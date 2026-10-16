@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Materialize the manifest-pinned desktop RAM image without putting 192 MiB in Git.
+// Materialize the manifest-pinned desktop RAM image from immutable hosting.
 import assert from "node:assert/strict";
 import { createHash, randomBytes } from "node:crypto";
 import { createReadStream, createWriteStream } from "node:fs";
@@ -11,8 +11,9 @@ import { fileURLToPath } from "node:url";
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const manifest = JSON.parse(await fs.readFile(path.join(repo, "web/artifacts-omarchy.json"), "utf8"));
 const artifact = manifest.artifacts.bootSnapshot;
-const relative = "releases/boot-snapshot/omarchy-ready.snap.gz";
-assert.equal(artifact.url, relative, "expected a source manifest, not a rewritten deploy manifest");
+const relative = artifact.url;
+assert.match(relative, /^releases\/boot-snapshot\/omarchy-[a-z0-9-]+\.snap\.gz$/u,
+  "expected a bounded versioned source snapshot path, not a rewritten deploy manifest");
 assert.match(artifact.sha256, /^[a-f0-9]{64}$/u);
 assert.ok(Number.isSafeInteger(artifact.size) && artifact.size > 0);
 const destination = path.join(repo, relative);

@@ -15,7 +15,7 @@ assert.ok(options.output);assert.ok(!options.sabotage||['channel-order','destina
 assert.ok(!options['node-only']||options['node-only']==='true');
 const output=path.resolve(options.output);await fs.mkdir(output,{recursive:true});
 const sourcePaths=[
-  'renderer/virgl-command/resources.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs',
+  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/unorm-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',
   'renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/color-formats.mjs',
   'renderer/virgl-shader/index.mjs','renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm',
   'renderer/virgl-shader/bridge.c','renderer/virgl-shader/UPSTREAM.json',
@@ -25,7 +25,7 @@ const sourcePaths=[
   'tools/virgl-command/color-fixtures.mjs','tools/verify-virgl-color-formats.mjs',
   'tools/verify-virgl-color-formats.sh','tools/virgl-command/colors-receipt.py','tools/virgl-command/colors-cold.py',
   'Makefile','renderer/virgl-command/README.md','renderer/virgl-command/resources-README.md','renderer/virgl-command/state-README.md',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const report={schema:1,task:'E6-T12g2',status:'running',guestExecution:false,
   boundary:'Original selected color packets and independent synthetic physical GL sampling/draw/readback; no full guest offload.',
   gitHead:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),command:[process.execPath,...process.argv.slice(1)],

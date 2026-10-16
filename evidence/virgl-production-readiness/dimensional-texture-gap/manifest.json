@@ -1,0 +1,62 @@
+{
+  "schema": "original-dimensional-texture-negative-readiness-v1",
+  "sourceHead": "37a6794437424049d38acb733191a16c1cdca998",
+  "trackedChanges": [],
+  "status": "passed",
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "/tmp/wasmvm-dimensional-texture-readiness.mjs",
+    "--output",
+    "/tmp/wasmvm-dimensional-texture-readiness-37a67944-v2"
+  ],
+  "recordCount": 100,
+  "reopenedMembers": 100,
+  "completeBodies": true,
+  "decodedBytes": 13029210,
+  "index": {
+    "path": "records.json",
+    "sha256": "49d070ecdf8803af19da3ce02eb44c316d08472dc094c7dcc661cd0817112d44"
+  },
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 2843123,
+    "sha256": "132ae60bdeb77d821688435a0349e371e2b33efaa4c43d6ff0e6d1d2539f27b2"
+  },
+  "report": {
+    "path": "report.json",
+    "bytes": 322271,
+    "sha256": "47e29af237cfea9cc29be023f9af3ebd4ba74c98e9eaaffa7dbad7a6a40abc83"
+  },
+  "runner": {
+    "bytes": 20723,
+    "sha256": "7c410f1febd88f88f3cbe99828359e13690b171fd3bb9f46434014f1dfa730f9",
+    "body": "readiness-runner.mjs"
+  },
+  "servedReadiness": {
+    "path": "renderer/virgl-command/tests/desktop-submit-acceptance.mjs",
+    "originalSha256": "2f3ddebcee03c7ac403b2a0f4c7c740412ba547a9a5b0c3be3bee1e9d5066d88",
+    "servedSha256": "48ebead59b5e01a967021e112e01677feab0a1ef796cbed25bcc5fa63442648c",
+    "body": "readiness-source.mjs"
+  },
+  "nativeGpuAllocations": true,
+  "actualLinuxGuest": false,
+  "productionAuthority": false,
+  "summary": {
+    "status": "passed",
+    "positiveControl": "2D positive control",
+    "refusedShapes": [
+      "original 3D volume",
+      "original six-face cube",
+      "original 2D array"
+    ],
+    "shaderRefusals": 6,
+    "nativeCalls": 167,
+    "limits": {
+      "texture2D": 16384,
+      "texture3D": 2048,
+      "cube": 16384,
+      "arrayLayers": 2048
+    },
+    "liveGuest3d": false
+  }
+}

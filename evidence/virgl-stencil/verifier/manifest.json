@@ -1,0 +1,45 @@
+{
+  "schema": "stencil-fresh-critic-seal-v1",
+  "task": "E6-T11d44",
+  "sourceHead": "0515e4dd31c41b1819762a0ec06aa23365fd295c",
+  "frozenWorkerRuntime": "de736cd109a092b59c82a83dd9520ee5928b8c2a",
+  "workerSubmission": "e8a36fe6c0a582cb86605a370f5fefc945a8f552",
+  "independentlyVerifiedBase": "5a0d9fc9655f1e0956154763bda420aec721865a",
+  "workerSeal": {
+    "path": "evidence/virgl-stencil/worker",
+    "manifestSha256": "386cdb8880bcf72d20a9bf5d6c2bb1eef58023da64974448b42ef7edab445055",
+    "indexSha256": "e590aee23a07f06a68542a118dea90eb9823d31a3669dbfad17294566c8f9271",
+    "archiveSha256": "46beab4bf23c06c2b8f826e41db8b0969cfd380b2a9bdcf750a4cc12322a848c",
+    "sourceHead": "de736cd109a092b59c82a83dd9520ee5928b8c2a",
+    "logicalMembers": 42535,
+    "physicalMembers": 4308,
+    "logicalBytes": 1817189091,
+    "physicalBytes": 840420963
+  },
+  "heldD43LogicalMembers": 74113,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 12899252,
+    "sha256": "6256d79d6cef23c6e20ce7b068773fddc5069d1f20183c0a9533e27c73e68ede"
+  },
+  "index": {
+    "path": "records.json",
+    "bytes": 1274727,
+    "sha256": "4a73ffbdbc9461bfe0fa3997c9f22fcffb208b06636a900133b6b8cb8317594e"
+  },
+  "reopening": {
+    "path": "reopening-audit.json",
+    "bytes": 2037036,
+    "sha256": "30946d58632ba4802d9a02cc8fa785e81916d8bd223be3021e6e74b869caf4dc",
+    "logicalMembers": 6445,
+    "physicalMembers": 1271,
+    "logicalBytes": 273973735,
+    "physicalBytes": 187350321
+  },
+  "wholeFreshRecordings": 6,
+  "sourceClosureBodies": 636,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "authority": "isolated original native stencil; exact unchanged predecessor boundaries"
+}

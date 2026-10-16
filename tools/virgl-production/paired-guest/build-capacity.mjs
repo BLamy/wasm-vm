@@ -1,0 +1,13 @@
+import fs from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=path.dirname(fileURLToPath(import.meta.url));
+const container='wasm-vm-production-graphics-reference',destination='/capture/desktop-capacity-guest';
+execFileSync('docker',['exec',container,'mkdir','-p',destination]);
+execFileSync('docker',['cp',root+'/.',container+':'+destination]);
+execFileSync('docker',['exec','-w',destination,container,'riscv64-linux-gnu-gcc','-march=rv64imac_zicsr','-mabi=lp64','-mcmodel=medany','-mno-relax','-msmall-data-limit=0','-fno-pie','-fno-stack-protector','-ffreestanding','-nostdlib','-Os','-Wl,--no-relax,--build-id=none,-T,link.ld','start.S','capacity.c','-o','capacity.elf'],{stdio:'inherit'});
+execFileSync('docker',['exec','-w',destination,container,'riscv64-linux-gnu-objcopy','-O','binary','capacity.elf','capacity.bin']);
+await fs.mkdir(path.join(root,'../../../guest/prebuilt'),{recursive:true});
+execFileSync('docker',['cp',container+':'+destination+'/capacity.bin',path.join(root,'../../../guest/prebuilt/production-gpu-capacity.bin')]);
+console.log('Built dedicated original-MMIO capacity guest. No Linux/Mesa claim.');

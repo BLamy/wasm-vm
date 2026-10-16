@@ -22,9 +22,9 @@ assert.ok(options.sabotage === undefined || ['early-collect', 'index-class'].inc
 const output = path.resolve(options.output);
 await fs.mkdir(output, { recursive: true });
 const codePaths = [
-  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs',
+  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/unorm-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs',
   'renderer/virgl-command/resources-README.md',
-  'renderer/virgl-command/constant-domain.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/state-README.md', 'renderer/virgl-command/draw-README.md', 'renderer/virgl-command/async-README.md',
+  'renderer/virgl-command/constant-domain.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs', 'renderer/virgl-command/state-README.md', 'renderer/virgl-command/draw-README.md', 'renderer/virgl-command/async-README.md',
   'renderer/virgl-command/tests/async-acceptance.mjs', 'renderer/virgl-shader/index.mjs',
   'renderer/virgl-shader/build/wasm/virgl-shader.mjs', 'renderer/virgl-shader/build/wasm/virgl-shader.wasm',
   'renderer/virgl-shader/bridge.c', 'renderer/virgl-shader/UPSTREAM.json',
@@ -34,7 +34,7 @@ const codePaths = [
   'tools/virgl-command/async-receipt.py', 'tools/virgl-command/async-cold.py',
   'renderer/virgl-shader/vendor/src/virgl_protocol.h', 'renderer/virgl-shader/vendor/src/virgl_hw.h',
   'tools/virgl-capture/workloads/textured-scene.c', 'Makefile',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const html = `<!doctype html><meta charset="utf-8"><title>VirGL asynchronous renderer jobs</title>
 <style>body{font:16px system-ui;background:#111720;color:#e7edf6;margin:32px;max-width:1100px}h1{font-size:27px}p{line-height:1.5}#draws{display:flex;gap:12px}figure{margin:8px}figcaption{font-size:12px;max-width:192px}pre{white-space:pre-wrap;background:#1b2533;padding:20px;border:1px solid #435167;border-radius:8px;font-size:14px}</style>
 <h1>VirGL asynchronous renderer jobs</h1><p>Eight original submissions · actual GPU staging and zero-timeout fences · explicit fresh DMA handshakes</p>
@@ -140,7 +140,7 @@ try {
     } finally { clearTimeout(timer); }
     report.browserMs = performance.now() - browserBegin;
     const coverage = await coverageSession.send('Profiler.takePreciseCoverage');
-    const runtimePaths = ['renderer/virgl-command/state.mjs', 'renderer/virgl-command/resources.mjs'];
+    const runtimePaths = ['renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs', 'renderer/virgl-command/resources.mjs'];
     const scripts = runtimePaths.map((filename) => {
       const matches = coverage.result.filter((script) => script.url.endsWith('/' + filename));
       assert.equal(matches.length, 1, `coverage must name the served runtime ${filename}`);

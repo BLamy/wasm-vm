@@ -1,0 +1,2 @@
+# Preserve the byte-for-byte pinned Mesa source, including its upstream blank line.
+tools/virgl-floating-depth/primary/u_format_parse.py whitespace=-blank-at-eol

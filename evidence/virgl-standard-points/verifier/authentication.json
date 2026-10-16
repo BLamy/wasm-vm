@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "predictionsMadeBeforeEvidence": true,
+  "archiveSha256": "797426c742a74686db9e4dbdf02135a58b8d30fec3433cd17a4f73e3bb78f846",
+  "records": 13269,
+  "authenticatedReceiptFiles": 13243,
+  "sourceClosure": 517,
+  "generated": 22,
+  "sourceHead": "8ccd2036305321645d7f8b47cf7e2c1bcdced863",
+  "cold": {
+    "schema": 1,
+    "task": "E6-T11d11",
+    "gitHead": "8ccd2036305321645d7f8b47cf7e2c1bcdced863",
+    "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-standard-points-cold-wtb14ecz/wasm-vm",
+    "removedEnvironmentNames": [
+      "RUST_LOG"
+    ],
+    "command": [
+      "make",
+      "verify-E6-T11d11"
+    ],
+    "status": "passed",
+    "cloneHead": "8ccd2036305321645d7f8b47cf7e2c1bcdced863",
+    "statusBefore": "",
+    "exitCode": 0,
+    "statusAfter": "",
+    "receiptSha256": "99193c7b041e0e80638afb85af4501502e89b5bf801ab50e342552eb6726a0b0",
+    "logSha256": "3071e6ec9e76f4a1ef8bd759e09d62d466240dee692eacc380c9b90b82205bfd"
+  }
+}

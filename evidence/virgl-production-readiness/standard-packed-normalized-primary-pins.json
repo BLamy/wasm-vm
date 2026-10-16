@@ -1,0 +1,24 @@
+{
+  "schema": "original-packed-normalized-primary-pins-v1",
+  "archive": "https://archive.mesa3d.org/mesa-26.2.2.tar.xz",
+  "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+  "sources": [
+    {
+      "path": "src/util/format/u_format.yaml",
+      "sha256": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10",
+      "bytes": 80486
+    },
+    {
+      "path": "src/mesa/state_tracker/st_extensions.c",
+      "sha256": "dbed39e3997c3fbc5e3a02c0fd6845cb43ab67f2c7972362ce20c225a24138ff",
+      "bytes": 74811
+    },
+    {
+      "path": "src/mesa/main/version.c",
+      "sha256": "8d3fd4701b3ec44276fcc0bbd3cafecfcb026043c01b74d9ddf018d3a116a24b",
+      "bytes": 29380
+    }
+  ],
+  "spec": "https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf",
+  "authority": "primary-format-facts-only"
+}

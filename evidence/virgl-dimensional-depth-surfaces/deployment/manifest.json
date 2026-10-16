@@ -1,0 +1,38 @@
+{
+  "schema": "dimensional-depth-surface-deployment-seal-v1",
+  "task": "E6-T11d64",
+  "head": "2f1e09f52ef3529b591887a08721fb234e77e500",
+  "records": 1168,
+  "recordIndexSha256": "9563b1a0181c16fd316668aa5efbf77eebb8e3ca79ee263714118fa97e8a5bbd",
+  "archiveSha256": "54682b96457986f46d732b4b59d15cf720f01570200fcd664b631d62ec698497",
+  "archiveBytes": 56783470,
+  "deploymentId": "9724effa-3c8e-42ba-996a-1edf07049acb",
+  "url": "https://9724effa.wasm-vm.pages.dev",
+  "canonical": "https://wasm-vm.pages.dev",
+  "servedBodies": 192,
+  "passed": 127,
+  "failed": 0,
+  "productionGraphicsAuthority": false,
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "2d9bb67f06580daa0a405220b6541c83c38824d2b72ce4a7a03600d72c3d4a7e"
+    },
+    {
+      "path": "recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "d16200f429ccf8b8b255281c900c30af0b221807eb82160c02e64630aacfc31e"
+    },
+    {
+      "path": "recording.tar.gz.part-0002",
+      "bytes": 16777216,
+      "sha256": "1c111eaee601435cd948e85088410300f02d1d36f10dd6de271d5010c6066214"
+    },
+    {
+      "path": "recording.tar.gz.part-0003",
+      "bytes": 6451822,
+      "sha256": "647ffb5e0bad002ba06179dfd4690741dbc29ea290227cd63309fbdeea2930b3"
+    }
+  ]
+}

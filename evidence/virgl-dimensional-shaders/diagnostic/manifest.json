@@ -1,0 +1,10 @@
+{
+  "schema": "dimensional-shader-failed-orchestration-seal-v1",
+  "head": "ebd460b325f5a3b97798a9450ab3c7f879b9ca26",
+  "records": 37389,
+  "reopenedMembers": 37389,
+  "recordIndexSha256": "8743090aa0ab239776508120a2f9574e38fefe354c2d9a5c894c1a96b2a8f0f0",
+  "archiveSha256": "12efb7befedfee0b9b8b57dee249fb99d0a6da030e61d4d5db9a62c060a747e0",
+  "archiveBytes": 20185544,
+  "productionAuthority": false
+}

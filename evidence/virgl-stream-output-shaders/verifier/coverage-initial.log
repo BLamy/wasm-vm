@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-stream-output-shaders/verifier/coverage.py", line 103, in <module>
+    assert (waiver['source'].endswith('.h') or text.lstrip().startswith(('/*', '#include', 'static ', 'const char *', 'bool standard_', 'uint32_t ', 'const uint32_t *', '                                  bool ', '                                bool ', '                                const char *'))), (waiver['source'], waiver['line'], text)
+AssertionError: ('renderer/virgl-shader/bridge.c', 2603, '                                  bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures, bool dimensional_shadows,\n')

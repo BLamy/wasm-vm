@@ -1,0 +1,18 @@
+{
+  "schema": "dimensional-view-gap-seal-v1",
+  "head": "deb7b3113f9adeb2e6e80449a6710dd3295093ea",
+  "records": 84,
+  "reopenedMembers": 84,
+  "recordIndexSha256": "8a0f3e965d6fc8a515c2fb289c7b7e88cfcefc163b0ca2fe7225890e841351bf",
+  "archiveSha256": "f087447c3ff9b16638724faffe0cf83c7a6f2979c37775e092f5fec2f2d6543a",
+  "archiveBytes": 999189,
+  "summary": {
+    "positiveDimensionalCompilerResponses": 54,
+    "consumerMetadataRefusals": 54,
+    "originalViewRefusals": 57,
+    "positiveHistoricalControls": 25
+  },
+  "previousPrsUnchanged": 135,
+  "newPr": 535,
+  "productionAuthority": false
+}

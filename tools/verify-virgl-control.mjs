@@ -28,7 +28,7 @@ const codePaths = [
   'crates/core/src/dev/virtio/gpu/scanout3d.rs',
   'crates/wasm/src/virgl_control_proof/scanout.rs',
   'renderer/virgl-command/scanout.mjs',
-  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/constant-domain.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/decoder.mjs',
+  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/unorm-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs', 'renderer/virgl-command/constant-domain.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs', 'renderer/virgl-command/decoder.mjs',
   'renderer/virgl-command/tests/control-acceptance.mjs', 'renderer/virgl-shader/index.mjs',
   'renderer/virgl-shader/build/wasm/virgl-shader.mjs', 'renderer/virgl-shader/build/wasm/virgl-shader.wasm',
   'renderer/virgl-shader/bridge.c', 'renderer/virgl-shader/UPSTREAM.json',
@@ -36,7 +36,7 @@ const codePaths = [
   'tools/virgl-command/fixtures.mjs', 'tools/verify-virgl-control.mjs', 'tools/verify-virgl-control.sh',
   'tools/verify-virgl-default-demo.mjs', 'web/dist/pkg/wasm_vm_wasm_bg.wasm', 'web/dist/sw.js',
   'tools/virgl-command/control-receipt.py', 'tools/virgl-command/control-cold.py', 'Makefile',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 async function collect(directory) {
   for (const entry of await fs.readdir(path.join(repo, directory), { withFileTypes: true })) {
     const filename = `${directory}/${entry.name}`;
@@ -125,7 +125,7 @@ try {
   } finally { clearTimeout(timer); }
   report.browserMs = performance.now() - begin;
   const coverage = await coverageSession.send('Profiler.takePreciseCoverage');
-  const scripts = ['renderer/virgl-command/control-bridge.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/state.mjs'].map((filename) => {
+  const scripts = ['renderer/virgl-command/control-bridge.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs'].map((filename) => {
     const matches = coverage.result.filter((script) => script.url.endsWith('/' + filename));
     assert.equal(matches.length, 1, `coverage must name served runtime ${filename}`);
     return { source: filename, sha256: sha256(servedSources.get(filename)), coverage: matches[0] };

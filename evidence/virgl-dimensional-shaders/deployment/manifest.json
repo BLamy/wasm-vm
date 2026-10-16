@@ -1,0 +1,10 @@
+{
+  "schema": "dimensional-shader-publication-seal-v1",
+  "head": "ebd460b325f5a3b97798a9450ab3c7f879b9ca26",
+  "records": 204,
+  "reopenedMembers": 204,
+  "recordIndexSha256": "3eb8743404017d746e8f3ffc46462d99fea9e0e15fb99e77f153c5c7d8fcd5a9",
+  "archiveSha256": "36a70ec88dbeeac94c4d55f50800d3a302d10d2057b3c2b0405b7eae0a0d683a",
+  "archiveBytes": 11381303,
+  "productionAuthority": false
+}

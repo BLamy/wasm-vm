@@ -1,0 +1,17 @@
+{
+  "schema": "dimensional-shadow-shader-deployment-seal-v1",
+  "task": "E6-T11d61",
+  "head": "7e51570851ef46eb10e8054f3a49b3bea8b79141",
+  "records": 511,
+  "reopenedMembers": 511,
+  "gzipEofChecked": true,
+  "recordIndexSha256": "460526f4a3b2713c2f605c85eefdab8c9022da016396255bf7d181f43cdc8252",
+  "archiveSha256": "13141c907e5b6d55f80ba0059b2e4cc6cc6dc6307dd27f925ddfabe77192ea21",
+  "archiveBytes": 49643952,
+  "deploymentId": "7112b2df-1f4f-4f2a-a039-b429e39f5835",
+  "url": "https://7112b2df.wasm-vm.pages.dev",
+  "canonical": "https://wasm-vm.pages.dev",
+  "passed": 127,
+  "failed": 0,
+  "productionGraphicsAuthority": false
+}

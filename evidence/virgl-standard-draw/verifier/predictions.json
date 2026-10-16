@@ -1,0 +1,60 @@
+{
+  "schema": "standard-draw-critic-predictions-v1",
+  "task": "E6-T11d6",
+  "role": "fresh-adversarial-verifier",
+  "dependency": "761a912a88823954e3424f7b003c15887e7c9034",
+  "frozenHead": "c9963d71add68b550d9f26a2b9e9d417f3daa437",
+  "workerClaim": "f7801621",
+  "inspectedEvidence": false,
+  "novelSeed": 3833342609,
+  "predictions": [
+    {
+      "id": "P1-auth",
+      "prediction": "The sealed archive/index hashes equal the supplied claim; all 752 safe unique members have the indexed length/SHA256; hot/cold source/gate receipts name c9963d71, every tracked runtime source equals that commit, and the pristine clone is clean before and after the identical gate."
+    },
+    {
+      "id": "P2-wire",
+      "prediction": "From literal words, standard admits positive divisors and 1/2/4-byte aligned indices and triangle/strip instance counts0/1/2/5/65536/u32-max; legacy admits only divisor0, aligned size2, and instanceCount1. Unsupported formats/modes/alignment and malformed tails reject, totaling80 cases160 predictions."
+    },
+    {
+      "id": "P3-native",
+      "prediction": "The 37 completed hardware frames use ordinary calls for wire0/1 with one effective instance and instanced calls above1, using native IDs and 1/2/4-byte native index types. All original upload/native-buffer/index/full pixel blobs authenticate; a u32 actual index70003 is fetched."
+    },
+    {
+      "id": "P4-ends",
+      "prediction": "mixed-wide-* uses actual indices70000..70003 despite hints; active IN0/IN1/IN15 have firstByte1120032/32/32 and requiredEnd1120096/80/64 with lastElement70003/2/1, work20 and index staging16 bytes. Every other frame end derives from literal offset+last*stride+components*4; positive divisors use floor((effective-1)/divisor)."
+    },
+    {
+      "id": "P5-restore",
+      "prediction": "After poison and A/B/A context changes, every native active divisor equals its selected wire divisor bounded by65536; A restores0/2/3, B selects0/1/2. Huge65535/u32-max divisors both select element0; the actual native query is65535/65536."
+    },
+    {
+      "id": "P6-pre-draw",
+      "prediction": "One-byte-short instance/vertex/index extents, fixed restart sentinels for every index width, native maximum index below actual70003, signed array overflow and excessive work reject before any failing native draw. Invalid native limits-1/1.5/2^32 reject construction. False safe hints cannot admit short data and false large hints cannot reject valid actual data. Malformed tail applies no commands."
+    },
+    {
+      "id": "P7-work",
+      "prediction": "The exact65536 vertex-instance-work frame admits; work65540 rejects before draw and cumulative draws charge instances so the third 8-work draw exceeds a16-work submission budget, with exactly two prior native draws."
+    },
+    {
+      "id": "P8-pending",
+      "prediction": "While a real later-task GPU index read is pending, cancellation returns cancelled and a changed revision stale-storage with no draw; public name reuse draws the retained old generation. All paths drain their real fence and release reads/staging and cleanup budgets tozero under schedules(0,64),(2,1),(5,3)."
+    },
+    {
+      "id": "P9-sabotage",
+      "prediction": "Changing the served real native IN1 divisor2=>1 issues drawElementsInstanced and completes its fence but fails the full-pixel mixed-wide oracle; it cannot count as proof if only a proxy assertion or earlier setup fails. The promoted oracle must independently reject the same physical mutation once."
+    },
+    {
+      "id": "P10-carry",
+      "prediction": "Every compiler/constants/cache/resources tracked byte equals D5 authority761a912a. Carry unchanged D5 compiler/reflection/ownership proof, including native active uniform completeness, and authenticate directly affected legacy decoder/draw/async/float gates once at frozen head."
+    },
+    {
+      "id": "P11-novel",
+      "prediction": "Independent seed0xe47c2a91, seven instances, differing divisors0/3/5 and u32 indices65557..65560 produce28 work,16-byte index staging, per-vertex requiredEnd1049008 and instance requiredEnd80/64. Exact backing ends admit; deleting the final byte of either last used instance/vertex/index range rejects before draw. Full native-ID tile pixels derived from the original seed and bytes hold under varied later-task schedules."
+    },
+    {
+      "id": "P12-coverage",
+      "prediction": "Every changed runtime hunk executes in authenticated original hot/cold or critic recording, or receives a narrow named syntax/config/record-only/unchanged-guard waiver. No changed semantic path is waved through on unexecuted product behavior."
+    }
+  ]
+}

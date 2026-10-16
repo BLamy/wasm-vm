@@ -1,0 +1,53 @@
+{
+  "task": "E6-T11d1",
+  "verdict": "verified",
+  "sourceHead": "92c98c7361cad2518200bfa99765ed5895ef4f95",
+  "workerSealAuthenticated": true,
+  "physicalFramesAudited": 30,
+  "freshFrames": 6,
+  "freshPixelAssertions": 94,
+  "changedFilesAudited": 27,
+  "changedLinesAudited": 881,
+  "runtimeGaps": 0,
+  "nativeArenaFailures": 12,
+  "exactNativeRecoveries": 12,
+  "wasmPressureSchedules": 9,
+  "maximalSeedCases": 3,
+  "sabotageOracleHeld": true,
+  "boundaryAttacks": 7,
+  "forgedContracts": 4,
+  "promotedTests": [
+    {
+      "path": "renderer/virgl-command/tests/vertex-constant-boundaries.mjs",
+      "sha256": "e64a2d4a97b5ff7401bf95ea4c45ff4da031eb754796ec906d7927d18e0dd826"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/tgsi_scratch_boundaries.c",
+      "sha256": "8458322946c0a81b868d7c6236533a28c129b5fb190a39113eb86ac08a9afc3b"
+    }
+  ],
+  "predictionResults": {
+    "P1": "HELD",
+    "P2": "HELD",
+    "P3": "HELD",
+    "P4": "HELD",
+    "P5": "HELD",
+    "P6": "HELD",
+    "P7": "HELD",
+    "P8-revised": "HELD",
+    "P9": "HELD",
+    "P10": "HELD"
+  },
+  "initialP8": "FAILED driver-active-prefix inference only; original source and failure preserved, then corrected before full-bank rerun. Complete actual native prefix remains the task oracle.",
+  "limits": {
+    "memoryBytes": 16777216,
+    "stackBytes": 262144,
+    "tgsiScratchBytes": 262144,
+    "textBytes": 49152,
+    "tokens": 8192,
+    "glslBytes": 262144,
+    "rawRegisters": 46,
+    "exactWords": 184
+  },
+  "authority": "isolated ordinary vertex128 capacity, private/raw/fragment46 retained; no production capsets or live guest/FPS/MIPS/API-conformance claim"
+}

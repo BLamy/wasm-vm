@@ -5,9 +5,11 @@ python3 verify_sources.py
 mode=${1:-native}
 mkdir -p "build/$mode"
 sources=(bridge.c raw_bits.c generated/u_format_table.c checked_upstream.c
-  vendor/src/gallium/auxiliary/tgsi/*.c
-  vendor/src/gallium/auxiliary/cso_cache/cso_hash.c vendor/src/gallium/auxiliary/cso_cache/cso_cache.c
-  vendor/src/mesa/util/u_debug.c)
+  checked_tgsi_sanity.c checked_cso_hash.c)
+for source in vendor/src/gallium/auxiliary/tgsi/*.c; do
+  [[ "$source" == */tgsi_sanity.c ]] || sources+=("$source")
+done
+sources+=(vendor/src/gallium/auxiliary/cso_cache/cso_cache.c vendor/src/mesa/util/u_debug.c standard_guard.c standard_stream_output.c standard_emit.c)
 common=(-std=gnu11 -D_GNU_SOURCE -D_DARWIN_C_SOURCE
   -DUTIL_ARCH_LITTLE_ENDIAN=1 -DUTIL_ARCH_BIG_ENDIAN=0
   -DHAVE___BUILTIN_CLZ=1 -DHAVE___BUILTIN_CLZLL=1 -DHAVE___BUILTIN_POPCOUNT=1
@@ -15,12 +17,477 @@ common=(-std=gnu11 -D_GNU_SOURCE -D_DARWIN_C_SOURCE
   -Ivendor/src/mesa/compat -Ivendor/src/gallium/include
   -Ivendor/src/gallium/auxiliary -Ivendor/src/gallium/auxiliary/util)
 case "$mode" in
+  standard-stream-output-native|standard-stream-output-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" == standard-stream-output-sanitize ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only standard_guard.c standard_emit.c standard_stream_output.c native_tests/standard_stream_output_inputs.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/standard_stream_output_inputs.c \
+      -lm -o "build/$mode/standard-stream-output-test"
+    ;;
+  standard-dimensional-shadow-texture-native|standard-dimensional-shadow-texture-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" == standard-dimensional-shadow-texture-sanitize ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only standard_guard.c standard_stream_output.c standard_emit.c native_tests/standard_dimensional_shadow_texture_inputs.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/standard_dimensional_shadow_texture_inputs.c \
+      -lm -o "build/$mode/standard-dimensional-shadow-texture-test"
+    ;;
+  standard-dimensional-texture-native|standard-dimensional-texture-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" == standard-dimensional-texture-sanitize ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only standard_guard.c standard_stream_output.c standard_emit.c native_tests/standard_dimensional_texture_inputs.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/standard_dimensional_texture_inputs.c \
+      -lm -o "build/$mode/standard-dimensional-texture-test"
+    ;;
+  standard-stream-output-allocation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_stream_output_allocations.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c bridge.c -o "build/$mode/bridge.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o "build/$mode/checked_upstream.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c standard_emit.c -o "build/$mode/standard_emit.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dmalloc=precise_word_upstream_malloc -c checked_tgsi_sanity.c -o "build/$mode/checked_tgsi_sanity.o"
+    remaining=()
+    for source in "${sources[@]}"; do
+      case "$source" in bridge.c|checked_upstream.c|standard_emit.c|checked_tgsi_sanity.c) ;; *) remaining+=("$source");; esac
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "build/$mode/bridge.o" "build/$mode/checked_upstream.o" "build/$mode/checked_tgsi_sanity.o" \
+      "${remaining[@]}" "build/$mode/standard_emit.o" native_tests/standard_stream_output_allocations.c \
+      -lm -o "build/$mode/standard-stream-output-allocation-test"
+    ;;
+  standard-dimensional-shadow-texture-allocation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_dimensional_shadow_texture_allocations.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c bridge.c -o "build/$mode/bridge.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o "build/$mode/checked_upstream.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c standard_emit.c -o "build/$mode/standard_emit.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dmalloc=precise_word_upstream_malloc -c checked_tgsi_sanity.c -o "build/$mode/checked_tgsi_sanity.o"
+    remaining=()
+    for source in "${sources[@]}"; do
+      case "$source" in bridge.c|checked_upstream.c|standard_emit.c|checked_tgsi_sanity.c) ;; *) remaining+=("$source");; esac
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "build/$mode/bridge.o" "build/$mode/checked_upstream.o" "build/$mode/checked_tgsi_sanity.o" \
+      "${remaining[@]}" "build/$mode/standard_emit.o" native_tests/standard_dimensional_shadow_texture_allocations.c \
+      -lm -o "build/$mode/standard-dimensional-shadow-texture-allocation-test"
+    ;;
+  standard-dimensional-texture-allocation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_dimensional_texture_allocations.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c bridge.c -o "build/$mode/bridge.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o "build/$mode/checked_upstream.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c standard_emit.c -o "build/$mode/standard_emit.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dmalloc=precise_word_upstream_malloc -c checked_tgsi_sanity.c -o "build/$mode/checked_tgsi_sanity.o"
+    remaining=()
+    for source in "${sources[@]}"; do
+      case "$source" in bridge.c|checked_upstream.c|standard_emit.c|checked_tgsi_sanity.c) ;; *) remaining+=("$source");; esac
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "build/$mode/bridge.o" "build/$mode/checked_upstream.o" "build/$mode/checked_tgsi_sanity.o" \
+      "${remaining[@]}" "build/$mode/standard_emit.o" native_tests/standard_dimensional_texture_allocations.c \
+      -lm -o "build/$mode/standard-dimensional-texture-allocation-test"
+    ;;
+  standard-shadow-texture-native|standard-shadow-texture-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" == standard-shadow-texture-sanitize ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only standard_guard.c standard_stream_output.c standard_emit.c native_tests/standard_shadow_texture_inputs.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/standard_shadow_texture_inputs.c \
+      -lm -o "build/$mode/standard-shadow-texture-test"
+    ;;
+  standard-shadow-texture-allocation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_shadow_texture_allocations.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c bridge.c -o "build/$mode/bridge.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o "build/$mode/checked_upstream.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c standard_emit.c -o "build/$mode/standard_emit.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dmalloc=precise_word_upstream_malloc -c checked_tgsi_sanity.c -o "build/$mode/checked_tgsi_sanity.o"
+    remaining=()
+    for source in "${sources[@]}"; do
+      case "$source" in bridge.c|checked_upstream.c|standard_emit.c|checked_tgsi_sanity.c) ;; *) remaining+=("$source");; esac
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "build/$mode/bridge.o" "build/$mode/checked_upstream.o" "build/$mode/checked_tgsi_sanity.o" \
+      "${remaining[@]}" "build/$mode/standard_emit.o" native_tests/standard_shadow_texture_allocations.c \
+      -lm -o "build/$mode/standard-shadow-texture-allocation-test"
+    ;;
+  standard-instance-base-native|standard-instance-base-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" == standard-instance-base-sanitize ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only standard_guard.c standard_stream_output.c standard_emit.c native_tests/standard_instance_base_inputs.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/standard_instance_base_inputs.c \
+      -lm -o "build/$mode/standard-instance-base-test"
+    ;;
+  standard-instance-base-allocation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_instance_base_allocations.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c bridge.c -o "build/$mode/bridge.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o "build/$mode/checked_upstream.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c standard_emit.c -o "build/$mode/standard_emit.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dmalloc=precise_word_upstream_malloc -c checked_tgsi_sanity.c -o "build/$mode/checked_tgsi_sanity.o"
+    remaining=()
+    for source in "${sources[@]}"; do
+      case "$source" in bridge.c|checked_upstream.c|standard_emit.c|checked_tgsi_sanity.c) ;; *) remaining+=("$source");; esac
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "build/$mode/bridge.o" "build/$mode/checked_upstream.o" "build/$mode/checked_tgsi_sanity.o" \
+      "${remaining[@]}" "build/$mode/standard_emit.o" native_tests/standard_instance_base_allocations.c \
+      -lm -o "build/$mode/standard-instance-base-allocation-test"
+    ;;
+  standard-integer-image-shader-native|standard-integer-image-shader-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" == standard-integer-image-shader-sanitize ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only standard_guard.c standard_stream_output.c standard_emit.c native_tests/standard_integer_image_shader_inputs.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/standard_integer_image_shader_inputs.c \
+      -lm -o "build/$mode/standard-integer-image-shader-test"
+    ;;
+  standard-integer-image-shader-allocation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_integer_image_shader_allocations.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c bridge.c -o "build/$mode/bridge.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o "build/$mode/checked_upstream.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c standard_emit.c -o "build/$mode/standard_emit.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dmalloc=precise_word_upstream_malloc -c checked_tgsi_sanity.c -o "build/$mode/checked_tgsi_sanity.o"
+    remaining=()
+    for source in "${sources[@]}"; do
+      case "$source" in bridge.c|checked_upstream.c|standard_emit.c|checked_tgsi_sanity.c) ;; *) remaining+=("$source");; esac
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "build/$mode/bridge.o" "build/$mode/checked_upstream.o" "build/$mode/checked_tgsi_sanity.o" \
+      "${remaining[@]}" "build/$mode/standard_emit.o" native_tests/standard_integer_image_shader_allocations.c \
+      -lm -o "build/$mode/standard-integer-image-shader-allocation-test"
+    ;;
+  standard-texture-native|standard-texture-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" == standard-texture-sanitize ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only standard_guard.c standard_stream_output.c standard_emit.c native_tests/standard_texture_inputs.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/standard_texture_inputs.c \
+      -lm -o "build/$mode/standard-texture-test"
+    ;;
+  standard-uniform-native|standard-uniform-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" == standard-uniform-sanitize ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only standard_guard.c standard_stream_output.c standard_emit.c native_tests/standard_uniform_inputs.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/standard_uniform_inputs.c \
+      -lm -o "build/$mode/standard-uniform-test"
+    ;;
+  standard-texture-allocation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_texture_allocations.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c bridge.c -o "build/$mode/bridge.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o "build/$mode/checked_upstream.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c standard_emit.c -o "build/$mode/standard_emit.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dmalloc=precise_word_upstream_malloc -c checked_tgsi_sanity.c -o "build/$mode/checked_tgsi_sanity.o"
+    remaining=()
+    for source in "${sources[@]}"; do
+      case "$source" in bridge.c|checked_upstream.c|standard_emit.c|checked_tgsi_sanity.c) ;; *) remaining+=("$source");; esac
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "build/$mode/bridge.o" "build/$mode/checked_upstream.o" "build/$mode/checked_tgsi_sanity.o" \
+      "${remaining[@]}" "build/$mode/standard_emit.o" native_tests/standard_texture_allocations.c \
+      -lm -o "build/$mode/standard-texture-allocation-test"
+    ;;
+  standard-uniform-allocation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_uniform_allocations.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c bridge.c -o "build/$mode/bridge.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o "build/$mode/checked_upstream.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c standard_emit.c -o "build/$mode/standard_emit.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dmalloc=precise_word_upstream_malloc -c checked_tgsi_sanity.c -o "build/$mode/checked_tgsi_sanity.o"
+    remaining=()
+    for source in "${sources[@]}"; do
+      case "$source" in bridge.c|checked_upstream.c|standard_emit.c|checked_tgsi_sanity.c) ;; *) remaining+=("$source");; esac
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "build/$mode/bridge.o" "build/$mode/checked_upstream.o" "build/$mode/checked_tgsi_sanity.o" \
+      "${remaining[@]}" "build/$mode/standard_emit.o" native_tests/standard_uniform_allocations.c \
+      -lm -o "build/$mode/standard-uniform-allocation-test"
+    ;;
+  standard-integer-native|standard-integer-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" == standard-integer-sanitize ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_integer_inputs.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/standard_integer_inputs.c \
+      -lm -o "build/$mode/standard-integer-test"
+    ;;
+  standard-integer-allocation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_integer_allocations.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c bridge.c -o "build/$mode/bridge.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o "build/$mode/checked_upstream.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c standard_emit.c -o "build/$mode/standard_emit.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "build/$mode/bridge.o" "build/$mode/checked_upstream.o" \
+      raw_bits.c generated/u_format_table.c "${sources[@]:4:${#sources[@]}-5}" "build/$mode/standard_emit.o" native_tests/standard_integer_allocations.c \
+      -lm -o "build/$mode/standard-integer-allocation-test"
+    ;;
+  standard-packed-native|standard-packed-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" == standard-packed-sanitize ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_packed_inputs.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/standard_packed_inputs.c \
+      -lm -o "build/$mode/standard-packed-test"
+    ;;
+  standard-packed-allocation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/standard_packed_allocations.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c bridge.c -o "build/$mode/bridge.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o "build/$mode/checked_upstream.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c standard_emit.c -o "build/$mode/standard_emit.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "build/$mode/bridge.o" "build/$mode/checked_upstream.o" \
+      raw_bits.c generated/u_format_table.c "${sources[@]:4:${#sources[@]}-5}" "build/$mode/standard_emit.o" native_tests/standard_packed_allocations.c \
+      -lm -o "build/$mode/standard-packed-allocation-test"
+    ;;
+  standard-allocation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c bridge.c -o "build/$mode/bridge.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -DBRIDGE_UPSTREAM_ALLOCATION_TEST -c checked_upstream.c -o "build/$mode/checked_upstream.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=precise_word_calloc -c standard_emit.c -o "build/$mode/standard_emit.o"
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "build/$mode/bridge.o" "build/$mode/checked_upstream.o" \
+      raw_bits.c generated/u_format_table.c "${sources[@]:4:${#sources[@]}-5}" "build/$mode/standard_emit.o" native_tests/standard_allocations.c \
+      -lm -o "build/$mode/standard-allocation-test"
+    ;;
+  standard-native|standard-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" == standard-sanitize ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only standard_guard.c standard_stream_output.c standard_emit.c native_tests/standard_compiler.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/standard_compiler.c \
+      -lm -o "build/$mode/standard-test"
+    ;;
+  exact-reciprocal-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    for source in bridge raw_bits; do
+      "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only "$source.c" native_tests/exact_reciprocal.c
+      "${CC:-clang}" "${common[@]}" "${instrument[@]}" -fstack-usage -c "$source.c" -o "build/exact-reciprocal-sanitize/$source.o"
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" build/exact-reciprocal-sanitize/bridge.o build/exact-reciprocal-sanitize/raw_bits.o \
+      "${sources[@]:2}" native_tests/exact_reciprocal.c -lm -o build/exact-reciprocal-sanitize/exact-reciprocal-test
+    ;;
+  coordinate-prefix-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/coordinate_prefix.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" \
+      native_tests/coordinate_prefix.c -lm -o build/$mode/coordinate-prefix-test
+    ;;
+  coordinate-prefix-wasm)
+    emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
+    if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
+    "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
+    test -f build/$mode/banks.bin || { echo 'Generate authenticated prefix banks before the Wasm audit build.' >&2; exit 1; }
+    "$emcc" "${common[@]}" -O2 "${sources[@]}" native_tests/coordinate_prefix.c -lm \
+      -sENVIRONMENT=node -sEXIT_RUNTIME=1 \
+      --preload-file build/$mode/banks.bin@/banks.bin \
+      -o build/$mode/coordinate-prefix.js
+    ;;
+  zero-cap-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/zero_cap.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" \
+      native_tests/zero_cap.c -lm -o build/$mode/zero-cap-test
+    ;;
+  zero-cap-wasm)
+    emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
+    if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
+    "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
+    test -f build/$mode/banks.bin || { echo 'Generate authenticated banks before the Wasm audit build.' >&2; exit 1; }
+    "$emcc" "${common[@]}" -O2 "${sources[@]}" native_tests/zero_cap.c -lm \
+      -sENVIRONMENT=node -sEXIT_RUNTIME=1 \
+      --preload-file build/$mode/banks.bin@/banks.bin \
+      -o build/$mode/zero-cap.js
+    ;;
+  original-c580-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/original_c580.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" \
+      native_tests/original_c580.c -lm -o build/$mode/original-c580-test
+    ;;
+  original-92cb-geometry-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/original_92cb_geometry.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" \
+      native_tests/original_92cb_geometry.c -lm -o build/$mode/original-92cb-geometry-test
+    ;;
+  original-92cb-geometry-wasm)
+    emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
+    if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
+    "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
+    for name in vertex.tgsi fragment.tgsi geometry.bin; do
+      test -f "build/$mode/$name" || { echo "Missing authenticated original $name" >&2; exit 1; }
+    done
+    "$emcc" "${common[@]}" -O2 "${sources[@]}" native_tests/original_92cb_geometry.c -lm \
+      -sENVIRONMENT=node -sEXIT_RUNTIME=1 \
+      --preload-file build/$mode/vertex.tgsi@/vertex.tgsi \
+      --preload-file build/$mode/fragment.tgsi@/fragment.tgsi \
+      --preload-file build/$mode/geometry.bin@/geometry.bin \
+      -o build/$mode/original-92cb-geometry.js
+    ;;
+  original-92cb-raster-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/original_92cb_raster.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" native_tests/original_92cb_raster.c -lm \
+      -o build/$mode/original-92cb-raster-test
+    ;;
+  original-92cb-raster-wasm)
+    emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
+    if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
+    "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
+    test -f build/$mode/geometry.bin || { echo 'Missing authenticated geometry.bin' >&2; exit 1; }
+    "$emcc" "${common[@]}" -O2 native_tests/original_92cb_raster.c -lm \
+      -sENVIRONMENT=node -sEXIT_RUNTIME=1 \
+      --preload-file build/$mode/geometry.bin@/geometry.bin \
+      -o build/$mode/original-92cb-raster.js
+    ;;
+  original-92cb-power-domain-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/original_92cb_power_domain.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" native_tests/original_92cb_power_domain.c -lm \
+      -o build/$mode/original-92cb-power-domain-test
+    ;;
+  original-92cb-power-domain-wasm)
+    emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
+    if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
+    "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
+    test -f build/$mode/geometry.bin || { echo 'Missing authenticated geometry.bin' >&2; exit 1; }
+    "$emcc" "${common[@]}" -O2 native_tests/original_92cb_power_domain.c -lm \
+      -sENVIRONMENT=node -sEXIT_RUNTIME=1 \
+      --preload-file build/$mode/geometry.bin@/geometry.bin \
+      -o build/$mode/original-92cb-power-domain.js
+    ;;
+  original-92cb-private-power-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/original_92cb_private_power.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" \
+      native_tests/original_92cb_private_power.c -lm -o build/$mode/original-92cb-private-power-test
+    ;;
+  original-92cb-private-power-wasm)
+    emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
+    if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
+    "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
+    for name in vertex.tgsi fragment.tgsi geometry.bin; do
+      test -f "build/$mode/$name" || { echo "Missing authenticated original $name" >&2; exit 1; }
+    done
+    "$emcc" "${common[@]}" -O2 "${sources[@]}" native_tests/original_92cb_private_power.c -lm \
+      -sENVIRONMENT=node -sEXIT_RUNTIME=1 \
+      --preload-file build/$mode/vertex.tgsi@/vertex.tgsi \
+      --preload-file build/$mode/fragment.tgsi@/fragment.tgsi \
+      --preload-file build/$mode/geometry.bin@/geometry.bin \
+      -o build/$mode/original-92cb-private-power.js
+    ;;
+  original-92cb-complete-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/original_92cb_complete.c
+    for source in bridge raw_bits; do
+      "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=original_complete_calloc -Dmalloc=original_complete_malloc \
+        -c "$source.c" -o "build/$mode/$source.o"
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" build/$mode/bridge.o build/$mode/raw_bits.o \
+      "${sources[@]:2}" native_tests/original_92cb_complete.c -lm -o build/$mode/original-92cb-complete-test
+    ;;
+  original-92cb-complete-wasm)
+    emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
+    if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
+    "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
+    for name in vertex.tgsi fragment.tgsi geometry.bin; do
+      test -f "build/$mode/$name" || { echo "Missing authenticated original $name" >&2; exit 1; }
+    done
+    for source in bridge raw_bits; do
+      "$emcc" "${common[@]}" -O2 -Dcalloc=original_complete_calloc -Dmalloc=original_complete_malloc \
+        -c "$source.c" -o "build/$mode/$source.o"
+    done
+    "$emcc" "${common[@]}" -O2 build/$mode/bridge.o build/$mode/raw_bits.o \
+      "${sources[@]:2}" native_tests/original_92cb_complete.c -lm \
+      -sENVIRONMENT=node -sEXIT_RUNTIME=1 -sSTACK_SIZE=262144 -sSTACK_OVERFLOW_CHECK=2 -sABORTING_MALLOC=0 \
+      --preload-file build/$mode/vertex.tgsi@/vertex.tgsi \
+      --preload-file build/$mode/fragment.tgsi@/fragment.tgsi \
+      --preload-file build/$mode/geometry.bin@/geometry.bin \
+      -o build/$mode/original-92cb-complete.js
+    ;;
+  original-c580-wasm)
+    emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
+    if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
+    "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
+    for name in vertex.tgsi fragment.tgsi banks.bin; do
+      test -f "build/$mode/$name" || { echo "Missing authenticated original $name" >&2; exit 1; }
+    done
+    "$emcc" "${common[@]}" -O2 "${sources[@]}" native_tests/original_c580.c -lm \
+      -sENVIRONMENT=node -sEXIT_RUNTIME=1 \
+      --preload-file build/$mode/vertex.tgsi@/vertex.tgsi \
+      --preload-file build/$mode/fragment.tgsi@/fragment.tgsi \
+      --preload-file build/$mode/banks.bin@/banks.bin \
+      -o build/$mode/original-c580.js
+    ;;
+  exact-pair-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    for source in bridge raw_bits; do
+      "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only "$source.c" native_tests/exact_pair.c
+      "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=exact_pair_calloc -fstack-usage -c "$source.c" -o "build/exact-pair-sanitize/$source.o"
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" build/exact-pair-sanitize/bridge.o build/exact-pair-sanitize/raw_bits.o \
+      "${sources[@]:2}" native_tests/exact_pair.c -lm -o build/exact-pair-sanitize/exact-pair-test
+    ;;
   guard-check)
-    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c native_tests/bounded_loops.c native_tests/raw_equality.c native_tests/selected_lanes.c native_tests/selected_lanes_pair.c native_tests/radial_domain.c native_tests/precise_words.c native_tests/precise_audit.c native_tests/ordered_masks.c native_tests/raster_bank.c native_tests/precise_arithmetic.c native_tests/original_corpus.c
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only standard_guard.c standard_stream_output.c standard_emit.c native_tests/standard_compiler.c native_tests/standard_allocations.c
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/captured.c native_tests/components.c native_tests/pairs.c native_tests/banks.c native_tests/raw_bits.c native_tests/integer_masks.c native_tests/float_masks.c native_tests/numeric_floats.c native_tests/component_floats.c native_tests/dot_reciprocals.c native_tests/constant_compiler.c native_tests/structured_conditionals.c native_tests/indirect_constants.c native_tests/bounded_loops.c native_tests/raw_equality.c native_tests/selected_lanes.c native_tests/selected_lanes_pair.c native_tests/radial_domain.c native_tests/precise_words.c native_tests/precise_audit.c native_tests/ordered_masks.c native_tests/raster_bank.c native_tests/precise_arithmetic.c native_tests/original_corpus.c native_tests/precise_fraction.c native_tests/saturation.c native_tests/exponent_logarithm.c native_tests/exact_reciprocal.c native_tests/coordinate_prefix.c native_tests/zero_cap.c native_tests/original_c580.c native_tests/original_92cb_geometry.c native_tests/original_92cb_power_domain.c
     "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -Wno-unused-function -DBRIDGE_UPSTREAM_ALLOC_GUARD_ONLY -fsyntax-only checked_upstream.c
     ;;
   native)
     "${CC:-clang}" "${common[@]}" -O2 "${sources[@]}" cli.c -lm -o build/native/virgl-shader
+    ;;
+  vertex-constant-native|vertex-constant-sanitize|vertex-constant-scratch-sanitize)
+    instrument=(-O2)
+    if [[ "$mode" != vertex-constant-native ]]; then
+      instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+        -fprofile-instr-generate -fcoverage-mapping -fstack-usage)
+    fi
+    if [[ "$mode" == vertex-constant-scratch-sanitize ]]; then
+      instrument+=(-DBRIDGE_TGSI_SCRATCH_BYTES=64)
+    fi
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only bridge.c raw_bits.c native_tests/vertex_constants.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/vertex_constants.c \
+      -lm -o "build/$mode/vertex-constant-test"
     ;;
   selected-lanes-pair-native)
     "${CC:-clang}" "${common[@]}" -O2 "${sources[@]}" native_tests/selected_lanes_pair.c -lm -o build/selected-lanes-pair-native/pair-test
@@ -258,17 +725,104 @@ case "$mode" in
     "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/signed_conversions.c \
       -lm -o build/signed-conversions-sanitize/signed-conversions-test
     ;;
+  scalar-operations-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/scalar_operations.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/scalar_operations.c \
+      -lm -o build/scalar-operations-sanitize/scalar-operations-test
+    ;;
+  minimum-selection-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/minimum_selection.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/minimum_selection.c \
+      -lm -o build/minimum-selection-sanitize/minimum-selection-test
+    ;;
+  precise-fraction-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/precise_fraction.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/precise_fraction.c \
+      -lm -o build/precise-fraction-sanitize/precise-fraction-test
+    ;;
+  exact-producer-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/exact_producer.c
+    for source in bridge raw_bits; do
+      "${CC:-clang}" "${common[@]}" "${instrument[@]}" -Dcalloc=exact_producer_calloc -fstack-usage -c "$source.c" -o "build/exact-producer-sanitize/$source.o"
+    done
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" build/exact-producer-sanitize/bridge.o build/exact-producer-sanitize/raw_bits.o \
+      "${sources[@]:2}" native_tests/exact_producer.c -lm -o build/exact-producer-sanitize/exact-producer-test
+    ;;
+  known-branch-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/known_branch.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/known_branch.c \
+      -lm -o build/known-branch-sanitize/known-branch-test
+    ;;
+  known-arithmetic-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/known_arithmetic.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/known_arithmetic.c \
+      -lm -o build/known-arithmetic-sanitize/known-test
+    ;;
+  discard-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/fragment_discard.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/fragment_discard.c \
+      -lm -o build/discard-sanitize/discard-test
+    ;;
+  coordinate-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/fragment_coordinates.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/fragment_coordinates.c \
+      -lm -o build/coordinate-sanitize/coordinate-test
+    ;;
+  power-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/power.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/power.c \
+      -lm -o build/power-sanitize/power-test
+    ;;
+  sine-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/sine.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/sine.c \
+      -lm -o build/sine-sanitize/sine-test
+    ;;
+  exponent-logarithm-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/exponent_logarithm.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/exponent_logarithm.c \
+      -lm -o build/exponent-logarithm-sanitize/exponent-logarithm-test
+    ;;
+  saturation-sanitize)
+    instrument=(-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined
+      -fprofile-instr-generate -fcoverage-mapping)
+    "${CC:-clang}" "${common[@]}" -Wall -Wextra -Werror -fsyntax-only native_tests/saturation.c
+    "${CC:-clang}" "${common[@]}" "${instrument[@]}" "${sources[@]}" native_tests/saturation.c \
+      -lm -o build/saturation-sanitize/saturation-test
+    ;;
   precise-token-audit)
     "${CC:-clang}" "${common[@]}" -g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined \
       "${sources[@]}" native_tests/precise_audit.c -lm -o build/precise-token-audit/precise-token-audit
     ;;
-  compiler-bounds-wasm-stack)
+  standard-wasm-stack|compiler-bounds-wasm-stack)
     emcc=${EMCC:-${EMSDK:+$EMSDK/upstream/emscripten/emcc}}
     if [[ -z "$emcc" ]]; then echo 'Set EMCC to the pinned Emscripten 4.0.22 compiler.' >&2; exit 1; fi
     "$emcc" --version | head -1 | grep -q ' 4\.0\.22 ' || { echo 'Emscripten 4.0.22 required.' >&2; exit 1; }
     # Same owned source and optimization as the delivered module. These objects
     # only measure compiler stack frames; the public acceptance uses build/wasm.
-    for source in bridge raw_bits; do
+    for source in bridge raw_bits checked_tgsi_sanity checked_cso_hash standard_guard standard_stream_output standard_emit checked_upstream; do
       "$emcc" "${common[@]}" -O2 -fstack-usage -c "$source.c" -o "build/$mode/$source.o"
     done
     ;;
@@ -280,8 +834,8 @@ case "$mode" in
       -sMODULARIZE=1 -sEXPORT_ES6=1 -sENVIRONMENT=web,worker,node -sFILESYSTEM=0 \
       -sINITIAL_MEMORY=16777216 -sALLOW_MEMORY_GROWTH=0 \
       -sSTACK_SIZE=262144 -sABORTING_MALLOC=0 \
-      '-sEXPORTED_FUNCTIONS=["_bridge_translate","_bridge_translate_pair","_malloc","_free"]' \
+      '-sEXPORTED_FUNCTIONS=["_bridge_translate","_bridge_translate_pair","_bridge_translate_exact","_bridge_translate_pair_exact","_bridge_translate_original_92cb_first_power","_bridge_translate_original_92cb_complete","_bridge_translate_standard","_bridge_translate_standard_pair","_bridge_translate_standard_pair_typed","_bridge_translate_standard_pair_vertex_formats","_bridge_translate_standard_uniform","_bridge_translate_standard_uniform_pair","_bridge_translate_standard_texture","_bridge_translate_standard_texture_pair","_bridge_translate_standard_integer_image","_bridge_translate_standard_integer_image_pair","_bridge_translate_standard_instance_base","_bridge_translate_standard_instance_base_pair","_bridge_translate_standard_shadow_texture","_bridge_translate_standard_shadow_texture_pair","_bridge_translate_standard_dimensional_texture","_bridge_translate_standard_dimensional_texture_pair","_bridge_translate_standard_dimensional_shadow_texture","_bridge_translate_standard_dimensional_shadow_texture_pair","_bridge_translate_standard_stream_output","_bridge_translate_standard_stream_output_pair","_malloc","_free"]' \
       '-sEXPORTED_RUNTIME_METHODS=["UTF8ToString","HEAPU8"]'
     ;;
-  *) echo 'Usage: build.sh guard-check|native|sanitize|captured-sanitize|component-sanitize|pair-sanitize|bank-sanitize|raw-bit-sanitize|integer-mask-sanitize|float-mask-sanitize|numeric-float-sanitize|component-float-sanitize|dot-reciprocal-sanitize|wasm' >&2; exit 2 ;;
+  *) echo 'Usage: build.sh guard-check|native|exact-reciprocal-sanitize|exact-pair-sanitize|sanitize|captured-sanitize|component-sanitize|pair-sanitize|bank-sanitize|raw-bit-sanitize|integer-mask-sanitize|float-mask-sanitize|numeric-float-sanitize|component-float-sanitize|dot-reciprocal-sanitize|wasm' >&2; exit 2 ;;
 esac

@@ -1,0 +1,640 @@
+{
+  "schema": "original-packed-normalized-consumer-gap-v1",
+  "task": "E6-T11d36",
+  "gitHead": "3e5e41429aadc9acbe68fade926d2763d1e2a356",
+  "verifiedDependency": "E6-T11d35",
+  "authority": "original-wire-refusal-only",
+  "nativeExecuted": false,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "sources": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "bytes": 40061,
+      "sha256": "0cbbbbf06acb54d74084f08155e950c0f2880c58715fdb7394ac7e9c2efd8821"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "bytes": 161227,
+      "sha256": "2f1489376f716c7258c322de0f6d7ab5efd510cfca00957de5cead028a858ea3"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "bytes": 99357,
+      "sha256": "00ec5439c4b64fd54ed2b6a3bb3746e60d0e91076416e28280b0f45d0438a5c2"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "bytes": 104896,
+      "sha256": "f9764ccd9ad34773cb50662365b889733ca827915b5f991c62a414125b627e27"
+    },
+    {
+      "path": "renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "renderer/virgl-shader/standard.mjs",
+      "bytes": 12344,
+      "sha256": "3c02d62f4f533c4348f7efd313ae3810449b2b0d2845a615c4f2be6dd0a9b448"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "bytes": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "tools/virgl-command/standard-packed-normalized-formats.json",
+      "bytes": 14249,
+      "sha256": "bf0f37b31c071a363a6ee5b336b7bfb80463901c1ed685adb23443b90b0e8764"
+    }
+  ],
+  "records": [
+    {
+      "kind": "base-view",
+      "format": 5,
+      "name": "B5G5R5A1_UNORM",
+      "hex": "01060600090000000600000005000002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-swizzled-view",
+      "format": 5,
+      "name": "B5G5R5A1_UNORM",
+      "hex": "010606000900000006000000050000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-surface",
+      "format": 5,
+      "name": "B5G5R5A1_UNORM",
+      "hex": "010805000a00000006000000050000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "base-view",
+      "format": 6,
+      "name": "B4G4R4A4_UNORM",
+      "hex": "01060600090000000600000006000002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-swizzled-view",
+      "format": 6,
+      "name": "B4G4R4A4_UNORM",
+      "hex": "010606000900000006000000060000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-surface",
+      "format": 6,
+      "name": "B4G4R4A4_UNORM",
+      "hex": "010805000a00000006000000060000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "base-view",
+      "format": 7,
+      "name": "B5G6R5_UNORM",
+      "hex": "01060600090000000600000007000002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-swizzled-view",
+      "format": 7,
+      "name": "B5G6R5_UNORM",
+      "hex": "010606000900000006000000070000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-surface",
+      "format": 7,
+      "name": "B5G6R5_UNORM",
+      "hex": "010805000a00000006000000070000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "base-view",
+      "format": 8,
+      "name": "R10G10B10A2_UNORM",
+      "hex": "01060600090000000600000008000002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-swizzled-view",
+      "format": 8,
+      "name": "R10G10B10A2_UNORM",
+      "hex": "010606000900000006000000080000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-surface",
+      "format": 8,
+      "name": "R10G10B10A2_UNORM",
+      "hex": "010805000a00000006000000080000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "base-view",
+      "format": 122,
+      "name": "B5G5R5X1_UNORM",
+      "hex": "0106060009000000060000007a000002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-swizzled-view",
+      "format": 122,
+      "name": "B5G5R5X1_UNORM",
+      "hex": "0106060009000000060000007a0000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-surface",
+      "format": 122,
+      "name": "B5G5R5X1_UNORM",
+      "hex": "010805000a000000060000007a0000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "base-view",
+      "format": 131,
+      "name": "B10G10R10A2_UNORM",
+      "hex": "01060600090000000600000083000002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-swizzled-view",
+      "format": 131,
+      "name": "B10G10R10A2_UNORM",
+      "hex": "010606000900000006000000830000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-surface",
+      "format": 131,
+      "name": "B10G10R10A2_UNORM",
+      "hex": "010805000a00000006000000830000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "base-view",
+      "format": 135,
+      "name": "B4G4R4X4_UNORM",
+      "hex": "01060600090000000600000087000002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-swizzled-view",
+      "format": 135,
+      "name": "B4G4R4X4_UNORM",
+      "hex": "010606000900000006000000870000020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-surface",
+      "format": 135,
+      "name": "B4G4R4X4_UNORM",
+      "hex": "010805000a00000006000000870000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "base-view",
+      "format": 308,
+      "name": "R10G10B10X2_UNORM",
+      "hex": "01060600090000000600000034010002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-swizzled-view",
+      "format": 308,
+      "name": "R10G10B10X2_UNORM",
+      "hex": "010606000900000006000000340100020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-surface",
+      "format": 308,
+      "name": "R10G10B10X2_UNORM",
+      "hex": "010805000a00000006000000340100000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "base-view",
+      "format": 319,
+      "name": "R4G4B4A4_UNORM",
+      "hex": "0106060009000000060000003f010002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-swizzled-view",
+      "format": 319,
+      "name": "R4G4B4A4_UNORM",
+      "hex": "0106060009000000060000003f0100020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-surface",
+      "format": 319,
+      "name": "R4G4B4A4_UNORM",
+      "hex": "010805000a000000060000003f0100000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "base-view",
+      "format": 320,
+      "name": "R5G5B5A1_UNORM",
+      "hex": "01060600090000000600000040010002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-swizzled-view",
+      "format": 320,
+      "name": "R5G5B5A1_UNORM",
+      "hex": "010606000900000006000000400100020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-surface",
+      "format": 320,
+      "name": "R5G5B5A1_UNORM",
+      "hex": "010805000a00000006000000400100000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "base-view",
+      "format": 321,
+      "name": "R5G6B5_UNORM",
+      "hex": "01060600090000000600000041010002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-swizzled-view",
+      "format": 321,
+      "name": "R5G6B5_UNORM",
+      "hex": "010606000900000006000000410100020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-surface",
+      "format": 321,
+      "name": "R5G6B5_UNORM",
+      "hex": "010805000a00000006000000410100000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "base-view",
+      "format": 407,
+      "name": "R4G4B4X4_UNORM",
+      "hex": "01060600090000000600000097010002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-swizzled-view",
+      "format": 407,
+      "name": "R4G4B4X4_UNORM",
+      "hex": "010606000900000006000000970100020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-surface",
+      "format": 407,
+      "name": "R4G4B4X4_UNORM",
+      "hex": "010805000a00000006000000970100000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "base-view",
+      "format": 409,
+      "name": "R5G5B5X1_UNORM",
+      "hex": "01060600090000000600000099010002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-swizzled-view",
+      "format": 409,
+      "name": "R5G5B5X1_UNORM",
+      "hex": "010606000900000006000000990100020000000001030000220a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-surface",
+      "format": 409,
+      "name": "R5G5B5X1_UNORM",
+      "hex": "010805000a00000006000000990100000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    }
+  ]
+}

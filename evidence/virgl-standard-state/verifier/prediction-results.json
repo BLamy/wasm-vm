@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "task": "E6-T11d5",
+  "writtenBeforeEvidence": true,
+  "predictions": [
+    {
+      "id": "P1",
+      "boundary": "Authentication",
+      "prediction": "The 228 sealed members and all hot/cold source hashes match the frozen runtime head 365b3cf3d076637c347c7e9802420f847d09fbed; the original sources equal their filename SHA256 and original banks equal validated capture bytes.",
+      "status": "HELD",
+      "result": "Uncontradicted at the scoped frozen boundary; see verifier audit and sealed recording points."
+    },
+    {
+      "id": "P2",
+      "boundary": "Factory and packet admission",
+      "prediction": "Standard 2048-word banks preserve every literal word; 2052-word banks, partial vec4 and bad slot/tails fail. Exact factories reject nonfinite words and standard metadata. No packet/label/option selects another facet; malformed tails apply zero commands.",
+      "status": "HELD",
+      "result": "Uncontradicted at the scoped frozen boundary; see verifier audit and sealed recording points."
+    },
+    {
+      "id": "P3",
+      "boundary": "Metadata and pairing",
+      "prediction": "Nested getters never run; sparse/extra/proxy/wrong-facet/513-vector/IO32/GENERIC16/duplicate/incompatible paired responses reject before native draw. Successful metadata copies retain no mutable compiler records.",
+      "status": "FAILED",
+      "result": "F1/F2 coherent metadata omissions escape native reflection accounting."
+    },
+    {
+      "id": "P4",
+      "boundary": "Native uniform state",
+      "prediction": "max-banks uploads and getUniform reads exactly 2048 words in both stages with declared/reflected size 512; short/reset/A-B-A words outside submitted extent equal zero, with pixels computed from original wire banks.",
+      "status": "HELD",
+      "result": "Uncontradicted at the scoped frozen boundary; see verifier audit and sealed recording points."
+    },
+    {
+      "id": "P5",
+      "boundary": "IO and system",
+      "prediction": "flat-raw-attribute15 links uvec4 flat output to input and preserves NaN bits, infinity, all-one and signed zero words; all sixteen GENERIC semantics and physical31 map as declared. Built-in IDs expose integer location -1; system block size 656, y-adjust offset640 value1.",
+      "status": "HELD",
+      "result": "Uncontradicted at the scoped frozen boundary; see verifier audit and sealed recording points."
+    },
+    {
+      "id": "P6",
+      "boundary": "Texture specialization",
+      "prediction": "both-stage sampler15 uses VS unit31/image5 and FS unit15/image6. Independently recomputed nonidentity/all-constant views produce full-frame pixels; generated VS/FS variants and native reflection agree.",
+      "status": "HELD",
+      "result": "Uncontradicted at the scoped frozen boundary; see verifier audit and sealed recording points."
+    },
+    {
+      "id": "P7",
+      "boundary": "Native fragment semantics",
+      "prediction": "Fragment coordinate pixels reflect lower-left half-integer centers; dynamic discard preserves clear only left of threshold, terminal discard has absent COLOR0 reflection, optimized-out uniform has no native reads/uploads.",
+      "status": "HELD",
+      "result": "Uncontradicted at the scoped frozen boundary; see verifier audit and sealed recording points."
+    },
+    {
+      "id": "P8",
+      "boundary": "Authentic compositor",
+      "prediction": "All three original 92cb and c580 banks and complete shaders execute through literal create/constants/transfer/draw packets. Saved vertex bytes equal authentic input bytes; full saved pixels match independent equations within budgets1/6.",
+      "status": "HELD",
+      "result": "Uncontradicted at the scoped frozen boundary; see verifier audit and sealed recording points."
+    },
+    {
+      "id": "P9",
+      "boundary": "Owned jobs/caches",
+      "prediction": "A-B-A/context swaps and retained selectors preserve owned generations; cache pressure evicts and relinks. Actual later-task zero-timeout fences complete before PBO read/publication; consumed tokens/jobs reject, cancellation drains after real draw, every owned budget returns zero.",
+      "status": "HELD",
+      "result": "Uncontradicted at the scoped frozen boundary; see verifier audit and sealed recording points."
+    },
+    {
+      "id": "P10",
+      "boundary": "Coverage and environment",
+      "prediction": "Every changed runtime line is hit by authenticated hot/cold coverage or has a narrow explicit waiver. The pristine exact-head clone has empty tracked/untracked status and scrubbed environment. Retained affected gates pass at the same head.",
+      "status": "HELD",
+      "result": "Uncontradicted at the scoped frozen boundary; see verifier audit and sealed recording points."
+    },
+    {
+      "id": "P11",
+      "boundary": "Independent bounded attack",
+      "prediction": "A new shader combination using distinct 2D multi-texel images, both-stage slot15 nonidentity views, flat raw linkage and a short/reset VS/FS bank will match precomputed pixel values under independently chosen schedules/context restoration.",
+      "status": "HELD",
+      "result": "Uncontradicted at the scoped frozen boundary; see verifier audit and sealed recording points."
+    },
+    {
+      "id": "P12",
+      "boundary": "Oracle sabotage",
+      "prediction": "Corrupting the actual served VS view or flat linkage causes the new independent pixel oracle to fail at the named frame; an unrelated metadata/native compile rejection is insufficient.",
+      "status": "HELD",
+      "result": "Uncontradicted at the scoped frozen boundary; see verifier audit and sealed recording points."
+    }
+  ],
+  "correctedPrediction": "P11 permits native optimizer retention; correction recorded before independent-final hardware run."
+}

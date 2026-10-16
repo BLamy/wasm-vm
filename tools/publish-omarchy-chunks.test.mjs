@@ -74,6 +74,36 @@ async function fixture(t) {
   return { root, chunksDir, manifestPath, first, last, firstSha, lastSha };
 }
 
+test('the release upload window reaches32, stays bounded, and completes before the manifest', {timeout:10000}, async t => {
+  const root=await mkdtemp(path.join(os.tmpdir(),'omarchy-publish-window-'));
+  t.after(async()=>{await import('node:fs/promises').then(({rm})=>rm(root,{recursive:true,force:true}));});
+  await mkdir(path.join(root,'chunks'));
+  const hashes=[];
+  for(let i=0;i<40;i++){
+    const bytes=Buffer.alloc(CHUNK_SIZE,i+1),digest=sha256(bytes);hashes.push(digest);
+    await writeFile(path.join(root,'chunks',digest+'.bin'),bytes);
+  }
+  const manifestPath=path.join(root,'manifest.json');
+  await writeFile(manifestPath,JSON.stringify({version:1,image_len:40*CHUNK_SIZE,chunk_size:CHUNK_SIZE,layout:'split',chunks:hashes})+'\n');
+  const stored=new Map(),order=[];let active=0,peak=0,release;
+  const barrier=new Promise(resolve=>{release=resolve;});
+  const checker=async({key,expectedSize,expectedSha})=>{
+    const b=stored.get(key);return{state:!b?'missing':b.length===expectedSize&&sha256(b)===expectedSha?'exact':'mismatch',status:null};
+  };
+  const uploader=async({key,sourcePath})=>{
+    active++;peak=Math.max(peak,active);let timer;
+    try{
+      if(peak===32)release();
+      await Promise.race([barrier,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('configured32 upload window was never reached')),3000);})]);
+      stored.set(key,await readFile(sourcePath));order.push(key);
+    }finally{clearTimeout(timer);active--;}
+  };
+  const result=await publishChunks({manifestPath,publish:true,uploadConcurrency:32,objectChecker:checker,uploader});
+  assert.equal(peak,32);assert.equal(active,0);assert.equal(result.uploaded,40);
+  assert.equal(order.length,41);assert.equal(order.at(-1),result.manifestKey);
+  for(const uploadConcurrency of [0,33,1.5])await assert.rejects(publishChunks({manifestPath,publish:true,uploadConcurrency,objectChecker:()=>{throw Error('invalid window must not reach checker');},uploader}),/bounded upload concurrency/);
+});
+
 async function localPublicServer(t, objects, statusOverrides = new Map()) {
   const server = createServer(async (request, response) => {
     const key = decodeURIComponent(new URL(request.url, "http://127.0.0.1").pathname.slice(1));

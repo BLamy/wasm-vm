@@ -1,0 +1,18 @@
+{
+  "schema": "original-packed-unsigned-image-seal-v1",
+  "task": "E6-T11d37",
+  "sourceHead": "c7c66c54482566f76b2f49af5a5e5721bd69d3f7",
+  "records": 11416,
+  "reopenedMembers": 11416,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "3013c3d161c192b598370147e70940a28a14bfd741ce3a4180ed027da79167fc",
+  "archiveBytes": 10766473,
+  "recordIndexSha256": "f191f60d45f82bab43fdec9227123b8f79c53fb9df90f60546b468741167af6e",
+  "hotReceiptSha256": "3d5e4faeb167bbc1e8e4f2944b33eaabd4b7798b935203f78464108e2e477989",
+  "coldReportSha256": "0a3525fab3556e8c3312d40468d1223de218ec655cbad18e323d4f518cbe6bef",
+  "coldReceiptSha256": "72ad2db9e6365208c282247da7fdba0a1730849c9ee09696f597de70067a393a",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-packed-unsigned-images",
+  "productionDrawAuthority": false
+}

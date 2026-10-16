@@ -1,0 +1,15 @@
+{
+  "schema": "d32-verifier-declarative-output-path-waiver-v1",
+  "status": "HELD",
+  "file": "tools/verify-virgl-integer-image-shader-adversarial.sh",
+  "line": 4,
+  "recordedHarnessHead": "a899bee2eb6a50cf472c11181eb3bb9f89746e6d",
+  "recordedSha256": "f7261138684d6e1f9781738297a910c3214966880ea27dbc20e8867c389a6d87",
+  "finalPromotedSha256": "ba0e1fe6e4ef97cbfe886d45d2db5056bb3a53d2b6fce285a6f0cf504ec98bff",
+  "reason": "Only the default output directory is qualified with HEAD, avoiding stale-record checks after later metadata commits. Every test, input, command and assertion remains byte-identical; the explicitly recorded a899bee2 run keeps its original source and full record closure. This is output-path configuration, with no runtime/native assertion change.",
+  "validation": [
+    "bash -n tools/verify-virgl-integer-image-shader-adversarial.sh",
+    "all bytes other than line4 identical"
+  ],
+  "nativeRuntimeUnchanged": true
+}

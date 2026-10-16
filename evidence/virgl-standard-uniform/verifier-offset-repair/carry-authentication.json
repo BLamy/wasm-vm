@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "seals": [
+    {
+      "role": "worker",
+      "manifest": {
+        "schema": "virgl-standard-uniform-shader-seal-v1",
+        "task": "E6-T11d16",
+        "sourceHead": "01988ea2625edab1669efefec3b7daecd52d64df",
+        "sealingHead": "5535d247a43fd8a04183d8df4fc715a74b451055",
+        "records": 10656,
+        "archiveSha256": "25436c66b4a320aa7bd68d407d37cf8c675438047e1fb8f0160964504e601fe0",
+        "archiveBytes": 81800987,
+        "recordIndexSha256": "8ea043b6586f2309d516e7d5f5ed6403ed413de7f8f6b4f16d317d031ff056b8",
+        "hotReceiptSha256": "4e4d3cbf69410d5e3782723c1ea82b5a00068f3caeee38cce405f335534665df",
+        "coldReportSha256": "845b530c53fd716700d0f16af126d28bd303211963c0aa371c6138a771fc1696",
+        "coldReceiptSha256": "174e9707d1200f7f5c440c3f06a7ca791971d213f020ca26c3bd533ef4cef127",
+        "guestExecution": false,
+        "portableDomainCertified": false,
+        "authority": "isolated-standard-uniform-shader",
+        "productionDrawAuthority": false
+      },
+      "verifiedMembers": 10656,
+      "uncompressedBytes": 802797183
+    },
+    {
+      "role": "verifier",
+      "manifest": {
+        "schema": "E6-T11d16-fresh-verifier-seal-v1",
+        "task": "E6-T11d16",
+        "submission": "5dc84364",
+        "verdict": "refuted",
+        "records": 44,
+        "archiveSha256": "68cb3cb849be72cd465423ced2c23d20a61a141f0f48fdfa3a3ae03c0e797c44",
+        "archiveBytes": 8886000,
+        "recordIndexSha256": "b3d707e7e5831c1995e03f9b829f18fb838a051e74e5f92b0a5afc9e1fff7fa6",
+        "workerArchiveSha256": "25436c66b4a320aa7bd68d407d37cf8c675438047e1fb8f0160964504e601fe0",
+        "verdictSha256": "0b347a134310a73061bf0f45b6d6f67caddd63aea6b9b17e554c5776e9e3f14d",
+        "authority": "isolated-standard-uniform-shader",
+        "productionAuthority": false
+      },
+      "verifiedMembers": 44,
+      "uncompressedBytes": 76417055
+    }
+  ],
+  "rendererChanges": [
+    "renderer/virgl-shader/standard_guard.c"
+  ],
+  "carriedNativeCasesSha256": "0a783912621a65ffe6ab2736a45916dcbb55e9ff000da61e5e0b5d95d4081b9b",
+  "prior48HardwareCarried": "All48 complete native pair/token responses are byte-identical at repaired runtime; emitter, metadata, JS admission/browser runner and original caller-mutation/range/pixel hardware oracle are unchanged. Original44-member verifier seal and worker10656-member seal authenticate without replacement."
+}

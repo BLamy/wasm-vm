@@ -1,0 +1,175 @@
+{
+  "schema": "E6-T11d7-critic-predictions-v1",
+  "writtenBeforeOriginalInspection": true,
+  "workerHead": "c63127a4954b6c61d23b2595149d8ab20116fdc6",
+  "predictions": [
+    {
+      "id": "P1",
+      "state": "Before every constant native draw, original input and GPU copy bytes match; float defaults zero/zero/zero/one; offset is wire buffer+source; wire divisor does not move any constant record.",
+      "point": "hot and cold all-widths-0 native call and copy snapshots",
+      "expectedFetches": [
+        {
+          "index": 0,
+          "firstByte": 32,
+          "requiredEnd": 36,
+          "components": 1,
+          "words": [
+            1027604480
+          ],
+          "genericValues": [
+            0.046875,
+            0,
+            0,
+            1
+          ],
+          "nativeDivisor": 0
+        },
+        {
+          "index": 1,
+          "firstByte": 56,
+          "requiredEnd": 64,
+          "components": 2,
+          "words": [
+            1051721728,
+            1052114944
+          ],
+          "genericValues": [
+            0.34375,
+            0.35546875,
+            0,
+            1
+          ],
+          "nativeDivisor": 0
+        },
+        {
+          "index": 2,
+          "firstByte": 88,
+          "requiredEnd": 100,
+          "components": 3,
+          "words": [
+            1059979264,
+            1057488896,
+            1056702464
+          ],
+          "genericValues": [
+            0.6796875,
+            0.53125,
+            0.4921875,
+            1
+          ],
+          "nativeDivisor": 0
+        },
+        {
+          "index": 3,
+          "firstByte": 128,
+          "requiredEnd": 144,
+          "components": 4,
+          "words": [
+            1060831232,
+            1041498112,
+            1043070976,
+            1059061760
+          ],
+          "genericValues": [
+            0.73046875,
+            0.14453125,
+            0.16796875,
+            0.625
+          ],
+          "nativeDivisor": 0
+        }
+      ],
+      "index": {
+        "offset": 12,
+        "size": 4,
+        "ids": [
+          70000,
+          70001,
+          70002,
+          70003
+        ],
+        "requiredEnd": 28
+      },
+      "aggregate": 56
+    },
+    {
+      "id": "P2",
+      "state": "All 31 frames pass independent full physical pixels, 12500 pixels per recording; all-four widths, exact end, arrays count0, indexed count1/positive, all16 and native unsigned indices >=0x80010000 execute.",
+      "point": "original immutable packet histories, uploaded blobs and physical pixels"
+    },
+    {
+      "id": "P3",
+      "state": "Each all-widths/A/B/A series across three schedules restores native generic values with array disabled/divisor0 after poison. Ordinary attributes remain array-enabled with proper native divisor; real native IDs have location -1.",
+      "point": "hot/cold draw-time native queries"
+    },
+    {
+      "id": "P4",
+      "state": "Exact first+width=end admitted for each width; length end-1 rejects before copies/draw. Aggregate budget56 admits;55 rejects before copies. At most16 attributes+index yields17 tickets.",
+      "point": "bounds/staging rejections and all-sixteen draw read calls"
+    },
+    {
+      "id": "P5",
+      "state": "First constant collected remains one of5 retained tickets; actual GPU upload while other4 pending results stale-storage, no draw, drains every read and fences; CPU-only mutation/reuse retain prior GPU/generation.",
+      "point": "six original suspension points and final async inspection"
+    },
+    {
+      "id": "P6",
+      "state": "Cancellation/reset-cancel and partial allocation after exactly1 real copy drain; store/renderer disposal invalidates with no completion claim; no reads/staging after every path.",
+      "point": "pending/cancel/partial/disposal records and physical sync deletion"
+    },
+    {
+      "id": "P7",
+      "state": "Every poll uses zero-timeout and at most once per sync per later task; no finish call; at most17 bounded reads and original physical GPU, fixed16MiB compiler.",
+      "point": "native events and browser identity"
+    },
+    {
+      "id": "P8",
+      "state": "Native generic+0.5 sabotage completes real draw/fence, changes first pixel red by64, named pixel oracle rejects; no GL pre-draw error is sufficient.",
+      "point": "fault-generic original frame"
+    },
+    {
+      "id": "P9",
+      "state": "All sealed index/archive/source/runtime/coverage hashes validate; hot old-head closure preserved and equivalent to final cold exact39a9d14b; final cold pristine before/after; byte-identical D5/D6 dependency and native-link code carries.",
+      "point": "seal authentication and source custody"
+    },
+    {
+      "id": "P10",
+      "state": "Each changed runtime hunk has physical coverage or a narrow documented unreachable defensive/config waiver; harness is finite real GPU draw, no shaderCPU oracle.",
+      "point": "scoped source/V8 coverage audit"
+    }
+  ],
+  "novel": {
+    "seed": "0xa17c9e53",
+    "components": [
+      2,
+      4,
+      1,
+      3,
+      4
+    ],
+    "strides": [
+      0,
+      16,
+      0,
+      0,
+      0
+    ],
+    "divisors": [
+      4294967295,
+      2,
+      1,
+      0,
+      17
+    ],
+    "base": "0xb4d40000",
+    "instances": 7,
+    "schedule": {
+      "delay": "seeded per-fence 1..7",
+      "step": 3
+    },
+    "offsetPlan": "seeded additional aligned prefix per resource",
+    "countercase": "truncate final constant resource exactly1 byte",
+    "pending": "different constants split into distinct GPU resources; mutate already collected first resource while other source waits",
+    "sabotage": "actual native generic mutation+0.5; require completed draw/fence then independent pixels fail"
+  }
+}

@@ -1,0 +1,445 @@
+{
+  "schema": "virgl-standard-restart-gap-v1",
+  "sourceHead": "2d1303bfd1f476ac33eda616ea380f5df52d1e0f",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "sources": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "bytes": 30524,
+      "sha256": "4c42869c7c5259e644d2ef33a4bcf2bca10236dbde9634bd5e99a756631f95d0"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "bytes": 106934,
+      "sha256": "1ca80d6c9b0ed81933b6c655d3fe3494ec88307a92adc7ff2c85c7c7bad614ee"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "bytes": 138739,
+      "sha256": "84de682f92f556561f6a7105c2541324542bbb8dc96cb0e7a5e099095075b2a0"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 426197,
+      "sha256": "40772f2a609b803a11f97a3cdd35087810964c2dd35662e0bb143e7144f97287"
+    }
+  ],
+  "restart": [
+    {
+      "mode": 1,
+      "restartIndex": 255,
+      "packetHex": "08000c000000000004000000010000000100000002000000000000000000000001000000ff00000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 1,
+      "restartIndex": 65535,
+      "packetHex": "08000c000000000004000000010000000100000002000000000000000000000001000000ffff000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 1,
+      "restartIndex": 4294967295,
+      "packetHex": "08000c000000000004000000010000000100000002000000000000000000000001000000ffffffff00000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 2,
+      "restartIndex": 255,
+      "packetHex": "08000c000000000004000000020000000100000002000000000000000000000001000000ff00000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 2,
+      "restartIndex": 65535,
+      "packetHex": "08000c000000000004000000020000000100000002000000000000000000000001000000ffff000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 2,
+      "restartIndex": 4294967295,
+      "packetHex": "08000c000000000004000000020000000100000002000000000000000000000001000000ffffffff00000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 3,
+      "restartIndex": 255,
+      "packetHex": "08000c000000000004000000030000000100000002000000000000000000000001000000ff00000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 3,
+      "restartIndex": 65535,
+      "packetHex": "08000c000000000004000000030000000100000002000000000000000000000001000000ffff000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 3,
+      "restartIndex": 4294967295,
+      "packetHex": "08000c000000000004000000030000000100000002000000000000000000000001000000ffffffff00000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 4,
+      "restartIndex": 255,
+      "packetHex": "08000c000000000004000000040000000100000002000000000000000000000001000000ff00000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 4,
+      "restartIndex": 65535,
+      "packetHex": "08000c000000000004000000040000000100000002000000000000000000000001000000ffff000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 4,
+      "restartIndex": 4294967295,
+      "packetHex": "08000c000000000004000000040000000100000002000000000000000000000001000000ffffffff00000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 5,
+      "restartIndex": 255,
+      "packetHex": "08000c000000000004000000050000000100000002000000000000000000000001000000ff00000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 5,
+      "restartIndex": 65535,
+      "packetHex": "08000c000000000004000000050000000100000002000000000000000000000001000000ffff000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 5,
+      "restartIndex": 4294967295,
+      "packetHex": "08000c000000000004000000050000000100000002000000000000000000000001000000ffffffff00000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 6,
+      "restartIndex": 255,
+      "packetHex": "08000c000000000004000000060000000100000002000000000000000000000001000000ff00000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 6,
+      "restartIndex": 65535,
+      "packetHex": "08000c000000000004000000060000000100000002000000000000000000000001000000ffff000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 6,
+      "restartIndex": 4294967295,
+      "packetHex": "08000c000000000004000000060000000100000002000000000000000000000001000000ffffffff00000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only core lines and triangles without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    }
+  ],
+  "runtimeUnchangedThrough": "bef7040804a1c71ad37112e35adcfebefbc4be21"
+}

@@ -1,0 +1,1487 @@
+{
+  "schema": "standard-compact-critic-records-v1",
+  "task": "E6-T11d12",
+  "sourceHead": "4fd889f27c477978b59f81e9cecb4bb7916e9c45",
+  "records": [
+    {
+      "path": "audit.mjs",
+      "bytes": 10663,
+      "sha256": "b202e110a23861e99e3aee9c3e378ab0ef85ed9828ccae4826fcfb4745f1f06b"
+    },
+    {
+      "path": "authenticate.py",
+      "bytes": 8025,
+      "sha256": "a420640da6bb07e92149120ab32fb28897c418442020c8769c300839e42212dd"
+    },
+    {
+      "path": "authentication.json",
+      "bytes": 26020,
+      "sha256": "e8ae697acb03aa4777824cb5190077983ec818b5122966dd5e7ef8fddd1dbec4"
+    },
+    {
+      "path": "citations.json",
+      "bytes": 23320,
+      "sha256": "3afd4638b57a189c98cb4a75ac7ade1ac02b4e3cc163e84f742d7d26a25ad9d6"
+    },
+    {
+      "path": "coverage-audit.json",
+      "bytes": 175772,
+      "sha256": "7013572f4bf857679cfbca7bee283540586c1615b4d5c5340abe38d53168a344"
+    },
+    {
+      "path": "coverage.py",
+      "bytes": 4685,
+      "sha256": "a518ed27f4fe788b665776fa8c086b0ac9f4c7dafd855e95a187b5d95ce0a44a"
+    },
+    {
+      "path": "final-gpu/blob-0000.bin.gz",
+      "bytes": 70,
+      "sha256": "30a6ee67d9e06ba0ce19940e0025b04409bffbe74afff6ba3574ce32f9c8bf95"
+    },
+    {
+      "path": "final-gpu/blob-0001.bin.gz",
+      "bytes": 29,
+      "sha256": "3b1820d9881fbbe17605431fde5a6251533a996d872f4613df4160c68a4c335c"
+    },
+    {
+      "path": "final-gpu/blob-0002.bin.gz",
+      "bytes": 70,
+      "sha256": "30a6ee67d9e06ba0ce19940e0025b04409bffbe74afff6ba3574ce32f9c8bf95"
+    },
+    {
+      "path": "final-gpu/blob-0003.bin.gz",
+      "bytes": 29,
+      "sha256": "3b1820d9881fbbe17605431fde5a6251533a996d872f4613df4160c68a4c335c"
+    },
+    {
+      "path": "final-gpu/blob-0004.bin.gz",
+      "bytes": 80,
+      "sha256": "f3e58cad1546b26e2445fd691bd5da9700a3f61596b8d4ff542314ed5f0e0c95"
+    },
+    {
+      "path": "final-gpu/blob-0005.bin.gz",
+      "bytes": 68,
+      "sha256": "7a30d826fde97ca19cedce3c15c3b5fa6dce057484ea1ba4d31e4f2de0c4156b"
+    },
+    {
+      "path": "final-gpu/blob-0006.bin.gz",
+      "bytes": 29,
+      "sha256": "1e1b358cf31e693ddb379e68b3c1ab5056fc3bf622a33065fd13f19a65eb7a61"
+    },
+    {
+      "path": "final-gpu/blob-0007.bin.gz",
+      "bytes": 68,
+      "sha256": "7a30d826fde97ca19cedce3c15c3b5fa6dce057484ea1ba4d31e4f2de0c4156b"
+    },
+    {
+      "path": "final-gpu/blob-0008.bin.gz",
+      "bytes": 29,
+      "sha256": "1e1b358cf31e693ddb379e68b3c1ab5056fc3bf622a33065fd13f19a65eb7a61"
+    },
+    {
+      "path": "final-gpu/blob-0009.bin.gz",
+      "bytes": 63,
+      "sha256": "428f4dd19a24f57aea5f2c17344fd9f8970e3869576ee2fdee6ff985c7ef39b1"
+    },
+    {
+      "path": "final-gpu/blob-0010.bin.gz",
+      "bytes": 78,
+      "sha256": "eb1deca35a6afd7648d25a1282f50108fe7114b4415218d7ad81d02e87a6e372"
+    },
+    {
+      "path": "final-gpu/blob-0011.bin.gz",
+      "bytes": 29,
+      "sha256": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9"
+    },
+    {
+      "path": "final-gpu/blob-0012.bin.gz",
+      "bytes": 78,
+      "sha256": "eb1deca35a6afd7648d25a1282f50108fe7114b4415218d7ad81d02e87a6e372"
+    },
+    {
+      "path": "final-gpu/blob-0013.bin.gz",
+      "bytes": 29,
+      "sha256": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9"
+    },
+    {
+      "path": "final-gpu/blob-0014.bin.gz",
+      "bytes": 81,
+      "sha256": "85333b4bfd64d266a659ac3fa37146d696f33bff0c8e28565f753ea2492b8bbb"
+    },
+    {
+      "path": "final-gpu/blob-0015.bin.gz",
+      "bytes": 70,
+      "sha256": "5b835bf138783b57d27aa3692feeb1561225f4ec7820bb496b04118cfadce828"
+    },
+    {
+      "path": "final-gpu/blob-0016.bin.gz",
+      "bytes": 29,
+      "sha256": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d"
+    },
+    {
+      "path": "final-gpu/blob-0017.bin.gz",
+      "bytes": 70,
+      "sha256": "5b835bf138783b57d27aa3692feeb1561225f4ec7820bb496b04118cfadce828"
+    },
+    {
+      "path": "final-gpu/blob-0018.bin.gz",
+      "bytes": 29,
+      "sha256": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d"
+    },
+    {
+      "path": "final-gpu/blob-0019.bin.gz",
+      "bytes": 63,
+      "sha256": "872b8f84304b0362c7adaa534aaa09ae9f316b4e400885f642b688a1b81a494a"
+    },
+    {
+      "path": "final-gpu/blob-0020.bin.gz",
+      "bytes": 88,
+      "sha256": "a98162712bd251bf8cd321198fcbe635a06dc8d432f704925d3c6df0cad659f3"
+    },
+    {
+      "path": "final-gpu/blob-0021.bin.gz",
+      "bytes": 29,
+      "sha256": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db"
+    },
+    {
+      "path": "final-gpu/blob-0022.bin.gz",
+      "bytes": 88,
+      "sha256": "a98162712bd251bf8cd321198fcbe635a06dc8d432f704925d3c6df0cad659f3"
+    },
+    {
+      "path": "final-gpu/blob-0023.bin.gz",
+      "bytes": 29,
+      "sha256": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db"
+    },
+    {
+      "path": "final-gpu/blob-0024.bin.gz",
+      "bytes": 69,
+      "sha256": "d65c9a05e71e15a15543ba1d2c8f1b31370762a88bcec28f97aa9da43d69cc0a"
+    },
+    {
+      "path": "final-gpu/blob-0025.bin.gz",
+      "bytes": 73,
+      "sha256": "953897a43be4a8d8c37afaa0b7cb71bd97107c2e48f14925a87a34ed404d0ebb"
+    },
+    {
+      "path": "final-gpu/blob-0026.bin.gz",
+      "bytes": 29,
+      "sha256": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db"
+    },
+    {
+      "path": "final-gpu/blob-0027.bin.gz",
+      "bytes": 73,
+      "sha256": "953897a43be4a8d8c37afaa0b7cb71bd97107c2e48f14925a87a34ed404d0ebb"
+    },
+    {
+      "path": "final-gpu/blob-0028.bin.gz",
+      "bytes": 29,
+      "sha256": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db"
+    },
+    {
+      "path": "final-gpu/blob-0029.bin.gz",
+      "bytes": 63,
+      "sha256": "c1fa79dd9f01dac51a16bc1b5daffac930f3ac70261337bd252566762c5fc5fb"
+    },
+    {
+      "path": "final-gpu/blob-0030.bin.gz",
+      "bytes": 78,
+      "sha256": "bc2fd52f969d19599301b78c7d9b5bce704bba8f1f2678f47911cefc2a3ce8fb"
+    },
+    {
+      "path": "final-gpu/blob-0031.bin.gz",
+      "bytes": 29,
+      "sha256": "19277b8464e87d8dba600f3e12792aa91a2315d9271f620ee68681fa5392f9b8"
+    },
+    {
+      "path": "final-gpu/blob-0032.bin.gz",
+      "bytes": 78,
+      "sha256": "bc2fd52f969d19599301b78c7d9b5bce704bba8f1f2678f47911cefc2a3ce8fb"
+    },
+    {
+      "path": "final-gpu/blob-0033.bin.gz",
+      "bytes": 29,
+      "sha256": "19277b8464e87d8dba600f3e12792aa91a2315d9271f620ee68681fa5392f9b8"
+    },
+    {
+      "path": "final-gpu/blob-0034.bin.gz",
+      "bytes": 77,
+      "sha256": "e0dadbc00cb5526d64265eae120e9a0b9a1ed98591e32aea289dc04707906111"
+    },
+    {
+      "path": "final-gpu/blob-0035.bin.gz",
+      "bytes": 73,
+      "sha256": "127b755ee584157a2e7689cc45a7f20076e026898da69384918cb05ca03d0057"
+    },
+    {
+      "path": "final-gpu/blob-0036.bin.gz",
+      "bytes": 29,
+      "sha256": "9ebc66afcfc6de5fdb1922534095243207cbc54ebdd6e2f896de8f3eb78a9a1c"
+    },
+    {
+      "path": "final-gpu/blob-0037.bin.gz",
+      "bytes": 73,
+      "sha256": "127b755ee584157a2e7689cc45a7f20076e026898da69384918cb05ca03d0057"
+    },
+    {
+      "path": "final-gpu/blob-0038.bin.gz",
+      "bytes": 29,
+      "sha256": "9ebc66afcfc6de5fdb1922534095243207cbc54ebdd6e2f896de8f3eb78a9a1c"
+    },
+    {
+      "path": "final-gpu/blob-0039.bin.gz",
+      "bytes": 63,
+      "sha256": "3244d3acb1c1d9048d29dd9662b99f4731e4849c8b08e51abbe0791bba7834c2"
+    },
+    {
+      "path": "final-gpu/blob-0040.bin.gz",
+      "bytes": 75,
+      "sha256": "572e23b76f0f35a7291208121e5465869a3fd34c5d4c38b876aee429ef8ff23e"
+    },
+    {
+      "path": "final-gpu/blob-0041.bin.gz",
+      "bytes": 29,
+      "sha256": "f1f43ad19429f21a5ec63f4d2070f589e5adcc6cd4f3b53e103f8f3547050c94"
+    },
+    {
+      "path": "final-gpu/blob-0042.bin.gz",
+      "bytes": 75,
+      "sha256": "572e23b76f0f35a7291208121e5465869a3fd34c5d4c38b876aee429ef8ff23e"
+    },
+    {
+      "path": "final-gpu/blob-0043.bin.gz",
+      "bytes": 29,
+      "sha256": "f1f43ad19429f21a5ec63f4d2070f589e5adcc6cd4f3b53e103f8f3547050c94"
+    },
+    {
+      "path": "final-gpu/blob-0044.bin.gz",
+      "bytes": 67,
+      "sha256": "27bf74036c2f244dc5d32c4725496b94239a325b6b1b12fd7802eb194ff25ec5"
+    },
+    {
+      "path": "final-gpu/blob-0045.bin.gz",
+      "bytes": 68,
+      "sha256": "beddee4494d53d6f9d0a1997d6f708e44bee22e99a8cdf8dbffa854c63864381"
+    },
+    {
+      "path": "final-gpu/blob-0046.bin.gz",
+      "bytes": 29,
+      "sha256": "a8d5bb261194ca13d023c415cbc9490569da7892a076593f9f9367512f35c11a"
+    },
+    {
+      "path": "final-gpu/blob-0047.bin.gz",
+      "bytes": 68,
+      "sha256": "beddee4494d53d6f9d0a1997d6f708e44bee22e99a8cdf8dbffa854c63864381"
+    },
+    {
+      "path": "final-gpu/blob-0048.bin.gz",
+      "bytes": 29,
+      "sha256": "a8d5bb261194ca13d023c415cbc9490569da7892a076593f9f9367512f35c11a"
+    },
+    {
+      "path": "final-gpu/blob-0049.bin.gz",
+      "bytes": 62,
+      "sha256": "9416d0ff35b6231816b4f0e0e6a780eedb54077c7f612fe7861f7bddbee67898"
+    },
+    {
+      "path": "final-gpu/blob-0050.bin.gz",
+      "bytes": 78,
+      "sha256": "bb6fefd0c437445ef15fb3b2f91302a520b94b5eb841eb2dc897c09d9ab3a91a"
+    },
+    {
+      "path": "final-gpu/blob-0051.bin.gz",
+      "bytes": 29,
+      "sha256": "d2ea9e0c6160ab90ba330915bd673a2ac618f2d4bebc1bd2041233b15f170edc"
+    },
+    {
+      "path": "final-gpu/blob-0052.bin.gz",
+      "bytes": 78,
+      "sha256": "bb6fefd0c437445ef15fb3b2f91302a520b94b5eb841eb2dc897c09d9ab3a91a"
+    },
+    {
+      "path": "final-gpu/blob-0053.bin.gz",
+      "bytes": 29,
+      "sha256": "d2ea9e0c6160ab90ba330915bd673a2ac618f2d4bebc1bd2041233b15f170edc"
+    },
+    {
+      "path": "final-gpu/blob-0054.bin.gz",
+      "bytes": 69,
+      "sha256": "02241c1f175f402d61f05584ad940c7b52763c8dde40b0e5b04e4609e63e986f"
+    },
+    {
+      "path": "final-gpu/blob-0055.bin.gz",
+      "bytes": 68,
+      "sha256": "6476defb6365b2be2659a0ac73fee23eb0ac4733fcde463b9ab7078be26bfc30"
+    },
+    {
+      "path": "final-gpu/blob-0056.bin.gz",
+      "bytes": 29,
+      "sha256": "f1f43ad19429f21a5ec63f4d2070f589e5adcc6cd4f3b53e103f8f3547050c94"
+    },
+    {
+      "path": "final-gpu/blob-0057.bin.gz",
+      "bytes": 68,
+      "sha256": "6476defb6365b2be2659a0ac73fee23eb0ac4733fcde463b9ab7078be26bfc30"
+    },
+    {
+      "path": "final-gpu/blob-0058.bin.gz",
+      "bytes": 29,
+      "sha256": "f1f43ad19429f21a5ec63f4d2070f589e5adcc6cd4f3b53e103f8f3547050c94"
+    },
+    {
+      "path": "final-gpu/blob-0059.bin.gz",
+      "bytes": 61,
+      "sha256": "4bf9b38114f2586bdd0e8c699ba139b42e48eba57caefe980c3f19a7333643b9"
+    },
+    {
+      "path": "final-gpu/blob-0060.bin.gz",
+      "bytes": 73,
+      "sha256": "97b74df36ed62c26f4bc8396d6e7a7d2b84d1a53b07f3714bf7966268e2137e8"
+    },
+    {
+      "path": "final-gpu/blob-0061.bin.gz",
+      "bytes": 29,
+      "sha256": "24741adfc94ff9edb27181c99d7a238c8f35bc7ec75417e8388ef6fd03830d9a"
+    },
+    {
+      "path": "final-gpu/blob-0062.bin.gz",
+      "bytes": 73,
+      "sha256": "97b74df36ed62c26f4bc8396d6e7a7d2b84d1a53b07f3714bf7966268e2137e8"
+    },
+    {
+      "path": "final-gpu/blob-0063.bin.gz",
+      "bytes": 29,
+      "sha256": "24741adfc94ff9edb27181c99d7a238c8f35bc7ec75417e8388ef6fd03830d9a"
+    },
+    {
+      "path": "final-gpu/blob-0064.bin.gz",
+      "bytes": 74,
+      "sha256": "05fd01925bd2a8444d8e19d2dbc56a324e63c70f65784bffb87ec82b4ec19894"
+    },
+    {
+      "path": "final-gpu/blob-0065.bin.gz",
+      "bytes": 70,
+      "sha256": "5552da076acc2493cde85b8a2322099e4430ae651c730888daa47ea706b919f5"
+    },
+    {
+      "path": "final-gpu/blob-0066.bin.gz",
+      "bytes": 29,
+      "sha256": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9"
+    },
+    {
+      "path": "final-gpu/blob-0067.bin.gz",
+      "bytes": 70,
+      "sha256": "5552da076acc2493cde85b8a2322099e4430ae651c730888daa47ea706b919f5"
+    },
+    {
+      "path": "final-gpu/blob-0068.bin.gz",
+      "bytes": 29,
+      "sha256": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9"
+    },
+    {
+      "path": "final-gpu/blob-0069.bin.gz",
+      "bytes": 60,
+      "sha256": "c2b0b42280f5a41125f5d16c33e3ecca2abf4e07d8069d8db75b385d0c51e328"
+    },
+    {
+      "path": "final-gpu/blob-0070.bin.gz",
+      "bytes": 74,
+      "sha256": "33f14f43f9803707df2e108ffabf2033491bac6d7d827eb19df44fb2d900c01b"
+    },
+    {
+      "path": "final-gpu/blob-0071.bin.gz",
+      "bytes": 29,
+      "sha256": "383750def4ef7b1bb31612bfa5a803f2365c9ac45d27110d1d45c9a952628916"
+    },
+    {
+      "path": "final-gpu/blob-0072.bin.gz",
+      "bytes": 74,
+      "sha256": "33f14f43f9803707df2e108ffabf2033491bac6d7d827eb19df44fb2d900c01b"
+    },
+    {
+      "path": "final-gpu/blob-0073.bin.gz",
+      "bytes": 29,
+      "sha256": "383750def4ef7b1bb31612bfa5a803f2365c9ac45d27110d1d45c9a952628916"
+    },
+    {
+      "path": "final-gpu/blob-0074.bin.gz",
+      "bytes": 62,
+      "sha256": "120dfb627896ff6e880d0747d31f6d965a31daf2591e423f9d1f7ce7bfc93518"
+    },
+    {
+      "path": "final-gpu/blob-0075.bin.gz",
+      "bytes": 67,
+      "sha256": "4ac5ca1114368d613238bf4e05714117420a3097fd215100779ed333625937f4"
+    },
+    {
+      "path": "final-gpu/blob-0076.bin.gz",
+      "bytes": 29,
+      "sha256": "f208edecff0f171f15565607302e87a5123aed692a75460e2276e797161a6fb1"
+    },
+    {
+      "path": "final-gpu/blob-0077.bin.gz",
+      "bytes": 67,
+      "sha256": "4ac5ca1114368d613238bf4e05714117420a3097fd215100779ed333625937f4"
+    },
+    {
+      "path": "final-gpu/blob-0078.bin.gz",
+      "bytes": 29,
+      "sha256": "f208edecff0f171f15565607302e87a5123aed692a75460e2276e797161a6fb1"
+    },
+    {
+      "path": "final-gpu/blob-0079.bin.gz",
+      "bytes": 37,
+      "sha256": "b3c71c0a598cebbcc1fefe0b93b79c8a8a6b5f27d0f0343dd07aec2ac6f2157f"
+    },
+    {
+      "path": "final-gpu/blob-0080.bin.gz",
+      "bytes": 73,
+      "sha256": "db4ca9c6b2a0735d7c24df197248866d110a013438830634023e0543fd2a34cf"
+    },
+    {
+      "path": "final-gpu/blob-0081.bin.gz",
+      "bytes": 29,
+      "sha256": "1e1b358cf31e693ddb379e68b3c1ab5056fc3bf622a33065fd13f19a65eb7a61"
+    },
+    {
+      "path": "final-gpu/blob-0082.bin.gz",
+      "bytes": 73,
+      "sha256": "db4ca9c6b2a0735d7c24df197248866d110a013438830634023e0543fd2a34cf"
+    },
+    {
+      "path": "final-gpu/blob-0083.bin.gz",
+      "bytes": 29,
+      "sha256": "1e1b358cf31e693ddb379e68b3c1ab5056fc3bf622a33065fd13f19a65eb7a61"
+    },
+    {
+      "path": "final-gpu/blob-0084.bin.gz",
+      "bytes": 68,
+      "sha256": "96b7655ffa986649a179fdeac1b3cb2e02d6a734de02a083920d152a112e31cc"
+    },
+    {
+      "path": "final-gpu/blob-0085.bin.gz",
+      "bytes": 68,
+      "sha256": "3cc1172dacdee5255993c32896fb62d097e868f5f1751cfa0e9200202b698edf"
+    },
+    {
+      "path": "final-gpu/blob-0086.bin.gz",
+      "bytes": 29,
+      "sha256": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db"
+    },
+    {
+      "path": "final-gpu/blob-0087.bin.gz",
+      "bytes": 68,
+      "sha256": "3cc1172dacdee5255993c32896fb62d097e868f5f1751cfa0e9200202b698edf"
+    },
+    {
+      "path": "final-gpu/blob-0088.bin.gz",
+      "bytes": 29,
+      "sha256": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db"
+    },
+    {
+      "path": "final-gpu/blob-0089.bin.gz",
+      "bytes": 63,
+      "sha256": "13616a3a9561fda61866abcd4be042c4ed44087cda5ea3c85791dcef0da36196"
+    },
+    {
+      "path": "final-gpu/blob-0090.bin.gz",
+      "bytes": 78,
+      "sha256": "d008470756f2ca869aa45d30ed4916359b07734bb6b36bd5cf900dc271c3e8f3"
+    },
+    {
+      "path": "final-gpu/blob-0091.bin.gz",
+      "bytes": 29,
+      "sha256": "a29181ce454a9db73e723d392fd16db0ba16a7728b3655398ae6d0a3208941cb"
+    },
+    {
+      "path": "final-gpu/blob-0092.bin.gz",
+      "bytes": 78,
+      "sha256": "d008470756f2ca869aa45d30ed4916359b07734bb6b36bd5cf900dc271c3e8f3"
+    },
+    {
+      "path": "final-gpu/blob-0093.bin.gz",
+      "bytes": 29,
+      "sha256": "a29181ce454a9db73e723d392fd16db0ba16a7728b3655398ae6d0a3208941cb"
+    },
+    {
+      "path": "final-gpu/blob-0094.bin.gz",
+      "bytes": 70,
+      "sha256": "2ed3e80702875e933d83ef57a3f4f767106a781ea162e8b55935c3c7561bf800"
+    },
+    {
+      "path": "final-gpu/blob-0095.bin.gz",
+      "bytes": 67,
+      "sha256": "13bcf26798ca10d135efeb3ff2bcfff06dd68554f9306045dde5ade13823a0d3"
+    },
+    {
+      "path": "final-gpu/blob-0096.bin.gz",
+      "bytes": 29,
+      "sha256": "eadf79cbfb06321093e6dbe90f49148ad3294b3eb5e1cfdc0db2fbd41aae8120"
+    },
+    {
+      "path": "final-gpu/blob-0097.bin.gz",
+      "bytes": 67,
+      "sha256": "13bcf26798ca10d135efeb3ff2bcfff06dd68554f9306045dde5ade13823a0d3"
+    },
+    {
+      "path": "final-gpu/blob-0098.bin.gz",
+      "bytes": 29,
+      "sha256": "eadf79cbfb06321093e6dbe90f49148ad3294b3eb5e1cfdc0db2fbd41aae8120"
+    },
+    {
+      "path": "final-gpu/blob-0099.bin.gz",
+      "bytes": 63,
+      "sha256": "afdbe5a9c97fd76e7dc5d1daadcba3677b6e55826a6e20af636220b80373ff33"
+    },
+    {
+      "path": "final-gpu/blob-0100.bin.gz",
+      "bytes": 74,
+      "sha256": "6cadda3c0438456e851c1bd876b6dfc7bcb62216698aa4e8591ffa028ba1b25a"
+    },
+    {
+      "path": "final-gpu/blob-0101.bin.gz",
+      "bytes": 29,
+      "sha256": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9"
+    },
+    {
+      "path": "final-gpu/blob-0102.bin.gz",
+      "bytes": 74,
+      "sha256": "6cadda3c0438456e851c1bd876b6dfc7bcb62216698aa4e8591ffa028ba1b25a"
+    },
+    {
+      "path": "final-gpu/blob-0103.bin.gz",
+      "bytes": 29,
+      "sha256": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9"
+    },
+    {
+      "path": "final-gpu/blob-0104.bin.gz",
+      "bytes": 77,
+      "sha256": "d494e5d27809eb95474c7751d14f11116076d56f623b6c5235f4383b54f45220"
+    },
+    {
+      "path": "final-gpu/blob-0105.bin.gz",
+      "bytes": 69,
+      "sha256": "102f9c7863e3828e3423bb1f1d93d24442124c3e47815b25384c244e33b2fbec"
+    },
+    {
+      "path": "final-gpu/blob-0106.bin.gz",
+      "bytes": 29,
+      "sha256": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d"
+    },
+    {
+      "path": "final-gpu/blob-0107.bin.gz",
+      "bytes": 69,
+      "sha256": "102f9c7863e3828e3423bb1f1d93d24442124c3e47815b25384c244e33b2fbec"
+    },
+    {
+      "path": "final-gpu/blob-0108.bin.gz",
+      "bytes": 29,
+      "sha256": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d"
+    },
+    {
+      "path": "final-gpu/blob-0109.bin.gz",
+      "bytes": 63,
+      "sha256": "7b4a96c9916a9be15a0a6b254331e09aafec8024a31b8929d2f3df540715a65a"
+    },
+    {
+      "path": "final-gpu/blob-0110.bin.gz",
+      "bytes": 76,
+      "sha256": "69b40b4018602aa49c05aeee823ec715a47da9f4b89515598c97e084eb056bd1"
+    },
+    {
+      "path": "final-gpu/blob-0111.bin.gz",
+      "bytes": 29,
+      "sha256": "70641d6eebe0385dee8f3eeee000d13c26cb5b4a134bb2b19a0009d2a556ee24"
+    },
+    {
+      "path": "final-gpu/blob-0112.bin.gz",
+      "bytes": 76,
+      "sha256": "69b40b4018602aa49c05aeee823ec715a47da9f4b89515598c97e084eb056bd1"
+    },
+    {
+      "path": "final-gpu/blob-0113.bin.gz",
+      "bytes": 29,
+      "sha256": "70641d6eebe0385dee8f3eeee000d13c26cb5b4a134bb2b19a0009d2a556ee24"
+    },
+    {
+      "path": "final-gpu/blob-0114.bin.gz",
+      "bytes": 77,
+      "sha256": "68a4f698110c153bed59ebae9abd4cd303fa9552640fdb052853091ea5b11b32"
+    },
+    {
+      "path": "final-gpu/blob-0115.bin.gz",
+      "bytes": 70,
+      "sha256": "ca24d853a1c98a14ff86268b0bd3f94feee62e51b5044313fa95532ecb0fbb9f"
+    },
+    {
+      "path": "final-gpu/blob-0116.bin.gz",
+      "bytes": 29,
+      "sha256": "d83feec860a02a7598c4587fa3fcf8da81ab43460fdc4fc6b510b88d03088340"
+    },
+    {
+      "path": "final-gpu/blob-0117.bin.gz",
+      "bytes": 70,
+      "sha256": "ca24d853a1c98a14ff86268b0bd3f94feee62e51b5044313fa95532ecb0fbb9f"
+    },
+    {
+      "path": "final-gpu/blob-0118.bin.gz",
+      "bytes": 29,
+      "sha256": "d83feec860a02a7598c4587fa3fcf8da81ab43460fdc4fc6b510b88d03088340"
+    },
+    {
+      "path": "final-gpu/blob-0119.bin.gz",
+      "bytes": 63,
+      "sha256": "aa06ec5dc8034db7a359d2e5b5d4f1fdffc1ed4bc8cc3500a4cda939596687a0"
+    },
+    {
+      "path": "final-gpu/blob-0120.bin.gz",
+      "bytes": 69,
+      "sha256": "eceac60f8d2953446e032e06bec40e6e8b88407aa1f540d8c0e156b5971b0bfe"
+    },
+    {
+      "path": "final-gpu/blob-0121.bin.gz",
+      "bytes": 29,
+      "sha256": "a29181ce454a9db73e723d392fd16db0ba16a7728b3655398ae6d0a3208941cb"
+    },
+    {
+      "path": "final-gpu/blob-0122.bin.gz",
+      "bytes": 69,
+      "sha256": "eceac60f8d2953446e032e06bec40e6e8b88407aa1f540d8c0e156b5971b0bfe"
+    },
+    {
+      "path": "final-gpu/blob-0123.bin.gz",
+      "bytes": 29,
+      "sha256": "a29181ce454a9db73e723d392fd16db0ba16a7728b3655398ae6d0a3208941cb"
+    },
+    {
+      "path": "final-gpu/blob-0124.bin.gz",
+      "bytes": 79,
+      "sha256": "e49fd81c6836b64046c91b64bf12e4d607538d829784e1bbea8f47b6fcf28b40"
+    },
+    {
+      "path": "final-gpu/blob-0125.bin.gz",
+      "bytes": 66,
+      "sha256": "5797be53928eddf8cb40725ae79958de14a4a6d42457b7a43ea840db31ac7661"
+    },
+    {
+      "path": "final-gpu/blob-0126.bin.gz",
+      "bytes": 29,
+      "sha256": "f6103b24edc4d6d4a764a8a3e2979fbba0e3cb3e61bc1cd89de37d4e46d820d5"
+    },
+    {
+      "path": "final-gpu/blob-0127.bin.gz",
+      "bytes": 66,
+      "sha256": "5797be53928eddf8cb40725ae79958de14a4a6d42457b7a43ea840db31ac7661"
+    },
+    {
+      "path": "final-gpu/blob-0128.bin.gz",
+      "bytes": 29,
+      "sha256": "f6103b24edc4d6d4a764a8a3e2979fbba0e3cb3e61bc1cd89de37d4e46d820d5"
+    },
+    {
+      "path": "final-gpu/blob-0129.bin.gz",
+      "bytes": 62,
+      "sha256": "9416d0ff35b6231816b4f0e0e6a780eedb54077c7f612fe7861f7bddbee67898"
+    },
+    {
+      "path": "final-gpu/blob-0130.bin.gz",
+      "bytes": 75,
+      "sha256": "ef9e6284e057423f774e219fefb78b0324b84b6165809305cc53f051a943bea9"
+    },
+    {
+      "path": "final-gpu/blob-0131.bin.gz",
+      "bytes": 29,
+      "sha256": "27552ea4571d43fdf7f363fb47d948582fb39ca7c3414f6b0baded78c4d41e22"
+    },
+    {
+      "path": "final-gpu/blob-0132.bin.gz",
+      "bytes": 75,
+      "sha256": "ef9e6284e057423f774e219fefb78b0324b84b6165809305cc53f051a943bea9"
+    },
+    {
+      "path": "final-gpu/blob-0133.bin.gz",
+      "bytes": 29,
+      "sha256": "27552ea4571d43fdf7f363fb47d948582fb39ca7c3414f6b0baded78c4d41e22"
+    },
+    {
+      "path": "final-gpu/blob-0134.bin.gz",
+      "bytes": 69,
+      "sha256": "bbff4785f19779626d7a35eaf1451395f41f7e9d2e77a838c548086d04644fee"
+    },
+    {
+      "path": "final-gpu/blob-0135.bin.gz",
+      "bytes": 69,
+      "sha256": "6944bd6e8a80b473351d1957b0614ab3fe27528fb4c711c240ab5296407cdb60"
+    },
+    {
+      "path": "final-gpu/blob-0136.bin.gz",
+      "bytes": 29,
+      "sha256": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9"
+    },
+    {
+      "path": "final-gpu/blob-0137.bin.gz",
+      "bytes": 69,
+      "sha256": "6944bd6e8a80b473351d1957b0614ab3fe27528fb4c711c240ab5296407cdb60"
+    },
+    {
+      "path": "final-gpu/blob-0138.bin.gz",
+      "bytes": 29,
+      "sha256": "0acc253bcd34b3e256eceadffc6bc57862fa12e0faaf8360a1a7391dcc7c07f9"
+    },
+    {
+      "path": "final-gpu/blob-0139.bin.gz",
+      "bytes": 61,
+      "sha256": "4bf9b38114f2586bdd0e8c699ba139b42e48eba57caefe980c3f19a7333643b9"
+    },
+    {
+      "path": "final-gpu/blob-0140.bin.gz",
+      "bytes": 70,
+      "sha256": "ab05265a6c66a0a4900945b678ecebe85d2b094e588504fb3e600de1187ce755"
+    },
+    {
+      "path": "final-gpu/blob-0141.bin.gz",
+      "bytes": 29,
+      "sha256": "edf07a16c41e8b7c9f5760708184cbad786154231a1aad221bd1984d345f91aa"
+    },
+    {
+      "path": "final-gpu/blob-0142.bin.gz",
+      "bytes": 70,
+      "sha256": "ab05265a6c66a0a4900945b678ecebe85d2b094e588504fb3e600de1187ce755"
+    },
+    {
+      "path": "final-gpu/blob-0143.bin.gz",
+      "bytes": 29,
+      "sha256": "edf07a16c41e8b7c9f5760708184cbad786154231a1aad221bd1984d345f91aa"
+    },
+    {
+      "path": "final-gpu/blob-0144.bin.gz",
+      "bytes": 74,
+      "sha256": "05fd01925bd2a8444d8e19d2dbc56a324e63c70f65784bffb87ec82b4ec19894"
+    },
+    {
+      "path": "final-gpu/blob-0145.bin.gz",
+      "bytes": 70,
+      "sha256": "2dbc61eb91590dca560da580a7aef335bca80bce7471b656d25a9ed418bbc91e"
+    },
+    {
+      "path": "final-gpu/blob-0146.bin.gz",
+      "bytes": 29,
+      "sha256": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db"
+    },
+    {
+      "path": "final-gpu/blob-0147.bin.gz",
+      "bytes": 70,
+      "sha256": "2dbc61eb91590dca560da580a7aef335bca80bce7471b656d25a9ed418bbc91e"
+    },
+    {
+      "path": "final-gpu/blob-0148.bin.gz",
+      "bytes": 29,
+      "sha256": "f76156d3a937469895220da68a7533ddcd4622130b6d2990bc038eb421bff9db"
+    },
+    {
+      "path": "final-gpu/blob-0149.bin.gz",
+      "bytes": 60,
+      "sha256": "c2b0b42280f5a41125f5d16c33e3ecca2abf4e07d8069d8db75b385d0c51e328"
+    },
+    {
+      "path": "final-gpu/blob-0150.bin.gz",
+      "bytes": 80,
+      "sha256": "82f76d315761f3860780c37e8c0e1c3da50f5bf9736fe04157f79e2579cdc0b1"
+    },
+    {
+      "path": "final-gpu/blob-0151.bin.gz",
+      "bytes": 29,
+      "sha256": "eadf79cbfb06321093e6dbe90f49148ad3294b3eb5e1cfdc0db2fbd41aae8120"
+    },
+    {
+      "path": "final-gpu/blob-0152.bin.gz",
+      "bytes": 80,
+      "sha256": "82f76d315761f3860780c37e8c0e1c3da50f5bf9736fe04157f79e2579cdc0b1"
+    },
+    {
+      "path": "final-gpu/blob-0153.bin.gz",
+      "bytes": 29,
+      "sha256": "eadf79cbfb06321093e6dbe90f49148ad3294b3eb5e1cfdc0db2fbd41aae8120"
+    },
+    {
+      "path": "final-gpu/blob-0154.bin.gz",
+      "bytes": 59,
+      "sha256": "a511f4772a8fa3cd2c8de3bbc99bea521bb9aba19781db8d8b340b948effca51"
+    },
+    {
+      "path": "final-gpu/blob-0155.bin.gz",
+      "bytes": 68,
+      "sha256": "2dfee83f51b2cfeb2c99c8597f0b1919df4e3c03f4e248824f0540ab5b4b91a6"
+    },
+    {
+      "path": "final-gpu/blob-0156.bin.gz",
+      "bytes": 29,
+      "sha256": "3b1820d9881fbbe17605431fde5a6251533a996d872f4613df4160c68a4c335c"
+    },
+    {
+      "path": "final-gpu/blob-0157.bin.gz",
+      "bytes": 68,
+      "sha256": "2dfee83f51b2cfeb2c99c8597f0b1919df4e3c03f4e248824f0540ab5b4b91a6"
+    },
+    {
+      "path": "final-gpu/blob-0158.bin.gz",
+      "bytes": 29,
+      "sha256": "3b1820d9881fbbe17605431fde5a6251533a996d872f4613df4160c68a4c335c"
+    },
+    {
+      "path": "final-gpu/blob-0159.bin.gz",
+      "bytes": 37,
+      "sha256": "b3c71c0a598cebbcc1fefe0b93b79c8a8a6b5f27d0f0343dd07aec2ac6f2157f"
+    },
+    {
+      "path": "final-gpu/blob-0160.bin.gz",
+      "bytes": 74,
+      "sha256": "195d9457a08c0b8ae1bf68182d894b088989a6b85a44d0616b538cc8e8860f57"
+    },
+    {
+      "path": "final-gpu/blob-0161.bin.gz",
+      "bytes": 29,
+      "sha256": "ae49fceb02099d39bde37b817e391fd300d04f093ed2ba8fbc76bcef28108641"
+    },
+    {
+      "path": "final-gpu/blob-0162.bin.gz",
+      "bytes": 74,
+      "sha256": "195d9457a08c0b8ae1bf68182d894b088989a6b85a44d0616b538cc8e8860f57"
+    },
+    {
+      "path": "final-gpu/blob-0163.bin.gz",
+      "bytes": 29,
+      "sha256": "ae49fceb02099d39bde37b817e391fd300d04f093ed2ba8fbc76bcef28108641"
+    },
+    {
+      "path": "final-gpu/blob-0164.bin.gz",
+      "bytes": 64,
+      "sha256": "ed9c6ab5bb250f3d805649af54e8c5380065d505096cf27af8d581a772b9793d"
+    },
+    {
+      "path": "final-gpu/blob-0165.bin.gz",
+      "bytes": 68,
+      "sha256": "1a333296c881d929e15569fc77bedd37ff795d1701f8667bf9ec23693c471a6b"
+    },
+    {
+      "path": "final-gpu/blob-0166.bin.gz",
+      "bytes": 29,
+      "sha256": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d"
+    },
+    {
+      "path": "final-gpu/blob-0167.bin.gz",
+      "bytes": 68,
+      "sha256": "1a333296c881d929e15569fc77bedd37ff795d1701f8667bf9ec23693c471a6b"
+    },
+    {
+      "path": "final-gpu/blob-0168.bin.gz",
+      "bytes": 29,
+      "sha256": "cda7dfab1b9db7fb4168441c8c6ec32011282fbdfd0a4749ba778e096d0ad28d"
+    },
+    {
+      "path": "final-gpu/blob-0169.bin.gz",
+      "bytes": 60,
+      "sha256": "0b3859ef88c16f9ef782b9c739cedd025b96472688912c760773823dc0e064e6"
+    },
+    {
+      "path": "final-gpu/blob-0170.bin.gz",
+      "bytes": 74,
+      "sha256": "ec64aee53afa15b0046087671fc63a681fec7226ea6a4c022670ead9e60d770f"
+    },
+    {
+      "path": "final-gpu/blob-0171.bin.gz",
+      "bytes": 29,
+      "sha256": "846248803c2480edb70e23d50b291df42e58b33cf025070e919221452d147061"
+    },
+    {
+      "path": "final-gpu/blob-0172.bin.gz",
+      "bytes": 74,
+      "sha256": "ec64aee53afa15b0046087671fc63a681fec7226ea6a4c022670ead9e60d770f"
+    },
+    {
+      "path": "final-gpu/blob-0173.bin.gz",
+      "bytes": 29,
+      "sha256": "846248803c2480edb70e23d50b291df42e58b33cf025070e919221452d147061"
+    },
+    {
+      "path": "final-gpu/blob-0174.bin.gz",
+      "bytes": 77,
+      "sha256": "09a22cd79d0b920b14110c416768713186f1bc65843a2b4e22639ab0396ef1cd"
+    },
+    {
+      "path": "final-gpu/blob-0175.bin.gz",
+      "bytes": 69,
+      "sha256": "8d5961775bb618725c7255b8b5df41b90d966a0281782db68e92870a20c12a0f"
+    },
+    {
+      "path": "final-gpu/blob-0176.bin.gz",
+      "bytes": 29,
+      "sha256": "9ebc66afcfc6de5fdb1922534095243207cbc54ebdd6e2f896de8f3eb78a9a1c"
+    },
+    {
+      "path": "final-gpu/blob-0177.bin.gz",
+      "bytes": 69,
+      "sha256": "8d5961775bb618725c7255b8b5df41b90d966a0281782db68e92870a20c12a0f"
+    },
+    {
+      "path": "final-gpu/blob-0178.bin.gz",
+      "bytes": 29,
+      "sha256": "9ebc66afcfc6de5fdb1922534095243207cbc54ebdd6e2f896de8f3eb78a9a1c"
+    },
+    {
+      "path": "final-gpu/blob-0179.bin.gz",
+      "bytes": 60,
+      "sha256": "0b3859ef88c16f9ef782b9c739cedd025b96472688912c760773823dc0e064e6"
+    },
+    {
+      "path": "final-gpu/blob-0180.bin.gz",
+      "bytes": 88,
+      "sha256": "7c27d8981858f2c018a1516cd4ddd087813b4785b52d352c43fc494e9f39a79c"
+    },
+    {
+      "path": "final-gpu/blob-0181.bin.gz",
+      "bytes": 29,
+      "sha256": "34c877038c0424f94ac187c242c20f837c1de60379a2b69e1de9bf1e4e8cd1b7"
+    },
+    {
+      "path": "final-gpu/blob-0182.bin.gz",
+      "bytes": 88,
+      "sha256": "7c27d8981858f2c018a1516cd4ddd087813b4785b52d352c43fc494e9f39a79c"
+    },
+    {
+      "path": "final-gpu/blob-0183.bin.gz",
+      "bytes": 29,
+      "sha256": "34c877038c0424f94ac187c242c20f837c1de60379a2b69e1de9bf1e4e8cd1b7"
+    },
+    {
+      "path": "final-gpu/blob-0184.bin.gz",
+      "bytes": 68,
+      "sha256": "8a875d030bc1eddb430caab24f6ff53f16e88f1dea9bafb7a0b574a3f78ceced"
+    },
+    {
+      "path": "final-gpu/blob-0185.bin.gz",
+      "bytes": 72,
+      "sha256": "e62f861852f340062b80125a6edb2f51cc90009089c01345d0646cfbf722e40f"
+    },
+    {
+      "path": "final-gpu/blob-0186.bin.gz",
+      "bytes": 29,
+      "sha256": "34c877038c0424f94ac187c242c20f837c1de60379a2b69e1de9bf1e4e8cd1b7"
+    },
+    {
+      "path": "final-gpu/blob-0187.bin.gz",
+      "bytes": 72,
+      "sha256": "e62f861852f340062b80125a6edb2f51cc90009089c01345d0646cfbf722e40f"
+    },
+    {
+      "path": "final-gpu/blob-0188.bin.gz",
+      "bytes": 29,
+      "sha256": "34c877038c0424f94ac187c242c20f837c1de60379a2b69e1de9bf1e4e8cd1b7"
+    },
+    {
+      "path": "final-gpu/blob-0189.bin.gz",
+      "bytes": 60,
+      "sha256": "0b3859ef88c16f9ef782b9c739cedd025b96472688912c760773823dc0e064e6"
+    },
+    {
+      "path": "final-gpu/blob-0190.bin.gz",
+      "bytes": 82,
+      "sha256": "59aeb1a7e97c029b140154414c0e19c72ba7772975cbd1cf914990ca2948b72e"
+    },
+    {
+      "path": "final-gpu/blob-0191.bin.gz",
+      "bytes": 29,
+      "sha256": "9934b2d4770d5023d2df52635d7982f42d27c1c6a72bedd735207290ce039a84"
+    },
+    {
+      "path": "final-gpu/blob-0192.bin.gz",
+      "bytes": 82,
+      "sha256": "59aeb1a7e97c029b140154414c0e19c72ba7772975cbd1cf914990ca2948b72e"
+    },
+    {
+      "path": "final-gpu/blob-0193.bin.gz",
+      "bytes": 29,
+      "sha256": "9934b2d4770d5023d2df52635d7982f42d27c1c6a72bedd735207290ce039a84"
+    },
+    {
+      "path": "final-gpu/blob-0194.bin.gz",
+      "bytes": 76,
+      "sha256": "b6e8b57cc250620ce8670f6e868de08a9c71a556debd6c06be6b9173b74963fb"
+    },
+    {
+      "path": "final-gpu/blob-0195.bin.gz",
+      "bytes": 73,
+      "sha256": "440c91a6b5975519e9957e012a73f3925f4a2fd2cd190b224abd5c1015c5bc05"
+    },
+    {
+      "path": "final-gpu/blob-0196.bin.gz",
+      "bytes": 29,
+      "sha256": "f208edecff0f171f15565607302e87a5123aed692a75460e2276e797161a6fb1"
+    },
+    {
+      "path": "final-gpu/blob-0197.bin.gz",
+      "bytes": 73,
+      "sha256": "440c91a6b5975519e9957e012a73f3925f4a2fd2cd190b224abd5c1015c5bc05"
+    },
+    {
+      "path": "final-gpu/blob-0198.bin.gz",
+      "bytes": 29,
+      "sha256": "f208edecff0f171f15565607302e87a5123aed692a75460e2276e797161a6fb1"
+    },
+    {
+      "path": "final-gpu/blob-0199.bin.gz",
+      "bytes": 62,
+      "sha256": "f2baae3ecf8486a674643ea31a93c6502448c0296e13a4821b9b1cd73e95cb90"
+    },
+    {
+      "path": "final-gpu/blob-0200.bin.gz",
+      "bytes": 80,
+      "sha256": "1ef0bd49d12d5a9d818e20081a74f63eb50c6bc37a54ef14e1fb020a1caf2f93"
+    },
+    {
+      "path": "final-gpu/blob-0201.bin.gz",
+      "bytes": 29,
+      "sha256": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641"
+    },
+    {
+      "path": "final-gpu/blob-0202.bin.gz",
+      "bytes": 80,
+      "sha256": "1ef0bd49d12d5a9d818e20081a74f63eb50c6bc37a54ef14e1fb020a1caf2f93"
+    },
+    {
+      "path": "final-gpu/blob-0203.bin.gz",
+      "bytes": 29,
+      "sha256": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641"
+    },
+    {
+      "path": "final-gpu/blob-0204.bin.gz",
+      "bytes": 57,
+      "sha256": "cc3658977195fcc59cf9d6442779a4a2fadc719b8d5b7ef009add39031f90ad2"
+    },
+    {
+      "path": "final-gpu/blob-0205.bin.gz",
+      "bytes": 89,
+      "sha256": "3e8a7a5baaaba673869e1a4535a50344614f5df5fa9575b0d224b7bf31ce3c7c"
+    },
+    {
+      "path": "final-gpu/blob-0206.bin.gz",
+      "bytes": 29,
+      "sha256": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641"
+    },
+    {
+      "path": "final-gpu/blob-0207.bin.gz",
+      "bytes": 89,
+      "sha256": "3e8a7a5baaaba673869e1a4535a50344614f5df5fa9575b0d224b7bf31ce3c7c"
+    },
+    {
+      "path": "final-gpu/blob-0208.bin.gz",
+      "bytes": 29,
+      "sha256": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641"
+    },
+    {
+      "path": "final-gpu/blob-0209.bin.gz",
+      "bytes": 48,
+      "sha256": "bddb7d51b497065d5ee9e488e4aee055390454aa08a4fd9f25bd2c31e2ef9abd"
+    },
+    {
+      "path": "final-gpu/blob-0210.bin.gz",
+      "bytes": 80,
+      "sha256": "1ef0bd49d12d5a9d818e20081a74f63eb50c6bc37a54ef14e1fb020a1caf2f93"
+    },
+    {
+      "path": "final-gpu/blob-0211.bin.gz",
+      "bytes": 29,
+      "sha256": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641"
+    },
+    {
+      "path": "final-gpu/blob-0212.bin.gz",
+      "bytes": 80,
+      "sha256": "1ef0bd49d12d5a9d818e20081a74f63eb50c6bc37a54ef14e1fb020a1caf2f93"
+    },
+    {
+      "path": "final-gpu/blob-0213.bin.gz",
+      "bytes": 29,
+      "sha256": "c133a9b713a0634749fcb23c713b653d7fb510d7c81ba3ce776bb9045d56d641"
+    },
+    {
+      "path": "final-gpu/blob-0214.bin.gz",
+      "bytes": 57,
+      "sha256": "cc3658977195fcc59cf9d6442779a4a2fadc719b8d5b7ef009add39031f90ad2"
+    },
+    {
+      "path": "final-gpu/blob-0215.bin.gz",
+      "bytes": 65,
+      "sha256": "0043824fdaa030f1623a90747d6243217c8e05ffb661b618f8d71a8c28c5df6d"
+    },
+    {
+      "path": "final-gpu/blob-0216.bin.gz",
+      "bytes": 36,
+      "sha256": "3ff56f9d64d32ef1ba05dd7a54d3dedd2abbba2db7991a1a8b950b7bb8ac2563"
+    },
+    {
+      "path": "final-gpu/blob-0217.bin.gz",
+      "bytes": 29,
+      "sha256": "01e84369d2a57932572756712fbd5834c7a2dc6382efff6ae0997ff13897df84"
+    },
+    {
+      "path": "final-gpu/blob-0218.bin.gz",
+      "bytes": 65,
+      "sha256": "0043824fdaa030f1623a90747d6243217c8e05ffb661b618f8d71a8c28c5df6d"
+    },
+    {
+      "path": "final-gpu/blob-0219.bin.gz",
+      "bytes": 29,
+      "sha256": "2ba89c42474b2c6887100a69ba0cd40121aba49fd746984be1591b00bf457d5b"
+    },
+    {
+      "path": "final-gpu/blob-0220.bin.gz",
+      "bytes": 29,
+      "sha256": "01e84369d2a57932572756712fbd5834c7a2dc6382efff6ae0997ff13897df84"
+    },
+    {
+      "path": "final-gpu/blob-0221.bin.gz",
+      "bytes": 65,
+      "sha256": "0043824fdaa030f1623a90747d6243217c8e05ffb661b618f8d71a8c28c5df6d"
+    },
+    {
+      "path": "final-gpu/blob-0222.bin.gz",
+      "bytes": 37,
+      "sha256": "73b1685379df9525e5996a7203641bbde236621dd2d9b7e10e9d9666cccad853"
+    },
+    {
+      "path": "final-gpu/blob-0223.bin.gz",
+      "bytes": 29,
+      "sha256": "01e84369d2a57932572756712fbd5834c7a2dc6382efff6ae0997ff13897df84"
+    },
+    {
+      "path": "final-gpu/blob-0224.bin.gz",
+      "bytes": 65,
+      "sha256": "0043824fdaa030f1623a90747d6243217c8e05ffb661b618f8d71a8c28c5df6d"
+    },
+    {
+      "path": "final-gpu/blob-0225.bin.gz",
+      "bytes": 38,
+      "sha256": "d279e62aeea175dac007d4903457b530a152bf364fff003dad8e4ca406b62af9"
+    },
+    {
+      "path": "final-gpu/blob-0226.bin.gz",
+      "bytes": 29,
+      "sha256": "01e84369d2a57932572756712fbd5834c7a2dc6382efff6ae0997ff13897df84"
+    },
+    {
+      "path": "final-gpu/blob-0227.bin.gz",
+      "bytes": 65,
+      "sha256": "0043824fdaa030f1623a90747d6243217c8e05ffb661b618f8d71a8c28c5df6d"
+    },
+    {
+      "path": "final-gpu/blob-0228.bin.gz",
+      "bytes": 41,
+      "sha256": "b443edda3c521fb768f2641c824b1d586e983515b825acc13fb56dbf5c2276af"
+    },
+    {
+      "path": "final-gpu/blob-0229.bin.gz",
+      "bytes": 28,
+      "sha256": "164a33e7d9ede1ca9f575c654978c15d06d4f29ff6c79e46b0775144301ee317"
+    },
+    {
+      "path": "final-gpu/blob-0230.bin.gz",
+      "bytes": 72,
+      "sha256": "c7a1a3bfc42153dcef14ef58d4f78847aeb1d6d940159bbc1be56a63e8d46197"
+    },
+    {
+      "path": "final-gpu/blob-0231.bin.gz",
+      "bytes": 29,
+      "sha256": "c3202a3511182d88cd87e4165c57ec2772a46adde58b2e5f9ef79d162c4e1251"
+    },
+    {
+      "path": "final-gpu/blob-0232.bin.gz",
+      "bytes": 72,
+      "sha256": "c7a1a3bfc42153dcef14ef58d4f78847aeb1d6d940159bbc1be56a63e8d46197"
+    },
+    {
+      "path": "final-gpu/blob-0233.bin.gz",
+      "bytes": 29,
+      "sha256": "c3202a3511182d88cd87e4165c57ec2772a46adde58b2e5f9ef79d162c4e1251"
+    },
+    {
+      "path": "final-gpu/blob-0234.bin.gz",
+      "bytes": 72,
+      "sha256": "c7a1a3bfc42153dcef14ef58d4f78847aeb1d6d940159bbc1be56a63e8d46197"
+    },
+    {
+      "path": "final-gpu/blob-0235.bin.gz",
+      "bytes": 29,
+      "sha256": "c3202a3511182d88cd87e4165c57ec2772a46adde58b2e5f9ef79d162c4e1251"
+    },
+    {
+      "path": "final-gpu/blob-0236.bin.gz",
+      "bytes": 72,
+      "sha256": "c7a1a3bfc42153dcef14ef58d4f78847aeb1d6d940159bbc1be56a63e8d46197"
+    },
+    {
+      "path": "final-gpu/blob-0237.bin.gz",
+      "bytes": 29,
+      "sha256": "c3202a3511182d88cd87e4165c57ec2772a46adde58b2e5f9ef79d162c4e1251"
+    },
+    {
+      "path": "final-gpu/blob-0238.bin.gz",
+      "bytes": 47,
+      "sha256": "597b99d374b02da55fec0ac1db53aed63007e2d4c3cc9927e3488ea5cc653b86"
+    },
+    {
+      "path": "final-gpu/blob-0239.bin.gz",
+      "bytes": 72,
+      "sha256": "c7a1a3bfc42153dcef14ef58d4f78847aeb1d6d940159bbc1be56a63e8d46197"
+    },
+    {
+      "path": "final-gpu/blob-0240.bin.gz",
+      "bytes": 29,
+      "sha256": "c3202a3511182d88cd87e4165c57ec2772a46adde58b2e5f9ef79d162c4e1251"
+    },
+    {
+      "path": "final-gpu/browser-coverage.json",
+      "bytes": 360961,
+      "sha256": "0d4f86633bd90f357d5c6fe8fcb90575f1324bbb4689071ed19a5124c2eabb11"
+    },
+    {
+      "path": "final-gpu/browser.png",
+      "bytes": 48081,
+      "sha256": "5ae631358d03d857f0160315f31b202d22c32ef8d4ab49a1a1663c5caef342a4"
+    },
+    {
+      "path": "final-gpu/report.json",
+      "bytes": 8683957,
+      "sha256": "e6b10050566663b1d6fdb33d43a9fa2e1a1cc4607966ad5ffdfdcd4a3b9f5088"
+    },
+    {
+      "path": "final-sabotage-constant/blob-0000.bin.gz",
+      "bytes": 69,
+      "sha256": "dc965dea0049e57051d7766d33ab6ed5b204c922e0fbe3041a09f88b88a979e7"
+    },
+    {
+      "path": "final-sabotage-constant/blob-0001.bin.gz",
+      "bytes": 29,
+      "sha256": "fcef1e569e16955bb2c097e840ec898890575e5e2c09c4dfd076ca9ecad0a8fc"
+    },
+    {
+      "path": "final-sabotage-constant/blob-0002.bin.gz",
+      "bytes": 69,
+      "sha256": "dc965dea0049e57051d7766d33ab6ed5b204c922e0fbe3041a09f88b88a979e7"
+    },
+    {
+      "path": "final-sabotage-constant/blob-0003.bin.gz",
+      "bytes": 29,
+      "sha256": "fcef1e569e16955bb2c097e840ec898890575e5e2c09c4dfd076ca9ecad0a8fc"
+    },
+    {
+      "path": "final-sabotage-constant/blob-0004.bin.gz",
+      "bytes": 46,
+      "sha256": "3b5e6d3971b7ce5ef9680a5fd272bbf0034287ae503b46557f30f54817ae69d2"
+    },
+    {
+      "path": "final-sabotage-constant/browser-coverage.json",
+      "bytes": 313460,
+      "sha256": "d43bd44d46c22d365f8b31d36a7eafa07c62b6229986f5016d786c06c9770d28"
+    },
+    {
+      "path": "final-sabotage-constant/browser.png",
+      "bytes": 79061,
+      "sha256": "f0e09c28fba84d41d2987d67fb6c24b03fed4c9c0b7ec1656c50a611dc0969a5"
+    },
+    {
+      "path": "final-sabotage-constant/mutation-source.mjs",
+      "bytes": 117651,
+      "sha256": "beef4a80119471066ad928e9cdd1e1711cb7ca60ed3b5cba2131d9fdb2023588"
+    },
+    {
+      "path": "final-sabotage-constant/report.json",
+      "bytes": 506513,
+      "sha256": "266c5617f4cd699c0eb2bd60543d7d52ed6f575e80b16a0864678a680e1b56f3"
+    },
+    {
+      "path": "final-sabotage-native/blob-0000.bin.gz",
+      "bytes": 81,
+      "sha256": "da1d8557ea9b94171df33c97a2c14cd227b8d8e694e745ee2f7d111d3367a4b1"
+    },
+    {
+      "path": "final-sabotage-native/blob-0001.bin.gz",
+      "bytes": 29,
+      "sha256": "fcef1e569e16955bb2c097e840ec898890575e5e2c09c4dfd076ca9ecad0a8fc"
+    },
+    {
+      "path": "final-sabotage-native/blob-0002.bin.gz",
+      "bytes": 81,
+      "sha256": "da1d8557ea9b94171df33c97a2c14cd227b8d8e694e745ee2f7d111d3367a4b1"
+    },
+    {
+      "path": "final-sabotage-native/blob-0003.bin.gz",
+      "bytes": 29,
+      "sha256": "fcef1e569e16955bb2c097e840ec898890575e5e2c09c4dfd076ca9ecad0a8fc"
+    },
+    {
+      "path": "final-sabotage-native/blob-0004.bin.gz",
+      "bytes": 50,
+      "sha256": "a8094110877188f99ba35fa3782efa5a468de7ea6acf36afd36204e71f8eaa1a"
+    },
+    {
+      "path": "final-sabotage-native/browser-coverage.json",
+      "bytes": 310381,
+      "sha256": "5d3f83e256c760eece2a13981982c48ad06f90a639035566c65f4326c0067cbe"
+    },
+    {
+      "path": "final-sabotage-native/browser.png",
+      "bytes": 78948,
+      "sha256": "a62b12e163293616b7d80cdd8f045def306a42325bcf80fa5ff5ee733bdef193"
+    },
+    {
+      "path": "final-sabotage-native/mutation-source.mjs",
+      "bytes": 117713,
+      "sha256": "19b335e4d85295a52617dcf5e3fb5e70a76f3a9945b49e3cc19fa6a1c9e40d5e"
+    },
+    {
+      "path": "final-sabotage-native/report.json",
+      "bytes": 502518,
+      "sha256": "87815471edc5313129ab85b71c60b1b1b799fd14925dd14b8c897bbdf64a6db0"
+    },
+    {
+      "path": "fresh-audit.json",
+      "bytes": 150417,
+      "sha256": "7a2fb804bff0ed18fdda8c5771ab010e23283e52e688b175dc3ff404fe52809f"
+    },
+    {
+      "path": "fresh-audit.mjs",
+      "bytes": 7514,
+      "sha256": "3aff64b5742de919fa40356bcf40d920b9df86bd01e0cac767e175604ae2148d"
+    },
+    {
+      "path": "physical-audit.json",
+      "bytes": 965970,
+      "sha256": "7edd0a5129434a69249a230e10f5c923a72b3d49f0c41c8765929022654ba734"
+    },
+    {
+      "path": "predictions.json",
+      "bytes": 3765,
+      "sha256": "85d488263ecec13ad1928a96d1d1452653a5f2a2bb1a1e6124fdf2e05ab74487"
+    },
+    {
+      "path": "seal.py",
+      "bytes": 3210,
+      "sha256": "efe812c1ccde7fc33eac50769709131653a1a6138d1827ffa32d5ee0fe7d82df"
+    },
+    {
+      "path": "sources/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "sources/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 72339,
+      "sha256": "3c04624cd731d744b96d4a1b0647dcfe44d0a096fa67c96261877f5204925e69"
+    },
+    {
+      "path": "sources/renderer/virgl-command/decoder.mjs",
+      "bytes": 31994,
+      "sha256": "a9bcef126b4f15d3e3920c1e5c14728c294afc79fde31015adb8e4f79237b2a1"
+    },
+    {
+      "path": "sources/renderer/virgl-command/resources.mjs",
+      "bytes": 63968,
+      "sha256": "c2355819a1ae04125af8689bb0e23cbdfa73b10dc87710b0be72638397a66eae"
+    },
+    {
+      "path": "sources/renderer/virgl-command/state.mjs",
+      "bytes": 117725,
+      "sha256": "e6ed224b99346005e099479d950c2bbf03ba3c98fb3e68562463e5626c16f635"
+    },
+    {
+      "path": "sources/renderer/virgl-command/tests/standard-compact-vertex-fetch-adversarial.mjs",
+      "bytes": 14874,
+      "sha256": "f66b41107fcfab22eced3a1aa9c17041cdc1613de583d8f913f7036d78f36ee8"
+    },
+    {
+      "path": "sources/renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "bytes": 25968,
+      "sha256": "e7c9cee10cc2194a3f9fcf912da2d57ece2e70237ed42640a5a5a47072e34851"
+    },
+    {
+      "path": "sources/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32393,
+      "sha256": "f667e2ef49a45a5c906ca424e8a436aee4e4d9c6a7428ca67a9de3a31b8edc3c"
+    },
+    {
+      "path": "sources/renderer/virgl-shader/UPSTREAM.json",
+      "bytes": 8594,
+      "sha256": "6f7866d3a3a5e502f6516506909c0d43dec60902fd251a2eecec9610bd992a71"
+    },
+    {
+      "path": "sources/renderer/virgl-shader/bridge.c",
+      "bytes": 143384,
+      "sha256": "b732da2dec8cbb2121ad9059ce461185260dc7ca551c5faec28462600fb84898"
+    },
+    {
+      "path": "sources/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 10814,
+      "sha256": "8d07e5832efc6bc832b9bd684bcaaaad19b536783643f40d088e2ddfba2a5052"
+    },
+    {
+      "path": "sources/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 428973,
+      "sha256": "30c655db576b421808c5316af3248c5c848b368000e4036f0803f26e0c309a81"
+    },
+    {
+      "path": "sources/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "sources/renderer/virgl-shader/standard.mjs",
+      "bytes": 3589,
+      "sha256": "d949b156fed338cd9816abf94239eb32b1773aaf3b3c4ade6dba77201d2310cc"
+    },
+    {
+      "path": "sources/renderer/virgl-shader/standard_emit.c",
+      "bytes": 14666,
+      "sha256": "76102e93e05151b3cf6ec44f1f2caaf470374386db99d1536cf4949fa184d402"
+    },
+    {
+      "path": "sources/renderer/virgl-shader/standard_guard.c",
+      "bytes": 17828,
+      "sha256": "1d7c94c83243122ccc1b52607722e5088ed593aab10c3b568db87af256b7db4d"
+    },
+    {
+      "path": "sources/renderer/virgl-shader/standard_guard.h",
+      "bytes": 1444,
+      "sha256": "dc6ca7d1c093a0d194ed4f94c59187347929c2a264d1026e7357825f1b6a6616"
+    },
+    {
+      "path": "sources/tools/verify-virgl-standard-compact.mjs",
+      "bytes": 11510,
+      "sha256": "b683a9187fb11b0e7c561ab20ae2d63de70fb24d75b61cd1e8333c8e1d3c1b33"
+    },
+    {
+      "path": "sources/tools/virgl-command/fixtures.mjs",
+      "bytes": 3660,
+      "sha256": "399b6b74fa48a8b6edfb237f23e7a42d45a65495fcb090762da0275218a29217"
+    },
+    {
+      "path": "sources/tools/virgl-command/standard-compact-adversarial-oracle.mjs",
+      "bytes": 11723,
+      "sha256": "fc3535d580d7ccf4322208d949800f4ebb8a97fd4e15cb2232b14479c0d540e1"
+    },
+    {
+      "path": "sources/tools/virgl-command/standard-compact-oracle.mjs",
+      "bytes": 7240,
+      "sha256": "c626038849a3b8524d44668a39a6f18a7807a03d17321c46408a2f77011f28af"
+    },
+    {
+      "path": "sources/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "verdict.json",
+      "bytes": 4976,
+      "sha256": "f05cb1d37a209b2f83d75b4a96f367f0f5c803405177c10ae7d15d74e5b9b690"
+    }
+  ]
+}

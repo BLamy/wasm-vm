@@ -1,0 +1,25 @@
+{
+  "schema": "original-packed-depth-consumer-seal-v1",
+  "task": "E6-T11d43",
+  "sourceHead": "bb12868a5fceea81acec5a8ff42496e13007ddd8",
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz",
+      "bytes": 43886017,
+      "sha256": "cee5f6525922a02a14885affebcf763df18468b6434267a251f1a1f5b3e313a4"
+    }
+  ],
+  "records": 61957,
+  "reopenedMembers": 61957,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "cee5f6525922a02a14885affebcf763df18468b6434267a251f1a1f5b3e313a4",
+  "archiveBytes": 43886017,
+  "recordIndexSha256": "012d2a73e5d3d61db1b98a399ebda30d2d0f8592ec54df06e15a0f9cc6be11cf",
+  "hotReceiptSha256": "1425537b3c0b6962359919acfce4d0d9c3add9f916141b3cb7e5a06c3629ef97",
+  "coldReportSha256": "fa66e169a366b8eccc2c5549712cae1fb5426760061e92023af6ba5b9d204042",
+  "coldReceiptSha256": "bc98b4397a2066e4d7a73c346cc0e483598047a2b075b47d37da3883edcf111e",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-packed-depth-consumers",
+  "productionDrawAuthority": false
+}

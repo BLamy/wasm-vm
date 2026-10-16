@@ -1,0 +1,76 @@
+{
+  "schema": "original-shared-exponent-consumer-critic-predictions-v1",
+  "task": "E6-T11d30",
+  "workerSubmission": "691d75bcbae32edd8ee76a824164165f714b0e9e",
+  "frozenHead": "62011567d7616e2b9bbe888e4754aa2064bde3ee",
+  "predecessor": "b76fa7d63703e3cf2a3dfc3b2d7c835c3f3db5e1",
+  "orientation": "Complete task and all executable/runtime/harness/documentation diff read before opening worker recordings. Added sealed evidence members are inert data, deferred until these predictions.",
+  "predictions": [
+    {
+      "id": "P1",
+      "boundary": "Seal/source/cold closure",
+      "prediction": "Every worker archive member has one safe indexed path and identical SHA256/length. Hot/cold receipts name frozen head 62011567d7616e2b9bbe888e4754aa2064bde3ee; tracked and generated source bytes agree with the receipts. The recorded pristine clone has that exact head, empty before/after status, and a passed make verify-E6-T11d30 receipt.",
+      "status": "UNOBSERVED"
+    },
+    {
+      "id": "P2",
+      "boundary": "Original decoder admission",
+      "prediction": "The literal CREATE_OBJECT sampler packets with format125, target2, levels1..3 and either identity or [2,4,0,5] swizzle succeed only under the selected RGB9E5 decoder/profile. Each historical decoder refuses. Reversed/high/reserved ranges, layer, invalid target/swizzle/format and every original125 surface fail without renderer guest draw or consumer allocation. Typed wire mutation after submission cannot alter stored packet semantics; unknown/inherited/accessor/trapping configuration fails with zero getter calls.",
+      "status": "UNOBSERVED"
+    },
+    {
+      "id": "P3",
+      "boundary": "Native sampling and precision",
+      "prediction": "After each actual terminal native fence, every native output component matches an independently reconstructed original-program result within unchanged 2e-6*max(1,abs(expected)). Original RGB9E5 channel k equals ((word>>(9*k))&511)*2**((word>>27)-24); alpha=1. Literal TGSI operands, original view/sampler packets and source dimensions determine fetch/query/nearest/bilinear/trilinear results. All declared interpolation predictions lie exactly on binary16 before execution. The whole 52-program matrix includes vertex/fragment TEX/TXL/TXF/TXD/TXQ, fragmentTXB, both filters/swizzles, two source tails and four fractional-mip cases.",
+      "status": "UNOBSERVED"
+    },
+    {
+      "id": "P4",
+      "boundary": "Completion/draw state/cache/public planes",
+      "prediction": "Each clear/first/warm frame follows a delivered ALREADY_SIGNALED or CONDITION_SATISFIED fence. Actual original draws use original guest VAO/program/framebuffer/viewport after all selected native helper draws. Cold/warm stage and pair cache keys retain the RGB9E5 namespace and warm links do not increase. Every RGBA32F output mip, blend/mask channel and public SG byte is derivable from original packets/bytes, with untouched padding still0x2e.",
+      "status": "UNOBSERVED"
+    },
+    {
+      "id": "P5",
+      "boundary": "Generation/fence ownership",
+      "prediction": "Three independently varied schedules preserve native old125 storage after source6 reuse, context2 switching and cache reset. Complete/cancel/renderer-dispose/resource-dispose keep two old image holds at the real terminal fence even after source6 and target1 reuse, return the prescribed terminal result, delete each native object once, and finish with all owner/renderer budgetszero.",
+      "status": "UNOBSERVED"
+    },
+    {
+      "id": "P6",
+      "boundary": "GPU-only update",
+      "prediction": "Under the update label, a byte framebuffer clear leads to PBO readPixels then RGB/UNSIGNED_INT_5_9_9_9_REV texSubImage2D with a PBO offset, with no CPU image download supplying bytes. The next original draw samples newly uploaded word96|(160<<9)|(224<<18)|(16<<27), i.e.[.375,.625,.875,1]; every other native source mip still equals all original fields and the entire public source backing remains byte-for-byte unchanged.",
+      "status": "UNOBSERVED"
+    },
+    {
+      "id": "P7",
+      "boundary": "Host/error/config/bounds",
+      "prediction": "Missing EXT_color_buffer_float, EXT_float_blend and OES_texture_float_linear each returns unsupported-host before consumer native allocation. Actual invalid native clear returns backend-error with one native clear fault and zero guest draw. Unknown/inherited/accessor/trapping config returns invalid-input before allocations and with zero getters. Resource/private image allocations obey unchanged predecessor bounds.",
+      "status": "UNOBSERVED"
+    },
+    {
+      "id": "P8",
+      "boundary": "Native controls/oracle sensitivity",
+      "prediction": "Actual source-level substitution and actual nearest-for-linear mutation both alter native calls, reach a real completed original shader draw, and fail the unchanged original-bit/pixel inverse. A new post-completion pixel corruption through the unchanged oracle will fail; changing metadata or expected fields will not rescue it.",
+      "status": "UNOBSERVED"
+    },
+    {
+      "id": "P9",
+      "boundary": "Affected gate/carry scope",
+      "prediction": "Async jobs, ordinary float consumer, packed storage/consumer and shared storage affected gates are recorded passed. All eight D26/D27/D28/D29 worker/critic archive/index/manifest pins agree with predecessor exact bytes. Storage/compiler/cache/maps/crates/web/guest and production remain unchanged; no new format125 output authority appears.",
+      "status": "UNOBSERVED"
+    },
+    {
+      "id": "P10",
+      "boundary": "Complete nested runtime coverage",
+      "prediction": "For every changed executable region in decoder.mjs and state.mjs, the full smallest governing V8 interval partition has a positive counter in final valid evidence, or an explicit nonbehavioral/dependency waiver. No positive parent or line sample can hide a zero selected child. Both historical and selected namespace/refresh branches execute in recorded matrix or affected prior gates.",
+      "status": "UNOBSERVED"
+    },
+    {
+      "id": "P11",
+      "boundary": "Bounded novel native sampler/owner attack",
+      "prediction": "Two retained125 views of distinct original mip ranges, sampled across vertex/fragment stages at the same numeric slot and added by literal original programs, keep distinct native views and old-generation values after source6 reuse plus cache reset/context restoration. All helper refreshes finish before guest state restoration and the combined output matches original-word arithmetic at completion.",
+      "status": "UNOBSERVED"
+    }
+  ]
+}

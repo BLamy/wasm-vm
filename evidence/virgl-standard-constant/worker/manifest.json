@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-standard-constant-attributes-seal-v1",
+  "task": "E6-T11d7",
+  "sourceHead": "39a9d14b7052c60ca11416bdba4e6eb78a38b1dd",
+  "records": 1123,
+  "archiveSha256": "598acb64caacea419f099a5fc1bb25fe763c4ce8dfb3eb8c0a76126acea28aca",
+  "archiveBytes": 4224807,
+  "recordIndexSha256": "36217166ebf678e6dd701ec7ec66f042891963be7638dc2c77a920903694d65a",
+  "hotReceiptSha256": "165c29196418fc6dc9f64e7367f39852da1103cfad31b004d4c6db71ce794f6e",
+  "coldReportSha256": "112b203cfe4848075fa9704ed6fb6a5b17d9a6373b2fbec3f02dccf7067838d0",
+  "coldReceiptSha256": "a37b11e92e561d2575df2cba7f39a7c4b0dd80e91357f7ebfbc630faec25dcf1",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "authority": "isolated-standard-constant-attributes",
+  "productionDrawAuthority": false
+}

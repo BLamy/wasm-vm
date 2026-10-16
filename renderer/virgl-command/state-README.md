@@ -61,7 +61,7 @@ DESTROY_OBJECT drops their public name/reference; existing bindings survive unti
 explicit replacement/unbind or subcontext destruction. In particular original
 submit249 destroys surface3 at byte11376 while its framebuffer still owns it; the
 framebuffer reset at byte11384 releases the last reference to already-unreferenced
-resource5. Shader programs disappear when either selector is finally released.
+resource5. Shader programs disappear when either selector is finally released and may be evicted sooner under bounded cache pressure; live bindings recreate them.
 DSA and vertex elements unbind when destroyed. Sampler-state destruction clears
 matching slots and compacts later slots, following the pinned destructor. Blend
 and rasterizer bindings own a bounded copy of their fields; destroying their
@@ -81,7 +81,7 @@ Shader creation passes original decoded TGSI text and its VS/FS stage to the
 verified Wasm bridge, then compiles the emitted GLSL ES300 on the actual GL
 context. LINK_SHADER prelinks a pair without binding it; BIND_SHADER selects its
 stage and links the pair when both stages are present. Programs are keyed by the
-two selector generations and a canonical interface derived from the fragment's
+private subcontext owner, two immutable selector generations, every used view and a canonical interface derived from the actual pair's
 GENERIC semantic indices, component masks and interpolation modes. Fragment
 input components must be written by the matching vertex semantic, independently
 of physical register order. The v4 shader bridge exposes `smooth`/`flat` metadata.
@@ -102,7 +102,7 @@ the final binding is released. Smooth pairs keep their existing base shaders.
 
 Fragment sampling keys canonically include used sampler slot/name, exact color
 format, target2, level/layer0, fixed lower-left origin and all four immutable
-RGBA/ZERO/ONE selectors. RGBA identity keeps its legacy executable key. The
+RGBA/ZERO/ONE selectors. RGBA identity includes its complete sampling key as well. The
 checked 2D TEX lookup is wrapped by a private GLSL helper before fragment main;
 helpers map the native normalized sample, including X-format alpha one. Shared
 texture contents and parameters remain unchanged. No per-view image or CPU
@@ -158,11 +158,12 @@ inactive resets remain accepted.
 
 The active profile is one required normalized level-zero color surface
 (BGRX8, RGBA8 or B10G10R10X2), exact-matching color sampler
-views with immutable selectors0–5, clamp-edge nearest/linear non-mip samplers, R32G32_FLOAT vertex elements,
-float-aligned vertex strides at most255 bytes, u16 indices, an integer positive
-viewport with normalized depth range, additive alpha blend modes supported by
-the decoder, optional dithering/back-face culling, and disabled depth/stencil.
-Scissor rasterization, depth views and mip/layer/cube sampling fail explicitly. Buffer
+views with immutable selectors0–5, clamp-edge nearest/linear non-mip samplers,
+R32/RG32/RGB32/RGBA32_FLOAT vertex elements, float-aligned vertex strides at most255 bytes,
+u16 indices or nonindexed triangles/strips, integer viewports with either Y sign
+and normalized GL depth range, additive alpha blend modes supported by the
+decoder, optional dithering/back-face culling/scissor, and Z16 depth testing.
+Stencil/alpha tests, depth views and mip/layer/cube sampling fail explicitly. Buffer
 and element ranges, resource classes, link inputs and quotas are validated before
 publication. Backend allocation/compile/link failures delete temporary objects.
 
@@ -174,11 +175,19 @@ and DST_ALPHA observes one. RGBA8 retains its ordinary stored alpha behavior.
 
 The original gears Z16_UNORM SURFACE can retain exact format16/bind1 native
 depth storage through a separate depth-surface lease. It cannot become a color
-attachment or an RGBA8 sampler view. Depth/stencil framebuffer selection,
-clear and DSA execution remain E6-T12h; this storage boundary does not enable
-them. `make verify-E6-T12g3` checks original surface lifetime, incompatible
+attachment or an RGBA8 sampler view. E6-T12h adds depth framebuffer selection,
+full depth clear and the eight GL depth comparisons; Z16 has no stencil storage.
+`make verify-E6-T12g3` retains original surface lifetime, incompatible
 color attachment rejection and independent native depth observations.
 Required matching color view admission is the E6-T12g4 boundary above.
+
+Negative viewport scaleY sets the owned system block's `winsys_adjust_y` to -1
+on every restoration. Its rectangle remains translateY - abs(scaleY), height
+2*abs(scaleY); GL clip Z is unchanged. Scissor uses literal lower-left min/max
+coordinates. Full CLEAR ignores scissor and color/depth masks, then restores
+those masks and scissor enable. Depth attachments retain their object/storage
+generation independently of their public names. Color/depth dimensions must
+match. See [raster proof](../../tools/virgl-command/raster-README.md).
 
 Restoration binds the renderer's private VAO/FBO/program, every texture/sampler
 unit, vertex/index buffers, system UBO and constants, color/blend/raster state,
@@ -214,3 +223,62 @@ inline jobs own their dense reserved upload at preparation and yield in
 step checks resource/context/membership identity, issues the upload and retires
 through a nonblocking GPU completion fence. Cancellation, stale identity and
 backend failures release the reservation without publishing an unowned payload.
+
+Translation, native program and render-state reuse, limits, exact-key equality,
+eviction, truthful counters and host frame captures are described in
+[cache-README.md](cache-README.md). Every supported GL binding still restores on
+every cache hit.
+
+The separate `createVirglStandardUniformAsyncRenderer` entry point consumes
+original SET_UNIFORM_BUFFER27 using `createStandardUniformResourceStore` and its
+host-only `uniformAccess` capability. VS/FS slots0..12 retain their original
+allocation and aligned nonempty byte range across public unref, detach and ID
+reuse. SET_CONSTANT_BUFFER12 clears that slot's resource binding. Submitted
+ranges keep allocations alive until the final nonblocking fence; pending draws
+reject changes to their captured lease, context or GPU revision.
+
+Guest std140 blocks occupy unique native bindings1..26; the separately owned
+656-byte VirglBlock uses binding0. The selected factory requires native limits
+for14 vertex,13 fragment and27 combined blocks/bindings and16KiB blocks. It
+checks native members and stage references. Missing referenced banks reject;
+unused native-retained blocks share one bounded16KiB zero allocation. Native
+eliminated declarations require no backing. The original slot-zero binding state
+selects both C-emitted stage bodies and participates in every cache/draw key.
+`make verify-E6-T11d17` records original packets, complete GPU storage, reflection,
+fences and independent full pixels. This isolated factory does not advertise
+production capabilities or initialize guest Mesa.
+
+The host-selected `createVirglStandardBufferAsyncRenderer` pairs with
+`createStandardBufferResourceStore`: zero or combined original vertex/index/constant
+creation flags preserve one authoritative native other-data allocation. Original
+vertex, index and uniform bindings retain that allocation independently. WebGL
+buffer classes prohibit native element-array aliasing, so the existing fenced
+index read supplies a bounded private u32 stream through the established
+normalization path. Original index values and restart/assembly semantics survive;
+the draw job owns and drains every private stream. This facet has no persistent
+CPU buffer shadow and does not advertise production capabilities.
+The host-selected standard facets preserve original core sampler address modes
+REPEAT/CLAMP_TO_EDGE/MIRROR_REPEAT, both image filters, all three mip-filter enums,
+finite signed LOD limits and inactive raw border/compare fields. Native sampler
+parameters use the pinned Gallium mapping. Reversed LOD limits have undefined
+sampling under GLES; their parameter values are preserved. Texture storage is
+still the proven single-level 2D profile, and shadow/border/anisotropy/nonzero LOD
+bias remain gated. Legacy finite admissions and native parameter shape stay intact.
+
+The production factory additionally consumes original RESOURCE_COPY_REGION17
+with the thirteen-dword layout pinned in `virgl_protocol.h`. Its current native
+consumer requires matching single-sample 2D RGBA8/BGRA8 renderable images. It
+copies exactly the source extent to the destination origin with nearest native
+framebuffer transfer, without scaling or format conversion. Both resources must
+belong to the submitting context. Temporary leases and completion holds retain
+their exact allocations through the GPU fence; a successful destination write
+invalidates derived image views. Other copy binding/format/sample classes reject.
+
+Production BLIT can read and write different mip levels of the same allocation.
+The same image at the same level still rejects, as do invalid levels, layers,
+rectangles and format reinterpretation. This supplies the original packaged
+wallpaper's base copy and ten-level mip chain. The hardware regression retains
+the original complete-job bytes and checks the full 1422x800 base, every mip,
+nonzero subregions, varying alpha, rejection accounting and fenced retirement.
+Run `node tools/virgl-production/omarchy-resource-copy-wire.mjs` and
+`node tools/virgl-production/omarchy-resource-copy-browser.mjs --output <new-dir>`.

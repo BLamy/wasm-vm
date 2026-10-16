@@ -1,0 +1,307 @@
+{
+  "schema": "original-integer-image-shader-gap-v1",
+  "sourceSnapshotHead": "d8d510a689cfb5440cc8b3b65fd94adb9baee109",
+  "authority": "isolated-compiler-refusal-only",
+  "nativeExecuted": false,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "records": [
+    {
+      "stage": "vertex",
+      "type": "UINT",
+      "op": "TEX",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TEX OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "UINT",
+      "op": "TXL",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXL OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "UINT",
+      "op": "TXF",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXF OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "UINT",
+      "op": "TXD",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXD OUT[1], CONST[0], CONST[1], CONST[2], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "UINT",
+      "op": "TXQ",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXQ OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "SINT",
+      "op": "TEX",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TEX OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "SINT",
+      "op": "TXL",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXL OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "SINT",
+      "op": "TXF",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXF OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "SINT",
+      "op": "TXD",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXD OUT[1], CONST[0], CONST[1], CONST[2], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "vertex",
+      "type": "SINT",
+      "op": "TXQ",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXQ OUT[1], CONST[0], SAMP[0], 2D\n1: MOV OUT[0], IN[0]\n2: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "UINT",
+      "op": "TEX",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TEX OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "UINT",
+      "op": "TXL",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXL OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "UINT",
+      "op": "TXF",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXF OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "UINT",
+      "op": "TXD",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXD OUT[0], CONST[0], CONST[1], CONST[2], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "UINT",
+      "op": "TXQ",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXQ OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "UINT",
+      "op": "TXB",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, UINT\n0: TXB OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "SINT",
+      "op": "TEX",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TEX OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "SINT",
+      "op": "TXL",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXL OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "SINT",
+      "op": "TXF",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXF OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "SINT",
+      "op": "TXD",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXD OUT[0], CONST[0], CONST[1], CONST[2], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "SINT",
+      "op": "TXQ",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXQ OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "stage": "fragment",
+      "type": "SINT",
+      "op": "TXB",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL CONST[0..2]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, SINT\n0: TXB OUT[0], CONST[0], SAMP[0], 2D\n1: END\n",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    }
+  ],
+  "sources": {
+    "renderer/virgl-shader/standard_guard.c": "39cf78283a681f3024cfcecf1ff6d7c2eea04b7943a40fc5c8ae77147fb66831",
+    "renderer/virgl-shader/standard_guard.h": "22e733e75b454d47b39340c6a75c060a16dac71cf5a2c602dcb015b09ace9b17",
+    "renderer/virgl-shader/standard_emit.c": "99466cf53d8737bcea02e468aabf04192476fac02bbd2688588efd4f8ced56d6",
+    "renderer/virgl-shader/bridge.c": "c63fc2ceedb07772366bfd9ff7854f36b27ded6a1cc7951432204f071ced1b4f",
+    "renderer/virgl-shader/bridge.h": "b3ef7710ac1d360a94f08879d75045cebfded77a68ec246baf847c631f681e6b",
+    "renderer/virgl-shader/standard.mjs": "88e6312adedc10ba804768d138eeb2e80c7bbbdc7b950edf2cd6ecf93e98b3ee",
+    "renderer/virgl-shader/build.sh": "5bd3c89c04b2ffb8bfceb9d0d38bb5c8e5b88046dd32bf335706d7f29b6127af",
+    "renderer/virgl-shader/build/wasm/virgl-shader.mjs": "509aaeb879c95b90acd26de08a310b23991779cf3564f174bbc1702c9b68a021",
+    "renderer/virgl-shader/build/wasm/virgl-shader.wasm": "41d5c79624d7799cb9339b3fb754bfb4b744ee959b70d8cc2daedfb0a1fb4ac8"
+  }
+}

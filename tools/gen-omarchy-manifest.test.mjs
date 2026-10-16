@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
 import { gzipSync } from "node:zlib";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { copyFile, mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
@@ -121,15 +121,39 @@ test("generator rejects a mixed RAM/delta pair before rewriting output", async (
   }
 });
 
-test("generator names the kernel it hashed (default path unchanged)", async () => {
+test("generator names and hashes the explicitly selected kernel", async () => {
   const f = await fixture();
   try {
     await runGenerator(f.env);
     const output = JSON.parse(await readFile(f.paths.outputPath, "utf8"));
     assert.equal(output.artifacts.kernel.url, f.paths.kernelPath);
     assert.equal(output.artifacts.kernel.sha256, sha256(Buffer.from("kernel")));
-    const source = await readFile(generator, "utf8");
-    assert.match(source, /kernel="\$\{OMARCHY_KERNEL:-releases\/kernel\/6\.6\.63\/Image\}"/u);
+  } finally {
+    await rm(f.root, { recursive: true, force: true });
+  }
+});
+
+test("generator defaults to the production input kernel even when the historical kernel exists", async () => {
+  const f = await fixture();
+  try {
+    const relative = "releases/kernel/6.6.63-omarchy-evdev1024/Image";
+    const production = Buffer.from("production input-buffer kernel");
+    const historical = Buffer.from("historical small-input-buffer kernel");
+    await mkdir(path.join(f.root, path.dirname(relative)), { recursive: true });
+    await mkdir(path.join(f.root, "releases/kernel/6.6.63"), { recursive: true });
+    await writeFile(path.join(f.root, relative), production);
+    await writeFile(path.join(f.root, "releases/kernel/6.6.63/Image"), historical);
+    await mkdir(path.join(f.root, "tools"));
+    const privateGenerator = path.join(f.root, "tools/gen-omarchy-manifest.sh");
+    await copyFile(generator, privateGenerator);
+    const env = { ...f.env };
+    delete env.OMARCHY_KERNEL;
+    await execFileAsync("bash", [privateGenerator], { cwd: f.root, env });
+    const output = JSON.parse(await readFile(f.paths.outputPath, "utf8"));
+    assert.equal(output.artifacts.kernel.url, relative);
+    assert.equal(output.artifacts.kernel.size, production.length);
+    assert.equal(output.artifacts.kernel.sha256, sha256(production));
+    assert.notEqual(output.artifacts.kernel.sha256, sha256(historical));
   } finally {
     await rm(f.root, { recursive: true, force: true });
   }

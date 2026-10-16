@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-standard-state-binding-seal-v1",
+  "task": "E6-T11d5",
+  "sourceHead": "adcbe81bcd091c3d411a8f96ac8746e1a17290fb",
+  "records": 332,
+  "archiveSha256": "9c2a187e7f192c35bcc9c06eb32d1e7fc90e8e7ca938cb37c6a124eb3bdc467e",
+  "archiveBytes": 10343259,
+  "recordIndexSha256": "be036ae9072dbfae6ea1225572ffbe62fa84a5df4ebe345eefe25a72d62fef11",
+  "hotReceiptSha256": "c7e39d32cb02684d278a2f673544063b10498c449ce1ea37ebadf5bcebe5ffa8",
+  "coldReportSha256": "dc427e1574da1cb0caf7b8f761883f95c73a95fa61ee45ffa024e488e5315161",
+  "coldReceiptSha256": "33545abd27c2b5ab70b2126f12bd469722f72a81949d59b1da7e97f0df04ef6f",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "authority": "isolated-standard-state-binding",
+  "productionDrawAuthority": false
+}

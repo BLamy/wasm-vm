@@ -1,0 +1,14 @@
+{
+  "scratch": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/critic-color-c1-tka3tsir",
+  "base_head": "0e004fa8e29bc6de000dbb807b7d6edbcf2c3066",
+  "results": [
+    {
+      "label": "literal-pattern-hardware",
+      "exit": 0
+    },
+    {
+      "label": "old-limit-sabotage-hardware",
+      "exit": 1
+    }
+  ]
+}

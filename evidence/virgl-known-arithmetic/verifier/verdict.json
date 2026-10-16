@@ -1,0 +1,170 @@
+{
+  "schema": "virgl-known-arithmetic-critic-verdict-v1",
+  "task": "E6-T12g6m1",
+  "verdict": "needs-evidence",
+  "sourceHead": "cba5ae02ba16dc15b7b51d5dcdd808f88fcaf1ee",
+  "submissionHead": "5c6daa5fd87bccc7dc39398b6f6ba6d22991585c",
+  "base": "bfd5c97f7d71f510fccd2bd120f43b3d8b54159f",
+  "predictionsSha256": "38fe79294e1c3bdb35000ac0c183ba5d6e25100c1101fbd15b5fadec9855f555",
+  "predictionResults": [
+    {
+      "id": "P0",
+      "status": "HELD",
+      "boundary": "Custody and lineage"
+    },
+    {
+      "id": "P1",
+      "status": "HELD",
+      "boundary": "Integer rounding"
+    },
+    {
+      "id": "P2",
+      "status": "HELD",
+      "boundary": "Literal emission and shadow"
+    },
+    {
+      "id": "P3",
+      "status": "HELD",
+      "boundary": "Unsafe and unknown operands"
+    },
+    {
+      "id": "P4",
+      "status": "HELD",
+      "boundary": "Join and address facts"
+    },
+    {
+      "id": "P5",
+      "status": "HELD",
+      "boundary": "Whole-text retry and old results"
+    },
+    {
+      "id": "P6",
+      "status": "HELD",
+      "boundary": "Metadata authority"
+    },
+    {
+      "id": "P7",
+      "status": "HELD",
+      "boundary": "Physical words and bytes"
+    },
+    {
+      "id": "P8",
+      "status": "HELD",
+      "boundary": "Owned consumer bank authority"
+    },
+    {
+      "id": "P9",
+      "status": "HELD",
+      "boundary": "Fault sensitivity and diagnostics"
+    },
+    {
+      "id": "P10",
+      "status": "HELD",
+      "boundary": "Storage and grammar"
+    },
+    {
+      "id": "P11",
+      "status": "HELD",
+      "boundary": "Remaining gate"
+    },
+    {
+      "id": "P12",
+      "status": "NEEDS EVIDENCE",
+      "boundary": "Executable coverage"
+    },
+    {
+      "id": "P13",
+      "status": "HELD",
+      "boundary": "Independent attack and sabotage"
+    }
+  ],
+  "findings": [
+    {
+      "id": "C1",
+      "status": "NEEDS EVIDENCE",
+      "prediction": "Both zero+nonzero known ADD identity returns execute in a recorded public retry.",
+      "observed": "Count0 in every original hot/cold raw_bits.c:known_add and known_arithmetic.c:known_add return region.",
+      "points": [
+        "renderer/virgl-shader/raw_known_arithmetic.h:34:13-21",
+        "renderer/virgl-shader/raw_known_arithmetic.h:35:13-21"
+      ],
+      "originalMergedProfileSha256": "abf869666cf3e495ad5e89059cf61f6e235df038d67ed592effdd5709f1cb863",
+      "demand": "Supplement the frozen original native binary recording with the public fixture supplemental-zero-return-vector, plus ADD(0,0x3fc00000) and ADD(0x3fc00000,0) rational WORD inputs to cover both helper instances. Record original raw/merged profiles and export with that executable; retain old seals.",
+      "fixture": {
+        "path": "attack-predictions.json",
+        "name": "supplemental-zero-return-vector",
+        "index": 16,
+        "textSha256": "b0909ad597f132fa4662444c8172098183fb694c2859aff2d6a9047e7e5d4db3",
+        "text": "FRAG\nDCL IN[0], GENERIC[0], PERSPECTIVE\nDCL OUT[0], COLOR\nDCL TEMP[0..7]\nDCL CONST[0..45]\nIMM[0] UINT32 {0,1069547520,1065353216,0}\nIMM[1] UINT32 {1069547520,0,3212836864,1065353216}\nADD TEMP[0], IMM[0], IMM[1]\nF2I TEMP[1], TEMP[0]\nI2F OUT[0], TEMP[1]\nEND\n"
+      }
+    },
+    {
+      "id": "C2",
+      "status": "NEEDS EVIDENCE",
+      "prediction": "The new known arithmetic wrapper selects and validates inherited v38 coordinate metadata.",
+      "observed": "bridge.c:stage_result region1710:115-142 count0 in original hot/cold recordings.",
+      "points": [
+        "renderer/virgl-shader/bridge.c:1710:115-142"
+      ],
+      "demand": "Record public supplemental-coordinate-wrapper at the frozen original native executable, assert v40 wrapper/base v38 and inherited coordinate policy, check whole native/Wasm pair parity and Node parse approval, and retain its original LLVM profile.",
+      "fixture": {
+        "path": "attack-predictions.json",
+        "name": "supplemental-coordinate-wrapper",
+        "index": 54,
+        "textSha256": "c4b060eb6d1914bfb388991e1e3a6895398c42b9e675c525c9e08f557ab5b312",
+        "text": "FRAG\nPROPERTY FS_COORD_ORIGIN LOWER_LEFT\nPROPERTY FS_COORD_PIXEL_CENTER HALF_INTEGER\nDCL IN[0], POSITION, LINEAR\nDCL OUT[0], COLOR\nDCL TEMP[0..7]\nIMM[0] UINT32 {1048576000,1048576000,1048576000,1048576000}\nIMM[1] UINT32 {1056964608,1056964608,1056964608,1056964608}\nADD TEMP[0], IMM[0], IMM[1]\nSIN TEMP[1], TEMP[0]\nADD OUT[0], TEMP[1], IN[0]\nEND\n"
+      }
+    },
+    {
+      "id": "J1",
+      "status": "NEEDS EVIDENCE",
+      "prediction": "Canonical ADD+MUL validation and inherited-base recursive rejection have original-source V8 execution evidence.",
+      "observed": "All sealed original browser V8 profiles have count0 at offsets11519-11565 (second operation) and11978-11987 (:checked). Original consumer result report semantically exercises these paths, but its Node V8 profile was not captured.",
+      "points": [
+        "renderer/virgl-command/constant-domain.mjs:152",
+        "renderer/virgl-command/constant-domain.mjs:156"
+      ],
+      "demand": "Capture NODE_V8_COVERAGE while replaying original-source consumer inputs: valid both-operation-wrapper metadata with operations [ADD,MUL], and an otherwise valid v40/SIN metadata record with inherited sineContract deleted. Bind script source hash and show positive counts for both specific nested ranges; include zero getter-invocation assertions. No GPU re-run is demanded for these inert metadata branches."
+    }
+  ],
+  "productContradictions": [],
+  "unchangedBoundarySources": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "sha256": "e3cae66fd843e9eadfd435967b04d3f546cb1b100c69750a6d9c8f8c17348398"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "sha256": "b4792108de3105ef0ba62d3c58bf148039c0ab0bcd9b0aaaa472bcf22f252b1d"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "sha256": "91409c2fa31857b1e917fd5fd3f8d759aedbf181bea6008257c2fa26ad05b9ce"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_known_arithmetic.h",
+      "sha256": "eaf4aa419caff2e7c9e7d2d5f6194c6184189cba78bd9c0ace541f7a291c27e9"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "sha256": "0be4e058dc23250a3116ac9360613a404739d807b858b926ee4d84205126b40b"
+    }
+  ],
+  "proofs": {
+    "attack-predictions.json": "83b533f100ddc39519fd0e4df0cd415b4b667e9557297c7e01291899b833d76c",
+    "coverage-audit.json": "0a35c329fa84eaf29458c3872c73ef62637e108a6be526d322cbd776331f34cd",
+    "consumer-capture-audit.json": "9e12bb536025fd45326b9a337fcf7b063f2519db077adcda019e01e132d45d1f",
+    "authentication.json": "12f4947d83d82ade98841c6a9094dfffdf1583d27eac79fe1e8e50169b1200c7",
+    "independent-oracle-audit.json": "bdf2f2f9a5a0b7edcb2aa6ba915d4ee515473bc50170b6c3a5542394a02ddddc",
+    "native-attacks.json": "eecf0ca2f5e7c25a21eea9613f375d2cee80b341897adad08e5642789aa03e35",
+    "original-profile-audit.json": "0944a0804048e6f8a30cfa05681a4b8c9b9384b005357e703de1ed7ace52fdcb",
+    "attack-prediction-correction.json": "95c2f9741995d8c83871eebda51bb3ed20a76884e14931437d20c4fa7c3ffb2e",
+    "fourth-capture-audit.json": "9d57a5e4c006cdcc17be36df14df8f7e1c1043cc289b6bcd29096d6acebbec8f",
+    "sabotage-prediction.json": "a80cdf7c439f3914ae1cf37552b454e0f77b3a739fcfdd8bde813919833b6f1c",
+    "predictions.json": "38fe79294e1c3bdb35000ac0c183ba5d6e25100c1101fbd15b5fadec9855f555",
+    "sabotage.json": "39796f1dfbce532609c9a1f79ea8bb599c220b2010e98099950cbec64c38c347",
+    "wasm-consumer-attacks.json": "e492bc85cfc430bb876de3b16abcc93c186287dce9f9852c8b3eab240ad80e4c"
+  },
+  "incrementalInstruction": "Carry all HELD semantic, independent attack/sabotage, original hardware, old result, and pristine-clone results forward while these boundary source hashes and their worker evidence digests remain unchanged. Record only the named supplementary native/Node proof and touched harness gates; no unrelated gauntlet or new pristine clone absent portability finding.",
+  "suite": "No promotion until proof sufficiency is complete. Independent deterministic oracle, exact fixtures/seed and real sabotage recordings are sealed candidates for promotion; no runtime code was edited."
+}

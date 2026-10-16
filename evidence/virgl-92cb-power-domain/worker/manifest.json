@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-original-92cb-physical-power-seal-v1",
+  "task": "E6-T12g6m5b2b1",
+  "sourceHead": "f9cc0ac20d2f837e8b68c560957f04e82ea8956f",
+  "records": 100,
+  "archiveSha256": "5d63d9a32cb74ad4d5533a46fb37b1980e3a9c5fbd10f7815ad27a611db7cdf0",
+  "archiveBytes": 4949795,
+  "recordIndexSha256": "76d1c99c2cb17832adc850306790d53eb6e23dd577215f9f6b8a4ba59dee7651",
+  "hotReceiptSha256": "b4b0f92078f9f454acf914fd385e2c857ff15d259b906ef8e1744d120dc3aebd",
+  "coldReportSha256": "ebc26e45faf5ac01015595c836646691d8beb6e5995a6022d1c26ea36b6322e5",
+  "coldReceiptSha256": "29ebb07f19125c0c2db58ac99d653bd73dfe348a854587490739b95a78e9173f",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "compilerAuthority": false,
+  "productionDrawAuthority": false
+}

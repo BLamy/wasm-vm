@@ -1,0 +1,17 @@
+{
+  "schema": "dimensional-depth-view-readiness-seal-v1",
+  "head": "bc2fb1e49575b8b1a399ca7729fcec4853a48287",
+  "records": 79,
+  "reopenedMembers": 79,
+  "recordIndexSha256": "f18e0e0bf22c2246363788c40ba8f696d38cabf5704decb704959d593490ddc1",
+  "archiveSha256": "73fa924aed62bd8ff8e812469b7ae98e403202f72c2ba664706b47a9ce93df68",
+  "archiveBytes": 4572788,
+  "negativeOriginalViews": 20,
+  "positiveOriginalControls": 13,
+  "nativeGpuCalls": 13858,
+  "assertions": 15581,
+  "actualLinuxGuest": false,
+  "positiveCapsetAuthority": false,
+  "originalStackPrsUnchanged": 137,
+  "newPr": 537
+}

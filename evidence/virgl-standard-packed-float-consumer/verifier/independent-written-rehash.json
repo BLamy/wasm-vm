@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "members": 5053,
+  "bytes": 131015836,
+  "completeWrittenIndexIndependentlyRehashed": true,
+  "archiveSha256": "c37f36dda0f5d1e157979e06e8e7cd98ee4c9a54853d4c071de9b7c4441e2b3b",
+  "recordIndexSha256": "2f723312128b1bbbe588ce89a3d1fb57315df8e9bf76bdfb1dcab42214b57031",
+  "extractedFresh": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/d28-written-critic-rehash-3d8wv0cf/fresh"
+}

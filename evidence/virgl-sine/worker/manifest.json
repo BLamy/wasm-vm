@@ -1,0 +1,24 @@
+{
+  "schema": "virgl-sine-worker-seal-v1",
+  "task": "E6-T12g6j1",
+  "sourceHead": "d44d2683941ab4cb32df53d4dcb84f045046caf9",
+  "base": "322bb56ee95ef9e2fb26b85179d61ae51efbbf5f",
+  "records": 135,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 32171106,
+    "sha256": "184d0cbf61b1fe7d3d0c01f1c20d786afceed06a1fa2600bbc4259e38011dc2c"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 23473,
+    "sha256": "451cf3abf287a254f83773bd3ab1963de8aeb09db555ecf5d969d1269481e0b3"
+  },
+  "hotReceiptSha256": "543ca9744fffdf50d1d40a43bdd75648138ef4769b037dd980786700bc1ad9a0",
+  "coldReportSha256": "d3de1df0400cbf06258a167c9c602735530fe36cd836d0888973b9c5e64d0a59",
+  "coldReceiptSha256": "c687ef5cad483d70a79249f4aba3e87762cc75e1e2143bb25dc1b71675d8f8f2",
+  "checkedWords": 24480,
+  "checkedPixels": 61056,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

@@ -1,0 +1,424 @@
+{
+  "scope": "Original final02 wall-clock stock typing failure; not a pass or cause claim",
+  "archive": "evidence/virgl-production-interactive-clock/worker/stock-wall-clock-repeat-negative-02.tar.gz",
+  "bytes": 417826,
+  "sha256": "49e3d57af16f950460a5b266afee70e1a5a7d33c84327bfc14db8208ef7173c2",
+  "reopenedMembers": 83,
+  "records": [
+    {
+      "path": "browser/failure.png",
+      "bytes": 20098,
+      "sha256": "ff074f422890e7ec33745074be0400bb71ee868e1ce8080d4fffe9e2110c4015"
+    },
+    {
+      "path": "browser/hardware.json",
+      "bytes": 7022,
+      "sha256": "1abf32565e66d377413207983a4bf03eaca58836aa1e0c0323026082e4084491"
+    },
+    {
+      "path": "browser/heartbeat.json",
+      "bytes": 1109419,
+      "sha256": "850bffff7c290a789b6426885a5d103e2b8418f6f15b651a984c15c39844703f"
+    },
+    {
+      "path": "browser/passive-worker-timing.json",
+      "bytes": 494869,
+      "sha256": "0228bbbed0a5a43fc919de2062c49a3961bfe7b5d0a8b34ef50771b5a8f18292"
+    },
+    {
+      "path": "browser/progress.png",
+      "bytes": 14911,
+      "sha256": "9a9fb1e0e2e2755f6aabed987ed0e0ef0efb509326de9c46c3965eb94301d715"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-000.json",
+      "bytes": 3576,
+      "sha256": "4c98560853c781f37858da773204aa91726016dfe6584043dbd53b39f0b7bb74"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-000.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-000.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-001.json",
+      "bytes": 3576,
+      "sha256": "c514d0fa3b87ef13e79a1a7dc11c20d61439d4692e9031743deef40fba007c60"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-001.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-001.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-002.json",
+      "bytes": 3576,
+      "sha256": "19ee385e5cffb905507b66b2d130c3ee6621f07dce2910865f2f3f280ce68542"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-002.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-002.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-003.json",
+      "bytes": 3576,
+      "sha256": "3b69b5ba738b375fde30579119aa7d00de0b6ecad43e3f8514169ae86cbc9d25"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-003.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-003.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-004.json",
+      "bytes": 3576,
+      "sha256": "5f45832b6ae2f303fbc4d2ae0b69cfa35f7d95dfd48d7e7860b27e2598eab1cb"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-004.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-004.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-005.json",
+      "bytes": 3576,
+      "sha256": "759eba3618364c8bea812a99d265d5867f6dae688d02aeaf046587732dcfc58d"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-005.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-005.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-006.json",
+      "bytes": 3576,
+      "sha256": "80c4fc8a23e4acec093f352af5f5e4cafeb8408045dfae5e0f2fd35161a5eb62"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-006.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-006.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-007.json",
+      "bytes": 3576,
+      "sha256": "e50f2e51e9bbcf8263e3e687c251fe8ca5eb8a1d116910c70e4eb0c702b231f5"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-007.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-007.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-008.json",
+      "bytes": 3576,
+      "sha256": "e3cdd649008ce8ab5b5c743ffda896c0c02206aee51651acfbecddd9095675dd"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-008.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-008.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-009.json",
+      "bytes": 3576,
+      "sha256": "56aa1a703e2235e66a054427879a1416399ea9ac566fb58d4f7d7e64acfc05b1"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-009.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-009.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-010.json",
+      "bytes": 3576,
+      "sha256": "0e66ff9bafc973d1912d0f175c5b1b62ca607d1c394a51f14b03d7d530735856"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-010.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-010.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-011.json",
+      "bytes": 3576,
+      "sha256": "5fe460588aca71b9259bd1a63af2ecd459c6296251ebbc50096e54cda78d73e6"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-011.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-011.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-012.json",
+      "bytes": 3576,
+      "sha256": "41aa26eac3bb374af15a43abbb7e36ce2c43cd1480431e0ebe64bc7f9cc0a4b9"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-012.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-012.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-013.json",
+      "bytes": 3576,
+      "sha256": "7f0da87683b9adad2e238571de281f270817dd47e0e4377ec16868768414c238"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-013.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-013.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-014.json",
+      "bytes": 3576,
+      "sha256": "8069703ea1751d5487ab4476a6ab3175bd801ab0d183338e59789e3a18dbade4"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-014.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-014.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-015.json",
+      "bytes": 3576,
+      "sha256": "0a016a54f64eddbbfa35111a8b095396754b8f5a047b8ae1e004e28214af8161"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-015.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-015.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-016.json",
+      "bytes": 3576,
+      "sha256": "4d66d7d2fbad76b9abdebc2f98086335d5a816240e0c3b5722a3a3ddaf6df386"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-016.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-016.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-017.json",
+      "bytes": 3576,
+      "sha256": "4f5b037ba533610c2e2bb31570d326e7a9c85431bbbcd7afe2f487c8b629a7de"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-017.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-017.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-018.json",
+      "bytes": 3576,
+      "sha256": "dea49d55f204279fbcac94e930db39925c8636a06adf575ece919b2ee815e16d"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-018.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-018.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-019.json",
+      "bytes": 3576,
+      "sha256": "e2603e13e5f2cfe006c602c1133a009471bdeefc0b78f4ffce730ff48c5336ec"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-019.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-019.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-020.json",
+      "bytes": 3576,
+      "sha256": "3bdf0545b96be994d5ee429f81805179895c9f33b7a16063c74f03eb08c42839"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-020.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-020.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-021.json",
+      "bytes": 3576,
+      "sha256": "bf9dff1ac2649536f7d721e3e18ccd7995be9ff413bab843c450891187001306"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-021.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-021.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-022.json",
+      "bytes": 3593,
+      "sha256": "5a5a00d89bd2272a194fd1e2eeb46775f8921f0922dccc22a3056cd13e3f35f7"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-022.png",
+      "bytes": 4854,
+      "sha256": "3c07c15c87aef85158f7e7fb6bf826c38eb63f6769fb2918785a9173af928884"
+    },
+    {
+      "path": "browser/public-desktop-input-bar-content-022.rgba",
+      "bytes": 133120,
+      "sha256": "a62111b0948956be281240730e1ae4f3f81229f6ee04d01bbd29f453dbe68fa8"
+    },
+    {
+      "path": "browser/public-desktop-input-failed.png",
+      "bytes": 19778,
+      "sha256": "fe3cc565814329927c9cedbd65af7e8d094ec54a016e11417c00c88fe7dcf260"
+    },
+    {
+      "path": "browser/public-desktop-input-typed.png",
+      "bytes": 10903,
+      "sha256": "2e294fb49fd080d2ea1527056abb10fd2b227242feb796d8d3791f69167896b9"
+    },
+    {
+      "path": "browser/public-desktop-input.json",
+      "bytes": 72449,
+      "sha256": "c4ebe64f52e757bf2c4b001514fdf1d9a565e879b276f558f0eaa62f89a28914"
+    },
+    {
+      "path": "browser/report.json",
+      "bytes": 2233081,
+      "sha256": "100b18cbeb7b31cfa2176215b14cb67b7405582a32a539dff9c05430434fb047"
+    },
+    {
+      "path": "oracle-protocol.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "oracle-protocol.stdout",
+      "bytes": 716,
+      "sha256": "35b9f1e531ae4e947c98da0346dcc3500b23446a9092becd4a773bc25d3a9073"
+    },
+    {
+      "path": "public.stderr",
+      "bytes": 471,
+      "sha256": "901bd13a6446909fda70d0647c0a1330d8fbb75dd2060cbd9c04599ab2aa7e86"
+    },
+    {
+      "path": "public.stdout",
+      "bytes": 81571,
+      "sha256": "6a43f85b4d300f10c7c451d54ccb626d247eb64b5fd3298e34f01c8090160835"
+    },
+    {
+      "path": "report.json",
+      "bytes": 16342,
+      "sha256": "7a88cb843d02a63f6bfaa75d0d1d9b3f5985fa0601e992ac537ffe888dceb0ac"
+    }
+  ]
+}

@@ -1,0 +1,222 @@
+{
+  "schema": "virgl-known-arithmetic-critic-original-profile-v1",
+  "status": "passed",
+  "recordings": [
+    {
+      "kind": "hot",
+      "binary": {
+        "path": "target/evidence/virgl-known-arithmetic-critic/unpacked/generated/known-arithmetic-sanitize/known-test",
+        "sha256": "28bbf65f360d93c674ec2b035d871136e958d42be6f00261820d5f922df606da"
+      },
+      "rawProfileSha256": "d1975d21eda5ad4954cad5771ec825348c27ec04ae0586eb244036fd05f8c3a5",
+      "mergedProfileSha256": "abf869666cf3e495ad5e89059cf61f6e235df038d67ed592effdd5709f1cb863",
+      "fullExport": {
+        "path": "target/evidence/virgl-known-arithmetic-critic/hot-original-coverage.json",
+        "sha256": "e897cb38f7bd6c543c741985485ebc02a844681f55db08b289dba685bec2b7f5"
+      },
+      "recordedFilteredCoverageSha256": "c01993ec52664e2e9c3a81ba9cb24e03fae0cfec9557f61ff160173b37f0d717",
+      "filteredExportEqualsOriginalRecording": true,
+      "functions": [
+        {
+          "name": "bridge.c:known_arithmetic_contract",
+          "count": 1564,
+          "files": [
+            "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/bridge.c"
+          ]
+        },
+        {
+          "name": "raw_bits.c:known_operands",
+          "count": 7480,
+          "files": [
+            "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_bits.c"
+          ]
+        },
+        {
+          "name": "raw_bits.c:known_word",
+          "count": 25216,
+          "files": [
+            "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_bits.c"
+          ]
+        },
+        {
+          "name": "raw_bits.c:known_add",
+          "count": 2128,
+          "files": [
+            "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "raw_bits.c:known_jam",
+          "count": 2200,
+          "files": [
+            "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "raw_bits.c:known_pack",
+          "count": 3804,
+          "files": [
+            "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "raw_bits.c:known_mul",
+          "count": 2064,
+          "files": [
+            "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "known_arithmetic.c:require",
+          "count": 156777,
+          "files": [
+            "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/native_tests/known_arithmetic.c"
+          ]
+        },
+        {
+          "name": "known_arithmetic.c:read_u32",
+          "count": 48529,
+          "files": [
+            "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/native_tests/known_arithmetic.c"
+          ]
+        },
+        {
+          "name": "known_arithmetic.c:known_mul",
+          "count": 23216,
+          "files": [
+            "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "known_arithmetic.c:known_pack",
+          "count": 46300,
+          "files": [
+            "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "known_arithmetic.c:known_jam",
+          "count": 25232,
+          "files": [
+            "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "known_arithmetic.c:known_add",
+          "count": 23216,
+          "files": [
+            "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "cold",
+      "binary": {
+        "path": "target/evidence/virgl-known-arithmetic-critic/unpacked/cold-generated/known-arithmetic-sanitize/known-test",
+        "sha256": "c4eeae93534814d9ccc1f2beded36781275946da8fb97dba0499a662150d74f2"
+      },
+      "rawProfileSha256": "d9d1c0fc5b2d0ca48ea7e244336257c7ff644758a6fe991727d45cd68aaa3356",
+      "mergedProfileSha256": "abf869666cf3e495ad5e89059cf61f6e235df038d67ed592effdd5709f1cb863",
+      "fullExport": {
+        "path": "target/evidence/virgl-known-arithmetic-critic/cold-original-coverage.json",
+        "sha256": "750ba05f051d8c478156d270fe4b114cf252505f8f1630eafc12b7f58137f9f3"
+      },
+      "recordedFilteredCoverageSha256": "a10b7e150f68e16dcdf7dda6202dcec26a85a9c7c4b1de3d3ee4c80ccca2c058",
+      "filteredExportEqualsOriginalRecording": true,
+      "functions": [
+        {
+          "name": "bridge.c:known_arithmetic_contract",
+          "count": 1564,
+          "files": [
+            "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/bridge.c"
+          ]
+        },
+        {
+          "name": "raw_bits.c:known_operands",
+          "count": 7480,
+          "files": [
+            "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_bits.c"
+          ]
+        },
+        {
+          "name": "raw_bits.c:known_word",
+          "count": 25216,
+          "files": [
+            "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_bits.c"
+          ]
+        },
+        {
+          "name": "raw_bits.c:known_add",
+          "count": 2128,
+          "files": [
+            "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "raw_bits.c:known_jam",
+          "count": 2200,
+          "files": [
+            "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "raw_bits.c:known_pack",
+          "count": 3804,
+          "files": [
+            "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "raw_bits.c:known_mul",
+          "count": 2064,
+          "files": [
+            "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "known_arithmetic.c:require",
+          "count": 156777,
+          "files": [
+            "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/native_tests/known_arithmetic.c"
+          ]
+        },
+        {
+          "name": "known_arithmetic.c:read_u32",
+          "count": 48529,
+          "files": [
+            "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/native_tests/known_arithmetic.c"
+          ]
+        },
+        {
+          "name": "known_arithmetic.c:known_mul",
+          "count": 23216,
+          "files": [
+            "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "known_arithmetic.c:known_pack",
+          "count": 46300,
+          "files": [
+            "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "known_arithmetic.c:known_jam",
+          "count": 25232,
+          "files": [
+            "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        },
+        {
+          "name": "known_arithmetic.c:known_add",
+          "count": 23216,
+          "files": [
+            "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-known-arithmetic-cold-u5mc9ilw/wasm-vm/renderer/virgl-shader/raw_known_arithmetic.h"
+          ]
+        }
+      ]
+    }
+  ]
+}

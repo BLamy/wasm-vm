@@ -1,0 +1,86 @@
+{
+  "schema": 1,
+  "task": "E6-T12g6m3a",
+  "verdict": "verified",
+  "claimHead": "b3dd41b2633adf4dd5d29d8cac848294b8fa4e9f",
+  "workerSourceHead": "38d7f930e012d8430e112d5dc3192a17ea4e164d",
+  "predictions": [
+    {
+      "id": "P1",
+      "status": "HELD"
+    },
+    {
+      "id": "P2",
+      "status": "HELD"
+    },
+    {
+      "id": "P3",
+      "status": "HELD"
+    },
+    {
+      "id": "P4",
+      "status": "HELD"
+    },
+    {
+      "id": "P5",
+      "status": "HELD"
+    },
+    {
+      "id": "P6",
+      "status": "HELD"
+    },
+    {
+      "id": "P7",
+      "status": "HELD"
+    },
+    {
+      "id": "P8",
+      "status": "HELD"
+    },
+    {
+      "id": "P9",
+      "status": "HELD"
+    }
+  ],
+  "summary": {
+    "changedRuntimeLines": 85,
+    "conditionalChildren": 72,
+    "executedChildren": 71,
+    "waivedChildren": 1,
+    "evidenceGaps": 0,
+    "criticCases": 164,
+    "criticMetadataAttacks": 138,
+    "criticGetterCalls": 0,
+    "criticPhysicalSeeds": [
+      2343432205,
+      324508640,
+      3512640993
+    ],
+    "criticFrames": 393,
+    "criticPixels": 25152,
+    "criticRejections": 807,
+    "criticUploadWords": 184380,
+    "unwrappedFrames": 8,
+    "unwrappedRejections": 4,
+    "oldResultsHeld": 10717,
+    "oldPairsHeld": 2683,
+    "closedExtensionsHeld": 177
+  },
+  "reportsSha256": {
+    "carry-forward.json": "d3a4601808e86a177f10a0aafcb58974224650cfb071b53ee31d82b3b883b941",
+    "coverage-audit.json": "3039e5c90bff301c5787e5e4bbdbd530407151a6d8f2eeb2ab8c6889db1ef58e",
+    "authentication.json": "f816f185553d8121286be846cbec2aa3309a5989c6b70fdbbb68e0f89a3434d5",
+    "capture-audit.json": "1c36143acfe51ab25d7b4c4340027ee643e5d7ca7ec8377b2b01e1b92238c7f6",
+    "reexport-report.json": "3cd83aa77b5b19cab9b8777f1206d6e7fae78089fe8feecc8e767937efde378f",
+    "predictions.json": "c2edf71f5c461dc72e9adf7dbaea692863b42f18a39e23d6f944974523f80fe1",
+    "historical-paths.json": "273d5035f700f869de0dbde8b5aee0f8bf7f690d5fcba4c33e29852eec71a6a5",
+    "sabotage.json": "cc816cf9398313cb339e741440ffa276075cdf9fe07704b9d0b27e28972d38c4",
+    "fault-source-audit.json": "7f3b2fea445c0a427f73681886cab917b5226a3d9802f6ee3216416ca8f7c3b8",
+    "final-checks.json": "949981390eafc612a854ed2cd364891674fbe4aa775583f4eb399b4a1ffc408c"
+  },
+  "implementationEdited": false,
+  "pristineCloneRepeated": false,
+  "workerSealsChanged": false,
+  "historicalRecordsRetagged": false,
+  "scope": "private exact bank metadata consumer only; no compiler admission, negotiation, demo import, guest execution or performance claim"
+}

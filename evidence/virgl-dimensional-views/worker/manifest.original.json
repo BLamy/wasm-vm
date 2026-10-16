@@ -1,0 +1,51 @@
+{
+  "schema": "dimensional-view-seal-v1",
+  "task": "E6-T11d58",
+  "head": "1c7f8c9b4e52e09e8f6e2201f92d7483ce7117a6",
+  "records": 2327,
+  "reopenedMembers": 2327,
+  "recordIndexSha256": "398ef4c26c719a0995bd5fbc7d14039d5dcccdb13613de7a22c945572d9a32da",
+  "archiveSha256": "fb56c37995c361bece8bbe14f6ec5606580741affbb8c76a9469e6c6a231cdf5",
+  "archiveBytes": 151192332,
+  "dependencySeals": [
+    {
+      "family": "virgl-production-readiness/dimensional-sampler-view-gap",
+      "manifestSha256": "b76764f40ad62136a835869e1adb88650ae58f8b6a56ce0284c42b8ff9f8c530",
+      "indexSha256": "8a0f3e965d6fc8a515c2fb289c7b7e88cfcefc163b0ca2fe7225890e841351bf",
+      "archiveSha256": "f087447c3ff9b16638724faffe0cf83c7a6f2979c37775e092f5fec2f2d6543a",
+      "reopenedBodies": 84
+    },
+    {
+      "family": "virgl-dimensional-shaders/worker",
+      "manifestSha256": "0c698861a17b341265e35b6c6d223ea0390ea495cb942c0e469d4ecb1201602f",
+      "indexSha256": "ce50cc6e695c5a8dacebc006e88c661967f2fa1e5a1e646b4ae5809d9c54976f",
+      "archiveSha256": "0476287955b27dd7ffca49c3be190acfa6f2b809c86f0b7f9339c995ec84970c",
+      "reopenedBodies": 38049
+    },
+    {
+      "family": "virgl-dimensional-shaders/verifier",
+      "manifestSha256": "acd8e069a0145f98a800aa6f496beba2f0d5b1ba3f29dc42e674ce556b4c0843",
+      "indexSha256": "a2ec3a56cc5f691c63d7176f57d9ee8470f4b203819560cbdd380b147f8b59a7",
+      "archiveSha256": "676ea1a1e5fd4a620d6ec7171a0f73b86e106b918c326692c49c3e5fa3a079d7",
+      "reopenedBodies": 12768
+    },
+    {
+      "family": "virgl-native-dimensional/worker",
+      "manifestSha256": "7c8fb3ab46b3659ce855e77a80afc161a14f808b491a6753caa6c53231b0d0e6",
+      "indexSha256": "01cb810875ddfcd1b895df24e688e798c1fe4e9d66364da2be4ea0d6aaeef418",
+      "archiveSha256": "d2f66777cdba8f6375d5958e80ca9204854bbccf151a0c3325cb63e6f91eef4b",
+      "reopenedBodies": 1625
+    },
+    {
+      "family": "virgl-native-dimensional/verifier",
+      "manifestSha256": "d290f464b5be7dbd39e01cc588aa9d4ed580bb4d7e688c345443e86e87ec2dc5",
+      "indexSha256": "914145b80457bbbe323229b4323cdcc04a04001f85399c36a510063cc92bd0b5",
+      "archiveSha256": "073c067eb7fb04d5ce3747d5937e9ec05cd210ae09da8b878ad5179420158619",
+      "reopenedBodies": 792
+    }
+  ],
+  "authoritativeRecording": "cold/recording",
+  "commands": 31,
+  "guestExecution": false,
+  "productionAuthority": false
+}

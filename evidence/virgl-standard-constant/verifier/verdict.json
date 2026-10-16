@@ -1,0 +1,60 @@
+{
+  "schema": "D7-fresh-critic-verdict-v1",
+  "verdict": "verified",
+  "predictionDigest": "0d221b9ae82d3b3edf2b1042e5b9e034b08be011cbbe8ac978c776844659c438",
+  "predictions": [
+    {
+      "id": "P1",
+      "result": "HELD"
+    },
+    {
+      "id": "P2",
+      "result": "HELD"
+    },
+    {
+      "id": "P3",
+      "result": "HELD"
+    },
+    {
+      "id": "P4",
+      "result": "HELD"
+    },
+    {
+      "id": "P5",
+      "result": "HELD"
+    },
+    {
+      "id": "P6",
+      "result": "HELD"
+    },
+    {
+      "id": "P7",
+      "result": "HELD"
+    },
+    {
+      "id": "P8",
+      "result": "HELD"
+    },
+    {
+      "id": "P9",
+      "result": "HELD"
+    },
+    {
+      "id": "P10",
+      "result": "HELD"
+    }
+  ],
+  "independentlySeededNovel": "0xa17c9e53: [2,4,1,3,4] lanes, distinct resources3..7, u32 IDs0xb4d40000..03,offsets36/44/40/12/48,per-fence seeded later-task delivery; all5 retained tickets and upload of collected resource3 alone",
+  "promotedPixelSabotage": "Completed drawElementsInstanced/fence; (0,0) expected[48,42,31,104] observed[99,42,31,104],error51; named critic-seeded-exact promoted independent pixel oracle rejects",
+  "originalAudit": "62 frames/25000 full pixels; both actual native generic sabotages independently rejected",
+  "promotedAudit": "6 novel +3 unchanged default-routing frames/5700 full pixels; all task attacks + distinct-source stress",
+  "runtimeHunkCoverage": "74 added/changed source lines; no unexecuted runtime alphanumeric tokens in authenticated combined original/retained V8 coverage",
+  "carry": "268 unchanged compiler/decoder/resource/cache/constant-domain/native-link boundaries; original full D6/4 legacy gates and final pristine39a9d14b run carry under incremental policy",
+  "scope": "Isolated standard async constant-attribute slice only; no guest,API,FPS,MIPS,caps,demo deployment authority",
+  "commands": [
+    "python3 evidence/virgl-standard-constant/verifier/authenticate.py",
+    "python3 evidence/virgl-standard-constant/verifier/audit_originals.py",
+    "python3 evidence/virgl-standard-constant/verifier/audit_coverage.py",
+    "VIRGL_STANDARD_CONSTANT_ADVERSARIAL_EVIDENCE_DIR=target/evidence/virgl-standard-constant-critic-final make verify-E6-T11d7-adversarial"
+  ]
+}

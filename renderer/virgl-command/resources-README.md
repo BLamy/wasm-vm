@@ -337,3 +337,131 @@ means the full resource width in guest bytes, including partial boxes; layer
 stride0 means the full resource height. Dense repacking skips guest row padding.
 Inline writes never modify guest backing and pending inline tickets bind resource
 and membership generations, independently of unrelated backing changes.
+
+
+## Host-selected multilevel 2D storage
+
+`createStandardTextureResourceStore` and `computeStandardTextureTransferLayout`
+extend the original buffer owner with existing color formats2/67/233 and bounded
+2D mip chains. `decodeStandardTextureSubmission` admits original op9/43/45 level
+words0..14; each resource still bounds the actual selected level. Dimensions round
+down per mip, with a minimum of one, and GPU charges sum every allocated level.
+Selected default strides use the full selected level dimensions. `mip-texture`
+metadata includes frozen `levels` and cannot pass historical view/draw/scanout
+kind checks. Transfers allocate no CPU image mirror; reads use the selected native
+FBO/PBO level and existing fences/identity retirement. Packed X-alpha initializes
+each native level. Historical factories retain their previous admissions and
+metadata/layout shapes. This storage facet grants no full/subrange sampler view,
+complete API, production negotiation or actual guest rendering by itself.
+
+The explicit `createStandardImageResourceStore` host facet adds original 2D view
+ranges and surface planes to the verified multilevel store. Its separate
+`imageAccess` capability owns opaque view and completion tokens. A restricted
+range has a fully charged private immutable GPU chain, refreshed before each
+active draw by identical-format, unscaled native framebuffer blits. A complete
+range may alias its retained source. Public token retirement and allocation
+retirement are distinct: submitted holds keep private/source storage charged
+through the job fence. Caller scissor and read/draw FBO state are restored; no CPU
+image feeds native output. Old factories expose no image capability.
+
+`decodeStandardImageSubmission` and `createVirglStandardImageAsyncRenderer`
+select original view first/last and surface level words. Both shader stages can
+retain different ranges of one source. Logical feedback rejects an overlapping
+original framebuffer plane even when a view uses a private copy. Nonoverlapping
+original levels can render into another plane. Z16 remains level zero; matching
+depth dimensions are checked against the selected color plane. Native base/max
+state restores explicitly, and views/surfaces retain native allocations until
+completion, cancellation or disposal. This isolated host API does not qualify
+production capsets, a complete guest API or the production worker/scanout path.
+
+
+### Original byte color images
+
+`createStandardColorTransferBackend`, `createStandardColorResourceStore`,
+`computeStandardColorTransferLayout`, `decodeStandardColorSubmission`, and
+`createVirglStandardColorAsyncRenderer` select the byte color boundary explicitly.
+The preceding factories keep their admissions and result shapes. The color store
+requires its matching native backend, including actual `EXT_render_snorm` support
+for private signed image copies and readback. Signed-normalized images support
+original sampler roles here; their original render bindings and surfaces reject.
+UNORM and sRGB images support both sampler and render roles.
+
+The immutable original format descriptor preserves each guest channel order and
+logical pixel size. New metadata reports `pixelBytes`, logical `byteLength`, and
+physical `gpuByteLength`, including every mip. Guest boxes, backing offsets and
+row pitches always use logical bytes. RGB SNORM and RGB sRGB use complete RGBA
+native storage with alpha initialized to one. All implicit-alpha render formats
+mask destination alpha writes. Allocation and private-view budgets charge the
+physical storage; uploads reserve enough scratch for any expansion. Expansion
+walks backwards in that same reservation. Readback uses native RGBA bytes and
+compacts them to the original guest order in the same reservation; R/RG images
+therefore reserve four bytes per read pixel, including their staged PBO.
+
+Native normalized sampling supplies missing zero/one channels. Native sRGB
+textures decode before filtering, and native sRGB targets encode linear clears,
+draws and blending. CPU transfers carry encoded bytes. Signed `-128` and `-127`
+represent the same normalized endpoint; normalized readbacks and GPU copies may
+canonicalize that duplicate encoding. No CPU texture shadow or store revision
+substitutes for the actual native image when refreshing a restricted mip view.
+This boundary supplies no complete guest API, positive capset, production guest
+initialization, scanout, deployment or throughput authority.
+
+### Original floating depth storage
+
+`createStandardFloatingDepthResourceStore`,
+`createStandardFloatingDepthTransferBackend`, and
+`computeStandardFloatingDepthTransferLayout` explicitly select Z32_FLOAT (18)
+and Z32_FLOAT_S8X24_UINT (126). Original 2D depth, sampler and combined bindings
+are 1, 8 and 9. Bounded full/truncated NPOT mip chains, strided segmented input,
+partial mip boxes and retained native ranges preserve original level identities.
+Historical owners and layouts continue rejecting these formats; Z16 keeps its
+original one-level depth binding. No new command/shader consumer or production
+device selects this storage profile.
+
+Format 18 owns native DEPTH_COMPONENT32F at four bytes per pixel. Format 126
+owns DEPTH32F_STENCIL8 plus a persistent pixel-unpack buffer, charged together
+at sixteen bytes per pixel before allocation. Original input remains eight
+bytes: little endian F32, stencil UP8 and unused X24. The numeric-offset PBO
+upload obeys WebGL's restriction on packed depth/stencil ArrayBufferViews.
+Finite depth follows GLES clamping to [0,1]. Signed zero and denormals retain
+only their defined alternatives; nonfinite fields have bounded raw custody,
+without a payload/value guarantee. Public X24 padding is canonical zero.
+
+Readback packs native float bits on the GPU. Packed stencil uses a cropped
+matching-format native blit and actual fixed-function masked tests into a
+separate byte plane. CPU work interleaves those downloaded fields only after
+completion; it never mirrors or rasterizes the texture. Read scratch is four
+bytes/pixel for 18 and sixteen for 126. Conversion textures cost four and
+sixteen; queued native read PBOs cost four and eight, so total staging charges
+are eight and twenty-four respectively. Every private 126 range includes its
+own upload-buffer charge. Matching-format NEAREST depth/stencil copies preserve
+fields through GPU-only changes, old generations and completion holds.
+
+Packing restores caller program, VAO, framebuffers, viewport, texture/sampler
+parameters, depth/stencil state, blend and color mask. With indexed draw buffers
+it changes output zero only, preserving other outputs without relying on an
+unavailable enabled-state query. Cancellation, native failure, disposal and ID
+reuse release each owned allocation once. `make verify-E6-T11d39` records full
+original/native/public inputs, varied physical schedules, independent field
+inverses, completed native corruption controls and governing V8 partitions.
+Real guest Mesa initialization, shadow/surface consumers, capabilities, demo
+deployment and throughput remain later qualifications.
+
+E6-T11d55 separately selects `createStandardDimensionalResourceStore`,
+`createStandardDimensionalTransferBackend` and
+`decodeStandardDimensionalSubmission`. Original RGBA8 volume (target3), cube
+(target4, six square faces) and 2D array (target7) owners use actual immutable
+WebGL2 storage. Volume mip depth shrinks; cube faces and array layers stay fixed.
+The selected owner preserves original render/sampler roles and creation hints,
+clamps separate dimensions/layers to measured host limits and charges every mip
+against the existing 4MiB resource/transfer and 32MiB aggregate budgets.
+
+Original op9/43/45 transfers preserve x/y/z, row stride, layer stride, odd public
+offsets, split SG backing and synchronized staging-copy directions. Reads use
+layer/face framebuffer attachments and either native byte output or a fenced
+PBO. GPU-only overwrites supply the inverse oracle; no CPU image mirror exists.
+`make verify-E6-T11d55` records the affected historical paths, three hardware
+schedules, literal full-byte inverses, failure cleanup, native layer sabotage
+and finest changed V8 regions. Historical constructors and dimensional
+sampler/surface/scanout admission remain separately gated. Native transport,
+production capability negotiation and Linux guest rendering are later work.

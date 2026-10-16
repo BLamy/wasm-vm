@@ -1,0 +1,39 @@
+{
+  "schema": "packed-depth-consumer-fresh-critic-seal-v1",
+  "task": "E6-T11d43",
+  "sourceHead": "1b03feb0b60422ba706f14c7f0fcd22d222fa903",
+  "frozenWorkerRuntime": "bb12868a5fceea81acec5a8ff42496e13007ddd8",
+  "workerSubmission": "dd466604ee2c1f61c9a2cb7e22750107f09b0425",
+  "workerSeal": {
+    "manifestSha256": "50d98b1a99ec9ffc0dce2567126a59fa7785536140275c2c62951d47378dfbdb",
+    "archiveSha256": "cee5f6525922a02a14885affebcf763df18468b6434267a251f1a1f5b3e313a4",
+    "indexSha256": "012d2a73e5d3d61db1b98a399ebda30d2d0f8592ec54df06e15a0f9cc6be11cf",
+    "independentlyReopenedLogicalMembers": 61957,
+    "heldD42LogicalBodies": 43044
+  },
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 17879350,
+    "sha256": "b4dd7626c6f74f145515c810c12d17416dfefd7ae527cee524c1e9265fee9d56"
+  },
+  "index": {
+    "path": "records.json",
+    "bytes": 3541971,
+    "sha256": "f5397d5d120a13072a44bef5fb2437457532465ef3a272821fbbd871f43b0964"
+  },
+  "reopening": {
+    "path": "reopening-audit.json",
+    "bytes": 3578274,
+    "sha256": "34225bc05afd4c10a312602c78a29a3bbe84543a29e954dc0f75f141d85d646b",
+    "logicalMembers": 12156,
+    "physicalMembers": 1729,
+    "logicalBytes": 294313620,
+    "physicalBytes": 161757454
+  },
+  "wholeFreshRecordings": 9,
+  "sourceClosureBodies": 972,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "authority": "isolated original packed UN24 consumers; unchanged held predecessor boundaries only"
+}

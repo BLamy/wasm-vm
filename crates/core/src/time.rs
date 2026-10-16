@@ -1,6 +1,6 @@
 //! E4-T24 — Timekeeping: the `mtime` derivation policy, in ONE place.
 //!
-//! The guest's machine timer (`mtime`) can be driven from two sources, selected per run:
+//! The guest's machine timer (`mtime`) has three explicitly selected policies:
 //!
 //! * [`TimeMode::ICount`] — **deterministic**. `mtime` is a pure function of the retired-instruction
 //!   count (`mtime = retired / clock_div`). Native and wasm retire the same instructions, so a timer
@@ -14,6 +14,10 @@
 //!   The host wall reading is **injected** through [`MonotonicClock`] so `crates/core` never names a
 //!   host time API (the no_std determinism guard — no `SystemTime`, no `Date::now`, and — critically
 //!   for the wasm32 no_std build — no f64 intrinsics: every computation here is integer-only).
+//!
+//! * [`TimeMode::PacedICount`] keeps retire-derived busy time and uses [`IdlePacer`] to bound
+//!   idle deadline jumps by monotonic host progress. It is opt-in and not deterministic across
+//!   hosts. Its host epoch is rebased at explicit pause/restore boundaries, never serialized.
 //!
 //! ## The wall-clock hazards this module defends against
 //!
@@ -118,8 +122,46 @@ pub struct TimeJump {
 pub enum TimeMode {
     /// Deterministic: `mtime = retired / clock_div`. The lockstep/fuzz source.
     ICount,
+    /// Retire-derived while busy; idle deadline jumps are capped by monotonic host progress.
+    PacedICount,
     /// Host-wall-derived, scaled to the timebase, with the clamp + slew policy.
     WallClock,
+}
+
+/// Host-only ceiling for opt-in ICount idle fast-forward. It never produces busy time or
+/// serializes a host epoch. Retire-derived time may already be ahead of this ceiling.
+#[derive(Debug, Clone)]
+pub struct IdlePacer {
+    anchor_host_ns: u64,
+    latest_host_ns: u64,
+    anchor_mtime: u64,
+    timebase_hz: u64,
+}
+
+impl IdlePacer {
+    pub fn new(host_ns: u64, mtime: u64, timebase_hz: u64) -> Self {
+        Self {
+            anchor_host_ns: host_ns,
+            latest_host_ns: host_ns,
+            anchor_mtime: mtime,
+            timebase_hz,
+        }
+    }
+
+    /// Limit a future idle deadline without rewinding current guest time. Backward host
+    /// readings retain the last ceiling; a large span saturates instead of wrapping.
+    pub fn limit_deadline(&mut self, host_ns: u64, current: u64, deadline: u64) -> u64 {
+        self.latest_host_ns = self.latest_host_ns.max(host_ns);
+        let elapsed = self.latest_host_ns - self.anchor_host_ns;
+        let ticks = u128::from(elapsed) * u128::from(self.timebase_hz) / NANOS_PER_SEC;
+        let ceiling = (u128::from(self.anchor_mtime) + ticks).min(u128::from(u64::MAX)) as u64;
+        current.max(deadline.min(ceiling))
+    }
+
+    /// Explicit pause/restore boundary: elapsed host time before this instant is discarded.
+    pub fn rebase(&mut self, host_ns: u64, mtime: u64) {
+        *self = Self::new(host_ns, mtime, self.timebase_hz);
+    }
 }
 
 /// The single owner of `mtime` derivation. In ICount mode it is a thin wrapper over the retire clock

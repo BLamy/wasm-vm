@@ -1,0 +1,136 @@
+{
+  "schema": "bounded-desktop-bridge-negative-seal-v1",
+  "head": "0660eebf08a1b047109ed4e2e508132b68d103ba",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "files": {
+    "acceptance.log": {
+      "bytes": 209,
+      "sha256": "c21627cd718cf6b5869e61d1a14e2fca3b6e9d3a77aa55ee6a229fea391810c3"
+    },
+    "browser.png": {
+      "bytes": 18324,
+      "sha256": "73eaa490287982d82a2bf94578b8a3805efdda9cc24d4895d1c2dd8a21eb3540"
+    },
+    "report.json": {
+      "bytes": 1792927,
+      "sha256": "7e3a04b2eaedb7d1dbd3efbb8931b8c2ec6d9d0ff18120f3d8456cec7a0ef904"
+    },
+    "source/evidence/virgl-corpus/captures/compositor/events.jsonl": {
+      "bytes": 522583,
+      "sha256": "5aedec4ee9c7c803648e16399f0846a88b1a1223b4eb93bec88726bc25b36b72"
+    },
+    "source/evidence/virgl-corpus/captures/compositor/manifest.json": {
+      "bytes": 7981,
+      "sha256": "22519c071fb65af6c5556bda1c3f4304951f49b8d19141ac40658bcb2d31482c"
+    },
+    "source/evidence/virgl-corpus/captures/glmark2-es2/events.jsonl": {
+      "bytes": 1145629,
+      "sha256": "ceaefc4b26e9d5811a89d4bb1f4fe24cd2ecb57def339e697e001cfbbd03921c"
+    },
+    "source/evidence/virgl-corpus/captures/glmark2-es2/manifest.json": {
+      "bytes": 8190,
+      "sha256": "28effba207e0c7d5679644e9a5c8d21b5ce30067a8155dfe46f92e417050c263"
+    },
+    "source/evidence/virgl-corpus/captures/kmscube/events.jsonl": {
+      "bytes": 48547,
+      "sha256": "d9007a7d2d3b2d769710c69dc7b4740a5aaf41a9b57a2426181b01c0457a3506"
+    },
+    "source/evidence/virgl-corpus/captures/kmscube/manifest.json": {
+      "bytes": 7245,
+      "sha256": "f336ce65bbf4827ab6b7f43d76b6be9badbc8c81a3576116095d09615dfbb77f"
+    },
+    "source/renderer/virgl-command/cache.mjs": {
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    "source/renderer/virgl-command/color-images.mjs": {
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    "source/renderer/virgl-command/constant-domain.mjs": {
+      "bytes": 110717,
+      "sha256": "4a35c325ff9a0247fbf4639c78c59daa1afb6fa95aeca92b21cf2d0c8d9a918e"
+    },
+    "source/renderer/virgl-command/control-bridge.mjs": {
+      "bytes": 30335,
+      "sha256": "59881d26fa257e3462f5d628026d4557ae541f27894124d19fddc9b104db43cf"
+    },
+    "source/renderer/virgl-command/decoder.mjs": {
+      "bytes": 45546,
+      "sha256": "55ec838b53c0ffa0085193ef5f067141f1316fa754eb3045efb93b2a20c5cad2"
+    },
+    "source/renderer/virgl-command/float-images.mjs": {
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    "source/renderer/virgl-command/floating-depth-gpu.mjs": {
+      "bytes": 14648,
+      "sha256": "6e87240445044201f21a2977ee883de57e930542b67a99a03cf0077c008ef853"
+    },
+    "source/renderer/virgl-command/floating-depth-images.mjs": {
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    "source/renderer/virgl-command/integer-images.mjs": {
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    "source/renderer/virgl-command/packed-float-images.mjs": {
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    "source/renderer/virgl-command/packed-normalized-images.mjs": {
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    "source/renderer/virgl-command/packed-unsigned-images.mjs": {
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    "source/renderer/virgl-command/resources.mjs": {
+      "bytes": 123354,
+      "sha256": "23dcd1d6260e4d439d851432e21c56edd0194bff1cf086ddb5f2da0a616db4f0"
+    },
+    "source/renderer/virgl-command/scanout.mjs": {
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac"
+    },
+    "source/renderer/virgl-command/shared-exponent-gpu.mjs": {
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    "source/renderer/virgl-command/shared-exponent-images.mjs": {
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    "source/renderer/virgl-command/state.mjs": {
+      "bytes": 184409,
+      "sha256": "011f6b308b6e99fe5a1513c28fac20a79498122e95f6f31e1062b35221b5be63"
+    },
+    "source/renderer/virgl-command/unorm-depth-images.mjs": {
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    "source/renderer/virgl-shader/build/wasm/virgl-shader.mjs": {
+      "bytes": 13094,
+      "sha256": "4da9f1ed30cff697193e0688a26ee93e48a3e1216485d5184301fec6c31d4879"
+    },
+    "source/renderer/virgl-shader/build/wasm/virgl-shader.wasm": {
+      "bytes": 441516,
+      "sha256": "aba0c891ad406ef876da6f1a86883b3fcdd98de12c1137a4f2feff566f5459f2"
+    },
+    "source/renderer/virgl-shader/index.mjs": {
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    "source/renderer/virgl-shader/standard.mjs": {
+      "bytes": 13130,
+      "sha256": "7371d7605ff8d7fe622330e3b0c3fda84704d0dffc08efb024d84387c4ce1952"
+    },
+    "source.mjs": {
+      "bytes": 11004,
+      "sha256": "aa229bf815d558b964445cfda4318a92bde866ff3fbcbcb7d7cb656dfa655f3e"
+    }
+  }
+}

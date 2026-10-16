@@ -1,0 +1,25 @@
+{
+  "schema": "virgl-fragment-discard-worker-seal-v1",
+  "task": "E6-T12g6l",
+  "sourceHead": "e7137ce55e714c4a5759175529a82cc056a6d097",
+  "base": "cca9a570fe061107ff05e3697b99cfc3566fabe5",
+  "records": 148,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 16742778,
+    "sha256": "50136a98be6a8e559f69a783eb96bae859ff5afb60765c07da77177d5e49107e"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 25921,
+    "sha256": "02958d5e896190be2704d42a8f58cc7fc00e5dfc5bd2e5259b97d1822bb70883"
+  },
+  "hotReceiptSha256": "c3538b29013db7b55289b585c85c134da8f450799a0714bcdf1bdcc40956272c",
+  "coldReportSha256": "26d27585df1c594e7b0eae6448c64367bc5adbfd6ffca288998b57c57013f976",
+  "coldReceiptSha256": "609ef3929ade036a98aef94485ef760172cf3c2994692a27ecc0b0471cf2b07c",
+  "directPixels": 201600,
+  "consumerPixels": 122880,
+  "checkedPixels": 324480,
+  "productionNegotiation": false,
+  "guestExecution": false
+}

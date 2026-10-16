@@ -1,0 +1,101 @@
+{
+  "schema": "standard-restart-point-citations-v1",
+  "points": {
+    "custom": {
+      "path": "unpacked/hot/hardware/report.json",
+      "line": 243531,
+      "sha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd",
+      "label": "mode-2-custom-0"
+    },
+    "wide": {
+      "path": "unpacked/hot/hardware/report.json",
+      "line": 244626,
+      "sha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd",
+      "label": "mode-2-wide-custom-0"
+    },
+    "disabledByte": {
+      "path": "unpacked/hot/hardware/report.json",
+      "line": 248933,
+      "sha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd",
+      "label": "mode-2-byte-maximum-0"
+    },
+    "disabledShort": {
+      "path": "unpacked/hot/hardware/report.json",
+      "line": 250023,
+      "sha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd",
+      "label": "mode-2-short-maximum-0"
+    },
+    "outOfType": {
+      "path": "unpacked/hot/hardware/report.json",
+      "line": 251112,
+      "sha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd",
+      "label": "mode-2-out-of-type-0"
+    },
+    "empty": {
+      "path": "unpacked/hot/hardware/report.json",
+      "line": 431849,
+      "sha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd",
+      "label": "all-custom-empty"
+    },
+    "exact": {
+      "path": "unpacked/hot/hardware/report.json",
+      "line": 499567,
+      "sha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd",
+      "label": "scratch-exact-64"
+    },
+    "oneShort": {
+      "path": "unpacked/hot/hardware/report.json",
+      "line": 534562,
+      "sha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd",
+      "label": "scratch-minus-one"
+    },
+    "collected": {
+      "path": "unpacked/hot/hardware/report.json",
+      "line": 1063546,
+      "sha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd",
+      "label": "pending-collected-index"
+    },
+    "reuse": {
+      "path": "unpacked/hot/hardware/report.json",
+      "line": 424835,
+      "sha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd",
+      "label": "pending-reuse"
+    },
+    "nativeUpload": {
+      "path": "unpacked/hot/hardware/report.json",
+      "line": 671767,
+      "sha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd",
+      "label": "native-upload-fails"
+    },
+    "ownedCancel": {
+      "path": "unpacked/hot/hardware/report.json",
+      "line": 674171,
+      "sha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd",
+      "label": "owned-cancel-finishing"
+    },
+    "dispose": {
+      "path": "unpacked/hot/hardware/report.json",
+      "line": 1220853,
+      "sha256": "eb24f3f682a7b7b18f9d97deacc7bad31f3ad3484680eef0fd8058186bffa1dd",
+      "label": "owned-dispose"
+    },
+    "fresh": {
+      "path": "final-promoted/hardware/report.json",
+      "line": 194564,
+      "sha256": "25d55902c7ffc3bdb86e4f1a3c4d5055b1213500cee16e936f5f77eb9cbcb289",
+      "label": "critic-mode-2-wide-custom-per-fence"
+    },
+    "freshEmptyBounds": {
+      "path": "final-promoted/hardware/report.json",
+      "line": 254827,
+      "sha256": "25d55902c7ffc3bdb86e4f1a3c4d5055b1213500cee16e936f5f77eb9cbcb289",
+      "label": "critic-all-restart-budget-65536"
+    },
+    "fault": {
+      "path": "final-promoted/fault-restart/report.json",
+      "line": 1880,
+      "sha256": "2fc33b9b82476de845fe7d0bfc57c838be1f3c7e93187028f1a85bcacee5654f",
+      "label": "critic-mode-2-wide-custom-per-fence"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+diff --git a/crates/core/src/dev/virtio/gpu/control3d.rs b/crates/core/src/dev/virtio/gpu/control3d.rs
+index 30ec71d8..1bcceb56 100644
+--- a/crates/core/src/dev/virtio/gpu/control3d.rs
++++ b/crates/core/src/dev/virtio/gpu/control3d.rs
+@@ -536,7 +536,7 @@ impl Control3dState {
+                 } else {
+                     MAX_RESOURCES
+                 };
+-                if self.resources.len() >= max_resources || gpu > MAX_GPU_BYTES - self.gpu_bytes {
++                if self.resources.len() > max_resources || gpu > MAX_GPU_BYTES - self.gpu_bytes {
+                     return Err(Control3dError::OutOfMemory);
+                 }
+                 self.resources

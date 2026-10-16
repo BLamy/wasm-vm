@@ -1,0 +1,432 @@
+{
+  "task": "E6-T11d1",
+  "status": "HELD",
+  "sourceHead": "92c98c7361cad2518200bfa99765ed5895ef4f95",
+  "reports": [
+    {
+      "prefix": "hot",
+      "nativeCases": 29,
+      "frames": [
+        {
+          "name": "MOV-0",
+          "color": [
+            64,
+            128,
+            64,
+            128
+          ],
+          "pixelSha256": "94564fc39ea32224050da5ee6c8500ecc1dc61ea9d43373fab756f0f6061dc5f",
+          "allPixels": 256
+        },
+        {
+          "name": "MOV-1",
+          "color": [
+            0,
+            128,
+            64,
+            64
+          ],
+          "pixelSha256": "25bb2c828a78fa4671de9066459a831fe06c477bd8ed655880134e420deec101",
+          "allPixels": 256
+        },
+        {
+          "name": "MOV-0",
+          "color": [
+            64,
+            128,
+            64,
+            128
+          ],
+          "pixelSha256": "94564fc39ea32224050da5ee6c8500ecc1dc61ea9d43373fab756f0f6061dc5f",
+          "allPixels": 256
+        },
+        {
+          "name": "ADD-0",
+          "color": [
+            128,
+            128,
+            191,
+            255
+          ],
+          "pixelSha256": "58c72c9ae4e38ac9dfcc7a35a67e46c95886594be0d18c74ece5085448876b00",
+          "allPixels": 256
+        },
+        {
+          "name": "ADD-1",
+          "color": [
+            128,
+            191,
+            64,
+            191
+          ],
+          "pixelSha256": "38fef916e95cc6d927e6c3c296c82ffb4ffc00f5b416bee0798cefbc527350b2",
+          "allPixels": 256
+        },
+        {
+          "name": "ADD-0",
+          "color": [
+            128,
+            128,
+            191,
+            255
+          ],
+          "pixelSha256": "58c72c9ae4e38ac9dfcc7a35a67e46c95886594be0d18c74ece5085448876b00",
+          "allPixels": 256
+        },
+        {
+          "name": "MUL-0",
+          "color": [
+            32,
+            64,
+            32,
+            64
+          ],
+          "pixelSha256": "da38a9ffc905c62b3f92ca9d3addabd2616e113c9a19434633651cc9820d09c7",
+          "allPixels": 256
+        },
+        {
+          "name": "MUL-1",
+          "color": [
+            0,
+            32,
+            64,
+            32
+          ],
+          "pixelSha256": "1a602254443543d0f08147353a7483a0452fbbdd56afcf90ea5842fe3e40f5ef",
+          "allPixels": 256
+        },
+        {
+          "name": "MUL-0",
+          "color": [
+            32,
+            64,
+            32,
+            64
+          ],
+          "pixelSha256": "da38a9ffc905c62b3f92ca9d3addabd2616e113c9a19434633651cc9820d09c7",
+          "allPixels": 256
+        },
+        {
+          "name": "MAD-0",
+          "color": [
+            96,
+            128,
+            128,
+            191
+          ],
+          "pixelSha256": "27f58f0f4e68623ad47751054ccc9e993432de08ec0923bbf79362c558969ceb",
+          "allPixels": 256
+        },
+        {
+          "name": "MAD-1",
+          "color": [
+            64,
+            143,
+            64,
+            128
+          ],
+          "pixelSha256": "6007f6d1cbe45c9b92eae256432b073748bab0ab196a6d2299dc2cc28dbc65e3",
+          "allPixels": 256
+        },
+        {
+          "name": "MAD-0",
+          "color": [
+            96,
+            128,
+            128,
+            191
+          ],
+          "pixelSha256": "27f58f0f4e68623ad47751054ccc9e993432de08ec0923bbf79362c558969ceb",
+          "allPixels": 256
+        },
+        {
+          "name": "async-0",
+          "color": [
+            64,
+            143,
+            64,
+            128
+          ],
+          "pixelSha256": "6007f6d1cbe45c9b92eae256432b073748bab0ab196a6d2299dc2cc28dbc65e3",
+          "allPixels": 256
+        },
+        {
+          "name": "async-1",
+          "color": [
+            64,
+            143,
+            64,
+            128
+          ],
+          "pixelSha256": "6007f6d1cbe45c9b92eae256432b073748bab0ab196a6d2299dc2cc28dbc65e3",
+          "allPixels": 256
+        },
+        {
+          "name": "async-3",
+          "color": [
+            64,
+            143,
+            64,
+            128
+          ],
+          "pixelSha256": "6007f6d1cbe45c9b92eae256432b073748bab0ab196a6d2299dc2cc28dbc65e3",
+          "allPixels": 256
+        }
+      ],
+      "physicalAssertions": 690,
+      "jobs": [
+        {
+          "delay": 0,
+          "polls": 2,
+          "waits": 2,
+          "fences": 2,
+          "gpuComplete": true
+        },
+        {
+          "delay": 1,
+          "polls": 3,
+          "waits": 4,
+          "fences": 2,
+          "gpuComplete": true
+        },
+        {
+          "delay": 3,
+          "polls": 5,
+          "waits": 8,
+          "fences": 2,
+          "gpuComplete": true
+        }
+      ],
+      "memory": {
+        "bytes": 16777216,
+        "allocations": 77,
+        "exhausted": {
+          "ok": false,
+          "error": {
+            "code": "translation-error",
+            "message": "Upstream TGSI scratch allocation failed or exceeded its bound."
+          }
+        },
+        "recovered": true
+      },
+      "retainedCases": 603,
+      "pairs": 23,
+      "allocationFaults": 752,
+      "originals": 25,
+      "status": "HELD"
+    },
+    {
+      "prefix": "cold",
+      "nativeCases": 29,
+      "frames": [
+        {
+          "name": "MOV-0",
+          "color": [
+            64,
+            128,
+            64,
+            128
+          ],
+          "pixelSha256": "94564fc39ea32224050da5ee6c8500ecc1dc61ea9d43373fab756f0f6061dc5f",
+          "allPixels": 256
+        },
+        {
+          "name": "MOV-1",
+          "color": [
+            0,
+            128,
+            64,
+            64
+          ],
+          "pixelSha256": "25bb2c828a78fa4671de9066459a831fe06c477bd8ed655880134e420deec101",
+          "allPixels": 256
+        },
+        {
+          "name": "MOV-0",
+          "color": [
+            64,
+            128,
+            64,
+            128
+          ],
+          "pixelSha256": "94564fc39ea32224050da5ee6c8500ecc1dc61ea9d43373fab756f0f6061dc5f",
+          "allPixels": 256
+        },
+        {
+          "name": "ADD-0",
+          "color": [
+            128,
+            128,
+            191,
+            255
+          ],
+          "pixelSha256": "58c72c9ae4e38ac9dfcc7a35a67e46c95886594be0d18c74ece5085448876b00",
+          "allPixels": 256
+        },
+        {
+          "name": "ADD-1",
+          "color": [
+            128,
+            191,
+            64,
+            191
+          ],
+          "pixelSha256": "38fef916e95cc6d927e6c3c296c82ffb4ffc00f5b416bee0798cefbc527350b2",
+          "allPixels": 256
+        },
+        {
+          "name": "ADD-0",
+          "color": [
+            128,
+            128,
+            191,
+            255
+          ],
+          "pixelSha256": "58c72c9ae4e38ac9dfcc7a35a67e46c95886594be0d18c74ece5085448876b00",
+          "allPixels": 256
+        },
+        {
+          "name": "MUL-0",
+          "color": [
+            32,
+            64,
+            32,
+            64
+          ],
+          "pixelSha256": "da38a9ffc905c62b3f92ca9d3addabd2616e113c9a19434633651cc9820d09c7",
+          "allPixels": 256
+        },
+        {
+          "name": "MUL-1",
+          "color": [
+            0,
+            32,
+            64,
+            32
+          ],
+          "pixelSha256": "1a602254443543d0f08147353a7483a0452fbbdd56afcf90ea5842fe3e40f5ef",
+          "allPixels": 256
+        },
+        {
+          "name": "MUL-0",
+          "color": [
+            32,
+            64,
+            32,
+            64
+          ],
+          "pixelSha256": "da38a9ffc905c62b3f92ca9d3addabd2616e113c9a19434633651cc9820d09c7",
+          "allPixels": 256
+        },
+        {
+          "name": "MAD-0",
+          "color": [
+            96,
+            128,
+            128,
+            191
+          ],
+          "pixelSha256": "27f58f0f4e68623ad47751054ccc9e993432de08ec0923bbf79362c558969ceb",
+          "allPixels": 256
+        },
+        {
+          "name": "MAD-1",
+          "color": [
+            64,
+            143,
+            64,
+            128
+          ],
+          "pixelSha256": "6007f6d1cbe45c9b92eae256432b073748bab0ab196a6d2299dc2cc28dbc65e3",
+          "allPixels": 256
+        },
+        {
+          "name": "MAD-0",
+          "color": [
+            96,
+            128,
+            128,
+            191
+          ],
+          "pixelSha256": "27f58f0f4e68623ad47751054ccc9e993432de08ec0923bbf79362c558969ceb",
+          "allPixels": 256
+        },
+        {
+          "name": "async-0",
+          "color": [
+            64,
+            143,
+            64,
+            128
+          ],
+          "pixelSha256": "6007f6d1cbe45c9b92eae256432b073748bab0ab196a6d2299dc2cc28dbc65e3",
+          "allPixels": 256
+        },
+        {
+          "name": "async-1",
+          "color": [
+            64,
+            143,
+            64,
+            128
+          ],
+          "pixelSha256": "6007f6d1cbe45c9b92eae256432b073748bab0ab196a6d2299dc2cc28dbc65e3",
+          "allPixels": 256
+        },
+        {
+          "name": "async-3",
+          "color": [
+            64,
+            143,
+            64,
+            128
+          ],
+          "pixelSha256": "6007f6d1cbe45c9b92eae256432b073748bab0ab196a6d2299dc2cc28dbc65e3",
+          "allPixels": 256
+        }
+      ],
+      "physicalAssertions": 690,
+      "jobs": [
+        {
+          "delay": 0,
+          "polls": 2,
+          "waits": 2,
+          "fences": 2,
+          "gpuComplete": true
+        },
+        {
+          "delay": 1,
+          "polls": 3,
+          "waits": 4,
+          "fences": 2,
+          "gpuComplete": true
+        },
+        {
+          "delay": 3,
+          "polls": 5,
+          "waits": 8,
+          "fences": 2,
+          "gpuComplete": true
+        }
+      ],
+      "memory": {
+        "bytes": 16777216,
+        "allocations": 77,
+        "exhausted": {
+          "ok": false,
+          "error": {
+            "code": "translation-error",
+            "message": "Upstream TGSI scratch allocation failed or exceeded its bound."
+          }
+        },
+        "recovered": true
+      },
+      "retainedCases": 603,
+      "pairs": 23,
+      "allocationFaults": 752,
+      "originals": 25,
+      "status": "HELD"
+    }
+  ],
+  "independentOracle": "rational arithmetic, separate binary32 packing, RGBA8 integer quantization; all raw bytes and original packet fields"
+}

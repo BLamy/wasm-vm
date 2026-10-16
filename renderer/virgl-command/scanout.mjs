@@ -15,7 +15,7 @@ const hex = (v) => { need(typeof v === 'string' && /^[0-9a-f]{16}$/.test(v), 'Ex
 const nextHex = (v) => { const n = BigInt('0x' + v) + 1n; need(n <= 0xffffffffffffffffn, 'Presentation generation exhausted.'); return n.toString(16).padStart(16, '0'); };
 const META = ['id','target','format','bind','width','height','depth','arraySize','lastLevel','nrSamples','flags'];
 function identity(value) { const id = record(value, ['id','generation']); need(uint(id.id) > 0 && hex(id.generation) !== '0000000000000000', 'Invalid resource identity.'); return Object.freeze(id); }
-function binding(value) {
+function binding(value, production) {
   const b = record(value, ['generation','rect','target']); need(hex(b.generation) !== '0000000000000000', 'Binding generation must be nonzero.');
   b.rect = record(b.rect, ['x','y','width','height']); Object.values(b.rect).forEach(uint);
   const kind = Object.getOwnPropertyDescriptor(b.target, 'kind')?.value;
@@ -29,16 +29,16 @@ function binding(value) {
     need(kind === 'renderer', 'Unknown scanout target kind.');
     b.target = record(b.target, ['kind','resource','metadata']); b.target.resource = identity(b.target.resource);
     const m = b.target.metadata = record(b.target.metadata, META); Object.values(m).forEach(uint); Object.freeze(m);
-    need(m.id === b.target.resource.id && m.target === 2 && m.format === 67 && m.bind === 10 && m.depth === 1 && m.arraySize === 1 && m.lastLevel === 0 && m.nrSamples === 0 && m.flags === 0 && m.width > 0 && m.height > 0 && m.width * m.height <= 1048576, 'Unsupported renderer scanout.');
+    need(m.id === b.target.resource.id && m.target === 2 && (m.format === 67 || (production && [1, 2].includes(m.format))) && (production ? (m.bind & 2) !== 0 && (m.bind & ~(10 | (1 << 18) | (1 << 20))) === 0 : m.bind === 10) && m.depth === 1 && m.arraySize === 1 && m.lastLevel === 0 && m.nrSamples === 0 && (m.flags === 0 || (production && m.flags === 1)) && m.width > 0 && m.height > 0 && m.width * m.height <= (production ? 8388608 : 1048576), 'Unsupported renderer scanout.');
     need(b.rect.x === 0 && b.rect.y === 0 && b.rect.width === m.width && b.rect.height === m.height, 'Only whole-resource renderer scanout is supported.');
   }
   Object.freeze(b.rect); Object.freeze(b.target); return Object.freeze(b);
 }
-export function normalizeScanoutEvent(input) {
+export function normalizeScanoutEvent(input, production = false) {
   const type = Object.getOwnPropertyDescriptor(input, 'type')?.value;
   need(type === 'bindScanout' || type === 'beginScanout', 'Unknown scanout event.');
   const event = record(input, type === 'bindScanout' ? ['type','epoch','binding'] : ['type','epoch','sequence','header','binding']);
-  hex(event.epoch); event.binding = binding(event.binding);
+  hex(event.epoch); event.binding = binding(event.binding, production);
   if (type === 'beginScanout') {
     hex(event.sequence); event.header = record(event.header, ['type','flags','fenceId','contextId','ringIndex']);
     for (const key of ['type','flags','contextId','ringIndex']) uint(event.header[key]); hex(event.header.fenceId);
@@ -62,19 +62,20 @@ function pixelWords(value) {
   const offset = Object.getOwnPropertyDescriptor(proto, 'byteOffset').get.call(value), length = Object.getOwnPropertyDescriptor(proto, 'length').get.call(value);
   return new Uint32Array(buffer, offset, length);
 }
-function convertRgba(bytes, width, height) {
+function convertRgba(bytes, width, height, format, reverseRows) {
   need(bytes instanceof Uint8Array && bytes.byteLength === width * height * 4 && bytes.byteOffset % 4 === 0, 'Invalid RGBA readback size.');
   const words = new Uint32Array(bytes.buffer, bytes.byteOffset, width * height);
   // The renderer returns little-endian RGBA; the established browser contract is BGRA words.
-  for (let i = 0; i < words.length; i++) { const word = words[i]; words[i] = (word & 0xff00ff00) | ((word & 255) << 16) | ((word >>> 16) & 255); }
-  for (let row = 0; row < Math.floor(height / 2); row++) {
+  if (format === 67) for (let i = 0; i < words.length; i++) { const word = words[i]; words[i] = (word & 0xff00ff00) | ((word & 255) << 16) | ((word >>> 16) & 255); }
+  if (format === 2) for (let i = 0; i < words.length; i++) words[i] |= 0xff000000;
+  for (let row = 0; reverseRows && row < Math.floor(height / 2); row++) {
     const sourceRow = height - 1 - row;
     for (let x = 0; x < width; x++) { const a = row * width + x, b = sourceRow * width + x, temporary = words[a]; words[a] = words[b]; words[b] = temporary; }
   }
   return words;
 }
 
-export function createRetainedScanout({ getOwners, resolveResource, presenter, onFault }) {
+export function createRetainedScanout({ getOwners, resolveResource, presenter, onFault, production = false }) {
   let current = null, localGeneration = '0000000000000000', disposed = false;
   const jobs = new Set(), held = new Set(), retirements = [];
   const counters = { bound: 0, captures: 0, captureReady: 0, queued: 0, drawn: 0, superseded: 0, cancelled: 0, failed: 0,
@@ -90,7 +91,7 @@ export function createRetainedScanout({ getOwners, resolveResource, presenter, o
   };
   const safeRetire = (entry, receipt) => { try { retire(entry, receipt); } catch (error) { onFault(error); } };
   const dropBinding = () => { if (current?.lease) { unwrap(current.owner.store.releaseStorage(current.lease)); current.lease = null; } };
-  const invalidate = () => { const next = nextHex(localGeneration); unwrap(presenter.rebind(next)); localGeneration = next; };
+  const invalidate = (preserveDisplay = false) => { const next = nextHex(localGeneration); unwrap(presenter.rebind(next,preserveDisplay)); localGeneration = next; };
   const release = (entry) => { if (entry.ticket) { unwrap(entry.owner.asyncAccess.release(entry.ticket)); entry.ticket = null; held.delete(entry); } };
   const api = {
     bind(event) {
@@ -102,7 +103,7 @@ export function createRetainedScanout({ getOwners, resolveResource, presenter, o
         need(META.every((key) => res.metadata[key] === target.metadata[key]), 'Scanout metadata differs from allocation.');
         accepted.lease = unwrap(accepted.owner.bindings.retainScanout(target.resource.id, res.storageGeneration)).lease;
       }
-      try { invalidate(); } catch (error) { if (accepted.lease) accepted.owner.store.releaseStorage(accepted.lease); onFault(error); throw error; }
+      try { invalidate(production && event.binding.target.kind !== 'disabled'); } catch (error) { if (accepted.lease) accepted.owner.store.releaseStorage(accepted.lease); onFault(error); throw error; }
       try { dropBinding(); } catch (error) { if (accepted.lease) accepted.owner.store.releaseStorage(accepted.lease); onFault(error); throw error; }
       current = accepted; counters.bound++; return ok();
     },
@@ -130,7 +131,13 @@ export function createRetainedScanout({ getOwners, resolveResource, presenter, o
       if (job.cancelled) { release(job); return ok({ status: 'done', result: { ok: false, error: { code: 'cancelled', message: 'Scanout cancelled.' }, gpuComplete: true, appliedCommands: 0, draws: [] } }); }
       const { width, height } = job.binding.target.metadata, bytes = polled.bytes;
       counters.captureReady++; counters.readbackBytes += bytes.byteLength;
-      const pixels = convertRgba(bytes, width, height); counters.rgbaConversionBytes += bytes.byteLength; counters.rowMoveBytes += Math.floor(height / 2) * 2 * width * 4;
+      // QEMU's GL scanout flips lower-left storage before the display reads
+      // destination rows top first. Our CPU readback starts at GL row zero,
+      // so production reverses only Y_0_TOP. Keep the isolated proof profile.
+      const reverseRows = production ? job.binding.target.metadata.flags === 1 : job.binding.target.metadata.flags !== 1;
+      const pixels = convertRgba(bytes, width, height, job.binding.target.metadata.format, reverseRows);
+      counters.rgbaConversionBytes += bytes.byteLength;
+      if (reverseRows) counters.rowMoveBytes += Math.floor(height / 2) * 2 * width * 4;
       const queued = presenter.enqueueOwned({ bindingGeneration: job.presenterGeneration,
         frame: { scanout: 0, format: 1, rect: { x: 0, y: 0, width, height }, resourceWidth: width, resourceHeight: height, pixels } }, (receipt) => safeRetire(job, receipt));
       if (!queued.ok) { release(job); return ok({ status: 'done', result: { ...queued, gpuComplete: true, appliedCommands: 0, draws: [] } }); }
@@ -155,6 +162,28 @@ export function createRetainedScanout({ getOwners, resolveResource, presenter, o
       invalidate();
       for (const job of [...held]) release(job);
       jobs.clear(); dropBinding(); current = null; return ok();
+    },
+    rebaseCheckpointEpoch(expected,next) {
+      need(!disposed && jobs.size===0 && held.size===0 && (!current || current.epoch===expected), 'Checkpoint display epoch is not idle.');
+      hex(expected);hex(next);need(next>expected && next!=='ffffffffffffffff','Invalid checkpoint display epoch.');
+      if(current)current.epoch=next;return ok();
+    },
+    async repairCheckpointFrame(cancelled=()=>false) {
+      need(!disposed && jobs.size===0 && held.size===0,'Checkpoint display is not idle.');
+      if(!current || current.binding.target.kind==='disabled')return ok({status:'disabled'});
+      need(current.binding.target.kind==='renderer','Checkpoint display requires a renderer binding.');
+      // This is a host repair read, with no native request key or used-ring completion.
+      const job={epoch:current.epoch,sequence:null,binding:current.binding,owner:current.owner,lease:current.lease,
+        ticket:null,phase:'ready',cancelled:false,retired:false,presenterGeneration:localGeneration};
+      const deadline=performance.now()+10000;jobs.add(job);
+      try {
+        for(;;) {
+          need(!cancelled(),'Checkpoint display repair was cancelled.');need(performance.now()<deadline,'Checkpoint display repair timed out.');
+          const state=unwrap(api.step(job));
+          if(state.status==='done') { unwrap(state.result);return ok({status:'queued',authority:'restored-gpu-readback'}); }
+          await new Promise(resolve=>setTimeout(resolve,0));
+        }
+      } catch(error) { release(job);jobs.delete(job);throw error; }
     },
     dispose() { if (disposed) return ok(); api.reset(); disposed = true; return presenter.dispose(); },
     inspect() { return { disposed, binding: current ? { epoch: current.epoch, ...current.binding } : null, localGeneration,

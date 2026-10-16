@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "head": "adcbe81bcd091c3d411a8f96ac8746e1a17290fb",
+  "archiveSha256": "9c2a187e7f192c35bcc9c06eb32d1e7fc90e8e7ca938cb37c6a124eb3bdc467e",
+  "recordIndexSha256": "be036ae9072dbfae6ea1225572ffbe62fa84a5df4ebe345eefe25a72d62fef11",
+  "records": 332,
+  "sourceChecks": 4754,
+  "fileChecks": 324,
+  "generatedChecks": 4,
+  "servedCoverageChecks": 126,
+  "coldPristine": true,
+  "cold": {
+    "schema": 1,
+    "task": "E6-T11d5",
+    "gitHead": "adcbe81bcd091c3d411a8f96ac8746e1a17290fb",
+    "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-standard-state-cold-e809aaf_/wasm-vm",
+    "removedEnvironmentNames": [
+      "RUST_LOG"
+    ],
+    "command": [
+      "make",
+      "verify-E6-T11d5"
+    ],
+    "status": "passed",
+    "cloneHead": "adcbe81bcd091c3d411a8f96ac8746e1a17290fb",
+    "statusBefore": "",
+    "exitCode": 0,
+    "statusAfter": "",
+    "receiptSha256": "33545abd27c2b5ab70b2126f12bd469722f72a81949d59b1da7e97f0df04ef6f",
+    "logSha256": "de27167bb088a87343727515ae3cb22ab2662c6342fe9edfddaf10bcbd062189"
+  },
+  "compilerDeviceCarryHead": "9323b44519710dfb2c8a324fe115872b79d274f0",
+  "legacyPrefixSha256": "bfd25f78876cb1b60c7d04de81245c5d9e3938fb4d34f6b0e723961d896afdd2",
+  "originalRuntimeBeforeRepairSha256": "7e9d7a18f53aceffe1c13dcc6bcd3f0da80c065c293cd58c21cbcbe06c47433e",
+  "runtimeSha256": "5cf194157113199a8a92bbf117ec9c5f9c0f355f506f1480ade9814085ba6f22",
+  "repairHunkSha256": "ee1f254cda5368427c683326232311443e581731ffab29fa8e37bebfef8629b4",
+  "priorCriticArchiveSha256": "6f05eeafad2f2dcdc225957b6ee95889855c1abc3538b480ad3f9a1222257c9b",
+  "priorCriticRecords": 52,
+  "runtimeDelta": [
+    "renderer/virgl-command/state.mjs"
+  ],
+  "workerClaimDelta": [
+    "evidence/virgl-standard-state/reflection-repair/manifest.json",
+    "evidence/virgl-standard-state/reflection-repair/recording.tar.gz",
+    "evidence/virgl-standard-state/reflection-repair/records.json",
+    "tasks/QUEUE.md",
+    "tasks/epic-6-transcendence/E6-T11d5-standard-shader-state-binding.md"
+  ],
+  "unpackedWorker": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-standard-state-reflection-verifier/unpacked-reflection-repair",
+  "unpackedCritic": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-standard-state-reflection-verifier/unpacked-verifier",
+  "originalShaderOracleSectionSha256": "fd706c473f0a401a70ab81288b4f2255d3067a2e2f2089ea6c4328e362665df3",
+  "promotedShaderOracleSectionSha256": "fd706c473f0a401a70ab81288b4f2255d3067a2e2f2089ea6c4328e362665df3",
+  "workerClaimHead": "b1263f6e60d68239288309218b3e8cc4590363ad"
+}

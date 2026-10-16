@@ -1,0 +1,45 @@
+{
+  "task": "E6-T11d1",
+  "status": "passed",
+  "sourceHead": "92c98c7361cad2518200bfa99765ed5895ef4f95",
+  "archiveSha256": "0438914308a3ccd17516af6a696ad65cfe9afbb5af589afd882ee7cc919c2d3c",
+  "indexSha256": "90489cd5702fa32ccc6bfc5ac97cd1d67febb731a6be8b410f5ffa82b5da6f34",
+  "records": 254,
+  "receipts": [
+    {
+      "prefix": "hot",
+      "receiptSha256": "c7a845562b622013c70d1a36df9ba8043ba57f5c5a4ed761346005a59be6a474",
+      "sources": 393,
+      "records": 117,
+      "binaries": 7
+    },
+    {
+      "prefix": "cold",
+      "receiptSha256": "d1b0c930b114076b9b1269403b9d68ec340c1e3f8ad892751044cf2c076e33b1",
+      "sources": 393,
+      "records": 117,
+      "binaries": 7
+    }
+  ],
+  "cold": {
+    "schema": 1,
+    "task": "E6-T11d1",
+    "gitHead": "92c98c7361cad2518200bfa99765ed5895ef4f95",
+    "clone": "/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-virgl-vertex-constant-cold-z4k4aggo/wasm-vm",
+    "removedEnvironmentNames": [
+      "RUST_LOG"
+    ],
+    "command": [
+      "make",
+      "verify-E6-T11d1"
+    ],
+    "status": "passed",
+    "cloneHead": "92c98c7361cad2518200bfa99765ed5895ef4f95",
+    "statusBefore": "",
+    "exitCode": 0,
+    "statusAfter": "",
+    "receiptSha256": "d1b0c930b114076b9b1269403b9d68ec340c1e3f8ad892751044cf2c076e33b1",
+    "logSha256": "b2692b6f35272d49c9505835c51a9bd01c501e276894abd8e0b50274ddbf8331"
+  },
+  "trackedClean": true
+}

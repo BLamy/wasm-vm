@@ -1,0 +1,18 @@
+{
+  "task": "E6-T12g6m3c",
+  "status": "passed",
+  "runs": [
+    {
+      "run": "hot",
+      "originalCoverageSha256": "b0cce4c07fc0b975aee3044d1ab0954b0df23f7a8a6b04001f60ecd6d44755ed",
+      "reexportCoverageSha256": "b0cce4c07fc0b975aee3044d1ab0954b0df23f7a8a6b04001f60ecd6d44755ed",
+      "identical": true
+    },
+    {
+      "run": "cold",
+      "originalCoverageSha256": "bc15e4e06dca96ea3243c15007d3ec698cc42ea4fd2aa1a7474e50f03757f23d",
+      "reexportCoverageSha256": "bc15e4e06dca96ea3243c15007d3ec698cc42ea4fd2aa1a7474e50f03757f23d",
+      "identical": true
+    }
+  ]
+}

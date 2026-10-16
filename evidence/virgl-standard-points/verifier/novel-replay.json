@@ -1,0 +1,1344 @@
+{
+  "schema": "standard-point-critic-replay-v1",
+  "status": "passed",
+  "reports": [
+    {
+      "source": "/novel/report.json",
+      "sha256": "b6d27fc26a5ad3fcf1064683b55544dd43e97da26dfdd5d3fe5c94cb9fa399d1",
+      "status": "passed",
+      "frames": 14
+    },
+    {
+      "source": "/fault-size-selection/report.json",
+      "sha256": "1a53942e2f4275412da2da54e0a21934078b64eaf2cd91de7bf1a98358bfcaa0",
+      "status": "failed",
+      "frames": 1
+    },
+    {
+      "source": "/fault-coord-y/report.json",
+      "sha256": "14d2e8837857ad9f41390fe3b91229fb23ceb81bf3a176aee834869dbe2fa3e1",
+      "status": "failed",
+      "frames": 1
+    }
+  ],
+  "frames": [
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-seeded-alias-1",
+      "width": 64,
+      "height": 16,
+      "pointSizes": [
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ]
+      ],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": -1,
+      "ids": [
+        16777545,
+        66387,
+        66413,
+        16777545,
+        66445,
+        66481,
+        16777545
+      ],
+      "draws": 1,
+      "normalizedBytes": 28,
+      "audit": {
+        "held": true,
+        "pixels": 1024,
+        "covered": 406,
+        "maxError": 1,
+        "misses": []
+      },
+      "pixelSha256": "e7a2dac0a6296aba43216e2fea41ceade2961fe38f5d69001ebb5748882356f8"
+    },
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-seeded-system-1",
+      "width": 48,
+      "height": 16,
+      "pointSizes": [
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ]
+      ],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": 1,
+      "ids": [
+        16777545,
+        66387,
+        66413,
+        16777545,
+        66445,
+        66481,
+        16777545
+      ],
+      "draws": 1,
+      "normalizedBytes": 28,
+      "audit": {
+        "held": true,
+        "pixels": 768,
+        "covered": 319,
+        "maxError": 1,
+        "misses": []
+      },
+      "pixelSha256": "1cd6ee683d06e398d7deb9b3086aa0de1ce890dc0775a1ecdb8b4defb449b584"
+    },
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-seeded-fixed",
+      "width": 16,
+      "height": 16,
+      "pointSizes": [
+        [
+          2.25,
+          2.25
+        ],
+        [
+          2.25,
+          2.25
+        ],
+        [
+          2.25,
+          2.25
+        ],
+        [
+          2.25,
+          2.25
+        ]
+      ],
+      "pointUniform": [
+        2.25,
+        0
+      ],
+      "winsysY": 1,
+      "ids": [
+        16777545,
+        66387,
+        66413,
+        16777545,
+        66445,
+        66481,
+        16777545
+      ],
+      "draws": 1,
+      "normalizedBytes": 28,
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "covered": 16,
+        "maxError": 1,
+        "misses": []
+      },
+      "pixelSha256": "18105dc816dad7d5060cd547dce2a88a4273b8b8dd00803d2351746783de6add"
+    },
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-seeded-constant",
+      "width": 64,
+      "height": 16,
+      "pointSizes": [
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ]
+      ],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": -1,
+      "ids": [
+        16777545,
+        66387,
+        66413,
+        16777545,
+        66445,
+        66481,
+        16777545
+      ],
+      "draws": 1,
+      "normalizedBytes": 28,
+      "audit": {
+        "held": true,
+        "pixels": 1024,
+        "covered": 470,
+        "maxError": 0,
+        "misses": []
+      },
+      "pixelSha256": "27433cf1bdde8ff70fe212af513b16f5490999b6650740c21294d68af4e25641"
+    },
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-seeded-XY-outside",
+      "width": 16,
+      "height": 16,
+      "pointSizes": [
+        [
+          6,
+          6
+        ]
+      ],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": 1,
+      "ids": [
+        66387
+      ],
+      "draws": 1,
+      "normalizedBytes": 0,
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "covered": 12,
+        "maxError": 0,
+        "misses": []
+      },
+      "pixelSha256": "3f23e442e3302a1deff0796393be8b44c3e002f1fb35ada7ea1ccd4cc8496f86"
+    },
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-seeded-near",
+      "width": 16,
+      "height": 16,
+      "pointSizes": [],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": 1,
+      "ids": [
+        16777545,
+        66387,
+        66413,
+        16777545,
+        66445,
+        66481,
+        16777545
+      ],
+      "draws": 1,
+      "normalizedBytes": 28,
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "covered": 0,
+        "maxError": 0,
+        "misses": []
+      },
+      "pixelSha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"
+    },
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-seeded-far",
+      "width": 16,
+      "height": 16,
+      "pointSizes": [],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": 1,
+      "ids": [
+        16777545,
+        66387,
+        66413,
+        16777545,
+        66445,
+        66481,
+        16777545
+      ],
+      "draws": 1,
+      "normalizedBytes": 28,
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "covered": 0,
+        "maxError": 0,
+        "misses": []
+      },
+      "pixelSha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"
+    },
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-seeded-clamp",
+      "width": 16,
+      "height": 16,
+      "pointSizes": [
+        [
+          2048,
+          511
+        ]
+      ],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": -1,
+      "ids": [
+        66387
+      ],
+      "draws": 1,
+      "normalizedBytes": 0,
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "covered": 256,
+        "maxError": 0,
+        "misses": []
+      },
+      "pixelSha256": "e3d5e6369199a5053a71ee1e2bff8635fa00d65cd23bf9784a84d0d0c94af5c2"
+    },
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-unused-point-coord",
+      "width": 16,
+      "height": 16,
+      "pointSizes": [
+        [
+          6,
+          6
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          3.25,
+          3.25
+        ]
+      ],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": 1,
+      "ids": [
+        16777545,
+        66387,
+        66413,
+        16777545,
+        66445,
+        66481,
+        16777545
+      ],
+      "draws": 1,
+      "normalizedBytes": 28,
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "covered": 94,
+        "maxError": 0,
+        "misses": []
+      },
+      "pixelSha256": "507621868edb4f9bd36f92f03cc5650f87f86ed6c0844d94469c8e6a04386490"
+    },
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-point-blend-budget",
+      "width": 16,
+      "height": 16,
+      "pointSizes": [
+        [
+          4,
+          4
+        ]
+      ],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": 1,
+      "ids": [
+        66387
+      ],
+      "draws": 1,
+      "normalizedBytes": 0,
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "covered": 16,
+        "maxError": 0,
+        "misses": []
+      },
+      "pixelSha256": "a59778364d77531a96565c76f850dd88354973277e5e54af789146875fab13b8"
+    },
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-A-first",
+      "width": 16,
+      "height": 16,
+      "pointSizes": [
+        [
+          6,
+          6
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          3.25,
+          3.25
+        ]
+      ],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": 1,
+      "ids": [
+        16777545,
+        66387,
+        66413,
+        16777545,
+        66445,
+        66481,
+        16777545
+      ],
+      "draws": 1,
+      "normalizedBytes": 28,
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "covered": 94,
+        "maxError": 1,
+        "misses": []
+      },
+      "pixelSha256": "706109d8bc4ef0c80672d489baa232a593d717e1a4de996438773aab1d5de156"
+    },
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-B",
+      "width": 16,
+      "height": 16,
+      "pointSizes": [
+        [
+          3.25,
+          3.25
+        ],
+        [
+          3.25,
+          3.25
+        ],
+        [
+          3.25,
+          3.25
+        ],
+        [
+          3.25,
+          3.25
+        ]
+      ],
+      "pointUniform": [
+        3.25,
+        0
+      ],
+      "winsysY": -1,
+      "ids": [
+        16777545,
+        66387,
+        66413,
+        16777545,
+        66445,
+        66481,
+        16777545
+      ],
+      "draws": 1,
+      "normalizedBytes": 28,
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "covered": 35,
+        "maxError": 0,
+        "misses": []
+      },
+      "pixelSha256": "3c6d45332292ec24881724da5e77b5c198f8c77c18cbb5f08742873bec7e4161"
+    },
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-A-last",
+      "width": 16,
+      "height": 16,
+      "pointSizes": [
+        [
+          6,
+          6
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          3.25,
+          3.25
+        ]
+      ],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": 1,
+      "ids": [
+        16777545,
+        66387,
+        66413,
+        16777545,
+        66445,
+        66481,
+        16777545
+      ],
+      "draws": 1,
+      "normalizedBytes": 28,
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "covered": 94,
+        "maxError": 1,
+        "misses": []
+      },
+      "pixelSha256": "706109d8bc4ef0c80672d489baa232a593d717e1a4de996438773aab1d5de156"
+    },
+    {
+      "source": "/novel/report.json",
+      "frame": "critic-cancel-native-fence",
+      "width": 16,
+      "height": 16,
+      "pointSizes": [
+        [
+          6,
+          6
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          3.25,
+          3.25
+        ]
+      ],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": 1,
+      "ids": [
+        16777545,
+        66387,
+        66413,
+        16777545,
+        66445,
+        66481,
+        16777545
+      ],
+      "draws": 1,
+      "normalizedBytes": 28,
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "covered": 94,
+        "maxError": 1,
+        "misses": []
+      },
+      "pixelSha256": "706109d8bc4ef0c80672d489baa232a593d717e1a4de996438773aab1d5de156"
+    }
+  ],
+  "faults": [
+    {
+      "source": "/fault-size-selection/report.json",
+      "frame": "critic-seeded-alias-1",
+      "width": 64,
+      "height": 16,
+      "pointSizes": [
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ]
+      ],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": -1,
+      "ids": [
+        16777545,
+        66387,
+        66413,
+        16777545,
+        66445,
+        66481,
+        16777545
+      ],
+      "draws": 1,
+      "normalizedBytes": 28,
+      "audit": {
+        "held": false,
+        "pixels": 1024,
+        "covered": 406,
+        "maxError": 244,
+        "misses": [
+          {
+            "x": 4,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              11,
+              128
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "error": 128
+          },
+          {
+            "x": 5,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              53,
+              128
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "error": 128
+          },
+          {
+            "x": 6,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              96,
+              128
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "error": 128
+          },
+          {
+            "x": 7,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              138,
+              128
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "error": 138
+          },
+          {
+            "x": 8,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              181,
+              128
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "error": 181
+          },
+          {
+            "x": 9,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              223,
+              128
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "error": 223
+          },
+          {
+            "x": 20,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              11,
+              143
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "error": 143
+          },
+          {
+            "x": 21,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              53,
+              143
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "error": 143
+          },
+          {
+            "x": 22,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              96,
+              143
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "error": 143
+          },
+          {
+            "x": 23,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              138,
+              143
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "error": 143
+          },
+          {
+            "x": 24,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              181,
+              143
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "error": 181
+          },
+          {
+            "x": 25,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              223,
+              143
+            ],
+            "observed": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "error": 223
+          }
+        ]
+      },
+      "pixelSha256": "d8180e067d8d2ff54a38709c5367a6a1eeaa60029d3552ca6eeb3a98b89e2d85"
+    },
+    {
+      "source": "/fault-coord-y/report.json",
+      "frame": "critic-seeded-alias-1",
+      "width": 64,
+      "height": 16,
+      "pointSizes": [
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ],
+        [
+          5.25,
+          5.25
+        ]
+      ],
+      "pointUniform": [
+        2.25,
+        1
+      ],
+      "winsysY": -1,
+      "ids": [
+        16777545,
+        66387,
+        66413,
+        16777545,
+        66445,
+        66481,
+        16777545
+      ],
+      "draws": 1,
+      "normalizedBytes": 28,
+      "audit": {
+        "held": false,
+        "pixels": 1024,
+        "covered": 406,
+        "maxError": 233,
+        "misses": [
+          {
+            "x": 4,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              11,
+              128
+            ],
+            "observed": [
+              61,
+              223,
+              11,
+              128
+            ],
+            "error": 191
+          },
+          {
+            "x": 5,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              53,
+              128
+            ],
+            "observed": [
+              61,
+              223,
+              53,
+              128
+            ],
+            "error": 191
+          },
+          {
+            "x": 6,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              96,
+              128
+            ],
+            "observed": [
+              61,
+              223,
+              96,
+              128
+            ],
+            "error": 191
+          },
+          {
+            "x": 7,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              138,
+              128
+            ],
+            "observed": [
+              61,
+              223,
+              138,
+              128
+            ],
+            "error": 191
+          },
+          {
+            "x": 8,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              181,
+              128
+            ],
+            "observed": [
+              61,
+              223,
+              181,
+              128
+            ],
+            "error": 191
+          },
+          {
+            "x": 9,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              223,
+              128
+            ],
+            "observed": [
+              61,
+              223,
+              223,
+              128
+            ],
+            "error": 191
+          },
+          {
+            "x": 20,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              11,
+              143
+            ],
+            "observed": [
+              61,
+              223,
+              11,
+              143
+            ],
+            "error": 191
+          },
+          {
+            "x": 21,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              53,
+              143
+            ],
+            "observed": [
+              61,
+              223,
+              53,
+              143
+            ],
+            "error": 191
+          },
+          {
+            "x": 22,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              96,
+              143
+            ],
+            "observed": [
+              61,
+              223,
+              96,
+              143
+            ],
+            "error": 191
+          },
+          {
+            "x": 23,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              138,
+              143
+            ],
+            "observed": [
+              61,
+              223,
+              138,
+              143
+            ],
+            "error": 191
+          },
+          {
+            "x": 24,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              181,
+              143
+            ],
+            "observed": [
+              61,
+              223,
+              181,
+              143
+            ],
+            "error": 191
+          },
+          {
+            "x": 25,
+            "y": 2,
+            "expected": [
+              61,
+              32,
+              223,
+              143
+            ],
+            "observed": [
+              61,
+              223,
+              223,
+              143
+            ],
+            "error": 191
+          }
+        ]
+      },
+      "pixelSha256": "f199278beb5624458dff145550550851bfa54b0843634eaa8c851993a28c41d5"
+    }
+  ],
+  "nativeBytes": 40410440,
+  "physicalPixels": 5632
+}

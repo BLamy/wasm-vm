@@ -1,0 +1,5 @@
+AssertionError [ERR_ASSERTION]: mode-2-custom-0 independent assembly pixel oracle: expected [], observed [{"x":3,"y":2,"expected":[[115,56,51,128]],"observed":[99,56,51,128],"error":16},{"x":4,"y":2,"expected":[[115,56,51,128]],"observed":[99,56,51,128],"error":16},{"x":5,"y":2,"expected":[[115,56,51,128]],"observed":[99,56,51,128],"error":16},{"x":19,"y":2,"expected":[[115,56,51,128]],"observed":[99,56,51,128],"error":16}]
+
+'failed' !== 'passed'
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-standard-assembly.mjs:123:12

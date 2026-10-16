@@ -1,0 +1,1501 @@
+{
+  "schema": "d60-verifier-source-pristine-provenance-v1",
+  "status": "passed",
+  "receiptSha256": "af7182fa12ca6e359a770f329368ef4545b7105141eb9141e3575510f1cd3254",
+  "sourcePins": 1215,
+  "clone": "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo",
+  "cloneHead": "9698c0a91086cd419087154875d7200efcfded69",
+  "cloneTrackedClean": true,
+  "commands": [
+    {
+      "name": "policy",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "diff-format",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "bc2fb1e49575b8b1a399ca7729fcec4853a48287",
+        "HEAD"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "format",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "command": [
+        "cargo",
+        "fmt",
+        "--check",
+        "-p",
+        "wasm-vm-core",
+        "-p",
+        "wasm-vm-wasm"
+      ],
+      "actualCommand": [
+        "cargo",
+        "fmt",
+        "--check",
+        "-p",
+        "wasm-vm-core",
+        "-p",
+        "wasm-vm-wasm"
+      ]
+    },
+    {
+      "name": "predecessor",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "python3",
+        "tools/virgl-dimensional-depth-views/predecessor.py",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/predecessor"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "clippy-default",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "command": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--lib",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "actualCommand": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--lib",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    {
+      "name": "clippy-wasm",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "command": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--features",
+        "virgl-control-proof",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "actualCommand": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--features",
+        "virgl-control-proof",
+        "--",
+        "-D",
+        "warnings"
+      ]
+    },
+    {
+      "name": "native-virtio_gpu_submit3d",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--features",
+        "virgl-control-proof,gpu-trace,trace",
+        "--test",
+        "virtio_gpu_submit3d",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "actualCommand": [
+        "cargo",
+        "test",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--features",
+        "virgl-control-proof,gpu-trace,trace",
+        "--test",
+        "virtio_gpu_submit3d",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ]
+    },
+    {
+      "name": "native-virtio_gpu_control3d",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--features",
+        "virgl-control-proof,gpu-trace,trace",
+        "--test",
+        "virtio_gpu_control3d",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "actualCommand": [
+        "cargo",
+        "test",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--features",
+        "virgl-control-proof,gpu-trace,trace",
+        "--test",
+        "virtio_gpu_control3d",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ]
+    },
+    {
+      "name": "wasm-core-default",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--no-default-features",
+        "--target",
+        "wasm32-unknown-unknown"
+      ],
+      "actualCommand": [
+        "cargo",
+        "build",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--no-default-features",
+        "--target",
+        "wasm32-unknown-unknown"
+      ]
+    },
+    {
+      "name": "wasm-core-selected",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--no-default-features",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--features",
+        "virgl-control-proof"
+      ],
+      "actualCommand": [
+        "cargo",
+        "build",
+        "--offline",
+        "-p",
+        "wasm-vm-core",
+        "--no-default-features",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--features",
+        "virgl-control-proof"
+      ]
+    },
+    {
+      "name": "wasm-proof",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "command": [
+        "wasm-pack",
+        "build",
+        "crates/wasm",
+        "--dev",
+        "--target",
+        "web",
+        "--out-dir",
+        "../../target/virgl-desktop-submit/pkg",
+        "--features",
+        "virgl-control-proof"
+      ],
+      "actualCommand": [
+        "wasm-pack",
+        "build",
+        "crates/wasm",
+        "--dev",
+        "--target",
+        "web",
+        "--out-dir",
+        "../../target/virgl-desktop-submit/pkg",
+        "--features",
+        "virgl-control-proof"
+      ]
+    },
+    {
+      "name": "syntax-private",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "--check",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/tools/virgl-dimensional-depth-views/private.mjs"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "syntax-private-body",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "--check",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/tools/virgl-dimensional-depth-views/private-body.mjs"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "syntax-configurations",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "--check",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/tools/virgl-dimensional-depth-views/configurations.mjs"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "syntax-browser",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "--check",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/tools/virgl-dimensional-depth-views/browser.mjs"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "syntax-private-browser",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "--check",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/tools/virgl-dimensional-depth-views/private-browser.mjs"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "syntax-fixtures",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "--check",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/tools/virgl-dimensional-depth-views/fixtures.mjs"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "syntax-private-boundaries",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "--check",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/tools/virgl-dimensional-depth-views/private-boundaries.mjs"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "syntax-native-dimensional-depth-views",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "--check",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/renderer/virgl-command/tests/native-dimensional-depth-views.mjs"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "syntax-resources",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "--check",
+        "renderer/virgl-command/resources.mjs"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "syntax-decoder",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "--check",
+        "renderer/virgl-command/decoder.mjs"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "syntax-state",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "--check",
+        "renderer/virgl-command/state.mjs"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "syntax-control-bridge",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "--check",
+        "renderer/virgl-command/control-bridge.mjs"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "syntax-floating-depth-gpu",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "--check",
+        "renderer/virgl-command/floating-depth-gpu.mjs"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "python-syntax",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "python3",
+        "-m",
+        "py_compile",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/tools/virgl-dimensional-depth-views/audit.py",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/tools/virgl-dimensional-depth-views/seal.py",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/tools/virgl-dimensional-depth-views/predecessor.py",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/tools/virgl-dimensional-depth-views/coverage.py",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/tools/virgl-dimensional-depth-views/cold.py",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/tools/virgl-dimensional-depth-views/verify.py"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "hardware-27449",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "command": [
+        "node",
+        "tools/virgl-dimensional-depth-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/hardware-27449",
+        "--seeds",
+        "27449"
+      ],
+      "actualCommand": [
+        "node",
+        "tools/virgl-dimensional-depth-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-439bf823/hardware-27449",
+        "--seeds",
+        "27449"
+      ]
+    },
+    {
+      "name": "private-27449",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "843f8512b3d318689ed7d2d603f7980305944125",
+      "command": [
+        "node",
+        "tools/virgl-dimensional-depth-views/private-browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/private-27449",
+        "--seed",
+        "27449"
+      ],
+      "actualCommand": [
+        "node",
+        "tools/virgl-dimensional-depth-views/private-browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-843f8512/private-27449",
+        "--seed",
+        "27449"
+      ]
+    },
+    {
+      "name": "hardware-84131",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "843f8512b3d318689ed7d2d603f7980305944125",
+      "command": [
+        "node",
+        "tools/virgl-dimensional-depth-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/hardware-84131",
+        "--seeds",
+        "84131"
+      ],
+      "actualCommand": [
+        "node",
+        "tools/virgl-dimensional-depth-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-843f8512/hardware-84131",
+        "--seeds",
+        "84131"
+      ]
+    },
+    {
+      "name": "private-84131",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "843f8512b3d318689ed7d2d603f7980305944125",
+      "command": [
+        "node",
+        "tools/virgl-dimensional-depth-views/private-browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/private-84131",
+        "--seed",
+        "84131"
+      ],
+      "actualCommand": [
+        "node",
+        "tools/virgl-dimensional-depth-views/private-browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-843f8512/private-84131",
+        "--seed",
+        "84131"
+      ]
+    },
+    {
+      "name": "hardware-176129",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "843f8512b3d318689ed7d2d603f7980305944125",
+      "command": [
+        "node",
+        "tools/virgl-dimensional-depth-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/hardware-176129",
+        "--seeds",
+        "176129"
+      ],
+      "actualCommand": [
+        "node",
+        "tools/virgl-dimensional-depth-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-843f8512/hardware-176129",
+        "--seeds",
+        "176129"
+      ]
+    },
+    {
+      "name": "private-176129",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "843f8512b3d318689ed7d2d603f7980305944125",
+      "command": [
+        "node",
+        "tools/virgl-dimensional-depth-views/private-browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/private-176129",
+        "--seed",
+        "176129"
+      ],
+      "actualCommand": [
+        "node",
+        "tools/virgl-dimensional-depth-views/private-browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-843f8512/private-176129",
+        "--seed",
+        "176129"
+      ]
+    },
+    {
+      "name": "attacks",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "843f8512b3d318689ed7d2d603f7980305944125",
+      "command": [
+        "node",
+        "tools/virgl-dimensional-depth-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/attacks",
+        "--attacks",
+        "true"
+      ],
+      "actualCommand": [
+        "node",
+        "tools/virgl-dimensional-depth-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-843f8512/attacks",
+        "--attacks",
+        "true"
+      ]
+    },
+    {
+      "name": "boundaries",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "843f8512b3d318689ed7d2d603f7980305944125",
+      "command": [
+        "node",
+        "tools/virgl-dimensional-depth-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/boundaries",
+        "--boundaries",
+        "true"
+      ],
+      "actualCommand": [
+        "node",
+        "tools/virgl-dimensional-depth-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-843f8512/boundaries",
+        "--boundaries",
+        "true"
+      ]
+    },
+    {
+      "name": "fault-wrong-layer",
+      "exitCode": 1,
+      "expected": 1,
+      "carriedFromHead": "843f8512b3d318689ed7d2d603f7980305944125",
+      "command": [
+        "node",
+        "tools/virgl-dimensional-depth-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/fault-wrong-layer",
+        "--fault",
+        "true",
+        "--seeds",
+        "176129"
+      ],
+      "actualCommand": [
+        "node",
+        "tools/virgl-dimensional-depth-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-843f8512/fault-wrong-layer",
+        "--fault",
+        "true",
+        "--seeds",
+        "176129"
+      ]
+    },
+    {
+      "name": "historical-dimensional-views",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "843f8512b3d318689ed7d2d603f7980305944125",
+      "command": [
+        "node",
+        "tools/virgl-dimensional-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/historical-dimensional-views",
+        "--seeds",
+        "27449",
+        "--smoke",
+        "true"
+      ],
+      "actualCommand": [
+        "node",
+        "tools/virgl-dimensional-views/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-843f8512/historical-dimensional-views",
+        "--seeds",
+        "27449",
+        "--smoke",
+        "true"
+      ]
+    },
+    {
+      "name": "historical-dimensional-depth",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "843f8512b3d318689ed7d2d603f7980305944125",
+      "command": [
+        "node",
+        "tools/virgl-dimensional-depth/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/historical-dimensional-depth",
+        "--seeds",
+        "27449",
+        "--smoke",
+        "true"
+      ],
+      "actualCommand": [
+        "node",
+        "tools/virgl-dimensional-depth/browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-843f8512/historical-dimensional-depth",
+        "--seeds",
+        "27449",
+        "--smoke",
+        "true"
+      ]
+    },
+    {
+      "name": "historical-bindings",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": "843f8512b3d318689ed7d2d603f7980305944125",
+      "command": [
+        "node",
+        "tools/verify-virgl-shadow-samplers.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/historical-bindings",
+        "--mode",
+        "bindings",
+        "--smoke",
+        "true"
+      ],
+      "actualCommand": [
+        "node",
+        "tools/verify-virgl-shadow-samplers.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-843f8512/historical-bindings",
+        "--mode",
+        "bindings",
+        "--smoke",
+        "true"
+      ]
+    },
+    {
+      "name": "historical-configurations",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "tools/virgl-dimensional-depth-views/private-browser.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/historical-configurations",
+        "--configurations",
+        "true"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "physical-audit",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "python3",
+        "tools/virgl-dimensional-depth-views/audit.py",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "coverage-audit",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "python3",
+        "tools/virgl-dimensional-depth-views/coverage.py",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "default-build",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "make",
+        "web-dist"
+      ],
+      "actualCommand": null
+    },
+    {
+      "name": "default-demo",
+      "exitCode": 0,
+      "expected": 0,
+      "carriedFromHead": null,
+      "command": [
+        "node",
+        "tools/verify-virgl-default-demo.mjs",
+        "--output",
+        "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-dimensional-depth-views-cold-vfzeh3m8/repo/target/evidence/dimensional-depth-views-cold-final-9698c0a9/default-demo",
+        "--task",
+        "E6-T11d60"
+      ],
+      "actualCommand": null
+    }
+  ],
+  "reports": [
+    {
+      "path": "cold/recording/attacks/report.json",
+      "sha256": "4788a4f3ab46d2474dfb01605e64504ab843d502f24b83d552aee2c9b433929a",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "status": "passed",
+      "sources": 40,
+      "served": 40
+    },
+    {
+      "path": "cold/recording/boundaries/report.json",
+      "sha256": "dc2eed7e4ded2b8e3c908daa8e1dea3ee2b69b8657b77781cd15086817d87b49",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "status": "passed",
+      "sources": 40,
+      "served": 40
+    },
+    {
+      "path": "cold/recording/fault-wrong-layer/report.json",
+      "sha256": "cf9850375bdc98018fe8280d4b7d765a5564302f4213c5da6203d5ebe6841840",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "status": "failed",
+      "sources": 40,
+      "served": 40
+    },
+    {
+      "path": "cold/recording/hardware-176129/report.json",
+      "sha256": "a0289add06b87c65316a285a72688ead4f14ac9cae2ffe202b9de54228901a2c",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "status": "passed",
+      "sources": 40,
+      "served": 40
+    },
+    {
+      "path": "cold/recording/hardware-27449/report.json",
+      "sha256": "f70be9e4fc2bca06656919b88ffc9cc76f7bba9ad19a905d3846a3e7b09f20cd",
+      "head": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "status": "passed",
+      "sources": 40,
+      "served": 40
+    },
+    {
+      "path": "cold/recording/hardware-84131/report.json",
+      "sha256": "07f8417c54577bec8ab008b5d8416b9bb4d06fd10011d4ca971a479c70c8503c",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "status": "passed",
+      "sources": 40,
+      "served": 40
+    },
+    {
+      "path": "cold/recording/historical-configurations/report.json",
+      "sha256": "b535ef8f08ba0ba0608ad12dd787a9ba2742e7f7266a159fa92abff37470950b",
+      "head": "9698c0a91086cd419087154875d7200efcfded69",
+      "status": "passed",
+      "sources": 53,
+      "served": 41
+    },
+    {
+      "path": "cold/recording/historical-dimensional-depth/report.json",
+      "sha256": "33a132aa4ce9bd539c8d2b615e6ca37b477b1b131f055a24c3c3651c740e0c3a",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "status": "passed",
+      "sources": 35,
+      "served": 35
+    },
+    {
+      "path": "cold/recording/historical-dimensional-views/report.json",
+      "sha256": "b921b18ec17fb18d83330cd2cf48f505163f81fea0eef338818d7f5b636b7882",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "status": "passed",
+      "sources": 40,
+      "served": 40
+    },
+    {
+      "path": "cold/recording/private-176129/report.json",
+      "sha256": "b4e773495087004180dfbc488bbe8b89a34d266a5842f4393f22babdcd8ebc7c",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "status": "passed",
+      "sources": 52,
+      "served": 38
+    },
+    {
+      "path": "cold/recording/private-27449/report.json",
+      "sha256": "160f2996ba36b1b4d7a5a122e81edf17ebfeeae7d1c522bbcfce0b1b71201424",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "status": "passed",
+      "sources": 52,
+      "served": 38
+    },
+    {
+      "path": "cold/recording/private-84131/report.json",
+      "sha256": "d0f7e5fe86a5f4bf35c96cb674f710f6563bbbebf62d683ec0b88ac76b9c1f49",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "status": "passed",
+      "sources": 52,
+      "served": 38
+    }
+  ],
+  "generated": {
+    "renderer/virgl-shader/build/wasm/virgl-shader.mjs": {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2",
+      "authorities": [
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/fault-wrong-layer/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/hardware/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/historical-dimensional-views/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/historical-native-image/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/fault-wrong-layer/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/hardware/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/historical-dimensional-views/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/historical-native-image/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/attacks/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/boundaries/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/fault-wrong-layer/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/hardware-176129/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/hardware-27449/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/hardware-84131/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/historical-bindings/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/historical-historical/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/historical-native-image/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/legacy-transport/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/sharing/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+          "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+        }
+      ]
+    },
+    "renderer/virgl-shader/build/wasm/virgl-shader.wasm": {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100",
+      "authorities": [
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/fault-wrong-layer/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/hardware/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/historical-dimensional-views/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/historical-native-image/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/fault-wrong-layer/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/hardware/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/historical-dimensional-views/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/historical-native-image/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/attacks/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/boundaries/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/fault-wrong-layer/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/hardware-176129/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/hardware-27449/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/hardware-84131/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/historical-bindings/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/historical-historical/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/historical-native-image/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/legacy-transport/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        },
+        {
+          "corpus": "virgl-dimensional-views/worker",
+          "path": "cold/recording/sharing/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+          "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+        }
+      ]
+    },
+    "target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": {
+      "path": "target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "authorities": [
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/fault-wrong-layer/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+          "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/hardware/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+          "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/historical-dimensional-views/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+          "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/historical-native-image/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+          "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/fault-wrong-layer/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+          "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/hardware/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+          "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/historical-dimensional-views/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+          "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/historical-native-image/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+          "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+        }
+      ]
+    },
+    "target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js": {
+      "path": "target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2",
+      "authorities": [
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/fault-wrong-layer/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+          "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/hardware/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+          "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/historical-dimensional-views/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+          "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/historical-native-image/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+          "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/fault-wrong-layer/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+          "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/hardware/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+          "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/historical-dimensional-views/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+          "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/historical-native-image/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+          "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+        }
+      ]
+    },
+    "target/virgl-desktop-submit/pkg/wasm_vm_wasm.js": {
+      "path": "target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174981,
+      "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30",
+      "authorities": [
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/fault-wrong-layer/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+          "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/hardware/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+          "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/historical-dimensional-views/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+          "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/historical-native-image/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+          "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/fault-wrong-layer/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+          "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/hardware/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+          "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/historical-dimensional-views/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+          "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/historical-native-image/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+          "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30"
+        }
+      ]
+    },
+    "target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm": {
+      "path": "target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7425956,
+      "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323",
+      "authorities": [
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/fault-wrong-layer/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+          "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/hardware/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+          "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/historical-dimensional-views/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+          "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/carried/recording/historical-native-image/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+          "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/fault-wrong-layer/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+          "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/hardware/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+          "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/historical-dimensional-views/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+          "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323"
+        },
+        {
+          "corpus": "virgl-dimensional-depth/worker",
+          "path": "cold/recording/historical-native-image/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+          "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323"
+        }
+      ]
+    }
+  },
+  "allColdReports": [
+    {
+      "path": "cold/continuation-source/continuation-source/continuation-source/continuation-source/report.json",
+      "sha256": "6457fdd62085d0c728e3c0604ede903b8affb9ab97b11f773b3f98f67717ea80",
+      "head": "9f2c98dd8c49a2cc226bde6a7e844227087d7f38",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/continuation-source/continuation-source/continuation-source/report.json",
+      "sha256": "0e87d6616e0295cb684ab62ab0815666c45665de77af87520ce93fc53482a715",
+      "head": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/continuation-source/continuation-source/recording/carried/continuation-source/report.json",
+      "sha256": "6457fdd62085d0c728e3c0604ede903b8affb9ab97b11f773b3f98f67717ea80",
+      "head": "9f2c98dd8c49a2cc226bde6a7e844227087d7f38",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/continuation-source/continuation-source/recording/carried/report.json",
+      "sha256": "0e87d6616e0295cb684ab62ab0815666c45665de77af87520ce93fc53482a715",
+      "head": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/continuation-source/continuation-source/report.json",
+      "sha256": "416ae055286418c6379a16e2021e1b95a566f11d6f6ad627002929b9611e7e2f",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/continuation-source/recording/carried/continuation-source/continuation-source/report.json",
+      "sha256": "6457fdd62085d0c728e3c0604ede903b8affb9ab97b11f773b3f98f67717ea80",
+      "head": "9f2c98dd8c49a2cc226bde6a7e844227087d7f38",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/continuation-source/recording/carried/continuation-source/report.json",
+      "sha256": "0e87d6616e0295cb684ab62ab0815666c45665de77af87520ce93fc53482a715",
+      "head": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/continuation-source/recording/carried/recording/carried/continuation-source/report.json",
+      "sha256": "6457fdd62085d0c728e3c0604ede903b8affb9ab97b11f773b3f98f67717ea80",
+      "head": "9f2c98dd8c49a2cc226bde6a7e844227087d7f38",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/continuation-source/recording/carried/recording/carried/report.json",
+      "sha256": "0e87d6616e0295cb684ab62ab0815666c45665de77af87520ce93fc53482a715",
+      "head": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/continuation-source/recording/carried/report.json",
+      "sha256": "416ae055286418c6379a16e2021e1b95a566f11d6f6ad627002929b9611e7e2f",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/continuation-source/report.json",
+      "sha256": "ed180fd328c52cfe2d04be6a87ba292785efb5a80a7d22d65f76839db4d485ed",
+      "head": "cd294e7486756f64fc9ea59373b14bac72cb60b7",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/recording/carried/continuation-source/continuation-source/continuation-source/report.json",
+      "sha256": "6457fdd62085d0c728e3c0604ede903b8affb9ab97b11f773b3f98f67717ea80",
+      "head": "9f2c98dd8c49a2cc226bde6a7e844227087d7f38",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/recording/carried/continuation-source/continuation-source/report.json",
+      "sha256": "0e87d6616e0295cb684ab62ab0815666c45665de77af87520ce93fc53482a715",
+      "head": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/recording/carried/continuation-source/recording/carried/continuation-source/report.json",
+      "sha256": "6457fdd62085d0c728e3c0604ede903b8affb9ab97b11f773b3f98f67717ea80",
+      "head": "9f2c98dd8c49a2cc226bde6a7e844227087d7f38",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/recording/carried/continuation-source/recording/carried/report.json",
+      "sha256": "0e87d6616e0295cb684ab62ab0815666c45665de77af87520ce93fc53482a715",
+      "head": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/recording/carried/continuation-source/report.json",
+      "sha256": "416ae055286418c6379a16e2021e1b95a566f11d6f6ad627002929b9611e7e2f",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/recording/carried/recording/carried/continuation-source/continuation-source/report.json",
+      "sha256": "6457fdd62085d0c728e3c0604ede903b8affb9ab97b11f773b3f98f67717ea80",
+      "head": "9f2c98dd8c49a2cc226bde6a7e844227087d7f38",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/recording/carried/recording/carried/continuation-source/report.json",
+      "sha256": "0e87d6616e0295cb684ab62ab0815666c45665de77af87520ce93fc53482a715",
+      "head": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/recording/carried/recording/carried/recording/carried/continuation-source/report.json",
+      "sha256": "6457fdd62085d0c728e3c0604ede903b8affb9ab97b11f773b3f98f67717ea80",
+      "head": "9f2c98dd8c49a2cc226bde6a7e844227087d7f38",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/recording/carried/recording/carried/recording/carried/report.json",
+      "sha256": "0e87d6616e0295cb684ab62ab0815666c45665de77af87520ce93fc53482a715",
+      "head": "439bf8234c81ba30b0feb0ce968f9f95a40adb5d",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/recording/carried/recording/carried/report.json",
+      "sha256": "416ae055286418c6379a16e2021e1b95a566f11d6f6ad627002929b9611e7e2f",
+      "head": "843f8512b3d318689ed7d2d603f7980305944125",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/recording/carried/report.json",
+      "sha256": "ed180fd328c52cfe2d04be6a87ba292785efb5a80a7d22d65f76839db4d485ed",
+      "head": "cd294e7486756f64fc9ea59373b14bac72cb60b7",
+      "exitCode": 2,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    },
+    {
+      "path": "cold/report.json",
+      "sha256": "c21df5854901fd3f935370fc34eabea1e44b9d9ec3ef47d4bc04f0b0af40f819",
+      "head": "9698c0a91086cd419087154875d7200efcfded69",
+      "exitCode": 0,
+      "cleanBefore": "",
+      "cleanAfter": ""
+    }
+  ],
+  "sealingPeerReceipt": {
+    "schema": "d60-sealing-reopen-interruption-v1",
+    "head": "9698c0a91086cd419087154875d7200efcfded69",
+    "ownedProcess": [
+      "88772",
+      "2012",
+      "04:27",
+      "100.0",
+      "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/Resources/Python.app/Contents/MacOS/Python tools/virgl-dimensional-depth-views/seal.py /tmp/wasmvm-dimensional-depth-views-cold-configuration-final evidence/virgl-dimensional-depth-views/worker"
+    ],
+    "reason": "Archive writer complete; random-access reopening of deduplicated gzip members was CPU-bound. Preserve full archive and finish full-byte checks sequentially.",
+    "archiveBytes": 460967357,
+    "recordIndexSha256": "38dc0b762d1bb5d37229a6ced3ae8b493eb93706cb26f1984b1251b7f83134b9"
+  }
+}

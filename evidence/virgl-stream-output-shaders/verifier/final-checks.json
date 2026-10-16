@@ -1,0 +1,93 @@
+{
+  "schema": "stream-output-shaders-critic-final-checks-v1",
+  "status": "passed",
+  "commands": [
+    {
+      "command": [
+        "node",
+        "--check",
+        "tools/virgl-stream-output-shaders/alias-browser.mjs"
+      ],
+      "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "evidence/virgl-stream-output-shaders/verifier/component-wasm.mjs"
+      ],
+      "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+      "exitCode": 0,
+      "stdout": "task-policy: OK (active=none)\n",
+      "stderr": "",
+      "stdoutSha256": "b09df388647b89ea459126a41fd92d72d5e274ddb70ffe70a741ba88cb705734",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "tools/build_queue.py"
+      ],
+      "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+      "exitCode": 0,
+      "stdout": "wrote tasks/QUEUE.md: 684 tasks, 491 verified\n",
+      "stderr": "",
+      "stdoutSha256": "c0e62a84517ab5b3da90c2253c6cabb326120c0e60488fe26b915b9cc97f8dd7",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--exit-code",
+        "0c167360a8d01a1e51b7be1309d6caf70fbff611",
+        "--",
+        "renderer",
+        "crates",
+        "web",
+        "guest",
+        "Cargo.lock",
+        "Cargo.toml"
+      ],
+      "cwd": "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm",
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "pythonSyntaxFiles": 7,
+  "sourceMutation": false,
+  "finishedAt": "2026-10-13T21:17:54.203641+00:00"
+}

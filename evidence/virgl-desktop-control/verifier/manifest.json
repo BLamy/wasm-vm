@@ -1,0 +1,49 @@
+{
+  "schema": "desktop-control-critic-seal-v1",
+  "task": "E6-T11d51",
+  "verdict": "verified",
+  "workerSubmissionHead": "0186b314c591d066227541ce5d3965eb9edad723",
+  "frozenHead": "e13dddfbb0d955abb268e4b4ac07828cbea35956",
+  "records": 337,
+  "reopenedMembers": 337,
+  "recordIndexSha256": "3a9e683e5e06e8e51423b764ef6067e80def9ac547e06f704eac68d94405cb6c",
+  "archiveSha256": "ec14364bf7d1bce7103137c15c2fd0694730e61d7af439ef52caeb5678fc8e83",
+  "archiveBytes": 4376380,
+  "workerSeal": {
+    "label": "worker",
+    "manifestSha256": "39c771aa285e5b215c26e92099f77fb63b5695d9a2ba62fe25001e47ec1da680",
+    "indexSha256": "c021b524368f72fca6a43eca1e6056343743f914c3d9fb98c3f438164c7182f7",
+    "archiveSha256": "778eff96061490ef562821014b72a54581c07c4077b31b7e0620f6a2229ba051",
+    "archiveBytes": 6894597,
+    "reopenedBodies": 665
+  },
+  "heldD50": [
+    {
+      "label": "D50-worker",
+      "manifestSha256": "59cea015984012bb2bbd8c8ac469e509ae272c5ca10814dbf80af669566dbdd7",
+      "indexSha256": "4a948c805eaf6d5c165a88694e81d575a630069d49292098274de625e4f1c4c8",
+      "archiveSha256": "7abb50b55a92b45ceec07aa52a95f0a024c94837dc0a44773465e3d4d3999420",
+      "archiveBytes": 2620778,
+      "reopenedBodies": 642
+    },
+    {
+      "label": "D50-verifier",
+      "manifestSha256": "7eb6715ab4f8345cf6093d1c7ed35e43aa5b8838d36d1d0ef63410338e353745",
+      "indexSha256": "21dc44b2dd2401e5a056c1ff152fa474e1529cd62199e40596c8c6864e7e6a86",
+      "archiveSha256": "4f038098d37c82b90234fcf03807b2e05632492a368a33647f014579dd0177cc",
+      "archiveBytes": 1595381,
+      "reopenedBodies": 365
+    }
+  ],
+  "carriedHostSources": 303,
+  "nativeFreshRecords": 608,
+  "novelRecords": 653,
+  "promotedRecords": 255,
+  "positiveMappedOperands": 120,
+  "staticLineWaivers": 35,
+  "exactUnmappedWaivers": 22,
+  "coldReceiptSha256": "ed668a0b73c3c97100dd6be9684743705ae5b6c446ad5a27f52a2af2d3ec43c7",
+  "runtimeChangedByVerifier": false,
+  "guestExecution": false,
+  "productionAuthority": false
+}

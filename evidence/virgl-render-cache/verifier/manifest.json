@@ -1,0 +1,28 @@
+{
+  "schema": "virgl-cache-critic-seal-v1",
+  "task": "E6-T12i",
+  "sourceHead": "6ec98cebea12fc9551e333746d9616999be1e5d2",
+  "verdict": "verified",
+  "records": 55,
+  "archiveBytes": 1477694,
+  "archiveSha256": "c6932986a04f4382148547ee5f06720fc496f0dce932eedb6f9b7c4e8a35105c",
+  "recordIndexSha256": "55037f473afd9ac72ec791625dd100067ebb20e57f8e07af9543f1429aed2f1f",
+  "workerArchiveSha256": "ad9165fcca40cca50382079c4df648d37525951bbae2e0b17012c236e9b097b7",
+  "coverageAuditSha256": "991d487ff45a1bbef46bd8c436d490148d9e6d339cf0e1965b7a5dcb692af9b2",
+  "finalAuditSha256": "38d732a0eae5d85e401aaeebf729550595a8250a3eff0dabb60c5801f790ce98",
+  "promotedModuleSha256": "b62565795c8d704cb328f388e3cd8611ad71d844052a793a3c0279f807505d8b",
+  "authority": "isolated-bounded-render-caches",
+  "guestExecution": false,
+  "productionDrawAuthority": false,
+  "predictionResults": {
+    "P0": "HELD",
+    "P1": "HELD",
+    "P2": "HELD",
+    "P3": "HELD",
+    "P4": "HELD",
+    "P5": "HELD",
+    "P6": "HELD",
+    "P7": "HELD",
+    "P8": "HELD"
+  }
+}

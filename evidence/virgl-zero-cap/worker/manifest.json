@@ -1,0 +1,14 @@
+{
+  "schema": "virgl-zero-cap-worker-seal-v1",
+  "task": "E6-T12g6m4c",
+  "sourceHead": "9484685b2346c9152da5de25cb55ce568f6b3ec9",
+  "records": 69,
+  "archiveSha256": "0ef8c10d2c4f894328adec33d2959d2c0725cc1ab5c02260e02e204c1a33337c",
+  "archiveBytes": 4172482,
+  "recordIndexSha256": "d5acbea85f0fb773e0623593bbd4f730a99504cc6f9cdbbee920c37f2f7c7966",
+  "hotReceiptSha256": "654083f5cfd2b067b4f449e1a951814bcde9e84c1b5d606611f844480742a617",
+  "coldReportSha256": "34ee3992c456b4c5c31d0445b55f9309116afdcfb373f7f045510867b6658f47",
+  "coldReceiptSha256": "42c123c65c9c121f295c2e529613ee18739dae08a5721c85447b2c4bc092c0f9",
+  "guestExecution": false,
+  "productionNegotiation": false
+}

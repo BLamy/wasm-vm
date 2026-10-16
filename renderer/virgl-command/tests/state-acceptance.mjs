@@ -422,7 +422,7 @@ export async function runBrowserAcceptance(fixtures, options = {}) {
   rejectStable(packet(1, 8, [88, 105, 67, 0, 0]), "surface resource belongs to another context");
   rejectStable(packet(1, 6, [88, 6, 0x02000043, 0, 0, 6]), "reserved sampler swizzle component rejected");
   rejectStable(packet(1, 6, [88, 3, 0x02000043, 0, 0, 0x688]), "sampler view buffer attachment incompatible");
-  rejectStable(packet(1, 3, [88, 1, 0, 0, 0]), "active depth hidden in DSA");
+  rejectStable(packet(1, 3, [88, 256, 0, 0, 0]), "unsupported alpha testing hidden in DSA");
   rejectStable(packet(34, 0, [5, 0, 1, 0, 0]), "active shader storage hidden in reset");
   rejectStable(packet(35, 0, [5, 0, 0, 0, 0, 0, 1]), "active image hidden in reset");
   rejectStable(packet(31, 0, [1, 5]), "active unsupported shader stage");

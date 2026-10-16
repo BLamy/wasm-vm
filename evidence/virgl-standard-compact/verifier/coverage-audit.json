@@ -1,0 +1,4670 @@
+{
+  "schema": "standard-compact-runtime-coverage-v1",
+  "sourceHead": "ac77cdd095de121d71628308d920bfdcdbc454c3",
+  "files": [
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "sha256": "a9bcef126b4f15d3e3920c1e5c14728c294afc79fde31015adb8e4f79237b2a1",
+      "addedLines": 20,
+      "lines": [
+        {
+          "line": 21,
+          "source": "// Original pinned VirGL enums. Descriptors are shared by wire admission,",
+          "classification": "waived",
+          "reason": "comment, delimiter or module import has no independent runtime branch",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 22,
+          "source": "// native pointers, actual fetch bounds and retained stride-zero reads.",
+          "classification": "waived",
+          "reason": "comment, delimiter or module import has no independent runtime branch",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 23,
+          "source": "const FLOATING_VERTEX_FORMATS = Object.freeze(Object.fromEntries([",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 24,
+          "source": "  [28, 4, \"FLOAT\", \"float\"], [48, 2, \"UNSIGNED_SHORT\", \"unorm\"],",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 25,
+          "source": "  [56, 2, \"SHORT\", \"snorm\"], [64, 1, \"UNSIGNED_BYTE\", \"unorm\"],",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 46,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 26,
+          "source": "  [74, 1, \"BYTE\", \"snorm\"], [91, 2, \"HALF_FLOAT\", \"half\"],",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 41,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 27,
+          "source": "].flatMap(([base, scalarBytes, type, kind]) => Array.from({ length: 4 }, (_, lane) => {",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 61,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 28,
+          "source": "  const format = base + lane, components = lane + 1;",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 38,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 29,
+          "source": "  return [format, Object.freeze({ format, components, scalarBytes,",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 30,
+          "source": "    elementBytes: components * scalarBytes, type, kind, normalized: kind === \"unorm\" || kind === \"snorm\" })];",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 31,
+          "source": "}))));",
+          "classification": "waived",
+          "reason": "comment, delimiter or module import has no independent runtime branch",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 32,
+          "source": "export const floatingVertexFormat = format => Number.isInteger(format) && Object.hasOwn(FLOATING_VERTEX_FORMATS, format) ? FLOATING_VERTEX_FORMATS[format] : null;",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 138,
+              "zeroCharacters": 5
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 143,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 33,
+          "source": "",
+          "classification": "waived",
+          "reason": "comment, delimiter or module import has no independent runtime branch",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 263,
+          "source": "        const format = floatingVertexFormat(sourceFormat);",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 264,
+          "source": "        p.require(p.standard ? format !== null : instanceDivisor === 0 && [28, 29, 30, 31].includes(sourceFormat), \"unsupported-feature\",",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 54,
+              "zeroCharacters": 53
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 107,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 265,
+          "source": "          p.standard ? \"Unsupported floating vertex format.\" : \"Only per-vertex R32 through RGBA32_FLOAT elements are supported.\");",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 60
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 105,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 266,
+          "source": "        // Standard alignment is checked on the effective buffer+element offset,",
+          "classification": "waived",
+          "reason": "comment, delimiter or module import has no independent runtime branch",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 267,
+          "source": "        // so individually unaligned offsets may sum to a valid native pointer.",
+          "classification": "waived",
+          "reason": "comment, delimiter or module import has no independent runtime branch",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 60,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 268,
+          "source": "        p.require((p.standard || sourceOffset % 4 === 0) && sourceOffset <= MAX_U32 - format.elementBytes,",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 20
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 82,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 269,
+          "source": "          \"invalid-value\", p.standard ? \"Vertex element end must fit u32.\" : \"Vertex element offset must be float-aligned and its end must fit u32.\");",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/hot/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/hot/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/hot/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/cold/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/cold/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-list-order/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/fault-provoking/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-coord-y/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/cold/retained-points/fault-size-selection/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/cold/retained-restart/fault-restart/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 55,
+              "zeroCharacters": 61
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 116,
+              "zeroCharacters": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "sha256": "e6ed224b99346005e099479d950c2bbf03ba3c98fb3e68562463e5626c16f635",
+      "addedLines": 41,
+      "lines": [
+        {
+          "line": 2,
+          "source": "import { decodeSubmission, decodeStandardSubmission, floatingVertexFormat } from \"./decoder.mjs\";",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 85,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 21,
+          "source": "const vertexComponents = (element) => floatingVertexFormat(element.sourceFormat).components;",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 82,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 82,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 82,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 82,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 82,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 82,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 82,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 82,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 82,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 22,
+          "source": "function constantVertexValues(bytes, sourceFormat) {",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 23,
+          "source": "  const format = floatingVertexFormat(sourceFormat), values = new Float32Array([0, 0, 0, 1]), words = [];",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 80,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 80,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 80,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 80,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 80,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 80,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 80,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 80,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 80,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 24,
+          "source": "  const input = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength), output = new DataView(values.buffer);",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 97,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 97,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 97,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 97,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 97,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 97,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 97,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 97,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 97,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 25,
+          "source": "  for (let lane = 0; lane < format.components; lane++) {",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 40,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 40,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 40,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 40,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 40,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 40,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 40,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 40,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 40,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 26,
+          "source": "    const at = lane * format.scalarBytes;",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 31,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 31,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 31,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 31,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 31,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 31,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 31,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 31,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 31,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 27,
+          "source": "    let value;",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 8,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 8,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 8,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 8,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 8,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 8,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 8,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 8,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 8,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 28,
+          "source": "    if (format.kind === \"float\") value = input.getFloat32(at, true);",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 51,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 51,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 51,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 51,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 51,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 51,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 51,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 51,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 23,
+              "zeroCharacters": 28
+            }
+          ]
+        },
+        {
+          "line": 29,
+          "source": "    else if (format.kind === \"half\") {",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 26,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 26
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 26
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 26
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 26,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 26
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 26
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 26
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 26,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 30,
+          "source": "      const bits = input.getUint16(at, true), sign = bits & 0x8000 ? -1 : 1, exponent = bits >>> 10 & 31, fraction = bits & 1023;",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 91
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 91
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 91
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 91
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 91
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 91
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 31,
+          "source": "      value = exponent === 31 ? fraction ? NaN : sign * Infinity :",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 47
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 47
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 47
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 47
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 47
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 47
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 20,
+              "zeroCharacters": 27
+            }
+          ]
+        },
+        {
+          "line": 32,
+          "source": "        sign * (exponent === 0 ? fraction * 2 ** -24 : (1024 + fraction) * 2 ** (exponent - 25));",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 62
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 62
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 62
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 62
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 62
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 62
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 62,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 33,
+          "source": "    } else {",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 4,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 4
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 4
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 4
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 4,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 4
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 4
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 4
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 4,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 34,
+          "source": "      const signed = format.kind === \"snorm\", bits = format.scalarBytes * 8;",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 35,
+          "source": "      const scalar = format.scalarBytes === 1 ? signed ? input.getInt8(at) : input.getUint8(at) :",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 75,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 75
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 75
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 75
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 75,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 75
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 75
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 75
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 75,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 36,
+          "source": "        signed ? input.getInt16(at, true) : input.getUint16(at, true);",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 49
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 49
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 49
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 49
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 49
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 49
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 37,
+          "source": "      value = signed ? Math.max(-1, scalar / (2 ** (bits - 1) - 1)) : scalar / (2 ** bits - 1);",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 38,
+          "source": "    }",
+          "classification": "waived",
+          "reason": "comment, delimiter or module import has no independent runtime branch",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 39,
+          "source": "    values[lane] = value;",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 18,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 18,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 18,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 18,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 18,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 18,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 18,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 18,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 18,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 40,
+          "source": "    // Preserve historical original float32 word custody. Compact values record",
+          "classification": "waived",
+          "reason": "comment, delimiter or module import has no independent runtime branch",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 66,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 66,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 66,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 66,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 66,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 66,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 66,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 66,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 66,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 41,
+          "source": "    // the actual generic binary32 result; the retained ticket owns source bytes.",
+          "classification": "waived",
+          "reason": "comment, delimiter or module import has no independent runtime branch",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 65,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 65,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 65,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 65,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 65,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 65,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 65,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 65,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 65,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 42,
+          "source": "    words.push(format.kind === \"float\" ? input.getUint32(at, true) : output.getUint32(lane * 4, true));",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 80,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 27
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 27
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 27
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 80,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 27
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 27
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 53,
+              "zeroCharacters": 27
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 22
+            }
+          ]
+        },
+        {
+          "line": 43,
+          "source": "  }",
+          "classification": "waived",
+          "reason": "comment, delimiter or module import has no independent runtime branch",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 44,
+          "source": "  return { values, words };",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 17,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 17,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 17,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 17,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 17,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 17,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 17,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 17,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 17,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 45,
+          "source": "}",
+          "classification": "waived",
+          "reason": "comment, delimiter or module import has no independent runtime branch",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 368,
+          "source": "          if (!standard) for (const element of fields.elements) require(element.sourceOffset % 4 === 0, \"invalid-state\", \"Vertex element offset must be float-aligned.\");",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 11,
+              "zeroCharacters": 121
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 11,
+              "zeroCharacters": 121
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 11,
+              "zeroCharacters": 121
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 11,
+              "zeroCharacters": 121
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 11,
+              "zeroCharacters": 121
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 11,
+              "zeroCharacters": 121
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 11,
+              "zeroCharacters": 121
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 11,
+              "zeroCharacters": 121
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 11,
+              "zeroCharacters": 121
+            }
+          ]
+        },
+        {
+          "line": 695,
+          "source": "        const format = floatingVertexFormat(element.sourceFormat), offset = buffer.fields.offset + element.sourceOffset;",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 100,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 100,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 100,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 100,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 100,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 100,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 100,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 100,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 100,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 696,
+          "source": "        require(buffer.fields.stride <= 255 && buffer.fields.stride % format.scalarBytes === 0 && offset % format.scalarBytes === 0,",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 108,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 108,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 108,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 108,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 108,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 108,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 108,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 108,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 108,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 699,
+          "source": "          format.elementBytes <= buffer.metadata.byteLength - buffer.fields.offset - element.sourceOffset, \"out-of-bounds\", \"Vertex element exceeds storage.\");",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 134,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 134,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 134,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 134,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 134,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 134,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 134,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 134,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 134,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 823,
+          "source": "        const format = floatingVertexFormat(element.sourceFormat);",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 52,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 52,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 52,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 52,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 52,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 52,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 52,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 52,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 52,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 824,
+          "source": "        gl.vertexAttribPointer(attribute.location, format.components, gl[format.type], format.normalized, buffer.fields.stride, buffer.fields.offset + element.sourceOffset);",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 150,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 150,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 150,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 150,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 150,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 150,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 150,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 150,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 150,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 992,
+          "source": "        const format = floatingVertexFormat(element.sourceFormat), elementBytes = format.elementBytes;",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 84,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 84,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 84,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 84,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 84,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 84,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 84,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 84,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 84,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 1004,
+          "source": "          ...(standard ? { sourceFormat: element.sourceFormat, elementBytes, nativeType: gl[format.type], normalized: format.normalized,",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 111,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 111,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 111,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 111,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 111,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 111,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 111,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 111,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 111,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 1005,
+          "source": "            divisor, nativeDivisor: constant ? 0 : Math.min(divisor, DRAW_LIMITS.indicesPerSubmission), firstElement: first, lastElement: last,",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 113,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 113,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 113,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 113,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 113,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 113,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 113,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 113,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 113,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 1158,
+          "source": "              require(value.offset <= binding.metadata.byteLength && value.stride <= 255 &&",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 69,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 69,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 69,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 69,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 69,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 69,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 69,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 69,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 69,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 1159,
+          "source": "                (standard || value.stride % 4 === 0 && value.offset % 4 === 0), \"out-of-bounds\", \"Invalid vertex buffer range/stride.\");",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 57,
+              "zeroCharacters": 40
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 57,
+              "zeroCharacters": 40
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 57,
+              "zeroCharacters": 40
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 57,
+              "zeroCharacters": 40
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 57,
+              "zeroCharacters": 40
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 57,
+              "zeroCharacters": 40
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 57,
+              "zeroCharacters": 40
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 57,
+              "zeroCharacters": 40
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 57,
+              "zeroCharacters": 40
+            }
+          ]
+        },
+        {
+          "line": 1358,
+          "source": "              constantAttributes.set(read.attributeIndex, constantVertexValues(read.bytes, read.sourceFormat));",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 88,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 88,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 88,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 88,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 88,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 88,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 88,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 88,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 88,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 1392,
+          "source": "                lease: buffer.lease, attributeIndex: attribute.index, sourceFormat: element.sourceFormat,",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 81,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 81,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 81,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 81,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 81,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 81,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 81,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 81,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 81,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 1393,
+          "source": "                box: { x: buffer.fields.offset + element.sourceOffset, y: 0, z: 0, width: floatingVertexFormat(element.sourceFormat).elementBytes, height: 1, depth: 1 },",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 127,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 127,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 127,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 127,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 127,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 127,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 127,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 127,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 127,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 1403,
+          "source": "                job.pending.reads.push({ ...access, attributeIndex: read.attributeIndex, sourceFormat: read.sourceFormat, ready: false });",
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 106,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 106,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 106,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 106,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 106,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-assembly/hardware/browser-coverage.json",
+              "positiveCharacters": 106,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-points/hardware/browser-coverage.json",
+              "positiveCharacters": 106,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+              "positiveCharacters": 106,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 106,
+              "zeroCharacters": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "status": "passed",
+  "branchWaivers": [
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 368,
+      "branch": "legacy-only offset predicate after !standard",
+      "classification": "waived",
+      "reason": "The added standard-mode bypass executes. The unexecuted legacy body is textually the predecessor predicate; 297 fresh browser literal packets and 301 hot/cold original wire packets exercise unchanged legacy admission. No new legacy renderer semantics."
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "line": 1159,
+      "branch": "legacy-only stride/offset modulo-four conjunction",
+      "classification": "waived",
+      "reason": "The added standard-mode bypass executes with compact and effective-offset cases. The unexecuted legacy modulo-four conjunction is the predecessor predicate, whose decoder and guard admission remains unchanged."
+    }
+  ]
+}

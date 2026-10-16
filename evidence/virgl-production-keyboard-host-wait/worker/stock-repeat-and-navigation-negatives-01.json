@@ -1,0 +1,1372 @@
+{
+  "schema": "production-keyboard-original-ui-negatives-v1",
+  "runtimeHead": "5c0b909048eac8a7d8511be68b6d04482372527c",
+  "scope": {
+    "hot": "Native and closed parent components passed. Original stock trusted50ms text became tttouch, expected marker failed, all60DOM transitions balanced. GPU all649completed/failed0. This is not a complete acceptance.",
+    "cold": "Pristine full-history cold native and parent components passed. Stock page unexpectedly requested original /app again before typing; reason not observed by old harness. Execution context destroyed, not a closed input proof.",
+    "software": "Diagnostic only: initial software snapshot with same original trusted50ms helper passed marker and displaced actual cursor. Driver differences and source hashes in harness.json. Not a GPU or production verdict."
+  },
+  "files": [
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/acceptance.stderr",
+      "bytes": 723,
+      "sha256": "7d2a2aaef525fa285056d308b2410b89efc9ab21cd25128f9e1683d14abaa879"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/acceptance.stdout",
+      "bytes": 226,
+      "sha256": "19a5acd6af721c49f537d6113e31761484c930f3398b3a951e8fda014cf9e17a"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/build.stderr",
+      "bytes": 5275,
+      "sha256": "d6f3abe6694b35d6f08c50514164dfd40169bdb5a3e5e70034e2502b5d55742b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/build.stdout",
+      "bytes": 2298,
+      "sha256": "5b715feb4dbbeef5f3dfa7de59991c3250f29508d83ef342892042c68d092ad6"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/clone.stderr",
+      "bytes": 3578,
+      "sha256": "03408cc17900d48674ccde3d5b72a86ca51b691352761ce41330a40bf63f1118"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/clone.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/core-clippy.stderr",
+      "bytes": 2553,
+      "sha256": "cb3310beaa859191dece414488f510abba4e0059980f73ad61c8d43f06334f09"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/core-clippy.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/format.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/format.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/keyboard.stderr",
+      "bytes": 10101,
+      "sha256": "9ee81090eaa7d0ddae24e023543534bfd299bc692c09dfd8f5ca52d45d840011"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/keyboard.stdout",
+      "bytes": 468,
+      "sha256": "a6a2dff10f7d7cf0939830e83a30d0b124147c6fa25ea5415b53b8ee3d669095"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/native.stderr",
+      "bytes": 2576,
+      "sha256": "c5c6b0fec801d308a4beaabc29535abb3cd8a00836288d799b76f7dcb3581d91"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/native.stdout",
+      "bytes": 33620,
+      "sha256": "e6bb8e5909d7435ca5b6ceecac957ce19485303b61b09152f689e49621d01445"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/policy.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/policy.stdout",
+      "bytes": 35,
+      "sha256": "9542085fd2c29ee7b725b23ee461fbe989ef1cecaa6764ae4cfeee84c4d7f6d9"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/actual-guest.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/actual-guest.stdout",
+      "bytes": 1200,
+      "sha256": "cc8820656fb9ed715c3d080ee962c3279a5d10b1b876523b928f780145bf31fd"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/build.stderr",
+      "bytes": 2442,
+      "sha256": "1d01548263331629efab7f265df284582eeb9791fd844e21774b6f3feae20298"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/build.stdout",
+      "bytes": 2298,
+      "sha256": "d47d7b4aecfb080b3feeecb2c35bdd9e0f1eef4c8ca998ae1bcc396940a92a94"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/core-clippy.stderr",
+      "bytes": 72,
+      "sha256": "c92508a29848820f033cd2ea015c85dde0953c88b07cc967ce34b7c08f610549"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/core-clippy.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/alpine-initial.json",
+      "bytes": 19086,
+      "sha256": "9162b1fc915fb04f1f3db30a87d2ed458bb085177c6710d37187810dc87a096c"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/alpine-initial.png",
+      "bytes": 142787,
+      "sha256": "8cba1aa356412521a43e232b4c3ef564f104c57b051dc6c8379fce0b0032ca68"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/alpine-persistence.json",
+      "bytes": 15326,
+      "sha256": "d1df8eb7ec1ec1b4cebc53b879dd85378bfc8e26fa16d3ee0f92b7d2c6dbd6b7"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/alpine-repeat-checkpoint.json",
+      "bytes": 152,
+      "sha256": "9a3ac90a5c1c35ca1a2cb97cf8546b4f35a1a6d66ba35bb61017f731ab10dde0"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/alpine-repeat.json",
+      "bytes": 19021,
+      "sha256": "d4cd3e27c305f2120786245fdc773cc4ef7d012c7dd208c6e0125a8f1eabfb79"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/alpine-repeat.png",
+      "bytes": 141435,
+      "sha256": "e30ee5898722f1b947737d472e0294dbd2bb9b1dac8d9ff04fb9bbba9c67cb10"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/busybox-initial.json",
+      "bytes": 19058,
+      "sha256": "5c3d8a02ba48a8c6c34961a3642aae116c061743eff1a96cca65b359b2eb4966"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/busybox-initial.png",
+      "bytes": 114663,
+      "sha256": "2c626b6962eaaf2b107cf86afc154406317a151518de6e07fe112ceb3c0db008"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/busybox-repeat.json",
+      "bytes": 13907,
+      "sha256": "3ae39f48edd6f497b7ed9fc7ae43da79ecdcd827f067838b1d8b106a6083c6c4"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/busybox-repeat.png",
+      "bytes": 115725,
+      "sha256": "36db180f0a8289570ce8a1bbdd1ce86f2139852f94ae654bb0525bd42dfbb55b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/node-alpine-initial.json",
+      "bytes": 112495,
+      "sha256": "214e0727cff776274521686d9d25136532bc8e1c309663d51dfdef05cb5936d7"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/node-alpine-initial.png",
+      "bytes": 148517,
+      "sha256": "449b3cd597e743a6ec35ed589b6beb10ea41993f196106c9aa4e2ac34520bab9"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/node-alpine-persistence.json",
+      "bytes": 26007,
+      "sha256": "51ec31340fd3d42877e0f81f4baee82782e2c97320305fbcb554ec1a69b95f1e"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/node-alpine-repeat-checkpoint.json",
+      "bytes": 153,
+      "sha256": "f08d77e82ad07336e98db3d5bf7eb9fc0a2c2dfd49230c90e1bb13709bdb6669"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/node-alpine-repeat.json",
+      "bytes": 27764,
+      "sha256": "49228a5ecb23fae66d96571bf6c94f8d2eef3d4a465bc419f9a6c647bec808b7"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/node-alpine-repeat.png",
+      "bytes": 144189,
+      "sha256": "7d466ba1d8597e96651d9a2ca6e8ffe6a04c63252f137b80a6258eb56d762d38"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/omarchy-initial.json",
+      "bytes": 160210,
+      "sha256": "fe9344f1138fd716eff422d5539edf091aaffeb4a6bce4a1056dbaf39e3ef18a"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/omarchy-initial.png",
+      "bytes": 10876,
+      "sha256": "c0fcf0cd4bcaa815f4cdfad6e75610f93610b66d6135c0bcdb48aaf72a1bdbbd"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/omarchy-repeat.json",
+      "bytes": 78345,
+      "sha256": "efb3e985c07013094ca9b1f68008d2856d64971a97683f93cc9c911b27371e5c"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/omarchy-repeat.png",
+      "bytes": 10876,
+      "sha256": "c0fcf0cd4bcaa815f4cdfad6e75610f93610b66d6135c0bcdb48aaf72a1bdbbd"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/passive-worker-timing.json",
+      "bytes": 26340,
+      "sha256": "d1d4ac56da0895500fe8cd6b3e8b3c7f28834b2eb6a3376deaeb6f76d122ec6d"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images/report.json",
+      "bytes": 699867,
+      "sha256": "1a389d738f113358c5038bcf20d5e5674c1370af1f1a643a4dadfc77e39b991e"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fast-boot-images.stdout",
+      "bytes": 4144,
+      "sha256": "5afe500e1d8d8476bcb0ceabf76e44204eec3d9b8031086c95105ff772e6fd5a"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fmt.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/fmt.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/acceptance.json",
+      "bytes": 2275524,
+      "sha256": "17c29dbeff5e9b44eeca79a582ac99e7c4f04c211fcb1fd64aab716bc989de5d"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/browser.png",
+      "bytes": 885302,
+      "sha256": "0f18e8e1caab92145f24c4794d0ff38cde9afaeeda264af59a1aae0ed08cb3e9"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/cube-state.json",
+      "bytes": 1711565,
+      "sha256": "1b55062540b973ab379c965ea5feb309eb9b1e5588e907d8a0b5d3c4eb3ca566"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/cube.txt",
+      "bytes": 4059,
+      "sha256": "e71111bae1dcb37305e6562ed6109f1a6184f9c8ef22648bd0f20fae7c379faa"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/final-state.json",
+      "bytes": 2116506,
+      "sha256": "86e3d951f050658cce03c0beb55b599aa01ee66767ef50d0037a027a9086c5d2"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/gpu.ndjson",
+      "bytes": 144519388,
+      "sha256": "93b70c4015b37697b5f5154368fd9b2f892912a1f6f88cebdad11588f4b24e1d"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/hardware.json",
+      "bytes": 7022,
+      "sha256": "97c85f2f369639db6499ef9849e2781e9b3e333c5df512d4589aac9d811814e6"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/hyprland.png",
+      "bytes": 14397,
+      "sha256": "2e18954577c34e3f7e4fd9fcfc6a0a1db134ee26c51587f9fabb7d860f25a9ca"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/hyprland.txt",
+      "bytes": 2619,
+      "sha256": "727d086f02566fa30b399ae2bfc5e7180531b3909d6bc58e5e50f96ec124d6c7"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/image-identity.json",
+      "bytes": 281,
+      "sha256": "1366fa250202f615b5b43b36f76c2e7c22a4ad3a64d8e243fa952da553d356e4"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/probe.txt",
+      "bytes": 26171,
+      "sha256": "4649e8ef3704784915dc4571207d75142fdfd444ca5514d5f071d935f6984d0b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/ready",
+      "bytes": 13,
+      "sha256": "7cb7605350cd399acc1291db95bc127bec36fb68a2172f3915c078f5bfe29be7"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/serial.log",
+      "bytes": 46572,
+      "sha256": "9d6c3e86625ac4629310fdda562e571cef757976d4844e70cbb22cd6ebb5da54"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/served-source.json",
+      "bytes": 8211,
+      "sha256": "6f3ff472437cf372502003d80414a2efdd0fdf700c9dab6bc85cdb94693db60b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/guest/state.json",
+      "bytes": 238881,
+      "sha256": "d6113c07b7335000624510bd4e999452e1bc595d1dfea3e9a99714e8f6bf9875"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/native.stderr",
+      "bytes": 2474,
+      "sha256": "287db637257d67497b3db4f43d210cf389f83b3dd6a8b5c83ac52e99f0e7a4a3"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/native.stdout",
+      "bytes": 2071,
+      "sha256": "d365d5980a18d8494960962422568053df2b909482200d37ab66d1147c1b245b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/original-handshake.json",
+      "bytes": 3088,
+      "sha256": "4a3897d6b3e5dd77739c7245ae6d1555c567008e92bab439c35197c42cdf6cbd"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/original-handshake.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/original-handshake.stdout",
+      "bytes": 53,
+      "sha256": "d0040869fbbd962c061eff0dcf158c16c5b227902bec3468a9905d59041c568f"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/protocol.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/protocol.stdout",
+      "bytes": 2905,
+      "sha256": "748fc4e11a41a753ad0d986726d75928e9970f90fe4acec369292896520499d4"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/public-desktop/failure.png",
+      "bytes": 15276,
+      "sha256": "3f80500d3b5cc82cb4235a20230130f053ca0d2b4d1814586f82bd0a7dd496e6"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/public-desktop/hardware.json",
+      "bytes": 7022,
+      "sha256": "c375d8f6fa3358d647c801cb1dc6e64c047fd8caabf1e641f96bd33c011a412e"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/public-desktop/heartbeat.json",
+      "bytes": 1153811,
+      "sha256": "4cdcdbe70c6c46e77a8de3b94e4b28bcd2906ccb26496c1ec86a4c2f3ff2760b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/public-desktop/passive-worker-timing.json",
+      "bytes": 2583,
+      "sha256": "da8f71278c874f5f017c572d3bb9e2e79edceed1b777c1f3bf1b16a51b8297e4"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/public-desktop/progress.png",
+      "bytes": 14809,
+      "sha256": "e21aec9315f554195af2ee6c9e32f2fc8b5d8a9f1a227af5aebe97e801b2e3bc"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/public-desktop/public-desktop-input-failed.png",
+      "bytes": 17147,
+      "sha256": "717a33f70141d53d91447b356ed396602c44ed3fefad77bb8dd4e0874a62df89"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/public-desktop/public-desktop-input.json",
+      "bytes": 6627,
+      "sha256": "58d3b5632d2724440c505d6162c69d6c6d70c56820ccee36a0a024aa98d0503d"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/public-desktop/report.json",
+      "bytes": 571565,
+      "sha256": "cb0a138ac91cc15dd7bcc36dc263d91611a8ce0fb042db9247c0180f94917271"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/public-desktop.stderr",
+      "bytes": 957,
+      "sha256": "d2df1ef800ece505e2882ca98885cad98cf7c8bd8ce4fa52ba1e8d64338db424"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/public-desktop.stdout",
+      "bytes": 86231,
+      "sha256": "e4fcd5a1b3c90d7337ff480cb0c1643a6e8b6c6c305083fec23922342a223533"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/qualification/browser.png",
+      "bytes": 12448,
+      "sha256": "ae276f420c216d39678b7518f06f5cf3a262bc2440c1ae597539054cb5b63df0"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/qualification/hardware.json",
+      "bytes": 7022,
+      "sha256": "6c1fcf080c3fd833883fa1dcf878f390c0b65d3919416d350d54ae5a531cb17b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/qualification/image-identity.json",
+      "bytes": 281,
+      "sha256": "1366fa250202f615b5b43b36f76c2e7c22a4ad3a64d8e243fa952da553d356e4"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/qualification/qualification.json",
+      "bytes": 199579,
+      "sha256": "ffdbceadc5ab0ac5cc809358519bcce35565c09ef28ba566428b6b2bb4f04ea3"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/qualification/served-source.json",
+      "bytes": 4573,
+      "sha256": "ded6166b5881493ac6f08c10ed4881b171334f5a2a7e8f8297101039a78f4402"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/qualification.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/qualification.stdout",
+      "bytes": 854,
+      "sha256": "f9436e6bbd6272d617e42748a8454efb90aaf3fa13991fd493b8e3f19fc915e2"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/report.json",
+      "bytes": 15674,
+      "sha256": "41b2c43a74d7d16797a46e89e75a1f22912afa8aa4ada7c89afd25ffc2f6dad0"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/wasm-clippy.stderr",
+      "bytes": 72,
+      "sha256": "8c233a54790c4800d3dd585436af679aa838da259bfdb129412e2d51cdb75cdc"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production/wasm-clippy.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production.stderr",
+      "bytes": 654,
+      "sha256": "0c8bffd47eea36bb5a17a441ce3fe86e2a768401504c2e6e25cd501e45f960d8"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/production.stdout",
+      "bytes": 128,
+      "sha256": "3b019ae29e2a790091050a1b80672a22acb720dffc747a5cad98d4fda140b9a9"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/report.json",
+      "bytes": 17815,
+      "sha256": "012685b867b649fc788cf147966f0b68552bcf82d3d526f7a44a9235fd88a25e"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/stub-build.stderr",
+      "bytes": 400,
+      "sha256": "e2e49b8ce0e0e0d9f7b1c8a79ddfad37a4d4937b364b994355b59a37f002ae43"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/stub-build.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/wasm-clippy.stderr",
+      "bytes": 2736,
+      "sha256": "a1e99d1af576e793566b39c6300b412698ab188163c7929dacad3c5b0481b668"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/keyboard-wait/wasm-clippy.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-cold01/report.json",
+      "bytes": 17848,
+      "sha256": "8753f36e1a9c8686a6de57203bc9781b06ef9bb4d313bac0df914b68b3e2dfb9"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/core-clippy.stderr",
+      "bytes": 173,
+      "sha256": "2dc1dd5b2ca03d8e5f19359b9446b08aab4d073ac438441c94e9efc30fc819ba"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/core-clippy.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/format.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/format.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/keyboard.stderr",
+      "bytes": 10042,
+      "sha256": "e4a3e1481bdd8305df843513419560e921450888cf93e3d20528ea56dbaef674"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/keyboard.stdout",
+      "bytes": 468,
+      "sha256": "1292d4f503c7d5dd1ce7391817a4be6c4d66880f1766425398bbdee0b9980f7d"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/native.stderr",
+      "bytes": 258,
+      "sha256": "3e6b464117163d4a5e95b5990f2b9d147ac8416a76bb0fb2f46c5ec9726ff1eb"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/native.stdout",
+      "bytes": 33620,
+      "sha256": "da42d17541cf827d408f5f39247aa575276bb7f4382251326450e1feff6d3993"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/policy.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/policy.stdout",
+      "bytes": 35,
+      "sha256": "9542085fd2c29ee7b725b23ee461fbe989ef1cecaa6764ae4cfeee84c4d7f6d9"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/actual-guest.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/actual-guest.stdout",
+      "bytes": 851,
+      "sha256": "f309b252116354c2c898e88466654a164036ceee113ec22bedd8234649451f56"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/build.stderr",
+      "bytes": 2442,
+      "sha256": "ec919b4db0567630bbc8f9770856888edfae5670e35c3ca09bca49de8f7cd61a"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/build.stdout",
+      "bytes": 2298,
+      "sha256": "fd3ed3b5f7ecc14d042eaa599f42162fe478675cbb8ad022fc7e6d4f9b882390"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/core-clippy.stderr",
+      "bytes": 72,
+      "sha256": "22e0df986057b9ba5be07526ac5fb348862a3dedef42108383cc3e088acbb889"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/core-clippy.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/alpine-initial.json",
+      "bytes": 17162,
+      "sha256": "5ae3aeb83b63067f5d51e621c0e2cbcab78fb6df62b807aed99ef57ba404ec12"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/alpine-initial.png",
+      "bytes": 148304,
+      "sha256": "f7b4ae9e99eda4e46a9edafe7f8f64e53325cff2dd8f814a5e35fa844b6ce7a4"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/alpine-persistence.json",
+      "bytes": 15232,
+      "sha256": "221c187571dd765abad5040c263c83287748206e0ee820db2e6d48901067c02a"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/alpine-repeat-checkpoint.json",
+      "bytes": 152,
+      "sha256": "dd26f6c14b4f9c5a51d6c1585d30018d075a7a62ecb6500c480d9f5e5d91c2a9"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/alpine-repeat.json",
+      "bytes": 16499,
+      "sha256": "8f1fb45b2ce741273c7e1067595eb89508b1e625b8d6182d62c8c98fb830e5df"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/alpine-repeat.png",
+      "bytes": 140468,
+      "sha256": "1344006cb2217d4606c2947437d1903fab872a2b04c48dd782900098037e9148"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/busybox-initial.json",
+      "bytes": 16121,
+      "sha256": "eca90a357ec76ce4c3cc61641bddae528046ffbbd5414fab0690f7376024c343"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/busybox-initial.png",
+      "bytes": 120968,
+      "sha256": "0686c5838febf4ec57a898b8862363574e6933493e4f95b1012d824ca590d008"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/busybox-repeat.json",
+      "bytes": 14507,
+      "sha256": "5938a9da9d8534d9687438abf3d8dcdb4a294fc471dba6376aa4dc9ab973ad9b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/busybox-repeat.png",
+      "bytes": 115301,
+      "sha256": "0b5cb3e31a5f6093a63c19ee1ac2e68db3b0e9920cf31a4a451771c4b52e64ca"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/node-alpine-initial.json",
+      "bytes": 104541,
+      "sha256": "ce1bb8c2387803a2d407fed0ac8933c4894ae6cf08c2f45b8cbe39f5749ef2a7"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/node-alpine-initial.png",
+      "bytes": 147786,
+      "sha256": "03311aaedea8a6dc4a1360a3c0af1f53df7ae3c5a3c6a5279fd53d9977acf22e"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/node-alpine-persistence.json",
+      "bytes": 16280,
+      "sha256": "509c1abdc140ef44b7e912b722a0b9a858c53d63e06aac8c3c04af7368f9e4a7"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/node-alpine-repeat-checkpoint.json",
+      "bytes": 152,
+      "sha256": "b6024f2e7989732cf267d5adc920957438bbd9156941d27741a798954b2d0cb9"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/node-alpine-repeat.json",
+      "bytes": 32028,
+      "sha256": "370cc2b3e04f507a4a702e161af392d478f72e1d4880e360d543c07cef716f1a"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/node-alpine-repeat.png",
+      "bytes": 144033,
+      "sha256": "35b0332f0395281d043e5b0a204894e3b446476cc70eae0d5190006961118654"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/omarchy-initial.json",
+      "bytes": 392412,
+      "sha256": "a4640c0a2fcd7903e59781c1391aab899c2c4c4cf9b582fece6d80f025297d23"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/omarchy-initial.png",
+      "bytes": 10872,
+      "sha256": "ef119ee7d2ac87bd40a423b6336112f8e1398f1906c78dedfc389e4caebfe5f1"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/omarchy-repeat.json",
+      "bytes": 363638,
+      "sha256": "279db63cecf538151a54fc9df2d5e42d0f34144d5be3e434a60c4ac8df0c3960"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/omarchy-repeat.png",
+      "bytes": 10869,
+      "sha256": "8b02b85074939be7cbea32ced83e8ab78e788bb5db8a405f85fc1bb62033c5e5"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/passive-worker-timing.json",
+      "bytes": 282916,
+      "sha256": "093211eae3d98654b79577f7886614370dbd3cb97dac6b49109376e9ba6167df"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images/report.json",
+      "bytes": 1287182,
+      "sha256": "144d625ac35e086b7fc3119e6bdc271a09120ced02c7b2f8f94c397f12965cf0"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fast-boot-images.stdout",
+      "bytes": 2578,
+      "sha256": "96008a79a17f8fb92ae4ae696a6d96dc3c99b348057aedd99afc2ab7839bcdb6"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fmt.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/fmt.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/acceptance.json",
+      "bytes": 2437855,
+      "sha256": "6d977e6848116de92cf0d82d77f0e68d04363f2802c7c22f438ca30ea89e9e57"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/browser.png",
+      "bytes": 884298,
+      "sha256": "8d2540006f4ca11e9ac1e993dfb3d191dbf7404076a0b0aacb414a1593d3835e"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/cube-state.json",
+      "bytes": 1726590,
+      "sha256": "c7a6f9cd94e86ccd5f34a6b4c99302aa55ec7100195931aa225abb8fdc3f70b5"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/cube.txt",
+      "bytes": 4084,
+      "sha256": "76181e2117f38c2e4088296bb2fd0a0a4b99253bbf21e186847ff22f53975d5a"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/final-state.json",
+      "bytes": 2265959,
+      "sha256": "1d375f04ed5a8b5c5057b7a9c582d150a65b7902b4c01bb259d3b120f436372a"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/gpu.ndjson",
+      "bytes": 159210994,
+      "sha256": "3b88ab2649168419ed9287617e033bb6c78a7a8f59546ccdc2b1820ed9787d69"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/hardware.json",
+      "bytes": 7022,
+      "sha256": "bab723b11e4b7ca49491d45305098da0243870ca24cffa754a8754eab4372359"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/hyprland.png",
+      "bytes": 14399,
+      "sha256": "4b3e22cc7d04333097564ebc02993216a7a8962c4942d63989bbecaf81f2eb4a"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/hyprland.txt",
+      "bytes": 2597,
+      "sha256": "9b2be5361bb7c848cbb3d40aad8006e7933c56bf88b2d8fc0c3a156846c4240a"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/image-identity.json",
+      "bytes": 281,
+      "sha256": "1366fa250202f615b5b43b36f76c2e7c22a4ad3a64d8e243fa952da553d356e4"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/probe.txt",
+      "bytes": 26171,
+      "sha256": "4649e8ef3704784915dc4571207d75142fdfd444ca5514d5f071d935f6984d0b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/ready",
+      "bytes": 13,
+      "sha256": "b608d124751fcac754d95fe7f5ab815e76c5bc54a619067165e476ba81fe7c67"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/serial.log",
+      "bytes": 46525,
+      "sha256": "a82841f648bd0f4b22877de43f68d8cd8ac420360eebc05ba2f823fa5fce93f3"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/served-source.json",
+      "bytes": 8211,
+      "sha256": "006c1794bea5d3df46e0cc9450c42b11b7c56129c882f36e3877b3fd422455a3"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/guest/state.json",
+      "bytes": 247313,
+      "sha256": "2c5018d1c6fc544e017d57f146e7bb4d266fe56811eb9035bc933e8efeb61c22"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/native.stderr",
+      "bytes": 2415,
+      "sha256": "915ba549a637a346bea9de62096248a424f047f1227687de198778724374a001"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/native.stdout",
+      "bytes": 2071,
+      "sha256": "13ba76bfe5afa1af7888607b7a9ffe1b580c2d07bba93a20ac766701080a79c1"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/original-handshake.json",
+      "bytes": 3089,
+      "sha256": "30a8a72baae741169a1184e7bf177ca261b233eb22f06fbec5c85acc66673af1"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/original-handshake.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/original-handshake.stdout",
+      "bytes": 53,
+      "sha256": "68eed8d38f66c399ec1b9a621830e873f3b7683157c67042d9755b9a5c595c07"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/protocol.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/protocol.stdout",
+      "bytes": 2910,
+      "sha256": "04ac93782e1d4212ab9c895a3c3edb4f12352e967b97aca4e2859cf9a8be854d"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/failure.png",
+      "bytes": 15629,
+      "sha256": "2653f5f102c131a90cd700daabf98709148fcca99ffa00988e6f3ede62c8c9ac"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/hardware.json",
+      "bytes": 7022,
+      "sha256": "0446fddddb983a3569b91c0329046a40e43e14cf689c37e3931adfb8da044b1d"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/heartbeat.json",
+      "bytes": 1197779,
+      "sha256": "5be3ceaf706f71eeb7ae377fb50625d59a79fb6e7ceb6474b1c0d22212356751"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/passive-worker-timing.json",
+      "bytes": 495121,
+      "sha256": "10999ef0bbb118bf966ee70013aa2cd65e9ca59f9b1ae10c2665d0028f0cece5"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/progress.png",
+      "bytes": 14911,
+      "sha256": "9a9fb1e0e2e2755f6aabed987ed0e0ef0efb509326de9c46c3965eb94301d715"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-000.json",
+      "bytes": 3576,
+      "sha256": "b90f1cdf4036b5363952d2002c6243b6178ff5f79776a6871e54f7e716d8e21b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-000.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-000.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-001.json",
+      "bytes": 3576,
+      "sha256": "2e5c6d526a869607dd0f150b22041653bb30b50bf5823e5829821cdb7d33f477"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-001.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-001.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-002.json",
+      "bytes": 3576,
+      "sha256": "7c9b80921b78bbb0ee90c32a6a7972eceff71cc3219a4d0793bf11b62ceafc20"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-002.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-002.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-003.json",
+      "bytes": 3576,
+      "sha256": "2e422e8c8abcd3bde6d963b8d8308b4f45f056414123a17a89815805f56687d3"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-003.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-003.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-004.json",
+      "bytes": 3576,
+      "sha256": "c92f8ed1a5768cc3c506952fcb5776649053e8c5198d998a8ace57917e7ff656"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-004.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-004.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-005.json",
+      "bytes": 3576,
+      "sha256": "740b0f76e10d103fd1f8010a8d9b82b4b67cc85c2d4a9b75f1ea968e7545ca04"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-005.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-005.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-006.json",
+      "bytes": 3576,
+      "sha256": "2d9f16271474e02090e50d79f42a9ac7a08e244e3e9f7d13f4c423b280e6819b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-006.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-006.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-007.json",
+      "bytes": 3576,
+      "sha256": "964e817322a21b757569370b623be80501ab04bcaae1048f53a0b39be53fad4d"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-007.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-007.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-008.json",
+      "bytes": 3576,
+      "sha256": "9c9e24ffb7fb9fabed7a9274da03b49960bc6d2729b0a57cc736ebd7e2ee8b8c"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-008.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-008.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-009.json",
+      "bytes": 3576,
+      "sha256": "806686b16f6d05aff4ac3cd5ce03101c5e998de3349ba88d33ceb6e98fb9993e"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-009.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-009.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-010.json",
+      "bytes": 3576,
+      "sha256": "5e039900501f8d18be5d6c8f7c224e75ecf30ebd3d7c6b8b9441810c254e4810"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-010.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-010.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-011.json",
+      "bytes": 3576,
+      "sha256": "d210818ff0c7fcddf00c9e022155c63ceed16d96b55c29b68deca12541bb9080"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-011.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-011.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-012.json",
+      "bytes": 3576,
+      "sha256": "335665d67f932612097c042268a063625b5ece447debeaff3901895620dd6ce6"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-012.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-012.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-013.json",
+      "bytes": 3576,
+      "sha256": "69087883ad57570adc9ccaad078b7ec2a2593af4bfac2a58ce23a774cc0835c1"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-013.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-013.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-014.json",
+      "bytes": 3576,
+      "sha256": "eb6cf09d18414158e8fadab56b8109dc023a8548e6fc4f15a9789a6ca2470715"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-014.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-014.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-015.json",
+      "bytes": 3576,
+      "sha256": "2a956ec2208daa22e2ebaa05c8190b1f0428105d6c663859f9f09c9c476c3b21"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-015.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-015.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-016.json",
+      "bytes": 3576,
+      "sha256": "a2789cf0b8d68282599e206ae40a4560a5b192213cb66c091e40da8ca5845014"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-016.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-016.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-017.json",
+      "bytes": 3576,
+      "sha256": "dd290d6477769dda2d752670aacadd7f9f335176c39296aadf85fa683828cf45"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-017.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-017.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-018.json",
+      "bytes": 3576,
+      "sha256": "f45eada39029b6b288a3679231e723ad780a974cad0b9fdfa1f540f964ef69b5"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-018.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-018.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-019.json",
+      "bytes": 3576,
+      "sha256": "46251006911c6ad9632f7ae251a3d571c05aea8a0013d71cb01fdcdffddcde9c"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-019.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-019.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-020.json",
+      "bytes": 3576,
+      "sha256": "f74e02976ad02ba886d78f9b4df1e9cefd2e2205dbb5707e2d4d4caae8a87991"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-020.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-020.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-021.json",
+      "bytes": 3576,
+      "sha256": "06ab57903cf28d346a6a4159557c29ad63a193ab5e9c1093bc62eaece5118096"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-021.png",
+      "bytes": 837,
+      "sha256": "a5db1ca1d5c12e43fbbbe3857ff9bd2973497f5a2eb1c847e4f4f3ecee1843ef"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-021.rgba",
+      "bytes": 133120,
+      "sha256": "c5af7e95aca9ef2cfbe437f23032f1c488af2edcdce816b1becce727075b5537"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-022.json",
+      "bytes": 3593,
+      "sha256": "a277a7499e0f3652121922cd2d3a3caa7be0135f15f0338886a4e80562f9aca0"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-022.png",
+      "bytes": 4727,
+      "sha256": "02e177283849d57183c4b3e478991cbd5f20e87f053e50e52234876daa4df914"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-bar-content-022.rgba",
+      "bytes": 133120,
+      "sha256": "5859b77eb74d4eb6facbf33381d2c0292ea2ce8768cf9e2a47abf97de73d1f3d"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-failed.png",
+      "bytes": 15321,
+      "sha256": "4f62c61f84b22ba291071ffebd7fa79531fe7c4b7a554c7ef6b211b089552050"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input-typed.png",
+      "bytes": 10708,
+      "sha256": "20a6808bfc79eeb9c504f95a46e991a05842e95fa5715f4b44b236c610d3996e"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/public-desktop-input.json",
+      "bytes": 72047,
+      "sha256": "3d03ce48aca0b0865b798d4883382e50584285e828fa22d6fb24132d36b13b5b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop/report.json",
+      "bytes": 2220104,
+      "sha256": "d67a1cce19cf60a655acac763a014988ca42a834ecafdf68dbb96d416409092e"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop.stderr",
+      "bytes": 355,
+      "sha256": "67640ae35dab3edaae3d60f4f28939aca46c42d3b757f02f44d61b5b678797d5"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/public-desktop.stdout",
+      "bytes": 85296,
+      "sha256": "93501338cc153510d065c13e7d6f27055f820220ed3d8a6bf461a1960001e2e2"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/qualification/browser.png",
+      "bytes": 12448,
+      "sha256": "ae276f420c216d39678b7518f06f5cf3a262bc2440c1ae597539054cb5b63df0"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/qualification/hardware.json",
+      "bytes": 7022,
+      "sha256": "23bdf24a605d004c87c87ce7f02f22ea6aca1eb415321e55bb4b6fd8d67fca59"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/qualification/image-identity.json",
+      "bytes": 281,
+      "sha256": "1366fa250202f615b5b43b36f76c2e7c22a4ad3a64d8e243fa952da553d356e4"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/qualification/qualification.json",
+      "bytes": 199579,
+      "sha256": "ffdbceadc5ab0ac5cc809358519bcce35565c09ef28ba566428b6b2bb4f04ea3"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/qualification/served-source.json",
+      "bytes": 4573,
+      "sha256": "c2137946729dca5282c20b8e29019d07215517b07d1d45227c96b0360a53631a"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/qualification.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/qualification.stdout",
+      "bytes": 854,
+      "sha256": "f9436e6bbd6272d617e42748a8454efb90aaf3fa13991fd493b8e3f19fc915e2"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/report.json",
+      "bytes": 28963,
+      "sha256": "28024a46a0c3ceeb53958baff83e4ba8c7d5fb2a089b883bf4705d85ce455bfe"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/wasm-clippy.stderr",
+      "bytes": 72,
+      "sha256": "99f71393b9903dca098310bb446022a4bdee195ea9996f351a787195555210a6"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production/wasm-clippy.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production.stderr",
+      "bytes": 536,
+      "sha256": "efacd62ff691dccad6f093d4aa9b5a45cb70adba786352b9e37bf745e2f17fff"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/production.stdout",
+      "bytes": 128,
+      "sha256": "3b019ae29e2a790091050a1b80672a22acb720dffc747a5cad98d4fda140b9a9"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/report.json",
+      "bytes": 31937,
+      "sha256": "3846603d6a5e7951f9d6fa4a43f05c93e62078781b2704b94dbad18b4326be6b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/stub-build.stderr",
+      "bytes": 173,
+      "sha256": "d60ab50ec67c416a9a97196530f6a9304228fe18cf2b3b27cfdf653d2c68818a"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/stub-build.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/wasm-clippy.stderr",
+      "bytes": 496,
+      "sha256": "706810504e8c51c93f7af9f29404be269d80b4a09ca23fc5e21c7da0d81678a6"
+    },
+    {
+      "path": "target/evidence/production-keyboard-host-wait-frozen01/wasm-clippy.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "target/evidence/production-keyboard-software-diagnostic01/browser/omarchy-initial.json",
+      "bytes": 106032,
+      "sha256": "433cfb8ee2c4c4ae13a7454c66ef5da5b6fde1fcb3e773b8939160321fd78699"
+    },
+    {
+      "path": "target/evidence/production-keyboard-software-diagnostic01/browser/omarchy-initial.png",
+      "bytes": 13744,
+      "sha256": "4340641b16d161e0f9460ea23dddedca19641dbea80100d8b77147c2d897edd7"
+    },
+    {
+      "path": "target/evidence/production-keyboard-software-diagnostic01/browser/passive-worker-timing.json",
+      "bytes": 35151,
+      "sha256": "e6a4767f2fea5f831626abf81b6aa581dc6cd5979e9caa78e8a3d7aa0eaae4bd"
+    },
+    {
+      "path": "target/evidence/production-keyboard-software-diagnostic01/browser/public-desktop-input-bar-content-000.json",
+      "bytes": 3593,
+      "sha256": "a8e9b6191977c5e99c9b4734b5d3c79998cf5858cacc5994ab16d57a7e926b75"
+    },
+    {
+      "path": "target/evidence/production-keyboard-software-diagnostic01/browser/public-desktop-input-bar-content-000.png",
+      "bytes": 4599,
+      "sha256": "b0443d7c1ee76a41891f5a4cea086b637d5087327c239793171b875208b73467"
+    },
+    {
+      "path": "target/evidence/production-keyboard-software-diagnostic01/browser/public-desktop-input-bar-content-000.rgba",
+      "bytes": 133120,
+      "sha256": "a2a8ea898751308d4f5e6d7d4877639bdcbb1ce8c1509bdc2546bf3f89fd1b00"
+    },
+    {
+      "path": "target/evidence/production-keyboard-software-diagnostic01/browser/public-desktop-input-typed.png",
+      "bytes": 10201,
+      "sha256": "07ad107a42fd68fc5bf1f466431026e5c43b736cb74e0fb0e836f810131dd14b"
+    },
+    {
+      "path": "target/evidence/production-keyboard-software-diagnostic01/browser/public-desktop-input.json",
+      "bytes": 41986,
+      "sha256": "1ec97b933d7b7c58c118dfe152de9ab64cfb09d19f513f7d5561efd227c6364d"
+    },
+    {
+      "path": "target/evidence/production-keyboard-software-diagnostic01/browser/public-desktop-input.png",
+      "bytes": 13435,
+      "sha256": "a23d12f221be10256b1eea0fbbd80a66538a275fa79d2878bfb9e0da7ae11533"
+    },
+    {
+      "path": "target/evidence/production-keyboard-software-diagnostic01/browser/report.json",
+      "bytes": 187706,
+      "sha256": "5b0b1c1af5a5d7f4c5bd05fbf22051acc8b231834c8e669aee346c921623039f"
+    },
+    {
+      "path": "target/evidence/production-keyboard-software-diagnostic01/critic-keyboard-diagnostic.mjs",
+      "bytes": 31007,
+      "sha256": "1424ea88b63515548884239718e66204a37fddaf1841e392db9027a6ea4f33a6"
+    },
+    {
+      "path": "target/evidence/production-keyboard-software-diagnostic01/harness.json",
+      "bytes": 550,
+      "sha256": "98fcbf7d6540ae4e383cc3984f9a6f0ea930641da2ac22b2dca7883588442e25"
+    }
+  ],
+  "archive": {
+    "path": "evidence/virgl-production-keyboard-host-wait/worker/stock-repeat-and-navigation-negatives-01.tar.gz",
+    "bytes": 8417433,
+    "sha256": "a77ed05d56d25a88502a342a625abf2bb6a1b850d5307b9e4fc13c730ab4fec5",
+    "reopenedMembers": 272
+  }
+}

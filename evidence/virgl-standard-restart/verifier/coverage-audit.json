@@ -1,0 +1,1227 @@
+{
+  "schema": "standard-restart-fresh-runtime-coverage-v1",
+  "status": "passed",
+  "runtimeHead": "ef30bcccb02f006a72da6c4796134b9c780a828d",
+  "coverageRecords": [
+    {
+      "path": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+      "sha256": "1c9ecf6ca04e4322890188219787111e2600f6a64f64aa1d3308dfc7151d6dfc"
+    },
+    {
+      "path": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+      "sha256": "1c9ecf6ca04e4322890188219787111e2600f6a64f64aa1d3308dfc7151d6dfc"
+    },
+    {
+      "path": "unpacked/hot/retained-standard-draw/retained-async-jobs/browser-coverage.json",
+      "sha256": "b4a7bc94e0436c63927e9120506394c10bf1e96302346a6c38537f83c116244c"
+    },
+    {
+      "path": "unpacked/hot/retained-standard-draw/retained-draw-replay/browser-coverage.json",
+      "sha256": "b09c636f859b12112efc092e1d2204a75f60af818c9694c7cfa433b897d51218"
+    },
+    {
+      "path": "unpacked/hot/retained-standard-draw/fault-divisor/browser-coverage.json",
+      "sha256": "bdce5ee2d9994847d1243c35dde0f682bc932ea27430b2d3c32d2fb3ab54436f"
+    },
+    {
+      "path": "unpacked/hot/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+      "sha256": "2b6b9306ec452edcaa4d3fc3882061c9541583c2925ae52e457d7edadabd9780"
+    },
+    {
+      "path": "unpacked/hot/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+      "sha256": "2b6b9306ec452edcaa4d3fc3882061c9541583c2925ae52e457d7edadabd9780"
+    },
+    {
+      "path": "unpacked/hot/hardware/browser-coverage.json",
+      "sha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+    },
+    {
+      "path": "unpacked/hot/hardware/browser-coverage.json",
+      "sha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+    },
+    {
+      "path": "unpacked/hot/retained-constant/hardware/browser-coverage.json",
+      "sha256": "ba4771228ace2a6d07f1d8f47e4be4c4d5b4ed1b68847d764f1011927c3039a8"
+    },
+    {
+      "path": "unpacked/hot/retained-constant/hardware/browser-coverage.json",
+      "sha256": "ba4771228ace2a6d07f1d8f47e4be4c4d5b4ed1b68847d764f1011927c3039a8"
+    },
+    {
+      "path": "unpacked/hot/retained-constant/fault-generic/browser-coverage.json",
+      "sha256": "0522e7acd1b629dd2e1a44548393ab4f2bd299ba9187d12f6252ef917ed887f6"
+    },
+    {
+      "path": "unpacked/hot/fault-restart/browser-coverage.json",
+      "sha256": "8d39bdf99e9ac5260de3a315f352e3230a6c95aeab48d8aa891844dbb72af6d5"
+    },
+    {
+      "path": "unpacked/hot/retained-topology/hardware/browser-coverage.json",
+      "sha256": "979c4a4db04dcc2344a8758b24a3c409678ef4ad8eb756dd049ea93e7c3a6f3f"
+    },
+    {
+      "path": "unpacked/hot/retained-topology/hardware/browser-coverage.json",
+      "sha256": "979c4a4db04dcc2344a8758b24a3c409678ef4ad8eb756dd049ea93e7c3a6f3f"
+    },
+    {
+      "path": "unpacked/hot/retained-topology/fault-mode/browser-coverage.json",
+      "sha256": "4614b6366aabec6e7c6838e8ba67f5e9dcf01452a710b3ad4bec0fe7868a62ca"
+    },
+    {
+      "path": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+      "sha256": "5c83c6e1cc49e71e41853f1d8d9105e83647d38ec1031d53fbb86f5b992de165"
+    },
+    {
+      "path": "unpacked/cold/retained-standard-draw/hardware/browser-coverage.json",
+      "sha256": "5c83c6e1cc49e71e41853f1d8d9105e83647d38ec1031d53fbb86f5b992de165"
+    },
+    {
+      "path": "unpacked/cold/retained-standard-draw/retained-async-jobs/browser-coverage.json",
+      "sha256": "9906d0902defb7aa4d52ba6a2d0408daedc374931aae852d31d58911dd182914"
+    },
+    {
+      "path": "unpacked/cold/retained-standard-draw/retained-draw-replay/browser-coverage.json",
+      "sha256": "ec307895d3ed18a1ffdf2305c6217093e0a8bb358e77490a404dfdcfb4e28cb3"
+    },
+    {
+      "path": "unpacked/cold/retained-standard-draw/fault-divisor/browser-coverage.json",
+      "sha256": "db84fe44ddade29cc48d36334d226a5869934acd13cd0a0c819494b91950f930"
+    },
+    {
+      "path": "unpacked/cold/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+      "sha256": "dcdd45a5e1cdb7b60f74263651dae993b873aca5819891b735e235eb3bab32fd"
+    },
+    {
+      "path": "unpacked/cold/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+      "sha256": "dcdd45a5e1cdb7b60f74263651dae993b873aca5819891b735e235eb3bab32fd"
+    },
+    {
+      "path": "unpacked/cold/hardware/browser-coverage.json",
+      "sha256": "24016812c403bc81660a55355f91aea3a15cffcd6930ac19fb1c2047da6a0928"
+    },
+    {
+      "path": "unpacked/cold/hardware/browser-coverage.json",
+      "sha256": "24016812c403bc81660a55355f91aea3a15cffcd6930ac19fb1c2047da6a0928"
+    },
+    {
+      "path": "unpacked/cold/retained-constant/hardware/browser-coverage.json",
+      "sha256": "f41ccbc239577393fd168cd80a4a4c5e28a75a939423ec9ce113197a161f8f0b"
+    },
+    {
+      "path": "unpacked/cold/retained-constant/hardware/browser-coverage.json",
+      "sha256": "f41ccbc239577393fd168cd80a4a4c5e28a75a939423ec9ce113197a161f8f0b"
+    },
+    {
+      "path": "unpacked/cold/retained-constant/fault-generic/browser-coverage.json",
+      "sha256": "734e059c0f7b565b57d71a4b72260ed42a07b5c09f57f71ba737400fe26ea84e"
+    },
+    {
+      "path": "unpacked/cold/fault-restart/browser-coverage.json",
+      "sha256": "fca8c92ea6e994e9a56e71bb1b0367913af5e3e09a57eb9cf16dbbaf702f8630"
+    },
+    {
+      "path": "unpacked/cold/retained-topology/hardware/browser-coverage.json",
+      "sha256": "f64832593c30aea5874c2b31b061e10d13f0b2a2e7a37b9d86a6206a036ac0c3"
+    },
+    {
+      "path": "unpacked/cold/retained-topology/hardware/browser-coverage.json",
+      "sha256": "f64832593c30aea5874c2b31b061e10d13f0b2a2e7a37b9d86a6206a036ac0c3"
+    },
+    {
+      "path": "unpacked/cold/retained-topology/fault-mode/browser-coverage.json",
+      "sha256": "f372433e82494d66d8701e45617bd3193867eff64ea3ca72ac962192e8fbf6e5"
+    },
+    {
+      "path": "final-promoted/hardware/browser-coverage.json",
+      "sha256": "d002138cf1a4ca20af1fd2777a895b809449aa7bcdd6daa10ed5e0cf3c50c9c9"
+    },
+    {
+      "path": "final-promoted/hardware/browser-coverage.json",
+      "sha256": "d002138cf1a4ca20af1fd2777a895b809449aa7bcdd6daa10ed5e0cf3c50c9c9"
+    },
+    {
+      "path": "final-promoted/fault-restart/browser-coverage.json",
+      "sha256": "478c84c1eda6d27a2dea441210579274c33376f8adde758d84558e0a6de14c27"
+    }
+  ],
+  "files": [
+    {
+      "file": "renderer/virgl-command/decoder.mjs",
+      "sha256": "50038f409862f416aef35759ad1819024e33da8d0a6be21299eb8a669ccf40ed",
+      "addedLines": 3,
+      "executedLines": 3,
+      "waivedLines": 0
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "sha256": "37484756f1ec0e829d811808cb859b2e5aedf8c609a642a658aa78b2bc825ef5",
+      "addedLines": 74,
+      "executedLines": 62,
+      "waivedLines": 12
+    }
+  ],
+  "hunks": [
+    {
+      "file": "renderer/virgl-command/decoder.mjs",
+      "start": 364,
+      "count": 3,
+      "context": "function decodeFields(p, objectType) {",
+      "added": [
+        {
+          "line": 364,
+          "code": "        fields.startInstance === 0 && (p.standard ? (fields.primitiveRestart ? fields.indexed : fields.restartIndex === 0) :",
+          "classification": "executed",
+          "witness": {
+            "token": "fields",
+            "offset": 20234,
+            "count": 524,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 365,
+          "code": "          !fields.primitiveRestart && fields.restartIndex === 0) && fields.countFromStreamOutput === 0,",
+          "classification": "executed",
+          "witness": {
+            "token": "fields",
+            "offset": 20419,
+            "count": 435,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 366,
+          "code": "      \"unsupported-feature\", p.standard ? \"Only core lines and triangles with indexed restart and without base offsets or stream output are supported.\" :",
+          "classification": "executed",
+          "witness": {
+            "token": "unsupported",
+            "offset": 20462,
+            "count": 978,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 903,
+      "count": 1,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 903,
+          "code": "    const issueDraw = (plan, bytes, submission, constantAttributes = null, job = null) => {",
+          "classification": "executed",
+          "witness": {
+            "token": "plan",
+            "offset": 69251,
+            "count": 382,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 907,
+      "count": 2,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 907,
+          "code": "      let validIndexCount = fields.indexed ? 0 : fields.count, restartCount = 0, normalize = false;",
+          "classification": "executed",
+          "witness": {
+            "token": "let",
+            "offset": 69727,
+            "count": 382,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 908,
+          "code": "      const fixedRestart = 2 ** (indexSize * 8) - 1;",
+          "classification": "executed",
+          "witness": {
+            "token": "const",
+            "offset": 69827,
+            "count": 382,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 911,
+      "count": 10,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 911,
+          "code": "        if (standard && fields.primitiveRestart && value === fields.restartIndex) {",
+          "classification": "executed",
+          "witness": {
+            "token": "if",
+            "offset": 70110,
+            "count": 328044,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 912,
+          "code": "          restartCount++; normalize ||= value !== fixedRestart; continue;",
+          "classification": "executed",
+          "witness": {
+            "token": "restartCount",
+            "offset": 70196,
+            "count": 130258,
+            "record": "final-promoted/hardware/browser-coverage.json",
+            "recordSha256": "d002138cf1a4ca20af1fd2777a895b809449aa7bcdd6daa10ed5e0cf3c50c9c9"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 913,
+          "code": "        }",
+          "classification": "waived",
+          "reason": "structural delimiter/blank/comment; no executable token"
+        },
+        {
+          "line": 914,
+          "code": "        require(standard || value !== fixedRestart, \"unsupported-draw\", \"Index 0xffff requires unsupported primitive-restart lowering.\");",
+          "classification": "executed",
+          "witness": {
+            "token": "unsupported",
+            "offset": 70323,
+            "count": 328044,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 915,
+          "code": "        // A nonrestart u32 sentinel cannot be preserved by widening. Smaller",
+          "classification": "waived",
+          "reason": "structural delimiter/blank/comment; no executable token"
+        },
+        {
+          "line": 916,
+          "code": "        // sentinels remain real vertex IDs in a private native u32 stream.",
+          "classification": "waived",
+          "reason": "structural delimiter/blank/comment; no executable token"
+        },
+        {
+          "line": 917,
+          "code": "        require(!standard || value !== 0xffffffff && value <= maxElementIndex,",
+          "classification": "executed",
+          "witness": {
+            "token": "require",
+            "offset": 70570,
+            "count": 328044,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 918,
+          "code": "          \"unsupported-draw\", \"Actual vertex index exceeds the native maximum element index.\");",
+          "classification": "executed",
+          "witness": {
+            "token": "unsupported",
+            "offset": 70652,
+            "count": 328044,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 919,
+          "code": "        normalize ||= standard && value === fixedRestart;",
+          "classification": "executed",
+          "witness": {
+            "token": "normalize",
+            "offset": 70745,
+            "count": 328044,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 920,
+          "code": "        validIndexCount++;",
+          "classification": "executed",
+          "witness": {
+            "token": "validIndexCount",
+            "offset": 70803,
+            "count": 328044,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 923,
+      "count": 4,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 923,
+          "code": "      const empty = validIndexCount === 0;",
+          "classification": "executed",
+          "witness": {
+            "token": "const",
+            "offset": 70944,
+            "count": 381,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 924,
+          "code": "      if (empty) { actualMinIndex = null; actualMaxIndex = null; }",
+          "classification": "executed",
+          "witness": {
+            "token": "if",
+            "offset": 70987,
+            "count": 381,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 925,
+          "code": "      require(!standard || empty || actualMaxIndex <= maxElementIndex,",
+          "classification": "executed",
+          "witness": {
+            "token": "require",
+            "offset": 71054,
+            "count": 381,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 926,
+          "code": "        \"unsupported-draw\", \"Actual vertex index exceeds the native maximum element index.\");",
+          "classification": "executed",
+          "witness": {
+            "token": "unsupported",
+            "offset": 71128,
+            "count": 382,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 932,
+      "count": 2,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 932,
+          "code": "        const first = empty ? null : constant || divisor ? 0 : actualMinIndex,",
+          "classification": "executed",
+          "witness": {
+            "token": "const",
+            "offset": 71549,
+            "count": 1141,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 933,
+          "code": "          last = empty ? null : constant ? 0 : divisor ? Math.floor((instances - 1) / divisor) : actualMaxIndex;",
+          "classification": "executed",
+          "witness": {
+            "token": "last",
+            "offset": 71630,
+            "count": 1141,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 936,
+      "count": 1,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 936,
+          "code": "        require(empty || constant || last <= Math.floor((buffer.metadata.byteLength - offset - elementBytes) / stride),",
+          "classification": "executed",
+          "witness": {
+            "token": "require",
+            "offset": 71894,
+            "count": 1141,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 940,
+      "count": 1,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 940,
+          "code": "          stride, offset, components: vertexComponents(element), firstByte: empty ? null : offset + first * stride, requiredEnd: empty ? null : offset + last * stride + elementBytes,",
+          "classification": "executed",
+          "witness": {
+            "token": "stride",
+            "offset": 72265,
+            "count": 1141,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 942,
+      "count": 1,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 942,
+          "code": "            ...(empty ? { fetchEmpty: true } : {}),",
+          "classification": "executed",
+          "witness": {
+            "token": "empty",
+            "offset": 72613,
+            "count": 1140,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 950,
+      "count": 35,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 950,
+          "code": "      const nativeIndexSize = normalize ? 4 : indexSize, nativeIndexOffset = normalize ? 0 : indexOffset;",
+          "classification": "executed",
+          "witness": {
+            "token": "const",
+            "offset": 73149,
+            "count": 382,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 951,
+          "code": "      const indexType = nativeIndexSize === 1 ? gl.UNSIGNED_BYTE : nativeIndexSize === 2 ? gl.UNSIGNED_SHORT : gl.UNSIGNED_INT;",
+          "classification": "executed",
+          "witness": {
+            "token": "const",
+            "offset": 73255,
+            "count": 382,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 952,
+          "code": "      try {",
+          "classification": "executed",
+          "witness": {
+            "token": "try",
+            "offset": 73383,
+            "count": 382,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 953,
+          "code": "        if (normalize) {",
+          "classification": "executed",
+          "witness": {
+            "token": "if",
+            "offset": 73397,
+            "count": 382,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 954,
+          "code": "          const byteLength = fields.count * 4;",
+          "classification": "executed",
+          "witness": {
+            "token": "const",
+            "offset": 73424,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 955,
+          "code": "          require(standard && job && job.normalizedIndices.length < drawLimits.drawsPerSubmission &&",
+          "classification": "executed",
+          "witness": {
+            "token": "require",
+            "offset": 73471,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 956,
+          "code": "            byteLength <= drawLimits.indicesPerSubmission * 4 - job.normalizedBytes,",
+          "classification": "executed",
+          "witness": {
+            "token": "byteLength",
+            "offset": 73574,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 957,
+          "code": "          \"limit-exceeded\", \"Owned normalized index budget exceeded.\");",
+          "classification": "executed",
+          "witness": {
+            "token": "limit",
+            "offset": 73658,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 958,
+          "code": "          job.normalizationScratchBytes = byteLength;",
+          "classification": "executed",
+          "witness": {
+            "token": "job",
+            "offset": 73729,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 959,
+          "code": "          const words = new Uint32Array(fields.count);",
+          "classification": "executed",
+          "witness": {
+            "token": "const",
+            "offset": 73783,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 960,
+          "code": "          for (let i = 0; i < words.length; i++) {",
+          "classification": "executed",
+          "witness": {
+            "token": "for",
+            "offset": 73838,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 961,
+          "code": "            const offset = i * indexSize, value = indexSize === 1 ? indices.getUint8(offset) : indexSize === 2 ? indices.getUint16(offset, true) : indices.getUint32(offset, true);",
+          "classification": "executed",
+          "witness": {
+            "token": "const",
+            "offset": 73891,
+            "count": 327500,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 962,
+          "code": "            words[i] = fields.primitiveRestart && value === fields.restartIndex ? 0xffffffff : value;",
+          "classification": "executed",
+          "witness": {
+            "token": "words",
+            "offset": 74071,
+            "count": 327500,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 963,
+          "code": "          }",
+          "classification": "waived",
+          "reason": "structural delimiter/blank/comment; no executable token"
+        },
+        {
+          "line": 964,
+          "code": "          const buffer = gl.createBuffer();",
+          "classification": "executed",
+          "witness": {
+            "token": "const",
+            "offset": 74183,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 965,
+          "code": "          require(buffer, \"backend-error\", \"Normalized index buffer allocation failed.\");",
+          "classification": "executed",
+          "witness": {
+            "token": "require",
+            "offset": 74227,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 966,
+          "code": "          // Own before upload/check: even a partial native allocation drains",
+          "classification": "waived",
+          "reason": "structural delimiter/blank/comment; no executable token"
+        },
+        {
+          "line": 967,
+          "code": "          // with the job. The work ceiling bounds all retained streams.",
+          "classification": "waived",
+          "reason": "structural delimiter/blank/comment; no executable token"
+        },
+        {
+          "line": 968,
+          "code": "          job.normalizedIndices.push(buffer); job.normalizedBytes += byteLength;",
+          "classification": "executed",
+          "witness": {
+            "token": "job",
+            "offset": 74468,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 969,
+          "code": "          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);",
+          "classification": "executed",
+          "witness": {
+            "token": "gl",
+            "offset": 74549,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 970,
+          "code": "          gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, words, gl.STREAM_DRAW); check();",
+          "classification": "executed",
+          "witness": {
+            "token": "gl",
+            "offset": 74607,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 971,
+          "code": "        }",
+          "classification": "waived",
+          "reason": "structural delimiter/blank/comment; no executable token"
+        },
+        {
+          "line": 972,
+          "code": "        if (fields.indexed) {",
+          "classification": "executed",
+          "witness": {
+            "token": "if",
+            "offset": 74697,
+            "count": 378,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 973,
+          "code": "          if (instances > 1) gl.drawElementsInstanced(mode, fields.count, indexType, nativeIndexOffset, instances);",
+          "classification": "executed",
+          "witness": {
+            "token": "if",
+            "offset": 74729,
+            "count": 378,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 974,
+          "code": "          else gl.drawElements(mode, fields.count, indexType, nativeIndexOffset);",
+          "classification": "executed",
+          "witness": {
+            "token": "else",
+            "offset": 74845,
+            "count": 247,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 975,
+          "code": "        } else if (instances > 1) gl.drawArraysInstanced(mode, fields.start, fields.count, instances);",
+          "classification": "executed",
+          "witness": {
+            "token": "else",
+            "offset": 74927,
+            "count": 33,
+            "record": "unpacked/hot/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+            "recordSha256": "2b6b9306ec452edcaa4d3fc3882061c9541583c2925ae52e457d7edadabd9780"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 976,
+          "code": "        else gl.drawArrays(mode, fields.start, fields.count);",
+          "classification": "executed",
+          "witness": {
+            "token": "else",
+            "offset": 75028,
+            "count": 33,
+            "record": "unpacked/hot/retained-standard-draw/retained-float-vertex-fetch/browser-coverage.json",
+            "recordSha256": "2b6b9306ec452edcaa4d3fc3882061c9541583c2925ae52e457d7edadabd9780"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 977,
+          "code": "      } finally {",
+          "classification": "executed",
+          "witness": {
+            "token": "finally",
+            "offset": 75090,
+            "count": 380,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 978,
+          "code": "        if (normalize) {",
+          "classification": "executed",
+          "witness": {
+            "token": "if",
+            "offset": 75108,
+            "count": 380,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 979,
+          "code": "          job.normalizationScratchBytes = 0;",
+          "classification": "executed",
+          "witness": {
+            "token": "job",
+            "offset": 75135,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 980,
+          "code": "          // Detach from the VAO before any yield; native storage remains owned",
+          "classification": "waived",
+          "reason": "structural delimiter/blank/comment; no executable token"
+        },
+        {
+          "line": 981,
+          "code": "          // until the job's final completion/drain or explicit disposal.",
+          "classification": "waived",
+          "reason": "structural delimiter/blank/comment; no executable token"
+        },
+        {
+          "line": 982,
+          "code": "          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexStorage.storage.buffer);",
+          "classification": "executed",
+          "witness": {
+            "token": "gl",
+            "offset": 75334,
+            "count": 320,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 983,
+          "code": "        }",
+          "classification": "waived",
+          "reason": "structural delimiter/blank/comment; no executable token"
+        },
+        {
+          "line": 984,
+          "code": "      }",
+          "classification": "waived",
+          "reason": "structural delimiter/blank/comment; no executable token"
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 991,
+      "count": 3,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 991,
+          "code": "        ...(standard ? { instanceCount: fields.instanceCount, effectiveInstances: instances, vertexWork, indexSize,",
+          "classification": "executed",
+          "witness": {
+            "token": "standard",
+            "offset": 75761,
+            "count": 378,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 992,
+          "code": "          primitiveRestart: fields.primitiveRestart, restartIndex: fields.restartIndex, validIndexCount, restartCount,",
+          "classification": "executed",
+          "witness": {
+            "token": "primitiveRestart",
+            "offset": 75875,
+            "count": 378,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 993,
+          "code": "          normalizedIndices: normalize, nativeIndexSize, nativeIndexOffset, normalizedIndexBytes: normalize ? fields.count * 4 : 0 } : {}),",
+          "classification": "executed",
+          "witness": {
+            "token": "normalizedIndices",
+            "offset": 75994,
+            "count": 378,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 1164,
+      "count": 4,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 1164,
+          "code": "    const releaseNormalizedIndices = (job) => {",
+          "classification": "executed",
+          "witness": {
+            "token": "job",
+            "offset": 88560,
+            "count": 206,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 1165,
+          "code": "      for (const buffer of job.normalizedIndices) gl.deleteBuffer(buffer);",
+          "classification": "executed",
+          "witness": {
+            "token": "gl",
+            "offset": 88620,
+            "count": 319,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 1166,
+          "code": "      job.normalizedIndices.length = 0; job.normalizedBytes = 0; job.normalizationScratchBytes = 0;",
+          "classification": "executed",
+          "witness": {
+            "token": "job",
+            "offset": 88651,
+            "count": 206,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 1167,
+          "code": "    };",
+          "classification": "waived",
+          "reason": "structural delimiter/blank/comment; no executable token"
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 1195,
+      "count": 1,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 1195,
+          "code": "      releaseNormalizedIndices(job);",
+          "classification": "executed",
+          "witness": {
+            "token": "releaseNormalizedIndices",
+            "offset": 90122,
+            "count": 205,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 1270,
+      "count": 1,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 1270,
+          "code": "          job.serial++; issueDraw(job.pending.plan, indexBytes, job.submission, constantAttributes, job);",
+          "classification": "executed",
+          "witness": {
+            "token": "job",
+            "offset": 94589,
+            "count": 364,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 1283,
+      "count": 1,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 1283,
+          "code": "          job.serial++; issueDraw(job.pending.plan, polled.bytes, job.submission, null, job);",
+          "classification": "executed",
+          "witness": {
+            "token": "job",
+            "offset": 95472,
+            "count": 39,
+            "record": "unpacked/hot/retained-standard-draw/hardware/browser-coverage.json",
+            "recordSha256": "1c9ecf6ca04e4322890188219787111e2600f6a64f64aa1d3308dfc7151d6dfc"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 1413,
+      "count": 3,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 1413,
+          "code": "            reads: asyncAccess.inspect().reads, transfers: asyncAccess.inspect().transfers, stagingBytes: asyncAccess.inspect().stagingBytes,",
+          "classification": "executed",
+          "witness": {
+            "token": "reads",
+            "offset": 105224,
+            "count": 3336,
+            "record": "final-promoted/hardware/browser-coverage.json",
+            "recordSha256": "d002138cf1a4ca20af1fd2777a895b809449aa7bcdd6daa10ed5e0cf3c50c9c9"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 1414,
+          "code": "            ...(standard ? { normalizedBuffers: activeJob?.normalizedIndices.length ?? 0,",
+          "classification": "executed",
+          "witness": {
+            "token": "standard",
+            "offset": 105370,
+            "count": 3336,
+            "record": "final-promoted/hardware/browser-coverage.json",
+            "recordSha256": "d002138cf1a4ca20af1fd2777a895b809449aa7bcdd6daa10ed5e0cf3c50c9c9"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 1415,
+          "code": "              normalizedBytes: activeJob?.normalizedBytes ?? 0, normalizationScratchBytes: activeJob?.normalizationScratchBytes ?? 0 } : {}) } } : {}),",
+          "classification": "executed",
+          "witness": {
+            "token": "normalizedBytes",
+            "offset": 105458,
+            "count": 3336,
+            "record": "final-promoted/hardware/browser-coverage.json",
+            "recordSha256": "d002138cf1a4ca20af1fd2777a895b809449aa7bcdd6daa10ed5e0cf3c50c9c9"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 1428,
+      "count": 2,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 1428,
+          "code": "          work.failedSubmissions++; releaseJobAccess(activeJob); releaseNormalizedIndices(activeJob);",
+          "classification": "executed",
+          "witness": {
+            "token": "work",
+            "offset": 106619,
+            "count": 3,
+            "record": "unpacked/hot/retained-standard-draw/retained-async-jobs/browser-coverage.json",
+            "recordSha256": "b4a7bc94e0436c63927e9120506394c10bf1e96302346a6c38537f83c116244c"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 1429,
+          "code": "          if (activeJob.sync) gl.deleteSync(activeJob.sync); activeJob = null;",
+          "classification": "executed",
+          "witness": {
+            "token": "if",
+            "offset": 106721,
+            "count": 3,
+            "record": "unpacked/hot/retained-standard-draw/retained-async-jobs/browser-coverage.json",
+            "recordSha256": "b4a7bc94e0436c63927e9120506394c10bf1e96302346a6c38537f83c116244c"
+          },
+          "zeroTokens": []
+        }
+      ]
+    },
+    {
+      "file": "renderer/virgl-command/state.mjs",
+      "start": 1457,
+      "count": 2,
+      "context": "function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "added": [
+        {
+          "line": 1457,
+          "code": "              error: null, serial: 0, completedSerial: -1, hadFence: false, sync: null,",
+          "classification": "executed",
+          "witness": {
+            "token": "error",
+            "offset": 108473,
+            "count": 206,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        },
+        {
+          "line": 1458,
+          "code": "              normalizedIndices: [], normalizedBytes: 0, normalizationScratchBytes: 0 };",
+          "classification": "executed",
+          "witness": {
+            "token": "normalizedIndices",
+            "offset": 108561,
+            "count": 206,
+            "record": "unpacked/hot/hardware/browser-coverage.json",
+            "recordSha256": "caa554acada3660c8a55b541f60ffc664757e1be468e269602a0986fcf15ff50"
+          },
+          "zeroTokens": []
+        }
+      ]
+    }
+  ],
+  "semanticCoverageGaps": []
+}

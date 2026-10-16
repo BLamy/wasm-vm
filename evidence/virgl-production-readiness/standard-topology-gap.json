@@ -1,0 +1,121 @@
+{
+  "schema": "virgl-standard-core-topology-negative-v1",
+  "sourceHead": "39a9d14b7052c60ca11416bdba4e6eb78a38b1dd",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "sources": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "bytes": 30480,
+      "sha256": "9e3b12a0c2fe8035c1de7bd40c08bc11cc7b1d77bfceb7a7ef3b28667076c00e"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "bytes": 106820,
+      "sha256": "dd2049d9d27e591b0ad63ecd30fedcdcf8ae09e7b754d81b769a81497c7d7671"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_defines.h",
+      "bytes": 25281,
+      "sha256": "29b02c15399768ab74054e711f6633c407cf5f952f591c046e7542b82e54a008"
+    }
+  ],
+  "records": [
+    {
+      "mode": 1,
+      "packetHex": "08000c0000000000040000000100000000000000030000000000000000000000000000000000000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only triangles/strips without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 2,
+      "packetHex": "08000c0000000000040000000200000000000000030000000000000000000000000000000000000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only triangles/strips without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 3,
+      "packetHex": "08000c0000000000040000000300000000000000030000000000000000000000000000000000000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only triangles/strips without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    },
+    {
+      "mode": 6,
+      "packetHex": "08000c0000000000040000000600000000000000030000000000000000000000000000000000000000000000ffffffff00000000",
+      "standard": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only triangles/strips without base offsets, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      },
+      "legacy": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only ordinary triangles/strips without instancing, restart or stream output are supported.",
+          "byteOffset": 0,
+          "opcode": 8
+        }
+      }
+    }
+  ],
+  "mapping": {
+    "1": "PIPE_PRIM_LINES",
+    "2": "PIPE_PRIM_LINE_LOOP",
+    "3": "PIPE_PRIM_LINE_STRIP",
+    "6": "PIPE_PRIM_TRIANGLE_FAN"
+  },
+  "claim": "All four ordinary Gallium core line/fan modes still reject at the standard decoder; no renderer or guest draw is claimed.",
+  "carriedRuntimeHead": "64b246220bbf3ed5e1a6f1ed7371535ed5ec5c56"
+}

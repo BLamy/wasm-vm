@@ -1,0 +1,16 @@
+{
+  "schema": "virgl-float-vertex-fetch-seal-v1",
+  "task": "E6-T11d3",
+  "sourceHead": "2ba17ed3d5373eea3991225c8cd8160920928499",
+  "records": 196,
+  "archiveSha256": "b435606f2147094639d1bdf9018c3ef9c2a3ad0aa9dd7ef3a9661fd2fde34395",
+  "archiveBytes": 5834228,
+  "recordIndexSha256": "f70fe5fc912d7523c4e624bcb25fb245a99ceb2d027957f2c3aac03da79f49c4",
+  "hotReceiptSha256": "9938461d48ef655a0d5a664d8dca669aeb4cf3864e82e8b3ac00631d8752330a",
+  "coldReportSha256": "ad6382b0468e13335029274e1828b279550f954264928e9ac809e2107ff42128",
+  "coldReceiptSha256": "bb8fa0e9ddba7f6b2da060b6fafaacfb8e6ee4306945fe4cf5a57d9954d56750",
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "authority": "isolated-float-vertex-fetch",
+  "productionDrawAuthority": false
+}

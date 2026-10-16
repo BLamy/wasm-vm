@@ -1,0 +1,53 @@
+{
+  "task": "E6-T12g6m3a",
+  "predictions": [
+    "P2",
+    "P4",
+    "P7"
+  ],
+  "status": "HELD",
+  "predecessorManifestSha256": "3060fcc17713548f4ccc9e266c401449156c3fbe25d3a9885a4b3506117a1b11",
+  "predecessorArchiveSha256": "c5cf668e9591991c253a976104e2bf7a9f95825e4baac6aa645897164fc23e29",
+  "predecessorLegacySha256": "d876cf49279ee305bd78466a16423691fb52bba82b81f629a8a1eb8f2aa8384a",
+  "predecessorVerifierTaskSha256": "2edb5ff6012b4a53203e6d96b9ea17e1ad590537c0a3922c825c49882d119d08",
+  "comparisons": [
+    {
+      "prefix": "hot",
+      "legacySha256": "a1a6164320311fcca57d72e9c01bb0a8d9167e95d3f22fab6e02ecbb96e32233",
+      "completeResultsEqual": 10717,
+      "completePairsEqual": 2683,
+      "sameClosedExtensions": 177,
+      "completeNativeWasmSinglesPairs": 18,
+      "ownedMetadataRejections": 322,
+      "bankChecks": 323,
+      "aliasCopies": 18,
+      "getterCalls": 0
+    },
+    {
+      "prefix": "cold/acceptance",
+      "legacySha256": "a1a6164320311fcca57d72e9c01bb0a8d9167e95d3f22fab6e02ecbb96e32233",
+      "completeResultsEqual": 10717,
+      "completePairsEqual": 2683,
+      "sameClosedExtensions": 177,
+      "completeNativeWasmSinglesPairs": 18,
+      "ownedMetadataRejections": 322,
+      "bankChecks": 323,
+      "aliasCopies": 18,
+      "getterCalls": 0
+    }
+  ],
+  "unchangedBoundaries": [
+    "renderer/virgl-shader",
+    "renderer/virgl-command/decoder.mjs",
+    "renderer/virgl-command/resources.mjs",
+    "tools/virgl-known-branches/legacy.mjs",
+    "tools/virgl-known-branches/cases.mjs",
+    "web"
+  ],
+  "priorProofsRetained": true,
+  "historicalRecordRetagged": false,
+  "compilerAdmissionChanged": false,
+  "publicDemoImportsChanged": false,
+  "guestExecution": false,
+  "performanceClaim": false
+}

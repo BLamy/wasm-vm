@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "task": "E6-T11d2",
+  "verdict": "verified",
+  "sourceHead": "0ed130ff0b9a3efa1273ac485d87dad656efcef4",
+  "submissionHead": "2b720fcac4da27b57397aa70ed3ba84a4d2c0b1e",
+  "verifiedParent": "3c6295a93d6b088c62a5c6f1cc434f226e090340",
+  "records": 81,
+  "archive": "recording.tar.gz",
+  "archiveBytes": 5600794,
+  "archiveSha256": "7a3dd7bdd542f66e6d852b059be0145d4e93d5b8be0283ad4f41e2c71238ae64",
+  "recordIndex": "records.json",
+  "recordIndexSha256": "80f7601bc8573a3458de5606756012655d47f1d77d65406ed7c25a5c6802e0c3",
+  "workerArchiveSha256": "ee7ef868a4e8d98e8121c37116a8d3d06497b6cc88ef3c9c4581254f3a522b1f",
+  "workerIndexSha256": "1c6b9f26fae9591017986598f241272b084505d251e34460c5c315f322108d7c",
+  "promotedTest": "renderer/virgl-command/tests/blend-boundaries.mjs",
+  "promotedTestSha256": "9ccadf5102df2c93d9b58a2f88c7a7a16b2b02e4f663bc3ac87c79fb3f70d7c7",
+  "executedChangedRuntimeLines": 66,
+  "freshPhysicalFrames": 7410,
+  "promotedFrames": 22,
+  "allMembersReopenedAndAuthenticated": true,
+  "scope": "Normalized single-target blend only; no production capset/API, guest boot, throughput/FPS or portability across GPUs claim."
+}

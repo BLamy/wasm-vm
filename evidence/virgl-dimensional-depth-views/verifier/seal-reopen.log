@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-dimensional-depth-views/verifier/reopen_verifier.py", line 22, in <module>
+    assert [r["path"] for r in rows] == sorted({r["path"] for r in rows})
+AssertionError

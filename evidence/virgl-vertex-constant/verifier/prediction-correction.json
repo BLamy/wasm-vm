@@ -1,0 +1,9 @@
+{
+  "task": "E6-T11d1",
+  "id": "P8",
+  "initialPrediction": "highest referenced slot93 implies driver-active prefix94",
+  "observed": "ANGLE retains actual active129 for declared129 even though slot127 is unused; renderer correctly requires128 guest vectors",
+  "evidenceSha256": "4f3cc0de1ba0645130204f52c5359108c886a83238143e0cc79734ac54a95767",
+  "productFinding": false,
+  "revisedBeforeRerun": "With512 guest words, both partial-write/swizzle outputs have literal pixels. Native129 is clamped128; supplied94 or127 vectors reject before draw, including unused-but-driver-active suffix. Poisoned prefix lanes reject and complete banks recover."
+}

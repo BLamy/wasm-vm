@@ -651,7 +651,7 @@ async function finalCoverage(gl,bridge,fixtures,c) {
   }
   {
     const trace=instrument(gl,c),backend=c.ok(createWebGL2TransferBackend(trace.gl),"direct backend lifecycle").backend;
-    const meta={id:1,kind:"texture",format:67,width:2,height:2,byteLength:16};
+    const meta={id:1,kind:"texture",format:67,width:2,height:2,byteLength:16,lastLevel:0};
     const storage=backend.allocate(meta),layout={box:{x:0,y:0,width:2,height:2},tightBytes:16};
     backend.upload(storage,meta,layout,new Uint8Array([1,2,3,255,4,5,6,255,7,8,9,255,10,11,12,255]));
     backend.beginReadback(storage,meta,layout);c.equal(trace.syncs.size,1,"direct backend holds staged read sync");

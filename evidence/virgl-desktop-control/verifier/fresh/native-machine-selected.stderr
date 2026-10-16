@@ -1,0 +1,2 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+     Running tests/virtio_gpu_machine.rs (target/debug/deps/virtio_gpu_machine-62b86c3fa0dc3fba)

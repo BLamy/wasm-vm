@@ -15,7 +15,7 @@ assert.ok(options.output);assert.ok(!options.sabotage||['swizzle'].includes(opti
 assert.ok(!options['node-only']||options['node-only']==='true');
 const output=path.resolve(options.output);await fs.mkdir(output,{recursive:true});
 const sourcePaths=[
-  'renderer/virgl-command/resources.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs',
+  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/unorm-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',
   'renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/texture-views.mjs',
   'renderer/virgl-command/tests/flat-pairs.mjs','renderer/virgl-shader/tests/pairs.mjs','renderer/virgl-shader/tests/components.mjs','renderer/virgl-shader/tests/browser.mjs','renderer/virgl-shader/tests/corpus.mjs',
   'renderer/virgl-shader/index.mjs','renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm',
@@ -26,7 +26,7 @@ const sourcePaths=[
   'tools/virgl-command/view-fixtures.mjs','tools/verify-virgl-texture-views.mjs',
   'tools/verify-virgl-texture-views.sh','tools/virgl-command/views-receipt.py','tools/virgl-command/views-cold.py',
   'Makefile','renderer/virgl-command/README.md','renderer/virgl-command/resources-README.md','renderer/virgl-command/state-README.md',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const report={schema:1,task:'E6-T12g4',status:'running',guestExecution:false,
   boundary:'Original selected VIEW/SAMPLER packets plus independent synthetic pixels, immutable view keys and bounded shader variants; no full guest offload.',
   gitHead:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),command:[process.execPath,...process.argv.slice(1)],

@@ -1,0 +1,114 @@
+{
+  "schema": "original-packed-unsigned-formats-v1",
+  "originalHeaderSha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7",
+  "mesaExcerptSha256": "6b2973fbcad86bc83e1b6ca0db4a235724f5837da1d2cbb9911c25e6f692742e",
+  "sourceArchiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+  "records": [
+    {
+      "originalFormat": 225,
+      "originalName": "B10G10R10A2_UINT",
+      "channels": [
+        "UP10",
+        "UP10",
+        "UP10",
+        "UP2"
+      ],
+      "swizzles": [
+        "Z",
+        "Y",
+        "X",
+        "W"
+      ],
+      "rgbaFields": [
+        {
+          "bits": 10,
+          "offset": 20,
+          "ignored": false
+        },
+        {
+          "bits": 10,
+          "offset": 10,
+          "ignored": false
+        },
+        {
+          "bits": 10,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 2,
+          "offset": 30,
+          "ignored": false
+        }
+      ],
+      "guestPixelBytes": 4,
+      "plannedNativePixelBytes": 4,
+      "plannedNativeInternal": "RGB10_A2UI",
+      "plannedUploadFormat": "RGBA_INTEGER",
+      "plannedUploadType": "UNSIGNED_INT_2_10_10_10_REV",
+      "plannedReadType": "UNSIGNED_INT",
+      "plannedReadFormat": "RGBA_INTEGER",
+      "nativeOffsets": [
+        0,
+        10,
+        20,
+        30
+      ],
+      "implicitAlpha": false,
+      "readPixelBytes": 16
+    },
+    {
+      "originalFormat": 253,
+      "originalName": "R10G10B10A2_UINT",
+      "channels": [
+        "UP10",
+        "UP10",
+        "UP10",
+        "UP2"
+      ],
+      "swizzles": [
+        "X",
+        "Y",
+        "Z",
+        "W"
+      ],
+      "rgbaFields": [
+        {
+          "bits": 10,
+          "offset": 0,
+          "ignored": false
+        },
+        {
+          "bits": 10,
+          "offset": 10,
+          "ignored": false
+        },
+        {
+          "bits": 10,
+          "offset": 20,
+          "ignored": false
+        },
+        {
+          "bits": 2,
+          "offset": 30,
+          "ignored": false
+        }
+      ],
+      "guestPixelBytes": 4,
+      "plannedNativePixelBytes": 4,
+      "plannedNativeInternal": "RGB10_A2UI",
+      "plannedUploadFormat": "RGBA_INTEGER",
+      "plannedUploadType": "UNSIGNED_INT_2_10_10_10_REV",
+      "plannedReadType": "UNSIGNED_INT",
+      "plannedReadFormat": "RGBA_INTEGER",
+      "nativeOffsets": [
+        0,
+        10,
+        20,
+        30
+      ],
+      "implicitAlpha": false,
+      "readPixelBytes": 16
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "status": "HELD all archive members reopened and authenticated",
+  "archive": {
+    "path": "target/evidence/critic-production-interactive-clock-components-seal01/clock-policy-unit-and-pause-controls.tar.gz",
+    "bytes": 306487,
+    "sha256": "0fa7e848bf8ed256ffcf40d707abb1ab62957b257e4446e0116728a80cb90cec"
+  },
+  "identities": 80,
+  "members": 81,
+  "scope": "Independent D72 partial component review, not a verified task or parent/recovery/deployment verdict"
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "critic-fixture-correction-v1",
+  "initialPredictionSha256": "995bb55fc94503d457c1dfaadb05cf0e5631e4afec04f024ed17272ca6063f96",
+  "failedCase": 0,
+  "observed": "unsupported-feature before producer authority",
+  "cause": "The adversarial common header unnecessarily declared an unused ADDR[0], prohibited by unchanged bridge.c:1046. Removing it from non-indirect fixtures restores the intended scoped test. This is a critic fixture correction, not a product refutation.",
+  "newPredictionPrecedesRerun": true,
+  "secondCorrection": {
+    "initialPredictionSha256": "66d302089bab1135b357f97868ca4dd846a855170628f52002520f2f11089672",
+    "failedCase": 56,
+    "cause": "The original depth-16 guard left OUT[0] unwritten on every non-entered branch, violating unchanged output initialization. Initialize OUT[0] before the nested UIFs to isolate the intended depth boundary.",
+    "newPredictionPrecedesRerun": true
+  }
+}

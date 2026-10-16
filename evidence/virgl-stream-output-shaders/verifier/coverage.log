@@ -1,0 +1,1 @@
+{"status": "passed", "javascript": 247, "native": 357, "staticWaivers": 71, "nativePredicateBranches": 28, "missing": 0, "wasmMemory": {"initialBytes": 16777216, "maximumBytes": 16777216, "growable": false}}

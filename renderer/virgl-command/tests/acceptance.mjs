@@ -374,7 +374,7 @@ export function runAcceptance(fixtures, options = {}) {
   };
   // Unknown dispatch, object bytes, exact arities and atomic whole-submission failure.
   reject(packet(255, 0, []), "unknown opcode", "unsupported-command", 0, 255);
-  reject(packet(15, 0, [0]), "out-of-profile scissor opcode", "unsupported-command");
+  reject(packet(15, 0, [0, 0]), "partial scissor bounds", "payload-length");
   reject(packet(1, 255, [1]), "unknown create object", "unsupported-object");
   reject(packet(1, 9, [1]), "unsupported query object", "unsupported-object");
   reject(packet(2, 4, [1]), "shader through generic bind object", "unsupported-object");
@@ -440,7 +440,7 @@ export function runAcceptance(fixtures, options = {}) {
   reject(setWord(shaderPacket, 5, 1), "shader stream output declaration", "unsupported-feature");
   reject(setWord(shaderPacket, 4, 0), "shader zero token count", "limit-exceeded");
   reject(setWord(shaderPacket, 4, 8193), "shader over token budget", "limit-exceeded");
-  reject(setWord(shaderPacket, 3, 16386), "shader declared text over budget", "limit-exceeded");
+  reject(setWord(shaderPacket, 3, 49154), "shader declared text over budget", "limit-exceeded");
   reject(setWord(shaderPacket, 3, 1), "empty shader declaration", "invalid-value");
   const embeddedNul = shaderPacket.slice(); embeddedNul[28] = 0;
   reject(embeddedNul, "shader embedded NUL", "invalid-value");
@@ -450,9 +450,10 @@ export function runAcceptance(fixtures, options = {}) {
   reject(badPadding, "shader nonzero alignment padding", "invalid-value");
   const nonAscii = shaderPacket.slice(); nonAscii[24] = 128;
   reject(nonAscii, "shader non-ASCII byte", "invalid-value");
-  const maxShader = accept(shader("x".repeat(16384), 1, 8192), "maximum shader text and token budgets");
-  equal(maxShader.commands[0].fields.text.length, 16384, "maximum text preserved");
-  reject(shader("x".repeat(16385)), "actual shader text above budget", "limit-exceeded");
+  accept(shader("x".repeat(16384), 1, 8192), "historical 16KiB shader remains admitted");
+  const maxShader = accept(shader("x".repeat(49152), 1, 8192), "maximum shader text and token budgets");
+  equal(maxShader.commands[0].fields.text.length, 49152, "maximum text preserved");
+  reject(shader("x".repeat(49153)), "actual shader text above budget", "limit-exceeded");
 
   for (const [event, offset, word, name] of [
     [161, 5304, 2, "viewport"], [161, 5072, 1, "blend color"], [161, 5336, 3, "inline constant"],
@@ -501,7 +502,7 @@ export function runAcceptance(fixtures, options = {}) {
   reject(packet(1, 5, [1, ...Array(17).fill([0, 0, 0, 29]).flat()]), "vertex elements over count budget", "limit-exceeded");
   reject(packet(1, 5, [1, 0, 0, 16, 29]), "vertex element buffer index budget", "limit-exceeded");
   reject(packet(1, 5, [1, 0xffffffff, 0, 0, 29]), "vertex element address overflow", "invalid-value");
-  accept(packet(1, 5, [0xffffffff, 0xfffffff7, 0, 15, 29]), "vertex element final valid source and buffer index");
+  accept(packet(1, 5, [0xffffffff, 0xfffffff4, 0, 15, 29]), "vertex element final aligned source and buffer index");
   accept(packet(1, 5, [1, ...Array(16).fill([0, 0, 0, 29]).flat()]), "maximum vertex elements");
   accept(packet(6, 0, []), "empty vertex buffers");
   accept(packet(6, 0, Array(16).fill([16, 8, 0xffffffff]).flat()), "maximum vertex buffers");
@@ -523,7 +524,8 @@ export function runAcceptance(fixtures, options = {}) {
     accept(packet(op, 0, [0, 32]), `sampler opcode ${op} empty at end of slot range`);
   }
   reject(packet(12, 0, [0, 0, 0]), "inline constants incomplete vec4", "payload-length");
-  reject(packet(12, 0, [0, 0, ...Array(188).fill(0)]), "inline constants over word budget", "limit-exceeded");
+  reject(packet(12, 0, [0, 0, ...Array(516).fill(0)]), "vertex inline constants over word budget", "limit-exceeded");
+  reject(packet(12, 0, [1, 0, ...Array(188).fill(0)]), "fragment inline constants over word budget", "limit-exceeded");
   reject(packet(12, 0, [1, 0, ...Array(183).fill(0)]), "high inline constants incomplete vec4", "payload-length");
   reject(packet(12, 0, [0, 15]), "constant slot budget", "limit-exceeded");
   reject(packet(12, 0, [0, 1, 0, 0, 0, 0]), "active nonzero constant slot", "unsupported-feature");
@@ -662,7 +664,7 @@ export function runAcceptance(fixtures, options = {}) {
     acceptedSubmissionResultJsonBytes: JSON.stringify(maximumBytesResult).length,
     acceptedCommandCount: 4096, commandCountSubmissionBytes: 32768,
     acceptedCommandCountResultJsonBytes: JSON.stringify(maximumCommandsResult).length,
-    maximumShaderTextBytes: 16384, maximumShaderTokens: 8192,
+    maximumShaderTextBytes: 49152, maximumShaderTokens: 8192,
     oversizedSubmissionBytes: 262148, oversizedCommandCount: 4097 },
   assertions, attacks, decodedSubmissions };
 }

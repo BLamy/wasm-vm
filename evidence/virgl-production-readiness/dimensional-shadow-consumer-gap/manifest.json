@@ -1,0 +1,79 @@
+{
+  "schema": "d62-original-dimensional-comparison-consumer-readiness-seal-v1",
+  "status": "sealed-and-reopened",
+  "head": "93021c5a28b99357532844de6ea4944291774099",
+  "claim": "D61 original dimensional comparison compiler passes; existing D60 consumer refuses before native shader allocation. Ordinary controls and native depth views pass.",
+  "negativeConsumerCases": 40,
+  "ordinaryControls": 40,
+  "nativeDepthViews": 40,
+  "actualLinuxGuest": false,
+  "productionAuthority": false,
+  "priorPr": "https://github.com/BLamy/wasm-vm/pull/539",
+  "appendOnlyContinuity": {
+    "schema": "d61-native-stack-append-only-continuity-v1",
+    "status": "passed",
+    "head": "93021c5a28b99357532844de6ea4944291774099",
+    "existingPrCount": 139,
+    "existingPrIdentitiesOrderHeadsBasesStatesHeld": true,
+    "stackIdentitiesHeld": true,
+    "allOpenDraftUnmerged": true,
+    "addition": {
+      "id": 4836719523,
+      "number": 539,
+      "node_id": "PR_kwDOTLQ_188AAAABIEp7ow",
+      "state": "open",
+      "draft": true,
+      "merged_at": null,
+      "html_url": "https://github.com/BLamy/wasm-vm/pull/539",
+      "head": {
+        "ref": "codex/virgl-dimensional-shadow-shaders",
+        "sha": "93021c5a28b99357532844de6ea4944291774099"
+      },
+      "base": {
+        "ref": "codex/virgl-dimensional-depth-sampler-views",
+        "sha": "04ab18042036bf0ab19864bbe38e787dd4aadf48"
+      }
+    },
+    "stacks": [
+      {
+        "number": 499,
+        "id": 1985180,
+        "previousPrCount": 50,
+        "publishedPrCount": 50,
+        "beforeSha256": "f221c656ee6ab1cc6da9cb890b5a8b3eeb66e45b757e1d4bd03466fffad643d1",
+        "afterSha256": "f221c656ee6ab1cc6da9cb890b5a8b3eeb66e45b757e1d4bd03466fffad643d1"
+      },
+      {
+        "number": 500,
+        "id": 1985183,
+        "previousPrCount": 89,
+        "publishedPrCount": 90,
+        "beforeSha256": "8e018ae88eb55945e3f055da9b23e590fc4a5f8a37073a4d4e68352764aa6a04",
+        "afterSha256": "1f3010f5ca33a40035d5f3d3a15c3d6413e9ba6a89dfd930ded52dc5a932a1ca"
+      }
+    ],
+    "checkerSha256": "2083a29f66de6e8a84d85decf77df57f6183a03567e494c923061004e9cc7015"
+  },
+  "d61Verifier": {
+    "head": "93021c5a28b99357532844de6ea4944291774099",
+    "manifestSha256": "77ef1511cf4ff3a2aceccbdb89c99bce55a6ae89ade0af6cbb9c2ceeb6ec024a",
+    "indexSha256": "e58839a053fe147e81b1ded7efd30023f8dae1fd1bdd97e49ca85ca251df647e",
+    "archiveSha256": "3fd875a25de06b25221241934b515993e0f54dfe839a8ec1c66dbad22e88f3d6"
+  },
+  "logicalMembers": 98,
+  "storedBodies": 94,
+  "backwardLinks": 4,
+  "logicalBytes": 68489276,
+  "index": {
+    "path": "records.json",
+    "bytes": 18329,
+    "sha256": "e4278f8c2b1d5b33dfca5d64252f9da4b5ac99630e0efa9722b18e576c938850"
+  },
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 7185375,
+    "sha256": "35c71860c204e94868577a5425efa2d52d621c7282324213b6802c0d104548dc"
+  },
+  "allCompleteBodiesReopened": true,
+  "gzipEofChecked": true
+}

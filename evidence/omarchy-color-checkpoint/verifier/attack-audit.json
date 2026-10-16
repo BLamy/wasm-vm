@@ -1,0 +1,182 @@
+{
+  "predictions_sha256": "d430b79e356871bde4ef5f7aaa4c322e55a35ed55b8520582d52a1b9baef3fd2",
+  "checks": [
+    {
+      "name": "literal-pattern-hardware",
+      "status": "HELD",
+      "report_sha256": "c816e89cee6c1f99c6ce848e297f017699479720622af1ee7ec1d4b9abed5ba2",
+      "unchanged_product_source_sha256": "ce1b15fdbe4fbcb8cf6f21477879cf201c3ae8a803f6b0fecf48264956207bd9",
+      "cases": [
+        {
+          "name": "production-R8-2048",
+          "logical_bytes": 4194304,
+          "sha256": "558a7e3ee504a28652752a776987bc44dfba0bea465daac79468f3151e61a87a",
+          "all_output_and_native_bytes_independently_checked": true,
+          "markers": [
+            {
+              "row": 0,
+              "first": 45,
+              "tail": 210,
+              "middle": 120
+            },
+            {
+              "row": 1,
+              "first": 182,
+              "tail": 73,
+              "middle": 227
+            },
+            {
+              "row": 511,
+              "first": 115,
+              "tail": 140,
+              "middle": 38
+            },
+            {
+              "row": 512,
+              "first": 225,
+              "tail": 30,
+              "middle": 180
+            },
+            {
+              "row": 513,
+              "first": 76,
+              "tail": 179,
+              "middle": 25
+            },
+            {
+              "row": 2046,
+              "first": 154,
+              "tail": 101,
+              "middle": 207
+            },
+            {
+              "row": 2047,
+              "first": 6,
+              "tail": 249,
+              "middle": 83
+            }
+          ]
+        },
+        {
+          "name": "production-R8-4096",
+          "logical_bytes": 16777216,
+          "sha256": "22ef85dff183b0be60054b641758be58a208fb1fadaa2819abe15c47423e8649",
+          "all_output_and_native_bytes_independently_checked": true,
+          "markers": [
+            {
+              "row": 0,
+              "first": 45,
+              "tail": 210,
+              "middle": 120
+            },
+            {
+              "row": 1,
+              "first": 182,
+              "tail": 73,
+              "middle": 227
+            },
+            {
+              "row": 255,
+              "first": 115,
+              "tail": 140,
+              "middle": 38
+            },
+            {
+              "row": 256,
+              "first": 225,
+              "tail": 30,
+              "middle": 180
+            },
+            {
+              "row": 257,
+              "first": 76,
+              "tail": 179,
+              "middle": 25
+            },
+            {
+              "row": 4094,
+              "first": 154,
+              "tail": 101,
+              "middle": 207
+            },
+            {
+              "row": 4095,
+              "first": 6,
+              "tail": 249,
+              "middle": 83
+            }
+          ]
+        },
+        {
+          "name": "historical-R8-eight-MiB",
+          "logical_bytes": 2097152,
+          "sha256": "5528f3a5c14b659f040e56eca723b3ce03600a9259e923467d51da22f82b2283",
+          "all_output_and_native_bytes_independently_checked": true,
+          "markers": [
+            {
+              "row": 0,
+              "first": 45,
+              "tail": 210,
+              "middle": 120
+            },
+            {
+              "row": 1,
+              "first": 182,
+              "tail": 73,
+              "middle": 227
+            },
+            {
+              "row": 1023,
+              "first": 115,
+              "tail": 140,
+              "middle": 38
+            },
+            {
+              "row": 1024,
+              "first": 225,
+              "tail": 30,
+              "middle": 180
+            },
+            {
+              "row": 1025,
+              "first": 76,
+              "tail": 179,
+              "middle": 25
+            },
+            {
+              "row": 2046,
+              "first": 154,
+              "tail": 101,
+              "middle": 207
+            },
+            {
+              "row": 2047,
+              "first": 6,
+              "tail": 249,
+              "middle": 83
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "old-limit-sabotage-hardware",
+      "status": "HELD",
+      "report_sha256": "6eb4ce7599f077654f3a7355aa9dded5c5ff78f3e974b9b4da29c13ed664b8d6",
+      "sabotaged_product_source_sha256": "d4b38e954301184e4cd3b988fced59e63006ce9e967a59ed02d2a5c5e6e29897",
+      "only_selected_limit_expression_changed": true,
+      "original_test_body_unchanged": true,
+      "meaningful_boundary_failure": "GPU checkpoint: Native color scratch exceeds byte limit.",
+      "original_wasm_commands_completed": 8,
+      "native_uploads_completed": 4,
+      "native_reads": 0,
+      "journal_artifacts": 0,
+      "exit": 1,
+      "objects_remaining": [
+        0,
+        0
+      ],
+      "stale_build_stamp_is_deliberately_not_promoted_as_a_new_runtime_identity": true
+    }
+  ]
+}

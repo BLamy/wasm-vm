@@ -1,0 +1,22 @@
+{
+  "schema": "virgl-standard-state-critic-seal-v1",
+  "task": "E6-T11d5",
+  "verdict": "refuted",
+  "sourceHead": "365b3cf3d076637c347c7e9802420f847d09fbed",
+  "workerClaimHead": "e5d4dba7b9cd5e8f8085f191d74f5e4a817abddd",
+  "records": 52,
+  "archiveBytes": 788717,
+  "archiveSha256": "6f05eeafad2f2dcdc225957b6ee95889855c1abc3538b480ad3f9a1222257c9b",
+  "recordIndexSha256": "09f798b43f4b9e960c97879b682ac0110089cb9f124b42108d79edd4093cbd7e",
+  "inheritedWorkerArchiveSha256": "553a510d719a5a4dd2617ec3ae1d126ee3a77ed4cbec5d113fb254b33c69d3d0",
+  "inheritedCompilerDeviceHead": "9323b44519710dfb2c8a324fe115872b79d274f0",
+  "authority": "isolated-standard-state-binding",
+  "guestExecution": false,
+  "productionDrawAuthority": false,
+  "findings": [
+    "F1",
+    "F2"
+  ],
+  "coverage": "accounted-with-narrow-waivers",
+  "note": "Raw critic reports and sources are packed here; unpacked worker records are deliberately excluded."
+}

@@ -1,0 +1,68 @@
+{
+  "schema": "d28-native-filtering-precision-classification-v1",
+  "classification": "critic original arbitrary-weight filtering-accuracy assumption failed; bounded proof domain repair, not runtime refutation",
+  "taskContract": "Actual native R11F_G11F_B10F original FLOAT sampler through unchanged bridge. No arbitrary filtering accuracy or portable f16 filtering rounding promise. Packed surface discrete allowed rounding assertions remain exact and separate.",
+  "originalExpectationPreserved": true,
+  "workerToleranceAndInputUnchanged": true,
+  "primarySources": [
+    {
+      "url": "https://registry.khronos.org/OpenGL/specs/es/3.0/es_spec_3.0.pdf",
+      "sections": [
+        "2.1.1",
+        "3.8.10.2",
+        "3.8.10.4"
+      ],
+      "interpretation": "Floating computation can be data-format limited; texture formulas define filtering structure without specifying an f32 filtering implementation. No inference of arbitrary f16 rounding contract is made."
+    },
+    {
+      "url": "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf",
+      "sections": [
+        "4.5.1",
+        "8",
+        "8.8"
+      ],
+      "interpretation": "Highp controls returned storage precision. Built-ins lacking GLSL equations have undefined precision; textureLod delegates lookup to API texture rules. Therefore highp return type alone does not establish the critic 2e-6 arbitrary-weight accuracy assumption."
+    }
+  ],
+  "directNativeIsolation": {
+    "mode": "precision",
+    "seed": "0xc01dcafe",
+    "source": "renderer/virgl-command/tests/standard-packed-float-consumer-critic.mjs:directNative",
+    "oracle": "Original TGSI/raw packed bit expectations retained with the unchanged budget, full native/source/public planes captured. Direct native result is a diagnostic equivalence control only, never expected-value input."
+  },
+  "boundedRepair": {
+    "inputDomain": "exact-e15-eighths-weighted-v1",
+    "seed": "0xc01dcafe",
+    "sourceValues": "Each source lane has exponent15 and mantissa an exact multiple of 1/8. NPOT13x7, ranges1..3 and0..3, TXL(.375,.625,.5), swizzle[2,0,5,4].",
+    "originalPredictions": [
+      [
+        1.388671875,
+        1.123046875,
+        1,
+        0
+      ],
+      [
+        1.4609375,
+        1.2861328125,
+        1,
+        0
+      ]
+    ],
+    "independentRationalPredictions": [
+      [
+        "711/512",
+        "575/512",
+        "1",
+        "0"
+      ],
+      [
+        "187/128",
+        "1317/1024",
+        "1",
+        "0"
+      ]
+    ],
+    "binary16Representability": "Verified algebraically before native execution, preserving every original source word in preobservations.",
+    "ownership": "Both original contexts keep the original retained13x7 allocation after public-ID6 replacement9x5/lastLevel2."
+  }
+}

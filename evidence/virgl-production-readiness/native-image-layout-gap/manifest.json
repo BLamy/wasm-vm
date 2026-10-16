@@ -1,0 +1,60 @@
+{
+  "schema": "selected-native-image-negative-readiness-v1",
+  "sourceHead": "0211566e662a3512b374c69ab915c563e7daf0cc",
+  "trackedChanges": [],
+  "status": "passed",
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "/tmp/wasmvm-selected-native-image-readiness.mjs",
+    "--output",
+    "/tmp/wasmvm-selected-native-image-readiness-verified"
+  ],
+  "recordCount": 74,
+  "completeBodies": true,
+  "decodedBytes": 12551962,
+  "index": {
+    "path": "records.json",
+    "sha256": "76a25718bfcd1736990f850db642fd99ddb04d89cbd6052d5408abb9ab432fdb"
+  },
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 2721287,
+    "sha256": "7e11fdcdd4431b6bf7069b8294089fe3f28b7c49df12adc7ae0ca10edb38352d"
+  },
+  "report": {
+    "path": "report.json",
+    "bytes": 332830,
+    "sha256": "edcff0af16f81c9d832bfa4990eb678d6894fcbcfa87d6337f817904e83e9007"
+  },
+  "runner": {
+    "bytes": 19278,
+    "sha256": "fd61ceaeade51baaf6d385efb4d3b98a995b503beba299eb0f0083757f7124d0",
+    "body": "readiness-runner.mjs"
+  },
+  "servedReadiness": {
+    "path": "renderer/virgl-command/tests/desktop-submit-acceptance.mjs",
+    "originalSha256": "2f3ddebcee03c7ac403b2a0f4c7c740412ba547a9a5b0c3be3bee1e9d5066d88",
+    "servedSha256": "ad1f9e6b83ef977b37f51553829801d71810526cf47e57de941883812297442b",
+    "body": "readiness-source.mjs"
+  },
+  "nativeRuntimeSources": {
+    "native-sources/crates/core/src/dev/virtio/gpu/control3d.rs": "d9a2c431be477b44b6daf712be672a93cddb6008dbcad1835184c38bef94102f",
+    "native-sources/crates/core/src/dev/virtio/gpu/submit3d.rs": "5b4e9fe0f9d9384ae16a2bde34b4bdd605f5d416b2d5c58c43d052a0463f6364"
+  },
+  "nativeGpuAllocations": true,
+  "actualLinuxGuest": false,
+  "productionAuthority": false,
+  "summary": {
+    "status": "passed",
+    "refusedNativeShapes": [
+      "RGBA8 complete mip chain",
+      "RG8 plane",
+      "RGB8 plane",
+      "floating RGBA plane",
+      "Z16 depth plane"
+    ],
+    "positiveHostShapes": 5,
+    "nativeCalls": 261,
+    "liveGuest3d": false
+  }
+}

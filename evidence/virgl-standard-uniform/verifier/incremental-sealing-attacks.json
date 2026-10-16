@@ -1,0 +1,102 @@
+{
+  "status": "passed",
+  "scope": "only two packaging files changed after authentic hot/cold runtime head; one exact108-byte suffix retained",
+  "attacks": [
+    {
+      "run": "hot",
+      "attack": "modified-prefix",
+      "rejected": true,
+      "rawSha256": "be0273881c43b8e471785d9c28793c99ff8abea8be6d1adbbbcc1a0eec88f550"
+    },
+    {
+      "run": "hot",
+      "attack": "truncated",
+      "rejected": true,
+      "rawSha256": "b84f2b715b499d89d92618e46cff70e490eb774a277c7b8acc379687a79ef673"
+    },
+    {
+      "run": "hot",
+      "attack": "other-append",
+      "rejected": true,
+      "rawSha256": "34dbf532eac3a31cac18575f6c0e2f7de0194852f40f0557189c8da1d397ff05"
+    },
+    {
+      "run": "hot",
+      "attack": "duplicate-confirmation",
+      "rejected": true,
+      "rawSha256": "e9385eeb84910877bb22a519bfda76550e92b614661ac8ee9da5263a76231b09"
+    },
+    {
+      "run": "hot",
+      "attack": "blank-append",
+      "rejected": true,
+      "rawSha256": "eb04ddfb4fc289892bc15376a862a578ada0c62cb071f295aa66ccbbc0856a71"
+    },
+    {
+      "run": "hot",
+      "attack": "prefix-only-change",
+      "rejected": true,
+      "rawSha256": "33be81ae5944b6ed24e69ddc28b2282eedc420c3e405b525e1bdd4716d2dd563"
+    },
+    {
+      "run": "hot",
+      "attack": "preceded-newline",
+      "rejected": true,
+      "rawSha256": "8802f0cf8a462cd8a2772cd5db06c69ec2cc1b912cf9bef7f9adf7517ac7a4a0"
+    },
+    {
+      "run": "hot",
+      "attack": "wrong-name",
+      "rejected": true,
+      "rawSha256": "2d0430a536403bf4c49bc7f9a29dc22334c35f8171724d66e18cea923170993c"
+    },
+    {
+      "run": "cold",
+      "attack": "modified-prefix",
+      "rejected": true,
+      "rawSha256": "eca1e903ccc217af02b5f8180d1dc14130244a9e5a70ed2f7d8a1b39ab7ef41c"
+    },
+    {
+      "run": "cold",
+      "attack": "truncated",
+      "rejected": true,
+      "rawSha256": "0af900c4540fc2a978f0ecc86337b610c1a4773ddbb27b4220d43e45dcf8759f"
+    },
+    {
+      "run": "cold",
+      "attack": "other-append",
+      "rejected": true,
+      "rawSha256": "f766ddb54eb3a395d1b0731869dda4a109592c59547773a701af322f036e5e59"
+    },
+    {
+      "run": "cold",
+      "attack": "duplicate-confirmation",
+      "rejected": true,
+      "rawSha256": "06894d2280974d04f10d3d41e04a4c27b4aada25e2dcdba9503b97061a6c20fc"
+    },
+    {
+      "run": "cold",
+      "attack": "blank-append",
+      "rejected": true,
+      "rawSha256": "60919a1e46b700978dce56d39ddbe491042e532c5cb7dd8ef8d82212cda86569"
+    },
+    {
+      "run": "cold",
+      "attack": "prefix-only-change",
+      "rejected": true,
+      "rawSha256": "ff9d10c16a253775bba99abf527d2e6b3263e53ce07f19aaf5871986a6951456"
+    },
+    {
+      "run": "cold",
+      "attack": "preceded-newline",
+      "rejected": true,
+      "rawSha256": "5b8ecf5a9c560121f50c316410a7c1afe2c36417fa96fae55c67d4c5ff1c52ef"
+    },
+    {
+      "run": "cold",
+      "attack": "wrong-name",
+      "rejected": true,
+      "rawSha256": "140a1b962e2e8d91ce02524ac87047a110793aa48cdac556ddff5d509b6b6eaa"
+    }
+  ]
+}

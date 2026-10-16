@@ -1,0 +1,602 @@
+{
+  "status": "HELD",
+  "hunks": [
+    {
+      "source": "Makefile",
+      "hunk": "@@ -2183,0 +2184,4 @@ verify-E6-T11d13:",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "evidence/virgl-production-readiness/standard-integer-vertex-gap.json",
+      "hunk": "@@ -0,0 +1,1977 @@",
+      "classification": "waived data",
+      "reason": "Sealed immutable recording/data, authenticated by complete index/bytes/digest. Negative predecessor artifact is historical isolation metadata.",
+      "citation": "authentication.json"
+    },
+    {
+      "source": "evidence/virgl-standard-integer/worker/manifest.json",
+      "hunk": "@@ -0,0 +1,16 @@",
+      "classification": "waived data",
+      "reason": "Sealed immutable recording/data, authenticated by complete index/bytes/digest. Negative predecessor artifact is historical isolation metadata.",
+      "citation": "authentication.json"
+    },
+    {
+      "source": "evidence/virgl-standard-integer/worker/records.json",
+      "hunk": "@@ -0,0 +1,72927 @@",
+      "classification": "waived data",
+      "reason": "Sealed immutable recording/data, authenticated by complete index/bytes/digest. Negative predecessor artifact is historical isolation metadata.",
+      "citation": "authentication.json"
+    },
+    {
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "hunk": "@@ -787 +787,8 @@ function standardFreeze(value) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "hunk": "@@ -804 +811,2 @@ function standardIO(value, stage, file, paired) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "hunk": "@@ -837 +845 @@ function standardIO(value, stage, file, paired) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "hunk": "@@ -839 +847 @@ function standardIOArray(value, stage, file, paired) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "hunk": "@@ -850 +858 @@ function standardIOArray(value, stage, file, paired) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "hunk": "@@ -858,4 +866,7 @@ function standardMetadata(value, stage, paired = false) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "hunk": "@@ -905 +916 @@ function standardMetadata(value, stage, paired = false) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "hunk": "@@ -909 +920 @@ function standardBody(value, stage, paired) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "hunk": "@@ -945 +956 @@ export function normalizeStandardShaderResult(value, stage) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "hunk": "@@ -953 +964 @@ export function normalizeStandardShaderPair(value) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/constant-domain.mjs",
+      "hunk": "@@ -957,0 +969,7 @@ export function normalizeStandardShaderPair(value) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "hunk": "@@ -36,0 +37,11 @@ export const floatingVertexFormat = format => Number.isInteger(format) && Object",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "hunk": "@@ -267 +278 @@ function decodeObject(p, objectType) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "hunk": "@@ -269 +280 @@ function decodeObject(p, objectType) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/integer-vertex-README.md",
+      "hunk": "@@ -0,0 +1,27 @@",
+      "classification": "waived declarative",
+      "reason": "Docs, ordered task dependency/status/queue metadata; no executable product behavior.",
+      "citation": "task-diff.patch"
+    },
+    {
+      "source": "renderer/virgl-command/standard-state-README.md",
+      "hunk": "@@ -55,0 +56,3 @@ actual guest Mesa initialization, scanout and performance need their own proof.",
+      "classification": "waived declarative",
+      "reason": "Docs, ordered task dependency/status/queue metadata; no executable product behavior.",
+      "citation": "task-diff.patch"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -2 +2 @@",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -6 +6 @@ import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank,",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -21 +21 @@ const DRAW_MODES = Object.freeze({ 0: \"POINTS\", 1: \"LINES\", 2: \"LINE_LOOP\", 3: \"",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -23 +23,2 @@ function constantVertexValues(bytes, sourceFormat) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -34 +35 @@ function constantVertexValues(bytes, sourceFormat) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -311,2 +312,3 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -316,2 +318,5 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -472,0 +478,13 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -476,0 +495 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -486 +505 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -490 +509 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -500 +519,5 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -507 +530 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -549 +572,2 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -698 +722 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -789,0 +814 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -814 +839,5 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -818,0 +848 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -822 +852,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -826,2 +862,2 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -995 +1031 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -1007,0 +1044 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -1396 +1433 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "hunk": "@@ -9 +9 @@ const families=[[28,4,'float'],[48,2,'unorm'],[56,2,'snorm'],[64,1,'unorm'],[74,",
+      "classification": "executed + harness guards waived",
+      "reason": "Actual literal driver/native/Wasm/browser tests execute. Argument/fixture-format and assertion-failure guards are proof harness only; all changed product behavior has independent evidence.",
+      "citation": "recording-audit.json + fresh-audit.json + native-replay.json"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "hunk": "@@ -32 +32 @@ export function compactSpec(options={}){",
+      "classification": "executed + harness guards waived",
+      "reason": "Actual literal driver/native/Wasm/browser tests execute. Argument/fixture-format and assertion-failure guards are proof harness only; all changed product behavior has independent evidence.",
+      "citation": "recording-audit.json + fresh-audit.json + native-replay.json"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "hunk": "@@ -68,4 +68,5 @@ export function compactRig(gl,bridge,c,s,options={}){",
+      "classification": "executed + harness guards waived",
+      "reason": "Actual literal driver/native/Wasm/browser tests execute. Argument/fixture-format and assertion-failure guards are proof harness only; all changed product behavior has independent evidence.",
+      "citation": "recording-audit.json + fresh-audit.json + native-replay.json"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "hunk": "@@ -76 +77 @@ export function compactRig(gl,bridge,c,s,options={}){",
+      "classification": "executed + harness guards waived",
+      "reason": "Actual literal driver/native/Wasm/browser tests execute. Argument/fixture-format and assertion-failure guards are proof harness only; all changed product behavior has independent evidence.",
+      "citation": "recording-audit.json + fresh-audit.json + native-replay.json"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "hunk": "@@ -101,2 +102,5 @@ export async function compactFrame(r,record,oracle={model:compactModel,compare:c",
+      "classification": "executed + harness guards waived",
+      "reason": "Actual literal driver/native/Wasm/browser tests execute. Argument/fixture-format and assertion-failure guards are proof harness only; all changed product behavior has independent evidence.",
+      "citation": "recording-audit.json + fresh-audit.json + native-replay.json"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-integer-vertex-inputs.mjs",
+      "hunk": "@@ -0,0 +1,143 @@",
+      "classification": "executed + harness guards waived",
+      "reason": "Actual literal driver/native/Wasm/browser tests execute. Argument/fixture-format and assertion-failure guards are proof harness only; all changed product behavior has independent evidence.",
+      "citation": "recording-audit.json + fresh-audit.json + native-replay.json"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-scalar-vertex-fetch-adversarial.mjs",
+      "hunk": "@@ -86 +86 @@ export async function runAcceptance({smoke=false,mutation}={}) {",
+      "classification": "executed + harness guards waived",
+      "reason": "Actual literal driver/native/Wasm/browser tests execute. Argument/fixture-format and assertion-failure guards are proof harness only; all changed product behavior has independent evidence.",
+      "citation": "recording-audit.json + fresh-audit.json + native-replay.json"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-scalar-vertex-fetch.mjs",
+      "hunk": "@@ -22 +22 @@ export function runWireAcceptance(){",
+      "classification": "executed + harness guards waived",
+      "reason": "Actual literal driver/native/Wasm/browser tests execute. Argument/fixture-format and assertion-failure guards are proof harness only; all changed product behavior has independent evidence.",
+      "citation": "recording-audit.json + fresh-audit.json + native-replay.json"
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2377,0 +2378,4 @@ static const char *standard_convert(struct standard_conversion *c, const char *o",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2442 +2446 @@ static void standard_io_json(const struct standard_profile *p, unsigned file)",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2515,2 +2519,3 @@ const char *bridge_translate_standard(int stage, const char *text, size_t length",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2518,0 +2524,2 @@ const char *bridge_translate_standard_pair(const char *vertex_text, size_t verte",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2525,0 +2533,7 @@ const char *bridge_translate_standard_pair(const char *vertex_text, size_t verte",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.c",
+      "hunk": "@@ -2547,0 +2562,12 @@ const char *bridge_translate_standard_pair(const char *vertex_text, size_t verte",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-shader/bridge.h",
+      "hunk": "@@ -83,0 +84,6 @@ const char *bridge_translate_standard_pair(const char *vertex_text, size_t verte",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-shader/build.sh",
+      "hunk": "@@ -19,0 +20,21 @@ case \"$mode\" in",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "renderer/virgl-shader/build.sh",
+      "hunk": "@@ -587 +608 @@ case \"$mode\" in",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_integer_allocations.c",
+      "hunk": "@@ -0,0 +1,45 @@",
+      "classification": "executed + harness guards waived",
+      "reason": "Actual literal driver/native/Wasm/browser tests execute. Argument/fixture-format and assertion-failure guards are proof harness only; all changed product behavior has independent evidence.",
+      "citation": "recording-audit.json + fresh-audit.json + native-replay.json"
+    },
+    {
+      "source": "renderer/virgl-shader/native_tests/standard_integer_inputs.c",
+      "hunk": "@@ -0,0 +1,38 @@",
+      "classification": "executed + harness guards waived",
+      "reason": "Actual literal driver/native/Wasm/browser tests execute. Argument/fixture-format and assertion-failure guards are proof harness only; all changed product behavior has independent evidence.",
+      "citation": "recording-audit.json + fresh-audit.json + native-replay.json"
+    },
+    {
+      "source": "renderer/virgl-shader/standard.mjs",
+      "hunk": "@@ -66,0 +67,15 @@ export async function createVirglStandardShaderBridge(options = {}) {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-shader/standard_emit.c",
+      "hunk": "@@ -37 +37,2 @@ static void named(const struct standard_profile *p, unsigned file, unsigned inde",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-shader/standard_emit.c",
+      "hunk": "@@ -75 +76 @@ static void interface(struct output *o, const struct standard_profile *p)",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.h",
+      "hunk": "@@ -28,0 +29,2 @@ struct standard_profile {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "renderer/virgl-shader/standard_guard.h",
+      "hunk": "@@ -31,0 +34,6 @@ struct standard_profile {",
+      "classification": "executed or individually waived",
+      "reason": "Authenticated actual LLVM/V8 full-region counters and independently replayed C profiles cover new semantics.",
+      "citation": "coverage-audit.json + coverage-waivers.json"
+    },
+    {
+      "source": "tasks/QUEUE.md",
+      "hunk": "@@ -5 +5 @@",
+      "classification": "waived declarative",
+      "reason": "Docs, ordered task dependency/status/queue metadata; no executable product behavior.",
+      "citation": "task-diff.patch"
+    },
+    {
+      "source": "tasks/QUEUE.md",
+      "hunk": "@@ -653,0 +654 @@ Legend: `[ ]` pending \u00b7 `[~]` in-progress \u00b7 `[?]` implemented/evidence-needed",
+      "classification": "waived declarative",
+      "reason": "Docs, ordered task dependency/status/queue metadata; no executable product behavior.",
+      "citation": "task-diff.patch"
+    },
+    {
+      "source": "tasks/QUEUE.md",
+      "hunk": "@@ -657 +658 @@ Legend: `[ ]` pending \u00b7 `[~]` in-progress \u00b7 `[?]` implemented/evidence-needed",
+      "classification": "waived declarative",
+      "reason": "Docs, ordered task dependency/status/queue metadata; no executable product behavior.",
+      "citation": "task-diff.patch"
+    },
+    {
+      "source": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "hunk": "@@ -7,2 +7,2 @@ status: blocked",
+      "classification": "waived declarative",
+      "reason": "Docs, ordered task dependency/status/queue metadata; no executable product behavior.",
+      "citation": "task-diff.patch"
+    },
+    {
+      "source": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "hunk": "@@ -294,0 +295,4 @@ graphics chain; isolated format results do not activate a production capset.",
+      "classification": "waived declarative",
+      "reason": "Docs, ordered task dependency/status/queue metadata; no executable product behavior.",
+      "citation": "task-diff.patch"
+    },
+    {
+      "source": "tasks/epic-6-transcendence/E6-T11d14-standard-integer-vertex-inputs.md",
+      "hunk": "@@ -0,0 +1,54 @@",
+      "classification": "waived declarative",
+      "reason": "Docs, ordered task dependency/status/queue metadata; no executable product behavior.",
+      "citation": "task-diff.patch"
+    },
+    {
+      "source": "tools/verify-virgl-standard-integer.mjs",
+      "hunk": "@@ -0,0 +1,138 @@",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "tools/verify-virgl-standard-integer.sh",
+      "hunk": "@@ -0,0 +1,69 @@",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "tools/virgl-command/standard-integer-cold.py",
+      "hunk": "@@ -0,0 +1,74 @@",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "tools/virgl-command/standard-integer-compiler.mjs",
+      "hunk": "@@ -0,0 +1,56 @@",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "tools/virgl-command/standard-integer-coverage.py",
+      "hunk": "@@ -0,0 +1,79 @@",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "tools/virgl-command/standard-integer-enums.c",
+      "hunk": "@@ -0,0 +1,58 @@",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "tools/virgl-command/standard-integer-oracle.mjs",
+      "hunk": "@@ -0,0 +1,160 @@",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "tools/virgl-command/standard-integer-pixels.mjs",
+      "hunk": "@@ -0,0 +1,43 @@",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "tools/virgl-command/standard-integer-receipt.py",
+      "hunk": "@@ -0,0 +1,148 @@",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "tools/virgl-command/standard-integer-seal.py",
+      "hunk": "@@ -0,0 +1,83 @@",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "tools/virgl-standard-shader/receipt.py",
+      "hunk": "@@ -62,2 +62,4 @@ def main(directory):",
+      "classification": "executed + recording guards waived",
+      "reason": "Prescribed build/default-cold/seal/coverage/receipt/oracle commands are recorded; archival error guards, argparse and defensive proof-tool failure exits change no product behavior.",
+      "citation": "worker hot/cold acceptance.log + authentication.json + profile-reexport.json"
+    },
+    {
+      "source": "evidence/virgl-standard-integer/worker/recording.tar.gz",
+      "classification": "authenticated data",
+      "reason": "14584 unique regular members authenticate before any semantic use.",
+      "citation": "authentication.json"
+    }
+  ],
+  "count": 85,
+  "proofGaps": [],
+  "deadAddedProductCode": []
+}

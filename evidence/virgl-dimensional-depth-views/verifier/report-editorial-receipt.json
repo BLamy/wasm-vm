@@ -1,0 +1,6 @@
+{
+  "schema": "verifier-report-format-v1",
+  "originalSha256": "4d3c65e535ead3c7cc1bfd05dbe9d926d73340ed64a5add24e6f3f3079bd2567",
+  "formattedSha256": "06c3157733a014cfdbc77a04934111798e0312c6270b7b83e4b128d8c3ba7d75",
+  "scope": "Spacing and command code fence only; no finding, prediction, citation or evidence changed."
+}

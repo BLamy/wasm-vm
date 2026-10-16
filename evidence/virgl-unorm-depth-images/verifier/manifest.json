@@ -1,0 +1,51 @@
+{
+  "schema": "d41-fresh-critic-lossless-seal-v1",
+  "task": "E6-T11d41",
+  "verdict": "verified",
+  "frozenRuntimeHead": "eda91e2569c38de3f56b92fd38b5326b2c6ae3fd",
+  "freshSourceHead": "2073205506d408d2800b1e65bf112123e9869b34",
+  "members": 4529,
+  "physicalMembers": 733,
+  "logicalBytes": 179084456,
+  "archiveBytes": 8862192,
+  "archiveSha256": "3186b70378d361999dff6313671de1be3db6bb87ef741e54a58c81521b79c1cb",
+  "recordIndexSha256": "1c999af56e97c2cddc44a6223721483f444b4885a2c9a2668747493ec65c279e",
+  "reopenedMembers": 4529,
+  "allPredictionsHeld": 15,
+  "originalPredictionsSha256": "20ceb3c68d578649472a36d136fde0878293bd0d2e453c95a8f83d9a36fe27fb",
+  "novelPredictionsSha256": "62bc97d718a2cbf4fb93331ede46df97308ee043b5c6db5c70efb84b44272678",
+  "workerSeal": {
+    "recording.tar.gz": "c04d93daf4f37cca8b9f9423fbe4776fe88d63c6a006709345691f9bcbc31afe",
+    "records.json": "1d86135fbe288343f0d67d15cf7b355956e53400ea343324d3dae789a0e8d609",
+    "manifest.json": "3b35c81a5d67ecbc8d781ad94acef91c2dadf656f950c7be8855637de72820ec"
+  },
+  "heldD40Seals": [
+    {
+      "folder": "evidence/virgl-floating-depth-consumer/worker",
+      "digests": {
+        "recording.tar.gz": "44697cfa945b3ea306d44eb9fefef1e8505a56ac7aec37f538471c374f5ecba6",
+        "records.json": "4e1bf3fc407ec86d2897ccc1279a82d401d9061d1873d55125575a036fefd22a",
+        "manifest.json": "0bd79d028035888c9f7c6d3876c0c03de3b44b5fb108d035b4f7b802377bbeb5"
+      },
+      "members": 33662
+    },
+    {
+      "folder": "evidence/virgl-floating-depth-consumer/verifier",
+      "digests": {
+        "recording.tar.gz": "25b0bbee63a5ac00720c8fcc9b037f695a231ab3bd29d3bb77a3d9b397e9dab0",
+        "records.json": "bbddcf9a418b2d5ce25b945dc6fd2c0fa8c416f4509fd470acfa8cd16ad3296b",
+        "manifest.json": "6e4897cec920be2bd3040f707f93c6147ad8797f05d3fbafda3458c7f86daa6c"
+      },
+      "members": 7041
+    }
+  ],
+  "freshRecordings": 5,
+  "newSchedules": [
+    "0x6a09e667",
+    "0xbb67ae85",
+    "0x3c6ef372"
+  ],
+  "novel": "odd-stride original mip subrectangle, stale PBO, retained generation",
+  "sabotage": "actual completed native clear341 after consumed337, consumed second fence345, unchanged inverse refuted",
+  "productionAuthority": false
+}

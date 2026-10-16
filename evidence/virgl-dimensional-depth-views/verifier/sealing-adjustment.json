@@ -1,0 +1,28 @@
+{
+  "schema": "d60-verifier-sealing-adjustment-v1",
+  "scope": "Seal-checker ordering assertion only; archive and frozen inputs unchanged.",
+  "failure": "Initial checker required whole-path lexical order, but the writer sorts pathlib path components. The assertion failed before any archive body was inspected.",
+  "originalCheckerSha256": "7ff6550d3778c44dcda87f39c4bab5b4b101a0033d0aa0d7e953e4fa58371162",
+  "finisherCheckerSha256": "d99c846e57fd49f74fba94073684101a35fcc5c8f5b54ffa0681adac72ce92a2",
+  "originalFailureLogSha256": "9d9b6b7a5890a082cf951859a7ca56a82b7065bd0d41ed416a73c883bb2edfe7",
+  "changedAssertion": {
+    "before": "assert [r[\"path\"] for r in rows] == sorted({r[\"path\"] for r in rows})",
+    "after": "assert [r[\"path\"] for r in rows] == sorted({r[\"path\"] for r in rows}, key=lambda name: pathlib.PurePosixPath(name).parts)"
+  },
+  "writerComplete": true,
+  "runtimeChanged": false,
+  "commands": [
+    [
+      "python3",
+      "evidence/virgl-dimensional-depth-views/verifier/reopen_verifier.py"
+    ],
+    [
+      "python3",
+      "evidence/virgl-dimensional-depth-views/verifier/reopen_verifier_finisher.py"
+    ],
+    [
+      "python3",
+      "evidence/virgl-dimensional-depth-views/verifier/finalize_seal_finisher.py"
+    ]
+  ]
+}

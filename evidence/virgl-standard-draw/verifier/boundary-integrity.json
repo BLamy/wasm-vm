@@ -1,0 +1,40 @@
+{
+  "status": "passed",
+  "frozenRuntime": "c9963d71add68b550d9f26a2b9e9d417f3daa437",
+  "productionRuntimeChanges": false,
+  "paths": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "sha256": "9e3b12a0c2fe8035c1de7bd40c08bc11cc7b1d77bfceb7a7ef3b28667076c00e",
+      "equalsFrozenRuntime": true
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sha256": "b5c8b0f0c203f4f1a39df931d60e1d00e25c184bed390f9e40ba371ebd14d642",
+      "equalsFrozenRuntime": true
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "sha256": "c2355819a1ae04125af8689bb0e23cbdfa73b10dc87710b0be72638397a66eae",
+      "equalsFrozenRuntime": true
+    },
+    {
+      "path": "renderer/virgl-command/cache.mjs",
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa",
+      "equalsFrozenRuntime": true
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "sha256": "732878d142d6d2cfd694ad58629f2a1ee4d282d4fc76c22c2e216a2d2f3a066b",
+      "equalsFrozenRuntime": true
+    }
+  ],
+  "promotedHarnessOnly": [
+    "Makefile",
+    "renderer/virgl-command/tests/standard-instanced-draws.mjs",
+    "renderer/virgl-command/tests/standard-instanced-draws-adversarial.mjs",
+    "tools/verify-virgl-standard-draw.mjs",
+    "tools/verify-virgl-standard-draw-adversarial.sh",
+    "tools/virgl-command/standard-draw-adversarial-audit.py"
+  ]
+}

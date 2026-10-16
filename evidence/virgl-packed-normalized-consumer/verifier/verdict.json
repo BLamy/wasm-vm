@@ -1,0 +1,221 @@
+{
+  "firstLine": "VERDICT: verified",
+  "task": "E6-T11d36",
+  "createdAt": "2026-10-11T07:11:13Z",
+  "workerSubmissionHead": "6e89fb7a25156136eb701dd8a4e475c563190ecb",
+  "runtimeRecordedHead": "001f3d42f3d55f2c225af65a81996d0c8b9d087c",
+  "predecessor": "3e5e41429aadc9acbe68fade926d2763d1e2a356",
+  "predictionsSha256": "57ddd146c85d6edf5bdae2ce7a97de7b9944cb06a8b3431b195f91be01315361",
+  "results": [
+    {
+      "id": "P0",
+      "status": "HELD",
+      "prediction": "Every worker seal member authenticates against the stated archive/index/manifest hashes; hot and cold sourceHead is 001f3d42f3d55f2c225af65a81996d0c8b9d087c. Cold clone before/after is pristine, scrubbed, and actual generated C/Wasm equals the authenticated D35 binary. Source runtime equals frozen head; unchanged dependency sources and each of the 14 historical waived operands match D35 byte-for-byte.",
+      "observation": "83,780 complete worker members, 802 recorded source members, both receipts, the exact-head pristine cold clone, 42,989 D35 members and 289 unchanged compiler/storage sources authenticate.",
+      "points": [
+        {
+          "path": "authentication.json",
+          "sha256": "1c658f45cdc080b6ac9d399f5aa8487f32d6d40b3049ae52578ddad6ff7fa154"
+        }
+      ]
+    },
+    {
+      "id": "P1",
+      "status": "HELD",
+      "prediction": "All thirteen original packed aliases have base-view, swizzled restricted mip-view and mip-surface wire admissions only in the selected normalized profile. Prior entry points refuse them before native mutation. Invalid target/layer/extent/swizzle and mismatched original storage formats remain refused. Selected host capability/config refusals allocate no native object.",
+      "observation": "39 original streams replay as D35 refusals through all 11 old decoders; current selected admission succeeds. Exact native-equivalent alias surface/view refusals apply zero commands and mutate no native state/storage/ownership; only an owned completion fence is permitted.",
+      "points": [
+        {
+          "path": "wire-replay.json",
+          "sha256": "0096699deefca9f3cb36de85dbe859b7557f71f762d6cf4f817318db2a690d88"
+        },
+        {
+          "path": "fresh-novel-3242072501/critic-audit.json",
+          "sha256": "d41cf17747f9826586315287a766ca4a46c3cdd058b5d014ff4a98b9cdcd5a40"
+        },
+        {
+          "path": "fresh-boundaries-3242072501/boundary-audit.json",
+          "sha256": "05219130eb628bab471c0cc4e30b2470cc7573696a3b8d5099e4d33eff386228"
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "status": "HELD",
+      "prediction": "From literal TGSI and packet state, each native packed component equals floor(clamp(float32_value,0,1)*(2^field_bits-1)+0.5) with original channel offsets; blend equations and masks use quantized destination fields, correct per-target native component type, and opaque alpha stays one. Normalized neighbors clamp, HDR FLOAT neighbors retain out-of-range values, integer neighbors preserve typed values. Native targets and every mip plane exactly match the independently parsed original commands, including sparse slots/broadcast/clear/mask/scissor and warm variants.",
+      "observation": "Both whole-original-wire inverses match all 181 target cases, 724 frames, 2,740 targets, 245,248 components and 4,924 planes per recording. Direct additional native alpha audit checks 114,828 implicit pixels.",
+      "points": [
+        {
+          "path": "rechecks/hot/hardware-targets/pixel-audit.json",
+          "sha256": "e112d2c5a872b713196929d3dd86ff525dee156ba6f4673c4bc75a06c1c3c2d6"
+        },
+        {
+          "path": "rechecks/cold/hardware-targets/pixel-audit.json",
+          "sha256": "5e718e7fbd975696f125c725f763506137658295bc59f51081e1e70b825ec13c"
+        },
+        {
+          "path": "recording-details.json",
+          "sha256": "813c994ca59a4e38a632d8e2ca1cee586b46a60d9a6a1e522389d80bb1fe142a"
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "status": "HELD",
+      "prediction": "From original source words and literal view/TGSI packet state, each FLOAT sampler fetch uses original_field/(2^bits-1), canonical implicit alpha one, requested swizzle constants and first+explicit_lod. Native sampler_2D unit, range texture and base/max levels agree. Vertex and fragment FLOAT use actual C/Wasm translation with the integer-image compiler profile; UINT/SINT views cannot borrow UNORM. Endpoint linear averages remain within 2^-11; fetches within 2e-6. Compiler stage/pair contracts and translated cache identities match original shaders and type/output shape.",
+      "observation": "Both full sampler inverses match 104 cases, 312 frames, 18,720 output and 46,488 retained-range components per recording. 46 unique worker requests / 2,898 responses and 19 unique fresh requests / 669 responses re-execute exactly in unchanged actual C/Wasm.",
+      "points": [
+        {
+          "path": "rechecks/hot/hardware-samples/sample-audit.json",
+          "sha256": "ffecfc29aa14965d738dc1b2df5ac499aa5d8974999333a670dd58741f52e1aa"
+        },
+        {
+          "path": "rechecks/cold/hardware-samples/sample-audit.json",
+          "sha256": "ffecfc29aa14965d738dc1b2df5ac499aa5d8974999333a670dd58741f52e1aa"
+        },
+        {
+          "path": "c-replay.json",
+          "sha256": "c7e6ee0300c2fad138adeaf1c298d5219eed92b62d064c55b7f0849d55c07361"
+        },
+        {
+          "path": "c-replay-fresh.json",
+          "sha256": "284ab11a9bb74ce3f6f837efa0d089438c8abea923fe1299481b698a46cd0be4"
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "status": "HELD",
+      "prediction": "Each captured public backing is reconstructed only from original transfer packet offset, stride, extent, original packed fields, and native FLOAT/integer values. All non-written bytes remain 0x2e; X fields are canonical one. Original source SG backing non-written bytes stay 0xa7. Every output/source mip outside the written level remains unchanged.",
+      "observation": "Per recording, 54,800,000 complete target and 6,240,000 sampler public bytes match independent original layout/packing. Each novel run checks 480,000 boxed backing bytes and 10,125 physical canonical-alpha pixels; untouched levels/padding stay isolated.",
+      "points": [
+        {
+          "path": "rechecks/hot/hardware-targets/pixel-audit.json",
+          "sha256": "e112d2c5a872b713196929d3dd86ff525dee156ba6f4673c4bc75a06c1c3c2d6"
+        },
+        {
+          "path": "rechecks/hot/hardware-samples/sample-audit.json",
+          "sha256": "ffecfc29aa14965d738dc1b2df5ac499aa5d8974999333a670dd58741f52e1aa"
+        },
+        {
+          "path": "fresh-novel-3242072501/critic-audit.json",
+          "sha256": "d41cf17747f9826586315287a766ca4a46c3cdd058b5d014ff4a98b9cdcd5a40"
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "status": "HELD",
+      "prediction": "For three independent varied schedules, a CPU native capture follows a successful actual poll on an owned WebGLSync created after all relevant writes; fence identities and native objects retire exactly once. Retained source/target generations and context/cache reuse cannot alias replacement names/backings. Cancellation/disposal drains holds/budgets and suppresses forbidden pending readback.",
+      "observation": "All worker schedule sets and three fresh schedules pass native ownership, original/retained generations, cache shape/context reuse, range refresh, complete/cancel/disposal, exact physical fences and once-only retirement.",
+      "points": [
+        {
+          "path": "independent-recordings.json",
+          "sha256": "39df3dd458941324d9136144b8ae52103715c43ecb34ab8462c73f7843085c6c"
+        },
+        {
+          "path": "fresh-runs.json",
+          "sha256": "11e6411cce0ae82e8f678f3c86e02c7de6fbe9d5507d70eaa83f4967574065cd"
+        },
+        {
+          "path": "fresh-custody.json",
+          "sha256": "7234a7aa6862b2ca410328d4be7ada9f66268e9c3fc740cc620fb740cb62eb76"
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "status": "HELD",
+      "prediction": "Re-derived smallest governing V8 partitions cover every new normalized admission/profile/cache/xAlpha operand. Zero-count operands may be waived only when individually exact and historical in authenticated predecessor source. No new normalized operand is waived; coverage hashes identify actual runtime served to headed Apple Metal.",
+      "observation": "Each recording independently derives 179 executed smallest governing V8 partitions and 14 individually mapped exact historical operands. No new normalized operand is waived; no unaccounted partition remains.",
+      "points": [
+        {
+          "path": "coverage-audit.json",
+          "sha256": "b67daa7d36f0eaa6015f6239c19a1ee700e30dfb31c18d488fc69e1814733ba0"
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "status": "HELD",
+      "prediction": "Wrong COLOR3 attachment and wrong packed sampler physically redirect native bindings and the independent inverse refutes resulting complete captures. Completed-output sabotage changes an actual packed native word after the original completion, polls another distinct physical fence, captures the changed word, and the unchanged independent inverse refutes it.",
+      "observation": "Fresh physical wrong target/sample controls refute their unchanged independent inverses. Native COLOR3 word changes 1477311616 to 1477311617 after fence30 seq1214, upload seq1220, distinct fence31 seq1227, CPU capture seq1231; independent red field is 129 against predicted 128 and complete mip/public backing is refuted.",
+      "points": [
+        {
+          "path": "physical-control.json",
+          "sha256": "08d52ab8e3927f946f8b06669304b973bf947f00d36083fe9590dad2378f9018"
+        },
+        {
+          "path": "fresh-fault-completed-output/pixel-audit.json",
+          "sha256": "597c97366fd7f913012fc80f980c084a35c4406e90f4defe4c560c7bcaca3246"
+        },
+        {
+          "path": "fresh-fault-nonzero-attachment/pixel-audit.json",
+          "sha256": "cb0fe5aac06c74a159706fd0c87979f224e9baed44ae8e8450cbf16c08449dc4"
+        },
+        {
+          "path": "fresh-fault-sample-plane/sample-audit.json",
+          "sha256": "08d23de7073f705c1e6296d02665f5ddacd001176d5324ed35f09c005c1520d7"
+        }
+      ]
+    },
+    {
+      "id": "P8",
+      "status": "HELD",
+      "prediction": "A critic-authored bounded attack interleaves packed alias identity refusal, restricted mip partial-box update and mixed targets with opaque alpha. Independent original-wire reconstruction must match full native/public planes across A/B/A cache and retained-generation operations. Physical corruption of a packed target after a completed critic draw must fail the same independent inverse after a distinct native fence.",
+      "observation": "Three mixed-target odd-mip alpha-mask/alias/boxed-read runs and the promoted make target pass. Exact private stage/pair key custody contains normalized profile at state.mjs:410/423. The same full inverse catches the physical post-completion corruption.",
+      "points": [
+        {
+          "path": "fresh-attack-plan.json",
+          "sha256": "19ea2a5e62d6bf4cf7ec2e27d460f34d4535d54d648c9ccc8f1e78d0edb1c9ee"
+        },
+        {
+          "path": "fresh-novel-3242072501/critic-audit.json",
+          "sha256": "d41cf17747f9826586315287a766ca4a46c3cdd058b5d014ff4a98b9cdcd5a40"
+        },
+        {
+          "path": "fresh-novel-2113343427/critic-audit.json",
+          "sha256": "97571e1ee2b71a7bf308efb614800439bd31ded868e93f463fcc202cd1c3f4be"
+        },
+        {
+          "path": "fresh-novel-375936213/critic-audit.json",
+          "sha256": "da9256b1d91d18d7146d3406ea0ad303a6972b26ebc08e187b4a3de511ff7348"
+        },
+        {
+          "path": "physical-control.json",
+          "sha256": "08d52ab8e3927f946f8b06669304b973bf947f00d36083fe9590dad2378f9018"
+        }
+      ],
+      "scopeRefinement": "fresh-attack-plan.json",
+      "harnessCorrection": "harness-correction.json"
+    }
+  ],
+  "findings": [],
+  "runtimeEdited": false,
+  "pristineCloneRepeated": false,
+  "scope": "isolated host-selected original packed UNORM consumer only",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "suite": {
+    "command": "make verify-E6-T11d36-adversarial",
+    "test": "renderer/virgl-command/tests/standard-packed-normalized-consumer-critic.mjs",
+    "inverse": "tools/virgl-packed-normalized-consumer/critic.py",
+    "reportSha256": "613cc0283ed42faafdbe1d5c04fd31b25b8aa6014fabe7585f42d067c5ea05ba",
+    "pixelAuditSha256": "fc7a05d5baa4e37df1ea6a1f03c130c23d399358575015288c648b4d011105aa",
+    "criticAuditSha256": "3fd1f03248d8c0fa3a6ef911e7e3a364a193f8d52aabb29b264de964413f6b82"
+  },
+  "leases": {
+    "heldUntilFinalCommit": [
+      "Git",
+      "index",
+      "shared-worktree",
+      "compiler",
+      "Node",
+      "browser",
+      "headed Chrome",
+      "GPU"
+    ],
+    "remainingOwnedBrowserProcesses": []
+  }
+}

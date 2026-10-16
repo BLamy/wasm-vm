@@ -1,0 +1,66 @@
+{
+  "task": "E6-T12g6m5a",
+  "madeBeforeOpeningWorkerRecording": true,
+  "basis": "Independent parse of captured es2gears event/blob packets and literal TGSI source at source head 3d799188; no worker recording read",
+  "sourceSha256": {
+    "vertex": "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c",
+    "fragment": "c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f"
+  },
+  "capture": {
+    "eventsSha256": "6c20fda867fea51b85a13dd7d4a4025f56fbf92bccbbc6a11b16db101a2244ea",
+    "draws": 2271,
+    "commandBlobs": 683,
+    "orderedBanks": [
+      {
+        "sha256": "601371b1af58e9b1a25718df3373e312f654f439ec50120542f72ae97b9e0553",
+        "draws": 42,
+        "fragmentDimensions": [1026, 770],
+        "vertexSetPacketSha256": "70d33f8ed99ab029118be33007c99ee2237628d22f0dd5784cd5b526466f6632",
+        "fragmentSetPacketSha256": "25a9b2b57e8cbdda40217e136af0a8c5ae5965074f2bb355e2b95907cc3f8a5a"
+      },
+      {
+        "sha256": "6114f85e86a56adcb5ddaaa80393ddf254613fcf3302bd6ffe5ba85b7874c9a8",
+        "draws": 2084,
+        "fragmentDimensions": [302, 302],
+        "vertexSetPacketSha256": "26e721a697b3fdcf7cd391ca04ed2c96849ec6672692c8662e39cfa95551f022",
+        "fragmentSetPacketSha256": "542d4e00dd3c34914c380c2f6b752024218866789820100a59298f94e7161a0f"
+      },
+      {
+        "sha256": "bb44ea4aeb2efae5398f9dd7e8e79fbb032dcbeab856057b4425456ae2264322",
+        "draws": 145,
+        "fragmentDimensions": [984, 728],
+        "vertexSetPacketSha256": "f52017f141e44eda7b9674543684cd1ecfe9390c764a7a80b4146d0384a97436",
+        "fragmentSetPacketSha256": "b2ad8003df0bf2c645790f6c17e00fdddfa6428f0a359aa6ecc2ba69bfd36cd0"
+      }
+    ],
+    "criticalFragmentWords": {
+      "CONST3": [1065353216, 2772434944, 857748425, 1065353216],
+      "CONST23x": 1,
+      "CONST24x": 0,
+      "CONST28x": 1065353216,
+      "CONST29x": 0,
+      "CONST30x": 1073741824
+    }
+  },
+  "physicalPredictions": {
+    "uniforms": [
+      {"name": "vsconst0[0]", "glType": 36296, "count": 3, "words": 12},
+      {"name": "fsconst0[0]", "glType": 36296, "count": 34, "words": 136}
+    ],
+    "survivorColorApprox": [1.00000027, 0.99999986, 0.99999991, 1],
+    "discardedColor": [0, 0, 1, 1],
+    "survivorCoordinatesNear": [[0,0],[1,0],[2,0],[3,0],[0,1],[0,2],[0,3]],
+    "survivorCoordinatesFar": [[3,0],[3,1],[3,2],[0,3],[1,3],[2,3],[3,3]],
+    "survivorsTotal": 42,
+    "discardsTotal": 54,
+    "discardFaultFirstMismatch": [1,1],
+    "outputFaultFirstMismatch": [0,0]
+  },
+  "predictions": [
+    "The complete native and Wasm pair result streams are byte-identical for all three banks, and every browser pair result equals that JSON object.",
+    "The default pair API and positive-cap, shortened-bank, and changed-source requests reject.",
+    "All six hardware frames have clean vertex/fragment/link logs, complete active uniform reflection, and 16 raw RGBA32F pixels matching the stated colors and coordinates within 0.02.",
+    "The discard and red-output mutations each make the browser acceptance fail at the predicted first mismatch without a compilation failure.",
+    "The sealed source and binary receipts bind the source head and a pristine clone; native coverage and browser coverage exercise changed executable harness paths."
+  ]
+}

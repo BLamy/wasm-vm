@@ -1,0 +1,339 @@
+{
+  "schema": "original-2d-texture-operation-readiness-only-v1",
+  "sourceIdentity": [
+    {
+      "path": "renderer/virgl-shader/standard.mjs",
+      "sha256": "e62f627e51a96658c100636c628a2ed6a87fd1ebf200d46c1167cf3107b6b25a"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "sha256": "e6e326674fa25c1dc8854ba1512416ffd17d87b2bbc46b1aad2e4c78811a1898"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.h",
+      "sha256": "c4c05b9d5f58824deded65868ea35e080c202191602d279e7088daa7d8eab407"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "sha256": "910fe4ce510012c575bb624b44d6183c0550bf2e61020d2a6f4971c878941f88"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "sha256": "fd925dfac1a097d891304841f0495b07b1b25ef49bf1c0fef045c8ee404fb4ff"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "sha256": "0f42245f22cabd36d69d2494056bedd03dd4394c9cf42424ee285f95b00920b0"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "sha256": "fc479ec92133f8b75d26043d20fca97d00b1a1556481abf5c5daf23b66e00fca"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+      "sha256": "2419cdd3a6322cee5da57d666012504c7b6500acb228418334b8183aa7ec1833"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "sha256": "e08fe8ceebfebb3e6a050b74d0ea0ebbfab35b6be742b6f0c9b9149dd484c3e2"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sha256": "64c33d57f0d1bc15b823151d8aa04ddca60326767b57cade8b76ef99995cffec"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "sha256": "22b39dda3bd93f3e7343af1035c14b362a99b800aee5cf76d6916eb8c690e28b"
+    }
+  ],
+  "referenceSources": [
+    "https://docs.mesa3d.org/gallium/tgsi.html",
+    "https://registry.khronos.org/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf"
+  ],
+  "inputs": "Complete constructed original TGSI text; no compiler replacement or rewrite.",
+  "rows": [
+    {
+      "opcode": "TXL",
+      "stage": "fragment",
+      "profile": "standard",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.25,0.25,0.0,1.0}\n0: TXL TEMP[0], IMM[0], SAMP[0], 2D\n1: MOV OUT[0], TEMP[0]\n2: END\n",
+      "sha256": "ddcb019b114b02e162e9e9f385135292b3e698484940701f3156e3c94c564ef3",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXL",
+      "stage": "fragment",
+      "profile": "uniform",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.25,0.25,0.0,1.0}\n0: TXL TEMP[0], IMM[0], SAMP[0], 2D\n1: MOV OUT[0], TEMP[0]\n2: END\n",
+      "sha256": "ddcb019b114b02e162e9e9f385135292b3e698484940701f3156e3c94c564ef3",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXF",
+      "stage": "fragment",
+      "profile": "standard",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] INT32 {1,1,0,1}\n0: TXF TEMP[0], IMM[0], SAMP[0], 2D\n1: MOV OUT[0], TEMP[0]\n2: END\n",
+      "sha256": "f3850325ef53aabdc3d5387b5ebdcc5f98b2520077171398282dbd83fcb14335",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXF",
+      "stage": "fragment",
+      "profile": "uniform",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] INT32 {1,1,0,1}\n0: TXF TEMP[0], IMM[0], SAMP[0], 2D\n1: MOV OUT[0], TEMP[0]\n2: END\n",
+      "sha256": "f3850325ef53aabdc3d5387b5ebdcc5f98b2520077171398282dbd83fcb14335",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXD",
+      "stage": "fragment",
+      "profile": "standard",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.25,0.25,0.0,1.0}\nIMM[1] FLT32 {0.25,0.0,0.0,0.0}\nIMM[2] FLT32 {0.0,0.25,0.0,0.0}\n0: TXD TEMP[0], IMM[0], IMM[1], IMM[2], SAMP[0], 2D\n1: MOV OUT[0], TEMP[0]\n2: END\n",
+      "sha256": "5840f637b772059ea5bfdf9402d0154948e1e0a7eb6d27b30bb0a2aa23f24ffd",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXD",
+      "stage": "fragment",
+      "profile": "uniform",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.25,0.25,0.0,1.0}\nIMM[1] FLT32 {0.25,0.0,0.0,0.0}\nIMM[2] FLT32 {0.0,0.25,0.0,0.0}\n0: TXD TEMP[0], IMM[0], IMM[1], IMM[2], SAMP[0], 2D\n1: MOV OUT[0], TEMP[0]\n2: END\n",
+      "sha256": "5840f637b772059ea5bfdf9402d0154948e1e0a7eb6d27b30bb0a2aa23f24ffd",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXB",
+      "stage": "fragment",
+      "profile": "standard",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.25,0.25,0.0,1.0}\n0: TXB TEMP[0], IMM[0], SAMP[0], 2D\n1: MOV OUT[0], TEMP[0]\n2: END\n",
+      "sha256": "074c84d3e54add7bc38f0fe173335450e3c333f78b017c8fc90aee29deaba3de",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXB",
+      "stage": "fragment",
+      "profile": "uniform",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.25,0.25,0.0,1.0}\n0: TXB TEMP[0], IMM[0], SAMP[0], 2D\n1: MOV OUT[0], TEMP[0]\n2: END\n",
+      "sha256": "074c84d3e54add7bc38f0fe173335450e3c333f78b017c8fc90aee29deaba3de",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXQ",
+      "stage": "fragment",
+      "profile": "standard",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] INT32 {1,1,0,1}\n0: TXQ TEMP[0], IMM[0], SAMP[0], 2D\n1: U2F TEMP[0], TEMP[0]\n2: MOV OUT[0], TEMP[0]\n3: END\n",
+      "sha256": "3411b4e8ba8e3f3677912e2f52356b30f97a08e4230fcd4dd50877cf608e4305",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXQ",
+      "stage": "fragment",
+      "profile": "uniform",
+      "text": "FRAG\nDCL OUT[0], COLOR\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] INT32 {1,1,0,1}\n0: TXQ TEMP[0], IMM[0], SAMP[0], 2D\n1: U2F TEMP[0], TEMP[0]\n2: MOV OUT[0], TEMP[0]\n3: END\n",
+      "sha256": "3411b4e8ba8e3f3677912e2f52356b30f97a08e4230fcd4dd50877cf608e4305",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXL",
+      "stage": "vertex",
+      "profile": "standard",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.25,0.25,0.0,1.0}\n0: TXL TEMP[0], IMM[0], SAMP[0], 2D\n1: MOV OUT[1], TEMP[0]\n2: MOV OUT[0], IN[0]\n3: END\n",
+      "sha256": "7870fc996d442cb159c9ed64c7ecf77d417abb8d245407a81073f079e04d8071",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXL",
+      "stage": "vertex",
+      "profile": "uniform",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.25,0.25,0.0,1.0}\n0: TXL TEMP[0], IMM[0], SAMP[0], 2D\n1: MOV OUT[1], TEMP[0]\n2: MOV OUT[0], IN[0]\n3: END\n",
+      "sha256": "7870fc996d442cb159c9ed64c7ecf77d417abb8d245407a81073f079e04d8071",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXF",
+      "stage": "vertex",
+      "profile": "standard",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] INT32 {1,1,0,1}\n0: TXF TEMP[0], IMM[0], SAMP[0], 2D\n1: MOV OUT[1], TEMP[0]\n2: MOV OUT[0], IN[0]\n3: END\n",
+      "sha256": "6b2a2c854ce78a1214e1c373ec6439e5ea033ff89e3e190c8df64a7c9d18deee",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXF",
+      "stage": "vertex",
+      "profile": "uniform",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] INT32 {1,1,0,1}\n0: TXF TEMP[0], IMM[0], SAMP[0], 2D\n1: MOV OUT[1], TEMP[0]\n2: MOV OUT[0], IN[0]\n3: END\n",
+      "sha256": "6b2a2c854ce78a1214e1c373ec6439e5ea033ff89e3e190c8df64a7c9d18deee",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXD",
+      "stage": "vertex",
+      "profile": "standard",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.25,0.25,0.0,1.0}\nIMM[1] FLT32 {0.25,0.0,0.0,0.0}\nIMM[2] FLT32 {0.0,0.25,0.0,0.0}\n0: TXD TEMP[0], IMM[0], IMM[1], IMM[2], SAMP[0], 2D\n1: MOV OUT[1], TEMP[0]\n2: MOV OUT[0], IN[0]\n3: END\n",
+      "sha256": "70e5d104044bcbda849db9e1845dcae680b963bf37c6d78a897146c017e18095",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXD",
+      "stage": "vertex",
+      "profile": "uniform",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.25,0.25,0.0,1.0}\nIMM[1] FLT32 {0.25,0.0,0.0,0.0}\nIMM[2] FLT32 {0.0,0.25,0.0,0.0}\n0: TXD TEMP[0], IMM[0], IMM[1], IMM[2], SAMP[0], 2D\n1: MOV OUT[1], TEMP[0]\n2: MOV OUT[0], IN[0]\n3: END\n",
+      "sha256": "70e5d104044bcbda849db9e1845dcae680b963bf37c6d78a897146c017e18095",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXB",
+      "stage": "vertex",
+      "profile": "standard",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.25,0.25,0.0,1.0}\n0: TXB TEMP[0], IMM[0], SAMP[0], 2D\n1: MOV OUT[1], TEMP[0]\n2: MOV OUT[0], IN[0]\n3: END\n",
+      "sha256": "b9157268c60acc91fafe3f531eca08049c35143ef781011cc8f09065f4b31811",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXB",
+      "stage": "vertex",
+      "profile": "uniform",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] FLT32 {0.25,0.25,0.0,1.0}\n0: TXB TEMP[0], IMM[0], SAMP[0], 2D\n1: MOV OUT[1], TEMP[0]\n2: MOV OUT[0], IN[0]\n3: END\n",
+      "sha256": "b9157268c60acc91fafe3f531eca08049c35143ef781011cc8f09065f4b31811",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXQ",
+      "stage": "vertex",
+      "profile": "standard",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] INT32 {1,1,0,1}\n0: TXQ TEMP[0], IMM[0], SAMP[0], 2D\n1: U2F TEMP[0], TEMP[0]\n2: MOV OUT[1], TEMP[0]\n3: MOV OUT[0], IN[0]\n4: END\n",
+      "sha256": "9f9f5d3e81f4d83028c8af422d9c6c00524ea40ada9126618e7f0a557afa72c1",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    },
+    {
+      "opcode": "TXQ",
+      "stage": "vertex",
+      "profile": "uniform",
+      "text": "VERT\nDCL IN[0]\nDCL OUT[0], POSITION\nDCL OUT[1], GENERIC[0]\nDCL TEMP[0]\nDCL SAMP[0]\nDCL SVIEW[0], 2D, FLOAT\nIMM[0] INT32 {1,1,0,1}\n0: TXQ TEMP[0], IMM[0], SAMP[0], 2D\n1: U2F TEMP[0], TEMP[0]\n2: MOV OUT[1], TEMP[0]\n3: MOV OUT[0], IN[0]\n4: END\n",
+      "sha256": "9f9f5d3e81f4d83028c8af422d9c6c00524ea40ada9126618e7f0a557afa72c1",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is outside the bounded standard GLES3 grammar."
+        }
+      }
+    }
+  ],
+  "guestExecution": false,
+  "nativeGpuExecution": false,
+  "productionNegotiation": false
+}

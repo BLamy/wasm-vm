@@ -121,6 +121,46 @@ class ConfigureOmarchyDemoTests(unittest.TestCase):
         self.assertIn("shadow = { enabled = false }", profile)
         self.assertIn("render = { cm_enabled = false }", profile)
 
+    def test_application_profile_rejects_missing_or_foreign_binaries_before_copy(self) -> None:
+        for binary in (None, b"\x7fELF\x02\x01" + bytes(12) + b"\x3e\x00" + bytes(44)):
+            if binary is not None:
+                self._write("usr/lib/chromium/chromium", binary)
+            with self.assertRaises((ValueError, FileNotFoundError)):
+                configure_omarchy_demo.configure(self.root, applications=True)
+            self.assertFalse((self.root / "home/omarchy/.config").exists())
+
+    def test_application_config_keeps_package_defaults_and_gives_dispatchers_a_native_ipc_budget(self) -> None:
+        # Header-only metadata fixtures; native application execution is proved
+        # separately in the recorded emulator, never by these files.
+        header = bytearray(64)
+        header[:6] = b"\x7fELF\x02\x01"
+        header[18:20] = b"\xf3\x00"
+        for name in ("usr/lib/chromium/chromium", "usr/lib/libreoffice/program/soffice.bin", "usr/bin/node"):
+            self._write(name, header)
+        for name in ("chromium", "libreoffice-writer", "libreoffice-calc", "libreoffice-impress"):
+            self._write("usr/share/applications/" + name + ".desktop", b"[Desktop Entry]\n")
+        original = b'-- retained upstream defaults\nrequire("default.hypr.omarchy")\nrequire("hypr.input")\n'
+        self._write("usr/share/omarchy/config/hypr/hyprland.lua", original)
+        bindings = "".join('o.bind("SUPER", "' + name + '")\n' for name in
+                           ("terminal-tmux", "terminal-herdr", "spotify", "cliamp", "omarchy-launch-docker-tui",
+                            "signal", "obsidian", "omawrite", "1password"))
+        self._write("usr/share/omarchy/default/hypr/bindings/applications.lua", bindings.encode())
+        packaged_shell = b'#!/bin/bash\nipc_timeout=${OMARCHY_SHELL_IPC_TIMEOUT:-2s}\n'
+        self._write("usr/bin/omarchy-shell", packaged_shell)
+        package_before = tree_snapshot(self.root / "usr/share/omarchy")
+
+        configure_omarchy_demo.configure(self.root, applications=True)
+
+        configured = (self.root / "home/omarchy/.config/hypr/hyprland.lua").read_bytes()
+        self.assertTrue(configured.startswith(original + b"\n"))
+        self.assertEqual(configured.count(b'hl.env("OMARCHY_SHELL_IPC_TIMEOUT", "120s")'), 1)
+        self.assertNotIn(b"omarchy_preinstalled_bindings = false", configured)
+        startup = (self.root / "home/omarchy/.config/default/hypr/autostart.lua").read_text()
+        self.assertEqual(startup.count('hl.exec_cmd("systemctl --user start wayland-wm-app-daemon.service")'), 1)
+        self.assertLess(startup.index("wayland-wm-app-daemon.service"), startup.index("omarchy-launch-shell"))
+        self.assertEqual((self.root / "usr/bin/omarchy-shell").read_bytes(), packaged_shell)
+        self.assertEqual(tree_snapshot(self.root / "usr/share/omarchy"), package_before)
+
     def test_responsive_profile_stops_per_frame_full_damage_sources(self) -> None:
         changes = configure_omarchy_demo.configure(self.root)
 

@@ -1,0 +1,688 @@
+{
+  "schema": "dimensional-depth-surface-readiness-index-v1",
+  "head": "2aca65e9328aa1433fb516511ca554fdd96b422d",
+  "records": [
+    {
+      "path": "probe/audit-source.py",
+      "bytes": 6218,
+      "sha256": "147a57a76eb1b4076c188fad0a25843b00cbfee4de1a5b0850d01bb979d47030",
+      "kind": "file"
+    },
+    {
+      "path": "probe/authority/d63-frozen-hardware-report.json",
+      "bytes": 76780,
+      "sha256": "d7d331adaf3c0b0f4839df76093138d42cdd1710f6fe5a7ed546f7594bf6f45c",
+      "kind": "file"
+    },
+    {
+      "path": "probe/authority/d63-worker-manifest.json",
+      "bytes": 13180,
+      "sha256": "cdcaa8ba0a2a80d789c7df623818b31cdd491af575ac9a92540b8df25d39cc4e",
+      "kind": "file"
+    },
+    {
+      "path": "probe/authority/d63-worker-records.json",
+      "bytes": 1133719,
+      "sha256": "43558e49104803535ea74b29dae6b145bdd8c762163013087f5cb475e22ef624",
+      "kind": "file"
+    },
+    {
+      "path": "probe/browser-coverage.json",
+      "bytes": 520470,
+      "sha256": "bf3b429d6748d8051a6eeacc3587fa6487b375bd889202abf27a11aaa3570b9f",
+      "kind": "file"
+    },
+    {
+      "path": "probe/browser.png",
+      "bytes": 47895,
+      "sha256": "fe9b67e23ff7806f2ae906c0e70c105155789f2be3c5eb844d9cf638f77b184f",
+      "kind": "file"
+    },
+    {
+      "path": "probe/original-wire-audit.json",
+      "bytes": 17234,
+      "sha256": "0d9abfe96ff5c81374ab0fe7e6e1919c8dc7a2fcc975911685a00efa8fcc58bd",
+      "kind": "file"
+    },
+    {
+      "path": "probe/readiness-body.mjs",
+      "bytes": 6013,
+      "sha256": "38d25c2c6940ee12b0e97b05134ab2cf1ce43b29191a4cca58d0fe9e93107fb2",
+      "kind": "file"
+    },
+    {
+      "path": "probe/readiness-runner.mjs",
+      "bytes": 9181,
+      "sha256": "f6e57ea738ad14cad3d22fdb5dce4ae66e5fb221df6e970602e9d326c71b7dcc",
+      "kind": "file"
+    },
+    {
+      "path": "probe/report.json",
+      "bytes": 7783770,
+      "sha256": "d9539c3604c44264cddeb4b25c79bb64fbac37828f8c3342c9c1695991398d65",
+      "kind": "file"
+    },
+    {
+      "path": "probe/served/root.html",
+      "bytes": 442,
+      "sha256": "4251640b9bbede73030e61e612a3065554cbf1f2aefbe2f7cf0af7967e107538",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/crates/core/src/dev/virtio/gpu/control3d.rs",
+      "bytes": 33358,
+      "sha256": "70c1ab06d14f8029028d08fdac4e2398f51dde11e19338e3188600fb8875d914",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/crates/core/src/dev/virtio/gpu/submit3d.rs",
+      "bytes": 28227,
+      "sha256": "7088c607723910175dd84c0c44b5f83a1891a496d87501a30c3a96eeeed57829",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/crates/wasm/src/lib.rs",
+      "bytes": 201348,
+      "sha256": "7cbdace34c964307fb274e5a67fc2800b1f9064bd78b2ba568762d3d9c9ee5ba",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/crates/wasm/src/virgl_control_proof.rs",
+      "bytes": 35917,
+      "sha256": "308cadf0ea4059761a8987697c20b1c76db7549ea2b9b36988e0bd3bec1565e5",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 119833,
+      "sha256": "7b39ba76e418405d2e1ac5eeba466dfcb077baffe3bc37f88d01bb95cd254f97",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 35689,
+      "sha256": "7c518e7118df8d1c9aeb1e54527b3cd84b476b24383b39d6b4dc0bb804a158ab",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 48925,
+      "sha256": "3b0f1100c19b4cb2f4a9fb78b1c67c8f63dcbde896669936bc6e2797e770c716",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/resources.mjs",
+      "bytes": 148786,
+      "sha256": "63c9e7459cf4618b272d90c467b9ac8147eb41cc9312f9e15d2a6f483d2b47d5",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14132,
+      "sha256": "affbac9b1b14e2a1eadb9bc29c693e120e20ffb84af02196a9eb00660eac1bac",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/state.mjs",
+      "bytes": 196237,
+      "sha256": "d2e62ea7c1684f82834f0eba5d4949c7c286f5b5d0f07090fd076e25508a2da0",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14038,
+      "sha256": "0e5f9c6b75eee85d9a27c6f29aaa4649545ae9a7c639e85466a6bb735f2e51c6",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 444027,
+      "sha256": "6b2ae0184103ee1b937f11412aa4a0818c5338d5358cc9b48c04524347163752",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 14035,
+      "sha256": "3ee5e75d5b3847861388364fc561e77395fe5a1e6b17a08b15cd9d6cedeae136",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-shader/vendor/src/gallium/include/pipe/p_shader_tokens.h",
+      "bytes": 23154,
+      "sha256": "48d2cedf0e97e4a685c20acb59bc8dd1317e0b2ba9166e9c4ac81fedda2e61f9",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "bytes": 333808,
+      "sha256": "e08fe8ceebfebb3e6a050b74d0ea0ebbfab35b6be742b6f0c9b9149dd484c3e2",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm.js",
+      "bytes": 174981,
+      "sha256": "0c06d38554753de457dbf9a84de5c1968c11a1b19e031b1e2e8a44e41808ed30",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/target/virgl-desktop-submit/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 7425956,
+      "sha256": "8c48aebb8f58bee66e4d0f69c9045e88263edfc9fb3ddd2e918828e5894e6323",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-dimensional-shadow-shaders/fixtures.mjs",
+      "bytes": 10140,
+      "sha256": "109947967350ab46bd57ac2024f62150bdc195132248ccf464f00928355e569b",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-floating-depth-consumer/primary/vrend_formats.c",
+      "bytes": 43802,
+      "sha256": "1b4b48526638b7b16293e7eb552b6d6cbdea44d551358bdc02f17c99b1d86844",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-floating-depth-consumer/primary/vrend_renderer.c",
+      "bytes": 495473,
+      "sha256": "be7e5c63fb501cb77bd5b2c13c332f8b93c49fd04d207f17d434932c237f4ea3",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-floating-depth/primary/es-3.0.6.pdf",
+      "bytes": 1528315,
+      "sha256": "7e831831595d3e44c267cc0a0d754f8c244cf3c8f5056f49a674f25fb9d5adeb",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-floating-depth/primary/st_extensions.c",
+      "bytes": 74811,
+      "sha256": "dbed39e3997c3fbc5e3a02c0fd6845cb43ab67f2c7972362ce20c225a24138ff",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-instance-base/fixtures.mjs",
+      "bytes": 6011,
+      "sha256": "6ff14a60ea98cb044e5b391c9d1e6ef8f4fc8428bb20d1fa6067e57046013304",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-instance-base/primary/glsl-es-3.00.6.pdf",
+      "bytes": 968763,
+      "sha256": "325058092a1c96a172f6e5b1e4008e94e7a2c75b63d6431f5bec273f374b6e7f",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-shadow-shaders/fixtures.mjs",
+      "bytes": 8653,
+      "sha256": "80b071e28005961a7d8aa06450624a01ab7b058e092384042814ee280dc1aef0",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-shadow-shaders/primary.json",
+      "bytes": 2336,
+      "sha256": "66799492ee663b9348eb33bb0966b9fd984fb923dc84e85f655086ed5343e4a4",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-shadow-shaders/primary/nir_to_tgsi.c",
+      "bytes": 140573,
+      "sha256": "ee5d9d290c7b16c0ee7dd9a9982191f0bd7dfcff5fb3304a7424169e4786679b",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/tools/virgl-shadow-shaders/primary/tgsi.rst",
+      "bytes": 98804,
+      "sha256": "6ec695d90ea0b3a5d471aab114352cc2431bcfc589f6b6e6ca88e4e1ca0caabe",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/web/admission-probe.js",
+      "bytes": 819,
+      "sha256": "03b0035d63b650b85214bd1d357297f8b261660489716513a887234ae223327c",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/web/boot-asset-cache.js",
+      "bytes": 9253,
+      "sha256": "ec667f890abdb796cf67df4b042a63dd4374d175157b9224c80a927c00bdfdbe",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/web/boot-path.js",
+      "bytes": 2867,
+      "sha256": "63ebc850add4cea7fb79ddc1a7cd46651cf05c3442e51803a0454475528f7d47",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/web/cold-counter-recycling.js",
+      "bytes": 1614,
+      "sha256": "8076719edb7126071a1db47fea0ad6b8ad1740032956e883d18a30071190af2b",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/web/decoded-cache.js",
+      "bytes": 1412,
+      "sha256": "92eb0ef85b5b2580ef1b574b103993d7969b5f1a5cf9d59b8430e5ab300f06ae",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/web/guest-clock.js",
+      "bytes": 3818,
+      "sha256": "7381e6869674f1fc92880ad6757ffc831f7a37a0e06e192cc4bb085ecdec9133",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/web/linux-worker-protocol.js",
+      "bytes": 30708,
+      "sha256": "a869126cae789f49655c198cc1952c8c427e8e473bbf8e9f88cf97950da6f01e",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/web/linux-worker.js",
+      "bytes": 1188,
+      "sha256": "7783b4aecb74b83882a2ca3495ed46932ed7930543d0cab72f4035ccfc13e4b9",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/web/loader.js",
+      "bytes": 80430,
+      "sha256": "55135e9789993bca8e15e71bcd9c81b5c89923b60bedf4c271d3212cff3e51eb",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/web/overlay-seed-identity.js",
+      "bytes": 692,
+      "sha256": "e7ae8d22f14e55791b70163254f304fc9fa999029952eba595d592c7fd389c4d",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/web/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804",
+      "kind": "hardlink",
+      "target": "probe/source/target/virgl-desktop-submit/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
+    },
+    {
+      "path": "probe/source/web/pkg/wasm_vm_wasm.js",
+      "bytes": 117001,
+      "sha256": "196dd41355906296c9dfd57f346853026df9d128d0f8c8f2084df81766b85ab2",
+      "kind": "file"
+    },
+    {
+      "path": "probe/source/web/task-quiescence.js",
+      "bytes": 942,
+      "sha256": "7e567ffb550d23c97d027d9e36333e9f6786fbacbc9d388cae5c838ec9a4fe86",
+      "kind": "file"
+    },
+    {
+      "path": "publication/after/commands.json",
+      "bytes": 2215,
+      "sha256": "1b176cfe18e31fa6d0ad10bcea570615a8278fd425669de3db2f0e61c8223a06",
+      "kind": "file"
+    },
+    {
+      "path": "publication/after/driver.py",
+      "bytes": 3286,
+      "sha256": "871b0d79555ac839e490de4a8092cb10f3456d7daa2bd8e7766a517492f2dd46",
+      "kind": "file"
+    },
+    {
+      "path": "publication/after/open-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "file"
+    },
+    {
+      "path": "publication/after/open-1.stdout",
+      "bytes": 1599546,
+      "sha256": "6b9df2e2c51ba370c704ab19ca5b71200d8f3594234a5fd7e4eeca0c21949404",
+      "kind": "file"
+    },
+    {
+      "path": "publication/after/open-2.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "publication/after/open-1.stderr"
+    },
+    {
+      "path": "publication/after/open-2.stdout",
+      "bytes": 668905,
+      "sha256": "2aac91ba17c986989157006a12f29d1a3cce46456113c7a432fe2607605de7f0",
+      "kind": "file"
+    },
+    {
+      "path": "publication/after/stack-499.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "publication/after/open-1.stderr"
+    },
+    {
+      "path": "publication/after/stack-499.stdout",
+      "bytes": 79241,
+      "sha256": "f221c656ee6ab1cc6da9cb890b5a8b3eeb66e45b757e1d4bd03466fffad643d1",
+      "kind": "file"
+    },
+    {
+      "path": "publication/after/stack-500.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "publication/after/open-1.stderr"
+    },
+    {
+      "path": "publication/after/stack-500.stdout",
+      "bytes": 146578,
+      "sha256": "3d5d4cda4287135c86883528519dc4e192a8b2eff348a3f88f840e2d6210661c",
+      "kind": "file"
+    },
+    {
+      "path": "publication/after/stack-local.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "publication/after/open-1.stderr"
+    },
+    {
+      "path": "publication/after/stack-local.stdout",
+      "bytes": 38375,
+      "sha256": "977ca2cda43f02c29de86501fb0f368b069ddc4e75df8fbbca34e3ace663854e",
+      "kind": "file"
+    },
+    {
+      "path": "publication/attachment-response.json",
+      "bytes": 138,
+      "sha256": "d61c6c8ad025c2eda5e0a7f6e36ae95d92abdae8c3e6e70b439556cc8d2403e2",
+      "kind": "file"
+    },
+    {
+      "path": "publication/before/commands.json",
+      "bytes": 1623,
+      "sha256": "0da714caaea6521f871e827bd4cd7ac40823ed529f9dfef1bca6cd43d12259f4",
+      "kind": "file"
+    },
+    {
+      "path": "publication/before/open-1.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "publication/after/open-1.stderr"
+    },
+    {
+      "path": "publication/before/open-1.stdout",
+      "bytes": 1600189,
+      "sha256": "d6092bf4eed11a7a29f16de6bd1567d89db31648e0fd82ab25d3257a6acc51f6",
+      "kind": "file"
+    },
+    {
+      "path": "publication/before/open-2.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "publication/after/open-1.stderr"
+    },
+    {
+      "path": "publication/before/open-2.stdout",
+      "bytes": 652765,
+      "sha256": "00be3e75362c08ff13fc8e728023d31db74752ecbf6f37e6b19307bd683c72dc",
+      "kind": "file"
+    },
+    {
+      "path": "publication/before/stack-499.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "publication/after/open-1.stderr"
+    },
+    {
+      "path": "publication/before/stack-499.stdout",
+      "bytes": 79241,
+      "sha256": "f221c656ee6ab1cc6da9cb890b5a8b3eeb66e45b757e1d4bd03466fffad643d1",
+      "kind": "hardlink",
+      "target": "publication/after/stack-499.stdout"
+    },
+    {
+      "path": "publication/before/stack-500.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "publication/after/open-1.stderr"
+    },
+    {
+      "path": "publication/before/stack-500.stdout",
+      "bytes": 144984,
+      "sha256": "b17f15572b123cdf0fbe3016006c29849722e09d5667fa3088755831a3ada27c",
+      "kind": "file"
+    },
+    {
+      "path": "publication/before/stack-local.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "publication/after/open-1.stderr"
+    },
+    {
+      "path": "publication/before/stack-local.stdout",
+      "bytes": 38187,
+      "sha256": "a4f99e94257daf39baf0da76f51576acd14c36ef685fd110aeddb074a67fe630",
+      "kind": "file"
+    },
+    {
+      "path": "publication/checker.py",
+      "bytes": 3120,
+      "sha256": "5919186c9211880e7becf48e84cd239bb22f99ede086f0ce7aebe6b0138a24db",
+      "kind": "file"
+    },
+    {
+      "path": "publication/continuity.json",
+      "bytes": 1550,
+      "sha256": "86be3d9eb2bd6c2a56f65d5006e2f17e5060bda8928ea61784e347bb07df3230",
+      "kind": "file"
+    },
+    {
+      "path": "publication/edit/body.md",
+      "bytes": 831,
+      "sha256": "45e1e1e435fd0867d2cd2b517c721a3a6b61103ccbf8ef9e25f6368a21a10d10",
+      "kind": "file"
+    },
+    {
+      "path": "publication/edit/commands.json",
+      "bytes": 679,
+      "sha256": "642493a8c96bfba7de059606249877d116405d2e059ffb45eba00daba8f11f22",
+      "kind": "file"
+    },
+    {
+      "path": "publication/edit/driver.py",
+      "bytes": 3286,
+      "sha256": "871b0d79555ac839e490de4a8092cb10f3456d7daa2bd8e7766a517492f2dd46",
+      "kind": "hardlink",
+      "target": "publication/after/driver.py"
+    },
+    {
+      "path": "publication/edit/edit.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "publication/after/open-1.stderr"
+    },
+    {
+      "path": "publication/edit/edit.stdout",
+      "bytes": 42,
+      "sha256": "1a32b4e5ee5b19f44bf7a9e42548041bd881c770d8ad0208f80f3dfd784cd562",
+      "kind": "file"
+    },
+    {
+      "path": "publication/submit/commands.json",
+      "bytes": 458,
+      "sha256": "fe22665b492b7c531a79e2743ea8ea541e8900419e044615c0da8b5ef12b24e1",
+      "kind": "file"
+    },
+    {
+      "path": "publication/submit/driver.py",
+      "bytes": 3286,
+      "sha256": "871b0d79555ac839e490de4a8092cb10f3456d7daa2bd8e7766a517492f2dd46",
+      "kind": "hardlink",
+      "target": "publication/after/driver.py"
+    },
+    {
+      "path": "publication/submit/submit.stderr",
+      "bytes": 9943,
+      "sha256": "bf34fd61f6e427c6f84720d0a30959259c5c51f84b617295d176633a6bbdc473",
+      "kind": "file"
+    },
+    {
+      "path": "publication/submit/submit.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "hardlink",
+      "target": "publication/after/open-1.stderr"
+    },
+    {
+      "path": "scripts/audit-depth-surface-readiness.py",
+      "bytes": 6218,
+      "sha256": "147a57a76eb1b4076c188fad0a25843b00cbfee4de1a5b0850d01bb979d47030",
+      "kind": "hardlink",
+      "target": "probe/audit-source.py"
+    },
+    {
+      "path": "scripts/seal-depth-surface-readiness.py",
+      "bytes": 3598,
+      "sha256": "4e4e03f50723a5b919504c46b9208058828a1c827bf1f98ffc688293bf0a3c81",
+      "kind": "file"
+    }
+  ]
+}

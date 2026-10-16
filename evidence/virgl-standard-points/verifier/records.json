@@ -1,0 +1,1807 @@
+{
+  "schema": "virgl-standard-points-critic-records-v1",
+  "task": "E6-T11d11",
+  "workerSubmission": "3d9cfcd03f2eabe900c50173242834aa6ce5f0e6",
+  "records": [
+    {
+      "path": "authenticate.py",
+      "bytes": 3675,
+      "sha256": "07c448bb940e6233b9fd0f84a41c2f13568503451828f13e6f10500c03a28c0d"
+    },
+    {
+      "path": "authentication.json",
+      "bytes": 993,
+      "sha256": "e66c53c29008dd4bcaa939c3fe5de5958d77934350149c7bd92ff60a26fcc1b1"
+    },
+    {
+      "path": "checks.json",
+      "bytes": 5324,
+      "sha256": "b7eef05e510c80cd57bb7e02b660b7afce260028295a170273ab46da2f274d87"
+    },
+    {
+      "path": "coverage-audit.json",
+      "bytes": 47145,
+      "sha256": "44c62237126754abf3359a4c17907992c3b57d6cbdbf74c8de0d0d344ecfdca8"
+    },
+    {
+      "path": "coverage_audit.py",
+      "bytes": 6384,
+      "sha256": "8509cd75f5222da376a23fba14609a8f4d16b4e2d2a871235ed8da5aaf8f6328"
+    },
+    {
+      "path": "fault-coord-y/blob-0000.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "fault-coord-y/blob-0001.bin.gz",
+      "bytes": 34,
+      "sha256": "d1e6745089d162b38dcaba23fe1a1698b5b66a1a1f18580c71a3eadf9110f717"
+    },
+    {
+      "path": "fault-coord-y/blob-0002.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "fault-coord-y/blob-0003.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "fault-coord-y/blob-0004.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "fault-coord-y/blob-0005.bin.gz",
+      "bytes": 34,
+      "sha256": "d1e6745089d162b38dcaba23fe1a1698b5b66a1a1f18580c71a3eadf9110f717"
+    },
+    {
+      "path": "fault-coord-y/blob-0006.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "fault-coord-y/blob-0007.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "fault-coord-y/blob-0008.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "fault-coord-y/blob-0009.bin.gz",
+      "bytes": 1026,
+      "sha256": "527f73e9fa0bfa64cdd7821974d1d8cfcf05e834422debfc7bf53ab39e1f730f"
+    },
+    {
+      "path": "fault-coord-y/browser-coverage.json",
+      "bytes": 307182,
+      "sha256": "ca432b1ba269558f3ea3ccd9d0e849fb3a554c22e5005a3186fb469c2cbaacf5"
+    },
+    {
+      "path": "fault-coord-y/browser.png",
+      "bytes": 92989,
+      "sha256": "b9fda21d96bd4b65ddfb6b5dd28cb1fb38c6ee9b923a6e0c6ca707d528c8ce08"
+    },
+    {
+      "path": "fault-coord-y/mutation-source.mjs",
+      "bytes": 116007,
+      "sha256": "e697bd66e7c0f534fe7892e776ed7cb2b668e5f870454ddf45442cb8360449dd"
+    },
+    {
+      "path": "fault-coord-y/report.json",
+      "bytes": 131506,
+      "sha256": "14d2e8837857ad9f41390fe3b91229fb23ceb81bf3a176aee834869dbe2fa3e1"
+    },
+    {
+      "path": "fault-size-selection/blob-0000.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "fault-size-selection/blob-0001.bin.gz",
+      "bytes": 34,
+      "sha256": "d1e6745089d162b38dcaba23fe1a1698b5b66a1a1f18580c71a3eadf9110f717"
+    },
+    {
+      "path": "fault-size-selection/blob-0002.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "fault-size-selection/blob-0003.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "fault-size-selection/blob-0004.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "fault-size-selection/blob-0005.bin.gz",
+      "bytes": 34,
+      "sha256": "d1e6745089d162b38dcaba23fe1a1698b5b66a1a1f18580c71a3eadf9110f717"
+    },
+    {
+      "path": "fault-size-selection/blob-0006.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "fault-size-selection/blob-0007.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "fault-size-selection/blob-0008.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "fault-size-selection/blob-0009.bin.gz",
+      "bytes": 101,
+      "sha256": "3a4cbdc84e978ce76700a5d76f3d4e207206528a8fb3fce1eaeebfe9ce13b97c"
+    },
+    {
+      "path": "fault-size-selection/browser-coverage.json",
+      "bytes": 306780,
+      "sha256": "0f67f00ea9b91bf4eec325ef8892ce03f355c09668d324032b8c087edcdb554c"
+    },
+    {
+      "path": "fault-size-selection/browser.png",
+      "bytes": 87358,
+      "sha256": "96a4731b2cdae3d4636e3be3d02776b96745e4df22272dc0fa67f6db8ef7243a"
+    },
+    {
+      "path": "fault-size-selection/mutation-source.mjs",
+      "bytes": 115932,
+      "sha256": "c99a4c0aa5ec62f88baa3d34f73b24af8606aa2ed052e5dab46c5e2bac3178c7"
+    },
+    {
+      "path": "fault-size-selection/report.json",
+      "bytes": 131102,
+      "sha256": "1a53942e2f4275412da2da54e0a21934078b64eaf2cd91de7bf1a98358bfcaa0"
+    },
+    {
+      "path": "independent-replay.json",
+      "bytes": 204608,
+      "sha256": "55925918eeaa02f4404369408312f9340161a4d969dbe5452afecac7b3fd87da"
+    },
+    {
+      "path": "novel-replay.json",
+      "bytes": 23392,
+      "sha256": "f3c3cbda0dc8aa6dd91b11f7035e6460796dcd9197a2d29f1335f0c9d9993f2a"
+    },
+    {
+      "path": "novel/blob-0000.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0001.bin.gz",
+      "bytes": 34,
+      "sha256": "d1e6745089d162b38dcaba23fe1a1698b5b66a1a1f18580c71a3eadf9110f717"
+    },
+    {
+      "path": "novel/blob-0002.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "novel/blob-0003.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0004.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0005.bin.gz",
+      "bytes": 34,
+      "sha256": "d1e6745089d162b38dcaba23fe1a1698b5b66a1a1f18580c71a3eadf9110f717"
+    },
+    {
+      "path": "novel/blob-0006.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "novel/blob-0007.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0008.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "novel/blob-0009.bin.gz",
+      "bytes": 1098,
+      "sha256": "586472161c26efdd51724078415c034c4cf116c4bff66790977c5ed62581375c"
+    },
+    {
+      "path": "novel/blob-0010.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0011.bin.gz",
+      "bytes": 36,
+      "sha256": "5d9861117b965adff31407122540de625177f8b10b8927576e17bcec0b8afe0b"
+    },
+    {
+      "path": "novel/blob-0012.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "novel/blob-0013.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0014.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0015.bin.gz",
+      "bytes": 36,
+      "sha256": "5d9861117b965adff31407122540de625177f8b10b8927576e17bcec0b8afe0b"
+    },
+    {
+      "path": "novel/blob-0016.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "novel/blob-0017.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0018.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "novel/blob-0019.bin.gz",
+      "bytes": 875,
+      "sha256": "6fe4461c49a59f40ea1cff8a3266f2feb27df7619748b17944ebb63c2b395adb"
+    },
+    {
+      "path": "novel/blob-0020.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0021.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "novel/blob-0022.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0023.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0024.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0025.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "novel/blob-0026.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0027.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0028.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "novel/blob-0029.bin.gz",
+      "bytes": 92,
+      "sha256": "e3762944cb790785e151ea40630dfc251e585e7d272ef06ff236c7f9b910787b"
+    },
+    {
+      "path": "novel/blob-0030.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0031.bin.gz",
+      "bytes": 29,
+      "sha256": "c0ea0da6d9b911b41bf20293bfb7941ff81fa1adbf1759b99eb2259a661db887"
+    },
+    {
+      "path": "novel/blob-0032.bin.gz",
+      "bytes": 34,
+      "sha256": "0d070f4db5922a9b4fa7b83716579a2b3f2bd6f0da94f183a3d272545c539d4e"
+    },
+    {
+      "path": "novel/blob-0033.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0034.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0035.bin.gz",
+      "bytes": 29,
+      "sha256": "c0ea0da6d9b911b41bf20293bfb7941ff81fa1adbf1759b99eb2259a661db887"
+    },
+    {
+      "path": "novel/blob-0036.bin.gz",
+      "bytes": 34,
+      "sha256": "0d070f4db5922a9b4fa7b83716579a2b3f2bd6f0da94f183a3d272545c539d4e"
+    },
+    {
+      "path": "novel/blob-0037.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0038.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "novel/blob-0039.bin.gz",
+      "bytes": 1128,
+      "sha256": "9387506d97346c861bc0a007e39178b7e6f4b1d84c0bd498f7923eb745564d64"
+    },
+    {
+      "path": "novel/blob-0040.bin.gz",
+      "bytes": 1080,
+      "sha256": "b78f17dadad890fdad7fe6088aac397d7fd22649a4248f8a52edbf827374c505"
+    },
+    {
+      "path": "novel/blob-0041.bin.gz",
+      "bytes": 1072,
+      "sha256": "90fdb754adc072e0b946e219e08194646eef39ba1879d1fedcc19e3241da5396"
+    },
+    {
+      "path": "novel/blob-0042.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "novel/blob-0043.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "novel/blob-0044.bin.gz",
+      "bytes": 1080,
+      "sha256": "b78f17dadad890fdad7fe6088aac397d7fd22649a4248f8a52edbf827374c505"
+    },
+    {
+      "path": "novel/blob-0045.bin.gz",
+      "bytes": 1072,
+      "sha256": "90fdb754adc072e0b946e219e08194646eef39ba1879d1fedcc19e3241da5396"
+    },
+    {
+      "path": "novel/blob-0046.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "novel/blob-0047.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "novel/blob-0048.bin.gz",
+      "bytes": 75,
+      "sha256": "c64f78487d07405ada2c75f6f332d841519c8a82352e1d991d31585a3f35f515"
+    },
+    {
+      "path": "novel/blob-0049.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0050.bin.gz",
+      "bytes": 1090,
+      "sha256": "c6396acc3ae7ae9956b1258dabaac90570131009228fcc1544e05add4f178fc2"
+    },
+    {
+      "path": "novel/blob-0051.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0052.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0053.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0054.bin.gz",
+      "bytes": 1090,
+      "sha256": "c6396acc3ae7ae9956b1258dabaac90570131009228fcc1544e05add4f178fc2"
+    },
+    {
+      "path": "novel/blob-0055.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0056.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0057.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "novel/blob-0058.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "novel/blob-0059.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0060.bin.gz",
+      "bytes": 1090,
+      "sha256": "c6396acc3ae7ae9956b1258dabaac90570131009228fcc1544e05add4f178fc2"
+    },
+    {
+      "path": "novel/blob-0061.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0062.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0063.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0064.bin.gz",
+      "bytes": 1090,
+      "sha256": "c6396acc3ae7ae9956b1258dabaac90570131009228fcc1544e05add4f178fc2"
+    },
+    {
+      "path": "novel/blob-0065.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0066.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0067.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "novel/blob-0068.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "novel/blob-0069.bin.gz",
+      "bytes": 1078,
+      "sha256": "701c7e680a3909f2b23dde2fb7fd7f372a740bea682a37c07532a9688c4ce1da"
+    },
+    {
+      "path": "novel/blob-0070.bin.gz",
+      "bytes": 1071,
+      "sha256": "963a764e21a43daf217d6a3aa5a76f32f5b502f645808cabe0a765d1756920fc"
+    },
+    {
+      "path": "novel/blob-0071.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "novel/blob-0072.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "novel/blob-0073.bin.gz",
+      "bytes": 1078,
+      "sha256": "701c7e680a3909f2b23dde2fb7fd7f372a740bea682a37c07532a9688c4ce1da"
+    },
+    {
+      "path": "novel/blob-0074.bin.gz",
+      "bytes": 1071,
+      "sha256": "963a764e21a43daf217d6a3aa5a76f32f5b502f645808cabe0a765d1756920fc"
+    },
+    {
+      "path": "novel/blob-0075.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "novel/blob-0076.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "novel/blob-0077.bin.gz",
+      "bytes": 111,
+      "sha256": "297f8070ed069d27bf0ad020b526ecebcfce2aa94b58a060d19baf55dcfe89e9"
+    },
+    {
+      "path": "novel/blob-0078.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0079.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "novel/blob-0080.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0081.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0082.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0083.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "novel/blob-0084.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0085.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0086.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "novel/blob-0087.bin.gz",
+      "bytes": 61,
+      "sha256": "58f54edd6b1db99c2a7cdf92f79c6ace8c9d783344c608f29e3dc33787ffa8d1"
+    },
+    {
+      "path": "novel/blob-0088.bin.gz",
+      "bytes": 1078,
+      "sha256": "701c7e680a3909f2b23dde2fb7fd7f372a740bea682a37c07532a9688c4ce1da"
+    },
+    {
+      "path": "novel/blob-0089.bin.gz",
+      "bytes": 1070,
+      "sha256": "40d5e8280e5452bf69ad57b4c8941fba5dd785393b3baac57fca348e0c8a33be"
+    },
+    {
+      "path": "novel/blob-0090.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "novel/blob-0091.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "novel/blob-0092.bin.gz",
+      "bytes": 1078,
+      "sha256": "701c7e680a3909f2b23dde2fb7fd7f372a740bea682a37c07532a9688c4ce1da"
+    },
+    {
+      "path": "novel/blob-0093.bin.gz",
+      "bytes": 1070,
+      "sha256": "40d5e8280e5452bf69ad57b4c8941fba5dd785393b3baac57fca348e0c8a33be"
+    },
+    {
+      "path": "novel/blob-0094.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "novel/blob-0095.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "novel/blob-0096.bin.gz",
+      "bytes": 86,
+      "sha256": "76ad1a97f191b9ecba0ed2853fdb8ece176c30cfc0d60690c21c309c8fe8243d"
+    },
+    {
+      "path": "novel/blob-0097.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0098.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "novel/blob-0099.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0100.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0101.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0102.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "novel/blob-0103.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0104.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0105.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "novel/blob-0106.bin.gz",
+      "bytes": 308,
+      "sha256": "26aacae0a2b12da0c80fb5b3ca5d34e26c20cf11a9e4ca07782b92c8e2657969"
+    },
+    {
+      "path": "novel/blob-0107.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0108.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "novel/blob-0109.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0110.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0111.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0112.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "novel/blob-0113.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0114.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0115.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "novel/blob-0116.bin.gz",
+      "bytes": 133,
+      "sha256": "91a3f1fcb29d7e6308552964c7ce5029cac3e335bae92a69cbf32481aa33ef70"
+    },
+    {
+      "path": "novel/blob-0117.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0118.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "novel/blob-0119.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0120.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0121.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "novel/blob-0122.bin.gz",
+      "bytes": 308,
+      "sha256": "26aacae0a2b12da0c80fb5b3ca5d34e26c20cf11a9e4ca07782b92c8e2657969"
+    },
+    {
+      "path": "novel/blob-0123.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0124.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "novel/blob-0125.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0126.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0127.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "novel/blob-0128.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "novel/blob-0129.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "novel/blob-0130.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "novel/blob-0131.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "novel/blob-0132.bin.gz",
+      "bytes": 308,
+      "sha256": "26aacae0a2b12da0c80fb5b3ca5d34e26c20cf11a9e4ca07782b92c8e2657969"
+    },
+    {
+      "path": "novel/blob-0133.bin.gz",
+      "bytes": 1078,
+      "sha256": "701c7e680a3909f2b23dde2fb7fd7f372a740bea682a37c07532a9688c4ce1da"
+    },
+    {
+      "path": "novel/blob-0134.bin.gz",
+      "bytes": 1070,
+      "sha256": "40d5e8280e5452bf69ad57b4c8941fba5dd785393b3baac57fca348e0c8a33be"
+    },
+    {
+      "path": "novel/blob-0135.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "novel/blob-0136.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "novel/blob-0137.bin.gz",
+      "bytes": 1078,
+      "sha256": "701c7e680a3909f2b23dde2fb7fd7f372a740bea682a37c07532a9688c4ce1da"
+    },
+    {
+      "path": "novel/blob-0138.bin.gz",
+      "bytes": 1070,
+      "sha256": "40d5e8280e5452bf69ad57b4c8941fba5dd785393b3baac57fca348e0c8a33be"
+    },
+    {
+      "path": "novel/blob-0139.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "novel/blob-0140.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "novel/browser-coverage.json",
+      "bytes": 345082,
+      "sha256": "52e484e3ebce4f96d31b097b4fab70bc536f0e7fe47909d8e75a4853f69bef4c"
+    },
+    {
+      "path": "novel/browser.png",
+      "bytes": 37985,
+      "sha256": "f07bbe710efe756d3ccdefb153034c4101cc14c8ab332ce30b338577c1cb1aa6"
+    },
+    {
+      "path": "novel/report.json",
+      "bytes": 3723299,
+      "sha256": "b6d27fc26a5ad3fcf1064683b55544dd43e97da26dfdd5d3fe5c94cb9fa399d1"
+    },
+    {
+      "path": "predictions.json",
+      "bytes": 3941,
+      "sha256": "407c19e7db95500ae0b28924e02a659f16019b95984e8875730436f0816fad4a"
+    },
+    {
+      "path": "promoted-source/renderer/virgl-command/tests/standard-native-points-adversarial.mjs",
+      "bytes": 9823,
+      "sha256": "2d94376ad9873de253fb6b29876b5ab988b22b52d588764f0f45cfdf4a0d74e6"
+    },
+    {
+      "path": "promoted-source/tools/verify-virgl-standard-points-adversarial.sh",
+      "bytes": 1364,
+      "sha256": "f304580e8987d848468b43d660d2e0ba2a70588679b726a6a46a5c71a5329f27"
+    },
+    {
+      "path": "promoted-source/tools/virgl-command/standard-point-adversarial-oracle.mjs",
+      "bytes": 14538,
+      "sha256": "91e5b95d26beab76f5c655cf03b2f92a767953c4f6dc595d4e5cbb24f7763faf"
+    },
+    {
+      "path": "promoted-source/tools/virgl-command/standard-point-verifier.mjs",
+      "bytes": 8848,
+      "sha256": "fa8db84e94a7894a609ec4b2c5db216bf535a6c175eeb111aba5f3d4829ac171"
+    },
+    {
+      "path": "recurrence/acceptance.log",
+      "bytes": 2512,
+      "sha256": "408882d76ca3b98410e5a959adf65f39c05334fd6f73d06e0b64e5fbd690700b"
+    },
+    {
+      "path": "recurrence/fault-coord-y/blob-0000.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/fault-coord-y/blob-0001.bin.gz",
+      "bytes": 34,
+      "sha256": "d1e6745089d162b38dcaba23fe1a1698b5b66a1a1f18580c71a3eadf9110f717"
+    },
+    {
+      "path": "recurrence/fault-coord-y/blob-0002.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "recurrence/fault-coord-y/blob-0003.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/fault-coord-y/blob-0004.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/fault-coord-y/blob-0005.bin.gz",
+      "bytes": 34,
+      "sha256": "d1e6745089d162b38dcaba23fe1a1698b5b66a1a1f18580c71a3eadf9110f717"
+    },
+    {
+      "path": "recurrence/fault-coord-y/blob-0006.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "recurrence/fault-coord-y/blob-0007.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/fault-coord-y/blob-0008.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "recurrence/fault-coord-y/blob-0009.bin.gz",
+      "bytes": 1026,
+      "sha256": "527f73e9fa0bfa64cdd7821974d1d8cfcf05e834422debfc7bf53ab39e1f730f"
+    },
+    {
+      "path": "recurrence/fault-coord-y/browser-coverage.json",
+      "bytes": 307182,
+      "sha256": "6533beed68855c027dae876b80888c80d5c0269c44a020cff6101cbc4d0f2537"
+    },
+    {
+      "path": "recurrence/fault-coord-y/browser.png",
+      "bytes": 92989,
+      "sha256": "b9fda21d96bd4b65ddfb6b5dd28cb1fb38c6ee9b923a6e0c6ca707d528c8ce08"
+    },
+    {
+      "path": "recurrence/fault-coord-y/mutation-source.mjs",
+      "bytes": 116007,
+      "sha256": "e697bd66e7c0f534fe7892e776ed7cb2b668e5f870454ddf45442cb8360449dd"
+    },
+    {
+      "path": "recurrence/fault-coord-y/report.json",
+      "bytes": 131570,
+      "sha256": "fb824576844ab74e028eeab0c501a983e487f34b3e6613256408b835ba14aae8"
+    },
+    {
+      "path": "recurrence/fault-size-selection/blob-0000.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/fault-size-selection/blob-0001.bin.gz",
+      "bytes": 34,
+      "sha256": "d1e6745089d162b38dcaba23fe1a1698b5b66a1a1f18580c71a3eadf9110f717"
+    },
+    {
+      "path": "recurrence/fault-size-selection/blob-0002.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "recurrence/fault-size-selection/blob-0003.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/fault-size-selection/blob-0004.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/fault-size-selection/blob-0005.bin.gz",
+      "bytes": 34,
+      "sha256": "d1e6745089d162b38dcaba23fe1a1698b5b66a1a1f18580c71a3eadf9110f717"
+    },
+    {
+      "path": "recurrence/fault-size-selection/blob-0006.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "recurrence/fault-size-selection/blob-0007.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/fault-size-selection/blob-0008.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "recurrence/fault-size-selection/blob-0009.bin.gz",
+      "bytes": 101,
+      "sha256": "3a4cbdc84e978ce76700a5d76f3d4e207206528a8fb3fce1eaeebfe9ce13b97c"
+    },
+    {
+      "path": "recurrence/fault-size-selection/browser-coverage.json",
+      "bytes": 306780,
+      "sha256": "da6920167fa26f63788d51f5c3f6a612a059f75ce7f33d464ea089fa58d34d0f"
+    },
+    {
+      "path": "recurrence/fault-size-selection/browser.png",
+      "bytes": 87358,
+      "sha256": "96a4731b2cdae3d4636e3be3d02776b96745e4df22272dc0fa67f6db8ef7243a"
+    },
+    {
+      "path": "recurrence/fault-size-selection/mutation-source.mjs",
+      "bytes": 115932,
+      "sha256": "c99a4c0aa5ec62f88baa3d34f73b24af8606aa2ed052e5dab46c5e2bac3178c7"
+    },
+    {
+      "path": "recurrence/fault-size-selection/report.json",
+      "bytes": 131167,
+      "sha256": "9c59c21cda61a7eb4743721bea50a6ba6b912eb5e0e3bc2ccd507cb6f6138efa"
+    },
+    {
+      "path": "recurrence/novel-replay.json",
+      "bytes": 23392,
+      "sha256": "ce73cf0547f787a8a755199601ed59d7487a716658984992d552566c04385ad3"
+    },
+    {
+      "path": "recurrence/novel/blob-0000.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0001.bin.gz",
+      "bytes": 34,
+      "sha256": "d1e6745089d162b38dcaba23fe1a1698b5b66a1a1f18580c71a3eadf9110f717"
+    },
+    {
+      "path": "recurrence/novel/blob-0002.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "recurrence/novel/blob-0003.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0004.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0005.bin.gz",
+      "bytes": 34,
+      "sha256": "d1e6745089d162b38dcaba23fe1a1698b5b66a1a1f18580c71a3eadf9110f717"
+    },
+    {
+      "path": "recurrence/novel/blob-0006.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "recurrence/novel/blob-0007.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0008.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "recurrence/novel/blob-0009.bin.gz",
+      "bytes": 1098,
+      "sha256": "586472161c26efdd51724078415c034c4cf116c4bff66790977c5ed62581375c"
+    },
+    {
+      "path": "recurrence/novel/blob-0010.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0011.bin.gz",
+      "bytes": 36,
+      "sha256": "5d9861117b965adff31407122540de625177f8b10b8927576e17bcec0b8afe0b"
+    },
+    {
+      "path": "recurrence/novel/blob-0012.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "recurrence/novel/blob-0013.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0014.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0015.bin.gz",
+      "bytes": 36,
+      "sha256": "5d9861117b965adff31407122540de625177f8b10b8927576e17bcec0b8afe0b"
+    },
+    {
+      "path": "recurrence/novel/blob-0016.bin.gz",
+      "bytes": 42,
+      "sha256": "e8c01daed8c942f77c7fbf5814150fc52e09d4caa9c63957db80ce774f603c79"
+    },
+    {
+      "path": "recurrence/novel/blob-0017.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0018.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "recurrence/novel/blob-0019.bin.gz",
+      "bytes": 875,
+      "sha256": "6fe4461c49a59f40ea1cff8a3266f2feb27df7619748b17944ebb63c2b395adb"
+    },
+    {
+      "path": "recurrence/novel/blob-0020.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0021.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "recurrence/novel/blob-0022.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0023.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0024.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0025.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "recurrence/novel/blob-0026.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0027.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0028.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "recurrence/novel/blob-0029.bin.gz",
+      "bytes": 92,
+      "sha256": "e3762944cb790785e151ea40630dfc251e585e7d272ef06ff236c7f9b910787b"
+    },
+    {
+      "path": "recurrence/novel/blob-0030.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0031.bin.gz",
+      "bytes": 29,
+      "sha256": "c0ea0da6d9b911b41bf20293bfb7941ff81fa1adbf1759b99eb2259a661db887"
+    },
+    {
+      "path": "recurrence/novel/blob-0032.bin.gz",
+      "bytes": 34,
+      "sha256": "0d070f4db5922a9b4fa7b83716579a2b3f2bd6f0da94f183a3d272545c539d4e"
+    },
+    {
+      "path": "recurrence/novel/blob-0033.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0034.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0035.bin.gz",
+      "bytes": 29,
+      "sha256": "c0ea0da6d9b911b41bf20293bfb7941ff81fa1adbf1759b99eb2259a661db887"
+    },
+    {
+      "path": "recurrence/novel/blob-0036.bin.gz",
+      "bytes": 34,
+      "sha256": "0d070f4db5922a9b4fa7b83716579a2b3f2bd6f0da94f183a3d272545c539d4e"
+    },
+    {
+      "path": "recurrence/novel/blob-0037.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0038.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "recurrence/novel/blob-0039.bin.gz",
+      "bytes": 1128,
+      "sha256": "9387506d97346c861bc0a007e39178b7e6f4b1d84c0bd498f7923eb745564d64"
+    },
+    {
+      "path": "recurrence/novel/blob-0040.bin.gz",
+      "bytes": 1080,
+      "sha256": "b78f17dadad890fdad7fe6088aac397d7fd22649a4248f8a52edbf827374c505"
+    },
+    {
+      "path": "recurrence/novel/blob-0041.bin.gz",
+      "bytes": 1072,
+      "sha256": "90fdb754adc072e0b946e219e08194646eef39ba1879d1fedcc19e3241da5396"
+    },
+    {
+      "path": "recurrence/novel/blob-0042.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "recurrence/novel/blob-0043.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "recurrence/novel/blob-0044.bin.gz",
+      "bytes": 1080,
+      "sha256": "b78f17dadad890fdad7fe6088aac397d7fd22649a4248f8a52edbf827374c505"
+    },
+    {
+      "path": "recurrence/novel/blob-0045.bin.gz",
+      "bytes": 1072,
+      "sha256": "90fdb754adc072e0b946e219e08194646eef39ba1879d1fedcc19e3241da5396"
+    },
+    {
+      "path": "recurrence/novel/blob-0046.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "recurrence/novel/blob-0047.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "recurrence/novel/blob-0048.bin.gz",
+      "bytes": 75,
+      "sha256": "c64f78487d07405ada2c75f6f332d841519c8a82352e1d991d31585a3f35f515"
+    },
+    {
+      "path": "recurrence/novel/blob-0049.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0050.bin.gz",
+      "bytes": 1090,
+      "sha256": "c6396acc3ae7ae9956b1258dabaac90570131009228fcc1544e05add4f178fc2"
+    },
+    {
+      "path": "recurrence/novel/blob-0051.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0052.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0053.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0054.bin.gz",
+      "bytes": 1090,
+      "sha256": "c6396acc3ae7ae9956b1258dabaac90570131009228fcc1544e05add4f178fc2"
+    },
+    {
+      "path": "recurrence/novel/blob-0055.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0056.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0057.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "recurrence/novel/blob-0058.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "recurrence/novel/blob-0059.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0060.bin.gz",
+      "bytes": 1090,
+      "sha256": "c6396acc3ae7ae9956b1258dabaac90570131009228fcc1544e05add4f178fc2"
+    },
+    {
+      "path": "recurrence/novel/blob-0061.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0062.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0063.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0064.bin.gz",
+      "bytes": 1090,
+      "sha256": "c6396acc3ae7ae9956b1258dabaac90570131009228fcc1544e05add4f178fc2"
+    },
+    {
+      "path": "recurrence/novel/blob-0065.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0066.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0067.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "recurrence/novel/blob-0068.bin.gz",
+      "bytes": 29,
+      "sha256": "edd5032db8e8d8c70e1b1d7a6d00b77413152430925ecfd09c8e77440cfe021e"
+    },
+    {
+      "path": "recurrence/novel/blob-0069.bin.gz",
+      "bytes": 1078,
+      "sha256": "701c7e680a3909f2b23dde2fb7fd7f372a740bea682a37c07532a9688c4ce1da"
+    },
+    {
+      "path": "recurrence/novel/blob-0070.bin.gz",
+      "bytes": 1071,
+      "sha256": "963a764e21a43daf217d6a3aa5a76f32f5b502f645808cabe0a765d1756920fc"
+    },
+    {
+      "path": "recurrence/novel/blob-0071.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "recurrence/novel/blob-0072.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "recurrence/novel/blob-0073.bin.gz",
+      "bytes": 1078,
+      "sha256": "701c7e680a3909f2b23dde2fb7fd7f372a740bea682a37c07532a9688c4ce1da"
+    },
+    {
+      "path": "recurrence/novel/blob-0074.bin.gz",
+      "bytes": 1071,
+      "sha256": "963a764e21a43daf217d6a3aa5a76f32f5b502f645808cabe0a765d1756920fc"
+    },
+    {
+      "path": "recurrence/novel/blob-0075.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "recurrence/novel/blob-0076.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "recurrence/novel/blob-0077.bin.gz",
+      "bytes": 111,
+      "sha256": "297f8070ed069d27bf0ad020b526ecebcfce2aa94b58a060d19baf55dcfe89e9"
+    },
+    {
+      "path": "recurrence/novel/blob-0078.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0079.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "recurrence/novel/blob-0080.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0081.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0082.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0083.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "recurrence/novel/blob-0084.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0085.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0086.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "recurrence/novel/blob-0087.bin.gz",
+      "bytes": 61,
+      "sha256": "58f54edd6b1db99c2a7cdf92f79c6ace8c9d783344c608f29e3dc33787ffa8d1"
+    },
+    {
+      "path": "recurrence/novel/blob-0088.bin.gz",
+      "bytes": 1078,
+      "sha256": "701c7e680a3909f2b23dde2fb7fd7f372a740bea682a37c07532a9688c4ce1da"
+    },
+    {
+      "path": "recurrence/novel/blob-0089.bin.gz",
+      "bytes": 1070,
+      "sha256": "40d5e8280e5452bf69ad57b4c8941fba5dd785393b3baac57fca348e0c8a33be"
+    },
+    {
+      "path": "recurrence/novel/blob-0090.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "recurrence/novel/blob-0091.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "recurrence/novel/blob-0092.bin.gz",
+      "bytes": 1078,
+      "sha256": "701c7e680a3909f2b23dde2fb7fd7f372a740bea682a37c07532a9688c4ce1da"
+    },
+    {
+      "path": "recurrence/novel/blob-0093.bin.gz",
+      "bytes": 1070,
+      "sha256": "40d5e8280e5452bf69ad57b4c8941fba5dd785393b3baac57fca348e0c8a33be"
+    },
+    {
+      "path": "recurrence/novel/blob-0094.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "recurrence/novel/blob-0095.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "recurrence/novel/blob-0096.bin.gz",
+      "bytes": 86,
+      "sha256": "76ad1a97f191b9ecba0ed2853fdb8ece176c30cfc0d60690c21c309c8fe8243d"
+    },
+    {
+      "path": "recurrence/novel/blob-0097.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0098.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "recurrence/novel/blob-0099.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0100.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0101.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0102.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "recurrence/novel/blob-0103.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0104.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0105.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "recurrence/novel/blob-0106.bin.gz",
+      "bytes": 308,
+      "sha256": "26aacae0a2b12da0c80fb5b3ca5d34e26c20cf11a9e4ca07782b92c8e2657969"
+    },
+    {
+      "path": "recurrence/novel/blob-0107.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0108.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "recurrence/novel/blob-0109.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0110.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0111.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0112.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "recurrence/novel/blob-0113.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0114.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0115.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "recurrence/novel/blob-0116.bin.gz",
+      "bytes": 133,
+      "sha256": "91a3f1fcb29d7e6308552964c7ce5029cac3e335bae92a69cbf32481aa33ef70"
+    },
+    {
+      "path": "recurrence/novel/blob-0117.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0118.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "recurrence/novel/blob-0119.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0120.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0121.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "recurrence/novel/blob-0122.bin.gz",
+      "bytes": 308,
+      "sha256": "26aacae0a2b12da0c80fb5b3ca5d34e26c20cf11a9e4ca07782b92c8e2657969"
+    },
+    {
+      "path": "recurrence/novel/blob-0123.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0124.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "recurrence/novel/blob-0125.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0126.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0127.bin.gz",
+      "bytes": 1126,
+      "sha256": "ac9694cb616b5e47ba5c0986d5e437315d3ee823de3b97c1b8cf9ba87e426a6a"
+    },
+    {
+      "path": "recurrence/novel/blob-0128.bin.gz",
+      "bytes": 1096,
+      "sha256": "d8eb37464097410437ed067fd4e1508350404a747b6983a04d50d04ec63b510f"
+    },
+    {
+      "path": "recurrence/novel/blob-0129.bin.gz",
+      "bytes": 1106,
+      "sha256": "9bb10ad4dc159e04af94ebd03e7412775aab694f23ca24bcaeba5b7afc85c4c6"
+    },
+    {
+      "path": "recurrence/novel/blob-0130.bin.gz",
+      "bytes": 43,
+      "sha256": "f18a5181e242d55057e55673daeee259afeeb720c43824f17e4dd7685074965d"
+    },
+    {
+      "path": "recurrence/novel/blob-0131.bin.gz",
+      "bytes": 44,
+      "sha256": "08bf0add39c513618ebb97d5e9c82cfbc4d49233a9719cb559218709934ca76a"
+    },
+    {
+      "path": "recurrence/novel/blob-0132.bin.gz",
+      "bytes": 308,
+      "sha256": "26aacae0a2b12da0c80fb5b3ca5d34e26c20cf11a9e4ca07782b92c8e2657969"
+    },
+    {
+      "path": "recurrence/novel/blob-0133.bin.gz",
+      "bytes": 1078,
+      "sha256": "701c7e680a3909f2b23dde2fb7fd7f372a740bea682a37c07532a9688c4ce1da"
+    },
+    {
+      "path": "recurrence/novel/blob-0134.bin.gz",
+      "bytes": 1070,
+      "sha256": "40d5e8280e5452bf69ad57b4c8941fba5dd785393b3baac57fca348e0c8a33be"
+    },
+    {
+      "path": "recurrence/novel/blob-0135.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "recurrence/novel/blob-0136.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "recurrence/novel/blob-0137.bin.gz",
+      "bytes": 1078,
+      "sha256": "701c7e680a3909f2b23dde2fb7fd7f372a740bea682a37c07532a9688c4ce1da"
+    },
+    {
+      "path": "recurrence/novel/blob-0138.bin.gz",
+      "bytes": 1070,
+      "sha256": "40d5e8280e5452bf69ad57b4c8941fba5dd785393b3baac57fca348e0c8a33be"
+    },
+    {
+      "path": "recurrence/novel/blob-0139.bin.gz",
+      "bytes": 1072,
+      "sha256": "59c53249293b230cf5c16bf68a3c53c9a0e643fa46658f4f65f2d3fa5232fda4"
+    },
+    {
+      "path": "recurrence/novel/blob-0140.bin.gz",
+      "bytes": 27,
+      "sha256": "c4ea9f55c15c495c3859921864a259b9fc1e08a6590cdc0776b67b4107a99fd5"
+    },
+    {
+      "path": "recurrence/novel/browser-coverage.json",
+      "bytes": 345082,
+      "sha256": "5d362b88d7032ead0c465f9c244f3fbe723f6f305f82be58126f8ce5c9664956"
+    },
+    {
+      "path": "recurrence/novel/browser.png",
+      "bytes": 37985,
+      "sha256": "f07bbe710efe756d3ccdefb153034c4101cc14c8ab332ce30b338577c1cb1aa6"
+    },
+    {
+      "path": "recurrence/novel/report.json",
+      "bytes": 3723363,
+      "sha256": "d4de5227bc86752defbbb333c22465828e0c2b2f6755df5a1f47ce5f21ebf0aa"
+    },
+    {
+      "path": "seal.py",
+      "bytes": 5113,
+      "sha256": "4129afd12fcb312e27b4f5ed1a6fadc05e690c4ab4c0fe66d7fcfb656f89d34b"
+    },
+    {
+      "path": "verdict.json",
+      "bytes": 6462,
+      "sha256": "a5261826f16963b52d7d1fe67ed44edb830e595f77460280fde7a8223085e0f8"
+    }
+  ]
+}

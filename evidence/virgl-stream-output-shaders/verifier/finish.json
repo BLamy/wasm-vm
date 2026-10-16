@@ -1,0 +1,33 @@
+{
+  "schema": "stream-output-shaders-independent-novel-and-publication-v1",
+  "status": "passed",
+  "N1": "HELD",
+  "S1": "HELD",
+  "P8": "HELD",
+  "novel": {
+    "cleanRuns": 12,
+    "physicalControls": 1,
+    "totalCapturedBytes": 1056,
+    "callerLayoutAndResponseDisjoint": true,
+    "jsArenaOwnersRemaining": 0,
+    "nativeReadbackBytesInterrogated": true
+  },
+  "deployment": {
+    "id": "6b288a8e-3da0-4c81-8970-2674e22fa678",
+    "source": "31bf0781db74fea94f51c9d6fa3217d16227bc99",
+    "reopenedMembers": 858,
+    "servedBodies": 192,
+    "passed": 127,
+    "failed": 0,
+    "browserErrors": 0,
+    "partialMarker": true,
+    "proofExportsAbsent": true,
+    "defaultWasmUnchanged": true,
+    "productionGraphicsAuthority": false,
+    "stagedFiles": 639,
+    "carriedDeploymentManifestSha256": "22a01eafcf805b79094ee3b311b749f62e533ecbd8c5ff37d41ffba641f897ee",
+    "liveReportSha256": "229135324646bc7b9d16b4f4e004d17fdabccf0896f4c4d7f6f6d895119953ab",
+    "actualCliReceiptSha256": "270d01a542b491e3cacfe9c4e0309888d4c809d8672870a24dfb0649e674d21c"
+  },
+  "citationsSha256": "89619e8115ad5eb2950702810ea2efd726a2293d20fed1b4d2bc096390ae9766"
+}

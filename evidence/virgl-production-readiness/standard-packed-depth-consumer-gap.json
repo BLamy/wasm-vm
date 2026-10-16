@@ -1,0 +1,3305 @@
+{
+  "schema": "original-packed-depth-consumer-gap-v1",
+  "task": "E6-T11d43",
+  "gitHead": "c60bf20abcd42c1c10fb1863c2666a344d5c8e70",
+  "verifiedDependency": "E6-T11d42",
+  "authority": "original-refusals-only",
+  "nativeExecuted": false,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "sources": [
+    {
+      "path": "renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "renderer/virgl-command/constant-domain.mjs",
+      "bytes": 99357,
+      "sha256": "00ec5439c4b64fd54ed2b6a3bb3746e60d0e91076416e28280b0f45d0438a5c2"
+    },
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "bytes": 43013,
+      "sha256": "d6fbbbfc909974a4c3052c98d7411dda0103b21093e74932136e447265bfcc7b"
+    },
+    {
+      "path": "renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 14648,
+      "sha256": "6e87240445044201f21a2977ee883de57e930542b67a99a03cf0077c008ef853"
+    },
+    {
+      "path": "renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "bytes": 122744,
+      "sha256": "601a575f91fd2399fa162f8e3bdffd403a7f9cd4f63d8066d131ac04528e78df"
+    },
+    {
+      "path": "renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 9865,
+      "sha256": "22efbf4e0a3ae04d2e29900278db1e88880bd7c2fc7e757d0fd12d3a899531b7"
+    },
+    {
+      "path": "renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "bytes": 165778,
+      "sha256": "e726262a8f6b9517780363562cdcc1b3a4fa4875b96d1fe1a30ec5cc4179548d"
+    },
+    {
+      "path": "renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa"
+    },
+    {
+      "path": "renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "renderer/virgl-shader/.gitignore",
+      "bytes": 8,
+      "sha256": "020c2606e8ed484089c2083e0be438b9d0736bee1558a6b76af0d58bd23f69cf"
+    },
+    {
+      "path": "renderer/virgl-shader/INTEGER-IMAGES.md",
+      "bytes": 1604,
+      "sha256": "123080127541968172a16936b2be592f9e9862c33fd43f8f838e6ac069c2bb3c"
+    },
+    {
+      "path": "renderer/virgl-shader/README.md",
+      "bytes": 83697,
+      "sha256": "27e7e329ac929c720827090255525cabd55ca68beec1a3bf68d487c857e06484"
+    },
+    {
+      "path": "renderer/virgl-shader/STANDARD.md",
+      "bytes": 3652,
+      "sha256": "4adb2d2d25f1abfbdbb18cf3b000c77f0e6a93aba90ca3e7ef0c344ca5008d5c"
+    },
+    {
+      "path": "renderer/virgl-shader/UPSTREAM.json",
+      "bytes": 8594,
+      "sha256": "6f7866d3a3a5e502f6516506909c0d43dec60902fd251a2eecec9610bd992a71"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "bytes": 154467,
+      "sha256": "b1b94dfec0d8b86365d261cd0b514da0cd45829356a5a05f11d3deb30c8556aa"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "bytes": 8510,
+      "sha256": "ca8ba24370bc20abd5560941b53a5a2fe3b7e0fa28dd3bf5e14d896fc7eb55a0"
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "bytes": 47763,
+      "sha256": "1a60766373d49ba6fa4b6200fe7627ae59d3d54f0f7924ca68044b3258716f2f"
+    },
+    {
+      "path": "renderer/virgl-shader/checked_cso_hash.c",
+      "bytes": 374,
+      "sha256": "fd5f5eccb4893602cad5cbdae7522c32cfe6ffa193fa3584c7c7bac06ae735d3"
+    },
+    {
+      "path": "renderer/virgl-shader/checked_tgsi_heap.h",
+      "bytes": 671,
+      "sha256": "d5b135f2a51a845e6c7798d56478dfdde8eed2e97cc7b5c722ce7052852d8d46"
+    },
+    {
+      "path": "renderer/virgl-shader/checked_tgsi_sanity.c",
+      "bytes": 1937,
+      "sha256": "f166e21f455174010ef3964d8c81126588d77ddc69cf15b7fa9cd825e3f08b1d"
+    },
+    {
+      "path": "renderer/virgl-shader/checked_upstream.c",
+      "bytes": 3266,
+      "sha256": "a1d60b4e9b214466f2fec6baabde855f78024bee68199aef524ef84f1f7f772b"
+    },
+    {
+      "path": "renderer/virgl-shader/checked_upstream.h",
+      "bytes": 304,
+      "sha256": "bdd21214e97b6e9a63516e2b96e4753f8aaaa9f69ad48dee1d133129872f8aac"
+    },
+    {
+      "path": "renderer/virgl-shader/cli.c",
+      "bytes": 454,
+      "sha256": "65c9e5a0a3c58ddad36e520f335ca054c8eeec33e851df24db474546a8d7afb3"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_gen.h",
+      "bytes": 48398,
+      "sha256": "ac83c3095bf8d81e84eeb448e7743135ce14cf7b35efdc0b75fef8d9c941f068"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_table.c",
+      "bytes": 554830,
+      "sha256": "9b654addadc5a17ae283381ba93c8f745a9416171284821e3da381571a49b4f4"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/virgl-version.h",
+      "bytes": 2149,
+      "sha256": "bea8c6c3b5f6509840d7365bfd0a6bb1d9671118e38da04464a419372faa97fb"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/banks.c",
+      "bytes": 9108,
+      "sha256": "bbdb308cf8eb69b1ad5d53e33ad8e49051b58ac1ceed8b390d143db63b3f81e7"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/bounded_loops.c",
+      "bytes": 16364,
+      "sha256": "9728ec295089efba300c4e8d51eafd1e3c21171b868126a0a0f804697bbb128b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/captured.c",
+      "bytes": 10446,
+      "sha256": "b0339483f3cb999932be8ae3e2dda9afefbec706f745bcb821d9df4ea8881abf"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/compiler_bounds.c",
+      "bytes": 7426,
+      "sha256": "53d7d7b03f362a837a64597a5e26e5e82a93e0d259aa86f380500bc654fa8e93"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/component_floats.c",
+      "bytes": 12756,
+      "sha256": "f4448c512bebc7243cb346123df3335df0ec9f56f5b7458d9e5b023ade5bc7ed"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/components.c",
+      "bytes": 6760,
+      "sha256": "6fd3bf132a80e5d8b9776967cd2d335433f54fba4937271c2d8e1e4504aea938"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/constant_compiler.c",
+      "bytes": 15327,
+      "sha256": "e30e7ff420b27e58c0e3a5b22b02b758a2dc6c767d358d0c2ea1a4468465b952"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/coordinate_prefix.c",
+      "bytes": 9869,
+      "sha256": "0fd37d903f9c9537844a8153ba90697145cff4cbbe1f8ce9321afdfa19caf1f0"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/dot_reciprocals.c",
+      "bytes": 12911,
+      "sha256": "9c701b78b0ac902ec1370b0b06200b58024fa2db9054eb7ca22226e6806fc3bf"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/exact_pair.c",
+      "bytes": 6930,
+      "sha256": "a7463df62c0fd54cdc4a49722c916dff98a4d228f136383e1846218dd93bfaf9"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/exact_producer.c",
+      "bytes": 7161,
+      "sha256": "dd202a4b9447ae9beed7c40817943386bc79620d2b0cadd119a035ee4ec321da"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/exact_reciprocal.c",
+      "bytes": 2376,
+      "sha256": "12d74f9b2d3fa7b4f64e0e2ad6e9df6d69ef4fceb3ab2bfad706a2ca6b9c8ad2"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/exponent_logarithm.c",
+      "bytes": 5628,
+      "sha256": "6d9663275c845be1aa9a12f7c624c9c06e613e1f5c9c6d1ebcb87f00207053ca"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/float_masks.c",
+      "bytes": 12298,
+      "sha256": "afc41f061f6d6427fe85ec35510512910e03bb893d35bb05ebe4d5ecbe5a2455"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/fragment_coordinates.c",
+      "bytes": 6958,
+      "sha256": "a682bccdba4e2ee2ea11f94f9d5901ae83062620e80365f8b2dfb8df75390971"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/fragment_discard.c",
+      "bytes": 8203,
+      "sha256": "6f50f7d77902474c0768ae28f9916bf000d23e0611de83ac10d466eddec53dfe"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/hex_literals.c",
+      "bytes": 3186,
+      "sha256": "4a08eddaca59ef684a431342ecf75779b1d077918cc1083b7cff9d92da7e69cd"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/hostile.c",
+      "bytes": 7478,
+      "sha256": "cff3b387a16d438a12dd1af57b47128c815a9f1a9fc1966a365cee51e1119696"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/indirect_constants.c",
+      "bytes": 16400,
+      "sha256": "5d2ce3c7f57c7422a44186d653a1fae6f76bdd064b1859be35877abc5f191129"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/integer_masks.c",
+      "bytes": 12136,
+      "sha256": "ac712922b538298a97bd67af2a1eddb4dd8bd060ca3d6c2f5e8b31c153112fe4"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/known_arithmetic.c",
+      "bytes": 3841,
+      "sha256": "f5abdb72162e0df0f13e41a8cfb36474faca509ce94471e5f0032c747f14acbd"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/known_branch.c",
+      "bytes": 4982,
+      "sha256": "02292fee984a8ef5a40f8c74d7af39a6773fc677c2f112056be884ff245c3a98"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/minimum_selection.c",
+      "bytes": 5381,
+      "sha256": "0624508c33793ed9561c298f58cb997c790d8d18cc6f4d4ea587380caf37eb07"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/numeric_floats.c",
+      "bytes": 12549,
+      "sha256": "1c86ce4e37632eebf76e5c0d085bbf344845a4427e85c562ce9d758eb84504b8"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/ordered_masks.c",
+      "bytes": 23863,
+      "sha256": "9ea96a8eafddc4db2dd8966f7e9b52d16bc85b09534bdd7042fb4c8c43a2ca4a"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_92cb_complete.c",
+      "bytes": 10736,
+      "sha256": "184cfcc6fad8b591880f710bb23c1a5670e16ece1887f9bc758c54e593922327"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_92cb_geometry.c",
+      "bytes": 5758,
+      "sha256": "8736d4cb1f150b626c46a4a1d0cd996bfd81c56c13b1fece1e7bf39383a83938"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_92cb_power_domain.c",
+      "bytes": 4401,
+      "sha256": "68d7930813758b6b55ba37d2a27ae274d16317497236bac6af1b56ce1160b4a1"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_92cb_private_power.c",
+      "bytes": 6362,
+      "sha256": "70c030ecff821b506a9b3aed139ab253908c97817d2324c67e85d388d1948c49"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_92cb_raster.c",
+      "bytes": 4590,
+      "sha256": "d42cb414fbc13369af6bab9501017fd0858748c62ef7cf9806fa636b4a0e2fbd"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_c580.c",
+      "bytes": 3060,
+      "sha256": "40611a136a17edd71fa633d855166c4469a63219c80c0f726dc90eb3d74f03eb"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_corpus.c",
+      "bytes": 3667,
+      "sha256": "4e78d3a0660312450e2c3db453c56f7d10bd25601b3078bc2d196572e50e7bd0"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/pairs.c",
+      "bytes": 8708,
+      "sha256": "19dc85ec25b16230e813996531e3a8235b396c4dfb9331304ad815cc784f46c2"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/power.c",
+      "bytes": 5565,
+      "sha256": "4fbc30c0a87322ee401396b9149779d9a23b9f4ba45a44b7b6e8a6075b8a21fd"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_arithmetic.c",
+      "bytes": 27753,
+      "sha256": "3ca506dc6af11efd49b4af0e9a26aa65bb45f1150cdf74725c91704b882f4bc9"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_audit.c",
+      "bytes": 1975,
+      "sha256": "193748c7e2dca04dba7a8345bcee1d6d18d99a4a949dbe7d71f4f52000c47f4f"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_fraction.c",
+      "bytes": 5895,
+      "sha256": "eccb78f243ae210dd0174854b530d89a99a227b29f22c5a51905c6e20fd848a4"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_upstream_allocations.c",
+      "bytes": 5169,
+      "sha256": "80bd380980efd72df832a52654ce00078ef3be8239e786e47e9539ca0c7cb891"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_upstream_allocations.sh",
+      "bytes": 1387,
+      "sha256": "d916319918b821f102ee9cbcce3af07daaa7ec54cbdfedba0b88cf1a5f75c651"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_words.c",
+      "bytes": 23834,
+      "sha256": "529dfd30bb43948e5a73ce96fb21f07413772107db6a598fdae76cb67f167cd5"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/radial_domain.c",
+      "bytes": 19041,
+      "sha256": "92a4474de315deae0b653b47368c2cab676aeaa175395ca31fb3d440d69f1947"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/raster_bank.c",
+      "bytes": 25552,
+      "sha256": "e22e4ccf23b5048e5939367090fc3dcc451d34b9753067721b2435ffae7a5cab"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/raw_bits.c",
+      "bytes": 11721,
+      "sha256": "8959695ea4436938389c64eb93e356fc83c1ad070941419d0184f57f25dd01bc"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/raw_equality.c",
+      "bytes": 16456,
+      "sha256": "355600c95b0ae2e1ddbb6f355d7119382553112676fb8079efc640677a7d0049"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/saturation.c",
+      "bytes": 5618,
+      "sha256": "53486fb5e04a1a6472abdc498d7f28794c49d19aecc96a37cdbfcec9ec739e7b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/scalar_operations.c",
+      "bytes": 5429,
+      "sha256": "35738685cc578b08df9c43525fd2a28e0e05d2e49f959649eeac68d3af7db88d"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/selected_lanes.c",
+      "bytes": 17898,
+      "sha256": "d4dfe66030345634062412ff7d902cf1648d54334568d176edde64570b0a9000"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/selected_lanes_pair.c",
+      "bytes": 906,
+      "sha256": "a931212987b702398159715d67af4009b9631fc4394aee349c7c712b05c81842"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/signed_conversions.c",
+      "bytes": 5514,
+      "sha256": "fb9bb1e447fb53ae9603638df282a58bed59833dec351cf351c958ac20cde653"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/signed_integers.c",
+      "bytes": 5412,
+      "sha256": "20712fb7b685e39be33474bf111230faec298615362e744d668db240ab9b9f90"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/sine.c",
+      "bytes": 5563,
+      "sha256": "5b8d533698ae03074db78e12f5912c6d27c4480eaf23c037d8b45b35916103fb"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_allocations.c",
+      "bytes": 4561,
+      "sha256": "6e3363baceffbeee44eeeaadafd690d66f564a8ab1ce37ef04fa104178281a3b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_compiler.c",
+      "bytes": 4007,
+      "sha256": "4b9900c6771859e42fab560e02c75442ecaffc5da1f45346e2eb66cca987174b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_integer_allocations.c",
+      "bytes": 4091,
+      "sha256": "2817bc35a60ccd0fe25aba7a54629d6c6ea76068df2767bd19c777338e641c7b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_integer_image_shader_allocations.c",
+      "bytes": 5890,
+      "sha256": "65d678935ce138aa4d56cf327b6fd7b18408aa57875224a78e1c2fa6a6fa19cc"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_integer_image_shader_inputs.c",
+      "bytes": 8276,
+      "sha256": "9ebcc1fe044999f9f077fc8aec1c3852004c2a046718154f766fed782578650a"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_integer_inputs.c",
+      "bytes": 1494,
+      "sha256": "19d0ab9db8114ac2c63fa13c91a6cbf80631414fd0bd923597e20a748ed5f927"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_packed_allocations.c",
+      "bytes": 4123,
+      "sha256": "6e748fdfd6c86f205540abd8d8d3f2cbbc37ad82f453b10f8c4341f6b96c9087"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_packed_inputs.c",
+      "bytes": 1720,
+      "sha256": "92dbc8fb34d55af57a3ef0dadee5b53d802527cec96e2a586f0ddcb9f8113132"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_texture_allocations.c",
+      "bytes": 5845,
+      "sha256": "a0157187ef330bb12a4db74f8dc9bf40073ca31d378e82c4da90971c15b76c73"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_texture_inputs.c",
+      "bytes": 6886,
+      "sha256": "8c0956d966856d1b34383adf60b2e9b2453457e5793118aed22678a5b270216f"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_uniform_allocations.c",
+      "bytes": 5137,
+      "sha256": "03f16f2e92b7293b34b14c02b9575a66cf33f9cf85e1d42f0170dffad506f7ed"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/standard_uniform_inputs.c",
+      "bytes": 4540,
+      "sha256": "3953024b8003fb345753538753447a5b507f45057d0f329b1ae4396ce2339868"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/structured_conditionals.c",
+      "bytes": 15757,
+      "sha256": "aec64e43ca848ee704c1dd4931206a83bf7a07e60e3a2bc23fd93d9e7c4a32db"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/tgsi_scratch_boundaries.c",
+      "bytes": 3274,
+      "sha256": "8458322946c0a81b868d7c6236533a28c129b5fb190a39113eb86ac08a9afc3b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/vertex_constants.c",
+      "bytes": 1857,
+      "sha256": "346c04c761e0480ccc94405409329a9c8e879fc58b98324d4d1d12a3694947a7"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/zero_cap.c",
+      "bytes": 7850,
+      "sha256": "d28cde75dd0f93316ccb87025cac04ab890f50c1aa3aee0c1c53dbd8ab3a267b"
+    },
+    {
+      "path": "renderer/virgl-shader/private_92cb_inputs.h",
+      "bytes": 58265,
+      "sha256": "b870fe0c78f82b1d006ad76e0f91e5e586840f66c54f881d2fedaaeddf7af440"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_binary32.h",
+      "bytes": 5216,
+      "sha256": "90d8e3227f44c19e21443d5ec85f6e926eece345b95cb6cd3b06f01259a7c490"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "bytes": 77456,
+      "sha256": "189bbb5af5530f2966c7dc099726ef07b04810beeb1c125ea2a66015ffe51710"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "bytes": 13722,
+      "sha256": "c3380721eaa83606bd8dd780de23a1f296e829de7efd3f62ff00606d04fd56f8"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_conversions.h",
+      "bytes": 3316,
+      "sha256": "f843c0f99ec6a62321507e72fcbed48bac504ff86f6818c1a232d0a666dd7341"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_fraction.h",
+      "bytes": 4300,
+      "sha256": "30ac2ff3c804f4b75e92a5646d95f108a1e3df5ad955027c204f490aa3e36003"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_known_arithmetic.h",
+      "bytes": 2732,
+      "sha256": "eaf4aa419caff2e7c9e7d2d5f6194c6184189cba78bd9c0ace541f7a291c27e9"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_scalar.h",
+      "bytes": 1329,
+      "sha256": "e3252b5baf03c58a941b22473bfa9784cc5315a1653cef65b95219bcea2c8afd"
+    },
+    {
+      "path": "renderer/virgl-shader/regenerate.py",
+      "bytes": 1696,
+      "sha256": "04121f0bbc2438b885c88737b03886c27a7024ea75454858c1bed9e40e89b399"
+    },
+    {
+      "path": "renderer/virgl-shader/standard.mjs",
+      "bytes": 12344,
+      "sha256": "3c02d62f4f533c4348f7efd313ae3810449b2b0d2845a615c4f2be6dd0a9b448"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.c",
+      "bytes": 18365,
+      "sha256": "1ce146fe9781a746f06429872ceb89e451c96bb3a21edd8342537a4b8b532541"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_emit.h",
+      "bytes": 526,
+      "sha256": "d80b357e90c79f78b9153aff6501ac689e469d9838c667d35285272390dc472c"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.c",
+      "bytes": 22103,
+      "sha256": "cd6764a9fc43a73a7353873a8b6461d3927e16fea05504044154296320042f45"
+    },
+    {
+      "path": "renderer/virgl-shader/standard_guard.h",
+      "bytes": 3206,
+      "sha256": "d18ed6f48d151a21c0140a7c5833b112d4b99b80a204b21573499deda7edb81d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/alpha.frag.tgsi",
+      "bytes": 145,
+      "sha256": "b76a6ab3958192db11de2e1e300e2761e6c6db359e00afeb3e6527d8fa70b53e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/arithmetic.frag.tgsi",
+      "bytes": 160,
+      "sha256": "e05362e13188b954051e39bccf3da5201ebaf967ee9a60ac0f987ee38383600f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/bank-cases.json",
+      "bytes": 192995,
+      "sha256": "a6582a8578b5e0b3e71c9ee49e4fdf0328fb8f40a8ffac1e2984498495513a75"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/banks.mjs",
+      "bytes": 23946,
+      "sha256": "b0f538bf1c61c9eb83d3b9b3a0e1567d2981bcbb728e1a2eba9f54e66bcd007d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/bounded-loop-cases.json",
+      "bytes": 361412,
+      "sha256": "0eec49f7e11ff80fbcf84ef723df88126061c04ea17ddc70de26fc7529ba1653"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/browser.mjs",
+      "bytes": 18232,
+      "sha256": "98c06c9083ac761ebec44ebc2b051dd0faf8e917014ce7287dc8aa079bb7e1ef"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-grammar-migrations.json",
+      "bytes": 8214,
+      "sha256": "ce3193f5efc48d47e8ff10c2f5571fd9efb5cea56935d32c32ccd8aa86a23a36"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-invalid.json",
+      "bytes": 20802,
+      "sha256": "fd7769f258bc5d51ce6e1c10c8e91345124676e6ce1777b30999e23a19cdbd80"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-textured-scene.mjs",
+      "bytes": 18550,
+      "sha256": "6e84d3e7313b9480f23fe41d571522f0e081343b732ab0b3e25482dd1f2aebcc"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/compiler-bounds-joins.mjs",
+      "bytes": 5725,
+      "sha256": "26dab24dbbff632ce381276abefcbca43f5fc2dca8342313f43fcd8376035c62"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/compiler-bounds.mjs",
+      "bytes": 13654,
+      "sha256": "a14ee820fdc0252863415dc403c066c8d0c9c49911dae827205f9a4cbfb7a64b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-cases.json",
+      "bytes": 54311,
+      "sha256": "92752e2bfc8d5712dc77d84b9502ed54c14fbecac6a717191dd556d09c122b40"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-float-cases.json",
+      "bytes": 301735,
+      "sha256": "423f9cd45978fe43a4da5c8c8a59d6d53f76e2068868c30eb06d3f331d92e198"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-float-hardware.json",
+      "bytes": 112033,
+      "sha256": "ee9afd644f44542c7bfef49636be7d4f9db957413f454a300737c10f1e8784e3"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-float-migrations.json",
+      "bytes": 3184,
+      "sha256": "f430bf73c2d29663d9ef406be7b55be2a6c590f2ad57e1584907a03974f88002"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-floats.mjs",
+      "bytes": 65278,
+      "sha256": "044a12cc3a0c166d3fe2c412b2d12f083b8a5d3edf3f91a983183e9f9a3fdc8e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/components.mjs",
+      "bytes": 20021,
+      "sha256": "28feb47ddaa30ba18704f63f150ce3e150b040be9788c146620635965c9a5f0c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/constant-compiler-cases.json",
+      "bytes": 398193,
+      "sha256": "53a0f1ef11e1b7049807df169d5b56acdaad4148aef4a8c4fd7b83154b1b9f7c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/constant-compiler-migrations.json",
+      "bytes": 232244,
+      "sha256": "91e88ec0a3dc6e9d9efe9ff9c0261021b87b0914394fd5cf7c338874911d3bc7"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/conversion-banks.mjs",
+      "bytes": 13931,
+      "sha256": "a42f166975286ecd0b085ff53c255447af2fd23e041b2221b30d783c0d7225af"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/coordinate-prefix.mjs",
+      "bytes": 7165,
+      "sha256": "d7647597389766d2f5822f5e93e178ff32aae042957b3ceb7cfdc70df06e23c9"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/corpus.mjs",
+      "bytes": 4442,
+      "sha256": "4f88a7a4f4a301f1a60e3f1b046d71635373a273cbc07e60b43c35aae33d0245"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocal-cases.json",
+      "bytes": 339348,
+      "sha256": "6640068f84c207cb221c8d753f5cd07afbed8fbc63b86f06664e245c9fb9ec3b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocal-hardware.json",
+      "bytes": 134169,
+      "sha256": "ca3dc4ec1cc4c60e382c1c23af645070b4aea303e9cea0c1cb8fd989666193a3"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocal-migrations.json",
+      "bytes": 1117,
+      "sha256": "e02edfeb1351ec7da0728a5d66673e12224b6d29e3b153e3a9c160f28325b28b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocals.mjs",
+      "bytes": 69323,
+      "sha256": "2b2f35dbd3a67c6fd11dada58746286837691599375a5d50c220fb31462f00b4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exact-reciprocal.mjs",
+      "bytes": 8180,
+      "sha256": "634167470e42a4f12768779ace33e8db69fdb57a669629ef67565abdc5d92ec1"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exponent-logarithm-capture-regressions.py",
+      "bytes": 9786,
+      "sha256": "59976dc30501ba5a42f4871d12fc75ce7bca82cc46715741e79c0f08d5f28442"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exponent-logarithm-regressions.mjs",
+      "bytes": 8009,
+      "sha256": "a3d5a37da138c9f79b808cccbf55c53959fb4917997d131ccf1286df83b4122d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exponent-logarithm.mjs",
+      "bytes": 20101,
+      "sha256": "b6fa4109e6db0c4a9ed428b416ae9c142ae78180cc4ffd4095d88ddc7a9dcc18"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-mask-cases.json",
+      "bytes": 229886,
+      "sha256": "fc5044fbce3c4df167c3d757e79079dfd3d1d533b220aecc99cae31037442a63"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-mask-hardware.json",
+      "bytes": 58605,
+      "sha256": "77e86508296cd98ee7b0844e635874124dadead9d932f8c03780c83c26c53458"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-masks-equality-successor.mjs",
+      "bytes": 42035,
+      "sha256": "66a30a77518169a0a06432f3f576ea27bc7c961bb3c0d4312c26754e0b141ef1"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-masks.mjs",
+      "bytes": 45102,
+      "sha256": "46a919670247c8e31bd21c81a584c28e5ad46b3f440112f5976ebf7b3e883e75"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/fraction-banks.mjs",
+      "bytes": 15065,
+      "sha256": "c43e677ee6ebf0f118829348347ea2c23bb82ae0913e2bfa3109429ea689ea3a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/fragment-coordinates.mjs",
+      "bytes": 23461,
+      "sha256": "29124c976106fd6e334bea07b415650390cd73694f0e8a23144461fb3e8917aa"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/fragment-discard.mjs",
+      "bytes": 23217,
+      "sha256": "7e803de0b785b668d4c84f27965689ca73eea4486fc345ffadcaeb98cd19ad2c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/gears-exact-alpha.mjs",
+      "bytes": 2112,
+      "sha256": "9b118502814dd7634fda76c1fc6df0d9eba679dbd73a469f413d8fd637a1f3da"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/gears-originals.json",
+      "bytes": 13694,
+      "sha256": "b2ea32f6f47428c1de7edbb70c21b40ad15409504bdaad4805f938658385ef28"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/gears-originals.mjs",
+      "bytes": 21524,
+      "sha256": "5a17d8733cf8562ba9ede747bc006c4b4c67d6de7f1b1a383bde81a8dffa76c0"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/hex-literal-regressions.mjs",
+      "bytes": 8196,
+      "sha256": "91000d19f71a851b94ea21d974e6d250ceb96e654b3aa5765d0b7a39321c770e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/hex-literals.mjs",
+      "bytes": 11322,
+      "sha256": "86bb9f3a6d0d12f6225375acda9b31d0714fc2085412fb59ef6e8dbdc889ac95"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/indirect-constant-cases.json",
+      "bytes": 339595,
+      "sha256": "8155bcfee6bcf299dc26d8b2eb82b98bda270c8bfbb763a97c4f320895fce167"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-mask-cases.json",
+      "bytes": 313689,
+      "sha256": "bc3209f4e1d498d9c176d08ad56ba13ff633e9ad3e710a63eae77552400ad16c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-mask-hardware.json",
+      "bytes": 57298,
+      "sha256": "7ff7c4e8f9d95b0dd1df94ef6ca9e0ba7e776ea2af4f4e879ca3554ebb9bedda"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-masks-equality-successor.mjs",
+      "bytes": 41546,
+      "sha256": "9c30e74b6c45bfce99f8a32854cdedd360ad92e05171f856310075de9e728d01"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-masks.mjs",
+      "bytes": 44611,
+      "sha256": "b4e5ca48168907ba566b8d7eb2f0599721d1e528c7812229057416e9a1018a28"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/known-arithmetic.mjs",
+      "bytes": 17145,
+      "sha256": "2197bbe1b29916cfb3580cc151a6809a1b186316a8c7be5aa1b82fadedc05d6d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/known-branches.mjs",
+      "bytes": 20488,
+      "sha256": "48f7edd550e16fe3bc59ba707d8238ed185ed1456caf991c88adf5ffafa5ff35"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/linkage.frag.tgsi",
+      "bytes": 80,
+      "sha256": "bf50dd29e6dadcc16e16e538731a72e47498881e38154fc15059bc2997d846c9"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/mesa-24.2.8-tgsi.rst",
+      "bytes": 99554,
+      "sha256": "856a2d675bf20e8014ecb77c96b7cd91e6d4bf853bbfbe697f3b09edfc34223c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/minimum-banks.mjs",
+      "bytes": 14516,
+      "sha256": "ac8a1838f47f0184efe60d62443b6c65167c93250e7352103c11639642b7156e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/minimum-selection-regressions.mjs",
+      "bytes": 9293,
+      "sha256": "641318a8ea3896fd078536c8c6fe11c4fe9cf118eeac1154ce6cb8a68fc5ab0f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/minimum-selection.mjs",
+      "bytes": 23694,
+      "sha256": "c7e0c9922457b5be8b603c99efa1478aa04daf92ad100860b865a844a4bddf7e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-float-cases.json",
+      "bytes": 211013,
+      "sha256": "f6a5ebb60bfac13649d67835d48b3a3bbc88e60e4c8b14d0240f2e5bc35e172b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-float-hardware.json",
+      "bytes": 92929,
+      "sha256": "635559a8b3d3d3c85399bd9a4fa0b20a970374293f00854d25569433251d0ba0"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-floats.mjs",
+      "bytes": 47489,
+      "sha256": "06ce68ff9abdcdb7b33d71b75db37ee54f57ecae6e326b8a04ad90803bf44b76"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/ordered-mask-cases.json",
+      "bytes": 410808,
+      "sha256": "41fe03c341c2df3c399366e1c72e1c392a1e4a79c262fe9aeed84025a7f28dad"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-92cb-power-domain.mjs",
+      "bytes": 14096,
+      "sha256": "91216245604c703dc71c30b8fab6d0245d1839521da8c9c98895be7a6ffdd20e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-92cb-private-power-worker.mjs",
+      "bytes": 280,
+      "sha256": "2eec3a8c0aa66275f37b39bd93c0d9bbaaac228d8c12833950a1af852784b023"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-92cb-private-power.mjs",
+      "bytes": 23074,
+      "sha256": "39d760230e8f88978dedfbe3a4e3af4a5de0d2b7be49f65365f5d760e1af20a6"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-c580.mjs",
+      "bytes": 12581,
+      "sha256": "89c8edde6bc5349d8eed7373b19885015bb13dce90c39ebc39b98ecac566570f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-corpus.json",
+      "bytes": 43067,
+      "sha256": "72762494d89146a605db7dae27e22ba76288f9cad5dca6654f6a3af669704020"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-corpus.mjs",
+      "bytes": 17645,
+      "sha256": "3634573e3bb9e5f88649642b61df924ce823525055b0c0d1e38530ad1709a771"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-programs-custody.mjs",
+      "bytes": 5148,
+      "sha256": "6e5efc2876dfe63e011d2fddb7bcd5773fe4bf7a8b5f9cc80126a32203979991"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-programs-worker.mjs",
+      "bytes": 270,
+      "sha256": "42a118ebb2d9a7c0352a421a4577dc15c1610f4dace1ff749bf31e404f2a6205"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-programs.mjs",
+      "bytes": 32060,
+      "sha256": "b35de4c4f326e1b5a9cef666d9d0d3326f4369abfc43f55412d9022549e16a1f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pair-cases.json",
+      "bytes": 199393,
+      "sha256": "1b230d356463f1adb1155631a5377e7f8e65ab6f78bc4404eeba26c0b7b52d63"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pairs.mjs",
+      "bytes": 15961,
+      "sha256": "a837403ff169cfb40b015256fb29b32da6c0f7b2f07eaf975c57392f8a690e3a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/passthrough.vert.tgsi",
+      "bytes": 109,
+      "sha256": "396294ea197243b64d61cc6207e76f5043f791d318d5dc90d8ec3da1fc496ce4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/power-capture-regressions.py",
+      "bytes": 15905,
+      "sha256": "7909501d13f4c4b5353da9f7437ef37b82806af33f44e3278ecc3989659e390d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/power-regressions.mjs",
+      "bytes": 10145,
+      "sha256": "3ecb62118b1dbda5341e1877774acb252cc4cdbe18bc71a3de42d61faf192165"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/power.mjs",
+      "bytes": 20046,
+      "sha256": "2d16c9e48b72d462dcdebcaebbc4a895600cbe49060942d996f6cdf0410ea37d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-arithmetic-cases.json",
+      "bytes": 576585,
+      "sha256": "68f6811d318ef2661f9010e28cf8e4a1a284600e419b371905ef9a639d1e02cc"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-fraction-capture-regressions.mjs",
+      "bytes": 4899,
+      "sha256": "3313c6693652d26baf0e1dc1179de478aab045c1f5b1bf49d5d2b4b3b2ae08f8"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-fraction-regressions.mjs",
+      "bytes": 9751,
+      "sha256": "6442b2dcaf14019e49eaed4406875c173d002ed99bba34f4ae3544cac4b7ef5e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-fraction.mjs",
+      "bytes": 21709,
+      "sha256": "61f0de99c66b60dd05fb41ff92037e3a6486519175a067b374d50dfa0c8c46f2"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-word-cases.json",
+      "bytes": 162808,
+      "sha256": "b3630a1489042dd7872d170e28decef3a27627028bd0ba36231d279199164064"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/radial-domain-cases.json",
+      "bytes": 80589,
+      "sha256": "bf87fce0e9cf3edc279e70b291005f0f1621e7aecc2506b88a2b76e943b126bd"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raster-bank-cases.json",
+      "bytes": 348383,
+      "sha256": "d9c11fd692f5fa4dea867834f5bc1a739d8ea4d6ff8799521e9be2a5ff35d728"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bit-cases.json",
+      "bytes": 107467,
+      "sha256": "f39f7650f947d53370c4d0ecd45eaa282b3610f42a28ca70af24473ee4077e4a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bit-hardware.json",
+      "bytes": 41731,
+      "sha256": "da9d08b03fa8cbe853f9b9813be9946c9b3d836b9a2c5cf879db9f98510aaae2"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bits.mjs",
+      "bytes": 38247,
+      "sha256": "0ed981c535e859e63556082e70336a250ea8254e876f0b6b5311d569c9de0986"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-cases.json",
+      "bytes": 277543,
+      "sha256": "a00303544487dc9b29f2f15a0aac89b24d79d52802fd1294801c9d9840611a61"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-migrations.json",
+      "bytes": 5170,
+      "sha256": "50c09a3cd522e340fd38279c50c49c0ac2b47f7eef0697b4be3d2380317c76f8"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-oracle.mjs",
+      "bytes": 5810,
+      "sha256": "7a1d358b664b6f74d1fd6294ca8639a1da5e5b68d0e97c3770dd41ede34ac1f4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality.mjs",
+      "bytes": 22854,
+      "sha256": "cd6cc39953dc0beabfb7a0f2f13f6f09fa74d4bdbcae89b8adbc572ab6d02392"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/saturation-capture-regressions.py",
+      "bytes": 11118,
+      "sha256": "9483831c97a60e40ea1fb51c33580ec1665e0bcdaa2a93a01b43e841de7a3745"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/saturation-regressions.mjs",
+      "bytes": 8915,
+      "sha256": "724fe09a689e41494e0cfbb7698d68b5b73390b1b6c1ee0b8c8204328a7c1536"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/saturation.mjs",
+      "bytes": 21741,
+      "sha256": "70ca5bf95506165ce69cdbae15c0fc0ae1013a9bd2921882ef10337709c2ce2c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/scalar-banks.mjs",
+      "bytes": 14276,
+      "sha256": "603885049741f01214934aafd09c64815bbbe986dd89e5c062cc538d9e913c8f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/scalar-operation-regressions.mjs",
+      "bytes": 9370,
+      "sha256": "5bc2520293dc934249f91e962f6328f36053cf702960200a8731e068d122fba8"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/scalar-operations.mjs",
+      "bytes": 23205,
+      "sha256": "a87ebdd431c6e440769b0fe86d6ed25861ffac0106d6d3c96dd180b82f7e8a22"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/selected-lanes-cases.json",
+      "bytes": 399314,
+      "sha256": "35585d7c3ff8eb3388c3a392349450e65df75c2bcd8c7f677b39a8cd065213b7"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/signed-conversion-regressions.mjs",
+      "bytes": 9538,
+      "sha256": "af656f9a8a7bc00d12fc4d8562dbc889ea19c63c2428917c37a6e45ad471ae0a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/signed-conversions.mjs",
+      "bytes": 22617,
+      "sha256": "116f17ed35223e5c9fc3bf7471f042dd350773245f141905852faf4bdb053db4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/signed-integer-regressions.mjs",
+      "bytes": 6552,
+      "sha256": "3b3a460110a099530dd255b51fd79c2180f2ed98df084f58180518485ebf43a3"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/signed-integers.mjs",
+      "bytes": 20900,
+      "sha256": "5872ff256b70b524458d4c490219557d40a0fcd2d2e4dc0e109621b6124a193a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/sine-capture-regressions.py",
+      "bytes": 13561,
+      "sha256": "ed2b288cd928cdd3b409b1a5d31a6f38e28b30ce3e0a282a868dc55d0a25be9c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/sine-regressions.mjs",
+      "bytes": 9286,
+      "sha256": "f57cf767e5d98db39c2bc34457b489527d9a88a7eae30e3c2075f6d6acc9545d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/sine.mjs",
+      "bytes": 19909,
+      "sha256": "1a654d3d78146d4719d18b83a142bc89179f1e0324f5abc218f78e73b9b1247e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-adversarial.mjs",
+      "bytes": 1866,
+      "sha256": "19a2a199655e8186a345e18869b51381bdbf2604ecc746a74d8dea3459984ce2"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-browser.mjs",
+      "bytes": 29019,
+      "sha256": "53aa76cabffb0ac9c81a76ed47dae56710ce76b269f4cbc4f9af047d0b3fae22"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-integer-image-shader-browser.mjs",
+      "bytes": 16080,
+      "sha256": "700a43b58ecf90d8fb8be8ec7261253fdc2b408b4479e50322ca83781edd6502"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-integer-image-shader-critic.mjs",
+      "bytes": 12551,
+      "sha256": "486f001a4903152b5a46d2eb4e3a54c77e9bf45c481525e9aadaba75e766d306"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-integer-image-shader-custody.mjs",
+      "bytes": 4112,
+      "sha256": "c0d09375f1157e4d29ee3ba1828071ad62ce6aa7b6ce684298e4a3983ecacb0f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-texture-adversarial.mjs",
+      "bytes": 14914,
+      "sha256": "fc586615bf67abc8bbbac878adc8bca9bc64d8f873e33d5229c9fba3a4ba1292"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-texture-browser.mjs",
+      "bytes": 15160,
+      "sha256": "53128848ce3a6b5ca0463b11db4b04faf7c09d0d47ecc81ca2f8297dadd16f1c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/standard-uniform-browser.mjs",
+      "bytes": 18303,
+      "sha256": "7c5eecbb11611c030c366a0b8c0189c007134016f6d229578141a91db68f0b9f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/structured-conditional-cases.json",
+      "bytes": 240027,
+      "sha256": "688d72e3ca6c210351242fba32d663cc356a6fc82e36809483dcd4a3900d2024"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/texture.frag.tgsi",
+      "bytes": 185,
+      "sha256": "4ca512b5dfd3afac60eddf009cdc542fe6effa5b9817143ff404210ffce3fa00"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/transform.vert.tgsi",
+      "bytes": 165,
+      "sha256": "320d661e3f13f88dd6c3e874ffe1a43320211a28b69d505cc9e0e6c3fe4908ff"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/zero-cap.mjs",
+      "bytes": 9516,
+      "sha256": "3c2bab1575764998004beb36ba9b83b74885012e0b9d0db8657010a38ffa33a2"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/COPYING",
+      "bytes": 1098,
+      "sha256": "3b32caf16e2402c2aff2b716858713f3e1feded85c25e71bf829816ee5009402"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+      "bytes": 8950,
+      "sha256": "88a296ad627e49f22d3e58b6c70c2a656f8c3e7a6fba652f16332c172b12737c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.h",
+      "bytes": 5609,
+      "sha256": "84ce8070d4af061f51e887ce7d80ce8fa9d81633205cf16bd61e42832d2cf1a0"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+      "bytes": 11319,
+      "sha256": "385fbd6abb5cfdb8fe0b982f07bdc2b98e2edaa50910b26681ab500c48d88514"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.h",
+      "bytes": 4178,
+      "sha256": "189444cd8c4b98327d79f0c33c5b63231854ab6419f9fe18b20e829510bcd66f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+      "bytes": 35054,
+      "sha256": "45867deeb665f4ca86bc0b755ea3e72d320cb01ef881b6a808e9f332b0a040c3"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.h",
+      "bytes": 2838,
+      "sha256": "5f3c327979b3043649b9df678b0e359d387f334e9573c16bd4a263c5452da039"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+      "bytes": 23084,
+      "sha256": "747fc8eb4df95202ea8192b377751021480ec7f430ba458936045a999d7f39bc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.h",
+      "bytes": 2696,
+      "sha256": "94cb5b4d80dc53937819a8dce44344ae63633e418174d3f8674668e1a74f49f4"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+      "bytes": 22172,
+      "sha256": "2419cdd3a6322cee5da57d666012504c7b6500acb228418334b8183aa7ec1833"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.h",
+      "bytes": 3230,
+      "sha256": "d20f7d0697a35196c5893d9454016b1cbe58d0b5dfe1eadec23b692271de0568"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+      "bytes": 2910,
+      "sha256": "1767a12cd5be68c04ec5f94a8ec27559913708c9eee13ba524919ee376c85879"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.h",
+      "bytes": 2323,
+      "sha256": "29a5f6c96dc4e3483a8afc1f6fdd035fabb29dbcd354bb316d5a005c7feb34db"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+      "bytes": 9241,
+      "sha256": "c08c03b75cc74dc8d30231773ed357ddbcbf5b792d303164882ad996c89d91bd"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.h",
+      "bytes": 4672,
+      "sha256": "3fb35f0187777fffcbbd9b5f12d3f17f7012e925439f5b959fc9c6876230ef1c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+      "bytes": 15277,
+      "sha256": "f5bc791e3488f2ae35ef1156b7953620de38601bbb4418984d039af5a0c14e51"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.h",
+      "bytes": 1879,
+      "sha256": "beac1b1c6680faf9cbcb660324b445a7664ea22fdc1ffb69f9ccfbac5fbf0bac"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+      "bytes": 24473,
+      "sha256": "c77892860df340b883c5e191577006f6ba5b0f07eb4ca6d74ec5e6466eac0975"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.h",
+      "bytes": 5283,
+      "sha256": "16f4742f1f8563703686aec4dbfade31ebaee2d1357f69ff525678919e0fc928"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+      "bytes": 5859,
+      "sha256": "e1c3909633b5acd3ff445ce3ddde249457ca92d1ba571269162b7eb5903f513f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.h",
+      "bytes": 2378,
+      "sha256": "12d42a3b23f78824c93a5115e479d437f21bb03745b647a9004feaef74a42abb"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+      "bytes": 49657,
+      "sha256": "692188a36d9cb4cb714dfc3eaf8fc9f7be4f5428550d8ad243fa3d6247d25b0c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.h",
+      "bytes": 1628,
+      "sha256": "e3a4c2c7af363e952c4b32b71c9b6f5517718392ed9572b86f27d27151e8af9c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+      "bytes": 11690,
+      "sha256": "dbab8d2d314a647c9639d9dd9e6947d3b920346a4680d3fe8102e7497241e4ce"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.h",
+      "bytes": 2715,
+      "sha256": "f3b4b296b9f0ccc1b8ad802bca91597efd12e08c551ccbce3b94fc23467a8fc1"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_debug_describe.h",
+      "bytes": 2040,
+      "sha256": "002511b4833ea6665b0aa6bd9010a0d999a58a4f8d91cb32de7fc30ff28f76ab"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_debug_refcnt.h",
+      "bytes": 1789,
+      "sha256": "2f173c1b54038fcd432933611687632ab2eac27a94511c615a9ab0c302a8c7b9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format.h",
+      "bytes": 24095,
+      "sha256": "3e2f6ad3d5c933ca9fd0124b3ae66a1584fc2ae57f761f2e147b497473384f51"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format.yaml",
+      "bytes": 77400,
+      "sha256": "6c2d3255351b90612afee88e9758b603c244cc81f26d25e0000f263d50c06a10"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_parse.py",
+      "bytes": 20341,
+      "sha256": "718ba46b27fbec2e0026ca8e2480a6b4992583a9b2bd4e2a90eee2a64f8a6ee7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_s3tc.h",
+      "bytes": 1601,
+      "sha256": "653113e5628c6ab84f5dd680cc658a992901011435332b2c445adabd0131587c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_table.py",
+      "bytes": 20834,
+      "sha256": "4fd54a3df7c3ccd37c3cd429953956799fa4d5113d147d60d8cf5d48e6415087"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_inlines.h",
+      "bytes": 7051,
+      "sha256": "52961188ed9a0cd849baabdbcce5fb1701f0bb8dc02e64115e82cbe2cac89866"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_prim.h",
+      "bytes": 7979,
+      "sha256": "8b4fddd7a11f08c7dd2d90a2b8f1f91abbfeaf849cc5f21425a5c80375b396d4"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_defines.h",
+      "bytes": 25281,
+      "sha256": "29b02c15399768ab74054e711f6633c407cf5f952f591c046e7542b82e54a008"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_shader_tokens.h",
+      "bytes": 23154,
+      "sha256": "48d2cedf0e97e4a685c20acb59bc8dd1317e0b2ba9166e9c4ac81fedda2e61f9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_state.h",
+      "bytes": 19681,
+      "sha256": "4c9b59a7e9827314dcac5b7492ecd0cc62bd585d662f0611e542af70858c9dbe"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/c11_compat.h",
+      "bytes": 483,
+      "sha256": "103fedb48f658d36cb416c9c9e5ea4d70dff181aab551fcb1028107d098ffa3e"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/c99_compat.h",
+      "bytes": 2754,
+      "sha256": "92445314d5fb3eff3a12eaf4cc864f9b459862a99594403b36ea79dfe149d267"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/no_extern_c.h",
+      "bytes": 2051,
+      "sha256": "60883a8d2b2978b861ef686c5a9afb41cf91ffec7c56baca89c626e7fea2d385"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/pipe/p_compiler.h",
+      "bytes": 4021,
+      "sha256": "cea977fedff656415c98ca4ac98d7ba4649c7bde65730f76a2e7a94034519e81"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/pipe/p_config.h",
+      "bytes": 4036,
+      "sha256": "86c0234de12412f65f8a53f1e9f619841d2e60a2b0e32b1ba99961b78c698985"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/bitscan.h",
+      "bytes": 8438,
+      "sha256": "afa4325d0ed38985bf00b547788a3b73c66a97a4513a3beb516e55b5fead5879"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/detect_os.h",
+      "bytes": 2522,
+      "sha256": "6d45904758bf3b5a67c0fa3829534461f1c8b276f55328f58a7cbac1d3770f95"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/hash_table.h",
+      "bytes": 7376,
+      "sha256": "9189e93d161af045eee3fca6f47aa164313e1668ab7341c69987a0f3ada24352"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/macros.h",
+      "bytes": 15240,
+      "sha256": "a6d424c804a9dd0e22f9bfe5fe332554b3440a13929d0aecf93f571ce9e9db8d"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory.h",
+      "bytes": 1938,
+      "sha256": "d77e951306a5027123a7c64675e10b23af8de03ea0673e84cbd935f93284e73f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory_aligned.h",
+      "bytes": 3383,
+      "sha256": "12d86fa94be38c13f7eeebdf313795e1267dd5a7187d2f0072e0e896f41702f6"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory_stdc.h",
+      "bytes": 2088,
+      "sha256": "07360363b88c927065e10df71bebf6c8a0cc3b9167c9dfce55f2d65f11e6f787"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_misc.h",
+      "bytes": 2695,
+      "sha256": "3b88b89e0227de413926a9907d660c4b967ee5fe15c9e47977ecfe7091823ceb"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_atomic.h",
+      "bytes": 11209,
+      "sha256": "cd3c5ca84af9a2aae50517e8735aacf7e72edce326504d60c9c239f5c7ab3d0c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.c",
+      "bytes": 10824,
+      "sha256": "9a3f45a3ed1cb45cd6b8543181b06aa30a6ef1ca57a0fca2678900f9c42b5a4d"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.h",
+      "bytes": 11537,
+      "sha256": "652e2cbc07d44cee7de3fa8cf2e30edc816bb061393de2f43f6d99d99e798ad8"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_endian.h",
+      "bytes": 1712,
+      "sha256": "088a97ceb214f120fabfe4a0eb8924fb1655de982525548bd867e3b45931b409"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_formats.h",
+      "bytes": 1818,
+      "sha256": "3fb34a11387b6c625a20862bd5204fc1b5dfb874d2a5f718ba6fa37953925cfc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_math.h",
+      "bytes": 17141,
+      "sha256": "1ba82ca8f9eaaac9b48b5ffbb3fa59edbd4f91051f6bbdd8bf2dc6d375a2620a"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_memory.h",
+      "bytes": 2735,
+      "sha256": "c5db17c724c70283ddbe04165722f6988d4e0eb9aa3602ae472feff016649af9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_string.h",
+      "bytes": 3055,
+      "sha256": "2c5615fc0be8f391051e2302dd1b1985eba5c5ece4922f511f8da07c59cf2598"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl-version.h.meson",
+      "bytes": 2209,
+      "sha256": "eb8fa107bc2e5fb42d5831a2036dae2f7e5c2c89574388d12391817685ed9eb1"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "bytes": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_protocol.h",
+      "bytes": 30358,
+      "sha256": "094a6e2b210f1d3dd0f1ac254ed8820c1d889e57d2735c0c6194dbc94f3b1ac7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_util.h",
+      "bytes": 4932,
+      "sha256": "d96d902c2b4d27083e5982fc90c7e887841cce07e0f95f42aa07ae64d9b53b77"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virglrenderer.h",
+      "bytes": 19876,
+      "sha256": "0b39479c6dbad50d0b94adbd681e124d3c1a77cb0560309ed493241644730cf8"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_debug.h",
+      "bytes": 3279,
+      "sha256": "89f086d99d07d01753de837068fa510e00d6447961f994d3a7bb7d2dbbe5a62f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "bytes": 333808,
+      "sha256": "e08fe8ceebfebb3e6a050b74d0ea0ebbfab35b6be742b6f0c9b9149dd484c3e2"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.h",
+      "bytes": 9367,
+      "sha256": "0df385cd9953620e9531db813a54fc582594f56364e5bf1efb1e7cd1ba2a2d09"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_strbuf.h",
+      "bytes": 6786,
+      "sha256": "b5909235cf614798d6cc89e6d9236e1653faf14b0493e1e912b68098841cae6f"
+    },
+    {
+      "path": "renderer/virgl-shader/verify_sources.py",
+      "bytes": 951,
+      "sha256": "2f473d2719bddcecea8828cd9eb02b98671d23fb6879f41946847998c8fea287"
+    },
+    {
+      "path": "tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    },
+    {
+      "path": "tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d"
+    },
+    {
+      "path": "tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8"
+    },
+    {
+      "path": "tools/virgl-compiler-bounds/cases.mjs",
+      "bytes": 9989,
+      "sha256": "64b78f1f8909226c9f7b449fb965dc1bbd51d01749104a48f300d1744993c350"
+    },
+    {
+      "path": "tools/virgl-exponent-logarithm/captures.mjs",
+      "bytes": 8123,
+      "sha256": "0873ee18b405059b197a501b34e085d18a2effa1b246c7074838c2bfb418b171"
+    },
+    {
+      "path": "tools/virgl-exponent-logarithm/cases.mjs",
+      "bytes": 9399,
+      "sha256": "bab67b1f741f25fc84b0c46ddb90e5631b55f53c1785ee496dfd4a1be93a6442"
+    },
+    {
+      "path": "tools/virgl-exponent-logarithm/oracle.mjs",
+      "bytes": 766,
+      "sha256": "5940b7d971919d3d7b8fd348b78a3935d16dc7588dba2b34d77527c77c606390"
+    },
+    {
+      "path": "tools/virgl-exponent-logarithm/plan.mjs",
+      "bytes": 2628,
+      "sha256": "43d814029f5462e4d103125e5d6911e7cfef5f566d573cd379b4866965af2128"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/vrend_formats.c",
+      "bytes": 43802,
+      "sha256": "1b4b48526638b7b16293e7eb552b6d6cbdea44d551358bdc02f17c99b1d86844"
+    },
+    {
+      "path": "tools/virgl-floating-depth-consumer/primary/vrend_renderer.c",
+      "bytes": 495473,
+      "sha256": "be7e5c63fb501cb77bd5b2c13c332f8b93c49fd04d207f17d434932c237f4ea3"
+    },
+    {
+      "path": "tools/virgl-floating-depth/primary/es-3.0.6.pdf",
+      "bytes": 1528315,
+      "sha256": "7e831831595d3e44c267cc0a0d754f8c244cf3c8f5056f49a674f25fb9d5adeb"
+    },
+    {
+      "path": "tools/virgl-floating-depth/primary/u_format.yaml",
+      "bytes": 80486,
+      "sha256": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10"
+    },
+    {
+      "path": "tools/virgl-fragment-coordinates/cases.mjs",
+      "bytes": 7113,
+      "sha256": "304cd413f15223b89c69ebcee47c4cc7bb6ae49f6496feecebaea5772f87b1fb"
+    },
+    {
+      "path": "tools/virgl-fragment-discard/cases.mjs",
+      "bytes": 11172,
+      "sha256": "320d1763b02f4340a8ccb34506fa9cb5edaa14383f24c48fc60fb58b239d7248"
+    },
+    {
+      "path": "tools/virgl-gears-shaders/oracle.mjs",
+      "bytes": 6018,
+      "sha256": "be9c57877fa94410264f19cdb391a0728fa405eb3ac7ff94dbf8cb56d02fd4aa"
+    },
+    {
+      "path": "tools/virgl-hex-literals/cases.mjs",
+      "bytes": 6126,
+      "sha256": "c21d8a929353ef9665f5a0fbeca49af307af5e4ba88ff7ca5167d7935a296411"
+    },
+    {
+      "path": "tools/virgl-integer-image-shader/critic-fixtures.mjs",
+      "bytes": 4052,
+      "sha256": "0172a366e25c0edcf97fdc54659d74005f84d7a09f82a70db8c2602be4200b17"
+    },
+    {
+      "path": "tools/virgl-integer-image-shader/fixtures.mjs",
+      "bytes": 6629,
+      "sha256": "a601bfbc4c13d6c727eebc5b53bdc91a7f63eade8fefbd28b4c95f3bfa85378f"
+    },
+    {
+      "path": "tools/virgl-known-arithmetic/cases.mjs",
+      "bytes": 8050,
+      "sha256": "1864d40f49039cdfee580c74d2d75a756fa67fa24699120eee9abba4c560c5a0"
+    },
+    {
+      "path": "tools/virgl-known-arithmetic/flow-cases.mjs",
+      "bytes": 1923,
+      "sha256": "9613d5a0325cac1631405a6fcf18ef0dd1732459044cc44c96700b33dec53f6e"
+    },
+    {
+      "path": "tools/virgl-known-branches/cases.mjs",
+      "bytes": 15855,
+      "sha256": "c6cf31203c27f6662dbbd44987b718b630ca67f526a588ced07893ea9a29c37b"
+    },
+    {
+      "path": "tools/virgl-known-branches/flow-cases.mjs",
+      "bytes": 8169,
+      "sha256": "e083e4a444a3827b371f5e883c94454b1e738c366c094fb482a405536e8e76ad"
+    },
+    {
+      "path": "tools/virgl-known-branches/held-cases.mjs",
+      "bytes": 17245,
+      "sha256": "c1a2ffcde9758edf182b9d8f8c279312e39da2b385330e638c957a80f3da5c71"
+    },
+    {
+      "path": "tools/virgl-known-branches/original-cases.mjs",
+      "bytes": 57619,
+      "sha256": "aee2e1415c6ae67452459877e493990e04daea6183879da772c9b5374f5527b0"
+    },
+    {
+      "path": "tools/virgl-minimum-selection/cases.mjs",
+      "bytes": 8481,
+      "sha256": "732a49381bb87d745e3db71f8425a17677f03a8edec7ccb50a5471d2c9626258"
+    },
+    {
+      "path": "tools/virgl-original-corpus/oracle.mjs",
+      "bytes": 6448,
+      "sha256": "d832307c7c18c0d684f7026584d91d6f310cf9f6c5221263bbdf7499012b64a0"
+    },
+    {
+      "path": "tools/virgl-original-programs/guard-cases.mjs",
+      "bytes": 1173,
+      "sha256": "1391a978a60f570612fba217336883e89eb83dff605f49140ce9f86aa596046a"
+    },
+    {
+      "path": "tools/virgl-original-programs/oracle.mjs",
+      "bytes": 4123,
+      "sha256": "1b25d639385668c6224c1fdf628bcdd6d732c4b379d7a7ff1ad35b09f451a640"
+    },
+    {
+      "path": "tools/virgl-power/captures.mjs",
+      "bytes": 34330,
+      "sha256": "4508f3d232ead415fc69cff67fe6864e3d5635ac0ceee22c8836440609daa221"
+    },
+    {
+      "path": "tools/virgl-power/cases.mjs",
+      "bytes": 10555,
+      "sha256": "688ab9512458781b173df146b6bf4c3de0bc4882dc574d330447124067b9c2e4"
+    },
+    {
+      "path": "tools/virgl-power/oracle.mjs",
+      "bytes": 792,
+      "sha256": "d1735f61ff972f20d5b8357947c0a2e73939092ee6a75623cccc2d1bd9bf2e20"
+    },
+    {
+      "path": "tools/virgl-power/plan.mjs",
+      "bytes": 2679,
+      "sha256": "76a0c930d822371a466bb1d67716ce8a883f9aa0d9ad21b01398791e4fe6019f"
+    },
+    {
+      "path": "tools/virgl-precise-arithmetic/oracle.mjs",
+      "bytes": 8462,
+      "sha256": "14716d2f6a87aa0efae66cb38f557e93f2cd7b4f0d414ef8cbbc1dfabc979eb3"
+    },
+    {
+      "path": "tools/virgl-precise-fraction/cases.mjs",
+      "bytes": 10002,
+      "sha256": "2f0f8b0fe510e65f260b343d0b885759bc47d6ba8373b8f5e2110b61698a3dd8"
+    },
+    {
+      "path": "tools/virgl-precise-fraction/plan.mjs",
+      "bytes": 3160,
+      "sha256": "55c3afa0049a64c2f1d254147f0aa63c4dedc1741f188925d0f55b629183259c"
+    },
+    {
+      "path": "tools/virgl-radial-domain/oracle.mjs",
+      "bytes": 10842,
+      "sha256": "9ad80b1a9b18bd3341ee949e700a2a7188051f29b1338dd99e0c66c51f11ce64"
+    },
+    {
+      "path": "tools/virgl-saturation/captures.mjs",
+      "bytes": 2477,
+      "sha256": "daa4ff77f0901c2203176e797bee653600d55f548dd34742a335f48c6161d1fc"
+    },
+    {
+      "path": "tools/virgl-saturation/cases.mjs",
+      "bytes": 11011,
+      "sha256": "54f9d029a796d3896867d032c4fb59ab30ef837f2ac770f5f1bab909a8cfa98a"
+    },
+    {
+      "path": "tools/virgl-saturation/plan.mjs",
+      "bytes": 2933,
+      "sha256": "84351f7d942e9baba2d1d7c9402e4dffeaba3ca85208782f1033a2cb335a5b0e"
+    },
+    {
+      "path": "tools/virgl-scalar-operations/cases.mjs",
+      "bytes": 7430,
+      "sha256": "d080188f45774aba7a15e7016ea234f0f0d3ae773c0f9509cf069ce67bd71e08"
+    },
+    {
+      "path": "tools/virgl-signed-conversions/cases.mjs",
+      "bytes": 9366,
+      "sha256": "4f6045c4a19de8b3892bb60acb4381eb80f6cb971db3819164b698dbf3b5f096"
+    },
+    {
+      "path": "tools/virgl-signed-integers/cases.mjs",
+      "bytes": 8069,
+      "sha256": "61cf9b1525f1366e3f0bc39572b00af2b8a6a69e2755279ea269f76828d7069e"
+    },
+    {
+      "path": "tools/virgl-sine/captures.mjs",
+      "bytes": 1406,
+      "sha256": "8f46b49e3f99cb9c439eb5a42ac2da7b85cb6bfd5cb7b53723dcf09751bf4849"
+    },
+    {
+      "path": "tools/virgl-sine/cases.mjs",
+      "bytes": 5776,
+      "sha256": "58bba1df03a946e38178f49aae0254dc1926c047d5723a2d74fa2c05d08e0dad"
+    },
+    {
+      "path": "tools/virgl-sine/oracle.mjs",
+      "bytes": 766,
+      "sha256": "5940b7d971919d3d7b8fd348b78a3935d16dc7588dba2b34d77527c77c606390"
+    },
+    {
+      "path": "tools/virgl-sine/plan.mjs",
+      "bytes": 2366,
+      "sha256": "6696124cba04b21044b25e5b48760f459c3f74a0e6e3fc8a11ecbf080f2181c0"
+    },
+    {
+      "path": "tools/virgl-standard-texture/adversarial-fixtures.mjs",
+      "bytes": 6268,
+      "sha256": "a9b9c3042cd1b45f7a94c279a5d4e989b56717caac4ea5423d6eac0a7e87c5d1"
+    },
+    {
+      "path": "tools/virgl-standard-texture/hardware-fixtures.mjs",
+      "bytes": 7088,
+      "sha256": "9ab55a5035e836717dc42dc40aa9a278b3621d318da16026519c66f112fca976"
+    },
+    {
+      "path": "tools/virgl-standard-uniform/cases.mjs",
+      "bytes": 8256,
+      "sha256": "18c5832047a293bc4c385c3e2451c8f65db43edfcfe24e19f12f9378f7794a24"
+    },
+    {
+      "path": "tools/virgl-standard-uniform/hardware-fixtures.mjs",
+      "bytes": 9842,
+      "sha256": "589cf7bd235293c26d4dd2e7ce979bb62e54554f1737d98e550183c18e84bd7e"
+    }
+  ],
+  "rows": [
+    {
+      "kind": "base-view",
+      "format": 20,
+      "hex": "01060600090000001d00000014000002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color or floating depth 2D views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "private-mip-view",
+      "format": 20,
+      "hex": "01060600090000001d000000140000020000000001020000200a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color or floating depth 2D views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-depth-surface",
+      "format": 20,
+      "hex": "010805000a0000001d000000140000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D color or depth surfaces and levels are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "base-view",
+      "format": 21,
+      "hex": "01060600090000001d00000015000002000000000000000088060000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color or floating depth 2D views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "private-mip-view",
+      "format": 21,
+      "hex": "01060600090000001d000000150000020000000001020000200a0000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified color or floating depth 2D views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "mip-depth-surface",
+      "format": 21,
+      "hex": "010805000a0000001d000000150000000200000000000000",
+      "result": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D color or depth surfaces and levels are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    }
+  ],
+  "heldLayouts": [
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 20,
+        "bind": 1,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 0,
+        "usage": 0,
+        "stride": 41,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 9,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 1
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 9,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 36,
+          "rowCount": 1,
+          "rowStride": 41,
+          "layerStride": 287,
+          "footprintBytes": 36,
+          "requiredEnd": 39,
+          "tightBytes": 36,
+          "direction": "upload",
+          "scratchBytes": 36,
+          "stagingBytes": 0
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 20,
+        "bind": 1,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 0,
+        "usage": 0,
+        "stride": 41,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 9,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 2
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 9,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 36,
+          "rowCount": 1,
+          "rowStride": 41,
+          "layerStride": 287,
+          "footprintBytes": 36,
+          "requiredEnd": 39,
+          "tightBytes": 36,
+          "direction": "readback",
+          "scratchBytes": 72,
+          "stagingBytes": 180,
+          "nativeReadBytes": 72,
+          "conversionBytes": 108
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 20,
+        "bind": 1,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 2,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 2,
+        "usage": 0,
+        "stride": 11,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 2,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 1
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 2,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 8,
+          "rowCount": 1,
+          "level": 2,
+          "levelWidth": 2,
+          "levelHeight": 1,
+          "rowStride": 11,
+          "layerStride": 11,
+          "footprintBytes": 8,
+          "requiredEnd": 11,
+          "tightBytes": 8,
+          "direction": "upload",
+          "scratchBytes": 8,
+          "stagingBytes": 0
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 20,
+        "bind": 1,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 2,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 2,
+        "usage": 0,
+        "stride": 11,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 2,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 2
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 2,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 8,
+          "rowCount": 1,
+          "level": 2,
+          "levelWidth": 2,
+          "levelHeight": 1,
+          "rowStride": 11,
+          "layerStride": 11,
+          "footprintBytes": 8,
+          "requiredEnd": 11,
+          "tightBytes": 8,
+          "direction": "readback",
+          "scratchBytes": 16,
+          "stagingBytes": 40,
+          "nativeReadBytes": 16,
+          "conversionBytes": 24
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 20,
+        "bind": 8,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 0,
+        "usage": 0,
+        "stride": 41,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 9,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 1
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 9,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 36,
+          "rowCount": 1,
+          "rowStride": 41,
+          "layerStride": 287,
+          "footprintBytes": 36,
+          "requiredEnd": 39,
+          "tightBytes": 36,
+          "direction": "upload",
+          "scratchBytes": 36,
+          "stagingBytes": 0
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 20,
+        "bind": 8,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 0,
+        "usage": 0,
+        "stride": 41,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 9,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 2
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 9,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 36,
+          "rowCount": 1,
+          "rowStride": 41,
+          "layerStride": 287,
+          "footprintBytes": 36,
+          "requiredEnd": 39,
+          "tightBytes": 36,
+          "direction": "readback",
+          "scratchBytes": 72,
+          "stagingBytes": 180,
+          "nativeReadBytes": 72,
+          "conversionBytes": 108
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 20,
+        "bind": 8,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 2,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 2,
+        "usage": 0,
+        "stride": 11,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 2,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 1
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 2,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 8,
+          "rowCount": 1,
+          "level": 2,
+          "levelWidth": 2,
+          "levelHeight": 1,
+          "rowStride": 11,
+          "layerStride": 11,
+          "footprintBytes": 8,
+          "requiredEnd": 11,
+          "tightBytes": 8,
+          "direction": "upload",
+          "scratchBytes": 8,
+          "stagingBytes": 0
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 20,
+        "bind": 8,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 2,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 2,
+        "usage": 0,
+        "stride": 11,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 2,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 2
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 2,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 8,
+          "rowCount": 1,
+          "level": 2,
+          "levelWidth": 2,
+          "levelHeight": 1,
+          "rowStride": 11,
+          "layerStride": 11,
+          "footprintBytes": 8,
+          "requiredEnd": 11,
+          "tightBytes": 8,
+          "direction": "readback",
+          "scratchBytes": 16,
+          "stagingBytes": 40,
+          "nativeReadBytes": 16,
+          "conversionBytes": 24
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 20,
+        "bind": 9,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 0,
+        "usage": 0,
+        "stride": 41,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 9,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 1
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 9,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 36,
+          "rowCount": 1,
+          "rowStride": 41,
+          "layerStride": 287,
+          "footprintBytes": 36,
+          "requiredEnd": 39,
+          "tightBytes": 36,
+          "direction": "upload",
+          "scratchBytes": 36,
+          "stagingBytes": 0
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 20,
+        "bind": 9,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 0,
+        "usage": 0,
+        "stride": 41,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 9,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 2
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 9,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 36,
+          "rowCount": 1,
+          "rowStride": 41,
+          "layerStride": 287,
+          "footprintBytes": 36,
+          "requiredEnd": 39,
+          "tightBytes": 36,
+          "direction": "readback",
+          "scratchBytes": 72,
+          "stagingBytes": 180,
+          "nativeReadBytes": 72,
+          "conversionBytes": 108
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 20,
+        "bind": 9,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 2,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 2,
+        "usage": 0,
+        "stride": 11,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 2,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 1
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 2,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 8,
+          "rowCount": 1,
+          "level": 2,
+          "levelWidth": 2,
+          "levelHeight": 1,
+          "rowStride": 11,
+          "layerStride": 11,
+          "footprintBytes": 8,
+          "requiredEnd": 11,
+          "tightBytes": 8,
+          "direction": "upload",
+          "scratchBytes": 8,
+          "stagingBytes": 0
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 20,
+        "bind": 9,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 2,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 2,
+        "usage": 0,
+        "stride": 11,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 2,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 2
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 2,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 8,
+          "rowCount": 1,
+          "level": 2,
+          "levelWidth": 2,
+          "levelHeight": 1,
+          "rowStride": 11,
+          "layerStride": 11,
+          "footprintBytes": 8,
+          "requiredEnd": 11,
+          "tightBytes": 8,
+          "direction": "readback",
+          "scratchBytes": 16,
+          "stagingBytes": 40,
+          "nativeReadBytes": 16,
+          "conversionBytes": 24
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 21,
+        "bind": 1,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 0,
+        "usage": 0,
+        "stride": 41,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 9,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 1
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 9,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 36,
+          "rowCount": 1,
+          "rowStride": 41,
+          "layerStride": 287,
+          "footprintBytes": 36,
+          "requiredEnd": 39,
+          "tightBytes": 36,
+          "direction": "upload",
+          "scratchBytes": 36,
+          "stagingBytes": 0
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 21,
+        "bind": 1,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 0,
+        "usage": 0,
+        "stride": 41,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 9,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 2
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 9,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 36,
+          "rowCount": 1,
+          "rowStride": 41,
+          "layerStride": 287,
+          "footprintBytes": 36,
+          "requiredEnd": 39,
+          "tightBytes": 36,
+          "direction": "readback",
+          "scratchBytes": 36,
+          "stagingBytes": 72,
+          "nativeReadBytes": 36,
+          "conversionBytes": 36
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 21,
+        "bind": 1,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 2,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 2,
+        "usage": 0,
+        "stride": 11,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 2,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 1
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 2,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 8,
+          "rowCount": 1,
+          "level": 2,
+          "levelWidth": 2,
+          "levelHeight": 1,
+          "rowStride": 11,
+          "layerStride": 11,
+          "footprintBytes": 8,
+          "requiredEnd": 11,
+          "tightBytes": 8,
+          "direction": "upload",
+          "scratchBytes": 8,
+          "stagingBytes": 0
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 21,
+        "bind": 1,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 2,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 2,
+        "usage": 0,
+        "stride": 11,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 2,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 2
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 2,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 8,
+          "rowCount": 1,
+          "level": 2,
+          "levelWidth": 2,
+          "levelHeight": 1,
+          "rowStride": 11,
+          "layerStride": 11,
+          "footprintBytes": 8,
+          "requiredEnd": 11,
+          "tightBytes": 8,
+          "direction": "readback",
+          "scratchBytes": 8,
+          "stagingBytes": 16,
+          "nativeReadBytes": 8,
+          "conversionBytes": 8
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 21,
+        "bind": 8,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 0,
+        "usage": 0,
+        "stride": 41,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 9,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 1
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 9,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 36,
+          "rowCount": 1,
+          "rowStride": 41,
+          "layerStride": 287,
+          "footprintBytes": 36,
+          "requiredEnd": 39,
+          "tightBytes": 36,
+          "direction": "upload",
+          "scratchBytes": 36,
+          "stagingBytes": 0
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 21,
+        "bind": 8,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 0,
+        "usage": 0,
+        "stride": 41,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 9,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 2
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 9,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 36,
+          "rowCount": 1,
+          "rowStride": 41,
+          "layerStride": 287,
+          "footprintBytes": 36,
+          "requiredEnd": 39,
+          "tightBytes": 36,
+          "direction": "readback",
+          "scratchBytes": 36,
+          "stagingBytes": 72,
+          "nativeReadBytes": 36,
+          "conversionBytes": 36
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 21,
+        "bind": 8,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 2,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 2,
+        "usage": 0,
+        "stride": 11,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 2,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 1
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 2,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 8,
+          "rowCount": 1,
+          "level": 2,
+          "levelWidth": 2,
+          "levelHeight": 1,
+          "rowStride": 11,
+          "layerStride": 11,
+          "footprintBytes": 8,
+          "requiredEnd": 11,
+          "tightBytes": 8,
+          "direction": "upload",
+          "scratchBytes": 8,
+          "stagingBytes": 0
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 21,
+        "bind": 8,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 2,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 2,
+        "usage": 0,
+        "stride": 11,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 2,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 2
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 2,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 8,
+          "rowCount": 1,
+          "level": 2,
+          "levelWidth": 2,
+          "levelHeight": 1,
+          "rowStride": 11,
+          "layerStride": 11,
+          "footprintBytes": 8,
+          "requiredEnd": 11,
+          "tightBytes": 8,
+          "direction": "readback",
+          "scratchBytes": 8,
+          "stagingBytes": 16,
+          "nativeReadBytes": 8,
+          "conversionBytes": 8
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 21,
+        "bind": 9,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 0,
+        "usage": 0,
+        "stride": 41,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 9,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 1
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 9,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 36,
+          "rowCount": 1,
+          "rowStride": 41,
+          "layerStride": 287,
+          "footprintBytes": 36,
+          "requiredEnd": 39,
+          "tightBytes": 36,
+          "direction": "upload",
+          "scratchBytes": 36,
+          "stagingBytes": 0
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 21,
+        "bind": 9,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 0,
+        "usage": 0,
+        "stride": 41,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 9,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 2
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 9,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 36,
+          "rowCount": 1,
+          "rowStride": 41,
+          "layerStride": 287,
+          "footprintBytes": 36,
+          "requiredEnd": 39,
+          "tightBytes": 36,
+          "direction": "readback",
+          "scratchBytes": 36,
+          "stagingBytes": 72,
+          "nativeReadBytes": 36,
+          "conversionBytes": 36
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 21,
+        "bind": 9,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 2,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 2,
+        "usage": 0,
+        "stride": 11,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 2,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 1
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 2,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 8,
+          "rowCount": 1,
+          "level": 2,
+          "levelWidth": 2,
+          "levelHeight": 1,
+          "rowStride": 11,
+          "layerStride": 11,
+          "footprintBytes": 8,
+          "requiredEnd": 11,
+          "tightBytes": 8,
+          "direction": "upload",
+          "scratchBytes": 8,
+          "stagingBytes": 0
+        }
+      }
+    },
+    {
+      "metadata": {
+        "id": 29,
+        "target": 2,
+        "format": 21,
+        "bind": 9,
+        "width": 9,
+        "height": 7,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 2,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "fields": {
+        "resourceHandle": 29,
+        "level": 2,
+        "usage": 0,
+        "stride": 11,
+        "layerStride": 0,
+        "box": {
+          "x": 0,
+          "y": 0,
+          "z": 0,
+          "width": 2,
+          "height": 1,
+          "depth": 1
+        },
+        "dataOffset": 3,
+        "direction": 2
+      },
+      "backingByteLength": 128,
+      "result": {
+        "ok": true,
+        "layout": {
+          "kind": "texture",
+          "box": {
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "width": 2,
+            "height": 1,
+            "depth": 1
+          },
+          "offset": 3,
+          "rowBytes": 8,
+          "rowCount": 1,
+          "level": 2,
+          "levelWidth": 2,
+          "levelHeight": 1,
+          "rowStride": 11,
+          "layerStride": 11,
+          "footprintBytes": 8,
+          "requiredEnd": 11,
+          "tightBytes": 8,
+          "direction": "readback",
+          "scratchBytes": 8,
+          "stagingBytes": 16,
+          "nativeReadBytes": 8,
+          "conversionBytes": 8
+        }
+      }
+    }
+  ],
+  "generated": [
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 12294,
+      "sha256": "6bb07a0b2a056d21ae52b22d7700ce10577854c1cdcf0877dd80be938e30e0fa"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 438512,
+      "sha256": "acbe036afcdc4f1d8aa8cfb0fb107f48ba27759a6af4a7b9d6c83e3aa679d6cc"
+    }
+  ]
+}

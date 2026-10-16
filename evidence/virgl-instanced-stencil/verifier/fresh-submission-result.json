@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "sourceHead": "d88235ea7d16b2475ff9d6c7d96cc361d5589c3e",
+  "command": "caffeinate -disu env VIRGL_INSTANCED_STENCIL_EVIDENCE_DIR=target/evidence/virgl-instanced-stencil-fresh-d88235ea make verify-E6-T11d47",
+  "receiptSha256": "6df627e5d1c4f1dcfed35481274401464ba9b2003b671a7013b7f5b4fae40cb6",
+  "counts": {
+    "runs": 268,
+    "frames": 290,
+    "pixels": 288918,
+    "nativePasses": 9370,
+    "normalizedBytes": 12768,
+    "consumedSyncs": 2522,
+    "disposalOnlySyncs": 24
+  },
+  "runtimeUnchangedFrom": "3cbb041b43928701026b5ca2ddfb3dcf9a799c2b"
+}

@@ -1,0 +1,260 @@
+{
+  "schema": "floating-depth-serving-boundary-v1",
+  "predecessor": "d79868fbfbb70ef215de0eaeee34cf3bee70a008",
+  "records": [
+    {
+      "path": "tools/verify-virgl-async-jobs.mjs",
+      "predecessorSha256": "0d15239320a57fe4f85bb8365ecf297fe708e3d2cfbd1f55548846ef21d15f5a",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs',",
+          "after": "  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-blend-equations.mjs",
+      "predecessorSha256": "9ded3c80c9fb6872ee5dc387a5d1b8e7961a3f46b9e0f4681c536be032e3df7b",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/cache.mjs',",
+          "after": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/cache.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-bounded-loops.mjs",
+      "predecessorSha256": "cb133871fbcc9968be74deb36f8d79cf011a5a2000e8e3ef54d5f97b895a3736",
+      "changes": [
+        {
+          "before": "const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/bounded-loops.mjs','renderer/virgl-command/tests/bounded-loops-oracle.mjs','renderer/virgl-command/tests/bounded-loops-shaders.json', 'renderer/virgl-command/color-images.mjs'];",
+          "after": "const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/bounded-loops.mjs','renderer/virgl-command/tests/bounded-loops-oracle.mjs','renderer/virgl-command/tests/bounded-loops-shaders.json', 'renderer/virgl-command/color-images.mjs'];"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-color-formats.mjs",
+      "predecessorSha256": "52477bc57d89f45c8f59d5eb8ea5bb4e2a20db1249516c35453627080036e54e",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',",
+          "after": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-constant-compiler.mjs",
+      "predecessorSha256": "2254e73c56a0fd8ff304e1b24b68adf1d5ac130c39efd0b292780213fb70aaae",
+      "changes": [
+        {
+          "before": "const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/constant-compiler.mjs','renderer/virgl-command/tests/constant-compiler-oracle.mjs','renderer/virgl-command/tests/constant-compiler-shaders.json', 'renderer/virgl-command/color-images.mjs'];",
+          "after": "const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/constant-compiler.mjs','renderer/virgl-command/tests/constant-compiler-oracle.mjs','renderer/virgl-command/tests/constant-compiler-shaders.json', 'renderer/virgl-command/color-images.mjs'];"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-constant-domains.mjs",
+      "predecessorSha256": "256e2dbe5e899e0bedb3d2daae57ebecd09d4b5c3ba03892e81aa043843cfb1b",
+      "changes": [
+        {
+          "before": "const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/constant-domains.mjs','renderer/virgl-command/tests/constant-domain-shaders.json', 'renderer/virgl-command/color-images.mjs'];",
+          "after": "const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/constant-domains.mjs','renderer/virgl-command/tests/constant-domain-shaders.json', 'renderer/virgl-command/color-images.mjs'];"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-constants.mjs",
+      "predecessorSha256": "87b5d3833e244a4f2547a943945040fc6fe1e58ac8f0606ff317975a7934aa95",
+      "changes": [
+        {
+          "before": "const runtime = ['renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/tests/constants.mjs','renderer/virgl-command/tests/constant-shaders.json','tools/virgl-constants/decoder.mjs', 'renderer/virgl-command/color-images.mjs'];",
+          "after": "const runtime = ['renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/tests/constants.mjs','renderer/virgl-command/tests/constant-shaders.json','tools/virgl-constants/decoder.mjs', 'renderer/virgl-command/color-images.mjs'];"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-control.mjs",
+      "predecessorSha256": "6273be04f9d002cb81c0d739b71bf96c0f4929c4455458ac7ea154b999683ce3",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/constant-domain.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs', 'renderer/virgl-command/decoder.mjs',",
+          "after": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs', 'renderer/virgl-command/constant-domain.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs', 'renderer/virgl-command/decoder.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-depth-formats.mjs",
+      "predecessorSha256": "584fd8fb0470782cf664ccaa22d4c6c8fd785daf88f8442e2279610f37c53d3d",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',",
+          "after": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-draw-replay.mjs",
+      "predecessorSha256": "6d418d32fd864f49c5b1423ed474fb98f5b11d983676060de74d6c2de14c7975",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs',",
+          "after": "  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-float-vertex-fetch.mjs",
+      "predecessorSha256": "ce6116db7e48e370977dd4fa1ef1690f4bbb16d1406d5b5d9ffa6189e56a790a",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/cache.mjs',",
+          "after": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/cache.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-indirect-constants.mjs",
+      "predecessorSha256": "0ec48a41e7f3865981e9cb77e4490604b5b9ce78dd49ccdfe8324d4301a37ce5",
+      "changes": [
+        {
+          "before": "const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/indirect-constants.mjs','renderer/virgl-command/tests/indirect-constants-oracle.mjs','renderer/virgl-command/tests/indirect-constants-shaders.json', 'renderer/virgl-command/color-images.mjs'];",
+          "after": "const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/indirect-constants.mjs','renderer/virgl-command/tests/indirect-constants-oracle.mjs','renderer/virgl-command/tests/indirect-constants-shaders.json', 'renderer/virgl-command/color-images.mjs'];"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-inline-uploads.mjs",
+      "predecessorSha256": "ba0531f6bded52205c3570def2954e35362f1bc0728096e65faf1cbcd36dc81c",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',",
+          "after": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-object-state.mjs",
+      "predecessorSha256": "44152e4c4785a464f605c5a3365311c6867bcf6286ba2204985aa56b33c3dd39",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs',",
+          "after": "  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-pairs.mjs",
+      "predecessorSha256": "5c60661fbcb1f2ab74fc4d38b708b87a6d57e3964cd9f392414703eb1ab0a130",
+      "changes": [
+        {
+          "before": "const commandPaths=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/constant-domain.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/tests/flat-pairs.mjs', 'renderer/virgl-command/color-images.mjs'];",
+          "after": "const commandPaths=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/constant-domain.mjs', 'renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/tests/flat-pairs.mjs', 'renderer/virgl-command/color-images.mjs'];"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-raster-depth.mjs",
+      "predecessorSha256": "a1697d4d0c8c921b57012965662d067a31580991d85d23c40cc9f495df210c80",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',",
+          "after": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-render-cache.mjs",
+      "predecessorSha256": "98b10984facd019d96189edb0e46f4927cf1181b133f7b303cd606fcd140d53c",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/cache.mjs',",
+          "after": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/cache.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-resource-transfers.mjs",
+      "predecessorSha256": "07cc07d51a876f1d7cd4fb3018352f578fe1a0ec3b137decf881341011aae70e",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs',",
+          "after": "  'renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs',"
+        },
+        {
+          "before": "      'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs'];",
+          "after": "      'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs'];"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-standard-float-images-adversarial.mjs",
+      "predecessorSha256": "8fcf7bade575367d4406ef8619a4a7b39075afb89395a687c601a1e9091f2ef9",
+      "changes": [
+        {
+          "before": "const names = ['renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/color-images.mjs',",
+          "after": "const names = ['renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs', 'renderer/virgl-command/color-images.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-standard-texture-storage-adversarial.mjs",
+      "predecessorSha256": "2b7fa6a2a261b66d82f0ad5e461dfe99fac7d40e1199cd23d405d3ef0e49bf11",
+      "changes": [
+        {
+          "before": "const root=process.cwd(),output=path.resolve(opts.output),sha=b=>createHash('sha256').update(b).digest('hex'),sourcePaths=['renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/color-images.mjs'],module=path.resolve(opts.module),chrome='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';",
+          "after": "const root=process.cwd(),output=path.resolve(opts.output),sha=b=>createHash('sha256').update(b).digest('hex'),sourcePaths=['renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs', 'renderer/virgl-command/color-images.mjs'],module=path.resolve(opts.module),chrome='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-standard-texture-storage.mjs",
+      "predecessorSha256": "7cfd6ca76f580c3e528509ec24dd08d98ee4f7312d8a29a46c4c2324f04b2a88",
+      "changes": [
+        {
+          "before": " 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/decoder.mjs',",
+          "after": " 'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-standard-uniform-bindings.mjs",
+      "predecessorSha256": "422f562f31eee68ccc7dd57d7e0f1abdc83946c2921fc8de1f5e8b496f5778ad",
+      "changes": [
+        {
+          "before": " \"renderer/virgl-command/float-images.mjs\", \"renderer/virgl-command/packed-float-images.mjs\", \"renderer/virgl-command/shared-exponent-images.mjs\", \"renderer/virgl-command/shared-exponent-gpu.mjs\", \"renderer/virgl-command/integer-images.mjs\", 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs',",
+          "after": " \"renderer/virgl-command/float-images.mjs\", \"renderer/virgl-command/packed-float-images.mjs\", \"renderer/virgl-command/shared-exponent-images.mjs\", \"renderer/virgl-command/shared-exponent-gpu.mjs\", \"renderer/virgl-command/integer-images.mjs\", 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-structured-conditionals.mjs",
+      "predecessorSha256": "4fc6dfb427e4b2750e60d70eb1bda898bc1f499c978789595712a0682496104b",
+      "changes": [
+        {
+          "before": "const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/structured-conditionals.mjs','renderer/virgl-command/tests/structured-conditionals-oracle.mjs','renderer/virgl-command/tests/structured-conditionals-shaders.json', 'renderer/virgl-command/color-images.mjs'];",
+          "after": "const runtime=['renderer/virgl-command/decoder.mjs','renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs','renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/structured-conditionals.mjs','renderer/virgl-command/tests/structured-conditionals-oracle.mjs','renderer/virgl-command/tests/structured-conditionals-shaders.json', 'renderer/virgl-command/color-images.mjs'];"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-texture-views.mjs",
+      "predecessorSha256": "430dcb8cdaff89b241e491a1e8baedcb02c2ab22aa03738787f827875470368c",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',",
+          "after": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',"
+        }
+      ]
+    },
+    {
+      "path": "tools/verify-virgl-vertex-constants.mjs",
+      "predecessorSha256": "088481dd256d1cc6196ba5cf855c07dd56d9b997b542c372656292395774f0a2",
+      "changes": [
+        {
+          "before": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/cache.mjs',",
+          "after": "  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs','renderer/virgl-command/cache.mjs',"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "kind": "critic-source-line-citation-correction",
+  "predictionUnchanged": "actual native output corruption must fail the exact literal word/shadow guard",
+  "observed": "word fault correctly failed at supplement.mjs:82; critic had annotated :84 and stopped while validating that citation",
+  "sourceCheck": "nl -ba verifies literal word82/shadow83 and consumer approval22",
+  "runtimeOrFixtureChanged": false,
+  "retainedFirstFailure": "target/evidence/virgl-known-arithmetic-critic-supplement/fault-word-guard.stderr",
+  "stderrSha256": "36147c03113afbc61ee3adfff4746997d1b4ad8259d56cb237a4b693cec11d6b",
+  "shadowInjectionCorrection": {
+    "observed": "a single shadow mutation left the same expected value in the second lane; the presence assertion passed and the deliberately non-ELF wrapper then failed llvm-cov export. This was an injection/point assumption, not accepted faulty evidence. Complete original native/Wasm equality is checked later by the guard.",
+    "demand": "recheck literal-shadow guard by corrupting both identical 1.5 literals in the first public single result; preserve the first output and preinspection predictions",
+    "retainedFirstFailure": "target/evidence/virgl-known-arithmetic-critic-supplement/fault-shadow-rechecked-guard.stderr",
+    "stderrSha256": "49df4c2ae5797e273f3f8ef38a86cae91a4cd8794fc5ec72734f98704efee80d"
+  }
+}

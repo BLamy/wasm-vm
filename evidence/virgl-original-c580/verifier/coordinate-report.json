@@ -1,0 +1,2884 @@
+{
+  "schema": 1,
+  "task": "E6-T12g6m5a",
+  "boundary": "independent coordinate-source sabotage",
+  "guestExecution": false,
+  "status": "failed",
+  "command": [
+    "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+    "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-original-c580-verifier/coordinate-browser.mjs"
+  ],
+  "startedAt": "2026-10-06T01:27:35.190Z",
+  "host": {
+    "platform": "darwin",
+    "architecture": "arm64",
+    "release": "25.6.0",
+    "node": "v24.20.0"
+  },
+  "gitHead": "2d99aa50228f2350a2de02eeb2f2c0c2d7508195",
+  "trackedChanges": [],
+  "sources": [
+    {
+      "path": "renderer/virgl-shader/bridge.c",
+      "size": 114320,
+      "sha256": "6800dd9843fff52ef017fceca2b24c4cad64c298f81bca9683e5701f78fb1441"
+    },
+    {
+      "path": "renderer/virgl-shader/bridge.h",
+      "size": 2768,
+      "sha256": "8236e37d624e67000596ef0adefc01d7640f7c3e807a1c48fc31b3cdea8e5554"
+    },
+    {
+      "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.js",
+      "size": 62836,
+      "sha256": "031892a4f63a8cc6fba114a8931d43881c12ba7cea5ab27e082bc64f386feb3e"
+    },
+    {
+      "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.mjs",
+      "size": 55619,
+      "sha256": "1182fc11fb11e2f2886efabd6377fd13f932eeed60bb407b76637269637a3935"
+    },
+    {
+      "path": "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.wasm",
+      "size": 38297,
+      "sha256": "4066d74c06425bc7a6fef4a4d83dcf79006fd0e02d02b64e1658963aede9f462"
+    },
+    {
+      "path": "renderer/virgl-shader/build/coordinate-primary.json",
+      "size": 615387,
+      "sha256": "469e4a92782152ed5789dfa5abaa1b27eaa2e8748a6243c36299a8cb7c344ea8"
+    },
+    {
+      "path": "renderer/virgl-shader/build/coordinate-reference-2242054355.json",
+      "size": 7828361,
+      "sha256": "0dafeb9a22fbe9838fd9b17fc5da7eebf28e375ff377d09ff22f3ea50800c653"
+    },
+    {
+      "path": "renderer/virgl-shader/build/coordinate-reference-2654435769.json",
+      "size": 7611831,
+      "sha256": "60c5d512ff216d53811d9835f9412f914ca8b32bdf3ea69b476ef9597a1921f5"
+    },
+    {
+      "path": "renderer/virgl-shader/build/coordinate-reference-3737844652.json",
+      "size": 7569519,
+      "sha256": "e95bd16e430788fbd8f3ae7e6fbc431b5a033613c788d1251871c511baf3fa11"
+    },
+    {
+      "path": "renderer/virgl-shader/build/coordinate-reference-608135816.json",
+      "size": 7744410,
+      "sha256": "b4069ca1cc1f8dded2f85828fbea4e3f20be87bf500ccc8c7de148f09aec703b"
+    },
+    {
+      "path": "renderer/virgl-shader/build/discard-primary.json",
+      "size": 2298330,
+      "sha256": "1e7e8b546e4678ed1b1879386e713e4a59d2f2c27cf21cc4a8019d9732cc1f70"
+    },
+    {
+      "path": "renderer/virgl-shader/build/discard-reference-2242054355.json",
+      "size": 7841831,
+      "sha256": "86a402f857bdb3a25b736236ccb06048f2816c89f3037ff57542d7b12a6e7169"
+    },
+    {
+      "path": "renderer/virgl-shader/build/discard-reference-2654435769.json",
+      "size": 4488495,
+      "sha256": "f4972e9a77a95840d50863dafccba98589527c50481b6d9ae1b7ec27fca687d2"
+    },
+    {
+      "path": "renderer/virgl-shader/build/discard-reference-608135816.json",
+      "size": 5035582,
+      "sha256": "d1700fa72d8dfef6558831244b83d6e692e427a39acf3944e1c71d71ec611c85"
+    },
+    {
+      "path": "renderer/virgl-shader/build/exponent-logarithm-primary.json",
+      "size": 2602850,
+      "sha256": "03914ff94880d3f8183da684135a99f71ffa4bdc40f003339a115f67c07b1fe2"
+    },
+    {
+      "path": "renderer/virgl-shader/build/exponent-logarithm-reference.json",
+      "size": 212802,
+      "sha256": "d0e335ace05c114f213676ef3d6503f1e47b5855c606f22a1c1b9b2bb6c90ff0"
+    },
+    {
+      "path": "renderer/virgl-shader/build/minimum-selection-primary.json",
+      "size": 1537266,
+      "sha256": "392543ca97ee56182a210fc02dfc5b41da35ab48239a67350e2b08ffacead50b"
+    },
+    {
+      "path": "renderer/virgl-shader/build/original-c580-wasm/fragment.tgsi",
+      "size": 14786,
+      "sha256": "c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f"
+    },
+    {
+      "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.js",
+      "size": 63193,
+      "sha256": "1b7b7a71e657bbafcfe58e2cd49bc440687f157fd4212ff8bdf836a731e1d6fb"
+    },
+    {
+      "path": "renderer/virgl-shader/build/original-c580-wasm/original-c580.wasm",
+      "size": 352465,
+      "sha256": "063c0ce25ef81fd197c88a31b3feb55b2377bed89dde215566e2941792146525"
+    },
+    {
+      "path": "renderer/virgl-shader/build/original-c580-wasm/vertex.tgsi",
+      "size": 419,
+      "sha256": "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c"
+    },
+    {
+      "path": "renderer/virgl-shader/build/power-primary.json",
+      "size": 2488460,
+      "sha256": "fbad78e19e89da3562a47acb9a2b69261f35b29984bcf7f938aa3c9e2017aacf"
+    },
+    {
+      "path": "renderer/virgl-shader/build/power-reference.json",
+      "size": 178850,
+      "sha256": "1edf2cf8a60d31ba415d1f218c1379694b540e9517df0e3fa68abb7f75a0a9d5"
+    },
+    {
+      "path": "renderer/virgl-shader/build/precise-fraction-primary.json",
+      "size": 3278533,
+      "sha256": "f7f57f8f55905fc403a712c152ee4d847a6fe89150471eb278102924c1e02756"
+    },
+    {
+      "path": "renderer/virgl-shader/build/saturation-primary.json",
+      "size": 2052714,
+      "sha256": "bdf1a83e24da3d82328b9bc94e4079d0a777dd0c29eb4a875839cd08ead8ebc8"
+    },
+    {
+      "path": "renderer/virgl-shader/build/scalar-operations-primary.json",
+      "size": 2639142,
+      "sha256": "33286a6a3fa66970b4be157da3998a2696c4756bc3fbc2f9482c776903e96e91"
+    },
+    {
+      "path": "renderer/virgl-shader/build/signed-conversions-primary.json",
+      "size": 548040,
+      "sha256": "1f3714318f3736e34c744a1c0b39aebf539071434a0427c182b574b274c2e4ee"
+    },
+    {
+      "path": "renderer/virgl-shader/build/signed-conversions-range-constant.mjs",
+      "size": 28615,
+      "sha256": "3690848dbbf5e2d1bd3cb33eda0b7075da9aaf4789d5b901a333164ccfec9ddc"
+    },
+    {
+      "path": "renderer/virgl-shader/build/signed-conversions-range-fault.json",
+      "size": 661,
+      "sha256": "5e4faaf3b7e6f29ad3c8a2e56cc3d6582e0cf54d3c717262e5b3bd352069ae62"
+    },
+    {
+      "path": "renderer/virgl-shader/build/signed-conversions-range-state.mjs",
+      "size": 74801,
+      "sha256": "e2ab9616ab5787ced52ba8ecf73a5d92dfda6a0bec6f257151ffd3ecceb2e3d7"
+    },
+    {
+      "path": "renderer/virgl-shader/build/signed-integers-primary.json",
+      "size": 724956,
+      "sha256": "e2d5af15fda7318fa64ecc1c6dd4003e58daade0394dc45238a2957c4cdd8be4"
+    },
+    {
+      "path": "renderer/virgl-shader/build/sine-primary.json",
+      "size": 1558108,
+      "sha256": "0e74751f9d33cbe9116a902021db7debd72fda8eb84d3945c424fd1da7a4bee9"
+    },
+    {
+      "path": "renderer/virgl-shader/build/sine-reference.json",
+      "size": 428582,
+      "sha256": "9ead8de13d1185fbe86c51a1d8d6d042d206b63247815f1c7dc778e343ab40e3"
+    },
+    {
+      "path": "renderer/virgl-shader/build/verify-original-c580-coordinate.mjs",
+      "size": 12788,
+      "sha256": "0bfa4a729a48fa1f5bce9c41ea1b61d578c830670d4a1b2fd1910e23e1bd6bb3"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "size": 9545,
+      "sha256": "f0b10ba4b17c05ff5c3db99608a402476ac2e91b482e7cdc3238704f59a58a41"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "size": 350481,
+      "sha256": "d38daa1c9d9c9c54acb36f9c74af3b7c59b18d7fb536d9e77bf879a84f4b1b29"
+    },
+    {
+      "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.js",
+      "size": 62764,
+      "sha256": "c5e09384e9f829ac63b705fd9efc2b5e1f3cb31430c7306db4d10d415f14f1e6"
+    },
+    {
+      "path": "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.wasm",
+      "size": 42062,
+      "sha256": "78ecbae4dd447b25e15ac7f449ba11b2ecf003d13eea0f1322a7b803150e2675"
+    },
+    {
+      "path": "renderer/virgl-shader/build.sh",
+      "size": 28862,
+      "sha256": "c152fa5b5bcfd709d12a1835d67baab3ce5f5c2e99904a299ac9296420adcf36"
+    },
+    {
+      "path": "renderer/virgl-shader/checked_upstream.c",
+      "size": 3266,
+      "sha256": "a1d60b4e9b214466f2fec6baabde855f78024bee68199aef524ef84f1f7f772b"
+    },
+    {
+      "path": "renderer/virgl-shader/checked_upstream.h",
+      "size": 304,
+      "sha256": "bdd21214e97b6e9a63516e2b96e4753f8aaaa9f69ad48dee1d133129872f8aac"
+    },
+    {
+      "path": "renderer/virgl-shader/cli.c",
+      "size": 454,
+      "sha256": "65c9e5a0a3c58ddad36e520f335ca054c8eeec33e851df24db474546a8d7afb3"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_gen.h",
+      "size": 48398,
+      "sha256": "ac83c3095bf8d81e84eeb448e7743135ce14cf7b35efdc0b75fef8d9c941f068"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/u_format_table.c",
+      "size": 554830,
+      "sha256": "9b654addadc5a17ae283381ba93c8f745a9416171284821e3da381571a49b4f4"
+    },
+    {
+      "path": "renderer/virgl-shader/generated/virgl-version.h",
+      "size": 2149,
+      "sha256": "bea8c6c3b5f6509840d7365bfd0a6bb1d9671118e38da04464a419372faa97fb"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "size": 15059,
+      "sha256": "439496651632a56dcdaea467bfe708ca00ea94b23f045ad36bdd55c133ff357b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/banks.c",
+      "size": 9108,
+      "sha256": "bbdb308cf8eb69b1ad5d53e33ad8e49051b58ac1ceed8b390d143db63b3f81e7"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/bounded_loops.c",
+      "size": 16364,
+      "sha256": "9728ec295089efba300c4e8d51eafd1e3c21171b868126a0a0f804697bbb128b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/captured.c",
+      "size": 10446,
+      "sha256": "b0339483f3cb999932be8ae3e2dda9afefbec706f745bcb821d9df4ea8881abf"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/compiler_bounds.c",
+      "size": 7426,
+      "sha256": "53d7d7b03f362a837a64597a5e26e5e82a93e0d259aa86f380500bc654fa8e93"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/component_floats.c",
+      "size": 12756,
+      "sha256": "f4448c512bebc7243cb346123df3335df0ec9f56f5b7458d9e5b023ade5bc7ed"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/components.c",
+      "size": 6760,
+      "sha256": "6fd3bf132a80e5d8b9776967cd2d335433f54fba4937271c2d8e1e4504aea938"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/constant_compiler.c",
+      "size": 15327,
+      "sha256": "e30e7ff420b27e58c0e3a5b22b02b758a2dc6c767d358d0c2ea1a4468465b952"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/coordinate_prefix.c",
+      "size": 9869,
+      "sha256": "0fd37d903f9c9537844a8153ba90697145cff4cbbe1f8ce9321afdfa19caf1f0"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/dot_reciprocals.c",
+      "size": 12911,
+      "sha256": "9c701b78b0ac902ec1370b0b06200b58024fa2db9054eb7ca22226e6806fc3bf"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/exact_pair.c",
+      "size": 6930,
+      "sha256": "a7463df62c0fd54cdc4a49722c916dff98a4d228f136383e1846218dd93bfaf9"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/exact_producer.c",
+      "size": 7161,
+      "sha256": "dd202a4b9447ae9beed7c40817943386bc79620d2b0cadd119a035ee4ec321da"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/exact_reciprocal.c",
+      "size": 2376,
+      "sha256": "12d74f9b2d3fa7b4f64e0e2ad6e9df6d69ef4fceb3ab2bfad706a2ca6b9c8ad2"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/exponent_logarithm.c",
+      "size": 5628,
+      "sha256": "6d9663275c845be1aa9a12f7c624c9c06e613e1f5c9c6d1ebcb87f00207053ca"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/float_masks.c",
+      "size": 12298,
+      "sha256": "afc41f061f6d6427fe85ec35510512910e03bb893d35bb05ebe4d5ecbe5a2455"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/fragment_coordinates.c",
+      "size": 6958,
+      "sha256": "a682bccdba4e2ee2ea11f94f9d5901ae83062620e80365f8b2dfb8df75390971"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/fragment_discard.c",
+      "size": 8203,
+      "sha256": "6f50f7d77902474c0768ae28f9916bf000d23e0611de83ac10d466eddec53dfe"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/hex_literals.c",
+      "size": 3186,
+      "sha256": "4a08eddaca59ef684a431342ecf75779b1d077918cc1083b7cff9d92da7e69cd"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/hostile.c",
+      "size": 7478,
+      "sha256": "cff3b387a16d438a12dd1af57b47128c815a9f1a9fc1966a365cee51e1119696"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/indirect_constants.c",
+      "size": 16400,
+      "sha256": "5d2ce3c7f57c7422a44186d653a1fae6f76bdd064b1859be35877abc5f191129"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/integer_masks.c",
+      "size": 12136,
+      "sha256": "ac712922b538298a97bd67af2a1eddb4dd8bd060ca3d6c2f5e8b31c153112fe4"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/known_arithmetic.c",
+      "size": 3841,
+      "sha256": "f5abdb72162e0df0f13e41a8cfb36474faca509ce94471e5f0032c747f14acbd"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/known_branch.c",
+      "size": 4982,
+      "sha256": "02292fee984a8ef5a40f8c74d7af39a6773fc677c2f112056be884ff245c3a98"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/minimum_selection.c",
+      "size": 5381,
+      "sha256": "0624508c33793ed9561c298f58cb997c790d8d18cc6f4d4ea587380caf37eb07"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/numeric_floats.c",
+      "size": 12549,
+      "sha256": "1c86ce4e37632eebf76e5c0d085bbf344845a4427e85c562ce9d758eb84504b8"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/ordered_masks.c",
+      "size": 23863,
+      "sha256": "9ea96a8eafddc4db2dd8966f7e9b52d16bc85b09534bdd7042fb4c8c43a2ca4a"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_c580.c",
+      "size": 3060,
+      "sha256": "40611a136a17edd71fa633d855166c4469a63219c80c0f726dc90eb3d74f03eb"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/original_corpus.c",
+      "size": 3667,
+      "sha256": "4e78d3a0660312450e2c3db453c56f7d10bd25601b3078bc2d196572e50e7bd0"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/pairs.c",
+      "size": 8708,
+      "sha256": "19dc85ec25b16230e813996531e3a8235b396c4dfb9331304ad815cc784f46c2"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/power.c",
+      "size": 5565,
+      "sha256": "4fbc30c0a87322ee401396b9149779d9a23b9f4ba45a44b7b6e8a6075b8a21fd"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_arithmetic.c",
+      "size": 27753,
+      "sha256": "3ca506dc6af11efd49b4af0e9a26aa65bb45f1150cdf74725c91704b882f4bc9"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_audit.c",
+      "size": 1975,
+      "sha256": "193748c7e2dca04dba7a8345bcee1d6d18d99a4a949dbe7d71f4f52000c47f4f"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_fraction.c",
+      "size": 5895,
+      "sha256": "eccb78f243ae210dd0174854b530d89a99a227b29f22c5a51905c6e20fd848a4"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_upstream_allocations.c",
+      "size": 5169,
+      "sha256": "80bd380980efd72df832a52654ce00078ef3be8239e786e47e9539ca0c7cb891"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_upstream_allocations.sh",
+      "size": 1387,
+      "sha256": "d916319918b821f102ee9cbcce3af07daaa7ec54cbdfedba0b88cf1a5f75c651"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/precise_words.c",
+      "size": 23834,
+      "sha256": "529dfd30bb43948e5a73ce96fb21f07413772107db6a598fdae76cb67f167cd5"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/radial_domain.c",
+      "size": 19041,
+      "sha256": "92a4474de315deae0b653b47368c2cab676aeaa175395ca31fb3d440d69f1947"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/raster_bank.c",
+      "size": 25552,
+      "sha256": "e22e4ccf23b5048e5939367090fc3dcc451d34b9753067721b2435ffae7a5cab"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/raw_bits.c",
+      "size": 11721,
+      "sha256": "8959695ea4436938389c64eb93e356fc83c1ad070941419d0184f57f25dd01bc"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/raw_equality.c",
+      "size": 16456,
+      "sha256": "355600c95b0ae2e1ddbb6f355d7119382553112676fb8079efc640677a7d0049"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/saturation.c",
+      "size": 5618,
+      "sha256": "53486fb5e04a1a6472abdc498d7f28794c49d19aecc96a37cdbfcec9ec739e7b"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/scalar_operations.c",
+      "size": 5429,
+      "sha256": "35738685cc578b08df9c43525fd2a28e0e05d2e49f959649eeac68d3af7db88d"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/selected_lanes_pair.c",
+      "size": 906,
+      "sha256": "a931212987b702398159715d67af4009b9631fc4394aee349c7c712b05c81842"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/selected_lanes.c",
+      "size": 17898,
+      "sha256": "d4dfe66030345634062412ff7d902cf1648d54334568d176edde64570b0a9000"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/signed_conversions.c",
+      "size": 5514,
+      "sha256": "fb9bb1e447fb53ae9603638df282a58bed59833dec351cf351c958ac20cde653"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/signed_integers.c",
+      "size": 5412,
+      "sha256": "20712fb7b685e39be33474bf111230faec298615362e744d668db240ab9b9f90"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/sine.c",
+      "size": 5563,
+      "sha256": "5b8d533698ae03074db78e12f5912c6d27c4480eaf23c037d8b45b35916103fb"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/structured_conditionals.c",
+      "size": 15757,
+      "sha256": "aec64e43ca848ee704c1dd4931206a83bf7a07e60e3a2bc23fd93d9e7c4a32db"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/zero_cap.c",
+      "size": 7850,
+      "sha256": "d28cde75dd0f93316ccb87025cac04ab890f50c1aa3aee0c1c53dbd8ab3a267b"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_binary32.h",
+      "size": 5216,
+      "sha256": "90d8e3227f44c19e21443d5ec85f6e926eece345b95cb6cd3b06f01259a7c490"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.c",
+      "size": 73883,
+      "sha256": "ad1f93ca94066cd6744ac566c2f8df122e0caa0dd1ecf3740ac7de3351d61181"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_bits.h",
+      "size": 13646,
+      "sha256": "10b01045653ca56bd82fb81da24b428ad2a4cffaa71fc8a120e8527f3fedc480"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_conversions.h",
+      "size": 3316,
+      "sha256": "f843c0f99ec6a62321507e72fcbed48bac504ff86f6818c1a232d0a666dd7341"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_fraction.h",
+      "size": 4300,
+      "sha256": "30ac2ff3c804f4b75e92a5646d95f108a1e3df5ad955027c204f490aa3e36003"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_known_arithmetic.h",
+      "size": 2732,
+      "sha256": "eaf4aa419caff2e7c9e7d2d5f6194c6184189cba78bd9c0ace541f7a291c27e9"
+    },
+    {
+      "path": "renderer/virgl-shader/raw_scalar.h",
+      "size": 1329,
+      "sha256": "e3252b5baf03c58a941b22473bfa9784cc5315a1653cef65b95219bcea2c8afd"
+    },
+    {
+      "path": "renderer/virgl-shader/README.md",
+      "size": 81026,
+      "sha256": "9f1152b385e6355a4720b5bda58c89f9174b8e1232b19af56d4859e37038b272"
+    },
+    {
+      "path": "renderer/virgl-shader/regenerate.py",
+      "size": 1696,
+      "sha256": "04121f0bbc2438b885c88737b03886c27a7024ea75454858c1bed9e40e89b399"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/alpha.frag.tgsi",
+      "size": 145,
+      "sha256": "b76a6ab3958192db11de2e1e300e2761e6c6db359e00afeb3e6527d8fa70b53e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/arithmetic.frag.tgsi",
+      "size": 160,
+      "sha256": "e05362e13188b954051e39bccf3da5201ebaf967ee9a60ac0f987ee38383600f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/bank-cases.json",
+      "size": 192995,
+      "sha256": "a6582a8578b5e0b3e71c9ee49e4fdf0328fb8f40a8ffac1e2984498495513a75"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/banks.mjs",
+      "size": 23946,
+      "sha256": "b0f538bf1c61c9eb83d3b9b3a0e1567d2981bcbb728e1a2eba9f54e66bcd007d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/bounded-loop-cases.json",
+      "size": 361412,
+      "sha256": "0eec49f7e11ff80fbcf84ef723df88126061c04ea17ddc70de26fc7529ba1653"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/browser.mjs",
+      "size": 18232,
+      "sha256": "98c06c9083ac761ebec44ebc2b051dd0faf8e917014ce7287dc8aa079bb7e1ef"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-grammar-migrations.json",
+      "size": 8214,
+      "sha256": "ce3193f5efc48d47e8ff10c2f5571fd9efb5cea56935d32c32ccd8aa86a23a36"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-invalid.json",
+      "size": 20802,
+      "sha256": "fd7769f258bc5d51ce6e1c10c8e91345124676e6ce1777b30999e23a19cdbd80"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/captured-textured-scene.mjs",
+      "size": 18550,
+      "sha256": "6e84d3e7313b9480f23fe41d571522f0e081343b732ab0b3e25482dd1f2aebcc"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/compiler-bounds-joins.mjs",
+      "size": 5725,
+      "sha256": "26dab24dbbff632ce381276abefcbca43f5fc2dca8342313f43fcd8376035c62"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/compiler-bounds.mjs",
+      "size": 13654,
+      "sha256": "a14ee820fdc0252863415dc403c066c8d0c9c49911dae827205f9a4cbfb7a64b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-cases.json",
+      "size": 54311,
+      "sha256": "92752e2bfc8d5712dc77d84b9502ed54c14fbecac6a717191dd556d09c122b40"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-float-cases.json",
+      "size": 301735,
+      "sha256": "423f9cd45978fe43a4da5c8c8a59d6d53f76e2068868c30eb06d3f331d92e198"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-float-hardware.json",
+      "size": 112033,
+      "sha256": "ee9afd644f44542c7bfef49636be7d4f9db957413f454a300737c10f1e8784e3"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-float-migrations.json",
+      "size": 3184,
+      "sha256": "f430bf73c2d29663d9ef406be7b55be2a6c590f2ad57e1584907a03974f88002"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/component-floats.mjs",
+      "size": 65278,
+      "sha256": "044a12cc3a0c166d3fe2c412b2d12f083b8a5d3edf3f91a983183e9f9a3fdc8e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/components.mjs",
+      "size": 20021,
+      "sha256": "28feb47ddaa30ba18704f63f150ce3e150b040be9788c146620635965c9a5f0c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/constant-compiler-cases.json",
+      "size": 398193,
+      "sha256": "53a0f1ef11e1b7049807df169d5b56acdaad4148aef4a8c4fd7b83154b1b9f7c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/constant-compiler-migrations.json",
+      "size": 232244,
+      "sha256": "91e88ec0a3dc6e9d9efe9ff9c0261021b87b0914394fd5cf7c338874911d3bc7"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/conversion-banks.mjs",
+      "size": 13931,
+      "sha256": "a42f166975286ecd0b085ff53c255447af2fd23e041b2221b30d783c0d7225af"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/coordinate-prefix.mjs",
+      "size": 7165,
+      "sha256": "d7647597389766d2f5822f5e93e178ff32aae042957b3ceb7cfdc70df06e23c9"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/corpus.mjs",
+      "size": 4442,
+      "sha256": "4f88a7a4f4a301f1a60e3f1b046d71635373a273cbc07e60b43c35aae33d0245"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocal-cases.json",
+      "size": 339348,
+      "sha256": "6640068f84c207cb221c8d753f5cd07afbed8fbc63b86f06664e245c9fb9ec3b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocal-hardware.json",
+      "size": 134169,
+      "sha256": "ca3dc4ec1cc4c60e382c1c23af645070b4aea303e9cea0c1cb8fd989666193a3"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocal-migrations.json",
+      "size": 1117,
+      "sha256": "e02edfeb1351ec7da0728a5d66673e12224b6d29e3b153e3a9c160f28325b28b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/dot-reciprocals.mjs",
+      "size": 69323,
+      "sha256": "2b2f35dbd3a67c6fd11dada58746286837691599375a5d50c220fb31462f00b4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exact-reciprocal.mjs",
+      "size": 8180,
+      "sha256": "634167470e42a4f12768779ace33e8db69fdb57a669629ef67565abdc5d92ec1"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exponent-logarithm-capture-regressions.py",
+      "size": 9786,
+      "sha256": "59976dc30501ba5a42f4871d12fc75ce7bca82cc46715741e79c0f08d5f28442"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exponent-logarithm-regressions.mjs",
+      "size": 8009,
+      "sha256": "a3d5a37da138c9f79b808cccbf55c53959fb4917997d131ccf1286df83b4122d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exponent-logarithm.mjs",
+      "size": 20101,
+      "sha256": "b6fa4109e6db0c4a9ed428b416ae9c142ae78180cc4ffd4095d88ddc7a9dcc18"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-mask-cases.json",
+      "size": 229886,
+      "sha256": "fc5044fbce3c4df167c3d757e79079dfd3d1d533b220aecc99cae31037442a63"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-mask-hardware.json",
+      "size": 58605,
+      "sha256": "77e86508296cd98ee7b0844e635874124dadead9d932f8c03780c83c26c53458"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-masks-equality-successor.mjs",
+      "size": 42035,
+      "sha256": "66a30a77518169a0a06432f3f576ea27bc7c961bb3c0d4312c26754e0b141ef1"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/float-masks.mjs",
+      "size": 45102,
+      "sha256": "46a919670247c8e31bd21c81a584c28e5ad46b3f440112f5976ebf7b3e883e75"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/fraction-banks.mjs",
+      "size": 15065,
+      "sha256": "c43e677ee6ebf0f118829348347ea2c23bb82ae0913e2bfa3109429ea689ea3a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/fragment-coordinates.mjs",
+      "size": 23461,
+      "sha256": "29124c976106fd6e334bea07b415650390cd73694f0e8a23144461fb3e8917aa"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/fragment-discard.mjs",
+      "size": 23217,
+      "sha256": "7e803de0b785b668d4c84f27965689ca73eea4486fc345ffadcaeb98cd19ad2c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/gears-exact-alpha.mjs",
+      "size": 2112,
+      "sha256": "9b118502814dd7634fda76c1fc6df0d9eba679dbd73a469f413d8fd637a1f3da"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/gears-originals.json",
+      "size": 13694,
+      "sha256": "b2ea32f6f47428c1de7edbb70c21b40ad15409504bdaad4805f938658385ef28"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/gears-originals.mjs",
+      "size": 21524,
+      "sha256": "5a17d8733cf8562ba9ede747bc006c4b4c67d6de7f1b1a383bde81a8dffa76c0"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/hex-literal-regressions.mjs",
+      "size": 8196,
+      "sha256": "91000d19f71a851b94ea21d974e6d250ceb96e654b3aa5765d0b7a39321c770e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/hex-literals.mjs",
+      "size": 11322,
+      "sha256": "86bb9f3a6d0d12f6225375acda9b31d0714fc2085412fb59ef6e8dbdc889ac95"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/indirect-constant-cases.json",
+      "size": 339595,
+      "sha256": "8155bcfee6bcf299dc26d8b2eb82b98bda270c8bfbb763a97c4f320895fce167"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-mask-cases.json",
+      "size": 313689,
+      "sha256": "bc3209f4e1d498d9c176d08ad56ba13ff633e9ad3e710a63eae77552400ad16c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-mask-hardware.json",
+      "size": 57298,
+      "sha256": "7ff7c4e8f9d95b0dd1df94ef6ca9e0ba7e776ea2af4f4e879ca3554ebb9bedda"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-masks-equality-successor.mjs",
+      "size": 41546,
+      "sha256": "9c30e74b6c45bfce99f8a32854cdedd360ad92e05171f856310075de9e728d01"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/integer-masks.mjs",
+      "size": 44611,
+      "sha256": "b4e5ca48168907ba566b8d7eb2f0599721d1e528c7812229057416e9a1018a28"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/known-arithmetic.mjs",
+      "size": 17145,
+      "sha256": "2197bbe1b29916cfb3580cc151a6809a1b186316a8c7be5aa1b82fadedc05d6d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/known-branches.mjs",
+      "size": 20488,
+      "sha256": "48f7edd550e16fe3bc59ba707d8238ed185ed1456caf991c88adf5ffafa5ff35"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/linkage.frag.tgsi",
+      "size": 80,
+      "sha256": "bf50dd29e6dadcc16e16e538731a72e47498881e38154fc15059bc2997d846c9"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/minimum-banks.mjs",
+      "size": 14516,
+      "sha256": "ac8a1838f47f0184efe60d62443b6c65167c93250e7352103c11639642b7156e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/minimum-selection-regressions.mjs",
+      "size": 9293,
+      "sha256": "641318a8ea3896fd078536c8c6fe11c4fe9cf118eeac1154ce6cb8a68fc5ab0f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/minimum-selection.mjs",
+      "size": 23694,
+      "sha256": "c7e0c9922457b5be8b603c99efa1478aa04daf92ad100860b865a844a4bddf7e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-float-cases.json",
+      "size": 211013,
+      "sha256": "f6a5ebb60bfac13649d67835d48b3a3bbc88e60e4c8b14d0240f2e5bc35e172b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-float-hardware.json",
+      "size": 92929,
+      "sha256": "635559a8b3d3d3c85399bd9a4fa0b20a970374293f00854d25569433251d0ba0"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/numeric-floats.mjs",
+      "size": 47489,
+      "sha256": "06ce68ff9abdcdb7b33d71b75db37ee54f57ecae6e326b8a04ad90803bf44b76"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/ordered-mask-cases.json",
+      "size": 410808,
+      "sha256": "41fe03c341c2df3c399366e1c72e1c392a1e4a79c262fe9aeed84025a7f28dad"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-c580.mjs",
+      "size": 12581,
+      "sha256": "89c8edde6bc5349d8eed7373b19885015bb13dce90c39ebc39b98ecac566570f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-corpus.json",
+      "size": 43067,
+      "sha256": "72762494d89146a605db7dae27e22ba76288f9cad5dca6654f6a3af669704020"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/original-corpus.mjs",
+      "size": 17645,
+      "sha256": "3634573e3bb9e5f88649642b61df924ce823525055b0c0d1e38530ad1709a771"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pair-cases.json",
+      "size": 199393,
+      "sha256": "1b230d356463f1adb1155631a5377e7f8e65ab6f78bc4404eeba26c0b7b52d63"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/pairs.mjs",
+      "size": 15961,
+      "sha256": "a837403ff169cfb40b015256fb29b32da6c0f7b2f07eaf975c57392f8a690e3a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/passthrough.vert.tgsi",
+      "size": 109,
+      "sha256": "396294ea197243b64d61cc6207e76f5043f791d318d5dc90d8ec3da1fc496ce4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/power-capture-regressions.py",
+      "size": 15905,
+      "sha256": "7909501d13f4c4b5353da9f7437ef37b82806af33f44e3278ecc3989659e390d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/power-regressions.mjs",
+      "size": 10145,
+      "sha256": "3ecb62118b1dbda5341e1877774acb252cc4cdbe18bc71a3de42d61faf192165"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/power.mjs",
+      "size": 20046,
+      "sha256": "2d16c9e48b72d462dcdebcaebbc4a895600cbe49060942d996f6cdf0410ea37d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-arithmetic-cases.json",
+      "size": 576585,
+      "sha256": "68f6811d318ef2661f9010e28cf8e4a1a284600e419b371905ef9a639d1e02cc"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-fraction-capture-regressions.mjs",
+      "size": 4899,
+      "sha256": "3313c6693652d26baf0e1dc1179de478aab045c1f5b1bf49d5d2b4b3b2ae08f8"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-fraction-regressions.mjs",
+      "size": 9751,
+      "sha256": "6442b2dcaf14019e49eaed4406875c173d002ed99bba34f4ae3544cac4b7ef5e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-fraction.mjs",
+      "size": 21709,
+      "sha256": "61f0de99c66b60dd05fb41ff92037e3a6486519175a067b374d50dfa0c8c46f2"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/precise-word-cases.json",
+      "size": 162808,
+      "sha256": "b3630a1489042dd7872d170e28decef3a27627028bd0ba36231d279199164064"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/radial-domain-cases.json",
+      "size": 80589,
+      "sha256": "bf87fce0e9cf3edc279e70b291005f0f1621e7aecc2506b88a2b76e943b126bd"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raster-bank-cases.json",
+      "size": 348383,
+      "sha256": "d9c11fd692f5fa4dea867834f5bc1a739d8ea4d6ff8799521e9be2a5ff35d728"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bit-cases.json",
+      "size": 107467,
+      "sha256": "f39f7650f947d53370c4d0ecd45eaa282b3610f42a28ca70af24473ee4077e4a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bit-hardware.json",
+      "size": 41731,
+      "sha256": "da9d08b03fa8cbe853f9b9813be9946c9b3d836b9a2c5cf879db9f98510aaae2"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-bits.mjs",
+      "size": 38247,
+      "sha256": "0ed981c535e859e63556082e70336a250ea8254e876f0b6b5311d569c9de0986"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-cases.json",
+      "size": 277543,
+      "sha256": "a00303544487dc9b29f2f15a0aac89b24d79d52802fd1294801c9d9840611a61"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-migrations.json",
+      "size": 5170,
+      "sha256": "50c09a3cd522e340fd38279c50c49c0ac2b47f7eef0697b4be3d2380317c76f8"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality-oracle.mjs",
+      "size": 5810,
+      "sha256": "7a1d358b664b6f74d1fd6294ca8639a1da5e5b68d0e97c3770dd41ede34ac1f4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/raw-equality.mjs",
+      "size": 22854,
+      "sha256": "cd6cc39953dc0beabfb7a0f2f13f6f09fa74d4bdbcae89b8adbc572ab6d02392"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/saturation-capture-regressions.py",
+      "size": 11118,
+      "sha256": "9483831c97a60e40ea1fb51c33580ec1665e0bcdaa2a93a01b43e841de7a3745"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/saturation-regressions.mjs",
+      "size": 8915,
+      "sha256": "724fe09a689e41494e0cfbb7698d68b5b73390b1b6c1ee0b8c8204328a7c1536"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/saturation.mjs",
+      "size": 21741,
+      "sha256": "70ca5bf95506165ce69cdbae15c0fc0ae1013a9bd2921882ef10337709c2ce2c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/scalar-banks.mjs",
+      "size": 14276,
+      "sha256": "603885049741f01214934aafd09c64815bbbe986dd89e5c062cc538d9e913c8f"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/scalar-operation-regressions.mjs",
+      "size": 9370,
+      "sha256": "5bc2520293dc934249f91e962f6328f36053cf702960200a8731e068d122fba8"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/scalar-operations.mjs",
+      "size": 23205,
+      "sha256": "a87ebdd431c6e440769b0fe86d6ed25861ffac0106d6d3c96dd180b82f7e8a22"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/selected-lanes-cases.json",
+      "size": 399314,
+      "sha256": "35585d7c3ff8eb3388c3a392349450e65df75c2bcd8c7f677b39a8cd065213b7"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/signed-conversion-regressions.mjs",
+      "size": 9538,
+      "sha256": "af656f9a8a7bc00d12fc4d8562dbc889ea19c63c2428917c37a6e45ad471ae0a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/signed-conversions.mjs",
+      "size": 22617,
+      "sha256": "116f17ed35223e5c9fc3bf7471f042dd350773245f141905852faf4bdb053db4"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/signed-integer-regressions.mjs",
+      "size": 6552,
+      "sha256": "3b3a460110a099530dd255b51fd79c2180f2ed98df084f58180518485ebf43a3"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/signed-integers.mjs",
+      "size": 20900,
+      "sha256": "5872ff256b70b524458d4c490219557d40a0fcd2d2e4dc0e109621b6124a193a"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/sine-capture-regressions.py",
+      "size": 13561,
+      "sha256": "ed2b288cd928cdd3b409b1a5d31a6f38e28b30ce3e0a282a868dc55d0a25be9c"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/sine-regressions.mjs",
+      "size": 9286,
+      "sha256": "f57cf767e5d98db39c2bc34457b489527d9a88a7eae30e3c2075f6d6acc9545d"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/sine.mjs",
+      "size": 19909,
+      "sha256": "1a654d3d78146d4719d18b83a142bc89179f1e0324f5abc218f78e73b9b1247e"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/structured-conditional-cases.json",
+      "size": 240027,
+      "sha256": "688d72e3ca6c210351242fba32d663cc356a6fc82e36809483dcd4a3900d2024"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/texture.frag.tgsi",
+      "size": 185,
+      "sha256": "4ca512b5dfd3afac60eddf009cdc542fe6effa5b9817143ff404210ffce3fa00"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/transform.vert.tgsi",
+      "size": 165,
+      "sha256": "320d661e3f13f88dd6c3e874ffe1a43320211a28b69d505cc9e0e6c3fe4908ff"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/zero-cap.mjs",
+      "size": 9516,
+      "sha256": "3c2bab1575764998004beb36ba9b83b74885012e0b9d0db8657010a38ffa33a2"
+    },
+    {
+      "path": "renderer/virgl-shader/UPSTREAM.json",
+      "size": 8594,
+      "sha256": "6f7866d3a3a5e502f6516506909c0d43dec60902fd251a2eecec9610bd992a71"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.c",
+      "size": 8950,
+      "sha256": "88a296ad627e49f22d3e58b6c70c2a656f8c3e7a6fba652f16332c172b12737c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_cache.h",
+      "size": 5609,
+      "sha256": "84ce8070d4af061f51e887ce7d80ce8fa9d81633205cf16bd61e42832d2cf1a0"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.c",
+      "size": 11319,
+      "sha256": "385fbd6abb5cfdb8fe0b982f07bdc2b98e2edaa50910b26681ab500c48d88514"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/cso_cache/cso_hash.h",
+      "size": 4178,
+      "sha256": "189444cd8c4b98327d79f0c33c5b63231854ab6419f9fe18b20e829510bcd66f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.c",
+      "size": 35054,
+      "sha256": "45867deeb665f4ca86bc0b755ea3e72d320cb01ef881b6a808e9f332b0a040c3"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_build.h",
+      "size": 2838,
+      "sha256": "5f3c327979b3043649b9df678b0e359d387f334e9573c16bd4a263c5452da039"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.c",
+      "size": 23084,
+      "sha256": "747fc8eb4df95202ea8192b377751021480ec7f430ba458936045a999d7f39bc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_dump.h",
+      "size": 2696,
+      "sha256": "94cb5b4d80dc53937819a8dce44344ae63633e418174d3f8674668e1a74f49f4"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.c",
+      "size": 22172,
+      "sha256": "2419cdd3a6322cee5da57d666012504c7b6500acb228418334b8183aa7ec1833"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_info.h",
+      "size": 3230,
+      "sha256": "d20f7d0697a35196c5893d9454016b1cbe58d0b5dfe1eadec23b692271de0568"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.c",
+      "size": 2910,
+      "sha256": "1767a12cd5be68c04ec5f94a8ec27559913708c9eee13ba524919ee376c85879"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_iterate.h",
+      "size": 2323,
+      "sha256": "29a5f6c96dc4e3483a8afc1f6fdd035fabb29dbcd354bb316d5a005c7feb34db"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.c",
+      "size": 9241,
+      "sha256": "c08c03b75cc74dc8d30231773ed357ddbcbf5b792d303164882ad996c89d91bd"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_parse.h",
+      "size": 4672,
+      "sha256": "3fb35f0187777fffcbbd9b5f12d3f17f7012e925439f5b959fc9c6876230ef1c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.c",
+      "size": 15277,
+      "sha256": "f5bc791e3488f2ae35ef1156b7953620de38601bbb4418984d039af5a0c14e51"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_sanity.h",
+      "size": 1879,
+      "sha256": "beac1b1c6680faf9cbcb660324b445a7664ea22fdc1ffb69f9ccfbac5fbf0bac"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.c",
+      "size": 24473,
+      "sha256": "c77892860df340b883c5e191577006f6ba5b0f07eb4ca6d74ec5e6466eac0975"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_scan.h",
+      "size": 5283,
+      "sha256": "16f4742f1f8563703686aec4dbfade31ebaee2d1357f69ff525678919e0fc928"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.c",
+      "size": 5859,
+      "sha256": "e1c3909633b5acd3ff445ce3ddde249457ca92d1ba571269162b7eb5903f513f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_strings.h",
+      "size": 2378,
+      "sha256": "12d42a3b23f78824c93a5115e479d437f21bb03745b647a9004feaef74a42abb"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.c",
+      "size": 49657,
+      "sha256": "692188a36d9cb4cb714dfc3eaf8fc9f7be4f5428550d8ad243fa3d6247d25b0c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_text.h",
+      "size": 1628,
+      "sha256": "e3a4c2c7af363e952c4b32b71c9b6f5517718392ed9572b86f27d27151e8af9c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.c",
+      "size": 11690,
+      "sha256": "dbab8d2d314a647c9639d9dd9e6947d3b920346a4680d3fe8102e7497241e4ce"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/tgsi/tgsi_util.h",
+      "size": 2715,
+      "sha256": "f3b4b296b9f0ccc1b8ad802bca91597efd12e08c551ccbce3b94fc23467a8fc1"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_debug_describe.h",
+      "size": 2040,
+      "sha256": "002511b4833ea6665b0aa6bd9010a0d999a58a4f8d91cb32de7fc30ff28f76ab"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_debug_refcnt.h",
+      "size": 1789,
+      "sha256": "2f173c1b54038fcd432933611687632ab2eac27a94511c615a9ab0c302a8c7b9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_parse.py",
+      "size": 20341,
+      "sha256": "718ba46b27fbec2e0026ca8e2480a6b4992583a9b2bd4e2a90eee2a64f8a6ee7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_s3tc.h",
+      "size": 1601,
+      "sha256": "653113e5628c6ab84f5dd680cc658a992901011435332b2c445adabd0131587c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format_table.py",
+      "size": 20834,
+      "sha256": "4fd54a3df7c3ccd37c3cd429953956799fa4d5113d147d60d8cf5d48e6415087"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_format.h",
+      "size": 24095,
+      "sha256": "3e2f6ad3d5c933ca9fd0124b3ae66a1584fc2ae57f761f2e147b497473384f51"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_inlines.h",
+      "size": 7051,
+      "sha256": "52961188ed9a0cd849baabdbcce5fb1701f0bb8dc02e64115e82cbe2cac89866"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/auxiliary/util/u_prim.h",
+      "size": 7979,
+      "sha256": "8b4fddd7a11f08c7dd2d90a2b8f1f91abbfeaf849cc5f21425a5c80375b396d4"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_defines.h",
+      "size": 25281,
+      "sha256": "29b02c15399768ab74054e711f6633c407cf5f952f591c046e7542b82e54a008"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_shader_tokens.h",
+      "size": 23154,
+      "sha256": "48d2cedf0e97e4a685c20acb59bc8dd1317e0b2ba9166e9c4ac81fedda2e61f9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/gallium/include/pipe/p_state.h",
+      "size": 19681,
+      "sha256": "4c9b59a7e9827314dcac5b7492ecd0cc62bd585d662f0611e542af70858c9dbe"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/c11_compat.h",
+      "size": 483,
+      "sha256": "103fedb48f658d36cb416c9c9e5ea4d70dff181aab551fcb1028107d098ffa3e"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/c99_compat.h",
+      "size": 2754,
+      "sha256": "92445314d5fb3eff3a12eaf4cc864f9b459862a99594403b36ea79dfe149d267"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/compat/no_extern_c.h",
+      "size": 2051,
+      "sha256": "60883a8d2b2978b861ef686c5a9afb41cf91ffec7c56baca89c626e7fea2d385"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/pipe/p_compiler.h",
+      "size": 4021,
+      "sha256": "cea977fedff656415c98ca4ac98d7ba4649c7bde65730f76a2e7a94034519e81"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/pipe/p_config.h",
+      "size": 4036,
+      "sha256": "86c0234de12412f65f8a53f1e9f619841d2e60a2b0e32b1ba99961b78c698985"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/bitscan.h",
+      "size": 8438,
+      "sha256": "afa4325d0ed38985bf00b547788a3b73c66a97a4513a3beb516e55b5fead5879"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/detect_os.h",
+      "size": 2522,
+      "sha256": "6d45904758bf3b5a67c0fa3829534461f1c8b276f55328f58a7cbac1d3770f95"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/hash_table.h",
+      "size": 7376,
+      "sha256": "9189e93d161af045eee3fca6f47aa164313e1668ab7341c69987a0f3ada24352"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/macros.h",
+      "size": 15240,
+      "sha256": "a6d424c804a9dd0e22f9bfe5fe332554b3440a13929d0aecf93f571ce9e9db8d"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory_aligned.h",
+      "size": 3383,
+      "sha256": "12d86fa94be38c13f7eeebdf313795e1267dd5a7187d2f0072e0e896f41702f6"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory_stdc.h",
+      "size": 2088,
+      "sha256": "07360363b88c927065e10df71bebf6c8a0cc3b9167c9dfce55f2d65f11e6f787"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_memory.h",
+      "size": 1938,
+      "sha256": "d77e951306a5027123a7c64675e10b23af8de03ea0673e84cbd935f93284e73f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/os_misc.h",
+      "size": 2695,
+      "sha256": "3b88b89e0227de413926a9907d660c4b967ee5fe15c9e47977ecfe7091823ceb"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_atomic.h",
+      "size": 11209,
+      "sha256": "cd3c5ca84af9a2aae50517e8735aacf7e72edce326504d60c9c239f5c7ab3d0c"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.c",
+      "size": 10824,
+      "sha256": "9a3f45a3ed1cb45cd6b8543181b06aa30a6ef1ca57a0fca2678900f9c42b5a4d"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_debug.h",
+      "size": 11537,
+      "sha256": "652e2cbc07d44cee7de3fa8cf2e30edc816bb061393de2f43f6d99d99e798ad8"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_endian.h",
+      "size": 1712,
+      "sha256": "088a97ceb214f120fabfe4a0eb8924fb1655de982525548bd867e3b45931b409"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_formats.h",
+      "size": 1818,
+      "sha256": "3fb34a11387b6c625a20862bd5204fc1b5dfb874d2a5f718ba6fa37953925cfc"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_math.h",
+      "size": 17141,
+      "sha256": "1ba82ca8f9eaaac9b48b5ffbb3fa59edbd4f91051f6bbdd8bf2dc6d375a2620a"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_memory.h",
+      "size": 2735,
+      "sha256": "c5db17c724c70283ddbe04165722f6988d4e0eb9aa3602ae472feff016649af9"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/mesa/util/u_string.h",
+      "size": 3055,
+      "sha256": "2c5615fc0be8f391051e2302dd1b1985eba5c5ece4922f511f8da07c59cf2598"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "size": 36318,
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_protocol.h",
+      "size": 30358,
+      "sha256": "094a6e2b210f1d3dd0f1ac254ed8820c1d889e57d2735c0c6194dbc94f3b1ac7"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_util.h",
+      "size": 4932,
+      "sha256": "d96d902c2b4d27083e5982fc90c7e887841cce07e0f95f42aa07ae64d9b53b77"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virglrenderer.h",
+      "size": 19876,
+      "sha256": "0b39479c6dbad50d0b94adbd681e124d3c1a77cb0560309ed493241644730cf8"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_debug.h",
+      "size": 3279,
+      "sha256": "89f086d99d07d01753de837068fa510e00d6447961f994d3a7bb7d2dbbe5a62f"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.c",
+      "size": 333808,
+      "sha256": "e08fe8ceebfebb3e6a050b74d0ea0ebbfab35b6be742b6f0c9b9149dd484c3e2"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_shader.h",
+      "size": 9367,
+      "sha256": "0df385cd9953620e9531db813a54fc582594f56364e5bf1efb1e7cd1ba2a2d09"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/vrend/vrend_strbuf.h",
+      "size": 6786,
+      "sha256": "b5909235cf614798d6cc89e6d9236e1653faf14b0493e1e912b68098841cae6f"
+    },
+    {
+      "path": "renderer/virgl-shader/verify_sources.py",
+      "size": 951,
+      "sha256": "2f473d2719bddcecea8828cd9eb02b98671d23fb6879f41946847998c8fea287"
+    },
+    {
+      "path": "tools/lib/virgl-browser-runner.mjs",
+      "size": 13473,
+      "sha256": "c5dbff6318c7aebc5a040389a999a4d0b4002845047b7f66035cd18df3702489"
+    },
+    {
+      "path": "target/evidence/virgl-original-c580-verifier/coordinate-browser.mjs",
+      "size": 1358,
+      "sha256": "d4f4019a78de4ee2807193de20ead62fce4c572f5ed878a287ef31cb90e94458"
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/captures/es2gears/shaders/403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c.tgsi",
+      "size": 419,
+      "sha256": "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c"
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/captures/es2gears/shaders/c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f.tgsi",
+      "size": 14786,
+      "sha256": "c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f"
+    },
+    {
+      "path": "target/evidence/virgl-original-c580/banks.bin",
+      "size": 1784,
+      "sha256": "4df0b1dca3d4455535333a2a7f0560775cd1140c00ad49a59f782ad78a49004e"
+    }
+  ],
+  "servedFiles": [
+    {
+      "path": "evidence/virgl-workload-inventory/captures/es2gears/shaders/403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c.tgsi",
+      "size": 419,
+      "sha256": "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c"
+    },
+    {
+      "path": "evidence/virgl-workload-inventory/captures/es2gears/shaders/c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f.tgsi",
+      "size": 14786,
+      "sha256": "c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f"
+    },
+    {
+      "path": "renderer/virgl-shader/build/verify-original-c580-coordinate.mjs",
+      "size": 12788,
+      "sha256": "0bfa4a729a48fa1f5bce9c41ea1b61d578c830670d4a1b2fd1910e23e1bd6bb3"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "size": 9545,
+      "sha256": "f0b10ba4b17c05ff5c3db99608a402476ac2e91b482e7cdc3238704f59a58a41"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "size": 350481,
+      "sha256": "d38daa1c9d9c9c54acb36f9c74af3b7c59b18d7fb536d9e77bf879a84f4b1b29"
+    },
+    {
+      "path": "renderer/virgl-shader/index.mjs",
+      "size": 15059,
+      "sha256": "439496651632a56dcdaea467bfe708ca00ea94b23f045ad36bdd55c133ff357b"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/browser.mjs",
+      "size": 18232,
+      "sha256": "98c06c9083ac761ebec44ebc2b051dd0faf8e917014ce7287dc8aa079bb7e1ef"
+    },
+    {
+      "path": "renderer/virgl-shader/tests/corpus.mjs",
+      "size": 4442,
+      "sha256": "4f88a7a4f4a301f1a60e3f1b046d71635373a273cbc07e60b43c35aae33d0245"
+    },
+    {
+      "path": "target/evidence/virgl-original-c580/banks.bin",
+      "size": 1784,
+      "sha256": "4df0b1dca3d4455535333a2a7f0560775cd1140c00ad49a59f782ad78a49004e"
+    }
+  ],
+  "browserErrors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "browser": {
+    "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "executableSha256": "ccffd5c5fe77ba3212e07c2c69091f8048b73c396b4647ecaa150e1e01a04954",
+    "version": "154.0.8037.98",
+    "launch": {
+      "executablePath": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "headless": false,
+      "args": [
+        "--enable-gpu"
+      ]
+    },
+    "actualCommandLine": [
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "--disable-field-trial-config",
+      "--disable-background-networking",
+      "--disable-background-timer-throttling",
+      "--disable-backgrounding-occluded-windows",
+      "--disable-back-forward-cache",
+      "--disable-breakpad",
+      "--disable-client-side-phishing-detection",
+      "--disable-component-extensions-with-background-pages",
+      "--disable-component-update",
+      "--no-default-browser-check",
+      "--disable-default-apps",
+      "--disable-dev-shm-usage",
+      "--disable-extensions",
+      "--disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker",
+      "--allow-pre-commit-input",
+      "--disable-hang-monitor",
+      "--disable-ipc-flooding-protection",
+      "--disable-popup-blocking",
+      "--disable-prompt-on-repost",
+      "--disable-renderer-backgrounding",
+      "--force-color-profile=srgb",
+      "--metrics-recording-only",
+      "--no-first-run",
+      "--enable-automation",
+      "--password-store=basic",
+      "--use-mock-keychain",
+      "--no-service-autorun",
+      "--export-tagged-pdf",
+      "--disable-search-engine-choice-screen",
+      "--unsafely-disable-devtools-self-xss-warnings",
+      "--enable-use-zoom-for-dsf=false",
+      "--no-sandbox",
+      "--enable-gpu",
+      "--user-data-dir=/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/playwright_chromiumdev_profile-Nx7syQ",
+      "--remote-debugging-pipe",
+      "--no-startup-window",
+      "--flag-switches-begin",
+      "--flag-switches-end"
+    ],
+    "cdpVersion": {
+      "protocolVersion": "1.3",
+      "product": "Chrome/154.0.8037.98",
+      "revision": "@b859317bf11f6be47f9b7799ec690a0a42a1fb33",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "jsVersion": "15.4.80.20"
+    },
+    "gpu": {
+      "devices": [
+        {
+          "vendorId": 4203,
+          "deviceId": 0,
+          "vendorString": "Google Inc. (Apple)",
+          "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+          "driverVendor": "Apple",
+          "driverVersion": "26.6.2"
+        }
+      ],
+      "auxAttributes": {
+        "amdSwitchable": false,
+        "canSupportThreadedTextureMailbox": false,
+        "directRenderingVersion": "",
+        "displayType": "ANGLE_METAL",
+        "glExtensions": "GL_AMD_performance_monitor GL_ANGLE_base_vertex_base_instance_shader_builtin GL_ANGLE_blob_cache GL_ANGLE_client_arrays GL_ANGLE_clip_cull_distance GL_ANGLE_compressed_texture_etc GL_ANGLE_depth_texture GL_ANGLE_framebuffer_blit GL_ANGLE_framebuffer_multisample GL_ANGLE_get_serialized_context_string GL_ANGLE_get_tex_level_parameter GL_ANGLE_instanced_arrays GL_ANGLE_memory_size GL_ANGLE_pack_reverse_row_order GL_ANGLE_polygon_mode GL_ANGLE_program_binary_readiness_query GL_ANGLE_program_cache_control GL_ANGLE_provoking_vertex GL_ANGLE_renderability_validation GL_ANGLE_request_extension GL_ANGLE_rgbx_internal_format GL_ANGLE_robust_client_memory GL_ANGLE_shader_pixel_local_storage GL_ANGLE_shader_pixel_local_storage_coherent GL_ANGLE_stencil_texturing GL_ANGLE_texture_compression_dxt3 GL_ANGLE_texture_compression_dxt5 GL_ANGLE_texture_multisample GL_ANGLE_translated_shader_source GL_APPLE_clip_distance GL_ARM_rgba8 GL_CHROMIUM_bind_generates_resource GL_CHROMIUM_bind_uniform_location GL_CHROMIUM_copy_texture GL_CHROMIUM_lose_context GL_EXT_base_instance GL_EXT_blend_func_extended GL_EXT_blend_minmax GL_EXT_clip_control GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_compressed_ETC1_RGB8_sub_texture GL_EXT_conservative_depth GL_EXT_debug_label GL_EXT_debug_marker GL_EXT_depth_clamp GL_EXT_discard_framebuffer GL_EXT_disjoint_timer_query GL_EXT_draw_buffers GL_EXT_draw_buffers_indexed GL_EXT_draw_elements_base_vertex GL_EXT_float_blend GL_EXT_frag_depth GL_EXT_instanced_arrays GL_EXT_map_buffer_range GL_EXT_multisampled_render_to_texture GL_EXT_occlusion_query_boolean GL_EXT_polygon_offset_clamp GL_EXT_pvrtc_sRGB GL_EXT_read_format_bgra GL_EXT_render_snorm GL_EXT_robustness GL_EXT_sRGB GL_EXT_shader_texture_lod GL_EXT_texture_compression_bptc GL_EXT_texture_compression_dxt1 GL_EXT_texture_compression_rgtc GL_EXT_texture_compression_s3tc_srgb GL_EXT_texture_filter_anisotropic GL_EXT_texture_format_BGRA8888 GL_EXT_texture_mirror_clamp_to_edge GL_EXT_texture_norm16 GL_EXT_texture_rg GL_EXT_texture_sRGB_R8 GL_EXT_texture_sRGB_RG8 GL_EXT_texture_shadow_lod GL_EXT_texture_storage GL_IMG_texture_compression_pvrtc GL_KHR_debug GL_KHR_parallel_shader_compile GL_KHR_robustness GL_KHR_texture_compression_astc_hdr GL_KHR_texture_compression_astc_ldr GL_KHR_texture_compression_astc_sliced_3d GL_MESA_framebuffer_flip_y GL_NV_fence GL_NV_framebuffer_blit GL_NV_pixel_buffer_object GL_NV_shader_noperspective_interpolation GL_OES_EGL_image GL_OES_EGL_sync GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth24 GL_OES_depth32 GL_OES_depth_texture GL_OES_draw_buffers_indexed GL_OES_draw_elements_base_vertex GL_OES_element_index_uint GL_OES_fbo_render_mipmap GL_OES_get_program_binary GL_OES_mapbuffer GL_OES_packed_depth_stencil GL_OES_required_internalformat GL_OES_rgb8_rgba8 GL_OES_sample_variables GL_OES_shader_multisample_interpolation GL_OES_standard_derivatives GL_OES_surfaceless_context GL_OES_texture_3D GL_OES_texture_float GL_OES_texture_float_linear GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_texture_npot GL_OES_texture_stencil8 GL_OES_vertex_array_object GL_QCOM_render_shared_exponent ",
+        "glImplementationParts": "(gl=egl-angle,angle=metal)",
+        "glRenderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+        "glResetNotificationStrategy": 33362,
+        "glVendor": "Google Inc. (Apple)",
+        "glVersion": "OpenGL ES 3.0 (ANGLE 2.1.28734 git hash: e12217f3e133)",
+        "glWsExtensions": "",
+        "glWsVendor": "",
+        "glWsVersion": "",
+        "inProcessGpu": false,
+        "initializationTime": 0.028119,
+        "isAsan": false,
+        "isClangCoverage": false,
+        "jpegDecodeAcceleratorSupported": false,
+        "maxMsaaSamples": "4",
+        "optimus": false,
+        "passthroughCmdDecoder": true,
+        "pixelShaderVersion": "3.00",
+        "processCrashCount": 0,
+        "sandboxed": false,
+        "skiaBackendType": "GraphiteDawnMetal",
+        "subpixelFontRendering": true,
+        "targetCpuBits": 64,
+        "vertexShaderVersion": "3.00",
+        "visibilityCallbackCallCount": 0
+      },
+      "featureStatus": {
+        "2d_canvas": "enabled",
+        "direct_rendering_display_compositor": "disabled_off_ok",
+        "gpu_compositing": "enabled",
+        "multiple_raster_threads": "enabled_on",
+        "opengl": "enabled_on",
+        "rasterization": "enabled",
+        "raw_draw": "disabled_off_ok",
+        "skia_graphite": "enabled_on",
+        "trees_in_viz": "disabled_off",
+        "video_decode": "enabled",
+        "video_encode": "enabled",
+        "webgl": "enabled",
+        "webgpu": "enabled",
+        "webnn": "disabled_off"
+      },
+      "driverBugWorkarounds": [
+        "disable_2d_canvas_auto_flush",
+        "enable_webgl_timer_query_extensions",
+        "disabled_extension_GL_KHR_blend_equation_advanced",
+        "disabled_extension_GL_KHR_blend_equation_advanced_coherent"
+      ],
+      "videoDecoding": [],
+      "videoEncoding": []
+    },
+    "webglFeature": "webgl"
+  },
+  "failure": {
+    "message": "page.evaluate: Error: independent full original pixel bank0 near (0,1): {\"expected\":[1.0000002703979702,0.9999998567894618,0.9999999131590388,1],\"actual\":[0,0,1,1],\"errors\":[1.0000002703979702,0.9999998567894618,8.684096119981888e-8,0]}\n    at require (http://127.0.0.1:61583/renderer/virgl-shader/build/verify-original-c580-coordinate.mjs:4:56)\n    at runAcceptance (http://127.0.0.1:61583/renderer/virgl-shader/build/verify-original-c580-coordinate.mjs:203:13)\n    at async eval (eval at evaluate (:234:30), <anonymous>:3:22)\n    at async <anonymous>:260:30",
+    "stack": "page.evaluate: Error: independent full original pixel bank0 near (0,1): {\"expected\":[1.0000002703979702,0.9999998567894618,0.9999999131590388,1],\"actual\":[0,0,1,1],\"errors\":[1.0000002703979702,0.9999998567894618,8.684096119981888e-8,0]}\n    at require (http://127.0.0.1:61583/renderer/virgl-shader/build/verify-original-c580-coordinate.mjs:4:56)\n    at runAcceptance (http://127.0.0.1:61583/renderer/virgl-shader/build/verify-original-c580-coordinate.mjs:203:13)\n    at async eval (eval at evaluate (:234:30), <anonymous>:3:22)\n    at async <anonymous>:260:30\n    at runVirglBrowser (/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/lib/virgl-browser-runner.mjs:145:56)\n    at /Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/async file:/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-original-c580-verifier/coordinate-browser.mjs:9:14"
+  },
+  "acceptance": {
+    "schema": "virgl-original-c580-physical-v1",
+    "status": "failed",
+    "guestExecution": false,
+    "productionNegotiation": false,
+    "fault": "coordinate",
+    "frames": [
+      {
+        "bank": 0,
+        "edge": "near",
+        "logs": {
+          "vertex": "",
+          "fragment": "",
+          "link": ""
+        },
+        "glslSha256": "5dc87b9b04c4a6131dacdd25b4ffb8d001ace547db3402caa9e3959bc8bf4d32",
+        "sourceSha256": "c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f",
+        "systemBlocks": [
+          {
+            "name": "VirglBlock",
+            "index": 0,
+            "byteLength": 656,
+            "members": [
+              {
+                "name": "winsys_adjust_y",
+                "reflectedName": "winsys_adjust_y",
+                "offset": 640,
+                "type": 5126,
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "reflection": [
+          {
+            "name": "vsconst0[0]",
+            "type": 36296,
+            "count": 3,
+            "words": [
+              1073758208,
+              0,
+              0,
+              0,
+              0,
+              1073763670,
+              0,
+              0,
+              3212869632,
+              3212880555,
+              1065353216,
+              0
+            ]
+          },
+          {
+            "name": "fsconst0[0]",
+            "type": 36296,
+            "count": 34,
+            "words": [
+              1149255680,
+              1145077760,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              1065353216,
+              2772434944,
+              857748425,
+              1065353216,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1065353216,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1073741824,
+              0,
+              0,
+              0,
+              3221225472,
+              3221225472,
+              0,
+              0,
+              1149255680,
+              1145077760,
+              0,
+              0,
+              1065353216,
+              0,
+              3212836864,
+              1145044992
+            ]
+          }
+        ],
+        "vertices": [
+          0.001949317738791423,
+          0.0025974222081233665,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1.9980506822612085,
+          0.0025974222081233665,
+          0,
+          1,
+          0.007797270955165692,
+          0,
+          0,
+          0,
+          0.001949317738791423,
+          1.997402458892231,
+          0,
+          1,
+          0,
+          0.01038961038961039,
+          0,
+          0
+        ],
+        "pixels": [
+          {
+            "x": 0,
+            "y": 0,
+            "expected": [
+              1.0000002703979702,
+              0.9999998567894618,
+              0.9999999131590388,
+              1
+            ],
+            "actual": [
+              1,
+              1,
+              0.9999998211860657,
+              1
+            ],
+            "errors": [
+              2.703979702367576e-7,
+              1.432105382059845e-7,
+              9.1972973126353e-8,
+              0
+            ]
+          },
+          {
+            "x": 1,
+            "y": 0,
+            "expected": [
+              1.0000002703979702,
+              0.9999998567894618,
+              0.9999999131590388,
+              1
+            ],
+            "actual": [
+              1,
+              1,
+              0.9999998211860657,
+              1
+            ],
+            "errors": [
+              2.703979702367576e-7,
+              1.432105382059845e-7,
+              9.1972973126353e-8,
+              0
+            ]
+          },
+          {
+            "x": 2,
+            "y": 0,
+            "expected": [
+              1.0000002703979702,
+              0.9999998567894618,
+              0.9999999131590388,
+              1
+            ],
+            "actual": [
+              1,
+              1,
+              0.9999998211860657,
+              1
+            ],
+            "errors": [
+              2.703979702367576e-7,
+              1.432105382059845e-7,
+              9.1972973126353e-8,
+              0
+            ]
+          },
+          {
+            "x": 3,
+            "y": 0,
+            "expected": [
+              1.0000002703979702,
+              0.9999998567894618,
+              0.9999999131590388,
+              1
+            ],
+            "actual": [
+              1,
+              1,
+              0.9999998211860657,
+              1
+            ],
+            "errors": [
+              2.703979702367576e-7,
+              1.432105382059845e-7,
+              9.1972973126353e-8,
+              0
+            ]
+          },
+          {
+            "x": 0,
+            "y": 1,
+            "expected": [
+              1.0000002703979702,
+              0.9999998567894618,
+              0.9999999131590388,
+              1
+            ],
+            "actual": [
+              0,
+              0,
+              1,
+              1
+            ],
+            "errors": [
+              1.0000002703979702,
+              0.9999998567894618,
+              8.684096119981888e-8,
+              0
+            ]
+          }
+        ]
+      }
+    ],
+    "pairs": [
+      {
+        "bank": 0,
+        "result": {
+          "ok": true,
+          "vertex": {
+            "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nin vec4 in_0;\nin vec4 in_1;\n smooth    out  vec4 vso_g0;\n vec4 temp0;\n vec4 temp1;\n vec4 temp2;\n vec4 temp3;\n vec4 temp4;\n vec4 temp5;\n vec4 temp6;\nuniform uvec4 vsconst0[3];\nlayout (std140) uniform VirglBlock {\n\tvec4 clipp[8];\n\tuint stipple_pattern[32];\n\tfloat winsys_adjust_y;\n\tfloat alpha_ref_val;\n\tbool clip_plane_enabled;\n\tint drawid_base;\n};\nvoid main(void)\n{\ntemp0.xyz = vec3(((uintBitsToFloat(vsconst0[0].xyzz) * (in_0.xxxx))).xyz);\ntemp1.xyz = vec3(((uintBitsToFloat(vsconst0[1].xyzz) * (in_0.yyyx))).xyz);\ntemp2.xyz = vec3((( vec4(temp0).xyzx  + uintBitsToFloat(vsconst0[2].xyzx))).xyz);\ngl_Position.xyz = vec3((( vec4(temp2).xyzx  +  vec4(temp1).xyzx )).xyz);\ngl_Position.w = float((uintBitsToFloat(uvec4(1065353216U,1065353216U,1065353216U,1065353216U)).w));\nvso_g0.xy = vec2(((in_1.xyxx).xy));\ngl_Position.y = gl_Position.y * winsys_adjust_y;\n}\n",
+            "metadata": {
+              "profile": "virgl-webgl2-straight-line-v5",
+              "stage": "vertex",
+              "inputs": [
+                {
+                  "index": 0,
+                  "name": "in_0",
+                  "type": "vec4",
+                  "semantic": "ATTRIBUTE",
+                  "semanticIndex": 0,
+                  "componentMask": 15
+                },
+                {
+                  "index": 1,
+                  "name": "in_1",
+                  "type": "vec4",
+                  "semantic": "ATTRIBUTE",
+                  "semanticIndex": 0,
+                  "componentMask": 15
+                }
+              ],
+              "outputs": [
+                {
+                  "index": 0,
+                  "name": "gl_Position",
+                  "type": "vec4",
+                  "semantic": "POSITION",
+                  "semanticIndex": 0,
+                  "componentMask": 15,
+                  "writtenMask": 15
+                },
+                {
+                  "index": 1,
+                  "name": "vso_g0",
+                  "type": "vec4",
+                  "semantic": "GENERIC",
+                  "semanticIndex": 0,
+                  "componentMask": 3,
+                  "writtenMask": 3,
+                  "interpolation": "smooth"
+                }
+              ],
+              "attributes": [
+                {
+                  "index": 0,
+                  "name": "in_0",
+                  "type": "vec4",
+                  "semantic": "ATTRIBUTE",
+                  "semanticIndex": 0,
+                  "componentMask": 15
+                },
+                {
+                  "index": 1,
+                  "name": "in_1",
+                  "type": "vec4",
+                  "semantic": "ATTRIBUTE",
+                  "semanticIndex": 0,
+                  "componentMask": 15
+                }
+              ],
+              "uniforms": [
+                {
+                  "name": "vsconst0",
+                  "type": "uvec4[]",
+                  "count": 3,
+                  "encoding": "float32-bits"
+                }
+              ],
+              "samplers": [],
+              "uniformBlocks": [
+                {
+                  "name": "VirglBlock",
+                  "byteLength": 656,
+                  "members": [
+                    {
+                      "name": "winsys_adjust_y",
+                      "offset": 640,
+                      "type": "float",
+                      "default": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "fragment": {
+            "glsl": "#version 300 es\nprecision highp float;\nprecision highp int;\nsmooth in vec4 vso_g0;\nlayout(location=0) out vec4 fsout_c0;\nuniform highp uvec4 fsconst0[34];\nuint raw_float_mask(uint a, uint b, bool greater_equal) {\n uint magnitude_a = a & 2147483647u, magnitude_b = b & 2147483647u;\n if (magnitude_a > 2139095040u || magnitude_b > 2139095040u) return 0u;\n bool both_zero = magnitude_a == 0u && magnitude_b == 0u;\n uint key_a = (a & 2147483648u) != 0u ? ~a : a ^ 2147483648u;\n uint key_b = (b & 2147483648u) != 0u ? ~b : b ^ 2147483648u;\n bool selected = greater_equal ? both_zero || key_a >= key_b : !both_zero && key_a < key_b;\n return selected ? 4294967295u : 0u;\n}\nuint raw_precise_max(uint a, uint b) {\n return raw_float_mask(b, a, false) != 0u ? a : b;\n}\nuint raw_precise_min(uint a, uint b) {\n return raw_float_mask(a, b, false) != 0u ? a : b;\n}\nuint raw_float_equal_mask(uint a, uint b, bool not_equal) {\n uint magnitude_a = a & 2147483647u, magnitude_b = b & 2147483647u;\n bool unordered = magnitude_a > 2139095040u || magnitude_b > 2139095040u;\n bool equal = !unordered && (a == b || (magnitude_a == 0u && magnitude_b == 0u));\n return (not_equal ? !equal : equal) ? 4294967295u : 0u;\n}\nbool raw_discard_negative(highp uint word) {\n highp uint magnitude = word & 2147483647u;\n return (word & 2147483648u) != 0u && magnitude != 0u && magnitude <= 2139095040u;\n}\nvoid main(void) {\n highp uvec4 raw_temp[219];\n highp uvec4 raw_out[8];\n highp uvec4 raw_rhs;\n highp vec4 float_temp[219];\n highp vec4 float_out[8];\n highp vec4 float_rhs;\n float_rhs = vec4((gl_FragCoord.y * uintBitsToFloat(fsconst0[33].z)), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[19].x = raw_rhs.x;\n float_temp[19].x = float_rhs.x;\n float_rhs = vec4(0.0, (float_temp[19].x + uintBitsToFloat(fsconst0[33].w)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[9].y = raw_rhs.y;\n float_temp[9].y = float_rhs.y;\n float_rhs = vec4((vso_g0.x * uintBitsToFloat(fsconst0[0].x)), (vso_g0.y * uintBitsToFloat(fsconst0[0].y)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[20].xy = raw_rhs.xy;\n float_temp[20].xy = float_rhs.xy;\n float_rhs = vec4((float_temp[20].y * uintBitsToFloat(3212836864u)), (float_temp[20].x * uintBitsToFloat(3212836864u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[21].xy = raw_rhs.xy;\n float_temp[21].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1140867072u)), (/* known:shadow */ uintBitsToFloat(1136689152u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1140867072u;\n /* known:word */ raw_rhs.y = 1136689152u;\n raw_temp[22].xy = raw_rhs.xy;\n float_temp[22].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1140817920u)), (/* known:shadow */ uintBitsToFloat(1136623616u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1140817920u;\n /* known:word */ raw_rhs.y = 1136623616u;\n raw_temp[23].xy = raw_rhs.xy;\n float_temp[23].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(3288301568u)), (/* known:shadow */ uintBitsToFloat(3284107264u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 3288301568u;\n /* known:word */ raw_rhs.y = 3284107264u;\n raw_temp[24].xy = raw_rhs.xy;\n float_temp[24].xy = float_rhs.xy;\n float_rhs = vec4((gl_FragCoord.x), 0.0, 0.0, 0.0);\n raw_rhs = uvec4((floatBitsToUint(gl_FragCoord.x)), 0u, 0u, 0u);\n raw_temp[9].x = raw_rhs.x;\n float_temp[9].x = float_rhs.x;\n float_rhs = vec4((float_temp[9].x + float_temp[24].x), (float_temp[9].y + float_temp[24].y), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[25].xy = raw_rhs.xy;\n float_temp[25].xy = float_rhs.xy;\n raw_rhs = uvec4((raw_float_mask(raw_temp[25].x, 0u, false)), (raw_float_mask(raw_temp[25].y, 0u, false)), 0u, 0u);\n raw_temp[26].xy = raw_rhs.xy;\n raw_rhs = uvec4((raw_temp[26].x & 1065353216u), (raw_temp[26].y & 1065353216u), 0u, 0u);\n float_rhs = vec4(uintBitsToFloat(raw_rhs.x), uintBitsToFloat(raw_rhs.y), 0.0, 0.0);\n raw_temp[27].xy = raw_rhs.xy;\n float_temp[27].xy = float_rhs.xy;\n float_rhs = vec4((uintBitsToFloat(1073741824u) * float_temp[27].x), (uintBitsToFloat(1073741824u) * float_temp[27].y), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[28].xy = raw_rhs.xy;\n float_temp[28].xy = float_rhs.xy;\n float_rhs = vec4((float_temp[28].x * uintBitsToFloat(3212836864u)), (float_temp[28].y * uintBitsToFloat(3212836864u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[29].xy = raw_rhs.xy;\n float_temp[29].xy = float_rhs.xy;\n float_rhs = vec4((float_temp[29].x + uintBitsToFloat(1065353216u)), (float_temp[29].y + uintBitsToFloat(1065353216u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[30].xy = raw_rhs.xy;\n float_temp[30].xy = float_rhs.xy;\n float_rhs = vec4((float_temp[25].x * float_temp[30].x), (float_temp[25].y * float_temp[30].y), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[31].xy = raw_rhs.xy;\n float_temp[31].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(2147483648u)), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 2147483648u;\n raw_temp[32].x = raw_rhs.x;\n float_temp[32].x = float_rhs.x;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1140867072u)), (/* known:shadow */ uintBitsToFloat(1136689152u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1140867072u;\n /* known:word */ raw_rhs.y = 1136689152u;\n raw_temp[33].xy = raw_rhs.xy;\n float_temp[33].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(3288350720u)), (/* known:shadow */ uintBitsToFloat(3284172800u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 3288350720u;\n /* known:word */ raw_rhs.y = 3284172800u;\n raw_temp[34].xy = raw_rhs.xy;\n float_temp[34].xy = float_rhs.xy;\n float_rhs = vec4((float_temp[31].x + float_temp[34].x), (float_temp[31].y + float_temp[34].y), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[35].xy = raw_rhs.xy;\n float_temp[35].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(3212836864u)), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 3212836864u;\n raw_temp[36].x = raw_rhs.x;\n float_temp[36].x = float_rhs.x;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1140850688u)), (/* known:shadow */ uintBitsToFloat(1136656384u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1140850688u;\n /* known:word */ raw_rhs.y = 1136656384u;\n raw_temp[37].xy = raw_rhs.xy;\n float_temp[37].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(3288334336u)), (/* known:shadow */ uintBitsToFloat(3284140032u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 3288334336u;\n /* known:word */ raw_rhs.y = 3284140032u;\n raw_temp[38].xy = raw_rhs.xy;\n float_temp[38].xy = float_rhs.xy;\n float_rhs = vec4((float_temp[31].x + float_temp[38].x), (float_temp[31].y + float_temp[38].y), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[39].xy = raw_rhs.xy;\n float_temp[39].xy = float_rhs.xy;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[32].x)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[40].x = raw_rhs.x;\n float_temp[40].x = float_rhs.x;\n float_rhs = vec4(1.0 / (uintBitsToFloat(fsconst0[32].y)));\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[40].y = raw_rhs.y;\n float_temp[40].y = float_rhs.y;\n float_rhs = vec4((float_temp[35].x + float_temp[40].x), (float_temp[35].y + float_temp[40].y), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[41].xy = raw_rhs.xy;\n float_temp[41].xy = float_rhs.xy;\n float_rhs = vec4((float_temp[39].x + float_temp[40].x), (float_temp[39].y + float_temp[40].y), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[42].xy = raw_rhs.xy;\n float_temp[42].xy = float_rhs.xy;\n /* TGSI PRECISE word-local */\n raw_rhs = uvec4((raw_precise_min((raw_temp[41].x), (raw_temp[41].y))), 0u, 0u, 0u);\n float_rhs = vec4(uintBitsToFloat(raw_rhs.x), 0.0, 0.0, 0.0);\n raw_temp[43].x = raw_rhs.x;\n float_temp[43].x = float_rhs.x;\n float_rhs = vec4((min(float_temp[43].x, uintBitsToFloat(fsconst0[29].x))), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[44].x = raw_rhs.x;\n float_temp[44].x = float_rhs.x;\n raw_rhs = uvec4((raw_float_mask(0u, raw_temp[44].x, false)), 0u, 0u, 0u);\n float_rhs = vec4(uintBitsToFloat(raw_rhs.x), 0.0, 0.0, 0.0);\n raw_temp[45].x = raw_rhs.x;\n float_temp[45].x = float_rhs.x;\n /* proved raw UIF */ if (false) {\n /* proved raw UIF */ if (false) {\n } else {\n /* proved raw UIF */ if (false) {\n } else {\n }\n }\n } else {\n float_rhs = vec4((uintBitsToFloat(0u)), 0.0, 0.0, 0.0);\n raw_rhs = uvec4((0u), 0u, 0u, 0u);\n raw_temp[10].x = raw_rhs.x;\n float_temp[10].x = float_rhs.x;\n float_rhs = vec4((uintBitsToFloat(1065353216u)), 0.0, 0.0, 0.0);\n raw_rhs = uvec4((1065353216u), 0u, 0u, 0u);\n raw_temp[17].x = raw_rhs.x;\n float_temp[17].x = float_rhs.x;\n }\n raw_rhs = uvec4((~raw_temp[10].x), 0u, 0u, 0u);\n raw_temp[79].x = raw_rhs.x;\n /* proved raw UIF */ if (true) {\n float_rhs = vec4((uintBitsToFloat(fsconst0[0].y) + float_temp[21].x), (uintBitsToFloat(fsconst0[0].x) + float_temp[21].y), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[80].xy = raw_rhs.xy;\n float_temp[80].xy = float_rhs.xy;\n /* TGSI PRECISE word-local */\n raw_rhs = uvec4((raw_precise_min((raw_temp[20].y), (raw_temp[80].x))), (raw_precise_min((raw_temp[20].x), (raw_temp[80].y))), 0u, 0u);\n float_rhs = vec4(uintBitsToFloat(raw_rhs.x), uintBitsToFloat(raw_rhs.y), 0.0, 0.0);\n raw_temp[81].xy = raw_rhs.xy;\n float_temp[81].xy = float_rhs.xy;\n /* TGSI PRECISE word-local */\n raw_rhs = uvec4((raw_precise_min((raw_temp[81].x), (raw_temp[81].y))), 0u, 0u, 0u);\n float_rhs = vec4(uintBitsToFloat(raw_rhs.x), 0.0, 0.0, 0.0);\n raw_temp[82].x = raw_rhs.x;\n float_temp[82].x = float_rhs.x;\n raw_rhs = uvec4((raw_float_mask(fsconst0[2].x, raw_temp[82].x, false)), 0u, 0u, 0u);\n raw_temp[83].x = raw_rhs.x;\n raw_rhs = uvec4((raw_temp[83].x & 1065353216u), 0u, 0u, 0u);\n float_rhs = vec4(uintBitsToFloat(raw_rhs.x), 0.0, 0.0, 0.0);\n raw_temp[84].x = raw_rhs.x;\n float_temp[84].x = float_rhs.x;\n if (raw_discard_negative((raw_temp[84].x ^ 2147483648u)) || raw_discard_negative((raw_temp[84].x ^ 2147483648u)) || raw_discard_negative((raw_temp[84].x ^ 2147483648u)) || raw_discard_negative((raw_temp[84].x ^ 2147483648u))) discard;\n }\n /* TGSI PRECISE word-local */\n raw_rhs = uvec4((raw_float_equal_mask(raw_temp[17].x, 0u, false)), 0u, 0u, 0u);\n float_rhs = vec4(uintBitsToFloat(raw_rhs.x), 0.0, 0.0, 0.0);\n raw_temp[85].x = raw_rhs.x;\n float_temp[85].x = float_rhs.x;\n raw_rhs = uvec4((raw_temp[85].x & 1065353216u), 0u, 0u, 0u);\n float_rhs = vec4(uintBitsToFloat(raw_rhs.x), 0.0, 0.0, 0.0);\n raw_temp[86].x = raw_rhs.x;\n float_temp[86].x = float_rhs.x;\n if (raw_discard_negative((raw_temp[86].x ^ 2147483648u)) || raw_discard_negative((raw_temp[86].x ^ 2147483648u)) || raw_discard_negative((raw_temp[86].x ^ 2147483648u)) || raw_discard_negative((raw_temp[86].x ^ 2147483648u))) discard;\n raw_rhs = uvec4(((0u ^ 2147483648u) < (fsconst0[23].x ^ 2147483648u) ? 4294967295u : 0u), 0u, 0u, 0u);\n raw_temp[87].x = raw_rhs.x;\n /* proved raw UIF */ if (true) {\n raw_rhs = uvec4(((fsconst0[23].x ^ 2147483648u) < (2u ^ 2147483648u) ? 4294967295u : 0u), 0u, 0u, 0u);\n raw_temp[88].x = raw_rhs.x;\n /* proved raw UIF */ if (true) {\n float_rhs = vec4((uintBitsToFloat(fsconst0[3].x)), (uintBitsToFloat(fsconst0[3].y)), (uintBitsToFloat(fsconst0[3].z)), (uintBitsToFloat(fsconst0[3].w)));\n raw_rhs = uvec4((fsconst0[3].x), (fsconst0[3].y), (fsconst0[3].z), (fsconst0[3].w));\n raw_temp[16].xyzw = raw_rhs.xyzw;\n float_temp[16].xyzw = float_rhs.xyzw;\n } else {\n /* proved raw UIF */ if (false) {\n } else {\n }\n /* proved raw UIF */ if (false) {\n } else {\n }\n }\n } else {\n }\n raw_rhs = uvec4(((0u ^ 2147483648u) >= (fsconst0[24].x ^ 2147483648u) ? 4294967295u : 0u), 0u, 0u, 0u);\n raw_temp[129].x = raw_rhs.x;\n /* proved raw UIF */ if (true) {\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(2761437591u)), (/* known:shadow */ uintBitsToFloat(839535101u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 2761437591u;\n /* known:word */ raw_rhs.y = 839535101u;\n raw_temp[130].xy = raw_rhs.xy;\n float_temp[130].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1065353216u)), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1065353216u;\n raw_temp[131].x = raw_rhs.x;\n float_temp[131].x = float_rhs.x;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1065353216u)), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1065353216u;\n raw_temp[132].x = raw_rhs.x;\n float_temp[132].x = float_rhs.x;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1065353216u)), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1065353216u;\n raw_temp[133].x = raw_rhs.x;\n float_temp[133].x = float_rhs.x;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1065353216u)), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1065353216u;\n raw_temp[134].x = raw_rhs.x;\n float_temp[134].x = float_rhs.x;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(2745312361u)), (/* known:shadow */ uintBitsToFloat(824421473u)), (/* known:shadow */ uintBitsToFloat(2743693980u)), (/* known:shadow */ uintBitsToFloat(860808737u)));\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 2745312361u;\n /* known:word */ raw_rhs.y = 824421473u;\n /* known:word */ raw_rhs.z = 2743693980u;\n /* known:word */ raw_rhs.w = 860808737u;\n raw_temp[135].xyzw = raw_rhs.xyzw;\n float_temp[135].xyzw = float_rhs.xyzw;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(597828713u)), (/* known:shadow */ uintBitsToFloat(2971905121u)), (/* known:shadow */ uintBitsToFloat(596210332u)), (/* known:shadow */ uintBitsToFloat(3008292385u)));\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 597828713u;\n /* known:word */ raw_rhs.y = 2971905121u;\n /* known:word */ raw_rhs.z = 596210332u;\n /* known:word */ raw_rhs.w = 3008292385u;\n raw_temp[136].xyzw = raw_rhs.xyzw;\n float_temp[136].xyzw = float_rhs.xyzw;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1065353216u)), (/* known:shadow */ uintBitsToFloat(1065353216u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1065353216u;\n /* known:word */ raw_rhs.y = 1065353216u;\n raw_temp[137].xy = raw_rhs.xy;\n float_temp[137].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1065353216u)), (/* known:shadow */ uintBitsToFloat(1065353215u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1065353216u;\n /* known:word */ raw_rhs.y = 1065353215u;\n raw_temp[138].xy = raw_rhs.xy;\n float_temp[138].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1065353216u)), (/* known:shadow */ uintBitsToFloat(1065353214u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1065353216u;\n /* known:word */ raw_rhs.y = 1065353214u;\n raw_temp[139].xy = raw_rhs.xy;\n float_temp[139].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1065353216u)), (/* known:shadow */ uintBitsToFloat(1065353213u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1065353216u;\n /* known:word */ raw_rhs.y = 1065353213u;\n raw_temp[140].xy = raw_rhs.xy;\n float_temp[140].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1082291371u)), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1082291371u;\n raw_temp[141].x = raw_rhs.x;\n float_temp[141].x = float_rhs.x;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1079226764u)), (/* known:shadow */ uintBitsToFloat(1051640168u)), (/* known:shadow */ uintBitsToFloat(1060377406u)), 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1079226764u;\n /* known:word */ raw_rhs.y = 1051640168u;\n /* known:word */ raw_rhs.z = 1060377406u;\n raw_temp[142].xyz = raw_rhs.xyz;\n float_temp[142].xyz = float_rhs.xyz;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(3226710412u)), (/* known:shadow */ uintBitsToFloat(3199123816u)), (/* known:shadow */ uintBitsToFloat(3207861054u)), 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 3226710412u;\n /* known:word */ raw_rhs.y = 3199123816u;\n /* known:word */ raw_rhs.z = 3207861054u;\n raw_temp[143].xyz = raw_rhs.xyz;\n float_temp[143].xyz = float_rhs.xyz;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1061478184u)), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1061478184u;\n raw_temp[144].x = raw_rhs.x;\n float_temp[144].x = float_rhs.x;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1047298911u)), (/* known:shadow */ uintBitsToFloat(1076299332u)), (/* known:shadow */ uintBitsToFloat(1071289115u)), 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1047298911u;\n /* known:word */ raw_rhs.y = 1076299332u;\n /* known:word */ raw_rhs.z = 1071289115u;\n raw_temp[145].xyz = raw_rhs.xyz;\n float_temp[145].xyz = float_rhs.xyz;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1065353216u)), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1065353216u;\n raw_temp[6].x = raw_rhs.x;\n float_temp[6].x = float_rhs.x;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1067605037u)), (/* known:shadow */ uintBitsToFloat(998866771u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1067605037u;\n /* known:word */ raw_rhs.y = 998866771u;\n raw_temp[146].xy = raw_rhs.xy;\n float_temp[146].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(3215088685u)), (/* known:shadow */ uintBitsToFloat(3146350419u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 3215088685u;\n /* known:word */ raw_rhs.y = 3146350419u;\n raw_temp[147].xy = raw_rhs.xy;\n float_temp[147].xy = float_rhs.xy;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1068216411u)), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1068216411u;\n raw_temp[148].x = raw_rhs.x;\n float_temp[148].x = float_rhs.x;\n float_rhs = vec4(0.0, (/* known:shadow */ uintBitsToFloat(1065353217u)), 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.y = 1065353217u;\n raw_temp[6].y = raw_rhs.y;\n float_temp[6].y = float_rhs.y;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(3207931453u)), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 3207931453u;\n raw_temp[149].x = raw_rhs.x;\n float_temp[149].x = float_rhs.x;\n float_rhs = vec4(0.0, 0.0, (/* known:shadow */ uintBitsToFloat(1065353209u)), 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.z = 1065353209u;\n raw_temp[6].z = raw_rhs.z;\n float_temp[6].z = float_rhs.z;\n /* TGSI PRECISE word-local */\n raw_rhs = uvec4((raw_precise_max((raw_temp[6].x), (0u))), (raw_precise_max((raw_temp[6].y), (0u))), (raw_precise_max((raw_temp[6].z), (0u))), 0u);\n float_rhs = vec4(uintBitsToFloat(raw_rhs.x), uintBitsToFloat(raw_rhs.y), uintBitsToFloat(raw_rhs.z), 0.0);\n raw_temp[150].xyz = raw_rhs.xyz;\n float_temp[150].xyz = float_rhs.xyz;\n { highp float power_base = float_temp[150].x; highp float power_exponent = uintBitsToFloat(1055439406u); float_rhs = vec4(0.0); if (power_base != 0.0) float_rhs = vec4(/* power:POW */ pow(power_base, power_exponent)); }\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[5].x = raw_rhs.x;\n float_temp[5].x = float_rhs.x;\n { highp float power_base = float_temp[150].y; highp float power_exponent = uintBitsToFloat(1055439406u); float_rhs = vec4(0.0); if (power_base != 0.0) float_rhs = vec4(/* power:POW */ pow(power_base, power_exponent)); }\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[5].y = raw_rhs.y;\n float_temp[5].y = float_rhs.y;\n { highp float power_base = float_temp[150].z; highp float power_exponent = uintBitsToFloat(1055439406u); float_rhs = vec4(0.0); if (power_base != 0.0) float_rhs = vec4(/* power:POW */ pow(power_base, power_exponent)); }\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[5].z = raw_rhs.z;\n float_temp[5].z = float_rhs.z;\n float_rhs = vec4(0.0, 0.0, 0.0, (float_temp[16].w));\n raw_rhs = uvec4(0u, 0u, 0u, (raw_temp[16].w));\n raw_temp[5].w = raw_rhs.w;\n float_temp[5].w = float_rhs.w;\n float_rhs = vec4((float_temp[5].x), (float_temp[5].y), (float_temp[5].z), (float_temp[5].w));\n raw_rhs = uvec4((raw_temp[5].x), (raw_temp[5].y), (raw_temp[5].z), (raw_temp[5].w));\n raw_temp[18].xyzw = raw_rhs.xyzw;\n float_temp[18].xyzw = float_rhs.xyzw;\n } else {\n /* proved raw UIF */ if (false) {\n } else {\n /* proved raw UIF */ if (false) {\n } else {\n }\n /* proved raw UIF */ if (false) {\n } else {\n }\n }\n }\n float_rhs = vec4((float_temp[18].x * float_temp[18].w), (float_temp[18].y * float_temp[18].w), (float_temp[18].z * float_temp[18].w), 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n raw_temp[0].xyz = raw_rhs.xyz;\n float_temp[0].xyz = float_rhs.xyz;\n float_rhs = vec4((/* known:shadow */ uintBitsToFloat(1065353216u)), 0.0, 0.0, 0.0);\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.x = 1065353216u;\n raw_temp[214].x = raw_rhs.x;\n float_temp[214].x = float_rhs.x;\n float_rhs = vec4(0.0, 0.0, 0.0, (float_temp[18].w));\n raw_rhs = uvec4(0u, 0u, 0u, (raw_temp[18].w));\n raw_temp[0].w = raw_rhs.w;\n float_temp[0].w = float_rhs.w;\n float_rhs = vec4((float_temp[0].x * float_temp[214].x), (float_temp[0].y * float_temp[214].x), (float_temp[0].z * float_temp[214].x), (/* known:shadow */ uintBitsToFloat(1065353216u)));\n raw_rhs = floatBitsToUint(float_rhs);\n /* known:word */ raw_rhs.w = 1065353216u;\n raw_out[0].xyzw = raw_rhs.xyzw;\n float_out[0].xyzw = float_rhs.xyzw;\n fsout_c0.x = float_out[0].x;\n fsout_c0.y = float_out[0].y;\n fsout_c0.z = float_out[0].z;\n fsout_c0.w = float_out[0].w;\n}\n",
+            "metadata": {
+              "profile": "virgl-webgl2-raw-bits-v42",
+              "stage": "fragment",
+              "inputs": [
+                {
+                  "index": 0,
+                  "name": "gl_FragCoord",
+                  "type": "vec4",
+                  "semantic": "POSITION",
+                  "semanticIndex": 0,
+                  "componentMask": 15,
+                  "interpolation": "linear"
+                },
+                {
+                  "index": 1,
+                  "name": "vso_g0",
+                  "type": "vec4",
+                  "semantic": "GENERIC",
+                  "semanticIndex": 0,
+                  "componentMask": 3,
+                  "interpolation": "smooth"
+                }
+              ],
+              "outputs": [
+                {
+                  "index": 0,
+                  "name": "fsout_c0",
+                  "type": "vec4",
+                  "semantic": "COLOR",
+                  "semanticIndex": 0,
+                  "componentMask": 15,
+                  "writtenMask": 15
+                }
+              ],
+              "attributes": [],
+              "uniforms": [
+                {
+                  "name": "fsconst0",
+                  "type": "uvec4[]",
+                  "count": 34,
+                  "encoding": "float32-bits"
+                }
+              ],
+              "samplers": [],
+              "uniformBlocks": [],
+              "preciseWordContract": {
+                "kind": "tgsi-precise-word-local-v1",
+                "stage": "fragment",
+                "operations": [
+                  "FSEQ",
+                  "MAX"
+                ]
+              },
+              "minimumBaseProfile": "virgl-webgl2-raw-bits-v19",
+              "minimumWordContract": {
+                "kind": "tgsi-minimum-word-local-v1",
+                "stage": "fragment",
+                "operations": [
+                  "MIN",
+                  "MIN_PRECISE"
+                ],
+                "ordinary": "existing-finite-numeric-authority",
+                "precise": "ordered-less-first-otherwise-second-original-word",
+                "modifiers": "negation-before-selection",
+                "output": "existing-numeric-or-selected-raw-authority"
+              },
+              "powerBaseProfile": "virgl-webgl2-raw-bits-v32",
+              "powerContract": {
+                "kind": "tgsi-bounded-power-v1",
+                "stage": "fragment",
+                "operations": [
+                  "POW"
+                ],
+                "source": "post-swizzle-x-pair-replicated-before-mask",
+                "proof": "static-post-modifier-word-facts-integer-exponent-envelope",
+                "domain": "zero-positive-or-positive-normal-log-envelope-120",
+                "error": "relative-le-2^-14-zero-exact",
+                "precision": "measured-physical-host-explicit-budget",
+                "modifiers": "negation-before-evaluation",
+                "authority": "existing-numeric-authority",
+                "result": "ordinary-highp-no-static-range-facts"
+              },
+              "coordinateBaseProfile": "virgl-webgl2-raw-bits-v37",
+              "coordinateContract": {
+                "kind": "tgsi-fragment-position-v1",
+                "stage": "fragment",
+                "input": 0,
+                "semanticIndex": 0,
+                "source": "gl_FragCoord",
+                "interpolation": "linear",
+                "origin": "lower-left",
+                "pixelCenter": "half-integer",
+                "components": "window-xy-depth-z-reciprocal-clip-w",
+                "precision": "essl3-highp-builtin",
+                "rasterization": "single-sample-half-pixel",
+                "surfaceOrigin": "lower-left",
+                "authority": "existing-input-no-static-range-facts"
+              },
+              "discardBaseProfile": "virgl-webgl2-raw-bits-v38",
+              "discardContract": {
+                "kind": "tgsi-fragment-discard-v1",
+                "stage": "fragment",
+                "operations": [
+                  "KILL_IF"
+                ],
+                "source": "all-four-post-swizzle-word-lanes",
+                "comparison": "ordered-binary32-any-negative-zero-and-nan-false",
+                "modifiers": "absolute-before-negation",
+                "liveness": "exclude-proved-discarded-predecessors",
+                "authority": "no-new-numeric-range-or-initialization-facts",
+                "alwaysDiscards": false
+              },
+              "knownArithmeticBaseProfile": "virgl-webgl2-raw-bits-v39",
+              "knownArithmeticContract": {
+                "kind": "tgsi-known-arithmetic-v1",
+                "stage": "fragment",
+                "operations": [
+                  "ADD",
+                  "MUL"
+                ],
+                "source": "fully-known-authorized-normal-or-zero-post-modifier",
+                "rounding": "binary32-nearest-ties-to-even-integer",
+                "result": "normal-or-zero-only",
+                "emission": "literal-word-and-matching-shadow",
+                "authority": "exact-emitted-producer-version-only",
+                "storage": "unused-third-operand-four-word-cache"
+              },
+              "branchBaseProfile": "virgl-webgl2-raw-bits-v40",
+              "branchContract": {
+                "kind": "tgsi-proved-raw-uif-v1",
+                "stage": "fragment",
+                "condition": "post-swizzle-x-raw-word-nonzero",
+                "proof": "producer-known-zero-or-proved-one-bit",
+                "liveness": "exclude-proved-unreachable-predecessors",
+                "syntax": "complete-unmodified-original-before-pruning",
+                "deadReads": "declarations-and-grammar-only-no-published-facts",
+                "indices": "original-instruction-positions",
+                "authority": "no-new-dynamic-word-numeric-or-bank-facts",
+                "storage": "instruction-flags-no-ir-growth"
+              },
+              "exactBaseProfile": "virgl-webgl2-raw-bits-v41",
+              "constantExactDomains": [
+                {
+                  "kind": "constant-bank-exact-u32-v1",
+                  "stage": "fragment",
+                  "slot": 0,
+                  "name": "fsconst0",
+                  "count": 34,
+                  "components": [
+                    {
+                      "register": 0,
+                      "component": 0,
+                      "word": 1149255680
+                    },
+                    {
+                      "register": 0,
+                      "component": 1,
+                      "word": 1145077760
+                    },
+                    {
+                      "register": 0,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 0,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 1,
+                      "component": 0,
+                      "word": 1065353216
+                    },
+                    {
+                      "register": 1,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 1,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 1,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 2,
+                      "component": 0,
+                      "word": 1065353216
+                    },
+                    {
+                      "register": 2,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 2,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 2,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 3,
+                      "component": 0,
+                      "word": 1065353216
+                    },
+                    {
+                      "register": 3,
+                      "component": 1,
+                      "word": 2772434944
+                    },
+                    {
+                      "register": 3,
+                      "component": 2,
+                      "word": 857748425
+                    },
+                    {
+                      "register": 3,
+                      "component": 3,
+                      "word": 1065353216
+                    },
+                    {
+                      "register": 4,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 4,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 4,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 4,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 5,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 5,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 5,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 5,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 6,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 6,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 6,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 6,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 7,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 7,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 7,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 7,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 8,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 8,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 8,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 8,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 9,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 9,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 9,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 9,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 10,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 10,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 10,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 10,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 11,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 11,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 11,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 11,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 12,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 12,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 12,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 12,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 13,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 13,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 13,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 13,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 14,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 14,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 14,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 14,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 15,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 15,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 15,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 15,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 16,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 16,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 16,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 16,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 17,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 17,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 17,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 17,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 18,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 18,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 18,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 18,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 19,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 19,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 19,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 19,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 20,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 20,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 20,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 20,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 21,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 21,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 21,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 21,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 22,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 22,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 22,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 22,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 23,
+                      "component": 0,
+                      "word": 1
+                    },
+                    {
+                      "register": 23,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 23,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 23,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 24,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 24,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 24,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 24,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 25,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 25,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 25,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 25,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 26,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 26,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 26,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 26,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 27,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 27,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 27,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 27,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 28,
+                      "component": 0,
+                      "word": 1065353216
+                    },
+                    {
+                      "register": 28,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 28,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 28,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 29,
+                      "component": 0,
+                      "word": 0
+                    },
+                    {
+                      "register": 29,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 29,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 29,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 30,
+                      "component": 0,
+                      "word": 1073741824
+                    },
+                    {
+                      "register": 30,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 30,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 30,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 31,
+                      "component": 0,
+                      "word": 3221225472
+                    },
+                    {
+                      "register": 31,
+                      "component": 1,
+                      "word": 3221225472
+                    },
+                    {
+                      "register": 31,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 31,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 32,
+                      "component": 0,
+                      "word": 1149255680
+                    },
+                    {
+                      "register": 32,
+                      "component": 1,
+                      "word": 1145077760
+                    },
+                    {
+                      "register": 32,
+                      "component": 2,
+                      "word": 0
+                    },
+                    {
+                      "register": 32,
+                      "component": 3,
+                      "word": 0
+                    },
+                    {
+                      "register": 33,
+                      "component": 0,
+                      "word": 1065353216
+                    },
+                    {
+                      "register": 33,
+                      "component": 1,
+                      "word": 0
+                    },
+                    {
+                      "register": 33,
+                      "component": 2,
+                      "word": 3212836864
+                    },
+                    {
+                      "register": 33,
+                      "component": 3,
+                      "word": 1145044992
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "interfaceKey": "generic-interpolation-v1:g0/3/smooth|tgsi-fragment-position-v1:in0/linear/lower-left/half-integer/window-z/reciprocal-w|tgsi-fragment-discard-v1:ordered-any-negative/raw-words/always-0"
+        },
+        "ordinary": {
+          "ok": false,
+          "error": {
+            "code": "unsupported-feature",
+            "message": "TGSI is malformed or outside the documented straight-line profile."
+          }
+        }
+      }
+    ],
+    "rejections": [
+      {
+        "name": "positive-cap",
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      {
+        "name": "short-bank",
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      },
+      {
+        "name": "altered-source",
+        "error": {
+          "code": "unsupported-feature",
+          "message": "TGSI is malformed or outside the documented straight-line profile."
+        }
+      }
+    ],
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Unspecified Version)",
+    "inputs": {
+      "vertexSha256": "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c",
+      "fragmentSha256": "c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f",
+      "banksSha256": "4df0b1dca3d4455535333a2a7f0560775cd1140c00ad49a59f782ad78a49004e"
+    },
+    "failure": {
+      "message": "independent full original pixel bank0 near (0,1): {\"expected\":[1.0000002703979702,0.9999998567894618,0.9999999131590388,1],\"actual\":[0,0,1,1],\"errors\":[1.0000002703979702,0.9999998567894618,8.684096119981888e-8,0]}"
+    }
+  },
+  "failureScreenshot": {
+    "path": "failure.png",
+    "sha256": "15e0b71550fb82c214e72edad87baf985e643fe645dff8ba412a0f80b5d54037"
+  },
+  "browserCoverage": {
+    "path": "browser-coverage.json",
+    "sha256": "0c0c851fc3dc4350c5082ca5b2257ad8e70494cbb7ecad2776a009393a62b26f"
+  },
+  "finishedAt": "2026-10-06T01:27:35.827Z"
+}

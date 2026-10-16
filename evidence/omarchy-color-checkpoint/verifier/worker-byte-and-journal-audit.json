@@ -1,0 +1,220 @@
+{
+  "schema": "critic-independent-buffer-and-journal-audit-v1",
+  "original_custody_sha256": "cb47154101a11b111f61fa98d80e9095ef8181956cf19ba44e9c76e82d745f57",
+  "hardware": {
+    "vendorId": 4203,
+    "deviceId": 0,
+    "vendorString": "Google Inc. (Apple)",
+    "deviceString": "ANGLE (Apple, ANGLE Metal Renderer: Apple M4 Max, Version 26.6.2 (Build 25G83))",
+    "driverVendor": "Apple",
+    "driverVersion": "26.6.2"
+  },
+  "hardware_enabled": true,
+  "browser_errors": {
+    "console": [],
+    "page": [],
+    "requests": []
+  },
+  "rows": [
+    {
+      "run": 0,
+      "name": "production-R8-2048",
+      "logical_bytes": 4194304,
+      "every_literal_and_output_byte_matches_independent_expected": true,
+      "logical_sha256": "7bb984b4dd0113d5c8f61ae4ee52695b5f6e59d5d8f85e979188de48569fcf54",
+      "native": [
+        {
+          "path": "hardware/bytes/production-R8-2048-native-0.bin",
+          "bytes": 16777216,
+          "sha256": "9296f687ff46c102271ee1dc19b51132b1832db9ff814c93d15a2bd7d8fae0e9",
+          "every_native_lane_matches": true
+        },
+        {
+          "path": "hardware/bytes/production-R8-2048-native-1.bin",
+          "bytes": 16777216,
+          "sha256": "9296f687ff46c102271ee1dc19b51132b1832db9ff814c93d15a2bd7d8fae0e9",
+          "every_native_lane_matches": true
+        }
+      ],
+      "objects_remaining": [
+        0,
+        0
+      ],
+      "journal": {
+        "bytes": 5255450,
+        "sha256": "7f7ad46f516c6f40545f90ea37676d560c742abb29ca575b979d8f7a3351b996",
+        "framing_and_trailing_digest_valid": true,
+        "frame_count": 16,
+        "gatherInput_frames": 4,
+        "full_original_guest_upload_bytes_match_literal": true,
+        "contents_identity_matches": true,
+        "restored_identity_matches": true
+      },
+      "hardware": [
+        {
+          "context": 0,
+          "full_reads": [
+            {
+              "stage": "checkpoint-source",
+              "args": [
+                0,
+                0,
+                2048,
+                2048,
+                6408,
+                5121,
+                {
+                  "type": "Uint8Array",
+                  "byteLength": 16777216
+                }
+              ]
+            }
+          ],
+          "band_reads": 0,
+          "uploads": 4
+        },
+        {
+          "context": 1,
+          "full_reads": [
+            {
+              "stage": "checkpoint-fresh-context",
+              "args": [
+                0,
+                0,
+                2048,
+                2048,
+                6408,
+                5121,
+                {
+                  "type": "Uint8Array",
+                  "byteLength": 16777216
+                }
+              ]
+            }
+          ],
+          "band_reads": 4,
+          "uploads": 4
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "name": "production-R8-4096",
+      "logical_bytes": 16777216,
+      "every_literal_and_output_byte_matches_independent_expected": true,
+      "logical_sha256": "d3500d461ad21b57207003822a7030134e97568cd63ef0d45541ff0d5759af56",
+      "native": [
+        {
+          "path": "hardware/bytes/production-R8-4096-native-0.bin",
+          "bytes": 67108864,
+          "sha256": "a20012d6aa76d8696aad15c13c2364d6b57dec1725cc06feb301dace42300e46",
+          "every_native_lane_matches": true
+        },
+        {
+          "path": "hardware/bytes/production-R8-4096-native-1.bin",
+          "bytes": 67108864,
+          "sha256": "a20012d6aa76d8696aad15c13c2364d6b57dec1725cc06feb301dace42300e46",
+          "every_native_lane_matches": true
+        }
+      ],
+      "objects_remaining": [
+        0,
+        0
+      ],
+      "journal": {
+        "bytes": 17855114,
+        "sha256": "356877c112f0f02dca4b5fe2d9376886957c3bbff0e40c423ec0e21c3b59bf05",
+        "framing_and_trailing_digest_valid": true,
+        "frame_count": 52,
+        "gatherInput_frames": 16,
+        "full_original_guest_upload_bytes_match_literal": true,
+        "contents_identity_matches": true,
+        "restored_identity_matches": true
+      },
+      "hardware": [
+        {
+          "context": 0,
+          "full_reads": [
+            {
+              "stage": "checkpoint-source",
+              "args": [
+                0,
+                0,
+                4096,
+                4096,
+                6408,
+                5121,
+                {
+                  "type": "Uint8Array",
+                  "byteLength": 67108864
+                }
+              ]
+            }
+          ],
+          "band_reads": 0,
+          "uploads": 16
+        },
+        {
+          "context": 1,
+          "full_reads": [
+            {
+              "stage": "checkpoint-fresh-context",
+              "args": [
+                0,
+                0,
+                4096,
+                4096,
+                6408,
+                5121,
+                {
+                  "type": "Uint8Array",
+                  "byteLength": 67108864
+                }
+              ]
+            }
+          ],
+          "band_reads": 16,
+          "uploads": 16
+        }
+      ],
+      "refusal": {
+        "native_bytes": 67125248,
+        "logical_bytes": 16781312,
+        "read_count_unchanged": 17,
+        "owner_quotas_identical": true,
+        "machine_identical": true,
+        "error": "GPU checkpoint: Native color scratch exceeds byte limit."
+      }
+    },
+    {
+      "run": 2,
+      "name": "historical-R8-eight-MiB",
+      "logical_bytes": 2097152,
+      "every_literal_and_output_byte_matches_independent_expected": true,
+      "logical_sha256": "5a8b63c4aa09926c6166069e10a4c1241f6a1817ebbe6e49c5b781473eb3d83e",
+      "native": [
+        {
+          "path": "hardware/bytes/historical-R8-eight-MiB-native.bin",
+          "bytes": 8388608,
+          "sha256": "aae4fc0866fd32ab10388ed23db3d41f4a5b7ab583b9223e1357a213f40e4d82",
+          "every_native_lane_matches": true
+        }
+      ],
+      "objects_remaining": 0,
+      "refusal": {
+        "native_bytes": 8396800,
+        "logical_bytes": 2099200,
+        "read_count_unchanged": 1,
+        "owner_quotas_identical": true,
+        "machine_identical": true,
+        "error": {
+          "ok": false,
+          "error": {
+            "code": "out-of-bounds",
+            "message": "Native color scratch exceeds byte limit."
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "schema": "dimensional-depth-surfaces-final-independent-verdict-v1",
+  "task": "E6-T11d64",
+  "verdict": "verified",
+  "submission": "fb8c9241678a46f1cf5f5a220add98e0ae010012",
+  "predictions": {
+    "P1": "HELD",
+    "P2": "HELD",
+    "P3": "HELD",
+    "P4": "HELD",
+    "P5": "HELD",
+    "P6": "HELD",
+    "P7": "HELD",
+    "P8": "HELD",
+    "N1": "HELD",
+    "S1": "HELD"
+  },
+  "implementationChangedByCritic": false,
+  "acceptanceReports": {
+    "interrogation.json": "53ef84a6f1e5e998ecf74213b37e3969d05c510177f5501e891c56a2b3e7ad76",
+    "final-custody.json": "cc7812b526c3915b401ae2806191adcd0cadaf6fc7aff922508b7ed3bcb7705d",
+    "final-coverage-deployment.json": "d05c412185aa804ec3de985b0134811aab8eb9690dc87d7669901f5baf8a999e",
+    "generation-interrogation.json": "795c53d7dfc26a2c039d012d10e5740817ca49f3434ca257351c459d88917fc7"
+  },
+  "promotedTests": [
+    "renderer/virgl-command/tests/native-dimensional-depth-surface-generations.mjs",
+    "tools/virgl-dimensional-depth-surfaces/generations-browser.mjs"
+  ],
+  "scope": "Selected original dimensional depth surfaces only; no production acceleration, Linux, complete API or MIPS claim.",
+  "commands": [
+    {
+      "command": "python3 evidence/virgl-dimensional-depth-surfaces/verifier/finish_custody.py",
+      "observedExitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "command": "node --check renderer/virgl-command/tests/native-dimensional-depth-surface-generations.mjs",
+      "observedExitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "command": "node --check tools/virgl-dimensional-depth-surfaces/generations-browser.mjs",
+      "observedExitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "command": "node tools/virgl-dimensional-depth-surfaces/generations-browser.mjs --output evidence/virgl-dimensional-depth-surfaces/verifier/generations-clean --authority target/evidence/d64-final-authority --seeds 1779033703,3144134277,1013904242",
+      "observedExitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "command": "node tools/virgl-dimensional-depth-surfaces/generations-browser.mjs --output evidence/virgl-dimensional-depth-surfaces/verifier/generations-redirected --authority target/evidence/d64-final-authority --seeds 1779033703 --fault true",
+      "observedExitCode": 1,
+      "expectedExitCode": 1
+    },
+    {
+      "command": "python3 evidence/virgl-dimensional-depth-surfaces/verifier/finish_generations.py",
+      "observedExitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "command": "python3 evidence/virgl-dimensional-depth-surfaces/verifier/finish_coverage_deployment.py",
+      "observedExitCode": 0,
+      "expectedExitCode": 0
+    }
+  ],
+  "preservedCriticDiagnostics": [
+    "coverage-deployment-initial.log",
+    "coverage-deployment-second.log",
+    "generation-interrogation-initial.log"
+  ],
+  "diagnosticResolution": "Critic assumptions were corrected to recognize authenticated carried boot manifests, one unchanged unserved legacy docs asset, and the inherited four-byte coordinate annotation. Runtime, recorded GPU work and byte oracles did not change."
+}

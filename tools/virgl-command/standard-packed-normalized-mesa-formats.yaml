@@ -1,0 +1,78 @@
+- name: B5G5R5A1_UNORM
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UN5, UN5, UN5, UN1]
+  swizzles: [Z, Y, X, W]
+- name: B4G4R4A4_UNORM
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UN4, UN4, UN4, UN4]
+  swizzles: [Z, Y, X, W]
+- name: B5G6R5_UNORM
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UN5, UN6, UN5]
+  swizzles: [Z, Y, X, 1]
+- name: R10G10B10A2_UNORM
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UN10, UN10, UN10, UN2]
+  swizzles: [X, Y, Z, W]
+- name: B5G5R5X1_UNORM
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UN5, UN5, UN5, X1]
+  swizzles: [Z, Y, X, 1]
+- name: B10G10R10A2_UNORM
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UN10, UN10, UN10, UN2]
+  swizzles: [Z, Y, X, W]
+- name: B4G4R4X4_UNORM
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UN4, UN4, UN4, X4]
+  swizzles: [Z, Y, X, 1]
+- name: R10G10B10X2_UNORM
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UN10, UN10, UN10, X2]
+  swizzles: [X, Y, Z, 1]
+- name: R4G4B4A4_UNORM
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UN4, UN4, UN4, UN4]
+  swizzles: [X, Y, Z, W]
+- name: R5G5B5A1_UNORM
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UN5, UN5, UN5, UN1]
+  swizzles: [X, Y, Z, W]
+- name: R5G6B5_UNORM
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UN5, UN6, UN5]
+  swizzles: [X, Y, Z, 1]
+- name: R4G4B4X4_UNORM
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UN4, UN4, UN4, X4]
+  swizzles: [X, Y, Z, 1]
+- name: R5G5B5X1_UNORM
+  layout: plain
+  colorspace: RGB
+  block: {width: 1, height: 1, depth: 1}
+  channels: [UN5, UN5, UN5, X1]
+  swizzles: [X, Y, Z, 1]

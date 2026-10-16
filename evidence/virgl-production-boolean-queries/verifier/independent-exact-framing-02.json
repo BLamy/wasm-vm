@@ -1,0 +1,470 @@
+{
+  "schema": 1,
+  "task": "E6-T11d69a",
+  "scope": "Supplemental original exact framing negatives and promoted six-row harness; tests-only addition after final cold, no runtime changes",
+  "archive": "independent-exact-framing-02.tar.gz",
+  "bytes": 2862627,
+  "sha256": "2bca94a7ef02d8f9ee70b8990f653f42cf4364c492e31432a95fc984b1e04da9",
+  "files": [
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/browser-coverage.json",
+      "bytes": 1764978,
+      "sha256": "fdb6c2b1f93b58169e21a02bc9701c77bea634354cb14fac6d4ed22e0fc27458"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/browser.png",
+      "bytes": 35098,
+      "sha256": "8e666aeea999b1052f369c193218305716890f8468e49627e67a9b0392979bf1"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/report.json",
+      "bytes": 23227,
+      "sha256": "0dca85ced292e13c6cc1d02a7a911e6a05e92c69dc96e513d0ea5b3e673022d9"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/run-0000.json.gz",
+      "bytes": 21131,
+      "sha256": "66d01b4603540d561a98290ef0bd9a4e5ee48a9255784bbef1ef1f30af1f1582"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 127535,
+      "sha256": "dd64536abf46bc69ff7866e9822d7acf1a3e7f5216e70919d4a03e633b7c7aca"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 38546,
+      "sha256": "a5337fbc0bf6d258200e653b13c86ba18f3f449dfaef06102c4791bfe20fe68a"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 54272,
+      "sha256": "8c23e2ca6a33b6c2613d15dce9284ce2da5ba16f36394a8b8f7507e2be878a64"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/multisample.mjs",
+      "bytes": 7268,
+      "sha256": "950255f6b8c09f09540e444a381fd9396665f64ec167307c2313b53b43d00b06"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/production.mjs",
+      "bytes": 20833,
+      "sha256": "c3cc943ff6a3e61dee5fac19142799b142d288fe543a40d9b953e6e4ae08ee28"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/queries.mjs",
+      "bytes": 4514,
+      "sha256": "737c8245f5bba1d898f5c7b90d046acbe8b5c54ba383f8eea79130f98163c416"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/resources.mjs",
+      "bytes": 163972,
+      "sha256": "18ea2bcaa19c60adb9b8c9a3f43be81d12fe0461cb06c7f66fee31fef5a6d06d"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14960,
+      "sha256": "4d20d1dc1d74836cd26a966206e4f8b051288ea8e3685904f749bbba1716ccbe"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 12102,
+      "sha256": "7b44ba7bc7361438807c1709c32929832dbf0b7af95966c68a65b01b23075ad8"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/state.mjs",
+      "bytes": 221315,
+      "sha256": "a05208d402c600ae24ea346be8b29118d82c4402a931fb012df6b81482516afd"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53429,
+      "sha256": "76f1a6cdb1faf9763d12794bf030d7a030efae6cc4e61a17b8d66b60fbb793d6"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/target/virgl-production/pkg/wasm_vm_wasm.js",
+      "bytes": 158077,
+      "sha256": "c8c619368f71b82d50b72a0916856ac91e966cea07e0222f4c32eb0fa2fdd1f2"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/target/virgl-production/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1747059,
+      "sha256": "f06b48da01807918da0afaad2c4abbab3fbac481209fe4d0b68bd6e4186cd280"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01/source/tools/virgl-production/critic-fast-boots-boolean-queries.mjs",
+      "bytes": 12988,
+      "sha256": "cff99ebe0205ee3c127c03171c983a9db9063fd5789f1cafcbeb2a10c1a0a20a"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01-driver.mjs",
+      "bytes": 9458,
+      "sha256": "763291a83c33a93b904378dc985ae4f97737c79980b6577da826fe3b602a10c4"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-01.log",
+      "bytes": 125,
+      "sha256": "ed432a68dc60a8be35d8381659ec0bcd33fdbf6843756b330b16a57575cced2f"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/browser-coverage.json",
+      "bytes": 1855856,
+      "sha256": "b6680eda4f98ecc9be7fd63dddc037c78c728e5a95bd3b2420f4869308db9e01"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/browser.png",
+      "bytes": 35264,
+      "sha256": "c291970c665151540818e9bf9ccda1e607fd3a852c7b785295913caeb77efddd"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/report.json",
+      "bytes": 26440,
+      "sha256": "6f9d26b56899746169876d6a5484f9ae877babd957b15ac5de46093156db37aa"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/run-0000.json.gz",
+      "bytes": 27665,
+      "sha256": "9419c8e3c713c9d006246e0c02f51f18fcfdf5c742941c59430b1a24bd0c20d3"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/run-0001.json.gz",
+      "bytes": 655591,
+      "sha256": "50410ce729394d0f64783817c69c5ef4804a28cbaae4456306a55873c66b86b8"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/run-0002.json.gz",
+      "bytes": 19795,
+      "sha256": "16273669326413057bdb61385f662663596c82f98751d8bcc9272625f7f3fb17"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/run-0003.json.gz",
+      "bytes": 19784,
+      "sha256": "d1ec28317a3d6beb19eab291f174ffe02ba61b7d48a4e0532e3f4e6692eea6c1"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/run-0004.json.gz",
+      "bytes": 19793,
+      "sha256": "3ec3c6453e1ce0677aa95cc7c56580bb337e3f7dad98a9c9b697bdff35794ee3"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/run-0005.json.gz",
+      "bytes": 21216,
+      "sha256": "bde6d51d7f079dee259dc0b36d2af621c8dd0a558f3e4490ac8cc3e2b09c5999"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 127535,
+      "sha256": "dd64536abf46bc69ff7866e9822d7acf1a3e7f5216e70919d4a03e633b7c7aca"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 38546,
+      "sha256": "a5337fbc0bf6d258200e653b13c86ba18f3f449dfaef06102c4791bfe20fe68a"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 54272,
+      "sha256": "8c23e2ca6a33b6c2613d15dce9284ce2da5ba16f36394a8b8f7507e2be878a64"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/multisample.mjs",
+      "bytes": 7268,
+      "sha256": "950255f6b8c09f09540e444a381fd9396665f64ec167307c2313b53b43d00b06"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/production.mjs",
+      "bytes": 20833,
+      "sha256": "c3cc943ff6a3e61dee5fac19142799b142d288fe543a40d9b953e6e4ae08ee28"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/queries.mjs",
+      "bytes": 4514,
+      "sha256": "737c8245f5bba1d898f5c7b90d046acbe8b5c54ba383f8eea79130f98163c416"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/resources.mjs",
+      "bytes": 163972,
+      "sha256": "18ea2bcaa19c60adb9b8c9a3f43be81d12fe0461cb06c7f66fee31fef5a6d06d"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14960,
+      "sha256": "4d20d1dc1d74836cd26a966206e4f8b051288ea8e3685904f749bbba1716ccbe"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 12102,
+      "sha256": "7b44ba7bc7361438807c1709c32929832dbf0b7af95966c68a65b01b23075ad8"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/state.mjs",
+      "bytes": 221315,
+      "sha256": "a05208d402c600ae24ea346be8b29118d82c4402a931fb012df6b81482516afd"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53429,
+      "sha256": "76f1a6cdb1faf9763d12794bf030d7a030efae6cc4e61a17b8d66b60fbb793d6"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/target/virgl-production/pkg/wasm_vm_wasm.js",
+      "bytes": 158077,
+      "sha256": "c8c619368f71b82d50b72a0916856ac91e966cea07e0222f4c32eb0fa2fdd1f2"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/target/virgl-production/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1747059,
+      "sha256": "f06b48da01807918da0afaad2c4abbab3fbac481209fe4d0b68bd6e4186cd280"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01/source/tools/virgl-production/critic-fast-boots-boolean-queries.mjs",
+      "bytes": 13176,
+      "sha256": "d0fb33b2bde17dcf9daa0c03a38192cf2f71c8ce675f01e0b3f2c9df32d43817"
+    },
+    {
+      "path": "target/evidence/critic-production-boolean-queries-framing-promoted-01.log",
+      "bytes": 125,
+      "sha256": "f20080c4ba349bfdb70586a7ae3b19822941a15b22efb35171c810f52413b15d"
+    },
+    {
+      "path": "tools/virgl-production/critic-fast-boots-boolean-queries-browser.mjs",
+      "bytes": 8350,
+      "sha256": "0b04ef02142b4146bbc6657340e9860753f32c84cbd831df66928692aba418d0"
+    },
+    {
+      "path": "tools/virgl-production/critic-fast-boots-boolean-queries.mjs",
+      "bytes": 13176,
+      "sha256": "d0fb33b2bde17dcf9daa0c03a38192cf2f71c8ce675f01e0b3f2c9df32d43817"
+    }
+  ]
+}

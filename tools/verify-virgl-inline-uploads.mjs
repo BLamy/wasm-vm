@@ -15,13 +15,13 @@ assert.ok(options.output);assert.ok(!options.sabotage||['inline-offset','stride'
 assert.ok(!options['node-only']||options['node-only']==='true');
 const output=path.resolve(options.output);await fs.mkdir(output,{recursive:true});
 const sourcePaths=[
-  'renderer/virgl-command/resources.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs',
+  'renderer/virgl-command/resources.mjs', 'renderer/virgl-command/float-images.mjs', 'renderer/virgl-command/packed-float-images.mjs', 'renderer/virgl-command/shared-exponent-images.mjs', 'renderer/virgl-command/shared-exponent-gpu.mjs', 'renderer/virgl-command/integer-images.mjs', 'renderer/virgl-command/packed-normalized-images.mjs', 'renderer/virgl-command/packed-unsigned-images.mjs', 'renderer/virgl-command/floating-depth-images.mjs', 'renderer/virgl-command/unorm-depth-images.mjs', 'renderer/virgl-command/floating-depth-gpu.mjs','renderer/virgl-command/decoder.mjs','renderer/virgl-command/state.mjs', 'renderer/virgl-command/cache.mjs',
   'renderer/virgl-command/constant-domain.mjs','renderer/virgl-command/tests/inline-uploads.mjs',
   'renderer/virgl-shader/index.mjs','renderer/virgl-shader/UPSTREAM.json','renderer/virgl-shader/vendor/src/virgl_protocol.h',
   'tools/virgl-command/fixtures.mjs','tools/virgl-command/inline-fixtures.mjs','tools/verify-virgl-inline-uploads.mjs',
   'tools/verify-virgl-inline-uploads.sh','tools/virgl-command/inline-receipt.py','tools/virgl-command/inline-cold.py',
   'Makefile','renderer/virgl-command/README.md','renderer/virgl-command/resources-README.md','renderer/virgl-command/state-README.md',
-];
+ 'renderer/virgl-command/color-images.mjs'];
 const report={schema:1,task:'E6-T12g5',status:'running',guestExecution:false,
   boundary:'Five original normal CPU uploads and synthetic checked inline writes with independent hardware bytes/depth; no full guest offload.',
   gitHead:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),command:[process.execPath,...process.argv.slice(1)],

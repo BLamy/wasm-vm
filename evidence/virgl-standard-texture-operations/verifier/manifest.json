@@ -1,0 +1,16 @@
+{
+  "schema": "d24-independent-verifier-seal-v1",
+  "task": "E6-T11d24",
+  "sourceHead": "5cd618e3effa1a45e2c814cb6bb460f38fa57740",
+  "frozenRuntimeHead": "765e9d967258e44def61b65e595bcfd92b192367",
+  "records": 826,
+  "unpackedBytes": 17966922,
+  "archiveBytes": 2432671,
+  "archiveSha256": "d8aef67b078befa0084d28257b9b422b83561ac58b9a17c3779619bdf609bc78",
+  "recordIndexSha256": "8209fb81e6f1db942c91de6c4c44fb63a8ef8772fbdcd8e8cd7007495c7b4d18",
+  "workerArchiveSha256": "f6be8a4330a501c058b539c0e0706ddf1e4d929dc518df7dd1cc49ab91326c81",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-texture-operations",
+  "productionDrawAuthority": false
+}

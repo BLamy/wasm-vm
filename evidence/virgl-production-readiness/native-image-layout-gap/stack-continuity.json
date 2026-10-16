@@ -1,0 +1,32 @@
+{
+  "schema": "existing-native-stack-continuity-v1",
+  "newPr": 531,
+  "verifiedHead": "0211566e662a3512b374c69ab915c563e7daf0cc",
+  "previousPrCount": 131,
+  "allPriorIdentityOrderHeadsBasesPreserved": true,
+  "all132OpenDraftUnmerged": true,
+  "stacks": [
+    {
+      "number": 499,
+      "id": 1985180,
+      "node_id": "PRS_kwDOTLQ_184AHkqc",
+      "base": {
+        "ref": "main"
+      },
+      "previousCount": 50,
+      "currentCount": 50,
+      "priorIdentityOrderHeadsBasesPreserved": true
+    },
+    {
+      "number": 500,
+      "id": 1985183,
+      "node_id": "PRS_kwDOTLQ_184AHkqf",
+      "base": {
+        "ref": "codex/virgl-signed-float-conversions"
+      },
+      "previousCount": 81,
+      "currentCount": 82,
+      "priorIdentityOrderHeadsBasesPreserved": true
+    }
+  ]
+}

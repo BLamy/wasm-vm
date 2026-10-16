@@ -1,0 +1,43 @@
+{
+  "schema": "E6-T11d16-offset-repair-critic-seal-v1",
+  "task": "E6-T11d16",
+  "verdict": "verified",
+  "workerSubmission": "81a7a5aba30dd742645336621228a4bd88425d2d",
+  "runtimeHead": "d3e0dc04431b64f7585565fdbf0a9c5065078152",
+  "diffBase": "ea2906ee1e6abece757fcbb3bc549b881f1336b6",
+  "records": 104,
+  "archiveBytes": 11790684,
+  "archiveSha256": "66de35c269e44252dc302ddc152e93d0aa1cd02fe9d1cd9171247d91b0daf09e",
+  "recordIndexSha256": "3f3e08edb1104103bc8c5451a855262708d163da9d9ead23f6eee71580f23187",
+  "verdictSha256": "96aea1bf78c62c81af77486525cde9e9b7406b0963cf093404d370da689ab3c0",
+  "predictionsSha256": "4d1c25855aca38ccfc69bcb9ae2acbef9ea3ef42b863320af965a7d6c92a1fc4",
+  "newWorkerArchiveSha256": "e481c471060723b3e183781836fa413eb76722ad53f8e97e2146308ad6046943",
+  "newWorkerIndexSha256": "d041a75220720bf43f24148b8e6d4add2b2c7518739299cf7e1596fef673df55",
+  "originalWorkerArchiveSha256": "25436c66b4a320aa7bd68d407d37cf8c675438047e1fb8f0160964504e601fe0",
+  "originalWorkerIndexSha256": "8ea043b6586f2309d516e7d5f5ed6403ed413de7f8f6b4f16d317d031ff056b8",
+  "originalCriticArchiveSha256": "68cb3cb849be72cd465423ced2c23d20a61a141f0f48fdfa3a3ae03c0e797c44",
+  "originalCriticIndexSha256": "b3d707e7e5831c1995e03f9b829f18fb838a051e74e5f92b0a5afc9e1fff7fa6",
+  "originalCriticVerdictSha256": "0b347a134310a73061bf0f45b6d6f67caddd63aea6b9b17e554c5776e9e3f14d",
+  "carriedHeldIds": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5",
+    "P6",
+    "P7",
+    "P8",
+    "P9",
+    "P10",
+    "P11",
+    "P12"
+  ],
+  "implementationEdited": false,
+  "authority": "isolated-standard-uniform-shader",
+  "productionAuthority": false,
+  "guestExecution": false,
+  "sealSourceSha256": {
+    "seal.py": "ef574f9b2b4ff131cbb48b2b1fe3544f571729b4e472ae385f97bfe05a44da78",
+    "verify-seal.py": "80851ce6c5f46e53dc8784719d0a2e70a422ae85fca31930cdda0f4a60ffbb84"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "schema": "dimensional-depth-gap-seal-v1",
+  "head": "fa4692ab33c0bd91e4d2cedddc8003df29354108",
+  "records": 142,
+  "reopenedMembers": 142,
+  "recordIndexSha256": "85c996d5af28bb7d1597109ca10a99f249ee2ffe707c9ff5323272332e128e64",
+  "archiveSha256": "c4dbe16cc1c661eaf12cbc71d80160fef50482851e1d3f4b41ba62aed912bebe",
+  "archiveBytes": 10003317,
+  "summary": {
+    "status": "passed",
+    "depth2DAdmitted": 15,
+    "dimensionalDepthRefused": 30,
+    "dimensionalRGBA8Admitted": 3,
+    "nativeCalls": 3271,
+    "assertions": 3182
+  },
+  "layoutDimensionalDepthRefusals": 60,
+  "layout2DDepthControls": 30,
+  "previousPrsUnchanged": 136,
+  "newPr": 536,
+  "productionAuthority": false
+}

@@ -1,0 +1,99 @@
+{
+  "task": "E5.5-T05a",
+  "status": "verified",
+  "workerHead": "d52f9b8beed4a94e3f523a56f3506830a4b178a3",
+  "sourceHead": "7344482caf8eb27a07820aceb505cff96e684e1f",
+  "scope": "static discovery only; no install/signature/execution claim",
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "tools/image/check-omarchy-app-catalog.py"
+      ],
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "python3",
+        "tools/image/check-omarchy-app-catalog.py",
+        "--archives",
+        "target/omarchy-full/packages"
+      ],
+      "exitCode": 0
+    },
+    {
+      "command": [
+        "python3",
+        "evidence/omarchy-app-catalog/verifier/inspect-direct.py"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "files": [
+    {
+      "path": "evidence/omarchy-app-catalog/verifier/VERDICT.md",
+      "bytes": 4854,
+      "sha256": "3e96c9ba64e23947637dea6cffc1e9de42a83a2f670dd5fac7fa48a567c4dab3"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/verifier/archives.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/verifier/archives.stdout",
+      "bytes": 547,
+      "sha256": "bc071a57a790e70259ffa0487984f39a989cd6e3546aab747b578f9203b647be"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/verifier/coverage.json",
+      "bytes": 8673,
+      "sha256": "a61dd3f0719bce518c48d11e2d83f61dc0f627356f1e3c23cdb948ea05835ebe"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/verifier/direct-accounting.json",
+      "bytes": 20815,
+      "sha256": "3b293eec6d2ca82ddea922c8764cf180e1fedb14326e91c178c43682e3239f75"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/verifier/direct-accounting.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/verifier/direct-accounting.stdout",
+      "bytes": 705,
+      "sha256": "9876ca3955fc77a5c0254b534dcd4e320a3eaa78fb01365d56c681e189a12e75"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/verifier/inspect-direct.py",
+      "bytes": 6648,
+      "sha256": "5effb6724f43de42e05b59b67a6c224350d1f1f822424fe866a655c7981c38cf"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/verifier/portable.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/verifier/portable.stdout",
+      "bytes": 548,
+      "sha256": "120453e2fb622f594a21e8aae85b6972d0c476207062edb57cadf68529c9c657"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/verifier/pre-data.json",
+      "bytes": 2138,
+      "sha256": "aa22074955dd0939424501f2a544d831e12eae058a66ef4be7133ca2c71a8de6"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/verifier/upstream-original.packages",
+      "bytes": 1675,
+      "sha256": "99434167d84b242050bbb32485679e92c29934fd5102df01265f7673612167fc"
+    },
+    {
+      "path": "evidence/omarchy-app-catalog/verifier/upstream-response.json",
+      "bytes": 1610,
+      "sha256": "6661268f0bb5fa98760e207734fb3baa0cf637f274640ac62a51f413ba631ac1"
+    }
+  ]
+}

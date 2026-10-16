@@ -1,0 +1,222 @@
+{
+  "schema": "standard-scalar-scoped-hunk-audit-v1",
+  "status": "passed",
+  "diffBase": "b98847797f109b0a3af6171fd0a8c21983e1057b",
+  "diffHead": "2879d9a49c5b9b4f351993f0cf75342c7743d41b",
+  "hunks": [
+    {
+      "source": "Makefile",
+      "hunk": "@@ -2179,0 +2180,4 @@ verify-E6-T11d12:",
+      "classification": "executed",
+      "reason": "hot/cold default make verify-E6-T11d13 runs the added target"
+    },
+    {
+      "source": "evidence/virgl-production-readiness/standard-scalar-vertex-gap.json",
+      "hunk": "@@ -0,0 +1,2395 @@",
+      "classification": "waived",
+      "reason": "declarative task/queue/README metadata or authenticated recorded evidence; no executable product behavior"
+    },
+    {
+      "source": "evidence/virgl-standard-scalar/worker/manifest.json",
+      "hunk": "@@ -0,0 +1,16 @@",
+      "classification": "waived",
+      "reason": "declarative task/queue/README metadata or authenticated recorded evidence; no executable product behavior"
+    },
+    {
+      "source": "evidence/virgl-standard-scalar/worker/records.json",
+      "hunk": "@@ -0,0 +1,47897 @@",
+      "classification": "waived",
+      "reason": "declarative task/queue/README metadata or authenticated recorded evidence; no executable product behavior"
+    },
+    {
+      "source": "renderer/virgl-command/compact-vertex-README.md",
+      "hunk": "@@ -33,2 +33,4 @@ unchanged compiler/allocator seals are retained.",
+      "classification": "waived",
+      "reason": "declarative task/queue/README metadata or authenticated recorded evidence; no executable product behavior"
+    },
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "hunk": "@@ -24,3 +24,7 @@ const FLOATING_VERTEX_FORMATS = Object.freeze(Object.fromEntries([",
+      "classification": "executed",
+      "reason": "all seven added table lines and each literal family/component have exact-source V8 hits and original wire/pointer authority"
+    },
+    {
+      "source": "renderer/virgl-command/scalar-vertex-README.md",
+      "hunk": "@@ -0,0 +1,39 @@",
+      "classification": "waived",
+      "reason": "declarative task/queue/README metadata or authenticated recorded evidence; no executable product behavior"
+    },
+    {
+      "source": "renderer/virgl-command/standard-state-README.md",
+      "hunk": "@@ -38 +38,2 @@ with actual byte-width bounds and retained stride-zero scalar reads. Arrays",
+      "classification": "waived",
+      "reason": "declarative task/queue/README metadata or authenticated recorded evidence; no executable product behavior"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -34 +34 @@ function constantVertexValues(bytes, sourceFormat) {",
+      "classification": "executed",
+      "reason": "all six added converter lines and all new signed/unsigned 8/16/32, normalized/scaled branches have exact-source detailed V8 hits and exact generic words"
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "hunk": "@@ -36,2 +36,5 @@ function constantVertexValues(bytes, sourceFormat) {",
+      "classification": "executed",
+      "reason": "all six added converter lines and all new signed/unsigned 8/16/32, normalized/scaled branches have exact-source detailed V8 hits and exact generic words"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch-adversarial.mjs",
+      "hunk": "@@ -51 +51 @@ export async function runAcceptance({smoke=false,mutation}={}) {",
+      "classification": "executed",
+      "reason": "updated scalar exclusions execute in 297-case headed hot/cold and node coverage; original sealed negative history remains unchanged"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "hunk": "@@ -9 +9 @@ const families=[[28,4,'float'],[48,2,'unorm'],[56,2,'snorm'],[64,1,'unorm'],[74,",
+      "classification": "executed",
+      "reason": "six changed helper lines execute in native/generic32 and affected compact runs; only the textually unchanged fixture-only unsupported-format throw is waived"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "hunk": "@@ -32 +32 @@ export function compactSpec(options={}){",
+      "classification": "executed",
+      "reason": "six changed helper lines execute in native/generic32 and affected compact runs; only the textually unchanged fixture-only unsupported-format throw is waived"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "hunk": "@@ -34 +34 @@ export function compactSpec(options={}){",
+      "classification": "executed",
+      "reason": "six changed helper lines execute in native/generic32 and affected compact runs; only the textually unchanged fixture-only unsupported-format throw is waived"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "hunk": "@@ -83 +83 @@ function checkWords(c,observed,expected,values,label){c.same(observed.length,exp",
+      "classification": "executed",
+      "reason": "six changed helper lines execute in native/generic32 and affected compact runs; only the textually unchanged fixture-only unsupported-format throw is waived"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "hunk": "@@ -92 +92 @@ export async function compactFrame(r,record){",
+      "classification": "executed",
+      "reason": "six changed helper lines execute in native/generic32 and affected compact runs; only the textually unchanged fixture-only unsupported-format throw is waived"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "hunk": "@@ -114 +114 @@ export function runWireAcceptance(){",
+      "classification": "executed",
+      "reason": "six changed helper lines execute in native/generic32 and affected compact runs; only the textually unchanged fixture-only unsupported-format throw is waived"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "hunk": "@@ -181 +181 @@ export function runWireAcceptance() {",
+      "classification": "executed",
+      "reason": "new R32_UNORM expectation executes in the independently reconstructed 80-case original/legacy wire matrix; native float32 admission remains covered"
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-scalar-vertex-fetch.mjs",
+      "hunk": "@@ -0,0 +1,98 @@",
+      "classification": "executed",
+      "reason": "396 wire cases,391 native frames, ten rejections, six lifetimes, disposal and two actual GPU sabotage witnesses execute every declared acceptance slice"
+    },
+    {
+      "source": "tasks/QUEUE.md",
+      "hunk": "@@ -5 +5 @@",
+      "classification": "waived",
+      "reason": "declarative task/queue/README metadata or authenticated recorded evidence; no executable product behavior"
+    },
+    {
+      "source": "tasks/QUEUE.md",
+      "hunk": "@@ -652,0 +653 @@ Legend: `[ ]` pending \u00b7 `[~]` in-progress \u00b7 `[?]` implemented/evidence-needed",
+      "classification": "waived",
+      "reason": "declarative task/queue/README metadata or authenticated recorded evidence; no executable product behavior"
+    },
+    {
+      "source": "tasks/QUEUE.md",
+      "hunk": "@@ -656 +657 @@ Legend: `[ ]` pending \u00b7 `[~]` in-progress \u00b7 `[?]` implemented/evidence-needed",
+      "classification": "waived",
+      "reason": "declarative task/queue/README metadata or authenticated recorded evidence; no executable product behavior"
+    },
+    {
+      "source": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "hunk": "@@ -7,2 +7,2 @@ status: blocked",
+      "classification": "waived",
+      "reason": "declarative task/queue/README metadata or authenticated recorded evidence; no executable product behavior"
+    },
+    {
+      "source": "tasks/epic-6-transcendence/E6-T11d-truthful-guest-virgl-bringup.md",
+      "hunk": "@@ -279,0 +280,15 @@ graphics chain remains ahead of unrelated queue work under the user's request.",
+      "classification": "waived",
+      "reason": "declarative task/queue/README metadata or authenticated recorded evidence; no executable product behavior"
+    },
+    {
+      "source": "tasks/epic-6-transcendence/E6-T11d13-standard-scalar-vertex-fetch.md",
+      "hunk": "@@ -0,0 +1,146 @@",
+      "classification": "waived",
+      "reason": "declarative task/queue/README metadata or authenticated recorded evidence; no executable product behavior"
+    },
+    {
+      "source": "tools/verify-virgl-standard-scalar.mjs",
+      "hunk": "@@ -0,0 +1,134 @@",
+      "classification": "executed",
+      "reason": "wire/default headed/fault/promoted paths execute at exact source hashes; defensive CLI/timeouts/error handling are harness guards, not additional product behaviors"
+    },
+    {
+      "source": "tools/verify-virgl-standard-scalar.sh",
+      "hunk": "@@ -0,0 +1,51 @@",
+      "classification": "executed",
+      "reason": "complete frozen hot and scrubbed cold acceptance logs record all commands, native/sanitized programs and affected original compact/scalar GPU evidence"
+    },
+    {
+      "source": "tools/virgl-command/standard-scalar-cold.py",
+      "hunk": "@@ -0,0 +1,74 @@",
+      "classification": "executed",
+      "reason": "authenticated cold report/log and still-present clean exact-freeze clone prove the pristine default command; failure-only defensive checks are harness guards"
+    },
+    {
+      "source": "tools/virgl-command/standard-scalar-enums.c",
+      "hunk": "@@ -0,0 +1,74 @@",
+      "classification": "executed",
+      "reason": "native and ASan/UBSan programs compile all declarative static assertions and emit the independently pinned 32-enum list"
+    },
+    {
+      "source": "tools/virgl-command/standard-scalar-oracle.mjs",
+      "hunk": "@@ -0,0 +1,85 @@",
+      "classification": "executed",
+      "reason": "worker byte/word/pixel oracle executes in all physical slices; a separate arithmetic byte decoder, exact BigInt rational rounding and original-TGSI interpreter refute self-licking expected values"
+    },
+    {
+      "source": "tools/virgl-command/standard-scalar-pixels.mjs",
+      "hunk": "@@ -0,0 +1,43 @@",
+      "classification": "executed",
+      "reason": "hot/cold full independent saved-pixel receipts are rechecked from original blobs; all changed scalar product behavior is independently authenticated"
+    },
+    {
+      "source": "tools/virgl-command/standard-scalar-receipt.py",
+      "hunk": "@@ -0,0 +1,147 @@",
+      "classification": "executed",
+      "reason": "hot/cold receipts close531sources/2generated/154historical identities, full blobs/source coverage and final command; defensive invalid-receipt checks add no product semantics"
+    },
+    {
+      "source": "tools/virgl-command/standard-scalar-retained-critic.mjs",
+      "hunk": "@@ -0,0 +1,23 @@",
+      "classification": "executed",
+      "reason": "each retained critic44 original-TGSI full-pixel audit and297wire cases are separately replayed"
+    },
+    {
+      "source": "tools/virgl-command/standard-scalar-seal.py",
+      "hunk": "@@ -0,0 +1,83 @@",
+      "classification": "executed",
+      "reason": "committed index/archive authenticate every hot/cold closure record; defensive invalid-seal checks add no product semantics"
+    }
+  ],
+  "branchWaivers": [
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "line": 9,
+      "branch": "throw Error(unsupported fixture format)",
+      "classification": "waived",
+      "reason": "Fixture-only failure for an out-of-matrix format is textually the predecessor guard. The widened family search and all newly admitted widths execute; this unchanged harness guard adds no scalar runtime behavior."
+    }
+  ],
+  "unexecutedRuntimeSegments": []
+}

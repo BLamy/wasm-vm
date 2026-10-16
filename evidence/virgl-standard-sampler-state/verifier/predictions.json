@@ -1,0 +1,43 @@
+{
+  "task": "E6-T11d19",
+  "role": "fresh-adversarial-verifier",
+  "base": "bdad14aff93ba70c09d60ab308df4d2024dce4ba",
+  "submission": "a8859ed6d16f9c5479bc32c97ae43c8caf6a6d96",
+  "frozen": "4e13347405adf4926dd866b9ff434a08420b4784",
+  "fileWrittenAfterExclusiveWriteLease": true,
+  "predictions": [
+    {
+      "id": "P1",
+      "prediction": "8192 original enum packets admit exactly S/T/R in {0,2,4}, mip in {0,1,2}, image in {0,1}; the old facet admits only its prior clamp shape."
+    },
+    {
+      "id": "P2",
+      "prediction": "Original finite signed/reversed f32 LOD and inactive raw words survive; nonfinite/reserved/bias/shadow/anisotropy still reject atomically and guest options cannot select the standard facet."
+    },
+    {
+      "id": "P3",
+      "prediction": "Each actual draw native sampler identity/parameters, all native texels and vertex bytes, complete original TGSI/C-Wasm GLSL, and full fence-completed pixels agree with independent original bytes/formulas, including both stages and NPOT."
+    },
+    {
+      "id": "P4",
+      "prediction": "Create/parameter faults never publish a sampler; replacement/deletion, poison/context/subcontext/cache restoration and queued delayed fences retain the correct identity/state and all budgets reach zero."
+    },
+    {
+      "id": "P5",
+      "prediction": "Wrap/filter sabotage completes a physical draw/fence before the unchanged original pixel oracle fails."
+    },
+    {
+      "id": "P6",
+      "prediction": "Hot/cold archive/index/source/served/generated/Wasm/V8 custody is exact at frozen head; pristine cold run is clean/scrubbed; every changed nested runtime region executes or receives an explicit scoped waiver; unchanged D16/17/18 HELD boundaries and evidence authenticate."
+    },
+    {
+      "id": "P7",
+      "prediction": "A novel stage-split physical seam attack uses distinct VS/FS sampler handles8/9 under identical numeric names across contexts/subcontexts, dyadic negative/multiple-period NPOT seams, independent seeded texels and delayed fence schedules. Poisoning units0/16 and cache reset must restore exact identities; queued original delete/recreate/rebind replaces only FS identity while preserving VS. Full original pixels and terminal budgets agree. Real wrap/filter sabotage fails this unchanged novel pixel oracle only after actual draw/fence completion."
+    }
+  ],
+  "chronology": {
+    "P1ThroughP6": "Sent in parent collaboration messages before opening sealed worker records; orientation had already read whole task and scoped diff.",
+    "P7": "Sent after worker orientation and before constructing or inspecting the novel independently seeded physical attack.",
+    "persistence": "This JSON is a transcript of those prior predictions, written only after the exclusive verifier write lease."
+  }
+}

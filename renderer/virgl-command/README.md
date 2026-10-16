@@ -120,14 +120,16 @@ validation budgets, not guest-advertised capabilities:
 | Declared shader tokens | 8,192 |
 | Vertex elements / vertex buffers | 16 / 16 |
 | Sampler slots | 32 |
-| Constant buffer slots / words in active slot | 15 / 184 |
+| Constant buffer slots / words in active slot | 15 / VS 512, FS 184 |
 | Shader storage buffer / image / atomic buffer slots | 16 / 32 / 16 |
 | Viewport / color attachment slots | 1 / 1 |
 
 Active constant data is restricted to slot zero in VS/FS, in complete vec4s.
-The 184-word (46-vec4) maximum includes finite float bit patterns without changing
+The VS 512-word and FS 184-word maxima include finite float bit patterns without changing
 the existing empty reset policy. Decoding a shorter prefix is valid; the renderer
-separately checks draw completeness against the actual linked program. This high
+separately checks draw completeness against the actual linked program. The wide
+vertex extent uploads only for `virgl-webgl2-straight-line-v6`; raw and fragment
+profiles retain their 46-vector limit and inaccessible suffix handling. This high
 limit is proved by authored packets: original captures uploaded at most 32 VS
 words and 4 FS words, so they do not demonstrate high-constant execution.
 
@@ -196,8 +198,11 @@ explicitly rejected by this narrower profile.
 
 - **BLEND:** `handle`, named independent/logicop/dither/alpha controls,
   `logicopFunction`, and eight `renderTargets` with named enable, RGB/alpha
-  functions/factors and color masks. RT0 supports disabled blending or additive
-  `(ONE or SRC_ALPHA, INV_SRC_ALPHA)` RGB and `(ONE, INV_SRC_ALPHA)` alpha.
+  functions/factors and color masks. RT0 supports disabled blending or independent
+  RGB/alpha ADD, SUBTRACT, REVERSE_SUBTRACT, MIN and MAX with all non-dual-source
+  GLES2 factors. SRC_ALPHA_SATURATE is source-only; its alpha factor is ONE.
+  Mixed constant-color/constant-alpha RGB factors use a bounded fragment variant
+  because WebGL disallows the direct native pair. See [blend-README.md](blend-README.md).
   Disabled function/factors and RT1–7 must be zero; any RT0 color mask and optional
   dithering are allowed. Logic operations, independent blending, alpha coverage
   and alpha-to-one are rejected.
@@ -220,8 +225,9 @@ explicitly rejected by this narrower profile.
   declaration, not a TGSI parser result. Shader grammar, token truth and stage
   agreement remain the shader bridge's responsibility.
 - **VERTEX_ELEMENTS:** `handle,elements[{sourceOffset,instanceDivisor,
-  vertexBufferIndex,sourceFormat}]`; per-vertex R32G32_FLOAT (29), divisor zero,
-  buffer index below 16, sourceOffset+8 fits u32.
+  vertexBufferIndex,sourceFormat}]`; per-vertex R32/RG32/RGB32/RGBA32_FLOAT (28..31), divisor zero,
+  buffer index below 16, float-aligned sourceOffset and its actual element end
+  (4/8/12/16 bytes) fit u32.
 - **SAMPLER_VIEW:** `handle,resourceHandle,format,target,firstLayer,lastLayer,
   firstLevel,lastLevel,swizzle[4]`; normalized color formats2/67/233, 2D (2), level/layer zero; swizzle
   components 0–5 (RGBA/ZERO/ONE). Resource type compatibility is deferred.
@@ -276,3 +282,48 @@ and matching native2D color/Z16 storage reuse the checked transfer boundary.
 synthetic inline writes, raw GPU pixels/bytes, odd rows, deferred ownership and
 physical source faults. END_TRANSFERS padding stays opaque; production negotiation
 remains disabled.
+
+E6-T12h adds strict SET_SCISSOR_STATE (opcode15), RGB32_FLOAT vertex elements,
+optional Z16 framebuffer/depth clear and DSA depth fields, and ordinary triangle
+strips/array draws. Stencil/alpha tests and unsupported primitive/instance/restart
+fields remain explicit errors. `make verify-E6-T12h` binds actual original client
+draws and independent physical state/pixel predictions; production caps remain
+disabled. The shader text ceiling is 49,152 bytes, separately from the bounded
+draw/state profile.
+
+The renderer uses bounded context-owned caches with exact key equality. See
+[cache-README.md](cache-README.md) for residency, eviction, counter denominators
+and explicitly host-labelled original-command/ESSL/binding frame dumps.
+
+The independently selected `decodeStandardSharedExponentImageSubmission` and
+`createVirglStandardSharedExponentImageAsyncRenderer` consume original format 125
+2D sampler views using the qualified shared-exponent resource owner and GPU transfer
+backend. They retain ordinary float, packed-float and normalized color operations
+inside the new profile, while previous factories retain their original admission.
+Original format 125 surfaces stay refused.
+
+`make verify-E6-T11d30` records original TGSI/packets, whole native source/output planes,
+public readbacks, physical fences and complete V8 regions. The recorded inputs declare
+native precision before GPU execution. Native wrong-level and wrong-filter controls
+must complete and then fail the unchanged independent oracle. Guest driver negotiation
+and production graphics are still governed by the parent bringup task.
+
+
+`createVirglStandardOrderedStencilAsyncRenderer` selects the isolated D45 native
+stencil consumer with `primitiveAssembly: "lists"` and an explicit native LAST
+provoking convention. For active S8 with unequal effective face references or
+masks, points, lines and BACK-culling triangles keep their original native draw
+and install front stencil state on both native faces. No-cull triangles with
+effective instance count one execute each original triangle's front/back culled
+passes before advancing to the next triangle. Strip parity and restart reset,
+fan center, original vertex IDs and LAST provoking identity survive u32 index
+normalization. Larger no-cull asymmetric instance counts remain refused.
+
+Owned normalization uses at most 12 bytes per charged original source word,
+64 native buffers, six native vertex visits and two native calls per source
+word. Every restart word and incomplete tail is charged. CPU scratch is detached
+before yielding, and native buffers retire only on consumed completion/drain
+or explicit disposal. The factory restores literal guest stencil and cull
+state after lowered calls, including native failure. Original common-field,
+front-only, disabled, absent-S8 and predecessor factory behavior is retained.
+This selected factory does not yet expose a production guest or negotiated caps.

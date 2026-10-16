@@ -1,0 +1,176 @@
+{
+  "schema": 1,
+  "task": "E6-T12h",
+  "verdict": "verified",
+  "sourceHead": "49c408e10b2a5126157f099765b2da6890dd2c16",
+  "submissionHead": "e07ca745888b0119ea86133acc179a9b982a0411",
+  "predictionsSha256": "d6a79edaf312bbcfa7b527daffc8b8779f0280e9fc296ea9d08f5f8c2ee5babb",
+  "predictions": [
+    {
+      "id": "P0",
+      "status": "HELD",
+      "observed": "All126 sealed members and frozen132 source bindings authenticate; hot/cold generated binaries agree, final clone was pristine and exact-headed.",
+      "citations": [
+        {
+          "path": "authentication.json",
+          "line": 8,
+          "sha256": "bdef80096168c88095fa4fdf74ae4f7228f91f5ada9c44d0e6ba23c145536c20"
+        }
+      ]
+    },
+    {
+      "id": "P1",
+      "status": "HELD",
+      "observed": "Independent raw little-endian wire/state reconstruction matches all nine physical client draws and five CPU snapshots, with complete active VS constants and original reflected layouts.",
+      "citations": [
+        {
+          "path": "wire-audit.json",
+          "line": 5,
+          "sha256": "dbd0fc3441d7717cfc8f3f886b3c308425e5b2cf44a50aed2925347a94c04d8d"
+        },
+        {
+          "path": "source-conventions.json",
+          "line": 4,
+          "sha256": "504e243c16c02d026abc43626b091750b7d66e533b2fbe525d62f6c36718fd09"
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "status": "HELD",
+      "observed": "Independent literal matrices reproduce clip-near/far occlusion, all eight comparisons and write-mask scenes in hot/cold/replay.",
+      "citations": [
+        {
+          "path": "pixel-audit.json",
+          "line": 5,
+          "sha256": "887f9ac5339a29747976aa434f96ab7892eb0076463b62fc2270b74333da8585"
+        },
+        {
+          "path": "unpacked/hot/hardware/report.json",
+          "line": 10728,
+          "sha256": "44e4129bffbaf29c2d94e574c9468cd798155e405d6cde72e530a69e41ad402a"
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "status": "HELD",
+      "observed": "Scissor/full-clear matrices, asymmetric Y samples, winding/culling and adjacent state toggles hold and their digests agree with independent expected bytes.",
+      "citations": [
+        {
+          "path": "pixel-audit.json",
+          "line": 39,
+          "sha256": "887f9ac5339a29747976aa434f96ab7892eb0076463b62fc2270b74333da8585"
+        },
+        {
+          "path": "unpacked/hot/hardware/report.json",
+          "line": 11008,
+          "sha256": "44e4129bffbaf29c2d94e574c9468cd798155e405d6cde72e530a69e41ad402a"
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "status": "HELD",
+      "observed": "Alignment/fetch/missing/foreign/role-swapped/mismatched target errors issue no draws; A/B/A frames agree, retained Z16 public-name/ID reuse and disposal hold. Dynamic state remains outside shader emission keys, with system Y restored per draw.",
+      "citations": [
+        {
+          "path": "unpacked/hot/hardware/report.json",
+          "line": 16436,
+          "sha256": "44e4129bffbaf29c2d94e574c9468cd798155e405d6cde72e530a69e41ad402a"
+        },
+        {
+          "path": "review-audit.json",
+          "line": 35,
+          "sha256": "fab9b84f33444972057d0fbd3d14520d1c17174763d074330c24cf49208f9f63"
+        },
+        {
+          "path": "source-conventions.json",
+          "line": 37,
+          "sha256": "504e243c16c02d026abc43626b091750b7d66e533b2fbe525d62f6c36718fd09"
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "status": "HELD",
+      "observed": "Owned arrays complete after actual later-task fences with no GPU index reads under worker delays0/1/3 and independent PRNG seeds1956311333/2789420567/728079433. Current G5 gates hold; unchanged G6 critic54-member seal and compiler/resource boundary carry forward.",
+      "citations": [
+        {
+          "path": "independent/report.json",
+          "line": 277,
+          "sha256": "318a29e859e72f27c3edec5b79dc181e51b45dc2b6172d49c705b262045d064b"
+        },
+        {
+          "path": "carry-forward.json",
+          "line": 7,
+          "sha256": "48b4e6fec5adc30531e1bebff2d7e6f9283ac29d5970c0ae855c111358df5f8e"
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "status": "HELD",
+      "observed": "Five frozen physical source faults fail exact named pixel predictions. Independent RGB-tail predicate mutation additionally fails the no-draw prediction. All original/replayed/independent/fault captures bind hardware identity and zero browser errors.",
+      "citations": [
+        {
+          "path": "authentication.json",
+          "line": 54,
+          "sha256": "bdef80096168c88095fa4fdf74ae4f7228f91f5ada9c44d0e6ba23c145536c20"
+        },
+        {
+          "path": "sabotage-rgb-tail/report.json",
+          "line": 226,
+          "sha256": "0dd19482ae461006fa4a5d9bff8a8c5784150efa468efc08e85f35a44bf8891a"
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "status": "HELD",
+      "observed": "All22 added decoder and72 added executable state lines execute in authenticated precise V8 coverage; four comments and documented validation/declarative plumbing are waived. No runtime or worker harness edits by the critic, ignored assertions/tests, or production import changes.",
+      "citations": [
+        {
+          "path": "coverage-audit.json",
+          "line": 7,
+          "sha256": "5d3d517c9ca938aa41703b27f1134051ba2a8ab339257b78897436232b03ada0"
+        },
+        {
+          "path": "review-audit.json",
+          "line": 35,
+          "sha256": "fab9b84f33444972057d0fbd3d14520d1c17174763d074330c24cf49208f9f63"
+        }
+      ]
+    },
+    {
+      "id": "P8",
+      "status": "HELD",
+      "observed": "Physical RGB72 exact tail accepts (firstByte36, requiredEnd72); RGB68 rejects out-of-bounds before draw, with unchanged state/pixels. Indexed RGB strip succeeds. Promoted test346 predictions hold; changing only its final complete-fetch bound to8 attempts an extra draw and is killed.",
+      "citations": [
+        {
+          "path": "independent/report.json",
+          "line": 636,
+          "sha256": "318a29e859e72f27c3edec5b79dc181e51b45dc2b6172d49c705b262045d064b"
+        },
+        {
+          "path": "independent/report.json",
+          "line": 684,
+          "sha256": "318a29e859e72f27c3edec5b79dc181e51b45dc2b6172d49c705b262045d064b"
+        },
+        {
+          "path": "sabotage-rgb-tail/report.json",
+          "line": 226,
+          "sha256": "0dd19482ae461006fa4a5d9bff8a8c5784150efa468efc08e85f35a44bf8891a"
+        }
+      ]
+    }
+  ],
+  "productFindings": [],
+  "proofGaps": [],
+  "suite": "Promote renderer/virgl-command/tests/raster-depth-boundaries.mjs and preserve direct physical acceptance command.",
+  "authority": "isolated-original-draw-state",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "matchedOriginalArtwork": false,
+  "performanceClaim": false
+}

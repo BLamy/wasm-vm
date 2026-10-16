@@ -1,0 +1,131 @@
+{
+  "task": "E6-T11d",
+  "sourceHead": "423edd8c084f969f5171af93b683dbd1534f2fa8",
+  "records": [
+    {
+      "path": "independent-capability-negative/independent-capability-abi-negative-control.tar.gz",
+      "bytes": 2005109,
+      "sha256": "ff5bc0b9f9f4bd0d68f96dd2e4bb860d446dca863b462fe3bcb4ea78dd9893e4"
+    },
+    {
+      "path": "independent-capability-negative/receipt.json",
+      "bytes": 145904,
+      "sha256": "d247387f1a137efa279b3f7de923daf5f0a47c320670eb3903ddaaaf8e7bdaf6"
+    },
+    {
+      "path": "prepared-proof-map.json",
+      "bytes": 13604,
+      "sha256": "0b8c766bb4755c0e7a70d549e8b04a49b079d0b680a6da527972d608dae00045"
+    },
+    {
+      "path": "reference-authentication.json",
+      "bytes": 9840,
+      "sha256": "ab1fc2021d1af516e194fdd6ef23cbf08f553df1695cc2344cb3d94b599646fe"
+    },
+    {
+      "path": "source/crates/core/src/dev/virtio/gpu/capabilities.rs",
+      "bytes": 6314,
+      "sha256": "4c05de5b32c0482ba3135967a067959d0f4c890767c64679531704fbceef2244"
+    },
+    {
+      "path": "source/docs/gpu-3d-contract.json",
+      "bytes": 71827,
+      "sha256": "79e1f6e37db1967317ae37d2fca1a069cde998b8cee8e02930bb153f51e18054"
+    },
+    {
+      "path": "source/renderer/virgl-command/decoder.mjs",
+      "bytes": 54272,
+      "sha256": "804134a7ba9a52c7335ec3ff14e5ac2a55a09307ed833e2c7266268ae7a704e2"
+    },
+    {
+      "path": "source/tools/virgl-production/caps_oracle.c",
+      "bytes": 2743,
+      "sha256": "5d6843966a88cc394213808779f9daaadbab19ef7fe07b7d94c45368afc6cd3b"
+    },
+    {
+      "path": "source/tools/virgl-production/critic-warm-readiness.test.mjs",
+      "bytes": 9236,
+      "sha256": "bab024caabe785140d711da98ae406b976603c68c31ad062642d9e9f87f8251f"
+    },
+    {
+      "path": "source/tools/virgl-production/verify-public-gpu-warm.py",
+      "bytes": 6803,
+      "sha256": "bd3cec722183730babda5bc96e589503211b9712b9dc76d63b643b61f4ff8867"
+    },
+    {
+      "path": "source/web/artifacts-omarchy-virgl.json",
+      "bytes": 820,
+      "sha256": "04d2ab66a554992425ca4f1b30e3a59ab083a740f7f92d6594033378b221b5bd"
+    },
+    {
+      "path": "source/web/gpu-checkpoint-build.js",
+      "bytes": 174,
+      "sha256": "153e3b90d7f1a740b89f383b527f374f6042aa16558302e063e8620ccb1d664b"
+    },
+    {
+      "path": "source/web/loader.js",
+      "bytes": 89607,
+      "sha256": "dfc4411dde2c193f6821af7e7fe5a4bc2d9ccd3a8e31e697c825f2f6ee2e70eb"
+    },
+    {
+      "path": "source/web/main.js",
+      "bytes": 155131,
+      "sha256": "cf3c38917f4e82c7a2637d26b99a1584b985d11cfb003015d1228806a74040ac"
+    },
+    {
+      "path": "successor/evidence/virgl-production-gpu-warm-default/verifier/VERDICT.md",
+      "bytes": 13128,
+      "sha256": "68d3543513c219bc43a07ecdc02c53b6e6d4e393e792eeb0ebc0472cc6c2672d"
+    },
+    {
+      "path": "successor/evidence/virgl-production-gpu-warm-default/verifier/review.tar.gz.json",
+      "bytes": 485,
+      "sha256": "c2a7e05e28e56f80c392afbdd077b9c4cbabf98358ca08e955c56c68cb50780c"
+    },
+    {
+      "path": "successor/evidence/virgl-production-gpu-warm-default/worker/manifest.json",
+      "bytes": 563,
+      "sha256": "7ee96bc2820c39de570eafb77d15dbb30bb45d3085428f3d5ee9a1602bae6ab8"
+    },
+    {
+      "path": "successor/evidence/virgl-production-gpu-warm-default/worker/records.json",
+      "bytes": 706073,
+      "sha256": "aba4910d68993e973e710af918556b0f3584d5f5ec3a49be223f21ec8805a21f"
+    },
+    {
+      "path": "verified-task/E6-T11d72-interactive-keyboard-clock.md",
+      "bytes": 36292,
+      "sha256": "0d7c162211e9737b32c0fe52a9f5fc375bbadfab1f262e4e1358d5dbba276be8"
+    },
+    {
+      "path": "verified-task/E6-T11d73-paced-idle-clock.md",
+      "bytes": 13115,
+      "sha256": "b59b98a5ceb15fe7d1faeafb2ff251fd591a9e312e21b660510142bc72dd3251"
+    },
+    {
+      "path": "verified-task/E6-T11d74c-paired-gpu-worker-resume.md",
+      "bytes": 13291,
+      "sha256": "f3beae912415b3efeb7820fcab729e73a6d6254f007249e18892cb262f83c1b8"
+    },
+    {
+      "path": "verified-task/E6-T11d74d-production-gpu-warm-boot.md",
+      "bytes": 16012,
+      "sha256": "ee1f3cfae20da128c831e9f4048a8af3425efd956b1598fb97dd6494a07c19fe"
+    },
+    {
+      "path": "verified-task/E6-T11d74d1-production-scanout-continuity.md",
+      "bytes": 8920,
+      "sha256": "07cb2a91e3f66547c32b7abb4e3a1299602f28f9b7e8111f51559317088b32f2"
+    },
+    {
+      "path": "verified-task/E6-T11d74d2-production-desktop-capacity.md",
+      "bytes": 8602,
+      "sha256": "994123cc8ae7d73e7cb5837d7d5529b198bd01b43f10d34d8cb478976a1a6f4f"
+    },
+    {
+      "path": "worker-claim.md",
+      "bytes": 2381,
+      "sha256": "5211333040b5b6474263736c350e41f52acb79e458beda14a0e7c89a6a288fdd"
+    }
+  ]
+}

@@ -1,0 +1,736 @@
+{
+  "schema": "normalized-byte-color-layout-planning-v1",
+  "negativeRecordSha256": "a9cd10df9f5a1865060dabbf898c8b419db99f2816f639c6d8223815f70345fb",
+  "profiles": [
+    {
+      "format": 1,
+      "name": "B8G8R8A8_UNORM",
+      "mesaLine": 50,
+      "descriptorSha256": "6eab5cbbfa27d31c737732e641a292dc567f30ae67e54d1e70314dc2bb1d6483",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "Z",
+        "Y",
+        "X",
+        "W"
+      ],
+      "nativeInternalFormat": "RGBA8",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": false,
+      "signedNormalized": false,
+      "srgb": false,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 3,
+      "name": "A8R8G8B8_UNORM",
+      "mesaLine": 88,
+      "descriptorSha256": "93c06c9353a1b1cdc08bdcaae3cf4435f5167f03a455e354db5056c712e77d92",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "Y",
+        "Z",
+        "W",
+        "X"
+      ],
+      "nativeInternalFormat": "RGBA8",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": false,
+      "signedNormalized": false,
+      "srgb": false,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 4,
+      "name": "X8R8G8B8_UNORM",
+      "mesaLine": 110,
+      "descriptorSha256": "d17f4f6026b12b16985a929335c9867505aef7b5434735849fba35cba96321d9",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 3,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "X8",
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "Y",
+        "Z",
+        "W",
+        "1"
+      ],
+      "nativeInternalFormat": "RGB8",
+      "nativeUploadFormat": "RGB",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": false,
+      "srgb": false,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 64,
+      "name": "R8_UNORM",
+      "mesaLine": 1788,
+      "descriptorSha256": "7dedb5499fadd1e04bcdf537d980da311703589305ed47b4379b3924560816b3",
+      "guestPixelBytes": 1,
+      "nativePixelBytes": 1,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "X",
+        "0",
+        "0",
+        "1"
+      ],
+      "nativeInternalFormat": "R8",
+      "nativeUploadFormat": "RED",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": false,
+      "srgb": false,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 65,
+      "name": "R8G8_UNORM",
+      "mesaLine": 1794,
+      "descriptorSha256": "911c2d9dc631cf0dde6ecd53e344f1146fbe5b1c91f42fcc2a83c2d453c689e4",
+      "guestPixelBytes": 2,
+      "nativePixelBytes": 2,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "X",
+        "Y",
+        "0",
+        "1"
+      ],
+      "nativeInternalFormat": "RG8",
+      "nativeUploadFormat": "RG",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": false,
+      "srgb": false,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 66,
+      "name": "R8G8B8_UNORM",
+      "mesaLine": 1804,
+      "descriptorSha256": "84f32c23848670f6b11114ba57845ad876f251fa827e8d9d7e92752f331c44fa",
+      "guestPixelBytes": 3,
+      "nativePixelBytes": 3,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "X",
+        "Y",
+        "Z",
+        "1"
+      ],
+      "nativeInternalFormat": "RGB8",
+      "nativeUploadFormat": "RGB",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": false,
+      "srgb": false,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 68,
+      "name": "X8B8G8R8_UNORM",
+      "mesaLine": 142,
+      "descriptorSha256": "cb071021779a07ec8a76b2e752c1ae8d88bd2937d3f93675bd7208b69071a47a",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 3,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "X8",
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "W",
+        "Z",
+        "Y",
+        "1"
+      ],
+      "nativeInternalFormat": "RGB8",
+      "nativeUploadFormat": "RGB",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": false,
+      "srgb": false,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 74,
+      "name": "R8_SNORM",
+      "mesaLine": 1872,
+      "descriptorSha256": "29bc04096c9af8bb4e30cf2517f5bc955797b43d666f808a4b21d590194a55be",
+      "guestPixelBytes": 1,
+      "nativePixelBytes": 1,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "SN8"
+      ],
+      "rgbaSourceLanes": [
+        "X",
+        "0",
+        "0",
+        "1"
+      ],
+      "nativeInternalFormat": "R8_SNORM",
+      "nativeUploadFormat": "RED",
+      "nativeType": "BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": true,
+      "srgb": false,
+      "guestRenderRole": false,
+      "requiresNativeExtension": "EXT_render_snorm"
+    },
+    {
+      "format": 75,
+      "name": "R8G8_SNORM",
+      "mesaLine": 1878,
+      "descriptorSha256": "45ddcf8f6e35460aebb3762b0e06d1d980c0d741861a58992632f0ac375b4a8f",
+      "guestPixelBytes": 2,
+      "nativePixelBytes": 2,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "SN8",
+        "SN8"
+      ],
+      "rgbaSourceLanes": [
+        "X",
+        "Y",
+        "0",
+        "1"
+      ],
+      "nativeInternalFormat": "RG8_SNORM",
+      "nativeUploadFormat": "RG",
+      "nativeType": "BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": true,
+      "srgb": false,
+      "guestRenderRole": false,
+      "requiresNativeExtension": "EXT_render_snorm"
+    },
+    {
+      "format": 76,
+      "name": "R8G8B8_SNORM",
+      "mesaLine": 1888,
+      "descriptorSha256": "e26e6c79a4b84601513956a357f4c78c938d289b8fa06a8143fbb9b5d18b4a0c",
+      "guestPixelBytes": 3,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "SN8",
+        "SN8",
+        "SN8"
+      ],
+      "rgbaSourceLanes": [
+        "X",
+        "Y",
+        "Z",
+        "1"
+      ],
+      "nativeInternalFormat": "RGBA8_SNORM",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": true,
+      "srgb": false,
+      "guestRenderRole": false,
+      "requiresNativeExtension": "EXT_render_snorm"
+    },
+    {
+      "format": 77,
+      "name": "R8G8B8A8_SNORM",
+      "mesaLine": 1900,
+      "descriptorSha256": "264fbbd3ef5fea01be5effa0b9f97a0017473866a71a16282c7b6eb43f9ace63",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "SN8",
+        "SN8",
+        "SN8",
+        "SN8"
+      ],
+      "rgbaSourceLanes": [
+        "X",
+        "Y",
+        "Z",
+        "W"
+      ],
+      "nativeInternalFormat": "RGBA8_SNORM",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "BYTE",
+      "implicitAlpha": false,
+      "signedNormalized": true,
+      "srgb": false,
+      "guestRenderRole": false,
+      "requiresNativeExtension": "EXT_render_snorm"
+    },
+    {
+      "format": 97,
+      "name": "R8G8B8_SRGB",
+      "mesaLine": 481,
+      "descriptorSha256": "a09045e95f9fbec208dd28be29f17f21640d30eee14a3d67b79e91f00134c175",
+      "guestPixelBytes": 3,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "X",
+        "Y",
+        "Z",
+        "1"
+      ],
+      "nativeInternalFormat": "SRGB8_ALPHA8",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": false,
+      "srgb": true,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 98,
+      "name": "A8B8G8R8_SRGB",
+      "mesaLine": 503,
+      "descriptorSha256": "eed41198a427dfd2ad580b332e9833cd2abb1a5ed95a9eb9917004b15db7339a",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "W",
+        "Z",
+        "Y",
+        "X"
+      ],
+      "nativeInternalFormat": "SRGB8_ALPHA8",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": false,
+      "signedNormalized": false,
+      "srgb": true,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 99,
+      "name": "X8B8G8R8_SRGB",
+      "mesaLine": 513,
+      "descriptorSha256": "d18e74a2a94520224d27f720f1818419ebbd375d2573a19ede426cb338047057",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "X8",
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "W",
+        "Z",
+        "Y",
+        "1"
+      ],
+      "nativeInternalFormat": "SRGB8_ALPHA8",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": false,
+      "srgb": true,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 100,
+      "name": "B8G8R8A8_SRGB",
+      "mesaLine": 523,
+      "descriptorSha256": "f203ed49b6614637e9e4328c91a09100bd3675999c49e1bc271f239960d5f8dd",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "Z",
+        "Y",
+        "X",
+        "W"
+      ],
+      "nativeInternalFormat": "SRGB8_ALPHA8",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": false,
+      "signedNormalized": false,
+      "srgb": true,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 101,
+      "name": "B8G8R8X8_SRGB",
+      "mesaLine": 533,
+      "descriptorSha256": "d2c2c3b9843c5c894bc65b8c57570a2d9779aa9b308568f71100efc964bcecfc",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8",
+        "X8"
+      ],
+      "rgbaSourceLanes": [
+        "Z",
+        "Y",
+        "X",
+        "1"
+      ],
+      "nativeInternalFormat": "SRGB8_ALPHA8",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": false,
+      "srgb": true,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 102,
+      "name": "A8R8G8B8_SRGB",
+      "mesaLine": 543,
+      "descriptorSha256": "7cd4c8a1452d166d469200b18bb44a56b82e7de7266b090d30e0c1f1c211109c",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "Y",
+        "Z",
+        "W",
+        "X"
+      ],
+      "nativeInternalFormat": "SRGB8_ALPHA8",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": false,
+      "signedNormalized": false,
+      "srgb": true,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 103,
+      "name": "X8R8G8B8_SRGB",
+      "mesaLine": 553,
+      "descriptorSha256": "093b9d47312a0cdfb41c0cbebec28b33ca43f06fbdce6780ee3bf64f057cced6",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "X8",
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "Y",
+        "Z",
+        "W",
+        "1"
+      ],
+      "nativeInternalFormat": "SRGB8_ALPHA8",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": false,
+      "srgb": true,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 104,
+      "name": "R8G8B8A8_SRGB",
+      "mesaLine": 493,
+      "descriptorSha256": "804f59d10ee6dd330c0281ff92a254a98a5b1fcfe2bf41d31bea6f70fecd3b47",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "X",
+        "Y",
+        "Z",
+        "W"
+      ],
+      "nativeInternalFormat": "SRGB8_ALPHA8",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": false,
+      "signedNormalized": false,
+      "srgb": true,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 121,
+      "name": "A8B8G8R8_UNORM",
+      "mesaLine": 132,
+      "descriptorSha256": "4a22e1a7a8db2aeb13e37ec465024b4171e1eaa0725a59d1f673d49c32afbde2",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "W",
+        "Z",
+        "Y",
+        "X"
+      ],
+      "nativeInternalFormat": "RGBA8",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": false,
+      "signedNormalized": false,
+      "srgb": false,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 134,
+      "name": "R8G8B8X8_UNORM",
+      "mesaLine": 153,
+      "descriptorSha256": "a4f395b09913432699c41b7aa6718ccbbca3e0eb85cb5281b18bebfe054a1b49",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 3,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8",
+        "X8"
+      ],
+      "rgbaSourceLanes": [
+        "X",
+        "Y",
+        "Z",
+        "1"
+      ],
+      "nativeInternalFormat": "RGB8",
+      "nativeUploadFormat": "RGB",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": false,
+      "srgb": false,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 230,
+      "name": "R8G8B8X8_SRGB",
+      "mesaLine": 3094,
+      "descriptorSha256": "7f3444c8dd444dd74018eee539c0130ba04bb633339675500e16202f7e91445e",
+      "guestPixelBytes": 4,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8",
+        "X8"
+      ],
+      "rgbaSourceLanes": [
+        "X",
+        "Y",
+        "Z",
+        "1"
+      ],
+      "nativeInternalFormat": "SRGB8_ALPHA8",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": false,
+      "srgb": true,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 317,
+      "name": "B8G8R8_UNORM",
+      "mesaLine": 1810,
+      "descriptorSha256": "b70264c9124434837411b14ce2632a994cd8538d96dc4547876ff8280d5a0463",
+      "guestPixelBytes": 3,
+      "nativePixelBytes": 3,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "Z",
+        "Y",
+        "X",
+        "1"
+      ],
+      "nativeInternalFormat": "RGB8",
+      "nativeUploadFormat": "RGB",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": false,
+      "srgb": false,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    },
+    {
+      "format": 387,
+      "name": "B8G8R8_SRGB",
+      "mesaLine": 487,
+      "descriptorSha256": "9b9b1baa3dcc07e104eeeec31ef7d79bb986ed0090c6da081aa86d248fd75889",
+      "guestPixelBytes": 3,
+      "nativePixelBytes": 4,
+      "nativeReadPixelBytes": 4,
+      "guestChannels": [
+        "UN8",
+        "UN8",
+        "UN8"
+      ],
+      "rgbaSourceLanes": [
+        "Z",
+        "Y",
+        "X",
+        "1"
+      ],
+      "nativeInternalFormat": "SRGB8_ALPHA8",
+      "nativeUploadFormat": "RGBA",
+      "nativeType": "UNSIGNED_BYTE",
+      "nativeReadFormat": "RGBA",
+      "nativeReadType": "UNSIGNED_BYTE",
+      "implicitAlpha": true,
+      "signedNormalized": false,
+      "srgb": true,
+      "guestRenderRole": true,
+      "requiresNativeExtension": null
+    }
+  ],
+  "authority": "independent pinned-source layout proposal only; no admission or rendering authority"
+}

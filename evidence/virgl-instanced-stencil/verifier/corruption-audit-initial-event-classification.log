@@ -1,0 +1,18 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+41 !== 40
+
+    at file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-instanced-stencil/verifier/corruption-audit.mjs:21:160 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 41,
+  expected: 40,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

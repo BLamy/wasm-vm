@@ -1,0 +1,13 @@
+{
+  "schema": "dimensional-shader-readiness-seal-v1",
+  "head": "48b2ba0c7ee90d13093f7782e5a2502e44095753",
+  "records": 19,
+  "reopenedMembers": 19,
+  "recordIndexSha256": "f95d57ef50e660cfb5c71f22bd65ba28c1041220325362bc08337f7f8bfd6db7",
+  "archiveSha256": "696b34e4d158f119066d2562a89f64199a30ea5d2fa28b55e31fb94aa333885b",
+  "archiveBytes": 236410,
+  "reportSha256": "c26ef08679a5ad077dd9974e4ba8e95c3abbaa96dc6189a956c457ebff5b1960",
+  "existingPRsUnchanged": 134,
+  "productionAuthority": false,
+  "runtimeChanges": false
+}

@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "members": 81,
+  "archive": {
+    "path": "recording.tar.gz",
+    "bytes": 5715510,
+    "sha256": "5ed88a420b97fec61922242d12a7c0a5543810929200e9cfe438f70f44eec262"
+  },
+  "recordIndex": {
+    "path": "records.json",
+    "bytes": 13269,
+    "sha256": "b9e0acedf515989e8e18d8e3b7b048aa59f6ab64c550348e23bc2dd01c5f7613"
+  },
+  "manifest": {
+    "path": "manifest.json",
+    "bytes": 10393,
+    "sha256": "106b8ca30efe21d961dcdee44130fb3c9ec5227f0e8c8e24d12a5ca33369f897"
+  },
+  "verdictRecord": {
+    "path": "verdict.json",
+    "bytes": 27429,
+    "sha256": "114472d86e1922ec0f4b6cc28e4e5fcc86d92dbc1acb4ab923f74096a63c3e85"
+  },
+  "promoted": [
+    {
+      "path": "renderer/virgl-shader/tests/exponent-logarithm-regressions.mjs",
+      "testSha256": "53d202c49570acab0e5811165b568b346e0382e8b577f0e6342a16391a6df7d6",
+      "archiveMember": "promoted/exponent-logarithm-regressions.mjs",
+      "report": "independent-regressions.json",
+      "reportSha256": "742e96602d7dcdc1c2339b81729e8d1ddfc4cd99e12aed080ee3a73d88ebd33c",
+      "cases": 1022
+    },
+    {
+      "path": "renderer/virgl-shader/tests/exponent-logarithm-capture-regressions.py",
+      "testSha256": "59976dc30501ba5a42f4871d12fc75ce7bca82cc46715741e79c0f08d5f28442",
+      "archiveMember": "promoted/exponent-logarithm-capture-regressions.py",
+      "report": "fourth-source-guards.json",
+      "reportSha256": "245f74562c492e5d68b11f6a1373a5a2357b2a95ee93edc63485ab023003159a",
+      "physicalWords": 13152,
+      "physicalPixels": 30464,
+      "dependency": {
+        "path": "tools/virgl-exponent-logarithm/reference.py",
+        "sha256": "79013b28c03575de0c7c177ade00d649d887ace9166d59377b48752f6e331458"
+      }
+    }
+  ]
+}

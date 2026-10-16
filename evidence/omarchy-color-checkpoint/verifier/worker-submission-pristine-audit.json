@@ -1,0 +1,42 @@
+{
+  "schema": "critic-c1-worker-archive-and-final-pristine-audit-v1",
+  "frozen_archive": {
+    "bytes": 29903652,
+    "sha256": "ee2afb3f2831659e9d32597385e2f986b3f36053c60d063a8e75326505356e4d",
+    "all_members_authenticated": 63
+  },
+  "pristine_archive": {
+    "bytes": 4265349,
+    "sha256": "4e517b8afbf31d51decbe677dc209b282205ece36cd900144d5447a2d6eabcb3",
+    "unique_new_payloads": 27,
+    "actual_originals_authenticated": 140,
+    "original_bytes": 512461299,
+    "frozen_deduplicated_files": 110,
+    "index_sha256": "33864bead928e20083a7f221301acf970c57744feb42b3cbebeafb92094a9fca"
+  },
+  "final_pristine": {
+    "head": "43f227ae83acb3fc1c5f9c3bcd9766d2710d0875",
+    "full_ancestry": true,
+    "own_Git_objects_npm_target": true,
+    "no_alternates_or_shared_npm_target": true,
+    "tracked_tree_clean": true,
+    "literal_make_exit": 0,
+    "controller_scrubs_RUSTFLAGS_CARGO_star_RUST_LOG_NODE_OPTIONS": true,
+    "source_bodies_and_all_physical_literal_restored_bytes_equal_frozen": true,
+    "hardware_assertions": 811,
+    "logical_bytes": 23068672,
+    "default_suite": "127/0, zero errors, proof export absent",
+    "early_setup_failures_preserved": "07 missing sparse fixture;08 unsupported sparse-add option;10 successful gate followed by only shallow-history generated metadata difference. Full ancestry11/generated-only reset12 precede13."
+  },
+  "worker_submission": "d5b97fba34cdde460656f26158710dd40684261a",
+  "only_worker_task_queue_evidence_after_freeze": [
+    "evidence/omarchy-color-checkpoint/worker/README.md",
+    "evidence/omarchy-color-checkpoint/worker/frozen.json",
+    "evidence/omarchy-color-checkpoint/worker/frozen.tar.xz.part-000",
+    "evidence/omarchy-color-checkpoint/worker/frozen.tar.xz.part-001",
+    "evidence/omarchy-color-checkpoint/worker/pristine.json",
+    "evidence/omarchy-color-checkpoint/worker/pristine.tar.gz",
+    "tasks/QUEUE.md",
+    "tasks/epic-5.5-omarchy/E5.5-T05c1-omarchy-color-checkpoint-budget.md"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "schema": "standard-draw-independent-critic-audit-v1",
+  "status": "passed",
+  "pixels": 10296,
+  "rows": 55,
+  "critic": false,
+  "pointsSha256": "7e0ecf5ac2a59d36e9d9d880864a2d0ac18d850eae7049f72161b984932abd68"
+}

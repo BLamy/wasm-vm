@@ -1,0 +1,1716 @@
+{
+  "schema": "standard-scalar-runtime-coverage-v1",
+  "sourceHead": "1b8e94b79de6ee79f72116246ce4042aa7bda815",
+  "files": [
+    {
+      "source": "renderer/virgl-command/decoder.mjs",
+      "sha256": "4a5fddc1249eebdef3d638b5257e5ead7c9b2afd79365dcf6f4f46e0cf1c36ae",
+      "addedLines": 7,
+      "lines": [
+        {
+          "line": 24,
+          "source": "  [28, 4, \"FLOAT\", \"float\"], [32, 4, \"UNSIGNED_INT\", \"unorm\"],",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 25,
+          "source": "  [36, 4, \"UNSIGNED_INT\", \"uscaled\"], [40, 4, \"INT\", \"snorm\"],",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 45,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 26,
+          "source": "  [44, 4, \"INT\", \"sscaled\"], [48, 2, \"UNSIGNED_SHORT\", \"unorm\"],",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 27,
+          "source": "  [52, 2, \"UNSIGNED_SHORT\", \"uscaled\"], [56, 2, \"SHORT\", \"snorm\"],",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 28,
+          "source": "  [60, 2, \"SHORT\", \"sscaled\"], [64, 1, \"UNSIGNED_BYTE\", \"unorm\"],",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 48,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 29,
+          "source": "  [69, 1, \"UNSIGNED_BYTE\", \"uscaled\"], [74, 1, \"BYTE\", \"snorm\"],",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 47,
+              "zeroCharacters": 0
+            }
+          ]
+        },
+        {
+          "line": 30,
+          "source": "  [82, 1, \"BYTE\", \"sscaled\"], [91, 2, \"HALF_FLOAT\", \"half\"],",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 43,
+              "zeroCharacters": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-command/state.mjs",
+      "sha256": "4fa723b49e48aa87d8959a7ed7380f282f25cf92a1ee2625dceacdbb3b61c786",
+      "addedLines": 6,
+      "lines": [
+        {
+          "line": 34,
+          "source": "      const signed = format.kind === \"snorm\" || format.kind === \"sscaled\", bits = format.scalarBytes * 8;",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 83,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 83,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 83,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 83,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 83,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 83,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 83,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 83
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 83
+            }
+          ]
+        },
+        {
+          "line": 36,
+          "source": "        format.scalarBytes === 2 ? signed ? input.getInt16(at, true) : input.getUint16(at, true) :",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 73,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 72,
+              "zeroCharacters": 1
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 72,
+              "zeroCharacters": 1
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 73,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 72,
+              "zeroCharacters": 1
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 72,
+              "zeroCharacters": 1
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 73,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 73
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 73
+            }
+          ]
+        },
+        {
+          "line": 37,
+          "source": "        signed ? input.getInt32(at, true) : input.getUint32(at, true);",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 49
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 49
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 49
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 49
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 49,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 49
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 49
+            }
+          ]
+        },
+        {
+          "line": 38,
+          "source": "      if (format.normalized) {",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 19,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 19,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 19,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 19,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 19,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 19,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 19,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 19
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 19
+            }
+          ]
+        },
+        {
+          "line": 39,
+          "source": "        value = signed ? Math.max(-1, scalar / (2 ** (bits - 1) - 1)) : scalar / (2 ** bits - 1);",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 58,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 58
+            }
+          ]
+        },
+        {
+          "line": 40,
+          "source": "      } else value = scalar;",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 16,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 16
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 16
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 16,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 16
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 16
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 16,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 16
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 16
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "sha256": "4fd85d7e351432563bc7fdf7c167ff146c89caf5d6c20facb610da1a2efa75bb",
+      "addedLines": 6,
+      "lines": [
+        {
+          "line": 9,
+          "source": "function fixtureFormat(format){for(const [base,bytes,kind]of [...families,[32,4,'unorm'],[40,4,'snorm'],[36,4,'uscaled'],[44,4,'sscaled'],[52,2,'uscaled'],[60,2,'sscaled'],[69,1,'uscaled'],[82,1,'sscaled']])if(format>=base&&format<base+4)return {components:format-base+1,bytes,kind};throw Error('unsupported fixture format');}",
+          "neverCoveredExecutableSegments": [
+            "throw",
+            "Error",
+            "'unsupported",
+            "fixture",
+            "format'"
+          ],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 241,
+              "zeroCharacters": 36
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 277
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 277
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 277
+            }
+          ]
+        },
+        {
+          "line": 32,
+          "source": "  else {const bits=fmt.bytes*8,signed=fmt.kind==='snorm'||fmt.kind==='sscaled',top=signed?2**(bits-1)-1:2**bits-1;",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 94,
+              "zeroCharacters": 10
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 94,
+              "zeroCharacters": 10
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 104,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 104,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 92,
+              "zeroCharacters": 12
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 92,
+              "zeroCharacters": 12
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 104,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 94,
+              "zeroCharacters": 10
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 94,
+              "zeroCharacters": 10
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 104,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 104,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 92,
+              "zeroCharacters": 12
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 92,
+              "zeroCharacters": 12
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 104,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 104
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 104
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 104
+            }
+          ]
+        },
+        {
+          "line": 34,
+          "source": "   if(fmt.bytes===1){if(signed)q.setInt8(at,value);else q.setUint8(at,value);}else if(fmt.bytes===2){if(signed)q.setInt16(at,value,true);else q.setUint16(at,value,true);}else if(signed)q.setInt32(at,value,true);else q.setUint32(at,value,true);",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 67,
+              "zeroCharacters": 126
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 67,
+              "zeroCharacters": 126
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 193,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 134,
+              "zeroCharacters": 59
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 149
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 149
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 134,
+              "zeroCharacters": 59
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 67,
+              "zeroCharacters": 126
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 67,
+              "zeroCharacters": 126
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 193,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 134,
+              "zeroCharacters": 59
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 149
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 44,
+              "zeroCharacters": 149
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 134,
+              "zeroCharacters": 59
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 193
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 193
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 193
+            }
+          ]
+        },
+        {
+          "line": 83,
+          "source": "export async function compactFrame(r,record,oracle={model:compactModel,compare:compareCompactPixels}){",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 6,
+              "zeroCharacters": 85
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 6,
+              "zeroCharacters": 85
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 91,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 6,
+              "zeroCharacters": 85
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 6,
+              "zeroCharacters": 85
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 6,
+              "zeroCharacters": 85
+            }
+          ]
+        },
+        {
+          "line": 92,
+          "source": " const model=oracle.model(r.history,r.bufferBytes,r.range),audit=oracle.compare(pixels,model,r.width,r.height),frame={label:record.label,width:r.width,height:r.height,range:r.range,history:r.history.map(h=>({...h})),inputs:r.exchanges.map(e=>({...e})),",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 220,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 220,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 220,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 220
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 220,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 220,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 220,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 220,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 220,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 220,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 220
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 220,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 220,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 220,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 220
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 220
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 220
+            }
+          ]
+        },
+        {
+          "line": 114,
+          "source": " for(const format of [0,27,32,40,52,60,68,69,78,82,87,95,0xffffffff]){const bytes=packet(1,5,[777,0,0,0,format]),a=decodeStandardSubmission(bytes),expected=[32,40,52,60,69,82].includes(format);c.same(a.ok,expected,'explicit successor scalar admission');records.push({format,hex:hex(bytes),standard:a,expected});}",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 253
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 253,
+              "zeroCharacters": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch-adversarial.mjs",
+      "sha256": "4838589cea77f2b6ca5b3e3d176158a5fb04a3702ad71e74f825b4f5417a5c92",
+      "addedLines": 1,
+      "lines": [
+        {
+          "line": 51,
+          "source": " for(const format of [0,27,32,52,60,68,78,95,0xffffffff]){const raw=packet(1,5,[777,0,0,0,format]),standard=decodeStandardSubmission(raw),legacy=decodeSubmission(raw),expected=[32,52,60].includes(format);c.same([standard.ok,legacy.ok],[expected,false],'critic explicit successor scalar admission');report.wire.push({hex:hex(raw),expected,legacyExpected:false,standard,legacy});}",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 319,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 319,
+              "zeroCharacters": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "sha256": "4c97a47afac682b1c9b4d15c42e91f831fc3eeb82e87eea4cf970d2f7e640f70",
+      "addedLines": 1,
+      "lines": [
+        {
+          "line": 181,
+          "source": "    test(packet(1,5,[777,0,divisor,0,format]),format<=32,divisor===0&&format<=31,\"element-\"+divisor+\"-\"+format);",
+          "neverCoveredExecutableSegments": [],
+          "classification": "executed",
+          "reason": "positive exact-source detailed V8 range",
+          "coverage": [
+            {
+              "record": "unpacked/hot/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "unpacked/hot/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "unpacked/hot/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "unpacked/hot/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "unpacked/hot/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "unpacked/hot/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "unpacked/cold/fault-constant-scaled/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "unpacked/cold/fault-native-signedness/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "unpacked/cold/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "unpacked/cold/retained-compact/critic-hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-constant-unpack/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "unpacked/cold/retained-compact/fault-native-normalize/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "unpacked/cold/retained-compact/hardware/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "final-gpu/browser-coverage.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            },
+            {
+              "record": "node-scalar-coverage/coverage-76376-1791625065709-0.json",
+              "positiveCharacters": 94,
+              "zeroCharacters": 0
+            },
+            {
+              "record": "node-compact-coverage/coverage-76375-1791625065705-0.json",
+              "positiveCharacters": 0,
+              "zeroCharacters": 94
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "status": "passed",
+  "branchWaivers": [
+    {
+      "source": "renderer/virgl-command/tests/standard-compact-vertex-fetch.mjs",
+      "line": 9,
+      "branch": "throw Error(unsupported fixture format)",
+      "classification": "waived",
+      "reason": "Fixture-only failure for an out-of-matrix format is textually the predecessor guard. The widened family search and all newly admitted widths execute; this unchanged harness guard adds no scalar runtime behavior."
+    }
+  ]
+}

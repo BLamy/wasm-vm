@@ -1,0 +1,1266 @@
+{
+  "scope": "Independent intermediate origin/culling inspection, real Qt default client API mismatch and diagnostic GLES selector, all-four gpu=0 warm regressions, public snapshot negative-boundary attack. This is not the final parent/recovery/deployment verdict.",
+  "runtimeCurrentHead": "1aa4e465962e119a632cec57768a383ffc411d5a",
+  "archive": {
+    "path": "evidence/virgl-production-bringup/verifier/independent-integration-inspections-01.tar.gz",
+    "bytes": 6847910,
+    "sha256": "2dcbf6c70d1d04eba422a62957299adbc9240f10f66a1162ece01b27db3e31f3"
+  },
+  "files": [
+    {
+      "path": "audits/critic-fast-boots-all-fixed-05-audit.json",
+      "bytes": 5159,
+      "sha256": "34b7c660503ec23ed25dd8cc4b46e79313f3e35fa33a255138fcb2a3bd9f8a30"
+    },
+    {
+      "path": "audits/critic-production-origin-audit.json",
+      "bytes": 9558,
+      "sha256": "771bfe56237ca503426c3007594cde2416250d3ad9eaf9580d2bce50afe5ef57"
+    },
+    {
+      "path": "audits/critic-public-snapshot-retry-01.log",
+      "bytes": 461,
+      "sha256": "5a37fbba835e93ce15ad2f2b401895c988ba5532a71891b1e641efd7a8b72b85"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/candidate-artifacts.json",
+      "bytes": 589,
+      "sha256": "28a5367cb9a207d72a9d679e0a61c4f981638738478690d4104e737d45fbc097"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/candidate-manifest.json",
+      "bytes": 1179757,
+      "sha256": "e7e143cb9fc738643ecc09b9f1689d50e8755431788f02309a9ac7a9ba03a564"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-gles-bar-visible-18.png",
+      "bytes": 5112,
+      "sha256": "eebbda015d2dcc2e7d4f7ba240e59c53ef2400a8efb0e68719271d626834bd6e"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-late-gpu-rejections-11.png",
+      "bytes": 4997,
+      "sha256": "2ae443e1176a910f5d9f188c7db88e64d41b6844976fe52f98c2172ec426d137"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-desktop-startup-02.json",
+      "bytes": 374,
+      "sha256": "1f9a1df61000e59263c665ee7b2a0a3853501eeb6acdf469f3ecf98dbf38d9be"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-egl-logger-attributes-09.json",
+      "bytes": 201,
+      "sha256": "153e8869291b72b5f5a8fee3737bd1d60c9aff58e9d59026e4dc973fe01a00fc"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-egl-logger-attributes-10.json",
+      "bytes": 140,
+      "sha256": "a82b4791b85d743df42741c7dac2c749c59b88ec4e5f97ee286db2177aca4870"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-egl-logger-exact-config-14.json",
+      "bytes": 287,
+      "sha256": "9fa3c8067ce426ae750899bbc9e590a6988f069f32bb0b18d8ac518ee144d11d"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-egl-logger-install-05.json",
+      "bytes": 11148,
+      "sha256": "daa4ec99ff1a71fb404d10a3f43f7e357af76841ce13490355b586c42f95d6ef"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-egl-logger-poll-12.json",
+      "bytes": 182,
+      "sha256": "76044825ed5080056494020def332866b2c8c2cac58e472522b187d6efcf0559"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-egl-logger-restart-07.json",
+      "bytes": 600,
+      "sha256": "89414cc0375ba7b3ce0545f212dbb18940f3dbeef6a0e2137d9c83228d59641c"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-egl-logger-restart-08.json",
+      "bytes": 520,
+      "sha256": "abafde77a78a5cba1b3f82221df8e3bc1422b5f8e528dab915f0a1933b0974ad"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-gles-bar-visible-18.json",
+      "bytes": 49,
+      "sha256": "79a03760fde9246c7970446830f48b78920aefbc2093c7214b2f0602efda5da8"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-gles-client-adapter-attributes-17.json",
+      "bytes": 351,
+      "sha256": "bf6588d5513cac552b6015b8e6e6a49712affc181d1e21ef52ed0a87403288fd"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-gles-client-adapter-install-15.json",
+      "bytes": 12353,
+      "sha256": "8c475b29650fd4bde22f5b23c0c34a6c5f4c6671c9fcc95e928be0d1a3795784"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-gles-client-adapter-restart-16.json",
+      "bytes": 546,
+      "sha256": "6610a3b05c886f93321e9166ef035881f87501c20461f87da42058ae36adf9aa"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-gles-client-log-head-20.json",
+      "bytes": 187,
+      "sha256": "da8ac00963ed37c3e6e657cf3b743cec81130ce20b794b5e9473eecbb32a5cc3"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-gles-client-render-19.json",
+      "bytes": 435,
+      "sha256": "56a75194bae6a8ebbaf6d5001a6738ea5c6831c48bc2a16c4a612fa2159af803"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-kernel-trace-availability-13.json",
+      "bytes": 658,
+      "sha256": "9ee369523ae120d42700977bf4ad1d9eaa9a04859a6563bbf91f406b1a78762f"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-late-gpu-rejections-11.json",
+      "bytes": 53,
+      "sha256": "51729083f82c6767459452b35980ee42c093ea173a6e126853402a621605ecf6"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-qt-version-04.json",
+      "bytes": 348,
+      "sha256": "fe36ad15e66e43573924ad20a3f375895c12018380b73b6faab550f1e95e974a"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-quickshell-launcher-06.json",
+      "bytes": 270,
+      "sha256": "5e0fb7b920672e48469b089d77c2e5b022ea5e1416c0dfb5758284dfd5480193"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-quickshell-render-03.json",
+      "bytes": 341,
+      "sha256": "979596647ca75f579770c6f276633669181d7c6025c85ed07cb74ef680d00cf9"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-release-qt-diagnostic-21.json",
+      "bytes": 53,
+      "sha256": "5af1a32975923eb84294e8d48913f8fcd8452f5d522bc033b51ef0465980c9ec"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-request-startup-services-01.json",
+      "bytes": 237,
+      "sha256": "69dfdb8a210f8dd4ed8f67ccd073e8fac2478fecc0ee4e5fd3462cbf466e4e90"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-desktop-startup-02.json",
+      "bytes": 13107,
+      "sha256": "8899264bd021ca5a31de82e84b37ff484b328d29eec9d0f3bc778260d811b31c"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-egl-logger-attributes-09.json",
+      "bytes": 1684,
+      "sha256": "2a6c02de8ad27fc26c491b3a4ee61bb7381162531aeb51ba25ba445284c17ee1"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-egl-logger-attributes-10.json",
+      "bytes": 604,
+      "sha256": "3be2ba9e8df94f807b17e79bca7932139bb793b2ac5463414e9d2cbcc35270fd"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-egl-logger-exact-config-14.json",
+      "bytes": 8866,
+      "sha256": "46f9ad39aa3f2eb123673e802345103594a81c7e3999dcecf0c915631759fdcd"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-egl-logger-install-05.json",
+      "bytes": 22774,
+      "sha256": "5d9990fcc9890451c6714a6c24197e464cae1d4e258d27526502b03f94848770"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-egl-logger-poll-12.json",
+      "bytes": 8150,
+      "sha256": "6745e9e75ee0ec97ff4def240fd1244f6bbab24d7e0e729f5428e0b77c895007"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-egl-logger-restart-07.json",
+      "bytes": 1937,
+      "sha256": "7f678468e7c0d45bea8d83f602e4bc17ddead9b8103b074ddf7d28ae947a7ffe"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-egl-logger-restart-08.json",
+      "bytes": 932,
+      "sha256": "76d23bb3524d7bcbb071903a9b0f45f440adaef0ad7b3a16e3c50aeb850999c2"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-gles-bar-visible-18.json",
+      "bytes": 978666,
+      "sha256": "a0d43e359681b6cae5e3eabc2e11c61e847dc2713fba18dffebc1236aef5416d"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-gles-client-adapter-attributes-17.json",
+      "bytes": 3322,
+      "sha256": "250594e4e1cf358233ddc599b3ffd8b1c6b4b551d9bc2e8a45cd70f834772094"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-gles-client-adapter-install-15.json",
+      "bytes": 27909,
+      "sha256": "ad6a2bb3c574d930764cda8dc90383e28fb84c1c2aa78ad1025f94b3bdf0dfb0"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-gles-client-adapter-restart-16.json",
+      "bytes": 1299,
+      "sha256": "248148d9098b843cff085b1f180e526560edeaf49d798717fb003bbae4c9e480"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-gles-client-log-head-20.json",
+      "bytes": 8390,
+      "sha256": "8436ee23ef707ab6b8065cfc13ae81a620d5f3b233c16f60243bc41d59aeca2b"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-gles-client-render-19.json",
+      "bytes": 6878,
+      "sha256": "628073f40285880d7c85e32ead1da4e896f3b7bcbac29a70b86969b41c83fbc5"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-kernel-trace-availability-13.json",
+      "bytes": 1219,
+      "sha256": "a3d3a5da190f4d3cf6183abe127de492804919f62514b4ad4e60162e8b7276ab"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-late-gpu-rejections-11.json",
+      "bytes": 849092,
+      "sha256": "e88b4bdc12466ebacc601a367006f17ebcb2e40353378d7afae05ec71698c454"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-qt-version-04.json",
+      "bytes": 56229,
+      "sha256": "38da500bf631ddbdf734ac59589a1c2b7dcfac3f99b9cd058c7624bfdc62d9c9"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-quickshell-launcher-06.json",
+      "bytes": 7502,
+      "sha256": "0e430ee199def6ef19bd57e34e18edbb4f1ded6ddc0aef21b7adf36597138a92"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-quickshell-render-03.json",
+      "bytes": 22128,
+      "sha256": "8f9b28f6ff525f22b043f3d65a818d330469ee493ab7aef81ff00721f0cdc65b"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-release-qt-diagnostic-21.json",
+      "bytes": 232,
+      "sha256": "61f20794f2a5f25f4b250fd3a498e814f351dfb170e0b93244e43f3b60710405"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-response-startup-services-01.json",
+      "bytes": 8297,
+      "sha256": "a67b61d53707f14072de8ee38cc55a8b23e2122ef2e7cc052dbd2246748213f6"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/control-state.json",
+      "bytes": 49,
+      "sha256": "e237a9e9091da191c21b0cb3e73ab4c7c6b361f65ba599265fe6b8b28eefc6eb"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/egl-exact-config-guest.log",
+      "bytes": 8281,
+      "sha256": "ecf2da63584985e0e55114ca98c9637ae8f935ccfa4f69cb7c641a3b876149f9"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/egl-logger-attributes-guest.log",
+      "bytes": 253,
+      "sha256": "04f69e1a11154149dafe8438d109095e99308c4b45c1b74bce9daceb9741917d"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/egl-logger-poll-12-guest.log",
+      "bytes": 7575,
+      "sha256": "eb88149c855b8855d83212242dd33720b3434e7ad49ffdb8720b3c28e3ab3ae8"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/failure.png",
+      "bytes": 12358,
+      "sha256": "f1a9861cccf448769e6379dc3b7c83eb4cf8da7ffa3b5baf04ef05bd9de18bbd"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/gles-bar-pixel-audit.json",
+      "bytes": 754,
+      "sha256": "ec0a4f888c3c2909f75f28ab099e7f474d3dda0d0385b77bf647e8361fe852e4"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/gles-client-log-head-guest.log",
+      "bytes": 7626,
+      "sha256": "63bf860ca6a27f4f07122fe5a018f44c892c69fcd5a889ecb10617173acf6a50"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/gles-client-render-guest.log",
+      "bytes": 5945,
+      "sha256": "e734a07c59952af7c896c0100cb12ff7818adeecf2697325dacdc3f225632e79"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/hardware.json",
+      "bytes": 7022,
+      "sha256": "b0eeed4918a256d5e61e377852fc208ff297529df4f51094200ce74ae46c9e27"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/heartbeat.json",
+      "bytes": 663899,
+      "sha256": "29f224a3f2a9d199e18bdc962634b215c5497172ffc203477a448ed1ad43c985"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/progress.png",
+      "bytes": 14908,
+      "sha256": "153cd7b988ac0e54aa7a1904430c9ae47216685ab9848bcafc0d4e9b6c13caec"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/public-desktop-input-failed.png",
+      "bytes": 12050,
+      "sha256": "535ee1c98afef12e6f60eb3bb72f23aed0813c07bec5f2757b57c9b79233ef3e"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/public-desktop-input-typed.png",
+      "bytes": 7517,
+      "sha256": "ed129f368505ddd1dc068264c98678d60ef76683157fd229818f9f5f3d6ae7c8"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/public-desktop-input.json",
+      "bytes": 35423,
+      "sha256": "131131dc42a137fbfffc816e88ba28ec0f7d08f9b0d4ad0958041ede2e890ad9"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/quickshell-render-guest.log",
+      "bytes": 21116,
+      "sha256": "df6cf0bfb7a71341a14488b9fab29a389133b04c7450436a4be84c4235f8c912"
+    },
+    {
+      "path": "critic-omarchy-gpu-ui-local11-05/report.json",
+      "bytes": 1390642,
+      "sha256": "a96728a7d33dd075b2dd99e93adfb12ad4fd31d81b44c695c36c10ebc200407a"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/browser-coverage.json",
+      "bytes": 1807987,
+      "sha256": "5a35e234645c4adfa618c6fdce4ae25f9f0331c5069d253b521ca85fd0a4f78e"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/browser.png",
+      "bytes": 34177,
+      "sha256": "21aec02f1d0b7475e13d867b33453070ff40661e891edec256b7c612ec71060f"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/report.json",
+      "bytes": 221846,
+      "sha256": "80729ce56d2a85c0802408633078c81710d905be2cad5e18f7e5f7f49d1fa17b"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/run-0000.json.gz",
+      "bytes": 7694,
+      "sha256": "257e3cb682d54e2102a04e2bbefd3fcd98d16337fc98404463fd77e300ee6cb8"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/run-0001.json.gz",
+      "bytes": 7695,
+      "sha256": "4d55b29c5f219cc0c4ded4c48677b927e9b92f9f212edcbb7a2ccb5eb9df3883"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/run-0002.json.gz",
+      "bytes": 7692,
+      "sha256": "cd19219673ee963cdc505b6a3a46d9a21b50c3c91829a6841ae0fc8b160c3eab"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/run-0003.json.gz",
+      "bytes": 7700,
+      "sha256": "f60bd89b7daea61a4b2854628465623bb163d9cd7c29e87024f3df02e0d3672a"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/run-0004.json.gz",
+      "bytes": 7691,
+      "sha256": "45605aeffe3e9005ae0e0d72a6ad0def55e270f5b284288135b9c47c4b81feed"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/run-0005.json.gz",
+      "bytes": 7708,
+      "sha256": "b4c17b62a1d07b741add651f65631f8d2b2632e2a92f095506347b638725946f"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/run-0006.json.gz",
+      "bytes": 7704,
+      "sha256": "9a56c02e6a349b3e239252be7fb384c6aa53c17bb880810068acca28b9aa9280"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/run-0007.json.gz",
+      "bytes": 7694,
+      "sha256": "aa90c134ea51f4bf0d94f1bb419368171db272b9e08304faa1a051b6352c13eb"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/run-0008.json.gz",
+      "bytes": 7710,
+      "sha256": "4ab32c84c5851c322f44a21fc262c94f04ae44251e13a499b83692c34a9e3abb"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/run-0009.json.gz",
+      "bytes": 7718,
+      "sha256": "3dbbe52c8b7d059724098f473c8f31dc7f6026af12cd4512eebfc782498fe7cc"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/run-0010.json.gz",
+      "bytes": 7722,
+      "sha256": "81196136734f3832ed783ef7d8da00fe7a097df7fbca95347ebd0b6d82a02c9e"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/run-0011.json.gz",
+      "bytes": 7713,
+      "sha256": "5c6b07739489a89ffdd288964680157cc7258f2bccc088c6a35da1834ab8b916"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 127535,
+      "sha256": "dd64536abf46bc69ff7866e9822d7acf1a3e7f5216e70919d4a03e633b7c7aca"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 38546,
+      "sha256": "a5337fbc0bf6d258200e653b13c86ba18f3f449dfaef06102c4791bfe20fe68a"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 53329,
+      "sha256": "e116b32fdd9b4d9cf698431f96cfd7b4a7174cd1adaf8a77fc8f45b585496d2b"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/multisample.mjs",
+      "bytes": 7268,
+      "sha256": "950255f6b8c09f09540e444a381fd9396665f64ec167307c2313b53b43d00b06"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/production.mjs",
+      "bytes": 19775,
+      "sha256": "0947381800b6789acaf4dfee77d274153df487ed2634391968cc41d86d3f5dde"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/resources.mjs",
+      "bytes": 161573,
+      "sha256": "f568c9a548b271b445e1e97fdc6e4041c553830c89974beeae748cab7eaf4bab"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14960,
+      "sha256": "4d20d1dc1d74836cd26a966206e4f8b051288ea8e3685904f749bbba1716ccbe"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 12102,
+      "sha256": "7b44ba7bc7361438807c1709c32929832dbf0b7af95966c68a65b01b23075ad8"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/state.mjs",
+      "bytes": 220162,
+      "sha256": "acdb5c99a5173bf2f0a78574aa4a1bbb7f82b5cc4acb51449dfe5046375b5a5d"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/tests/production-critic-bounds.mjs",
+      "bytes": 15197,
+      "sha256": "122000b3424f538dff75bc4f47660cacc7c00bf5ca199ed1eff4b0103965eb0d"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/tests/production-critic-shader-bindings.mjs",
+      "bytes": 8280,
+      "sha256": "e58d873d3b8b3a249f6b8007743268b5cf20157a4a7a74633f8949c2cb7bbf46"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/target/virgl-production/pkg/wasm_vm_wasm.js",
+      "bytes": 158077,
+      "sha256": "c4a581058bb7eb79aa4b1280bac56842ac04be11f69d83821de3c385b20b8ead"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/target/virgl-production/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1745917,
+      "sha256": "d4f14be3159205c801aaf3653e7042ffb782f2f1116e68c63bbb205009a5ca4d"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/tools/virgl-production/critic-dimensional-browser.mjs",
+      "bytes": 9137,
+      "sha256": "73e80fb5bf6c38680bcf3c802c0a84c64333c3bac261df1421a0e29f634ecf09"
+    },
+    {
+      "path": "critic-production-y-top-reference-after-06/source/tools/virgl-production/critic-fast-boots-y-top.mjs",
+      "bytes": 7796,
+      "sha256": "9f32446b8e6128126ec183d69bc098bb307e89bcfc79adb551499f5da112856d"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/browser-coverage.json",
+      "bytes": 1806724,
+      "sha256": "679a3f0466aaf81e22b72c92d89b3b3ee9ba35f15d77fb8617bf3bcaeac48ef4"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/browser.png",
+      "bytes": 952270,
+      "sha256": "cfafe4da6dea92f94be2c245172176a3eaaa64a2a9c1508349e781960a30c146"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/report.json",
+      "bytes": 242883,
+      "sha256": "6f72be8bb00d3bbf07e977c6488c710370fb1e792032576a2453393e51ae752a"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/run-0000.json.gz",
+      "bytes": 7952,
+      "sha256": "3d2c0dbbf8f78fb86288969c2ffbc42033cefb734ae4b4bc8810f99ccbd5d151"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/run-0001.json.gz",
+      "bytes": 7955,
+      "sha256": "e84e3403275ba07ff6547b14561a9f9a4efee13d80dcb5d417e7f74838bcf095"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/run-0002.json.gz",
+      "bytes": 7691,
+      "sha256": "1a76270eefe9df9b5e37c745cbd69d849b70a71de97a08d450bc8e618425036c"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/run-0003.json.gz",
+      "bytes": 7966,
+      "sha256": "06d48acc11a449ece2c6e339c60410c51866f409f4b1e81e5197922fbb5208f6"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/run-0004.json.gz",
+      "bytes": 7693,
+      "sha256": "6fb441c30bc1fe94262613aa2c6d99fa4bf62dcc3056d058611365a10de1051b"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/run-0005.json.gz",
+      "bytes": 7972,
+      "sha256": "3803dc20d9e70826b4e5b056d30c344404188f4f977ddccd25e572430eb1fdf5"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/run-0006.json.gz",
+      "bytes": 7964,
+      "sha256": "5b960b5683df33532e6791a6e593d5f8d291e3b5d72e3626ca86b3e2ac6bd842"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/run-0007.json.gz",
+      "bytes": 7969,
+      "sha256": "7c2ceb8d888afe0e9c723f53b770655b12b7d270c25fea3251f7b67221673018"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/run-0008.json.gz",
+      "bytes": 7967,
+      "sha256": "0615c4a1df50e7ed761eb47b1ac1d93df4ec4696c683ee18270b432a59e197af"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/run-0009.json.gz",
+      "bytes": 7976,
+      "sha256": "25c9acbd5e915ec62b18b9a6b57d19d773e9a29e83fde5ab7ff03189f2c5966d"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/run-0010.json.gz",
+      "bytes": 7976,
+      "sha256": "14cdf12d759af00e8b594f1310267cb25b651a296dc7fa98008feeeff3e0d81e"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/run-0011.json.gz",
+      "bytes": 7988,
+      "sha256": "60ef80d1e1cda7cc0384688c7510272d2801e2cf825452f15d1693c0410bc8f1"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 127535,
+      "sha256": "dd64536abf46bc69ff7866e9822d7acf1a3e7f5216e70919d4a03e633b7c7aca"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 38546,
+      "sha256": "a5337fbc0bf6d258200e653b13c86ba18f3f449dfaef06102c4791bfe20fe68a"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/decoder.mjs",
+      "bytes": 53329,
+      "sha256": "e116b32fdd9b4d9cf698431f96cfd7b4a7174cd1adaf8a77fc8f45b585496d2b"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/multisample.mjs",
+      "bytes": 7268,
+      "sha256": "950255f6b8c09f09540e444a381fd9396665f64ec167307c2313b53b43d00b06"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/production.mjs",
+      "bytes": 19775,
+      "sha256": "0947381800b6789acaf4dfee77d274153df487ed2634391968cc41d86d3f5dde"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/resources.mjs",
+      "bytes": 161573,
+      "sha256": "f568c9a548b271b445e1e97fdc6e4041c553830c89974beeae748cab7eaf4bab"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/scanout.mjs",
+      "bytes": 14571,
+      "sha256": "c778d73f1d7bee43d07021588d9166ecb6329bfe29a0f3c52c12a395c5db959c"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 12102,
+      "sha256": "7b44ba7bc7361438807c1709c32929832dbf0b7af95966c68a65b01b23075ad8"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/state.mjs",
+      "bytes": 219997,
+      "sha256": "7739698a3ac9581c1169c24b9997a8fc5b825f7decb57f18068214fb65efdf36"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/tests/production-critic-bounds.mjs",
+      "bytes": 15197,
+      "sha256": "122000b3424f538dff75bc4f47660cacc7c00bf5ca199ed1eff4b0103965eb0d"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/tests/production-critic-shader-bindings.mjs",
+      "bytes": 8280,
+      "sha256": "e58d873d3b8b3a249f6b8007743268b5cf20157a4a7a74633f8949c2cb7bbf46"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/tests/standard-instanced-draws.mjs",
+      "bytes": 32402,
+      "sha256": "f02cf96a50f79ef5ed71c0240784a7ae3d030231d18d320148e89252bf724afa"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/tests/submit-acceptance.mjs",
+      "bytes": 53417,
+      "sha256": "c65063916c5f28085604a5dca46a2221f360762c1192776dc9294e2e1ba238ed"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/target/virgl-production/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/target/virgl-production/pkg/wasm_vm_wasm.js",
+      "bytes": 158077,
+      "sha256": "c4a581058bb7eb79aa4b1280bac56842ac04be11f69d83821de3c385b20b8ead"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/target/virgl-production/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1745917,
+      "sha256": "d4f14be3159205c801aaf3653e7042ffb782f2f1116e68c63bbb205009a5ca4d"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/tools/virgl-command/standard-draw-oracle.mjs",
+      "bytes": 4684,
+      "sha256": "8de41c4a9f041f7a9acaf8a062a525f64c0ef3d197c464753764ddada94d26e3"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/tools/virgl-command/standard-image-fixtures.mjs",
+      "bytes": 3809,
+      "sha256": "1c045bdf667fc18be16644a05dfeeb5ef7e88b4eb7eaf3f3572f20fa98954d48"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/tools/virgl-command/standard-sampler-fixtures.mjs",
+      "bytes": 3671,
+      "sha256": "e0977f02f9d6750b727c5e9b72f9e486b0245acc203acafeeaec16de8e25133d"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/tools/virgl-command/standard-texture-fixtures.mjs",
+      "bytes": 3872,
+      "sha256": "f32f31df7d93fdf829559b04b822ea23162de44c9e171c19ccc37c71c65c15e8"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/tools/virgl-production/critic-dimensional-browser.mjs",
+      "bytes": 9137,
+      "sha256": "73e80fb5bf6c38680bcf3c802c0a84c64333c3bac261df1421a0e29f634ecf09"
+    },
+    {
+      "path": "critic-production-y-top-reference-before-04/source/tools/virgl-production/critic-fast-boots-y-top.mjs",
+      "bytes": 7653,
+      "sha256": "5b82f41ab662c26b63e3799829c039a1587381f4bee1b0efb23a432b4855758f"
+    },
+    {
+      "path": "critic-public-snapshot-sabotage-01/main.js",
+      "bytes": 153731,
+      "sha256": "139d503cbd3cefc6c8ccc296131161165236cca8c6d87a993d239a54af9d918f"
+    },
+    {
+      "path": "critic-public-snapshot-sabotage-01/run.log",
+      "bytes": 1454,
+      "sha256": "00b18eb3c49a3286f4cd5d017a63df47ab5573d462c76f8539b98b41dcb7cbaa"
+    },
+    {
+      "path": "critic-public-snapshot-sabotage-01/tests/critic-public-snapshot-retry.test.mjs",
+      "bytes": 4775,
+      "sha256": "987b71778d13e4dc1b5413fc31f83c0fda040f095de8505dec666c91f3998f52"
+    },
+    {
+      "path": "current-inspected-source/tools/virgl-production/critic-fast-boots-y-top-browser.mjs",
+      "bytes": 9601,
+      "sha256": "38a15bcc0e0ab86c6f560ed442b5aa83da323f122d006f4da9ae3375ec715555"
+    },
+    {
+      "path": "current-inspected-source/tools/virgl-production/critic-fast-boots-y-top.mjs",
+      "bytes": 7796,
+      "sha256": "9f32446b8e6128126ec183d69bc098bb307e89bcfc79adb551499f5da112856d"
+    },
+    {
+      "path": "current-inspected-source/tools/virgl-production/critic-fast-boots.mjs",
+      "bytes": 26262,
+      "sha256": "f42fcd34d930eaa2d3e68312cbc58586bd013906783b41ab561df52a9bc3e523"
+    },
+    {
+      "path": "current-inspected-source/web/main.js",
+      "bytes": 153786,
+      "sha256": "55e5fed8f221bf42123d7dc579ea26a7e125e8ac89397589145049448c361024"
+    },
+    {
+      "path": "current-inspected-source/web/tests/critic-public-snapshot-retry.test.mjs",
+      "bytes": 4775,
+      "sha256": "987b71778d13e4dc1b5413fc31f83c0fda040f095de8505dec666c91f3998f52"
+    },
+    {
+      "path": "fast05-served/app.html",
+      "bytes": 48797,
+      "sha256": "7e754bfb14cf6664e335bba2680d2c1de3f80ab8a7af240f31f4c85af06f89c3"
+    },
+    {
+      "path": "fast05-served/artifacts-alpine.json",
+      "bytes": 774,
+      "sha256": "72843b6eebb9b482f1ffba392872d24824ca7465a09d1b4bec257d02a93a1ece"
+    },
+    {
+      "path": "fast05-served/artifacts-node-alpine.json",
+      "bytes": 795,
+      "sha256": "84dd4084dc7ef21e0054aa819fa3694b744ea93d013d8d8bc2c951cf9b8c8857"
+    },
+    {
+      "path": "fast05-served/artifacts-omarchy.json",
+      "bytes": 879,
+      "sha256": "935dcf06755da8c14ddf8b178e2eb8919d63b034979d578617df8b163c2360bf"
+    },
+    {
+      "path": "fast05-served/artifacts.json",
+      "bytes": 591,
+      "sha256": "9448cba61163eab896c1a80ec166274f552f5bbc847b83f7d69025f00a95b8cf"
+    },
+    {
+      "path": "fast05-served/linux-worker-host.js",
+      "bytes": 3251,
+      "sha256": "e9ae076ba6bd045811638391f49a6c9e4573b2b4e9c9f90a1c33581590572ee4"
+    },
+    {
+      "path": "fast05-served/linux-worker-protocol.js",
+      "bytes": 31368,
+      "sha256": "92b708ba29ea7375f4d18e5f0d19bd6492fe8061f3e32b0d7a3c7564bb620550"
+    },
+    {
+      "path": "fast05-served/linux-worker.js",
+      "bytes": 1188,
+      "sha256": "7783b4aecb74b83882a2ca3495ed46932ed7930543d0cab72f4035ccfc13e4b9"
+    },
+    {
+      "path": "fast05-served/loader.js",
+      "bytes": 82292,
+      "sha256": "7bfedc4bcae7057f1fafb596d1325a82a232423d9abf0144c9ed8d46466e0a32"
+    },
+    {
+      "path": "fast05-served/main.js",
+      "bytes": 153786,
+      "sha256": "55e5fed8f221bf42123d7dc579ea26a7e125e8ac89397589145049448c361024"
+    },
+    {
+      "path": "fast05-served/pkg/wasm_vm_wasm.js",
+      "bytes": 127501,
+      "sha256": "e7180ae76f643ffd2de2063d4ecb4a7348d11523313a9684990fbf475a0752b6"
+    },
+    {
+      "path": "fast05-served/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1743453,
+      "sha256": "c9f24482f55b6111a24f932aae95d81203beecfbb8d14458ed9d1787f1e1a3a8"
+    },
+    {
+      "path": "fast05-served/src/sink/presentation.js",
+      "bytes": 23361,
+      "sha256": "a1f7ac1bc6a3f8b27056f5ba9f566977cf60de9b76eb69a5b5837005aa5fe173"
+    },
+    {
+      "path": "old-public-input.mjs",
+      "bytes": 6724,
+      "sha256": "1b412bfdbb240267b6911ed4541ccfd4c6e6028e16be10225cd956808bd9dc40"
+    },
+    {
+      "path": "primary-origin/qemu-egl-helpers.c",
+      "bytes": 15830,
+      "sha256": "56e3840b975633fbff8313dc6a5c66ad0b908420819c1208356fdc9c139fc7f2"
+    },
+    {
+      "path": "primary-origin/qemu-sdl2-gl.c",
+      "bytes": 7637,
+      "sha256": "7614d13e4bd20df0298bcfeece4d593d550229057ccc473624fbcaf49bb8c02c"
+    },
+    {
+      "path": "primary-origin/qemu-virtio-gpu-virgl-7.2.0.c",
+      "bytes": 20364,
+      "sha256": "af7c22d02443061077a4c387c53f4a980c89558e9a67d6cca7428857a5c9cff5"
+    },
+    {
+      "path": "primary-origin/vrend_renderer-1.3.0.c",
+      "bytes": 495473,
+      "sha256": "be7e5c63fb501cb77bd5b2c13c332f8b93c49fd04d207f17d434932c237f4ea3"
+    },
+    {
+      "path": "primary-qt/6.11.2-qeglconvenience.cpp",
+      "bytes": 21057,
+      "sha256": "5c0b4cb049a36858ef51faf16a7ba42569f5426f9ac1974942da3b8d94292f09"
+    },
+    {
+      "path": "primary-qt/6.11.2-qopenglcontext.cpp",
+      "bytes": 45135,
+      "sha256": "e9a63843ecd5b4c975ba068d9f12c6449840754a4a8c355015fc428f1d4b91f2"
+    },
+    {
+      "path": "primary-qt/6.11.2-qrhigles2.cpp",
+      "bytes": 297748,
+      "sha256": "702fa9af2d972b85be3f4b83dc4f33552c3b6add285d61b3fde4d9ec8cfe843c"
+    },
+    {
+      "path": "primary-qt/6.11.2-qsgrhisupport.cpp",
+      "bytes": 57523,
+      "sha256": "277057dcf8ae13492d299564cdb751498c46c2219bd783d6b1922ee2e2d34c0d"
+    },
+    {
+      "path": "primary-qt/6.11.2-qwaylandglcontext.cpp",
+      "bytes": 19799,
+      "sha256": "339bbbd7e7cba3e2ec620f5b6d4f81fb48ac4c66655b791ebc44a38be78a2964"
+    },
+    {
+      "path": "primary-qt/quickshell-receipts.json",
+      "bytes": 1884,
+      "sha256": "c8d54e7f6cf7a6cdc4f68fec7b946ff24741b9952a6303ed5050dde030fa3ccb"
+    },
+    {
+      "path": "primary-qt/quickshell-src-launch-command.cpp",
+      "bytes": 17813,
+      "sha256": "ac23c17b4a33231259894f44fd133a6cf890cf851402e335f40f9c6d76f45895"
+    },
+    {
+      "path": "primary-qt/quickshell-src-launch-launch.cpp",
+      "bytes": 9842,
+      "sha256": "60812ec93022a8bcd0831a0dbb24a4ac81373d34cdf60b251764fed977ba2a93"
+    },
+    {
+      "path": "primary-qt/quickshell-src-launch-launch_p.hpp",
+      "bytes": 2228,
+      "sha256": "57782aaa475c411b1a68c37b85d0563e902bc46d69f863588d8d7f7152692c6d"
+    },
+    {
+      "path": "primary-qt/quickshell-src-launch-main.cpp",
+      "bytes": 3512,
+      "sha256": "0d05ea9be6728dfd4075895c2717435183f658696c1d95be08e117a14df2901d"
+    },
+    {
+      "path": "primary-qt/quickshell-src-launch-main.hpp",
+      "bytes": 74,
+      "sha256": "d6dd42d99ee6b1596056d396c7d4c324b92f9f409c4cd8affeba157eeb3f7f81"
+    },
+    {
+      "path": "primary-qt/quickshell-src-launch-parsecommand.cpp",
+      "bytes": 9878,
+      "sha256": "c80a90eb1fd06d49c6a1005380e808a10040c1c74fb2bf8d329d65ba5d7c5185"
+    },
+    {
+      "path": "primary-qt/quickshell-v0.3.1-tree.json",
+      "bytes": 164820,
+      "sha256": "2f062ea5476fca197606e457b79a48ba6f9c4dacdadd7869c833f220dd659c9d"
+    },
+    {
+      "path": "production-fast-boot-node-fixed-04/node-alpine-initial.json",
+      "bytes": 5183,
+      "sha256": "0a92855f8f2a7998ac2264bbcd9a3948b00f70e178abee1312791a1cb4e0e952"
+    },
+    {
+      "path": "production-fast-boot-node-fixed-04/node-alpine-initial.png",
+      "bytes": 148514,
+      "sha256": "433135904cf16135741e6443ef6823688933b9f23030d7db85e4fb83c3f8519e"
+    },
+    {
+      "path": "production-fast-boot-node-fixed-04/node-alpine-persistence.json",
+      "bytes": 5191,
+      "sha256": "e577e04a63772e34ae61ac2fd509d5f9ab0b5c65d07d157b096b1e232ef93b54"
+    },
+    {
+      "path": "production-fast-boot-node-fixed-04/node-alpine-repeat-checkpoint.json",
+      "bytes": 152,
+      "sha256": "15d727b25a6652fc877a99b57759b8943dc01dff2134917acc1554c19fa5b3b4"
+    },
+    {
+      "path": "production-fast-boot-node-fixed-04/node-alpine-repeat.json",
+      "bytes": 5345,
+      "sha256": "0042a464b8938530662a53c5bb71d32e9094a319f59b9fa1ac30817f96ca4afe"
+    },
+    {
+      "path": "production-fast-boot-node-fixed-04/node-alpine-repeat.png",
+      "bytes": 144131,
+      "sha256": "5b28e02df8d42cfa51612ebc1479047e7b7092bad27e077aac8de08c777beb4c"
+    },
+    {
+      "path": "production-fast-boot-node-fixed-04/report.json",
+      "bytes": 70754,
+      "sha256": "10b9585f6b28fc6d9a2c8d8b877527903fdb9d5733587be7be35611355ec0c6d"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/alpine-initial.json",
+      "bytes": 5103,
+      "sha256": "c2f036558b6b98e9780f8b9328b4027295af0e94710bbbbd20cc172b6abbe33d"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/alpine-initial.png",
+      "bytes": 148572,
+      "sha256": "9d6562dda3e790e5343584e77360862c9a1dbaddbe99cb53e6bf7aa6fb66954b"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/alpine-persistence.json",
+      "bytes": 5151,
+      "sha256": "a2963b5ce6dd313f99f28190337f610c58126d62d2f3ef45e10c310290eae399"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/alpine-repeat-checkpoint.json",
+      "bytes": 152,
+      "sha256": "c5667c4c1d5b8f23cc1c942b59c469e85c9988944e84c084a47703a40f64369a"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/alpine-repeat.json",
+      "bytes": 5262,
+      "sha256": "642153b3e5539e1f17672b0fe9fc6706ef80f7d02c22ebf6bd97fec88fbe45ac"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/alpine-repeat.png",
+      "bytes": 141029,
+      "sha256": "0c6a3477b6b209af27cb37f001b3002b76ec0355981eba32edd4552ff4625d84"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/busybox-initial.json",
+      "bytes": 4049,
+      "sha256": "d79d359b1bdfdcdc25b1605c68ca42842634a7565691b4db7f471644995fce83"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/busybox-initial.png",
+      "bytes": 120614,
+      "sha256": "36380506e8f57ef3b6c8ec0900e96b23ac72d8ab330870972334e5070e917942"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/busybox-repeat.json",
+      "bytes": 4046,
+      "sha256": "292e4288f5276eb6054b40cac0c8d642508bd8a4aeed3814256fed8c088f8577"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/busybox-repeat.png",
+      "bytes": 115328,
+      "sha256": "41c2b64b7e0c7201786aaac4eff1271e89d3cc8994bfb46d5769a36d770e72bd"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/node-alpine-initial.json",
+      "bytes": 5184,
+      "sha256": "e306b6a73d6ae9debb14eb9372ac44c29d83eb34a7bad8110bf5e97c381fa9f9"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/node-alpine-initial.png",
+      "bytes": 148398,
+      "sha256": "a0189c1411b1690126cb3b455d5f9b6b396bcbdee32143c8ee5b2f3cec487f85"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/node-alpine-persistence.json",
+      "bytes": 5176,
+      "sha256": "b37955f11f638b15af857631d3952435c20d242832a424a31e1c1152cbcb8071"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/node-alpine-repeat-checkpoint.json",
+      "bytes": 152,
+      "sha256": "a51af89322f52870185211a02f8737203b6ac664f0010f4e3509b83f38414fe5"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/node-alpine-repeat.json",
+      "bytes": 5345,
+      "sha256": "b5b9d72e46caa587ce03eb1cdf319eee4f49338d9f7e67a9b2e45b7f63077bec"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/node-alpine-repeat.png",
+      "bytes": 144166,
+      "sha256": "a1878ca6eae4e17e30253eae943caa4a7b4fb1cc59e3cdb6b9bc7b7b98bf22d1"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/omarchy-initial.json",
+      "bytes": 59998,
+      "sha256": "38e3a5636d172c41936ef7e2002d22735a17805efc8b9db4d290a65507d7f674"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/omarchy-initial.png",
+      "bytes": 10876,
+      "sha256": "c0fcf0cd4bcaa815f4cdfad6e75610f93610b66d6135c0bcdb48aaf72a1bdbbd"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/omarchy-repeat.json",
+      "bytes": 55760,
+      "sha256": "3cdd711074e73ca67fcba98ee2dbd6021aa936927e8040c3079b1c3726bf0b1e"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/omarchy-repeat.png",
+      "bytes": 10876,
+      "sha256": "c0fcf0cd4bcaa815f4cdfad6e75610f93610b66d6135c0bcdb48aaf72a1bdbbd"
+    },
+    {
+      "path": "production-fast-boots-all-fixed-05/report.json",
+      "bytes": 299376,
+      "sha256": "72f39ffb601af2e030a953b7837cd766c89a49350e46355291bcfac85281787a"
+    },
+    {
+      "path": "production-integration-orientation/native-origin-reference/commands-0.bin",
+      "bytes": 568,
+      "sha256": "a0f906b6562ba7403a1b5bf1cd521ec6ab7a83dc7078f1bf1781ccee21da578a"
+    },
+    {
+      "path": "production-integration-orientation/native-origin-reference/commands-1.bin",
+      "bytes": 568,
+      "sha256": "a0f906b6562ba7403a1b5bf1cd521ec6ab7a83dc7078f1bf1781ccee21da578a"
+    },
+    {
+      "path": "production-integration-orientation/native-origin-reference/origin.c",
+      "bytes": 5067,
+      "sha256": "15cd18b395c08e73a63fa70bca926042c3e475006fa5cc1dfffcecd4fd65090f"
+    },
+    {
+      "path": "production-integration-orientation/native-origin-reference/receipt.json",
+      "bytes": 3815,
+      "sha256": "36a9cf4c3b287bd1d6c1913acdd36dcac261812fc5047f4a1a256d257b45a465"
+    },
+    {
+      "path": "production-integration-orientation/native-origin-reference/run-02.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "production-integration-orientation/native-origin-reference/run-02.stdout",
+      "bytes": 292,
+      "sha256": "b589541bf8c56d77c63c6c8c2b57e2d78f5abc9270ce10bd3a23618f9ec601e9"
+    },
+    {
+      "path": "production-integration-orientation/native-origin-reference/run-03.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "production-integration-orientation/native-origin-reference/run-03.stdout",
+      "bytes": 472,
+      "sha256": "bbd234d53f1ed80cb2300d03ff4217d118dfe32c023dc87473ba6353f49bea38"
+    },
+    {
+      "path": "production-integration-orientation/native-origin-reference/run.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "production-integration-orientation/native-origin-reference/run.stdout",
+      "bytes": 140,
+      "sha256": "6cad484ac058a78e90a708c4d217ebd02f2dc840375b86cae70bb945ef97e597"
+    },
+    {
+      "path": "production-integration-orientation/native-origin-reference/vertices.bin",
+      "bytes": 384,
+      "sha256": "50e33055980cbd4ee768de43b8d363fd732dc2a50b5bc38543133ab71f3e37d8"
+    }
+  ]
+}

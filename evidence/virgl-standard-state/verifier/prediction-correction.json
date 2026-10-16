@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "task": "E6-T11d5",
+  "boundary": "P11 optimized native reads",
+  "status": "prediction-too-strong",
+  "before": "All uniforms and samplers disappear when the FS discards their results.",
+  "observed": {
+    "uniforms": [
+      {
+        "name": "vsconst0",
+        "count": 3,
+        "words": [
+          1056964608,
+          1056964608,
+          1056964608,
+          1056964608,
+          2146598097,
+          2139095040,
+          3339551534,
+          2147483648,
+          1023410176,
+          1015021568,
+          1031798784,
+          1040187392
+        ]
+      }
+    ],
+    "samplers": [
+      {
+        "stage": 0,
+        "slot": 3,
+        "unit": 19,
+        "value": 19,
+        "resource": 5
+      },
+      {
+        "stage": 0,
+        "slot": 15,
+        "unit": 31,
+        "value": null,
+        "resource": 6
+      },
+      {
+        "stage": 1,
+        "slot": 2,
+        "unit": 2,
+        "value": 2,
+        "resource": 7
+      },
+      {
+        "stage": 1,
+        "slot": 15,
+        "unit": 15,
+        "value": null,
+        "resource": 8
+      }
+    ]
+  },
+  "citation": "independent-initial/report.json browserResult.partial.lastFrame critic-optimized-out-955415761",
+  "reason": "The task permits native reflection to eliminate reads; it does not require the driver to optimize every unused output or instruction. Actual pixels held at [64,32,128,255].",
+  "revisedBeforeNextRun": "Remaining native arrays must still receive all owned words; the FS declares no raw bank. The all-constant VS15 view and undeclared FS15 have null locations, while other declared native samplers may remain active."
+}

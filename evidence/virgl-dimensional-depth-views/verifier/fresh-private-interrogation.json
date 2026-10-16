@@ -1,0 +1,376 @@
+{
+  "status": "passed",
+  "totals": {
+    "carriedD59ConversionCopies": 378,
+    "inverseCases": 30,
+    "inversePixels": 765,
+    "literalBudgetCases": 90,
+    "physicalDriverFaults": 102,
+    "rangeRefusals": 135,
+    "historicalRefusals": 1170,
+    "boundaryCases": 30,
+    "physicalCopies": 540
+  },
+  "citations": [
+    {
+      "report": "fresh-private-362436069/report.json",
+      "sha256": "57c5b10fca575187ab8c8c3cdae8b95d1f3294772d5fd4e01f2a7e86f4f73394",
+      "point": "browserResult/result/result/rows/0",
+      "target": 4,
+      "format": 16,
+      "nativeCosts": [
+        360,
+        60
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-362436069/report.json",
+      "sha256": "57c5b10fca575187ab8c8c3cdae8b95d1f3294772d5fd4e01f2a7e86f4f73394",
+      "point": "browserResult/result/result/rows/1",
+      "target": 4,
+      "format": 18,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-362436069/report.json",
+      "sha256": "57c5b10fca575187ab8c8c3cdae8b95d1f3294772d5fd4e01f2a7e86f4f73394",
+      "point": "browserResult/result/result/rows/2",
+      "target": 4,
+      "format": 20,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-362436069/report.json",
+      "sha256": "57c5b10fca575187ab8c8c3cdae8b95d1f3294772d5fd4e01f2a7e86f4f73394",
+      "point": "browserResult/result/result/rows/3",
+      "target": 4,
+      "format": 21,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-362436069/report.json",
+      "sha256": "57c5b10fca575187ab8c8c3cdae8b95d1f3294772d5fd4e01f2a7e86f4f73394",
+      "point": "browserResult/result/result/rows/4",
+      "target": 4,
+      "format": 126,
+      "nativeCosts": [
+        2880,
+        480
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-362436069/report.json",
+      "sha256": "57c5b10fca575187ab8c8c3cdae8b95d1f3294772d5fd4e01f2a7e86f4f73394",
+      "point": "browserResult/result/result/rows/5",
+      "target": 7,
+      "format": 16,
+      "nativeCosts": [
+        588,
+        42
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-362436069/report.json",
+      "sha256": "57c5b10fca575187ab8c8c3cdae8b95d1f3294772d5fd4e01f2a7e86f4f73394",
+      "point": "browserResult/result/result/rows/6",
+      "target": 7,
+      "format": 18,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-362436069/report.json",
+      "sha256": "57c5b10fca575187ab8c8c3cdae8b95d1f3294772d5fd4e01f2a7e86f4f73394",
+      "point": "browserResult/result/result/rows/7",
+      "target": 7,
+      "format": 20,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-362436069/report.json",
+      "sha256": "57c5b10fca575187ab8c8c3cdae8b95d1f3294772d5fd4e01f2a7e86f4f73394",
+      "point": "browserResult/result/result/rows/8",
+      "target": 7,
+      "format": 21,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-362436069/report.json",
+      "sha256": "57c5b10fca575187ab8c8c3cdae8b95d1f3294772d5fd4e01f2a7e86f4f73394",
+      "point": "browserResult/result/result/rows/9",
+      "target": 7,
+      "format": 126,
+      "nativeCosts": [
+        4704,
+        336
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-521288629/report.json",
+      "sha256": "97288f485608fea4d271f1c12a7b7e97e60324ae8f85603d3925237aab6edfce",
+      "point": "browserResult/result/result/rows/0",
+      "target": 4,
+      "format": 16,
+      "nativeCosts": [
+        360,
+        60
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-521288629/report.json",
+      "sha256": "97288f485608fea4d271f1c12a7b7e97e60324ae8f85603d3925237aab6edfce",
+      "point": "browserResult/result/result/rows/1",
+      "target": 4,
+      "format": 18,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-521288629/report.json",
+      "sha256": "97288f485608fea4d271f1c12a7b7e97e60324ae8f85603d3925237aab6edfce",
+      "point": "browserResult/result/result/rows/2",
+      "target": 4,
+      "format": 20,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-521288629/report.json",
+      "sha256": "97288f485608fea4d271f1c12a7b7e97e60324ae8f85603d3925237aab6edfce",
+      "point": "browserResult/result/result/rows/3",
+      "target": 4,
+      "format": 21,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-521288629/report.json",
+      "sha256": "97288f485608fea4d271f1c12a7b7e97e60324ae8f85603d3925237aab6edfce",
+      "point": "browserResult/result/result/rows/4",
+      "target": 4,
+      "format": 126,
+      "nativeCosts": [
+        2880,
+        480
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-521288629/report.json",
+      "sha256": "97288f485608fea4d271f1c12a7b7e97e60324ae8f85603d3925237aab6edfce",
+      "point": "browserResult/result/result/rows/5",
+      "target": 7,
+      "format": 16,
+      "nativeCosts": [
+        588,
+        42
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-521288629/report.json",
+      "sha256": "97288f485608fea4d271f1c12a7b7e97e60324ae8f85603d3925237aab6edfce",
+      "point": "browserResult/result/result/rows/6",
+      "target": 7,
+      "format": 18,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-521288629/report.json",
+      "sha256": "97288f485608fea4d271f1c12a7b7e97e60324ae8f85603d3925237aab6edfce",
+      "point": "browserResult/result/result/rows/7",
+      "target": 7,
+      "format": 20,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-521288629/report.json",
+      "sha256": "97288f485608fea4d271f1c12a7b7e97e60324ae8f85603d3925237aab6edfce",
+      "point": "browserResult/result/result/rows/8",
+      "target": 7,
+      "format": 21,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-521288629/report.json",
+      "sha256": "97288f485608fea4d271f1c12a7b7e97e60324ae8f85603d3925237aab6edfce",
+      "point": "browserResult/result/result/rows/9",
+      "target": 7,
+      "format": 126,
+      "nativeCosts": [
+        4704,
+        336
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-88675123/report.json",
+      "sha256": "1f6b4764a7f43b0a0a6b1786343723d1c9a5e3f5d22a35511eb0038c310a0596",
+      "point": "browserResult/result/result/rows/0",
+      "target": 4,
+      "format": 16,
+      "nativeCosts": [
+        360,
+        60
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-88675123/report.json",
+      "sha256": "1f6b4764a7f43b0a0a6b1786343723d1c9a5e3f5d22a35511eb0038c310a0596",
+      "point": "browserResult/result/result/rows/1",
+      "target": 4,
+      "format": 18,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-88675123/report.json",
+      "sha256": "1f6b4764a7f43b0a0a6b1786343723d1c9a5e3f5d22a35511eb0038c310a0596",
+      "point": "browserResult/result/result/rows/2",
+      "target": 4,
+      "format": 20,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-88675123/report.json",
+      "sha256": "1f6b4764a7f43b0a0a6b1786343723d1c9a5e3f5d22a35511eb0038c310a0596",
+      "point": "browserResult/result/result/rows/3",
+      "target": 4,
+      "format": 21,
+      "nativeCosts": [
+        720,
+        120
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-88675123/report.json",
+      "sha256": "1f6b4764a7f43b0a0a6b1786343723d1c9a5e3f5d22a35511eb0038c310a0596",
+      "point": "browserResult/result/result/rows/4",
+      "target": 4,
+      "format": 126,
+      "nativeCosts": [
+        2880,
+        480
+      ],
+      "verifiedInversePixels": 30
+    },
+    {
+      "report": "fresh-private-88675123/report.json",
+      "sha256": "1f6b4764a7f43b0a0a6b1786343723d1c9a5e3f5d22a35511eb0038c310a0596",
+      "point": "browserResult/result/result/rows/5",
+      "target": 7,
+      "format": 16,
+      "nativeCosts": [
+        588,
+        42
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-88675123/report.json",
+      "sha256": "1f6b4764a7f43b0a0a6b1786343723d1c9a5e3f5d22a35511eb0038c310a0596",
+      "point": "browserResult/result/result/rows/6",
+      "target": 7,
+      "format": 18,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-88675123/report.json",
+      "sha256": "1f6b4764a7f43b0a0a6b1786343723d1c9a5e3f5d22a35511eb0038c310a0596",
+      "point": "browserResult/result/result/rows/7",
+      "target": 7,
+      "format": 20,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-88675123/report.json",
+      "sha256": "1f6b4764a7f43b0a0a6b1786343723d1c9a5e3f5d22a35511eb0038c310a0596",
+      "point": "browserResult/result/result/rows/8",
+      "target": 7,
+      "format": 21,
+      "nativeCosts": [
+        1176,
+        84
+      ],
+      "verifiedInversePixels": 21
+    },
+    {
+      "report": "fresh-private-88675123/report.json",
+      "sha256": "1f6b4764a7f43b0a0a6b1786343723d1c9a5e3f5d22a35511eb0038c310a0596",
+      "point": "browserResult/result/result/rows/9",
+      "target": 7,
+      "format": 126,
+      "nativeCosts": [
+        4704,
+        336
+      ],
+      "verifiedInversePixels": 21
+    }
+  ]
+}

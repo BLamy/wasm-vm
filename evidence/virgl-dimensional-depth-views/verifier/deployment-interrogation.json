@@ -1,0 +1,629 @@
+{
+  "status": "HELD",
+  "stageBodies": 304,
+  "unchangedBodies": 302,
+  "changes": [
+    "roadmap.js",
+    "sw.js"
+  ],
+  "liveResponses": 194,
+  "builtResponses": 194,
+  "head": "9698c0a91086cd419087154875d7200efcfded69",
+  "deployment": "d72507c5-dc78-4fc4-92b6-f663c3bd9357",
+  "liveReportSha256": "3361d7e355efb487052049ea90e8e113b357055f0c5e98121a9609cc2e7f7554",
+  "builtReportSha256": "a00011e50b9b64bd4e31fb4d3d7625fea991737b2e93555caf78ea1976cb4758",
+  "defaultWasmSha256": "d45b575207e0035b5c518698e7b6793b2bf12da635531723fad70813a5956c36",
+  "defaultExports": [
+    {
+      "name": "memory",
+      "kind": "memory"
+    },
+    {
+      "name": "__wbg_filesha256_free",
+      "kind": "function"
+    },
+    {
+      "name": "__wbg_wasmlinux_free",
+      "kind": "function"
+    },
+    {
+      "name": "__wbg_wasmmachine_free",
+      "kind": "function"
+    },
+    {
+      "name": "bench",
+      "kind": "function"
+    },
+    {
+      "name": "filesha256_finish",
+      "kind": "function"
+    },
+    {
+      "name": "filesha256_new",
+      "kind": "function"
+    },
+    {
+      "name": "filesha256_update",
+      "kind": "function"
+    },
+    {
+      "name": "initLogging",
+      "kind": "function"
+    },
+    {
+      "name": "overlayDbName",
+      "kind": "function"
+    },
+    {
+      "name": "seedOverlayDelta",
+      "kind": "function"
+    },
+    {
+      "name": "version",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_advanceOverlayGeneration",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_attachAudioCapture",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_attachAudioOutput",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_attachDisplay",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_audioCaptureReady",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_audioOutputReady",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_beginFileUpload",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_bootProfile",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_cancelFileDownload",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_cancelFileUpload",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_closeStorage",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_confirmAgentHello",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_dismissFileDownload",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_dismissFileUpload",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_displayReady",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_displayStats",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_enableJit",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_enableJitWithPolicy",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_fetchPending",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_fetchStats",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_fileTransferReady",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_fileTransferStatus",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_finishFileDownload",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_getProfile",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_guestClockState",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_hasUnpersisted",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_importStoredSnapshot",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_inputDeviceStats",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_jitStats",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_keyboardLedState",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_loadSnapshotBlob",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_new",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_newChunkedDisk",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_newChunkedDiskPersistent",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_newChunkedDiskSeeded",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_newChunkedDiskWithExtra",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_newDisk",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_noteFileTransferPersist",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_notifyCaptureEvent",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_overlayGeneration",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_pendingChunks",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_persistPending",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_persistSnapshot",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_persistStats",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_pushFileUpload",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_readStoredSnapshot",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_rebaseGuestClock",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_relinquishSnapshotWriter",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_restoreDecisionCode",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_restoreDesktopSnapshot",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_restoreStoredSnapshot",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_runChunk",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_saveDesktopSnapshot",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_saveSnapshot",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_sendAgentInput",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_sendInput",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_sendKeyboardEvent",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_sendMouseEvent",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_sendTabletEvent",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_setAdmissionProbe",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_setChaining",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_setColdCounterRecycling",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_setDecodedCacheEntries",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_setDiskReadOnly",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_setDisplay",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_setDynamicChaining",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_setFastInterpreter",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_setFileDownloadReady",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_setGuestClock",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_setICountDivider",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_setProfiling",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_stampBootSnapshotIdentity",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_stateDigest",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_syncKeyboard",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_syncMouse",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_syncTablet",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_takeAgentOutput",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_takeFileDownloadChunk",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_virtioSndCaptureState",
+      "kind": "function"
+    },
+    {
+      "name": "wasmlinux_virtioSndConfig",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_enableJit",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_enableJitWithPolicy",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_getStats",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_jitStats",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_loadElf",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_new",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_ramLen",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_registers",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_run",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_setAdmissionProbe",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_setChaining",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_setColdCounterRecycling",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_setConsole",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_setDynamicChaining",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_setProfiling",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_setTrace",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_stateDigest",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_step",
+      "kind": "function"
+    },
+    {
+      "name": "wasmmachine_takeTrace",
+      "kind": "function"
+    },
+    {
+      "name": "__jit_amo",
+      "kind": "function"
+    },
+    {
+      "name": "__jit_fp_arith_s",
+      "kind": "function"
+    },
+    {
+      "name": "__jit_fp_div_s",
+      "kind": "function"
+    },
+    {
+      "name": "__jit_fp_flags",
+      "kind": "function"
+    },
+    {
+      "name": "__jit_fp_fmadd_s",
+      "kind": "function"
+    },
+    {
+      "name": "__jit_fp_from_int_s",
+      "kind": "function"
+    },
+    {
+      "name": "__jit_fp_op32",
+      "kind": "function"
+    },
+    {
+      "name": "__jit_fp_op64",
+      "kind": "function"
+    },
+    {
+      "name": "__jit_fp_to_word_s",
+      "kind": "function"
+    },
+    {
+      "name": "__jit_load",
+      "kind": "function"
+    },
+    {
+      "name": "__jit_lr",
+      "kind": "function"
+    },
+    {
+      "name": "__jit_sc",
+      "kind": "function"
+    },
+    {
+      "name": "__jit_store",
+      "kind": "function"
+    },
+    {
+      "name": "setSlirpDhcpLeaseSeconds",
+      "kind": "function"
+    },
+    {
+      "name": "setSlirpDohEndpoint",
+      "kind": "function"
+    },
+    {
+      "name": "setSlirpMtu",
+      "kind": "function"
+    },
+    {
+      "name": "setSlirpNet",
+      "kind": "function"
+    },
+    {
+      "name": "setSlirpRelay",
+      "kind": "function"
+    },
+    {
+      "name": "setSlirpRelayToken",
+      "kind": "function"
+    },
+    {
+      "name": "setSlirpTailscaleWorker",
+      "kind": "function"
+    },
+    {
+      "name": "slirpDhcpStats",
+      "kind": "function"
+    },
+    {
+      "name": "slirpTailscaleCommand",
+      "kind": "function"
+    },
+    {
+      "name": "__abort_handler",
+      "kind": "global"
+    },
+    {
+      "name": "__instance_terminated",
+      "kind": "global"
+    },
+    {
+      "name": "wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56",
+      "kind": "function"
+    },
+    {
+      "name": "wasm_bindgen__convert__closures_____invoke__h0b706747458e1fca",
+      "kind": "function"
+    },
+    {
+      "name": "wasm_bindgen__convert__closures_____invoke__h659a05315284d40e",
+      "kind": "function"
+    },
+    {
+      "name": "wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_2",
+      "kind": "function"
+    },
+    {
+      "name": "wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_3",
+      "kind": "function"
+    },
+    {
+      "name": "wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_4",
+      "kind": "function"
+    },
+    {
+      "name": "wasm_bindgen__convert__closures_____invoke__h23dbae85235c57c2",
+      "kind": "function"
+    },
+    {
+      "name": "__wbindgen_malloc",
+      "kind": "function"
+    },
+    {
+      "name": "__wbindgen_realloc",
+      "kind": "function"
+    },
+    {
+      "name": "__wbindgen_exn_store",
+      "kind": "function"
+    },
+    {
+      "name": "__externref_table_alloc",
+      "kind": "function"
+    },
+    {
+      "name": "__wbindgen_externrefs",
+      "kind": "table"
+    },
+    {
+      "name": "__wbindgen_free",
+      "kind": "function"
+    },
+    {
+      "name": "__wbindgen_destroy_closure",
+      "kind": "function"
+    },
+    {
+      "name": "__externref_table_dealloc",
+      "kind": "function"
+    },
+    {
+      "name": "__wbindgen_start",
+      "kind": "function"
+    }
+  ],
+  "proofExportAbsent": true,
+  "builtPassed": 127,
+  "livePassed": 127,
+  "failed": 0,
+  "errors": [],
+  "sourceFrozenArchiveSha256": "7a65e50b191e6e9c7c9f36c0a811afc1048cd30868b6248dc439d719ee2dddb6",
+  "liveScreenshotSha256": "7fb37677d9723e23315f18d62d418493c0b49ac61f70785ce84a066b7fb3b8b7"
+}

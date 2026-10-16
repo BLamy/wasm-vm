@@ -1,0 +1,9 @@
+{
+  "task": "E6-T12g6m3c",
+  "baselineSha256": "17fd92fd454a14a44fddc4db0beadc4246a92f4ff749e57a8e2762aca638f8ac",
+  "baselineUntrackedCount": 4202,
+  "currentUntrackedCount": 4757,
+  "missingHistoricalPaths": 0,
+  "defaultProfrawSha256AfterVerifierReplay": "143b4b1f0e8809afb6937994a9213de2d35041351e20a04c2505bae76414ddba",
+  "defaultProfrawPriorContentKnown": false
+}

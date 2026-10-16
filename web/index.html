@@ -47,29 +47,15 @@
         margin: 0;
         font-weight: 650;
       }
-      /* Glowing brand dot, matched to the landing page. */
-      h1::before {
-        content: "";
-        display: inline-block;
-        width: 9px; height: 9px;
-        border-radius: 50%;
-        margin-right: 10px;
-        vertical-align: middle;
-        background: radial-gradient(circle at 30% 30%, #d6f4ff, var(--cyan));
-        box-shadow: 0 0 12px var(--cyan), 0 0 26px rgba(83, 212, 255, 0.5);
-      }
+      .app-brand { color: var(--text); text-decoration: none; font-size: 20px; letter-spacing: -1px; }
+      .app-brand span { color: var(--cyan); }
+      .app-brand i { color: var(--cyan); font-style: normal; margin-left: 10px; }
+      .app-section { color: var(--muted); margin-left: 12px; font-size: 13px; font-weight: 400; }
       .version {
         color: var(--muted);
         font: 12px ui-monospace, monospace;
         white-space: nowrap;
       }
-      .host-capture-link {
-        color: var(--cyan);
-        font: 12px ui-monospace, monospace;
-        white-space: nowrap;
-        text-decoration: none;
-      }
-      .host-capture-link:hover { text-decoration: underline; }
       .audio-autoplay-badge {
         max-width: min(390px, 34vw);
         padding: 4px 8px;
@@ -499,13 +485,14 @@
       .cap-ev.live { color: var(--green); }
       .cap-ev.regressed { color: var(--red); }
 
-      /* ── Tab bar ─────────────────────────────────────────────────────── */
+      /* ── Site navigation ─────────────────────────────────────────────────────── */
       nav.tabs {
         display: flex;
         gap: 4px;
         align-items: stretch;
       }
       .tab {
+        display: inline-flex; align-items: center; text-decoration: none;
         border: 1px solid transparent;
         border-radius: 9px;
         background: transparent;
@@ -535,7 +522,7 @@
       .panel { display: none; }
       .panel.active { display: block; }
       /* Under automation (Playwright) reveal every panel so existing element-level e2e specs stay
-         actionable regardless of the active tab; real users get the tabbed UI (see tabs.js). */
+         actionable; the ordinary demo opens the guest launcher (see tabs.js). */
       :root.e2e-showall:not([data-wvm-desktop="omarchy"]) .panel { display: block !important; }
       :root.e2e-showall .tests-layout { min-height: 0; }
       main { min-height: calc(100vh - 51px); }
@@ -850,13 +837,6 @@
         .docker-app { grid-template-columns: 1fr; }
         .network-config { grid-template-columns: 1fr 1fr; }
         .dk-side { flex-direction: row; flex-wrap: wrap; border-right: 0; border-bottom: 1px solid var(--line); }
-        .rm-detail { width: 100%; }
-        /* Roadmap header: stack the headline + progress card instead of forcing two columns (which
-           squeezed the title to one word per line and overlapped the card on phones). The ID-scoped
-           selector is deliberate — the base `.rm-top` rule is defined LATER in the source, so a plain
-           `.rm-top` override here would lose on source order. */
-        #panel-roadmap .rm-top { grid-template-columns: 1fr; }
-        #panel-roadmap .rm-overall-card { max-width: 560px; }
       }
 
       /* Embed mode (?embed): the landing's lazy live-boot iframe loads the app chrome-free — no
@@ -867,286 +847,27 @@
       html.embed .ide-body, html.embed .ide-hsplit { display: none !important; }
       html.embed .ide-term-pane { height: 100vh !important; flex: 1 1 auto !important; }
 
-      /* ── Linear-style roadmap (Roadmap tab) ──────────────────────────────── */
-      #panel-roadmap { position: relative; }
-      .rm { padding: 0 0 40px; }
-      .rm-top {
-        display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 560px);
-        gap: 18px; align-items: stretch;
-        padding: 16px 20px; border-bottom: 1px solid var(--line);
-      }
-      .rm-head h2 { font-size: 20px; text-transform: none; letter-spacing: -0.2px; }
-      .rm-headline { margin-top: 6px; color: var(--muted); font: 12.5px ui-monospace, monospace; }
-      .rm-overall-card {
-        border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2);
-        padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;
-      }
-      .rm-overall-head { display: flex; justify-content: space-between; align-items: baseline; }
-      .rm-overall-title { font-size: 12px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.4px; }
-      .rm-overall-num { font: 650 13px ui-monospace, monospace; color: var(--green); }
-      .rm-progress { height: 8px; border-radius: 5px; background: #1c2129; overflow: hidden; }
-      .rm-progress-fill { display: block; height: 100%; background: linear-gradient(90deg, var(--green), var(--cyan)); }
-      .rm-burndown { width: 100%; height: auto; display: block; }
-      .rm-overall-foot { color: var(--muted); font-size: 11px; }
-
-      .rm-toolbar {
-        display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-        padding: 12px 20px; border-bottom: 1px solid var(--line); background: #0d1015;
-        position: sticky; top: 0; z-index: 5;
-      }
-      .rm-search {
-        flex: 1; min-width: 200px; min-height: 34px; padding: 6px 12px;
-        border: 1px solid var(--line); border-radius: 8px; background: #151a22; color: var(--text); font-size: 13px;
-      }
-      .rm-select { min-height: 34px; }
-      .rm-count { margin-left: auto; color: var(--muted); font: 12px ui-monospace, monospace; }
-
-      .rm-lanes { display: flex; flex-direction: column; }
-      .rm-lane { padding: 14px 20px; border-bottom: 1px solid var(--line); }
-      .rm-lane.done { background: #0b0f0c; }
-      .rm-lane-head {
-        display: flex; align-items: center; gap: 10px; margin-bottom: 10px; width: 100%;
-        background: none; border: 0; padding: 4px 2px; cursor: pointer; color: var(--text);
-        border-radius: 6px; text-align: left;
-      }
-      .rm-lane-head:hover { background: var(--panel-2); }
-      .rm-lane-head:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-      .rm-caret { color: var(--muted); font-size: 10px; width: 12px; }
-      .rm-epic-tag {
-        font: 650 12px ui-monospace, monospace; color: #0b0e14; background: var(--muted);
-        border-radius: 5px; padding: 1px 7px;
-      }
-      .rm-lane.done .rm-epic-tag { background: var(--green); }
-      .rm-epic-name { font-size: 14px; font-weight: 650; }
-      .rm-epic-done { font: 11px ui-monospace, monospace; color: var(--green); }
-      .rm-epic-count { margin-left: auto; color: var(--muted); font: 11px ui-monospace, monospace; }
-      .rm-lane.collapsed .rm-stack { margin-bottom: 0; }
-      .rm-stack { display: flex; height: 6px; border-radius: 4px; overflow: hidden; background: #1c2129; margin-bottom: 12px; }
-      .rm-stack-seg { display: block; height: 100%; }
-
-      /* Kanban board: horizontally scrolling columns, each column vertically scrollable. */
-      .rm-board {
-        display: flex; gap: 12px; align-items: flex-start;
-        overflow-x: auto; padding-bottom: 6px;
-      }
-      .rm-col {
-        flex: 0 0 264px; width: 264px;
-        background: #0d1117; border: 1px solid var(--line); border-radius: 10px;
-        display: flex; flex-direction: column; max-height: 560px;
-      }
-      .rm-col-head {
-        display: flex; align-items: center; gap: 8px; padding: 9px 11px;
-        border-bottom: 1px solid var(--line); position: sticky; top: 0; background: #0d1117;
-        border-radius: 10px 10px 0 0;
-      }
-      .rm-col-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 650; }
-      .rm-col-count {
-        margin-left: auto; font: 11px ui-monospace, monospace; color: var(--muted);
-        background: #1c2129; border-radius: 10px; padding: 0 8px; min-width: 22px; text-align: center;
-      }
-      .rm-col-verified .rm-col-label { color: var(--green); }
-      .rm-col-blocked .rm-col-label { color: var(--red); }
-      .rm-col-debt .rm-col-label { color: #b17ce0; }
-      .rm-col-in-progress .rm-col-label { color: var(--amber); }
-      .rm-col-body {
-        display: flex; flex-direction: column; gap: 8px;
-        padding: 9px; overflow-y: auto; min-height: 0;
-      }
-      .rm-card {
-        text-align: left; border: 1px solid var(--line); border-left: 3px solid var(--muted);
-        border-radius: 9px; background: var(--panel-2); padding: 11px 12px; cursor: pointer;
-        display: flex; flex-direction: column; gap: 8px; flex: 0 0 auto; color: var(--text);
-        transition: border-color 120ms, transform 80ms;
-      }
-      .rm-card:hover { border-color: #3a4453; transform: translateY(-1px); }
-      .rm-card:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-      .rm-card.st-verified { border-left-color: var(--green); }
-      .rm-card.st-implemented { border-left-color: #4a9eff; }
-      .rm-card.st-progress { border-left-color: var(--amber); }
-      .rm-card.st-pending { border-left-color: #6b7684; }
-      .rm-card.st-blocked { border-left-color: var(--red); }
-      .rm-card.st-debt { border-left-color: #b17ce0; }
-      .rm-card.st-cancelled { border-left-color: #5a6470; opacity: 0.6; }
-      .rm-card.st-cancelled .rm-card-title { text-decoration: line-through; }
-      /* Jira-style sub-ticket: real status column + a subtle grey parent-context band on top. */
-      .rm-sub {
-        display: flex; flex-direction: column; gap: 6px; flex: 0 0 auto;
-        background: #12171e; border: 1px solid var(--line); border-radius: 10px; padding: 6px;
-      }
-      .rm-sub .rm-card { border-color: var(--line); }
-      .rm-sub-ctx {
-        display: flex; align-items: center; gap: 6px; width: 100%; text-align: left;
-        background: none; border: none; cursor: pointer; padding: 2px 4px 0; overflow: hidden;
-      }
-      .rm-sub-ctx:hover .rm-sub-ctx-title { color: var(--text); }
-      .rm-sub-ctx:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 4px; }
-      .rm-sub-ctx-id { font: 650 10.5px ui-monospace, monospace; color: #8a94a2; white-space: nowrap; }
-      .rm-sub-ctx-title {
-        font-size: 11px; color: #6b7684; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      }
-      /* View toggle (Board / Timeline) */
-      .rm-viewtoggle { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; flex: 0 0 auto; }
-      .rm-vt { background: var(--panel-2); color: var(--muted); border: none; padding: 8px 14px; cursor: pointer; font-size: 13px; }
-      .rm-vt.active { background: var(--cyan); color: #04121a; font-weight: 650; }
-      .rm-vt:not(.active):hover { color: var(--text); background: #1c2129; }
-      /* ── Gantt / timeline view ─────────────────────────────────────────── */
-      /* No overflow container here: an overflow-x scroller would become a scroll context and
-         break the date axis's viewport-sticky. Horizontal fit is handled by the min-width inner. */
-      .rm-gantt { padding-bottom: 10px; --rm-label-w: 230px; }
-      .rm-gantt-inner { min-width: 900px; }
-      .rm-gantt-axis {
-        position: sticky; top: 59px; z-index: 3; display: grid;
-        grid-template-columns: var(--rm-label-w) 1fr; background: var(--panel); border-bottom: 1px solid var(--line);
-      }
-      .rm-axis-track { position: relative; height: 30px; }
-      .rm-axis-tick { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--line); }
-      .rm-axis-lbl { position: absolute; top: 8px; font: 10.5px ui-monospace, monospace; color: var(--muted); padding-left: 5px; white-space: nowrap; }
-      .rm-gantt-body { position: relative; }
-      .rm-gridlines { position: absolute; top: 0; bottom: 0; left: var(--rm-label-w); right: 0; z-index: 0; pointer-events: none; }
-      .rm-gridline { position: absolute; top: 0; bottom: 0; border-left: 1px solid rgba(255,255,255,0.045); }
-      .rm-today { position: absolute; top: 0; bottom: 0; border-left: 1.5px dashed var(--red); z-index: 1; pointer-events: none; }
-      .rm-today-lbl { position: absolute; top: 2px; font: 10px ui-monospace, monospace; color: var(--red); padding-left: 4px; }
-      .rm-g-epic {
-        display: grid; grid-template-columns: var(--rm-label-w) 1fr; align-items: center;
-        padding-top: 12px; position: relative; z-index: 1;
-      }
-      .rm-g-epic-head { display: flex; align-items: center; gap: 7px; width: 100%; background: none; border: none; cursor: pointer; text-align: left; padding: 4px 0; }
-      .rm-g-epic-head:hover .rm-g-epic-name { color: var(--text); }
-      .rm-g-epic-name { font-size: 11.5px; font-weight: 650; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-      .rm-g-epic-num { font: 11px ui-monospace, monospace; color: var(--muted); background: #1c2129; border-radius: 10px; padding: 0 7px; }
-      .rm-g-row {
-        display: grid; grid-template-columns: var(--rm-label-w) 1fr; align-items: center; height: 30px;
-        position: relative; z-index: 1; border-bottom: 1px solid rgba(255,255,255,0.03);
-      }
-      .rm-g-row:hover { background: rgba(255,255,255,0.035); }
-      .rm-g-label { display: flex; align-items: center; gap: 7px; padding-right: 12px; overflow: hidden; cursor: pointer; background: none; border: none; text-align: left; }
-      .rm-g-dot-s { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
-      .rm-g-id { font: 650 11px ui-monospace, monospace; color: var(--muted); white-space: nowrap; }
-      .rm-g-title { font-size: 12px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .rm-g-track { position: relative; height: 100%; }
-      .rm-g-bar {
-        position: absolute; top: 50%; transform: translateY(-50%); height: 13px; border-radius: 7px;
-        cursor: pointer; min-width: 7px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
-      }
-      .rm-g-bar:hover { filter: brightness(1.15); outline: 1px solid rgba(255,255,255,0.35); }
-      .rm-g-tick { position: absolute; top: 50%; width: 4px; height: 4px; border-radius: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.9); }
-      .rm-g-noact { position: absolute; top: 50%; left: 6px; transform: translateY(-50%); font: 10.5px ui-monospace, monospace; color: #55606e; font-style: italic; }
-      .rm-gantt-legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 10px 2px 0; color: var(--muted); font-size: 11.5px; }
-      .rm-gantt-legend span { display: inline-flex; align-items: center; gap: 5px; }
-      .rm-gantt-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
-      .rm-card.st-decomposed { border-left-color: #7c8aa0; }
-      .rm-badge.st-decomposed { color: #9aa7b8; }
-      .rm-sub-link {
-        background: none; border: none; padding: 0; color: var(--cyan); cursor: pointer;
-        text-align: left; font: inherit; text-decoration: underline; text-underline-offset: 2px;
-      }
-      .rm-sub-link:hover { color: #8fe3ff; }
-      .rm-card-top { display: flex; align-items: center; gap: 8px; }
-      .rm-card-id { font: 650 11px ui-monospace, monospace; color: var(--muted); }
-      .rm-capstone { font: 10px ui-monospace, monospace; color: var(--amber); }
-      .rm-badge {
-        margin-left: auto; font: 10.5px ui-monospace, monospace; text-transform: uppercase;
-        border-radius: 5px; padding: 1px 7px; border: 1px solid currentColor; white-space: nowrap;
-      }
-      .rm-badge.st-verified { color: var(--green); }
-      .rm-badge.st-implemented { color: #4a9eff; }
-      .rm-badge.st-progress { color: var(--amber); }
-      .rm-badge.st-pending { color: #8a94a2; }
-      .rm-badge.st-blocked { color: var(--red); }
-      .rm-badge.st-debt { color: #b17ce0; }
-      .rm-badge.st-cancelled { color: #6b7684; }
-      .rm-card-title { font-size: 12.5px; line-height: 1.4; color: #dbe5ef; }
-      .rm-card-foot { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
-      .rm-chip {
-        font: 10.5px ui-monospace, monospace; color: var(--muted);
-        border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px;
-      }
-      .rm-empty { padding: 40px 20px; color: var(--muted); text-align: center; }
-
-      /* Ticket detail — slide-in evidence panel */
-      .rm-detail {
-        position: fixed; top: 51px; right: 0; bottom: 0; width: min(560px, 94vw); z-index: 30;
-        background: var(--panel); border-left: 1px solid var(--line);
-        box-shadow: -18px 0 48px rgba(0,0,0,.45); overflow: auto;
-      }
-      .rm-detail[hidden] { display: none; }
-      .rm-detail-bar {
-        position: sticky; top: 0; display: flex; align-items: center; gap: 10px;
-        padding: 12px 18px; border-bottom: 1px solid var(--line); background: #0d1015;
-      }
-      .rm-detail-id { font: 650 13px ui-monospace, monospace; color: var(--text); }
-      .rm-detail-close {
-        margin-left: auto; border: 1px solid var(--line); border-radius: 6px; background: #1b222d;
-        color: var(--text); font-size: 12px; padding: 5px 11px; cursor: pointer;
-      }
-      .rm-detail-body { padding: 16px 18px 40px; }
-      .rm-detail-title { margin: 0 0 12px; font-size: 16px; line-height: 1.4; }
-      .rm-detail-kv { display: grid; grid-template-columns: 120px minmax(0,1fr); gap: 6px 14px; margin-bottom: 14px; }
-      .rm-detail-kv dt { color: var(--muted); font-size: 12px; }
-      .rm-detail-kv dd { margin: 0; font-size: 12.5px; color: #dbe5ef; overflow-wrap: anywhere; }
-      .rm-detail-h {
-        margin: 18px 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
-        color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 5px;
-      }
-      .rm-detail-text { margin: 0; font-size: 12.5px; line-height: 1.55; color: #c9d1d9; white-space: pre-wrap; }
-      .rm-ac { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-      .rm-ac-item { display: grid; grid-template-columns: 18px minmax(0,1fr); gap: 8px; font-size: 12.5px; line-height: 1.45; color: #c9d1d9; }
-      .rm-ac-box { color: var(--muted); font: 12px ui-monospace, monospace; }
-      .rm-ac-item.done .rm-ac-box { color: var(--green); }
-      .rm-ac-item.done .rm-ac-text { color: #9aa6b2; }
-      .rm-log {
-        margin: 0; padding: 12px; border-radius: 8px; background: #0b0e14; border: 1px solid var(--line);
-        font: 11.5px ui-monospace, monospace; line-height: 1.5; color: #cdd6f4;
-        white-space: pre-wrap; overflow-wrap: anywhere; max-height: 420px; overflow: auto;
-      }
-      .rm-detail-src { margin-top: 16px; color: var(--muted); font-size: 11px; }
-      .rm-detail-src code { font: 11px ui-monospace, monospace; background: #0b141c; border: 1px solid #223; border-radius: 4px; padding: 0 4px; }
     </style>
   </head>
   <body>
     <header>
-      <h1><a href="./landing.html" style="color:inherit;text-decoration:none" title="Home">wasm-vm</a> — RV64 in the browser</h1>
-      <nav class="tabs" role="tablist" aria-label="Views">
-        <button class="tab active" data-tab="roadmap" role="tab" aria-selected="true">Roadmap</button>
-        <button class="tab" data-tab="ide" role="tab" aria-selected="false">Demo</button>
-        <button class="tab" data-tab="docs" role="tab" aria-selected="false">Docs</button>
+      <h1><a class="app-brand" href="./landing.html" title="Home">wasm<span>—</span>vm<i>/</i></a><span class="app-section">Demo</span></h1>
+      <nav class="tabs" aria-label="Primary navigation">
+        <a class="tab" href="./landing.html">Home</a>
+        <a class="tab" href="./roadmap.html">Roadmap</a>
+        <a class="tab" href="./docs.html">Docs</a>
+        <a class="tab active" data-tab="ide" href="#ide" aria-current="page">Demo</a>
       </nav>
-      <span class="host-capture-link"><a class="host-capture-link" href="./console-capture.html">Display + serial</a> · <a class="host-capture-link" href="./desktop.html">Desktop boot</a> · <a class="host-capture-link" href="./desktop-terminal.html">Terminal input</a> · <a class="host-capture-link" href="./desktop-cursor.html">Cursor + DPR</a> · <a class="host-capture-link" href="./desktop-resize.html">Live resize</a></span>
       <span id="audio-autoplay-badge" class="audio-autoplay-badge" role="status" aria-live="polite">
         Audio muted until interaction — click or press a key to enable sound.
       </span>
       <span id="version" class="version">initializing...</span>
     </header>
 
-    <!-- ══ ROADMAP TAB (default) — Linear-style, reads ./tasks.json ═════════ -->
-    <div id="panel-roadmap" class="panel active" role="tabpanel">
-      <section class="rm" aria-labelledby="rm-title">
-        <div class="rm-top">
-          <div class="rm-head">
-            <h2 id="rm-title">Roadmap</h2>
-            <div id="rm-headline" class="rm-headline">loading tasks…</div>
-          </div>
-          <div id="rm-overall" class="rm-overall"></div>
-        </div>
-        <div class="rm-toolbar">
-          <div class="rm-viewtoggle" role="tablist" aria-label="Roadmap view">
-            <button id="rm-view-timeline" class="rm-vt active" type="button" role="tab" aria-selected="true">▦ Gantt</button>
-            <button id="rm-view-board" class="rm-vt" type="button" role="tab" aria-selected="false">▤ Kanban</button>
-          </div>
-          <input id="rm-search" type="search" class="rm-search" placeholder="Search issues…  (press /)" aria-label="Search issues" />
-          <select id="rm-epic" class="rm-select" aria-label="Filter by epic"><option value="">All epics</option></select>
-          <select id="rm-status" class="rm-select" aria-label="Filter by status"><option value="">All statuses</option></select>
-          <span id="rm-count" class="rm-count"></span>
-        </div>
-        <div id="rm-lanes" class="rm-lanes"></div>
-      </section>
-      <aside id="rm-detail" class="rm-detail" role="dialog" aria-label="Issue detail" hidden></aside>
-    </div>
-
     <!-- Legacy live-suite capability panel: the standalone Tests tab was removed, but main.js
-         (an off-limits file) still binds these element IDs (#roadmap-grid/#roadmap-sub, the
+         still binds these element IDs (#roadmap-grid/#roadmap-sub, the
          #suite-* / #metric-* / #hover-* nodes) to drive the in-browser riscv-tests suite whose
-         results feed ticket evidence. Kept in the DOM, hidden, and unreachable from the tab bar. -->
+         results feed capability evidence. Kept in the DOM, hidden, for the test-hooks route. -->
     <div id="legacy-roadmap" hidden aria-hidden="true">
       <div id="roadmap-sub"></div>
       <div id="roadmap-grid"></div>
@@ -1203,19 +924,26 @@
     </div>
 
     <!-- ══ TERMINAL TAB ════════════════════════════════════════════════════ -->
-    <div id="panel-ide" class="panel" role="tabpanel">
+    <div id="panel-ide" class="panel active">
       <section id="os-launcher" class="os-launcher" aria-labelledby="os-launcher-title">
         <p class="os-launcher-kicker">RISC-V guest launcher</p>
         <h2 id="os-launcher-title">Choose an operating system</h2>
         <p class="os-launcher-copy">
-          Each option boots a real guest in this browser. Warm images restore in seconds when their
-          identity matches the current kernel and disk; Omarchy is the graphical desktop image and
-          uses its own immutable chunk set.
+          Each option runs a real guest in this browser. The first warm launch downloads a checkpoint.
+          Later launches can reuse the cached copy. Omarchy is the graphical desktop.
         </p>
+        <label for="desktop-graphics">Desktop graphics</label>
+        <select id="desktop-graphics">
+          <option value="gpu">GPU rendering · warm boot</option>
+          <option value="software">Software rendering · warm snapshot</option>
+        </select>
+        <output id="gpu-status" aria-live="polite"></output>
+        <a id="gpu-retry" hidden href="./app?guest=omarchy&amp;desktop=1&amp;gpu=0#ide">Restart with software graphics</a>
+        <a id="gpu-cold-retry" hidden href="./app?guest=omarchy&amp;desktop=1&amp;gpu=1&amp;noSnapshot=1#ide">Cold boot with GPU rendering</a>
         <div class="os-options" role="list" aria-label="Operating system choices">
           <button class="os-option" type="button" data-os="omarchy" role="listitem">
             <span class="os-option-title">Omarchy</span>
-            <span class="os-option-detail">Open the Hyprland desktop with Foot and the Omarchy shell, fitted to your window. Experimental software rendering: input can take minutes to appear.</span>
+            <span class="os-option-detail">Open Hyprland with Chromium, LibreOffice, Node.js and Foot. The desktop fits your window and restores from a prepared checkpoint, with GPU compositing after a hardware check.</span>
             <span class="os-option-meta" data-os-meta="omarchy" data-state="checking">checking image…</span>
           </button>
           <button class="os-option" type="button" data-os="node-alpine" role="listitem">
@@ -1359,22 +1087,11 @@
       </section>
     </div>
 
-    <!-- ══ DOCS TAB ════════════════════════════════════════════════════════ -->
-    <!-- In-app docs mount point. A separate docstream (React) renderer is mounted into #docs-mount;
-         keeping it a tab (not a page link) means switching to Docs never reloads the SPA and never
-         interrupts the background Alpine boot. -->
-    <div id="panel-docs" class="panel" role="tabpanel">
-      <div id="docs-mount">
-        <p style="padding:24px;color:#9aa6b2;font:14px ui-monospace,monospace">Loading docs…</p>
-      </div>
-    </div>
-
     <!-- xterm.js UMD build + fit addon (pinned via package-lock.json + npm ci — no CDN). -->
     <script src="./node_modules/@xterm/xterm/lib/xterm.js"></script>
     <script src="./node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
     <script type="module" src="./tabs.js"></script>
     <script type="module" src="./ide.js"></script>
-    <script type="module" src="./docs-mount.js"></script>
     <!-- E4-T22b: establish isolation/fallback before main.js evaluates any backend or wasm imports.
          The shim may reload once on a headerless static host; if it cannot establish isolation,
          chooseCpuBackend records the clean single-thread decision and main.js still loads normally. -->

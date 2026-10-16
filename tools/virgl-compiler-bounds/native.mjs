@@ -39,9 +39,10 @@ for(const line of run.stdout.toString().trim().split('\n')){
   else assert.equal(line,'STATUS passed');
 }
 assert.equal(records.length,cases.length);assert.equal(pairRecords.length,pairs.length);
-assert.deepEqual(layout,{ir:111744,profile:32440,flow:433092,frame:27068,raster:207884,conversion:33584,pairConversions:67168,singleResponse:1589248,pairResponse:3179520,rasterQueue:1024,laneBits:16,pcBits:16});
+// Carry the already-landed exact-bank pointers at fcb908e7; this slice does not change raw/profile layout.
+assert.deepEqual(layout,{ir:111752,profile:32448,flow:433092,frame:27068,raster:207884,conversion:33592,pairConversions:67184,singleResponse:1589248,pairResponse:3179520,rasterQueue:1024,laneBits:16,pcBits:16});
 assert.deepEqual(writers,{glslLimit:262144,singleWorstEscapedBytes:1572866,pairWorstEscapedBytes:3145732,shortCapacity:128,status:'passed'});
-for(const bytes of [111744,433092,207884,262145])assert.ok(faults.some(f=>f.requestedBytes===bytes),`actual arena allocation failure ${bytes}`);
+for(const bytes of [111752,433092,207884,262145])assert.ok(faults.some(f=>f.requestedBytes===bytes),`actual arena allocation failure ${bytes}`);
 execFileSync('xcrun',['llvm-profdata','merge','-sparse',path.join(output,'native.profraw'),'-o',path.join(output,'native.profdata')]);
 const coverage=JSON.parse(execFileSync('xcrun',['llvm-cov','export',binary,`-instr-profile=${path.join(output,'native.profdata')}`],{maxBuffer:128e6}));
 const ownedFiles=['renderer/virgl-shader/bridge.c','renderer/virgl-shader/raw_bits.c','renderer/virgl-shader/native_tests/compiler_bounds.c'];

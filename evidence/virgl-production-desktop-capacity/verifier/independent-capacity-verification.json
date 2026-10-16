@@ -1,0 +1,10 @@
+{
+  "task": "E6-T11d74d2",
+  "verdict": "verified",
+  "frozenHead": "f0f36214f770551bd867f33b5177698107a5c00f",
+  "path": "independent-capacity-verification.tar.gz",
+  "bytes": 2139568,
+  "sha256": "5bce8ed9d4d74f970b151e33841537f636f14f0b02e1b8e19b8807c9f323a0d3",
+  "members": 211,
+  "authenticatedIdentities": 210
+}

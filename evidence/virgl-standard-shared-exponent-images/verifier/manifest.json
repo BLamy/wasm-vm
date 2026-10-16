@@ -1,0 +1,83 @@
+{
+  "schema": "original-shared-exponent-critic-seal-v1",
+  "task": "E6-T11d29",
+  "verdict": "verified",
+  "sourceHead": "90dd309b800762309df6fa2431ba25e76d44a3f5",
+  "workerRuntimeHead": "7e88b69a565d0042297e3001c8c4044efdf4cca9",
+  "workerSubmission": "dcd1668079c047d27bba75d230e3be9b51ffa3de",
+  "records": 1436,
+  "sourceRecords": 281,
+  "archiveBytes": 4064392,
+  "archiveSha256": "fadf4c70cfcb707a409036c58ce7750967b7787a303e6b6a3bb4ec5ed38c2f5d",
+  "recordIndexSha256": "1fc05fdf5fc8aa54a45ce448cafeea5022380e633b010e3374465321e53fe2f9",
+  "verdictSha256": "d15abc0f40a91829c97fa5864221c7fcb2732172ea039f428a62890381a7e877",
+  "predictionSha256": "f910a215766a0e3503cdae66dd0b7639d0dc0cf81ca083a66f21c77a8fb428bc",
+  "auditSha256": {
+    "authentication.json": "2f75a7f8e52d77434addc947b0793fa3617ee9c266e942a6bf1852c88258c8ee",
+    "plane-audit.json": "3dd6a8b6cadec8934992bc968d219dafb792894fcfca624a65efdbb26477fdb2",
+    "plane-citations.jsonl": "b99fbf25e1d33c04b5f5e5a76a200536772fcceb954d8f043d06efb1dd738641",
+    "fresh-audit.json": "8c53e8d3f32fd7ddc2a97b01674273199ed6106459e81c5361cb841ad420759e",
+    "fresh-plane-citations.jsonl": "effb5e23f62dcc38f3c511b7c0bb4960e10b71561951c67451ae545038b9ab81",
+    "coverage-audit.json": "6df65fad5fe8d9e3d4f32c14d58792607bc444c10a0e6091c9c6e398faae5e83",
+    "source-boundary-audit.json": "511dd43e4d14827999dd4f81d0349550ab0d91a6f44482ae66243715c8f53571",
+    "critic-freeze.json": "0ff56bc319b2018f8d2362af28285a29a4f432107df445590792da4fc3cb0404",
+    "final/novel-plan-audit.json": "f5f64156b68512b98b833d49b597dfa25fadbb45add2e713548b1f37f7bdda7f",
+    "final/novel-audit.json": "b03d6d80e10d90aa5c1c4cd28e75ae1df346891e6b0eadb96099c07e77973760"
+  },
+  "workerInput": {
+    "folder": "evidence/virgl-standard-shared-exponent-images/worker",
+    "members": 11096,
+    "bytes": 196146571,
+    "archiveSha256": "5867b3470f9efc59feb41276c38aefad463197cf1f8a705c0bb03d0478a537ae",
+    "indexSha256": "8451bac5629992d907a3d14de3eaae5eff4ac3b38b1c62a3f639b40b3fab3412"
+  },
+  "carriedInputs": [
+    {
+      "folder": "evidence/virgl-standard-float-consumer/worker",
+      "members": 46748,
+      "bytes": 490147613,
+      "archiveSha256": "b70916d9faee7567b16cd8c031fe04e9f3da31d84d9a6c1ab2de0096e3d4b049",
+      "indexSha256": "3892679dc0855e5f04002414a4e9bf5b58bbbaef4836eebc8ae4519b1cd92cd1"
+    },
+    {
+      "folder": "evidence/virgl-standard-float-consumer/verifier",
+      "members": 2104,
+      "bytes": 45701616,
+      "archiveSha256": "98828d48ab4d9bb46584d0dd6d54ffee768b17692020c4921838ed614ad63e4f",
+      "indexSha256": "89452fa48e47f86e5ec46ecb28a6c50c95da4954642c5b7e321f119fb1ac7a2c"
+    },
+    {
+      "folder": "evidence/virgl-standard-packed-float-images/worker",
+      "members": 3168,
+      "bytes": 29177475,
+      "archiveSha256": "a20c525b93d18e0b1db07cb17a462e253c6b4616b108417fa2173fc784bb7329",
+      "indexSha256": "543bf6fea1a1b91b35ea37b3d52ff8cc665066654a9829df0fa83b37e16c02fa"
+    },
+    {
+      "folder": "evidence/virgl-standard-packed-float-images/verifier",
+      "members": 2651,
+      "bytes": 50376738,
+      "archiveSha256": "d9e25a68cf1e0e5a12ca9a37b0ce8f0bc3a69e25a3e1b0d2867de68a8bc71fe0",
+      "indexSha256": "21a9f3544901600860d133ddf27c2acf4e50bed01ead512033838db8afc0d728"
+    },
+    {
+      "folder": "evidence/virgl-standard-packed-float-consumer/worker",
+      "members": 11034,
+      "bytes": 116363429,
+      "archiveSha256": "681c54f8ca1e027a048f370e55f33c980745e41024a7524f7a71852e671c99aa",
+      "indexSha256": "8ac3f2450fefe86ac7987f4deee7c19dcbc328264d672a84916b7d2b2b435339"
+    },
+    {
+      "folder": "evidence/virgl-standard-packed-float-consumer/verifier",
+      "members": 5053,
+      "bytes": 131015836,
+      "archiveSha256": "c37f36dda0f5d1e157979e06e8e7cd98ee4c9a54853d4c071de9b7c4441e2b3b",
+      "indexSha256": "2f723312128b1bbbe588ce89a3d1fb57315df8e9bf76bdfb1dcab42214b57031"
+    }
+  ],
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "authority": "isolated-original-format125-image-owner-and-transfers",
+  "excluded": "Unpacked worker input, preliminary runs and preliminary line/coverage reports are not critic authority. Final/ contains all frozen native runs and the required physically completed negative control."
+}

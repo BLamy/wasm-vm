@@ -1,0 +1,7414 @@
+{
+  "status": "HELD",
+  "citations": [
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "line": 247654,
+      "recordSha256": "ee9e1f60055d1e0387e4d033f87a38c3f5045f4225e50932b047b16d2eaf2b83",
+      "label": "integer-narrow-word-189-0-true",
+      "pixelSha256": "67a0e444d60035dbca69e41d12320d168d7a1a7ce0fc3c2389e326b13ac4d5a7",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 4,
+          "resourceGeneration": 5,
+          "stride": 0,
+          "offset": 2,
+          "components": 4,
+          "firstByte": 2,
+          "requiredEnd": 10,
+          "sourceFormat": 192,
+          "elementBytes": 8,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934528,
+            4294967295,
+            32767,
+            1
+          ],
+          "genericValues": [
+            -32768,
+            -1,
+            32767,
+            1
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934528,
+            4294967295,
+            32767,
+            1
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "nanPixels": 0,
+        "maxError": 0,
+        "misses": [],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "line": 186900,
+      "recordSha256": "ee9e1f60055d1e0387e4d033f87a38c3f5045f4225e50932b047b16d2eaf2b83",
+      "label": "integer32-word-193-2-2-true",
+      "pixelSha256": "3919f9aac104a095821387a0840e72668e27e5cba98d34fd9f0d7a108e1429e7",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 4,
+          "resourceGeneration": 5,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "sourceFormat": 196,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2147483647,
+            2147483648,
+            2143289345,
+            4294967295
+          ],
+          "genericValues": [
+            2147483647,
+            2147483648,
+            2143289345,
+            4294967295
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            2147483647,
+            2147483648,
+            2143289345,
+            4294967295
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "nanPixels": 0,
+        "maxError": 0,
+        "misses": [],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "line": 371023,
+      "recordSha256": "ee9e1f60055d1e0387e4d033f87a38c3f5045f4225e50932b047b16d2eaf2b83",
+      "label": "integer-high-slot-constant",
+      "pixelSha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 15,
+          "location": 1,
+          "resourceId": 4,
+          "resourceGeneration": 5,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "sourceFormat": 196,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "genericValues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_15",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "nanPixels": 0,
+        "maxError": 0,
+        "misses": [],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "line": 372174,
+      "recordSha256": "ee9e1f60055d1e0387e4d033f87a38c3f5045f4225e50932b047b16d2eaf2b83",
+      "label": "integer-mixed-shared-constant",
+      "pixelSha256": "123e58c9348dd58d0dfccafe576108f2c44c4fd786dc260bfde7c709a69dfd3d",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 213,
+          "components": 4,
+          "firstByte": 213,
+          "requiredEnd": 217,
+          "sourceFormat": 184,
+          "elementBytes": 4,
+          "nativeType": 5120,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294967168,
+            4294967168,
+            4294967168,
+            4294967168
+          ],
+          "genericValues": [
+            -128,
+            -128,
+            -128,
+            -128
+          ]
+        },
+        {
+          "attributeIndex": 2,
+          "location": 2,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 220,
+          "components": 4,
+          "firstByte": 220,
+          "requiredEnd": 236,
+          "sourceFormat": 196,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4286578691,
+            2147483649,
+            2143289345,
+            1
+          ],
+          "genericValues": [
+            4286578691,
+            2147483649,
+            2143289345,
+            1
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294967168,
+            4294967168,
+            4294967168,
+            4294967168
+          ]
+        },
+        {
+          "name": "in_2",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            4286578691,
+            2147483649,
+            2143289345,
+            1
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "nanPixels": 0,
+        "maxError": 0,
+        "misses": [],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "line": 374719,
+      "recordSha256": "ee9e1f60055d1e0387e4d033f87a38c3f5045f4225e50932b047b16d2eaf2b83",
+      "label": "exact-compact-staging",
+      "pixelSha256": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 4,
+          "resourceGeneration": 5,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "sourceFormat": 196,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "genericValues": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "nanPixels": 0,
+        "maxError": 0,
+        "misses": [],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "line": 376176,
+      "recordSha256": "ee9e1f60055d1e0387e4d033f87a38c3f5045f4225e50932b047b16d2eaf2b83",
+      "label": "integer-exact-work",
+      "pixelSha256": "208462cbed746faae5fec87942aadfd5c0091333b78cc9eb5c0fadbf3c9c21ec",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 4,
+          "resourceGeneration": 5,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 4,
+          "requiredEnd": 36,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 1,
+          "nativeDivisor": 1,
+          "firstElement": 0,
+          "lastElement": 1
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 35669,
+          "pointerType": 5124,
+          "integer": true,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 512,
+        "nanPixels": 0,
+        "maxError": 0,
+        "misses": [],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "line": 378611,
+      "recordSha256": "ee9e1f60055d1e0387e4d033f87a38c3f5045f4225e50932b047b16d2eaf2b83",
+      "label": "pending-waiting-attributes-reuse",
+      "pixelSha256": "dfba22c28cf4da82b015363fa87a562bc118fe8ed626db1b1d86abffa94b2b17",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 4,
+          "resourceGeneration": 5,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2147483648,
+            2147483648,
+            2147483648,
+            2147483648
+          ],
+          "genericValues": [
+            -2147483648,
+            -2147483648,
+            -2147483648,
+            -2147483648
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            2147483648,
+            2147483648,
+            2147483648,
+            2147483648
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "nanPixels": 0,
+        "maxError": 0,
+        "misses": [],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "line": 386865,
+      "recordSha256": "ee9e1f60055d1e0387e4d033f87a38c3f5045f4225e50932b047b16d2eaf2b83",
+      "label": "typed-variant-false-1",
+      "pixelSha256": "34425119693530399d06ece67f03c277b83ad092d881f7c84896a08764c08451",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 4,
+          "resourceGeneration": 5,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            1048576000,
+            3204448256,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            1048576000,
+            -1090519040,
+            1065353216
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            1048576000,
+            3204448256,
+            1065353216
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "nanPixels": 0,
+        "maxError": 0,
+        "misses": [],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "line": 388736,
+      "recordSha256": "ee9e1f60055d1e0387e4d033f87a38c3f5045f4225e50932b047b16d2eaf2b83",
+      "label": "typed-variant-false-2",
+      "pixelSha256": "34425119693530399d06ece67f03c277b83ad092d881f7c84896a08764c08451",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 4,
+          "resourceGeneration": 5,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "sourceFormat": 196,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            1048576000,
+            3204448256,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            1048576000,
+            3204448256,
+            1065353216
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            1056964608,
+            1048576000,
+            3204448256,
+            1065353216
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "nanPixels": 0,
+        "maxError": 0,
+        "misses": [],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "line": 400237,
+      "recordSha256": "ee9e1f60055d1e0387e4d033f87a38c3f5045f4225e50932b047b16d2eaf2b83",
+      "label": "typed-variant-true-3",
+      "pixelSha256": "34425119693530399d06ece67f03c277b83ad092d881f7c84896a08764c08451",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 4,
+          "resourceGeneration": 5,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            1048576000,
+            3204448256,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            0.25,
+            -0.5,
+            1
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            1048576000,
+            3204448256,
+            1065353216
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "nanPixels": 0,
+        "maxError": 0,
+        "misses": [],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "unpacked/hot/hardware/report.json",
+      "line": 383002,
+      "recordSha256": "ee9e1f60055d1e0387e4d033f87a38c3f5045f4225e50932b047b16d2eaf2b83",
+      "label": "restore-A-last",
+      "pixelSha256": "939bc8edfa0e4b06aaeddc5ef1c73e97b0eaf9260b148b0d9e13ca2133c70f32",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 4,
+          "resourceGeneration": 5,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 196,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 36296,
+          "pointerType": 5125,
+          "integer": true,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 256,
+        "nanPixels": 0,
+        "maxError": 0,
+        "misses": [],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "unpacked/hot/fault-native-signedness/report.json",
+      "line": 375,
+      "recordSha256": "e80e5fbae398ca82365cefeb2a8f71b94fa022cbe1a6b95e2106995065441966",
+      "label": "integer-smoke",
+      "pixelSha256": "745849c534a1b440d1c6286e6199732e78a391224a6a516b0752d89440db996e",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 4,
+          "resourceGeneration": 5,
+          "stride": 4,
+          "offset": 1,
+          "components": 4,
+          "firstByte": 29,
+          "requiredEnd": 53,
+          "sourceFormat": 184,
+          "elementBytes": 4,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 36296,
+          "pointerType": 5121,
+          "integer": true,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": false,
+        "pixels": 256,
+        "nanPixels": 0,
+        "maxError": 255,
+        "misses": [
+          {
+            "x": 1,
+            "y": 2,
+            "expected": [
+              128,
+              255,
+              255,
+              255
+            ],
+            "observed": [
+              128,
+              0,
+              0,
+              0
+            ],
+            "error": 255
+          },
+          {
+            "x": 2,
+            "y": 2,
+            "expected": [
+              128,
+              255,
+              255,
+              255
+            ],
+            "observed": [
+              128,
+              0,
+              0,
+              0
+            ],
+            "error": 255
+          },
+          {
+            "x": 3,
+            "y": 2,
+            "expected": [
+              128,
+              255,
+              255,
+              255
+            ],
+            "observed": [
+              128,
+              0,
+              0,
+              0
+            ],
+            "error": 255
+          },
+          {
+            "x": 4,
+            "y": 2,
+            "expected": [
+              128,
+              255,
+              255,
+              255
+            ],
+            "observed": [
+              128,
+              0,
+              0,
+              0
+            ],
+            "error": 255
+          },
+          {
+            "x": 1,
+            "y": 3,
+            "expected": [
+              128,
+              255,
+              255,
+              255
+            ],
+            "observed": [
+              128,
+              0,
+              0,
+              0
+            ],
+            "error": 255
+          },
+          {
+            "x": 2,
+            "y": 3,
+            "expected": [
+              128,
+              255,
+              255,
+              255
+            ],
+            "observed": [
+              128,
+              0,
+              0,
+              0
+            ],
+            "error": 255
+          },
+          {
+            "x": 3,
+            "y": 3,
+            "expected": [
+              128,
+              255,
+              255,
+              255
+            ],
+            "observed": [
+              128,
+              0,
+              0,
+              0
+            ],
+            "error": 255
+          },
+          {
+            "x": 4,
+            "y": 3,
+            "expected": [
+              128,
+              255,
+              255,
+              255
+            ],
+            "observed": [
+              128,
+              0,
+              0,
+              0
+            ],
+            "error": 255
+          }
+        ],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "unpacked/hot/fault-constant-word/report.json",
+      "line": 375,
+      "recordSha256": "c0ed73a83ddb16a21dfb88252d7916170ceaa64cc46daed2b47d7f4268665277",
+      "label": "integer-smoke",
+      "pixelSha256": "ac71cbc8ccc0add94aa643cc3483a49acfebeb4cc9647215d8d528c866fc2dca",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 4,
+          "resourceGeneration": 5,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "sourceFormat": 196,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4286578688,
+            16777216,
+            2143289344,
+            4294967294
+          ],
+          "genericValues": [
+            4286578688,
+            16777216,
+            2143289344,
+            4294967294
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            4286578688,
+            16777216,
+            2143289344,
+            4294967294
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": false,
+        "pixels": 256,
+        "nanPixels": 0,
+        "maxError": 1,
+        "misses": [
+          {
+            "x": 1,
+            "y": 2,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              128,
+              255
+            ],
+            "error": 1
+          },
+          {
+            "x": 2,
+            "y": 2,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              128,
+              255
+            ],
+            "error": 1
+          },
+          {
+            "x": 3,
+            "y": 2,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              128,
+              255
+            ],
+            "error": 1
+          },
+          {
+            "x": 4,
+            "y": 2,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              128,
+              255
+            ],
+            "error": 1
+          },
+          {
+            "x": 1,
+            "y": 3,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              128,
+              255
+            ],
+            "error": 1
+          },
+          {
+            "x": 2,
+            "y": 3,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              128,
+              255
+            ],
+            "error": 1
+          },
+          {
+            "x": 3,
+            "y": 3,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              128,
+              255
+            ],
+            "error": 1
+          },
+          {
+            "x": 4,
+            "y": 3,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              0,
+              128,
+              255
+            ],
+            "error": 1
+          }
+        ],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "unpacked/hot/fault-shader-conversion/report.json",
+      "line": 375,
+      "recordSha256": "87079ad392ce1f957699bb3d75371718b209aae9c95f55cbb8de1e354ca48eaa",
+      "label": "integer-smoke",
+      "pixelSha256": "33ffa6ffb0330ffe6c42aa4070038d47d3143202c639580084d820feb7d5422e",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 4,
+          "resourceGeneration": 5,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 116,
+          "requiredEnd": 212,
+          "sourceFormat": 196,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 36296,
+          "pointerType": 5125,
+          "integer": true,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": false,
+        "pixels": 256,
+        "nanPixels": 0,
+        "maxError": 176,
+        "misses": [
+          {
+            "x": 1,
+            "y": 2,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              128,
+              127,
+              79
+            ],
+            "error": 176
+          },
+          {
+            "x": 2,
+            "y": 2,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              128,
+              127,
+              79
+            ],
+            "error": 176
+          },
+          {
+            "x": 3,
+            "y": 2,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              128,
+              127,
+              79
+            ],
+            "error": 176
+          },
+          {
+            "x": 4,
+            "y": 2,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              128,
+              127,
+              79
+            ],
+            "error": 176
+          },
+          {
+            "x": 1,
+            "y": 3,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              128,
+              127,
+              79
+            ],
+            "error": 176
+          },
+          {
+            "x": 2,
+            "y": 3,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              128,
+              127,
+              79
+            ],
+            "error": 176
+          },
+          {
+            "x": 3,
+            "y": 3,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              128,
+              127,
+              79
+            ],
+            "error": 176
+          },
+          {
+            "x": 4,
+            "y": 3,
+            "expected": [
+              1,
+              0,
+              128,
+              255
+            ],
+            "observed": [
+              0,
+              128,
+              127,
+              79
+            ],
+            "error": 176
+          }
+        ],
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "final-gpu/report.json",
+      "line": 55707,
+      "recordSha256": "da1f0046d590cdad71265b92fe509566e95dbae9c55a60968658b9b1eac2d5c0",
+      "label": "critic-high16-1851936439-0",
+      "pixelSha256": "86f60704d17196dbda198abe0c0c044795e25f5e56904b6186732a6e55b1bbbb",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 52,
+          "requiredEnd": 228,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 229,
+          "components": 4,
+          "firstByte": 229,
+          "requiredEnd": 233,
+          "sourceFormat": 184,
+          "elementBytes": 4,
+          "nativeType": 5120,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294967168,
+            4294967295,
+            127,
+            4294967265
+          ],
+          "genericValues": [
+            -128,
+            -1,
+            127,
+            -31
+          ]
+        },
+        {
+          "attributeIndex": 2,
+          "location": 2,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 236,
+          "components": 1,
+          "firstByte": 236,
+          "requiredEnd": 240,
+          "sourceFormat": 197,
+          "elementBytes": 4,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4286578691
+          ],
+          "genericValues": [
+            -8388605,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 3,
+          "location": 3,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 242,
+          "components": 1,
+          "firstByte": 242,
+          "requiredEnd": 244,
+          "sourceFormat": 189,
+          "elementBytes": 2,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934528
+          ],
+          "genericValues": [
+            -32768,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 4,
+          "location": 4,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 245,
+          "components": 3,
+          "firstByte": 245,
+          "requiredEnd": 248,
+          "sourceFormat": 179,
+          "elementBytes": 3,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            255,
+            0,
+            1
+          ],
+          "genericValues": [
+            255,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 5,
+          "location": 5,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 252,
+          "components": 2,
+          "firstByte": 252,
+          "requiredEnd": 260,
+          "sourceFormat": 198,
+          "elementBytes": 8,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2147483647,
+            878180254
+          ],
+          "genericValues": [
+            2147483647,
+            878180254,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 6,
+          "location": 6,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 264,
+          "components": 2,
+          "firstByte": 264,
+          "requiredEnd": 272,
+          "sourceFormat": 198,
+          "elementBytes": 8,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2653817676,
+            2147483648
+          ],
+          "genericValues": [
+            -1641149620,
+            -2147483648,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 7,
+          "location": 7,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 274,
+          "components": 4,
+          "firstByte": 274,
+          "requiredEnd": 282,
+          "sourceFormat": 192,
+          "elementBytes": 8,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934528,
+            4294967295,
+            32767,
+            6710
+          ],
+          "genericValues": [
+            -32768,
+            -1,
+            32767,
+            6710
+          ]
+        },
+        {
+          "attributeIndex": 8,
+          "location": 8,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 284,
+          "components": 4,
+          "firstByte": 284,
+          "requiredEnd": 300,
+          "sourceFormat": 196,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2143289345,
+            4286578691,
+            4294967295,
+            16777217
+          ],
+          "genericValues": [
+            2143289345,
+            4286578691,
+            4294967295,
+            16777217
+          ]
+        },
+        {
+          "attributeIndex": 9,
+          "location": 9,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 304,
+          "components": 2,
+          "firstByte": 304,
+          "requiredEnd": 312,
+          "sourceFormat": 198,
+          "elementBytes": 8,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4286578691,
+            4294967295
+          ],
+          "genericValues": [
+            -8388605,
+            -1,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 10,
+          "location": 10,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 314,
+          "components": 2,
+          "firstByte": 314,
+          "requiredEnd": 318,
+          "sourceFormat": 190,
+          "elementBytes": 4,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934528,
+            4294967295
+          ],
+          "genericValues": [
+            -32768,
+            -1,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 11,
+          "location": 11,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 320,
+          "components": 4,
+          "firstByte": 320,
+          "requiredEnd": 328,
+          "sourceFormat": 188,
+          "elementBytes": 8,
+          "nativeType": 5123,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            65535,
+            0,
+            1,
+            51921
+          ],
+          "genericValues": [
+            65535,
+            0,
+            1,
+            51921
+          ]
+        },
+        {
+          "attributeIndex": 12,
+          "location": 12,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 332,
+          "components": 3,
+          "firstByte": 332,
+          "requiredEnd": 344,
+          "sourceFormat": 195,
+          "elementBytes": 12,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2147483647,
+            3809712064,
+            2147483648
+          ],
+          "genericValues": [
+            2147483647,
+            3809712064,
+            2147483648,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 13,
+          "location": 13,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 348,
+          "components": 2,
+          "firstByte": 348,
+          "requiredEnd": 356,
+          "sourceFormat": 194,
+          "elementBytes": 8,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            3757786308,
+            2147483648
+          ],
+          "genericValues": [
+            3757786308,
+            2147483648,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 14,
+          "location": 14,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 357,
+          "components": 2,
+          "firstByte": 357,
+          "requiredEnd": 359,
+          "sourceFormat": 178,
+          "elementBytes": 2,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            255,
+            0
+          ],
+          "genericValues": [
+            255,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 15,
+          "location": 15,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 360,
+          "components": 1,
+          "firstByte": 360,
+          "requiredEnd": 361,
+          "sourceFormat": 177,
+          "elementBytes": 1,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            255
+          ],
+          "genericValues": [
+            255,
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294967168,
+            4294967295,
+            127,
+            4294967265
+          ]
+        },
+        {
+          "name": "in_2",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4286578691,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_3",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934528,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_4",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            255,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "in_5",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            2147483647,
+            878180254,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_6",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            2653817676,
+            2147483648,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_7",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934528,
+            4294967295,
+            32767,
+            6710
+          ]
+        },
+        {
+          "name": "in_8",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            2143289345,
+            4286578691,
+            4294967295,
+            16777217
+          ]
+        },
+        {
+          "name": "in_9",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4286578691,
+            4294967295,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_10",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934528,
+            4294967295,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_11",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            65535,
+            0,
+            1,
+            51921
+          ]
+        },
+        {
+          "name": "in_12",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            2147483647,
+            3809712064,
+            2147483648,
+            1
+          ]
+        },
+        {
+          "name": "in_13",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            3757786308,
+            2147483648,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_14",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            255,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_15",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            255,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 768,
+        "maxError": 0,
+        "misses": [],
+        "nanPixels": 0,
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "final-gpu/report.json",
+      "line": 145959,
+      "recordSha256": "da1f0046d590cdad71265b92fe509566e95dbae9c55a60968658b9b1eac2d5c0",
+      "label": "critic-high16-pending-reuse",
+      "pixelSha256": "aef87758574ee6247660f09abe5ed35f293780e50e239cbef3c0903a60897e39",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 52,
+          "requiredEnd": 228,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 229,
+          "components": 4,
+          "firstByte": 229,
+          "requiredEnd": 233,
+          "sourceFormat": 184,
+          "elementBytes": 4,
+          "nativeType": 5120,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294967168,
+            4294967295,
+            127,
+            89
+          ],
+          "genericValues": [
+            -128,
+            -1,
+            127,
+            89
+          ]
+        },
+        {
+          "attributeIndex": 2,
+          "location": 2,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 234,
+          "components": 1,
+          "firstByte": 234,
+          "requiredEnd": 236,
+          "sourceFormat": 189,
+          "elementBytes": 2,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934528
+          ],
+          "genericValues": [
+            -32768,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 3,
+          "location": 3,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 238,
+          "components": 1,
+          "firstByte": 238,
+          "requiredEnd": 240,
+          "sourceFormat": 185,
+          "elementBytes": 2,
+          "nativeType": 5123,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            65535
+          ],
+          "genericValues": [
+            65535,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 4,
+          "location": 4,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 242,
+          "components": 1,
+          "firstByte": 242,
+          "requiredEnd": 244,
+          "sourceFormat": 189,
+          "elementBytes": 2,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934528
+          ],
+          "genericValues": [
+            -32768,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 5,
+          "location": 5,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 245,
+          "components": 1,
+          "firstByte": 245,
+          "requiredEnd": 246,
+          "sourceFormat": 177,
+          "elementBytes": 1,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            255
+          ],
+          "genericValues": [
+            255,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 6,
+          "location": 6,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 248,
+          "components": 2,
+          "firstByte": 248,
+          "requiredEnd": 256,
+          "sourceFormat": 194,
+          "elementBytes": 8,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2740723164,
+            2147483648
+          ],
+          "genericValues": [
+            2740723164,
+            2147483648,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 7,
+          "location": 7,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 260,
+          "components": 1,
+          "firstByte": 260,
+          "requiredEnd": 264,
+          "sourceFormat": 197,
+          "elementBytes": 4,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2147483648
+          ],
+          "genericValues": [
+            -2147483648,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 8,
+          "location": 8,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 265,
+          "components": 3,
+          "firstByte": 265,
+          "requiredEnd": 268,
+          "sourceFormat": 179,
+          "elementBytes": 3,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            255,
+            0,
+            1
+          ],
+          "genericValues": [
+            255,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 9,
+          "location": 9,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 272,
+          "components": 1,
+          "firstByte": 272,
+          "requiredEnd": 276,
+          "sourceFormat": 197,
+          "elementBytes": 4,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4286578691
+          ],
+          "genericValues": [
+            -8388605,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 10,
+          "location": 10,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 277,
+          "components": 4,
+          "firstByte": 277,
+          "requiredEnd": 281,
+          "sourceFormat": 180,
+          "elementBytes": 4,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            255,
+            0,
+            1,
+            61
+          ],
+          "genericValues": [
+            255,
+            0,
+            1,
+            61
+          ]
+        },
+        {
+          "attributeIndex": 11,
+          "location": 11,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 282,
+          "components": 2,
+          "firstByte": 282,
+          "requiredEnd": 286,
+          "sourceFormat": 186,
+          "elementBytes": 4,
+          "nativeType": 5123,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            65535,
+            0
+          ],
+          "genericValues": [
+            65535,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 12,
+          "location": 12,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 288,
+          "components": 4,
+          "firstByte": 288,
+          "requiredEnd": 296,
+          "sourceFormat": 188,
+          "elementBytes": 8,
+          "nativeType": 5123,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            65535,
+            0,
+            1,
+            39988
+          ],
+          "genericValues": [
+            65535,
+            0,
+            1,
+            39988
+          ]
+        },
+        {
+          "attributeIndex": 13,
+          "location": 13,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 298,
+          "components": 1,
+          "firstByte": 298,
+          "requiredEnd": 300,
+          "sourceFormat": 189,
+          "elementBytes": 2,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934528
+          ],
+          "genericValues": [
+            -32768,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 14,
+          "location": 14,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 302,
+          "components": 4,
+          "firstByte": 302,
+          "requiredEnd": 310,
+          "sourceFormat": 192,
+          "elementBytes": 8,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934528,
+            4294967295,
+            32767,
+            4294945288
+          ],
+          "genericValues": [
+            -32768,
+            -1,
+            32767,
+            -22008
+          ]
+        },
+        {
+          "attributeIndex": 15,
+          "location": 15,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 312,
+          "components": 1,
+          "firstByte": 312,
+          "requiredEnd": 316,
+          "sourceFormat": 197,
+          "elementBytes": 4,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2143289345
+          ],
+          "genericValues": [
+            2143289345,
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294967168,
+            4294967295,
+            127,
+            89
+          ]
+        },
+        {
+          "name": "in_2",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934528,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_3",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            65535,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_4",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934528,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_5",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            255,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_6",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            2740723164,
+            2147483648,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_7",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            2147483648,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_8",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            255,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "in_9",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4286578691,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_10",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            255,
+            0,
+            1,
+            61
+          ]
+        },
+        {
+          "name": "in_11",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            65535,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_12",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            65535,
+            0,
+            1,
+            39988
+          ]
+        },
+        {
+          "name": "in_13",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934528,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_14",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934528,
+            4294967295,
+            32767,
+            4294945288
+          ]
+        },
+        {
+          "name": "in_15",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            2143289345,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 768,
+        "maxError": 0,
+        "misses": [],
+        "nanPixels": 0,
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "final-gpu/report.json",
+      "line": 99744,
+      "recordSha256": "da1f0046d590cdad71265b92fe509566e95dbae9c55a60968658b9b1eac2d5c0",
+      "label": "critic-high16-variant-false-1",
+      "pixelSha256": "4984e491814126e619539e10dd839d50b786308ca3c00ff1643f7985e1231faa",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 52,
+          "requiredEnd": 228,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 232,
+          "components": 4,
+          "firstByte": 232,
+          "requiredEnd": 248,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 2,
+          "location": 2,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 252,
+          "components": 4,
+          "firstByte": 252,
+          "requiredEnd": 268,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 3,
+          "location": 3,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 272,
+          "components": 4,
+          "firstByte": 272,
+          "requiredEnd": 288,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 4,
+          "location": 4,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 292,
+          "components": 4,
+          "firstByte": 292,
+          "requiredEnd": 308,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 5,
+          "location": 5,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 312,
+          "components": 4,
+          "firstByte": 312,
+          "requiredEnd": 328,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 6,
+          "location": 6,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 332,
+          "components": 4,
+          "firstByte": 332,
+          "requiredEnd": 348,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 7,
+          "location": 7,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 352,
+          "components": 4,
+          "firstByte": 352,
+          "requiredEnd": 368,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 8,
+          "location": 8,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 372,
+          "components": 4,
+          "firstByte": 372,
+          "requiredEnd": 388,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 9,
+          "location": 9,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 392,
+          "components": 4,
+          "firstByte": 392,
+          "requiredEnd": 408,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 10,
+          "location": 10,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 412,
+          "components": 4,
+          "firstByte": 412,
+          "requiredEnd": 428,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 11,
+          "location": 11,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 432,
+          "components": 4,
+          "firstByte": 432,
+          "requiredEnd": 448,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 12,
+          "location": 12,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 452,
+          "components": 4,
+          "firstByte": 452,
+          "requiredEnd": 468,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 13,
+          "location": 13,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 472,
+          "components": 4,
+          "firstByte": 472,
+          "requiredEnd": 488,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 14,
+          "location": 14,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 492,
+          "components": 4,
+          "firstByte": 492,
+          "requiredEnd": 508,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "attributeIndex": 15,
+          "location": 15,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 512,
+          "components": 4,
+          "firstByte": 512,
+          "requiredEnd": 528,
+          "sourceFormat": 200,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            1056964608,
+            -1098907648,
+            1061158912,
+            1065353216
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_2",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_3",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_4",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_5",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_6",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_7",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_8",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_9",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_10",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_11",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_12",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_13",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_14",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_15",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 768,
+        "maxError": 0,
+        "misses": [],
+        "nanPixels": 0,
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "final-gpu/report.json",
+      "line": 136992,
+      "recordSha256": "da1f0046d590cdad71265b92fe509566e95dbae9c55a60968658b9b1eac2d5c0",
+      "label": "critic-high16-variant-true-3",
+      "pixelSha256": "4984e491814126e619539e10dd839d50b786308ca3c00ff1643f7985e1231faa",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 52,
+          "requiredEnd": 228,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 232,
+          "components": 4,
+          "firstByte": 232,
+          "requiredEnd": 248,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 2,
+          "location": 2,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 252,
+          "components": 4,
+          "firstByte": 252,
+          "requiredEnd": 268,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 3,
+          "location": 3,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 272,
+          "components": 4,
+          "firstByte": 272,
+          "requiredEnd": 288,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 4,
+          "location": 4,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 292,
+          "components": 4,
+          "firstByte": 292,
+          "requiredEnd": 308,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 5,
+          "location": 5,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 312,
+          "components": 4,
+          "firstByte": 312,
+          "requiredEnd": 328,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 6,
+          "location": 6,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 332,
+          "components": 4,
+          "firstByte": 332,
+          "requiredEnd": 348,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 7,
+          "location": 7,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 352,
+          "components": 4,
+          "firstByte": 352,
+          "requiredEnd": 368,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 8,
+          "location": 8,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 372,
+          "components": 4,
+          "firstByte": 372,
+          "requiredEnd": 388,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 9,
+          "location": 9,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 392,
+          "components": 4,
+          "firstByte": 392,
+          "requiredEnd": 408,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 10,
+          "location": 10,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 412,
+          "components": 4,
+          "firstByte": 412,
+          "requiredEnd": 428,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 11,
+          "location": 11,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 432,
+          "components": 4,
+          "firstByte": 432,
+          "requiredEnd": 448,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 12,
+          "location": 12,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 452,
+          "components": 4,
+          "firstByte": 452,
+          "requiredEnd": 468,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 13,
+          "location": 13,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 472,
+          "components": 4,
+          "firstByte": 472,
+          "requiredEnd": 488,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 14,
+          "location": 14,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 492,
+          "components": 4,
+          "firstByte": 492,
+          "requiredEnd": 508,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 15,
+          "location": 15,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 512,
+          "components": 4,
+          "firstByte": 512,
+          "requiredEnd": 528,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ],
+          "genericValues": [
+            0.5,
+            -0.25,
+            0.75,
+            1
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_2",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_3",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_4",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_5",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_6",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_7",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_8",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_9",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_10",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_11",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_12",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_13",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_14",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_15",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            1056964608,
+            3196059648,
+            1061158912,
+            1065353216
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": true,
+        "pixels": 768,
+        "maxError": 0,
+        "misses": [],
+        "nanPixels": 0,
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "final-fault-native-signedness/report.json",
+      "line": 392,
+      "recordSha256": "de3353da763a4ddc861c202b9e31cdbe795c450a9520188e9cb67507a4262371",
+      "label": "critic-high16-sabotage-native-signedness",
+      "pixelSha256": "a0dddcaf2074a662663b50f1964ee344a0b11973b48acbf6e7ee5d259d9b8605",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 52,
+          "requiredEnd": 228,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 4,
+          "offset": 229,
+          "components": 4,
+          "firstByte": 241,
+          "requiredEnd": 285,
+          "sourceFormat": 184,
+          "elementBytes": 4,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 2,
+          "location": 2,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 4,
+          "offset": 288,
+          "components": 1,
+          "firstByte": 300,
+          "requiredEnd": 344,
+          "sourceFormat": 197,
+          "elementBytes": 4,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 3,
+          "location": 3,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 2,
+          "offset": 346,
+          "components": 1,
+          "firstByte": 346,
+          "requiredEnd": 350,
+          "sourceFormat": 189,
+          "elementBytes": 2,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1
+        },
+        {
+          "attributeIndex": 4,
+          "location": 4,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 3,
+          "offset": 351,
+          "components": 3,
+          "firstByte": 360,
+          "requiredEnd": 393,
+          "sourceFormat": 179,
+          "elementBytes": 3,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 5,
+          "location": 5,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 8,
+          "offset": 396,
+          "components": 2,
+          "firstByte": 420,
+          "requiredEnd": 508,
+          "sourceFormat": 198,
+          "elementBytes": 8,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 6,
+          "location": 6,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 8,
+          "offset": 512,
+          "components": 2,
+          "firstByte": 512,
+          "requiredEnd": 528,
+          "sourceFormat": 198,
+          "elementBytes": 8,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1
+        },
+        {
+          "attributeIndex": 7,
+          "location": 7,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 8,
+          "offset": 530,
+          "components": 4,
+          "firstByte": 554,
+          "requiredEnd": 642,
+          "sourceFormat": 192,
+          "elementBytes": 8,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 8,
+          "location": 8,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 644,
+          "components": 4,
+          "firstByte": 692,
+          "requiredEnd": 868,
+          "sourceFormat": 196,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 9,
+          "location": 9,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 8,
+          "offset": 872,
+          "components": 2,
+          "firstByte": 872,
+          "requiredEnd": 888,
+          "sourceFormat": 198,
+          "elementBytes": 8,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1
+        },
+        {
+          "attributeIndex": 10,
+          "location": 10,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 4,
+          "offset": 890,
+          "components": 2,
+          "firstByte": 902,
+          "requiredEnd": 946,
+          "sourceFormat": 190,
+          "elementBytes": 4,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 11,
+          "location": 11,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 8,
+          "offset": 948,
+          "components": 4,
+          "firstByte": 972,
+          "requiredEnd": 1060,
+          "sourceFormat": 188,
+          "elementBytes": 8,
+          "nativeType": 5123,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 12,
+          "location": 12,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 12,
+          "offset": 1064,
+          "components": 3,
+          "firstByte": 1064,
+          "requiredEnd": 1088,
+          "sourceFormat": 195,
+          "elementBytes": 12,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1
+        },
+        {
+          "attributeIndex": 13,
+          "location": 13,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 8,
+          "offset": 1092,
+          "components": 2,
+          "firstByte": 1116,
+          "requiredEnd": 1204,
+          "sourceFormat": 194,
+          "elementBytes": 8,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 14,
+          "location": 14,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 2,
+          "offset": 1205,
+          "components": 2,
+          "firstByte": 1211,
+          "requiredEnd": 1233,
+          "sourceFormat": 178,
+          "elementBytes": 2,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 15,
+          "location": 15,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 1,
+          "offset": 1234,
+          "components": 1,
+          "firstByte": 1234,
+          "requiredEnd": 1236,
+          "sourceFormat": 177,
+          "elementBytes": 1,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 36296,
+          "pointerType": 5121,
+          "integer": true,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_2",
+          "shaderType": 35669,
+          "pointerType": 5124,
+          "integer": true,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_3",
+          "shaderType": 35669,
+          "pointerType": 5122,
+          "integer": true,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_4",
+          "shaderType": 36296,
+          "pointerType": 5121,
+          "integer": true,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_5",
+          "shaderType": 35669,
+          "pointerType": 5124,
+          "integer": true,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_6",
+          "shaderType": 35669,
+          "pointerType": 5124,
+          "integer": true,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_7",
+          "shaderType": 35669,
+          "pointerType": 5122,
+          "integer": true,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_8",
+          "shaderType": 36296,
+          "pointerType": 5125,
+          "integer": true,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_9",
+          "shaderType": 35669,
+          "pointerType": 5124,
+          "integer": true,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_10",
+          "shaderType": 35669,
+          "pointerType": 5122,
+          "integer": true,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_11",
+          "shaderType": 36296,
+          "pointerType": 5123,
+          "integer": true,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_12",
+          "shaderType": 36296,
+          "pointerType": 5125,
+          "integer": true,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_13",
+          "shaderType": 36296,
+          "pointerType": 5125,
+          "integer": true,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_14",
+          "shaderType": 36296,
+          "pointerType": 5121,
+          "integer": true,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_15",
+          "shaderType": 36296,
+          "pointerType": 5121,
+          "integer": true,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": false,
+        "pixels": 768,
+        "maxError": 199,
+        "misses": [
+          {
+            "x": 10,
+            "y": 3,
+            "expected": [
+              25,
+              65,
+              175,
+              100
+            ],
+            "observed": [
+              25,
+              190,
+              80,
+              155
+            ],
+            "error": 125
+          },
+          {
+            "x": 11,
+            "y": 3,
+            "expected": [
+              25,
+              65,
+              175,
+              100
+            ],
+            "observed": [
+              25,
+              190,
+              80,
+              155
+            ],
+            "error": 125
+          },
+          {
+            "x": 12,
+            "y": 3,
+            "expected": [
+              25,
+              65,
+              175,
+              100
+            ],
+            "observed": [
+              25,
+              190,
+              80,
+              155
+            ],
+            "error": 125
+          },
+          {
+            "x": 13,
+            "y": 3,
+            "expected": [
+              25,
+              65,
+              175,
+              100
+            ],
+            "observed": [
+              25,
+              190,
+              80,
+              155
+            ],
+            "error": 125
+          },
+          {
+            "x": 26,
+            "y": 3,
+            "expected": [
+              25,
+              65,
+              175,
+              100
+            ],
+            "observed": [
+              25,
+              190,
+              80,
+              155
+            ],
+            "error": 125
+          },
+          {
+            "x": 27,
+            "y": 3,
+            "expected": [
+              25,
+              65,
+              175,
+              100
+            ],
+            "observed": [
+              25,
+              190,
+              80,
+              155
+            ],
+            "error": 125
+          },
+          {
+            "x": 28,
+            "y": 3,
+            "expected": [
+              25,
+              65,
+              175,
+              100
+            ],
+            "observed": [
+              25,
+              190,
+              80,
+              155
+            ],
+            "error": 125
+          },
+          {
+            "x": 29,
+            "y": 3,
+            "expected": [
+              25,
+              65,
+              175,
+              100
+            ],
+            "observed": [
+              25,
+              190,
+              80,
+              155
+            ],
+            "error": 125
+          }
+        ],
+        "nanPixels": 0,
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "final-fault-constant-word/report.json",
+      "line": 392,
+      "recordSha256": "56015d994587ab1568cea9d0cef761757377c290ec06f66052edd46aa479b377",
+      "label": "critic-high16-sabotage-constant-word",
+      "pixelSha256": "f3ff977faf3f389f9b9235e4ff649ef5d8f254cfbe1664be21d77e4d28c2c76b",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 52,
+          "requiredEnd": 228,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 229,
+          "components": 4,
+          "firstByte": 229,
+          "requiredEnd": 233,
+          "sourceFormat": 184,
+          "elementBytes": 4,
+          "nativeType": 5120,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294967169,
+            4294967294,
+            126,
+            4294967264
+          ],
+          "genericValues": [
+            -127,
+            -2,
+            126,
+            -32
+          ]
+        },
+        {
+          "attributeIndex": 2,
+          "location": 2,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 236,
+          "components": 1,
+          "firstByte": 236,
+          "requiredEnd": 240,
+          "sourceFormat": 197,
+          "elementBytes": 4,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4286578690
+          ],
+          "genericValues": [
+            -8388606,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 3,
+          "location": 3,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 242,
+          "components": 1,
+          "firstByte": 242,
+          "requiredEnd": 244,
+          "sourceFormat": 189,
+          "elementBytes": 2,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934529
+          ],
+          "genericValues": [
+            -32767,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 4,
+          "location": 4,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 245,
+          "components": 3,
+          "firstByte": 245,
+          "requiredEnd": 248,
+          "sourceFormat": 179,
+          "elementBytes": 3,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            254,
+            1,
+            0
+          ],
+          "genericValues": [
+            254,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 5,
+          "location": 5,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 252,
+          "components": 2,
+          "firstByte": 252,
+          "requiredEnd": 260,
+          "sourceFormat": 198,
+          "elementBytes": 8,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2147483646,
+            878180255
+          ],
+          "genericValues": [
+            2147483646,
+            878180255,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 6,
+          "location": 6,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 264,
+          "components": 2,
+          "firstByte": 264,
+          "requiredEnd": 272,
+          "sourceFormat": 198,
+          "elementBytes": 8,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2653817677,
+            2147483649
+          ],
+          "genericValues": [
+            -1641149619,
+            -2147483647,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 7,
+          "location": 7,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 274,
+          "components": 4,
+          "firstByte": 274,
+          "requiredEnd": 282,
+          "sourceFormat": 192,
+          "elementBytes": 8,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934529,
+            4294967294,
+            32766,
+            6711
+          ],
+          "genericValues": [
+            -32767,
+            -2,
+            32766,
+            6711
+          ]
+        },
+        {
+          "attributeIndex": 8,
+          "location": 8,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 284,
+          "components": 4,
+          "firstByte": 284,
+          "requiredEnd": 300,
+          "sourceFormat": 196,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2143289344,
+            4286578690,
+            4294967294,
+            16777216
+          ],
+          "genericValues": [
+            2143289344,
+            4286578690,
+            4294967294,
+            16777216
+          ]
+        },
+        {
+          "attributeIndex": 9,
+          "location": 9,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 304,
+          "components": 2,
+          "firstByte": 304,
+          "requiredEnd": 312,
+          "sourceFormat": 198,
+          "elementBytes": 8,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4286578690,
+            4294967294
+          ],
+          "genericValues": [
+            -8388606,
+            -2,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 10,
+          "location": 10,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 314,
+          "components": 2,
+          "firstByte": 314,
+          "requiredEnd": 318,
+          "sourceFormat": 190,
+          "elementBytes": 4,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934529,
+            4294967294
+          ],
+          "genericValues": [
+            -32767,
+            -2,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 11,
+          "location": 11,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 320,
+          "components": 4,
+          "firstByte": 320,
+          "requiredEnd": 328,
+          "sourceFormat": 188,
+          "elementBytes": 8,
+          "nativeType": 5123,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            65534,
+            1,
+            0,
+            51920
+          ],
+          "genericValues": [
+            65534,
+            1,
+            0,
+            51920
+          ]
+        },
+        {
+          "attributeIndex": 12,
+          "location": 12,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 332,
+          "components": 3,
+          "firstByte": 332,
+          "requiredEnd": 344,
+          "sourceFormat": 195,
+          "elementBytes": 12,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2147483646,
+            3809712065,
+            2147483649
+          ],
+          "genericValues": [
+            2147483646,
+            3809712065,
+            2147483649,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 13,
+          "location": 13,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 348,
+          "components": 2,
+          "firstByte": 348,
+          "requiredEnd": 356,
+          "sourceFormat": 194,
+          "elementBytes": 8,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            3757786309,
+            2147483649
+          ],
+          "genericValues": [
+            3757786309,
+            2147483649,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 14,
+          "location": 14,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 357,
+          "components": 2,
+          "firstByte": 357,
+          "requiredEnd": 359,
+          "sourceFormat": 178,
+          "elementBytes": 2,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            254,
+            1
+          ],
+          "genericValues": [
+            254,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 15,
+          "location": 15,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 360,
+          "components": 1,
+          "firstByte": 360,
+          "requiredEnd": 361,
+          "sourceFormat": 177,
+          "elementBytes": 1,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            254
+          ],
+          "genericValues": [
+            254,
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294967169,
+            4294967294,
+            126,
+            4294967264
+          ]
+        },
+        {
+          "name": "in_2",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4286578690,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_3",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934529,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_4",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            254,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_5",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            2147483646,
+            878180255,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_6",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            2653817677,
+            2147483649,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_7",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934529,
+            4294967294,
+            32766,
+            6711
+          ]
+        },
+        {
+          "name": "in_8",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            2143289344,
+            4286578690,
+            4294967294,
+            16777216
+          ]
+        },
+        {
+          "name": "in_9",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4286578690,
+            4294967294,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_10",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934529,
+            4294967294,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_11",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            65534,
+            1,
+            0,
+            51920
+          ]
+        },
+        {
+          "name": "in_12",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            2147483646,
+            3809712065,
+            2147483649,
+            1
+          ]
+        },
+        {
+          "name": "in_13",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            3757786309,
+            2147483649,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_14",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            254,
+            1,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_15",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            254,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": false,
+        "pixels": 768,
+        "maxError": 1,
+        "misses": [
+          {
+            "x": 1,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              8,
+              207,
+              21,
+              62
+            ],
+            "error": 1
+          },
+          {
+            "x": 2,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              8,
+              207,
+              21,
+              62
+            ],
+            "error": 1
+          },
+          {
+            "x": 3,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              8,
+              207,
+              21,
+              62
+            ],
+            "error": 1
+          },
+          {
+            "x": 4,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              8,
+              207,
+              21,
+              62
+            ],
+            "error": 1
+          },
+          {
+            "x": 17,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              8,
+              207,
+              21,
+              62
+            ],
+            "error": 1
+          },
+          {
+            "x": 18,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              8,
+              207,
+              21,
+              62
+            ],
+            "error": 1
+          },
+          {
+            "x": 19,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              8,
+              207,
+              21,
+              62
+            ],
+            "error": 1
+          },
+          {
+            "x": 20,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              8,
+              207,
+              21,
+              62
+            ],
+            "error": 1
+          }
+        ],
+        "nanPixels": 0,
+        "portableNaNPayload": false
+      }
+    },
+    {
+      "record": "final-fault-shader-conversion/report.json",
+      "line": 392,
+      "recordSha256": "93b619b80a7057b7dad892a250ac80a82c78f2c140e8b0d5282cbce066b431c9",
+      "label": "critic-high16-sabotage-shader-conversion",
+      "pixelSha256": "96c2f7481babed9fe7d9f0a1c0b96e875cffb50d825efe1d3e1185d6020f51ce",
+      "gpuComplete": true,
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "location": 0,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "firstByte": 52,
+          "requiredEnd": 228,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13
+        },
+        {
+          "attributeIndex": 1,
+          "location": 1,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 229,
+          "components": 4,
+          "firstByte": 229,
+          "requiredEnd": 233,
+          "sourceFormat": 184,
+          "elementBytes": 4,
+          "nativeType": 5120,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294967168,
+            4294967295,
+            127,
+            4294967265
+          ],
+          "genericValues": [
+            -128,
+            -1,
+            127,
+            -31
+          ]
+        },
+        {
+          "attributeIndex": 2,
+          "location": 2,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 236,
+          "components": 1,
+          "firstByte": 236,
+          "requiredEnd": 240,
+          "sourceFormat": 197,
+          "elementBytes": 4,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4286578691
+          ],
+          "genericValues": [
+            -8388605,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 3,
+          "location": 3,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 242,
+          "components": 1,
+          "firstByte": 242,
+          "requiredEnd": 244,
+          "sourceFormat": 189,
+          "elementBytes": 2,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934528
+          ],
+          "genericValues": [
+            -32768,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 4,
+          "location": 4,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 245,
+          "components": 3,
+          "firstByte": 245,
+          "requiredEnd": 248,
+          "sourceFormat": 179,
+          "elementBytes": 3,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            255,
+            0,
+            1
+          ],
+          "genericValues": [
+            255,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 5,
+          "location": 5,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 252,
+          "components": 2,
+          "firstByte": 252,
+          "requiredEnd": 260,
+          "sourceFormat": 198,
+          "elementBytes": 8,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2147483647,
+            878180254
+          ],
+          "genericValues": [
+            2147483647,
+            878180254,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 6,
+          "location": 6,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 264,
+          "components": 2,
+          "firstByte": 264,
+          "requiredEnd": 272,
+          "sourceFormat": 198,
+          "elementBytes": 8,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2653817676,
+            2147483648
+          ],
+          "genericValues": [
+            -1641149620,
+            -2147483648,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 7,
+          "location": 7,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 274,
+          "components": 4,
+          "firstByte": 274,
+          "requiredEnd": 282,
+          "sourceFormat": 192,
+          "elementBytes": 8,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934528,
+            4294967295,
+            32767,
+            6710
+          ],
+          "genericValues": [
+            -32768,
+            -1,
+            32767,
+            6710
+          ]
+        },
+        {
+          "attributeIndex": 8,
+          "location": 8,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 284,
+          "components": 4,
+          "firstByte": 284,
+          "requiredEnd": 300,
+          "sourceFormat": 196,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2143289345,
+            4286578691,
+            4294967295,
+            16777217
+          ],
+          "genericValues": [
+            2143289345,
+            4286578691,
+            4294967295,
+            16777217
+          ]
+        },
+        {
+          "attributeIndex": 9,
+          "location": 9,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 304,
+          "components": 2,
+          "firstByte": 304,
+          "requiredEnd": 312,
+          "sourceFormat": 198,
+          "elementBytes": 8,
+          "nativeType": 5124,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4286578691,
+            4294967295
+          ],
+          "genericValues": [
+            -8388605,
+            -1,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 10,
+          "location": 10,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 314,
+          "components": 2,
+          "firstByte": 314,
+          "requiredEnd": 318,
+          "sourceFormat": 190,
+          "elementBytes": 4,
+          "nativeType": 5122,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            4294934528,
+            4294967295
+          ],
+          "genericValues": [
+            -32768,
+            -1,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 11,
+          "location": 11,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 320,
+          "components": 4,
+          "firstByte": 320,
+          "requiredEnd": 328,
+          "sourceFormat": 188,
+          "elementBytes": 8,
+          "nativeType": 5123,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            65535,
+            0,
+            1,
+            51921
+          ],
+          "genericValues": [
+            65535,
+            0,
+            1,
+            51921
+          ]
+        },
+        {
+          "attributeIndex": 12,
+          "location": 12,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 332,
+          "components": 3,
+          "firstByte": 332,
+          "requiredEnd": 344,
+          "sourceFormat": 195,
+          "elementBytes": 12,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            2147483647,
+            3809712064,
+            2147483648
+          ],
+          "genericValues": [
+            2147483647,
+            3809712064,
+            2147483648,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 13,
+          "location": 13,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 348,
+          "components": 2,
+          "firstByte": 348,
+          "requiredEnd": 356,
+          "sourceFormat": 194,
+          "elementBytes": 8,
+          "nativeType": 5125,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            3757786308,
+            2147483648
+          ],
+          "genericValues": [
+            3757786308,
+            2147483648,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 14,
+          "location": 14,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 357,
+          "components": 2,
+          "firstByte": 357,
+          "requiredEnd": 359,
+          "sourceFormat": 178,
+          "elementBytes": 2,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            255,
+            0
+          ],
+          "genericValues": [
+            255,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "attributeIndex": 15,
+          "location": 15,
+          "resourceId": 3,
+          "resourceGeneration": 4,
+          "stride": 0,
+          "offset": 360,
+          "components": 1,
+          "firstByte": 360,
+          "requiredEnd": 361,
+          "sourceFormat": 177,
+          "elementBytes": 1,
+          "nativeType": 5121,
+          "normalized": false,
+          "nativeIntegerInput": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "constant": true,
+          "componentWords": [
+            255
+          ],
+          "genericValues": [
+            255,
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "nativeTypes": [
+        {
+          "name": "in_0",
+          "shaderType": 35666,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Float32Array",
+          "genericWords": [
+            0,
+            0,
+            0,
+            1065353216
+          ]
+        },
+        {
+          "name": "in_1",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294967168,
+            4294967295,
+            127,
+            4294967265
+          ]
+        },
+        {
+          "name": "in_2",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4286578691,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_3",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934528,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_4",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            255,
+            0,
+            1,
+            1
+          ]
+        },
+        {
+          "name": "in_5",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            2147483647,
+            878180254,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_6",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            2653817676,
+            2147483648,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_7",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934528,
+            4294967295,
+            32767,
+            6710
+          ]
+        },
+        {
+          "name": "in_8",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            2143289345,
+            4286578691,
+            4294967295,
+            16777217
+          ]
+        },
+        {
+          "name": "in_9",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4286578691,
+            4294967295,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_10",
+          "shaderType": 35669,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Int32Array",
+          "genericWords": [
+            4294934528,
+            4294967295,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_11",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            65535,
+            0,
+            1,
+            51921
+          ]
+        },
+        {
+          "name": "in_12",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            2147483647,
+            3809712064,
+            2147483648,
+            1
+          ]
+        },
+        {
+          "name": "in_13",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            3757786308,
+            2147483648,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_14",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            255,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "in_15",
+          "shaderType": 36296,
+          "pointerType": 5126,
+          "integer": false,
+          "genericKind": "Uint32Array",
+          "genericWords": [
+            255,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "gl_InstanceID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        },
+        {
+          "name": "gl_VertexID",
+          "shaderType": null,
+          "pointerType": null,
+          "integer": null,
+          "genericKind": null,
+          "genericWords": null
+        }
+      ],
+      "audit": {
+        "held": false,
+        "pixels": 768,
+        "maxError": 213,
+        "misses": [
+          {
+            "x": 1,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              137,
+              48,
+              234,
+              2
+            ],
+            "error": 213
+          },
+          {
+            "x": 2,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              137,
+              48,
+              234,
+              2
+            ],
+            "error": 213
+          },
+          {
+            "x": 3,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              137,
+              48,
+              234,
+              2
+            ],
+            "error": 213
+          },
+          {
+            "x": 4,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              137,
+              48,
+              234,
+              2
+            ],
+            "error": 213
+          },
+          {
+            "x": 17,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              137,
+              48,
+              234,
+              2
+            ],
+            "error": 213
+          },
+          {
+            "x": 18,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              137,
+              48,
+              234,
+              2
+            ],
+            "error": 213
+          },
+          {
+            "x": 19,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              137,
+              48,
+              234,
+              2
+            ],
+            "error": 213
+          },
+          {
+            "x": 20,
+            "y": 2,
+            "expected": [
+              9,
+              207,
+              21,
+              62
+            ],
+            "observed": [
+              137,
+              48,
+              234,
+              2
+            ],
+            "error": 213
+          }
+        ],
+        "nanPixels": 0,
+        "portableNaNPayload": false
+      }
+    }
+  ]
+}

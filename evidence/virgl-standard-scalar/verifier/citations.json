@@ -1,0 +1,2049 @@
+{
+  "schema": "standard-scalar-point-citations-v1",
+  "workerArchiveSha256": "99c79728c82a3c7ddef092b1faa10420192df535be67da662e1724b3aab596d2",
+  "frames": {
+    "scaled32-round-36-1-0-true": {
+      "record": "hot/hardware/report.json",
+      "line": 224239,
+      "recordSha256": "611313911fa1d0c4d9e0d2b96dd17094ca212d22e1a0dd8b50b39891821a6618",
+      "label": "scaled32-round-36-1-0-true",
+      "pixels": 256,
+      "pixelsSha256": "c332319a61714807974a9469979da4c6a75dce969b32fbf7cf1e9b0ca39c2ba1",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 39,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "genericValues": [
+            16777216,
+            16777218,
+            16777220,
+            33554432
+          ],
+          "componentWords": [
+            1266679808,
+            1266679809,
+            1266679810,
+            1275068416
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "ids": [
+        7,
+        9,
+        12
+      ],
+      "maxError": 0,
+      "misses": [],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": true
+    },
+    "norm32-endpoint-word-40-0-true": {
+      "record": "hot/hardware/report.json",
+      "line": 312239,
+      "recordSha256": "611313911fa1d0c4d9e0d2b96dd17094ca212d22e1a0dd8b50b39891821a6618",
+      "label": "norm32-endpoint-word-40-0-true",
+      "pixels": 256,
+      "pixelsSha256": "381154bb3d3765bc4fc6654f85a0ccebdf2f02afcfc01e18602552ddaa2c2ab5",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 43,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": true,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "genericValues": [
+            -1,
+            -1,
+            1,
+            0
+          ],
+          "componentWords": [
+            3212836864,
+            3212836864,
+            1065353216,
+            0
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "ids": [
+        7,
+        9,
+        12
+      ],
+      "maxError": 0,
+      "misses": [],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": true
+    },
+    "norm32-generic-round-32-0": {
+      "record": "hot/hardware/report.json",
+      "line": 316715,
+      "recordSha256": "611313911fa1d0c4d9e0d2b96dd17094ca212d22e1a0dd8b50b39891821a6618",
+      "label": "norm32-generic-round-32-0",
+      "pixels": 256,
+      "pixelsSha256": "62eb774dc735fb7f7d54eca70dab57c103495eb7282d2b4d2775c10f70ac086b",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 35,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": true,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "genericValues": [
+            0.003906250465661287,
+            0.003906250931322575,
+            0.0078125,
+            0.0078125
+          ],
+          "componentWords": [
+            998244353,
+            998244354,
+            1006632960,
+            1006632960
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "ids": [
+        7,
+        9,
+        12
+      ],
+      "maxError": 0,
+      "misses": [],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": true
+    },
+    "norm32-generic-round-40-1": {
+      "record": "hot/hardware/report.json",
+      "line": 322310,
+      "recordSha256": "611313911fa1d0c4d9e0d2b96dd17094ca212d22e1a0dd8b50b39891821a6618",
+      "label": "norm32-generic-round-40-1",
+      "pixels": 256,
+      "pixelsSha256": "173356fab5c5a70f112375c6b308550d487be68ee5100c0657858302c5e39b3a",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 43,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": true,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "genericValues": [
+            0.007812500931322575,
+            -0.007812500931322575,
+            0.015625,
+            -0.015625
+          ],
+          "componentWords": [
+            1006632961,
+            3154116609,
+            1015021568,
+            3162505216
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "ids": [
+        7,
+        9,
+        12
+      ],
+      "maxError": 0,
+      "misses": [],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": true
+    },
+    "scalar-missing-36-3-true": {
+      "record": "hot/hardware/report.json",
+      "line": 350849,
+      "recordSha256": "611313911fa1d0c4d9e0d2b96dd17094ca212d22e1a0dd8b50b39891821a6618",
+      "label": "scalar-missing-36-3-true",
+      "pixels": 256,
+      "pixelsSha256": "f668f921cdc94153451adcf34fbbe1940651505bd3619a2392db803b1f0d3203",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 0,
+          "offset": 4,
+          "components": 1,
+          "sourceFormat": 36,
+          "elementBytes": 4,
+          "nativeType": 5125,
+          "normalized": false,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 4,
+          "requiredEnd": 8,
+          "genericValues": [
+            1,
+            0,
+            0,
+            1
+          ],
+          "componentWords": [
+            1065353216
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "ids": [
+        7,
+        9,
+        12
+      ],
+      "maxError": 0,
+      "misses": [],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": true
+    },
+    "scaled32-shared-overlap": {
+      "record": "hot/hardware/report.json",
+      "line": 398065,
+      "recordSha256": "611313911fa1d0c4d9e0d2b96dd17094ca212d22e1a0dd8b50b39891821a6618",
+      "label": "scaled32-shared-overlap",
+      "pixels": 256,
+      "pixelsSha256": "7ae7c17ba068572e60850a3bdcd53be0ac3e477d5a9fc788bd3c5c21f4c24ca0",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 8,
+          "offset": 216,
+          "components": 4,
+          "sourceFormat": 47,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 272,
+          "requiredEnd": 328
+        }
+      ],
+      "ids": [
+        7,
+        9,
+        12
+      ],
+      "maxError": 0,
+      "misses": [],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": true
+    },
+    "pending-waiting-attributes-reuse": {
+      "record": "hot/hardware/report.json",
+      "line": 425796,
+      "recordSha256": "611313911fa1d0c4d9e0d2b96dd17094ca212d22e1a0dd8b50b39891821a6618",
+      "label": "pending-waiting-attributes-reuse",
+      "pixels": 256,
+      "pixelsSha256": "ea263e0b96d3e17cc0fcc2c3a34b4a0469780b02c854f71c17c417e8e893a350",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 47,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "genericValues": [
+            -2147483648,
+            -2147483648,
+            -2147483648,
+            -2147483648
+          ],
+          "componentWords": [
+            3472883712,
+            3472883712,
+            3472883712,
+            3472883712
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "ids": [
+        7,
+        9,
+        12
+      ],
+      "maxError": 0,
+      "misses": [],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": true
+    },
+    "restore-A-last": {
+      "record": "hot/hardware/report.json",
+      "line": 430101,
+      "recordSha256": "611313911fa1d0c4d9e0d2b96dd17094ca212d22e1a0dd8b50b39891821a6618",
+      "label": "restore-A-last",
+      "pixels": 256,
+      "pixelsSha256": "6c2187a5f30442e58aa9f5e1f881aa61d458712836ade087de4544038dfee05f",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 43,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        }
+      ],
+      "ids": [
+        7,
+        9,
+        12
+      ],
+      "maxError": 0,
+      "misses": [],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": true
+    },
+    "hot/fault-native-signedness/report.json": {
+      "record": "hot/fault-native-signedness/report.json",
+      "line": 364,
+      "recordSha256": "8a8603de36f753fb56c521209a9f935b161ee8afa1b89d4fc0d454969fc4625f",
+      "label": "scalar-smoke",
+      "pixels": 256,
+      "pixelsSha256": "7465cf2ee6e79e4ce621cce02bbd6aac310d4aefb18ca7948916f7fb67168c16",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 47,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        }
+      ],
+      "ids": [
+        7,
+        9,
+        12
+      ],
+      "maxError": 128,
+      "misses": [
+        {
+          "x": 1,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 1,
+          "y": 3,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 2,
+          "y": 3,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 3,
+          "y": 3,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 4,
+          "y": 3,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        }
+      ],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": false
+    },
+    "hot/fault-constant-scaled/report.json": {
+      "record": "hot/fault-constant-scaled/report.json",
+      "line": 364,
+      "recordSha256": "8ec080464828a37538b660caf3cb88527fb7298eab96c0834e3e00fbbf242ffc",
+      "label": "scalar-smoke",
+      "pixels": 256,
+      "pixelsSha256": "c36b766f0389ff9a627b6c5ac7692fa8fedd714a3aa09cb3347e3470b863f8a5",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 0,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 47,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 4,
+          "requiredEnd": 20,
+          "genericValues": [
+            16777216,
+            -16777216,
+            -1,
+            2147483648
+          ],
+          "componentWords": [
+            1266679808,
+            3414163456,
+            3212836864,
+            1325400064
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "ids": [
+        7,
+        9,
+        12
+      ],
+      "maxError": 128,
+      "misses": [
+        {
+          "x": 1,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 1,
+          "y": 3,
+          "expected": [
+            0,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 2,
+          "y": 3,
+          "expected": [
+            0,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 3,
+          "y": 3,
+          "expected": [
+            0,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 4,
+          "y": 3,
+          "expected": [
+            0,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        }
+      ],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": false
+    },
+    "hot/retained-compact/fault-native-normalize/report.json": {
+      "record": "hot/retained-compact/fault-native-normalize/report.json",
+      "line": 344,
+      "recordSha256": "ae3e4312b0e0339ecec0f1d721ae979a4f450a94c4302bd4060bde734a0691d4",
+      "label": "compact-smoke",
+      "pixels": 256,
+      "pixelsSha256": "020794cc70dac71e5d589a8294fae365d9a9322d6930dbbc5d885a3b06cac92e",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 4,
+          "offset": 1,
+          "components": 4,
+          "sourceFormat": 67,
+          "elementBytes": 4,
+          "nativeType": 5121,
+          "normalized": true,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 29,
+          "requiredEnd": 53
+        }
+      ],
+      "ids": [
+        7,
+        9,
+        12
+      ],
+      "maxError": 158,
+      "misses": [
+        {
+          "x": 10,
+          "y": 3,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 11,
+          "y": 3,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 12,
+          "y": 3,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 13,
+          "y": 3,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 10,
+          "y": 4,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 11,
+          "y": 4,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 12,
+          "y": 4,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        },
+        {
+          "x": 13,
+          "y": 4,
+          "expected": [
+            174,
+            175,
+            175,
+            97
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 158
+        }
+      ],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": false
+    },
+    "hot/retained-compact/fault-constant-unpack/report.json": {
+      "record": "hot/retained-compact/fault-constant-unpack/report.json",
+      "line": 344,
+      "recordSha256": "429e15e4190caa612f3a80cdddcd537e3861bc5a197be24c9cda3a5129fbedbd",
+      "label": "compact-smoke",
+      "pixels": 256,
+      "pixelsSha256": "0e48da2a94ba03bc5eca17e7f2e5c8aae637ec5606795e54cffc2d7ac88abc89",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 7,
+          "lastElement": 12,
+          "firstByte": 116,
+          "requiredEnd": 212
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 4,
+          "stride": 0,
+          "offset": 1,
+          "components": 4,
+          "sourceFormat": 67,
+          "elementBytes": 4,
+          "nativeType": 5121,
+          "normalized": true,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 1,
+          "requiredEnd": 5,
+          "genericValues": [
+            0.250980406999588,
+            0.501960813999176,
+            0.7529411911964417,
+            1
+          ],
+          "componentWords": [
+            1048608897,
+            1056997505,
+            1061208257,
+            1065353216
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "ids": [
+        7,
+        9,
+        12
+      ],
+      "maxError": 96,
+      "misses": [
+        {
+          "x": 1,
+          "y": 2,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 1,
+          "y": 3,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 2,
+          "y": 3,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 3,
+          "y": 3,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        },
+        {
+          "x": 4,
+          "y": 3,
+          "expected": [
+            159,
+            191,
+            223,
+            255
+          ],
+          "observed": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "error": 96
+        }
+      ],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": false
+    },
+    "critic-seeded-85-false": {
+      "record": "final-gpu/report.json",
+      "line": 70772,
+      "recordSha256": "a0c7e5dc5a36051bc62e8306a966401fc16464db02293ac9f49a728662043a33",
+      "label": "critic-seeded-85-false",
+      "pixels": 768,
+      "pixelsSha256": "fc8d098e6abb5dff54d9c266321743f8113cc8094fbe51768af4fd80339f966e",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 15,
+          "firstByte": 36,
+          "requiredEnd": 260
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 4,
+          "offset": 261,
+          "components": 4,
+          "sourceFormat": 85,
+          "elementBytes": 4,
+          "nativeType": 5120,
+          "normalized": false,
+          "constant": false,
+          "divisor": 2,
+          "nativeDivisor": 2,
+          "firstElement": 0,
+          "lastElement": 1,
+          "firstByte": 261,
+          "requiredEnd": 269
+        }
+      ],
+      "ids": [
+        2,
+        7,
+        15
+      ],
+      "maxError": 0,
+      "misses": [],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": true
+    },
+    "critic-seeded-43-true": {
+      "record": "final-gpu/report.json",
+      "line": 17372,
+      "recordSha256": "a0c7e5dc5a36051bc62e8306a966401fc16464db02293ac9f49a728662043a33",
+      "label": "critic-seeded-43-true",
+      "pixels": 768,
+      "pixelsSha256": "e5318290d6e617a7427b15da5f4d7b3f98635287f21b92c512661568ff12ff69",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 14,
+          "firstByte": 52,
+          "requiredEnd": 244
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 248,
+          "components": 4,
+          "sourceFormat": 43,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": true,
+          "constant": true,
+          "divisor": 4294967295,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 248,
+          "requiredEnd": 264,
+          "genericValues": [
+            -1,
+            -1,
+            -1,
+            -1
+          ],
+          "componentWords": [
+            3212836864,
+            3212836864,
+            3212836864,
+            3212836864
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "ids": [
+        3,
+        8,
+        14
+      ],
+      "maxError": 0,
+      "misses": [],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": true
+    },
+    "critic-rational-39-true-0": {
+      "record": "final-gpu/report.json",
+      "line": 75280,
+      "recordSha256": "a0c7e5dc5a36051bc62e8306a966401fc16464db02293ac9f49a728662043a33",
+      "label": "critic-rational-39-true-0",
+      "pixels": 768,
+      "pixelsSha256": "f4a25ff0ae8b0f2453ef31734e6b05f06b35f14c246a878c5b82728fb8efc60a",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 13,
+          "firstByte": 52,
+          "requiredEnd": 228
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 232,
+          "components": 4,
+          "sourceFormat": 39,
+          "elementBytes": 16,
+          "nativeType": 5125,
+          "normalized": false,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 232,
+          "requiredEnd": 248,
+          "genericValues": [
+            16777220,
+            16777224,
+            33554432,
+            33554436
+          ],
+          "componentWords": [
+            1266679810,
+            1266679812,
+            1275068416,
+            1275068417
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "ids": [
+        3,
+        8,
+        13
+      ],
+      "maxError": 0,
+      "misses": [],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": true
+    },
+    "critic-pending-reuse": {
+      "record": "final-gpu/report.json",
+      "line": 105842,
+      "recordSha256": "a0c7e5dc5a36051bc62e8306a966401fc16464db02293ac9f49a728662043a33",
+      "label": "critic-pending-reuse",
+      "pixels": 768,
+      "pixelsSha256": "8ad47e51be4ffc1099886bdf99241dcc691e6c311570e5071e37423ceff89b15",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 3,
+          "lastElement": 17,
+          "firstByte": 52,
+          "requiredEnd": 292
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 296,
+          "components": 4,
+          "sourceFormat": 47,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 296,
+          "requiredEnd": 312,
+          "genericValues": [
+            -2147483648,
+            -16777224,
+            33554436,
+            2147483648
+          ],
+          "componentWords": [
+            3472883712,
+            3414163460,
+            1275068417,
+            1325400064
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "ids": [
+        3,
+        10,
+        17
+      ],
+      "maxError": 0,
+      "misses": [],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": true
+    },
+    "final-sabotage-native/report.json": {
+      "record": "final-sabotage-native/report.json",
+      "line": 377,
+      "recordSha256": "1844215cc1c31d8845989909408dfbe85bd3ac113c00ffa5656d303ef8d513a9",
+      "label": "critic-sabotage-native-signedness",
+      "pixels": 768,
+      "pixelsSha256": "3da8851a04cc02594184b024963092cdcc16fa0a1ced28c439a0b10816eb74fa",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 11,
+          "firstByte": 36,
+          "requiredEnd": 196
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 200,
+          "components": 4,
+          "sourceFormat": 47,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 11,
+          "firstByte": 232,
+          "requiredEnd": 392
+        }
+      ],
+      "ids": [
+        2,
+        5,
+        11
+      ],
+      "maxError": 128,
+      "misses": [
+        {
+          "x": 1,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 17,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 18,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 19,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        },
+        {
+          "x": 20,
+          "y": 2,
+          "expected": [
+            0,
+            0,
+            0,
+            207
+          ],
+          "observed": [
+            0,
+            0,
+            0,
+            79
+          ],
+          "error": 128
+        }
+      ],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": false
+    },
+    "final-sabotage-constant/report.json": {
+      "record": "final-sabotage-constant/report.json",
+      "line": 377,
+      "recordSha256": "9c964e1bff25ed9fdd375475da6cbe9f9253e0dace169821ea2fef61ab535adc",
+      "label": "critic-sabotage-constant-scaled",
+      "pixels": 768,
+      "pixelsSha256": "5cd998ee1028dd78b80a776afcbb77a37cc5f1be58ddfeeb3882fe443f3845c5",
+      "fetches": [
+        {
+          "attributeIndex": 0,
+          "resourceId": 3,
+          "stride": 16,
+          "offset": 4,
+          "components": 4,
+          "sourceFormat": 31,
+          "elementBytes": 16,
+          "nativeType": 5126,
+          "normalized": false,
+          "constant": false,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 2,
+          "lastElement": 11,
+          "firstByte": 36,
+          "requiredEnd": 196
+        },
+        {
+          "attributeIndex": 1,
+          "resourceId": 3,
+          "stride": 0,
+          "offset": 200,
+          "components": 4,
+          "sourceFormat": 47,
+          "elementBytes": 16,
+          "nativeType": 5124,
+          "normalized": false,
+          "constant": true,
+          "divisor": 0,
+          "nativeDivisor": 0,
+          "firstElement": 0,
+          "lastElement": 0,
+          "firstByte": 200,
+          "requiredEnd": 216,
+          "genericValues": [
+            16777224,
+            -16777224,
+            33554436,
+            2147483648
+          ],
+          "componentWords": [
+            1266679812,
+            3414163460,
+            1275068417,
+            1325400064
+          ],
+          "nan": [
+            false,
+            false,
+            false,
+            false
+          ]
+        }
+      ],
+      "ids": [
+        2,
+        5,
+        11
+      ],
+      "maxError": 128,
+      "misses": [
+        {
+          "x": 1,
+          "y": 2,
+          "expected": [
+            4,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            4,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 2,
+          "y": 2,
+          "expected": [
+            4,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            4,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 3,
+          "y": 2,
+          "expected": [
+            4,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            4,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 4,
+          "y": 2,
+          "expected": [
+            4,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            4,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 17,
+          "y": 2,
+          "expected": [
+            4,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            4,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 18,
+          "y": 2,
+          "expected": [
+            4,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            4,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 19,
+          "y": 2,
+          "expected": [
+            4,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            4,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        },
+        {
+          "x": 20,
+          "y": 2,
+          "expected": [
+            4,
+            0,
+            128,
+            75
+          ],
+          "observed": [
+            4,
+            0,
+            0,
+            75
+          ],
+          "error": 128
+        }
+      ],
+      "draws": 1,
+      "normalizedBuffers": 0,
+      "held": false
+    }
+  }
+}

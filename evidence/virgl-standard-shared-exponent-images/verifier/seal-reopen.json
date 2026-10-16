@@ -1,0 +1,11 @@
+{
+  "status": "HELD",
+  "archiveSha256": "fadf4c70cfcb707a409036c58ce7750967b7787a303e6b6a3bb4ec5ed38c2f5d",
+  "indexSha256": "1fc05fdf5fc8aa54a45ce448cafeea5022380e633b010e3374465321e53fe2f9",
+  "manifestSha256": "63805000d66b232b41fada5c2e2866aa998850979ebe67ba054cd765da5604dc",
+  "members": 1436,
+  "bytes": 49969672,
+  "everyMemberReopened": true,
+  "everyMemberSizeAndDigestMatched": true,
+  "regularUniqueSafeMembers": true
+}

@@ -1,0 +1,414 @@
+{
+  "schema": "standard-topology-fresh-critic-verdict-v1",
+  "task": "E6-T11d8",
+  "verdict": "verified",
+  "predictionDigest": "f5fc51d22dad4a8c1069cb2e7f108630c341bbc54831fcbc55ce0ea317887f33",
+  "predictions": [
+    {
+      "id": "P1-custody",
+      "result": "HELD",
+      "point": {
+        "record": "authentication.json",
+        "sha256": "e9701a52d9cf5582798c6040c47888671d17d2997653ddad15730d8390df7a64",
+        "pointer": "/sourceBindings"
+      }
+    },
+    {
+      "id": "P2-wire",
+      "result": "HELD",
+      "point": {
+        "record": "original-audit.json",
+        "sha256": "0e1beee2d1dc73f290f53e6e099a98f792b910f5d27f6438e2a70c6813e6b3cc",
+        "pointer": "/wire"
+      }
+    },
+    {
+      "id": "P3-physical",
+      "result": "HELD",
+      "point": {
+        "record": "original-audit.json",
+        "sha256": "0e1beee2d1dc73f290f53e6e099a98f792b910f5d27f6438e2a70c6813e6b3cc",
+        "pointer": "/frames"
+      }
+    },
+    {
+      "id": "P4-bounds-work",
+      "result": "HELD",
+      "point": {
+        "record": "original-audit.json",
+        "sha256": "0e1beee2d1dc73f290f53e6e099a98f792b910f5d27f6438e2a70c6813e6b3cc",
+        "pointer": "/rejects"
+      }
+    },
+    {
+      "id": "P5-state-lifetime",
+      "result": "HELD",
+      "point": {
+        "record": "original-audit.json",
+        "sha256": "0e1beee2d1dc73f290f53e6e099a98f792b910f5d27f6438e2a70c6813e6b3cc",
+        "pointer": "/lifetimes"
+      }
+    },
+    {
+      "id": "P6-sensitivity",
+      "result": "HELD",
+      "point": {
+        "record": "physical/fault-mode/report.json",
+        "sha256": "a0becb6871704572f356b8878f628217c64fed6bd140f2ea79706f7f41083f9f",
+        "line": 1276,
+        "pointer": "/partial/frames/0"
+      }
+    },
+    {
+      "id": "P7-carry-coverage",
+      "result": "HELD",
+      "point": {
+        "record": "coverage-audit.json",
+        "sha256": "34796c8f10a18cbab4c6228c1a00832729b2d278b92342522a165c996d1703ee",
+        "pointer": "/files"
+      }
+    },
+    {
+      "id": "P8-novel",
+      "result": "HELD",
+      "point": {
+        "record": "physical/hardware/report.json",
+        "sha256": "d4f8c5baeb0e6c85ccdcb02cede1c506832b2fa2251864a529e7a950ef85470f",
+        "line": 74296,
+        "pointer": "/browserResult/result/frames/0"
+      }
+    }
+  ],
+  "findings": [],
+  "originalFrames": 174,
+  "originalPixels": 100352,
+  "originalWireRecords": 316,
+  "newPhysicalFrames": 44,
+  "newPhysicalPixels": 24576,
+  "novel": "seed 0x25df967b; nonmonotonic u32 IDs 82186/82178/82182/82180 (tail adds 82194), binding/source prefixes 52/56/48, index offset 28; rectangle 3.5..12.5 (fan 3..12), variable 1..6 fence delivery and commandsPerStep 2",
+  "promotedFault": {
+    "recording": "fault-mode",
+    "index": 0,
+    "label": "critic-mode-2-wide",
+    "reportSha256": "a0becb6871704572f356b8878f628217c64fed6bd140f2ea79706f7f41083f9f",
+    "pixelSha256": "40a13034d4f34f59a874f129323f47d2ba22288a8a3b2ef9979afe99dc5f5a1e",
+    "ids": [
+      82186,
+      82178,
+      82182,
+      82180
+    ],
+    "nativeCall": {
+      "name": "drawElementsInstanced",
+      "args": [
+        3,
+        4,
+        5125,
+        28,
+        4
+      ],
+      "turn": 18,
+      "label": "critic-mode-2-wide",
+      "activeTexture": 33984,
+      "indexBuffer": 11,
+      "attributes": [
+        {
+          "name": "in_0",
+          "location": 0,
+          "divisor": 0,
+          "stride": 16,
+          "offset": 52,
+          "components": 4,
+          "enabled": true,
+          "genericValues": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "buffer": 8
+        },
+        {
+          "name": "in_1",
+          "location": 1,
+          "divisor": 0,
+          "stride": 0,
+          "offset": 0,
+          "components": 4,
+          "enabled": false,
+          "genericValues": [
+            0.19921875,
+            0.16796875,
+            0.12890625,
+            1
+          ],
+          "buffer": null
+        },
+        {
+          "name": "in_2",
+          "location": 2,
+          "divisor": 2,
+          "stride": 16,
+          "offset": 48,
+          "components": 4,
+          "enabled": true,
+          "genericValues": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "buffer": 10
+        },
+        {
+          "name": "gl_InstanceID",
+          "location": -1
+        }
+      ]
+    },
+    "fetches": [
+      {
+        "attributeIndex": 0,
+        "resourceId": 3,
+        "stride": 16,
+        "offset": 52,
+        "components": 4,
+        "constant": false,
+        "divisor": 0,
+        "nativeDivisor": 0,
+        "firstElement": 82178,
+        "lastElement": 82186,
+        "firstByte": 1314900,
+        "requiredEnd": 1315044
+      },
+      {
+        "attributeIndex": 1,
+        "resourceId": 4,
+        "stride": 0,
+        "offset": 56,
+        "components": 4,
+        "constant": true,
+        "divisor": 4294967295,
+        "nativeDivisor": 0,
+        "firstElement": 0,
+        "lastElement": 0,
+        "firstByte": 56,
+        "requiredEnd": 72,
+        "genericValues": [
+          0.19921875,
+          0.16796875,
+          0.12890625,
+          1
+        ],
+        "componentWords": [
+          1045168128,
+          1043070976,
+          1040449536,
+          1065353216
+        ]
+      },
+      {
+        "attributeIndex": 2,
+        "resourceId": 5,
+        "stride": 16,
+        "offset": 48,
+        "components": 4,
+        "constant": false,
+        "divisor": 2,
+        "nativeDivisor": 2,
+        "firstElement": 0,
+        "lastElement": 1,
+        "firstByte": 48,
+        "requiredEnd": 80
+      }
+    ],
+    "held": false,
+    "pixels": 1024,
+    "strictPixels": 1008,
+    "alternativePixels": 16,
+    "maxError": 128,
+    "misses": [
+      {
+        "x": 3,
+        "y": 4,
+        "expected": [
+          [
+            33,
+            43,
+            35,
+            128
+          ]
+        ],
+        "observed": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "error": 128,
+        "reason": "line interior"
+      },
+      {
+        "x": 19,
+        "y": 4,
+        "expected": [
+          [
+            33,
+            43,
+            35,
+            128
+          ]
+        ],
+        "observed": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "error": 128,
+        "reason": "line interior"
+      },
+      {
+        "x": 35,
+        "y": 4,
+        "expected": [
+          [
+            37,
+            29,
+            36,
+            128
+          ]
+        ],
+        "observed": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "error": 128,
+        "reason": "line interior"
+      },
+      {
+        "x": 51,
+        "y": 4,
+        "expected": [
+          [
+            37,
+            29,
+            36,
+            128
+          ]
+        ],
+        "observed": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "error": 128,
+        "reason": "line interior"
+      },
+      {
+        "x": 3,
+        "y": 5,
+        "expected": [
+          [
+            33,
+            43,
+            35,
+            128
+          ]
+        ],
+        "observed": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "error": 128,
+        "reason": "line interior"
+      },
+      {
+        "x": 19,
+        "y": 5,
+        "expected": [
+          [
+            33,
+            43,
+            35,
+            128
+          ]
+        ],
+        "observed": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "error": 128,
+        "reason": "line interior"
+      }
+    ],
+    "closingEdge": {
+      "x": 3,
+      "y": 4,
+      "colors": [
+        [
+          33,
+          43,
+          35,
+          128
+        ]
+      ],
+      "strict": true,
+      "reason": "line interior"
+    },
+    "actualFences": [
+      {
+        "name": "fenceSync",
+        "turn": 11,
+        "label": "critic-mode-2-wide",
+        "sync": 18
+      },
+      {
+        "name": "fenceSync",
+        "turn": 11,
+        "label": "critic-mode-2-wide",
+        "sync": 20
+      },
+      {
+        "name": "fenceSync",
+        "turn": 18,
+        "label": "critic-mode-2-wide",
+        "sync": 21
+      }
+    ]
+  },
+  "coverage": {
+    "runtimeLines": [
+      "decoder.mjs:363",
+      "decoder.mjs:365",
+      "state.mjs:20",
+      "state.mjs:936"
+    ],
+    "unexecutedRuntimeTokens": [],
+    "digest": "34796c8f10a18cbab4c6228c1a00832729b2d278b92342522a165c996d1703ee"
+  },
+  "carry": {
+    "predecessor": "64b246220bbf3ed5e1a6f1ed7371535ed5ec5c56",
+    "D7WorkerArchive": "598acb64caacea419f099a5fc1bb25fe763c4ce8dfb3eb8c0a76126acea28aca",
+    "D7CriticArchive": "0e7c1966aba67f0276d371a2414f065c0396d65088310b253e54a6857911d231",
+    "unchangedBoundarySources": 266,
+    "retainedD6": "37 frames/10296 pixels and four legacy gates per hot/cold",
+    "retainedD7": "31 frames/12500 pixels, actual generic sabotage and original-byte audit per hot/cold",
+    "cold": "Final prescribed exact-head dff28ee8 checkout passed; source-closed receipt, scrubbed environment, clean before/after authenticate. No portability/isolation finding requires another clone."
+  },
+  "scope": "Isolated standard asynchronous core modes1/2/3/6 only. No guest, API, production caps, deployment, MIPS or FPS authority.",
+  "commands": [
+    "python3 evidence/virgl-standard-topology/verifier/authenticate.py",
+    "node evidence/virgl-standard-topology/verifier/audit_originals.mjs",
+    "python3 evidence/virgl-standard-topology/verifier/audit_coverage.py",
+    "VIRGL_STANDARD_TOPOLOGY_ADVERSARIAL_EVIDENCE_DIR=target/evidence/virgl-standard-topology-critic-final make verify-E6-T11d8-adversarial",
+    "python3 evidence/virgl-standard-topology/verifier/seal_critic.py"
+  ]
+}

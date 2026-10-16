@@ -80,6 +80,13 @@ def parse_criteria(section):
     return items
 
 
+def verbatim_section(body, name):
+    """Keep a task contract's heading, whitespace and code exactly as authored."""
+    match = re.search(r"^## " + re.escape(name) + r"[^\S\n]*\n.*?(?=^## |\Z)",
+                      body, re.DOTALL | re.MULTILINE)
+    return match.group(0) if match else ""
+
+
 # ── Evidence-chain timeline: when the AI actually worked on each ticket ──────
 # Real dates come from git — commits that TOUCH a ticket's file or NAME its id in
 # the subject — plus the dated entries inside each task's verification log. This
@@ -93,7 +100,9 @@ def build_git_activity():
     """
     try:
         out = subprocess.run(
-            ["git", "-C", REPO, "log", "--all", "--date=short",
+            # Activity is part of the shipped build. Other worktrees, remote
+            # tracking refs and stashes must not change a build at this HEAD.
+            ["git", "-C", REPO, "log", "HEAD", "--date=short",
              "--format=\x01%H\x1f%ad\x1f%s", "--name-only"],
             capture_output=True, text=True, check=True).stdout
     except Exception as e:  # no git / not a repo → timeline is simply empty
@@ -201,6 +210,8 @@ def main():
                 "estimate": fm.get("estimate", ""),
                 "capstone": bool(fm.get("capstone", False)),
                 "goal": extract_section(body, "Goal"),
+                "boundary": verbatim_section(body, "Boundary"),
+                "acceptanceContract": verbatim_section(body, "Deterministic acceptance"),
                 "criteria": crit,
                 "criteriaTotal": len(crit),
                 "criteriaDone": sum(1 for c in crit if c["checked"]),

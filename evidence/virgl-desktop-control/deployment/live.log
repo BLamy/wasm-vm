@@ -1,0 +1,9 @@
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   'Failed to load resource: the server responded with a status of 404 ()'
++ ]
+- []
+
+    at file:///private/tmp/wasmvm-desktop-control-live.mjs:67:10

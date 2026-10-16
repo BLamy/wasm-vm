@@ -49,7 +49,7 @@ def prepare_boot_caches(root, run):
             raise ValueError(f"package update completion was not recorded: {relative}")
 
 
-def build(source, output, selection, overlays, image_mib=4096):
+def build(source, output, selection, overlays, image_mib=4096, applications=False):
     if sys.platform != "linux" or os.geteuid() != 0:
         raise ValueError("requires the rootful Linux image tooling container")
     for path in (source, output):
@@ -71,8 +71,8 @@ def build(source, output, selection, overlays, image_mib=4096):
     reviewed = json.loads(overlays.read_text())
     if sorted(assembly["overlays"]) != sorted(p["path"].lstrip("/") for p in reviewed["entries"]):
         raise ValueError("reviewed overlays differ from assembly provenance")
-    if not 3072 <= image_mib <= 8192:
-        raise ValueError("image size must be 3072..8192 MiB")
+    if not 3072 <= image_mib <= 16384:
+        raise ValueError("image size must be 3072..16384 MiB")
     sanitizer = load("sanitize-omarchy")
     sanitizer._require_input(source)
     sanitizer._preflight_source(source)
@@ -101,7 +101,11 @@ def build(source, output, selection, overlays, image_mib=4096):
             raise RuntimeError(f"command {len(commands)} failed ({result.returncode}); see {logs}")
 
     sanitizer.sanitize(source, root)
-    load("configure-omarchy-demo").configure(root)
+    configurator = load("configure-omarchy-demo")
+    if applications:
+        configurator.configure(root, applications=True)
+    else:
+        configurator.configure(root)
     mounted = []
     try:
         run("mount", "-t", "tmpfs", "-o", "nosuid,noexec,size=4m", "tmpfs", root / "dev")
@@ -133,6 +137,11 @@ def build(source, output, selection, overlays, image_mib=4096):
         for theme_file in ("foot.ini", "hyprland.lua", "colors.toml"):
             if (root / "home/omarchy/.local/state/omarchy/current/theme" / theme_file).stat().st_size == 0:
                 raise ValueError("empty generated theme")
+        if applications:
+            run("chroot", root, "/usr/bin/setpriv", "--reuid=1000", "--regid=1000", "--clear-groups", "/usr/bin/env",
+                "HOME=/home/omarchy", "XDG_CURRENT_DESKTOP=Hyprland", "/usr/bin/bash", "-euc",
+                'test "$(xdg-settings get default-web-browser)" = chromium.desktop; '
+                'test "$(xdg-mime query default application/vnd.oasis.opendocument.text)" = libreoffice-writer.desktop')
         prepare_boot_caches(root, run)
     finally:
         # Never populate ext4 while any temporary pseudo-filesystem is mounted.
@@ -178,7 +187,7 @@ def build(source, output, selection, overlays, image_mib=4096):
         "timestamps": "not a bit-reproducible build contract",
         "machineIdentity": "empty machine-id; systemd generates a new identity on first boot",
         "accounts": "locked root, nobody, omarchy plus fresh package systemd-sysusers identities",
-        "desktopVerified": False, "commands": commands}
+        "applicationIntegration": applications, "desktopVerified": False, "commands": commands}
     (output / "build-receipt.json").write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
     print(json.dumps(receipt["image"]), flush=True)
     return image
@@ -191,5 +200,6 @@ if __name__ == "__main__":
     parser.add_argument("--selection", type=Path, required=True)
     parser.add_argument("--overlays", type=Path, required=True)
     parser.add_argument("--image-mib", type=int, default=4096)
+    parser.add_argument("--applications", action="store_true")
     args = parser.parse_args()
-    build(args.source, args.output, args.selection, args.overlays, args.image_mib)
+    build(args.source, args.output, args.selection, args.overlays, args.image_mib, args.applications)

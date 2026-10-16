@@ -6,8 +6,12 @@
  * Checked indirect constants use the owned raw backend exclusively.
  */
 #include "bridge.h"
+#include "checked_tgsi_heap.h"
 #include "checked_upstream.h"
 #include "raw_bits.h"
+#include "private_92cb_inputs.h"
+#include "standard_guard.h"
+#include "standard_emit.h"
 #include "vrend/vrend_shader.h"
 #include "tgsi/tgsi_text.h"
 #include "util/os_misc.h"
@@ -123,12 +127,13 @@ static bool index_number(const char **p, unsigned *result, unsigned limit)
    *result = value;
    return true;
 }
-static unsigned register_limit(unsigned file)
+static unsigned register_limit(const struct profile *s, unsigned file)
 {
-   return file == TEMP ? TEMP_REGISTERS : file == CONST ? CONST_REGISTERS :
+   return file == TEMP ? TEMP_REGISTERS : file == CONST ?
+      (!s->stage && !s->raw ? BRIDGE_MAX_VERTEX_CONSTANTS : CONST_REGISTERS) :
       file == IMM ? IMM_REGISTERS : FILE_REGISTERS;
 }
-static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
+static bool register_name(const char **p, const struct profile *s, struct reg *r, enum operand_kind kind)
 {
    if (word(p, "ADDR")) {
       failure_code = "unsupported-feature";
@@ -148,14 +153,14 @@ static bool register_name(const char **p, struct reg *r, enum operand_kind kind)
       failure_code = "unsupported-feature";
       if (kind != SOURCE || !punctuation(p, '[') || !index_number(p, &r->index, 1) ||
           !punctuation(p, ']') || !punctuation(p, '.') || !word(p, "x")) return false;
-   } else if (!index_number(p, &r->index, register_limit(f))) return false;
+   } else if (!index_number(p, &r->index, register_limit(s, f))) return false;
    r->file = indirect ? INDIRECT_CONST : (enum file)f;
    r->last = r->index;
    space(p);
    if (!strncmp(*p, "..", 2)) {
       if (kind != DECLARATION || (f != TEMP && f != CONST)) { failure_code = "unsupported-feature"; return false; }
       *p += 2;
-      if (!index_number(p, &r->last, register_limit(f)) || r->last < r->index) return false;
+      if (!index_number(p, &r->last, register_limit(s, f)) || r->last < r->index) return false;
    }
    if (!punctuation(p, ']')) return false;
    r->mask = 15;
@@ -189,7 +194,8 @@ static bool source(const char **p, struct profile *s, unsigned consumed, struct 
                    enum raw_opcode opcode, unsigned role)
 {
    struct reg r;
-   if (!register_name(p, &r, SOURCE)) return false;
+   bool dead = !s->syntax_only && (s->raw_flags & RAW_BRANCH_RETRY) && !s->live;
+   if (!register_name(p, s, &r, SOURCE)) return false;
    /* Handle the checked indirect tag BEFORE any ordinary file-array lookup. */
    if (r.file != INDIRECT_CONST &&
        (r.file == OUT || r.file >= SAMP || !s->declared[r.file][r.index])) return false;
@@ -201,7 +207,14 @@ static bool source(const char **p, struct profile *s, unsigned consumed, struct 
    if (r.file == INDIRECT_CONST) {
       failure_code = "unsupported-feature";
       if (!s->raw || !s->address_declared) return false;
-      if (!s->syntax_only) {
+      if (s->raw_flags & RAW_BRANCH_RETRY) {
+         bool declared = false;
+         for (unsigned i = 0; i < CONST_REGISTERS; ++i)
+            declared |= s->declared[CONST][i] && (s->components[CONST][i] & needed) == needed;
+         if (!declared) return false;
+      }
+      if (dead) s->dead_indirect = true;
+      if (!s->syntax_only && !dead) {
          if (!s->address_written) return false;
          uint64_t candidates = 0;
          if (s->raw->loop.checked)
@@ -220,7 +233,7 @@ static bool source(const char **p, struct profile *s, unsigned consumed, struct 
          s->raw->indirect_indices |= candidates;
       }
    } else if ((s->components[r.file][r.index] & needed) != needed) return false;
-   if (!s->syntax_only && r.file == TEMP && (s->written[TEMP][r.index] & needed) != needed) {
+   if (!s->syntax_only && !dead && r.file == TEMP && (s->written[TEMP][r.index] & needed) != needed) {
       const struct demand_certificate *c = s->raw ? &s->raw->demand : NULL;
       bool permitted = c && c->checked && role == 1 &&
          ((s->current_pc == c->lrp && opcode == RAW_LRP) ||
@@ -314,7 +327,7 @@ static bool literal_float_bits(const char **p, uint32_t *raw_bits)
 static bool declaration(const char **p, struct profile *s)
 {
    struct reg r;
-   if (s->started || !register_name(p, &r, DECLARATION) || r.file == IMM) return false;
+   if (s->started || !register_name(p, s, &r, DECLARATION) || r.file == IMM) return false;
    if (r.file == ADDR) {
       failure_code = "unsupported-feature";
       if (!s->raw || s->address_declared || !end(p)) return false;
@@ -329,7 +342,8 @@ static bool declaration(const char **p, struct profile *s)
    if (r.file == OUT || (r.file == IN && s->stage == 1)) {
       if (!punctuation(p, ',')) return false;
       if (word(p, "POSITION")) {
-         if (s->stage != 0 || r.file != OUT || r.index != 0) return false;
+         if (r.index != 0 || !((s->stage == 0 && r.file == OUT) ||
+             (s->stage == 1 && r.file == IN && s->raw))) return false;
          semantic = 1;
       } else if (word(p, "GENERIC")) {
          if (!punctuation(p, '[') || !index_number(p, &sid, FILE_REGISTERS) || !punctuation(p, ']')) return false;
@@ -343,7 +357,8 @@ static bool declaration(const char **p, struct profile *s)
          if (s->declared[r.file][i] && s->semantic[r.file][i] == semantic && s->semantic_index[r.file][i] == sid) return false;
       if (s->stage == 1 && r.file == IN) {
          if (!punctuation(p, ',')) return false;
-         if (word(p, "CONSTANT")) flat = true;
+         if (semantic == 1) { if (!word(p, "LINEAR")) return false; }
+         else if (word(p, "CONSTANT")) flat = true;
          else if (!word(p, "PERSPECTIVE")) return false;
       }
    } else if (r.file == SVIEW) {
@@ -735,6 +750,8 @@ static bool control(const char **p, struct profile *s, struct flow_context *flow
 {
    failure_code = "unsupported-feature";
    struct raw_instruction raw = {.opcode = opcode, .flags = s->raw_flags};
+   bool pruning = !s->syntax_only && (s->raw_flags & RAW_BRANCH_RETRY);
+   if (pruning && !s->live) raw.flags |= RAW_DEAD;
    bool loop = opcode == RAW_BGNLOOP || opcode == RAW_ENDLOOP;
    if (opcode == RAW_UIF && !source(p, s, 1u, &raw.src[0], opcode, 0)) return false;
    unsigned target = 0;
@@ -755,8 +772,17 @@ static bool control(const char **p, struct profile *s, struct flow_context *flow
       frame->has_else = frame->has_else_target = false;
       frame->entry_live = s->live; frame->saved_live = frame->exit_live = false;
       if (!s->syntax_only) {
-         if (frame->is_loop) loop_header(s);
+         if (frame->is_loop) { if (!pruning || s->live) loop_header(s); }
          else flow_snapshot(s, frame, false);
+         if (!frame->is_loop && pruning && s->live) {
+            int truth = raw_uif_truth(s->raw, &raw.src[0]);
+            if (truth >= 0) {
+               raw.flags |= truth ? RAW_UIF_TRUE : RAW_UIF_FALSE;
+               s->raw->opcode_mask |= RAW_BRANCH_LIVENESS_USED;
+               if (truth) frame->entry_live = false;
+               else s->live = false;
+            }
+         }
          if (!frame->is_loop && s->raw->radial.recognized &&
              s->current_pc == s->raw->radial.branch) {
             /* The owned finite bank must satisfy the coefficient domain
@@ -771,17 +797,23 @@ static bool control(const char **p, struct profile *s, struct flow_context *flow
       while (depth && !flow->frames[depth - 1].is_loop) --depth;
       if (!depth) return false;
       if (!s->syntax_only) {
-         if (s->current_pc != s->raw->loop.break_pc || !s->live) return false;
          struct flow_frame *frame = &flow->frames[depth - 1];
-         flow_snapshot(s, frame, false); frame->exit_live = true;
-         s->live = false;
+         if (s->current_pc != s->raw->loop.break_pc || (!s->live && (!pruning || frame->entry_live))) return false;
+         if (s->live) {
+            flow_snapshot(s, frame, false); frame->exit_live = true;
+            s->live = false;
+         }
       }
    } else {
       if (!flow->depth) return false;
       struct flow_frame *frame = &flow->frames[flow->depth - 1];
       if (opcode == RAW_ENDLOOP) {
-         if (!frame->is_loop || (!s->syntax_only && (s->current_pc != s->raw->loop.end || !frame->exit_live))) return false;
-         if (!s->syntax_only) { flow_snapshot(s, frame, true); s->live = true; }
+         bool dead_loop = pruning && !frame->entry_live;
+         if (!frame->is_loop || (!s->syntax_only && (s->current_pc != s->raw->loop.end || (!frame->exit_live && !dead_loop)))) return false;
+         if (!s->syntax_only) {
+            if (!dead_loop) { flow_snapshot(s, frame, true); s->live = true; raw.flags &= ~RAW_DEAD; }
+            else s->live = false;
+         }
          --flow->depth;
       } else {
          if (frame->is_loop) return false;
@@ -811,6 +843,36 @@ static bool control(const char **p, struct profile *s, struct flow_context *flow
    return true;
 }
 
+static bool discard_instruction(const char **p, struct profile *s, enum raw_opcode opcode)
+{
+   failure_code = "unsupported-feature";
+   if (!s->raw || s->stage != 1 || s->instructions >= BRIDGE_MAX_INSTRUCTIONS) return false;
+   struct raw_instruction raw = {.opcode = opcode, .flags = s->raw_flags};
+   if (opcode == RAW_KILL_IF) {
+      if (punctuation(p, '-')) raw.flags |= RAW_NEGATE_SOURCE0;
+      bool absolute = punctuation(p, '|');
+      if (absolute) raw.flags |= RAW_ABSOLUTE_SOURCE0;
+      if (!source(p, s, 15u, &raw.src[0], opcode, 0) || (absolute && !punctuation(p, '|'))) return false;
+   }
+   if (!end(p)) return false;
+   ++s->instructions;
+   if (s->syntax_only) s->raw->instructions[s->raw->count++] = raw;
+   else {
+      if ((s->raw_flags & RAW_BRANCH_RETRY) && !s->live) {
+         raw.flags |= RAW_DEAD;
+         s->raw->instructions[s->raw->count++] = raw;
+      } else {
+         if (raw_discard_guaranteed(s->raw, &raw)) {
+            s->live = false;
+            raw.flags |= RAW_TERMINATING_DISCARD;
+         }
+         raw_record(s->raw, &raw);
+      }
+   }
+   failure_code = "parse-error";
+   return true;
+}
+
 static bool instruction(const char **p, struct profile *s, struct flow_context *flow)
 {
    s->current_pc = s->instructions;
@@ -821,6 +883,8 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       if (flow && flow->depth) { failure_code = "unsupported-feature"; return false; }
       s->ended = true; return end(p);
    }
+   if (word(p, "KILL_IF")) return discard_instruction(p, s, RAW_KILL_IF);
+   if (word(p, "KILL")) return discard_instruction(p, s, RAW_KILL);
    if (flow) {
       if (word(p, "BGNLOOP")) return control(p, s, flow, RAW_BGNLOOP);
       if (word(p, "BRK")) return control(p, s, flow, RAW_BRK);
@@ -833,9 +897,17 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       arity = 1; partial = true; raw.flags = RAW_PRECISE;
    } else if (word(p, "MOV")) { arity = 1; partial = true; }
    else if (s->raw) {
-      if (word(p, "FSEQ_PRECISE")) { raw.opcode = RAW_FSEQ; raw.flags = RAW_PRECISE; }
+      if (word(p, "MOV_SAT")) raw.opcode = RAW_MOV_SAT;
+      else if (word(p, "DIV_SAT")) raw.opcode = RAW_DIV_SAT;
+      else if (word(p, "EX2")) raw.opcode = RAW_EX2;
+      else if (word(p, "LG2")) raw.opcode = RAW_LG2;
+      else if (word(p, "SIN")) raw.opcode = RAW_SIN;
+      else if (word(p, "POW")) raw.opcode = RAW_POW;
+      else if (word(p, "FSEQ_PRECISE")) { raw.opcode = RAW_FSEQ; raw.flags = RAW_PRECISE; }
       else if (word(p, "FSNE_PRECISE")) { raw.opcode = RAW_FSNE; raw.flags = RAW_PRECISE; }
       else if (word(p, "MAX_PRECISE")) { raw.opcode = RAW_MAX_PRECISE; raw.flags = RAW_PRECISE; }
+      else if (word(p, "MIN_PRECISE")) { raw.opcode = RAW_MIN_PRECISE; raw.flags = RAW_PRECISE; }
+      else if (word(p, "FRC_PRECISE")) { raw.opcode = RAW_FRC_PRECISE; raw.flags = RAW_PRECISE; }
       else if (word(p, "ADD_PRECISE")) { raw.opcode = RAW_ADD_PRECISE; raw.flags = RAW_PRECISE; }
       else if (word(p, "MUL_PRECISE")) { raw.opcode = RAW_MUL_PRECISE; raw.flags = RAW_PRECISE; }
       else if (word(p, "UARL")) raw.opcode = RAW_UARL;
@@ -850,6 +922,8 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       else if (word(p, "IMAX")) raw.opcode = RAW_IMAX;
       else if (word(p, "I2F")) raw.opcode = RAW_I2F;
       else if (word(p, "F2I")) raw.opcode = RAW_F2I;
+      else if (word(p, "TRUNC")) raw.opcode = RAW_TRUNC;
+      else if (word(p, "SSG")) raw.opcode = RAW_SSG;
       else if (word(p, "USEQ")) raw.opcode = RAW_USEQ;
       else if (word(p, "USNE")) raw.opcode = RAW_USNE;
       else if (word(p, "UCMP")) raw.opcode = RAW_UCMP;
@@ -863,6 +937,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       else if (word(p, "TEX")) raw.opcode = RAW_TEX;
       else if (word(p, "DIV")) raw.opcode = RAW_DIV;
       else if (word(p, "MAX")) raw.opcode = RAW_MAX;
+      else if (word(p, "MIN")) raw.opcode = RAW_MIN;
       else if (word(p, "FRC")) raw.opcode = RAW_FRC;
       else if (word(p, "LRP")) raw.opcode = RAW_LRP;
       else if (word(p, "DP3")) raw.opcode = RAW_DP3;
@@ -870,13 +945,14 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
       else if (word(p, "RSQ")) raw.opcode = RAW_RSQ;
       else { failure_code = "unsupported-feature"; return false; }
       tex = raw.opcode == RAW_TEX;
-      arity = raw.opcode == RAW_UARL || raw.opcode == RAW_NOT || raw.opcode == RAW_FRC ||
-         raw.opcode == RAW_RCP || raw.opcode == RAW_RSQ || raw.opcode == RAW_I2F || raw.opcode == RAW_F2I || tex ? 1 :
+      arity = raw.opcode == RAW_MOV_SAT || raw.opcode == RAW_UARL || raw.opcode == RAW_NOT || raw.opcode == RAW_FRC || raw.opcode == RAW_FRC_PRECISE ||
+         raw.opcode == RAW_RCP || raw.opcode == RAW_RSQ || raw.opcode == RAW_EX2 || raw.opcode == RAW_LG2 || raw.opcode == RAW_SIN || raw.opcode == RAW_I2F || raw.opcode == RAW_F2I ||
+         raw.opcode == RAW_TRUNC || raw.opcode == RAW_SSG || tex ? 1 :
          raw.opcode == RAW_UCMP || raw.opcode == RAW_MAD || raw.opcode == RAW_LRP ? 3 : 2;
       partial = !tex && raw.opcode != RAW_MAD;
       /* These formerly unsupported numeric tokens retain that error category
        * for malformed syntax and unproven domains in an owned raw stage. */
-      if (raw.opcode == RAW_UARL || ((UINT64_C(1) << raw.opcode) & (RAW_NUMERIC_OPCODES | RAW_ARITHMETIC_OPCODES | RAW_CONVERSION_OPCODES))) failure_code = "unsupported-feature";
+      if (raw.opcode == RAW_UARL || ((UINT64_C(1) << raw.opcode) & (RAW_NUMERIC_OPCODES | RAW_ARITHMETIC_OPCODES | RAW_CONVERSION_OPCODES | RAW_FRACTION_OPCODES))) failure_code = "unsupported-feature";
    }
    else if (word(p, "ADD") || word(p, "MUL")) { arity = 2; partial = true; }
    else if (word(p, "MAD")) arity = 3;
@@ -884,7 +960,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
    else { failure_code = "unsupported-feature"; return false; }
    if (++s->instructions > BRIDGE_MAX_INSTRUCTIONS) return false;
    struct reg dst;
-   if (!register_name(p, &dst, DESTINATION)) return false;
+   if (!register_name(p, s, &dst, DESTINATION)) return false;
    if (raw.opcode == RAW_UARL) {
       if (dst.file != ADDR || !s->address_declared) return false;
    } else if ((dst.file != OUT && dst.file != TEMP) || !s->declared[dst.file][dst.index] ||
@@ -897,7 +973,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
        * and bitwise payloads never pass through this typed minus parser. */
       bool arithmetic = s->raw && ((UINT64_C(1) << raw.opcode) & RAW_ARITHMETIC_OPCODES);
       if (s->raw && (((UINT64_C(1) << raw.opcode) & (RAW_NUMERIC_OPCODES | RAW_ARITHMETIC_OPCODES)) ||
-          raw.opcode == RAW_MAX_PRECISE || raw.opcode == RAW_F2I) && punctuation(p, '-'))
+          raw.opcode == RAW_MAX_PRECISE || raw.opcode == RAW_MIN_PRECISE || raw.opcode == RAW_FRC_PRECISE || raw.opcode == RAW_F2I) && punctuation(p, '-'))
          raw.flags |= RAW_NEGATE_SOURCE0 << i;
       bool absolute = (arithmetic || raw.opcode == RAW_F2I) && punctuation(p, '|');
       if (absolute) raw.flags |= RAW_ABSOLUTE_SOURCE0 << i;
@@ -906,7 +982,7 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
    }
    if (tex) {
       struct reg sampler;
-      if (s->stage != 1 || !punctuation(p, ',') || !register_name(p, &sampler, SOURCE) || sampler.file != SAMP || sampler.explicit_mask ||
+      if (s->stage != 1 || !punctuation(p, ',') || !register_name(p, s, &sampler, SOURCE) || sampler.file != SAMP || sampler.explicit_mask ||
           !s->declared[SAMP][sampler.index] || !s->declared[SVIEW][sampler.index] || !punctuation(p, ',') || !word(p, "2D")) return false;
       raw.sampler = sampler.index;
    }
@@ -914,6 +990,14 @@ static bool instruction(const char **p, struct profile *s, struct flow_context *
    if (s->raw) {
       raw.dst = (struct raw_destination){dst.file, dst.index, dst.mask};
       raw.flags |= s->raw_flags;
+      if (!s->syntax_only && (s->raw_flags & RAW_BRANCH_RETRY) && !s->live) {
+         /* The earlier whole-text syntax pass validated this original slot.
+          * Keep its index, but publish no lane, address, domain or written fact. */
+         raw.flags |= RAW_DEAD;
+         s->raw->instructions[s->raw->count++] = raw;
+         failure_code = "parse-error";
+         return true;
+      }
       if (!s->syntax_only && s->raw->demand.checked && s->current_pc == s->raw->demand.lrp)
          raw.flags |= RAW_GUARDED_LRP;
       if (s->syntax_only) s->raw->instructions[s->raw->count++] = raw;
@@ -961,15 +1045,30 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
          if (!punctuation(&p, '}') || !end(&p)) return false;
          s->declared[IMM][i] = true; s->components[IMM][i] = 15; ++s->immediates;
       } else if (word(&p, "PROPERTY")) {
-         if (s->stage != 1 || s->started || s->color0_property ||
-             !word(&p, "FS_COLOR0_WRITES_ALL_CBUFS") || !word(&p, "1") || !end(&p)) {
-            failure_code = "unsupported-feature";
-            return false;
+         failure_code = "unsupported-feature";
+         if (s->stage != 1 || s->started) return false;
+         if (word(&p, "FS_COORD_ORIGIN")) {
+            if (!s->raw || s->coordinate_origin_property || !word(&p, "LOWER_LEFT") || !end(&p)) return false;
+            s->coordinate_origin_property = true;
+         } else if (word(&p, "FS_COORD_PIXEL_CENTER")) {
+            if (!s->raw || s->coordinate_center_property || !word(&p, "HALF_INTEGER") || !end(&p)) return false;
+            s->coordinate_center_property = true;
+         } else {
+            if (s->color0_property || !word(&p, "FS_COLOR0_WRITES_ALL_CBUFS") || !word(&p, "1") || !end(&p)) return false;
+            /* Fixed cfg.max_draw_buffers=1 makes this exactly COLOR0, not MRT. */
+            s->color0_property = true;
          }
-         /* Fixed cfg.max_draw_buffers=1 makes this exactly COLOR0, not MRT. */
-         s->color0_property = true;
+         failure_code = "parse-error";
       } else {
          s->started = true;
+         /* The two validated TGSI properties and POSITION declaration already
+          * precede the first instruction. Make that checked coordinate source
+          * visible to the raw interpreter before its first IN[0] read. Final
+          * validation below still rejects an incomplete convention. */
+         if (s->raw && s->stage == 1 && s->declared[IN][0] &&
+             s->semantic[IN][0] == 1 && s->coordinate_origin_property &&
+             s->coordinate_center_property)
+            s->raw->opcode_mask |= RAW_FRAGMENT_COORDINATES_USED;
          /* Labels are optional, bounded, sequential, and never jump targets. */
          if (isdigit((unsigned char)*p)) {
             unsigned label = 0, digits = 0;
@@ -984,21 +1083,28 @@ static bool validate_body(char *text, struct profile *s, struct flow_context *fl
    }
    if (flow && flow->depth) { failure_code = "unsupported-feature"; return false; }
    if (!header || !s->ended || !s->instructions || !s->declared[OUT][0]) return false;
-   if (s->syntax_only) return s->semantic[OUT][0] == (s->stage == 0 ? 1u : 3u);
-   for (unsigned i = 0; i < 8; ++i)
-      if (s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
-   if (s->raw && (!s->raw->opcode_mask ||
-       (s->address_declared && !s->raw->indirect_indices))) {
+   bool coordinates = s->stage == 1 && s->declared[IN][0] && s->semantic[IN][0] == 1;
+   if (coordinates != s->coordinate_origin_property || coordinates != s->coordinate_center_property) {
       failure_code = "unsupported-feature";
       return false;
    }
-   if (s->raw && !raw_outputs_safe(s)) {
+   /* A direct MOV of the builtin needs no fabricated opcode or static facts. */
+   if (coordinates) s->raw->opcode_mask |= RAW_FRAGMENT_COORDINATES_USED;
+   if (s->syntax_only) return s->semantic[OUT][0] == (s->stage == 0 ? 1u : 3u);
+   for (unsigned i = 0; i < 8; ++i)
+      if (s->live && s->declared[OUT][i] && s->written[OUT][i] != s->components[OUT][i]) return false;
+   if (s->raw && (!s->raw->opcode_mask ||
+       (s->address_declared && !s->raw->indirect_indices && !s->dead_indirect))) {
+      failure_code = "unsupported-feature";
+      return false;
+   }
+   if (s->live && s->raw && !raw_outputs_safe(s)) {
       int raster = raw_certify_raster_outputs(s);
       if (raster != 1) {
          /* An exact producer alone cannot borrow raw-bank output authority.
           * One whole-text finite-bank retry can establish ordinary numerical
           * access separately. Allocation failure is never retried as a domain. */
-         if (raster == 0 && (s->raw->opcode_mask & RAW_PRECISE_ARITHMETIC_USED) &&
+         if (raster == 0 && (s->raw->opcode_mask & (RAW_PRECISE_ARITHMETIC_USED | RAW_FRACTION_OPCODES)) &&
              !(s->raw_flags & RAW_CONDITIONAL)) missing_numeric_authority = true;
          failure_code = raster < 0 ? "translation-error" : "unsupported-feature";
          return false;
@@ -1029,12 +1135,13 @@ static void io_metadata(const struct profile *s, enum file f)
       const char *names[] = {"ATTRIBUTE", "POSITION", "GENERIC", "COLOR"};
       char name[32];
       if (!semantic) snprintf(name, sizeof(name), "in_%u", i);
-      else if (semantic == 1) snprintf(name, sizeof(name), "gl_Position");
+      else if (semantic == 1) snprintf(name, sizeof(name), "%s", s->stage ? "gl_FragCoord" : "gl_Position");
       else if (semantic == 2) snprintf(name, sizeof(name), "vso_g%u", sid);
       else snprintf(name, sizeof(name), "fsout_c0");
       append("%s{\"index\":%u,\"name\":\"%s\",\"type\":\"vec4\",\"semantic\":\"%s\",\"semanticIndex\":%u,\"componentMask\":%u", comma ? "," : "", i, name, names[semantic], sid, s->components[f][i]);
       if (f == OUT) append(",\"writtenMask\":%u", s->written[f][i]);
       if (semantic == 2) append(",\"interpolation\":\"%s\"", s->flat[f][i] ? "flat" : "smooth");
+      if (semantic == 1 && s->stage) append(",\"interpolation\":\"linear\"");
       append("}");
       comma = true;
    }
@@ -1095,7 +1202,9 @@ static bool demand_retry(struct profile *profile, const char *text, size_t lengt
    struct raw_ir *ir = profile->raw;
    int stage = profile->stage;
    unsigned flags = profile->raw_flags;
+   const struct raw_exact_bank *exact = ir->exact;
    memset(ir, 0, sizeof(*ir));
+   ir->exact = exact;
    *profile = (struct profile){.stage = stage, .raw = ir, .raw_flags = flags, .syntax_only = true};
    memcpy(checked, text, length); checked[length] = 0;
    failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
@@ -1118,8 +1227,10 @@ static bool radial_retry(struct profile *profile, const char *text, size_t lengt
    if (!profile->raw || !(profile->raw_flags & RAW_STRUCTURED)) return false;
    struct raw_ir *ir = profile->raw;
    int stage = profile->stage;
-   unsigned flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL;
+   unsigned flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL | (profile->raw_flags & (RAW_KNOWN_RETRY | RAW_BRANCH_RETRY));
+   const struct raw_exact_bank *exact = ir->exact;
    memset(ir, 0, sizeof(*ir));
+   ir->exact = exact;
    *profile = (struct profile){.stage = stage, .raw = ir, .raw_flags = flags, .syntax_only = true};
    memcpy(checked, text, length); checked[length] = 0;
    failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
@@ -1136,7 +1247,19 @@ static bool radial_retry(struct profile *profile, const char *text, size_t lengt
    return validate(checked, profile) && ir->radial.used && (ir->opcode_mask & RAW_FINITE_BANK_USED);
 }
 
-static const char *check_input(struct profile *profile, const char *text, size_t length)
+static bool exact_declarations(const struct profile *profile, const struct raw_exact_bank *exact)
+{
+   for (unsigned i = 0; i < exact->count; ++i) {
+      const struct bridge_exact_word *word = &exact->components[i];
+      if (!profile->declared[CONST][word->reg] ||
+          !(profile->components[CONST][word->reg] & (1u << word->component)) ||
+          word->reg >= profile->constant_extent) return false;
+   }
+   return true;
+}
+
+static const char *check_input_attempt(struct profile *profile, const char *text, size_t length, unsigned retry_flags,
+                                     const struct raw_exact_bank *exact)
 {
    if (!text) return error("invalid-input", "TGSI text is required.");
    if (length > BRIDGE_MAX_TEXT) return error("input-too-large", "TGSI text exceeds 49152 bytes.");
@@ -1160,15 +1283,20 @@ static const char *check_input(struct profile *profile, const char *text, size_t
          while (isdigit((unsigned char)*p)) ++p;
          if (!punctuation(&p, ':')) continue;
       }
-      if (word(&p, "BGNLOOP") || word(&p, "BRK") || word(&p, "ENDLOOP")) {
+      if (word(&p, "KILL") || word(&p, "KILL_IF")) {
+         candidate = true;
+      } else if (word(&p, "BGNLOOP") || word(&p, "BRK") || word(&p, "ENDLOOP")) {
          candidate = structured_candidate = loop_candidate = true;
       } else if (word(&p, "UIF") || word(&p, "ELSE") || word(&p, "ENDIF")) {
          candidate = structured_candidate = true;
+      } else if (profile->stage == 1 && word(&p, "PROPERTY") &&
+                 (word(&p, "FS_COORD_ORIGIN") || word(&p, "FS_COORD_PIXEL_CENTER"))) {
+         candidate = true;
       } else if (word(&p, "MOV_PRECISE") || word(&p, "FSEQ_PRECISE") || word(&p, "FSNE_PRECISE")) {
          candidate = true;
-      } else if (word(&p, "ADD_PRECISE") || word(&p, "MUL_PRECISE")) {
+      } else if (word(&p, "ADD_PRECISE") || word(&p, "MUL_PRECISE") || word(&p, "FRC_PRECISE")) {
          candidate = numeric_candidate = true;
-      } else if (word(&p, "I2F") || word(&p, "F2I")) {
+      } else if (word(&p, "I2F") || word(&p, "F2I") || word(&p, "TRUNC") || word(&p, "SSG") || word(&p, "MOV_SAT") || word(&p, "DIV_SAT") || word(&p, "EX2") || word(&p, "LG2") || word(&p, "SIN") || word(&p, "POW")) {
          candidate = numeric_candidate = true;
       } else if (word(&p, "AND") || word(&p, "OR") || word(&p, "NOT") || word(&p, "SHL") || word(&p, "USHR") ||
           word(&p, "UADD") || word(&p, "ISGE") || word(&p, "ISLT") || word(&p, "IMAX") || word(&p, "USEQ") || word(&p, "USNE") || word(&p, "UCMP") ||
@@ -1183,16 +1311,28 @@ static const char *check_input(struct profile *profile, const char *text, size_t
             ++p; space(&p);
             if (*p == '-') candidate = true;
          }
-      } else if (word(&p, "DIV") || word(&p, "MAX") || word(&p, "MAX_PRECISE") || word(&p, "FRC") || word(&p, "LRP") ||
+      } else if (word(&p, "DIV") || word(&p, "MAX") || word(&p, "MAX_PRECISE") || word(&p, "MIN") || word(&p, "MIN_PRECISE") || word(&p, "FRC") || word(&p, "LRP") ||
                  word(&p, "DP3") || word(&p, "RCP") || word(&p, "RSQ")) {
          candidate = numeric_candidate = true;
       }
    }
-   if (candidate) {
+   if (candidate || exact) {
       profile->raw_flags = (numeric_candidate || structured_candidate ? RAW_MIXED : 0) |
-         (structured_candidate ? RAW_STRUCTURED : 0);
+         (structured_candidate ? RAW_STRUCTURED : 0) | retry_flags;
       profile->raw = calloc(1, sizeof(*profile->raw));
       if (!profile->raw) return error("translation-error", "Raw IR allocation failed.");
+      profile->raw->exact = exact;
+   }
+   if (profile->raw && ((retry_flags & RAW_BRANCH_RETRY) || exact) && !loop_candidate) {
+      /* Complete original grammar must pass before any dead semantic read is
+       * skipped. Keep every slot for existing graph/certificate indexes. */
+      profile->syntax_only = true;
+      memcpy(checked, text, length); checked[length] = 0;
+      failure_code = "parse-error";
+      if (!validate(checked, profile)) return numeric_rejection();
+      if (exact && !exact_declarations(profile, exact))
+         return error("invalid-input", "Exact components must be declared by the complete stage text.");
+      demand_reset(profile, profile->stage, profile->raw, profile->raw_flags);
    }
    if (loop_candidate) {
       /* Syntax-only records share the one bounded IR; they never reach emit.
@@ -1200,7 +1340,10 @@ static const char *check_input(struct profile *profile, const char *text, size_t
       profile->syntax_only = true;
       memcpy(checked, text, length); checked[length] = 0;
       failure_code = "parse-error";
-      if (!validate(checked, profile) || !loop_recognize(profile->raw)) {
+      bool grammar = validate(checked, profile);
+      if (grammar && exact && !exact_declarations(profile, exact))
+         return error("invalid-input", "Exact components must be declared by the complete stage text.");
+      if (!grammar || !loop_recognize(profile->raw)) {
          profile->syntax_only = false;
          return error(!strcmp(failure_code, "translation-error") ? failure_code : "unsupported-feature",
             !strcmp(failure_code, "translation-error") ? "Structured flow allocation failed." :
@@ -1215,7 +1358,7 @@ static const char *check_input(struct profile *profile, const char *text, size_t
       ir->count = 0; ir->opcode_mask = ir->indirect_indices = 0;
       ir->address = (struct raw_lane){0};
       *profile = (struct profile){.stage = stage, .raw = ir,
-         .raw_flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL};
+         .raw_flags = RAW_MIXED | RAW_STRUCTURED | RAW_CONDITIONAL | retry_flags};
       memcpy(checked, text, length); checked[length] = 0;
       failure_code = "parse-error"; missing_numeric_authority = missing_initialization = false;
       if (validate(checked, profile)) return NULL;
@@ -1244,9 +1387,10 @@ static const char *check_input(struct profile *profile, const char *text, size_t
    int stage = profile->stage;
    free(profile->raw);
    *profile = (struct profile){.stage = stage, .raw_flags = RAW_MIXED | RAW_CONDITIONAL |
-      (structured_candidate ? RAW_STRUCTURED : 0)};
+      (structured_candidate ? RAW_STRUCTURED : 0) | retry_flags};
    profile->raw = calloc(1, sizeof(*profile->raw));
    if (!profile->raw) return numeric_rejection();
+   profile->raw->exact = exact;
    memcpy(checked, text, length); checked[length] = 0;
    failure_code = "parse-error";
    missing_numeric_authority = missing_initialization = false;
@@ -1254,6 +1398,34 @@ static const char *check_input(struct profile *profile, const char *text, size_t
    if (missing_initialization && (demand_retry(profile, text, length, checked) ||
        (strcmp(failure_code, "translation-error") && radial_retry(profile, text, length, checked)))) return NULL;
    return numeric_rejection();
+}
+
+static const char *check_input(struct profile *profile, const char *text, size_t length)
+{
+   const char *failed = check_input_attempt(profile, text, length, 0, NULL);
+   if (!failed) return NULL;
+   bool parse_failure = strstr(failed, "\"code\":\"parse-error\"") != NULL;
+   if (!parse_failure && !strstr(failed, "\"code\":\"unsupported-feature\"")) return failed;
+   /* Existing successful source/metadata bytes win. A fresh final transaction
+    * may materialize known producers; failed retries preserve the old error. */
+   int stage = profile->stage;
+   if (!parse_failure) {
+      free(profile->raw);
+      *profile = (struct profile){.stage = stage};
+      const char *known = check_input_attempt(profile, text, length, RAW_KNOWN_RETRY, NULL);
+      if (!known && profile->raw && (profile->raw->opcode_mask & RAW_KNOWN_ARITHMETIC_USED)) {
+         response_used = 0; response_overflow = false;
+         return NULL;
+      }
+   }
+   free(profile->raw);
+   *profile = (struct profile){.stage = stage};
+   const char *retry = check_input_attempt(profile, text, length, RAW_KNOWN_RETRY | RAW_BRANCH_RETRY, NULL);
+   if (!retry && profile->raw && (profile->raw->opcode_mask & RAW_BRANCH_LIVENESS_USED)) {
+      response_used = 0; response_overflow = false;
+      return NULL;
+   }
+   return parse_failure ? error("parse-error", "TGSI is malformed or outside the documented straight-line profile.") : numeric_rejection();
 }
 
 static const char *convert(struct conversion *c, const char *text, size_t length,
@@ -1264,11 +1436,11 @@ static const char *convert(struct conversion *c, const char *text, size_t length
        * value-only metadata from declarations already checked by our guard. */
       c->info.num_consts = (int)c->profile.constant_extent;
       for (unsigned i = 0; i < c->profile.raw->count; ++i)
-         if (c->profile.raw->instructions[i].opcode == RAW_TEX)
+         if (c->profile.raw->instructions[i].opcode == RAW_TEX && !(c->profile.raw->instructions[i].flags & RAW_DEAD))
             c->info.samplers_used_mask |= 1u << c->profile.raw->instructions[i].sampler;
       if (c->profile.stage) {
          struct vrend_fs_shader_info *fs = &c->variable.fs_info;
-         for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (c->profile.declared[IN][i]) {
+         for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (c->profile.declared[IN][i] && c->profile.semantic[IN][i] == 2) {
             struct vrend_interp_info *entry = &fs->interpinfo[fs->num_interps++];
             entry->semantic_name = TGSI_SEMANTIC_GENERIC;
             entry->semantic_index = c->profile.semantic_index[IN][i];
@@ -1284,7 +1456,10 @@ static const char *convert(struct conversion *c, const char *text, size_t length
    memcpy(input, text, length); input[length] = 0;
    struct tgsi_token tokens[BRIDGE_MAX_TOKENS] = {0};
    upstream_logged = false;
-   if (!tgsi_text_translate(input, tokens, BRIDGE_MAX_TOKENS)) return error("parse-error", "Upstream TGSI validation rejected the shader.");
+   bridge_tgsi_scratch_begin();
+   if (!tgsi_text_translate(input, tokens, BRIDGE_MAX_TOKENS)) return bridge_tgsi_scratch_failed() ?
+      error("translation-error", "Upstream TGSI scratch allocation failed or exceeded its bound.") :
+      error("parse-error", "Upstream TGSI validation rejected the shader.");
    struct vrend_shader_cfg cfg = {.glsl_version = 300, .max_draw_buffers = 1, .use_gles = 1, .use_core_profile = 1, .use_integer = 1};
    struct vrend_shader_key key = {0};
    if (c->profile.stage == 1) key.fs.lower_left_origin = 1;
@@ -1299,7 +1474,7 @@ static const char *convert(struct conversion *c, const char *text, size_t length
    return NULL;
 }
 
-/* The profile permits only GENERIC fragment inputs, all centered and either
+/* Interstage inputs are GENERIC, all centered and either
  * PERSPECTIVE or CONSTANT. Cross-check upstream's value-only export before it
  * becomes a vertex key; never accept caller keys or copy owned shader pointers. */
 static bool checked_fragment_interface(const struct conversion *fragment)
@@ -1308,7 +1483,7 @@ static bool checked_fragment_interface(const struct conversion *fragment)
    const struct vrend_fs_shader_info *info = &fragment->variable.fs_info;
    unsigned count = 0;
    bool seen[FILE_REGISTERS] = {0};
-   for (unsigned i = 0; i < FILE_REGISTERS; ++i) count += p->declared[IN][i];
+   for (unsigned i = 0; i < FILE_REGISTERS; ++i) count += p->declared[IN][i] && p->semantic[IN][i] == 2;
    if (info->num_interps != (int)count || info->has_sample_input || info->has_noperspective) return false;
    for (unsigned i = 0; i < count; ++i) {
       const struct vrend_interp_info *entry = &info->interpinfo[i];
@@ -1316,7 +1491,7 @@ static bool checked_fragment_interface(const struct conversion *fragment)
           entry->location != TGSI_INTERPOLATE_LOC_CENTER || seen[entry->semantic_index]) return false;
       seen[entry->semantic_index] = true;
       bool matched = false;
-      for (unsigned j = 0; j < FILE_REGISTERS; ++j) if (p->declared[IN][j] && p->semantic_index[IN][j] == entry->semantic_index) {
+      for (unsigned j = 0; j < FILE_REGISTERS; ++j) if (p->declared[IN][j] && p->semantic[IN][j] == 2 && p->semantic_index[IN][j] == entry->semantic_index) {
          unsigned expected = p->flat[IN][j] ? TGSI_INTERPOLATE_CONSTANT : TGSI_INTERPOLATE_PERSPECTIVE;
          if (entry->interpolate != expected) return false;
          matched = true;
@@ -1328,7 +1503,7 @@ static bool checked_fragment_interface(const struct conversion *fragment)
 
 static bool match_interface(struct profile *vertex, const struct profile *fragment)
 {
-   for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (fragment->declared[IN][i]) {
+   for (unsigned i = 0; i < FILE_REGISTERS; ++i) if (fragment->declared[IN][i] && fragment->semantic[IN][i] == 2) {
       bool matched = false;
       for (unsigned j = 0; j < FILE_REGISTERS; ++j) {
          if (!vertex->declared[OUT][j] || vertex->semantic[OUT][j] != 2 ||
@@ -1348,10 +1523,14 @@ static void interface_key(const struct profile *fragment)
    bool comma = false;
    for (unsigned sid = 0; sid < FILE_REGISTERS; ++sid)
       for (unsigned i = 0; i < FILE_REGISTERS; ++i)
-         if (fragment->declared[IN][i] && fragment->semantic_index[IN][i] == sid) {
+         if (fragment->declared[IN][i] && fragment->semantic[IN][i] == 2 && fragment->semantic_index[IN][i] == sid) {
             append("%sg%u/%u/%s", comma ? ";" : "", sid, fragment->components[IN][i], fragment->flat[IN][i] ? "flat" : "smooth");
             comma = true;
          }
+   if (fragment->raw && (fragment->raw->opcode_mask & RAW_FRAGMENT_COORDINATES_USED))
+      append("|tgsi-fragment-position-v1:in0/linear/lower-left/half-integer/window-z/reciprocal-w");
+   if (fragment->raw && (fragment->raw->opcode_mask & RAW_DISCARD_OPCODES))
+      append("|tgsi-fragment-discard-v1:ordered-any-negative/raw-words/always-%u", !fragment->live);
    append("\"");
 }
 
@@ -1363,11 +1542,18 @@ static void constant_domain(int stage, int count)
 
 /* The outer profile keeps every simultaneous obligation mandatory. A precision
  * record cannot replace a finite/indirect/loop/radial admission contract. */
+/* A dead loop retains its independent syntax certificate for the emitter and
+ * graph. Only a reachable loop requires the live count/bank consumer policy. */
+static bool live_loop(const struct raw_ir *ir)
+{
+   return ir->loop.checked && !(ir->instructions[ir->loop.begin].flags & RAW_DEAD);
+}
+
 static const char *precise_profile(const struct raw_ir *ir)
 {
-   if (ir->radial.used) return ir->loop.checked ? "virgl-webgl2-raw-bits-v26" :
+   if (ir->radial.used) return live_loop(ir) ? "virgl-webgl2-raw-bits-v26" :
       ir->indirect_indices ? "virgl-webgl2-raw-bits-v25" : "virgl-webgl2-raw-bits-v24";
-   if (ir->loop.checked) return "virgl-webgl2-raw-bits-v23";
+   if (live_loop(ir)) return "virgl-webgl2-raw-bits-v23";
    if (ir->indirect_indices) return ir->opcode_mask & RAW_FINITE_BANK_USED ?
       "virgl-webgl2-raw-bits-v22" : "virgl-webgl2-raw-bits-v21";
    if (ir->opcode_mask & RAW_STRUCTURED_OPCODES) return ir->opcode_mask & RAW_FINITE_BANK_USED ?
@@ -1380,8 +1566,10 @@ static void precise_contract(const struct profile *profile)
    bool used[4] = {false};
    for (unsigned i = 0; i < profile->raw->count; ++i) {
       const struct raw_instruction *instruction = &profile->raw->instructions[i];
+      if (instruction->flags & RAW_DEAD) continue;
       if (!(instruction->flags & RAW_PRECISE)) continue;
       if ((UINT64_C(1) << instruction->opcode) & RAW_ARITHMETIC_OPCODES) continue;
+      if (instruction->opcode == RAW_MIN_PRECISE || instruction->opcode == RAW_FRC_PRECISE) continue;
       used[instruction->opcode == RAW_FSEQ ? 0 : instruction->opcode == RAW_FSNE ? 1 :
          instruction->opcode == RAW_MAX_PRECISE ? 2 : 3] = true;
    }
@@ -1443,6 +1631,105 @@ static void conversion_contract(const struct profile *profile, unsigned count, c
    append("]}]");
 }
 
+static void scalar_contract(const struct profile *profile, const char *base)
+{
+   uint64_t ops = profile->raw->opcode_mask;
+   bool trunc = (ops & (UINT64_C(1) << RAW_TRUNC)) != 0, ssg = (ops & (UINT64_C(1) << RAW_SSG)) != 0;
+   append(",\"scalarBaseProfile\":\"%s\",\"scalarWordContract\":{\"kind\":\"tgsi-finite-scalar-binary32-v1\",\"stage\":\"%s\",\"operations\":[%s%s%s],\"domain\":\"existing-finite-numeric-authority\",\"truncation\":\"toward-zero-preserve-zero-sign\",\"sign\":\"negative-one-positive-one-canonical-zero\",\"result\":\"normal-or-signed-zero\"}",
+      base, profile->stage ? "fragment" : "vertex", trunc ? "\"TRUNC\"" : "", trunc && ssg ? "," : "", ssg ? "\"SSG\"" : "");
+}
+
+static void minimum_contract(const struct profile *profile, const char *base)
+{
+   uint64_t ops = profile->raw->opcode_mask;
+   bool plain = (ops & (UINT64_C(1) << RAW_MIN)) != 0, precise = (ops & (UINT64_C(1) << RAW_MIN_PRECISE)) != 0;
+   append(",\"minimumBaseProfile\":\"%s\",\"minimumWordContract\":{\"kind\":\"tgsi-minimum-word-local-v1\",\"stage\":\"%s\",\"operations\":[%s%s%s],\"ordinary\":\"existing-finite-numeric-authority\",\"precise\":\"ordered-less-first-otherwise-second-original-word\",\"modifiers\":\"negation-before-selection\",\"output\":\"existing-numeric-or-selected-raw-authority\"}",
+      base, profile->stage ? "fragment" : "vertex", plain ? "\"MIN\"" : "", plain && precise ? "," : "", precise ? "\"MIN_PRECISE\"" : "");
+}
+
+static void fraction_contract(const struct profile *profile, const char *base)
+{
+   append(",\"fractionBaseProfile\":\"%s\",\"fractionWordContract\":{\"kind\":\"tgsi-fraction-binary32-rne-v1\",\"stage\":\"%s\",\"operations\":[\"FRC_PRECISE\"],\"equation\":\"x-minus-floor\",\"rounding\":\"nearest-even\",\"specials\":\"canonical-quiet-0x7fc00000\",\"subnormals\":\"gradual\",\"zero\":\"canonical-positive\",\"modifiers\":\"negation-before-evaluation\",\"authority\":\"existing-numeric-or-static-word-authority\"}",
+      base, profile->stage ? "fragment" : "vertex");
+}
+
+static void saturation_contract(const struct profile *profile, const char *base)
+{
+   uint64_t ops = profile->raw->opcode_mask;
+   bool divide = (ops & (UINT64_C(1) << RAW_DIV_SAT)) != 0, move = (ops & (UINT64_C(1) << RAW_MOV_SAT)) != 0;
+   append(",\"saturationBaseProfile\":\"%s\",\"saturationContract\":{\"kind\":\"tgsi-numeric-saturation-local-v1\",\"stage\":\"%s\",\"operations\":[%s%s%s],\"equation\":\"post-operation-ternary-zero-one\",\"authority\":\"existing-numeric-authority\",\"divisionDomain\":\"static-normal-divisor-unit-or-known-bounded-quotient\",\"division\":\"positive-denominator-highp-2.5-ulp\",\"modifiers\":\"negation-before-operation\",\"zero\":\"underlying-numeric-result\"}",
+      base, profile->stage ? "fragment" : "vertex", divide ? "\"DIV_SAT\"" : "", divide && move ? "," : "", move ? "\"MOV_SAT\"" : "");
+}
+
+static void exponent_contract(const struct profile *profile, const char *base)
+{
+   uint64_t ops = profile->raw->opcode_mask;
+   bool exponential = (ops & (UINT64_C(1) << RAW_EX2)) != 0, logarithm = (ops & (UINT64_C(1) << RAW_LG2)) != 0;
+   append(",\"exponentBaseProfile\":\"%s\",\"exponentContract\":{\"kind\":\"tgsi-bounded-exponent-logarithm-v1\",\"stage\":\"%s\",\"operations\":[%s%s%s],\"source\":\"post-swizzle-x-replicated-before-mask\",\"proof\":\"static-post-modifier-word-facts\",\"exponentDomain\":\"normal-or-zero-minus125-to126\",\"logarithmDomain\":\"positive-normal\",\"exponentError\":\"(3+2*abs(x))-ulp\",\"logarithmError\":\"3-ulp-outside-[0.5,2];abs-lt-2^-21-inside\",\"modifiers\":\"negation-before-evaluation\",\"authority\":\"existing-numeric-authority\",\"result\":\"ordinary-highp-no-static-range-facts\"}",
+      base, profile->stage ? "fragment" : "vertex", exponential ? "\"EX2\"" : "", exponential && logarithm ? "," : "", logarithm ? "\"LG2\"" : "");
+}
+
+static void sine_contract(const struct profile *profile, const char *base)
+{
+   append(",\"sineBaseProfile\":\"%s\",\"sineContract\":{\"kind\":\"tgsi-bounded-sine-v1\",\"stage\":\"%s\",\"operations\":[\"SIN\"],\"source\":\"post-swizzle-x-replicated-before-mask\",\"proof\":\"static-post-modifier-word-facts\",\"domain\":\"normal-or-zero-minus8-to8\",\"error\":\"absolute-le-2^-20\",\"precision\":\"measured-physical-host-no-essl-guarantee\",\"modifiers\":\"negation-before-evaluation\",\"authority\":\"existing-numeric-authority\",\"result\":\"ordinary-highp-no-static-range-facts\"}",
+      base, profile->stage ? "fragment" : "vertex");
+}
+
+static void power_contract(const struct profile *profile, const char *base)
+{
+   if (profile->raw_flags & RAW_PRIVATE_92CB_COMPLETE) {
+      append(",\"powerBaseProfile\":\"%s\",\"powerContract\":{"
+         "\"kind\":\"tgsi-private-invocation-guarded-power-v1\","
+         "\"stage\":\"fragment\",\"operations\":[\"POW\"],"
+         "\"source\":\"post-swizzle-x-pair-replicated-before-mask\","
+         "\"proof\":\"checked-actual-operands-before-evaluation\","
+         "\"domain\":\"zero-positive-or-positive-normal-log-envelope-120\","
+         "\"maskedNegativeSites\":[231,260,293,319],"
+         "\"invalidResult\":\"explicit-fault-sentinel\","
+         "\"error\":\"measured-relative-le-2^-14-zero-exact\","
+         "\"result\":\"ordinary-highp-no-static-range-facts\"}", base);
+      return;
+   }
+
+   append(",\"powerBaseProfile\":\"%s\",\"powerContract\":{\"kind\":\"tgsi-bounded-power-v1\",\"stage\":\"%s\",\"operations\":[\"POW\"],\"source\":\"post-swizzle-x-pair-replicated-before-mask\",\"proof\":\"static-post-modifier-word-facts-integer-exponent-envelope\",\"domain\":\"zero-positive-or-positive-normal-log-envelope-120\",\"error\":\"relative-le-2^-14-zero-exact\",\"precision\":\"measured-physical-host-explicit-budget\",\"modifiers\":\"negation-before-evaluation\",\"authority\":\"existing-numeric-authority\",\"result\":\"ordinary-highp-no-static-range-facts\"}",
+      base, profile->stage ? "fragment" : "vertex");
+}
+
+static void coordinate_contract(const char *base)
+{
+   append(",\"coordinateBaseProfile\":\"%s\",\"coordinateContract\":{\"kind\":\"tgsi-fragment-position-v1\",\"stage\":\"fragment\",\"input\":0,\"semanticIndex\":0,\"source\":\"gl_FragCoord\",\"interpolation\":\"linear\",\"origin\":\"lower-left\",\"pixelCenter\":\"half-integer\",\"components\":\"window-xy-depth-z-reciprocal-clip-w\",\"precision\":\"essl3-highp-builtin\",\"rasterization\":\"single-sample-half-pixel\",\"surfaceOrigin\":\"lower-left\",\"authority\":\"existing-input-no-static-range-facts\"}", base);
+}
+
+static void discard_contract(const struct profile *profile, const char *base)
+{
+   uint64_t ops = profile->raw->opcode_mask;
+   bool kill = (ops & (UINT64_C(1) << RAW_KILL)) != 0;
+   bool conditional = (ops & (UINT64_C(1) << RAW_KILL_IF)) != 0;
+   append(",\"discardBaseProfile\":\"%s\",\"discardContract\":{\"kind\":\"tgsi-fragment-discard-v1\",\"stage\":\"fragment\",\"operations\":[%s%s%s],\"source\":\"all-four-post-swizzle-word-lanes\",\"comparison\":\"ordered-binary32-any-negative-zero-and-nan-false\",\"modifiers\":\"absolute-before-negation\",\"liveness\":\"exclude-proved-discarded-predecessors\",\"authority\":\"no-new-numeric-range-or-initialization-facts\",\"alwaysDiscards\":%s}",
+      base, kill ? "\"KILL\"" : "", kill && conditional ? "," : "", conditional ? "\"KILL_IF\"" : "", profile->live ? "false" : "true");
+}
+
+static void known_arithmetic_contract(const struct profile *profile, const char *base)
+{
+   bool add = false, mul = false, rcp = false;
+   for (unsigned pc = 0; pc < profile->raw->count; ++pc) {
+      const struct raw_instruction *i = &profile->raw->instructions[pc];
+      if (!(i->flags & RAW_KNOWN_RESULT)) continue;
+      add |= i->opcode == RAW_ADD;
+      mul |= i->opcode == RAW_MUL;
+      rcp |= i->opcode == RAW_RCP;
+   }
+   append(",\"knownArithmeticBaseProfile\":\"%s\",\"knownArithmeticContract\":{\"kind\":\"tgsi-known-arithmetic-v1\",\"stage\":\"%s\",\"operations\":[%s%s%s%s%s],\"source\":\"fully-known-authorized-normal-or-zero-post-modifier\",\"rounding\":\"binary32-nearest-ties-to-even-integer\",\"result\":\"normal-or-zero-only\",\"emission\":\"literal-word-and-matching-shadow\",\"authority\":\"exact-emitted-producer-version-only\",\"storage\":\"unused-third-operand-four-word-cache\"}",
+      base, profile->stage ? "fragment" : "vertex", add ? "\"ADD\"" : "", add && mul ? "," : "", mul ? "\"MUL\"" : "",
+      rcp && (add || mul) ? "," : "", rcp ? "\"RCP\"" : "");
+}
+
+static void branch_contract(const struct profile *profile, const char *base)
+{
+   append(",\"branchBaseProfile\":\"%s\",\"branchContract\":{\"kind\":\"tgsi-proved-raw-uif-v1\",\"stage\":\"%s\",\"condition\":\"post-swizzle-x-raw-word-nonzero\",\"proof\":\"producer-known-zero-or-proved-one-bit\",\"liveness\":\"exclude-proved-unreachable-predecessors\",\"syntax\":\"complete-unmodified-original-before-pruning\",\"deadReads\":\"declarations-and-grammar-only-no-published-facts\",\"indices\":\"original-instruction-positions\",\"authority\":\"no-new-dynamic-word-numeric-or-bank-facts\",\"storage\":\"instruction-flags-no-ir-growth\"}",
+      base, profile->stage ? "fragment" : "vertex");
+}
+
 static void stage_result(const struct conversion *c)
 {
    const struct profile *profile = &c->profile;
@@ -1457,11 +1744,16 @@ static void stage_result(const struct conversion *c)
          else append("%c", byte);
       }
    }
-   const char *name = !c->owned_shader ? "virgl-webgl2-straight-line-v5" :
+   bool wide_vertex_bank = false;
+   if (!stage && !profile->raw)
+      for (unsigned i = CONST_REGISTERS; i < BRIDGE_MAX_VERTEX_CONSTANTS; ++i)
+         wide_vertex_bank |= profile->declared[CONST][i];
+   const char *name = !c->owned_shader ? (wide_vertex_bank ?
+      "virgl-webgl2-straight-line-v6" : "virgl-webgl2-straight-line-v5") :
       profile->raw->opcode_mask & RAW_PRECISE_WORD_USED ? precise_profile(profile->raw) :
-      profile->raw->radial.used ? (profile->raw->loop.checked ? "virgl-webgl2-raw-bits-v16" :
+      profile->raw->radial.used ? (live_loop(profile->raw) ? "virgl-webgl2-raw-bits-v16" :
          profile->raw->indirect_indices ? "virgl-webgl2-raw-bits-v15" : "virgl-webgl2-raw-bits-v14") :
-      c->profile.raw->loop.checked ? "virgl-webgl2-raw-bits-v12" :
+      live_loop(c->profile.raw) ? "virgl-webgl2-raw-bits-v12" :
       c->profile.raw->indirect_indices ?
          (c->profile.raw->opcode_mask & RAW_FINITE_BANK_USED ? "virgl-webgl2-raw-bits-v11" : "virgl-webgl2-raw-bits-v10") :
       c->profile.raw->opcode_mask & RAW_STRUCTURED_OPCODES ?
@@ -1477,9 +1769,25 @@ static void stage_result(const struct conversion *c)
    bool arithmetic = profile->raw && (profile->raw->opcode_mask & RAW_PRECISE_ARITHMETIC_USED);
    bool conversion = profile->raw && (profile->raw->opcode_mask & RAW_CONVERSION_OPCODES);
    bool conversion_bank = profile->raw && (profile->raw->opcode_mask & RAW_CONVERSION_BANK_USED);
+   bool scalar = profile->raw && (profile->raw->opcode_mask & RAW_SCALAR_OPCODES);
+   bool minimum = profile->raw && (profile->raw->opcode_mask & RAW_MINIMUM_OPCODES);
+   bool fraction = profile->raw && (profile->raw->opcode_mask & RAW_FRACTION_OPCODES);
+   bool saturation = profile->raw && (profile->raw->opcode_mask & RAW_SATURATION_OPCODES);
+   bool exponent = profile->raw && (profile->raw->opcode_mask & RAW_EXPONENT_OPCODES);
+   bool power = profile->raw && (profile->raw->opcode_mask & RAW_POWER_OPCODES);
+   bool sine = profile->raw && (profile->raw->opcode_mask & RAW_SINE_OPCODES);
+   bool coordinates = profile->raw && (profile->raw->opcode_mask & RAW_FRAGMENT_COORDINATES_USED);
+   bool discard = profile->raw && (profile->raw->opcode_mask & RAW_DISCARD_OPCODES);
+   bool known_arithmetic = profile->raw && (profile->raw->opcode_mask & RAW_KNOWN_ARITHMETIC_USED);
+   bool branch = profile->raw && (profile->raw->opcode_mask & RAW_BRANCH_LIVENESS_USED);
+   const char *conversion_name = conversion_bank ? "virgl-webgl2-raw-bits-v30" : "virgl-webgl2-raw-bits-v29";
+   const char *base_profile =
+      power ? "virgl-webgl2-raw-bits-v37" : sine ? "virgl-webgl2-raw-bits-v36" : exponent ? "virgl-webgl2-raw-bits-v35" : saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" : scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
+      arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name;
+   const char *inherited_profile = branch ? "virgl-webgl2-raw-bits-v41" : known_arithmetic ? "virgl-webgl2-raw-bits-v40" : discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile;
+   const struct raw_exact_bank *exact = profile->raw ? profile->raw->exact : NULL;
    append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
-      conversion ? (conversion_bank ? "virgl-webgl2-raw-bits-v30" : "virgl-webgl2-raw-bits-v29") :
-      arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name,
+      exact ? "virgl-webgl2-raw-bits-v42" : inherited_profile,
       stage ? "fragment" : "vertex");
    io_metadata(profile, IN); append(",\"outputs\":"); io_metadata(profile, OUT);
    append(",\"attributes\":");
@@ -1496,7 +1804,7 @@ static void stage_result(const struct conversion *c)
    append("]");
    if (profile->raw && (profile->raw->opcode_mask & RAW_FINITE_BANK_USED))
       constant_domain(stage, info->num_consts);
-   else if (profile->raw && profile->raw->loop.checked)
+   else if (profile->raw && live_loop(profile->raw))
       constant_domain(stage, info->num_consts); /* Explicit loop policy, not a fabricated numeric dependency. */
    if (profile->raw && profile->raw->indirect_indices) {
       append(",\"constantAccesses\":[{\"kind\":\"constant-bank-static-indirect-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"indices\":[",
@@ -1507,7 +1815,7 @@ static void stage_result(const struct conversion *c)
       }
       append("]}]");
    }
-   if (profile->raw && profile->raw->loop.checked)
+   if (profile->raw && live_loop(profile->raw))
       append(",\"constantConstraints\":[{\"kind\":\"constant-bank-counted-table-i32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"register\":9,\"component\":0,\"maximum\":18}]",
          stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
    if (profile->raw && profile->raw->radial.used)
@@ -1518,6 +1826,34 @@ static void stage_result(const struct conversion *c)
    if (arithmetic) arithmetic_contract(profile, raster ? "virgl-webgl2-raw-bits-v27" : name);
    if (conversion) conversion_contract(profile, info->num_consts,
       arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
+   if (scalar) scalar_contract(profile, conversion ? conversion_name :
+      arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
+   if (minimum) minimum_contract(profile, scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name :
+      arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
+   if (fraction) fraction_contract(profile, minimum ? "virgl-webgl2-raw-bits-v32" : scalar ? "virgl-webgl2-raw-bits-v31" :
+      conversion ? conversion_name : arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
+   if (saturation) saturation_contract(profile, fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" :
+      scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name : arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
+   if (exponent) exponent_contract(profile, saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" :
+      scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name : arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
+   if (sine) sine_contract(profile, exponent ? "virgl-webgl2-raw-bits-v35" : saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" :
+      scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name : arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
+   if (power) power_contract(profile, sine ? "virgl-webgl2-raw-bits-v36" : exponent ? "virgl-webgl2-raw-bits-v35" : saturation ? "virgl-webgl2-raw-bits-v34" : fraction ? "virgl-webgl2-raw-bits-v33" : minimum ? "virgl-webgl2-raw-bits-v32" :
+      scalar ? "virgl-webgl2-raw-bits-v31" : conversion ? conversion_name : arithmetic ? "virgl-webgl2-raw-bits-v28" : raster ? "virgl-webgl2-raw-bits-v27" : name);
+   if (coordinates) coordinate_contract(base_profile);
+   if (discard) discard_contract(profile, coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);
+   if (known_arithmetic) known_arithmetic_contract(profile, discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);
+   if (branch) branch_contract(profile, known_arithmetic ? "virgl-webgl2-raw-bits-v40" : discard ? "virgl-webgl2-raw-bits-v39" : coordinates ? "virgl-webgl2-raw-bits-v38" : base_profile);
+   if (exact) {
+      append(",\"exactBaseProfile\":\"%s\",\"constantExactDomains\":[{\"kind\":\"constant-bank-exact-u32-v1\",\"stage\":\"%s\",\"slot\":0,\"name\":\"%sconst0\",\"count\":%d,\"components\":[",
+         inherited_profile, stage ? "fragment" : "vertex", stage ? "fs" : "vs", info->num_consts);
+      for (unsigned i = 0; i < exact->count; ++i) {
+         const struct bridge_exact_word *word = &exact->components[i];
+         append("%s{\"register\":%u,\"component\":%u,\"word\":%u}",
+            i ? "," : "", word->reg, word->component, word->word);
+      }
+      append("]}]");
+   }
    append("}");
 }
 
@@ -1533,6 +1869,66 @@ const char *bridge_translate(int stage, const char *text, size_t length)
    cleanup(&c);
    if (retry_failed) return numeric_rejection();
    if (response_overflow) return error("translation-error", "JSON output exceeded its bound.");
+   return response;
+}
+
+const char *bridge_translate_exact(int stage, const char *text, size_t length,
+                                  const struct bridge_exact_word *components, size_t count)
+{
+   begin_response(false);
+   if (stage != 0 && stage != 1) return error("unsupported-stage", "Only vertex and fragment stages are supported.");
+   if (!text || !components || !count || count > BRIDGE_MAX_EXACT_WORDS)
+      return error("invalid-input", "Provide complete text and 1..184 canonical exact components.");
+   if (length > BRIDGE_MAX_TEXT) return error("input-too-large", "TGSI text exceeds 49152 bytes.");
+   /* No semantic allocation or callback can observe caller-owned input after
+    * these copies. The bounded table lives until the conversion is cleaned. */
+   char owned_text[BRIDGE_MAX_TEXT + 1];
+   memcpy(owned_text, text, length); owned_text[length] = 0;
+   struct raw_exact_bank exact = {.count = (unsigned)count};
+   memcpy(exact.components, components, count * sizeof(*components));
+   unsigned previous = 0;
+   for (unsigned i = 0; i < exact.count; ++i) {
+      const struct bridge_exact_word *word = &exact.components[i];
+      if (word->reg >= CONST_REGISTERS || word->component >= 4)
+         return error("invalid-input", "Exact register/component is outside the private bank.");
+      unsigned key = word->reg * 4 + word->component;
+      if (i && key <= previous) return error("invalid-input", "Exact components must be unique and canonically ordered.");
+      previous = key;
+      exact.words[word->reg][word->component] = word->word;
+      exact.present[word->reg] |= (unsigned char)(1u << word->component);
+   }
+   struct conversion c = {.profile = {.stage = stage}};
+   const char *failed = check_input(&c.profile, owned_text, length);
+   if (!failed) {
+      /* Valid private assumptions never alter an already admitted old result. */
+      if (!exact_declarations(&c.profile, &exact)) {
+         cleanup(&c);
+         return error("invalid-input", "Exact components must be declared by the complete stage text.");
+      }
+      failed = convert(&c, owned_text, length, NULL);
+      if (!failed) { append("{\"ok\":true,"); stage_result(&c); append("}"); }
+      bool retry_failed = (c.profile.raw_flags & RAW_CONDITIONAL) && (failed || response_overflow);
+      cleanup(&c);
+      if (retry_failed) return numeric_rejection();
+      if (response_overflow) return error("translation-error", "JSON output exceeded its bound.");
+      return response;
+   }
+   bool eligible = strstr(failed, "\"code\":\"parse-error\"") || strstr(failed, "\"code\":\"unsupported-feature\"");
+   char original[256];
+   snprintf(original, sizeof(original), "%s", failed);
+   cleanup(&c);
+   if (!eligible) return response;
+   c = (struct conversion){.profile = {.stage = stage}};
+   failed = check_input_attempt(&c.profile, owned_text, length, RAW_KNOWN_RETRY | RAW_BRANCH_RETRY, &exact);
+   bool invalid = failed && strstr(failed, "\"code\":\"invalid-input\"");
+   if (!failed) failed = convert(&c, owned_text, length, NULL);
+   if (!failed) {
+      begin_response(false);
+      append("{\"ok\":true,"); stage_result(&c); append("}");
+   }
+   bool rejected = failed || response_overflow;
+   cleanup(&c);
+   if (rejected && !invalid) { begin_response(false); append("%s", original); }
    return response;
 }
 
@@ -1562,4 +1958,906 @@ const char *bridge_translate_pair(const char *vertex_text, size_t vertex_length,
    if (retry_failed) return numeric_rejection();
    if (response_overflow) return error("translation-error", "JSON output exceeded its bound.");
    return response;
+}
+
+/* Keep the two owned source copies on the bounded entry stack, and the two
+ * conversions in one checked heap arena. No second entry frame is nested. */
+struct exact_pair_input {
+   char text[BRIDGE_MAX_TEXT + 1];
+   struct raw_exact_bank exact;
+};
+_Static_assert(sizeof(struct exact_pair_input) * 2 <= 104320, "owned pair input bound");
+
+static bool pair_exact_components(struct raw_exact_bank *exact,
+                                  const struct bridge_exact_word *components, size_t count)
+{
+   exact->count = (unsigned)count;
+   if (count) memcpy(exact->components, components, count * sizeof(*components));
+   unsigned previous = 0;
+   for (unsigned i = 0; i < exact->count; ++i) {
+      const struct bridge_exact_word *word = &exact->components[i];
+      if (word->reg >= CONST_REGISTERS || word->component >= 4) return false;
+      unsigned key = word->reg * 4 + word->component;
+      if (i && key <= previous) return false;
+      previous = key;
+      exact->words[word->reg][word->component] = word->word;
+      exact->present[word->reg] |= (unsigned char)(1u << word->component);
+   }
+   return true;
+}
+
+static bool pair_exact_eligible(const char *failed)
+{
+   return strstr(failed, "\"code\":\"parse-error\"") || strstr(failed, "\"code\":\"unsupported-feature\"");
+}
+
+static const char *pair_exact_stage(struct conversion *c, const struct exact_pair_input *input,
+                                   size_t length, bool qualified)
+{
+   const struct raw_exact_bank *exact = &input->exact;
+   const char *failed = check_input(&c->profile, input->text, length);
+   if (!failed) {
+      if (exact->count && !exact_declarations(&c->profile, exact))
+         return error("invalid-input", "Exact components must be declared by the complete stage text.");
+   } else if (qualified && exact->count && pair_exact_eligible(failed)) {
+      int stage = c->profile.stage;
+      cleanup(c);
+      memset(c, 0, sizeof(*c)); c->profile.stage = stage;
+      failed = check_input_attempt(&c->profile, input->text, length,
+         RAW_KNOWN_RETRY | RAW_BRANCH_RETRY, exact);
+   }
+   return failed;
+}
+
+static const char *pair_exact_finish(struct conversion *stages, const struct exact_pair_input *inputs,
+                                    const size_t *lengths, int private_bank)
+{
+   struct conversion *vertex = &stages[0], *fragment = &stages[1];
+   if (!match_interface(&vertex->profile, &fragment->profile))
+      return error("incompatible-interface", "Fragment GENERIC inputs require matching fully written vertex outputs.");
+   const char *failed = convert(fragment, inputs[1].text, lengths[1], NULL);
+   if (!failed && !checked_fragment_interface(fragment))
+      failed = error("translation-error", "Upstream fragment interpolation metadata differs from the checked interface.");
+   if (!failed) failed = convert(vertex, inputs[0].text, lengths[0], &fragment->variable.fs_info);
+   if (!failed) {
+      begin_response(true);
+      append("{\"ok\":true,\"vertex\":{"); stage_result(vertex);
+      append("},\"fragment\":{"); stage_result(fragment);
+      append("},\"interfaceKey\":"); interface_key(&fragment->profile);
+      if (private_bank >= 0 && private_bank < 3)
+         append(",\"private92cbFirstPower\":{\"kind\":\"original-92cb-pc221-222-v1\","
+            "\"bank\":%d,\"completeVertexSha256\":\"7bf4d0d0f981a9feb958d6595302b15d564fc846e6d5ee71874f0921b31e613e\","
+            "\"completeFragmentSha256\":\"92cb866af48f952b719c54959a439c7330333c6d32897430bc3d4a0a2f63bfba\","
+            "\"geometrySha256\":\"0d8bf78697b9be39a58c9274e221a89a9903f8587dfa2cf5cf5b754ae82e27ac\","
+            "\"viewport\":[0,0,1024,768],\"samples\":0,\"colorFormat\":34836,"
+            "\"mode\":5,\"first\":0,\"count\":4,\"drawTimeRecheckRequired\":true,"
+            "\"productionDrawAuthority\":false}", private_bank);
+      if (private_bank >= 3) {
+         append(",\"private92cbComplete\":{\"kind\":\"original-92cb-full-guarded-v1\","
+            "\"bank\":%d,\"instructions\":716,\"completeSource\":true,"
+            "\"completeVertexSha256\":\"7bf4d0d0f981a9feb958d6595302b15d564fc846e6d5ee71874f0921b31e613e\","
+            "\"completeFragmentSha256\":\"92cb866af48f952b719c54959a439c7330333c6d32897430bc3d4a0a2f63bfba\","
+            "\"geometrySha256\":\"0d8bf78697b9be39a58c9274e221a89a9903f8587dfa2cf5cf5b754ae82e27ac\","
+            "\"viewport\":[0,0,1024,768],\"samples\":0,\"colorFormat\":34836,"
+            "\"mode\":5,\"first\":0,\"count\":4,"
+            "\"powerGuard\":\"normal-or-zero-nonnegative-envelope-120\","
+            "\"maskedNegativePowers\":[231,260,293,319],"
+            "\"diagnosticAttachment\":1,\"drawTimeRecheckRequired\":true,"
+            "\"productionDrawAuthority\":false,\"powerSites\":[", private_bank - 3);
+         bool comma = false;
+         for (unsigned pc = 0; pc < fragment->profile.raw->count; ++pc) {
+            const struct raw_instruction *i = &fragment->profile.raw->instructions[pc];
+            if (i->opcode != RAW_POW || (i->flags & RAW_DEAD)) continue;
+            append("%s%u", comma ? "," : "", pc); comma = true;
+         }
+         append("]}");
+      }
+      append("}");
+   }
+   return failed;
+}
+
+const char *bridge_translate_pair_exact(const char *vertex_text, size_t vertex_length,
+                                        const struct bridge_exact_word *vertex_components, size_t vertex_count,
+                                        const char *fragment_text, size_t fragment_length,
+                                        const struct bridge_exact_word *fragment_components, size_t fragment_count)
+{
+   begin_response(true);
+   if (!vertex_text || !fragment_text || vertex_count > BRIDGE_MAX_EXACT_WORDS ||
+       fragment_count > BRIDGE_MAX_EXACT_WORDS || !(vertex_count || fragment_count) ||
+       (vertex_count && !vertex_components) || (fragment_count && !fragment_components))
+      return error("invalid-input", "Provide both texts and bounded canonical stage-local exact components.");
+   if (vertex_length > BRIDGE_MAX_TEXT || fragment_length > BRIDGE_MAX_TEXT)
+      return error("input-too-large", "TGSI text exceeds 49152 bytes.");
+   struct exact_pair_input inputs[2] = {0};
+   const size_t lengths[2] = {vertex_length, fragment_length};
+   memcpy(inputs[0].text, vertex_text, vertex_length);
+   memcpy(inputs[1].text, fragment_text, fragment_length);
+   if (!pair_exact_components(&inputs[0].exact, vertex_components, vertex_count) ||
+       !pair_exact_components(&inputs[1].exact, fragment_components, fragment_count))
+      return error("invalid-input", "Exact components must be bounded, unique and canonically ordered.");
+   /* Both input banks/texts now belong to this call, before the first actual
+    * allocation. All conversion pointers are released before inputs expire. */
+   struct conversion *stages = calloc(2, sizeof(*stages));
+   if (!stages) return error("allocation-failed", "Paired conversion allocation failed.");
+   stages[1].profile.stage = 1;
+   const char *failed = pair_exact_stage(&stages[0], &inputs[0], lengths[0], false);
+   if (!failed) failed = pair_exact_stage(&stages[1], &inputs[1], lengths[1], false);
+   if (!failed) failed = pair_exact_finish(stages, inputs, lengths, -1);
+   bool conditional = ((stages[0].profile.raw_flags | stages[1].profile.raw_flags) & RAW_CONDITIONAL) != 0;
+   bool invalid_input = failed && strstr(failed, "\"code\":\"invalid-input\"");
+   if (conditional && (failed || response_overflow) && !invalid_input) failed = numeric_rejection();
+   else if (response_overflow) failed = error("translation-error", "JSON output exceeded its bound.");
+   bool eligible = failed && pair_exact_eligible(failed);
+   char original[256];
+   if (eligible) snprintf(original, sizeof(original), "%s", failed);
+   cleanup(&stages[0]); cleanup(&stages[1]);
+   if (eligible) {
+      memset(stages, 0, 2 * sizeof(*stages)); stages[1].profile.stage = 1;
+      begin_response(true);
+      failed = pair_exact_stage(&stages[0], &inputs[0], lengths[0], true);
+      if (!failed) failed = pair_exact_stage(&stages[1], &inputs[1], lengths[1], true);
+      bool invalid = failed && strstr(failed, "\"code\":\"invalid-input\"");
+      if (!failed) failed = pair_exact_finish(stages, inputs, lengths, -1);
+      bool rejected = failed || response_overflow;
+      cleanup(&stages[0]); cleanup(&stages[1]);
+      if (rejected && !invalid) { begin_response(true); append("%s", original); }
+   }
+   free(stages);
+   return response;
+}
+
+static uint32_t private_92cb_word(const unsigned char *bytes)
+{
+   return (uint32_t)bytes[0] | (uint32_t)bytes[1] << 8 |
+      (uint32_t)bytes[2] << 16 | (uint32_t)bytes[3] << 24;
+}
+
+/* The observer preserves every original declaration and instruction through
+ * pc222. Only the two open branch targets are retargeted to a new output tail.
+ * No original pc223+ operation is parsed, translated or certified. */
+static char *private_92cb_prefix(size_t *length)
+{
+   const char *source = private_92cb_fragment;
+   const char *line216 = strstr(source, "\n216: UIF TEMP[167].xxxx :272\n");
+   const char *line217 = strstr(source, "\n217:   UIF TEMP[168].xxxx :242\n");
+   const char *line218 = strstr(source, "\n218:     MUL TEMP[169].xy,");
+   const char *line223 = strstr(source, "\n223:     ADD TEMP[173].x,");
+   if (!line216 || !line217 || !line218 || !line223 ||
+       !(line216 < line217 && line217 < line218 && line218 < line223)) return NULL;
+   static const char branches[] =
+      "\n216: UIF TEMP[167].xxxx :228\n217:   UIF TEMP[168].xxxx :225";
+   static const char tail[] =
+      "\n223: MOV OUT[0].xy, TEMP[170].xyxx"
+      "\n224: MOV OUT[0].zw, TEMP[172].xyxy"
+      "\n225: ELSE :227"
+      "\n226: MOV OUT[0], IMM[0].yyyy"
+      "\n227: ENDIF"
+      "\n228: ELSE :230"
+      "\n229: MOV OUT[0], IMM[0].yyyy"
+      "\n230: ENDIF"
+      "\n231: END\n";
+   size_t before = (size_t)(line216 - source);
+   size_t middle = (size_t)(line223 - line218);
+   *length = before + sizeof(branches) - 1 + middle + sizeof(tail) - 1;
+   if (*length > BRIDGE_MAX_TEXT) return NULL;
+   char *prefix = malloc(*length + 1);
+   if (!prefix) return NULL;
+   memcpy(prefix, source, before);
+   memcpy(prefix + before, branches, sizeof(branches) - 1);
+   memcpy(prefix + before + sizeof(branches) - 1, line218, middle);
+   memcpy(prefix + before + sizeof(branches) - 1 + middle, tail, sizeof(tail));
+   return prefix;
+}
+
+const char *bridge_translate_original_92cb_first_power(
+   const char *vertex_text, size_t vertex_length,
+   const char *fragment_text, size_t fragment_length,
+   const unsigned char *geometry, size_t geometry_length,
+   unsigned bank, const struct bridge_92cb_draw_state *draw)
+{
+   begin_response(true);
+   if (!vertex_text || !fragment_text || !geometry || !draw || bank >= 3 ||
+       vertex_length != sizeof(private_92cb_vertex) - 1 ||
+       fragment_length != sizeof(private_92cb_fragment) - 1 ||
+       geometry_length != sizeof(private_92cb_geometry) ||
+       memcmp(vertex_text, private_92cb_vertex, vertex_length) ||
+       memcmp(fragment_text, private_92cb_fragment, fragment_length) ||
+       memcmp(geometry, private_92cb_geometry, geometry_length))
+      return error("invalid-input", "Complete original 92cb sources and three-bank geometry must match the pinned capture.");
+   if (draw->viewport_x || draw->viewport_y || draw->viewport_width != 1024 ||
+       draw->viewport_height != 768 || draw->samples || draw->color_format != 0x8814 ||
+       draw->mode != 5 || draw->first || draw->count != 4)
+      return error("invalid-input", "The private first-power certificate requires the original single-sample RGBA32F strip draw state.");
+   size_t prefix_length = 0;
+   char *prefix = private_92cb_prefix(&prefix_length);
+   if (!prefix) return error("translation-error", "The pinned original first-power prefix cannot be derived.");
+   struct exact_pair_input inputs[2] = {0};
+   struct bridge_exact_word vertex_words[16], fragment_words[148];
+   const unsigned char *bank_bytes = geometry + 72 + bank * 656;
+   for (unsigned i = 0; i < 16; ++i)
+      vertex_words[i] = (struct bridge_exact_word){i / 4, i % 4, private_92cb_word(bank_bytes + 4 * i)};
+   for (unsigned i = 0; i < 148; ++i)
+      fragment_words[i] = (struct bridge_exact_word){i / 4, i % 4, private_92cb_word(bank_bytes + 64 + 4 * i)};
+   memcpy(inputs[0].text, vertex_text, vertex_length);
+   memcpy(inputs[1].text, prefix, prefix_length);
+   bool canonical = pair_exact_components(&inputs[0].exact, vertex_words, 16) &&
+      pair_exact_components(&inputs[1].exact, fragment_words, 148);
+   if (!canonical) { free(prefix); return error("translation-error", "Pinned exact 92cb bank is not canonical."); }
+   struct conversion *stages = calloc(2, sizeof(*stages));
+   if (!stages) { free(prefix); return error("allocation-failed", "Private paired conversion allocation failed."); }
+   stages[1].profile.stage = 1;
+   const char *failed = pair_exact_stage(&stages[0], &inputs[0], vertex_length, true);
+   if (!failed) failed = check_input_attempt(&stages[1].profile, inputs[1].text, prefix_length,
+      RAW_KNOWN_RETRY | RAW_BRANCH_RETRY | RAW_PRIVATE_92CB_POWER, &inputs[1].exact);
+   if (!failed) failed = pair_exact_finish(stages, inputs,
+      (size_t[2]){vertex_length, prefix_length}, (int)bank);
+   bool rejected = failed || response_overflow;
+   cleanup(&stages[0]); cleanup(&stages[1]);
+   free(stages); free(prefix);
+   if (rejected && response_overflow) return error("translation-error", "Private paired JSON exceeded its bound.");
+   return response;
+}
+
+const char *bridge_translate_original_92cb_complete(
+   const char *vertex_text, size_t vertex_length,
+   const char *fragment_text, size_t fragment_length,
+   const unsigned char *geometry, size_t geometry_length,
+   unsigned bank, const struct bridge_92cb_draw_state *draw)
+{
+   begin_response(true);
+   if (!vertex_text || !fragment_text || !geometry || !draw || bank >= 3 ||
+       vertex_length != sizeof(private_92cb_vertex) - 1 ||
+       fragment_length != sizeof(private_92cb_fragment) - 1 ||
+       geometry_length != sizeof(private_92cb_geometry) ||
+       memcmp(vertex_text, private_92cb_vertex, vertex_length) ||
+       memcmp(fragment_text, private_92cb_fragment, fragment_length) ||
+       memcmp(geometry, private_92cb_geometry, geometry_length))
+      return error("invalid-input", "Complete original 92cb sources and three-bank geometry must match the pinned capture.");
+   if (draw->viewport_x || draw->viewport_y || draw->viewport_width != 1024 ||
+       draw->viewport_height != 768 || draw->samples || draw->color_format != 0x8814 ||
+       draw->mode != 5 || draw->first || draw->count != 4)
+      return error("invalid-input", "The private full-source certificate requires the original single-sample RGBA32F strip draw state.");
+   struct exact_pair_input inputs[2] = {0};
+   struct bridge_exact_word vertex_words[16], fragment_words[148];
+   const unsigned char *bank_bytes = geometry + 72 + bank * 656;
+   for (unsigned i = 0; i < 16; ++i)
+      vertex_words[i] = (struct bridge_exact_word){i / 4, i % 4, private_92cb_word(bank_bytes + 4 * i)};
+   for (unsigned i = 0; i < 148; ++i)
+      fragment_words[i] = (struct bridge_exact_word){i / 4, i % 4, private_92cb_word(bank_bytes + 64 + 4 * i)};
+   memcpy(inputs[0].text, vertex_text, vertex_length);
+   memcpy(inputs[1].text, fragment_text, fragment_length);
+   bool canonical = pair_exact_components(&inputs[0].exact, vertex_words, 16) &&
+      pair_exact_components(&inputs[1].exact, fragment_words, 148);
+   if (!canonical) { return error("translation-error", "Pinned exact 92cb bank is not canonical."); }
+   struct conversion *stages = calloc(2, sizeof(*stages));
+   if (!stages) { return error("allocation-failed", "Private paired conversion allocation failed."); }
+   stages[1].profile.stage = 1;
+   const char *failed = pair_exact_stage(&stages[0], &inputs[0], vertex_length, true);
+   if (!failed) failed = check_input_attempt(&stages[1].profile, inputs[1].text, fragment_length,
+      RAW_KNOWN_RETRY | RAW_BRANCH_RETRY | RAW_PRIVATE_92CB_COMPLETE, &inputs[1].exact);
+   if (!failed) failed = pair_exact_finish(stages, inputs,
+      (size_t[2]){vertex_length, fragment_length}, (int)bank + 3);
+   bool rejected = failed || response_overflow;
+   cleanup(&stages[0]); cleanup(&stages[1]);
+   free(stages);
+   if (rejected && response_overflow) return error("translation-error", "Private paired JSON exceeded its bound.");
+   return response;
+}
+
+/* The standard facet deliberately has no profile/raw_ir member. Its guarded
+ * syntax is the only input to this independent upstream transaction. */
+#include "tgsi/tgsi_parse.h"
+#include "tgsi/tgsi_build.h"
+struct standard_conversion {
+   struct standard_profile profile;
+   struct vrend_shader_info info;
+   struct vrend_variable_shader_info variable;
+   struct vrend_strarray shader;
+   char *standard_source;
+};
+_Static_assert(sizeof(struct standard_conversion) * 2 <= 65536, "standard pair arena bound");
+static void standard_cleanup(struct standard_conversion *c)
+{
+   strarray_free(&c->shader, true);
+   free(c->info.sampler_arrays);
+   free(c->info.image_arrays);
+   free(c->standard_source);
+}
+/* The pinned converter counts a declaration ending at CONST[0] with ++,
+ * rather than max(Last + 1). Put that unique declaration before other CONST
+ * declarations. This is a stable permutation of complete original tokens:
+ * no register, instruction, property, immediate or label is rewritten. The
+ * guard still rejects duplicates/holes used by direct reads, and the strict
+ * independently derived maximum-bank comparison remains in force. */
+static bool standard_constant_order(struct tgsi_token *tokens)
+{
+   struct tgsi_parse_context parser;
+   if (tgsi_parse_init(&parser, tokens) != TGSI_PARSE_OK) return false;
+   unsigned first = 0;
+   bool ok = true;
+   while (!tgsi_parse_end_of_tokens(&parser)) {
+      unsigned start = parser.Position;
+      if (!tgsi_parse_token(&parser)) { ok = false; break; }
+      if (parser.FullToken.Token.Type == TGSI_TOKEN_TYPE_INSTRUCTION) break;
+      if (parser.FullToken.Token.Type != TGSI_TOKEN_TYPE_DECLARATION ||
+          parser.FullToken.FullDeclaration.Declaration.File != TGSI_FILE_CONSTANT) continue;
+      const struct tgsi_full_declaration *decl = &parser.FullToken.FullDeclaration;
+      if (decl->Declaration.Dimension && decl->Dim.Index2D) continue;
+      if (!first) first = start;
+      if (decl->Range.Last || start == first) continue;
+      unsigned width = decl->Declaration.Dimension ? 3 : 2;
+      if (decl->Range.First || parser.Position - start != width) {
+         ok = false; break;
+      }
+      struct tgsi_token zero[3];
+      memcpy(zero, tokens + start, width * sizeof(*tokens));
+      memmove(tokens + first + width, tokens + first, (start - first) * sizeof(*tokens));
+      memcpy(tokens + first, zero, width * sizeof(*tokens));
+      break;
+   }
+   tgsi_parse_free(&parser);
+   return ok;
+}
+/* This pinned converter predates NIR's PCOORD system-value declaration. Give
+ * upstream validation one private unused input alias; public metadata and the
+ * word emitter still consume the complete original tokens. Rebuilding bounds
+ * the extra interpolation token and avoids changing any caller-owned stream. */
+static const char *standard_point_tokens(const struct standard_profile *p,
+                                         const struct tgsi_token *original,
+                                         struct tgsi_token **result)
+{
+   unsigned system = 2, input = 0;
+   for (unsigned i = 0; i < 2; ++i)
+      if (p->declared[STD_SV][i] && p->system[i].semantic == STD_PCOORD) system = i;
+   if (system == 2) return NULL;
+   while (input < STANDARD_IO && p->declared[STD_IN][input]) ++input;
+   if (input == STANDARD_IO) return error("translation-error", "No bounded private point-coordinate alias.");
+   struct tgsi_token *tokens = calloc(BRIDGE_MAX_TOKENS, sizeof(*tokens));
+   if (!tokens) return error("allocation-failed", "Point-coordinate validation allocation failed.");
+   struct tgsi_parse_context parser;
+   if (tgsi_parse_init(&parser, original) != TGSI_PARSE_OK) {
+      free(tokens); return error("translation-error", "Original point-coordinate token parsing failed.");
+   }
+   struct tgsi_header header = tgsi_build_header();
+   struct tgsi_processor processor = tgsi_build_processor(parser.FullHeader.Processor.Processor, &header);
+   memcpy(tokens + 1, &processor, sizeof(processor));
+   unsigned used = 2; bool ok = true;
+   while (!tgsi_parse_end_of_tokens(&parser)) {
+      if (!tgsi_parse_token(&parser)) { ok = false; break; }
+      unsigned built = 0;
+      switch (parser.FullToken.Token.Type) {
+      case TGSI_TOKEN_TYPE_DECLARATION: {
+         struct tgsi_full_declaration *d = &parser.FullToken.FullDeclaration;
+         if (d->Declaration.File == TGSI_FILE_SYSTEM_VALUE && d->Range.First == system) {
+            d->Declaration.File = TGSI_FILE_INPUT;
+            d->Range.First = d->Range.Last = input;
+            d->Declaration.Interpolate = 1;
+            d->Interp.Interpolate = TGSI_INTERPOLATE_LINEAR;
+            d->Interp.Location = TGSI_INTERPOLATE_LOC_CENTER;
+         }
+         built = tgsi_build_full_declaration(d, tokens + used, &header, BRIDGE_MAX_TOKENS - used);
+         break;
+      }
+      case TGSI_TOKEN_TYPE_IMMEDIATE:
+         built = tgsi_build_full_immediate(&parser.FullToken.FullImmediate, tokens + used, &header, BRIDGE_MAX_TOKENS - used);
+         break;
+      case TGSI_TOKEN_TYPE_PROPERTY:
+         built = tgsi_build_full_property(&parser.FullToken.FullProperty, tokens + used, &header, BRIDGE_MAX_TOKENS - used);
+         break;
+      case TGSI_TOKEN_TYPE_INSTRUCTION: {
+         struct tgsi_full_instruction *i = &parser.FullToken.FullInstruction;
+         for (unsigned j = 0; j < i->Instruction.NumSrcRegs; ++j)
+            if (i->Src[j].Register.File == TGSI_FILE_SYSTEM_VALUE && i->Src[j].Register.Index == (int)system) {
+               i->Src[j].Register.File = TGSI_FILE_INPUT; i->Src[j].Register.Index = (int)input;
+            }
+         built = tgsi_build_full_instruction(i, tokens + used, &header, BRIDGE_MAX_TOKENS - used);
+         break;
+      }
+      default: break;
+      }
+      if (!built) { ok = false; break; }
+      used += built;
+   }
+   tgsi_parse_free(&parser);
+   if (!ok) { free(tokens); return error("translation-error", "Bounded point-coordinate validation rebuild failed."); }
+   memcpy(tokens, &header, sizeof(header)); *result = tokens;
+   return NULL;
+}
+static const char *standard_convert(struct standard_conversion *c, const char *owned,
+                                    const struct vrend_fs_shader_info *fragment)
+{
+   struct tgsi_token tokens[BRIDGE_MAX_TOKENS] = {0};
+   if (c->profile.uniform_buffers) bridge_tgsi_scratch_begin_uniform();
+   else bridge_tgsi_scratch_begin();
+   upstream_logged = false;
+   if (!tgsi_text_translate(owned, tokens, BRIDGE_MAX_TOKENS) || bridge_tgsi_scratch_failed() || upstream_logged)
+      return error("translation-error", "Checked upstream TGSI parsing failed.");
+   if (!standard_constant_order(tokens))
+      return error("translation-error", "Checked standard constant declaration ordering failed.");
+   struct vrend_shader_cfg cfg = {.glsl_version = 300, .max_draw_buffers = 4,
+      .use_gles = 1, .use_core_profile = 1, .use_integer = 1};
+   struct vrend_shader_key key = {0};
+   if (c->profile.stage) {
+      key.fs.lower_left_origin = 1;
+      key.fs.cbufs_signed_int_bitmask = c->profile.signed_colors;
+      key.fs.cbufs_unsigned_int_bitmask = c->profile.unsigned_colors;
+   }
+   else {
+      key.vs.attrib_signed_int_bitmask = c->profile.signed_inputs;
+      key.vs.attrib_unsigned_int_bitmask = c->profile.unsigned_inputs;
+   }
+   if (fragment) key.fs_info = *fragment;
+   if (!strarray_alloc(&c->shader, SHADER_MAX_STRINGS))
+      return error("translation-error", "Standard output allocation failed.");
+   struct tgsi_token *point_tokens = NULL;
+   const char *failed = standard_point_tokens(&c->profile, tokens, &point_tokens);
+   if (failed) return failed;
+   bridge_upstream_allocation_begin();
+   bool ok = vrend_convert_shader(NULL, &cfg, point_tokens ? point_tokens : tokens, 0, &key, &c->info, &c->variable, &c->shader);
+   free(point_tokens);
+   size_t bytes = 0;
+   for (int i = 0; i < c->shader.num_strings; ++i) bytes += strlen(c->shader.strings[i].buf);
+   /* Pinned upstream samplers_used means declared SAMP registers. Our public
+    * interface describes actual TEX reads, so unused declarations must not
+    * confuse those two independently checked facts. */
+   uint32_t declared_samplers = 0;
+   for (unsigned i = 0; i < STANDARD_SAMPLERS; ++i)
+      if (c->profile.declared[STD_SAMP][i]) declared_samplers |= 1u << i;
+   uint32_t declared_uniforms = 0;
+   for (unsigned i = 1; i <= STANDARD_UNIFORM_SLOTS; ++i)
+      if (c->profile.uniform_counts[i]) declared_uniforms |= 1u << i;
+   if (!ok || bridge_upstream_allocation_failed() || upstream_logged || bytes > BRIDGE_MAX_GLSL ||
+       c->info.num_consts != c->profile.constants || c->info.samplers_used_mask != declared_samplers ||
+       c->info.ubo_used_mask != declared_uniforms || c->info.ubo_indirect ||
+       (c->profile.shadow_textures && c->info.shadow_samp_mask != c->profile.upstream_shadow_samplers) ||
+       (c->profile.texture_operations && c->info.gles_use_tex_query_level != (c->profile.queried_levels != 0)))
+      return error("translation-error", "Standard conversion failed or metadata/output bounds disagree.");
+   /* The pinned public info exposes a mask, but not the per-bank sizes. Check
+    * those independently emitted declarations before producing word storage. */
+   for (unsigned slot = 1; slot <= STANDARD_UNIFORM_SLOTS; ++slot) if (c->profile.uniform_counts[slot]) {
+      char declaration[128]; const char *prefix = c->profile.stage ? "fs" : "vs";
+      snprintf(declaration, sizeof(declaration), "uniform %subo%u { vec4 %subo%ucontents[%u]; };\n",
+               prefix, slot, prefix, slot, c->profile.uniform_counts[slot]);
+      unsigned matches = 0;
+      for (int i = 0; i < c->shader.num_strings; ++i)
+         matches += strstr(c->shader.strings[i].buf, declaration) != NULL;
+      if (matches != 1) return error("translation-error", "Upstream uniform bank size disagrees.");
+   }
+   const char *emitted = standard_emit(&c->profile, tokens, &c->standard_source);
+   return emitted ? error(emitted, "Standard word-storage emission failed.") : NULL;
+}
+static bool standard_fragment_export(const struct standard_conversion *c)
+{
+   const struct standard_profile *p = &c->profile;
+   const struct vrend_fs_shader_info *fs = &c->variable.fs_info;
+   unsigned count = 0; bool seen[STANDARD_GENERIC] = {0};
+   for (unsigned i = 0; i < STANDARD_IO; ++i)
+      count += p->declared[STD_IN][i] && p->input[i].semantic == STD_GENERIC;
+   if (fs->num_interps != (int)count || fs->has_sample_input || fs->has_noperspective) return false;
+   for (unsigned i = 0; i < count; ++i) {
+      const struct vrend_interp_info *e = &fs->interpinfo[i];
+      if (e->semantic_name != TGSI_SEMANTIC_GENERIC || e->semantic_index >= STANDARD_GENERIC ||
+          e->location != TGSI_INTERPOLATE_LOC_CENTER || seen[e->semantic_index]) return false;
+      seen[e->semantic_index] = true;
+      bool found = false;
+      for (unsigned j = 0; j < STANDARD_IO; ++j) if (p->declared[STD_IN][j] &&
+          p->input[j].semantic == STD_GENERIC && p->input[j].sid == e->semantic_index) {
+         if (e->interpolate != (p->input[j].flat ? TGSI_INTERPOLATE_CONSTANT : TGSI_INTERPOLATE_PERSPECTIVE)) return false;
+         found = true;
+      }
+      if (!found) return false;
+   }
+   return true;
+}
+static void standard_io_json(const struct standard_profile *p, unsigned file)
+{
+   bool comma = false;
+   append("[");
+   const struct standard_io *list = file == STD_IN ? p->input : file == STD_OUT ? p->output : p->system;
+   unsigned count = file == STD_SV ? 2 : STANDARD_IO;
+   static const char *semantics[] = {"ATTRIBUTE", "POSITION", "GENERIC", "COLOR", "VERTEXID", "INSTANCEID", "PSIZE", "PCOORD"};
+   for (unsigned i = 0; i < count; ++i) if (p->declared[file][i]) {
+      const struct standard_io *io = &list[i];
+      char name[32];
+      if (io->semantic == STD_ATTRIBUTE) snprintf(name, sizeof(name), "in_%u", i);
+      else if (io->semantic == STD_POSITION) snprintf(name, sizeof(name), "%s", p->stage ? "gl_FragCoord" : "gl_Position");
+      else if (io->semantic == STD_GENERIC) snprintf(name, sizeof(name), "vso_g%u", io->sid);
+      else if (io->semantic == STD_COLOR) snprintf(name, sizeof(name), "fsout_c%u", io->sid);
+      else if (io->semantic == STD_PSIZE) snprintf(name, sizeof(name), "gl_PointSize");
+      else if (io->semantic == STD_PCOORD) snprintf(name, sizeof(name), "gl_PointCoord");
+      else snprintf(name, sizeof(name), "%s", io->semantic == STD_VERTEXID ? "gl_VertexID" : "gl_InstanceID");
+      append("%s{\"index\":%u,\"name\":\"%s\",\"type\":\"%s\",\"semantic\":\"%s\",\"semanticIndex\":%u,\"componentMask\":%u",
+         comma ? "," : "", i, name, io->semantic == STD_ATTRIBUTE ? standard_attribute_type(p, i) : io->semantic == STD_COLOR ? standard_color_type(p, io->sid) : io->semantic == STD_PSIZE ? "float" : file == STD_SV && io->semantic != STD_PCOORD ? "int" : io->semantic == STD_GENERIC && io->flat ? "uvec4" : "vec4", semantics[io->semantic], io->sid, io->mask);
+      if (file == STD_OUT) append(",\"syntacticWriteMask\":%u", io->writes);
+      if (io->semantic == STD_GENERIC) append(",\"interpolation\":\"%s\"", io->flat ? "flat" : "smooth");
+      if ((io->semantic == STD_POSITION || io->semantic == STD_PCOORD) && file == STD_IN && p->stage) append(",\"interpolation\":\"linear\"");
+      append("}"); comma = true;
+   }
+   append("]");
+}
+static void standard_stream_output_json(const struct standard_stream_output *s)
+{
+   append(",\"streamOutput\":{\"encoding\":\"raw-32bit-words\",\"captureBuffer\":%u,\"strides\":[%u,%u,%u,%u],\"outputs\":[",
+      s->capture_buffer, s->strides[0], s->strides[1], s->strides[2], s->strides[3]);
+   for (unsigned i = 0; i < s->count; ++i) {
+      const struct standard_stream_output_entry *e = &s->outputs[i];
+      append("%s{\"registerIndex\":%u,\"startComponent\":%u,\"numComponents\":%u,\"outputBuffer\":%u,\"destinationOffset\":%u,\"stream\":0}",
+         i ? "," : "", e->register_index, e->start_component,
+         e->num_components, e->output_buffer, e->destination_offset);
+   }
+   append("],\"varyings\":["); unsigned packed = 0; bool comma = false;
+   for (unsigned i = 0; i < s->count; ++i) {
+      const struct standard_stream_output_entry *e = &s->outputs[i];
+      if (e->output_buffer != s->capture_buffer) continue;
+      append("%s{\"outputIndex\":%u,\"name\":\"wv_so_%u\",\"type\":\"", comma ? "," : "", i, i);
+      if (e->num_components == 1) append("uint");
+      else append("uvec%u", e->num_components);
+      append("\",\"components\":%u,\"packedOffset\":%u}", e->num_components, packed * 4);
+      packed += e->num_components; comma = true;
+   }
+   append("],\"packedStrideBytes\":%u}", packed * 4);
+}
+static void standard_result(const struct standard_conversion *c)
+{
+   const struct standard_profile *p = &c->profile;
+   append("\"glsl\":\"");
+   {
+      const char *s = c->standard_source;
+      for (; *s; ++s) {
+         unsigned char ch = (unsigned char)*s;
+         if (ch == '"' || ch == '\\') append("\\%c", ch);
+         else if (ch < 32) append("\\u%04x", ch);
+         else append("%c", ch);
+      }
+   }
+   append("\",\"metadata\":{\"profile\":\"%s\",\"stage\":\"%s\",\"inputs\":",
+          p->stream_output.enabled ? "virgl-webgl2-standard-stream-output-gles3-v1" : p->dimensional_shadows ? "virgl-webgl2-standard-dimensional-shadow-texture-gles3-v1" : p->dimensional_textures ? "virgl-webgl2-standard-dimensional-texture-gles3-v1" : p->shadow_textures ? "virgl-webgl2-standard-shadow-texture-gles3-v1" : p->instance_base ? "virgl-webgl2-standard-instance-base-gles3-v1" : p->integer_images ? "virgl-webgl2-standard-integer-image-gles3-v1" : p->texture_operations ? "virgl-webgl2-standard-texture-gles3-v1" : p->uniform_buffers ? "virgl-webgl2-standard-uniform-gles3-v1" : "virgl-webgl2-standard-gles3-v1",
+          p->stage ? "fragment" : "vertex");
+   standard_io_json(p, STD_IN); append(",\"outputs\":"); standard_io_json(p, STD_OUT);
+   append(",\"attributes\":"); if (p->stage) append("[]"); else standard_io_json(p, STD_IN);
+   append(",\"systemValues\":"); standard_io_json(p, STD_SV);
+   append(",\"uniforms\":[");
+   if (p->constants && !p->buffer_zero) append("{\"name\":\"%sconst0\",\"type\":\"uvec4[]\",\"count\":%u,\"encoding\":\"raw-32bit-words\"}", p->stage ? "fs" : "vs", p->constants);
+   append("],\"samplers\":["); bool comma = false;
+   for (unsigned i = 0; i < STANDARD_SAMPLERS; ++i) if (p->used_samplers & (1u << i)) {
+      append("%s{\"index\":%u,\"name\":\"%ssamp%u\",\"type\":\"%s\"}", comma ? "," : "", i, p->stage ? "fs" : "vs", i, standard_sampler_type(p, i));
+      comma = true;
+   }
+   append("],\"uniformBlocks\":[");
+   if (!p->stage) append("{\"name\":\"VirglBlock\",\"byteLength\":656,\"members\":[{\"name\":\"winsys_adjust_y\",\"offset\":640,\"type\":\"float\",\"default\":1}]}");
+   append("],\"rasterUniforms\":[");
+   bool point_coord = false;
+   for (unsigned i = 0; i < STANDARD_IO; ++i)
+      point_coord |= p->declared[STD_IN][i] && p->input[i].semantic == STD_PCOORD;
+   for (unsigned i = 0; i < 2; ++i)
+      point_coord |= p->declared[STD_SV][i] && p->system[i].semantic == STD_PCOORD;
+   if (!p->stage) append("{\"name\":\"wv_point_size\",\"type\":\"vec2\",\"semantic\":\"POINT_SIZE\"}");
+   else if (point_coord) append("{\"name\":\"wv_point_coord_y\",\"type\":\"float\",\"semantic\":\"POINT_COORD_Y\"}");
+   append("]");
+   if (p->instance_base) {
+      append(",\"instanceUniforms\":[");
+      if (standard_has_instance_id(p)) append("{\"name\":\"wv_instance_base\",\"type\":\"uint\",\"semantic\":\"INSTANCE_BASE\",\"default\":0}");
+      append("]");
+   }
+   if (p->shadow_textures) {
+      append(",\"shadowUniforms\":["); bool comma = false;
+      for (unsigned i = 0; i < STANDARD_SAMPLERS; ++i) if (p->shadow_samples & (1u << i)) {
+         const char *stage = p->stage ? "fs" : "vs";
+         append("%s{\"index\":%u,\"name\":\"%sshadmask%u\",\"type\":\"vec4\",\"semantic\":\"SHADOW_MASK\"},"
+                "{\"index\":%u,\"name\":\"%sshadadd%u\",\"type\":\"vec4\",\"semantic\":\"SHADOW_ADD\"}",
+                comma ? "," : "", i, stage, i, i, stage, i);
+         comma = true;
+      }
+      append("]");
+   }
+   if (p->uniform_buffers) {
+      append(",\"guestUniformBlocks\":["); bool comma = false;
+      for (unsigned i = 0; i <= STANDARD_UNIFORM_SLOTS; ++i) {
+         unsigned count = i ? p->uniform_counts[i] : p->buffer_zero ? p->constants : 0;
+         if (!count) continue;
+         append("%s{\"name\":\"Virgl%sConst%u\",\"stage\":\"%s\",\"slot\":%u,\"byteLength\":%u,\"encoding\":\"raw-32bit-words\",\"members\":[{\"name\":\"%sconst%u\",\"type\":\"uvec4[]\",\"count\":%u,\"offset\":0,\"arrayStride\":16}]}",
+                comma ? "," : "", p->stage ? "FS" : "VS", i, p->stage ? "fragment" : "vertex",
+                i, count * 16, p->stage ? "fs" : "vs", i, count);
+         comma = true;
+      }
+      append("]");
+   }
+   if (p->texture_operations) {
+      append(",\"textureQueries\":["); bool comma = false;
+      for (unsigned i = 0; i < STANDARD_SAMPLERS; ++i) if (p->queried_levels & (1u << i)) {
+         append("%s{\"index\":%u,\"name\":\"%ssamplevels%u\",\"type\":\"int\",\"semantic\":\"TEXTURE_LEVELS\"}",
+                comma ? "," : "", i, p->stage ? "fs" : "vs", i);
+         comma = true;
+      }
+      append("]");
+   }
+   if (p->integer_images) append(",\"colorOutputMasks\":{\"signedMask\":%u,\"unsignedMask\":%u}", p->signed_colors, p->unsigned_colors);
+   if (p->stream_output.enabled) standard_stream_output_json(&p->stream_output);
+   append(",\"broadcastColor0\":%s,\"standardSemantics\":{\"kind\":\"native-gles3-highp-v1\",\"precision\":\"native-highp\",\"undefinedDomains\":\"native-gles3\",\"preciseQualifier\":\"no-gpu-shader5\",\"registerStorage\":\"uvec4\",\"flatVaryingStorage\":\"uvec4\",\"scalarResults\":\"tgsi-x-replicated\",\"exactAuthority\":false,\"gpuExecutionBound\":false}}", p->broadcast ? "true" : "false");
+}
+static bool standard_color_masks(struct standard_profile *p, uint32_t signed_colors, uint32_t unsigned_colors)
+{
+   if ((signed_colors | unsigned_colors) > 15u || (signed_colors & unsigned_colors) ||
+       (!p->stage && (signed_colors | unsigned_colors))) return false;
+   uint32_t outputs = p->broadcast ? 15u : 0u;
+   for (unsigned i = 0; i < STANDARD_IO; ++i)
+      if (p->declared[STD_OUT][i] && p->output[i].semantic == STD_COLOR) outputs |= 1u << p->output[i].sid;
+   if ((signed_colors | unsigned_colors) & ~outputs) return false;
+   p->signed_colors = (uint8_t)signed_colors; p->unsigned_colors = (uint8_t)unsigned_colors;
+   return true;
+}
+static const char *standard_input(struct standard_profile *p, const char *text, size_t length, char *owned)
+{
+   if (!text) return error("invalid-input", "Standard TGSI input is null.");
+   if (length > BRIDGE_MAX_TEXT) return error("input-too-large", "TGSI text exceeds 49152 bytes.");
+   memcpy(owned, text, length); owned[length] = 0;
+   const char *code = standard_validate(p, owned, length);
+   /* The pinned parser omits CR from its whitespace set. This facet owns and
+    * canonicalizes only accepted whitespace; grammar and extents use original
+    * bytes, and no opcode, literal or register is rewritten. */
+   if (!code) for (size_t i = 0; i < length; ++i) if (owned[i] == '\r') owned[i] = ' ';
+   return code ? error(code, "TGSI is outside the bounded standard GLES3 grammar.") : NULL;
+}
+static const char *standard_stage_layout(int stage, const char *text, size_t length, bool uniform_buffers, bool texture_operations,
+                                  bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures, bool dimensional_shadows,
+                                  bool stream_output, const uint32_t *layout, size_t layout_words, uint32_t capture_buffer)
+{
+   begin_response(false);
+   if (stage != 0 && stage != 1) return error("unsupported-stage", "Only vertex and fragment stages are supported.");
+   char owned[BRIDGE_MAX_TEXT + 1];
+   struct standard_profile p = {.stage = stage, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations, .integer_images = integer_images, .instance_base = instance_base, .shadow_textures = shadow_textures, .dimensional_textures = dimensional_textures, .dimensional_shadows = dimensional_shadows};
+   const char *failed = standard_input(&p, text, length, owned);
+   if (failed) return response;
+   if (stream_output) {
+      const char *code = standard_stream_output_validate(&p, layout, layout_words, capture_buffer);
+      if (code) return error(code, "Original stream-output layout is outside this selected facet.");
+   }
+   if (!standard_color_masks(&p, signed_colors, unsigned_colors))
+      return error("invalid-input", "Color format masks must be disjoint 4-bit masks naming fragment outputs.");
+   struct standard_conversion *c = calloc(1, sizeof(*c));
+   if (!c) return error("allocation-failed", "Standard conversion arena allocation failed.");
+   c->profile = p;
+   failed = standard_convert(c, owned, NULL);
+   if (!failed) { append("{\"ok\":true,"); standard_result(c); append("}"); }
+   standard_cleanup(c); free(c);
+   if (response_overflow) return error("translation-error", "Standard JSON output exceeded its bound.");
+   return response;
+}
+static const char *standard_stage(int stage, const char *text, size_t length, bool uniform_buffers, bool texture_operations,
+                                  bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures, bool dimensional_shadows)
+{
+   return standard_stage_layout(stage, text, length, uniform_buffers, texture_operations,
+      integer_images, signed_colors, unsigned_colors, instance_base, shadow_textures,
+      dimensional_textures, dimensional_shadows, false, NULL, 0, 0);
+}
+const char *bridge_translate_standard(int stage, const char *text, size_t length)
+{
+   return standard_stage(stage, text, length, false, false, false, 0, 0, false, false, false, false);
+}
+const char *bridge_translate_standard_uniform(int stage, const char *text, size_t length)
+{
+   return standard_stage(stage, text, length, true, false, false, 0, 0, false, false, false, false);
+}
+static const char *standard_pair_layout(const char *vertex_text, size_t vertex_length,
+                                const char *fragment_text, size_t fragment_length,
+                                uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                bool uniform_buffers, bool texture_operations, uint32_t buffer_zero_mask,
+                                bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures, bool dimensional_shadows,
+                                bool stream_output, const uint32_t *layout, size_t layout_words, uint32_t capture_buffer)
+{
+   begin_response(true);
+   if ((signed_inputs | unsigned_inputs | packed_signed_inputs | packed_normalized_inputs) > 0xffffu ||
+       (signed_inputs & unsigned_inputs) || ((signed_inputs | unsigned_inputs) & packed_signed_inputs) ||
+       (packed_normalized_inputs & ~packed_signed_inputs) || buffer_zero_mask > 3u)
+      return error("invalid-input", "Vertex format masks must be compatible 16-bit masks.");
+   char owned[2][BRIDGE_MAX_TEXT + 1];
+   struct standard_profile profiles[2] = {{.stage = 0, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations, .integer_images = integer_images, .instance_base = instance_base, .shadow_textures = shadow_textures, .dimensional_textures = dimensional_textures, .dimensional_shadows = dimensional_shadows},
+                                         {.stage = 1, .uniform_buffers = uniform_buffers, .texture_operations = texture_operations, .integer_images = integer_images, .instance_base = instance_base, .shadow_textures = shadow_textures, .dimensional_textures = dimensional_textures, .dimensional_shadows = dimensional_shadows}};
+   const char *failed = standard_input(&profiles[0], vertex_text, vertex_length, owned[0]);
+   if (!failed) failed = standard_input(&profiles[1], fragment_text, fragment_length, owned[1]);
+   if (!failed && stream_output) {
+      const char *code = standard_stream_output_validate(&profiles[0], layout, layout_words, capture_buffer);
+      if (!code) code = standard_stream_output_validate(&profiles[1], NULL, 0, capture_buffer);
+      if (code) failed = error(code, "Original stream-output layout is outside this selected facet.");
+   }
+   if (!failed && !standard_match(&profiles[0], &profiles[1]))
+      failed = error("incompatible-interface", "Standard fragment inputs require matching declared vertex components.");
+   if (failed) return response;
+   if (!standard_color_masks(&profiles[1], signed_colors, unsigned_colors))
+      return error("invalid-input", "Color format masks must be disjoint 4-bit masks naming fragment outputs.");
+   for (unsigned i = 0; i < 2; ++i) if (buffer_zero_mask & (1u << i)) {
+      if (!profiles[i].constants) return error("invalid-input", "Buffered slot zero requires a declared constant bank.");
+      profiles[i].buffer_zero = true;
+   }
+   uint32_t declared_inputs = 0;
+   for (unsigned i = 0; i < 16; ++i)
+      if (profiles[0].declared[STD_IN][i]) declared_inputs |= 1u << i;
+   if ((signed_inputs | unsigned_inputs | packed_signed_inputs) & ~declared_inputs)
+      return error("invalid-input", "Format masks must name declared vertex attributes.");
+   profiles[0].signed_inputs = (uint16_t)signed_inputs;
+   profiles[0].unsigned_inputs = (uint16_t)unsigned_inputs;
+   profiles[0].packed_signed_inputs = (uint16_t)packed_signed_inputs;
+   profiles[0].packed_normalized_inputs = (uint16_t)packed_normalized_inputs;
+   struct standard_conversion *c = calloc(2, sizeof(*c));
+   if (!c) return error("allocation-failed", "Standard pair arena allocation failed.");
+   c[0].profile = profiles[0]; c[1].profile = profiles[1];
+   failed = standard_convert(&c[1], owned[1], NULL);
+   if (!failed && !standard_fragment_export(&c[1])) failed = error("translation-error", "Standard interpolation export differs from the checked fragment declarations.");
+   if (!failed) failed = standard_convert(&c[0], owned[0], &c[1].variable.fs_info);
+   if (!failed) {
+      append("{\"ok\":true,\"vertex\":{"); standard_result(&c[0]);
+      append("},\"fragment\":{"); standard_result(&c[1]);
+      append("},\"interfaceKey\":\"standard-generic-interpolation-v1:");
+      bool comma = false;
+      for (unsigned sid = 0; sid < STANDARD_GENERIC; ++sid)
+         for (unsigned i = 0; i < STANDARD_IO; ++i) if (profiles[1].declared[STD_IN][i] && profiles[1].input[i].semantic == STD_GENERIC && profiles[1].input[i].sid == sid) {
+            const struct standard_io *io = &profiles[1].input[i];
+            append("%sg%u/%u/%s", comma ? ";" : "", sid, io->mask, io->flat ? "flat" : "smooth"); comma = true;
+         }
+      append("\"}");
+   }
+   standard_cleanup(&c[0]); standard_cleanup(&c[1]); free(c);
+   if (response_overflow) return error("translation-error", "Standard pair JSON output exceeded its bound.");
+   return response;
+}
+static const char *standard_pair(const char *vertex_text, size_t vertex_length,
+                                const char *fragment_text, size_t fragment_length,
+                                uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                bool uniform_buffers, bool texture_operations, uint32_t buffer_zero_mask,
+                                bool integer_images, uint32_t signed_colors, uint32_t unsigned_colors, bool instance_base, bool shadow_textures, bool dimensional_textures, bool dimensional_shadows)
+{
+   return standard_pair_layout(vertex_text, vertex_length, fragment_text, fragment_length,
+      signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
+      uniform_buffers, texture_operations, buffer_zero_mask, integer_images, signed_colors,
+      unsigned_colors, instance_base, shadow_textures, dimensional_textures, dimensional_shadows,
+      false, NULL, 0, 0);
+}
+const char *bridge_translate_standard_pair(const char *vertex_text, size_t vertex_length,
+                                           const char *fragment_text, size_t fragment_length)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length, 0, 0, 0, 0, false, false, 0, false, 0, 0, false, false, false, false);
+}
+const char *bridge_translate_standard_pair_typed(const char *vertex_text, size_t vertex_length,
+                                                 const char *fragment_text, size_t fragment_length,
+                                                 uint32_t signed_inputs, uint32_t unsigned_inputs)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
+                        signed_inputs, unsigned_inputs, 0, 0, false, false, 0, false, 0, 0, false, false, false, false);
+}
+const char *bridge_translate_standard_pair_vertex_formats(const char *vertex_text, size_t vertex_length,
+                                                          const char *fragment_text, size_t fragment_length,
+                                                          uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                          uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
+                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs, false, false, 0, false, 0, 0, false, false, false, false);
+}
+const char *bridge_translate_standard_uniform_pair(const char *vertex_text, size_t vertex_length,
+                                                   const char *fragment_text, size_t fragment_length,
+                                                   uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                   uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                                   uint32_t buffer_zero_mask)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
+                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
+                        true, false, buffer_zero_mask, false, 0, 0, false, false, false, false);
+}
+
+const char *bridge_translate_standard_texture(int stage, const char *text, size_t length)
+{
+   return standard_stage(stage, text, length, true, true, false, 0, 0, false, false, false, false);
+}
+const char *bridge_translate_standard_texture_pair(const char *vertex_text, size_t vertex_length,
+                                                   const char *fragment_text, size_t fragment_length,
+                                                   uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                   uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                                   uint32_t buffer_zero_mask)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
+                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
+                        true, true, buffer_zero_mask, false, 0, 0, false, false, false, false);
+}
+
+const char *bridge_translate_standard_integer_image(int stage, const char *text, size_t length,
+                                                    uint32_t signed_colors, uint32_t unsigned_colors)
+{
+   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, false, false, false, false);
+}
+const char *bridge_translate_standard_integer_image_pair(const char *vertex_text, size_t vertex_length,
+                                                         const char *fragment_text, size_t fragment_length,
+                                                         uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                         uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                                         uint32_t buffer_zero_mask, uint32_t signed_colors, uint32_t unsigned_colors)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
+                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
+                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, false, false, false, false);
+}
+
+const char *bridge_translate_standard_instance_base(int stage, const char *text, size_t length,
+                                                    uint32_t signed_colors, uint32_t unsigned_colors)
+{
+   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, true, false, false, false);
+}
+
+const char *bridge_translate_standard_instance_base_pair(const char *vertex_text, size_t vertex_length,
+                                                         const char *fragment_text, size_t fragment_length,
+                                                         uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                         uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                                         uint32_t buffer_zero_mask, uint32_t signed_colors, uint32_t unsigned_colors)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
+                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
+                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, true, false, false, false);
+}
+
+const char *bridge_translate_standard_shadow_texture(int stage, const char *text, size_t length,
+                                                     uint32_t signed_colors, uint32_t unsigned_colors)
+{
+   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, true, true, false, false);
+}
+const char *bridge_translate_standard_shadow_texture_pair(const char *vertex_text, size_t vertex_length,
+                                                          const char *fragment_text, size_t fragment_length,
+                                                          uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                          uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                                          uint32_t buffer_zero_mask, uint32_t signed_colors, uint32_t unsigned_colors)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
+                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
+                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, true, true, false, false);
+}
+
+const char *bridge_translate_standard_dimensional_texture(int stage, const char *text, size_t length,
+                                                          uint32_t signed_colors, uint32_t unsigned_colors)
+{
+   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, true, true, true, false);
+}
+const char *bridge_translate_standard_dimensional_texture_pair(const char *vertex_text, size_t vertex_length,
+                                                               const char *fragment_text, size_t fragment_length,
+                                                               uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                               uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                                               uint32_t buffer_zero_mask, uint32_t signed_colors, uint32_t unsigned_colors)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
+                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
+                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, true, true, true, false);
+}
+
+const char *bridge_translate_standard_dimensional_shadow_texture(int stage, const char *text, size_t length,
+                                                                 uint32_t signed_colors, uint32_t unsigned_colors)
+{
+   return standard_stage(stage, text, length, true, true, true, signed_colors, unsigned_colors, true, true, true, true);
+}
+const char *bridge_translate_standard_dimensional_shadow_texture_pair(const char *vertex_text, size_t vertex_length,
+                                                                      const char *fragment_text, size_t fragment_length,
+                                                                      uint32_t signed_inputs, uint32_t unsigned_inputs,
+                                                                      uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+                                                                      uint32_t buffer_zero_mask, uint32_t signed_colors, uint32_t unsigned_colors)
+{
+   return standard_pair(vertex_text, vertex_length, fragment_text, fragment_length,
+                        signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
+                        true, true, buffer_zero_mask, true, signed_colors, unsigned_colors, true, true, true, true);
+}
+const char *bridge_translate_standard_stream_output(int stage, const char *text, size_t length,
+   uint32_t signed_colors, uint32_t unsigned_colors,
+   const uint32_t *layout, size_t layout_words, uint32_t capture_buffer)
+{
+   return standard_stage_layout(stage, text, length, true, true, true,
+      signed_colors, unsigned_colors, true, true, true, true,
+      true, layout, layout_words, capture_buffer);
+}
+const char *bridge_translate_standard_stream_output_pair(const char *vertex_text, size_t vertex_length,
+   const char *fragment_text, size_t fragment_length,
+   uint32_t signed_inputs, uint32_t unsigned_inputs,
+   uint32_t packed_signed_inputs, uint32_t packed_normalized_inputs,
+   uint32_t buffer_zero_mask, uint32_t signed_colors, uint32_t unsigned_colors,
+   const uint32_t *layout, size_t layout_words, uint32_t capture_buffer)
+{
+   return standard_pair_layout(vertex_text, vertex_length, fragment_text, fragment_length,
+      signed_inputs, unsigned_inputs, packed_signed_inputs, packed_normalized_inputs,
+      true, true, buffer_zero_mask, true, signed_colors, unsigned_colors,
+      true, true, true, true, true, layout, layout_words, capture_buffer);
 }

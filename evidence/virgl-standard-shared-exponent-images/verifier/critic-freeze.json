@@ -1,0 +1,17 @@
+{
+  "status": "HELD",
+  "workerSubmission": "dcd1668079c047d27bba75d230e3be9b51ffa3de",
+  "criticFreeze": "90dd309b800762309df6fa2431ba25e76d44a3f5",
+  "onlyPromotedHarnessChanged": true,
+  "MakefileOnlyAddsCriticTarget": true,
+  "sources": {
+    "Makefile": "c4d792799c0c6aaa848a3c36dc320c101bf03b6209854806f534d2d44c5b7cb5",
+    "renderer/virgl-command/tests/standard-shared-exponent-critic.json": "92642f09a1a002ef64593e8d63a68eb1709a73cefc6e5b05bf0a4aeda4e172c5",
+    "renderer/virgl-command/tests/standard-shared-exponent-critic.mjs": "055027fede65b7c5ed8aa992fe4e61364cc5166d143620942f612d35f5177826",
+    "tools/verify-virgl-standard-shared-exponent-adversarial.sh": "c09f8cf39c27f890f2dbf99ac452c5f7df203c0d5da7a6dfac5a79cba74f9307",
+    "tools/verify-virgl-standard-shared-exponent-critic.mjs": "e386c09a19e2659ee03b9aaee308e86d95cc8ad3fc93319a9aa0ee205dc527b0",
+    "tools/virgl-command/standard-shared-exponent-critic.py": "fc9a349f71927d80417e305e61fc12eba4031124ef2f30d318dd1eab793095ac"
+  },
+  "coldRebuildRequired": false,
+  "coldCarryReason": "Only new critic fixtures/tests/recording tools and additive verify target changed. Product runtime, compiler and dependency boundaries exact7e88; original successful pristine scrubbed7e88 recording carries unchanged."
+}

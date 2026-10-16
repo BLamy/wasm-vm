@@ -1,0 +1,11 @@
+{
+  "scope": "verifier-only offline auditing",
+  "initialFailure": "summed historical deleted native allocations across successive A/B/A jobs instead of current live allocations",
+  "physicalFramesBeforeFailure": 304,
+  "physicalPixelsBeforeFailure": 177664,
+  "correction": "subtract independently witnessed deletions; use final job fence for both drawn and owned-but-undrawn private buffers; disposal requires actual disposed inspection",
+  "runtimeChanged": false,
+  "hardwareRunRerunRequired": false,
+  "secondFailure": "treated a completed read-fence cancellation drain as explicit disposal instead of permitted completion/drain",
+  "secondCorrection": "accept finishing/cancelling/retiring only after real ready final fence, zero retained reads, later-task polls; other phases require disposed=true"
+}

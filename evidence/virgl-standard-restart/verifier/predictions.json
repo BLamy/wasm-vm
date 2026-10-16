@@ -1,0 +1,20 @@
+{
+  "schema": "standard-restart-fresh-verifier-predictions-v1",
+  "task": "E6-T11d9",
+  "submissionHead": "13e0f7b26276cc1dd20bd3c67b82d463d07e4df0",
+  "runtimeHead": "31e4b3ff907d36f54689513796927acc16b5fd62",
+  "sourceClosure": "ef30bcccb02f006a72da6c4796134b9c780a828d",
+  "writtenBeforeOpeningEvidence": true,
+  "predictions": [
+    {"id":"P0", "prediction":"The archive/index authenticate every unique record; hot physical reports remain at 31e4 and the final pristine clone at ef30. Git/source digests permit only the receipt-file correction between those heads. The original hot acceptance log retains its receipt KeyError and is not a passed full make invocation. Earlier HELD compiler/resource/constant/link and historical D6/D7/D8 records are byte-identical to bef704."},
+    {"id":"P1", "prediction":"Literal DRAW flags admit only modes 1..6 with boolean indexed/restart, zero base offsets and stream output; restart enabled requires indexed, disabled requires marker zero. Legacy remains only modes 4/5, no restart. Hostile boolean, offset, stream-output and malformed-tail snapshots fail before native draw."},
+    {"id":"P2", "prediction":"Every original source GPU buffer equals reconstruction from literal transfer bytes at original offsets and generations. Normalization replaces only enabled exact original marker with u32max and preserves all other original IDs, including 255/65535 with restart disabled or an out-of-type marker. Fixed-compatible streams preserve native size/offset. Real nonrestart u32max rejects before allocation/draw."},
+    {"id":"P3", "prediction":"Native modes, original/native types and offsets, original attribute/generic/divisor bindings and all pixels match an independently derived byte/primitive/ID oracle. Restart divides every mode into segments; tails cannot bridge segments, loop closures stay inside each segment. Vertex-ID tags physically guard clip W. No observed pixels are used to form expectations; per-instance colors avoid a provoking-state claim."},
+    {"id":"P4", "prediction":"Actual fetch min/max exclude only enabled exact markers and ignore hints. All restart produces null min/max, null first/last/byte ends, explicit empty fetches and clear pixels while count*max(1,instances) still consumes source work. Short bounds, work 35 vs 36, exact/one-short read storage and 65th draw have specific errors."},
+    {"id":"P5", "prediction":"Whole pending read batches reject changed original storage even after index collection and before constant completion. Cancellation/stale revision never normalize or draw; name reuse succeeds only with retained old generation and original bytes. Every job drains its real fences and releases read/staging counters."},
+    {"id":"P6", "prediction":"Exact 65536 source words reach 262144 normalized native bytes, and 64 draws reach 64 retained buffers; work 65535 fails and no yield owns CPU scratch. GPU scratch remains owned and detached from guest VAO through later reads/final drain. Second create/upload failure keeps only successful draw prefix; cancellation and explicit disposal release every owned object/read with counters zero."},
+    {"id":"P7", "prediction":"A/B/A context and native EBO/VAO poisoning restore actual original/native bindings and pixels. Every runtime added hunk has positive V8 execution coverage or a narrow explicit guard/type/config waiver."},
+    {"id":"P8", "prediction":"A real served marker-mapping mutation completes drawElementsInstanced and a real final GPU fence, retains original marker in physical normalized GPU bytes, and fails the independent full pixel oracle. The promoted fresh oracle must also fail this actual served mutation."},
+    {"id":"P9", "prediction":"A newly seeded custom-marker/wide-index stream with independent nonzero binding/source offsets and a per-fence later schedule satisfies the same original byte, exact-marker, full-pixel and lifetime invariants; independently varied all-restart/out-of-type markers and nonrestart native sentinel give their specified outcomes."}
+  ]
+}

@@ -1,0 +1,2107 @@
+{
+  "status": "failed",
+  "error": "Error: Actual guest application window did not close\n    at waitClosed (file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/omarchy-applications-pristine01/clone-native-note97/tools/virgl-production/omarchy-applications.mjs:564:11)\n    at async openWriterFile (file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/omarchy-applications-pristine01/clone-native-note97/tools/virgl-production/omarchy-applications.mjs:844:5)\n    at async verifyOmarchyApplications (file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/omarchy-applications-pristine01/clone-native-note97/tools/virgl-production/omarchy-applications.mjs:1096:23)\n    at async file:///Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/omarchy-applications-pristine01/clone-native-note97/tools/virgl-production/critic-fast-boots.mjs:698:33",
+  "acceptedInventorySha256": "ae72ccdf528974e203726b058a639201bfa19950ee4190658baad14e0440ab86",
+  "firstSave": {
+    "sha256": "719cb212524f8393c9cf9fc7b227787f272671114e8a8526f669ac29ddef45af",
+    "bytes": 8716,
+    "text": "Omarchy riscv document 42"
+  },
+  "reopenLaunch": {
+    "window": {
+      "address": "0x55557967dee0",
+      "mapped": true,
+      "hidden": false,
+      "visible": true,
+      "acceptsInput": true,
+      "at": [
+        647,
+        38
+      ],
+      "size": [
+        621,
+        750
+      ],
+      "workspace": {
+        "id": 1,
+        "name": "1"
+      },
+      "floating": false,
+      "monitor": 0,
+      "class": "libreoffice-writer",
+      "title": "Untitled 1 \u2014 LibreOffice Writer",
+      "initialClass": "libreoffice-writer",
+      "initialTitle": "Untitled 1 \u2014 LibreOffice Writer",
+      "pid": 11701,
+      "xwayland": false,
+      "pinned": false,
+      "pinFullscreened": false,
+      "fullscreen": 0,
+      "fullscreenClient": 0,
+      "fullscreenHandler": "default",
+      "allowedOverFullscreen": true,
+      "grouped": [],
+      "tags": [
+        "default-opacity*"
+      ],
+      "swallowing": "0x0",
+      "focusHistoryID": 0,
+      "inhibitingIdle": false,
+      "xdgTag": "",
+      "xdgDescription": "",
+      "contentType": "none",
+      "tearingHint": false,
+      "stableId": "1800000d"
+    }
+  },
+  "writerTip": {
+    "window": {
+      "address": "0x555579d0d9d0",
+      "mapped": true,
+      "hidden": false,
+      "visible": true,
+      "acceptsInput": true,
+      "at": [
+        641,
+        307
+      ],
+      "size": [
+        634,
+        212
+      ],
+      "workspace": {
+        "id": 1,
+        "name": "1"
+      },
+      "floating": true,
+      "monitor": 0,
+      "class": "soffice",
+      "title": "Tip of the Day: 1/224",
+      "initialClass": "soffice",
+      "initialTitle": "Tip of the Day: 1/224",
+      "pid": 11701,
+      "xwayland": false,
+      "pinned": false,
+      "pinFullscreened": false,
+      "fullscreen": 0,
+      "fullscreenClient": 0,
+      "fullscreenHandler": "default",
+      "allowedOverFullscreen": true,
+      "grouped": [],
+      "tags": [
+        "default-opacity*"
+      ],
+      "swallowing": "0x0",
+      "focusHistoryID": 0,
+      "inhibitingIdle": false,
+      "xdgTag": "",
+      "xdgDescription": "",
+      "contentType": "none",
+      "tearingHint": false,
+      "stableId": "1800000e"
+    },
+    "target": {
+      "x": 1215,
+      "y": 492
+    },
+    "action": "trusted native OK button",
+    "time": 1792143344909
+  },
+  "pageErrors": [],
+  "inputFailure": {
+    "focus": "ide-display-canvas",
+    "capture": "on",
+    "held": [],
+    "device": {
+      "pendingEventBudget": 2048,
+      "pendingEvents": 0,
+      "pendingFrames": 0,
+      "droppedFrames": 0,
+      "droppedEvents": 0,
+      "statusEventsServed": 2,
+      "rejectedEvents": 0
+    }
+  },
+  "beforeGpu": {
+    "epoch": "0000000000000002",
+    "qualified": true,
+    "counters": {
+      "failed": 0
+    }
+  },
+  "phases": [
+    {
+      "kind": "guest-command",
+      "command": "XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients",
+      "result": {
+        "stdout": "[{\n    \"address\": \"0x5555795aee80\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [12, 38],\n    \"size\": [621, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"foot\",\n    \"title\": \"omarchy@omarchy-demo:~\",\n    \"initialClass\": \"foot\",\n    \"initialTitle\": \"foot\",\n    \"pid\": 704,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\", \"terminal*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 3,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"18000000\"\n},{\n    \"address\": \"0x55557967dee0\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [647, 38],\n    \"size\": [621, 750],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": false,\n    \"monitor\": 0,\n    \"class\": \"libreoffice-writer\",\n    \"title\": \"Untitled 1 \u2014 LibreOffice Writer\",\n    \"initialClass\": \"libreoffice-writer\",\n    \"initialTitle\": \"Untitled 1 \u2014 LibreOffice Writer\",\n    \"pid\": 11701,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 2,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"1800000d\"\n},{\n    \"address\": \"0x555579d0d9d0\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [641, 307],\n    \"size\": [634, 212],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": true,\n    \"monitor\": 0,\n    \"class\": \"soffice\",\n    \"title\": \"Tip of the Day: 1/224\",\n    \"initialClass\": \"soffice\",\n    \"initialTitle\": \"Tip of the Day: 1/224\",\n    \"pid\": 11701,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 1,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"1800000e\"\n},{\n    \"address\": \"0x555579673e60\",\n    \"mapped\": true,\n    \"hidden\": false,\n    \"visible\": true,\n    \"acceptsInput\": true,\n    \"at\": [320, 28],\n    \"size\": [1276, 770],\n    \"workspace\": {\n        \"id\": 1,\n        \"name\": \"1\"\n    },\n    \"floating\": true,\n    \"monitor\": 0,\n    \"class\": \"soffice\",\n    \"title\": \"Open\",\n    \"initialClass\": \"soffice\",\n    \"initialTitle\": \"Open\",\n    \"pid\": 11701,\n    \"xwayland\": false,\n    \"pinned\": false,\n    \"pinFullscreened\": false,\n    \"fullscreen\": 0,\n    \"fullscreenClient\": 0,\n    \"fullscreenHandler\": \"default\",\n    \"allowedOverFullscreen\": true,\n    \"grouped\": [],\n    \"tags\": [\"default-opacity*\"],\n    \"swallowing\": \"0x0\",\n    \"focusHistoryID\": 0,\n    \"inhibitingIdle\": false,\n    \"xdgTag\": \"\",\n    \"xdgDescription\": \"\",\n    \"contentType\": \"none\",\n    \"tearingHint\": false,\n    \"stableId\": \"1800000f\"\n}]\n\n",
+        "exit": 0
+      },
+      "time": 1792143944455
+    },
+    {
+      "kind": "gpu-health",
+      "state": {
+        "epoch": "0000000000000002",
+        "qualified": true,
+        "lost": false,
+        "poisoned": false,
+        "disposed": false,
+        "counters": {
+          "begun": 8122,
+          "completed": 8122,
+          "failed": 0,
+          "cancelled": 0,
+          "exchanges": 3746,
+          "inputBytes": 741737460,
+          "outputBytes": 0,
+          "pumps": 22281,
+          "draws": 29170
+        },
+        "lastFailure": null
+      },
+      "time": 1792143940714
+    }
+  ],
+  "trusted": [
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    },
+    {
+      "trusted": true
+    }
+  ],
+  "_provenance": "Minimized original cold13 Tip/Open timeout; source17f; full original SHA894df61ff71aee51dddfb735e211844798b7d990f5db22d80900edfa3d2fc28a. Parser regression only, not native evidence."
+}

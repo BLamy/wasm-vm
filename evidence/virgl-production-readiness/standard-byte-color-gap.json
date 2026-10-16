@@ -1,0 +1,901 @@
+{
+  "schema": "original-normalized-byte-color-negative-v1",
+  "sourceHead": "89306b560bb71552a9a6800065ec54273cff0dc8",
+  "sources": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "sha256": "0ce9a8d15ef845d4ccba12c4c776c84de523913aad45bbc798c8827343543552"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "sha256": "92b9892ff13cb824564369a6b30891ac918bb079bcc4f3973c3df426710d84f9"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sha256": "adb03f30ed711cd725d15caea3242aa8b030c70f973580adced2fe73d18e0928"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "sha256": "fc479ec92133f8b75d26043d20fca97d00b1a1556481abf5c5daf23b66e00fca"
+    }
+  ],
+  "mesa": {
+    "archive": "mesa-26.2.2.tar.xz",
+    "archiveSha256": "eeb29ca7e56cfaa8e8a79538dcf834e3b18e501c31bef5145e959ea437cc4216",
+    "path": "mesa-26.2.2/src/util/format/u_format.yaml",
+    "sha256": "f0fef33544456468def10d5dffc72a61e8b0e7acc599b700fc65366e6f495a10"
+  },
+  "records": [
+    {
+      "kind": "view",
+      "format": 1,
+      "name": "B8G8R8A8_UNORM",
+      "packetHex": "010606004d0000000600000001000002000000000000000088060000",
+      "mesaSourceLine": 50,
+      "mesaDescriptor": "- name: B8G8R8A8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [Z, Y, X, W]\n  little_endian:\n    alias: BGRA8888_UNORM\n  big_endian:\n    alias: ARGB8888_UNORM\n",
+      "mesaDescriptorSha256": "6eab5cbbfa27d31c737732e641a292dc567f30ae67e54d1e70314dc2bb1d6483",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 1,
+      "name": "B8G8R8A8_UNORM",
+      "packetHex": "010805004d00000006000000010000000000000000000000",
+      "mesaSourceLine": 50,
+      "mesaDescriptor": "- name: B8G8R8A8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [Z, Y, X, W]\n  little_endian:\n    alias: BGRA8888_UNORM\n  big_endian:\n    alias: ARGB8888_UNORM\n",
+      "mesaDescriptorSha256": "6eab5cbbfa27d31c737732e641a292dc567f30ae67e54d1e70314dc2bb1d6483",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 3,
+      "name": "A8R8G8B8_UNORM",
+      "packetHex": "010606004d0000000600000003000002000000000000000088060000",
+      "mesaSourceLine": 88,
+      "mesaDescriptor": "- name: A8R8G8B8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [Y, Z, W, X]\n  little_endian:\n    alias: ARGB8888_UNORM\n  big_endian:\n    alias: BGRA8888_UNORM\n",
+      "mesaDescriptorSha256": "93c06c9353a1b1cdc08bdcaae3cf4435f5167f03a455e354db5056c712e77d92",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 3,
+      "name": "A8R8G8B8_UNORM",
+      "packetHex": "010805004d00000006000000030000000000000000000000",
+      "mesaSourceLine": 88,
+      "mesaDescriptor": "- name: A8R8G8B8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [Y, Z, W, X]\n  little_endian:\n    alias: ARGB8888_UNORM\n  big_endian:\n    alias: BGRA8888_UNORM\n",
+      "mesaDescriptorSha256": "93c06c9353a1b1cdc08bdcaae3cf4435f5167f03a455e354db5056c712e77d92",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 4,
+      "name": "X8R8G8B8_UNORM",
+      "packetHex": "010606004d0000000600000004000002000000000000000088060000",
+      "mesaSourceLine": 110,
+      "mesaDescriptor": "- name: X8R8G8B8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [X8, UN8, UN8, UN8]\n  swizzles: [Y, Z, W, 1]\n  little_endian:\n    alias: XRGB8888_UNORM\n  big_endian:\n    alias: BGRX8888_UNORM\n",
+      "mesaDescriptorSha256": "d17f4f6026b12b16985a929335c9867505aef7b5434735849fba35cba96321d9",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 4,
+      "name": "X8R8G8B8_UNORM",
+      "packetHex": "010805004d00000006000000040000000000000000000000",
+      "mesaSourceLine": 110,
+      "mesaDescriptor": "- name: X8R8G8B8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [X8, UN8, UN8, UN8]\n  swizzles: [Y, Z, W, 1]\n  little_endian:\n    alias: XRGB8888_UNORM\n  big_endian:\n    alias: BGRX8888_UNORM\n",
+      "mesaDescriptorSha256": "d17f4f6026b12b16985a929335c9867505aef7b5434735849fba35cba96321d9",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 64,
+      "name": "R8_UNORM",
+      "packetHex": "010606004d0000000600000040000002000000000000000088060000",
+      "mesaSourceLine": 1788,
+      "mesaDescriptor": "- name: R8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8]\n  swizzles: [X, 0, 0, 1]\n",
+      "mesaDescriptorSha256": "7dedb5499fadd1e04bcdf537d980da311703589305ed47b4379b3924560816b3",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 64,
+      "name": "R8_UNORM",
+      "packetHex": "010805004d00000006000000400000000000000000000000",
+      "mesaSourceLine": 1788,
+      "mesaDescriptor": "- name: R8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8]\n  swizzles: [X, 0, 0, 1]\n",
+      "mesaDescriptorSha256": "7dedb5499fadd1e04bcdf537d980da311703589305ed47b4379b3924560816b3",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 65,
+      "name": "R8G8_UNORM",
+      "packetHex": "010606004d0000000600000041000002000000000000000088060000",
+      "mesaSourceLine": 1794,
+      "mesaDescriptor": "- name: R8G8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8]\n  swizzles: [X, Y, 0, 1]\n  little_endian:\n    alias: RG88_UNORM\n  big_endian:\n    alias: GR88_UNORM\n",
+      "mesaDescriptorSha256": "911c2d9dc631cf0dde6ecd53e344f1146fbe5b1c91f42fcc2a83c2d453c689e4",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 65,
+      "name": "R8G8_UNORM",
+      "packetHex": "010805004d00000006000000410000000000000000000000",
+      "mesaSourceLine": 1794,
+      "mesaDescriptor": "- name: R8G8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8]\n  swizzles: [X, Y, 0, 1]\n  little_endian:\n    alias: RG88_UNORM\n  big_endian:\n    alias: GR88_UNORM\n",
+      "mesaDescriptorSha256": "911c2d9dc631cf0dde6ecd53e344f1146fbe5b1c91f42fcc2a83c2d453c689e4",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 66,
+      "name": "R8G8B8_UNORM",
+      "packetHex": "010606004d0000000600000042000002000000000000000088060000",
+      "mesaSourceLine": 1804,
+      "mesaDescriptor": "- name: R8G8B8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8]\n  swizzles: [X, Y, Z, 1]\n",
+      "mesaDescriptorSha256": "84f32c23848670f6b11114ba57845ad876f251fa827e8d9d7e92752f331c44fa",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 66,
+      "name": "R8G8B8_UNORM",
+      "packetHex": "010805004d00000006000000420000000000000000000000",
+      "mesaSourceLine": 1804,
+      "mesaDescriptor": "- name: R8G8B8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8]\n  swizzles: [X, Y, Z, 1]\n",
+      "mesaDescriptorSha256": "84f32c23848670f6b11114ba57845ad876f251fa827e8d9d7e92752f331c44fa",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 68,
+      "name": "X8B8G8R8_UNORM",
+      "packetHex": "010606004d0000000600000044000002000000000000000088060000",
+      "mesaSourceLine": 142,
+      "mesaDescriptor": "- name: X8B8G8R8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [X8, UN8, UN8, UN8]\n  swizzles: [W, Z, Y, 1]\n  little_endian:\n    alias: XBGR8888_UNORM\n  big_endian:\n    alias: RGBX8888_UNORM\n# PIPE_FORMAT_R8G8B8A8_UNORM is below\n",
+      "mesaDescriptorSha256": "cb071021779a07ec8a76b2e752c1ae8d88bd2937d3f93675bd7208b69071a47a",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 68,
+      "name": "X8B8G8R8_UNORM",
+      "packetHex": "010805004d00000006000000440000000000000000000000",
+      "mesaSourceLine": 142,
+      "mesaDescriptor": "- name: X8B8G8R8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [X8, UN8, UN8, UN8]\n  swizzles: [W, Z, Y, 1]\n  little_endian:\n    alias: XBGR8888_UNORM\n  big_endian:\n    alias: RGBX8888_UNORM\n# PIPE_FORMAT_R8G8B8A8_UNORM is below\n",
+      "mesaDescriptorSha256": "cb071021779a07ec8a76b2e752c1ae8d88bd2937d3f93675bd7208b69071a47a",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 74,
+      "name": "R8_SNORM",
+      "packetHex": "010606004d000000060000004a000002000000000000000088060000",
+      "mesaSourceLine": 1872,
+      "mesaDescriptor": "- name: R8_SNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [SN8]\n  swizzles: [X, 0, 0, 1]\n",
+      "mesaDescriptorSha256": "29bc04096c9af8bb4e30cf2517f5bc955797b43d666f808a4b21d590194a55be",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 74,
+      "name": "R8_SNORM",
+      "packetHex": "010805004d000000060000004a0000000000000000000000",
+      "mesaSourceLine": 1872,
+      "mesaDescriptor": "- name: R8_SNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [SN8]\n  swizzles: [X, 0, 0, 1]\n",
+      "mesaDescriptorSha256": "29bc04096c9af8bb4e30cf2517f5bc955797b43d666f808a4b21d590194a55be",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 75,
+      "name": "R8G8_SNORM",
+      "packetHex": "010606004d000000060000004b000002000000000000000088060000",
+      "mesaSourceLine": 1878,
+      "mesaDescriptor": "- name: R8G8_SNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [SN8, SN8]\n  swizzles: [X, Y, 0, 1]\n  little_endian:\n    alias: RG88_SNORM\n  big_endian:\n    alias: GR88_SNORM\n",
+      "mesaDescriptorSha256": "45ddcf8f6e35460aebb3762b0e06d1d980c0d741861a58992632f0ac375b4a8f",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 75,
+      "name": "R8G8_SNORM",
+      "packetHex": "010805004d000000060000004b0000000000000000000000",
+      "mesaSourceLine": 1878,
+      "mesaDescriptor": "- name: R8G8_SNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [SN8, SN8]\n  swizzles: [X, Y, 0, 1]\n  little_endian:\n    alias: RG88_SNORM\n  big_endian:\n    alias: GR88_SNORM\n",
+      "mesaDescriptorSha256": "45ddcf8f6e35460aebb3762b0e06d1d980c0d741861a58992632f0ac375b4a8f",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 76,
+      "name": "R8G8B8_SNORM",
+      "packetHex": "010606004d000000060000004c000002000000000000000088060000",
+      "mesaSourceLine": 1888,
+      "mesaDescriptor": "- name: R8G8B8_SNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [SN8, SN8, SN8]\n  swizzles: [X, Y, Z, 1]\n",
+      "mesaDescriptorSha256": "e26e6c79a4b84601513956a357f4c78c938d289b8fa06a8143fbb9b5d18b4a0c",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 76,
+      "name": "R8G8B8_SNORM",
+      "packetHex": "010805004d000000060000004c0000000000000000000000",
+      "mesaSourceLine": 1888,
+      "mesaDescriptor": "- name: R8G8B8_SNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [SN8, SN8, SN8]\n  swizzles: [X, Y, Z, 1]\n",
+      "mesaDescriptorSha256": "e26e6c79a4b84601513956a357f4c78c938d289b8fa06a8143fbb9b5d18b4a0c",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 77,
+      "name": "R8G8B8A8_SNORM",
+      "packetHex": "010606004d000000060000004d000002000000000000000088060000",
+      "mesaSourceLine": 1900,
+      "mesaDescriptor": "- name: R8G8B8A8_SNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [SN8, SN8, SN8, SN8]\n  swizzles: [X, Y, Z, W]\n  little_endian:\n    alias: RGBA8888_SNORM\n  big_endian:\n    alias: ABGR8888_SNORM\n",
+      "mesaDescriptorSha256": "264fbbd3ef5fea01be5effa0b9f97a0017473866a71a16282c7b6eb43f9ace63",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 77,
+      "name": "R8G8B8A8_SNORM",
+      "packetHex": "010805004d000000060000004d0000000000000000000000",
+      "mesaSourceLine": 1900,
+      "mesaDescriptor": "- name: R8G8B8A8_SNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [SN8, SN8, SN8, SN8]\n  swizzles: [X, Y, Z, W]\n  little_endian:\n    alias: RGBA8888_SNORM\n  big_endian:\n    alias: ABGR8888_SNORM\n",
+      "mesaDescriptorSha256": "264fbbd3ef5fea01be5effa0b9f97a0017473866a71a16282c7b6eb43f9ace63",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 97,
+      "name": "R8G8B8_SRGB",
+      "packetHex": "010606004d0000000600000061000002000000000000000088060000",
+      "mesaSourceLine": 481,
+      "mesaDescriptor": "- name: R8G8B8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8]\n  swizzles: [X, Y, Z, 1]\n",
+      "mesaDescriptorSha256": "a09045e95f9fbec208dd28be29f17f21640d30eee14a3d67b79e91f00134c175",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 97,
+      "name": "R8G8B8_SRGB",
+      "packetHex": "010805004d00000006000000610000000000000000000000",
+      "mesaSourceLine": 481,
+      "mesaDescriptor": "- name: R8G8B8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8]\n  swizzles: [X, Y, Z, 1]\n",
+      "mesaDescriptorSha256": "a09045e95f9fbec208dd28be29f17f21640d30eee14a3d67b79e91f00134c175",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 98,
+      "name": "A8B8G8R8_SRGB",
+      "packetHex": "010606004d0000000600000062000002000000000000000088060000",
+      "mesaSourceLine": 503,
+      "mesaDescriptor": "- name: A8B8G8R8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [W, Z, Y, X]\n  little_endian:\n    alias: ABGR8888_SRGB\n  big_endian:\n    alias: RGBA8888_SRGB\n",
+      "mesaDescriptorSha256": "eed41198a427dfd2ad580b332e9833cd2abb1a5ed95a9eb9917004b15db7339a",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 98,
+      "name": "A8B8G8R8_SRGB",
+      "packetHex": "010805004d00000006000000620000000000000000000000",
+      "mesaSourceLine": 503,
+      "mesaDescriptor": "- name: A8B8G8R8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [W, Z, Y, X]\n  little_endian:\n    alias: ABGR8888_SRGB\n  big_endian:\n    alias: RGBA8888_SRGB\n",
+      "mesaDescriptorSha256": "eed41198a427dfd2ad580b332e9833cd2abb1a5ed95a9eb9917004b15db7339a",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 99,
+      "name": "X8B8G8R8_SRGB",
+      "packetHex": "010606004d0000000600000063000002000000000000000088060000",
+      "mesaSourceLine": 513,
+      "mesaDescriptor": "- name: X8B8G8R8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [X8, UN8, UN8, UN8]\n  swizzles: [W, Z, Y, 1]\n  little_endian:\n    alias: XBGR8888_SRGB\n  big_endian:\n    alias: RGBX8888_SRGB\n",
+      "mesaDescriptorSha256": "d18e74a2a94520224d27f720f1818419ebbd375d2573a19ede426cb338047057",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 99,
+      "name": "X8B8G8R8_SRGB",
+      "packetHex": "010805004d00000006000000630000000000000000000000",
+      "mesaSourceLine": 513,
+      "mesaDescriptor": "- name: X8B8G8R8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [X8, UN8, UN8, UN8]\n  swizzles: [W, Z, Y, 1]\n  little_endian:\n    alias: XBGR8888_SRGB\n  big_endian:\n    alias: RGBX8888_SRGB\n",
+      "mesaDescriptorSha256": "d18e74a2a94520224d27f720f1818419ebbd375d2573a19ede426cb338047057",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 100,
+      "name": "B8G8R8A8_SRGB",
+      "packetHex": "010606004d0000000600000064000002000000000000000088060000",
+      "mesaSourceLine": 523,
+      "mesaDescriptor": "- name: B8G8R8A8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [Z, Y, X, W]\n  little_endian:\n    alias: BGRA8888_SRGB\n  big_endian:\n    alias: ARGB8888_SRGB\n",
+      "mesaDescriptorSha256": "f203ed49b6614637e9e4328c91a09100bd3675999c49e1bc271f239960d5f8dd",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 100,
+      "name": "B8G8R8A8_SRGB",
+      "packetHex": "010805004d00000006000000640000000000000000000000",
+      "mesaSourceLine": 523,
+      "mesaDescriptor": "- name: B8G8R8A8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [Z, Y, X, W]\n  little_endian:\n    alias: BGRA8888_SRGB\n  big_endian:\n    alias: ARGB8888_SRGB\n",
+      "mesaDescriptorSha256": "f203ed49b6614637e9e4328c91a09100bd3675999c49e1bc271f239960d5f8dd",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 101,
+      "name": "B8G8R8X8_SRGB",
+      "packetHex": "010606004d0000000600000065000002000000000000000088060000",
+      "mesaSourceLine": 533,
+      "mesaDescriptor": "- name: B8G8R8X8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, X8]\n  swizzles: [Z, Y, X, 1]\n  little_endian:\n    alias: BGRX8888_SRGB\n  big_endian:\n    alias: XRGB8888_SRGB\n",
+      "mesaDescriptorSha256": "d2c2c3b9843c5c894bc65b8c57570a2d9779aa9b308568f71100efc964bcecfc",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 101,
+      "name": "B8G8R8X8_SRGB",
+      "packetHex": "010805004d00000006000000650000000000000000000000",
+      "mesaSourceLine": 533,
+      "mesaDescriptor": "- name: B8G8R8X8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, X8]\n  swizzles: [Z, Y, X, 1]\n  little_endian:\n    alias: BGRX8888_SRGB\n  big_endian:\n    alias: XRGB8888_SRGB\n",
+      "mesaDescriptorSha256": "d2c2c3b9843c5c894bc65b8c57570a2d9779aa9b308568f71100efc964bcecfc",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 102,
+      "name": "A8R8G8B8_SRGB",
+      "packetHex": "010606004d0000000600000066000002000000000000000088060000",
+      "mesaSourceLine": 543,
+      "mesaDescriptor": "- name: A8R8G8B8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [Y, Z, W, X]\n  little_endian:\n    alias: ARGB8888_SRGB\n  big_endian:\n    alias: BGRA8888_SRGB\n",
+      "mesaDescriptorSha256": "7cd4c8a1452d166d469200b18bb44a56b82e7de7266b090d30e0c1f1c211109c",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 102,
+      "name": "A8R8G8B8_SRGB",
+      "packetHex": "010805004d00000006000000660000000000000000000000",
+      "mesaSourceLine": 543,
+      "mesaDescriptor": "- name: A8R8G8B8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [Y, Z, W, X]\n  little_endian:\n    alias: ARGB8888_SRGB\n  big_endian:\n    alias: BGRA8888_SRGB\n",
+      "mesaDescriptorSha256": "7cd4c8a1452d166d469200b18bb44a56b82e7de7266b090d30e0c1f1c211109c",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 103,
+      "name": "X8R8G8B8_SRGB",
+      "packetHex": "010606004d0000000600000067000002000000000000000088060000",
+      "mesaSourceLine": 553,
+      "mesaDescriptor": "- name: X8R8G8B8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [X8, UN8, UN8, UN8]\n  swizzles: [Y, Z, W, 1]\n  little_endian:\n    alias: XRGB8888_SRGB\n  big_endian:\n    alias: BGRX8888_SRGB\n\n\n# Mixed-sign formats (typically used for bump map textures)\n",
+      "mesaDescriptorSha256": "093b9d47312a0cdfb41c0cbebec28b33ca43f06fbdce6780ee3bf64f057cced6",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 103,
+      "name": "X8R8G8B8_SRGB",
+      "packetHex": "010805004d00000006000000670000000000000000000000",
+      "mesaSourceLine": 553,
+      "mesaDescriptor": "- name: X8R8G8B8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [X8, UN8, UN8, UN8]\n  swizzles: [Y, Z, W, 1]\n  little_endian:\n    alias: XRGB8888_SRGB\n  big_endian:\n    alias: BGRX8888_SRGB\n\n\n# Mixed-sign formats (typically used for bump map textures)\n",
+      "mesaDescriptorSha256": "093b9d47312a0cdfb41c0cbebec28b33ca43f06fbdce6780ee3bf64f057cced6",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 104,
+      "name": "R8G8B8A8_SRGB",
+      "packetHex": "010606004d0000000600000068000002000000000000000088060000",
+      "mesaSourceLine": 493,
+      "mesaDescriptor": "- name: R8G8B8A8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [X, Y, Z, W]\n  little_endian:\n    alias: RGBA8888_SRGB\n  big_endian:\n    alias: ABGR8888_SRGB\n",
+      "mesaDescriptorSha256": "804f59d10ee6dd330c0281ff92a254a98a5b1fcfe2bf41d31bea6f70fecd3b47",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 104,
+      "name": "R8G8B8A8_SRGB",
+      "packetHex": "010805004d00000006000000680000000000000000000000",
+      "mesaSourceLine": 493,
+      "mesaDescriptor": "- name: R8G8B8A8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [X, Y, Z, W]\n  little_endian:\n    alias: RGBA8888_SRGB\n  big_endian:\n    alias: ABGR8888_SRGB\n",
+      "mesaDescriptorSha256": "804f59d10ee6dd330c0281ff92a254a98a5b1fcfe2bf41d31bea6f70fecd3b47",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 121,
+      "name": "A8B8G8R8_UNORM",
+      "packetHex": "010606004d0000000600000079000002000000000000000088060000",
+      "mesaSourceLine": 132,
+      "mesaDescriptor": "- name: A8B8G8R8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [W, Z, Y, X]\n  little_endian:\n    alias: ABGR8888_UNORM\n  big_endian:\n    alias: RGBA8888_UNORM\n",
+      "mesaDescriptorSha256": "4a22e1a7a8db2aeb13e37ec465024b4171e1eaa0725a59d1f673d49c32afbde2",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 121,
+      "name": "A8B8G8R8_UNORM",
+      "packetHex": "010805004d00000006000000790000000000000000000000",
+      "mesaSourceLine": 132,
+      "mesaDescriptor": "- name: A8B8G8R8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, UN8]\n  swizzles: [W, Z, Y, X]\n  little_endian:\n    alias: ABGR8888_UNORM\n  big_endian:\n    alias: RGBA8888_UNORM\n",
+      "mesaDescriptorSha256": "4a22e1a7a8db2aeb13e37ec465024b4171e1eaa0725a59d1f673d49c32afbde2",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 134,
+      "name": "R8G8B8X8_UNORM",
+      "packetHex": "010606004d0000000600000086000002000000000000000088060000",
+      "mesaSourceLine": 153,
+      "mesaDescriptor": "- name: R8G8B8X8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, X8]\n  swizzles: [X, Y, Z, 1]\n  little_endian:\n    alias: RGBX8888_UNORM\n  big_endian:\n    alias: XBGR8888_UNORM\n",
+      "mesaDescriptorSha256": "a4f395b09913432699c41b7aa6718ccbbca3e0eb85cb5281b18bebfe054a1b49",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 134,
+      "name": "R8G8B8X8_UNORM",
+      "packetHex": "010805004d00000006000000860000000000000000000000",
+      "mesaSourceLine": 153,
+      "mesaDescriptor": "- name: R8G8B8X8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, X8]\n  swizzles: [X, Y, Z, 1]\n  little_endian:\n    alias: RGBX8888_UNORM\n  big_endian:\n    alias: XBGR8888_UNORM\n",
+      "mesaDescriptorSha256": "a4f395b09913432699c41b7aa6718ccbbca3e0eb85cb5281b18bebfe054a1b49",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 230,
+      "name": "R8G8B8X8_SRGB",
+      "packetHex": "010606004d00000006000000e6000002000000000000000088060000",
+      "mesaSourceLine": 3094,
+      "mesaDescriptor": "- name: R8G8B8X8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, X8]\n  swizzles: [X, Y, Z, 1]\n  little_endian:\n    alias: RGBX8888_SRGB\n  big_endian:\n    alias: XBGR8888_SRGB\n",
+      "mesaDescriptorSha256": "7f3444c8dd444dd74018eee539c0130ba04bb633339675500e16202f7e91445e",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 230,
+      "name": "R8G8B8X8_SRGB",
+      "packetHex": "010805004d00000006000000e60000000000000000000000",
+      "mesaSourceLine": 3094,
+      "mesaDescriptor": "- name: R8G8B8X8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8, X8]\n  swizzles: [X, Y, Z, 1]\n  little_endian:\n    alias: RGBX8888_SRGB\n  big_endian:\n    alias: XBGR8888_SRGB\n",
+      "mesaDescriptorSha256": "7f3444c8dd444dd74018eee539c0130ba04bb633339675500e16202f7e91445e",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 317,
+      "name": "B8G8R8_UNORM",
+      "packetHex": "010606004d000000060000003d010002000000000000000088060000",
+      "mesaSourceLine": 1810,
+      "mesaDescriptor": "- name: B8G8R8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8]\n  swizzles: [Z, Y, X, 1]\n",
+      "mesaDescriptorSha256": "b70264c9124434837411b14ce2632a994cd8538d96dc4547876ff8280d5a0463",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 317,
+      "name": "B8G8R8_UNORM",
+      "packetHex": "010805004d000000060000003d0100000000000000000000",
+      "mesaSourceLine": 1810,
+      "mesaDescriptor": "- name: B8G8R8_UNORM\n  layout: plain\n  colorspace: RGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8]\n  swizzles: [Z, Y, X, 1]\n",
+      "mesaDescriptorSha256": "b70264c9124434837411b14ce2632a994cd8538d96dc4547876ff8280d5a0463",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "view",
+      "format": 387,
+      "name": "B8G8R8_SRGB",
+      "packetHex": "010606004d0000000600000083010002000000000000000088060000",
+      "mesaSourceLine": 487,
+      "mesaDescriptor": "- name: B8G8R8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8]\n  swizzles: [Z, Y, X, 1]\n",
+      "mesaDescriptorSha256": "9b9b1baa3dcc07e104eeeec31ef7d79bb986ed0090c6da081aa86d248fd75889",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only required normalized color 2D sampler views are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    },
+    {
+      "kind": "surface",
+      "format": 387,
+      "name": "B8G8R8_SRGB",
+      "packetHex": "010805004d00000006000000830100000000000000000000",
+      "mesaSourceLine": 487,
+      "mesaDescriptor": "- name: B8G8R8_SRGB\n  layout: plain\n  colorspace: SRGB\n  block: {width: 1, height: 1, depth: 1}\n  channels: [UN8, UN8, UN8]\n  swizzles: [Z, Y, X, 1]\n",
+      "mesaDescriptorSha256": "9b9b1baa3dcc07e104eeeec31ef7d79bb986ed0090c6da081aa86d248fd75889",
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-feature",
+          "message": "Only qualified 2D image levels or level-zero Z16 surfaces are supported.",
+          "byteOffset": 0,
+          "opcode": 1
+        }
+      }
+    }
+  ],
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "negative original wire admission only; no native, API, guest or deployment qualification"
+}

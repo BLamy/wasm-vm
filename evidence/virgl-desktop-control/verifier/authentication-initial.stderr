@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-desktop-control/verifier/authenticate.py", line 51, in <module>
+    dm,db,ds=reopen_seal(repo/'evidence/virgl-resource-capacity'/pin['role'],'D50-'+pin['role'],pin['manifestSha256'])
+  File "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-desktop-control/verifier/authenticate.py", line 21, in reopen_seal
+    assert member.isfile() and not pathlib.PurePosixPath(member.name).is_absolute() and '..' not in pathlib.PurePosixPath(member.name).parts
+AssertionError

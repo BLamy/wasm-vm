@@ -1,0 +1,5 @@
+{
+  "prediction": "The promoted served mutation must reach the pixel oracle after a completed native draw/fence; use seed-derived marker0x7a4d inside retained position storage, distinct from every actual native ID. The original 0x9d620431 marker reached native INVALID_OPERATION because the sabotaged native vertex exceeded storage; that is an honest failed harness attempt, not a product refutation or a pixel-oracle sabotage.",
+  "initialHarnessSha256": "62965ac667e842f5c2a454f009b3ade8053fa541a2d1421d0728dd6b992cdbd6",
+  "writtenBeforeCorrectedRun": true
+}

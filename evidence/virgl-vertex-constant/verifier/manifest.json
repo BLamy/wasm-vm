@@ -1,0 +1,39 @@
+{
+  "schema": "virgl-vertex-constant-critic-seal-v1",
+  "task": "E6-T11d1",
+  "verdict": "verified",
+  "sourceHead": "92c98c7361cad2518200bfa99765ed5895ef4f95",
+  "records": 54,
+  "archiveBytes": 5061727,
+  "archiveSha256": "36d18cbf16f9736618c4a435f494961f3476f92a52edd442ee9425b54bda4850",
+  "recordIndexSha256": "3e7f1f18f18b94f1067da6dc736860b3762d535d86d3743e1cd9b1ae7a084326",
+  "workerArchiveSha256": "0438914308a3ccd17516af6a696ad65cfe9afbb5af589afd882ee7cc919c2d3c",
+  "finalAuditSha256": "9ba3ab5f12a59783d1bcd6ea4043708ed653af38a5bd4f4895e342d9985f682f",
+  "coverageAuditSha256": "353afbc116f3c6d16a033e0d06a12f62c5e96cd957ee101763d001fef736c15e",
+  "promotedTests": [
+    {
+      "path": "renderer/virgl-command/tests/vertex-constant-boundaries.mjs",
+      "sha256": "e64a2d4a97b5ff7401bf95ea4c45ff4da031eb754796ec906d7927d18e0dd826"
+    },
+    {
+      "path": "renderer/virgl-shader/native_tests/tgsi_scratch_boundaries.c",
+      "sha256": "8458322946c0a81b868d7c6236533a28c129b5fb190a39113eb86ac08a9afc3b"
+    }
+  ],
+  "predictionResults": {
+    "P1": "HELD",
+    "P2": "HELD",
+    "P3": "HELD",
+    "P4": "HELD",
+    "P5": "HELD",
+    "P6": "HELD",
+    "P7": "HELD",
+    "P8-revised": "HELD",
+    "P9": "HELD",
+    "P10": "HELD"
+  },
+  "initialP8": "FAILED driver-active-prefix inference only; original source and failure preserved, then corrected before full-bank rerun. Complete actual native prefix remains the task oracle.",
+  "authority": "isolated ordinary vertex128 capacity, private/raw/fragment46 retained; no production capsets or live guest/FPS/MIPS/API-conformance claim",
+  "guestExecution": false,
+  "productionDrawAuthority": false
+}

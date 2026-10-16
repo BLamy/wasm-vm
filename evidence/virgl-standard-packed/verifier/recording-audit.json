@@ -1,0 +1,94 @@
+{
+  "schema": "standard-packed-critic-recording-v1",
+  "status": "passed",
+  "records": [
+    {
+      "family": "hot",
+      "name": "hardware",
+      "reportSha256": "f534019c32e9adffdad439bbede122055f82b84b53331a4e309cfee94e23aee9",
+      "auditPath": "hot-hardware-audit.jsonl",
+      "frames": 214,
+      "draws": 214,
+      "suspensions": 6,
+      "rejections": 15
+    },
+    {
+      "family": "hot",
+      "name": "fault-native-normalize",
+      "reportSha256": "8f396f3824aad45b9a4239f50b958530e95ecebcf921339cc810b2746313aeb5",
+      "auditPath": "hot-fault-native-normalize-audit.jsonl",
+      "frames": 1,
+      "draws": 1,
+      "suspensions": 0,
+      "rejections": 0
+    },
+    {
+      "family": "hot",
+      "name": "fault-constant-field",
+      "reportSha256": "ba6444a676ab273f4a037dab09403c4203c0a945b86bfa1479b8bc3de27ec824",
+      "auditPath": "hot-fault-constant-field-audit.jsonl",
+      "frames": 1,
+      "draws": 1,
+      "suspensions": 0,
+      "rejections": 0
+    },
+    {
+      "family": "hot",
+      "name": "fault-shader-sign",
+      "reportSha256": "21cd9d962cde19a228b33f169d28c5dd9f0e28463e2652e832621781ae7d127a",
+      "auditPath": "hot-fault-shader-sign-audit.jsonl",
+      "frames": 1,
+      "draws": 1,
+      "suspensions": 0,
+      "rejections": 0
+    },
+    {
+      "family": "cold",
+      "name": "hardware",
+      "reportSha256": "bd4f581ae7fc2a3af160f0cf05e5013b40a0ba2cf69dc40e0b10b4b9cf3b69ce",
+      "auditPath": "cold-hardware-audit.jsonl",
+      "frames": 214,
+      "draws": 214,
+      "suspensions": 6,
+      "rejections": 15
+    },
+    {
+      "family": "cold",
+      "name": "fault-native-normalize",
+      "reportSha256": "d23d8a096e66a58291b68d216188018de9973e4bdba5a15ce8558841f32a8658",
+      "auditPath": "cold-fault-native-normalize-audit.jsonl",
+      "frames": 1,
+      "draws": 1,
+      "suspensions": 0,
+      "rejections": 0
+    },
+    {
+      "family": "cold",
+      "name": "fault-constant-field",
+      "reportSha256": "6cc955e56e86155aadacd414fc6f638ec89fb7751613cc2774a1948205e8268b",
+      "auditPath": "cold-fault-constant-field-audit.jsonl",
+      "frames": 1,
+      "draws": 1,
+      "suspensions": 0,
+      "rejections": 0
+    },
+    {
+      "family": "cold",
+      "name": "fault-shader-sign",
+      "reportSha256": "c9529f8d7643879f72bca53608c68e3e2a1b6ef25b50e4ccf9b63301978678f7",
+      "auditPath": "cold-fault-shader-sign-audit.jsonl",
+      "frames": 1,
+      "draws": 1,
+      "suspensions": 0,
+      "rejections": 0
+    }
+  ],
+  "frames": 428,
+  "pixels": 115200,
+  "faults": 6,
+  "servedPins": 120,
+  "originalStorage": 1288,
+  "genericReads": 204,
+  "compiledNativeSources": 434,
+  "compilerVariants": 26
+}

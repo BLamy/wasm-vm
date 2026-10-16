@@ -1,0 +1,76 @@
+{
+  "schema": "fresh-rgb9e5-critic-predictions-v1",
+  "beforeEvidenceInspection": true,
+  "sourceHead": "7e88b69a565d0042297e3001c8c4044efdf4cca9",
+  "submission": "dcd1668079c047d27bba75d230e3be9b51ffa3de",
+  "predecessor": "cd59854e79cedf31abe35585bbe1fe616a8fc7ae",
+  "predictions": [
+    {
+      "id": "P1",
+      "boundary": "Custody",
+      "prediction": "The worker archive and index have exactly11096 unique safe regular members; all hashes and sizes match. Every source, served module, full V8 range and compiler byte matches frozen7e88 source or pinned carried predecessor. Cold head7e88 is pristine before and after, has exit0, and its source/generated/evidence digests equal the carried receipt.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P2",
+      "boundary": "Original fields",
+      "prediction": "Format125 has R bits0..8/G9..17/B18..26/E27..31; native RGB is each9-bit mantissa times2^(E-24), alpha exactly1. Raw0 gives RGB0; raw1 gives R2^-24; raw0xffffffff gives RGB65408; raw0xf8000000 gives RGB0. For every original word, independent general rational conversion yields canonical E=max(0,floor(log2(maxRGB))+16), R/G/B exact integers below512.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P3",
+      "boundary": "Native-only copies",
+      "prediction": "All original textures are RGB9_E5 enum35901; uploads are RGB6407/UNSIGNED_INT_5_9_9_9_REV35902 typed Uint32 preserving little-endian original words. Private ranges use only GPU texelFetch -> RGBA8 -> readPixels RGBA/UNSIGNED_BYTE into the fixed PBO -> texSubImage from the same PBO. Every local mip exactly matches the selected original rational RGB with alpha1; there is no getBufferSubData or CPU readPixels under product-copy labels.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P4",
+      "boundary": "Public bytes and padding",
+      "prediction": "Synchronous and fenced staged public bytes equal independent canonical little-endian words for every complete plane and nonzero NPOT box. Untouched original backing bytes stay0xa7, staging padding0x2e, neighbors/mips untouched; observed source/private planes match original bits rather than fixture decoded outputs.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P5",
+      "boundary": "Physical budgets",
+      "prediction": "Source byte charge equals4*sum(mipPixels); private texture charge equals4*sum(selectedPixels)+8*privateBasePixels. For13x7 levels0..3 source=452, range1..3 texture=88 and helper=144, total684.5x3 sync read requires60 CPU plus60 conversion; staged requires60 CPU plus120 GPU. One-byte-short paths refuse before native allocation. Persistent helpers have exactly1 texStorage2D and1 bufferData over3 refreshes; retained native generations keep charges through hold/fence/cleanup.",
+      "status": "PENDING",
+      "beforeEvidenceArithmetic": "13x7,6x3,3x1,1x1 have113 total pixels; selected range has22 pixels. Corrected mental addition before evidence inspection."
+    },
+    {
+      "id": "P6",
+      "boundary": "Identity and lifetime",
+      "prediction": "Unequal public ID6 replacement gets a greater generation with separate native texture. Old range6x3 levels0..2 continues to return its original generation and mip values after ID reuse; old read captures original base bytes. Two contexts/owners sharing numeric IDs refuse foreign leases/views before native allocation. Cancel consumes a physical fence; dispose proves only cleanup. Every owned native object deleted exactly1 and terminal budgets all0.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P7",
+      "boundary": "Strict admission",
+      "prediction": "Getter/prototype/proxy/marker/invalid role/range/layer/level cases refuse with no successful native allocation; no getters run and throwing proxy trap runs once. Format125 accepts only bind8 and refuses surface/render/scanout. Historical packed owner/decoder remain closed to125.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P8",
+      "boundary": "Failure and state",
+      "prediction": "All21 named native allocation/compile/link/draw/read/buffer/fence/collect/precision failures execute one fault, reject, retire objects once and zero scratch/staging/tickets. Product copy restores program/VAO/framebuffers/viewport/mask/active textures/samplers/base/max/capabilities/pixel store/pack and unpack bindings on success and failure.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P9",
+      "boundary": "Schedules and negative controls",
+      "prediction": "Each of three distinct boundary seeds executes every scoped attack. Packing-field and copy-level controls execute real changed native shader/uniforms, consume actual completed fences(37146 or37148), then disagree with unchanged independently calculated original RGB. A critic-created post-fence corruption must also be detected.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P10",
+      "boundary": "Coverage and carry",
+      "prediction": "Every smallest governing nested V8 interval overlapping changed runtime has positive execution in an authenticated native/Node recording, a precise scope waiver for trusted internal guard or foreign-host code, or a finding. All27 serving changes inverse exactly to predecessor. D26/D27/D28 compiler/consumer/storage evidence seals are unchanged, reopen fully, and their successful cold results are carried.",
+      "status": "PENDING"
+    },
+    {
+      "id": "P11",
+      "boundary": "Novel attack",
+      "prediction": "A new native experiment will combine noncanonical asymmetric RGB9E5 words, a truncated nonzero private mip range, foreign owner capabilities, nondefault program and PBO bindings, an actual draw error and retry. Before any native observation its original-bit rational expected planes, range footprint, expected refusal codes and restored state will be written to a plan; subsequent completed fences must preserve full colors/alpha and reuse charged helpers.",
+      "status": "PENDING"
+    }
+  ]
+}

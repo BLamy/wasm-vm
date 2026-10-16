@@ -1,0 +1,16 @@
+- name: Z32_FLOAT
+  layout: plain
+  colorspace: ZS
+  block: {width: 1, height: 1, depth: 1}
+  channels: [F32]
+  swizzles: [X, _, _, _]
+- name: Z32_FLOAT_S8X24_UINT
+  layout: plain
+  colorspace: ZS
+  block: {width: 1, height: 1, depth: 1}
+  little_endian:
+    channels: [F32, UP8, X24]
+    swizzles: [X, Y, _, _]
+  big_endian:
+    channels: [F32, X24, UP8]
+    swizzles: [X, Z, _, _]

@@ -1,0 +1,172 @@
+{
+  "schema": "fresh-rgb9e5-adversarial-verdict-v1",
+  "verdict": "verified",
+  "task": "E6-T11d29",
+  "workerRuntimeHead": "7e88b69a565d0042297e3001c8c4044efdf4cca9",
+  "workerSubmission": "dcd1668079c047d27bba75d230e3be9b51ffa3de",
+  "criticFreeze": "90dd309b800762309df6fa2431ba25e76d44a3f5",
+  "predictionDigest": "f910a215766a0e3503cdae66dd0b7639d0dc0cf81ca083a66f21c77a8fb428bc",
+  "predictions": [
+    {
+      "id": "P1",
+      "boundary": "Custody",
+      "prediction": "The worker archive and index have exactly11096 unique safe regular members; all hashes and sizes match. Every source, served module, full V8 range and compiler byte matches frozen7e88 source or pinned carried predecessor. Cold head7e88 is pristine before and after, has exit0, and its source/generated/evidence digests equal the carried receipt.",
+      "status": "HELD",
+      "observed": "Reopened every one of 11096 worker members, both 587-source receipts, every recorded served/generated binding and all six D26/D27/D28 carried seals. The scrubbed exact7e88 cold clone remains pristine and its successful recording is unchanged. Final critic reports and their closures bind the frozen90dd harness.",
+      "citations": [
+        "authentication.json",
+        "critic-freeze.json",
+        "fresh-audit.json"
+      ]
+    },
+    {
+      "id": "P2",
+      "boundary": "Original fields",
+      "prediction": "Format125 has R bits0..8/G9..17/B18..26/E27..31; native RGB is each9-bit mantissa times2^(E-24), alpha exactly1. Raw0 gives RGB0; raw1 gives R2^-24; raw0xffffffff gives RGB65408; raw0xf8000000 gives RGB0. For every original word, independent general rational conversion yields canonical E=max(0,floor(log2(maxRGB))+16), R/G/B exact integers below512.",
+      "status": "HELD",
+      "observed": "118528 scalar words and every complete recorded original/native plane agree with independent exact rational and integer binary32 arithmetic. Original zero, minimum2^-24, maximum65408, noncanonical zero, all32 exponents and all512 mantissas have the predicted unsigned RGB and implicit alpha1.",
+      "citations": [
+        "plane-audit.json",
+        "plane-citations.jsonl:1191",
+        "source-boundary-audit.json"
+      ]
+    },
+    {
+      "id": "P3",
+      "boundary": "Native-only copies",
+      "prediction": "All original textures are RGB9_E5 enum35901; uploads are RGB6407/UNSIGNED_INT_5_9_9_9_REV35902 typed Uint32 preserving little-endian original words. Private ranges use only GPU texelFetch -> RGBA8 -> readPixels RGBA/UNSIGNED_BYTE into the fixed PBO -> texSubImage from the same PBO. Every local mip exactly matches the selected original rational RGB with alpha1; there is no getBufferSubData or CPU readPixels under product-copy labels.",
+      "status": "HELD",
+      "observed": "Authenticated RGB9_E5 storage, RGB/UNSIGNED_INT_5_9_9_9_REV original uploads, 322 worker plus66 fresh PBO uploads and complete private mip planes. Product copies do not download pixels; the fixed RGBA8/PBO path preserves exact original RGB, including noncanonical words.",
+      "citations": [
+        "plane-citations.jsonl:1193",
+        "plane-audit.json",
+        "fresh-audit.json",
+        "final/novel-audit.json"
+      ]
+    },
+    {
+      "id": "P4",
+      "boundary": "Public bytes and padding",
+      "prediction": "Synchronous and fenced staged public bytes equal independent canonical little-endian words for every complete plane and nonzero NPOT box. Untouched original backing bytes stay0xa7, staging padding0x2e, neighbors/mips untouched; observed source/private planes match original bits rather than fixture decoded outputs.",
+      "status": "HELD",
+      "observed": "4386888 worker public bytes and1869352 padding bytes, plus2640 public and9978 padding bytes in fresh boundary schedules, match independent original-bit predictions. Full NPOT, nonzero box, tail mip, patched native-only and untouched backing observations agree.",
+      "citations": [
+        "plane-citations.jsonl:1195",
+        "plane-audit.json",
+        "fresh-audit.json"
+      ]
+    },
+    {
+      "id": "P5",
+      "boundary": "Physical budgets",
+      "prediction": "Source byte charge equals4*sum(mipPixels); private texture charge equals4*sum(selectedPixels)+8*privateBasePixels. For13x7 levels0..3 source=452, range1..3 texture=88 and helper=144, total684.5x3 sync read requires60 CPU plus60 conversion; staged requires60 CPU plus120 GPU. One-byte-short paths refuse before native allocation. Persistent helpers have exactly1 texStorage2D and1 bufferData over3 refreshes; retained native generations keep charges through hold/fence/cleanup.",
+      "status": "HELD",
+      "beforeEvidenceArithmetic": "13x7,6x3,3x1,1x1 have113 total pixels; selected range has22 pixels. Corrected mental addition before evidence inspection.",
+      "observed": "13x7 source452 plus private texture88 plus helper144 equals684 GPU bytes;683 refuses before allocation. Sync5x3 charges60 CPU plus60 conversion bytes; staged charges60 CPU plus120 GPU bytes. Fixed private helper storage is reused across refreshes without orphan bufferData, and retained charges last through physical completion/cleanup.",
+      "citations": [
+        "plane-citations.jsonl:1135",
+        "plane-audit.json",
+        "fresh-audit.json",
+        "final/novel-audit.json"
+      ]
+    },
+    {
+      "id": "P6",
+      "boundary": "Identity and lifetime",
+      "prediction": "Unequal public ID6 replacement gets a greater generation with separate native texture. Old range6x3 levels0..2 continues to return its original generation and mip values after ID reuse; old read captures original base bytes. Two contexts/owners sharing numeric IDs refuse foreign leases/views before native allocation. Cancel consumes a physical fence; dispose proves only cleanup. Every owned native object deleted exactly1 and terminal budgets all0.",
+      "status": "HELD",
+      "observed": "Reused public ID6 retains old generation3 while replacement generation4 is separate. Old6x3 local mips and captured source reads retain original values; old-generation charges remain through holds/fences. Foreign same-ID owners refuse. Cancellation consumes physical completion, disposal proves cleanup, and owned objects retire once with terminal budgets zero.",
+      "citations": [
+        "plane-citations.jsonl:1091",
+        "plane-audit.json",
+        "fresh-audit.json"
+      ]
+    },
+    {
+      "id": "P7",
+      "boundary": "Strict admission",
+      "prediction": "Getter/prototype/proxy/marker/invalid role/range/layer/level cases refuse with no successful native allocation; no getters run and throwing proxy trap runs once. Format125 accepts only bind8 and refuses surface/render/scanout. Historical packed owner/decoder remain closed to125.",
+      "status": "HELD",
+      "observed": "Strict own-data, getter/prototype/proxy/marker, role/range/layer/level and foreign-capability refusals hold without successful native allocation. The throwing proxy is visited once. Original125 accepts sampler bind8 only; historical packed decoder/store and command consumer admission remain closed.",
+      "citations": [
+        "plane-audit.json",
+        "fresh-audit.json",
+        "final/novel-audit.json"
+      ]
+    },
+    {
+      "id": "P8",
+      "boundary": "Failure and state",
+      "prediction": "All21 named native allocation/compile/link/draw/read/buffer/fence/collect/precision failures execute one fault, reject, retire objects once and zero scratch/staging/tickets. Product copy restores program/VAO/framebuffers/viewport/mask/active textures/samplers/base/max/capabilities/pixel store/pack and unpack bindings on success and failure.",
+      "status": "HELD",
+      "observed": "All21 named failure boundaries hold in each worker schedule (126 hot/cold cases) and each independent seed (63 fresh cases). The new actual draw failure/retry and late post-helper native error restore full caller state, retire ownership once and preserve budgets; direct helper disposal/refusal and legacy native branches execute.",
+      "citations": [
+        "plane-citations.jsonl:988",
+        "plane-audit.json",
+        "fresh-audit.json",
+        "final/novel-native/report.json#/browserResult/result/runs/0/states"
+      ]
+    },
+    {
+      "id": "P9",
+      "boundary": "Schedules and negative controls",
+      "prediction": "Each of three distinct boundary seeds executes every scoped attack. Packing-field and copy-level controls execute real changed native shader/uniforms, consume actual completed fences(37146 or37148), then disagree with unchanged independently calculated original RGB. A critic-created post-fence corruption must also be detected.",
+      "status": "HELD",
+      "observed": "Three fresh schedules complete all scoped boundaries. Worker packing-field and wrong-level controls consume physical fences and fail the independent inverse. The critic B<-R shader control fails after actual sync19/turn6/result37146: component2 predicted0x3b400000, observed0x3a800000; unchanged input oracle detects it.",
+      "citations": [
+        "plane-citations.jsonl:1780",
+        "final/novel-audit.json#/actualBlueFieldControl",
+        "fresh-audit.json"
+      ]
+    },
+    {
+      "id": "P10",
+      "boundary": "Coverage and carry",
+      "prediction": "Every smallest governing nested V8 interval overlapping changed runtime has positive execution in an authenticated native/Node recording, a precise scope waiver for trusted internal guard or foreign-host code, or a finding. All27 serving changes inverse exactly to predecessor. D26/D27/D28 compiler/consumer/storage evidence seals are unchanged, reopen fully, and their successful cold results are carried.",
+      "status": "HELD",
+      "observed": "Full nested governing V8 intervals in62 authenticated script records cover498 partitions:493 execute and5 contain syntax/whitespace only. No behavioral region remains unexecuted. All27 static serving edits inverse exactly to predecessor. Six predecessor seals and the successful cold recording carry by unchanged source/dependency/evidence digest.",
+      "citations": [
+        "coverage-audit.json",
+        "source-boundary-audit.json",
+        "authentication.json",
+        "critic-freeze.json"
+      ]
+    },
+    {
+      "id": "P11",
+      "boundary": "Novel attack",
+      "prediction": "A new native experiment will combine noncanonical asymmetric RGB9E5 words, a truncated nonzero private mip range, foreign owner capabilities, nondefault program and PBO bindings, an actual draw error and retry. Before any native observation its original-bit rational expected planes, range footprint, expected refusal codes and restored state will be written to a plan; subsequent completed fences must preserve full colors/alpha and reuse charged helpers.",
+      "status": "HELD",
+      "observed": "Before native observation, three independent LCG plans fixed23x9,19x3 and1x31 original words, nonzero range2..3 rational planes and GPU totals1184,344,324. Eleven frozen critic rows verify20 full native planes, foreign owners, nondefault program/PBO state, actual draw failure/retry, fixed-helper reuse, legacy paths and rollback.",
+      "citations": [
+        "novel-plan.json",
+        "final/novel-plan-audit.json",
+        "final/novel-audit.json",
+        "final/novel-native/report.json"
+      ]
+    }
+  ],
+  "findings": [],
+  "scope": "isolated-original-format125-image-owner-and-transfers",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false,
+  "suite": {
+    "target": "make verify-E6-T11d29-adversarial",
+    "promotedCommit": "90dd309b800762309df6fa2431ba25e76d44a3f5",
+    "actualPostFenceControlRequired": true
+  },
+  "coldCarryReason": "Only new critic fixtures/tests/recording tools and additive verify target changed. Product runtime, compiler and dependency boundaries exact7e88; original successful pristine scrubbed7e88 recording carries unchanged.",
+  "audits": {
+    "authentication.json": "2f75a7f8e52d77434addc947b0793fa3617ee9c266e942a6bf1852c88258c8ee",
+    "plane-audit.json": "3dd6a8b6cadec8934992bc968d219dafb792894fcfca624a65efdbb26477fdb2",
+    "plane-citations.jsonl": "b99fbf25e1d33c04b5f5e5a76a200536772fcceb954d8f043d06efb1dd738641",
+    "fresh-audit.json": "8c53e8d3f32fd7ddc2a97b01674273199ed6106459e81c5361cb841ad420759e",
+    "fresh-plane-citations.jsonl": "effb5e23f62dcc38f3c511b7c0bb4960e10b71561951c67451ae545038b9ab81",
+    "coverage-audit.json": "6df65fad5fe8d9e3d4f32c14d58792607bc444c10a0e6091c9c6e398faae5e83",
+    "source-boundary-audit.json": "511dd43e4d14827999dd4f81d0349550ab0d91a6f44482ae66243715c8f53571",
+    "critic-freeze.json": "0ff56bc319b2018f8d2362af28285a29a4f432107df445590792da4fc3cb0404",
+    "final/novel-plan-audit.json": "f5f64156b68512b98b833d49b597dfa25fadbb45add2e713548b1f37f7bdda7f",
+    "final/novel-audit.json": "b03d6d80e10d90aa5c1c4cd28e75ae1df346891e6b0eadb96099c07e77973760"
+  }
+}

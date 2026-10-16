@@ -1,0 +1,23 @@
+{
+  "schema": "packed-uint-fresh-critic-full-seal-v1",
+  "task": "E6-T11d38",
+  "verdict": "verified",
+  "workerSubmissionHead": "83b2e147f7134bb807b699500ba91bd4a42e9090",
+  "runtimeRecordedHead": "11326fe597196cb75d0853d230da0a3ed22683c5",
+  "records": 7901,
+  "reopenedMembers": 7901,
+  "rawBytes": 399012542,
+  "archiveBytes": 19875235,
+  "archiveSha256": "abd8363319ed7967177acb4927f1bffd55133bb21373a382ae574cc1e9c90db8",
+  "recordIndexSha256": "f174a0fc0b7bd4f8f92fe7787860a6a42febdc0e1c36a277c89653610a0bd3c6",
+  "completeFreshSourcesInputsNativeCoverageBrowserScreenshots": true,
+  "sourceClosure": 876,
+  "freshRootRecordings": 15,
+  "workerArchiveSha256": "8faad34f84ccfce10b8645598ad92f53a2e3b58414949d4dee6fc59a5ed7a0c6",
+  "workerArchiveReopenedMembers": 26639,
+  "predecessorReopenedMembers": 123156,
+  "runtimeEdited": false,
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false
+}

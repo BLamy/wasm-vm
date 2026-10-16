@@ -1,0 +1,13 @@
+{
+  "task": "E6-T12g6m3a",
+  "prediction": "P9",
+  "status": "HELD",
+  "guardExitCode": 1,
+  "guardFailure": "vertex: adjacent exact word must reject\n\ntrue !== false\n",
+  "guardOriginalSha256": "cd78c5384d57c35e62cc8ecd6c2bc5449a2229dd23722e7082678123c528204f",
+  "guardFaultSha256": "8871994c196075b53f1a5c349b75f3338aa221718692a655d737a9af1974480c",
+  "forgedCaptureExitCode": 1,
+  "forgedCapturePoint": "acceptance.rigs[0].draws[0].rgbaBytes[0]",
+  "forgedCaptureSha256": "7b77e9df143587bfdb2beddb3af19f237416c534084cb634611e960c74af8ba6",
+  "productionSourcesEdited": false
+}

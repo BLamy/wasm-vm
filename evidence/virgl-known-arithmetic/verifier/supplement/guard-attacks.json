@@ -1,0 +1,156 @@
+{
+  "schema": "virgl-known-arithmetic-incremental-guard-attacks-v1",
+  "status": "passed",
+  "predictionsSha256": "d902a7833b45b7c29abf6ad07acdc207d036879f26aec77d8c9c074b84a00a14",
+  "positiveReplay": {
+    "reportSha256": "38cd4239bf5b1c0bfc9a391f519fdc88454e8dc4fc747d3faa64a23f708eb077",
+    "binarySha256": "28bbf65f360d93c674ec2b035d871136e958d42be6f00261820d5f922df606da",
+    "llvmCounts": [
+      8,
+      4,
+      4,
+      4,
+      4
+    ],
+    "v8Counts": [
+      1,
+      2
+    ]
+  },
+  "actualOutputFaults": [
+    {
+      "name": "word",
+      "exit": 1,
+      "originalNativeStatus": "passed",
+      "nativeSanitizerErrors": 0,
+      "outputDirectory": "target/evidence/virgl-known-arithmetic-critic-supplement/fault-word-final",
+      "wrapperSourceSha256": "60f04ecffd80202b506da4374499a7610be37aa1c773c007d89f9a67537476b0",
+      "point": "tools/virgl-known-arithmetic/supplement.mjs:82",
+      "stderrSha256": "36147c03113afbc61ee3adfff4746997d1b4ad8259d56cb237a4b693cec11d6b",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "shadow",
+      "exit": 1,
+      "originalNativeStatus": "passed",
+      "nativeSanitizerErrors": 0,
+      "outputDirectory": "target/evidence/virgl-known-arithmetic-critic-supplement/fault-shadow-final",
+      "wrapperSourceSha256": "4d579f0e00b5bc2e65e28227787a8a2345bf51dded0f1474d192d3cc8a2bc0cb",
+      "point": "tools/virgl-known-arithmetic/supplement.mjs:83",
+      "stderrSha256": "3b9f994dc627f818eedfa74fefa61033ff48d545cc51421d739238095e0a31bb",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "metadata",
+      "exit": 1,
+      "stderrSha256": "81112566d50144d8812674e859c0d5cba736f163fe1948e541c06bcb4602484d",
+      "inputSha256": "08dee1dd5374b0126c9ca06487375626dd3515575f369238e368c27492f943b6",
+      "point": "tools/virgl-known-arithmetic/supplement.mjs:22"
+    }
+  ],
+  "receiptResults": [
+    {
+      "name": "positive",
+      "status": "HELD"
+    },
+    {
+      "name": "binary-mismatch",
+      "status": "HELD",
+      "rejection": "matching executable and positive nested coverage"
+    },
+    {
+      "name": "wrong-word-count",
+      "status": "HELD",
+      "rejection": "targeted original-source coverage"
+    },
+    {
+      "name": "wrong-rounding-count",
+      "status": "HELD",
+      "rejection": "targeted original-source coverage"
+    },
+    {
+      "name": "wrong-public-count",
+      "status": "HELD",
+      "rejection": "targeted original-source coverage"
+    },
+    {
+      "name": "missing-native-region",
+      "status": "HELD",
+      "rejection": "targeted original-source coverage"
+    },
+    {
+      "name": "missing-v8-range",
+      "status": "HELD",
+      "rejection": "targeted original-source coverage"
+    },
+    {
+      "name": "zero-native-0",
+      "status": "HELD",
+      "rejection": "matching executable and positive nested coverage"
+    },
+    {
+      "name": "zero-native-1",
+      "status": "HELD",
+      "rejection": "matching executable and positive nested coverage"
+    },
+    {
+      "name": "zero-native-2",
+      "status": "HELD",
+      "rejection": "matching executable and positive nested coverage"
+    },
+    {
+      "name": "zero-native-3",
+      "status": "HELD",
+      "rejection": "matching executable and positive nested coverage"
+    },
+    {
+      "name": "zero-native-4",
+      "status": "HELD",
+      "rejection": "matching executable and positive nested coverage"
+    },
+    {
+      "name": "zero-v8-0",
+      "status": "HELD",
+      "rejection": "matching executable and positive nested coverage"
+    },
+    {
+      "name": "zero-v8-1",
+      "status": "HELD",
+      "rejection": "matching executable and positive nested coverage"
+    },
+    {
+      "name": "stale-head",
+      "status": "HELD",
+      "exit": 1,
+      "stderrSha256": "d7d1151b2a590a8a7826a3f141ed349d82bacb0d1cf07f13b5f4433e4645bff2"
+    },
+    {
+      "name": "failed-status",
+      "status": "HELD",
+      "exit": 1,
+      "stderrSha256": "d7d1151b2a590a8a7826a3f141ed349d82bacb0d1cf07f13b5f4433e4645bff2"
+    },
+    {
+      "name": "wrong-task",
+      "status": "HELD",
+      "exit": 1,
+      "stderrSha256": "d7d1151b2a590a8a7826a3f141ed349d82bacb0d1cf07f13b5f4433e4645bff2"
+    }
+  ],
+  "touchedReceiptExecutedLines": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    63
+  ],
+  "runtimeMutation": false
+}

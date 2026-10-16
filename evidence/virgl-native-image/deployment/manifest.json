@@ -1,0 +1,44 @@
+{
+  "schema": "native-image-deployment-v1",
+  "head": "6799137b1df9601f02cb7347e609095553bd8951",
+  "deployment": "https://4ace451b.wasm-vm.pages.dev",
+  "production": "https://wasm-vm.pages.dev",
+  "files": {
+    "deploy.log": {
+      "bytes": 4359,
+      "sha256": "eac498f620f7a24cc80dbec9e3ee1cc119ec921951e634d35da7eb7372ce57f9"
+    },
+    "final/browser.png": {
+      "bytes": 50653,
+      "sha256": "17f3983d4237dbaa13d6bcf310ff9ccf499cad5bfc72ff8af085d4d513a340a7"
+    },
+    "final/live.log": {
+      "bytes": 75,
+      "sha256": "ef42fe9c18f2549dba471f16a709183678f401ca9ff8c240601f4c843ba4ba96"
+    },
+    "final/report.json": {
+      "bytes": 33291,
+      "sha256": "5551502010daf72cbdceffd4d5fb5aeb1caba68440fade7d3ed6e28b482872fa"
+    },
+    "final/source.mjs": {
+      "bytes": 6947,
+      "sha256": "7613b1594d57147bda30addb7c24431516c3eb6b427573dc699656dadb98c25a"
+    },
+    "generated/artifacts-alpine.json": {
+      "bytes": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+    },
+    "generated/artifacts-node-alpine.json": {
+      "bytes": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+    },
+    "generated/artifacts-omarchy.json": {
+      "bytes": 1193,
+      "sha256": "0fa46b08b90179bb11f6a451f86959908089f73afa19c99580f28360b7b8c22a"
+    },
+    "generated/artifacts.json": {
+      "bytes": 905,
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404"
+    }
+  }
+}

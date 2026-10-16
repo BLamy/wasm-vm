@@ -1,0 +1,203 @@
+{
+  "schema": "standard-assembly-critic-verdict-v1",
+  "task": "E6-T11d10",
+  "verdict": "verified",
+  "workerSubmission": "391643b02e5b59018da3cae9f650122cc7d83172",
+  "runtimeFreeze": "3ad8f8f6e817799935c66168f26518a93c65ebe4",
+  "coldSource": "dc28eaa0128177a5f742e8f2877fc7a6573d06fd",
+  "runtimeSourceSha256": "58b54ba349ccc8af0f18598d8d44a03555d7b14612c3f52488fca1341c91c671",
+  "predictions": [
+    {
+      "id": "P1-selection",
+      "prediction": "Before any real draw, unknown standard selection and legacy option return invalid-input; missing/wrong native provoking extension return unsupported-host. Historical default remains native.",
+      "status": "HELD",
+      "evidence": {
+        "path": "evidence/virgl-standard-assembly/verifier/hot-audit.json",
+        "line": 1,
+        "sha256": "2bcfc620d5102c9f4620811c525cf1a0e630aa0309635880f65fefb7ecded213"
+      }
+    },
+    {
+      "id": "P2-native-list-identity",
+      "prediction": "For each original enabled exact-marker segment, loop emits adjacent ordered original-ID pairs then last->first iff length>=2; fan emits (first,i,i+1) triples iff length>=3. Arrays retain start+i. No rebase and no output for tiny segments.",
+      "status": "HELD",
+      "evidence": {
+        "path": "evidence/virgl-standard-assembly/verifier/hot-audit.json",
+        "line": 378,
+        "sha256": "2bcfc620d5102c9f4620811c525cf1a0e630aa0309635880f65fefb7ecded213"
+      }
+    },
+    {
+      "id": "P3-native-state",
+      "prediction": "Immediately at every selected actual draw, including modes 1,3,4,5, native convention is LAST=0x8e4e. Restored native draw entry, mode,count,type,offset,instances and VAO EBO match independently derived original and private GPU bytes.",
+      "status": "HELD",
+      "evidence": {
+        "path": "evidence/virgl-standard-assembly/verifier/hot-audit.json",
+        "line": 2006,
+        "sha256": "2bcfc620d5102c9f4620811c525cf1a0e630aa0309635880f65fefb7ecded213"
+      }
+    },
+    {
+      "id": "P4-pixels",
+      "prediction": "Before pixel inspection: original flat red is (original last primitive vertex*17 &255)/256; smooth pixels interpolate original attribute outputs, culling uses original winding. Loop closure and strict interiors must agree; triangle shared edges cannot be clear. Only declared half-open endpoints/outer triangle edges vary.",
+      "status": "HELD",
+      "evidence": {
+        "path": "evidence/virgl-standard-assembly/verifier/cold-audit.json",
+        "line": 378,
+        "sha256": "8f94efbad84c37966caea39d627b7efb7cea872ceb45b966807599e70cb42cf9"
+      }
+    },
+    {
+      "id": "P5-bounds",
+      "prediction": "At actual source validation, all original words including markers/tails charge count*max(1,instances); native work <=3 source. 65536 fan indices produce 196602 u32 words=786408 bytes; 64 fans of1024 produce 784896 bytes/64 buffers. Tightened source/read/draw limits, short reads and nonrestart-u32-max reject before unsafe draw/allocation.",
+      "status": "HELD",
+      "evidence": {
+        "path": "evidence/virgl-standard-assembly/verifier/hot-audit.json",
+        "line": 8253,
+        "sha256": "2bcfc620d5102c9f4620811c525cf1a0e630aa0309635880f65fefb7ecded213"
+      }
+    },
+    {
+      "id": "P6-ownership",
+      "prediction": "At every yield CPU vector charge is0, private storage is detached from actual original EBO (including arrays retaining an old binding), owned native<=786432 bytes/64 buffers, and remains alive until final completed drain or explicit disposal. All retained reads/native/CPU counters end0. Pending changes reject stale source; name reuse draws retained original generation; suffix cancellation/partial failure never draws.",
+      "status": "HELD",
+      "evidence": {
+        "path": "evidence/virgl-standard-assembly/verifier/hot-audit.json",
+        "line": 20358,
+        "sha256": "2bcfc620d5102c9f4620811c525cf1a0e630aa0309635880f65fefb7ecded213"
+      }
+    },
+    {
+      "id": "P7-custody",
+      "prediction": "All10364 sealed records match index/archive hashes. Hot/cold actual browser runtime source digests equal frozen final source; physical freeze->cold-head changes only offline auditor label and receipt transport. Hot original full make exits2 after physical successes and is not passed; corrected narrow audit and pristine dc28 make pass with scrubbed env and empty before/after status.",
+      "status": "HELD",
+      "evidence": {
+        "path": "evidence/virgl-standard-assembly/verifier/authentication.json",
+        "line": 1,
+        "sha256": "24262574bc0537016a5888396c3ab0a68b0e298d1dcea25d12e7d8da4c051e99"
+      }
+    },
+    {
+      "id": "P8-regression",
+      "prediction": "Both served list-order and FIRST regressions complete drawElementsInstanced and real final fence, then fail original pixel oracle. Physical list-order bytes differ in forward pair order; FIRST fault preserves list bytes but records0x8e4d; both differ at(3,2) expected[115,56,51,128] vs[99,56,51,128].",
+      "status": "HELD",
+      "evidence": {
+        "path": "evidence/virgl-standard-assembly/verifier/fault-list-order-audit.json",
+        "line": 1,
+        "sha256": "9189f5c47628298ab233d0174cb450388debe4a7b8a12d2c82cd5dfb296f884b"
+      }
+    },
+    {
+      "id": "P9-coverage",
+      "prediction": "Each changed executable hunk is exercised in authenticated exact-source V8 coverage; unreachable defensive guards and declarative option/output metadata are explicitly classified. Earlier compiler/resources/cache/decoder and D6-D9 seals stay byte-identical under predecessor authority.",
+      "status": "HELD",
+      "evidence": {
+        "path": "evidence/virgl-standard-assembly/verifier/coverage-audit.json",
+        "line": 1,
+        "sha256": "7a3c300e95d80c6874766feee35c89e67bf713f873889e8b45132f0d62ee0dd0"
+      }
+    },
+    {
+      "id": "P10-novel",
+      "prediction": "A newly seeded nonmonotonic wide-u32 custom-restart stream with nonzero original offsets, later read/fence schedule and FIRST poison retains exact original-ID native words and ordered flat/smooth/culling pixels; yield ownership and final release bounds hold.",
+      "status": "HELD",
+      "evidence": {
+        "path": "evidence/virgl-standard-assembly/verifier/independent-audit.json",
+        "line": 7,
+        "sha256": "e427d6f1e4b9354c72c402354f06f7c54e1c6f9bbadd903b6a43f6a77e01a4d6"
+      }
+    }
+  ],
+  "findings": [],
+  "custody": {
+    "reopenedRecords": 10364,
+    "workerArchiveSha256": "51ff1c7fa589480cdc626d715771364164aa3540086dbc9ea443986503d84177",
+    "hotOriginalFullMakePassed": false,
+    "hotOriginalExitCode": 2,
+    "hotCorrectedNarrowAuditPassed": true,
+    "pristineColdMakePassed": true
+  },
+  "physical": {
+    "hot": {
+      "frames": 304,
+      "pixels": 177664,
+      "draws": 492,
+      "privateBuffers": 417
+    },
+    "cold": {
+      "frames": 304,
+      "pixels": 177664,
+      "draws": 492,
+      "privateBuffers": 417
+    },
+    "critic": {
+      "seed": 795804360,
+      "frames": 8,
+      "pixels": 7168,
+      "draws": 8,
+      "privateBuffers": 8
+    }
+  },
+  "coverage": {
+    "hunks": 14,
+    "newLines": 54,
+    "executableLinesHit": 49,
+    "structuralLinesWaived": 5,
+    "declarativeLegacyMetadataBranchesWaived": true,
+    "deadHunks": 0,
+    "unprovenClaimedRuntimeHunks": 0
+  },
+  "suite": [
+    "renderer/virgl-command/tests/standard-primitive-assembly-adversarial.mjs",
+    "tools/virgl-command/standard-assembly-adversarial-oracle.mjs",
+    "tools/virgl-command/standard-assembly-adversarial-audit.mjs"
+  ],
+  "incrementalCarry": {
+    "unchangedBoundaryFiles": 267,
+    "unchangedD6D7D8D9Evidence": true,
+    "authority": "c378b55516f74a2da3612462104785fe6997fca1",
+    "relabelledEarlierProof": false
+  },
+  "limitations": [
+    "isolated explicitly selected native primitive-list boundary only",
+    "no complete API/profile, points, typed production capability, guest rendering, deployment or performance authority"
+  ],
+  "commands": "checks.json and Verification log",
+  "evidence": [
+    {
+      "path": "evidence/virgl-standard-assembly/verifier/authentication.json",
+      "line": null,
+      "sha256": "24262574bc0537016a5888396c3ab0a68b0e298d1dcea25d12e7d8da4c051e99"
+    },
+    {
+      "path": "evidence/virgl-standard-assembly/verifier/hot-audit.json",
+      "line": null,
+      "sha256": "2bcfc620d5102c9f4620811c525cf1a0e630aa0309635880f65fefb7ecded213"
+    },
+    {
+      "path": "evidence/virgl-standard-assembly/verifier/cold-audit.json",
+      "line": null,
+      "sha256": "8f94efbad84c37966caea39d627b7efb7cea872ceb45b966807599e70cb42cf9"
+    },
+    {
+      "path": "evidence/virgl-standard-assembly/verifier/independent-audit.json",
+      "line": null,
+      "sha256": "e427d6f1e4b9354c72c402354f06f7c54e1c6f9bbadd903b6a43f6a77e01a4d6"
+    },
+    {
+      "path": "evidence/virgl-standard-assembly/verifier/fault-list-order-audit.json",
+      "line": null,
+      "sha256": "9189f5c47628298ab233d0174cb450388debe4a7b8a12d2c82cd5dfb296f884b"
+    },
+    {
+      "path": "evidence/virgl-standard-assembly/verifier/fault-provoking-audit.json",
+      "line": null,
+      "sha256": "d36d128a4f46b6db47b6925ab8255d92ef64c0f7ac1dd2d847f50facee48ca53"
+    },
+    {
+      "path": "evidence/virgl-standard-assembly/verifier/coverage-audit.json",
+      "line": null,
+      "sha256": "7a3c300e95d80c6874766feee35c89e67bf713f873889e8b45132f0d62ee0dd0"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "standard-point-critic-predictions-v1",
+  "madeBeforeEvidenceInspection": true,
+  "submissionHead": "3d9cfcd03f2eabe900c50173242834aa6ce5f0e6",
+  "predictions": [
+    {"id":"custody","prediction":"The 13269 archive entries match the committed record index exactly; all hashes and sizes hold. Hot/cold receipt source hashes match current runtime/compiler bytes. Runtime bytes are identical from 53e01e08 through submission."},
+    {"id":"compiler","prediction":"Original PSIZE full/x physical slots 1,7,31 and PCOORD IN/SV slots and same-index IN/SV aliases preserve declarations and original instructions; native and Wasm output agree. Wrong stage/index/interpolation and duplicate built-ins reject. The maximal accepted adapter case stays within 8192 tokens and the adapter allocation fault emits no partial output then exactly recovers."},
+    {"id":"typed-metadata","prediction":"POINT_SIZE is reflected FLOAT_VEC2 size 1 in every standard vertex program; PCOORD Y is FLOAT size 1 unless unused xy is optimized away. Missing/forged contracts reject before drawing; original fragment input/system PCOORD is vec4 and original PSIZE is scalar native output backed by uvec4 register words."},
+    {"id":"default-pixels","prediction":"The per-vertex-input frame draws original IDs [7,9,12] through native POINTS mode 0, UNSIGNED_SHORT 5123, byte offset 12 and count 3. Positive size values [2,4,5.25] cover exactly 45 pixels. Pixel (2,3) is RGBA [119,223,32,128], and (3,4) is [119,96,159,128], with at most one native quantization unit per channel."},
+    {"id":"native-domains","prediction":"Fixed size is bound unchanged, including 2048; hardware clamps to the queried range. Negative viewport uses Y uniform -1. Near/far centers outside [-w,w] produce zero covered pixels; a large point centered outside XY can still cover the framebuffer."},
+    {"id":"fetch-restart","prediction":"Array/index offsets, u8/u16/u32 restart and disabled max indices, divisors, generic attributes and instancing remain original. Any private normalized u32 index bytes equal the independently decoded original sequence with only restart substitution. One-byte-short storage and exceeded work produce no draw."},
+    {"id":"ownership","prediction":"At waiting-index there is one active read, at waiting-attributes two. Revision/cancel rejects before drawing and drains fences; name reuse keeps old generation. At retained normalized draw cancellation/disposal, owned storage survives until completion/drain and is released; final budgets are zero."},
+    {"id":"restore","prediction":"A/B/A physical native uniforms, VAO/EBO, viewport, scissor and color writes recover original values after poisoning and context alternation; final A pixels equal first A."},
+    {"id":"faults","prediction":"The actual served size-selection and coordinate-Y sabotages each complete native POINTS draw and final fence, then fail the original full-pixel oracle; size sabotage binds [1,0], coordinate sabotage binds opposite winsysY."},
+    {"id":"coverage","prediction":"Each new executable runtime C/JS hunk is exercised by the sealed worker recording or a bounded critic attack. Unreachable structural/error checks receive individually justified waivers rather than an unqualified coverage claim."},
+    {"id":"cold-retained","prediction":"One pristine exact-head default full make succeeds at 8ccd2036 with scrubbed environment and empty checkout before/after. Historical draw/constant/topology/restart/assembly seals are unchanged. Both hot wrapper/receipt failures remain visible and are carried only across the documented harness-only corrections."},
+    {"id":"novel-schedule","prediction":"An independently seeded original point-size/coordinate pattern using delayed fences, aliasing and fixed/per-vertex alternation agrees with a separate literal geometric pixel oracle. Actual native uniform sabotage fails that promoted oracle after completion."}
+  ]
+}

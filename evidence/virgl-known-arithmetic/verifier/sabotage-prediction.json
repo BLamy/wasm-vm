@@ -1,0 +1,8 @@
+{
+  "schema": "virgl-known-arithmetic-critic-sabotage-prediction-v1",
+  "beforeExecution": true,
+  "originalSourceSha256": "eaf4aa419caff2e7c9e7d2d5f6194c6184189cba78bd9c0ace541f7a291c27e9",
+  "mutatedSourceSha256": "45f40e0293cbbb1fb2667947df7cd53456ee38740be07a3c6fbe21ee16303f9e",
+  "mutation": "Round every binary32 tie upward in magnitude, discarding RN-even parity.",
+  "prediction": "Independent rational WORD 4 (+1 + 2^-24) expects 0x3f800000. The actual mutated native test must exit nonzero before public fixtures and report 3f800001 != 3f800000. Runtime worktree and original worker seals remain untouched."
+}

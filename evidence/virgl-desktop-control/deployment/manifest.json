@@ -1,0 +1,91 @@
+{
+  "schema": "desktop-control-default-deployment-v1",
+  "head": "e13dddfbb0d955abb268e4b4ac07828cbea35956",
+  "deploymentUrl": "https://3554989b.wasm-vm.pages.dev",
+  "liveUrl": "https://wasm-vm.pages.dev",
+  "guestAccelerationEnabled": false,
+  "finalReport": "final/report.json",
+  "allowedFavicon404": true,
+  "files": [
+    {
+      "path": "deploy.log",
+      "bytes": 4359,
+      "sha256": "42a5adcaa020491da4142827e6660b80b18b5c2a398abf678f06ccb7d4dbb91e"
+    },
+    {
+      "path": "deployed-artifacts-alpine.json",
+      "bytes": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+    },
+    {
+      "path": "deployed-artifacts-node-alpine.json",
+      "bytes": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+    },
+    {
+      "path": "deployed-artifacts-omarchy.json",
+      "bytes": 1193,
+      "sha256": "0fa46b08b90179bb11f6a451f86959908089f73afa19c99580f28360b7b8c22a"
+    },
+    {
+      "path": "deployed-artifacts.json",
+      "bytes": 905,
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404"
+    },
+    {
+      "path": "final/browser.png",
+      "bytes": 50710,
+      "sha256": "257248e61e94ae173fefe710eaa7ba111cad8c531bd8c168ecf6c12e1f16e2ae"
+    },
+    {
+      "path": "final/live.log",
+      "bytes": 75,
+      "sha256": "ef42fe9c18f2549dba471f16a709183678f401ca9ff8c240601f4c843ba4ba96"
+    },
+    {
+      "path": "final/report.json",
+      "bytes": 33297,
+      "sha256": "e8b34930e8e6876b88e5a692a44b05b9e431be2fe09a757d6b2f78191f96e27f"
+    },
+    {
+      "path": "final/source.mjs",
+      "bytes": 6753,
+      "sha256": "362da1bd4b7da54f8832b646d933f0304418260d3d020b8c2702282ada172ee4"
+    },
+    {
+      "path": "first-load/live.log",
+      "bytes": 251,
+      "sha256": "8e864378c625dbad5780651b965722b0eddc52ec293cc7ce042b6ddb15e4fce8"
+    },
+    {
+      "path": "first-load/manifest.json",
+      "bytes": 1500,
+      "sha256": "f45ce9054d737d0528356c5934f8b7ede1502e79bde35386c88f340033a41954"
+    },
+    {
+      "path": "first-load/report.json",
+      "bytes": 33345,
+      "sha256": "44927b39dba88170257b9943f0eb061dff62b091b0463d0768f606050a8b0618"
+    },
+    {
+      "path": "first-load/source.mjs",
+      "bytes": 6274,
+      "sha256": "9e724fc823f656b25219ed92e42fa8e6c260ba003c32cf3ccd903f8a0c126e0f"
+    },
+    {
+      "path": "live.log",
+      "bytes": 251,
+      "sha256": "8e864378c625dbad5780651b965722b0eddc52ec293cc7ce042b6ddb15e4fce8"
+    },
+    {
+      "path": "report.json",
+      "bytes": 33345,
+      "sha256": "44927b39dba88170257b9943f0eb061dff62b091b0463d0768f606050a8b0618"
+    },
+    {
+      "path": "source.mjs",
+      "bytes": 6274,
+      "sha256": "9e724fc823f656b25219ed92e42fa8e6c260ba003c32cf3ccd903f8a0c126e0f"
+    }
+  ]
+}

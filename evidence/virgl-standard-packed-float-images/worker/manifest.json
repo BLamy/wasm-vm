@@ -1,0 +1,16 @@
+{
+  "schema": "original-packed-float-image-seal-v1",
+  "task": "E6-T11d27",
+  "sourceHead": "f8daccb922097c7fa1cd71f601395824a32277e1",
+  "records": 3168,
+  "archiveSha256": "a20c525b93d18e0b1db07cb17a462e253c6b4616b108417fa2173fc784bb7329",
+  "archiveBytes": 3580618,
+  "recordIndexSha256": "543bf6fea1a1b91b35ea37b3d52ff8cc665066654a9829df0fa83b37e16c02fa",
+  "hotReceiptSha256": "6adae3ad8a8f36abeb618c1b4fabc62b2a2e7ae59beca21d6d4275508aa346d3",
+  "coldReportSha256": "3de39e154710953a5b4d2336cf5326fb2a547cbf264a8b2754d8a62472f84e31",
+  "coldReceiptSha256": "bb61747b2d47a0f6f6e2601b3421b5cd995408ab22306bd486f0c2d0eabc7084",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-packed-float-images",
+  "productionDrawAuthority": false
+}

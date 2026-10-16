@@ -6,6 +6,63 @@ the separate private raw-bit profile. It supplies a translation boundary to the 
 renderers. Production GPU negotiation remains disabled; this module does not
 establish general Mesa or guest desktop compatibility.
 
+## Original instance IDs — E6-T11d46
+
+`createVirglStandardInstanceBaseShaderBridge` selects the separate
+`virgl-webgl2-standard-instance-base-gles3-v1` compiler. Original TGSI INSTANCEID
+reads use `uint(gl_InstanceID) + wv_instance_base`; the original VERTEXID remains
+native. Its existing request methods accept no offset field. A vertex INSTANCEID
+declaration owns one `instanceUniforms` record for the highp uint uniform, whose
+native initial value is zero. An unused declaration can be optimized out.
+
+The future qualified draw consumer must bind the retained original instance
+offset with `uniform1ui`. This compiler retains the original typed/packed inputs,
+constant banks, integer images and raw output words; it does not bind guest
+resources or activate graphics negotiation. Historical entry points and factories
+retain their complete response bytes. `make verify-E6-T11d46` records actual
+native/Wasm responses, original tokens, allocation faults, raw Metal outputs and
+a completed wrong-offset control for independent verification.
+
+## Original 2D texture operations — E6-T11d23
+
+`createVirglStandardTextureShaderBridge` selects a separate fixed-memory
+standard/uniform compiler for original TXL, TXF, TXD, fragment TXB and TXQ.
+Declared views remain 2D/FLOAT. Native ESSL uses explicit LOD, integer fetch,
+gradients, bias and size queries with the original masks and source modifiers.
+The historical factories and public C entries retain their original responses.
+
+The distinct `virgl-webgl2-standard-texture-gles3-v1` metadata includes sorted
+`textureQueries` records for defined TXQ.w lanes. Each names a native integer
+uniform for the original stage sampler's accessible level count. Its future
+resource consumer must derive this count from a retained, validated view.
+Undefined 2D TXQ.z supplies no dimension claim. This compiler does not bind
+resources or activate guest capabilities.
+
+`make verify-E6-T11d23` records complete original operands, native/sanitized C
+and fixed-memory Wasm responses, real allocation failures and recovery, exact
+historical ABI comparisons, headed Metal pixels and physical native-state
+controls. Full sources, texture planes, output bodies and consumed fences are
+sealed with one final pristine clone for a fresh verifier.
+
+## Finite scalar truncation and sign — E6-T12g6f
+
+TRUNC and SSG operate independently on each consumed component, including
+swizzles, negation and masked or aliased writes. They require the existing
+numeric authority. Unknown private integers and literal nonzero subnormals,
+infinities and NaNs cannot acquire numeric access through these operations.
+Existing finite constant banks still admit dynamic subnormal values. The
+unsigned helpers preserve TRUNC's source zero sign; SSG returns exact +1/-1
+for nonzero finite inputs and canonical positive zero for either input zero.
+Results carry a numeric shadow and ordinary output permission, with their
+whole inherited constant-bank dependency. All source lanes precede writes.
+
+Outer profile v31 declares these policies and retains the complete v1..v30
+base, including simultaneous conversion, arithmetic, raster, radial and loop
+obligations. The wrapper cannot wrap itself. [The recording protocol](../../tools/virgl-scalar-operations/README.md)
+documents the pinned TGSI source, exact owned zero bits, unmodified Mesa
+ordinary zero allowance and `make verify-E6-T12g6f`. Production negotiation
+and the complete captured compositor programs remain gated.
+
 ## Signed integer and binary32 conversions — E6-T12g6e
 
 Private I2F explicitly rounds signed32 words to binary32 nearest-even. F2I
@@ -632,6 +689,26 @@ original closure or actual Mesa acceleration. Production stays disabled.
 
 ### Legacy finite-float profile
 
+The ordinary vertex path also accepts guest CONST indices 0–127. A declaration
+above index 45 selects `virgl-webgl2-straight-line-v6`; the older ordinary results
+retain their v5 bytes. This extension uses the same checked finite-float
+MOV/ADD/MUL/MAD grammar and pinned emitter. Fragment, raw numeric, indirect and
+private exact-bank profiles retain indices 0–45 and their existing metadata.
+The final CONST0 declaration can produce a 129-element native array, but guest
+CONST128 remains inaccessible. Reflection bounds the complete native active
+prefix by the actual host limit, and upload is capped at 128 guest vectors only
+for the ordinary v6 vertex profile. This capacity is a prerequisite for the
+GLES2 vertex-uniform floor; it does not qualify a complete guest API or capset.
+
+The pinned TGSI sanity checker and its three pinned hash tables now share one
+256KiB scratch transaction. Both upstream sources remain byte-pinned. Scratch
+allocation failure and arena exhaustion cancel validation before an unchecked
+upstream allocation can return NULL; the bridge returns a complete typed error.
+The actual delivered 16MiB Wasm module is tested under allocator exhaustion and
+must recover its exact healthy result. Scratch exhaustion is also tested in a
+sanitized build with a 64-byte bound. The parser/IR arenas, text/token/output
+ceilings and 256KiB Wasm stack retain their previous bounds.
+
 `virgl-webgl2-straight-line-v5` deliberately accepts a strict subset of TGSI text:
 
 - `VERT` and `FRAG`; unique `DCL` registers with canonical decimal indices
@@ -684,7 +761,8 @@ requires new safety checks and independent browser execution evidence.
 
 Input is capped at 49,152 bytes, 1,536 nonempty lines, 512 bytes per nonempty
 line, 768 non-END instructions, 512 TEMP registers, 32 immediate vectors, 46
-CONST registers and eight IN/OUT/SAMP/SVIEW registers. Tokens retain their fixed
+CONST registers (128 only for ordinary v6 vertex stages) and eight
+IN/OUT/SAMP/SVIEW registers. Tokens retain their fixed
 8,192-word allocation. GLSL is capped at 262,144 bytes per stage. These ceilings
 are independent: a valid 768-instruction MAD program can exceed the GLSL ceiling
 and must reject. JSON storage reserves the worst six-byte escape for every GLSL
@@ -1208,3 +1286,23 @@ physical word mismatch. Three input seeds, the retained hardware leaves, native
 ASan/UBSan/counters, actual fixed-heap Wasm pressure, and a final scrubbed clone
 complete the scoped evidence. Guest3D negotiation remains disabled and no desktop
 MIPS or compositor responsiveness result is claimed here.
+
+Private minimum selection (`E6-T12g6g1`) adds ordinary `MIN` to the existing
+numeric path and instruction-local `MIN_PRECISE` to the raw-word path. Ordinary
+inputs require existing finite numeric authority; their emitted GLSL `min`
+retains the existing mathematical zero-sign allowance. The precise operation
+chooses the first original word only for an ordered strict less-than result.
+Equal values, both signed zeros and unordered operands choose the second
+original word, preserving its NaN payload and subnormal encoding. Source
+negation precedes selection. Masks, swizzles and aliased sources are captured
+before publishing writes. The selected result retains the previous raw/float
+provenance rules; private integer manufacture obtains no new numeric authority.
+
+Outer raw profile v32 carries `minimumWordContract` and one v1–v31
+`minimumBaseProfile`, retaining all whole older obligations. It cannot wrap
+itself; the complete descending chain has at most five wrappers. The old
+FSEQ/FSNE/MAX/MOV precision contract remains unchanged, and every instruction's
+PRECISE marker remains local. Copied-bank raster outputs retain the exact
+normal/zero component certificates. State consumers, production negotiation
+and demo imports are unchanged. The isolated native/Wasm and physical GPU
+acceptance is `make verify-E6-T12g6g1`; this boundary makes no performance claim.

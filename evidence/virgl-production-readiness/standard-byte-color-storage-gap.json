@@ -1,0 +1,703 @@
+{
+  "schema": "original-byte-color-storage-negative-v1",
+  "sourceHead": "89306b560bb71552a9a6800065ec54273cff0dc8",
+  "sources": [
+    {
+      "path": "renderer/virgl-command/decoder.mjs",
+      "sha256": "0ce9a8d15ef845d4ccba12c4c776c84de523913aad45bbc798c8827343543552"
+    },
+    {
+      "path": "renderer/virgl-command/resources.mjs",
+      "sha256": "92b9892ff13cb824564369a6b30891ac918bb079bcc4f3973c3df426710d84f9"
+    },
+    {
+      "path": "renderer/virgl-command/state.mjs",
+      "sha256": "adb03f30ed711cd725d15caea3242aa8b030c70f973580adced2fe73d18e0928"
+    },
+    {
+      "path": "renderer/virgl-shader/vendor/src/virgl_hw.h",
+      "sha256": "191ca5cea527949a29e9753b1e31d550f2fed922895d78dabc5c5c3585aa2ff7"
+    },
+    {
+      "path": "renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "sha256": "fc479ec92133f8b75d26043d20fca97d00b1a1556481abf5c5daf23b66e00fca"
+    }
+  ],
+  "rows": [
+    {
+      "format": 1,
+      "name": "B8G8R8A8_UNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 1,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 3,
+      "name": "A8R8G8B8_UNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 3,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 4,
+      "name": "X8R8G8B8_UNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 4,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 64,
+      "name": "R8_UNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 64,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 65,
+      "name": "R8G8_UNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 65,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 66,
+      "name": "R8G8B8_UNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 66,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 68,
+      "name": "X8B8G8R8_UNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 68,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 74,
+      "name": "R8_SNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 74,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 75,
+      "name": "R8G8_SNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 75,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 76,
+      "name": "R8G8B8_SNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 76,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 77,
+      "name": "R8G8B8A8_SNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 77,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 97,
+      "name": "R8G8B8_SRGB",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 97,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 98,
+      "name": "A8B8G8R8_SRGB",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 98,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 99,
+      "name": "X8B8G8R8_SRGB",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 99,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 100,
+      "name": "B8G8R8A8_SRGB",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 100,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 101,
+      "name": "B8G8R8X8_SRGB",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 101,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 102,
+      "name": "A8R8G8B8_SRGB",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 102,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 103,
+      "name": "X8R8G8B8_SRGB",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 103,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 104,
+      "name": "R8G8B8A8_SRGB",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 104,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 121,
+      "name": "A8B8G8R8_UNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 121,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 134,
+      "name": "R8G8B8X8_UNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 134,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 230,
+      "name": "R8G8B8X8_SRGB",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 230,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 317,
+      "name": "B8G8R8_UNORM",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 317,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    },
+    {
+      "format": 387,
+      "name": "B8G8R8_SRGB",
+      "metadata": {
+        "id": 6,
+        "target": 2,
+        "format": 387,
+        "bind": 8,
+        "width": 7,
+        "height": 5,
+        "depth": 1,
+        "arraySize": 1,
+        "lastLevel": 0,
+        "nrSamples": 0,
+        "flags": 0
+      },
+      "observed": {
+        "ok": false,
+        "error": {
+          "code": "unsupported-resource",
+          "message": "Only required normalized 2D color formats with render/sampler roles and scanout/shared hints are supported."
+        }
+      },
+      "allocations": 0,
+      "final": {
+        "ok": true
+      }
+    }
+  ],
+  "authority": "pure metadata refusal before any backend allocation; no native renderer authority",
+  "guestExecution": false,
+  "productionNegotiation": false
+}

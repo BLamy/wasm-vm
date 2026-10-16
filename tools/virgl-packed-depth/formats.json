@@ -1,0 +1,44 @@
+[
+  {
+    "originalFormat": 20,
+    "originalName": "S8_UINT_Z24_UNORM",
+    "channels": [
+      "UP8",
+      "UN24"
+    ],
+    "swizzles": [
+      "Y",
+      "X",
+      "_",
+      "_"
+    ],
+    "guestPixelBytes": 4,
+    "plannedNativePixelBytes": 4,
+    "ownedPixelBytes": 4,
+    "plannedNativeInternal": "DEPTH24_STENCIL8",
+    "plannedUploadFormat": "DEPTH_STENCIL",
+    "plannedUploadType": "UNSIGNED_INT_24_8",
+    "stencil": true
+  },
+  {
+    "originalFormat": 21,
+    "originalName": "Z24X8_UNORM",
+    "channels": [
+      "UN24",
+      "X8"
+    ],
+    "swizzles": [
+      "X",
+      "_",
+      "_",
+      "_"
+    ],
+    "guestPixelBytes": 4,
+    "plannedNativePixelBytes": 4,
+    "ownedPixelBytes": 4,
+    "plannedNativeInternal": "DEPTH_COMPONENT24",
+    "plannedUploadFormat": "DEPTH_COMPONENT",
+    "plannedUploadType": "UNSIGNED_INT",
+    "stencil": false
+  }
+]

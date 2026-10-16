@@ -1,0 +1,25 @@
+{
+  "schema": "original-stencil-seal-v1",
+  "task": "E6-T11d44",
+  "sourceHead": "de736cd109a092b59c82a83dd9520ee5928b8c2a",
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz",
+      "bytes": 42370970,
+      "sha256": "46beab4bf23c06c2b8f826e41db8b0969cfd380b2a9bdcf750a4cc12322a848c"
+    }
+  ],
+  "records": 42535,
+  "reopenedMembers": 42535,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "46beab4bf23c06c2b8f826e41db8b0969cfd380b2a9bdcf750a4cc12322a848c",
+  "archiveBytes": 42370970,
+  "recordIndexSha256": "e590aee23a07f06a68542a118dea90eb9823d31a3669dbfad17294566c8f9271",
+  "hotReceiptSha256": "f91bfe2d9b9216a287bd7e5c393e046a1419cfbe974fc8aeae1b7b6f22d4bd8a",
+  "coldReportSha256": "07431ec30af71c0bc20b5b43da6d6e822c667fdac4dc1aa9dc341a4f9b149d80",
+  "coldReceiptSha256": "ae6cfce6fecc7c902a8a75c635d21ee27fa3f7f9efc229cef1c595255056c033",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-original-stencils",
+  "productionDrawAuthority": false
+}

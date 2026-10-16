@@ -1,0 +1,261 @@
+{
+  "schema": "independent-original-shadow-critic-seal-v1",
+  "task": "E6-T11d48",
+  "sourceHead": "44e3f1301b6253a1fdf066fd102ca68b81dce3ff",
+  "workerFreeze": "f57db8c880684eb73cdc29c166568185fdde0a46",
+  "submission": "b0bc023d80c06cf0a449eb7648632b3a9a0af137",
+  "predecessor": "41c1aa490d19d8c307ea7bdbb5647acf346681f4",
+  "status": "passed",
+  "records": 626,
+  "reopenedMembers": 626,
+  "physicalBodies": 561,
+  "logicalBytes": 690978972,
+  "archiveBytes": 533579212,
+  "archiveSha256": "642815d0c63aee4e79645203f0cb3437582c46a899eb36dcf159150899d7a05c",
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "2d7d526916c5885772ba6fbaa5b105ab56547b099543a0fddf92294798c6122c"
+    },
+    {
+      "path": "recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "fd782ef73079f8f70cd2ddecad964bd8c14f8975ace5163a1a25f512344bdcb6"
+    },
+    {
+      "path": "recording.tar.gz.part-0002",
+      "bytes": 16777216,
+      "sha256": "5242f204d2fb9f6ef284bd38fc0022bcc94e51803fd8bb4a54c1002f8aba8d36"
+    },
+    {
+      "path": "recording.tar.gz.part-0003",
+      "bytes": 16777216,
+      "sha256": "b37ef52901d3390008525bfd3a971776d658c77ac7235a7cebab6193d311920f"
+    },
+    {
+      "path": "recording.tar.gz.part-0004",
+      "bytes": 16777216,
+      "sha256": "628889a5c5933a86d1e252d93f9e9bdb3f060652176555855cbc391ad1647a74"
+    },
+    {
+      "path": "recording.tar.gz.part-0005",
+      "bytes": 16777216,
+      "sha256": "528a5abd3961590c1671ed908808329e7850d4528a484fc4934a0032335cad4a"
+    },
+    {
+      "path": "recording.tar.gz.part-0006",
+      "bytes": 16777216,
+      "sha256": "24cb9114f7f71d9a8f3ed564578583b0354b6dad6ca2da9ab6125f2147c0a701"
+    },
+    {
+      "path": "recording.tar.gz.part-0007",
+      "bytes": 16777216,
+      "sha256": "349c0d31e44692005142969d0568f997fb63459e5eb200c28300fadb021816b1"
+    },
+    {
+      "path": "recording.tar.gz.part-0008",
+      "bytes": 16777216,
+      "sha256": "8f1869572bf6f7f72ec83697a200a9bf64f2a63b3345f384f11eaa535468c481"
+    },
+    {
+      "path": "recording.tar.gz.part-0009",
+      "bytes": 16777216,
+      "sha256": "56bb38832da4b96fe4615e7f44effa3bfa55926d577e110ea2fd5cf7a9951c95"
+    },
+    {
+      "path": "recording.tar.gz.part-0010",
+      "bytes": 16777216,
+      "sha256": "5571d5e897e501e3b1e7eeb53c41a0dc4b34952ed5cb563637643193a30ffdf2"
+    },
+    {
+      "path": "recording.tar.gz.part-0011",
+      "bytes": 16777216,
+      "sha256": "64e084a83cc5e3ef68426451c48df370435d14cda644ef956f716f0df408b3af"
+    },
+    {
+      "path": "recording.tar.gz.part-0012",
+      "bytes": 16777216,
+      "sha256": "47d36c3d338e762bdb5bf1b1dab2d5e7a5a67e9d6073afa65b17458eef54f60a"
+    },
+    {
+      "path": "recording.tar.gz.part-0013",
+      "bytes": 16777216,
+      "sha256": "395575c9b3b274863b70e750ac2c240cd780c286561bec88bf23aa7acab1138e"
+    },
+    {
+      "path": "recording.tar.gz.part-0014",
+      "bytes": 16777216,
+      "sha256": "89e12aa23c75c3aed14a4d45948981ff3b544e902fdec0763c53a904f6e833ba"
+    },
+    {
+      "path": "recording.tar.gz.part-0015",
+      "bytes": 16777216,
+      "sha256": "99cdadf99501043b0557e4a758a41c9e34dbd69e7e0d46efd2a9565ca2662afa"
+    },
+    {
+      "path": "recording.tar.gz.part-0016",
+      "bytes": 16777216,
+      "sha256": "bb148cf63422c1f39c44e76110e5a179f5680b6b9ebc25c4b4e574d7d6b10398"
+    },
+    {
+      "path": "recording.tar.gz.part-0017",
+      "bytes": 16777216,
+      "sha256": "a9a31d850a53c0545b2f027e33c7e3d8de9c63218e257fc4f3ebfd20e5c51682"
+    },
+    {
+      "path": "recording.tar.gz.part-0018",
+      "bytes": 16777216,
+      "sha256": "b85538797de61005b14eaf1eb1dc4a7930090a96e00273f9108de17af77c2a31"
+    },
+    {
+      "path": "recording.tar.gz.part-0019",
+      "bytes": 16777216,
+      "sha256": "a62223f9a5f3c055be9e118cb44d03c4adb489a59e166826af34cc63b541982a"
+    },
+    {
+      "path": "recording.tar.gz.part-0020",
+      "bytes": 16777216,
+      "sha256": "801cdbdc38af4c19959e2a6015d558247b82aea178c9694188f0a817bfbac04e"
+    },
+    {
+      "path": "recording.tar.gz.part-0021",
+      "bytes": 16777216,
+      "sha256": "77fda8f585faaeb9ccc9a1367cad909e68d753d3987b368cc2479b1b59777cb5"
+    },
+    {
+      "path": "recording.tar.gz.part-0022",
+      "bytes": 16777216,
+      "sha256": "9a132c0f24f7739771810ba27dfe38296889dfce51c4e47e6d99893cb0e72f88"
+    },
+    {
+      "path": "recording.tar.gz.part-0023",
+      "bytes": 16777216,
+      "sha256": "94347738f30fb224f34e7fe54eaa5ae164b6aa764eb42000feaca4e67d8b784c"
+    },
+    {
+      "path": "recording.tar.gz.part-0024",
+      "bytes": 16777216,
+      "sha256": "b42201efa380a24480d399e31fcb1285678258be8f3e6592265c984b0141e018"
+    },
+    {
+      "path": "recording.tar.gz.part-0025",
+      "bytes": 16777216,
+      "sha256": "fb5be10d7cc64450123dbf52b0e54540f559ae1e940e408e1f854f5823823520"
+    },
+    {
+      "path": "recording.tar.gz.part-0026",
+      "bytes": 16777216,
+      "sha256": "da128c40539d8c80a8ae3b48aae4e7b9b3a8d627a3e637cc252d0f483a900660"
+    },
+    {
+      "path": "recording.tar.gz.part-0027",
+      "bytes": 16777216,
+      "sha256": "07902435af093b3acdc5fa81829e90bb19d6d12b7e32fdc829df10f87582b445"
+    },
+    {
+      "path": "recording.tar.gz.part-0028",
+      "bytes": 16777216,
+      "sha256": "86636185092bebf5e5590ed0eaeb39a9ca382bf4e0d79e798c19ed9f2975d59a"
+    },
+    {
+      "path": "recording.tar.gz.part-0029",
+      "bytes": 16777216,
+      "sha256": "2b807cf98a6b8bf83dc5d46a892df4ed8daf2222a2c69d8ddb0f6b023ea28344"
+    },
+    {
+      "path": "recording.tar.gz.part-0030",
+      "bytes": 16777216,
+      "sha256": "6db95eb6ff88029c69771a55235d1bec33b9b38574b52abe8871a607ec1ca290"
+    },
+    {
+      "path": "recording.tar.gz.part-0031",
+      "bytes": 13485516,
+      "sha256": "7c248753a92614240db20ae25c966486092ecdba1cd9d20842891e4b8b9ba268"
+    }
+  ],
+  "recordIndexSha256": "67c1175debe54024f70c35eadbe08733ae08930008a1928dc78af4232ce0349e",
+  "completeWorkerSealIncluded": true,
+  "reopenedWorkerMembers": 52584,
+  "reopenedPredecessorMembers": 213503,
+  "independentCases": 545,
+  "physicalBaselineWords": 24,
+  "physicallyRefutedWords": 4,
+  "finestCoverage": {
+    "javascript": 18,
+    "native": 308,
+    "waivers": 17,
+    "zero": 0
+  },
+  "audits": {
+    "authentication.json": "a306395ee291e86d95f7b74e33ec7c8a9571be33e30731aa6acf13842e32801a",
+    "original-response-audit.json": "440f7815bbe9f6c46cb23bbc24a50fc23d5ad8536aba54435c7a2c9952fec7d4",
+    "original-token-audit.json": "84be56c08d09329dffd05ee5575d0e6f6c2510eb8379889692e5f5d64d082f12",
+    "coverage-fine.json": "b1bfaa14b51e4aa6ef45a1e0d304fc0a0387657c7ca0493bc488213692336f29",
+    "worker-original-physical-audit.json": "cf697f92ba9d74c1065d03ca8721fffda35f8d3072be3004861743adcc12c6d0",
+    "environment-stack-audit.json": "e8d314cf04b6afbd1942abf011874ef0b9fed38c6a8ce3e9e49d5049e17935f1",
+    "novel-physical-audit.json": "ef5e3dfa0b807b21c9b9defdf45ffa198b9e5fa263908f8daa2c54d0f6115245",
+    "independent/audit.json": "bcfd258ee69f7d52b3bb23f5820a28157b09c88ede38f4119ac7b7683504bd6c",
+    "carry.json": "b7467ca77d84b5f5f797c7859df8bac5a9b3df0835a95b45e71f8b78c5a9d43d"
+  },
+  "generated": {
+    "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.js": "031892a4f63a8cc6fba114a8931d43881c12ba7cea5ab27e082bc64f386feb3e",
+    "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.mjs": "1182fc11fb11e2f2886efabd6377fd13f932eeed60bb407b76637269637a3935",
+    "renderer/virgl-shader/build/coordinate-prefix-wasm/coordinate-prefix.wasm": "4066d74c06425bc7a6fef4a4d83dcf79006fd0e02d02b64e1658963aede9f462",
+    "renderer/virgl-shader/build/coordinate-primary.json": "469e4a92782152ed5789dfa5abaa1b27eaa2e8748a6243c36299a8cb7c344ea8",
+    "renderer/virgl-shader/build/coordinate-reference-2242054355.json": "0dafeb9a22fbe9838fd9b17fc5da7eebf28e375ff377d09ff22f3ea50800c653",
+    "renderer/virgl-shader/build/coordinate-reference-2654435769.json": "60c5d512ff216d53811d9835f9412f914ca8b32bdf3ea69b476ef9597a1921f5",
+    "renderer/virgl-shader/build/coordinate-reference-3737844652.json": "e95bd16e430788fbd8f3ae7e6fbc431b5a033613c788d1251871c511baf3fa11",
+    "renderer/virgl-shader/build/coordinate-reference-608135816.json": "b4069ca1cc1f8dded2f85828fbea4e3f20be87bf500ccc8c7de148f09aec703b",
+    "renderer/virgl-shader/build/discard-primary.json": "1e7e8b546e4678ed1b1879386e713e4a59d2f2c27cf21cc4a8019d9732cc1f70",
+    "renderer/virgl-shader/build/discard-reference-2242054355.json": "86a402f857bdb3a25b736236ccb06048f2816c89f3037ff57542d7b12a6e7169",
+    "renderer/virgl-shader/build/discard-reference-2654435769.json": "f4972e9a77a95840d50863dafccba98589527c50481b6d9ae1b7ec27fca687d2",
+    "renderer/virgl-shader/build/discard-reference-608135816.json": "d1700fa72d8dfef6558831244b83d6e692e427a39acf3944e1c71d71ec611c85",
+    "renderer/virgl-shader/build/exponent-logarithm-primary.json": "03914ff94880d3f8183da684135a99f71ffa4bdc40f003339a115f67c07b1fe2",
+    "renderer/virgl-shader/build/exponent-logarithm-reference.json": "d0e335ace05c114f213676ef3d6503f1e47b5855c606f22a1c1b9b2bb6c90ff0",
+    "renderer/virgl-shader/build/minimum-selection-primary.json": "392543ca97ee56182a210fc02dfc5b41da35ab48239a67350e2b08ffacead50b",
+    "renderer/virgl-shader/build/original-92cb-complete-wasm/fragment.tgsi": "92cb866af48f952b719c54959a439c7330333c6d32897430bc3d4a0a2f63bfba",
+    "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.js": "7a1aa9a2e004586cdbffcd67150ff1e8e2210e5a6329ea531639eabe09da0d65",
+    "renderer/virgl-shader/build/original-92cb-complete-wasm/original-92cb-complete.wasm": "674e860fa64daccaeb5f46394dcbf42caf26978904b2f6dfc0d95fec3f2fae54",
+    "renderer/virgl-shader/build/original-92cb-complete-wasm/vertex.tgsi": "7bf4d0d0f981a9feb958d6595302b15d564fc846e6d5ee71874f0921b31e613e",
+    "renderer/virgl-shader/build/original-92cb-geometry-wasm/fragment.tgsi": "92cb866af48f952b719c54959a439c7330333c6d32897430bc3d4a0a2f63bfba",
+    "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.js": "549b2d0aee04a50a6537f512ccf5e03d32744eb98ee2d0feeead05a9043054bf",
+    "renderer/virgl-shader/build/original-92cb-geometry-wasm/original-92cb-geometry.wasm": "284101e96f730a8120aab1c4162bfa185dd89a52e28ae4c1eaef76660420cec7",
+    "renderer/virgl-shader/build/original-92cb-geometry-wasm/vertex.tgsi": "7bf4d0d0f981a9feb958d6595302b15d564fc846e6d5ee71874f0921b31e613e",
+    "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.js": "5716f99490b39faa7cdde01f0f8a66092c96b4aad14f6e1eac6b8a508535b6f0",
+    "renderer/virgl-shader/build/original-92cb-power-domain-wasm/original-92cb-power-domain.wasm": "0c48f942cae6250a651cefe8e0c1b4b2aeb151cbba9690552c20cabfe86d1936",
+    "renderer/virgl-shader/build/original-92cb-private-power-wasm/fragment.tgsi": "92cb866af48f952b719c54959a439c7330333c6d32897430bc3d4a0a2f63bfba",
+    "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.js": "263c1d796d9ac2a34c1014153f6c7391cb9ef8725ab776a72a7385bf54dad9e6",
+    "renderer/virgl-shader/build/original-92cb-private-power-wasm/original-92cb-private-power.wasm": "05217efd8a84524df85ceb16073ea8fe3a5c1aaa0d69db321d9fb9f58032087a",
+    "renderer/virgl-shader/build/original-92cb-private-power-wasm/vertex.tgsi": "7bf4d0d0f981a9feb958d6595302b15d564fc846e6d5ee71874f0921b31e613e",
+    "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.js": "4fa5047f7a29585d6165f82f6e548279d58b8a6e99aea696d5385f22831d3fe8",
+    "renderer/virgl-shader/build/original-92cb-raster-wasm/original-92cb-raster.wasm": "fc4752367fc77fbcfe94dc403fab06cfdc1e80fdeb68b8048d0bb1688ff6d799",
+    "renderer/virgl-shader/build/original-c580-wasm/fragment.tgsi": "c5806d5f8fd74bf2d3ce5ccf32bdc255ec13ad9447eec5896a3c96a591a5c68f",
+    "renderer/virgl-shader/build/original-c580-wasm/original-c580.js": "1b7b7a71e657bbafcfe58e2cd49bc440687f157fd4212ff8bdf836a731e1d6fb",
+    "renderer/virgl-shader/build/original-c580-wasm/original-c580.wasm": "9f6dde0e5bc678287b236b6ad977b1b06decb6f316a2755bbabb0314ef16b90d",
+    "renderer/virgl-shader/build/original-c580-wasm/vertex.tgsi": "403b0529c632d3d2ffe4584ede810f5745e8b76ca2ab4f575e1073d8f29fcf0c",
+    "renderer/virgl-shader/build/power-primary.json": "fbad78e19e89da3562a47acb9a2b69261f35b29984bcf7f938aa3c9e2017aacf",
+    "renderer/virgl-shader/build/power-reference.json": "1edf2cf8a60d31ba415d1f218c1379694b540e9517df0e3fa68abb7f75a0a9d5",
+    "renderer/virgl-shader/build/precise-fraction-primary.json": "f7f57f8f55905fc403a712c152ee4d847a6fe89150471eb278102924c1e02756",
+    "renderer/virgl-shader/build/saturation-primary.json": "bdf1a83e24da3d82328b9bc94e4079d0a777dd0c29eb4a875839cd08ead8ebc8",
+    "renderer/virgl-shader/build/scalar-operations-primary.json": "33286a6a3fa66970b4be157da3998a2696c4756bc3fbc2f9482c776903e96e91",
+    "renderer/virgl-shader/build/signed-conversions-primary.json": "1f3714318f3736e34c744a1c0b39aebf539071434a0427c182b574b274c2e4ee",
+    "renderer/virgl-shader/build/signed-conversions-range-constant.mjs": "3690848dbbf5e2d1bd3cb33eda0b7075da9aaf4789d5b901a333164ccfec9ddc",
+    "renderer/virgl-shader/build/signed-conversions-range-fault.json": "5e4faaf3b7e6f29ad3c8a2e56cc3d6582e0cf54d3c717262e5b3bd352069ae62",
+    "renderer/virgl-shader/build/signed-conversions-range-state.mjs": "e2ab9616ab5787ced52ba8ecf73a5d92dfda6a0bec6f257151ffd3ecceb2e3d7",
+    "renderer/virgl-shader/build/signed-integers-primary.json": "e2d5af15fda7318fa64ecc1c6dd4003e58daade0394dc45238a2957c4cdd8be4",
+    "renderer/virgl-shader/build/sine-primary.json": "0e74751f9d33cbe9116a902021db7debd72fda8eb84d3945c424fd1da7a4bee9",
+    "renderer/virgl-shader/build/sine-reference.json": "9ead8de13d1185fbe86c51a1d8d6d042d206b63247815f1c7dc778e343ab40e3",
+    "renderer/virgl-shader/build/wasm/virgl-shader.mjs": "4da9f1ed30cff697193e0688a26ee93e48a3e1216485d5184301fec6c31d4879",
+    "renderer/virgl-shader/build/wasm/virgl-shader.wasm": "aba0c891ad406ef876da6f1a86883b3fcdd98de12c1137a4f2feff566f5459f2",
+    "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.js": "c5e09384e9f829ac63b705fd9efc2b5e1f3cb31430c7306db4d10d415f14f1e6",
+    "renderer/virgl-shader/build/zero-cap-wasm/zero-cap.wasm": "78ecbae4dd447b25e15ac7f449ba11b2ecf003d13eea0f1322a7b803150e2675",
+    "target/evidence/virgl-shadow-critic-44e3f130/independent/native.jsonl": "6066f28c45d2611dbc70fa84ee232502984de971e169cb431a1a26d3dfacd61c",
+    "renderer/virgl-shader/build/standard-shadow-texture-native/standard-shadow-texture-test": "c27cebee81a59200c79250f89c911a3f01552d10dd07f17299fbe09e73d0fcd2",
+    "renderer/virgl-shader/build/standard-shadow-texture-sanitize/standard-shadow-texture-test": "29b5366bfaf2cc0e953fea83b9f4a573ce33f03aa31ee3125608ddd1cf05c0bd",
+    "renderer/virgl-shader/build/standard-shadow-texture-allocation-sanitize/standard-shadow-texture-allocation-test": "4bba0d5bd0aa03ae6a63c8c87555738414a2ed4385517d8f2cc651afc2336ce9"
+  },
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "productionDrawAuthority": false
+}

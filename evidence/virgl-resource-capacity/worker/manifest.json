@@ -1,0 +1,27 @@
+{
+  "schema": "resource-capacity-seal-v1",
+  "task": "E6-T11d50",
+  "sourceHead": "64bf6ed58a27a52a20e1548166e12d09dd719031",
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz",
+      "bytes": 2620778,
+      "sha256": "7abb50b55a92b45ceec07aa52a95f0a024c94837dc0a44773465e3d4d3999420"
+    }
+  ],
+  "records": 642,
+  "reopenedMembers": 642,
+  "sourceClosureIncluded": true,
+  "archiveSha256": "7abb50b55a92b45ceec07aa52a95f0a024c94837dc0a44773465e3d4d3999420",
+  "archiveBytes": 2620778,
+  "recordIndexSha256": "4a948c805eaf6d5c165a88694e81d575a630069d49292098274de625e4f1c4c8",
+  "hotReceiptSha256": "f2ceeba4ee501604914fd07fc58fa987ad8a7a85b42b280b8c949afee72ba54c",
+  "coldReportSha256": "d338595e16870b8821da10e31ab57265603380f5e235e5176de660dcd507165f",
+  "coldReceiptSha256": "6c62e09123dd6721772db5091a025afb9ebc54125fd7a37bf5f8f4a132dc8ffc",
+  "guestExecution": false,
+  "productionNegotiation": false,
+  "authority": "isolated-resource-capacity-consumer",
+  "productionDrawAuthority": false,
+  "predecessorSealsArePublishedDependencies": true,
+  "reopenedPredecessorMembers": 48920
+}

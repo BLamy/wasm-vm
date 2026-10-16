@@ -1,0 +1,22 @@
+{
+  "schema": "virgl-required-formats-verifier-seal-v1",
+  "task": "E6-T12g6",
+  "verdict": "verified",
+  "workerSourceHead": "5ad750b459d44b1f92dc3db9f5a49f043647b846",
+  "submissionHead": "096d2c8adcc2f211c30e9ece80858ad77438ee7f",
+  "reviewBaseHead": "096d2c8adcc2f211c30e9ece80858ad77438ee7f",
+  "workerArchiveSha256": "aaf797f2914f32519af9eed6ae55c32b2172b0d6ebaa89503eceedc0913c57db",
+  "workerIndexSha256": "bdaf8a3ec2f48e7b7fed86993e9a5d206526e8e72be18b3be41e6644e49bedba",
+  "archiveSha256": "ccc2953847c35bec033ed338241fd98c9e375db0abedd4cd72001af555257090",
+  "archiveBytes": 799572,
+  "recordIndexSha256": "b1aa1ec66dee8af518be06adc5a094431caa84a253e9211bce1414b9e56f32b4",
+  "records": 54,
+  "authority": "isolated-client-format-view-closure",
+  "productionDrawAuthority": false,
+  "guestExecution": false,
+  "portableDomainCertified": false,
+  "coldProofCarriedUnchanged": true,
+  "promotedTests": {
+    "renderer/virgl-command/tests/required-format-roles.mjs": "3327edcca510e46a96edfa2a4a89916ace0855efeec567f69d2b2597113aa5b5"
+  }
+}

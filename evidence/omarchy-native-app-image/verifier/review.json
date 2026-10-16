@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "task": "E5.5-T05b",
+  "verdict": "verified",
+  "source": "2f27c1d8efb734ce115b1a7f07840c456916d816",
+  "workerSubmission": "d305912826774dd237308054ca84bbcc3d6427ee",
+  "archive": "review.tar.gz",
+  "bytes": 2017780,
+  "sha256": "d967081c08f8cfbe5dccd09e3bb39a2a298a79d461336d7da7e65b9d8ebadc6c",
+  "members": 74,
+  "indexedIdentities": 73,
+  "indexSha256": "bacb1ec221840432be8490fb24bed53a60bf4d1378259c062ddad71f4bbeacee",
+  "promotedTest": "tools/image/test_native_app_packaging_critic.py",
+  "promotedTestSha256": "24a822a6c7cdaebfebef3c6ab08f3845fc3ef79a3856b97c3ea9de5dcc1f9255",
+  "scope": "Signed native package assembly and fresh ext4 only; T05c/T05d remain",
+  "largeDataCustody": "Main raw image/manifest and accepted main assembly/cache retained. Both images/chunks completely streamed before exact duplicate cleanup release. Duplicate changed-signature package body omitted from capsule; it is byte-identical to the included healthy package, as original actual gpgv observations assert."
+}

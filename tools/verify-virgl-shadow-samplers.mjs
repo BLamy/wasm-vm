@@ -1,0 +1,124 @@
+#!/usr/bin/env node
+import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import fs from "node:fs/promises";
+import { createServer } from "node:http";
+import os from "node:os";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
+import { repo, sha256 } from "./virgl-command/fixtures.mjs";
+
+const options = {};
+for (let index = 2; index < process.argv.length; index += 2) {
+  assert.ok(["--output", "--fault", "--smoke", "--seed", "--mode"].includes(process.argv[index]));
+  assert.ok(process.argv[index + 1]); options[process.argv[index].slice(2)] = process.argv[index + 1];
+}
+assert.ok(options.output); assert.ok(!options.mode||["matrix","bindings","formats","mips","query-only","refusals","reflection","boundaries","same-image","inherited","typed","historical"].includes(options.mode)); assert.ok(!options.fault || ["compare", "mask"].includes(options.fault));
+for (const flag of ["smoke"]) assert.ok(!options[flag] || options[flag] === "true");
+const output = path.resolve(options.output); await fs.mkdir(output, { recursive: true });
+const sourceSet = new Set();
+async function addSource(name) {
+  if (sourceSet.has(name)) return;
+  sourceSet.add(name);
+  const raw = await fs.readFile(path.join(repo, name));
+  if (!name.endsWith('.mjs')) return;
+  for (const match of raw.toString('utf8').matchAll(/(?:from|import)\s*['"](\.\.?\/[^'"]+)['"]/g))
+    await addSource(path.posix.normalize(path.posix.join(path.posix.dirname(name), match[1])));
+}
+for (const name of ['renderer/virgl-command/tests/standard-shadow-samplers.mjs','renderer/virgl-command/tests/standard-shadow-samplers-inherited.mjs','renderer/virgl-command/tests/standard-shadow-samplers-historical.mjs',
+ 'renderer/virgl-command/decoder.mjs','renderer/virgl-command/constant-domain.mjs',
+ 'renderer/virgl-shader/build/wasm/virgl-shader.mjs','renderer/virgl-shader/build/wasm/virgl-shader.wasm',
+ 'tools/verify-virgl-shadow-samplers.mjs']) await addSource(name);
+const sourcePaths = [...sourceSet];
+const report = { schema: 1, task: "E6-T11d49", status: "running", guestExecution: false, productionNegotiation: false,
+  gitHead: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(),
+  command: [process.execPath, ...process.argv.slice(1)], host: { platform: process.platform, arch: process.arch,
+    release: os.release(), node: process.version }, sources: [], inputs: [], servedFiles: [],
+  browserErrors: { console: [], page: [], requests: [] }, startedAt: new Date().toISOString() };
+const served = new Map(),blobKeys=new Set(); let browser, server, page;
+async function recordBlob(blob){assert.ok(!blobKeys.has(blob.key));assert.ok(/^blob-[0-9]+$/.test(blob.key));const bytes=Buffer.from(blob.gzipBase64,'base64');assert.equal(sha256(bytes),blob.gzipSha256);const name=blob.key+'.bin.gz';await fs.writeFile(path.join(output,name),bytes);blobKeys.add(blob.key);return name;}
+async function recordRun(index,body){assert.ok(Number.isInteger(index)&&index>=0);const bytes=Buffer.from(body),name='run-'+String(index).padStart(4,'0')+'.json';await fs.writeFile(path.join(output,name),bytes);return {path:name,bytes:bytes.length,sha256:sha256(bytes)};}
+
+try {
+  const sources = new Map();
+  for (const name of sourcePaths) {
+    const bytes = await fs.readFile(path.join(repo, name)); sources.set(name, bytes);
+    report.sources.push({ path: name, bytes: bytes.length, sha256: sha256(bytes) });
+    await fs.mkdir(path.join(output,"source",path.dirname(name)),{recursive:true});await fs.writeFile(path.join(output,"source",name),bytes);
+  }
+  {
+    report.fault=options.fault??null;
+    const html = Buffer.from('<!doctype html><meta charset="utf-8"><title>Original native shadow sampler consumers</title><style>body{font:16px system-ui;background:#111720;color:#e7edf6;margin:32px}pre{white-space:pre-wrap}canvas{width:256px;height:256px;image-rendering:pixelated}</style><h1>Original native shadow sampler consumers</h1><p>Original sampler and view packets · native depth comparisons · owned controls</p><p id="status">Checking actual hardware bindings…</p><canvas id="gpu" width="8" height="8"></canvas><pre id="result"></pre>');
+    const endpoints = new Map([["/", { bytes: html, type: "text/html" }],
+      ...[...sources].filter(([name]) => name.endsWith(".mjs") || name.endsWith(".wasm")).map(([name, bytes]) =>
+        ["/" + name, { bytes, type: name.endsWith(".wasm") ? "application/wasm" : "text/javascript" }])]);
+    server = createServer((request, response) => {
+      const name = new URL(request.url, "http://localhost").pathname;
+      if (name === "/favicon.ico") { response.writeHead(204).end(); return; }
+      const item = endpoints.get(name); if (!item) { response.writeHead(404).end("not found"); return; }
+      served.set(name, { path: name, bytes: item.bytes.length, sha256: sha256(item.bytes) });
+      response.writeHead(200, { "Content-Type": item.type, "Cache-Control": "no-store",
+        "Cross-Origin-Opener-Policy": "same-origin", "Cross-Origin-Embedder-Policy": "require-corp" }).end(item.bytes);
+    });
+    await new Promise((resolve, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", resolve); });
+    const chrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      { chromium } = await import(pathToFileURL(path.join(repo, "web/node_modules/playwright/index.mjs")));
+    browser = await chromium.launch({ executablePath: chrome, headless: false, args: ["--enable-gpu"] });
+    const session = await browser.newBrowserCDPSession(), system = await session.send("SystemInfo.getInfo"),
+      command = await session.send("Browser.getBrowserCommandLine");
+    assert.equal(system.gpu.featureStatus.webgl2 ?? system.gpu.featureStatus.webgl, "enabled");
+    assert.ok(!command.arguments.some(value => /swiftshader|llvmpipe|softpipe|lavapipe|--disable-gpu(?:$|=)/i.test(value)));
+    report.browser = { executable: chrome, sha256: sha256(await fs.readFile(chrome)), version: browser.version(),
+      headless: false, gpu: system.gpu, commandLine: command.arguments };
+    const context = await browser.newContext({ viewport: { width: 1100, height: 900 }, deviceScaleFactor: 1 });
+    page = await context.newPage();
+    await page.exposeFunction("__recordPackedConsumerBlob",recordBlob);
+    await page.exposeFunction("__recordPackedConsumerRun",recordRun);
+    page.on("console", message => { if (message.type() === "error") report.browserErrors.console.push(message.text()); });
+    page.on("pageerror", error => report.browserErrors.page.push(error.message));
+    page.on("requestfailed", request => report.browserErrors.requests.push({ url: request.url(), error: request.failure()?.errorText }));
+    await page.goto("http://127.0.0.1:" + server.address().port + "/", { waitUntil: "load" });
+    const cdp = await context.newCDPSession(page); await cdp.send("Profiler.enable");
+    await cdp.send("Profiler.startPreciseCoverage", { callCount: true, detailed: true });
+    let timer;
+    try {
+      report.browserResult = await Promise.race([page.evaluate(async spec => {
+        try {
+          const module=await import('/renderer/virgl-command/tests/'+(spec.mode==='inherited'?'standard-shadow-samplers-inherited':spec.mode==='historical'?'standard-shadow-samplers-historical':'standard-shadow-samplers')+'.mjs');const result=await module.runAcceptance(spec);
+          document.querySelector("#status").textContent = "Passed original native shadow sampler proof";
+          document.querySelector("#result").textContent = JSON.stringify({ gpu: result.gpu, runs: result.runs?.length??0, planes: (result.runs??[]).reduce((sum,row)=>sum+(row.planes?.length??0),0), predictions: result.predictions?.length??result.assertions?.length??0 }, null, 2);
+          return { status: "passed", result };
+        } catch (error) {
+          document.querySelector("#status").textContent = "Failed: " + error.message;
+          return { status: "failed", error: { message: error.message, stack: error.stack } };
+        }
+      }, { smoke: Boolean(options.smoke), fault:options.fault, mode:options.mode, ...(options.seed ? {seed:Number(options.seed)} : {}) }),
+        new Promise((_, reject) => { timer = setTimeout(() => reject(new Error("original shadow sampler hardware proof exceeded 420 seconds")), 420000); })]);
+    } finally { clearTimeout(timer); }
+    if (report.browserResult.status === "failed") report.partial = await page.evaluate(() => window.__standardShadowSamplerEvidence ?? window.__standardInstancedStencilEvidence ?? window.__standardOrderedStencilEvidence ?? window.__standardStencilEvidence ?? window.__standardPackedDepthConsumerEvidence ?? window.__standardMultipleColorEvidence ?? window.__standardIntegerImageConsumerEvidence ?? window.__standardPackedNormalizedConsumerEvidence ?? null);
+    const evidence = report.browserResult.result ?? report.partial;
+    if(evidence)for(const blob of evidence.blobs??[]){
+      if(blob.gzipBase64){blob.path=await recordBlob(blob);delete blob.gzipBase64;}
+      else {assert.ok(blobKeys.has(blob.key));assert.equal(blob.path,blob.key+'.bin.gz');assert.equal(sha256(await fs.readFile(path.join(output,blob.path))),blob.gzipSha256);}
+    }
+    const coverage = await cdp.send("Profiler.takePreciseCoverage"), scripts = [];
+    for (const name of sourcePaths.filter(name => name.endsWith(".mjs"))) {
+      const matches = coverage.result.filter(script => script.url.endsWith("/" + name));
+      if (matches.length) { assert.equal(matches.length, 1); scripts.push({ source: name, sha256: sha256(sources.get(name)), sourceBody: sources.get(name).toString("utf8"), coverage: matches[0] }); }
+    }
+    await fs.writeFile(path.join(output, "browser-coverage.json"), JSON.stringify({ schema: 1, scripts }, null, 2) + "\n");
+    report.browserCoverage = { path: "browser-coverage.json", sha256: sha256(await fs.readFile(path.join(output, "browser-coverage.json"))) };
+    await cdp.send("Profiler.stopPreciseCoverage"); await page.screenshot({ path: path.join(output, "browser.png"), fullPage: true });
+    report.screenshot = { path: "browser.png", sha256: sha256(await fs.readFile(path.join(output, "browser.png"))) };
+    assert.deepEqual(report.browserErrors, { console: [], page: [], requests: [] });
+    assert.equal(report.browserResult.status, "passed", report.browserResult.error?.message);
+  }
+  for (const source of report.sources) assert.equal(sha256(await fs.readFile(path.join(repo, source.path))), source.sha256, "source drift " + source.path);
+  report.status = "passed"; console.log("Original native shadow sampler acceptance passed");
+} catch (error) {
+  report.status = "failed"; report.failure = { message: error.message, stack: error.stack }; process.exitCode = 1; console.error(error.stack);
+} finally {
+  report.servedFiles = [...served.values()]; report.finishedAt = new Date().toISOString();
+  await fs.writeFile(path.join(output, "report.json"), JSON.stringify(report, null, 2) + "\n");
+  await browser?.close().catch(() => {}); if (server) await new Promise(resolve => server.close(resolve));
+}

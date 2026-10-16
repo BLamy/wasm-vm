@@ -1,0 +1,51 @@
+{
+  "task": "E6-T12g6m3c",
+  "status": "passed",
+  "nativeConditionalAlternatives": 110,
+  "executedNativeAlternatives": 106,
+  "waivedNativeAlternatives": [
+    {
+      "line": 2023,
+      "column": 34,
+      "alternative": "true"
+    },
+    {
+      "line": 2024,
+      "column": 13,
+      "alternative": "true"
+    },
+    {
+      "line": 2036,
+      "column": 33,
+      "alternative": "true"
+    },
+    {
+      "line": 1982,
+      "column": 19,
+      "alternative": "true"
+    }
+  ],
+  "v8ConditionalRegions": 92,
+  "hitV8ConditionalRegions": 92,
+  "faults": {
+    "interface": {
+      "sourceSha256": "0fd0fa9617e83b04c899612ab8920aa06f68523ea00665fde19c56020ffc534c",
+      "wasmSha256": "5b1253d854a6ddcf7ae7420d3b7b1d19263806da95dc3177b55e7b46392b7178",
+      "contradictionPoints": [
+        "shaderFixtures/both-qualified-flat",
+        "both-qualified-flat-sync/pair",
+        "both-qualified-flat-sync/submission/real paired link"
+      ]
+    },
+    "metadata": {
+      "sourceSha256": "f71bc4913b87f3906543e8a6ebf6cd8678bc6beaa742780a8084de0c5885ef66",
+      "wasmSha256": "5d6725a0019bae7ca4366b429749b8388cef5d83be2f223f1e8b2345e0272bc6",
+      "contradictionPoints": [
+        "shaderFixtures/both-qualified-flat",
+        "both-qualified-flat-sync/pair",
+        "both-qualified-flat-sync/submission/real paired link"
+      ]
+    }
+  },
+  "originalCoverageSha256": "b0cce4c07fc0b975aee3044d1ab0954b0df23f7a8a6b04001f60ecd6d44755ed"
+}

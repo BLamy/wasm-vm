@@ -1,0 +1,70 @@
+{
+  "status": "passed",
+  "scope": "auditor-only sensitivity; actual served corruption is recorded separately",
+  "record": "target/evidence/virgl-ordered-stencil-critic-frozen-20c7360c/schedule-0x85a308d3/run-0004.json",
+  "bodySha256": "6730c8568b8f5d0a479531b8672e7e614159d37447785597ca66e2c51d9f5c35",
+  "imageWriter": {
+    "sequence": 3869,
+    "buffer": 123
+  },
+  "bufferCopies": [
+    {
+      "sequence": 3872,
+      "source": 10,
+      "destination": 124,
+      "fence": 26,
+      "created": 3873,
+      "consumed": 3888
+    },
+    {
+      "sequence": 3874,
+      "source": 11,
+      "destination": 126,
+      "fence": 27,
+      "created": 3875,
+      "consumed": 3887
+    }
+  ],
+  "points": [
+    {
+      "resourceKind": "image",
+      "resource": 7,
+      "readSequence": 3893,
+      "writerSequence": 3869,
+      "fenceCreatedSequence": 3873,
+      "completion": {
+        "sync": 26,
+        "sequence": 3888,
+        "actual": 37146,
+        "delivered": 37146
+      }
+    },
+    {
+      "resourceKind": "normalized-buffer",
+      "resource": 123,
+      "readSequence": 3890,
+      "writerSequence": 3869,
+      "fenceCreatedSequence": 3873,
+      "completion": {
+        "sync": 26,
+        "sequence": 3888,
+        "actual": 37146,
+        "delivered": 37146
+      }
+    }
+  ],
+  "checkerMutants": [
+    {
+      "name": "pre-image-writer-fence",
+      "status": "rejected"
+    },
+    {
+      "name": "unconsumed-status",
+      "status": "rejected"
+    },
+    {
+      "name": "pre-buffer-writer-fence",
+      "status": "rejected"
+    }
+  ]
+}

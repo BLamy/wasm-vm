@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/evidence/virgl-stream-output-shaders/verifier/coverage.py", line 103, in <module>
+    assert (waiver['source'].endswith('.h') or text.lstrip().startswith(('/*', '#include', 'static ', 'const char *', 'bool ', 'uint32_t ', 'const uint32_t *'))), (waiver['source'], waiver['line'], text)
+AssertionError: ('renderer/virgl-shader/standard_stream_output.c', 61, '                                    unsigned register_index)\n')

@@ -1,0 +1,7 @@
+{
+  "schema":"fresh-shadow-sampler-final-attack-predictions-v1",
+  "madeBeforeFinalNativeRuns":true,
+  "baselineSeeds":["0x61a387d9","0x94ce720a","0xd73ab56b"],
+  "boundarySeeds":["0x6ac47308","0xb59d7a1d","0xe174cf53"],
+  "prediction":"For each baseline seed, eight whole frames (288 words) agree with original two-slot projective TXP/XOR packets. At fixed depth zero references -0.25/0/0.25 compare EQUAL as 1/1/0 while floating depth compares 0/1/0; at fixed depth one references 0.75/1/1.25 compare as 0/1/1 while floating depth compares 0/1/0. Projection divisors 0.5/2/-2 preserve these post-projective values. Original controls are slot13 [0,5,4,3] and slot1 [5,0,3,4], then replacement views [5,4,2,0] / [0,3,5,4]. Each stage has separately owned native sampler units and mask/add pairs. Native control corruption runs each pass two baselines first, then complete distinct third fences: NEVER corrupts 72 words and red mask corruption corrupts 12 words across the four runs. Refusal/reflection and three distinct delay schedules still drain all native objects and complete original recovery planes."
+}

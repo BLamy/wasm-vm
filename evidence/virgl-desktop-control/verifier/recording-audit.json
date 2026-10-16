@@ -1,0 +1,5478 @@
+{
+  "schema": "desktop-control-critic-recording-audit-v1",
+  "nativeRecords": 608,
+  "guestInstructions": 632,
+  "hotColdRecordsEqual": true,
+  "original": [
+    {
+      "workload": "compositor",
+      "manifestSha256": "22519c071fb65af6c5556bda1c3f4304951f49b8d19141ac40658bcb2d31482c",
+      "eventsSha256": "5aedec4ee9c7c803648e16399f0846a88b1a1223b4eb93bec88726bc25b36b72",
+      "completeCalls": [
+        {
+          "enter": {
+            "seq": 10,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 2,
+            "target": 2,
+            "format": 2,
+            "bind": 2,
+            "width": 1280,
+            "height": 800,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 1,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 11,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 10,
+            "result": 0,
+            "blobs": []
+          }
+        },
+        {
+          "enter": {
+            "seq": 118,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 3,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 119,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 118,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000030000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 129,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 4,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 130,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 129,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000040000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 140,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 5,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 141,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 140,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000050000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 151,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 6,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 152,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 151,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000060000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 186,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 3,
+            "blobs": []
+          },
+          "return": {
+            "seq": 187,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 186,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000300000000000000"
+        },
+        {
+          "enter": {
+            "seq": 196,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 4,
+            "blobs": []
+          },
+          "return": {
+            "seq": 197,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 196,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000400000000000000"
+        },
+        {
+          "enter": {
+            "seq": 200,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 5,
+            "blobs": []
+          },
+          "return": {
+            "seq": 201,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 200,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000500000000000000"
+        },
+        {
+          "enter": {
+            "seq": 204,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 6,
+            "blobs": []
+          },
+          "return": {
+            "seq": 205,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 204,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000600000000000000"
+        },
+        {
+          "enter": {
+            "seq": 210,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 7,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 211,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 210,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000070000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 221,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 8,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 222,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 221,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000080000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 232,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 9,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 233,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 232,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000090000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 243,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 10,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 244,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 243,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000a0000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 267,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 11,
+            "target": 2,
+            "format": 2,
+            "bind": 1310730,
+            "width": 1024,
+            "height": 768,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 268,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 267,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000b00000002000000020000000a0014000004000000030000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 290,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 12,
+            "target": 2,
+            "format": 2,
+            "bind": 1310730,
+            "width": 1024,
+            "height": 768,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 291,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 290,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000c00000002000000020000000a0014000004000000030000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 316,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 13,
+            "target": 2,
+            "format": 2,
+            "bind": 1310730,
+            "width": 1024,
+            "height": 768,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 317,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 316,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000d00000002000000020000000a0014000004000000030000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 353,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 14,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 426,
+            "height": 15,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 354,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 353,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000e00000002000000430000000a000000aa0100000f000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 364,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 15,
+            "target": 0,
+            "format": 64,
+            "bind": 524288,
+            "width": 1048576,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 365,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 364,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000f0000000000000040000000000008000000100001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 375,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 16,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 8,
+            "height": 12,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 376,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 375,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001000000002000000430000000a000000080000000c000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 386,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 17,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 571,
+            "height": 15,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 387,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 386,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001100000002000000430000000a0000003b0200000f000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 397,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 18,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 8,
+            "height": 12,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 398,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 397,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001200000002000000430000000a000000080000000c000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 408,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 19,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 1024,
+            "height": 768,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 409,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 408,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001300000002000000430000000a0000000004000000030000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 419,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 20,
+            "target": 2,
+            "format": 20,
+            "bind": 9,
+            "width": 1024,
+            "height": 768,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 420,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 419,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000140000000200000014000000090000000004000000030000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 432,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 21,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 1024,
+            "height": 768,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 433,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 432,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001500000002000000430000000a0000000004000000030000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 443,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 22,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 512,
+            "height": 512,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 444,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 443,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001600000002000000430000000a0000000002000000020000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 454,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 23,
+            "target": 0,
+            "format": 64,
+            "bind": 524288,
+            "width": 1048576,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 455,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 454,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000170000000000000040000000000008000000100001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 465,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 24,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 396,
+            "height": 27,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 466,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 465,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001800000002000000430000000a0000008c0100001b000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 476,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 25,
+            "target": 0,
+            "format": 64,
+            "bind": 524288,
+            "width": 1048576,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 477,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 476,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000190000000000000040000000000008000000100001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 487,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 26,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 24,
+            "height": 24,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 488,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 487,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001a00000002000000430000000a0000001800000018000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 498,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 27,
+            "target": 0,
+            "format": 64,
+            "bind": 32,
+            "width": 1048576,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 499,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 498,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001b0000000000000040000000200000000000100001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 509,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 28,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 64,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 510,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 509,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001c0000000000000040000000100000004000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 520,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 29,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 64,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 521,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 520,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001d0000000000000040000000100000004000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 531,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 30,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 64,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 532,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 531,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001e0000000000000040000000100000004000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2509,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 15,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2510,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2509,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000f00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2515,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 23,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2516,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2515,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001700000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2550,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 14,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2551,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2550,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000e00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2564,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 16,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2565,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2564,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2570,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 17,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2571,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2570,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001100000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2574,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 18,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2575,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2574,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001200000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2578,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 20,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2579,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2578,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001400000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2582,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 19,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2583,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2582,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001300000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2590,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 22,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2591,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2590,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001600000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2594,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 24,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2595,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2594,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001800000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2598,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 26,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2599,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2598,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001a00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2622,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 21,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2623,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2622,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001500000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2628,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 7,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2629,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2628,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000700000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2634,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 8,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2635,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2634,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000800000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2640,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 9,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2641,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2640,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000900000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2646,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 10,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2647,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2646,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000a00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2652,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 28,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2653,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2652,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001c00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2658,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 29,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2659,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2658,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001d00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2664,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 30,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2665,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2664,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001e00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2670,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 27,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2671,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2670,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001b00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2676,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 25,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2677,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2676,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001900000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2686,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 11,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2687,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2686,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000b00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2692,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 13,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2693,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2692,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000d00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 2698,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 12,
+            "blobs": []
+          },
+          "return": {
+            "seq": 2699,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 2698,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000c00000000000000"
+        }
+      ],
+      "soleBootstrap": {
+        "enter": {
+          "seq": 10,
+          "type": "resource_create",
+          "phase": "enter",
+          "threadId": 1,
+          "parentCallSeq": 0,
+          "resourceId": 2,
+          "target": 2,
+          "format": 2,
+          "bind": 2,
+          "width": 1280,
+          "height": 800,
+          "depth": 1,
+          "arraySize": 1,
+          "lastLevel": 0,
+          "nrSamples": 0,
+          "flags": 1,
+          "iovCount": 0,
+          "blobs": []
+        },
+        "return": {
+          "seq": 11,
+          "type": "resource_create",
+          "phase": "return",
+          "threadId": 1,
+          "parentCallSeq": 0,
+          "callSeq": 10,
+          "result": 0,
+          "blobs": []
+        }
+      },
+      "fixtureCalls": 56,
+      "successes": 56,
+      "peak": 24,
+      "refusal": null,
+      "points": [
+        {
+          "event": 118,
+          "line": 784,
+          "response": "0x1100",
+          "resources": 1,
+          "sinkEvents": 1,
+          "digest": "65d4fe0fcb960ef35ce91eebfda617bd6ddb17218a3e8bdd40bea7883e2dbc27"
+        },
+        {
+          "event": 129,
+          "line": 786,
+          "response": "0x1100",
+          "resources": 2,
+          "sinkEvents": 2,
+          "digest": "b02967bde498eedf89ddb3d76791e5cccd44e4fd45e4f731d359358236bcb159"
+        },
+        {
+          "event": 140,
+          "line": 788,
+          "response": "0x1100",
+          "resources": 3,
+          "sinkEvents": 3,
+          "digest": "6c7f721609df90e9f4f586620a7768f7ca65d4347699ee339c373514652ee66c"
+        },
+        {
+          "event": 151,
+          "line": 790,
+          "response": "0x1100",
+          "resources": 4,
+          "sinkEvents": 4,
+          "digest": "9e2380017ca2b6c0d826e1352d6d57596f471ffbf70d90b0e757d2ee40c4d88e"
+        },
+        {
+          "event": 186,
+          "line": 792,
+          "response": "0x1100",
+          "resources": 3,
+          "sinkEvents": 5,
+          "digest": "ad0745418c79301ee2a805cf36a1d92f7511c350589a58a1818f1339886e5151"
+        },
+        {
+          "event": 196,
+          "line": 794,
+          "response": "0x1100",
+          "resources": 2,
+          "sinkEvents": 6,
+          "digest": "2e8927ec9068a40211b33d85c0f7ca47f82d760d3853d6ded2a43f2e164ca064"
+        },
+        {
+          "event": 200,
+          "line": 796,
+          "response": "0x1100",
+          "resources": 1,
+          "sinkEvents": 7,
+          "digest": "94b86995938e6e8ac937f3effc6e5070e76d028a364b487fbc2aff2c1f26bb5b"
+        },
+        {
+          "event": 204,
+          "line": 798,
+          "response": "0x1100",
+          "resources": 0,
+          "sinkEvents": 8,
+          "digest": "d1994aa2a525af0fa2a3babd4a7eaf03d5d54585d62a7c41982574f3da2dd00d"
+        },
+        {
+          "event": 210,
+          "line": 800,
+          "response": "0x1100",
+          "resources": 1,
+          "sinkEvents": 9,
+          "digest": "ff08f6395783a3df62bb9e0ffa57edd441d3cf0662e6b6ede3beb2bbabf532b2"
+        },
+        {
+          "event": 221,
+          "line": 802,
+          "response": "0x1100",
+          "resources": 2,
+          "sinkEvents": 10,
+          "digest": "559bccb782f92d32a8e4ef060f6b046cdd9ec725c70fcbaa99f0ae357347189b"
+        },
+        {
+          "event": 232,
+          "line": 804,
+          "response": "0x1100",
+          "resources": 3,
+          "sinkEvents": 11,
+          "digest": "37db1a6798897ca85759fc67663cda9528783af336d7797d1b1d9c5b8dd24944"
+        },
+        {
+          "event": 243,
+          "line": 806,
+          "response": "0x1100",
+          "resources": 4,
+          "sinkEvents": 12,
+          "digest": "cc64bb5d9c691b14a07fe4c021e5626531b5c2633e1d290c9d73a2faa2a7b36d"
+        },
+        {
+          "event": 267,
+          "line": 808,
+          "response": "0x1100",
+          "resources": 5,
+          "sinkEvents": 13,
+          "digest": "0420bcac2f70ea4c56656081e5a355ab42c653be040e1043ed37e34f61841c55"
+        },
+        {
+          "event": 290,
+          "line": 810,
+          "response": "0x1100",
+          "resources": 6,
+          "sinkEvents": 14,
+          "digest": "526d0b9c3b2db4a36ea434ae4ee58151607b27d7eb817ec24845ff318c24c428"
+        },
+        {
+          "event": 316,
+          "line": 812,
+          "response": "0x1100",
+          "resources": 7,
+          "sinkEvents": 15,
+          "digest": "edc04f3f6f46e288440e57a7b5af2f6ef34a15d8cc3105b32320c0952ed7306b"
+        },
+        {
+          "event": 353,
+          "line": 814,
+          "response": "0x1100",
+          "resources": 8,
+          "sinkEvents": 16,
+          "digest": "bb6ff1cd50b66e94396107a8a5fecb344f58f7e614c16875ca0e3c54cc36af35"
+        },
+        {
+          "event": 364,
+          "line": 816,
+          "response": "0x1100",
+          "resources": 9,
+          "sinkEvents": 17,
+          "digest": "456418837258ac430288e14db55fe141de68f29798e683c02d3ebac0275f73c3"
+        },
+        {
+          "event": 375,
+          "line": 818,
+          "response": "0x1100",
+          "resources": 10,
+          "sinkEvents": 18,
+          "digest": "c8f50a44d280ac06b512ebc60a93780dc4ae93dc9502f657e5738437db5b2367"
+        },
+        {
+          "event": 386,
+          "line": 820,
+          "response": "0x1100",
+          "resources": 11,
+          "sinkEvents": 19,
+          "digest": "d554ccfd04fcf6b92b6040b13a38737ab17de00750c5964a45f53702ec3aae82"
+        },
+        {
+          "event": 397,
+          "line": 822,
+          "response": "0x1100",
+          "resources": 12,
+          "sinkEvents": 20,
+          "digest": "5dd8c28ad638da8e4894aecfede1c017e7e9c01a8e0f113e6844f480ccaafc1b"
+        },
+        {
+          "event": 408,
+          "line": 824,
+          "response": "0x1100",
+          "resources": 13,
+          "sinkEvents": 21,
+          "digest": "0d35e470e02e35514a083309e03a4310d485a8a2621d325b59cb580cf222ce6d"
+        },
+        {
+          "event": 419,
+          "line": 826,
+          "response": "0x1100",
+          "resources": 14,
+          "sinkEvents": 22,
+          "digest": "2649b014ae5ffcd11828fc4cd220412c72dddc06ef645138e25490e7a49af367"
+        },
+        {
+          "event": 432,
+          "line": 828,
+          "response": "0x1100",
+          "resources": 15,
+          "sinkEvents": 23,
+          "digest": "7e64f4b1c7d648d97329b3ce30e615b00295171703bfdd30794730cac4c118e9"
+        },
+        {
+          "event": 443,
+          "line": 830,
+          "response": "0x1100",
+          "resources": 16,
+          "sinkEvents": 24,
+          "digest": "15be66e23112f8b0bca60e0bb1af0b0061873d4e319f45565e51998e1b0dcef5"
+        },
+        {
+          "event": 454,
+          "line": 832,
+          "response": "0x1100",
+          "resources": 17,
+          "sinkEvents": 25,
+          "digest": "3f09740d1ea36a54552dd9e778b5607d2b39a48f79cb96e6de68772124719348"
+        },
+        {
+          "event": 465,
+          "line": 834,
+          "response": "0x1100",
+          "resources": 18,
+          "sinkEvents": 26,
+          "digest": "a45c1a6f66dbabcd6e6806b6405233da1cc5878665e6d6bafe0985df46f32d31"
+        },
+        {
+          "event": 476,
+          "line": 836,
+          "response": "0x1100",
+          "resources": 19,
+          "sinkEvents": 27,
+          "digest": "c2917ec9e9153e0a3c5c7e86cd942e1ac6a3a4ce8de009af5e8d9fa9f6eb1301"
+        },
+        {
+          "event": 487,
+          "line": 838,
+          "response": "0x1100",
+          "resources": 20,
+          "sinkEvents": 28,
+          "digest": "8439426d59ffc1549c554cc6196fb4e0019ecdff76ab0ae3cf3d5affc1fdabb4"
+        },
+        {
+          "event": 498,
+          "line": 840,
+          "response": "0x1100",
+          "resources": 21,
+          "sinkEvents": 29,
+          "digest": "374b80c273155691789820e52f93f74923970ca118c9dac2b2c335ca922273b2"
+        },
+        {
+          "event": 509,
+          "line": 842,
+          "response": "0x1100",
+          "resources": 22,
+          "sinkEvents": 30,
+          "digest": "0f6750cad7b4d1521bbc1e2bd5f902b531c7262def9bb6616288c97e12e335f5"
+        },
+        {
+          "event": 520,
+          "line": 844,
+          "response": "0x1100",
+          "resources": 23,
+          "sinkEvents": 31,
+          "digest": "fa3f8581865dfa85698d14807118c6d14903c34468e1b2004b1fec9bf1db2a15"
+        },
+        {
+          "event": 531,
+          "line": 846,
+          "response": "0x1100",
+          "resources": 24,
+          "sinkEvents": 32,
+          "digest": "ea0f00471ec570a816ab4f1fd76ae492ac85b2c26d4ce470744d61a4be3f0e7e"
+        },
+        {
+          "event": 2509,
+          "line": 848,
+          "response": "0x1100",
+          "resources": 23,
+          "sinkEvents": 33,
+          "digest": "5131c1e72092854880927b9e009a2e823821a67cdb77a41f70bc2a2c9cb74198"
+        },
+        {
+          "event": 2515,
+          "line": 850,
+          "response": "0x1100",
+          "resources": 22,
+          "sinkEvents": 34,
+          "digest": "cf79ff10785e1f7848028bc8f321af3056ec9d9eaa389ad0cf6cd7b4c4cbdc08"
+        },
+        {
+          "event": 2550,
+          "line": 852,
+          "response": "0x1100",
+          "resources": 21,
+          "sinkEvents": 35,
+          "digest": "02b3eb03d8c4da3ae66c6fce9dbc6c110fa6c767e7ff23cce40ca959eab12263"
+        },
+        {
+          "event": 2564,
+          "line": 854,
+          "response": "0x1100",
+          "resources": 20,
+          "sinkEvents": 36,
+          "digest": "ca9ea42e1fc0c640a5547c15a2110998bfe12c5b59181ec7046c1e9bffa4f0bd"
+        },
+        {
+          "event": 2570,
+          "line": 856,
+          "response": "0x1100",
+          "resources": 19,
+          "sinkEvents": 37,
+          "digest": "268a7ce200c917e6c03edb1b1a152539956d57829ffbdacf947673773a7f5876"
+        },
+        {
+          "event": 2574,
+          "line": 858,
+          "response": "0x1100",
+          "resources": 18,
+          "sinkEvents": 38,
+          "digest": "9478f65f9552ac87564334e0d29ce3a8ac89bae407645ee294291dace95c80c3"
+        },
+        {
+          "event": 2578,
+          "line": 860,
+          "response": "0x1100",
+          "resources": 17,
+          "sinkEvents": 39,
+          "digest": "d9ef6ca2c22880d59d19ac8963be65233cd6366e5078f00ca033e72e0d96cea9"
+        },
+        {
+          "event": 2582,
+          "line": 862,
+          "response": "0x1100",
+          "resources": 16,
+          "sinkEvents": 40,
+          "digest": "f6f6330713db3a22f5339ab4dc6e5fe5fd6dd51ddcc780e1ee2dfd0f922a44dc"
+        },
+        {
+          "event": 2590,
+          "line": 864,
+          "response": "0x1100",
+          "resources": 15,
+          "sinkEvents": 41,
+          "digest": "7c4483d02a4170e8969757c1b3c2a25c12a6463a53574061fe27b14daf651320"
+        },
+        {
+          "event": 2594,
+          "line": 866,
+          "response": "0x1100",
+          "resources": 14,
+          "sinkEvents": 42,
+          "digest": "1df586e6459f930a50204ba7fc192835ab355ca2a674c5855e3c43d89c0dc79d"
+        },
+        {
+          "event": 2598,
+          "line": 868,
+          "response": "0x1100",
+          "resources": 13,
+          "sinkEvents": 43,
+          "digest": "25802731deecc9e710cb50399074c39224805923e34e1da8359f0bf2ef849f0c"
+        },
+        {
+          "event": 2622,
+          "line": 870,
+          "response": "0x1100",
+          "resources": 12,
+          "sinkEvents": 44,
+          "digest": "7b767910c217d93fd71f6ff643690bec2fdc8c2ed8140a79f6a5a62cc1ab11a9"
+        },
+        {
+          "event": 2628,
+          "line": 872,
+          "response": "0x1100",
+          "resources": 11,
+          "sinkEvents": 45,
+          "digest": "cb3cfff90132d1aded14003d0b353cdb07db75deadf9c7d11acd765fd5de7ab1"
+        },
+        {
+          "event": 2634,
+          "line": 874,
+          "response": "0x1100",
+          "resources": 10,
+          "sinkEvents": 46,
+          "digest": "f31486139f6ca6dd2b55afb527b47f9c5491d34226abebf035ea6e7bd85e9465"
+        },
+        {
+          "event": 2640,
+          "line": 876,
+          "response": "0x1100",
+          "resources": 9,
+          "sinkEvents": 47,
+          "digest": "d4daf070c17c1f69fd1f8155d668b2213548aad7be08975a5225ddb98afe6835"
+        },
+        {
+          "event": 2646,
+          "line": 878,
+          "response": "0x1100",
+          "resources": 8,
+          "sinkEvents": 48,
+          "digest": "37d19f0bd56fe876af4ec61a8d53c35a9b54967488206739a81140ec43703fa4"
+        },
+        {
+          "event": 2652,
+          "line": 880,
+          "response": "0x1100",
+          "resources": 7,
+          "sinkEvents": 49,
+          "digest": "f694759bf83780f4e08521559a06da9f6f8458fa1faf9e22b66d3f2fa478c377"
+        },
+        {
+          "event": 2658,
+          "line": 882,
+          "response": "0x1100",
+          "resources": 6,
+          "sinkEvents": 50,
+          "digest": "56dc565ceb219df22c2fb4cd8bfb0f319c27569f9f2848b875451ea94ad0d6fe"
+        },
+        {
+          "event": 2664,
+          "line": 884,
+          "response": "0x1100",
+          "resources": 5,
+          "sinkEvents": 51,
+          "digest": "2c68aee67496be4ed3437f422f19726cdbc8955311a6b711069d2dba3b334484"
+        },
+        {
+          "event": 2670,
+          "line": 886,
+          "response": "0x1100",
+          "resources": 4,
+          "sinkEvents": 52,
+          "digest": "84e3373a0d29a078fc55349f414a84e9c8bc3da8c4042cf617b3600efb7a2822"
+        },
+        {
+          "event": 2676,
+          "line": 888,
+          "response": "0x1100",
+          "resources": 3,
+          "sinkEvents": 53,
+          "digest": "c8ad8c7e51ec4efdb9c25192e13c85dec1e7e3960126697b17be961011a9de79"
+        },
+        {
+          "event": 2686,
+          "line": 890,
+          "response": "0x1100",
+          "resources": 2,
+          "sinkEvents": 54,
+          "digest": "d933415cb0520ce997abd95e3d69f2af922b113b2442cbfc3871fc9f7128de04"
+        },
+        {
+          "event": 2692,
+          "line": 892,
+          "response": "0x1100",
+          "resources": 1,
+          "sinkEvents": 55,
+          "digest": "55806e097a6f8b8b8f64c5c7ed5bebeb36caf2a53f725cbef02fa9965973d56a"
+        },
+        {
+          "event": 2698,
+          "line": 894,
+          "response": "0x1100",
+          "resources": 0,
+          "sinkEvents": 56,
+          "digest": "9d635aa5b26954b9cbc1fad532b5bfcc17d23e8da1ea0716465fd31ef699e957"
+        }
+      ]
+    },
+    {
+      "workload": "kmscube",
+      "manifestSha256": "f336ce65bbf4827ab6b7f43d76b6be9badbc8c81a3576116095d09615dfbb77f",
+      "eventsSha256": "d9007a7d2d3b2d769710c69dc7b4740a5aaf41a9b57a2426181b01c0457a3506",
+      "completeCalls": [
+        {
+          "enter": {
+            "seq": 10,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 2,
+            "target": 2,
+            "format": 2,
+            "bind": 2,
+            "width": 1280,
+            "height": 800,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 1,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 11,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 10,
+            "result": 0,
+            "blobs": []
+          }
+        },
+        {
+          "enter": {
+            "seq": 97,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 3,
+            "target": 2,
+            "format": 2,
+            "bind": 1310730,
+            "width": 640,
+            "height": 480,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 98,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 97,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000300000002000000020000000a00140080020000e0010000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 114,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 4,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 1056,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 115,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 114,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000040000000000000040000000100000002004000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 125,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 5,
+            "target": 2,
+            "format": 67,
+            "bind": 1048586,
+            "width": 512,
+            "height": 512,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 126,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 125,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000500000002000000430000000a0010000002000000020000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 160,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 6,
+            "target": 2,
+            "format": 2,
+            "bind": 1310730,
+            "width": 640,
+            "height": 480,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 161,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 160,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000600000002000000020000000a00140080020000e0010000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 269,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 3,
+            "blobs": []
+          },
+          "return": {
+            "seq": 270,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 269,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000300000000000000"
+        },
+        {
+          "enter": {
+            "seq": 273,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 4,
+            "blobs": []
+          },
+          "return": {
+            "seq": 274,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 273,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000400000000000000"
+        },
+        {
+          "enter": {
+            "seq": 282,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 6,
+            "blobs": []
+          },
+          "return": {
+            "seq": 283,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 282,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000600000000000000"
+        },
+        {
+          "enter": {
+            "seq": 286,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 5,
+            "blobs": []
+          },
+          "return": {
+            "seq": 287,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 286,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000500000000000000"
+        }
+      ],
+      "soleBootstrap": {
+        "enter": {
+          "seq": 10,
+          "type": "resource_create",
+          "phase": "enter",
+          "threadId": 1,
+          "parentCallSeq": 0,
+          "resourceId": 2,
+          "target": 2,
+          "format": 2,
+          "bind": 2,
+          "width": 1280,
+          "height": 800,
+          "depth": 1,
+          "arraySize": 1,
+          "lastLevel": 0,
+          "nrSamples": 0,
+          "flags": 1,
+          "iovCount": 0,
+          "blobs": []
+        },
+        "return": {
+          "seq": 11,
+          "type": "resource_create",
+          "phase": "return",
+          "threadId": 1,
+          "parentCallSeq": 0,
+          "callSeq": 10,
+          "result": 0,
+          "blobs": []
+        }
+      },
+      "fixtureCalls": 8,
+      "successes": 8,
+      "peak": 4,
+      "refusal": null,
+      "points": [
+        {
+          "event": 97,
+          "line": 897,
+          "response": "0x1100",
+          "resources": 1,
+          "sinkEvents": 1,
+          "digest": "215b71757ee8c1e086641dfdb1157c02b75efee1cb8df2db8163832949a33f8f"
+        },
+        {
+          "event": 114,
+          "line": 899,
+          "response": "0x1100",
+          "resources": 2,
+          "sinkEvents": 2,
+          "digest": "076a386398788266c99bfe4fe9fe1c6f6583b5a732eee04023b6f9dfec905b1f"
+        },
+        {
+          "event": 125,
+          "line": 901,
+          "response": "0x1100",
+          "resources": 3,
+          "sinkEvents": 3,
+          "digest": "507784e96b99d67c159a251ae80b867f2ca9431f45217dfe415670e0e9860631"
+        },
+        {
+          "event": 160,
+          "line": 903,
+          "response": "0x1100",
+          "resources": 4,
+          "sinkEvents": 4,
+          "digest": "fb98762714e7086e8aa73c2d3096e807578a363b216e112da1ddbe199ebca313"
+        },
+        {
+          "event": 269,
+          "line": 905,
+          "response": "0x1100",
+          "resources": 3,
+          "sinkEvents": 5,
+          "digest": "4cdc097d208477a58b0c72ef866a472059a75e1709c0807562ca9cecc7c8d353"
+        },
+        {
+          "event": 273,
+          "line": 907,
+          "response": "0x1100",
+          "resources": 2,
+          "sinkEvents": 6,
+          "digest": "6d1d55d618a4feb9b42945519ae1f9b42bf0f9b16c88386be451e2eb6b8dd134"
+        },
+        {
+          "event": 282,
+          "line": 909,
+          "response": "0x1100",
+          "resources": 1,
+          "sinkEvents": 7,
+          "digest": "3767f8b183a90a160bafab9000e5b68d24f46bcd64e6632b4e3638752f1eab5f"
+        },
+        {
+          "event": 286,
+          "line": 911,
+          "response": "0x1100",
+          "resources": 0,
+          "sinkEvents": 8,
+          "digest": "d1994aa2a525af0fa2a3babd4a7eaf03d5d54585d62a7c41982574f3da2dd00d"
+        }
+      ]
+    },
+    {
+      "workload": "glmark2-es2",
+      "manifestSha256": "28effba207e0c7d5679644e9a5c8d21b5ce30067a8155dfe46f92e417050c263",
+      "eventsSha256": "ceaefc4b26e9d5811a89d4bb1f4fe24cd2ecb57def339e697e001cfbbd03921c",
+      "completeCalls": [
+        {
+          "enter": {
+            "seq": 10,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 2,
+            "target": 2,
+            "format": 2,
+            "bind": 2,
+            "width": 1280,
+            "height": 800,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 1,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 11,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 10,
+            "result": 0,
+            "blobs": []
+          }
+        },
+        {
+          "enter": {
+            "seq": 124,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 3,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 125,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 124,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000030000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 135,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 4,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 136,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 135,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000040000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 146,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 5,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 147,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 146,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000050000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 157,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 6,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 158,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 157,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000060000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 195,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 3,
+            "blobs": []
+          },
+          "return": {
+            "seq": 196,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 195,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000300000000000000"
+        },
+        {
+          "enter": {
+            "seq": 205,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 4,
+            "blobs": []
+          },
+          "return": {
+            "seq": 206,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 205,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000400000000000000"
+        },
+        {
+          "enter": {
+            "seq": 209,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 5,
+            "blobs": []
+          },
+          "return": {
+            "seq": 210,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 209,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000500000000000000"
+        },
+        {
+          "enter": {
+            "seq": 213,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 6,
+            "blobs": []
+          },
+          "return": {
+            "seq": 214,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 213,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000600000000000000"
+        },
+        {
+          "enter": {
+            "seq": 219,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 7,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 220,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 219,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000070000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 230,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 8,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 231,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 230,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000080000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 241,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 9,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 242,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 241,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000090000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 252,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 10,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 32,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 253,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 252,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000a0000000000000040000000100000002000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 276,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 11,
+            "target": 2,
+            "format": 2,
+            "bind": 1310730,
+            "width": 1024,
+            "height": 768,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 277,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 276,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000b00000002000000020000000a0014000004000000030000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 299,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 12,
+            "target": 2,
+            "format": 2,
+            "bind": 1310730,
+            "width": 1024,
+            "height": 768,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 300,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 299,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000c00000002000000020000000a0014000004000000030000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 325,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 13,
+            "target": 2,
+            "format": 2,
+            "bind": 1310730,
+            "width": 1024,
+            "height": 768,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 326,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 325,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000d00000002000000020000000a0014000004000000030000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 362,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 14,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 426,
+            "height": 15,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 363,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 362,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000e00000002000000430000000a000000aa0100000f000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 373,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 15,
+            "target": 0,
+            "format": 64,
+            "bind": 524288,
+            "width": 1048576,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 374,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 373,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000000f0000000000000040000000000008000000100001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 384,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 16,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 8,
+            "height": 12,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 385,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 384,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001000000002000000430000000a000000080000000c000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 395,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 17,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 571,
+            "height": 15,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 396,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 395,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001100000002000000430000000a0000003b0200000f000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 406,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 18,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 8,
+            "height": 12,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 407,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 406,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001200000002000000430000000a000000080000000c000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 417,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 19,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 1024,
+            "height": 768,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 418,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 417,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001300000002000000430000000a0000000004000000030000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 428,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 20,
+            "target": 2,
+            "format": 20,
+            "bind": 9,
+            "width": 1024,
+            "height": 768,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 429,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 428,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000140000000200000014000000090000000004000000030000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 441,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 21,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 1024,
+            "height": 768,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 442,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 441,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001500000002000000430000000a0000000004000000030000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 452,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 22,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 512,
+            "height": 512,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 453,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 452,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001600000002000000430000000a0000000002000000020000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 463,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 23,
+            "target": 0,
+            "format": 64,
+            "bind": 524288,
+            "width": 1048576,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 464,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 463,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000170000000000000040000000000008000000100001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 474,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 24,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 396,
+            "height": 27,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 475,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 474,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001800000002000000430000000a0000008c0100001b000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 485,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 25,
+            "target": 0,
+            "format": 64,
+            "bind": 524288,
+            "width": 1048576,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 486,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 485,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000190000000000000040000000000008000000100001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 496,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 26,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 24,
+            "height": 24,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 497,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 496,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001a00000002000000430000000a0000001800000018000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 507,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 27,
+            "target": 0,
+            "format": 64,
+            "bind": 32,
+            "width": 1048576,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 508,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 507,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001b0000000000000040000000200000000000100001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 518,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 28,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 64,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 519,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 518,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001c0000000000000040000000100000004000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 529,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 29,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 64,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 530,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 529,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001d0000000000000040000000100000004000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 540,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 30,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 64,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 541,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 540,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001e0000000000000040000000100000004000000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 3014,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 31,
+            "target": 2,
+            "format": 1,
+            "bind": 1048586,
+            "width": 800,
+            "height": 600,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 3015,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 3014,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000001f00000002000000010000000a0010002003000058020000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 3025,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 32,
+            "target": 2,
+            "format": 17,
+            "bind": 1,
+            "width": 800,
+            "height": 600,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 3026,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 3025,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000200000000200000011000000010000002003000058020000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 3067,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 33,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 800,
+            "height": 600,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 3068,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 3067,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000002100000002000000430000000a0000002003000058020000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 3078,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 34,
+            "target": 2,
+            "format": 21,
+            "bind": 9,
+            "width": 800,
+            "height": 600,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 3079,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 3078,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000220000000200000015000000090000002003000058020000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 3266,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 33,
+            "blobs": []
+          },
+          "return": {
+            "seq": 3267,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 3266,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000002100000000000000"
+        },
+        {
+          "enter": {
+            "seq": 3270,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 34,
+            "blobs": []
+          },
+          "return": {
+            "seq": 3271,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 3270,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000002200000000000000"
+        },
+        {
+          "enter": {
+            "seq": 3332,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 35,
+            "target": 2,
+            "format": 67,
+            "bind": 10,
+            "width": 800,
+            "height": 600,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 3333,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 3332,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000002300000002000000430000000a0000002003000058020000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 3343,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 36,
+            "target": 2,
+            "format": 21,
+            "bind": 9,
+            "width": 800,
+            "height": 600,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 3344,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 3343,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000240000000200000015000000090000002003000058020000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 3562,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 37,
+            "target": 2,
+            "format": 134,
+            "bind": 10,
+            "width": 512,
+            "height": 512,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 3563,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 3562,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000002500000002000000860000000a0000000002000000020000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 3607,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 38,
+            "target": 0,
+            "format": 64,
+            "bind": 524288,
+            "width": 1048576,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 3608,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 3607,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000260000000000000040000000000008000000100001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4282,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 39,
+            "target": 2,
+            "format": 177,
+            "bind": 10,
+            "width": 616,
+            "height": 31,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4283,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4282,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000002700000002000000b10000000a000000680200001f000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4293,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 40,
+            "target": 0,
+            "format": 64,
+            "bind": 524288,
+            "width": 1048576,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4294,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4293,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "040200000000000000000000000000000000000000000000280000000000000040000000000008000000100001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4419,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 41,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 432,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4420,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4419,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "04020000000000000000000000000000000000000000000029000000000000004000000010000000b001000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4430,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 42,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 432,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4431,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4430,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000002a000000000000004000000010000000b001000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4480,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 43,
+            "target": 0,
+            "format": 64,
+            "bind": 16,
+            "width": 288,
+            "height": 1,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4481,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4480,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000002b0000000000000040000000100000002001000001000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4703,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 31,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4704,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4703,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001f00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4789,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 35,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4790,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4789,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000002300000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4793,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 36,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4794,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4793,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000002400000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4871,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 37,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4872,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4871,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000002500000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4879,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 32,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4880,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4879,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000002000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4885,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 41,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4886,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4885,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000002900000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4893,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 42,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4894,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4893,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000002a00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4897,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 43,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4898,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4897,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000002b00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 4905,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 38,
+            "blobs": []
+          },
+          "return": {
+            "seq": 4906,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 4905,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000002600000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5499,
+            "type": "resource_create",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 44,
+            "target": 2,
+            "format": 1,
+            "bind": 1048586,
+            "width": 24,
+            "height": 24,
+            "depth": 1,
+            "arraySize": 1,
+            "lastLevel": 0,
+            "nrSamples": 0,
+            "flags": 0,
+            "iovCount": 0,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5500,
+            "type": "resource_create",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5499,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0402000000000000000000000000000000000000000000002c00000002000000010000000a0010001800000018000000010000000100000000000000000000000000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5624,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 39,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5625,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5624,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000002700000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5632,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 15,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5633,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5632,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000f00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5636,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 23,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5637,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5636,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001700000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5675,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 14,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5676,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5675,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000e00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5679,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 16,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5680,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5679,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001000000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5691,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 17,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5692,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5691,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001100000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5695,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 18,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5696,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5695,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001200000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5699,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 20,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5700,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5699,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001400000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5705,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 19,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5706,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5705,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001300000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5709,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 22,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5710,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5709,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001600000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5717,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 24,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5718,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5717,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001800000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5721,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 26,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5722,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5721,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001a00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5747,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 21,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5748,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5747,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001500000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5753,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 7,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5754,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5753,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000700000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5759,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 8,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5760,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5759,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000800000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5765,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 9,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5766,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5765,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000900000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5771,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 10,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5772,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5771,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000a00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5777,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 28,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5778,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5777,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001c00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5783,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 29,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5784,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5783,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001d00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5789,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 30,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5790,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5789,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001e00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5795,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 27,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5796,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5795,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001b00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5801,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 25,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5802,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5801,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000001900000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5813,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 40,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5814,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5813,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000002800000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5817,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 44,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5818,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5817,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000002c00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5823,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 11,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5824,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5823,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000b00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5829,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 12,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5830,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5829,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000c00000000000000"
+        },
+        {
+          "enter": {
+            "seq": 5835,
+            "type": "resource_unref",
+            "phase": "enter",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "resourceId": 13,
+            "blobs": []
+          },
+          "return": {
+            "seq": 5836,
+            "type": "resource_unref",
+            "phase": "return",
+            "threadId": 1,
+            "parentCallSeq": 0,
+            "callSeq": 5835,
+            "result": 0,
+            "blobs": []
+          },
+          "packet": "0201000000000000000000000000000000000000000000000d00000000000000"
+        }
+      ],
+      "soleBootstrap": {
+        "enter": {
+          "seq": 10,
+          "type": "resource_create",
+          "phase": "enter",
+          "threadId": 1,
+          "parentCallSeq": 0,
+          "resourceId": 2,
+          "target": 2,
+          "format": 2,
+          "bind": 2,
+          "width": 1280,
+          "height": 800,
+          "depth": 1,
+          "arraySize": 1,
+          "lastLevel": 0,
+          "nrSamples": 0,
+          "flags": 1,
+          "iovCount": 0,
+          "blobs": []
+        },
+        "return": {
+          "seq": 11,
+          "type": "resource_create",
+          "phase": "return",
+          "threadId": 1,
+          "parentCallSeq": 0,
+          "callSeq": 10,
+          "result": 0,
+          "blobs": []
+        }
+      },
+      "fixtureCalls": 84,
+      "successes": 33,
+      "peak": 25,
+      "refusal": 3025,
+      "points": [
+        {
+          "event": 124,
+          "line": 914,
+          "response": "0x1100",
+          "resources": 1,
+          "sinkEvents": 1,
+          "digest": "65d4fe0fcb960ef35ce91eebfda617bd6ddb17218a3e8bdd40bea7883e2dbc27"
+        },
+        {
+          "event": 135,
+          "line": 916,
+          "response": "0x1100",
+          "resources": 2,
+          "sinkEvents": 2,
+          "digest": "b02967bde498eedf89ddb3d76791e5cccd44e4fd45e4f731d359358236bcb159"
+        },
+        {
+          "event": 146,
+          "line": 918,
+          "response": "0x1100",
+          "resources": 3,
+          "sinkEvents": 3,
+          "digest": "6c7f721609df90e9f4f586620a7768f7ca65d4347699ee339c373514652ee66c"
+        },
+        {
+          "event": 157,
+          "line": 920,
+          "response": "0x1100",
+          "resources": 4,
+          "sinkEvents": 4,
+          "digest": "9e2380017ca2b6c0d826e1352d6d57596f471ffbf70d90b0e757d2ee40c4d88e"
+        },
+        {
+          "event": 195,
+          "line": 922,
+          "response": "0x1100",
+          "resources": 3,
+          "sinkEvents": 5,
+          "digest": "ad0745418c79301ee2a805cf36a1d92f7511c350589a58a1818f1339886e5151"
+        },
+        {
+          "event": 205,
+          "line": 924,
+          "response": "0x1100",
+          "resources": 2,
+          "sinkEvents": 6,
+          "digest": "2e8927ec9068a40211b33d85c0f7ca47f82d760d3853d6ded2a43f2e164ca064"
+        },
+        {
+          "event": 209,
+          "line": 926,
+          "response": "0x1100",
+          "resources": 1,
+          "sinkEvents": 7,
+          "digest": "94b86995938e6e8ac937f3effc6e5070e76d028a364b487fbc2aff2c1f26bb5b"
+        },
+        {
+          "event": 213,
+          "line": 928,
+          "response": "0x1100",
+          "resources": 0,
+          "sinkEvents": 8,
+          "digest": "d1994aa2a525af0fa2a3babd4a7eaf03d5d54585d62a7c41982574f3da2dd00d"
+        },
+        {
+          "event": 219,
+          "line": 930,
+          "response": "0x1100",
+          "resources": 1,
+          "sinkEvents": 9,
+          "digest": "ff08f6395783a3df62bb9e0ffa57edd441d3cf0662e6b6ede3beb2bbabf532b2"
+        },
+        {
+          "event": 230,
+          "line": 932,
+          "response": "0x1100",
+          "resources": 2,
+          "sinkEvents": 10,
+          "digest": "559bccb782f92d32a8e4ef060f6b046cdd9ec725c70fcbaa99f0ae357347189b"
+        },
+        {
+          "event": 241,
+          "line": 934,
+          "response": "0x1100",
+          "resources": 3,
+          "sinkEvents": 11,
+          "digest": "37db1a6798897ca85759fc67663cda9528783af336d7797d1b1d9c5b8dd24944"
+        },
+        {
+          "event": 252,
+          "line": 936,
+          "response": "0x1100",
+          "resources": 4,
+          "sinkEvents": 12,
+          "digest": "cc64bb5d9c691b14a07fe4c021e5626531b5c2633e1d290c9d73a2faa2a7b36d"
+        },
+        {
+          "event": 276,
+          "line": 938,
+          "response": "0x1100",
+          "resources": 5,
+          "sinkEvents": 13,
+          "digest": "0420bcac2f70ea4c56656081e5a355ab42c653be040e1043ed37e34f61841c55"
+        },
+        {
+          "event": 299,
+          "line": 940,
+          "response": "0x1100",
+          "resources": 6,
+          "sinkEvents": 14,
+          "digest": "526d0b9c3b2db4a36ea434ae4ee58151607b27d7eb817ec24845ff318c24c428"
+        },
+        {
+          "event": 325,
+          "line": 942,
+          "response": "0x1100",
+          "resources": 7,
+          "sinkEvents": 15,
+          "digest": "edc04f3f6f46e288440e57a7b5af2f6ef34a15d8cc3105b32320c0952ed7306b"
+        },
+        {
+          "event": 362,
+          "line": 944,
+          "response": "0x1100",
+          "resources": 8,
+          "sinkEvents": 16,
+          "digest": "bb6ff1cd50b66e94396107a8a5fecb344f58f7e614c16875ca0e3c54cc36af35"
+        },
+        {
+          "event": 373,
+          "line": 946,
+          "response": "0x1100",
+          "resources": 9,
+          "sinkEvents": 17,
+          "digest": "456418837258ac430288e14db55fe141de68f29798e683c02d3ebac0275f73c3"
+        },
+        {
+          "event": 384,
+          "line": 948,
+          "response": "0x1100",
+          "resources": 10,
+          "sinkEvents": 18,
+          "digest": "c8f50a44d280ac06b512ebc60a93780dc4ae93dc9502f657e5738437db5b2367"
+        },
+        {
+          "event": 395,
+          "line": 950,
+          "response": "0x1100",
+          "resources": 11,
+          "sinkEvents": 19,
+          "digest": "d554ccfd04fcf6b92b6040b13a38737ab17de00750c5964a45f53702ec3aae82"
+        },
+        {
+          "event": 406,
+          "line": 952,
+          "response": "0x1100",
+          "resources": 12,
+          "sinkEvents": 20,
+          "digest": "5dd8c28ad638da8e4894aecfede1c017e7e9c01a8e0f113e6844f480ccaafc1b"
+        },
+        {
+          "event": 417,
+          "line": 954,
+          "response": "0x1100",
+          "resources": 13,
+          "sinkEvents": 21,
+          "digest": "0d35e470e02e35514a083309e03a4310d485a8a2621d325b59cb580cf222ce6d"
+        },
+        {
+          "event": 428,
+          "line": 956,
+          "response": "0x1100",
+          "resources": 14,
+          "sinkEvents": 22,
+          "digest": "2649b014ae5ffcd11828fc4cd220412c72dddc06ef645138e25490e7a49af367"
+        },
+        {
+          "event": 441,
+          "line": 958,
+          "response": "0x1100",
+          "resources": 15,
+          "sinkEvents": 23,
+          "digest": "7e64f4b1c7d648d97329b3ce30e615b00295171703bfdd30794730cac4c118e9"
+        },
+        {
+          "event": 452,
+          "line": 960,
+          "response": "0x1100",
+          "resources": 16,
+          "sinkEvents": 24,
+          "digest": "15be66e23112f8b0bca60e0bb1af0b0061873d4e319f45565e51998e1b0dcef5"
+        },
+        {
+          "event": 463,
+          "line": 962,
+          "response": "0x1100",
+          "resources": 17,
+          "sinkEvents": 25,
+          "digest": "3f09740d1ea36a54552dd9e778b5607d2b39a48f79cb96e6de68772124719348"
+        },
+        {
+          "event": 474,
+          "line": 964,
+          "response": "0x1100",
+          "resources": 18,
+          "sinkEvents": 26,
+          "digest": "a45c1a6f66dbabcd6e6806b6405233da1cc5878665e6d6bafe0985df46f32d31"
+        },
+        {
+          "event": 485,
+          "line": 966,
+          "response": "0x1100",
+          "resources": 19,
+          "sinkEvents": 27,
+          "digest": "c2917ec9e9153e0a3c5c7e86cd942e1ac6a3a4ce8de009af5e8d9fa9f6eb1301"
+        },
+        {
+          "event": 496,
+          "line": 968,
+          "response": "0x1100",
+          "resources": 20,
+          "sinkEvents": 28,
+          "digest": "8439426d59ffc1549c554cc6196fb4e0019ecdff76ab0ae3cf3d5affc1fdabb4"
+        },
+        {
+          "event": 507,
+          "line": 970,
+          "response": "0x1100",
+          "resources": 21,
+          "sinkEvents": 29,
+          "digest": "374b80c273155691789820e52f93f74923970ca118c9dac2b2c335ca922273b2"
+        },
+        {
+          "event": 518,
+          "line": 972,
+          "response": "0x1100",
+          "resources": 22,
+          "sinkEvents": 30,
+          "digest": "0f6750cad7b4d1521bbc1e2bd5f902b531c7262def9bb6616288c97e12e335f5"
+        },
+        {
+          "event": 529,
+          "line": 974,
+          "response": "0x1100",
+          "resources": 23,
+          "sinkEvents": 31,
+          "digest": "fa3f8581865dfa85698d14807118c6d14903c34468e1b2004b1fec9bf1db2a15"
+        },
+        {
+          "event": 540,
+          "line": 976,
+          "response": "0x1100",
+          "resources": 24,
+          "sinkEvents": 32,
+          "digest": "ea0f00471ec570a816ab4f1fd76ae492ac85b2c26d4ce470744d61a4be3f0e7e"
+        },
+        {
+          "event": 3014,
+          "line": 978,
+          "response": "0x1100",
+          "resources": 25,
+          "sinkEvents": 33,
+          "digest": "81765d9ad503a775fae9e4837a9425d918fa7859a7baf266144c6125265e4f4a"
+        },
+        {
+          "event": 3025,
+          "line": 980,
+          "response": "0x1205",
+          "resources": 25,
+          "sinkEvents": 33,
+          "digest": "81765d9ad503a775fae9e4837a9425d918fa7859a7baf266144c6125265e4f4a"
+        }
+      ]
+    }
+  ],
+  "selectedBoundaryPoints": [
+    {
+      "case": "desktop-count-admitted",
+      "line": 983,
+      "response": "001100000000000000000000000000000000000000000000",
+      "sinkEvents": 1,
+      "transportDigest": "f60f5fa2e11cd1106e314e48c1f1433cc56d2bce5f894b06043548f5f3678cef"
+    },
+    {
+      "case": "desktop-count-admitted",
+      "line": 1013,
+      "response": "001100000000000000000000000000000000000000000000",
+      "sinkEvents": 16,
+      "transportDigest": "d46895deb6f2f155ef57664fe0090acede91250d3f2659225e992668a9db47f7"
+    },
+    {
+      "case": "desktop-count-admitted",
+      "line": 1107,
+      "response": "001100000000000000000000000000000000000000000000",
+      "sinkEvents": 63,
+      "transportDigest": "5ed9dfa48c187586cd9e8b0531cb7d22b52768ed0949541efe80414082a5c1a0"
+    },
+    {
+      "case": "desktop-count-admitted",
+      "line": 1109,
+      "response": "001100000000000000000000000000000000000000000000",
+      "sinkEvents": 64,
+      "transportDigest": "e5e7e6faa019e5a445cf3a6a3dd662a1d0cd4179e98ba14d40c154f3141bf188"
+    },
+    {
+      "case": "desktop-count-65-refused",
+      "line": 1111,
+      "response": "011200000000000000000000000000000000000000000000",
+      "sinkEvents": 64,
+      "transportDigest": "e5e7e6faa019e5a445cf3a6a3dd662a1d0cd4179e98ba14d40c154f3141bf188"
+    },
+    {
+      "case": "desktop-count-release",
+      "line": 1113,
+      "response": "001100000000000000000000000000000000000000000000",
+      "sinkEvents": 65,
+      "transportDigest": "6944925d04dc2ae77abd72f01f10f0c5dbc9f45624b72678e8140a175bba66f1"
+    },
+    {
+      "case": "desktop-host-refusal-no-publication",
+      "line": 1115,
+      "response": "011200000000000000000000000000000000000000000000",
+      "sinkEvents": 65,
+      "transportDigest": "6944925d04dc2ae77abd72f01f10f0c5dbc9f45624b72678e8140a175bba66f1"
+    }
+  ],
+  "cases": {
+    "context-budget-valid": 8,
+    "context-budget-plus-one": 1,
+    "context-budget-release": 1,
+    "context-budget-recovery": 1,
+    "resource-budget-valid": 16,
+    "resource-budget-plus-one": 1,
+    "resource-budget-release": 1,
+    "resource-budget-recovery": 1,
+    "single-resource-budget-plus-one": 1,
+    "GPU-byte-budget-valid": 8,
+    "GPU-byte-budget-plus-one": 1,
+    "GPU-byte-budget-release": 1,
+    "GPU-byte-budget-recovery": 1,
+    "SG-budget-resource": 1,
+    "SG-byte-budget-exact": 1,
+    "SG-byte-budget-detach": 1,
+    "SG-byte-budget-plus-one": 1,
+    "SG-byte-budget-recovery": 1,
+    "default-context-disabled": 1,
+    "unnegotiated-context-disabled": 1,
+    "negotiated-context": 1,
+    "later-command-disabled": 5,
+    "zero-context": 1,
+    "invalid-context-fields": 5,
+    "short-context": 5,
+    "duplicate-context": 1,
+    "invalid-resource-fields": 13,
+    "short-resource": 5,
+    "valid-resource-after-malformed": 1,
+    "duplicate-resource": 1,
+    "missing-context-attach": 1,
+    "missing-resource-attach": 1,
+    "valid-attach-after-errors": 1,
+    "valid-detach": 1,
+    "duplicate-detach": 1,
+    "portable-context-create": 1,
+    "portable-resource-create": 5,
+    "portable-backing-split": 1,
+    "portable-context-attach": 5,
+    "duplicate-context-attach": 1,
+    "duplicate-backing-attach": 1,
+    "portable-resource-unref": 1,
+    "portable-resource-reuse": 1,
+    "old-membership-does-not-attach-new-resource": 1,
+    "fresh-membership": 1,
+    "destroy-context-with-resources": 1,
+    "context-id-reuse": 1,
+    "old-context-membership-gone": 1,
+    "portable-final-unref": 5,
+    "portable-final-context-destroy": 1,
+    "valid-after-short-response": 23,
+    "renderer-allocation-failure": 1,
+    "renderer-allocation-recovery-same-id": 1,
+    "reset-context": 1,
+    "reset-membership": 1,
+    "context-after-reset": 1,
+    "sg-resource": 1,
+    "invalid-sg-range": 7,
+    "short-sg-entry-list": 1,
+    "sg-entry-cap": 1,
+    "sg-reserved-padding": 1,
+    "alias-short-aggregate-is-defined": 1,
+    "sg-detach": 1,
+    "sg-exact-end-of-ram": 1,
+    "2d-fenced-create": 1,
+    "3d-cannot-replace-2d": 1,
+    "2d-unref": 1,
+    "3d-after-2d-unref": 1,
+    "2d-cannot-replace-3d": 1,
+    "desktop-GPU-budget-admitted": 8,
+    "desktop-GPU-budget-plus-one": 1,
+    "desktop-GPU-budget-release": 1,
+    "desktop-GPU-budget-recovery": 1,
+    "desktop-resource-budget-plus-one": 1,
+    "desktop-color-resource-budget-plus-one": 4,
+    "desktop-backing-resource": 8,
+    "desktop-backing-byte-admitted": 8,
+    "desktop-backing-overflow-resource": 1,
+    "desktop-backing-byte-plus-one": 1,
+    "desktop-backing-resource-plus-one": 1,
+    "desktop-backing-byte-release": 1,
+    "desktop-backing-byte-recovery": 1,
+    "desktop-unnegotiated": 1,
+    "desktop-context": 1,
+    "desktop-split-resource": 1,
+    "desktop-membership": 1,
+    "desktop-duplicate-id": 1,
+    "desktop-generation-release": 1,
+    "desktop-generation-reuse": 1,
+    "desktop-stale-membership": 1,
+    "desktop-shared-2D-id-refusal": 1,
+    "desktop-3D-unref": 1,
+    "desktop-2D-create": 1,
+    "desktop-shared-3D-id-refusal": 1,
+    "desktop-2D-unref": 1,
+    "desktop-profile-retained-after-reset": 1,
+    "desktop-color-role": 18,
+    "desktop-color-release": 18,
+    "legacy-color-refusal": 17,
+    "legacy-color-admission": 1,
+    "legacy-color-release": 1,
+    "desktop-depth-role": 3,
+    "desktop-depth-release": 3,
+    "legacy-depth-refusal": 3,
+    "desktop-invalid-role": 19,
+    "desktop-unqualified-format": 8,
+    "desktop-invalid-metadata": 30,
+    "desktop-short-metadata": 12,
+    "desktop-dimension-exact": 8,
+    "desktop-dimension-release": 8,
+    "desktop-dimension-plus-one": 12,
+    "desktop-compositor-original-118": 1,
+    "desktop-compositor-original-129": 1,
+    "desktop-compositor-original-140": 1,
+    "desktop-compositor-original-151": 1,
+    "desktop-compositor-original-186": 1,
+    "desktop-compositor-original-196": 1,
+    "desktop-compositor-original-200": 1,
+    "desktop-compositor-original-204": 1,
+    "desktop-compositor-original-210": 1,
+    "desktop-compositor-original-221": 1,
+    "desktop-compositor-original-232": 1,
+    "desktop-compositor-original-243": 1,
+    "desktop-compositor-original-267": 1,
+    "desktop-compositor-original-290": 1,
+    "desktop-compositor-original-316": 1,
+    "desktop-compositor-original-353": 1,
+    "desktop-compositor-original-364": 1,
+    "desktop-compositor-original-375": 1,
+    "desktop-compositor-original-386": 1,
+    "desktop-compositor-original-397": 1,
+    "desktop-compositor-original-408": 1,
+    "desktop-compositor-original-419": 1,
+    "desktop-compositor-original-432": 1,
+    "desktop-compositor-original-443": 1,
+    "desktop-compositor-original-454": 1,
+    "desktop-compositor-original-465": 1,
+    "desktop-compositor-original-476": 1,
+    "desktop-compositor-original-487": 1,
+    "desktop-compositor-original-498": 1,
+    "desktop-compositor-original-509": 1,
+    "desktop-compositor-original-520": 1,
+    "desktop-compositor-original-531": 1,
+    "desktop-compositor-original-2509": 1,
+    "desktop-compositor-original-2515": 1,
+    "desktop-compositor-original-2550": 1,
+    "desktop-compositor-original-2564": 1,
+    "desktop-compositor-original-2570": 1,
+    "desktop-compositor-original-2574": 1,
+    "desktop-compositor-original-2578": 1,
+    "desktop-compositor-original-2582": 1,
+    "desktop-compositor-original-2590": 1,
+    "desktop-compositor-original-2594": 1,
+    "desktop-compositor-original-2598": 1,
+    "desktop-compositor-original-2622": 1,
+    "desktop-compositor-original-2628": 1,
+    "desktop-compositor-original-2634": 1,
+    "desktop-compositor-original-2640": 1,
+    "desktop-compositor-original-2646": 1,
+    "desktop-compositor-original-2652": 1,
+    "desktop-compositor-original-2658": 1,
+    "desktop-compositor-original-2664": 1,
+    "desktop-compositor-original-2670": 1,
+    "desktop-compositor-original-2676": 1,
+    "desktop-compositor-original-2686": 1,
+    "desktop-compositor-original-2692": 1,
+    "desktop-compositor-original-2698": 1,
+    "desktop-kmscube-original-97": 1,
+    "desktop-kmscube-original-114": 1,
+    "desktop-kmscube-original-125": 1,
+    "desktop-kmscube-original-160": 1,
+    "desktop-kmscube-original-269": 1,
+    "desktop-kmscube-original-273": 1,
+    "desktop-kmscube-original-282": 1,
+    "desktop-kmscube-original-286": 1,
+    "desktop-glmark2-es2-original-124": 1,
+    "desktop-glmark2-es2-original-135": 1,
+    "desktop-glmark2-es2-original-146": 1,
+    "desktop-glmark2-es2-original-157": 1,
+    "desktop-glmark2-es2-original-195": 1,
+    "desktop-glmark2-es2-original-205": 1,
+    "desktop-glmark2-es2-original-209": 1,
+    "desktop-glmark2-es2-original-213": 1,
+    "desktop-glmark2-es2-original-219": 1,
+    "desktop-glmark2-es2-original-230": 1,
+    "desktop-glmark2-es2-original-241": 1,
+    "desktop-glmark2-es2-original-252": 1,
+    "desktop-glmark2-es2-original-276": 1,
+    "desktop-glmark2-es2-original-299": 1,
+    "desktop-glmark2-es2-original-325": 1,
+    "desktop-glmark2-es2-original-362": 1,
+    "desktop-glmark2-es2-original-373": 1,
+    "desktop-glmark2-es2-original-384": 1,
+    "desktop-glmark2-es2-original-395": 1,
+    "desktop-glmark2-es2-original-406": 1,
+    "desktop-glmark2-es2-original-417": 1,
+    "desktop-glmark2-es2-original-428": 1,
+    "desktop-glmark2-es2-original-441": 1,
+    "desktop-glmark2-es2-original-452": 1,
+    "desktop-glmark2-es2-original-463": 1,
+    "desktop-glmark2-es2-original-474": 1,
+    "desktop-glmark2-es2-original-485": 1,
+    "desktop-glmark2-es2-original-496": 1,
+    "desktop-glmark2-es2-original-507": 1,
+    "desktop-glmark2-es2-original-518": 1,
+    "desktop-glmark2-es2-original-529": 1,
+    "desktop-glmark2-es2-original-540": 1,
+    "desktop-glmark2-es2-original-3014": 1,
+    "desktop-glmark2-es2-original-3025": 1,
+    "desktop-count-admitted": 64,
+    "desktop-count-65-refused": 1,
+    "desktop-count-release": 1,
+    "desktop-host-refusal-no-publication": 1,
+    "desktop-host-recovery": 1,
+    "desktop-count-cleanup": 64
+  },
+  "browser": [
+    {
+      "label": "hot",
+      "reportSha256": "4ce9c4d08327af02bc81f8df035f2f63a25a1e72e59f89a20bdf6f381e127537",
+      "report": {
+        "schema": 1,
+        "task": "E6-T11d51",
+        "status": "passed",
+        "gitHead": "e13dddfbb0d955abb268e4b4ac07828cbea35956",
+        "command": [
+          "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/tools/verify-virgl-default-demo.mjs",
+          "--output",
+          "/Users/blamy/.codex/worktrees/mips-throughput/wasm-vm/target/evidence/virgl-desktop-control-final/hot-2/default-demo",
+          "--task",
+          "E6-T11d51"
+        ],
+        "startedAt": "2026-10-12T06:36:52.076Z",
+        "errors": [],
+        "browserVersion": "155.0.8059.39",
+        "url": "http://127.0.0.1:52778/app.html?noAutoBoot&testHooks=1",
+        "proofExportAbsent": true,
+        "passed": 127,
+        "failed": 0,
+        "suiteStatus": "complete in 5.6s",
+        "roadmapPip": "cap-pip live",
+        "graphicsRoadmapPip": "cap-pip partial",
+        "servedWasmSha256": "5ecbc124be68e42a708d18f6aaf49c94793a7d9b1c757f9922dab78c7951c4d8",
+        "screenshot": {
+          "path": "browser.png",
+          "sha256": "bc8c3aba5e68dc04921eccbd7af3c61bf3872c405855dd222f4cce39f780f984"
+        },
+        "finishedAt": "2026-10-12T06:36:58.583Z"
+      }
+    },
+    {
+      "label": "cold",
+      "reportSha256": "67c2013400a894204c24ff088bf74ffe655ebbf87b139edbb57745a5bbc5ed71",
+      "report": {
+        "schema": 1,
+        "task": "E6-T11d51",
+        "status": "passed",
+        "gitHead": "e13dddfbb0d955abb268e4b4ac07828cbea35956",
+        "command": [
+          "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+          "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-desktop-control-cold-w5ad9gmu/repo/tools/verify-virgl-default-demo.mjs",
+          "--output",
+          "/private/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-desktop-control-cold-w5ad9gmu/repo/target/evidence/desktop-control-cold/default-demo",
+          "--task",
+          "E6-T11d51"
+        ],
+        "startedAt": "2026-10-12T06:44:54.857Z",
+        "errors": [],
+        "browserVersion": "155.0.8059.39",
+        "url": "http://127.0.0.1:55168/app.html?noAutoBoot&testHooks=1",
+        "proofExportAbsent": true,
+        "passed": 127,
+        "failed": 0,
+        "suiteStatus": "complete in 5.5s",
+        "roadmapPip": "cap-pip live",
+        "graphicsRoadmapPip": "cap-pip partial",
+        "servedWasmSha256": "5ecbc124be68e42a708d18f6aaf49c94793a7d9b1c757f9922dab78c7951c4d8",
+        "screenshot": {
+          "path": "browser.png",
+          "sha256": "6be6ab97ad4ef4001c32b66e7e9cb7f9c7231b33cd6470f18ef7f4800aacc81a"
+        },
+        "finishedAt": "2026-10-12T06:45:01.386Z"
+      }
+    },
+    {
+      "label": "live",
+      "reportSha256": "e8b34930e8e6876b88e5a692a44b05b9e431be2fe09a757d6b2f78191f96e27f",
+      "report": {
+        "schema": 1,
+        "task": "E6-T11d51",
+        "status": "passed",
+        "gitHead": "e13dddfbb0d955abb268e4b4ac07828cbea35956",
+        "command": [
+          "/Users/blamy/.nvm/versions/node/v24.20.0/bin/node",
+          "/tmp/wasmvm-desktop-control-live.mjs",
+          "--output",
+          "evidence/virgl-desktop-control/deployment/final",
+          "--task",
+          "E6-T11d51"
+        ],
+        "startedAt": "2026-10-12T07:00:31.703Z",
+        "errors": [],
+        "favicon404": [
+          {
+            "text": "Failed to load resource: the server responded with a status of 404 ()",
+            "location": {
+              "url": "https://wasm-vm.pages.dev/favicon.ico",
+              "lineNumber": 0,
+              "columnNumber": 0
+            }
+          }
+        ],
+        "httpErrors": [],
+        "browserVersion": "155.0.8059.39",
+        "url": "https://wasm-vm.pages.dev/app.html?noAutoBoot&testHooks=1&qualification=e13dddfb",
+        "proofExportAbsent": true,
+        "passed": 127,
+        "failed": 0,
+        "suiteStatus": "complete in 14.9s",
+        "roadmapPip": "cap-pip live",
+        "graphicsRoadmapPip": "cap-pip partial",
+        "servedWasmSha256": "5ecbc124be68e42a708d18f6aaf49c94793a7d9b1c757f9922dab78c7951c4d8",
+        "screenshot": {
+          "path": "browser.png",
+          "sha256": "257248e61e94ae173fefe710eaa7ba111cad8c531bd8c168ecf6c12e1f16e2ae"
+        },
+        "finishedAt": "2026-10-12T07:00:49.105Z"
+      }
+    }
+  ],
+  "guestExecution": false,
+  "productionAuthority": false
+}

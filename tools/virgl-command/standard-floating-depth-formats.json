@@ -1,0 +1,44 @@
+[
+  {
+    "originalFormat": 18,
+    "originalName": "Z32_FLOAT",
+    "channels": [
+      "F32"
+    ],
+    "swizzles": [
+      "X",
+      "_",
+      "_",
+      "_"
+    ],
+    "guestPixelBytes": 4,
+    "plannedNativePixelBytes": 4,
+    "ownedPixelBytes": 4,
+    "plannedNativeInternal": "DEPTH_COMPONENT32F",
+    "plannedUploadFormat": "DEPTH_COMPONENT",
+    "plannedUploadType": "FLOAT",
+    "stencil": false
+  },
+  {
+    "originalFormat": 126,
+    "originalName": "Z32_FLOAT_S8X24_UINT",
+    "channels": [
+      "F32",
+      "UP8",
+      "X24"
+    ],
+    "swizzles": [
+      "X",
+      "Y",
+      "_",
+      "_"
+    ],
+    "guestPixelBytes": 8,
+    "plannedNativePixelBytes": 8,
+    "ownedPixelBytes": 16,
+    "plannedNativeInternal": "DEPTH32F_STENCIL8",
+    "plannedUploadFormat": "DEPTH_STENCIL",
+    "plannedUploadType": "FLOAT_32_UNSIGNED_INT_24_8_REV",
+    "stencil": true
+  }
+]

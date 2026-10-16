@@ -117,6 +117,7 @@ struct MailboxState {
     last_exchange: u64,
     completion: Option<Submit3dCompletion>,
     scanout: bool,
+    draw_limit: u32,
 }
 #[derive(Clone, Default)]
 pub struct Submit3dMailbox(Rc<RefCell<MailboxState>>);
@@ -145,7 +146,7 @@ impl Submit3dMailbox {
         if (state.scanout && (completion.applied_commands != 0 || completion.draws != 0))
             || completion.exchange_sequence != state.last_exchange
             || completion.applied_commands > 4096
-            || completion.draws > 64
+            || completion.draws > state.draw_limit
             || (!completion.gpu_complete
                 && completion.outcome != Err(Control3dError::BridgePoisoned))
         {
@@ -154,10 +155,11 @@ impl Submit3dMailbox {
         state.completion = Some(completion);
         Ok(())
     }
-    fn arm(&self, key: Submit3dKey, scanout: bool) {
+    fn arm(&self, key: Submit3dKey, scanout: bool, draw_limit: u32) {
         *self.0.borrow_mut() = MailboxState {
             active: Some(key),
             scanout,
+            draw_limit,
             ..MailboxState::default()
         };
     }
@@ -299,9 +301,33 @@ pub(crate) struct Submit3dState {
     pub pending: Option<PendingSubmit3d>,
     next_sequence: u64,
     counters: Submit3dCounters,
+    layered_dma: bool,
+    production: bool,
 }
 impl Submit3dState {
     pub fn new(sink: Box<dyn Submit3dSink>, mailbox: Submit3dMailbox) -> Self {
+        Self::with_layered_dma(sink, mailbox, false)
+    }
+    pub fn new_layered(sink: Box<dyn Submit3dSink>, mailbox: Submit3dMailbox) -> Self {
+        Self::with_layered_dma(sink, mailbox, true)
+    }
+    pub fn new_production(sink: Box<dyn Submit3dSink>, mailbox: Submit3dMailbox) -> Self {
+        let mut state = Self::with_layered_dma(sink, mailbox, true);
+        state.production = true;
+        state
+    }
+    fn exchange_limit(&self) -> u64 {
+        if self.production {
+            32 * 1024 * 1024
+        } else {
+            MAX_EXCHANGE_BYTES
+        }
+    }
+    fn with_layered_dma(
+        sink: Box<dyn Submit3dSink>,
+        mailbox: Submit3dMailbox,
+        layered_dma: bool,
+    ) -> Self {
         mailbox.revoke();
         Self {
             sink,
@@ -309,6 +335,8 @@ impl Submit3dState {
             pending: None,
             next_sequence: 1,
             counters: Submit3dCounters::default(),
+            layered_dma,
+            production: false,
         }
     }
     pub fn snapshot(&self) -> Submit3dSnapshot {
@@ -333,6 +361,12 @@ impl Submit3dState {
                 completion_ready: mailbox.ready,
             }),
         }
+    }
+    pub(super) fn commit_checkpoint(&mut self, snapshot: Submit3dSnapshot) {
+        self.mailbox.revoke();
+        self.pending = None;
+        self.next_sequence = snapshot.next_sequence;
+        self.counters = snapshot.counters;
     }
     pub fn next_key(&self, epoch: u64) -> Result<Submit3dKey, Control3dError> {
         self.next_sequence
@@ -360,8 +394,11 @@ impl Submit3dState {
                 .saturating_add(bytes.len() as u64);
         }
         self.next_sequence += 1;
-        self.mailbox
-            .arm(key, matches!(pending.request, PendingRequest::Scanout(_)));
+        self.mailbox.arm(
+            key,
+            matches!(pending.request, PendingRequest::Scanout(_)),
+            if self.production { 256 } else { 64 },
+        );
         self.pending = Some(pending);
         let result = match &self.pending.as_ref().expect("installed pending").request {
             PendingRequest::Render(r) => self.sink.begin_job(r),
@@ -429,6 +466,7 @@ impl Submit3dState {
         &self,
         exchange: &Submit3dExchange,
         current: &Control3dSnapshot,
+        layers: Option<(u32, u32)>,
     ) -> Result<(Vec<(u64, usize)>, usize), Control3dError> {
         let p = self
             .pending
@@ -452,7 +490,9 @@ impl Submit3dState {
         }
         if current.epoch != exchange.key.epoch
             || !current.contexts.iter().any(|c| {
-                c.identity == request.context && c.resources.contains(&exchange.backing.resource)
+                c.identity == request.context
+                    && (c.resources.contains(&exchange.backing.resource)
+                        || self.production && matches!(request.kind, Submit3dKind::Transfer(_)))
             })
         {
             return Err(Control3dError::InvalidContextId);
@@ -478,13 +518,41 @@ impl Submit3dState {
             .backing
             .as_ref()
             .ok_or(Control3dError::InvalidParameter)?;
-        row_spans(exchange.rows, entries)
+        if let Some((stride, count)) = layers {
+            if !self.layered_dma {
+                return Err(Control3dError::InvalidParameter);
+            }
+            if self.production {
+                layered_row_spans_limited(
+                    exchange.rows,
+                    stride,
+                    count,
+                    entries,
+                    self.exchange_limit(),
+                )
+            } else {
+                layered_row_spans(exchange.rows, stride, count, entries)
+            }
+        } else {
+            if self.production {
+                row_spans_limited(exchange.rows, entries, self.exchange_limit())
+            } else {
+                row_spans(exchange.rows, entries)
+            }
+        }
     }
 }
 
 pub(crate) fn row_spans(
     rows: Submit3dRows,
     entries: &[BackingEntry],
+) -> Result<(Vec<(u64, usize)>, usize), Control3dError> {
+    row_spans_limited(rows, entries, MAX_EXCHANGE_BYTES)
+}
+fn row_spans_limited(
+    rows: Submit3dRows,
+    entries: &[BackingEntry],
+    byte_limit: u64,
 ) -> Result<(Vec<(u64, usize)>, usize), Control3dError> {
     let bad = Control3dError::InvalidParameter;
     let tight = u64::from(rows.row_bytes)
@@ -494,7 +562,7 @@ pub(crate) fn row_spans(
         || rows.row_count == 0
         || rows.row_count > super::control3d::MAX_TEXTURE_SIZE
         || rows.row_stride < rows.row_bytes
-        || tight > MAX_EXCHANGE_BYTES
+        || tight > byte_limit
     {
         return Err(bad);
     }
@@ -538,6 +606,81 @@ pub(crate) fn row_spans(
     Ok((spans, tight as usize))
 }
 
+/// One ordered exchange covers the entire layered plane set. Checked logical
+/// offsets remain monotone even when rows/layers have padding; the SG cursor
+/// advances once instead of rescanning every entry for every row.
+fn layered_row_spans(
+    rows: Submit3dRows,
+    layer_stride: u32,
+    layer_count: u32,
+    entries: &[BackingEntry],
+) -> Result<(Vec<(u64, usize)>, usize), Control3dError> {
+    layered_row_spans_limited(rows, layer_stride, layer_count, entries, MAX_EXCHANGE_BYTES)
+}
+fn layered_row_spans_limited(
+    rows: Submit3dRows,
+    layer_stride: u32,
+    layer_count: u32,
+    entries: &[BackingEntry],
+    byte_limit: u64,
+) -> Result<(Vec<(u64, usize)>, usize), Control3dError> {
+    let bad = Control3dError::InvalidParameter;
+    if rows.row_bytes == 0
+        || rows.row_count == 0
+        || rows.row_count > super::control3d::MAX_TEXTURE_SIZE
+        || rows.row_stride < rows.row_bytes
+        || layer_count == 0
+        || layer_count > super::control3d::MAX_ARRAY_LAYERS
+        || layer_stride < rows.row_stride.checked_mul(rows.row_count).ok_or(bad)?
+    {
+        return Err(bad);
+    }
+    let tight = u64::from(rows.row_bytes) * u64::from(rows.row_count) * u64::from(layer_count);
+    let end = rows
+        .offset
+        .checked_add(u64::from(layer_count - 1) * u64::from(layer_stride))
+        .and_then(|v| v.checked_add(u64::from(rows.row_count - 1) * u64::from(rows.row_stride)))
+        .and_then(|v| v.checked_add(u64::from(rows.row_bytes)))
+        .ok_or(bad)?;
+    let total: u64 = entries.iter().map(|e| u64::from(e.length)).sum();
+    if tight > byte_limit || end > total {
+        return Err(bad);
+    }
+    let mut spans = Vec::new();
+    // Positive row bytes and the dense-byte bound also bound this allocation.
+    let max_spans = rows.row_count as usize * layer_count as usize + entries.len();
+    spans
+        .try_reserve_exact(max_spans)
+        .map_err(|_| Control3dError::OutOfMemory)?;
+    let (mut index, mut prefix) = (0, 0);
+    for layer in 0..layer_count {
+        for row in 0..rows.row_count {
+            let mut start = rows.offset
+                + u64::from(layer) * u64::from(layer_stride)
+                + u64::from(row) * u64::from(rows.row_stride);
+            // Every row start is strictly before the prevalidated complete end.
+            while prefix + u64::from(entries[index].length) <= start {
+                prefix += u64::from(entries[index].length);
+                index += 1;
+            }
+            let mut left = u64::from(rows.row_bytes);
+            while left > 0 {
+                let entry = entries[index];
+                let skip = start - prefix;
+                let take = left.min(u64::from(entry.length) - skip);
+                spans.push((entry.addr.checked_add(skip).ok_or(bad)?, take as usize));
+                start += take;
+                left -= take;
+                if left > 0 {
+                    prefix += u64::from(entry.length);
+                    index += 1;
+                }
+            }
+        }
+    }
+    Ok((spans, tight as usize))
+}
+
 pub(crate) fn admit(
     state: &Submit3dState,
     control: Control3dSnapshot,
@@ -566,10 +709,36 @@ pub(crate) fn admit(
     {
         return Err(bad);
     }
+    let legacy_2d = header.ty == p::CMD_TRANSFER_TO_HOST_2D;
+    let legacy_id = if legacy_2d {
+        if readable_len(&chain) != Some(56) {
+            return Err(bad);
+        }
+        let bytes = read_readable_at::<56>(&chain, bus, 0).ok_or(bad)?;
+        if bytes[52..56] != [0; 4] {
+            return Err(bad);
+        }
+        Some(u32::from_le_bytes(
+            bytes[48..52].try_into().expect("2D resource"),
+        ))
+    } else {
+        None
+    };
     let context = control
         .contexts
         .iter()
-        .find(|c| c.identity.id == header.ctx_id)
+        .find(|c| {
+            if legacy_2d && header.ctx_id == 0 {
+                legacy_id.is_some_and(|id| {
+                    control
+                        .resources
+                        .iter()
+                        .any(|r| r.identity.id == id && r.metadata.flags == 1)
+                })
+            } else {
+                c.identity.id == header.ctx_id
+            }
+        })
         .ok_or(Control3dError::InvalidContextId)?;
     let mut resources = Vec::new();
     resources
@@ -590,7 +759,61 @@ pub(crate) fn admit(
             }),
         });
     }
+    let outer_id = if matches!(
+        header.ty,
+        p::CMD_TRANSFER_TO_HOST_3D | p::CMD_TRANSFER_FROM_HOST_3D
+    ) {
+        read_readable_at::<4>(&chain, bus, 56).map(u32::from_le_bytes)
+    } else {
+        legacy_id
+    };
+    if let Some(id) = outer_id
+        && !resources.iter().any(|r| r.identity.id == id)
+    {
+        let r = control
+            .resources
+            .iter()
+            .find(|r| r.identity.id == id)
+            .ok_or(Control3dError::InvalidResourceId)?;
+        resources.push(AcceptedResource3d {
+            identity: r.identity,
+            metadata: r.metadata,
+            backing: r.backing.as_ref().map(|entries| AcceptedBacking3d {
+                generation: r.backing_generation.expect("attached generation"),
+                byte_length: entries.iter().map(|e| u64::from(e.length)).sum(),
+            }),
+        });
+    }
     let kind = match header.ty {
+        p::CMD_TRANSFER_TO_HOST_2D => {
+            let b = read_readable_at::<56>(&chain, bus, 0).ok_or(bad)?;
+            let w = |offset| {
+                u32::from_le_bytes(b[offset..offset + 4].try_into().expect("2D transfer word"))
+            };
+            let id = legacy_id.expect("2D id");
+            let r = resources
+                .iter()
+                .find(|r| r.identity.id == id)
+                .ok_or(Control3dError::InvalidResourceId)?;
+            let t = Transfer3d {
+                box_: Transfer3dBox {
+                    x: w(24),
+                    y: w(28),
+                    z: 0,
+                    width: w(32),
+                    height: w(36),
+                    depth: 1,
+                },
+                offset: u64::from_le_bytes(b[40..48].try_into().expect("2D offset")),
+                resource_id: id,
+                level: 0,
+                stride: r.metadata.width.checked_mul(4).ok_or(bad)?,
+                layer_stride: 0,
+                direction: 1,
+            };
+            validate_transfer(t, r, state.exchange_limit())?;
+            Submit3dKind::Transfer(t)
+        }
         p::CMD_SUBMIT_3D => {
             let h = read_readable_at::<32>(&chain, bus, 0).ok_or(bad)?;
             let size = u32::from_le_bytes(h[24..28].try_into().expect("size")) as usize;
@@ -650,7 +873,7 @@ pub(crate) fn admit(
                 .iter()
                 .find(|r| r.identity.id == t.resource_id)
                 .ok_or(Control3dError::InvalidResourceId)?;
-            validate_transfer(t, r)?;
+            validate_transfer(t, r, state.exchange_limit())?;
             Submit3dKind::Transfer(t)
         }
         _ => return Err(Control3dError::Unspecified),
@@ -670,30 +893,33 @@ pub(crate) fn admit(
         trace: super::CommandTraceMeta::default(),
     })
 }
-fn validate_transfer(t: Transfer3d, r: &AcceptedResource3d) -> Result<(), Control3dError> {
+fn validate_transfer(
+    t: Transfer3d,
+    r: &AcceptedResource3d,
+    byte_limit: u64,
+) -> Result<(), Control3dError> {
     let bad = Control3dError::InvalidParameter;
     let m = r.metadata;
     let b = t.box_;
+    let (width, height, layers, scale) = m.transfer_extent(t.level)?;
     if m.bind == 524_288
-        || t.level != 0
         || b.width == 0
         || b.height == 0
-        || b.depth != 1
-        || b.z != 0
-        || u64::from(b.x) + u64::from(b.width) > u64::from(m.width)
-        || u64::from(b.y) + u64::from(b.height) > u64::from(m.height)
+        || b.depth == 0
+        || u64::from(b.z) + u64::from(b.depth) > u64::from(layers)
+        || u64::from(b.x) + u64::from(b.width) > u64::from(width)
+        || u64::from(b.y) + u64::from(b.height) > u64::from(height)
     {
         return Err(bad);
     }
-    let scale = if m.target == 2 { 4 } else { 1 };
     let row_bytes = b.width.checked_mul(scale).ok_or(bad)?;
     let row_stride = if t.stride == 0 {
-        m.width.checked_mul(scale).ok_or(bad)?
+        width.checked_mul(scale).ok_or(bad)?
     } else {
         t.stride
     };
     let layer = if t.layer_stride == 0 {
-        row_stride.checked_mul(m.height).ok_or(bad)?
+        row_stride.checked_mul(height).ok_or(bad)?
     } else {
         t.layer_stride
     };
@@ -702,15 +928,20 @@ fn validate_transfer(t: Transfer3d, r: &AcceptedResource3d) -> Result<(), Contro
     }
     let end = t
         .offset
-        .checked_add(u64::from(b.height - 1) * u64::from(row_stride))
+        .checked_add(u64::from(b.depth - 1) * u64::from(layer))
+        .and_then(|v| v.checked_add(u64::from(b.height - 1) * u64::from(row_stride)))
         .and_then(|v| v.checked_add(u64::from(row_bytes)))
         .ok_or(bad)?;
     let backing = r.backing.ok_or(bad)?;
     if end > backing.byte_length
-        || end - t.offset > MAX_EXCHANGE_BYTES
-        || u64::from(row_bytes) * u64::from(b.height) > MAX_EXCHANGE_BYTES
+        || end - t.offset > byte_limit
+        || u64::from(row_bytes) * u64::from(b.height) * u64::from(b.depth) > byte_limit
     {
         return Err(bad);
     }
     Ok(())
 }
+
+#[cfg(all(test, feature = "std"))]
+#[path = "submit3d_dimensional_tests.rs"]
+mod dimensional_span_tests;

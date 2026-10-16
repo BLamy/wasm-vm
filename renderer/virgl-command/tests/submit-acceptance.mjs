@@ -93,7 +93,7 @@ function instrument(gl, c, schedule = 0) {
       }
       if (key === "drawElements") { drawCount++; calls.push({ mode: args[0], count: args[1], type: args[2], offset: args[3], turn }); record("drawElements", { count: args[1], offset: args[3] }); }
       const result = value.apply(target, args);
-      if (/^create(Buffer|Texture|Framebuffer|VertexArray|Sampler|Program|Shader)$/.test(key) && result) {
+      if (/^create(Buffer|Texture|Framebuffer|VertexArray|Sampler|Program|Shader|Query)$/.test(key) && result) {
         objects.set(result, { id: nextId++, kind: key.slice(6) });
         if (key === "createBuffer") buffers.set(result, { firstTarget: null, bytes: 0, produced: false, sync: null });
       }
@@ -104,7 +104,7 @@ function instrument(gl, c, schedule = 0) {
         record("fenceSync", { sync: entry.id });
       }
       if (key === "flush") record("flush");
-      if (/^delete(Buffer|Texture|Framebuffer|VertexArray|Sampler|Program|Shader|Sync)$/.test(key) && args[0]) {
+      if (/^delete(Buffer|Texture|Framebuffer|VertexArray|Sampler|Program|Shader|Sync|Query)$/.test(key) && args[0]) {
         record(key, { object: id(args[0]) }); objects.delete(args[0]);
         if (key === "deleteBuffer") buffers.delete(args[0]); if (key === "deleteSync") syncs.delete(args[0]);
       }
@@ -228,13 +228,18 @@ class Queue {
   }
   reset() { this.vm.writeMmio(0x70,0); this.run(); this.configure(); this.negotiate(); }
 }
-function makeRig(WasmVirglSubmitProof, createVirglSubmitBridge, gl, shaderBridge, c, schedule=0, proof=true, portable=false) {
+function makeRig(WasmVirglSubmitProof, createVirglSubmitBridge, gl, shaderBridge, c, schedule=0, proof=true, portable=false, layered=false) {
   const trace=instrument(gl,c,schedule), events=[], exchanges=[], completions=[], hooks={}; let q, intercept=null;
-  const host=c.ok(createVirglSubmitBridge({gl:trace.gl,shaderBridge,transport:{
+  const transport={
     gatherInput(...args) { const before=q.usedIndex(); hooks.beforeGather?.(args); const data=q.vm.gatherInput(...args); hooks.afterGather?.(args,data); exchanges.push({kind:'input',args,bytes:hex(data),usedIndex:before}); return data; },
     scatterOutput(...args) { const before=q.usedIndex(), irqBefore=q.vm.readMmio(0x60)&1; hooks.beforeScatter?.(args); const result=q.vm.scatterOutput(...args); hooks.afterScatter?.(args); c.equal(q.usedIndex(),before,'readback scatter precedes used publication'); c.equal(q.vm.readMmio(0x60)&1,irqBefore,'readback scatter preserves prior IRQ and does not publish completion'); exchanges.push({kind:'output',args:args.slice(0,-1),bytes:hex(args.at(-1)),usedIndex:before}); return result; },
     complete(...args) { const before=q.usedIndex(); if(args[4])c.truth(trace.syncs.size===0,'completion is posted only after all GPU fences retire'); hooks.beforeComplete?.(args); const result=q.vm.complete(...args); hooks.afterComplete?.(args); c.equal(q.usedIndex(),before,'completion mailbox does not publish used during host pump'); completions.push({args,usedIndex:before}); return result; }
-  }}),'real asynchronous bridge');
+  };
+  if(layered)Object.assign(transport,{
+    gatherLayeredInput(...args) { const before=q.usedIndex(); hooks.beforeLayeredGather?.(args); const data=q.vm.gatherLayeredInput(...args); hooks.afterLayeredGather?.(args,data); c.equal(q.usedIndex(),before,'layered gather precedes used publication'); exchanges.push({kind:'layered-input',args,bytes:hex(data),usedIndex:before}); return data; },
+    scatterLayeredOutput(...args) { const before=q.usedIndex(),irqBefore=q.vm.readMmio(0x60)&1; hooks.beforeLayeredScatter?.(args); const result=q.vm.scatterLayeredOutput(...args); hooks.afterLayeredScatter?.(args); c.equal(q.usedIndex(),before,'all layered scatter precedes used publication'); c.equal(q.vm.readMmio(0x60)&1,irqBefore,'layered scatter preserves prior IRQ'); exchanges.push({kind:'layered-output',args:args.slice(0,-1),bytes:hex(args.at(-1)),usedIndex:before}); return result; }
+  });
+  const host=c.ok(createVirglSubmitBridge({gl:trace.gl,shaderBridge,transport}),'real asynchronous bridge');
   q=new Queue(WasmVirglSubmitProof,(event)=>{events.push(structuredClone(event)); if(intercept) return intercept(event); return host.bridge.apply(event);},c,proof,portable);
   const step=async()=>{await turn(); trace.nextTurn(); const before=q.usedIndex(), result=host.bridge.pump(); if(trace.control.oracleFailure)throw trace.control.oracleFailure; if(c.failure)throw c.failure; c.ok(result,'host asynchronous pump'); c.equal(q.usedIndex(),before,'host GPU step never publishes used'); return result;};
   const drain=async(target=q.next)=>{
@@ -487,3 +492,6 @@ export async function runBrowserAcceptance({WasmVirglSubmitProof,createVirglSubm
   result.ordered=await hundredDraws(WasmVirglSubmitProof,createVirglSubmitBridge,gl,shaderBridge,fixtures,c);result.assertions=c.assertions;
   result.summary={status:result.status,assertions:result.assertions,minimal:result.minimal,original:{packetCount:result.original.packetCount,gpuDraws:result.original.gpuDraws,checkedPixels:result.original.checkedPixels},ordered:{queuedCommands:result.ordered.queuedCommands,gpuDraws:result.ordered.gpuDraws,maximumPending:result.ordered.maximumPending},sequencing:result.sequencing};return result;
 }
+
+// Shared literal queue and hardware-oracle fixtures; selection is supplied by the caller.
+export { checker, makeRig, Queue, context, resource, idCommand, header, submission, backing, transfer, originalReplay, orderedDma, uncertainGpuFailure, protocolAttacks };

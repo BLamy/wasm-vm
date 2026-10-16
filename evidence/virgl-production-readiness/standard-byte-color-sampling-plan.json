@@ -1,0 +1,1735 @@
+{
+  "schema": "original-pinned-byte-color-sampling-planning-v1",
+  "layoutProposalSha256": "a253efab7666bf652d2134a3d09ca6996fa95bba3655353d4708ceac77fe263e",
+  "cases": [
+    {
+      "format": 1,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.043137254901960784,
+        0.4980392156862745,
+        0.00784313725490196,
+        0.6784313725490196
+      ],
+      "byteOutputAfterSignedRemap": [
+        11,
+        127,
+        2,
+        173
+      ],
+      "formatSourceSha256": "6eab5cbbfa27d31c737732e641a292dc567f30ae67e54d1e70314dc2bb1d6483"
+    },
+    {
+      "format": 1,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.23921568627450981,
+        0.9137254901960784,
+        0.07450980392156863,
+        0.984313725490196
+      ],
+      "byteOutputAfterSignedRemap": [
+        61,
+        233,
+        19,
+        251
+      ],
+      "formatSourceSha256": "6eab5cbbfa27d31c737732e641a292dc567f30ae67e54d1e70314dc2bb1d6483"
+    },
+    {
+      "format": 1,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.6784313725490196,
+        0.043137254901960784,
+        0.4980392156862745,
+        0.00784313725490196
+      ],
+      "byteOutputAfterSignedRemap": [
+        173,
+        11,
+        127,
+        2
+      ],
+      "formatSourceSha256": "6eab5cbbfa27d31c737732e641a292dc567f30ae67e54d1e70314dc2bb1d6483"
+    },
+    {
+      "format": 1,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.984313725490196,
+        0.23921568627450981,
+        0.9137254901960784,
+        0.07450980392156863
+      ],
+      "byteOutputAfterSignedRemap": [
+        251,
+        61,
+        233,
+        19
+      ],
+      "formatSourceSha256": "6eab5cbbfa27d31c737732e641a292dc567f30ae67e54d1e70314dc2bb1d6483"
+    },
+    {
+      "format": 3,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.4980392156862745,
+        0.043137254901960784,
+        0.6784313725490196,
+        0.00784313725490196
+      ],
+      "byteOutputAfterSignedRemap": [
+        127,
+        11,
+        173,
+        2
+      ],
+      "formatSourceSha256": "93c06c9353a1b1cdc08bdcaae3cf4435f5167f03a455e354db5056c712e77d92"
+    },
+    {
+      "format": 3,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.9137254901960784,
+        0.23921568627450981,
+        0.984313725490196,
+        0.07450980392156863
+      ],
+      "byteOutputAfterSignedRemap": [
+        233,
+        61,
+        251,
+        19
+      ],
+      "formatSourceSha256": "93c06c9353a1b1cdc08bdcaae3cf4435f5167f03a455e354db5056c712e77d92"
+    },
+    {
+      "format": 3,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.043137254901960784,
+        0.6784313725490196,
+        0.00784313725490196,
+        0.4980392156862745
+      ],
+      "byteOutputAfterSignedRemap": [
+        11,
+        173,
+        2,
+        127
+      ],
+      "formatSourceSha256": "93c06c9353a1b1cdc08bdcaae3cf4435f5167f03a455e354db5056c712e77d92"
+    },
+    {
+      "format": 3,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.23921568627450981,
+        0.984313725490196,
+        0.07450980392156863,
+        0.9137254901960784
+      ],
+      "byteOutputAfterSignedRemap": [
+        61,
+        251,
+        19,
+        233
+      ],
+      "formatSourceSha256": "93c06c9353a1b1cdc08bdcaae3cf4435f5167f03a455e354db5056c712e77d92"
+    },
+    {
+      "format": 4,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.4980392156862745,
+        0.043137254901960784,
+        0.6784313725490196,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        127,
+        11,
+        173,
+        255
+      ],
+      "formatSourceSha256": "d17f4f6026b12b16985a929335c9867505aef7b5434735849fba35cba96321d9"
+    },
+    {
+      "format": 4,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.9137254901960784,
+        0.23921568627450981,
+        0.984313725490196,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        233,
+        61,
+        251,
+        255
+      ],
+      "formatSourceSha256": "d17f4f6026b12b16985a929335c9867505aef7b5434735849fba35cba96321d9"
+    },
+    {
+      "format": 4,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.043137254901960784,
+        0.6784313725490196,
+        0.00784313725490196,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        11,
+        173,
+        2,
+        255
+      ],
+      "formatSourceSha256": "d17f4f6026b12b16985a929335c9867505aef7b5434735849fba35cba96321d9"
+    },
+    {
+      "format": 4,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.23921568627450981,
+        0.984313725490196,
+        0.07450980392156863,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        61,
+        251,
+        19,
+        255
+      ],
+      "formatSourceSha256": "d17f4f6026b12b16985a929335c9867505aef7b5434735849fba35cba96321d9"
+    },
+    {
+      "format": 64,
+      "case": 0,
+      "originalPixelHex": "02",
+      "rgbaSampling": [
+        0.00784313725490196,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        2,
+        0,
+        0,
+        255
+      ],
+      "formatSourceSha256": "7dedb5499fadd1e04bcdf537d980da311703589305ed47b4379b3924560816b3"
+    },
+    {
+      "format": 64,
+      "case": 1,
+      "originalPixelHex": "13",
+      "rgbaSampling": [
+        0.07450980392156863,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        19,
+        0,
+        0,
+        255
+      ],
+      "formatSourceSha256": "7dedb5499fadd1e04bcdf537d980da311703589305ed47b4379b3924560816b3"
+    },
+    {
+      "format": 64,
+      "case": 2,
+      "originalPixelHex": "7f",
+      "rgbaSampling": [
+        0.4980392156862745,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        127,
+        0,
+        0,
+        255
+      ],
+      "formatSourceSha256": "7dedb5499fadd1e04bcdf537d980da311703589305ed47b4379b3924560816b3"
+    },
+    {
+      "format": 64,
+      "case": 3,
+      "originalPixelHex": "e9",
+      "rgbaSampling": [
+        0.9137254901960784,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        233,
+        0,
+        0,
+        255
+      ],
+      "formatSourceSha256": "7dedb5499fadd1e04bcdf537d980da311703589305ed47b4379b3924560816b3"
+    },
+    {
+      "format": 65,
+      "case": 0,
+      "originalPixelHex": "027f",
+      "rgbaSampling": [
+        0.00784313725490196,
+        0.4980392156862745,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        2,
+        127,
+        0,
+        255
+      ],
+      "formatSourceSha256": "911c2d9dc631cf0dde6ecd53e344f1146fbe5b1c91f42fcc2a83c2d453c689e4"
+    },
+    {
+      "format": 65,
+      "case": 1,
+      "originalPixelHex": "13e9",
+      "rgbaSampling": [
+        0.07450980392156863,
+        0.9137254901960784,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        19,
+        233,
+        0,
+        255
+      ],
+      "formatSourceSha256": "911c2d9dc631cf0dde6ecd53e344f1146fbe5b1c91f42fcc2a83c2d453c689e4"
+    },
+    {
+      "format": 65,
+      "case": 2,
+      "originalPixelHex": "7f0b",
+      "rgbaSampling": [
+        0.4980392156862745,
+        0.043137254901960784,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        127,
+        11,
+        0,
+        255
+      ],
+      "formatSourceSha256": "911c2d9dc631cf0dde6ecd53e344f1146fbe5b1c91f42fcc2a83c2d453c689e4"
+    },
+    {
+      "format": 65,
+      "case": 3,
+      "originalPixelHex": "e93d",
+      "rgbaSampling": [
+        0.9137254901960784,
+        0.23921568627450981,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        233,
+        61,
+        0,
+        255
+      ],
+      "formatSourceSha256": "911c2d9dc631cf0dde6ecd53e344f1146fbe5b1c91f42fcc2a83c2d453c689e4"
+    },
+    {
+      "format": 66,
+      "case": 0,
+      "originalPixelHex": "027f0b",
+      "rgbaSampling": [
+        0.00784313725490196,
+        0.4980392156862745,
+        0.043137254901960784,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        2,
+        127,
+        11,
+        255
+      ],
+      "formatSourceSha256": "84f32c23848670f6b11114ba57845ad876f251fa827e8d9d7e92752f331c44fa"
+    },
+    {
+      "format": 66,
+      "case": 1,
+      "originalPixelHex": "13e93d",
+      "rgbaSampling": [
+        0.07450980392156863,
+        0.9137254901960784,
+        0.23921568627450981,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        19,
+        233,
+        61,
+        255
+      ],
+      "formatSourceSha256": "84f32c23848670f6b11114ba57845ad876f251fa827e8d9d7e92752f331c44fa"
+    },
+    {
+      "format": 66,
+      "case": 2,
+      "originalPixelHex": "7f0bad",
+      "rgbaSampling": [
+        0.4980392156862745,
+        0.043137254901960784,
+        0.6784313725490196,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        127,
+        11,
+        173,
+        255
+      ],
+      "formatSourceSha256": "84f32c23848670f6b11114ba57845ad876f251fa827e8d9d7e92752f331c44fa"
+    },
+    {
+      "format": 66,
+      "case": 3,
+      "originalPixelHex": "e93dfb",
+      "rgbaSampling": [
+        0.9137254901960784,
+        0.23921568627450981,
+        0.984313725490196,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        233,
+        61,
+        251,
+        255
+      ],
+      "formatSourceSha256": "84f32c23848670f6b11114ba57845ad876f251fa827e8d9d7e92752f331c44fa"
+    },
+    {
+      "format": 68,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.6784313725490196,
+        0.043137254901960784,
+        0.4980392156862745,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        173,
+        11,
+        127,
+        255
+      ],
+      "formatSourceSha256": "cb071021779a07ec8a76b2e752c1ae8d88bd2937d3f93675bd7208b69071a47a"
+    },
+    {
+      "format": 68,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.984313725490196,
+        0.23921568627450981,
+        0.9137254901960784,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        251,
+        61,
+        233,
+        255
+      ],
+      "formatSourceSha256": "cb071021779a07ec8a76b2e752c1ae8d88bd2937d3f93675bd7208b69071a47a"
+    },
+    {
+      "format": 68,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.00784313725490196,
+        0.6784313725490196,
+        0.043137254901960784,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        2,
+        173,
+        11,
+        255
+      ],
+      "formatSourceSha256": "cb071021779a07ec8a76b2e752c1ae8d88bd2937d3f93675bd7208b69071a47a"
+    },
+    {
+      "format": 68,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.07450980392156863,
+        0.984313725490196,
+        0.23921568627450981,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        19,
+        251,
+        61,
+        255
+      ],
+      "formatSourceSha256": "cb071021779a07ec8a76b2e752c1ae8d88bd2937d3f93675bd7208b69071a47a"
+    },
+    {
+      "format": 74,
+      "case": 0,
+      "originalPixelHex": "80",
+      "rgbaSampling": [
+        -1,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        0,
+        128,
+        128,
+        255
+      ],
+      "formatSourceSha256": "29bc04096c9af8bb4e30cf2517f5bc955797b43d666f808a4b21d590194a55be"
+    },
+    {
+      "format": 74,
+      "case": 1,
+      "originalPixelHex": "81",
+      "rgbaSampling": [
+        -1,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        0,
+        128,
+        128,
+        255
+      ],
+      "formatSourceSha256": "29bc04096c9af8bb4e30cf2517f5bc955797b43d666f808a4b21d590194a55be"
+    },
+    {
+      "format": 74,
+      "case": 2,
+      "originalPixelHex": "fe",
+      "rgbaSampling": [
+        -0.015748031496062992,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        125,
+        128,
+        128,
+        255
+      ],
+      "formatSourceSha256": "29bc04096c9af8bb4e30cf2517f5bc955797b43d666f808a4b21d590194a55be"
+    },
+    {
+      "format": 74,
+      "case": 3,
+      "originalPixelHex": "00",
+      "rgbaSampling": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        128,
+        128,
+        128,
+        255
+      ],
+      "formatSourceSha256": "29bc04096c9af8bb4e30cf2517f5bc955797b43d666f808a4b21d590194a55be"
+    },
+    {
+      "format": 75,
+      "case": 0,
+      "originalPixelHex": "80fe",
+      "rgbaSampling": [
+        -1,
+        -0.015748031496062992,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        0,
+        125,
+        128,
+        255
+      ],
+      "formatSourceSha256": "45ddcf8f6e35460aebb3762b0e06d1d980c0d741861a58992632f0ac375b4a8f"
+    },
+    {
+      "format": 75,
+      "case": 1,
+      "originalPixelHex": "8100",
+      "rgbaSampling": [
+        -1,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        0,
+        128,
+        128,
+        255
+      ],
+      "formatSourceSha256": "45ddcf8f6e35460aebb3762b0e06d1d980c0d741861a58992632f0ac375b4a8f"
+    },
+    {
+      "format": 75,
+      "case": 2,
+      "originalPixelHex": "fe01",
+      "rgbaSampling": [
+        -0.015748031496062992,
+        0.007874015748031496,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        125,
+        129,
+        128,
+        255
+      ],
+      "formatSourceSha256": "45ddcf8f6e35460aebb3762b0e06d1d980c0d741861a58992632f0ac375b4a8f"
+    },
+    {
+      "format": 75,
+      "case": 3,
+      "originalPixelHex": "007e",
+      "rgbaSampling": [
+        0.0,
+        0.9921259842519685,
+        0.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        128,
+        254,
+        128,
+        255
+      ],
+      "formatSourceSha256": "45ddcf8f6e35460aebb3762b0e06d1d980c0d741861a58992632f0ac375b4a8f"
+    },
+    {
+      "format": 76,
+      "case": 0,
+      "originalPixelHex": "80fe01",
+      "rgbaSampling": [
+        -1,
+        -0.015748031496062992,
+        0.007874015748031496,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        0,
+        125,
+        129,
+        255
+      ],
+      "formatSourceSha256": "e26e6c79a4b84601513956a357f4c78c938d289b8fa06a8143fbb9b5d18b4a0c"
+    },
+    {
+      "format": 76,
+      "case": 1,
+      "originalPixelHex": "81007e",
+      "rgbaSampling": [
+        -1,
+        0.0,
+        0.9921259842519685,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        0,
+        128,
+        254,
+        255
+      ],
+      "formatSourceSha256": "e26e6c79a4b84601513956a357f4c78c938d289b8fa06a8143fbb9b5d18b4a0c"
+    },
+    {
+      "format": 76,
+      "case": 2,
+      "originalPixelHex": "fe017f",
+      "rgbaSampling": [
+        -0.015748031496062992,
+        0.007874015748031496,
+        1.0,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        125,
+        129,
+        255,
+        255
+      ],
+      "formatSourceSha256": "e26e6c79a4b84601513956a357f4c78c938d289b8fa06a8143fbb9b5d18b4a0c"
+    },
+    {
+      "format": 76,
+      "case": 3,
+      "originalPixelHex": "007eff",
+      "rgbaSampling": [
+        0.0,
+        0.9921259842519685,
+        -0.007874015748031496,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        128,
+        254,
+        126,
+        255
+      ],
+      "formatSourceSha256": "e26e6c79a4b84601513956a357f4c78c938d289b8fa06a8143fbb9b5d18b4a0c"
+    },
+    {
+      "format": 77,
+      "case": 0,
+      "originalPixelHex": "80fe017f",
+      "rgbaSampling": [
+        -1,
+        -0.015748031496062992,
+        0.007874015748031496,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        0,
+        125,
+        129,
+        255
+      ],
+      "formatSourceSha256": "264fbbd3ef5fea01be5effa0b9f97a0017473866a71a16282c7b6eb43f9ace63"
+    },
+    {
+      "format": 77,
+      "case": 1,
+      "originalPixelHex": "81007eff",
+      "rgbaSampling": [
+        -1,
+        0.0,
+        0.9921259842519685,
+        -0.007874015748031496
+      ],
+      "byteOutputAfterSignedRemap": [
+        0,
+        128,
+        254,
+        126
+      ],
+      "formatSourceSha256": "264fbbd3ef5fea01be5effa0b9f97a0017473866a71a16282c7b6eb43f9ace63"
+    },
+    {
+      "format": 77,
+      "case": 2,
+      "originalPixelHex": "fe017f80",
+      "rgbaSampling": [
+        -0.015748031496062992,
+        0.007874015748031496,
+        1.0,
+        -1
+      ],
+      "byteOutputAfterSignedRemap": [
+        125,
+        129,
+        255,
+        0
+      ],
+      "formatSourceSha256": "264fbbd3ef5fea01be5effa0b9f97a0017473866a71a16282c7b6eb43f9ace63"
+    },
+    {
+      "format": 77,
+      "case": 3,
+      "originalPixelHex": "007eff81",
+      "rgbaSampling": [
+        0.0,
+        0.9921259842519685,
+        -0.007874015748031496,
+        -1
+      ],
+      "byteOutputAfterSignedRemap": [
+        128,
+        254,
+        126,
+        0
+      ],
+      "formatSourceSha256": "264fbbd3ef5fea01be5effa0b9f97a0017473866a71a16282c7b6eb43f9ace63"
+    },
+    {
+      "format": 97,
+      "case": 0,
+      "originalPixelHex": "027f0b",
+      "rgbaSampling": [
+        0.000607053967097675,
+        0.21223075741405523,
+        0.003346535763899161,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        0,
+        54,
+        1,
+        255
+      ],
+      "formatSourceSha256": "a09045e95f9fbec208dd28be29f17f21640d30eee14a3d67b79e91f00134c175"
+    },
+    {
+      "format": 97,
+      "case": 1,
+      "originalPixelHex": "13e93d",
+      "rgbaSampling": [
+        0.006512090792594475,
+        0.8148465722161012,
+        0.046665086336880095,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        2,
+        208,
+        12,
+        255
+      ],
+      "formatSourceSha256": "a09045e95f9fbec208dd28be29f17f21640d30eee14a3d67b79e91f00134c175"
+    },
+    {
+      "format": 97,
+      "case": 2,
+      "originalPixelHex": "7f0bad",
+      "rgbaSampling": [
+        0.21223075741405523,
+        0.003346535763899161,
+        0.4178850708481375,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        54,
+        1,
+        107,
+        255
+      ],
+      "formatSourceSha256": "a09045e95f9fbec208dd28be29f17f21640d30eee14a3d67b79e91f00134c175"
+    },
+    {
+      "format": 97,
+      "case": 3,
+      "originalPixelHex": "e93dfb",
+      "rgbaSampling": [
+        0.8148465722161012,
+        0.046665086336880095,
+        0.9646862478944651,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        208,
+        12,
+        246,
+        255
+      ],
+      "formatSourceSha256": "a09045e95f9fbec208dd28be29f17f21640d30eee14a3d67b79e91f00134c175"
+    },
+    {
+      "format": 98,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.4178850708481375,
+        0.003346535763899161,
+        0.21223075741405523,
+        0.00784313725490196
+      ],
+      "byteOutputAfterSignedRemap": [
+        107,
+        1,
+        54,
+        2
+      ],
+      "formatSourceSha256": "eed41198a427dfd2ad580b332e9833cd2abb1a5ed95a9eb9917004b15db7339a"
+    },
+    {
+      "format": 98,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.9646862478944651,
+        0.046665086336880095,
+        0.8148465722161012,
+        0.07450980392156863
+      ],
+      "byteOutputAfterSignedRemap": [
+        246,
+        12,
+        208,
+        19
+      ],
+      "formatSourceSha256": "eed41198a427dfd2ad580b332e9833cd2abb1a5ed95a9eb9917004b15db7339a"
+    },
+    {
+      "format": 98,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.000607053967097675,
+        0.4178850708481375,
+        0.003346535763899161,
+        0.4980392156862745
+      ],
+      "byteOutputAfterSignedRemap": [
+        0,
+        107,
+        1,
+        127
+      ],
+      "formatSourceSha256": "eed41198a427dfd2ad580b332e9833cd2abb1a5ed95a9eb9917004b15db7339a"
+    },
+    {
+      "format": 98,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.006512090792594475,
+        0.9646862478944651,
+        0.046665086336880095,
+        0.9137254901960784
+      ],
+      "byteOutputAfterSignedRemap": [
+        2,
+        246,
+        12,
+        233
+      ],
+      "formatSourceSha256": "eed41198a427dfd2ad580b332e9833cd2abb1a5ed95a9eb9917004b15db7339a"
+    },
+    {
+      "format": 99,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.4178850708481375,
+        0.003346535763899161,
+        0.21223075741405523,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        107,
+        1,
+        54,
+        255
+      ],
+      "formatSourceSha256": "d18e74a2a94520224d27f720f1818419ebbd375d2573a19ede426cb338047057"
+    },
+    {
+      "format": 99,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.9646862478944651,
+        0.046665086336880095,
+        0.8148465722161012,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        246,
+        12,
+        208,
+        255
+      ],
+      "formatSourceSha256": "d18e74a2a94520224d27f720f1818419ebbd375d2573a19ede426cb338047057"
+    },
+    {
+      "format": 99,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.000607053967097675,
+        0.4178850708481375,
+        0.003346535763899161,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        0,
+        107,
+        1,
+        255
+      ],
+      "formatSourceSha256": "d18e74a2a94520224d27f720f1818419ebbd375d2573a19ede426cb338047057"
+    },
+    {
+      "format": 99,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.006512090792594475,
+        0.9646862478944651,
+        0.046665086336880095,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        2,
+        246,
+        12,
+        255
+      ],
+      "formatSourceSha256": "d18e74a2a94520224d27f720f1818419ebbd375d2573a19ede426cb338047057"
+    },
+    {
+      "format": 100,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.003346535763899161,
+        0.21223075741405523,
+        0.000607053967097675,
+        0.6784313725490196
+      ],
+      "byteOutputAfterSignedRemap": [
+        1,
+        54,
+        0,
+        173
+      ],
+      "formatSourceSha256": "f203ed49b6614637e9e4328c91a09100bd3675999c49e1bc271f239960d5f8dd"
+    },
+    {
+      "format": 100,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.046665086336880095,
+        0.8148465722161012,
+        0.006512090792594475,
+        0.984313725490196
+      ],
+      "byteOutputAfterSignedRemap": [
+        12,
+        208,
+        2,
+        251
+      ],
+      "formatSourceSha256": "f203ed49b6614637e9e4328c91a09100bd3675999c49e1bc271f239960d5f8dd"
+    },
+    {
+      "format": 100,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.4178850708481375,
+        0.003346535763899161,
+        0.21223075741405523,
+        0.00784313725490196
+      ],
+      "byteOutputAfterSignedRemap": [
+        107,
+        1,
+        54,
+        2
+      ],
+      "formatSourceSha256": "f203ed49b6614637e9e4328c91a09100bd3675999c49e1bc271f239960d5f8dd"
+    },
+    {
+      "format": 100,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.9646862478944651,
+        0.046665086336880095,
+        0.8148465722161012,
+        0.07450980392156863
+      ],
+      "byteOutputAfterSignedRemap": [
+        246,
+        12,
+        208,
+        19
+      ],
+      "formatSourceSha256": "f203ed49b6614637e9e4328c91a09100bd3675999c49e1bc271f239960d5f8dd"
+    },
+    {
+      "format": 101,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.003346535763899161,
+        0.21223075741405523,
+        0.000607053967097675,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        1,
+        54,
+        0,
+        255
+      ],
+      "formatSourceSha256": "d2c2c3b9843c5c894bc65b8c57570a2d9779aa9b308568f71100efc964bcecfc"
+    },
+    {
+      "format": 101,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.046665086336880095,
+        0.8148465722161012,
+        0.006512090792594475,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        12,
+        208,
+        2,
+        255
+      ],
+      "formatSourceSha256": "d2c2c3b9843c5c894bc65b8c57570a2d9779aa9b308568f71100efc964bcecfc"
+    },
+    {
+      "format": 101,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.4178850708481375,
+        0.003346535763899161,
+        0.21223075741405523,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        107,
+        1,
+        54,
+        255
+      ],
+      "formatSourceSha256": "d2c2c3b9843c5c894bc65b8c57570a2d9779aa9b308568f71100efc964bcecfc"
+    },
+    {
+      "format": 101,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.9646862478944651,
+        0.046665086336880095,
+        0.8148465722161012,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        246,
+        12,
+        208,
+        255
+      ],
+      "formatSourceSha256": "d2c2c3b9843c5c894bc65b8c57570a2d9779aa9b308568f71100efc964bcecfc"
+    },
+    {
+      "format": 102,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.21223075741405523,
+        0.003346535763899161,
+        0.4178850708481375,
+        0.00784313725490196
+      ],
+      "byteOutputAfterSignedRemap": [
+        54,
+        1,
+        107,
+        2
+      ],
+      "formatSourceSha256": "7cd4c8a1452d166d469200b18bb44a56b82e7de7266b090d30e0c1f1c211109c"
+    },
+    {
+      "format": 102,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.8148465722161012,
+        0.046665086336880095,
+        0.9646862478944651,
+        0.07450980392156863
+      ],
+      "byteOutputAfterSignedRemap": [
+        208,
+        12,
+        246,
+        19
+      ],
+      "formatSourceSha256": "7cd4c8a1452d166d469200b18bb44a56b82e7de7266b090d30e0c1f1c211109c"
+    },
+    {
+      "format": 102,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.003346535763899161,
+        0.4178850708481375,
+        0.000607053967097675,
+        0.4980392156862745
+      ],
+      "byteOutputAfterSignedRemap": [
+        1,
+        107,
+        0,
+        127
+      ],
+      "formatSourceSha256": "7cd4c8a1452d166d469200b18bb44a56b82e7de7266b090d30e0c1f1c211109c"
+    },
+    {
+      "format": 102,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.046665086336880095,
+        0.9646862478944651,
+        0.006512090792594475,
+        0.9137254901960784
+      ],
+      "byteOutputAfterSignedRemap": [
+        12,
+        246,
+        2,
+        233
+      ],
+      "formatSourceSha256": "7cd4c8a1452d166d469200b18bb44a56b82e7de7266b090d30e0c1f1c211109c"
+    },
+    {
+      "format": 103,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.21223075741405523,
+        0.003346535763899161,
+        0.4178850708481375,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        54,
+        1,
+        107,
+        255
+      ],
+      "formatSourceSha256": "093b9d47312a0cdfb41c0cbebec28b33ca43f06fbdce6780ee3bf64f057cced6"
+    },
+    {
+      "format": 103,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.8148465722161012,
+        0.046665086336880095,
+        0.9646862478944651,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        208,
+        12,
+        246,
+        255
+      ],
+      "formatSourceSha256": "093b9d47312a0cdfb41c0cbebec28b33ca43f06fbdce6780ee3bf64f057cced6"
+    },
+    {
+      "format": 103,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.003346535763899161,
+        0.4178850708481375,
+        0.000607053967097675,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        1,
+        107,
+        0,
+        255
+      ],
+      "formatSourceSha256": "093b9d47312a0cdfb41c0cbebec28b33ca43f06fbdce6780ee3bf64f057cced6"
+    },
+    {
+      "format": 103,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.046665086336880095,
+        0.9646862478944651,
+        0.006512090792594475,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        12,
+        246,
+        2,
+        255
+      ],
+      "formatSourceSha256": "093b9d47312a0cdfb41c0cbebec28b33ca43f06fbdce6780ee3bf64f057cced6"
+    },
+    {
+      "format": 104,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.000607053967097675,
+        0.21223075741405523,
+        0.003346535763899161,
+        0.6784313725490196
+      ],
+      "byteOutputAfterSignedRemap": [
+        0,
+        54,
+        1,
+        173
+      ],
+      "formatSourceSha256": "804f59d10ee6dd330c0281ff92a254a98a5b1fcfe2bf41d31bea6f70fecd3b47"
+    },
+    {
+      "format": 104,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.006512090792594475,
+        0.8148465722161012,
+        0.046665086336880095,
+        0.984313725490196
+      ],
+      "byteOutputAfterSignedRemap": [
+        2,
+        208,
+        12,
+        251
+      ],
+      "formatSourceSha256": "804f59d10ee6dd330c0281ff92a254a98a5b1fcfe2bf41d31bea6f70fecd3b47"
+    },
+    {
+      "format": 104,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.21223075741405523,
+        0.003346535763899161,
+        0.4178850708481375,
+        0.00784313725490196
+      ],
+      "byteOutputAfterSignedRemap": [
+        54,
+        1,
+        107,
+        2
+      ],
+      "formatSourceSha256": "804f59d10ee6dd330c0281ff92a254a98a5b1fcfe2bf41d31bea6f70fecd3b47"
+    },
+    {
+      "format": 104,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.8148465722161012,
+        0.046665086336880095,
+        0.9646862478944651,
+        0.07450980392156863
+      ],
+      "byteOutputAfterSignedRemap": [
+        208,
+        12,
+        246,
+        19
+      ],
+      "formatSourceSha256": "804f59d10ee6dd330c0281ff92a254a98a5b1fcfe2bf41d31bea6f70fecd3b47"
+    },
+    {
+      "format": 121,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.6784313725490196,
+        0.043137254901960784,
+        0.4980392156862745,
+        0.00784313725490196
+      ],
+      "byteOutputAfterSignedRemap": [
+        173,
+        11,
+        127,
+        2
+      ],
+      "formatSourceSha256": "4a22e1a7a8db2aeb13e37ec465024b4171e1eaa0725a59d1f673d49c32afbde2"
+    },
+    {
+      "format": 121,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.984313725490196,
+        0.23921568627450981,
+        0.9137254901960784,
+        0.07450980392156863
+      ],
+      "byteOutputAfterSignedRemap": [
+        251,
+        61,
+        233,
+        19
+      ],
+      "formatSourceSha256": "4a22e1a7a8db2aeb13e37ec465024b4171e1eaa0725a59d1f673d49c32afbde2"
+    },
+    {
+      "format": 121,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.00784313725490196,
+        0.6784313725490196,
+        0.043137254901960784,
+        0.4980392156862745
+      ],
+      "byteOutputAfterSignedRemap": [
+        2,
+        173,
+        11,
+        127
+      ],
+      "formatSourceSha256": "4a22e1a7a8db2aeb13e37ec465024b4171e1eaa0725a59d1f673d49c32afbde2"
+    },
+    {
+      "format": 121,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.07450980392156863,
+        0.984313725490196,
+        0.23921568627450981,
+        0.9137254901960784
+      ],
+      "byteOutputAfterSignedRemap": [
+        19,
+        251,
+        61,
+        233
+      ],
+      "formatSourceSha256": "4a22e1a7a8db2aeb13e37ec465024b4171e1eaa0725a59d1f673d49c32afbde2"
+    },
+    {
+      "format": 134,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.00784313725490196,
+        0.4980392156862745,
+        0.043137254901960784,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        2,
+        127,
+        11,
+        255
+      ],
+      "formatSourceSha256": "a4f395b09913432699c41b7aa6718ccbbca3e0eb85cb5281b18bebfe054a1b49"
+    },
+    {
+      "format": 134,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.07450980392156863,
+        0.9137254901960784,
+        0.23921568627450981,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        19,
+        233,
+        61,
+        255
+      ],
+      "formatSourceSha256": "a4f395b09913432699c41b7aa6718ccbbca3e0eb85cb5281b18bebfe054a1b49"
+    },
+    {
+      "format": 134,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.4980392156862745,
+        0.043137254901960784,
+        0.6784313725490196,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        127,
+        11,
+        173,
+        255
+      ],
+      "formatSourceSha256": "a4f395b09913432699c41b7aa6718ccbbca3e0eb85cb5281b18bebfe054a1b49"
+    },
+    {
+      "format": 134,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.9137254901960784,
+        0.23921568627450981,
+        0.984313725490196,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        233,
+        61,
+        251,
+        255
+      ],
+      "formatSourceSha256": "a4f395b09913432699c41b7aa6718ccbbca3e0eb85cb5281b18bebfe054a1b49"
+    },
+    {
+      "format": 230,
+      "case": 0,
+      "originalPixelHex": "027f0bad",
+      "rgbaSampling": [
+        0.000607053967097675,
+        0.21223075741405523,
+        0.003346535763899161,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        0,
+        54,
+        1,
+        255
+      ],
+      "formatSourceSha256": "7f3444c8dd444dd74018eee539c0130ba04bb633339675500e16202f7e91445e"
+    },
+    {
+      "format": 230,
+      "case": 1,
+      "originalPixelHex": "13e93dfb",
+      "rgbaSampling": [
+        0.006512090792594475,
+        0.8148465722161012,
+        0.046665086336880095,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        2,
+        208,
+        12,
+        255
+      ],
+      "formatSourceSha256": "7f3444c8dd444dd74018eee539c0130ba04bb633339675500e16202f7e91445e"
+    },
+    {
+      "format": 230,
+      "case": 2,
+      "originalPixelHex": "7f0bad02",
+      "rgbaSampling": [
+        0.21223075741405523,
+        0.003346535763899161,
+        0.4178850708481375,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        54,
+        1,
+        107,
+        255
+      ],
+      "formatSourceSha256": "7f3444c8dd444dd74018eee539c0130ba04bb633339675500e16202f7e91445e"
+    },
+    {
+      "format": 230,
+      "case": 3,
+      "originalPixelHex": "e93dfb13",
+      "rgbaSampling": [
+        0.8148465722161012,
+        0.046665086336880095,
+        0.9646862478944651,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        208,
+        12,
+        246,
+        255
+      ],
+      "formatSourceSha256": "7f3444c8dd444dd74018eee539c0130ba04bb633339675500e16202f7e91445e"
+    },
+    {
+      "format": 317,
+      "case": 0,
+      "originalPixelHex": "027f0b",
+      "rgbaSampling": [
+        0.043137254901960784,
+        0.4980392156862745,
+        0.00784313725490196,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        11,
+        127,
+        2,
+        255
+      ],
+      "formatSourceSha256": "b70264c9124434837411b14ce2632a994cd8538d96dc4547876ff8280d5a0463"
+    },
+    {
+      "format": 317,
+      "case": 1,
+      "originalPixelHex": "13e93d",
+      "rgbaSampling": [
+        0.23921568627450981,
+        0.9137254901960784,
+        0.07450980392156863,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        61,
+        233,
+        19,
+        255
+      ],
+      "formatSourceSha256": "b70264c9124434837411b14ce2632a994cd8538d96dc4547876ff8280d5a0463"
+    },
+    {
+      "format": 317,
+      "case": 2,
+      "originalPixelHex": "7f0bad",
+      "rgbaSampling": [
+        0.6784313725490196,
+        0.043137254901960784,
+        0.4980392156862745,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        173,
+        11,
+        127,
+        255
+      ],
+      "formatSourceSha256": "b70264c9124434837411b14ce2632a994cd8538d96dc4547876ff8280d5a0463"
+    },
+    {
+      "format": 317,
+      "case": 3,
+      "originalPixelHex": "e93dfb",
+      "rgbaSampling": [
+        0.984313725490196,
+        0.23921568627450981,
+        0.9137254901960784,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        251,
+        61,
+        233,
+        255
+      ],
+      "formatSourceSha256": "b70264c9124434837411b14ce2632a994cd8538d96dc4547876ff8280d5a0463"
+    },
+    {
+      "format": 387,
+      "case": 0,
+      "originalPixelHex": "027f0b",
+      "rgbaSampling": [
+        0.003346535763899161,
+        0.21223075741405523,
+        0.000607053967097675,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        1,
+        54,
+        0,
+        255
+      ],
+      "formatSourceSha256": "9b9b1baa3dcc07e104eeeec31ef7d79bb986ed0090c6da081aa86d248fd75889"
+    },
+    {
+      "format": 387,
+      "case": 1,
+      "originalPixelHex": "13e93d",
+      "rgbaSampling": [
+        0.046665086336880095,
+        0.8148465722161012,
+        0.006512090792594475,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        12,
+        208,
+        2,
+        255
+      ],
+      "formatSourceSha256": "9b9b1baa3dcc07e104eeeec31ef7d79bb986ed0090c6da081aa86d248fd75889"
+    },
+    {
+      "format": 387,
+      "case": 2,
+      "originalPixelHex": "7f0bad",
+      "rgbaSampling": [
+        0.4178850708481375,
+        0.003346535763899161,
+        0.21223075741405523,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        107,
+        1,
+        54,
+        255
+      ],
+      "formatSourceSha256": "9b9b1baa3dcc07e104eeeec31ef7d79bb986ed0090c6da081aa86d248fd75889"
+    },
+    {
+      "format": 387,
+      "case": 3,
+      "originalPixelHex": "e93dfb",
+      "rgbaSampling": [
+        0.9646862478944651,
+        0.046665086336880095,
+        0.8148465722161012,
+        1.0
+      ],
+      "byteOutputAfterSignedRemap": [
+        246,
+        12,
+        208,
+        255
+      ],
+      "formatSourceSha256": "9b9b1baa3dcc07e104eeeec31ef7d79bb986ed0090c6da081aa86d248fd75889"
+    }
+  ],
+  "authority": "pinned-source original-input proposal, no native rendering claim"
+}

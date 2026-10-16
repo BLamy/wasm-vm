@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "task": "E6-T11d71",
+  "verdict": "verified",
+  "path": "evidence/virgl-production-keyboard-host-wait/verifier/final-closure/independent-keyboard-host-wait-closure.tar.gz",
+  "bytes": 10172,
+  "sha256": "9271161e07450a82169fb332655636e9bcab53d8232d27aa42a25eec16d25ab8",
+  "membersReopened": 8,
+  "identities": 7,
+  "manifestSha256": "69b4aeda8662c7ab07c7a7d5bfd6abf8e266398adc7f99a8a0cad2e1505952e7",
+  "files": [
+    {
+      "path": "audit-closure.py",
+      "bytes": 7683,
+      "sha256": "cda9dd4a95cdd57817f68b3a39f5a310a497748a5ff7a49a2ea2a11fd01e6d61"
+    },
+    {
+      "path": "finish-closure.py",
+      "bytes": 6895,
+      "sha256": "1037887b88255f5d95cc6b257ddf4bb545bc36237320048bfae75d7bd0b573f0"
+    },
+    {
+      "path": "pre-data-predictions.json",
+      "bytes": 2234,
+      "sha256": "3c28a0a6d013b36540b4da6e5be164be27aa652b6e488226a9edd3c3a37cc14d"
+    },
+    {
+      "path": "prediction-and-coverage.json",
+      "bytes": 7412,
+      "sha256": "d93182a31451f0b77b650652a18258ece56561729886da1245505d5f28ee699b"
+    },
+    {
+      "path": "renewed-native-rows.json",
+      "bytes": 15018,
+      "sha256": "4ec1f66ce750d7a9139d3927421d7ca7659f635f51bd685d499d9cbbe0f2a83e"
+    },
+    {
+      "path": "source-equivalence.json",
+      "bytes": 1329,
+      "sha256": "94a5a0f3c1c654bfa52b5a8e2e3bf97dac994f23d3ca18c750543584ffa45d88"
+    },
+    {
+      "path": "worker-closure-authentication.json",
+      "bytes": 4832,
+      "sha256": "e36ff510df11c47c15a0d7497a2cd22c9034fca1ff76d34d7fede356055659ed"
+    }
+  ]
+}

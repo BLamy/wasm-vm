@@ -1,0 +1,18 @@
+{
+  "schema": "E6-T12g6m3c-verifier-predictions-v1",
+  "madeBeforeEvidenceInspection": true,
+  "base": "8840833b7fc8196a72c7acf2752b2dff684f6670",
+  "frozenRuntimeHead": "1bbbe70a7bb4c9a9cdc0c3113cbb6b6a1deba733",
+  "submissionHead": "69eadeb8e575674e586172e2f292e5a0df3aa9bd",
+  "predictions": [
+    {"id":"P1","point":"paired C/Wasm call after ordinary complete acceptance","expected":"full byte-equivalent ordinary pair result; no exact qualification changes its complete result"},
+    {"id":"P2","point":"qualified pair after full fragment interface derivation","expected":"complete fragment checked key, including unused Generic masks, interpolation, position, and discard, controls vertex result; each successful newly admitted stage retains its entire supplied valid exact component list"},
+    {"id":"P3","point":"before first conversion allocation and at every allocation failure","expected":"both original texts and banks are owned; caller mutation cannot change result; failure has only error/ok and subsequent exact/default/single calls recover"},
+    {"id":"P4","point":"real decoded DRAW using paired result","expected":"wrong or short current stage banks fail before draw, unsafe upload, link, or index effects; full physical frames and uniform reflections agree with independently predicted values"},
+    {"id":"P5","point":"actual compiler source fault browser run","expected":"vertex varying corruption causes physical WebGL interface rejection and exact metadata corruption causes pre-DRAW rejection, each contradicted by independent capture assertions and delivered fault Wasm"},
+    {"id":"P6","point":"sealed hot/cold recordings and original profiles","expected":"all archive members and source/binary digests bind the frozen head; pristine scrubbed clone succeeds; every changed runtime line and conditional child has an execution hit or precise invariant waiver"},
+    {"id":"P7","point":"negative original larger compositor cases","expected":"both full original texts remain rejected without synthetic results or expanded loop/range authority"},
+    {"id":"P8","point":"bounded novel attack: swap distinct stage-local banks for coordinate/discard pair, then restore","expected":"swapped tuple sets never silently authorize the opposite stage; successful original result is reproducible after both swaps"},
+    {"id":"P9","point":"sabotage one independent assertion","expected":"modifying one asserted expected complete interface key or frame pixel in a verifier-only copy makes the checker fail"}
+  ]
+}

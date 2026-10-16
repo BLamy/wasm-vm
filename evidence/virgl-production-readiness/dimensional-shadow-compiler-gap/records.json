@@ -1,0 +1,196 @@
+{
+  "schema": "dimensional-shadow-readiness-index-v1",
+  "head": "04ab18042036bf0ab19864bbe38e787dd4aadf48",
+  "records": [
+    {
+      "path": "admission/records.json",
+      "bytes": 30233,
+      "sha256": "3ff75718227d24357e111c97c6228b8aff87233ecec7f412941e858558fb5862"
+    },
+    {
+      "path": "admission/report.json",
+      "bytes": 2039,
+      "sha256": "b54d37ea926ca01e3fb0441fba7f71a58b926091ac2c9b2b343c533ac89a7f20"
+    },
+    {
+      "path": "admission/runner.mjs",
+      "bytes": 4368,
+      "sha256": "23bb6819bfbf5f0de88959b9554d8bd4c128718e936c1cb694cf360ff6a4a3c8"
+    },
+    {
+      "path": "admission/sources/renderer/virgl-shader/bridge.c",
+      "bytes": 159930,
+      "sha256": "3c891f4114c06cb45c6d99138cb1405ad364d1762705db95463a031870edafbc"
+    },
+    {
+      "path": "admission/sources/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 13538,
+      "sha256": "4ade0ffb9ffb661a729179525e7937c4695230dc57a7f79db63a1538119a95f2"
+    },
+    {
+      "path": "admission/sources/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 442769,
+      "sha256": "8749da215131646f0b7d53d59fe7ee19fa68b2fab2e9bec80446c4af3e84e100"
+    },
+    {
+      "path": "admission/sources/renderer/virgl-shader/standard.mjs",
+      "bytes": 13572,
+      "sha256": "2a3f3123b9b85932e76ed5b8576d5d5de10f0179db35875534edbfac7ffa91e4"
+    },
+    {
+      "path": "admission/sources/renderer/virgl-shader/standard_emit.c",
+      "bytes": 21461,
+      "sha256": "a8208e978af151f9ce18586b65342b17feb81578e9fb74ee5ef1662cc5679cd7"
+    },
+    {
+      "path": "admission/sources/renderer/virgl-shader/standard_guard.c",
+      "bytes": 24361,
+      "sha256": "0bda6d031d9a3a9e3df1624d7edad9203f44fa51b2fdbac58f39340e1a5f34ec"
+    },
+    {
+      "path": "admission/sources/renderer/virgl-shader/standard_guard.h",
+      "bytes": 4428,
+      "sha256": "92e7ed5239a822d193381fd6627ef223e7d93d788fb53d1f0986e07649d67177"
+    },
+    {
+      "path": "admission/sources/renderer/virgl-shader/vendor/src/gallium/include/pipe/p_shader_tokens.h",
+      "bytes": 23154,
+      "sha256": "48d2cedf0e97e4a685c20acb59bc8dd1317e0b2ba9166e9c4ac81fedda2e61f9"
+    },
+    {
+      "path": "cleanup/clone-custody.json",
+      "bytes": 1191,
+      "sha256": "2fc8faf374089d95c8e2bf704af4f7f169b9af024d0badebb8399fea212456f8"
+    },
+    {
+      "path": "cleanup/clone-script.py",
+      "bytes": 3528,
+      "sha256": "5d16f9a738549df501631bf4bac18efe3b35369cdc90c6cffa82d186a55b14ea"
+    },
+    {
+      "path": "cleanup/incremental-cache.json",
+      "bytes": 386,
+      "sha256": "cf9eb98095e1cb619122a9e3359c9e60e4fda2088d1d1ff14d2595e155b14dec"
+    },
+    {
+      "path": "cleanup/staging-deduplication.json",
+      "bytes": 383177,
+      "sha256": "25cc0e308ab91d9be7dc6da11efecd23ce7479f7441b2aa7715e5bd275a3937a"
+    },
+    {
+      "path": "cleanup/verifier-release.json",
+      "bytes": 860,
+      "sha256": "cacbeb07d921cabc571e87d648555cb76210d86fa95ef5111f457ca317dbe1ec"
+    },
+    {
+      "path": "dependencies/deployment/manifest.json",
+      "bytes": 608,
+      "sha256": "e70510aa90493b955fe70c445c318bdd75b4e4f3b9144bf98201a0905b86351c"
+    },
+    {
+      "path": "dependencies/deployment/records.json",
+      "bytes": 92093,
+      "sha256": "be8d78eaddb35e2fbe8d8cfe9591f60c7c7caaab9d7e2c5506c2199844a0fb08"
+    },
+    {
+      "path": "dependencies/verifier/manifest.json",
+      "bytes": 8005,
+      "sha256": "1e7b66672d57a8caa6224d02f6c1e12bef85b3cf2f01d9082ee7c2f48341356e"
+    },
+    {
+      "path": "dependencies/verifier/records.json",
+      "bytes": 562225,
+      "sha256": "6438d86a2028a1b20c1eff2e381bed399c62c44db6a4086373c0183141099a58"
+    },
+    {
+      "path": "dependencies/worker/manifest.json",
+      "bytes": 9413,
+      "sha256": "6e4047173d8fefb25d1763ba2eb9e9c40534bddd70f02544cb05e843f6005145"
+    },
+    {
+      "path": "dependencies/worker/records.json",
+      "bytes": 8214430,
+      "sha256": "38dc0b762d1bb5d37229a6ced3ae8b493eb93706cb26f1984b1251b7f83134b9"
+    },
+    {
+      "path": "publication/attachment.json",
+      "bytes": 137,
+      "sha256": "873d498dcc5207d7f876b277da59226e81853347730933d4012f9c1ecfdbe32e"
+    },
+    {
+      "path": "publication/continuity.json",
+      "bytes": 1773,
+      "sha256": "01f3d2ecd546a662d49c3475ffb973e1d564b3474a1fd0f55d786dd13d4770d5"
+    },
+    {
+      "path": "publication/description.md",
+      "bytes": 1508,
+      "sha256": "5d7e3dce7abecee669ac939d9ba124885c6e0b740b644e6ddb6708f34f1b43cd"
+    },
+    {
+      "path": "publication/description.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "publication/description.stdout",
+      "bytes": 42,
+      "sha256": "279d19499969338287b46fef2d15388599d7221216c819af06f8007294fe7702"
+    },
+    {
+      "path": "publication/local-after.json",
+      "bytes": 37125,
+      "sha256": "34e84be62fee1a4bf4d807fcea6b59d6b253ec2419c02fe856f3aede40479287"
+    },
+    {
+      "path": "publication/local-before.json",
+      "bytes": 36937,
+      "sha256": "f741dd58391be251d151caa4ac5b953bef4e980482875bc35365d87b612272ad"
+    },
+    {
+      "path": "publication/pull538-described.json",
+      "bytes": 16401,
+      "sha256": "521ad506970623e1f9cfcfd8a3ddd1e0fe9b49622234fb422a6925b9e5e22f5e"
+    },
+    {
+      "path": "publication/stack499-after.json",
+      "bytes": 79241,
+      "sha256": "f221c656ee6ab1cc6da9cb890b5a8b3eeb66e45b757e1d4bd03466fffad643d1"
+    },
+    {
+      "path": "publication/stack499-before.json",
+      "bytes": 79241,
+      "sha256": "f221c656ee6ab1cc6da9cb890b5a8b3eeb66e45b757e1d4bd03466fffad643d1"
+    },
+    {
+      "path": "publication/stack500-after.json",
+      "bytes": 141780,
+      "sha256": "00faecdd8c388db3e59c883a8c27dc09389c587212a2c9e93438ed4e2df439bb"
+    },
+    {
+      "path": "publication/stack500-before.json",
+      "bytes": 140193,
+      "sha256": "9b1f2fcb263753eedd72b6de7e1cd196a765b68fe6be5505681aedf05009168a"
+    },
+    {
+      "path": "publication/submit.stderr",
+      "bytes": 9615,
+      "sha256": "0140c38205bb315106afebd1d51e476223bde6f83ae396b870a6133104561003"
+    },
+    {
+      "path": "publication/submit.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "scripts/seal.py",
+      "bytes": 4449,
+      "sha256": "706ca72df3c4e6b66bbd2349cfc6b25963aa97ffcae0affa9872ed3bf32eefde"
+    },
+    {
+      "path": "scripts/stack.py",
+      "bytes": 2450,
+      "sha256": "c01484b4ae0b611464fb3ef4507439b949580cf045ffac89eeccae3758efc81e"
+    }
+  ]
+}

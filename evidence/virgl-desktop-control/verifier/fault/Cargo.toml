@@ -1,0 +1,12 @@
+[package]
+name="desktop-control-critic-fault"
+version="0.0.0"
+edition="2024"
+[features]
+default=["virgl-control-proof","gpu-trace","trace"]
+virgl-control-proof=[]
+gpu-trace=[]
+trace=[]
+zicsr-stub=[]
+[dependencies]
+wasm-vm-core={path="/var/folders/nr/cyvk1qc14jj5c081vj1xts000000gn/T/wasm-vm-desktop-control-fault-t98su082/repo/crates/core",features=["virgl-control-proof","gpu-trace","trace"]}

@@ -1,0 +1,1970 @@
+{
+  "schema": "standard-assembly-critic-coverage-v1",
+  "status": "passed",
+  "source": "renderer/virgl-command/state.mjs",
+  "stateSourceSha256": "58b54ba349ccc8af0f18598d8d44a03555d7b14612c3f52488fca1341c91c671",
+  "diffSha256": "75acfa155e1980f403252bca0cf4e77e44edd8554a13c8469263b1e2206964fd",
+  "hunks": [
+    {
+      "header": "@@ -134 +134 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        134
+      ]
+    },
+    {
+      "header": "@@ -135,0 +136,3 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        136,
+        137,
+        138
+      ]
+    },
+    {
+      "header": "@@ -181,0 +185,4 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        185,
+        186,
+        187,
+        188
+      ]
+    },
+    {
+      "header": "@@ -848,0 +856 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        856
+      ]
+    },
+    {
+      "header": "@@ -949 +957,18 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        957,
+        958,
+        959,
+        960,
+        961,
+        962,
+        963,
+        964,
+        965,
+        966,
+        967,
+        968,
+        969,
+        970,
+        971,
+        972,
+        973,
+        974
+      ]
+    },
+    {
+      "header": "@@ -951,0 +977 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        977
+      ]
+    },
+    {
+      "header": "@@ -954 +980 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        980
+      ]
+    },
+    {
+      "header": "@@ -956 +982 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        982
+      ]
+    },
+    {
+      "header": "@@ -959,2 +985,16 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        985,
+        986,
+        987,
+        988,
+        989,
+        990,
+        991,
+        992,
+        993,
+        994,
+        995,
+        996,
+        997,
+        998,
+        999,
+        1000
+      ]
+    },
+    {
+      "header": "@@ -972,3 +1012,3 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1012,
+        1013,
+        1014
+      ]
+    },
+    {
+      "header": "@@ -982 +1022 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1022
+      ]
+    },
+    {
+      "header": "@@ -993 +1033,2 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1033,
+        1034
+      ]
+    },
+    {
+      "header": "@@ -1315 +1356 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1356
+      ]
+    },
+    {
+      "header": "@@ -1407 +1448 @@ function createRenderer(options, drawing, asynchronous = false, standard = false",
+      "lines": [
+        1448
+      ]
+    }
+  ],
+  "changedLines": [
+    {
+      "line": 134,
+      "text": "const config = dataRecord(options, [\"gl\", \"resources\", \"bindings\", \"shaderBridge\", \"limits\", \"cacheLimits\", ...(drawing ? [\"drawLimits\"] : []), ...(asynchronous ? [\"asyncAccess\", \"jobLimits\"] : []), ...(standard ? [\"primitiveAssembly\"] : [])], [\"gl\", \"resources\", \"bindings\", \"shaderBridge\", ...(asynchronous ? [\"asyncAccess\"] : [])]);",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 136,
+      "text": "const primitiveAssembly = standard ? config.primitiveAssembly ?? \"native\" : \"native\";",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 137,
+      "text": "require([\"native\", \"lists\"].includes(primitiveAssembly), \"invalid-input\", \"Unknown standard primitive assembly selection.\");",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 138,
+      "text": "const assemblyLists = primitiveAssembly === \"lists\";",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 185,
+      "text": "const provoking = assemblyLists ? gl.getExtension(\"WEBGL_provoking_vertex\") : null;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 186,
+      "text": "require(!assemblyLists || provoking && typeof provoking.provokingVertexWEBGL === \"function\" &&",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 187,
+      "text": "provoking.LAST_VERTEX_CONVENTION_WEBGL === 0x8e4e,",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 188,
+      "text": "\"unsupported-host\", \"Native list assembly requires an explicit last-vertex convention.\");",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 317
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 197
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 856,
+      "text": "if (plan && assemblyLists) provoking.provokingVertexWEBGL(provoking.LAST_VERTEX_CONVENTION_WEBGL);",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 4262
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 4262
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 2755
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 2755
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 109
+        }
+      ]
+    },
+    {
+      "line": 957,
+      "text": "const assembled = assemblyLists && [2, 6].includes(fields.mode);",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 958,
+      "text": "const nativeMode = assembled ? fields.mode === 2 ? 1 : 4 : fields.mode;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 959,
+      "text": "const sourceIndex = i => !indices ? fields.start + i : indexSize === 1 ? indices.getUint8(i) :",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 982164
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 982164
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 327
+        }
+      ]
+    },
+    {
+      "line": 960,
+      "text": "indexSize === 2 ? indices.getUint16(i * 2, true) : indices.getUint32(i * 4, true);",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 1632
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 1632
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 315
+        }
+      ]
+    },
+    {
+      "line": 961,
+      "text": "const isRestart = value => fields.primitiveRestart && value === fields.restartIndex;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 654836
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 654836
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 246
+        }
+      ]
+    },
+    {
+      "line": 962,
+      "text": "let nativeCount = fields.count;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 963,
+      "text": "if (assembled) {",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 964,
+      "text": "nativeCount = 0; let length = 0;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 306
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 306
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 965,
+      "text": "for (let i = 0; i <= fields.count; i++) {",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 327724
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 327724
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 131
+        }
+      ]
+    },
+    {
+      "line": 966,
+      "text": "if (i === fields.count || isRestart(sourceIndex(i))) {",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 327724
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 327724
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 131
+        }
+      ]
+    },
+    {
+      "line": 967,
+      "text": "nativeCount += fields.mode === 2 ? length >= 2 ? length * 2 : 0 : Math.max(0, length - 2) * 3;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 396
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 396
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 50
+        }
+      ]
+    },
+    {
+      "line": 968,
+      "text": "length = 0;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 396
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 396
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 50
+        }
+      ]
+    },
+    {
+      "line": 969,
+      "text": "} else length++;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 327328
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 327328
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 81
+        }
+      ]
+    },
+    {
+      "line": 970,
+      "text": "}",
+      "classification": "waived-structural",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 327724
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 327724
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 131
+        }
+      ]
+    },
+    {
+      "line": 971,
+      "text": "require(nativeCount <= fields.count * 3, \"limit-exceeded\", \"Expanded native primitive work exceeds original source bound.\");",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 306
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 306
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 972,
+      "text": "normalize = true;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 306
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 306
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 973,
+      "text": "}",
+      "classification": "waived-structural",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 306
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 306
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 974,
+      "text": "const mode = gl[DRAW_MODES[nativeMode]], nativeIndexed = fields.indexed || assembled;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 977,
+      "text": "const originalIndexBuffer = normalize ? gl.getParameter(gl.ELEMENT_ARRAY_BUFFER_BINDING) : null;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 980,
+      "text": "const byteLength = nativeCount * 4;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 419
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 419
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 320
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 320
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 982,
+      "text": "byteLength <= drawLimits.indicesPerSubmission * (assemblyLists ? 12 : 4) - job.normalizedBytes,",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 419
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 419
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 320
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 320
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 985,
+      "text": "const words = new Uint32Array(nativeCount);",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 419
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 419
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 320
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 320
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 986,
+      "text": "if (assembled) {",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 419
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 419
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 320
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 320
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 987,
+      "text": "let first = 0, previous = 0, length = 0, out = 0;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 306
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 306
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 988,
+      "text": "for (let i = 0; i <= fields.count; i++) {",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 327724
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 327724
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 131
+        }
+      ]
+    },
+    {
+      "line": 989,
+      "text": "if (i === fields.count || isRestart(sourceIndex(i))) {",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 327724
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 327724
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 131
+        }
+      ]
+    },
+    {
+      "line": 990,
+      "text": "if (fields.mode === 2 && length >= 2) { words[out++] = previous; words[out++] = first; }",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 396
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 396
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 50
+        }
+      ]
+    },
+    {
+      "line": 991,
+      "text": "length = 0;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 396
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 396
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 50
+        }
+      ]
+    },
+    {
+      "line": 992,
+      "text": "} else {",
+      "classification": "waived-structural",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 327328
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 327328
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 81
+        }
+      ]
+    },
+    {
+      "line": 993,
+      "text": "const value = sourceIndex(i);",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 327328
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 327328
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 81
+        }
+      ]
+    },
+    {
+      "line": 994,
+      "text": "if (length === 0) first = value;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 327328
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 327328
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 81
+        }
+      ]
+    },
+    {
+      "line": 995,
+      "text": "else if (fields.mode === 2) { words[out++] = previous; words[out++] = value; }",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 326958
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 326958
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 52
+        }
+      ]
+    },
+    {
+      "line": 996,
+      "text": "else if (length >= 2) { words[out++] = first; words[out++] = previous; words[out++] = value; }",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 326676
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 326676
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 35
+        }
+      ]
+    },
+    {
+      "line": 997,
+      "text": "previous = value; length++;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 327328
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 327328
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 81
+        }
+      ]
+    },
+    {
+      "line": 998,
+      "text": "}",
+      "classification": "waived-structural",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 327328
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 327328
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 81
+        }
+      ]
+    },
+    {
+      "line": 999,
+      "text": "}",
+      "classification": "waived-structural",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 327724
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 327724
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 131
+        }
+      ]
+    },
+    {
+      "line": 1000,
+      "text": "} else for (let i = 0; i < words.length; i++) {",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 846
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 846
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 327500
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 327500
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 1012,
+      "text": "if (nativeIndexed) {",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 493
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 493
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 378
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 378
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 1013,
+      "text": "if (instances > 1) gl.drawElementsInstanced(mode, nativeCount, indexType, nativeIndexOffset, instances);",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 457
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 457
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 378
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 378
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 1014,
+      "text": "else gl.drawElements(mode, nativeCount, indexType, nativeIndexOffset);",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 314
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 314
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 247
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 247
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 0
+        }
+      ]
+    },
+    {
+      "line": 1022,
+      "text": "gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, originalIndexBuffer);",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 419
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 419
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 320
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 320
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 1033,
+      "text": "normalizedIndices: normalize, nativeIndexSize, nativeIndexOffset, normalizedIndexBytes: normalize ? nativeCount * 4 : 0,",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 493
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 493
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 378
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 378
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 1034,
+      "text": "...(assemblyLists ? { primitiveAssembly, assembled, nativeMode, nativeCount, nativeIndexed, nativeVertexWork: nativeCount * instances } : {}) } : {}),",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 497
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 382
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 8
+        }
+      ]
+    },
+    {
+      "line": 1356,
+      "text": "issueDraw(plan, null, job.submission, null, job); advanceJob(job); budget--; continue;",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 18
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 18
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 1
+        }
+      ]
+    },
+    {
+      "line": 1448,
+      "text": "...(drawing ? { drawLimits } : {}), ...(standard ? { primitiveAssembly } : {}),",
+      "classification": "executed",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "maxHit": 2093
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "maxHit": 2093
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 1633
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "maxHit": 1633
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "maxHit": 264
+        }
+      ]
+    }
+  ],
+  "branches": [
+    {
+      "start": 134,
+      "end": 134,
+      "snippet": ": []",
+      "classification": "waived-declarative",
+      "reason": "declarative empty capability/metadata branches for unselected legacy factories; legacy option rejection executes before acquisition; historical runtime remains outside the selected list facet",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "hits": 0
+        }
+      ]
+    },
+    {
+      "start": 134,
+      "end": 134,
+      "snippet": ": []",
+      "classification": "waived-declarative",
+      "reason": "declarative empty capability/metadata branches for unselected legacy factories; legacy option rejection executes before acquisition; historical runtime remains outside the selected list facet",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "hits": 0
+        }
+      ]
+    },
+    {
+      "start": 134,
+      "end": 134,
+      "snippet": ": []",
+      "classification": "waived-declarative",
+      "reason": "declarative empty capability/metadata branches for unselected legacy factories; legacy option rejection executes before acquisition; historical runtime remains outside the selected list facet",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "hits": 0
+        }
+      ]
+    },
+    {
+      "start": 136,
+      "end": 136,
+      "snippet": "?? \"native\"",
+      "classification": "executed-retained",
+      "reason": "executed in authenticated exact-source default D9 retention run",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "hits": 197
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "hits": 197
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "hits": 0
+        }
+      ]
+    },
+    {
+      "start": 136,
+      "end": 136,
+      "snippet": ": \"native\"",
+      "classification": "waived-declarative",
+      "reason": "declarative empty capability/metadata branches for unselected legacy factories; legacy option rejection executes before acquisition; historical runtime remains outside the selected list facet",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "hits": 0
+        }
+      ]
+    },
+    {
+      "start": 185,
+      "end": 185,
+      "snippet": ": null",
+      "classification": "executed-retained",
+      "reason": "executed in authenticated exact-source default D9 retention run",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "hits": 197
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "hits": 197
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "hits": 0
+        }
+      ]
+    },
+    {
+      "start": 982,
+      "end": 982,
+      "snippet": ": 4",
+      "classification": "executed-retained",
+      "reason": "executed in authenticated exact-source default D9 retention run",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "hits": 320
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "hits": 320
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "hits": 0
+        }
+      ]
+    },
+    {
+      "start": 1034,
+      "end": 1034,
+      "snippet": ": {}",
+      "classification": "executed-retained",
+      "reason": "executed in authenticated exact-source default D9 retention run",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "hits": 378
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "hits": 378
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "hits": 0
+        }
+      ]
+    },
+    {
+      "start": 1034,
+      "end": 1034,
+      "snippet": ": {}",
+      "classification": "waived-declarative",
+      "reason": "declarative empty capability/metadata branches for unselected legacy factories; legacy option rejection executes before acquisition; historical runtime remains outside the selected list facet",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "hits": 0
+        }
+      ]
+    },
+    {
+      "start": 1448,
+      "end": 1448,
+      "snippet": ": {}",
+      "classification": "waived-declarative",
+      "reason": "declarative empty capability/metadata branches for unselected legacy factories; legacy option rejection executes before acquisition; historical runtime remains outside the selected list facet",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "hits": 0
+        }
+      ]
+    },
+    {
+      "start": 1448,
+      "end": 1448,
+      "snippet": ": {}",
+      "classification": "waived-declarative",
+      "reason": "declarative empty capability/metadata branches for unselected legacy factories; legacy option rejection executes before acquisition; historical runtime remains outside the selected list facet",
+      "runs": [
+        {
+          "path": "unpacked/hot/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+          "hits": 0
+        },
+        {
+          "path": "independent/browser-coverage.json",
+          "hits": 0
+        }
+      ]
+    }
+  ],
+  "guardClassification": [
+    {
+      "lines": [
+        137,
+        186,
+        187,
+        188
+      ],
+      "classification": "executed",
+      "reason": "real invalid selection/missing extension/wrong extension rejection paths and valid extension draws"
+    },
+    {
+      "lines": [
+        971
+      ],
+      "classification": "executed-defensive-bound",
+      "reason": "bounded loop/fan count proof, exact 65536 fan and empty/tiny segments execute it; failure arm is algebraically impossible without corrupting trusted internal state"
+    },
+    {
+      "lines": [
+        982
+      ],
+      "classification": "executed",
+      "reason": "both list and retained native scales are covered; source-work/draw limits dominate private byte guard; exact ceiling and tightened source limits exercised"
+    },
+    {
+      "lines": [
+        1022
+      ],
+      "classification": "executed",
+      "reason": "original indexed EBO and retained prior EBO on arrays restore before yield, including exceptions after partial upload"
+    }
+  ],
+  "scope": "all new executable hunks exercised; no dead hunk and no uncovered claimed runtime behavior",
+  "sources": [
+    {
+      "path": "unpacked/hot/hardware/browser-coverage.json",
+      "sha256": "92407fae9aa89bfc929a2511bb14d3c92f6450bc694cf92b294b268a31354cfd"
+    },
+    {
+      "path": "unpacked/cold/hardware/browser-coverage.json",
+      "sha256": "baba0beff61f81186611b431b1c3d83dcad0ab68b53e6134bec34fbeafd1aa71"
+    },
+    {
+      "path": "unpacked/hot/retained-restart/hardware/browser-coverage.json",
+      "sha256": "f8af36ddd4056f33e97927754cb711d8098a6ad76f5222494307997a207a1205"
+    },
+    {
+      "path": "unpacked/cold/retained-restart/hardware/browser-coverage.json",
+      "sha256": "ecaf048a8670e2ab6407597230617561ec9c65381a243617397be347ab67b3bf"
+    },
+    {
+      "path": "independent/browser-coverage.json",
+      "sha256": "e27a5a6eea42baa7f8a128ee5493281040b12486cae199a91ce0ee20b9a067da"
+    }
+  ]
+}

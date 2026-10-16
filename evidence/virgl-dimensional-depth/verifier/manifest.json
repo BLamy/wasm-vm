@@ -1,0 +1,56 @@
+{
+  "schema": "dimensional-depth-fresh-verifier-seal-v1",
+  "task": "E6-T11d59",
+  "workerHead": "d7b20d465eaa45057c234b5fd48d8a3e2eada823",
+  "base": "fa4692ab33c0bd91e4d2cedddc8003df29354108",
+  "runtimeFreeze": "ac6e174bbf86b94494b4213c7637f559f1b5ca8b",
+  "harnessFreeze": "ca9481ebe67cb0678939996d5f796552c6a1bf3b",
+  "verdict": "verified",
+  "predictionsHeld": 14,
+  "records": 308,
+  "reopenedMembers": 308,
+  "bodyBytes": 304726664,
+  "recordIndexSha256": "0f5636d1b4f07d815b0864b430892f6724bde0dbe50dff5c03d7a125c927f3d8",
+  "archiveSha256": "2872dbc59dfeb308a758497220a18d6e67fac6f127cb8ad1ddab948116fa23f2",
+  "archiveBytes": 37705730,
+  "archiveParts": [
+    {
+      "path": "recording.tar.gz.part-0000",
+      "bytes": 16777216,
+      "sha256": "d6a3a2b9ed0c54d4edff85d460db494a5a9c8bab2726b9650e62f0a4b7a6c432"
+    },
+    {
+      "path": "recording.tar.gz.part-0001",
+      "bytes": 16777216,
+      "sha256": "72ea42f71e4d8a2f36e89bc177a369f5c112109fb05377a690bebfb5321c37e1"
+    },
+    {
+      "path": "recording.tar.gz.part-0002",
+      "bytes": 4151298,
+      "sha256": "8e06e95ecf2eb9184ffea7e1b891daf11981c9f4b7f57cee5c1a86c7a3f18694"
+    }
+  ],
+  "verdictSha256": "54baa4afcbb92042d7674386e9c9ce33f7e844cf956c62d028bfbae52831e304",
+  "originalPredictionsSha256": "33d6fa78802f530b2bffc9421fef324ba0b42633df2026749c74c9abb23d8c89",
+  "workerManifestSha256": "109f0a3a84cbf48bca63f28206a568cd0f7b78019e26202d96b8890870504a55",
+  "deploymentManifestSha256": "370e3aa117f95484a690360032397fe9ecdf01ca1a16e2d543cdd89eacb8f52c",
+  "authoritativeRecordings": [
+    "fresh-362436069-521288629-88675123",
+    "novel-2654435769-2135587861",
+    "novel-sabotage-stencil",
+    "promoted-2654435769-2135587861",
+    "promoted-sabotage-stencil"
+  ],
+  "fullOriginalGpuCalls": true,
+  "fullSourceServedBodies": true,
+  "guestInstructionTraces": true,
+  "actualLinuxGuest": false,
+  "productionAuthority": false,
+  "excludedGeneratedConfirmationFiles": [
+    "commit.log",
+    "manifest.json",
+    "records.json",
+    "seal-reopen.log",
+    "seal.log"
+  ]
+}

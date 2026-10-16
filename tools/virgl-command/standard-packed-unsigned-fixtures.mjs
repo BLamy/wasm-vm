@@ -1,0 +1,45 @@
+// Independent original Mesa channels/swizzles; no product conversion imports.
+export const originalFormats=Object.freeze([{"originalFormat":225,"originalName":"B10G10R10A2_UINT","channels":["UP10","UP10","UP10","UP2"],"swizzles":["Z","Y","X","W"],"rgbaFields":[{"bits":10,"offset":20,"ignored":false},{"bits":10,"offset":10,"ignored":false},{"bits":10,"offset":0,"ignored":false},{"bits":2,"offset":30,"ignored":false}],"guestPixelBytes":4,"plannedNativePixelBytes":4,"plannedNativeInternal":"RGB10_A2UI","plannedUploadFormat":"RGBA_INTEGER","plannedUploadType":"UNSIGNED_INT_2_10_10_10_REV","plannedReadType":"UNSIGNED_INT","plannedReadFormat":"RGBA_INTEGER","nativeOffsets":[0,10,20,30],"implicitAlpha":false,"readPixelBytes":16},{"originalFormat":253,"originalName":"R10G10B10A2_UINT","channels":["UP10","UP10","UP10","UP2"],"swizzles":["X","Y","Z","W"],"rgbaFields":[{"bits":10,"offset":0,"ignored":false},{"bits":10,"offset":10,"ignored":false},{"bits":10,"offset":20,"ignored":false},{"bits":2,"offset":30,"ignored":false}],"guestPixelBytes":4,"plannedNativePixelBytes":4,"plannedNativeInternal":"RGB10_A2UI","plannedUploadFormat":"RGBA_INTEGER","plannedUploadType":"UNSIGNED_INT_2_10_10_10_REV","plannedReadType":"UNSIGNED_INT","plannedReadFormat":"RGBA_INTEGER","nativeOffsets":[0,10,20,30],"implicitAlpha":false,"readPixelBytes":16}]);
+export const originalFormat=id=>originalFormats.find(row=>row.originalFormat===id);
+export const metadata=(id,format,width,height,lastLevel=0,bind=10)=>({id,target:2,format,bind,width,height,depth:1,arraySize:1,lastLevel,nrSamples:0,flags:0});
+export const hex=bytes=>[...bytes].map(value=>value.toString(16).padStart(2,'0')).join('');
+export function packet(opcode,words){const bytes=new Uint8Array((words.length+1)*4),view=new DataView(bytes.buffer);view.setUint32(0,opcode|words.length<<16,true);words.forEach((word,index)=>view.setUint32(4+index*4,word>>>0,true));return bytes;}
+export const transfer=(id,plane,direction=1)=>packet(43,[id,plane.level,0,plane.stride,0,plane.x??0,plane.y??0,0,plane.width,plane.height,1,plane.offset,direction]);
+export const copyTransfer=(id,plane,staging,direction=3)=>packet(45,[id,plane.level,0,plane.stride,0,plane.x??0,plane.y??0,0,plane.width,plane.height,1,staging,plane.offset,direction]);
+export function inlineTransfer(id,plane){
+ const rowBytes=plane.input.length/plane.height,span=(plane.height-1)*plane.stride+rowBytes,bytes=new Uint8Array(Math.ceil(span/4)*4).fill(0x6d);
+ for(let y=0;y<plane.height;y++)bytes.set(plane.input.subarray(y*rowBytes,(y+1)*rowBytes),y*plane.stride);
+ const view=new DataView(bytes.buffer);return packet(9,[id,plane.level,0,plane.stride,0,plane.x??0,plane.y??0,0,plane.width,plane.height,1,...Array.from({length:bytes.length/4},(_,i)=>view.getUint32(i*4,true))]);
+}
+const random=seed=>()=>{seed^=seed<<13;seed^=seed>>>17;seed^=seed<<5;return seed>>>0;};
+export function canonical(format,input){
+ const f=originalFormat(format),v=new DataView(input.buffer,input.byteOffset,input.byteLength),out=input.slice(),d=new DataView(out.buffer);
+ if(f.implicitAlpha&&f.rgbaFields[3].bits){const a=f.rgbaFields[3],mask=(2**a.bits-1)<<a.offset;for(let i=0;i<input.length/f.guestPixelBytes;i++){const word=f.guestPixelBytes===2?v.getUint16(i*2,true):v.getUint32(i*4,true);if(f.guestPixelBytes===2)d.setUint16(i*2,word|mask,true);else d.setUint32(i*4,word|mask,true);}}
+ return out;
+}
+export function source(format,width,height,lastLevel,seed,{bind=10,dense=false}={}){
+ const f=originalFormat(format),next=random(seed),planes=[];let offset=5,w=width,h=height;
+ for(let level=0;level<=lastLevel;level++){
+  const input=new Uint8Array(w*h*f.guestPixelBytes),v=new DataView(input.buffer),stride=w*f.guestPixelBytes+7;
+  for(let i=0;i<w*h;i++){let word=dense&&f.guestPixelBytes===2?i:next();if(dense&&f.guestPixelBytes===4){word=(i%1024)|((Math.floor(i/4)%1024)<<10)|((1023-i%1024)<<20)|((i%4)<<30);}if(f.guestPixelBytes===2)v.setUint16(i*2,word,true);else v.setUint32(i*4,word,true);}
+  planes.push({level,width:w,height:h,stride,offset,input});offset+=(h-1)*stride+w*f.guestPixelBytes+11;w=Math.max(1,Math.floor(w/2));h=Math.max(1,Math.floor(h/2));
+ }
+ const backing=new Uint8Array(offset+9).fill(0xa7);
+ for(const p of planes)for(let y=0;y<p.height;y++){const row=p.width*f.guestPixelBytes;backing.set(p.input.subarray(y*row,(y+1)*row),p.offset+y*p.stride);}
+ return {metadata:metadata(6,format,width,height,lastLevel,bind),seed,dense,planes,backing};
+}
+export function originalValues(format,input){
+ const f=originalFormat(format),v=new DataView(input.buffer,input.byteOffset,input.byteLength),result=[];
+ for(let i=0;i<input.length/4;i++){const word=v.getUint32(i*4,true);for(const field of f.rgbaFields)result.push((word>>>field.offset)&(2**field.bits-1));}return result;
+}
+export function nativeMisses(format,input,native){
+ const expected=originalValues(format,input),v=new DataView(native.buffer,native.byteOffset,native.byteLength),miss=[];
+ if(native.length!==expected.length*4)return[{bytes:native.length,expected:expected.length*4}];
+ for(let i=0;i<expected.length;i++){const actual=v.getUint32(i*4,true);if(actual!==expected[i]&&miss.length<8)miss.push({pixel:Math.floor(i/4),lane:i%4,expected:expected[i],observed:actual});}return miss;
+}
+export function clearWords(format,width,height,values){
+ const f=originalFormat(format),out=new Uint8Array(width*height*4),v=new DataView(out.buffer);let word=0;
+ f.rgbaFields.forEach((field,lane)=>{word|=(values[lane]&(2**field.bits-1))<<field.offset;});
+ for(let i=0;i<width*height;i++)v.setUint32(i*4,word,true);return out;
+}
+export function patchPlane(format,plane,patch){const f=originalFormat(format),result=canonical(format,plane.input),raw=canonical(format,patch.input),rowBytes=patch.width*f.guestPixelBytes;for(let y=0;y<patch.height;y++)result.set(raw.subarray(y*rowBytes,(y+1)*rowBytes),((patch.y+y)*plane.width+patch.x)*f.guestPixelBytes);return result;}
