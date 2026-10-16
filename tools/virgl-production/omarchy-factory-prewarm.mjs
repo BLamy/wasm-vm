@@ -25,7 +25,8 @@ for p in paths:
    if not b:break
    if header is None:header=b[:64]
    read+=len(b)
-  assert read==s.st_size and p.stat()==s
+  after=p.stat();fields=['st_dev','st_ino','st_size','st_mode','st_uid','st_gid','st_mtime_ns','st_ctime_ns']
+  assert read==s.st_size and all(getattr(after,k)==getattr(s,k) for k in fields)
   if p.name in ['chromium','soffice.bin']:assert header[:4]==bytes([127,69,76,70]) and struct.unpack_from('<H',header,18)[0]==243
   if s.st_size:mappings.append((len(rows),mmap.mmap(f.fileno(),0,flags=mmap.MAP_PRIVATE,prot=mmap.PROT_READ|mmap.PROT_WRITE)))
  rows.append(dict(path=str(p),bytes=s.st_size,readBytes=read,ino=s.st_ino,uid=s.st_uid,mode=stat.S_IMODE(s.st_mode)))
