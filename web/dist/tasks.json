@@ -25389,18 +25389,18 @@
         },
         {
           "date": "2026-10-16",
-          "commits": 7,
+          "commits": 8,
           "labels": [
+            "Publish the Omarchy factory after wallpaper and Apps initialization",
             "Publish matched native Omarchy application warm boot manifests",
             "Name the recorded GPU completion counter accurately",
-            "Record coherent software factory and bounded preparation attempts",
-            "Record closed swap and publication evidence with original negatives"
+            "Record coherent software factory and bounded preparation attempts"
           ]
         }
       ],
       "firstActivity": "2026-10-15",
       "lastActivity": "2026-10-16",
-      "commitCount": 10
+      "commitCount": 11
     },
     {
       "id": "E6-T01",
