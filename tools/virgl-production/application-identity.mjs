@@ -116,7 +116,12 @@ export function createApplicationIdentityProof(page,command,output,options={}){
     }
     assert.deepEqual(capture.after.clock,capture.before.clock);
     assert.equal(capture.after.scheduler.retiredInstructions,capture.before.scheduler.retiredInstructions);
-    const bytes=await fs.readFile(pairPath),decoded=await decodeGpuCheckpointPair(bytes,expectedIdentity),delta=Buffer.from(decoded.disk);
+    const bytes=await fs.readFile(pairPath);
+    if(retained){
+      assert.equal(bytes.length,retained.receipt.pair.bytes);
+      assert.equal(sha(bytes),retained.receipt.pair.sha256,'copied observed pair matches the pinned original');
+    }
+    const decoded=await decodeGpuCheckpointPair(bytes,expectedIdentity),delta=Buffer.from(decoded.disk);
     const native=Buffer.from(decoded.native),trailer=native.length-84;
     assert.equal(native.subarray(0,8).toString('latin1'),'WVMRESU1');
     assert.equal(native.subarray(trailer,trailer+8).toString('latin1'),'WVGRESU1');
@@ -128,8 +133,8 @@ export function createApplicationIdentityProof(page,command,output,options={}){
     const rows=parseIdentityDelta(delta,manifest);await fs.writeFile(path.join(directory,'actual.wvod'),delta);
     if(retained){
       const r=retained.receipt;
-      assert.deepEqual(decoded.identity,r.identity);assert.equal(decoded.epoch,r.epoch);
-      assert.deepEqual(decoded.clockState,r.clockState);assert.equal(decoded.witness,r.witness);
+      assert.deepEqual({...decoded.identity},r.identity);assert.equal(decoded.epoch,r.epoch);
+      assert.deepEqual({...decoded.clockState},r.clockState);assert.equal(decoded.witness,r.witness);
       assert.equal(sha(delta),r.diskSha256);assert.equal(rows.length,r.deltaBlocks);
       assert.equal(sha(manifestBytes),r.manifestSha256);assert.equal(expectedImageSha256,r.baseImageSha256);
     }
