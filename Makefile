@@ -2686,3 +2686,4 @@ verify-E5.5-T05c1:
 	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
 	$(MAKE) web-dist
 	node tools/virgl-production/omarchy-color-checkpoint-browser.mjs --output "$${OMARCHY_COLOR_CHECKPOINT_EVIDENCE_DIR:-target/evidence/omarchy-color-checkpoint-hardware}"
+	node tools/verify-virgl-default-demo.mjs --output "$${OMARCHY_COLOR_DEMO_EVIDENCE_DIR:-target/evidence/omarchy-color-checkpoint-demo}" --task E5.5-T05c1
