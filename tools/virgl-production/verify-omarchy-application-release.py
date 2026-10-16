@@ -70,6 +70,7 @@ def run(name, command, extra=None, timeout=3600):
 
 def boot(name, extra, public=True, timeout=3600):
     options = {"CRITIC_FAST_BOOT_WEB_ROOT": str(repo/"web/dist"),
+               "CRITIC_FAST_BOOT_PUBLIC_ASSET_ORIGIN": args.url,
                "CRITIC_FAST_BOOT_GUESTS": "omarchy", "CRITIC_FAST_BOOT_PERSISTENCE": "0", **extra}
     if public:
         options["CRITIC_FAST_BOOT_URL"] = args.url

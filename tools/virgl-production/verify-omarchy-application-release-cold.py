@@ -63,8 +63,10 @@ def run(name, command, cwd, timeout=3600, stdin=None):
 
 
 try:
+    upload_pack = "git -c uploadpack.allowFilter=true -c uploadpack.allowAnySHA1InWant=true upload-pack"
     run("clone", ["git", "clone", "--no-local", "--no-checkout", "--filter=blob:none",
-                  "--upload-pack=git -c uploadpack.allowFilter=true upload-pack", str(repo), str(clone)], repo)
+                  "--upload-pack="+upload_pack, str(repo), str(clone)], repo)
+    run("local-filter-transport", ["git", "config", "remote.origin.uploadpack", upload_pack], clone)
     run("sparse", ["git", "sparse-checkout", "set", "--no-cone", "--stdin"], clone,
         stdin=b"/*\n!/evidence/\n")
     run("checkout", ["git", "checkout", "--detach", head], clone)

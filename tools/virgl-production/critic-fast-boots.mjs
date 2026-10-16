@@ -21,6 +21,9 @@ const web = path.resolve(process.env.CRITIC_FAST_BOOT_WEB_ROOT || path.join(repo
 // This optional cache is an optimization. A pristine clone may omit every asset.
 const releaseCache = path.resolve(process.env.CRITIC_FAST_BOOT_CACHE_DIRECTORY || path.join(repo,'releases'));
 const r2 = 'https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev';
+const publicAssetOrigin=new URL(process.env.CRITIC_FAST_BOOT_PUBLIC_ASSET_ORIGIN||'https://wasm-vm.pages.dev/');
+assert.equal(publicAssetOrigin.protocol,'https:');assert.equal(publicAssetOrigin.pathname,'/');
+assert.equal(publicAssetOrigin.search+publicAssetOrigin.hash+publicAssetOrigin.username+publicAssetOrigin.password,'');
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const guests = (process.env.CRITIC_FAST_BOOT_GUESTS || 'busybox,alpine,node-alpine,omarchy').split(',');
 const coldGpu = process.env.CRITIC_FAST_BOOT_GPU === '1';
@@ -69,7 +72,7 @@ noteRecorderMemory();const recorderMemoryTimer=setInterval(noteRecorderMemory,30
 if(gpuTrace)await fs.writeFile(path.join(output,'gpu.ndjson'),'');
 const report = {status:'running', scope:factoryGuardOnly?'read-only native factory process/client exclusion; no application interaction or repeat-latency claim':restoredApplications?'native application launches after a fresh factory restoration; repeat timing is verified separately':swapCheckpoint?'separate swapped-page checkpoint fixture, not factory or publication timing':'actual production UI fast boots and repeat launches',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
-  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, gpuTimingOnly, remoteUrl, warmGpu, applicationContinuation, restoredApplications, omarchyPersist, swapCheckpointMode:swapCheckpoint, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
+  webRoot:web, releaseCache, publicAssetOrigin:publicAssetOrigin.href, saveOnRepeat, gpuTrace, gpuTimingOnly, remoteUrl, warmGpu, applicationContinuation, restoredApplications, omarchyPersist, swapCheckpointMode:swapCheckpoint, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
 if(applicationComponent)report.applicationComponent={name:applicationComponent,scope:'Only missing native Writer/Node/npm/wallpaper and final desktop proof; not Chromium/SVG or publication timing.'};
 for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs','critic-canvas-observation.mjs']){
   const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
@@ -192,10 +195,15 @@ async function fetchOriginal(pathname) {
     // checkout has no ignored snapshot cache and must resolve those same bytes.
     // Small historical assets can still exist only at their legacy URL; either
     // path remains subject to the original manifest's exact size/hash check.
-    const routes=pin?['/sha256/'+pin.sha256+pathname,pathname]:[pathname];
+    // deploy-cloudflare.sh ships small paired deltas/snapshots on Pages. A
+    // pristine local swap fixture must resolve that real published object,
+    // rather than assume an unadvertised copy also exists in R2.
+    const pagesAsset=pin&&pathname.startsWith('/releases/boot-snapshot/')&&pin.size<=25*1024*1024;
+    const routes=pagesAsset?[new URL(pathname,publicAssetOrigin).href]:pin&&!pathname.startsWith('/sha256/')
+      ?[r2+'/sha256/'+pin.sha256+pathname,r2+pathname]:[r2+pathname];
     for(const route of routes){
-      const remote=await fetch(r2+route,{signal:AbortSignal.timeout(180000)});
-      const receipt={pathname,url:r2+route,status:remote.status};report.remoteFetches.push(receipt);
+      const remote=await fetch(route,{signal:AbortSignal.timeout(180000)});
+      const receipt={pathname,url:route,status:remote.status};report.remoteFetches.push(receipt);
       if(remote.status===404&&route!==routes.at(-1)){await remote.body?.cancel();continue;}
       assert.equal(remote.status,200,route+' original R2 status');
       const bytes=Buffer.from(await remote.arrayBuffer());
