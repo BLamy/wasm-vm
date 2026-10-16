@@ -28,6 +28,18 @@ test('a cold Writer continuation preserves the failed Tip/Open recording and act
   }
 });
 
+test('a cold Writer continuation rejects two same-process Open choosers',async()=>{
+  const prior=JSON.parse(await fs.readFile(new URL('./fixtures/omarchy-writer-tip-open.json',import.meta.url)));
+  const windows=JSON.parse(prior.phases[0].result.stdout);
+  const open=windows.find(row=>row.pid===prior.reopenLaunch.window.pid&&row.class==='soffice'&&row.title==='Open');
+  assert.ok(open);
+  windows.push({...open,address:'0x555579673e70'});
+  prior.phases[0].result.stdout=JSON.stringify(windows);
+  const bytes=Buffer.from(JSON.stringify(prior));
+  const digest=createHash('sha256').update(bytes).digest('hex');
+  assert.throws(()=>authenticateColdWriterOpenPrefix(bytes,digest));
+});
+
 test('native note controls are selected from visible pixels across tiled layouts and hover colors',()=>{
   for(const width of [621,1256])for(const shade of [225,239]){
     const height=750,rgba=Buffer.alloc(width*height*4);
