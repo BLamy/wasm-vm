@@ -15,14 +15,20 @@ for p in Path('/proc').iterdir():
  try:
   if p.stat().st_uid!=1000:continue
   s=(p/'stat').read_text();cmd=(p/'cmdline').read_bytes().split(bytes([0]));comm=(p/'comm').read_text().strip()
+  restricted=False
   try:exe=os.readlink(p/'exe')
   except FileNotFoundError:exe=None
-  rows.append(dict(pid=int(p.name),starttime=s.rsplit(')',1)[1].split()[19],state=s.rsplit(')',1)[1].split()[0],comm=comm,exe=exe,args=[x.decode() for x in cmd if x]))
+  except PermissionError:exe=None;restricted=True
+  rows.append(dict(pid=int(p.name),ppid=int(s.rsplit(')',1)[1].split()[1]),starttime=s.rsplit(')',1)[1].split()[19],state=s.rsplit(')',1)[1].split()[0],comm=comm,exe=exe,restricted=restricted,args=[x.decode() for x in cmd if x]))
  except FileNotFoundError:continue
 print(json.dumps(dict(processes=rows,chromiumEula=(Path.home()/'.config/chromium/EULA Accepted').exists(),chromiumFirstRun=(Path.home()/'.config/chromium/First Run').exists())))`;
   const text='python3 -c '+quote(code);assert.ok(Buffer.byteLength(text)<2500);
   const processes=await command(page,text,300000);assert.equal(processes.exit,0);
   const observed=JSON.parse(processes.stdout);
+  for(const row of observed.processes.filter(row=>row.restricted))assert.ok(
+    row.comm==='systemd'&&row.ppid===1&&JSON.stringify(row.args)===JSON.stringify(['/usr/lib/systemd/systemd','--user'])||
+    row.comm==='(sd-pam)'&&JSON.stringify(row.args)===JSON.stringify(['(sd-pam)'])&&observed.processes.some(parent=>parent.pid===row.ppid&&parent.comm==='systemd'&&parent.ppid===1),
+    'retain and qualify the native nondumpable user-manager/PAM process; unknown inaccessible executables fail');
   assert.equal(observed.chromiumEula,false);assert.equal(observed.chromiumFirstRun,false);
   assert.ok(!observed.processes.some(row=>row.state!=='Z'&&(/\/(?:chromium|libreoffice)\//i.test(row.exe??'')||/^(?:chromium|soffice\.bin)$/.test(row.comm))),'no prelaunched native browser or office process');
   const result={status:'passed',scope:'Read-only complete native uid1000 process/client exclusion on the actual restored factory; no fixture or application profile writes',clients,command:text,processes,observed};

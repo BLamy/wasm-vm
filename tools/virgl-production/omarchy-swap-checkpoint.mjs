@@ -45,12 +45,15 @@ def mapstate():
  vec=(ctypes.c_ubyte*pages)();assert libc.mincore(address,size,vec)==0,ctypes.get_errno()
  return {'present':sum(bool(v&(1<<63)) for v in entries),'swapped':sum(bool(v&(1<<62)) for v in entries),'resident':sum(bool(v&1) for v in vec),'entriesSha256':hashlib.sha256(raw).hexdigest(),'mincoreSha256':hashlib.sha256(bytes(vec)).hexdigest()}
 before=mapstate();beforeSwap=swap();assert before['present']==pages and before['swapped']==0 and before['resident']==pages
-m.madvise(getattr(mmap,'MADV_PAGEOUT',21));pageoutDeadline=time.monotonic()+30;pageoutSamples=[]
-while True:
- paged=mapstate();pageoutSamples.append(paged)
+pageoutSamples=[]
+for attempt in range(2):
+ passBefore=mapstate();m.madvise(getattr(mmap,'MADV_PAGEOUT',21));time.sleep(0.5);paged=mapstate()
+ pageoutSamples.append(dict(passNumber=attempt+1,before=passBefore,after=paged))
  if paged['present']==0 and paged['swapped']==pages and paged['resident']==0:break
- assert time.monotonic()<pageoutDeadline,(before,paged,beforeSwap,swap())
- time.sleep(0.05)
+ # A first write can leave clean data in swap cache. Refault unchanged bytes,
+ # then reclaim that clean mapping; never discard or reconstruct its contents.
+ assert m[:]==data
+assert paged['present']==0 and paged['swapped']==pages and paged['resident']==0,(before,paged,beforeSwap,swap())
 pagedSwap=swap()
 exe=Path('/proc/self/exe').resolve();elf=exe.read_bytes();assert elf[:4]==bytes([127,69,76,70]) and struct.unpack_from('<H',elf,18)[0]==243
 identity={'pid':os.getpid(),'starttime':start(),'address':address,'bytes':size,'pages':pages,'seed':seed,'expectedSha256':hashlib.sha256(data).hexdigest(),'scriptSha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'exe':str(exe),'exeSha256':hashlib.sha256(elf).hexdigest()}
