@@ -194,8 +194,36 @@ export async function verifyOmarchyApplications(page, command, output, options =
     const proof=await identityProof.process(client,executable,name+'-identity-'+identitySequence++);
     report.phases.push({kind:'native-executable-identity',proof,time:Date.now()});await save();return proof;
   }
-  async function press(key){report.phases.push({kind:'trusted-key',key,time:Date.now()});await page.keyboard.press(key,{delay:100});await save();}
-  async function type(text){report.phases.push({kind:'trusted-text',text,time:Date.now()});await typeGuestText(page,text);await save();}
+  async function focusInput(){
+    const canvas=page.locator('#ide-display-canvas');await canvas.focus();
+    if(await page.evaluate(()=>document.documentElement.dataset.keyboardCapture)!=='on'){
+      await page.locator('#ide-keyboard-toggle').click();await canvas.focus();
+    }
+    assert.equal(await page.evaluate(()=>document.activeElement?.id),'ide-display-canvas');
+    assert.equal(await page.evaluate(()=>document.documentElement.dataset.keyboardCapture),'on');
+  }
+  async function inputObservation(){
+    return await page.evaluate(async()=>({focus:document.activeElement?.id,capture:document.documentElement.dataset.keyboardCapture,
+      device:await __linuxCtl.inputDeviceStats(),held:__keyboardCapture.heldSnapshot(),debug:__keyboardCapture.stats(),
+      frames:__keyboardCapture.frames(),diagnostics:__keyboardCapture.diagnostics()}));
+  }
+  async function press(key){await focusInput();const time=Date.now();report.phases.push({kind:'trusted-key',key,time});await page.keyboard.press(key,{delay:100});await save();return time;}
+  async function type(text){await focusInput();report.phases.push({kind:'trusted-text',text,time:Date.now()});await typeGuestText(page,text);await save();}
+  async function navigateBrowser(chromium){
+    const rows=await clients(),client=rows.find(row=>row.pid===chromium.pid&&row.address===chromium.address);
+    assert.ok(client?.visible&&client.size[0]>300&&client.size[1]>200);
+    const result=await run(hypr+'monitors');assert.equal(result.exit,0);
+    const monitor=JSON.parse(result.stdout).find(row=>row.id===client.monitor);assert.equal(monitor.scale,1);
+    const box=await page.locator('#ide-display-canvas').boundingBox();assert.ok(box?.width>0&&box.height>0);
+    const target={x:client.at[0]+client.size[0]*0.55,y:client.at[1]+64};
+    const before=await inputObservation();
+    await page.mouse.click(box.x+target.x*box.width/monitor.width,box.y+target.y*box.height/monitor.height,{delay:120});
+    // Select the visible native address field through its real pointer surface.
+    // This also establishes compositor seat focus after a native modal closes.
+    await press('Control+a');await type(fixtureSpec.url);const enteredAt=await press('Enter');
+    report.phases.push({kind:'native-address-navigation',target,client,before,enteredAt,after:await inputObservation(),time:Date.now()});await save();
+    return enteredAt;
+  }
   async function cancelTestKeyringPrompt(chromium) {
     const prompts=(await clients()).filter(row=>row.class==='gcr-prompter'&&row.visible!==false);
     if(!prompts.length)return false;
@@ -269,14 +297,16 @@ export async function verifyOmarchyApplications(page, command, output, options =
     const window=await waitWindow(row=>/libreoffice|soffice/i.test(row.class)&&row.visible!==false&&row.size?.[0]>300,600000);
     await waitActive(row=>row.pid===window.pid);await shot('writer-open');return window;
   }
-  async function verifySandboxedImage() {
-    const code="import gi,hashlib,json,os,base64;gi.require_version('GdkPixbuf','2.0');from gi.repository import GdkPixbuf;assert 'GLYCIN_DISABLE_SANDBOX' not in os.environ;p='/usr/share/icons/Adwaita/scalable/status/image-missing.svg';source=open(p,'rb').read();b=GdkPixbuf.Pixbuf.new_from_file_at_scale(p,48,48,True);pixels=b.get_pixels();print(json.dumps({'width':b.get_width(),'height':b.get_height(),'channels':b.get_n_channels(),'stride':b.get_rowstride(),'pixelSha256':hashlib.sha256(pixels).hexdigest(),'sourceSha256':hashlib.sha256(source).hexdigest(),'pixels':base64.b64encode(pixels).decode(),'source':base64.b64encode(source).decode()}),flush=True)";
+  async function verifySandboxedImage(chromium) {
+    const expected={pid:chromium.pid,starttime:report.chromium.before.data.starttime,exe:'/usr/lib/chromium/chromium'};
+    const code=`import gi,hashlib,json,os,base64;from pathlib import Path;expected=json.loads(${JSON.stringify(JSON.stringify(expected))})\ndef process():\n p=Path('/proc')/str(expected['pid']);s=(p/'stat').read_text();value=dict(pid=expected['pid'],starttime=s[s.rfind(')')+2:].split()[19],exe=os.readlink(p/'exe'));assert value==expected;return value\nbefore=process();gi.require_version('GdkPixbuf','2.0');from gi.repository import GdkPixbuf;assert 'GLYCIN_DISABLE_SANDBOX' not in os.environ;p='/usr/share/icons/Adwaita/scalable/status/image-missing.svg';source=open(p,'rb').read();b=GdkPixbuf.Pixbuf.new_from_file_at_scale(p,48,48,True);pixels=b.get_pixels();after=process();assert before==after;print(json.dumps({'chromiumBefore':before,'chromiumAfter':after,'width':b.get_width(),'height':b.get_height(),'channels':b.get_n_channels(),'stride':b.get_rowstride(),'pixelSha256':hashlib.sha256(pixels).hexdigest(),'sourceSha256':hashlib.sha256(source).hexdigest(),'pixels':base64.b64encode(pixels).decode(),'source':base64.b64encode(source).decode()}),flush=True)`;
     const result=await run('timeout -k 1s 10s env RUST_LOG=debug python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");
     assert.equal(result.exit,0,'native GdkPixbuf decodes the packaged icon under the normal sandbox');
     assert.match(result.stdout,/bwrap sandboxing available: true/);
     assert.match(result.stdout,/"bwrap"[^\n]+"--seccomp"/);
     assert.doesNotMatch(result.stdout,/running without sandbox/i);
     const value=JSON.parse(result.stdout.split('\n').findLast(line=>line.startsWith('{')));
+    assert.deepEqual(value.chromiumBefore,expected);assert.deepEqual(value.chromiumAfter,expected);
     assert.equal(value.width,48);assert.equal(value.height,48);assert.equal(value.channels,4);assert.equal(value.stride,192);
     const pixels=Buffer.from(value.pixels,'base64'),source=Buffer.from(value.source,'base64');
     assert.equal(pixels.length,48*48*4);assert.equal(sha(pixels),value.pixelSha256);assert.equal(sha(source),value.sourceSha256);
@@ -357,13 +387,13 @@ export async function verifyOmarchyApplications(page, command, output, options =
     await waitActive(row=>row.pid===chromium.pid);
     assert.match(report.chromium.process.stdout,/\/usr\/lib\/chromium\/chromium/);
     await shot('chromium-open');
-    await press('Control+l');await type(fixtureSpec.url);await press('Enter');
-    let ready,diagnostic=0,nextDiagnostic=0,nextPromptProbe=0;const navigationStarted=Date.now();
+    const navigationStarted=await navigateBrowser(chromium);
+    let ready,diagnostic=0,nextDiagnostic=0,nextPromptProbe=0;
     do {
       if(Date.now()>=nextPromptProbe){
         nextPromptProbe=Date.now()+15000;
         if(await cancelTestKeyringPrompt(chromium)){
-          await press('Control+l');await type(fixtureSpec.url);await press('Enter');
+          await navigateBrowser(chromium);
         }
       }
       await gpuHealth();ready=await run('cat /tmp/omarchyapps/ready.json');if(ready.exit===0)break;
@@ -389,8 +419,8 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.equal(report.browserSubmission.message,note);assert.equal(report.browserSubmission.clickTrusted,true);
     assert.ok(report.browserSubmission.inputTrusted.length>=note.length);assert.ok(report.browserSubmission.inputTrusted.every(value=>value===true));
     report.chromiumGpu=await shot('chromium-submitted');
-    await verifySandboxedImage();
-    await press('Control+Shift+w');await waitClosed(row=>/chromium/i.test(row.class));
+    await verifySandboxedImage(chromium);
+    await press('Meta+w');await waitClosed(row=>/chromium/i.test(row.class));
 
     report.writer=await identity(await launchWriter(),'/usr/lib/libreoffice/program/soffice.bin');assert.match(report.writer.process.stdout,/\/usr\/lib\/libreoffice\/program\/soffice.bin/);
     const first='omarchy riscv document 42';await type(first);await press('Control+s');await sleep(2000);await shot('writer-save-dialog');
@@ -434,6 +464,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.status='passed';await save();return report;
   } catch(error) {
     report.status='failed';report.error=error.stack||String(error);
+    report.inputFailure=await inputObservation().catch(error=>({error:String(error)}));
     report.pageErrors=[...pageErrors];
     report.trusted=await page.evaluate(()=>window.__appTrusted).catch(()=>null);
     await shot('failed').catch(()=>{});await save();throw error;
