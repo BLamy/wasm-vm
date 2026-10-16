@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/boot-debugging.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "f51b0bfd09433479ddf43c11e8c1742b77a0a6ea810bb8ff2f48d13e3f3c2a0c"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Boot debugging playbook (E2-T14)
 
 {% hint style="info" %}

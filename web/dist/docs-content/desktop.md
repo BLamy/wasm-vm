@@ -1,3 +1,9 @@
+---
+kind: "Field guide"
+source: "web/docs-source/guides/desktop.md"
+scope: "Authored explanation; verification belongs to the named evidence"
+---
+
 # Display, input, and audio
 
 The host workbench exposes display and serial surfaces. Guest input passes through explicit keyboard, pointer, clipboard, and audio boundaries. Each boundary has a contract and recorded failure drills.
@@ -8,6 +14,18 @@ Read the display contract before choosing a present path. Desktop bring-up uses 
 
 {% hint style="info" %}
 The marketing hero is a Three.js architecture illustration rendered directly by the browser. It is independent of guest VirGL support and is not evidence of a guest GPU feature.
+{% endhint %}
+
+## Application image and release scope
+
+The application image contains native RISC-V **Chromium 153.0.8010.52**, **LibreOffice 26.8.0** and **Node 26.11.1 / npm 12.2.0** in an 860-package image. These are guest Linux applications, separate from the host browser running the emulator.
+
+The [independent E5.5-T05c verdict](https://github.com/BLamy/wasm-vm/blob/dddae3bc2c15b1332dedcb208f3b7e6c6f852127/evidence/omarchy-applications-desktop/verifier/VERDICT.md) covers actual native Chromium browsing and trusted form input, normal sandboxed SVG decoding, Writer typing/save/close/reopen/edit/resave, Node/npm, and the qualified production compositor and scanout. It retains the original failed attempts and the explicitly authenticated missing-proof continuation; it does not claim that every application rasterizes through the GPU. Its exact source and evidence boundaries remain part of that verdict.
+
+The [application catalogue](https://github.com/BLamy/wasm-vm/blob/dddae3bc2c15b1332dedcb208f3b7e6c6f852127/tools/image/omarchy-apps/catalog.json) accounts for 147 upstream Omarchy 4.0.2 entries: 32 were already present, 97 have native repository packages, five have portable alternatives, and 13 still require source-port work. Chromium and LibreOffice are two explicit additions beyond that list. The 13 unresolved ports are not established incompatibilities, and this is not a claim that all 147 applications are complete.
+
+{% hint style="warning" %}
+The new application image is not yet the public warm desktop. E5.5-T05d must publish matching accelerated and software checkpoint/disk pairs, verify restored application launches and HTTPS delivery, and update the default manifests together. The [launcher](./app.html#ide) uses its published manifest, not this guide's package list. Read [guest graphics](./docs.html?page=graphics) for warm, explicit cold and software modes.
 {% endhint %}
 
 ## Keyboard capture

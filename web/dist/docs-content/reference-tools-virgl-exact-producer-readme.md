@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-exact-producer/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "5bc3b27b99c5411cc5d4da6936aa7bcb516c252b8e11ec6533bb7102ddc3d970"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Private exact-word compiler transaction — E6-T12g6m3b
 
 {% hint style="info" %}

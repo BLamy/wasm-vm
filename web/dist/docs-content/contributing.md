@@ -1,3 +1,9 @@
+---
+kind: "Field guide"
+source: "web/docs-source/guides/contributing.md"
+scope: "Authored explanation; verification belongs to the named evidence"
+---
+
 # Work in the repository
 
 Read the operating manual before taking a task. The queue, roadmap, and verification logs are executable coordination state; documentation style changes must not rewrite their historical claims.

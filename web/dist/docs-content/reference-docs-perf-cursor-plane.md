@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/perf/cursor-plane.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "1e01b8c8ee024033083bf9f374846840ae28d87ee79cb44ee08723c805194607"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Cursor-plane integration proof
 
 {% hint style="info" %}

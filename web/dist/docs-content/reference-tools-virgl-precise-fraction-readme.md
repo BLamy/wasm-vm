@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-precise-fraction/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "2356c67eac195b52d5d738e3f04ac65a33d7d1d25f3aa1b0c4be882d8309d7bc"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Instruction-local precise fraction evidence
 
 {% hint style="info" %}

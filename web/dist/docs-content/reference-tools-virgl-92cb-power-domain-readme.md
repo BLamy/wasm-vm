@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-92cb-power-domain/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "02dc9f69cfd2039780473821dbb485c814be4a60b9f40dab9ba5ce6031b90ed1"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Original 92cb physical first-power domain
 
 {% hint style="info" %}

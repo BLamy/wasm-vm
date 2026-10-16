@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/integer-images-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "d323bf05dbd37492261323430a9469d8754fe864d73c8109b20f69998eaba603"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Original integer image storage
 
 {% hint style="info" %}

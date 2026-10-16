@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-capture/workloads/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "7d0e86991d94db929dc2fe1b64e040713489e94d9108cb3f68d5bffe64b2b75f"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Guest graphics capture workloads
 
 {% hint style="info" %}

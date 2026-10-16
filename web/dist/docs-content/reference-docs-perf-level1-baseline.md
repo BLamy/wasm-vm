@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/perf/level1-baseline.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "d8661fb3fb7a3551e3ceadb58b95c421f67e6cc6f87598d09bc4d0a360231b0a"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Level-1 interpreter performance baseline (E1-T23)
 
 {% hint style="info" %}

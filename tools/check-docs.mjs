@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
-import { parseMarkdown, serializeMarkdown, documentOutline } from "../web/node_modules/@brett_lamy/docstream/dist/index.js";
+import { parseMarkdown, serializeMarkdown, documentOutline, readDocumentProperties, getTaskState } from "../web/node_modules/@brett_lamy/docstream/dist/index.js";
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
 const read=rel=>readFile(path.join(root,rel),"utf8");
@@ -12,7 +12,8 @@ const require=(value,message)=>{if(!value)throw new Error(message);};
 const catalog=JSON.parse(await read("web/docs-content/catalog.json"));
 const ledger=JSON.parse(await read("web/docs-content/migration-ledger.json"));
 const version=JSON.parse(await read("web/node_modules/@brett_lamy/docstream/package.json")).version;
-require(version==="1.8.0"&&catalog.docstreamVersion===version,"Docstream exact release drift");
+require(version==="1.9.1"&&catalog.docstreamVersion===version,"Docstream exact release drift");
+require(JSON.parse(await read("web/package.json")).dependencies["@brett_lamy/docstream"]===version,"Docstream package pin drift");
 const tracked=execFileSync("git",["ls-tree","-r","--name-only",ledger.sourceRevision],{cwd:root,encoding:"utf8",maxBuffer:16*1024*1024}).split("\n").filter(Boolean);
 const baseline=tracked.filter(p=>/\.(md|mdx|rst|adoc)$/i.test(p));
 const auxiliary=ledger.documents.filter(d=>d.role==="auxiliary-record").map(d=>d.path);
@@ -29,12 +30,21 @@ require(baseline.length===catalog.counts.baselineProse,"Baseline inventory count
 for(const file of sources){require(indexed.has(file),`Unaccounted source: ${file}`);const item=indexed.get(file);require(["rewritten","preserved","obsolete"].includes(item.status)&&item.reason.length>12,`Missing disposition: ${file}`);require(sha(originals.get(file))===item.sourceSha256,`Immutable baseline source disagrees with ledger: ${file}`);if(item.status==="rewritten")require(item.page&&item.replacement,`No rendered rewrite for ${file}`);}
 const ids=new Set(catalog.pages.map(p=>p.id));
 require(ids.size===catalog.pages.length,"Duplicate document IDs");
-const roundtrip=[],links=[],commands=[];let contentRefs=0,namedFences=0;
+const roundtrip=[],links=[],commands=[],properties=[];let contentRefs=0,namedFences=0;
+const expectedTaskStates=["pending","in-progress","implemented","blocked","parked","refuted","verified","cancelled"];
+let verificationStates=[];
+function taskStates(node,result=[]){if(!node||typeof node!=="object")return result;if(node.type==="listItem"&&(node.state!==undefined||node.checked!==undefined))result.push(getTaskState(node));for(const value of Object.values(node)){if(Array.isArray(value))for(const child of value)taskStates(child,result);else if(value&&typeof value==="object")taskStates(value,result);}return result;}
 function codeBlocks(node,result=[]){if(!node||typeof node!=="object")return result;if(node.type==="code")result.push(node.code);for(const value of Object.values(node)){if(Array.isArray(value))for(const child of value)codeBlocks(child,result);else if(value&&typeof value==="object")codeBlocks(value,result);}return result;}
 for(const page of catalog.pages){
   const markdown=await read(`web/docs-content/${page.id}.md`);
   require(sha(markdown)===page.sha256,`Published digest mismatch: ${page.id}`);
   const parsed=parseMarkdown(markdown);
+  require(parsed.properties,`Missing native document properties: ${page.id}`);
+  const metadata=readDocumentProperties(parsed.properties);
+  require(!metadata.error&&metadata.values.source===page.source&&metadata.values.kind&&metadata.values.scope,`Invalid publication properties: ${page.id}`);
+  if(page.kind==="reference")require(metadata.values.source_revision===ledger.sourceRevision&&metadata.values.source_sha256===page.sourceSha256,`Reference properties drift: ${page.id}`);
+  properties.push({id:page.id,keys:Object.keys(metadata.values),sourceRevision:metadata.values.source_revision});
+  if(page.id==="verification"){verificationStates=taskStates(parsed);require(JSON.stringify(verificationStates)===JSON.stringify(expectedTaskStates),"Native task-state examples are incomplete or misparsed");}
   require(parsed.children.length>1,`Empty document: ${page.id}`);
   require(documentOutline(parsed).some(h=>h.level===1),`Missing title: ${page.id}`);
   const serialized=serializeMarkdown(parsed);
@@ -61,7 +71,7 @@ const currentShader=await read("web/landing.js");
 const fragment=s=>s.match(/fragmentShader:\s*\/\* glsl \*\/\s*`([\s\S]*?)`/)[1];
 require(fragment(oldShader)===fragment(currentShader),"Background fragment shader was replaced or changed");
 for(const asset of ["web/landing.html","web/landing-page.js","web/hero-scene.js","web/landing.js","web/landing-benchmarks.js","web/docs-bundle/reader.js","web/docs-bundle/reader.css"])require((await stat(path.join(root,asset))).size>0,`Missing browser asset ${asset}`);
-const receipt={schema:1,docstreamVersion:version,sourceRevision:ledger.sourceRevision,baselineProse:baseline.length,auxiliaryRecords:auxiliary.length,ledgerDocuments:ledger.documents.length,renderedPages:catalog.pages.length,dispositions:ledger.counts,localLinks:links.length,docstreamContentRefs:contentRefs,namedCodeFences:namedFences,referenceCodeBlocks:commands.reduce((s,p)=>s+p.codeBlocks,0),shaderFragmentSha256:sha(fragment(currentShader)),roundtripExceptions:roundtrip,commands};
+const receipt={schema:1,docstreamVersion:version,sourceRevision:ledger.sourceRevision,baselineProse:baseline.length,auxiliaryRecords:auxiliary.length,ledgerDocuments:ledger.documents.length,renderedPages:catalog.pages.length,dispositions:ledger.counts,localLinks:links.length,docstreamContentRefs:contentRefs,namedCodeFences:namedFences,referenceCodeBlocks:commands.reduce((s,p)=>s+p.codeBlocks,0),shaderFragmentSha256:sha(fragment(currentShader)),nativeProperties:properties,nativeTaskStates:verificationStates,roundtripExceptions:roundtrip,commands};
 await mkdir(path.join(root,"target/docs-build"),{recursive:true});
 await writeFile(path.join(root,"target/docs-build/docs-validation.json"),JSON.stringify(receipt,null,2)+"\n");
 require(roundtrip.length===0,`Docstream round-trip changed ${roundtrip.length} pages; see target/docs-build/docs-validation.json`);

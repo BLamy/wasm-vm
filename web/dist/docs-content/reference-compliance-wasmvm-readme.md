@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "compliance/wasmvm/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "e85b36c422592d2b56c5463b07ee6dc11182d4d9943bb99a1c88c39ac7632b82"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # RISCOF wasm-vm plugin
 
 {% hint style="info" %}

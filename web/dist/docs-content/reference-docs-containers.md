@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/containers.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "72351e5026e7d5a218eda25e56b8c25a0e965afbf950e591939341dd2940696c"
+scope: "Historical snapshot; use current field guides for present capabilities"
+---
+
 # Historical guest kernel container audit
 
 {% hint style="info" %}

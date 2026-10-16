@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/deployment/network-providers.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "3d1b097b21f04cd6324606288305456fa95ffda3f0c3f48106115fd3cf097f7b"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Network provider deployment
 
 {% hint style="info" %}

@@ -27,7 +27,7 @@ try{
  assert.equal(git('status','--porcelain','--untracked-files=no'),'','record from a clean committed source');
  const catalog=JSON.parse(await fs.readFile(path.join(dist,'docs-content/catalog.json')));
  const ledger=JSON.parse(await fs.readFile(path.join(dist,'docs-content/migration-ledger.json')));
- assert.equal(catalog.docstreamVersion,'1.8.0');assert.equal(catalog.pages.length,154);assert.equal(ledger.documents.length,1995);
+ assert.equal(catalog.docstreamVersion,'1.9.1');assert.equal(catalog.pages.length,154);assert.equal(ledger.documents.length,1995);
  report.corpus={pages:catalog.pages.length,records:ledger.documents.length,version:catalog.docstreamVersion};
  let base=process.argv[5];
  if(!base){
@@ -187,6 +187,14 @@ try{
  assert.equal(await page.locator('.reader-header a[href="./app.html#ide"]').count(),1);
  assert.equal(await page.locator('.reader-header a[href="./"]').count(),1);
  await page.goto(new URL('docs.html?page=graphics',base).href,{waitUntil:'load'});await page.locator('.reader-document h1').waitFor();
+ const properties=page.locator('[data-document-properties]');
+ assert.equal(await properties.count(),1);
+ assert.equal(await properties.getAttribute('open'),null);
+ await properties.locator('summary').focus();await page.keyboard.press('Enter');
+ assert.equal(await properties.evaluate(el=>el.open),true);
+ assert.equal(await properties.locator('input,textarea,button').count(),0,'publication properties are read-only');
+ assert.match(await properties.innerText(),/web\/docs-source\/guides\/graphics\.md/);
+ await properties.locator('summary').press('Enter');
  const graphicsText=await page.locator('.reader-document').innerText();
  assert.match(graphicsText,/GPU rendering restores an authenticated Omarchy warm checkpoint/);
  assert.match(graphicsText,/Acceptance checks new guest GPU work after startup/);
@@ -195,6 +203,17 @@ try{
  assert.match(graphicsText,/WebGL2/);
  assert.match(graphicsText,/300-MIPS/);
  await screenshot(page,'desktop-reader.png');report.steps.push({name:'production reader routes and truthful graphics boundary',status:'passed'});
+ await page.goto(new URL('docs.html?page=verification',base).href,{waitUntil:'load'});await page.locator('.reader-document h1').waitFor();
+ const nativeStates=['pending','in-progress','implemented','blocked','parked','refuted','verified','cancelled'];
+ assert.deepEqual(await page.locator('.reader-document .docs-task-control[data-task-state]').evaluateAll(els=>els.map(el=>el.dataset.taskState)),nativeStates);
+ assert.equal(await page.locator('.reader-document input[aria-readonly="true"]').count(),8);
+ const stateBefore=await page.locator('.reader-document .docs-task-control[data-task-state]').evaluateAll(els=>els.map(el=>el.dataset.taskState));
+ await page.locator('.reader-document [data-task-state="pending"] input').click();
+ await page.locator('.reader-document [data-task-state="pending"] input').press('Space');
+ assert.deepEqual(await page.locator('.reader-document .docs-task-control[data-task-state]').evaluateAll(els=>els.map(el=>el.dataset.taskState)),stateBefore);
+ assert.equal(await page.locator('.reader-document [data-task-state="pending"] input').isChecked(),false);
+ await screenshot(page,'desktop-reader-task-states.png');
+ report.steps.push({name:'Docstream 1.9.1 native properties and eight read-only task states',status:'passed'});
  for(const [entry,id] of [['docs-embedding.html','embedding'],['docs-guest.html','storage'],['docs-containers.html','containers'],['docs-verification.html','verification'],['docs-explainers.html','explainers']]){
   for(const address of [entry,entry.slice(0,-5)]){
   await page.goto(new URL(address,base).href,{waitUntil:'load'});await page.locator('.reader-document h1').waitFor();
@@ -235,6 +254,13 @@ try{
  await phone.locator('.reader-sidebar nav a').first().click();assert.equal(await phone.getByRole('button',{name:'Browse docs'}).getAttribute('aria-expanded'),'false');
  await phone.locator('.reader-document h1').waitFor();assert.ok(await phone.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
  await screenshot(phone,'mobile-reader.png');report.steps.push({name:'assembled mobile motion/search/navigation/reflow',status:'passed'});
+ await phone.goto(new URL('docs.html?page=verification',base).href,{waitUntil:'load'});await phone.locator('.reader-document h1').waitFor();
+ await phone.locator('[data-document-properties] summary').click();
+ assert.equal(await phone.locator('[data-document-properties]').evaluate(el=>el.open),true);
+ assert.equal(await phone.locator('[data-document-properties] input, [data-document-properties] textarea').count(),0);
+ assert.equal(await phone.locator('.reader-document .docs-task-control[data-task-state] input[aria-readonly="true"]').count(),8);
+ assert.ok(await phone.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+ await screenshot(phone,'mobile-reader-properties.png');
  await Promise.all([page.waitForLoadState('networkidle'),phone.waitForLoadState('networkidle')]);
  await Promise.all(bodyReads);
  // Every retired response must have its own authenticated original response;

@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/clipboard.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "5009cdd778305e5b7530e98ae723a44716d7820367b7b60484f19704df1ef874"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Clipboard policy
 
 {% hint style="info" %}

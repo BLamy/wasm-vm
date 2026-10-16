@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/toolchain/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "87c27eec8bc344a68f0652475211ae48d00d5d0ff3beccbd760887822b36e4e8"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Reference RISC-V toolchain (E0-T13)
 
 {% hint style="info" %}

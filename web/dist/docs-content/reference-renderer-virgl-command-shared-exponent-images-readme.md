@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/shared-exponent-images-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "26dd525c7ae891a9b646d6a479704a7670cffb4010dd1e0e0e9292fca054e5d7"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Selected original RGB9E5 images
 
 {% hint style="info" %}

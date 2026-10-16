@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/scalar-vertex-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "3d12024f33dc92ba9c4d872395c6e79c1ef11a2fa60f089d10dca545b7a16515"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Scalar floating vertex fetch
 
 {% hint style="info" %}

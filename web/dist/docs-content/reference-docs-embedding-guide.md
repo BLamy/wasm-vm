@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/embedding-guide.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "6a77d65dde5369f6cbb1dbadbb0be326cce9ba01318ee155eccf403caac55c4d"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Embedding wasm-vm
 
 {% hint style="info" %}

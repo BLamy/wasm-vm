@@ -1,3 +1,9 @@
+---
+kind: "Field guide"
+source: "web/docs-source/guides/networking.md"
+scope: "Authored explanation; verification belongs to the named evidence"
+---
+
 # Connect the guest deliberately
 
 The CPU executes locally, while network traffic uses an explicit provider. Downloading boot artifacts and sending guest packets are separate operations; neither is covered by a blanket promise that nothing leaves the tab.

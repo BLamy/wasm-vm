@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/product/proofmesh-whitepaper.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "1c32801a41d9e9b9e464b2840a7e150f1d1a02da0001afd0d8fb392364b884e2"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # ProofMesh
 
 {% hint style="info" %}

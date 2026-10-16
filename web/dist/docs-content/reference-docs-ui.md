@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/ui.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "9c0306735f28019986f0df0cffdd28686a450bbbdd013db4f9961a4dbf555921"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Browser host chrome
 
 {% hint style="info" %}

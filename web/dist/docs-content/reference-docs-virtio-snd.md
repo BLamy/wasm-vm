@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/virtio-snd.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "7759b1d7f624eb83cf68301be2221c4be73a135e6061ffda1ff002d79fc8cf9d"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # virtio-snd T19a control contract
 
 {% hint style="info" %}

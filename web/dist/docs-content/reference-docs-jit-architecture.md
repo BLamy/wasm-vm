@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/jit-architecture.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "9762a0b8cd9e6510a6d6b6e3e594bc2a9020e4eb49a937491d1f2d8348506f6a"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # JIT architecture — tiering, block shape, ABI, side exits, invalidation, budgets (E4-T06)
 
 {% hint style="info" %}

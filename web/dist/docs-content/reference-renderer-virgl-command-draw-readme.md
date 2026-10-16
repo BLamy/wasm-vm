@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/draw-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "3645f1daaa10af9665155c3f4ce2792e4371cd1430e178d23307acd5d58149c2"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Bounded VirGL triangle draws
 
 {% hint style="info" %}

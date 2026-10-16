@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/packed-vertex-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "5e8cefdcb2e5dfea01e7e32eaebf960f142c410ad85204708ffb17988200aaed"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Original packed vertex fetch
 
 {% hint style="info" %}

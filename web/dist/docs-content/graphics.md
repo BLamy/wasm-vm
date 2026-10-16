@@ -1,3 +1,9 @@
+---
+kind: "Field guide"
+source: "web/docs-source/guides/graphics.md"
+scope: "Authored explanation; verification belongs to the named evidence"
+---
+
 # Guest graphics
 
 The accelerated Omarchy path sends the guest's VirGL commands to WebGL2 in the production Linux worker. Mesa chooses OpenGL ES 3.0; Hyprland retries that API after its GLES 3.2 request. Frames reach the visible canvas through retained, fenced scanout and a page presentation receipt.

@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "crates/wasm-emit/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "3895ff309ebf89f7fb62b2da2514fe0580dd54018c0b5035b9599839f8dccd3b"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # wasm-vm-wasm-emit (E4-T07)
 
 {% hint style="info" %}

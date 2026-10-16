@@ -1,3 +1,9 @@
+---
+kind: "Field guide"
+source: "web/docs-source/guides/containers.md"
+scope: "Authored explanation; verification belongs to the named evidence"
+---
+
 # The container boundary
 
 wasm-vm includes an OCI image pipeline and a guest-side bundle runner. Importing an image, auditing kernel features, and proving a booted container workload are separate acceptance steps.

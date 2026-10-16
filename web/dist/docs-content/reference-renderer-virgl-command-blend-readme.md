@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/blend-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "eb9b136b426495fb4deb74a51503c729478b84b8ab3a73dac907333a6f3e163d"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Single-target normalized blending
 
 {% hint style="info" %}

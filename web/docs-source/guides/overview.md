@@ -28,7 +28,7 @@ The `@agent-wasm/*` packages belong to a separate host-side project. This reposi
 
 The reference library contains the detailed technical documentation from this repository, including device contracts, renderer boundaries, build runbooks, and dated measurements. Every page exposes its original source and Markdown. Search matches titles, paths, and page content; the Reference section also supports a subject filter.
 
-[Documentation coverage](./docs.html?page=coverage) accounts for every tracked prose file. Task logs, evidence, operating policy, protocols, legal text, and upstream specifications keep their authoritative source intact.
+[Documentation coverage](./docs.html?page=coverage) accounts for every prose file at its pinned migration revision. Current field guides identify newer evidence separately. Task logs, evidence, operating policy, protocols, legal text, and upstream specifications keep their authoritative source intact.
 
 ## Product direction
 

@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/design/slirp.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "5c4c42f51177243bc0771084da44edd471ad55863676cec2d25f62ced83da756"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Slirp — user-mode network for the guest (E3-T14)
 
 {% hint style="info" %}

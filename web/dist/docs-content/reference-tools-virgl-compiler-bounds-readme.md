@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-compiler-bounds/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "68514f0a83eb2ea5bc8263e00c7b6a64c77c3105d7cc08cefc837da0a30842fe"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Virgl compiler bounds
 
 {% hint style="info" %}

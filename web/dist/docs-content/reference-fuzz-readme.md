@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "fuzz/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "0673f485af9022fb6376855efb18c0bb2f98b0cb0ad4f3ebf630c5a8939504b2"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Fuzzing scaffold (E0-T21)
 
 {% hint style="info" %}

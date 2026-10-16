@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/desktop-bringup.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "ab7da8e5680bc00f76c56c113d4e7ce532d55c73f7954183a698edde84a31453"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Desktop bring-up playbook
 
 {% hint style="info" %}

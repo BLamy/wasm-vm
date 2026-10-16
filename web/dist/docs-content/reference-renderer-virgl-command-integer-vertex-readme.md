@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/integer-vertex-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "c506218898ba0a00c8500de01b8e6bc4a28fce1eccaba83098c55fe94808b8c3"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Standard pure integer vertex inputs
 
 {% hint style="info" %}

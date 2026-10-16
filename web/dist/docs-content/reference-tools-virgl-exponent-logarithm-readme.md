@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-exponent-logarithm/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "bae328eb57817c25abac94b59213a80f24557b96af8bc67c751e17e52e221754"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Virgl exponent logarithm
 
 {% hint style="info" %}

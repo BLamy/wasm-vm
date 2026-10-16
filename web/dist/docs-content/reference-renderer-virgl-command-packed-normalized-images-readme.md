@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/packed-normalized-images-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "66620059e3f74ea8e2e3297a48998534447df997ccdb093d4140930b5ca47a49"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Packed normalized images readme
 
 {% hint style="info" %}

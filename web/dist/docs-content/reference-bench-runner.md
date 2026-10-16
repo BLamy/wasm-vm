@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "bench/RUNNER.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "7a9cfe399b0f68d64adc7b9995e0468c911e6b1a5d034d755e574f86651896c4"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Perf-regression runner setup (E4-T27)
 
 {% hint style="info" %}

@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/rootfs.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "d57415979201ceb45c6fbee5cb62dfad61fbedac71b5c5ac2318b6678bbd67fb"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Alpine riscv64 rootfs (E2-T18)
 
 {% hint style="info" %}

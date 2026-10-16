@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/perf/present-paths.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "58e51d8971d901a81b4c975988687ae9eb93ea5eccdd3df8874555bdbf26d3df"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Presentation path measurements
 
 {% hint style="info" %}

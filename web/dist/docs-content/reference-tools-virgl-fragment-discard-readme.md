@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-fragment-discard/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "249f17457a9783e6e9657f6917a7a6fd92d9aa3366e593875d581b6aac7f51cf"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Fragment discard and surviving predecessors
 
 {% hint style="info" %}

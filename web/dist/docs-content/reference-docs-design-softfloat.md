@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/design/softfloat.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "b9fe6d4d1322a610d66bcfbf25423b514ac279a903188643c1bd0e84a85af5cd"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # SoftFloat backend decision (E1-T05)
 
 {% hint style="info" %}

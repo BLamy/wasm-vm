@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-command/raster-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "1931b4f2427b850844415e95efbf994d57eb9a0eb29990acf82eb5993a6d4df7"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Raster readme
 
 {% hint style="info" %}

@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/container-matrix.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "f7c55d94e58cf59db29d52befbb6f3773f685bd0910ffa45dd1b6cec0a4b5542"
+scope: "Historical snapshot; use current field guides for present capabilities"
+---
+
 # Historical nine-image container matrix
 
 {% hint style="info" %}

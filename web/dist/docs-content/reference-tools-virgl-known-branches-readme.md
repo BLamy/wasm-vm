@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-known-branches/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "0064d84972f6d7425e4d23796286fa4b2969d8181c970bec7dd82f1679740779"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Virgl known branches
 
 {% hint style="info" %}

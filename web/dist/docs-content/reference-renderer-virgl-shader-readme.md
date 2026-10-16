@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-shader/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "9ada48676c0a9f23f929d2ba345696bc61a6d259d42f0837a1692c25ed48b99f"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Bounded VirGL shader bridge
 
 {% hint style="info" %}

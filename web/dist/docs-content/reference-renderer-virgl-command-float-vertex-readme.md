@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/float-vertex-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "ee79a8a3d1a008b66544b9c2fa4c02baf51e99dc967803de5a82b1f18c6de620"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Float vertex fetch boundary
 
 {% hint style="info" %}

@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/gpu-3d-decision.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "359ffc09c351298a55453a9d9a94303e7ec0b03ca9fec0cb41b8fa1f9acdfdee"
+scope: "Historical snapshot; use current field guides for present capabilities"
+---
+
 # Historical graphics decision
 
 {% hint style="info" %}

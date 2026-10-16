@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-signed-conversions/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "70619a9b84b4c7b8aa1d6eb834be81c224f63e731d058028f86bc959be996562"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Private signed conversion evidence
 
 {% hint style="info" %}

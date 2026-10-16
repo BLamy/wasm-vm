@@ -1,3 +1,9 @@
+---
+kind: "Field guide"
+source: "web/docs-source/guides/quickstart.md"
+scope: "Authored explanation; verification belongs to the named evidence"
+---
+
 # Boot your first guest
 
 Open the [guest launcher](./app.html#ide) and choose an operating system to run the machine. The demo contains the guest console and display. The [roadmap](./roadmap.html) lives on the main site, and all guides and references are in this documentation library.

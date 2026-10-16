@@ -1,3 +1,9 @@
+---
+kind: "Field guide"
+source: "web/docs-source/guides/performance.md"
+scope: "Authored explanation; verification belongs to the named evidence"
+---
+
 # Read the measurements
 
 The homepage publishes two independent Node workload campaigns and a separate native JIT handoff diagnostic. Preserve that separation when comparing a result or proposing an optimization.

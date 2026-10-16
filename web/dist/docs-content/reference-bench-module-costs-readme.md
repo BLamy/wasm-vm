@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "bench/module-costs/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "46395b69930f1d28eff64a199b08589d4f46aafe217764ec8731424b256ff8be"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # E4-T19 — cross-browser WebAssembly module-cost matrix
 
 {% hint style="info" %}

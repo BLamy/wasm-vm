@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/design/file-transfer.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "8a31ca21f3155bf3892451284b8f1573876c1ee3aea9dea9b5b74cf5ededfc82"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Bounded host/guest file transfer
 
 {% hint style="info" %}

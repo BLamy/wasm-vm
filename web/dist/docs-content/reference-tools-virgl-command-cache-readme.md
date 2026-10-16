@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-command/cache-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "e78d96093491947b65f369329db1440b0c22ea21514bf4b089599b6b115296fd"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Renderer cache evidence
 
 {% hint style="info" %}

@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/perf/perf-overhaul-2026-09.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "544a80bd91f44542469e04f59909e00d60adaa8d4f7e7f7132538632cbe0d0a6"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Perf overhaul (2026-09)
 
 {% hint style="info" %}

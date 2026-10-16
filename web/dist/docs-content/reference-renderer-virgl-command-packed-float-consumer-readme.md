@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/packed-float-consumer-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "3561e3c02db63b34cce41a1ba7d070f863c44e7baa6a16bf03c86689c9b72768"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Original R11G11B10 image consumer
 
 {% hint style="info" %}

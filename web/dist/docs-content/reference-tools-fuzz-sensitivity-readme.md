@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/fuzz/sensitivity/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "e5ce9ef7b20c777d7140b40e0dc1a99ea0ed0881faa13b60556c3e62eaeb8f3e"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Fuzzer sensitivity fixtures (E1-T21)
 
 {% hint style="info" %}

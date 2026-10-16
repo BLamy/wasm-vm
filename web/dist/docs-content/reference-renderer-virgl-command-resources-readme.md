@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/resources-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "3eddbdcc5f57253cabc1a3bbca40d2233f6b42c8109d56be8e8ea28d390a8211"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # VirGL resources and transfers
 
 {% hint style="info" %}

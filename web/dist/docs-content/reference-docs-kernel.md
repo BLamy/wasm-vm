@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/kernel.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "5e08dce3e3654c9d209615b672c63ce3f4412a20538093f3ff76a58999852a04"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # The wasm-vm guest kernel (E2-T12)
 
 {% hint style="info" %}

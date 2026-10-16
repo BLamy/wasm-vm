@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/scanout-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "ae55d9162c1acfe521ba27493a62fac221c6ec43edbff023e29e7a1a78e0b757"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Explicit retained scanout proof
 
 {% hint style="info" %}

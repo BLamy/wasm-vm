@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/audio.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "33766adb4f269a1eb05dab84a415bc62e9de94e1126d385a820b0dc51cda5db8"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Browser audio ring contract (E5-T20a)
 
 {% hint style="info" %}

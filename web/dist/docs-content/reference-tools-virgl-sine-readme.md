@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-sine/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "b1e2e8d790c963e2a8e7385ffbc1727f1a7db29cce2e3b7b33ba9c0be45f0b93"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Virgl sine
 
 {% hint style="info" %}

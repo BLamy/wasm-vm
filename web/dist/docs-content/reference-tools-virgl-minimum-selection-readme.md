@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-minimum-selection/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "8652f51d28f9749bcb525feb968a13df080178d4c682fc1525a0e87c1f4bc417"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Minimum selection evidence — E6-T12g6g1
 
 {% hint style="info" %}

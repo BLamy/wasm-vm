@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "bench/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "54e8124a0bb88c1f92e2cf7988721752d049f872015f4edf6af26f52af36eb55"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # In-guest micro-benchmarks: CoreMark + Dhrystone (E4-T03)
 
 {% hint style="info" %}

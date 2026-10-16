@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/product/proofmesh-api.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "05347d0df4f66c6aecfebe66feee4be4f487a9ddfda3b1ef9c4af082a8b52aef"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # ProofMesh API contract
 
 {% hint style="info" %}

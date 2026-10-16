@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/integer-image-consumer-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "efa4462b8529d831766518be8638d4619c29e957d1c23e9cd1c4cf17033248e2"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Selected original integer image consumer
 
 {% hint style="info" %}

@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/design/tailscale-worker-protocol.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "72008e7cd1261e756a47b2c14a7484623b16c2aef60d3515e2d6640de2c911c1"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Browser Tailscale Worker protocol
 
 {% hint style="info" %}

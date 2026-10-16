@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/perf/capstone-e4.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "ee40bc93afc954cc043b556cef72265022d85455c9b15e1e942aa0b6a2c8134b"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Level-4 capstone measurement contract (E4-T28a)
 
 {% hint style="info" %}

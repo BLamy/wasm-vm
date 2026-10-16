@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-required-formats/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "c674f33ee6852c023c808248f22eeca9928d452ae5d6beeea8cf97633b517293"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Virgl required formats
 
 {% hint style="info" %}

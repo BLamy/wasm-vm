@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tests/fuzz-regressions/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "516ce747698a29726e6cac154c18cfa0a4b956ca021e126eeb89d0c104904915"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Fuzz regression corpus (E1-T21)
 
 {% hint style="info" %}

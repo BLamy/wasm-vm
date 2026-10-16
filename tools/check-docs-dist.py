@@ -26,13 +26,14 @@ def fences(text):
 
 catalog = json.loads((DIST / "docs-content/catalog.json").read_text())
 ledger = json.loads((DIST / "docs-content/migration-ledger.json").read_text())
-require(catalog["docstreamVersion"] == "1.8.0", "Wrong published Docstream release")
+require(catalog["docstreamVersion"] == "1.9.1", "Wrong published Docstream release")
 hashes = {}
 for page in catalog["pages"]:
     target = DIST / "docs-content" / f"{page['id']}.md"
     text = target.read_text()
     hashes[page["id"]] = sha(target.read_bytes())
     require(hashes[page["id"]] == page["sha256"], f"Published document hash drift: {page['id']}")
+    require(text.startswith("---\nkind: ") and "\nsource: " in text.split("\n---\n", 1)[0], f"Missing native document properties: {page['id']}")
     original = (ROOT / "web/docs-content" / f"{page['id']}.md").read_text()
     require(fences(text) == fences(original), f"Deployment changed a code example: {page['id']}")
     outside = re.sub(r"^\s*(`{3,})[^\n]*\n.*?^\s*\1\s*$", "", text, flags=re.M | re.S)

@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/fuzz/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "29c93f4277591123b15c522001e8c21256ec3b71170488fae4e48a65061cfe69"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # tools/fuzz — differential fuzzer vs Spike (E1-T21)
 
 {% hint style="info" %}

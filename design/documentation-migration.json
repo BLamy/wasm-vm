@@ -22,7 +22,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/README.md",
       "page": "reference-readme",
       "replacement": "./docs.html?page=reference-readme",
-      "publishedSha256": "59911a58e8c4335596084be67a609e2789a7f2d3cc32d96ad942ae6bafb700d6"
+      "publishedSha256": "6dc214a93196dc638952ff1c5dcbed93ec0bc03bcd7bb8de047241aa3ce6bff3"
     },
     {
       "path": "ROADMAP.md",
@@ -39,7 +39,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/bench/README.md",
       "page": "reference-bench-readme",
       "replacement": "./docs.html?page=reference-bench-readme",
-      "publishedSha256": "15a896f7333d796f0d283e065f192bc02d471999ca2c4492cd87332ed2303442"
+      "publishedSha256": "14633c3bbd9683c6da5db6d395cfcd23bf1ae6d42061897e87844fe7ab0a93e1"
     },
     {
       "path": "bench/RUNNER.md",
@@ -49,7 +49,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/bench/RUNNER.md",
       "page": "reference-bench-runner",
       "replacement": "./docs.html?page=reference-bench-runner",
-      "publishedSha256": "d524107e2b5a9effb50087d1fd7181bf299f73d799cc87fbf34ae96cb3754b04"
+      "publishedSha256": "8bd122fb32d5af05122e2f35c1758abe801a7f1334ec56cb5ff964b1a8125b41"
     },
     {
       "path": "bench/guest/src/PROVENANCE.md",
@@ -80,7 +80,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/bench/module-costs/README.md",
       "page": "reference-bench-module-costs-readme",
       "replacement": "./docs.html?page=reference-bench-module-costs-readme",
-      "publishedSha256": "b4d316069ef0fceead987bd27f32de1cb9ef9418815eb107ac79f2a0faf64044"
+      "publishedSha256": "98e5636265f74d8859a2e828742f151a1e2b46734f1b19fee29794d95aec5bd0"
     },
     {
       "path": "bench/module-costs/results/README.md",
@@ -90,7 +90,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/bench/module-costs/results/README.md",
       "page": "reference-bench-module-costs-results-readme",
       "replacement": "./docs.html?page=reference-bench-module-costs-results-readme",
-      "publishedSha256": "5ab696e90ea8abe910ae13991f1fb39d339d464ec2cd63df20d885e1846e6cc2"
+      "publishedSha256": "54f0a0ef048378c84c3b3902ff9bdefe4de70a3a6b4833e4b83d21178d112916"
     },
     {
       "path": "compliance/EXCLUSIONS.md",
@@ -100,7 +100,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/compliance/EXCLUSIONS.md",
       "page": "reference-compliance-exclusions",
       "replacement": "./docs.html?page=reference-compliance-exclusions",
-      "publishedSha256": "402cda417300270cc067b22559245ca46607f94679c4927284fe470d74f3f58a"
+      "publishedSha256": "614411173ac9718e62e96f9b6e7a6c2abfa1dea58985d0ff5eb9732745832b34"
     },
     {
       "path": "compliance/README.md",
@@ -110,7 +110,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/compliance/README.md",
       "page": "reference-compliance-readme",
       "replacement": "./docs.html?page=reference-compliance-readme",
-      "publishedSha256": "10364a67ac60056f9b06daaa00b3f46adb8c006c3c1b492608ac263e4fd903ee"
+      "publishedSha256": "4a1382e28d8d35434506d5c325aee03c1f253cc5dc12c852fca6b6a3418a558d"
     },
     {
       "path": "compliance/spike/README.md",
@@ -120,7 +120,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/compliance/spike/README.md",
       "page": "reference-compliance-spike-readme",
       "replacement": "./docs.html?page=reference-compliance-spike-readme",
-      "publishedSha256": "4f00653ac2ac92f7663a1a2550cf18f2e8497ed5ddc83f8e23d199c7a7270aca"
+      "publishedSha256": "fc5ed47ff91e5c26bd605ba3676066a10e44fcaae6ff538790d2461544b0a502"
     },
     {
       "path": "compliance/wasmvm/README.md",
@@ -130,7 +130,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/compliance/wasmvm/README.md",
       "page": "reference-compliance-wasmvm-readme",
       "replacement": "./docs.html?page=reference-compliance-wasmvm-readme",
-      "publishedSha256": "d874cd2478211566f7b69b886d8374056de436db9bc96987d14c3d40ee198f6b"
+      "publishedSha256": "df25cf7808743ace1f50ffaca0e78a2ee6e4ababd183b936ea6b784a67f3d0d3"
     },
     {
       "path": "crates/jit-runtime/corpus/README.md",
@@ -140,7 +140,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/crates/jit-runtime/corpus/README.md",
       "page": "reference-crates-jit-runtime-corpus-readme",
       "replacement": "./docs.html?page=reference-crates-jit-runtime-corpus-readme",
-      "publishedSha256": "2b1b32f93fa5acdcb7658ad6653daecf6ce11c3ed02ac1f07bbcddf23b7c0870"
+      "publishedSha256": "d562f9df82ddc651eec333c3919a8f890f144704e10b65b262ee59e4e0ce982f"
     },
     {
       "path": "crates/wasm-emit/README.md",
@@ -150,7 +150,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/crates/wasm-emit/README.md",
       "page": "reference-crates-wasm-emit-readme",
       "replacement": "./docs.html?page=reference-crates-wasm-emit-readme",
-      "publishedSha256": "61603226f02c7a733649bd36c79aee1ed451380b0f00e278fe02fc8beaf8d1c7"
+      "publishedSha256": "af2247d9e16e6d6352e7a9caab6f88b06ec5618e4cb6a00252a7ba48d739ad9c"
     },
     {
       "path": "docs/RELEASE_ASSURANCE.md",
@@ -160,7 +160,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/RELEASE_ASSURANCE.md",
       "page": "reference-docs-release-assurance",
       "replacement": "./docs.html?page=reference-docs-release-assurance",
-      "publishedSha256": "70eb8555037028a32943338df59431ce8e2c63934542c4c665baf39c6c05e9c3"
+      "publishedSha256": "87db6172f36b383c1883da843d7122d6b7e6910d614bb18d5f9334f01deca21f"
     },
     {
       "path": "docs/adr/0002-sbi-firmware.md",
@@ -170,7 +170,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/adr/0002-sbi-firmware.md",
       "page": "reference-docs-adr-0002-sbi-firmware",
       "replacement": "./docs.html?page=reference-docs-adr-0002-sbi-firmware",
-      "publishedSha256": "9bcae8a73dbd26d4beb0dbe18828794a9006a84557626c30df5679772e1ec09c"
+      "publishedSha256": "b6366061b6fd41467fba660b108be86c191b1279df37861374dc697753343cde"
     },
     {
       "path": "docs/agent-protocol.md",
@@ -180,7 +180,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/agent-protocol.md",
       "page": "reference-docs-agent-protocol",
       "replacement": "./docs.html?page=reference-docs-agent-protocol",
-      "publishedSha256": "415050add5f8dfd0b7d40caeee1ff483783072c2af1ae16b3cd1032c9783c8c1"
+      "publishedSha256": "85b94c776bba103ca73d2a1a04148654b121217ebee7faea6a31c150a892f8ca"
     },
     {
       "path": "docs/audio.md",
@@ -190,7 +190,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/audio.md",
       "page": "reference-docs-audio",
       "replacement": "./docs.html?page=reference-docs-audio",
-      "publishedSha256": "fbc39528b396928bde83da836142b0c5a0fd0670e48dda4426dcee29aa30a15f"
+      "publishedSha256": "834486f095a0aec6d879b6e586b85d937159d7a9c952b4169745023fc836fffa"
     },
     {
       "path": "docs/baselines.md",
@@ -200,7 +200,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/baselines.md",
       "page": "reference-docs-baselines",
       "replacement": "./docs.html?page=reference-docs-baselines",
-      "publishedSha256": "238c7b62e2216a9d28fbd5514cd25dc938c02965b56717186d9d5acccc5a1fe5"
+      "publishedSha256": "e004f1339aa9b0579e09518ffe1364146c480808c4d499e0278cccb1366f467a"
     },
     {
       "path": "docs/boot-debugging.md",
@@ -210,7 +210,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/boot-debugging.md",
       "page": "reference-docs-boot-debugging",
       "replacement": "./docs.html?page=reference-docs-boot-debugging",
-      "publishedSha256": "dcc76bf9126c76bad1cf154d6d51fc3a297c457ecb3dff457ac0d5fa22e7dd02"
+      "publishedSha256": "d80deb26021af2cb711b27b7a95f237ffba1c76b88dc4a15443038699d9cb7ab"
     },
     {
       "path": "docs/capstone-e0.md",
@@ -220,7 +220,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/capstone-e0.md",
       "page": "reference-docs-capstone-e0",
       "replacement": "./docs.html?page=reference-docs-capstone-e0",
-      "publishedSha256": "5036a40279681b3e56aed85137f1826db6e49ca92b3193a00cfb6fcb9f4fbc0e"
+      "publishedSha256": "61dd15a251eadb8aecfeb8d4636ab9a6fb84ca61e2c1fba2bc7d34eaff184a54"
     },
     {
       "path": "docs/clipboard.md",
@@ -230,7 +230,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/clipboard.md",
       "page": "reference-docs-clipboard",
       "replacement": "./docs.html?page=reference-docs-clipboard",
-      "publishedSha256": "107e2a8a615f5b7471ff00aa04b7b406ec714b21a4e8513ac36724ead10096ca"
+      "publishedSha256": "c87aaedd88b09c5b2117619c50ec2c5e54beb232462fa6ccbea8c10b8540d198"
     },
     {
       "path": "docs/container-matrix.md",
@@ -240,7 +240,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/container-matrix.md",
       "page": "reference-docs-container-matrix",
       "replacement": "./docs.html?page=reference-docs-container-matrix",
-      "publishedSha256": "58cabb8084e7d4bc41eda2c4e523bb8ac001fc506bdfc46619a461c429deda61"
+      "publishedSha256": "548dd4f70e4df75d868c25b83cc7f36f59256f970c1c2073339a2573d4944202"
     },
     {
       "path": "docs/containers.md",
@@ -250,7 +250,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/containers.md",
       "page": "reference-docs-containers",
       "replacement": "./docs.html?page=reference-docs-containers",
-      "publishedSha256": "f1198cc4c7d1767d79893571975c4794380122bced454f83762229be2df01acf"
+      "publishedSha256": "da0d0af3c082616ee1dae373894d574b51a8104567926e35af700ec8a2d8269c"
     },
     {
       "path": "docs/decisions/display-server.md",
@@ -260,7 +260,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/decisions/display-server.md",
       "page": "reference-docs-decisions-display-server",
       "replacement": "./docs.html?page=reference-docs-decisions-display-server",
-      "publishedSha256": "c87fe5f583c6ba3345c2959c36bcb597da1eef4ee3b148d032bcab013087ea35"
+      "publishedSha256": "e1a7c342c110e77e71e168c94b25130430f130148388fd2d4c3cdcf836c8597d"
     },
     {
       "path": "docs/demos/level-4.md",
@@ -270,7 +270,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/demos/level-4.md",
       "page": "reference-docs-demos-level-4",
       "replacement": "./docs.html?page=reference-docs-demos-level-4",
-      "publishedSha256": "eda8ae2480e66938b664c4585b6f559acb80f2e0c6970a3d539d98baf6787296"
+      "publishedSha256": "17b539072a29a1623ff4b7ba3051e96a8ee1c4cdf06ffdb80a4dd8e2cda4876e"
     },
     {
       "path": "docs/deployment/network-providers.md",
@@ -280,7 +280,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/deployment/network-providers.md",
       "page": "reference-docs-deployment-network-providers",
       "replacement": "./docs.html?page=reference-docs-deployment-network-providers",
-      "publishedSha256": "e0240cea1ed9475f7cdb4663811c29d49f070abb4f7e2cccdf543dc334f9f9c3"
+      "publishedSha256": "2cc6c76be640b631d6fcadbc15e711a378054d467313ef4fb027c83d48b91fce"
     },
     {
       "path": "docs/design/chunked-image.md",
@@ -290,7 +290,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/design/chunked-image.md",
       "page": "reference-docs-design-chunked-image",
       "replacement": "./docs.html?page=reference-docs-design-chunked-image",
-      "publishedSha256": "c040d8448beac1c3410a9271920dcb5b8079c6a21a339d1bdfd0d0dffa3043d3"
+      "publishedSha256": "b60a6f9800f944592780f7ea6a68d6818083d8e888ef9bc1d1b93a3f87fc33f8"
     },
     {
       "path": "docs/design/cow-overlay.md",
@@ -300,7 +300,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/design/cow-overlay.md",
       "page": "reference-docs-design-cow-overlay",
       "replacement": "./docs.html?page=reference-docs-design-cow-overlay",
-      "publishedSha256": "226c1a1f7a803c97539e1dd6ed4f7a617c7625f9b4ec6699066f50d3ace79894"
+      "publishedSha256": "1bc551565a5e3e8279d1cc9ffa49d43c8ef7eaf9f65818c2deadb6e940e860c9"
     },
     {
       "path": "docs/design/file-transfer.md",
@@ -310,7 +310,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/design/file-transfer.md",
       "page": "reference-docs-design-file-transfer",
       "replacement": "./docs.html?page=reference-docs-design-file-transfer",
-      "publishedSha256": "8e5e03af60d30cc725ba80832d3a53856dd23b8858d0ae01c9aec09a7e4bd08c"
+      "publishedSha256": "2f47f2afaf6c07c56f2732b3ab891449c8c444880f1e9e09c7b3ce5676e1bc13"
     },
     {
       "path": "docs/design/http-fast-path-eval.md",
@@ -320,7 +320,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/design/http-fast-path-eval.md",
       "page": "reference-docs-design-http-fast-path-eval",
       "replacement": "./docs.html?page=reference-docs-design-http-fast-path-eval",
-      "publishedSha256": "a867cea31cbc1c1e782843b07d6afe47ec88e4753fe210f7682eb30681ea6e3c"
+      "publishedSha256": "fad8de4bf6f536643b7d3554cc75fb9e749007aefe80da138f84821bd9dd25c0"
     },
     {
       "path": "docs/design/image-pipeline.md",
@@ -330,7 +330,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/design/image-pipeline.md",
       "page": "reference-docs-design-image-pipeline",
       "replacement": "./docs.html?page=reference-docs-design-image-pipeline",
-      "publishedSha256": "7ce823f087716319f0169a9adaf94ac721d0293c937187c930c76d786f7e624b"
+      "publishedSha256": "168ffa5f8524b6f9c756d15d9193b6a41a3cd4d9682694907d08ba9c4b82a355"
     },
     {
       "path": "docs/design/slirp.md",
@@ -340,7 +340,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/design/slirp.md",
       "page": "reference-docs-design-slirp",
       "replacement": "./docs.html?page=reference-docs-design-slirp",
-      "publishedSha256": "e00b61400d03de6b2924723f84e34a660adb5085eee80d259d172eee940f5d60"
+      "publishedSha256": "1a5a29fc6fb0ed8d32a30efe47f9740572754e24bc367a365a6879ab44a17d38"
     },
     {
       "path": "docs/design/softfloat.md",
@@ -350,7 +350,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/design/softfloat.md",
       "page": "reference-docs-design-softfloat",
       "replacement": "./docs.html?page=reference-docs-design-softfloat",
-      "publishedSha256": "52439913390d97d06a3f1deae5d5426ffb27fc22726804d98c99aba8d1cd00d4"
+      "publishedSha256": "597ceed2844f8a72df072b0910a437996f52176eee7ec6f951894418577a9274"
     },
     {
       "path": "docs/design/tailscale-worker-protocol.md",
@@ -360,7 +360,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/design/tailscale-worker-protocol.md",
       "page": "reference-docs-design-tailscale-worker-protocol",
       "replacement": "./docs.html?page=reference-docs-design-tailscale-worker-protocol",
-      "publishedSha256": "1d98a83adb0502e1ec76b5c732fc6163ba0974ffcef9161fbba1de4c0a67401c"
+      "publishedSha256": "59cb31f748447423802cd2504c7ea06e6290cf09ceb89a8280c3a09ed4aea184"
     },
     {
       "path": "docs/design/ws-proxy-protocol.md",
@@ -370,7 +370,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/design/ws-proxy-protocol.md",
       "page": "reference-docs-design-ws-proxy-protocol",
       "replacement": "./docs.html?page=reference-docs-design-ws-proxy-protocol",
-      "publishedSha256": "743205aa7897c618bfb037d7145c040e590dc84d32102162f118a9c874d684a0"
+      "publishedSha256": "ffb5e564b9aedab0e3fd5ae02e0a6d21b606d290c410556d40d81b50dff05a9f"
     },
     {
       "path": "docs/desktop-boot-order.md",
@@ -380,7 +380,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/desktop-boot-order.md",
       "page": "reference-docs-desktop-boot-order",
       "replacement": "./docs.html?page=reference-docs-desktop-boot-order",
-      "publishedSha256": "7b01ff52e42a25ffba374d7386fcc7521f89e7e827c124f106c634044bda28a3"
+      "publishedSha256": "6a9f26803bcf11c8b661369a04f5e18c502de2b2db342b5df3df1dd3845398b3"
     },
     {
       "path": "docs/desktop-bringup.md",
@@ -390,7 +390,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/desktop-bringup.md",
       "page": "reference-docs-desktop-bringup",
       "replacement": "./docs.html?page=reference-docs-desktop-bringup",
-      "publishedSha256": "5287b3015741365d1274873d46c81e3a879b7760de0873c04898840d78af8a0b"
+      "publishedSha256": "c25f15a3e94fcee8b43a702ec8106d03755f241c6130d46bcbd0f84f78ac7d1b"
     },
     {
       "path": "docs/display.md",
@@ -400,7 +400,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/display.md",
       "page": "reference-docs-display",
       "replacement": "./docs.html?page=reference-docs-display",
-      "publishedSha256": "f1461550b370d05614fb6bcd28b18fc5c869ee3c2870d569a5eb40bb0a19d594"
+      "publishedSha256": "75f63da4288ce05059feefd59a4cd56661d54437cf1ed646d4f85df01092cd1d"
     },
     {
       "path": "docs/e4-t22-cpu-worker-coop-coep.md",
@@ -410,7 +410,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/e4-t22-cpu-worker-coop-coep.md",
       "page": "reference-docs-e4-t22-cpu-worker-coop-coep",
       "replacement": "./docs.html?page=reference-docs-e4-t22-cpu-worker-coop-coep",
-      "publishedSha256": "937d21dc346af022c7f152d4544aebd63532b6be848d05f377971c62d74ed23c"
+      "publishedSha256": "370b67b15694deda11b3ab5af354471e8a86820afb33db901ba774ef04733acd"
     },
     {
       "path": "docs/embedding-guide.md",
@@ -420,7 +420,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/embedding-guide.md",
       "page": "reference-docs-embedding-guide",
       "replacement": "./docs.html?page=reference-docs-embedding-guide",
-      "publishedSha256": "b7229901f2afc14683dc4e4878d7a4037ab3f2ab2acff387802104886189b2eb"
+      "publishedSha256": "8e0cc340b4bd899595006db724d81008b8a32764161994bad8bfb7dbd4341fc2"
     },
     {
       "path": "docs/gpu-3d-decision.md",
@@ -430,7 +430,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/gpu-3d-decision.md",
       "page": "reference-docs-gpu-3d-decision",
       "replacement": "./docs.html?page=reference-docs-gpu-3d-decision",
-      "publishedSha256": "ee9813775f9a4ecadd83b9a3006a4c6e4153b3853409ccb298d58626e0bc3a57"
+      "publishedSha256": "7a50d8b9bbe47f825a6a58ffee53209740d624fefdf2dad547bd5b64af4f6d82"
     },
     {
       "path": "docs/images.md",
@@ -440,7 +440,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/images.md",
       "page": "reference-docs-images",
       "replacement": "./docs.html?page=reference-docs-images",
-      "publishedSha256": "e677cb978bd3011e67c7cfbda34d9557a73aa9282f9339b530a9ad4a438280e9"
+      "publishedSha256": "7dedeb8ebc0411ece1d4fcc3aeac4d5c4faa3e6f3e965c3111e5ed5731388218"
     },
     {
       "path": "docs/input.md",
@@ -450,7 +450,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/input.md",
       "page": "reference-docs-input",
       "replacement": "./docs.html?page=reference-docs-input",
-      "publishedSha256": "8a48a8bfafd02be33f9908a2342d114621c34b465d7b60bf1a1aa5321f072a5c"
+      "publishedSha256": "67a65492df894593603f7da29998ae6c562e2a879e5837ac9745844244a84e1e"
     },
     {
       "path": "docs/jit-architecture.md",
@@ -460,7 +460,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/jit-architecture.md",
       "page": "reference-docs-jit-architecture",
       "replacement": "./docs.html?page=reference-docs-jit-architecture",
-      "publishedSha256": "2adf6b2410e16c5c0fbe23f961b000560cf8242df3662bb8af20ee004916d19b"
+      "publishedSha256": "82d239820c7224908b06ca733dab9455ce50c5fc5de917fbb5be79c9949ea437"
     },
     {
       "path": "docs/jit-fp-policy.md",
@@ -470,7 +470,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/jit-fp-policy.md",
       "page": "reference-docs-jit-fp-policy",
       "replacement": "./docs.html?page=reference-docs-jit-fp-policy",
-      "publishedSha256": "8349382c4765810a52f33ae3a772906940453afbddf0f7348b8065f0d4d3a9fe"
+      "publishedSha256": "afe563f8d32083763d3fc68fb85cd8af0547a83d8b6f65468eb99a5b25b104ba"
     },
     {
       "path": "docs/kernel.md",
@@ -480,7 +480,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/kernel.md",
       "page": "reference-docs-kernel",
       "replacement": "./docs.html?page=reference-docs-kernel",
-      "publishedSha256": "800760c1293125278d5bf0d580d9874242fde5824ce49e30b7f54e8367e19f60"
+      "publishedSha256": "59035ad1e05183f69ba8bb40e06f0bb291d5fde4986b0d6df9e5c26d0f02eaf2"
     },
     {
       "path": "docs/level1-report.md",
@@ -490,7 +490,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/level1-report.md",
       "page": "reference-docs-level1-report",
       "replacement": "./docs.html?page=reference-docs-level1-report",
-      "publishedSha256": "9f2d483226906ed2ad6de9183d48469dcef478ba9f5162e08f6e209a533f15d6"
+      "publishedSha256": "1b2a25f9504f92b4c4027bb4673e7c66da8270285ab130c71fe212f40ead31c1"
     },
     {
       "path": "docs/perf-baseline.md",
@@ -500,7 +500,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/perf-baseline.md",
       "page": "reference-docs-perf-baseline",
       "replacement": "./docs.html?page=reference-docs-perf-baseline",
-      "publishedSha256": "f3bb4a99256077bc158f22e59554263cfc90e33ea96020fbd76b65462e58a6b4"
+      "publishedSha256": "8783c9ac1d21155f6df8b258e6af40caaeb3e3d7d8f88c80152ce6c0eb349cab"
     },
     {
       "path": "docs/perf/capstone-e4.md",
@@ -510,7 +510,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/perf/capstone-e4.md",
       "page": "reference-docs-perf-capstone-e4",
       "replacement": "./docs.html?page=reference-docs-perf-capstone-e4",
-      "publishedSha256": "7a55c48707ea4bbee02637188523f5bf20a72a3cb5b2b86b0bc1e0b5dc43f957"
+      "publishedSha256": "5ee502e5ff3fde0c562a7c01e0d596c9c3408571fb13b7887f953fe65d8e5a16"
     },
     {
       "path": "docs/perf/cursor-plane.md",
@@ -520,7 +520,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/perf/cursor-plane.md",
       "page": "reference-docs-perf-cursor-plane",
       "replacement": "./docs.html?page=reference-docs-perf-cursor-plane",
-      "publishedSha256": "d092a6e553ff04c52a6fd812e96c57f9ff4f1c2fb36498aea1f736e9ed0d70da"
+      "publishedSha256": "7445b218fb7944f84d83f69544354e068bb37f004813705e065b8f4ca57ba5cd"
     },
     {
       "path": "docs/perf/display-server-workload.md",
@@ -530,7 +530,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/perf/display-server-workload.md",
       "page": "reference-docs-perf-display-server-workload",
       "replacement": "./docs.html?page=reference-docs-perf-display-server-workload",
-      "publishedSha256": "82e33ae1d570bb55af54b1379b93a109f4e24575ce25fd20c280eb073693667b"
+      "publishedSha256": "26eebe6b40d89cdd5a68ec578755efe436320e70bb3063c8d08a7d2fbcdcc016"
     },
     {
       "path": "docs/perf/e4-t34-jit-retrospective.md",
@@ -540,7 +540,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/perf/e4-t34-jit-retrospective.md",
       "page": "reference-docs-perf-e4-t34-jit-retrospective",
       "replacement": "./docs.html?page=reference-docs-perf-e4-t34-jit-retrospective",
-      "publishedSha256": "8a74e79988a1a45fbbea189303c524b94d28d65310a8ee10c63b35f6211f6d31"
+      "publishedSha256": "7ab8d61f9b636ba1774910faf9c9eb0440ad974256fb01ff7bbceef06b7794d9"
     },
     {
       "path": "docs/perf/flamegraphs.md",
@@ -550,7 +550,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/perf/flamegraphs.md",
       "page": "reference-docs-perf-flamegraphs",
       "replacement": "./docs.html?page=reference-docs-perf-flamegraphs",
-      "publishedSha256": "4dc369948726eeda5829276cdc3d3906517a0d603de91dc03d1e24597bbc0a06"
+      "publishedSha256": "7c1f02b206dfaf6f29df69cd01a478137a0736a47b202cf8a26740ceeb043dcd"
     },
     {
       "path": "docs/perf/jit-register-handoff-2026-10.md",
@@ -560,7 +560,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/perf/jit-register-handoff-2026-10.md",
       "page": "reference-docs-perf-jit-register-handoff-2026-10",
       "replacement": "./docs.html?page=reference-docs-perf-jit-register-handoff-2026-10",
-      "publishedSha256": "ce8fadcc48185b0f0698ef0f6e72c4f113d6553bfc4e97fcfdeebff565efc011"
+      "publishedSha256": "9faca67534086b15defd6bdfe2d452bc94eb8dc08711d49e6e167c80bd2bc8dd"
     },
     {
       "path": "docs/perf/level1-baseline.md",
@@ -570,7 +570,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/perf/level1-baseline.md",
       "page": "reference-docs-perf-level1-baseline",
       "replacement": "./docs.html?page=reference-docs-perf-level1-baseline",
-      "publishedSha256": "d24c4345c1e8d0a6182b8433d77e5f53ca17249e7a6049ec47fec7f193edb370"
+      "publishedSha256": "7666f0283fa17dfcf7f0835aafc4043503467d83a58eaaec965a795f21888248"
     },
     {
       "path": "docs/perf/level3-interpreter-baseline.md",
@@ -580,7 +580,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/perf/level3-interpreter-baseline.md",
       "page": "reference-docs-perf-level3-interpreter-baseline",
       "replacement": "./docs.html?page=reference-docs-perf-level3-interpreter-baseline",
-      "publishedSha256": "7d38327c2482fad016fafd3b523f41f19134af65b4207d4b99a45abbf0810e3f"
+      "publishedSha256": "65b6a38fc8c756716ac142e83b2f8856a410d329803a8fe3877d12131d3af006"
     },
     {
       "path": "docs/perf/perf-overhaul-2026-09.md",
@@ -590,7 +590,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/perf/perf-overhaul-2026-09.md",
       "page": "reference-docs-perf-perf-overhaul-2026-09",
       "replacement": "./docs.html?page=reference-docs-perf-perf-overhaul-2026-09",
-      "publishedSha256": "4eb9d475cb41c42630ba98ac3f609ec708ac29eaeae3b1e39946e9d8a2dd61c2"
+      "publishedSha256": "2625561cb0abad2a3aef595e50165884bca4aaf64346669b2c8a887b57f0a72b"
     },
     {
       "path": "docs/perf/present-paths.md",
@@ -600,7 +600,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/perf/present-paths.md",
       "page": "reference-docs-perf-present-paths",
       "replacement": "./docs.html?page=reference-docs-perf-present-paths",
-      "publishedSha256": "5f6656d7c5129c2a6108dc783f13f5b3d81141874ab25d8a2681cd9108b9d27a"
+      "publishedSha256": "4d9df4fa67adfde53f7b579ca8f74b30cff86e39b38ca8ef1ac3da50cc1469d0"
     },
     {
       "path": "docs/platform.md",
@@ -610,7 +610,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/platform.md",
       "page": "reference-docs-platform",
       "replacement": "./docs.html?page=reference-docs-platform",
-      "publishedSha256": "33d7cd55ca698e57c2177fc11bcd8ad7c08aa6b5b692c535331f423c69b23a1d"
+      "publishedSha256": "18067888c2e7d65a4f9eac6ab959d4371f1eda46d6f3a4acc7c2a84cfca31b41"
     },
     {
       "path": "docs/product/proofmesh-api.md",
@@ -620,7 +620,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/product/proofmesh-api.md",
       "page": "reference-docs-product-proofmesh-api",
       "replacement": "./docs.html?page=reference-docs-product-proofmesh-api",
-      "publishedSha256": "82bd917b4b46e384217dc0f0290bc0867dee018c275b9d024460dc5d32664520"
+      "publishedSha256": "0ed29e81b5c9cd922f7895e6c961d6343c82928bf770c7ce5eb170706e695343"
     },
     {
       "path": "docs/product/proofmesh-roadmap.md",
@@ -630,7 +630,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/product/proofmesh-roadmap.md",
       "page": "reference-docs-product-proofmesh-roadmap",
       "replacement": "./docs.html?page=reference-docs-product-proofmesh-roadmap",
-      "publishedSha256": "18ba4a607bd1bfe6f542b945cb5c31c266b77f10486dcafb49bb8d9bef5b6ce3"
+      "publishedSha256": "0b9af90416afa5eee6bb5792cffd8b4fa97e6a242fc9f7b3cafcc12d24393b66"
     },
     {
       "path": "docs/product/proofmesh-whitepaper.md",
@@ -640,7 +640,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/product/proofmesh-whitepaper.md",
       "page": "reference-docs-product-proofmesh-whitepaper",
       "replacement": "./docs.html?page=reference-docs-product-proofmesh-whitepaper",
-      "publishedSha256": "f4d26398550168a00390828020b35288ae4dd9e4eedae10ee0ca2b83285dbb60"
+      "publishedSha256": "066d625d29c81f273a488e4475f877d77b04c40a4f6e05f42a59ca5bb58f5a0a"
     },
     {
       "path": "docs/rootfs.md",
@@ -650,7 +650,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/rootfs.md",
       "page": "reference-docs-rootfs",
       "replacement": "./docs.html?page=reference-docs-rootfs",
-      "publishedSha256": "efa2ee4917c5228d1bebe90b4c34918f4316f314676de15b835c582285c7d1b9"
+      "publishedSha256": "65de5cff25892bd8b1d151524c353dcd6cd77777569d9fc3375957e60109a529"
     },
     {
       "path": "docs/timekeeping.md",
@@ -660,7 +660,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/timekeeping.md",
       "page": "reference-docs-timekeeping",
       "replacement": "./docs.html?page=reference-docs-timekeeping",
-      "publishedSha256": "7ca3099bcdd06521399e64aa1bfeab7055d64198854e8aa3376c8ba56194737d"
+      "publishedSha256": "2b1a57ca829daed11877ff9008468ece8cbafb97385bf561c499dcc0801321e9"
     },
     {
       "path": "docs/trace-format.md",
@@ -670,7 +670,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/trace-format.md",
       "page": "reference-docs-trace-format",
       "replacement": "./docs.html?page=reference-docs-trace-format",
-      "publishedSha256": "956d12c77545f3383ad7ea341265e410b69978df195276b83a0b675716b6503b"
+      "publishedSha256": "786a5be60e938e18020bdbf8ec7a25bc1e9042dc6d152233440800d8eed8a90f"
     },
     {
       "path": "docs/ui.md",
@@ -680,7 +680,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/ui.md",
       "page": "reference-docs-ui",
       "replacement": "./docs.html?page=reference-docs-ui",
-      "publishedSha256": "6543d68ed1ae530790ae899457ae7e9997aa5c552f89f570a4f9d468af0bda53"
+      "publishedSha256": "7a524f6ed370cadac7ffefc1825d3ee04ffd1b33cf82878886e195d8adfb8e44"
     },
     {
       "path": "docs/virgl-shader-prerequisites.md",
@@ -690,7 +690,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/virgl-shader-prerequisites.md",
       "page": "reference-docs-virgl-shader-prerequisites",
       "replacement": "./docs.html?page=reference-docs-virgl-shader-prerequisites",
-      "publishedSha256": "d6ecce60283346ad5356dc7325ccd2959470982477c1e8fcc4c049956060db2d"
+      "publishedSha256": "b1c90ba52b2fbbf2881bfed0b680975e6d8f1b3011e97d55e660bf0e61c6c214"
     },
     {
       "path": "docs/virtio-snd.md",
@@ -700,7 +700,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/virtio-snd.md",
       "page": "reference-docs-virtio-snd",
       "replacement": "./docs.html?page=reference-docs-virtio-snd",
-      "publishedSha256": "fd25ab3363b4e33a383ec3b906d384fa0f27b25e8cdd03093df127c68e3f372d"
+      "publishedSha256": "fc93737fc017030a156591a9a7a0e66c5ac7b4d0881f37c6a59f3f9f6e709b76"
     },
     {
       "path": "docs/worker-devices.md",
@@ -710,7 +710,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/docs/worker-devices.md",
       "page": "reference-docs-worker-devices",
       "replacement": "./docs.html?page=reference-docs-worker-devices",
-      "publishedSha256": "3497bbe392796c6bde7778255084b5484245389ae25fb391d88825f09658565f"
+      "publishedSha256": "463452fdd82a52b32af8d621dd7d128f66ede31ba90c709a666547de560d553e"
     },
     {
       "path": "evidence/e3-t10/README.md",
@@ -5641,7 +5641,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/fuzz/README.md",
       "page": "reference-fuzz-readme",
       "replacement": "./docs.html?page=reference-fuzz-readme",
-      "publishedSha256": "7f3ee8b74f6a2ea32ded0fe7054c63f2fa3d8c8401bb7e542c67fbb262aef2f0"
+      "publishedSha256": "567716cefeb1e9dbc127fea88bf5a3d4927b874d4a6f80d852eecbc8882bf6e9"
     },
     {
       "path": "guest/README.md",
@@ -5651,7 +5651,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/guest/README.md",
       "page": "reference-guest-readme",
       "replacement": "./docs.html?page=reference-guest-readme",
-      "publishedSha256": "5cab708606860498f0fd4b741dab7df99210446e997da97c92eabdfaf08ea662"
+      "publishedSha256": "3f6205aa839feb1ffab236d3a8cec3654139408434c46d2e6a9e66204b55da0b"
     },
     {
       "path": "renderer/virgl-command/README.md",
@@ -5661,7 +5661,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/README.md",
       "page": "reference-renderer-virgl-command-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-readme",
-      "publishedSha256": "464035d6a9c3bfc9417e8deefb9df5d884ab89246a9453213e25fca704e61db2"
+      "publishedSha256": "1a1aac9c04359f04ad7beb264fd1fe9de22e9e1e81b37b77076142e6c2933136"
     },
     {
       "path": "renderer/virgl-command/async-README.md",
@@ -5671,7 +5671,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/async-README.md",
       "page": "reference-renderer-virgl-command-async-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-async-readme",
-      "publishedSha256": "7788b48996d2d6aad970af6026134bfbe3870c22c20ca948d3bdadaca544b2f6"
+      "publishedSha256": "b1453865df7e025afd55c140e0e95a15d07ed43379d29a600ccd9de6b917f7f0"
     },
     {
       "path": "renderer/virgl-command/blend-README.md",
@@ -5681,7 +5681,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/blend-README.md",
       "page": "reference-renderer-virgl-command-blend-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-blend-readme",
-      "publishedSha256": "3906f7136efe87e594769410cecc279d42f8e7259d9d19e80503e432c7ae12f0"
+      "publishedSha256": "a41f1f0f57e47f070ada8855025a1a80ffba294372755a0949cbc91debf2599c"
     },
     {
       "path": "renderer/virgl-command/cache-README.md",
@@ -5691,7 +5691,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/cache-README.md",
       "page": "reference-renderer-virgl-command-cache-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-cache-readme",
-      "publishedSha256": "8899e62c5e1972ca28286a047419914cff7d998ab687b60fb66746b415c74a42"
+      "publishedSha256": "a869c2e52b21ac9e0388d5992819d9b2cf03a86115c27a68b32ae71fe3b26953"
     },
     {
       "path": "renderer/virgl-command/compact-vertex-README.md",
@@ -5701,7 +5701,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/compact-vertex-README.md",
       "page": "reference-renderer-virgl-command-compact-vertex-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-compact-vertex-readme",
-      "publishedSha256": "446d374ad54dd340e7b3e50157628ddca4bee3b9d1eef760380e4acb50c94586"
+      "publishedSha256": "8bca40cc8a9cdd8bd238ca649d6a241ba2abbe923ed0ec690ab87ea14df95d95"
     },
     {
       "path": "renderer/virgl-command/control-README.md",
@@ -5711,7 +5711,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/control-README.md",
       "page": "reference-renderer-virgl-command-control-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-control-readme",
-      "publishedSha256": "f0de9885e554c6d903851ed9b752ea7614469ad3e313000bc9099f59cbc9d295"
+      "publishedSha256": "4f17b921cbf7c129a97ad3ef85fddfd9d67a94c471e5547751c2aae9887c1b4a"
     },
     {
       "path": "renderer/virgl-command/draw-README.md",
@@ -5721,7 +5721,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/draw-README.md",
       "page": "reference-renderer-virgl-command-draw-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-draw-readme",
-      "publishedSha256": "135652b5a1228684b16aaec5593317ebd0c8bf98ead30cbc257182207bf76187"
+      "publishedSha256": "745dd3597af91c877abfbd6b791db6c5310fb66fa785d6c35bdb878b289533fb"
     },
     {
       "path": "renderer/virgl-command/float-consumer-README.md",
@@ -5731,7 +5731,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/float-consumer-README.md",
       "page": "reference-renderer-virgl-command-float-consumer-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-float-consumer-readme",
-      "publishedSha256": "9ee4fb7690ade77b2ac4d27e430e675f00ab789d506c1ae30860b653d07cdc29"
+      "publishedSha256": "590138fae28823dd22715f846bbc97037f3f5a8307c8b62e31394d98bad16966"
     },
     {
       "path": "renderer/virgl-command/float-images-README.md",
@@ -5741,7 +5741,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/float-images-README.md",
       "page": "reference-renderer-virgl-command-float-images-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-float-images-readme",
-      "publishedSha256": "28a2d4f788bf6973ed643bd9c738c63911f265daf9fcff55bdc6d855fbd1abc9"
+      "publishedSha256": "64daf5a026fd021b6415b27c742f0fb07984ad1d11363ee8cf237908d0c6d4c5"
     },
     {
       "path": "renderer/virgl-command/float-vertex-README.md",
@@ -5751,7 +5751,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/float-vertex-README.md",
       "page": "reference-renderer-virgl-command-float-vertex-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-float-vertex-readme",
-      "publishedSha256": "406aa3cdf806117a4ce2834c189be19a3548bdd569266b3ba3565aca60b7ecd5"
+      "publishedSha256": "26f3fc9cc83bcf7808ed502ea6ebd60dce1e449d77e851c4939a6658f97903ac"
     },
     {
       "path": "renderer/virgl-command/integer-image-consumer-README.md",
@@ -5761,7 +5761,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/integer-image-consumer-README.md",
       "page": "reference-renderer-virgl-command-integer-image-consumer-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-integer-image-consumer-readme",
-      "publishedSha256": "5b6f0df0b800fd385348d563998fac27eb6150d8423f89ad2f4a2d4fff0e3b50"
+      "publishedSha256": "a1f328ac9737c168df4dfe43bcae44c389f1c928e245954b47cb8332b04cf5ec"
     },
     {
       "path": "renderer/virgl-command/integer-images-README.md",
@@ -5771,7 +5771,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/integer-images-README.md",
       "page": "reference-renderer-virgl-command-integer-images-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-integer-images-readme",
-      "publishedSha256": "f17f140381e00eccccb44c9950e593514a796843e17f7c2df316df854502b462"
+      "publishedSha256": "6fd0b91c53152bcf7bdbb20a65b8bad4438bc87c01ab7a4c50f966efcf2c65c2"
     },
     {
       "path": "renderer/virgl-command/integer-vertex-README.md",
@@ -5781,7 +5781,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/integer-vertex-README.md",
       "page": "reference-renderer-virgl-command-integer-vertex-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-integer-vertex-readme",
-      "publishedSha256": "fb5f61a0a24fcefb3a6fc8a613e5ad291aa3cdaecb17fabae5cc796bcdd65c9d"
+      "publishedSha256": "0004c3e476b32af08521c8cb87247cdd7620f6048864722fe49c705fe11c26e5"
     },
     {
       "path": "renderer/virgl-command/packed-float-consumer-README.md",
@@ -5791,7 +5791,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/packed-float-consumer-README.md",
       "page": "reference-renderer-virgl-command-packed-float-consumer-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-packed-float-consumer-readme",
-      "publishedSha256": "24124d2e1a45d6d30b79a0a7d1e30b66627cb14f067a5044e8251d068b838f9f"
+      "publishedSha256": "82a778d6aeb4609575142ff710f3239585fb5217e98e8cb710524eb6ae02fab8"
     },
     {
       "path": "renderer/virgl-command/packed-float-images-README.md",
@@ -5801,7 +5801,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/packed-float-images-README.md",
       "page": "reference-renderer-virgl-command-packed-float-images-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-packed-float-images-readme",
-      "publishedSha256": "c27f587c7b96e7a3ab397d4f822f774f2266ca7cba2e3458887f00fee8a10d6f"
+      "publishedSha256": "aa94d55a225c619e07cce29ad4e3a7310fec9c2a4632d691ef5bd1d710309c64"
     },
     {
       "path": "renderer/virgl-command/packed-normalized-images-README.md",
@@ -5811,7 +5811,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/packed-normalized-images-README.md",
       "page": "reference-renderer-virgl-command-packed-normalized-images-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-packed-normalized-images-readme",
-      "publishedSha256": "eef4c5715373d7f54ca340810b40676a435059c6d09ea3488834d87af18e1b4b"
+      "publishedSha256": "b824ae307de6e76ed5e35929ee84ad5047ce1f1b01a680231db2c158c7c831c1"
     },
     {
       "path": "renderer/virgl-command/packed-vertex-README.md",
@@ -5821,7 +5821,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/packed-vertex-README.md",
       "page": "reference-renderer-virgl-command-packed-vertex-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-packed-vertex-readme",
-      "publishedSha256": "6d2daef2301d547142a0e9aa0d352ddd2b9e9d40f92ee0a4692b47a6b82a2b92"
+      "publishedSha256": "d73305a7d12ef6326b15f3fc2f7b6577595e987cc6039f9249122ab856957d3b"
     },
     {
       "path": "renderer/virgl-command/resources-README.md",
@@ -5831,7 +5831,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/resources-README.md",
       "page": "reference-renderer-virgl-command-resources-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-resources-readme",
-      "publishedSha256": "746d3630469832ef4417752603107bd859304da5e5d94bb6d11c58ebb4ac8055"
+      "publishedSha256": "4ac2c4b96bbc2dce57bb3a89048bee3ff97ea857264d3ce86c4268d53083f4ce"
     },
     {
       "path": "renderer/virgl-command/scalar-vertex-README.md",
@@ -5841,7 +5841,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/scalar-vertex-README.md",
       "page": "reference-renderer-virgl-command-scalar-vertex-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-scalar-vertex-readme",
-      "publishedSha256": "2809fc0fe4266ff8c72c0178a699bd8c25e66a99fa7bb3c23247011dcd5c95a5"
+      "publishedSha256": "b75e90ba6be7428dbabf518c9a86bc5e60e1cdf3c0063ee954ee90f3d66b1168"
     },
     {
       "path": "renderer/virgl-command/scanout-README.md",
@@ -5851,7 +5851,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/scanout-README.md",
       "page": "reference-renderer-virgl-command-scanout-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-scanout-readme",
-      "publishedSha256": "f443073202ec425d16b5cf0c4f2fd90a4f0607bacbd86f1dfe6a80c56f2eb1ea"
+      "publishedSha256": "ca1225795f19706d446080eb98af10d3d6dd4559ec77c2f8eb17d5a1c2063931"
     },
     {
       "path": "renderer/virgl-command/shared-exponent-images-README.md",
@@ -5861,7 +5861,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/shared-exponent-images-README.md",
       "page": "reference-renderer-virgl-command-shared-exponent-images-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-shared-exponent-images-readme",
-      "publishedSha256": "5bddb4b5e087f634c351788b293bb84e8a0ceeb56e58b4bd9bb95e3feda24527"
+      "publishedSha256": "cc1aff63c7533be0b3a47a34d1d42ecbf443e65a706e2d53ddab2a8f8b577add"
     },
     {
       "path": "renderer/virgl-command/standard-state-README.md",
@@ -5871,7 +5871,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/standard-state-README.md",
       "page": "reference-renderer-virgl-command-standard-state-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-standard-state-readme",
-      "publishedSha256": "7e32ec2bfaeffed0ffab8775f815750709acc47c523c0a72289df69d9be739a6"
+      "publishedSha256": "084054f0c025d8274517a0a8a52d45c01ad099f9b5f465bbccc6a339b931a6ca"
     },
     {
       "path": "renderer/virgl-command/state-README.md",
@@ -5881,7 +5881,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/state-README.md",
       "page": "reference-renderer-virgl-command-state-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-state-readme",
-      "publishedSha256": "a0d47164543e5625d8495487815585e897855897fca6fa42d970e48b93b85ba9"
+      "publishedSha256": "e3e05ecebc566ca24450fd8953e645de2baabbfcd549737e75f3e22b667f759b"
     },
     {
       "path": "renderer/virgl-command/submit-README.md",
@@ -5891,7 +5891,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/submit-README.md",
       "page": "reference-renderer-virgl-command-submit-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-submit-readme",
-      "publishedSha256": "dfd415c81e5cda9667440db43f8a73f56ceb5fd1070ef89b66e057b28c99d1b8"
+      "publishedSha256": "b866818c040830990f3a7d72b4e695f6b19eb7bf99722a20f3438bc3d9402789"
     },
     {
       "path": "renderer/virgl-command/texture-operations-README.md",
@@ -5901,7 +5901,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-command/texture-operations-README.md",
       "page": "reference-renderer-virgl-command-texture-operations-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-command-texture-operations-readme",
-      "publishedSha256": "a2164a6d0434264bbf3fbdd14d2d28199351b891fca52540b45221781a21dedf"
+      "publishedSha256": "29e8cf73d7ff163e16b04fc61640c6b68364a64414b21d33238c8ba4a602aa67"
     },
     {
       "path": "renderer/virgl-shader/INTEGER-IMAGES.md",
@@ -5911,7 +5911,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-shader/INTEGER-IMAGES.md",
       "page": "reference-renderer-virgl-shader-integer-images",
       "replacement": "./docs.html?page=reference-renderer-virgl-shader-integer-images",
-      "publishedSha256": "331109f48bd2fc6b4a20cfbfa641a257e5b688a7459c8f864ca78ef05cb1ba9d"
+      "publishedSha256": "5f9357b778499c152a2bdffa02b5b1428bf57b6db6b585bc6d68ddabedc137ba"
     },
     {
       "path": "renderer/virgl-shader/README.md",
@@ -5921,7 +5921,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-shader/README.md",
       "page": "reference-renderer-virgl-shader-readme",
       "replacement": "./docs.html?page=reference-renderer-virgl-shader-readme",
-      "publishedSha256": "15152c38e8f3443e8ce0b54ee55d8d3d2e7961a4f855460ddcfaa0074d7f06d1"
+      "publishedSha256": "4f6e0fcd25475e70c1c23339e35e716fc3249caf8ba5032079b5aa3050bbc795"
     },
     {
       "path": "renderer/virgl-shader/STANDARD.md",
@@ -5931,7 +5931,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/renderer/virgl-shader/STANDARD.md",
       "page": "reference-renderer-virgl-shader-standard",
       "replacement": "./docs.html?page=reference-renderer-virgl-shader-standard",
-      "publishedSha256": "d399102b2733ba62ae61250651a0c6c566025914ab5ce86ae7588deb4b583189"
+      "publishedSha256": "da9a9768efbe171b32efc76b77a5a92eac42a3f4a6e81a13eb781b16391a0802"
     },
     {
       "path": "renderer/virgl-shader/tests/mesa-24.2.8-tgsi.rst",
@@ -10722,7 +10722,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tests/fuzz-regressions/README.md",
       "page": "reference-tests-fuzz-regressions-readme",
       "replacement": "./docs.html?page=reference-tests-fuzz-regressions-readme",
-      "publishedSha256": "1c5fef11cbf0aff37f07349710e560fc4200264bffcc28d7a1d06023f43b726b"
+      "publishedSha256": "c179144bfc352fe1b79f92f733a24a438b9b51c1a3ad78214c646fd6843c9a89"
     },
     {
       "path": "tests/stress/README.md",
@@ -10732,7 +10732,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tests/stress/README.md",
       "page": "reference-tests-stress-readme",
       "replacement": "./docs.html?page=reference-tests-stress-readme",
-      "publishedSha256": "fac4c39b04cf902c80b2584a2a4c6ac52a5e9152fbaa1076c2ec20efd99bc977"
+      "publishedSha256": "dd15d68f5bd6858ef14b9f20adc145bd35b2bfaa50cf1fb7ebf5be862471a8ee"
     },
     {
       "path": "third_party/tailscale-connect/README.md",
@@ -10749,7 +10749,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/diff/README.md",
       "page": "reference-tools-diff-readme",
       "replacement": "./docs.html?page=reference-tools-diff-readme",
-      "publishedSha256": "3e2abe0e9534c7cfbea55b5db1844b2c0c30ac8eaafeea8012dce9412216d9a6"
+      "publishedSha256": "c562299edfa7b2451f48c481368fdf6713b269b675cc62dc1545c79a9a0f6b0a"
     },
     {
       "path": "tools/fuzz/README.md",
@@ -10759,7 +10759,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/fuzz/README.md",
       "page": "reference-tools-fuzz-readme",
       "replacement": "./docs.html?page=reference-tools-fuzz-readme",
-      "publishedSha256": "6d3a648b2fed0bf850d0cd01663da67970beae25e016e5d40bc7f1144aae3957"
+      "publishedSha256": "e160f75dbfcff5afc1ae7d96d89c875ad2695f8a7355358890c264c0badeff28"
     },
     {
       "path": "tools/fuzz/sensitivity/README.md",
@@ -10769,7 +10769,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/fuzz/sensitivity/README.md",
       "page": "reference-tools-fuzz-sensitivity-readme",
       "replacement": "./docs.html?page=reference-tools-fuzz-sensitivity-readme",
-      "publishedSha256": "8e77b50d5e9208d1ac04c482512423d77ed7d0279e41d695d998166eceb01bd6"
+      "publishedSha256": "b5b6f3145d20bb005dbd87814dbd8f64b470127418214f90fbcf9a40ceb8c5e0"
     },
     {
       "path": "tools/image/OMARCHY.md",
@@ -10779,7 +10779,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/image/OMARCHY.md",
       "page": "reference-tools-image-omarchy",
       "replacement": "./docs.html?page=reference-tools-image-omarchy",
-      "publishedSha256": "7df1015ae719dce8b4722da6bad9d1a56cf96a5dc65f948278567cc48eba20e3"
+      "publishedSha256": "92d2f627b91a51e77fbb889f21e34f2f7ee86266e0de73563b983de1ef072dd6"
     },
     {
       "path": "tools/image/e5-t22c/README.md",
@@ -10789,7 +10789,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/image/e5-t22c/README.md",
       "page": "reference-tools-image-e5-t22c-readme",
       "replacement": "./docs.html?page=reference-tools-image-e5-t22c-readme",
-      "publishedSha256": "199adc48040fbb2a229a866bebbf64cd32630bdaed7556e3304fc5369c665381"
+      "publishedSha256": "55b92d8715eb21559c4b376d80307d2b19e45999bc94ea2d75703ce38e6c4375"
     },
     {
       "path": "tools/perf/README.md",
@@ -10799,7 +10799,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/perf/README.md",
       "page": "reference-tools-perf-readme",
       "replacement": "./docs.html?page=reference-tools-perf-readme",
-      "publishedSha256": "8570e34d99ec51a65554f33e56dd6364483f2db35250650a10df76b91d7bb86d"
+      "publishedSha256": "e3d4396ade48986e0bb787a9180035d848b95ff49991d65e0706de9c709c6b53"
     },
     {
       "path": "tools/rr/README.md",
@@ -10809,7 +10809,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/rr/README.md",
       "page": "reference-tools-rr-readme",
       "replacement": "./docs.html?page=reference-tools-rr-readme",
-      "publishedSha256": "6348bdd2651d634764ac327f9f73d2979604e01ef06682413bf81991dea084e8"
+      "publishedSha256": "f837a866f0936b316fe3bac7cecbb74033ba45f5e53f6eb6749f94507277d1be"
     },
     {
       "path": "tools/toolchain/README.md",
@@ -10819,7 +10819,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/toolchain/README.md",
       "page": "reference-tools-toolchain-readme",
       "replacement": "./docs.html?page=reference-tools-toolchain-readme",
-      "publishedSha256": "d365d0fc5b674ce6dcbf157e40e08d8d1e451318f46e2912d811a65e88146309"
+      "publishedSha256": "028b3b1eafe4c86f1020d6326cf3314c947e85a438338e80d9a2fb8e1beb5af8"
     },
     {
       "path": "tools/verify/runbook.md",
@@ -10829,7 +10829,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/verify/runbook.md",
       "page": "reference-tools-verify-runbook",
       "replacement": "./docs.html?page=reference-tools-verify-runbook",
-      "publishedSha256": "c8c5ae0e2f723df82550fdc4df00f0b3c09947de5af0c0ddda9cd63c26f02ef3"
+      "publishedSha256": "ae536c7ac5a3b0440ceab8c57958b08c042b2eff56ebe65b9928cc4df260c71e"
     },
     {
       "path": "tools/virgl-92cb-geometry/README.md",
@@ -10839,7 +10839,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-92cb-geometry/README.md",
       "page": "reference-tools-virgl-92cb-geometry-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-92cb-geometry-readme",
-      "publishedSha256": "084b196d4bfe795f93774239897ea559b654d74caf33eef96797d6564e52104a"
+      "publishedSha256": "4c7aee32f41a73fa08158ed4c3d068813291aadf90a06620e4008db4e1c12ac8"
     },
     {
       "path": "tools/virgl-92cb-power-domain/README.md",
@@ -10849,7 +10849,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-92cb-power-domain/README.md",
       "page": "reference-tools-virgl-92cb-power-domain-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-92cb-power-domain-readme",
-      "publishedSha256": "931949028c39539acd38c60a8d38019345eebfe3d255f286044971ec7b65b927"
+      "publishedSha256": "1c08bed37a9122410d6ad0aed4d2ac0730d0cc6895a02cba7a73a6392df39c39"
     },
     {
       "path": "tools/virgl-92cb-raster/README.md",
@@ -10859,7 +10859,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-92cb-raster/README.md",
       "page": "reference-tools-virgl-92cb-raster-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-92cb-raster-readme",
-      "publishedSha256": "a6f3dc527440e2d356ba59fa3a563a0980b8aec18977261d7ae3d183cc1a5885"
+      "publishedSha256": "1313ce80a17ae7f9c3e3483802173cb435915544c7a6e2b09d10eaea074b5423"
     },
     {
       "path": "tools/virgl-capture/README.md",
@@ -10869,7 +10869,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-capture/README.md",
       "page": "reference-tools-virgl-capture-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-capture-readme",
-      "publishedSha256": "bc5459fbbc71e01502e8548802170e9030c20879b6be8316289a9495b7ed7222"
+      "publishedSha256": "9a4710ee52a64d40b61304b317e92cddd0516f55c62f972956bad44497e5a6c2"
     },
     {
       "path": "tools/virgl-capture/tests/recorder_README.md",
@@ -10879,7 +10879,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-capture/tests/recorder_README.md",
       "page": "reference-tools-virgl-capture-tests-recorder-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-capture-tests-recorder-readme",
-      "publishedSha256": "4dd8b745bde9fdba91f9b0fd378040e90224d220fc30e7bb784a8331fcb1b72a"
+      "publishedSha256": "2bfda4639960e9e5778df3e09bae73bec0a20d9da9ff52cfd572407d81ef2b74"
     },
     {
       "path": "tools/virgl-capture/workloads/README.md",
@@ -10889,7 +10889,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-capture/workloads/README.md",
       "page": "reference-tools-virgl-capture-workloads-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-capture-workloads-readme",
-      "publishedSha256": "d0e6d4625edbb22a79d10530d999f921c020a4fbfb303f88cb0ddfcdfd748a9d"
+      "publishedSha256": "e56fc301ad41fa4acadac0349936730de90fe8f71a0328b9d9aec5be1bd85f12"
     },
     {
       "path": "tools/virgl-command/cache-README.md",
@@ -10899,7 +10899,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-command/cache-README.md",
       "page": "reference-tools-virgl-command-cache-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-command-cache-readme",
-      "publishedSha256": "66d83ef215243182b94c81bc49cbb8d4d0ce84ea0b1bd03d81cc91f1aa7102a8"
+      "publishedSha256": "81173f92fe0da917644dd68b12a333a6916b114f82269b81125387962cef71b9"
     },
     {
       "path": "tools/virgl-command/raster-README.md",
@@ -10909,7 +10909,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-command/raster-README.md",
       "page": "reference-tools-virgl-command-raster-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-command-raster-readme",
-      "publishedSha256": "c79c39d88eb4e17d50f6c868865795dc4634f57dde7aaca39d5bf8e4033c1ab5"
+      "publishedSha256": "d63280eff89760d1c3c212ebe46b9308188c26e5148963ff39ab723856591047"
     },
     {
       "path": "tools/virgl-compiler-bounds/README.md",
@@ -10919,7 +10919,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-compiler-bounds/README.md",
       "page": "reference-tools-virgl-compiler-bounds-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-compiler-bounds-readme",
-      "publishedSha256": "aa6b94bc0cb9ad4f248d21cc1f2a05c3845ad86a04ecaaa1dfbd9f7a1a698bb5"
+      "publishedSha256": "cc0e51b0bc56145d159f2f66f044675841bbc5fb62a3dcc00ccd1d2da60fe014"
     },
     {
       "path": "tools/virgl-exact-bank/README.md",
@@ -10929,7 +10929,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-exact-bank/README.md",
       "page": "reference-tools-virgl-exact-bank-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-exact-bank-readme",
-      "publishedSha256": "891cfc6cd72d17b204bb7036ef1a94324551521cf29436a439f31fffbd7cd61c"
+      "publishedSha256": "32dae94ee53dbcb584ebeee7f99c14e0cfe364d05c98a20aa9003b4b425b4d19"
     },
     {
       "path": "tools/virgl-exact-producer/README.md",
@@ -10939,7 +10939,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-exact-producer/README.md",
       "page": "reference-tools-virgl-exact-producer-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-exact-producer-readme",
-      "publishedSha256": "ca0e825f406c2a8229de040711d36e8256cd47d318fea592dc0edd89f046008d"
+      "publishedSha256": "bb9ca2b52f3c3b6aa60ef2f855e3204d27a033abfd134b6cf7e2ab7fa9879ef2"
     },
     {
       "path": "tools/virgl-exponent-logarithm/README.md",
@@ -10949,7 +10949,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-exponent-logarithm/README.md",
       "page": "reference-tools-virgl-exponent-logarithm-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-exponent-logarithm-readme",
-      "publishedSha256": "08fcb55f74e3c4b4be1e39516777fc2bdba5313ce6284b702e61ad86a19e0f4f"
+      "publishedSha256": "4173245139860357534b15175b0736d11cff5ebb51b7a0fe2c11bdbd931a9002"
     },
     {
       "path": "tools/virgl-fragment-coordinates/README.md",
@@ -10959,7 +10959,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-fragment-coordinates/README.md",
       "page": "reference-tools-virgl-fragment-coordinates-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-fragment-coordinates-readme",
-      "publishedSha256": "acd509a36f30bf645df4f19b789a67dc0ef5657ea5a09fdde8a8c2f3ab1e91da"
+      "publishedSha256": "6f084ef55ff33cf95ac51d1d09cfa51170dd8992ab98fc6453a585e0bddf6b8e"
     },
     {
       "path": "tools/virgl-fragment-discard/README.md",
@@ -10969,7 +10969,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-fragment-discard/README.md",
       "page": "reference-tools-virgl-fragment-discard-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-fragment-discard-readme",
-      "publishedSha256": "fd5c0d470a1b7cacdc55fc0ab4d9d8c43a63fd69d7260592e32e1f1e5d823a30"
+      "publishedSha256": "0676193df49c7b68452164448e4740e9014fe3ef20c7206b62e54c67a6d05b3b"
     },
     {
       "path": "tools/virgl-gears-shaders/README.md",
@@ -10979,7 +10979,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-gears-shaders/README.md",
       "page": "reference-tools-virgl-gears-shaders-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-gears-shaders-readme",
-      "publishedSha256": "23faff7a5027526754b539ed1093f5aeb43ba9cec93223416b3349f34f620518"
+      "publishedSha256": "b01c0b358273ca17e4ea184b74a02ec16f523cf29201fc8d2e772d228058b594"
     },
     {
       "path": "tools/virgl-hex-literals/README.md",
@@ -10989,7 +10989,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-hex-literals/README.md",
       "page": "reference-tools-virgl-hex-literals-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-hex-literals-readme",
-      "publishedSha256": "e41685b555575881bf42cc1c11f750f940ddde3882d0c438c2524c594ae2e806"
+      "publishedSha256": "3275415f10dd812b3e2337aff0d268b0ac8b57bdb6be3ebf0fdcaa27a70e0367"
     },
     {
       "path": "tools/virgl-known-arithmetic/README.md",
@@ -10999,7 +10999,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-known-arithmetic/README.md",
       "page": "reference-tools-virgl-known-arithmetic-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-known-arithmetic-readme",
-      "publishedSha256": "22d87976ecb0c0c470c37aeba9c915a481c98cccbda4781bd770c1c4cb026580"
+      "publishedSha256": "ef3d81608e6eceaf116d62b00b80547b8e05d824b1cf040e11b1ea23be9fe3f3"
     },
     {
       "path": "tools/virgl-known-branches/README.md",
@@ -11009,7 +11009,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-known-branches/README.md",
       "page": "reference-tools-virgl-known-branches-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-known-branches-readme",
-      "publishedSha256": "16d2decb5756ff02873183d858bb75a3c8b16ac366a82a0e0acaa0c2abc0f157"
+      "publishedSha256": "e9c0d509a152a8185a89f4e7678f1ff179204f601ddb8beb582fcec948c7b742"
     },
     {
       "path": "tools/virgl-minimum-selection/README.md",
@@ -11019,7 +11019,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-minimum-selection/README.md",
       "page": "reference-tools-virgl-minimum-selection-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-minimum-selection-readme",
-      "publishedSha256": "4c6f31decb3a0a6af88479fba9953745d1cd4245921592f174263dbe1d548ddb"
+      "publishedSha256": "27444b4bcac35663c7ca29b45c8fafd05000f156e7c2b5ea42c4e9f42efeac5a"
     },
     {
       "path": "tools/virgl-original-corpus/README.md",
@@ -11029,7 +11029,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-original-corpus/README.md",
       "page": "reference-tools-virgl-original-corpus-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-original-corpus-readme",
-      "publishedSha256": "0bc8378943a3a5e4b01fa1e5ee80c20e2b53a6db5ccdda526c41972083bb9076"
+      "publishedSha256": "fe6ea45252bec3e522dae2468d2193d6f1cd199a643d31306a6595d102e471f9"
     },
     {
       "path": "tools/virgl-original-programs/README.md",
@@ -11039,7 +11039,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-original-programs/README.md",
       "page": "reference-tools-virgl-original-programs-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-original-programs-readme",
-      "publishedSha256": "60dc2c86c00074d41a518a808d7dba000188b5d5223d78fcf508dfd7f4a75142"
+      "publishedSha256": "8c133066356f78b0f488b40cd4de2590f0d022240016aa01aaf9609e0954602c"
     },
     {
       "path": "tools/virgl-power/README.md",
@@ -11049,7 +11049,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-power/README.md",
       "page": "reference-tools-virgl-power-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-power-readme",
-      "publishedSha256": "acbf633cce00d60560a37e7452b00c03f147f60bb097af65e8cffc074df9bf93"
+      "publishedSha256": "5086ae0fa2d4c8bace6982abb47086a933677ef62c0e0fe7f308740afc771efe"
     },
     {
       "path": "tools/virgl-precise-fraction/README.md",
@@ -11059,7 +11059,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-precise-fraction/README.md",
       "page": "reference-tools-virgl-precise-fraction-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-precise-fraction-readme",
-      "publishedSha256": "0b6ffad95e4933388ec97dfd5ff7f9c90ace16f7fc5936450b50c0b6964568a3"
+      "publishedSha256": "e8f59f15b366798fc712f9cb2bea12d692dd63fdaf55cea066aa02b7f1d9a550"
     },
     {
       "path": "tools/virgl-required-formats/README.md",
@@ -11069,7 +11069,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-required-formats/README.md",
       "page": "reference-tools-virgl-required-formats-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-required-formats-readme",
-      "publishedSha256": "5fb16c369bb8f2a75df2cd0df4cafa5d876fe20a051440bd2b573f04bbccd93d"
+      "publishedSha256": "53639d74e01654dbda7fb2f90fae17e6a1e56a1c13dec4db7d7a8e6640cbaa93"
     },
     {
       "path": "tools/virgl-saturation/README.md",
@@ -11079,7 +11079,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-saturation/README.md",
       "page": "reference-tools-virgl-saturation-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-saturation-readme",
-      "publishedSha256": "7ae4e7baeeb1565969956d478790e8ade0295eec2e993c383d04b2820a251910"
+      "publishedSha256": "b877b885fcad2a96952357bb8047856de34e2ea6c3f2c3eedb7aa37dc60fa3b5"
     },
     {
       "path": "tools/virgl-scalar-operations/README.md",
@@ -11089,7 +11089,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-scalar-operations/README.md",
       "page": "reference-tools-virgl-scalar-operations-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-scalar-operations-readme",
-      "publishedSha256": "d660b12bb1771d935160726e789c1a3be490906ea0cd5ef89f3e3c49a8fbbd3c"
+      "publishedSha256": "72b0f73542029b170953e21ffb8d29a3f34d374c093e153dfbe4d44552669125"
     },
     {
       "path": "tools/virgl-shadow-shaders/primary/tgsi.rst",
@@ -11106,7 +11106,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-signed-conversions/README.md",
       "page": "reference-tools-virgl-signed-conversions-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-signed-conversions-readme",
-      "publishedSha256": "02348eb6f6ac67392cd58663a63766f5a9d931227a42fdac4fdaa0a07f2952be"
+      "publishedSha256": "6a917706178dc9c0930a79d91e8de9be8e610ef49c4b3ac9bbaef9e4e5023064"
     },
     {
       "path": "tools/virgl-signed-integers/README.md",
@@ -11116,7 +11116,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-signed-integers/README.md",
       "page": "reference-tools-virgl-signed-integers-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-signed-integers-readme",
-      "publishedSha256": "c39dae523030bfce22ebdc5790110cfa128a6e7731b523c665981338c86512cd"
+      "publishedSha256": "cde42346f7967a485c894ed4de4290c6733efa0e2f44553b140af954e55e00da"
     },
     {
       "path": "tools/virgl-sine/README.md",
@@ -11126,7 +11126,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/tools/virgl-sine/README.md",
       "page": "reference-tools-virgl-sine-readme",
       "replacement": "./docs.html?page=reference-tools-virgl-sine-readme",
-      "publishedSha256": "9d9ff47b6a725510ff8fb5501743576b53e585d862ec05c238ff1328520c4304"
+      "publishedSha256": "2461ce28cd12b88332bd074f55f5d8aa540d9531e8a83fdd5bb1f2a8ad27420f"
     },
     {
       "path": "web/README.md",
@@ -11136,7 +11136,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/web/README.md",
       "page": "reference-web-readme",
       "replacement": "./docs.html?page=reference-web-readme",
-      "publishedSha256": "d7bdbc1783fda9f6b79e03578753695f4a3777c2cfdf2274900c14ea3a6a4709"
+      "publishedSha256": "8637c91e55b1134e079bc77fd0b25ee39095156ccf5ae5b84ce6ea86f2644a5e"
     },
     {
       "path": "web/dist/tailscale-connect/README.md",
@@ -11153,7 +11153,7 @@
       "sourceUrl": "https://github.com/BLamy/wasm-vm/blob/2691b24e6c00478f8d69f81180b6827761de246a/web/tailscale-connect/README.md",
       "page": "reference-web-tailscale-connect-readme",
       "replacement": "./docs.html?page=reference-web-tailscale-connect-readme",
-      "publishedSha256": "0941d9b905dc616a16110ed03f5c22bc2446320bd363da127461f02d4f443906"
+      "publishedSha256": "90218229aa4d5a7b7b2a8c79b217f5cef7bbdf5111ace49d0ddbbe308f6e35b9"
     },
     {
       "path": "bench/guest/MANIFEST.txt",
