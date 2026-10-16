@@ -9,7 +9,7 @@ import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {once} from 'node:events';
 import {createInterface} from 'node:readline';
-import {createApplicationFixture,readFixtureTransition,authenticateBrowserPrefix,isWriterDocumentWindow} from './omarchy-applications.mjs';
+import {createApplicationFixture,readFixtureTransition,authenticateBrowserPrefix,isWriterDocumentWindow,isWriterTipWindow} from './omarchy-applications.mjs';
 
 test('the original Bash job notification cannot obscure or replace a fixture transition receipt',()=>{
   const token='8203261826a440b9bd4746d04943f145';
@@ -93,4 +93,17 @@ test('LibreOffice native and Xwayland splash windows cannot accept document typi
   assert.equal(isWriterDocumentWindow({...editor,size:[644,199]}),false);
   assert.equal(isWriterDocumentWindow({...editor,visible:false}),false);
   assert.equal(isWriterDocumentWindow({...editor,class:'foot',title:'omarchy@omarchy-demo:~'}),false);
+});
+
+test('only the visible native Writer process tip can be dismissed as Tip of the Day',()=>{
+  const tip={pid:12830,mapped:true,visible:true,class:'soffice',title:'Tip of the Day: 1/224',size:[646,439]};
+  assert.equal(isWriterTipWindow(tip,12830),true);
+  assert.equal(isWriterTipWindow({...tip,title:'Tip of the Day: 224/224'},12830),true);
+  for(const changes of [{pid:12831},{mapped:false},{visible:false},{class:'foot'},
+    {title:'Untitled 1 — LibreOffice Writer'},{title:'Tip of the Day: 0/224'},
+    {title:'Tip of the Day: 1/0'},{title:'Tip of the Day: 1/224 extra'},{size:[100,439]}]){
+    assert.equal(isWriterTipWindow({...tip,...changes},12830),false);
+  }
+  assert.equal(isWriterTipWindow(null,12830),false);
+  assert.equal(isWriterTipWindow(tip,undefined),false);
 });
