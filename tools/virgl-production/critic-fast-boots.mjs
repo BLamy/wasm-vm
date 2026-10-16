@@ -30,6 +30,7 @@ const localGpuPairFile = process.env.CRITIC_FAST_BOOT_GPU_PAIR_FILE;
 const candidateDirectory = process.env.CRITIC_FAST_BOOT_IMAGE_DIRECTORY
   ? path.resolve(process.env.CRITIC_FAST_BOOT_IMAGE_DIRECTORY) : null;
 const snapshotPersistence = process.env.CRITIC_FAST_BOOT_PERSISTENCE !== '0';
+const omarchyPersist = process.env.CRITIC_FAST_BOOT_OMARCHY_PERSIST === '1';
 const saveOnRepeat = process.env.CRITIC_FAST_BOOT_SAVE_ON_REPEAT === '1';
 const gpuTrace = process.env.CRITIC_FAST_BOOT_GPU_TRACE === '1';
 const captureGpuPair = process.env.CRITIC_FAST_BOOT_CAPTURE_GPU_PAIR === '1';
@@ -41,6 +42,7 @@ const applicationContinuation = process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINU
 const applicationComponent=process.env.CRITIC_FAST_BOOT_APPLICATION_COMPONENT;
 assert.ok(applicationComponent===undefined||applicationComponent==='writer','known explicit application component');
 const remoteUrl = process.env.CRITIC_FAST_BOOT_URL;
+if(omarchyPersist)assert.ok(!acceleratedGpu&&guests.includes('omarchy'),'explicit software Omarchy persistence');
 if(restoredApplications)assert.ok(warmGpu&&!applicationWorkload&&!captureGpuPair&&!swapCheckpoint,'restored application launch proof uses its own warm session');
 if(swapCheckpoint)assert.ok(guests.length===1&&guests[0]==='omarchy'&&!coldGpu&&!captureGpuPair&&!applicationWorkload&&!restoredApplications&&!remoteUrl,'separate local Omarchy warm swap fixture, never the clean factory or publication timing');
 const failureHoldMs=Number(process.env.CRITIC_FAST_BOOT_HOLD_FAILURE_MS||1800000);
@@ -63,7 +65,7 @@ noteRecorderMemory();const recorderMemoryTimer=setInterval(noteRecorderMemory,30
 if(gpuTrace)await fs.writeFile(path.join(output,'gpu.ndjson'),'');
 const report = {status:'running', scope:restoredApplications?'native application launches after a fresh factory restoration; repeat timing is verified separately':swapCheckpoint?'separate swapped-page checkpoint fixture, not factory or publication timing':'actual production UI fast boots and repeat launches',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
-  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, warmGpu, applicationContinuation, restoredApplications, swapCheckpointMode:swapCheckpoint, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
+  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, warmGpu, applicationContinuation, restoredApplications, omarchyPersist, swapCheckpointMode:swapCheckpoint, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
 if(applicationComponent)report.applicationComponent={name:applicationComponent,scope:'Only missing native Writer/Node/npm/wallpaper and final desktop proof; not Chromium/SVG or publication timing.'};
 for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs','critic-canvas-observation.mjs']){
   const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
@@ -628,13 +630,14 @@ try{
     if (!remoteUrl) { query.set('assetBase',origin); query.set('omarchyAssetBase',origin); }
     if(gpuTrace){query.set('testHooks','1');query.set('gpuTrace','1');query.set('workerHeartbeatTimeoutMs','10000');}
     if(guest==='omarchy')query.set('desktop','1');
+    if(guest==='omarchy'&&(omarchyPersist||swapCheckpoint&&!acceleratedGpu))query.set('persist','1');
     const url=origin+'/app?'+query+'#ide';
     for(const round of coldGpu||captureGpuPair||applicationContinuation||restoredApplications?['initial']:['initial','repeat']){
       phase=guest+'-'+round;let started=Date.now();
       let repeatCheckpoint,phaseEgl,publicDesktopInput,publicDesktopFinal,warmPixels,warmTiming,postWorkloadInput,restoredAppLaunches,swapResult;
       if(round==='initial')await page.goto(url);
       else {
-        if(saveOnRepeat&&!swapCheckpoint&&!acceleratedGpu&&['alpine','node-alpine','omarchy'].includes(guest)) {
+        if(saveOnRepeat&&!swapCheckpoint&&!acceleratedGpu&&(['alpine','node-alpine'].includes(guest)||guest==='omarchy'&&omarchyPersist)) {
           // Guest reads can dirty atime/history and advance the durable disk.
           // Save the live RAM/disk pair through the public paused/flush boundary
           // instead of trying the old shipped RAM against a changed overlay.
@@ -823,7 +826,7 @@ try{
       await fs.writeFile(path.join(output,phase+'.json'),JSON.stringify(report.phases.at(-1),null,2));
       console.log(JSON.stringify({phase,restoredMs,result,display:state.display?.successfulPresents,databases:state.databases}));
     }
-    if(snapshotPersistence&&!acceleratedGpu&&!swapCheckpoint&&['alpine','node-alpine','omarchy'].includes(guest)){
+    if(snapshotPersistence&&!acceleratedGpu&&!swapCheckpoint&&(['busybox','alpine','node-alpine'].includes(guest)||guest==='omarchy'&&omarchyPersist)){
       phase=guest+'-persistence';const marker=(guest==='omarchy'?'/home/omarchy/':'/root/')+'critic-fast-boot-'+guest;
       const write=await guestCommand(page,`printf 'DURABLE_${guest}_42_PASS' > ${marker}; sync`,180000);
       assert.equal(write.exit,0);
@@ -838,15 +841,9 @@ try{
       const generation=await page.evaluate(()=>window.__snapshotGeneration());
       assert.equal(generation,before,phase+' durable generation preserved');
       const state=await snapshot(page);
-      report.phases.push({phase,restoredMs:Date.now()-started,write,read,before,generation,state,checkpoint});
+      report.phases.push({phase,restoredMs:Date.now()-started,write,read,before,generation,state,checkpoint,persistenceKind:guest==='busybox'?'whole-machine RAM including initramfs filesystem':'whole-machine RAM and chunked disk'});
       await fs.writeFile(path.join(output,phase+'.json'),JSON.stringify(report.phases.at(-1),null,2));
       console.log(JSON.stringify({phase,restoredMs:Date.now()-started,before,generation,read}));
-    }
-    if(snapshotPersistence&&guest==='busybox'){
-      const checkpoint=await page.evaluate(()=>window.wvmDemo.snapshotSave());
-      assert.equal(checkpoint.ok,false);assert.equal(checkpoint.code,'SNAPSHOT_NOT_PERSISTENT');
-      const result={phase:'busybox-persistence-capability',checkpoint,scope:'Flat BusyBox initramfs has no persistent chunked disk; the two shipped-snapshot fast boots above remain the supported repeat path'};
-      report.phases.push(result);await fs.writeFile(path.join(output,'busybox-persistence-capability.json'),JSON.stringify(result,null,2)+'\n');
     }
     await page.evaluate(()=>window.__linuxCtl?.stop?.()).catch(()=>{});
     await Promise.all(liveReads); await captureWorkerShellSources(); assert.deepEqual(liveReadErrors, [], 'published original source bodies');
