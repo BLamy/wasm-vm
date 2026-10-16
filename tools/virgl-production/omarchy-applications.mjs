@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {createHash} from 'node:crypto';
+import {createHash,randomUUID} from 'node:crypto';
 import {verifyPublicDesktopInput} from './critic-fast-boots-input.mjs';
 import {assertPublicDesktopFinal} from './critic-fast-boots-final.mjs';
 import {verifyPublicBarContent} from './critic-fast-boots-bar-content.mjs';
@@ -55,6 +55,21 @@ class Handler(BaseHTTPRequestHandler):
 HTTPServer(('127.0.0.1',8765),Handler).serve_forever()
 `;
 
+// A previous document can become focused as soon as the keyring closes. Give
+// each application recording a new GET and new POST endpoints, so that document
+// cannot satisfy the new navigation's readiness or submission.
+export function createApplicationFixture(token) {
+  assert.match(token,/^[a-f0-9]{32}$/);
+  const route='/?run='+token,readyPath='/ready/'+token,submitPath='/submit/'+token;
+  const body=html.replace("fetch('/ready',","fetch('"+readyPath+"',")
+    .replace("fetch('/submit',","fetch('"+submitPath+"',");
+  const source=server.replace('HTML='+JSON.stringify(html)+'.encode()','HTML='+JSON.stringify(body)+'.encode()')
+    .replace("if self.path!='/':","if self.path!="+JSON.stringify(route)+":")
+    .replace("('/submit','/ready')","("+JSON.stringify(submitPath)+","+JSON.stringify(readyPath)+")")
+    .replace("self.path=='/ready'","self.path=="+JSON.stringify(readyPath));
+  return {token,route,readyPath,submitPath,url:'http://127.0.0.1:8765'+route,source};
+}
+
 export async function verifyOmarchyApplications(page, command, output, options = {}) {
   // Re-read at each invocation: a retry can update only this helper's dependency
   // while Node retains the application module from the previous recording.
@@ -82,7 +97,8 @@ export async function verifyOmarchyApplications(page, command, output, options =
     }
   }
   if(continueExistingBrowser)assert.ok(continuationRequest,'existing browser continuation requires the retained owned failure and request');
-  const report = {status:'running',identityModuleSha256,continueExistingBrowser,networking:{provider:'offline',fixture:'http://127.0.0.1:8765/',externalBrowsingClaim:false},phases:[]};
+  const fixtureSpec=createApplicationFixture(randomUUID().replaceAll('-',''));
+  const report = {status:'running',identityModuleSha256,continueExistingBrowser,fixtureToken:fixtureSpec.token,fixtureServerSha256:sha(Buffer.from(fixtureSpec.source)),networking:{provider:'offline',fixture:fixtureSpec.url,externalBrowsingClaim:false},phases:[]};
   if(continuationRequest)report.continuationRequest=continuationRequest;
   const file = path.join(output,name+'.json');
   const inventoryBytes=await fs.readFile(path.join(output,'input-runtime-elf.json'));
@@ -291,13 +307,13 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.wallpaper=await run('readlink -f "$HOME/.local/state/omarchy/current/background"; sha256sum "$HOME/.local/state/omarchy/current/background" /usr/share/omarchy/shell/plugins/background/Background.qml; '+hypr+'monitors');
     assert.equal(report.wallpaper.exit,0);
     if(continueExistingBrowser){
-      const code=`from pathlib import Path;import hashlib,json,stat,os;p=Path('/tmp/omarchyapps');s=p.lstat();assert stat.S_ISDIR(s.st_mode) and s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o700;source=p/'server.py';f=source.lstat();assert stat.S_ISREG(f.st_mode) and f.st_uid==1000 and f.st_nlink==1 and f.st_size==${Buffer.byteLength(server)};digest=hashlib.sha256(source.read_bytes()).hexdigest();assert digest==${JSON.stringify(sha(Buffer.from(server)))};pidfile=p/'server.pid';f=pidfile.lstat();assert stat.S_ISREG(f.st_mode) and f.st_uid==1000 and f.st_nlink==1 and 0<f.st_size<32;pid=int(pidfile.read_text());assert pid>1;q=Path('/proc')/str(pid);assert q.stat().st_uid==1000 and (q/'cmdline').read_bytes().split(bytes([0]))[-2]==str(source).encode() and (q/'exe').resolve()==Path('/usr/bin/python3').resolve();assert not (p/'submission.json').exists() and not Path(${JSON.stringify(document)}).exists();old=p/'ready.json';retained=p/'ready-before-continuation.json';assert not retained.exists();old.rename(retained) if old.exists() else None;print(json.dumps({'scope':'authenticated existing owned loopback fixture only','serverPid':pid,'serverSha256':digest,'priorReadyRetained':retained.exists()}))`;
+      const code=`from pathlib import Path;import hashlib,json,stat,os,signal,time;p=Path('/tmp/omarchyapps');s=p.lstat();assert stat.S_ISDIR(s.st_mode) and s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o700;source=p/'server.py';f=source.lstat();assert stat.S_ISREG(f.st_mode) and f.st_uid==1000 and f.st_nlink==1 and f.st_size==${Buffer.byteLength(server)};digest=hashlib.sha256(source.read_bytes()).hexdigest();assert digest==${JSON.stringify(sha(Buffer.from(server)))};pidfile=p/'server.pid';f=pidfile.lstat();assert stat.S_ISREG(f.st_mode) and f.st_uid==1000 and f.st_nlink==1 and 0<f.st_size<32;pid=int(pidfile.read_text());assert pid>1;q=Path('/proc')/str(pid);assert q.stat().st_uid==1000 and (q/'cmdline').read_bytes().split(bytes([0]))[-2]==str(source).encode() and (q/'exe').resolve()==Path('/usr/bin/python3').resolve();assert not (p/'submission.json').exists() and not Path(${JSON.stringify(document)}).exists();os.kill(pid,signal.SIGTERM);deadline=time.monotonic()+10\ndef stopped():\n try:return (q/'stat').read_text().split(')')[-1].split()[0]=='Z'\n except FileNotFoundError:return True\nwhile not stopped() and time.monotonic()<deadline:time.sleep(0.01)\nassert stopped();retained=p.with_name('omarchyapps-before-'+${JSON.stringify(fixtureSpec.token)});assert not retained.exists();p.rename(retained);p.mkdir(mode=0o700);print(json.dumps({'scope':'authenticated owned fixture retained before generation change','serverPid':pid,'serverSha256':digest,'retainedFixture':str(retained)}))`;
       const fixture=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");assert.equal(fixture.exit,0);report.existingFixture=JSON.parse(fixture.stdout);
     }else{
       const setup=await run('test "$(id -u)" = 1000 && test ! -e /tmp/omarchyapps && test ! -e '+document+' && mkdir -m 700 /tmp/omarchyapps');assert.equal(setup.exit,0);
-      const payload=Buffer.from(server).toString('base64');
-      const fixture=await run(`printf '%s' '${payload}' | base64 -d > /tmp/omarchyapps/server.py; python3 /tmp/omarchyapps/server.py > /tmp/omarchyapps/server.log 2>&1 < /dev/null & echo $! > /tmp/omarchyapps/server.pid`);assert.equal(fixture.exit,0);
     }
+    const payload=Buffer.from(fixtureSpec.source).toString('base64');
+    const fixture=await run(`printf '%s' '${payload}' | base64 -d > /tmp/omarchyapps/server.py; python3 /tmp/omarchyapps/server.py > /tmp/omarchyapps/server.log 2>&1 < /dev/null & echo $! > /tmp/omarchyapps/server.pid`);assert.equal(fixture.exit,0);
     report.defaults=await run('env XDG_CURRENT_DESKTOP=Hyprland xdg-settings get default-web-browser; '+hypr+'binds; free -m; uname -m');assert.equal(report.defaults.exit,0);assert.match(report.defaults.stdout,/chromium.desktop/);
     const initialEula=await run('test -f "$HOME/.config/chromium/EULA Accepted"');assert.ok([0,1].includes(initialEula.exit));
     if(continueExistingBrowser)assert.equal(initialEula.exit,0,'continuation requires the already accepted native first-run dialog');
@@ -321,13 +337,13 @@ export async function verifyOmarchyApplications(page, command, output, options =
     await waitActive(row=>row.pid===chromium.pid);
     assert.match(report.chromium.process.stdout,/\/usr\/lib\/chromium\/chromium/);
     await shot('chromium-open');
-    await press('Control+l');await type('http://127.0.0.1:8765/');await press('Enter');
+    await press('Control+l');await type(fixtureSpec.url);await press('Enter');
     let ready,diagnostic=0,nextDiagnostic=0,nextPromptProbe=0;const navigationStarted=Date.now();
     do {
       if(Date.now()>=nextPromptProbe){
         nextPromptProbe=Date.now()+15000;
         if(await cancelTestKeyringPrompt(chromium)){
-          await press('Control+l');await type('http://127.0.0.1:8765/');await press('Enter');
+          await press('Control+l');await type(fixtureSpec.url);await press('Enter');
         }
       }
       await gpuHealth();ready=await run('cat /tmp/omarchyapps/ready.json');if(ready.exit===0)break;
@@ -343,7 +359,8 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.equal(ready.exit,0,'native Chromium loaded and focused the guest loopback page');
     report.browserNavigationMs=Date.now()-navigationStarted;
     assert.ok(report.browserNavigationMs<=600000,'native Chromium navigation finished within the measured 600-second deadline');
-    report.browserReady=JSON.parse(ready.stdout);assert.deepEqual(report.browserReady,{readyState:'complete',hasFocus:true,activeElement:'note',location:'http://127.0.0.1:8765/'});
+    report.browserReady=JSON.parse(ready.stdout);assert.deepEqual(report.browserReady,{readyState:'complete',hasFocus:true,activeElement:'note',location:fixtureSpec.url});
+    const requested=await run('cat /tmp/omarchyapps/requested');assert.equal(requested.exit,0);assert.equal(requested.stdout.trim(),fixtureSpec.route);report.browserRequest=requested;
     await shot('chromium-fixture');
     const note='omarchy chromium riscv 42';await type(note);await press('Tab');await press('Space');
     let submitted;

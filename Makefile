@@ -2660,6 +2660,7 @@ verify-E5.5-T05c:
 	git diff --check
 	node --check tools/virgl-production/omarchy-applications.mjs
 	node --check tools/virgl-production/application-identity.mjs
+	node --test tools/virgl-production/omarchy-application-fixture.test.mjs
 	python3 -m py_compile tools/image/prepare-omarchy-application-memory.py
 	node tools/virgl-production/omarchy-shader-padding.mjs
 	node tools/virgl-production/omarchy-storage-leases-browser.mjs "$${OMARCHY_STORAGE_LEASE_EVIDENCE_DIR:-target/evidence/omarchy-storage-leases}"
