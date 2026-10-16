@@ -133,6 +133,32 @@ export function isWriterDocumentWindow(row) {
     /writer/i.test(row.class+' '+row.title)&&row.size?.[0]>300&&row.size?.[1]>300;
 }
 
+export function authenticateWriterSavePrefix(bytes,expectedSha256) {
+  assert.match(expectedSha256,/^[a-f0-9]{64}$/);assert.equal(sha(bytes),expectedSha256);
+  const prior=JSON.parse(bytes);assert.equal(prior.status,'failed');assert.equal(prior.component.name,'writer');
+  assert.match(prior.error,/^Error: Actual guest application window did not close\n/);
+  for(const field of ['firstSave','secondSave','nodeNpm','wallpaperTransitions'])assert.equal(prior[field],undefined);
+  assert.ok(isWriterDocumentWindow(prior.writer.window));
+  assert.equal(prior.writer.executable,'/usr/lib/libreoffice/program/soffice.bin');
+  assert.equal(prior.writer.executableSha256,'f8717b01e4381e7820938f48a35f18df6e076fcc2641f9176149ac7646ce5fe4');
+  const before=prior.writer.before.data,after=prior.writer.after.data;
+  for(const key of ['pid','exe','exeStat','pathStat','rootStat','rootBlock','starttime'])assert.deepEqual(before[key],after[key]);
+  assert.equal(before.pid,prior.writer.window.pid);assert.equal(before.exe,prior.writer.executable);
+  assert.equal(prior.saveDialog.pid,before.pid);assert.equal(prior.saveDialog.class,'soffice');assert.equal(prior.saveDialog.title,'Save');
+  assert.equal(prior.fittedSaveDialog.address,prior.saveDialog.address);assert.equal(prior.fittedSaveDialog.pid,before.pid);
+  assert.equal(prior.fittedSaveDialog.fullscreen,2,'the retained attempt hid the GTK actions in true fullscreen');
+  assert.equal(prior.beforeGpu.qualified,true);assert.equal(prior.beforeGpu.counters.failed,0);
+  const input=prior.phases.filter(row=>['trusted-key','trusted-text'].includes(row.kind));
+  assert.ok(input.some(row=>row.kind==='trusted-text'&&row.text==='Omarchy riscv document 42'));
+  assert.deepEqual(input.slice(-3).map(row=>row.kind==='trusted-key'?row.key:row.text),
+    ['Control+l','/home/omarchy/Documents/omarchy-native-applications-42.odt','Enter']);
+  assert.ok(prior.trusted.length>100&&prior.trusted.every(row=>row.trusted===true));
+  assert.equal(prior.inputFailure.focus,'ide-display-canvas');assert.equal(prior.inputFailure.capture,'on');
+  assert.deepEqual(prior.inputFailure.held,[]);assert.equal(prior.inputFailure.device.pendingEvents,0);
+  assert.equal(prior.inputFailure.device.droppedEvents,0);assert.equal(prior.inputFailure.device.droppedFrames,0);
+  return {prior};
+}
+
 export async function verifyOmarchyApplications(page, command, output, options = {}) {
   // Re-read at each invocation: a retry can update only this helper's dependency
   // while Node retains the application module from the previous recording.
@@ -143,7 +169,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
   const name = options.name || 'native-applications';
   let writerOnly=options.component==='writer';
   assert.ok(options.component===undefined||writerOnly,'known explicit application component');
-  let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest,processWitness,browserPrefix,sandboxPrefix,writerComponent,writerLaunchResume;
+  let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest,processWitness,browserPrefix,sandboxPrefix,writerComponent,writerLaunchResume,writerSaveResume;
   async function retainedComponent(reference,authenticate,scope){
     assert.ok(processWitness,'same-process native witness is required');
     assert.match(reference.path,/^control-applications-[a-z0-9-]+\.json$/);assert.match(reference.sourceSha256,/^[a-f0-9]{64}$/);
@@ -162,6 +188,28 @@ export async function verifyOmarchyApplications(page, command, output, options =
     const bytes=await fs.readFile(path.join(output,'control-request-'+id+'.json')),request=JSON.parse(bytes);
     assert.equal(request.id,id);assert.equal(request.kind,'retry-applications');
     continueExistingBrowser ||= request.continueExistingBrowser===true;
+    if(request.resumeWriterSave){
+      assert.ok(!continueExistingBrowser&&!request.writerComponent&&!request.resumeAfterBrowser&&!request.resumeAfterSandbox&&!request.processWitness&&!request.resumeWriterLaunch);
+      const reference=request.resumeWriterSave;
+      assert.equal(reference.path,'control-applications-writer-launch55.json');
+      for(const key of ['sha256','sourceSha256','responseSha256','controllerSha256'])assert.match(reference[key],/^[a-f0-9]{64}$/);
+      const parentBytes=await fs.readFile(path.join(output,'report.json'));assert.equal(sha(parentBytes),reference.controllerSha256);
+      const parent=JSON.parse(parentBytes);assert.equal(parent.status,'failed');assert.equal(parent.applicationComponent.name,'writer');
+      assert.equal(parent.applicationContinuation,true);assert.equal(parent.warmGpu,true);assert.ok(!parent.remoteUrl);
+      assert.equal(sha(await fs.readFile(path.join(output,'candidate-manifest.json'))),parent.candidate.manifestSha256);
+      assert.equal(parent.expectedGpuPair.identity.imageManifestSha256,parent.candidate.manifestSha256);
+      const sourcePath=reference.path.replace(/\.json$/,'-source.mjs');
+      assert.equal(sha(await fs.readFile(path.join(output,sourcePath))),reference.sourceSha256);
+      const responseBytes=await fs.readFile(path.join(output,'control-response-writer-launch55.json'));
+      assert.equal(sha(responseBytes),reference.responseSha256);const response=JSON.parse(responseBytes);
+      assert.equal(response.request.id,'writer-launch55');assert.equal(response.request.kind,'retry-applications');
+      assert.equal(response.source.bodyPath,sourcePath);assert.equal(response.source.sha256,reference.sourceSha256);
+      assert.match(response.error,/^Error: Actual guest application window did not close\n/);
+      const authenticated=authenticateWriterSavePrefix(await fs.readFile(path.join(output,reference.path)),reference.sha256);
+      assert.equal(authenticated.prior.identityModuleSha256,identityModuleSha256);
+      continuationRequest={id,sha256:sha(bytes),scope:'same native unsaved Writer and Save dialog; original waitClosed timeout remains failed'};
+      writerOnly=true;writerSaveResume={...authenticated,reference:{...reference,sourcePath}};
+    }
     if(request.resumeWriterLaunch){
       assert.ok(!continueExistingBrowser&&!request.writerComponent&&!request.resumeAfterBrowser&&!request.resumeAfterSandbox&&!request.processWitness);
       const reference=request.resumeWriterLaunch;
@@ -240,11 +288,12 @@ export async function verifyOmarchyApplications(page, command, output, options =
   const fixtureSpec=writerComponent?.fixture||sandboxPrefix?.fixture||browserPrefix?.fixture||createApplicationFixture(randomUUID().replaceAll('-',''));
   const report = {status:'running',identityModuleSha256,continueExistingBrowser,fixtureToken:fixtureSpec.token,fixtureServerSha256:sha(Buffer.from(fixtureSpec.source)),networking:{provider:'offline',fixture:fixtureSpec.url,externalBrowsingClaim:false},phases:[]};
   if(writerOnly){
-    assert.ok((!name.startsWith('control-applications-')||writerLaunchResume)&&!continueExistingBrowser&&!writerComponent&&!browserPrefix&&!sandboxPrefix);
+    assert.ok((!name.startsWith('control-applications-')||writerLaunchResume||writerSaveResume)&&!continueExistingBrowser&&!writerComponent&&!browserPrefix&&!sandboxPrefix);
     assert.equal(process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINUATION,'1');
     report.component={name:'writer',scope:'New Writer save/reopen/edit, native Node/npm, wallpaper and final desktop only; prior Chromium/SVG evidence remains separate.'};
     report.networking.fixture=null;
     if(writerLaunchResume)report.resumedWriterLaunch=writerLaunchResume;
+    if(writerSaveResume)report.resumedWriterSave=writerSaveResume.reference;
   }
   if(continuationRequest)report.continuationRequest=continuationRequest;
   if(processWitness)report.processWitness=processWitness;
@@ -510,9 +559,11 @@ export async function verifyOmarchyApplications(page, command, output, options =
       report.phases.push({kind:'native-file-dialog-focus',dialog:current,target,time:Date.now()});await save();
     }
     await clickVisible();
-    if(current.at[0]<0||current.at[1]<0||current.at[0]+current.size[0]>monitor.width||current.at[1]+current.size[1]>monitor.height){
-      await press('Meta+f');
-      current=await waitActive(row=>row.address===dialog.address&&row.at[0]>=0&&row.at[1]>=0&&row.at[0]+row.size[0]<=monitor.width&&row.at[1]+row.size[1]<=monitor.height);
+    if(current.fullscreen===2||current.at[0]<0||current.at[1]<0||current.at[0]+current.size[0]>monitor.width||current.at[1]+current.size[1]>monitor.height){
+      // GTK puts its Name and Save/Open actions in the title bar. Omarchy's
+      // maximize binding fits the chooser while retaining those native controls.
+      await press('Meta+Alt+f');
+      current=await waitActive(row=>row.address===dialog.address&&row.fullscreen===1&&row.at[0]>=0&&row.at[1]>=0&&row.at[0]+row.size[0]<=monitor.width&&row.at[1]+row.size[1]<=monitor.height);
       await clickVisible();
     }
     await waitActive(row=>row.address===dialog.address);return current;
@@ -571,7 +622,17 @@ export async function verifyOmarchyApplications(page, command, output, options =
       if(writerLaunchResume){
         assert.equal(report.beforeGpu.epoch,writerLaunchResume.epoch);assert.ok(windows.every(row=>/foot/i.test(row.class)),'no application has launched before this retry');
       }
-      const prepareDirectory=writerLaunchResume?"assert p.is_dir() and not (p/'node').exists() and not (p/'npm').exists()":"assert not p.exists();p.mkdir(mode=0o700)";
+      if(writerSaveResume){
+        const prior=writerSaveResume.prior;assert.equal(report.beforeGpu.epoch,prior.beforeGpu.epoch);
+        assert.ok(windows.every(row=>/foot/i.test(row.class)||row.pid===prior.writer.window.pid),'only the same Writer process and native Foot remain');
+        const writer=windows.find(row=>row.address===prior.writer.window.address&&row.pid===prior.writer.window.pid);
+        assert.ok(writer&&writer.class===prior.writer.window.class&&writer.title===prior.writer.window.title);
+        report.writer=await identity(writer,'/usr/lib/libreoffice/program/soffice.bin');
+        assert.equal(report.writer.before.data.starttime,prior.writer.before.data.starttime);
+        for(const key of ['exeStat','pathStat','rootStat','rootBlock'])assert.deepEqual(report.writer.before.data[key],prior.writer.before.data[key]);
+        report.saveDialog=await waitActive(row=>row.address===prior.saveDialog.address&&row.pid===writer.pid&&row.class==='soffice'&&row.title==='Save');
+      }
+      const prepareDirectory=(writerLaunchResume||writerSaveResume)?"assert p.is_dir() and not (p/'node').exists() and not (p/'npm').exists()":"assert not p.exists();p.mkdir(mode=0o700)";
       const code=`from pathlib import Path;import json,stat;p=Path('/tmp/omarchyapps');assert not Path(${JSON.stringify(document)}).exists();${prepareDirectory};s=p.lstat();assert stat.S_ISDIR(s.st_mode) and s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o700;rows=[x.split() for x in Path('/proc/swaps').read_text().splitlines()[1:]];active=[x for x in rows if x[0]=='/var/lib/wasm-vm-applications/swapfile'];assert len(active)==1 and int(active[0][2])*1024==536866816 and int(active[0][4])==10;print(json.dumps(dict(scope='empty owned terminal-output directory only; no document, app-profile or browser-output setup',directory=str(p),activeSwap=active[0])))`;
       const prepared=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");assert.equal(prepared.exit,0);report.writerPreparation=JSON.parse(prepared.stdout);
       if(writerLaunchResume){
@@ -692,14 +753,15 @@ export async function verifyOmarchyApplications(page, command, output, options =
       await press('Meta+w');await waitClosed(row=>/chromium/i.test(row.class));
     }
 
-    report.writer=await identity(await launchWriter(sandboxPrefix?.prior.writer.window.pid),'/usr/lib/libreoffice/program/soffice.bin');assert.match(report.writer.process.stdout,/\/usr\/lib\/libreoffice\/program\/soffice.bin/);
-    const first='Omarchy riscv document 42';report.saveDialog=await saveWriterText(report.writer.window,first);
+    if(!writerSaveResume)report.writer=await identity(await launchWriter(sandboxPrefix?.prior.writer.window.pid),'/usr/lib/libreoffice/program/soffice.bin');
+    assert.match(report.writer.process.stdout,/\/usr\/lib\/libreoffice\/program\/soffice.bin/);
+    const first='Omarchy riscv document 42';if(!writerSaveResume)report.saveDialog=await saveWriterText(report.writer.window,first);
     report.fittedSaveDialog=await focusFileDialog(report.saveDialog);await shot('writer-save-dialog');
-    await press('Control+l');await type(document);await press('Enter');await waitClosed(row=>row.address===report.saveDialog.address);
+    await press('Control+l');await press('Control+a');await type(document);await press('Enter');await waitClosed(row=>row.address===report.saveDialog.address);
     report.firstSave=await readDocument('first-save',[first]);assert.ok(report.firstSave.text.includes(first));
     await shot('writer-saved');await press('Control+q');await waitClosed(row=>/libreoffice|soffice/i.test(row.class));
     await launchWriter();await press('Control+o');report.openDialog=await waitActive(row=>/^Open(?: File)?$/i.test(row.title));report.fittedOpenDialog=await focusFileDialog(report.openDialog);await shot('writer-open-dialog');
-    await press('Control+l');await type(document);await press('Enter');await waitClosed(row=>row.address===report.openDialog.address);
+    await press('Control+l');await press('Control+a');await type(document);await press('Enter');await waitClosed(row=>row.address===report.openDialog.address);
     report.reopenedWindow=await waitWindow(row=>/omarchy-native-applications-42/i.test(row.title));
     await focusWriterContent(report.reopenedWindow);await shot('writer-reopened');await press('Control+End');await press('Enter');await type('Reopened and saved');await press('Control+s');await sleep(2000);
     report.secondSave=await readDocument('second-save',[first,'Reopened and saved']);assert.ok(report.secondSave.text.includes(first));assert.ok(report.secondSave.text.includes('Reopened and saved'));
