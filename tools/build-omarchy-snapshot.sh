@@ -65,6 +65,9 @@ if ! cp -c "$IMAGE" "$WORK" 2>/dev/null; then
 fi
 
 echo "[omarchy-snapshot] booting to mapped Foot + the package-owned Omarchy shell…"
+OMARCHY_CAPTURE_SHELL_PROFILE="${OMARCHY_CAPTURE_SHELL_PROFILE:-browser-software}" \
+OMARCHY_EXPECT_RENDERER="${OMARCHY_EXPECT_RENDERER:-llvmpipe}" \
+OMARCHY_EXPECT_LP_NUM_THREADS="${OMARCHY_EXPECT_LP_NUM_THREADS:-0}" \
 node tools/verify/omarchy-native-capture.mjs "$BIN" boot \
   --kernel "$KERNEL" \
   --drive "file=$WORK" \

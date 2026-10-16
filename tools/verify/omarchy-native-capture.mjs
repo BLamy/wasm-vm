@@ -4,12 +4,14 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { plainTerminal, parseProbe, probeCommand, parseInstances, desktopObservation } from "./omarchy-browser-session.mjs";
-import { hasOmarchyDesktopLayers } from "../../web/omarchy-desktop-readiness.js";
+import { hasOmarchyDesktopLayers, hasOmarchyShellBar } from "../../web/omarchy-desktop-readiness.js";
 import { parseExpectedLpNumThreads, validateExpectedLpEnvironment } from "./omarchy-thread-setting.mjs";
 import { INPUT_BUFFER_NOTES_SHA256, INPUT_BUFFER_NOTES_COMMAND, assertInputKernelNotes } from "./omarchy-input-kernel-state.mjs";
 
 const [binary, ...args] = process.argv.slice(2);
 assert.ok(binary && args.length, "usage: omarchy-native-capture.mjs BINARY boot ARGS...");
+const shellProfile=process.env.OMARCHY_CAPTURE_SHELL_PROFILE||"package-full";
+assert.ok(["package-full","browser-software"].includes(shellProfile),"known explicit shell capture profile");
 const requestedRenderer = process.env.OMARCHY_EXPECT_RENDERER;
 if (requestedRenderer) assert.match(requestedRenderer, /^(softpipe|llvmpipe)$/u);
 const expectedLpNumThreads = parseExpectedLpNumThreads(process.env.OMARCHY_EXPECT_LP_NUM_THREADS);
@@ -62,6 +64,14 @@ async function probe(command) {
 try {
   await waitFor(() => /\[omarchy@omarchy-demo [^\n]*\]\$ /u.test(plainTerminal(serial)), 7_200_000);
   assert.equal((await probe("id -u")).output, "1000");
+  if(shellProfile==="browser-software"){
+    const profile=await probe("cat /home/omarchy/.config/omarchy/shell.json");
+    assert.equal(profile.status,0);
+    const config=JSON.parse(profile.output);
+    assert.equal(config.version,1);assert.ok(config.disabledPlugins?.includes("omarchy.background"),
+      "the software-only capture exception requires the actual intentionally disabled background profile");
+    console.log(`\nOMARCHY_CAPTURE_SHELL_PROFILE ${JSON.stringify({shellProfile,profile})}`);
+  }
   if (expectedKernelNotes) {
     const observed = await probe(INPUT_BUFFER_NOTES_COMMAND);
     assertInputKernelNotes({ exit: observed.status, stdout: observed.output });
@@ -79,7 +89,16 @@ try {
       if ([clients, layers, processes].every((r) => r.status === 0)) {
         const observed = desktopObservation(JSON.parse(clients.output), JSON.parse(layers.output), processes.output);
         console.log(`\nOMARCHY_DESKTOP_OBSERVATION ${JSON.stringify(observed)}`);
-        if (observed.mappedFoot && observed.quickshellObserved && hasOmarchyDesktopLayers(JSON.parse(layers.output))) {
+        const parsedLayers=JSON.parse(layers.output);
+        const shellReady=shellProfile==="package-full"?hasOmarchyDesktopLayers(parsedLayers):
+          hasOmarchyShellBar(parsedLayers)&&observed.shellLayers.some(layer=>layer.namespace==="omarchy-bar"&&layer.alpha>0);
+        if (observed.mappedFoot && observed.quickshellObserved && shellReady) {
+          if(shellProfile==="browser-software"){
+            const shellPid=observed.shellProcesses[0].pid;
+            const environment=await probe(`tr '\\000' '\\n' < /proc/${shellPid}/environ | sed -n '/^QT_QUICK_BACKEND=/p'`);
+            assert.equal(environment.status,0);assert.equal(environment.output,"QT_QUICK_BACKEND=software");
+            console.log(`\nOMARCHY_SOFTWARE_SHELL_OBSERVATION ${JSON.stringify({shellProfile,shellPid,environment,observed})}`);
+          }
           if (expectedRenderer || expectedLpNumThreads !== null) {
             const environment = await probe(`tr '\\000' '\\n' < /proc/${instance.pid}/environ | sed -n '/GALLIUM_DRIVER/p;/LIBGL_ALWAYS_SOFTWARE/p;/LP_NUM_THREADS/p'`);
             const threads = await probe(`ps -T -p ${instance.pid} -o comm=`);
