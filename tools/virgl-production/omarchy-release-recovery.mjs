@@ -23,7 +23,7 @@ const descriptor=JSON.parse(expectedPublishedSource('artifacts-omarchy-virgl.jso
 const pin=descriptor.artifacts.gpuCheckpoint;assert.ok(pin);
 const pairUrl=new URL(pin.url,url).href;
 const report={schema:'omarchy-published-recovery-v1',status:'running',
-  scope:'One corrupted published GPU download is refused without automatic fallback; a trusted visible software choice restores the published software factory. Wider context-loss/reset fuzzing remains E6-T11e.',
+  scope:'The original published GPU request receives its independently published same-size last-bit-flip fixture through native HTTPS; refusal precedes a trusted visible software choice restoring the published software factory. Wider context-loss/reset fuzzing remains E6-T11e.',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
   command:[process.execPath,...process.argv.slice(1)],url:url.href,pin,sources:[],requests:[],trusted:[],pageErrors:[],routeErrors:[],browserLifecycle:[]};
 const save=()=>fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');
@@ -72,13 +72,15 @@ try{
     try{
       if(actual.href===pairUrl){
         assert.equal(stage,'refusal');assert.equal(report.corruption,undefined,'only one attempted original GPU download');
-        const original=await route.fetch({timeout:180000});assert.equal(original.status(),200);
+        const original=await route.fetch({timeout:180000,maxRetries:2});assert.equal(original.status(),200);
         const bytes=await original.body();assert.equal(bytes.length,pin.size);assert.equal(hash(bytes),pin.sha256);
         assert.equal(bytes.subarray(0,8).toString(),'WVGPAIR1');
         const changed=Buffer.from(bytes);changed[changed.length-1]^=1;
+        const fixtureUrl=new URL('/sha256/'+hash(changed)+'/verification-fixtures/omarchy-gpu-checkpoint-last-bitflip.wvgpair',actual).href;
         report.corruption={url:actual.href,status:200,originalBytes:bytes.length,originalSha256:hash(bytes),
-          changedByte:changed.length-1,changedSha256:hash(changed),scope:'same-size bit flip only; published manifest/source bytes remain unchanged'};
-        await save();await route.fulfill({response:original,body:changed});return;
+          changedByte:changed.length-1,changedSha256:hash(changed),fixtureUrl,originalFetch:{timeout:180000,maxRetries:2},
+          scope:'same-size bit flip only; published manifest/source bytes remain unchanged; only this request URL is overridden to the independently published fixture on the same HTTPS origin, keeping the large response outside the DevTools pipe'};
+        await save();await route.continue({url:fixtureUrl});return;
       }
       if(actual.origin!==url.origin||request.method()!=='GET'){await route.continue();return;}
       const original=await route.fetch({timeout:180000});
@@ -103,6 +105,8 @@ try{
   await page.waitForTimeout(1000);report.refusal=await state();
   assertWarmFailureUi({...report.refusal,pageErrors:report.pageErrors.filter(r=>r.stage==='refusal')},'digest-mismatch');
   assert.ok(report.corruption);assert.deepEqual(report.routeErrors,[]);
+  assert.ok(report.refusal.errors.some(row=>row.message.includes('expected '+pin.sha256+', got '+report.corruption.changedSha256)),
+    'the original worker hashes the exact published same-size corrupted body');
   await page.screenshot({path:path.join(output,'refused.png'),fullPage:true});await save();
   stage='explicit-software';
   await Promise.all([page.waitForURL('**/app?guest=omarchy&desktop=1&gpu=0#ide'),page.locator('#gpu-retry').click()]);
