@@ -181,14 +181,8 @@ require("default.hypr.toggles")
         write("home/omarchy/.config/hypr/hyprland.lua", hyprland + "\n" + shell_environment)
         write("home/omarchy/.config/default/hypr/bindings/applications.lua", compatible_application_bindings(
             path("usr/share/omarchy/default/hypr/bindings/applications.lua").read_text()))
-        write("home/omarchy/.config/default/hypr/autostart.lua", '''-- Offline, package-owned browser desktop; no architecture-specific installers.
-hl.on("hyprland.start", function()
-  hl.exec_cmd("systemctl --user import-environment $(env | cut -d'=' -f 1)")
-  hl.exec_cmd("dbus-update-activation-environment --systemd --all")
-  hl.exec_cmd("omarchy-launch-shell")
-  hl.exec_cmd("/usr/local/bin/omarchy-demo-session")
-end)
-''')
+        write("home/omarchy/.config/default/hypr/autostart.lua",
+              Path(__file__).with_name("omarchy-application-autostart.lua").read_text())
         write("home/omarchy/.config/mimeapps.list", """[Default Applications]
 text/html=chromium.desktop
 x-scheme-handler/http=chromium.desktop

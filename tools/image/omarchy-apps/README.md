@@ -105,6 +105,10 @@ their command in the live guest PATH before being registered; pending ports do
 not launch architecture-specific upstream installers. Packaged desktop entries
 and web apps remain available through the Omarchy launcher. This does not mark
 upstream first-user provisioning complete or run network installers.
+The application desktop starts the unchanged packaged UWSM app daemon during
+desktop startup, before the first interactive browser or office launch. Its normal
+client and pipe watchdog remain unchanged. The cold application recorder observes
+the daemon process and FIFOs without a readiness ping that could start it itself.
 
 Prepare a new software desktop from the output volume recorded by T05b:
 

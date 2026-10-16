@@ -4,6 +4,8 @@
 The immutable source is never mounted or modified. Its package bytes remain
 unchanged. A fully allocated swap file supports normal Linux memory accounting
 and the upstream Glycin sandbox's MemAvailable+SwapFree address-space budget.
+Start the packaged UWSM application daemon with the desktop so its Python
+startup does not first occur inside an interactive app client's pipe watchdog.
 """
 import argparse
 import hashlib
@@ -90,6 +92,18 @@ def prepare(args):
                                "originalSha256": hashlib.sha256(hyprland.encode()).hexdigest(),
                                "sha256": hashlib.sha256(configured_hyprland.encode()).hexdigest(),
                                "packagedScriptsChanged": False}
+        autostart_path = "/home/omarchy/.config/default/hypr/autostart.lua"
+        autostart = run(debug("cat " + autostart_path), "autostart-original.lua")
+        configured_autostart = Path(__file__).with_name("omarchy-application-autostart.lua").read_text()
+        daemon_start = '  hl.exec_cmd("systemctl --user start wayland-wm-app-daemon.service")\n'
+        if configured_autostart.count(daemon_start) != 1 or configured_autostart.replace(daemon_start, "", 1) != autostart:
+            raise ValueError("review the original application autostart before adding daemon startup")
+        receipt["applicationLauncher"] = {"path": autostart_path,
+                                          "unit": "wayland-wm-app-daemon.service",
+                                          "originalSha256": hashlib.sha256(autostart.encode()).hexdigest(),
+                                          "sha256": hashlib.sha256(configured_autostart.encode()).hexdigest(),
+                                          "packagedScriptsChanged": False,
+                                          "clientTimeoutChanged": False}
         with tempfile.TemporaryDirectory(prefix="memory-", dir=output) as temporary:
             scratch = Path(temporary)
             swap = scratch / "swapfile"
@@ -108,6 +122,7 @@ def prepare(args):
                 (output / "swap-header.bin").write_bytes(stream.read(4096))
             (scratch / "fstab").write_text(fstab + SWAP_PATH + " none swap defaults,pri=10 0 0\n")
             (scratch / "hyprland.lua").write_text(configured_hyprland)
+            (scratch / "autostart.lua").write_text(configured_autostart)
             profile = {"schema": 1, "baseSha256": args.expected_sha256, "swap": dict(receipt["swap"]),
                        "ramMiB": 1024, "sandboxMutation": False, "reason": "native desktop applications"}
             (scratch / "memory-profile.json").write_text(json.dumps(profile, indent=2) + "\n")
@@ -118,6 +133,10 @@ def prepare(args):
                         "set_inode_field " + hyprland_path + " mode 0100644",
                         "set_inode_field " + hyprland_path + " uid 1000",
                         "set_inode_field " + hyprland_path + " gid 1000",
+                        "rm " + autostart_path, "write /work/autostart.lua " + autostart_path,
+                        "set_inode_field " + autostart_path + " mode 0100644",
+                        "set_inode_field " + autostart_path + " uid 1000",
+                        "set_inode_field " + autostart_path + " gid 1000",
                         "write /work/memory-profile.json /etc/wasm-vm/application-memory.json"]
             (scratch / "commands").write_text("\n".join(commands) + "\n")
             run(["docker", "run", "--rm", "--network", "none", "-v", str(image) + ":/disk/guest.ext4",
@@ -156,6 +175,11 @@ def prepare(args):
                 raise ValueError("application memory profile differs")
             if run(debug("cat " + hyprland_path), "hyprland-final.lua") != configured_hyprland:
                 raise ValueError("application shell environment differs")
+            if run(debug("cat " + autostart_path), "autostart-final.lua") != configured_autostart:
+                raise ValueError("application launcher startup differs")
+            autostart_stat = run(debug("stat " + autostart_path), "autostart-stat.txt")
+            if not re.search(r"Type:\s+regular\s+Mode:\s+0644", autostart_stat) or not re.search(r"User:\s+1000\s+Group:\s+1000", autostart_stat):
+                raise ValueError("application launcher startup ownership/mode differs")
             receipt["swap"]["sha256"] = swap_sha
             receipt["swap"]["dataBlocks"] = SWAP_BYTES // 4096
             receipt["swap"]["listedBlocks"] = len(blocks)

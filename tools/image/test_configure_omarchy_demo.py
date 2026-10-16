@@ -155,6 +155,9 @@ class ConfigureOmarchyDemoTests(unittest.TestCase):
         self.assertTrue(configured.startswith(original + b"\n"))
         self.assertEqual(configured.count(b'hl.env("OMARCHY_SHELL_IPC_TIMEOUT", "120s")'), 1)
         self.assertNotIn(b"omarchy_preinstalled_bindings = false", configured)
+        startup = (self.root / "home/omarchy/.config/default/hypr/autostart.lua").read_text()
+        self.assertEqual(startup.count('hl.exec_cmd("systemctl --user start wayland-wm-app-daemon.service")'), 1)
+        self.assertLess(startup.index("wayland-wm-app-daemon.service"), startup.index("omarchy-launch-shell"))
         self.assertEqual((self.root / "usr/bin/omarchy-shell").read_bytes(), packaged_shell)
         self.assertEqual(tree_snapshot(self.root / "usr/share/omarchy"), package_before)
 
