@@ -1,0 +1,10 @@
+{
+  "created_utc": "2026-10-16T10:42:37.461671+00:00",
+  "orientation_head": "0105509c33e94bb9504b3d0aec2e74c48946414e",
+  "orientation_inputs_sha256": {
+    "AGENTS.md": "d1c7718fd7ab6c3efaa7900d1923f090e267829e6762f7a1a1bb64d4c45c085d",
+    "tasks/epic-5.5-omarchy/E5.5-T05c1-omarchy-color-checkpoint-budget.md": "6d332db7aaaba2fd56d3294c82d2aa1bd6c5fdba718d08efc789e35a259b4bd2"
+  },
+  "predictions_sha256": "c14d18ee5c905596d8a09ea621d0846f9d3f70ea6841f47ca4b793ff6bf07b7f",
+  "new_source_or_outcomes_inspected": false
+}
