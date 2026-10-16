@@ -97,11 +97,12 @@ try:
             run("whitespace", ["git", "diff", "--check"])
             run("publisher-tests", ["node", "--test", "tools/publish-omarchy-chunks.test.mjs", "tools/verify/omarchy-r2-proxy.test.mjs"])
             run("software-manifest-tests", ["node", "--test", "tools/gen-omarchy-manifest.test.mjs"])
+            run("factory-readiness-tests", ["node", "--test", "tools/virgl-production/omarchy-factory-ready.test.mjs"])
             run("snapshot-fetch-syntax", ["node", "--check", "tools/fetch-omarchy-snapshot.mjs"])
             run("capture-syntax", ["node", "--check", "tools/verify/omarchy-native-capture.mjs"])
             run("software-builder-syntax", ["bash", "-n", "tools/build-omarchy-snapshot.sh"])
             for name in ("critic-fast-boots", "critic-fast-boots-input", "critic-desktop-actions",
-                         "omarchy-swap-checkpoint", "omarchy-factory-guard", "omarchy-factory-prewarm",
+                         "omarchy-swap-checkpoint", "omarchy-factory-guard", "omarchy-factory-ready", "omarchy-factory-prewarm",
                          "omarchy-restored-app-launches", "omarchy-release-recovery", "recompress-gpu-factory"):
                 run("syntax-"+name, ["node", "--check", "tools/virgl-production/"+name+".mjs"])
             run("docs", ["node", "tools/check-docs.mjs"])
@@ -109,7 +110,7 @@ try:
         elif phase == "gpu-timing":
             boot(phase, {"CRITIC_FAST_BOOT_GPU": "warm", "CRITIC_FAST_BOOT_GPU_TIMING_ONLY": "1"})
         elif phase == "gpu-functional":
-            boot(phase, {"CRITIC_FAST_BOOT_GPU": "warm", "CRITIC_FAST_BOOT_GPU_TRACE": "1"})
+            boot(phase, {"CRITIC_FAST_BOOT_GPU": "warm", "CRITIC_FAST_BOOT_GPU_TRACE": "1", "CRITIC_FAST_BOOT_FULL_DESKTOP_READY": "1"})
         elif phase == "factory":
             boot(phase, {"CRITIC_FAST_BOOT_GPU": "warm", "CRITIC_FAST_BOOT_FACTORY_GUARD_ONLY": "1"})
             boot("factory-software", {"CRITIC_FAST_BOOT_GPU": "0", "CRITIC_FAST_BOOT_FACTORY_GUARD_ONLY": "1"})

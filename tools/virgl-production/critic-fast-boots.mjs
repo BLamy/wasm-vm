@@ -37,6 +37,7 @@ const omarchyPersist = process.env.CRITIC_FAST_BOOT_OMARCHY_PERSIST === '1';
 const saveOnRepeat = process.env.CRITIC_FAST_BOOT_SAVE_ON_REPEAT === '1';
 const gpuTrace = process.env.CRITIC_FAST_BOOT_GPU_TRACE === '1';
 const captureGpuPair = process.env.CRITIC_FAST_BOOT_CAPTURE_GPU_PAIR === '1';
+const fullDesktopReady = process.env.CRITIC_FAST_BOOT_FULL_DESKTOP_READY === '1';
 const applicationWorkload = process.env.CRITIC_FAST_BOOT_APPLICATIONS === '1';
 const restoredApplications = process.env.CRITIC_FAST_BOOT_RESTORED_APPLICATIONS === '1';
 const swapCheckpoint = process.env.CRITIC_FAST_BOOT_SWAP === '1';
@@ -60,6 +61,7 @@ if(applicationContinuation)assert.ok(applicationWorkload&&warmGpu&&localGpuPairF
   'application continuation requires the explicitly owned local recorded pair and image; no repeat/publication claim');
 if(applicationComponent)assert.ok(applicationContinuation,'a missing-only application component requires the owned local recorded baseline');
 if(captureGpuPair||localGpuPairFile)assert.ok(acceleratedGpu&&!remoteUrl,'GPU factory capture requires the owned local accelerated session');
+if(fullDesktopReady)assert.ok(acceleratedGpu&&!gpuTimingOnly&&!factoryGuardOnly&&!swapCheckpoint,'full native desktop readiness requires a separate interactive GPU session');
 if (remoteUrl) {
   const url = new URL(remoteUrl);
   assert.equal(url.protocol, 'https:');
@@ -121,6 +123,12 @@ if(factoryGuardOnly){
 }
 if(prewarmApplications){
   for(const filename of ['omarchy-factory-prewarm.mjs','omarchy-factory-guard.mjs']){
+    const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
+    report.harnessHashes[filename]=hash(bytes);await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
+  }
+}
+if(captureGpuPair||fullDesktopReady){
+  for(const filename of ['omarchy-factory-ready.mjs','omarchy-factory-guard.mjs']){
     const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
     report.harnessHashes[filename]=hash(bytes);await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
   }
@@ -804,7 +812,12 @@ try{
             await fs.writeFile(path.join(output,'factory-capture.json'),JSON.stringify(report.factoryCapture,null,2)+'\n');
             console.log(JSON.stringify({phase:'factory-captured',pin:report.factoryCapture.pin}));
           }:undefined;
-          report.publicDesktopInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:phase+'-public-desktop-input',initialClockMode:applicationWorkload?'paced-icount':expectedGpuPair?.clockState.mode||'icount',prepareFactory:captureGpuPair,beforeTyping:captureFactory});
+          const beforeTyping=captureGpuPair||fullDesktopReady?async context=>{
+            const {verifyOmarchyFactoryReady}=await import('./omarchy-factory-ready.mjs');
+            report.factoryReadiness=await verifyOmarchyFactoryReady(page,guestCommand,output,{name:phase+'-factory-ready',foot:context.foot});
+            if(captureFactory)await captureFactory(context);
+          }:undefined;
+          report.publicDesktopInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:phase+'-public-desktop-input',initialClockMode:applicationWorkload?'paced-icount':expectedGpuPair?.clockState.mode||'icount',prepareFactory:captureGpuPair,beforeTyping});
           publicDesktopInput=report.publicDesktopInput;
           if(warmGpu&&!captureGpuPair&&!restoredApplications){
             warmPixels=await verifyWarmGpuPixels(page,{outputDir:output,label:phase+'-literal-pixels'});
