@@ -332,6 +332,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     await fs.writeFile(path.join(output,name+'-'+label+'.odt'),bytes);return saved;
   }
   try {
+    report.initialBrowserInput=await inputObservation();await save();
     const canvas=page.locator('#ide-display-canvas');await canvas.focus();
     if(await page.evaluate(()=>document.documentElement.dataset.keyboardCapture)!=='on'){
       await page.locator('#ide-keyboard-toggle').click();await canvas.focus();
@@ -457,6 +458,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
       // recorded component retry also earns the stock post-app desktop proof.
       report.publicDesktopInput=await verifyPublicDesktopInput(page,command,output,{name:name+'-public-desktop-input',initialClockMode:'paced-icount'});
       report.publicDesktopFinal=await page.evaluate(async()=>({serial:__fastBootCritic.serial,workerErrors:__fastBootCritic.errors,
+        workers:__fastBootCritic.workerBoots,events:__fastBootCritic.events,wireTotals:__fastBootCritic.wireTotals,
         gpu:await window.wvmDemo.gpuStats(),display:window.__presentation?.state?.(),cursor:window.__cursor?.state?.()}));
       report.publicDesktopFinal.pageErrors=[...pageErrors];assertPublicDesktopFinal(report.publicDesktopFinal);
     }
