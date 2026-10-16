@@ -29,6 +29,12 @@ const guests = (process.env.CRITIC_FAST_BOOT_GUESTS || 'busybox,alpine,node-alpi
 const coldGpu = process.env.CRITIC_FAST_BOOT_GPU === '1';
 const warmGpu = process.env.CRITIC_FAST_BOOT_GPU === 'warm';
 const acceleratedGpu = coldGpu || warmGpu;
+const configuredDivider = process.env.CRITIC_FAST_BOOT_ICOUNT_DIVIDER;
+if(configuredDivider!==undefined){
+  assert.match(configuredDivider,/^[1-9][0-9]{0,3}$/);
+  assert.ok(Number(configuredDivider)<=1024&&coldGpu&&!process.env.CRITIC_FAST_BOOT_URL,
+    'explicit divider measurement uses only an owned cold launch, never an existing warm pair');
+}
 const localGpuPairFile = process.env.CRITIC_FAST_BOOT_GPU_PAIR_FILE;
 const candidateDirectory = process.env.CRITIC_FAST_BOOT_IMAGE_DIRECTORY
   ? path.resolve(process.env.CRITIC_FAST_BOOT_IMAGE_DIRECTORY) : null;
@@ -75,6 +81,7 @@ if(gpuTrace)await fs.writeFile(path.join(output,'gpu.ndjson'),'');
 const report = {status:'running', scope:factoryGuardOnly?'read-only native factory process/client exclusion; no application interaction or repeat-latency claim':restoredApplications?'native application launches after a fresh factory restoration; repeat timing is verified separately':swapCheckpoint?'separate swapped-page checkpoint fixture, not factory or publication timing':'actual production UI fast boots and repeat launches',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
   webRoot:web, releaseCache, publicAssetOrigin:publicAssetOrigin.href, saveOnRepeat, gpuTrace, gpuTimingOnly, remoteUrl, warmGpu, applicationContinuation, restoredApplications, omarchyPersist, swapCheckpointMode:swapCheckpoint, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
+if(configuredDivider!==undefined)report.configuredDivider=Number(configuredDivider);
 if(applicationComponent)report.applicationComponent={name:applicationComponent,scope:'Only missing native Writer/Node/npm/wallpaper and final desktop proof; not Chromium/SVG or publication timing.'};
 for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs','critic-canvas-observation.mjs']){
   const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
@@ -655,6 +662,7 @@ try{
     const query=new URLSearchParams({guest});
     if(!warmGpu)query.set('gpu',coldGpu?'1':'0');
     if(coldGpu)query.set('noSnapshot','1');
+    if(configuredDivider!==undefined)query.set('omarchyDivider',configuredDivider);
     if (!remoteUrl) { query.set('assetBase',origin); query.set('omarchyAssetBase',origin); }
     if(gpuTrace){query.set('testHooks','1');query.set('gpuTrace','1');query.set('workerHeartbeatTimeoutMs','10000');}
     if(guest==='omarchy')query.set('desktop','1');
@@ -707,6 +715,7 @@ try{
       assert.equal(result.exit,0,phase+' live guest command');
       assert.match(result.stdout,guest==='node-alpine'?/FAST_NODE_42_PASS/:/FAST_.*_42_PASS/);
       const state=await snapshot(page);
+      if(configuredDivider!==undefined)assert.equal(state.workers[0]?.options.icountDivider,Number(configuredDivider),'original launcher passes the selected divider to the actual worker');
       if(warmGpu&&!captureGpuPair&&!applicationContinuation&&!swapCheckpoint)warmTiming=gpuWarmTiming(state,round);
       assert.equal(state.restored,!coldGpu,phase+' selected cold/warm path');
       assert.ok(state.workers.length>=1,phase+' actual worker');
