@@ -38,6 +38,7 @@ const applicationWorkload = process.env.CRITIC_FAST_BOOT_APPLICATIONS === '1';
 const restoredApplications = process.env.CRITIC_FAST_BOOT_RESTORED_APPLICATIONS === '1';
 const swapCheckpoint = process.env.CRITIC_FAST_BOOT_SWAP === '1';
 const factoryGuardOnly = process.env.CRITIC_FAST_BOOT_FACTORY_GUARD_ONLY === '1';
+const gpuTimingOnly = process.env.CRITIC_FAST_BOOT_GPU_TIMING_ONLY === '1';
 const shellIpcWorkload = process.env.CRITIC_FAST_BOOT_SHELL_IPC === '1';
 const applicationContinuation = process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINUATION === '1';
 const applicationComponent=process.env.CRITIC_FAST_BOOT_APPLICATION_COMPONENT;
@@ -45,6 +46,7 @@ assert.ok(applicationComponent===undefined||applicationComponent==='writer','kno
 const remoteUrl = process.env.CRITIC_FAST_BOOT_URL;
 if(omarchyPersist)assert.ok(!acceleratedGpu&&guests.includes('omarchy'),'explicit software Omarchy persistence');
 if(factoryGuardOnly)assert.ok(warmGpu&&guests.length===1&&guests[0]==='omarchy'&&!applicationWorkload&&!captureGpuPair&&!swapCheckpoint&&!restoredApplications,'separate read-only factory exclusion after real GPU restore');
+if(gpuTimingOnly)assert.ok(warmGpu&&!gpuTrace&&!captureGpuPair&&!applicationWorkload&&!restoredApplications&&!swapCheckpoint&&!factoryGuardOnly,'ordinary warm GPU timing has no trace, test-hook workload or capture');
 if(restoredApplications)assert.ok(warmGpu&&!applicationWorkload&&!captureGpuPair&&!swapCheckpoint,'restored application launch proof uses its own warm session');
 if(swapCheckpoint)assert.ok(guests.length===1&&guests[0]==='omarchy'&&!coldGpu&&!captureGpuPair&&!applicationWorkload&&!restoredApplications&&!remoteUrl,'separate local Omarchy warm swap fixture, never the clean factory or publication timing');
 const failureHoldMs=Number(process.env.CRITIC_FAST_BOOT_HOLD_FAILURE_MS||1800000);
@@ -67,7 +69,7 @@ noteRecorderMemory();const recorderMemoryTimer=setInterval(noteRecorderMemory,30
 if(gpuTrace)await fs.writeFile(path.join(output,'gpu.ndjson'),'');
 const report = {status:'running', scope:factoryGuardOnly?'read-only native factory process/client exclusion; no application interaction or repeat-latency claim':restoredApplications?'native application launches after a fresh factory restoration; repeat timing is verified separately':swapCheckpoint?'separate swapped-page checkpoint fixture, not factory or publication timing':'actual production UI fast boots and repeat launches',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
-  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, warmGpu, applicationContinuation, restoredApplications, omarchyPersist, swapCheckpointMode:swapCheckpoint, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
+  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, gpuTimingOnly, remoteUrl, warmGpu, applicationContinuation, restoredApplications, omarchyPersist, swapCheckpointMode:swapCheckpoint, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
 if(applicationComponent)report.applicationComponent={name:applicationComponent,scope:'Only missing native Writer/Node/npm/wallpaper and final desktop proof; not Chromium/SVG or publication timing.'};
 for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs','critic-canvas-observation.mjs']){
   const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
@@ -261,7 +263,7 @@ if (!remoteUrl) server=createServer(async (request,response)=>{
       record.status=200;record.uploadBytes=size;record.written=factoryUpload.written;
       response.writeHead(200,{'Content-Type':'application/json'}).end(JSON.stringify(pin));return;
     }
-    if(localGpuPair&&pathname==='/__bootstrap-gpu-pair'){record.status=200;record.size=localGpuPair.length;response.writeHead(200,{'Content-Type':'application/octet-stream','Content-Length':localGpuPair.length}).end(localGpuPair);return;}
+    if(localGpuPair&&pathname==='/__bootstrap-gpu-pair'){record.status=200;record.size=localGpuPair.length;record.sha256=hash(localGpuPair);response.writeHead(200,{'Content-Type':'application/octet-stream','Content-Length':localGpuPair.length,'Cache-Control':'no-store'}).end(localGpuPair);return;}
     if(candidateDescriptorBytes&&pathname==='/artifacts-omarchy-virgl.json'){
       record.status=200;record.source='local-immutable-candidate-descriptor';
       record.sha256=hash(candidateDescriptorBytes);record.size=candidateDescriptorBytes.length;
@@ -547,7 +549,11 @@ try{
     await fs.writeFile(path.join(output,'hardware.json'),JSON.stringify({hardware,commandLine},null,2));}
   for(const guest of guests){
     assert.ok(['busybox','alpine','node-alpine','omarchy'].includes(guest));
-    const context=await browser.newContext({viewport:{width:1280,height:850},serviceWorkers:'allow'});
+    // The private swap fixture replaces its descriptor between capture/reload.
+    // A production shell SW deliberately retains its original descriptor, so
+    // this local dynamic-artifact fixture excludes that cache layer. The real
+    // published first/repeat checks continue to allow the production SW.
+    const context=await browser.newContext({viewport:{width:1280,height:850},serviceWorkers:swapCheckpoint?'block':'allow'});
     await context.addInitScript(observeOriginalWorker);
     const page=activePage=await context.newPage();
     // Passive document lifecycle evidence. Unexpected reloads remain failures;
@@ -732,7 +738,12 @@ try{
             const {verifyOmarchyApplications}=await import('./omarchy-applications.mjs');
             report.applications=await verifyOmarchyApplications(page,guestCommand,output,{name:phase+'-native-applications',executables:applicationExecutables,component:applicationComponent});
           }
-          if(!swapCheckpoint&&!factoryGuardOnly){
+          if(gpuTimingOnly){
+            publicDesktopFinal=await snapshot(page);publicDesktopFinal.pageErrors=[...pageErrors];
+            assertPublicDesktopFinal(publicDesktopFinal);
+            await fs.writeFile(path.join(output,phase+'-ordinary-gpu-final.json'),JSON.stringify(publicDesktopFinal,null,2)+'\n');
+          }
+          if(!swapCheckpoint&&!factoryGuardOnly&&!gpuTimingOnly){
           const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
           const captureFactory=captureGpuPair?async({foot,barContent})=>{
             const active=await guestCommand(page,'XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow',300000);assert.equal(active.exit,0);assert.equal(JSON.parse(active.stdout).pid,foot.pid,'factory captures actual Foot, not the screensaver');
@@ -836,6 +847,13 @@ try{
         }else{
           assert.notEqual(await page.evaluate(()=>performance.timeOrigin),report.swapFixture.sourceDocumentTimeOrigin,'actual reload creates a fresh document and worker');
           assert.equal(state.workers.length,1,'fresh worker boots once');
+          assert.equal(await page.evaluate(()=>navigator.serviceWorker.controller),null,'private mutable swap fixture has no stale shell descriptor');
+          if(acceleratedGpu){
+            const reads=state.events.filter(event=>event.type==='wvm:guest-progress'&&event.detail.phase.startsWith('gpuCheckpoint:'));
+            assert.equal(reads.at(-1)?.detail.total,report.swapFixture.saved.pin.bytes,'worker reads the actual newly captured swapped-page pair');
+            assert.equal(reads.at(-1)?.detail.loaded,report.swapFixture.saved.pin.bytes);
+            assert.ok(report.requests.some(request=>request.phase===phase&&request.pathname==='/__bootstrap-gpu-pair'&&request.sha256===report.swapFixture.saved.pin.sha256),'original server supplied the exact new captured pair');
+          }
           if(!acceleratedGpu)assert.equal(await page.evaluate(()=>__snapshotGeneration()),report.swapFixture.saved.after.generation,'software restores the exact saved disk generation');
           swapResult=await refaultSwapFixture(page,guestCommand,output,report.swapFixture.prepared);report.swapFixture.restored=swapResult;
           const final=await snapshot(page);final.pageErrors=[...pageErrors];assert.deepEqual(final.workerErrors,[]);assert.deepEqual(final.pageErrors,[]);
