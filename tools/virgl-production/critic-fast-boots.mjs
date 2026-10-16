@@ -700,6 +700,24 @@ try{
           const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
           const captureFactory=captureGpuPair?async({foot,barContent})=>{
             const active=await guestCommand(page,'XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow',300000);assert.equal(active.exit,0);assert.equal(JSON.parse(active.stdout).pid,foot.pid,'factory captures actual Foot, not the screensaver');
+            const clean=await guestCommand(page,'test ! -e /tmp/gpukeyboard42touch && test ! -d /tmp/omarchyapps && test ! -e /home/omarchy/Documents/omarchy-native-applications-42.odt',300000);
+            assert.equal(clean.exit,0,'clean factory precedes the acceptance fixtures');
+            const inputAt=await page.evaluate(()=>window.__criticTrustedInputEvents.length);
+            const gpuBefore=await page.evaluate(()=>window.__linuxCtl.gpuStats());
+            await page.locator('#ide-display-canvas').focus();
+            await page.keyboard.press('Control+l',{delay:100});
+            let clearGpu;const clearDeadline=Date.now()+120000;
+            do{
+              clearGpu=await page.evaluate(()=>window.__linuxCtl.gpuStats());
+              if(clearGpu.counters.draws>gpuBefore.counters.draws&&!clearGpu.pending)break;
+              await new Promise(resolve=>setTimeout(resolve,250));
+            }while(Date.now()<clearDeadline);
+            assert.ok(clearGpu.counters.draws>gpuBefore.counters.draws&&!clearGpu.pending,'actual clean-prompt frame completes before factory save');
+            assert.deepEqual(await page.evaluate(()=>window.__keyboardCapture.heldSnapshot()),[],'factory has no held keys');
+            const cleanInput=await page.evaluate(at=>window.__criticTrustedInputEvents.slice(at),inputAt);
+            assert.ok(cleanInput.length>0&&cleanInput.every(event=>event.trusted),'factory prompt is cleared through trusted input');
+            const cleanScreenshot='factory-clean-prompt.png';
+            await page.screenshot({path:path.join(output,cleanScreenshot),fullPage:true});
             report.factoryCapture=await page.evaluate(async()=>{
               const c=window.__linuxCtl;await c.pause();
               const before={clock:await c.guestClockState(),scheduler:await c.schedulerStats(),gpu:await c.gpuStats()};
@@ -715,14 +733,11 @@ try{
             assert.equal(report.factoryCapture.after.scheduler.retiredInstructions,report.factoryCapture.before.scheduler.retiredInstructions);
             await page.screenshot({path:path.join(output,'factory-source.png'),fullPage:true});
             report.factoryCapture.activeWindow=JSON.parse(active.stdout);report.factoryCapture.barContent=barContent;
+            report.factoryCapture.cleanPreparation={scope:'clean owned factory captured before acceptance typing; trusted Control-L redraw',clean,cleanInput,gpuBefore,clearGpu,cleanScreenshot};
             await fs.writeFile(path.join(output,'factory-capture.json'),JSON.stringify(report.factoryCapture,null,2)+'\n');
             console.log(JSON.stringify({phase:'factory-captured',pin:report.factoryCapture.pin}));
           }:undefined;
-          report.publicDesktopInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:phase+'-public-desktop-input',initialClockMode:applicationWorkload?'paced-icount':expectedGpuPair?.clockState.mode||'icount',prepareFactory:captureGpuPair});
-          if(captureFactory){
-            const cleanup=await guestCommand(page,'rm -- /tmp/gpukeyboard42touch',300000);assert.equal(cleanup.exit,0);
-            await captureFactory(report.publicDesktopInput);
-          }
+          report.publicDesktopInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:phase+'-public-desktop-input',initialClockMode:applicationWorkload?'paced-icount':expectedGpuPair?.clockState.mode||'icount',prepareFactory:captureGpuPair,beforeTyping:captureFactory});
           publicDesktopInput=report.publicDesktopInput;
           if(warmGpu&&!captureGpuPair){
             warmPixels=await verifyWarmGpuPixels(page,{outputDir:output,label:phase+'-literal-pixels'});
