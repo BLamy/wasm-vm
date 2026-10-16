@@ -141,7 +141,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
   identityModule.searchParams.set('recording',identityModuleSha256);
   const {createApplicationIdentityProof}=await import(identityModule.href);
   const name = options.name || 'native-applications';
-  let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest,processWitness,browserPrefix,sandboxPrefix;
+  let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest,processWitness,browserPrefix,sandboxPrefix,writerComponent;
   async function retainedComponent(reference,authenticate,scope){
     assert.ok(processWitness,'same-process native witness is required');
     assert.match(reference.path,/^control-applications-[a-z0-9-]+\.json$/);assert.match(reference.sourceSha256,/^[a-f0-9]{64}$/);
@@ -160,9 +160,9 @@ export async function verifyOmarchyApplications(page, command, output, options =
     const bytes=await fs.readFile(path.join(output,'control-request-'+id+'.json')),request=JSON.parse(bytes);
     assert.equal(request.id,id);assert.equal(request.kind,'retry-applications');
     continueExistingBrowser ||= request.continueExistingBrowser===true;
-    if(continueExistingBrowser){
-      assert.equal(request.continueExistingBrowser,true);
-      const original=JSON.parse(await fs.readFile(path.join(output,'report.json')));
+    if(continueExistingBrowser||request.writerComponent){
+      if(continueExistingBrowser)assert.equal(request.continueExistingBrowser,true);
+      const originalBytes=await fs.readFile(path.join(output,'report.json')),original=JSON.parse(originalBytes);
       assert.equal(original.status,'failed');assert.equal(original.warmGpu,true);
       assert.equal(original.applicationContinuation,true);assert.ok(!original.remoteUrl);
       assert.ok(original.errors.some(error=>error.includes('native Chromium loaded and focused the guest loopback page')));
@@ -170,6 +170,27 @@ export async function verifyOmarchyApplications(page, command, output, options =
       if(request.processWitness){
         assert.equal(request.processWitness.path,'omarchy-initial-native-applications-identity-0-filesystem/receipt.json');
         assert.match(request.processWitness.sha256,/^[a-f0-9]{64}$/);processWitness=request.processWitness;
+      }
+      if(request.writerComponent){
+        assert.ok(!continueExistingBrowser&&!request.resumeAfterBrowser&&!request.resumeAfterSandbox);
+        assert.ok(processWitness,'the current native Chromium identity must be authenticated before normal close');
+        const reference=request.writerComponent;
+        assert.equal(reference.path,'omarchy-initial-native-applications.json');
+        assert.match(reference.sha256,/^[a-f0-9]{64}$/);assert.match(reference.sourceSha256,/^[a-f0-9]{64}$/);
+        assert.match(reference.controllerSha256,/^[a-f0-9]{64}$/);assert.equal(sha(originalBytes),reference.controllerSha256);
+        const priorBytes=await fs.readFile(path.join(output,reference.path));assert.equal(sha(priorBytes),reference.sha256);
+        assert.equal(original.harnessHashes['omarchy-applications.mjs'],reference.sourceSha256);
+        assert.equal(sha(await fs.readFile(path.join(output,'executed-harness/omarchy-applications.mjs'))),reference.sourceSha256);
+        const prior=JSON.parse(priorBytes);assert.equal(prior.status,'failed');
+        assert.match(prior.error,/native Chromium loaded and focused the guest loopback page/);
+        assert.equal(prior.identityModuleSha256,identityModuleSha256);
+        assert.ok(prior.chromium&&prior.firstRunWindow&&!prior.firstSave&&!prior.secondSave&&!prior.nodeNpm&&!prior.wallpaperTransitions);
+        assert.equal(prior.chromium.window.pid,prior.firstRunWindow.window.pid);
+        assert.equal(prior.chromium.before.data.starttime,prior.firstRunWindow.before.data.starttime);
+        assert.equal(sha(await fs.readFile(path.join(output,'candidate-manifest.json'))),original.candidate.manifestSha256);
+        assert.equal(original.expectedGpuPair.identity.imageManifestSha256,original.candidate.manifestSha256);
+        const fixture=createApplicationFixture(prior.fixtureToken);assert.equal(sha(Buffer.from(fixture.source)),prior.fixtureServerSha256);
+        writerComponent={prior,fixture,reference:{...reference,scope:'Writer/Node/npm/wallpaper and final desktop only. Original browser deadline remains failed; independent earlier browser/SVG evidence is separate.'}};
       }
       assert.ok(!(request.resumeAfterBrowser&&request.resumeAfterSandbox),'one explicit continuation boundary');
       if(request.resumeAfterBrowser)browserPrefix=await retainedComponent(request.resumeAfterBrowser,authenticateBrowserPrefix,
@@ -190,10 +211,11 @@ export async function verifyOmarchyApplications(page, command, output, options =
     }
   }
   if(continueExistingBrowser)assert.ok(continuationRequest,'existing browser continuation requires the retained owned failure and request');
-  const fixtureSpec=sandboxPrefix?.fixture||browserPrefix?.fixture||createApplicationFixture(randomUUID().replaceAll('-',''));
+  const fixtureSpec=writerComponent?.fixture||sandboxPrefix?.fixture||browserPrefix?.fixture||createApplicationFixture(randomUUID().replaceAll('-',''));
   const report = {status:'running',identityModuleSha256,continueExistingBrowser,fixtureToken:fixtureSpec.token,fixtureServerSha256:sha(Buffer.from(fixtureSpec.source)),networking:{provider:'offline',fixture:fixtureSpec.url,externalBrowsingClaim:false},phases:[]};
   if(continuationRequest)report.continuationRequest=continuationRequest;
   if(processWitness)report.processWitness=processWitness;
+  if(writerComponent)report.writerComponent=writerComponent.reference;
   if(browserPrefix)report.carriedBrowserPrefix=browserPrefix.reference;
   if(sandboxPrefix){report.carriedSandboxPrefix=sandboxPrefix.reference;report.carriedBrowserPrefix=sandboxPrefix.browser.reference;}
   const file = path.join(output,name+'.json');
@@ -228,19 +250,23 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.equal(state.counters.failed,0,'actual application GPU work was refused; inspect the original GPU trace');
   }
   let waitCaptureSequence=0;
+  // Native hyprctl processes are expensive inside an interpreted guest. The
+  // missing-only component yields between observations without changing any
+  // wall-clock deadline or the normal canonical scenario.
+  const nativePollMs=writerComponent?10000:1500;
   async function waitWindow(predicate, timeout=300000) {
     const deadline=Date.now()+timeout;let nextCapture=Date.now()+60000;
-    while(Date.now()<deadline){await gpuHealth();const rows=await clients();const found=rows.find(predicate);if(found)return found;if(Date.now()>=nextCapture){nextCapture=Date.now()+60000;await shot('window-wait-'+waitCaptureSequence++);}await sleep(1500);}
+    while(Date.now()<deadline){await gpuHealth();const rows=await clients();const found=rows.find(predicate);if(found)return found;if(Date.now()>=nextCapture){nextCapture=Date.now()+60000;await shot('window-wait-'+waitCaptureSequence++);}await sleep(nativePollMs);}
     throw Error('Actual guest application window did not appear');
   }
   async function waitActive(predicate, timeout=300000) {
     const deadline=Date.now()+timeout;let nextCapture=Date.now()+60000;
-    while(Date.now()<deadline){await gpuHealth();const result=await run(hypr+'activewindow');assert.equal(result.exit,0);const active=JSON.parse(result.stdout);if(predicate(active))return active;if(Date.now()>=nextCapture){nextCapture=Date.now()+60000;await shot('focus-wait-'+waitCaptureSequence++);}await sleep(1500);}
+    while(Date.now()<deadline){await gpuHealth();const result=await run(hypr+'activewindow');assert.equal(result.exit,0);const active=JSON.parse(result.stdout);if(predicate(active))return active;if(Date.now()>=nextCapture){nextCapture=Date.now()+60000;await shot('focus-wait-'+waitCaptureSequence++);}await sleep(nativePollMs);}
     throw Error('Actual guest application did not acquire focus');
   }
   async function waitClosed(predicate, timeout=120000) {
     const deadline=Date.now()+timeout;
-    while(Date.now()<deadline){await gpuHealth();if(!(await clients()).some(predicate))return;await sleep(1500);}
+    while(Date.now()<deadline){await gpuHealth();if(!(await clients()).some(predicate))return;await sleep(nativePollMs);}
     throw Error('Actual guest application window did not close');
   }
   async function shot(label) {
@@ -479,7 +505,16 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.beforeGpu=await shot('initial');
     await waitReadableBar();
     let chromium;
-    if(browserPrefix||sandboxPrefix){
+    if(writerComponent){
+      assert.equal(report.beforeGpu.epoch,writerComponent.prior.beforeGpu.epoch,'same live GPU epoch as original failed08');
+      const code=`from pathlib import Path;import hashlib,json,stat,os;p=Path('/tmp/omarchyapps');s=p.lstat();assert stat.S_ISDIR(s.st_mode) and s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o700;f=p/'server.py';s=f.lstat();assert stat.S_ISREG(s.st_mode) and s.st_uid==1000 and s.st_nlink==1;digest=hashlib.sha256(f.read_bytes()).hexdigest();assert digest==${JSON.stringify(report.fixtureServerSha256)};pid=int((p/'server.pid').read_text());q=Path('/proc')/str(pid);assert q.stat().st_uid==1000 and str(f).encode() in (q/'cmdline').read_bytes().split(bytes([0])) and (q/'exe').resolve()==Path('/usr/bin/python3').resolve();assert not Path(${JSON.stringify(document)}).exists() and not (p/'node').exists() and not (p/'npm').exists();print(json.dumps(dict(scope='read-only authentication of the untouched failed08 fixture, not a browser success',serverPid=pid,serverSha256=digest)))`;
+      const guard=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");assert.equal(guard.exit,0);report.retainedWriterFixture=JSON.parse(guard.stdout);
+      const current=await waitWindow(row=>row.pid===writerComponent.prior.chromium.window.pid&&row.address===writerComponent.prior.chromium.window.address&&row.visible!==false);
+      report.currentChromiumBeforeClose=await identity(current,'/usr/lib/chromium/chromium');
+      assert.equal(report.currentChromiumBeforeClose.before.data.starttime,writerComponent.prior.chromium.before.data.starttime);
+      await waitActive(row=>row.pid===current.pid);await press('Meta+w');await waitClosed(row=>/chromium/i.test(row.class));
+      await shot('writer-component-browser-closed');
+    }else if(browserPrefix||sandboxPrefix){
       const prior=(browserPrefix||sandboxPrefix.browser).prior;
       assert.equal(report.beforeGpu.epoch,prior.chromiumGpu.epoch,'same live GPU generation as the carried browser prefix');
       const expected={requested:fixtureSpec.route,ready:prior.browserReady,submission:prior.browserSubmission};
@@ -575,7 +610,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.ok(report.browserSubmission.inputTrusted.length>=note.length);assert.ok(report.browserSubmission.inputTrusted.every(value=>value===true));
     report.chromiumGpu=await shot('chromium-submitted');
     }
-    if(!sandboxPrefix){
+    if(!sandboxPrefix&&!writerComponent){
       await verifySandboxedImage(chromium);
       await press('Meta+w');await waitClosed(row=>/chromium/i.test(row.class));
     }
@@ -606,7 +641,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.afterGpu=await shot('node-npm');
     await wallpaperTransition();
     let previousGpu=report.beforeGpu;
-    for(const phase of ((browserPrefix||sandboxPrefix)?[report.writerGpu,report.afterGpu]:[report.chromiumGpu,report.writerGpu,report.afterGpu])){
+    for(const phase of ((browserPrefix||sandboxPrefix||writerComponent)?[report.writerGpu,report.afterGpu]:[report.chromiumGpu,report.writerGpu,report.afterGpu])){
       assert.equal(phase.qualified,true);assert.equal(phase.lost,false);assert.equal(phase.counters.failed,0);
       assert.equal(phase.epoch,previousGpu.epoch);assert.equal(phase.poisoned,false);assert.equal(phase.disposed,false);
       assert.ok(phase.counters.draws>previousGpu.counters.draws);assert.ok(phase.counters.completed>previousGpu.counters.completed);
