@@ -61,7 +61,7 @@ const report = {status:'running', scope:'actual production UI fast boots and rep
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
   webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, warmGpu, applicationContinuation, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
 if(applicationComponent)report.applicationComponent={name:applicationComponent,scope:'Only missing native Writer/Node/npm/wallpaper and final desktop proof; not Chromium/SVG or publication timing.'};
-for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs']){
+for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs','critic-canvas-observation.mjs']){
   const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
   report.harnessHashes[filename]=hash(bytes);
   await fs.mkdir(path.join(output,'executed-harness'),{recursive:true});
@@ -409,6 +409,19 @@ async function serviceOwnedControl(page) {
     } else if (request.kind === 'snapshot') {
       response.result = await snapshot(page);
       await page.screenshot({path: path.join(output, 'control-' + request.id + '.png'), fullPage: true});
+    } else if (request.kind === 'canvas-observation') {
+      const filename = path.join(repo, 'tools/virgl-production/critic-canvas-observation.mjs');
+      assert.equal(hash(await fs.readFile(filename)), report.harnessHashes['critic-canvas-observation.mjs'],
+        'read-only observer remains the original recorded source');
+      const {observePublicCanvas} = await import('./critic-canvas-observation.mjs');
+      response.result = await observePublicCanvas(page, output, {name: 'control-canvas-' + request.id, crop: request.crop});
+    } else if (request.kind === 'shell-ipc') {
+      assert.ok(shellIpcWorkload, 'ordinary Apps proof belongs to this explicit owned shell capture');
+      const filename = path.join(repo, 'tools/virgl-production/omarchy-shell-ipc.mjs');
+      assert.equal(hash(await fs.readFile(filename)), report.harnessHashes['omarchy-shell-ipc.mjs'],
+        'Apps observer remains the original recorded source');
+      const {verifyOmarchyShellIpc} = await import('./omarchy-shell-ipc.mjs');
+      response.result = await verifyOmarchyShellIpc(page, guestCommand, output, {name: 'control-shell-' + request.id});
     } else if (request.kind === 'retry-input') {
       const {verifyPublicDesktopInput} = await import('./critic-fast-boots-input.mjs');
       response.result = await verifyPublicDesktopInput(page, guestCommand, output,
