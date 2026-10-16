@@ -89,7 +89,7 @@ const applicationExecutables={};
 const applicationProofAssets=new Map();
 if(applicationWorkload||restoredApplications){
   assert.ok(acceleratedGpu,'native application acceptance uses the qualified GPU route');
-  for(const filename of ['omarchy-applications.mjs','application-identity.mjs',...(restoredApplications?['omarchy-restored-app-launches.mjs']:[])]){
+  for(const filename of ['omarchy-applications.mjs','application-identity.mjs',...(restoredApplications?['omarchy-restored-app-launches.mjs','omarchy-factory-guard.mjs']:[])]){
     const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
     report.harnessHashes[filename]=hash(bytes);
     await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
@@ -205,13 +205,13 @@ async function fetchOriginal(pathname) {
       const remote=await fetch(route,{signal:AbortSignal.timeout(180000)});
       const receipt={pathname,url:route,status:remote.status};report.remoteFetches.push(receipt);
       if(remote.status===404&&route!==routes.at(-1)){await remote.body?.cancel();continue;}
-      assert.equal(remote.status,200,route+' original R2 status');
+      assert.equal(remote.status,200,route+' original published status');
       const bytes=Buffer.from(await remote.arrayBuffer());
       if(pin)checkPin(bytes,pin,pathname);
       Object.assign(receipt,{bytes:bytes.length,sha256:hash(bytes)});
       return bytes;
     }
-    throw Error('No original R2 asset for '+pathname);
+    throw Error('No original published asset for '+pathname);
   })());
   return remoteAssets.get(pathname);
 }

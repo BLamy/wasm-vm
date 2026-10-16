@@ -5,6 +5,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createApplicationIdentityProof} from './application-identity.mjs';
 import {typeGuestText,isWriterDocumentWindow,isWriterTipWindow} from './omarchy-applications.mjs';
+import {verifyCleanFactory} from './omarchy-factory-guard.mjs';
 
 const ctl='XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j ';
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -53,12 +54,44 @@ export async function verifyRestoredApplicationLaunches(page,command,output,opti
     report.steps.push({kind:'trusted-native-button',dialog,x,y,time:Date.now()});await save();
     await page.mouse.click(box.x+x*box.width/monitor.width,box.y+y*box.height/monitor.height,{delay:120});
   }
+  async function writerFirstRun(front,writer){
+    if(front.pid!==writer.pid)return false;
+    if(front.class==='soffice'&&front.title==='Welcome to LibreOffice!'){
+      report.writerWelcome??=[];assert.ok(report.writerWelcome.length<3,'bounded genuine Writer welcome pages');
+      const monitor=(await read('monitors')).find(row=>row.id===front.monitor);
+      await shot('writer-welcome-'+report.writerWelcome.length);
+      await clickNative(front,Math.min(front.at[0]+front.size[0]-45,monitor.width-15),front.at[1]+front.size[1]-27);
+      report.writerWelcome.push({window:front,time:Date.now()});await save();return true;
+    }
+    if(isWriterTipWindow(front,writer.pid)){
+      assert.equal(report.writerTip,undefined,'one original first-run tip');await shot('writer-tip');
+      report.writerTip={window:front,time:Date.now()};await save();await press('Escape');return true;
+    }
+    return false;
+  }
+  async function closeWriter(writer){
+    await press('Control+q');const deadline=Date.now()+600000;let handled=false;
+    do{
+      const rows=await read('clients');if(!rows.some(row=>row.pid===writer.pid))return;
+      const front=await read('activewindow');
+      // LibreOffice can map its welcome after the editor's first frame. A
+      // quit sent to that modal cannot close the editor; finish the genuine
+      // first-run pages and send a fresh trusted quit only after focus returns.
+      if(await writerFirstRun(front,writer))handled=true;
+      else if(handled&&front.pid===writer.pid&&isWriterDocumentWindow(front)){
+        await press('Control+q');handled=false;
+      }
+      await sleep(1500);
+    }while(Date.now()<deadline);
+    throw Error('Restored native Writer did not close through its genuine first-run UI');
+  }
   try{
     assert.equal(await page.evaluate(()=>window.__linuxCtl.restoredFromBootSnapshot()),true,'applications launch after real restoration');
     assert.equal((await run('id -u')).trim(),'1000');
     report.beforeGpu=await health();
     report.inputStart=await page.evaluate(()=>window.__criticTrustedInputEvents.length);
-    const initial=await read('clients');assert.ok(!initial.some(row=>/chromium|libreoffice|soffice/i.test(row.class)),'factory has no prelaunched browser or office window');
+    report.factoryGuard=await verifyCleanFactory(page,command,output,{name:name+'-factory-guard'});
+    const initial=await read('clients');assert.ok(!initial.some(row=>/chromium|libreoffice|soffice/i.test(row.class+' '+row.title)),'factory has no prelaunched browser or office window');
     const started=Date.now();await press('Meta+Shift+b');
     let chrome=await findWindow(row=>row.visible!==false&&(row.class===''&&row.title==='Chromium Additional Terms of Service'||/chromium/i.test(row.class)),'stock Chromium shortcut opens its native window');
     if(chrome.title==='Chromium Additional Terms of Service'){
@@ -83,17 +116,12 @@ export async function verifyRestoredApplicationLaunches(page,command,output,opti
     await focus();report.steps.push({kind:'trusted-text',text:'libreoffice writer',time:Date.now()});await save();await typeGuestText(page,'libreoffice writer');await sleep(1500);await shot('apps-menu');await press('Enter');
     const writer=await findWindow(isWriterDocumentWindow,'native Writer editor maps',1200000);
     report.writer=await identity.process(writer,'/usr/lib/libreoffice/program/soffice.bin',name+'-writer');
-    for(let step=0;step<3;step++){
-      const dialog=await read('activewindow');if(dialog.pid!==writer.pid||dialog.title!=='Welcome to LibreOffice!')break;
-      assert.equal(dialog.class,'soffice');const monitor=(await read('monitors')).find(row=>row.id===dialog.monitor);
-      await shot('writer-welcome-'+step);await clickNative(dialog,Math.min(dialog.at[0]+dialog.size[0]-45,monitor.width-15),dialog.at[1]+dialog.size[1]-27);
-      await sleep(1500);
-    }
+    for(let step=0;step<3;step++){const dialog=await read('activewindow');if(!await writerFirstRun(dialog,writer))break;await sleep(1500);}
     let front=await wait(()=>read('activewindow'),row=>row.pid===writer.pid&&row.title!=='Welcome to LibreOffice!'&&row.visible!==false,'native welcome has completed',120000);
-    if(isWriterTipWindow(front,writer.pid)){await shot('writer-tip');await press('Escape');front=await wait(()=>read('activewindow'),row=>row.address===writer.address,'Writer owns focus after native tip closes',120000);}
+    if(isWriterTipWindow(front,writer.pid)){await writerFirstRun(front,writer);front=await wait(()=>read('activewindow'),row=>row.address===writer.address,'Writer owns focus after native tip closes',120000);}
     assert.ok(isWriterDocumentWindow(front),'the restored app launch reaches an actual editor');
     await shot('writer');report.writerLaunchMs=Date.now()-writerStarted;await save();
-    await press('Control+q');await closed(row=>/libreoffice|soffice/i.test(row.class));
+    await closeWriter(writer);await closed(row=>/libreoffice|soffice/i.test(row.class));
     report.afterGpu=await health();
     assert.ok(report.afterGpu.counters.draws>report.beforeGpu.counters.draws,'restored compositor draws real application windows');
     report.trusted=await page.evaluate(at=>window.__criticTrustedInputEvents.slice(at),report.inputStart);
