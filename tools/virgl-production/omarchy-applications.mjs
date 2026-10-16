@@ -141,9 +141,9 @@ export async function verifyOmarchyApplications(page, command, output, options =
   identityModule.searchParams.set('recording',identityModuleSha256);
   const {createApplicationIdentityProof}=await import(identityModule.href);
   const name = options.name || 'native-applications';
-  const writerOnly=options.component==='writer';
+  let writerOnly=options.component==='writer';
   assert.ok(options.component===undefined||writerOnly,'known explicit application component');
-  let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest,processWitness,browserPrefix,sandboxPrefix,writerComponent;
+  let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest,processWitness,browserPrefix,sandboxPrefix,writerComponent,writerLaunchResume;
   async function retainedComponent(reference,authenticate,scope){
     assert.ok(processWitness,'same-process native witness is required');
     assert.match(reference.path,/^control-applications-[a-z0-9-]+\.json$/);assert.match(reference.sourceSha256,/^[a-f0-9]{64}$/);
@@ -162,6 +162,30 @@ export async function verifyOmarchyApplications(page, command, output, options =
     const bytes=await fs.readFile(path.join(output,'control-request-'+id+'.json')),request=JSON.parse(bytes);
     assert.equal(request.id,id);assert.equal(request.kind,'retry-applications');
     continueExistingBrowser ||= request.continueExistingBrowser===true;
+    if(request.resumeWriterLaunch){
+      assert.ok(!continueExistingBrowser&&!request.writerComponent&&!request.resumeAfterBrowser&&!request.resumeAfterSandbox&&!request.processWitness);
+      const reference=request.resumeWriterLaunch;
+      assert.equal(reference.path,'omarchy-initial-native-applications.json');
+      for(const key of ['sha256','sourceSha256','controllerSha256'])assert.match(reference[key],/^[a-f0-9]{64}$/);
+      const parentBytes=await fs.readFile(path.join(output,'report.json'));assert.equal(sha(parentBytes),reference.controllerSha256);
+      const parent=JSON.parse(parentBytes);assert.equal(parent.status,'failed');assert.equal(parent.applicationComponent.name,'writer');
+      assert.equal(parent.applicationContinuation,true);assert.equal(parent.warmGpu,true);assert.ok(!parent.remoteUrl);
+      assert.equal(parent.failedPhase,'omarchy-initial');
+      assert.equal(sha(await fs.readFile(path.join(output,'candidate-manifest.json'))),parent.candidate.manifestSha256);
+      assert.equal(parent.expectedGpuPair.identity.imageManifestSha256,parent.candidate.manifestSha256);
+      assert.ok(parent.errors.some(error=>error.startsWith('locator.focus: Timeout 30000ms exceeded.')));
+      assert.equal(parent.harnessHashes['omarchy-applications.mjs'],reference.sourceSha256);
+      assert.equal(sha(await fs.readFile(path.join(output,'executed-harness/omarchy-applications.mjs'))),reference.sourceSha256);
+      const priorBytes=await fs.readFile(path.join(output,reference.path));assert.equal(sha(priorBytes),reference.sha256);
+      const prior=JSON.parse(priorBytes);assert.equal(prior.status,'failed');assert.equal(prior.component.name,'writer');
+      assert.match(prior.error,/^locator\.focus: Timeout 30000ms exceeded\./);assert.equal(prior.identityModuleSha256,identityModuleSha256);
+      for(const key of ['writer','saveDialog','firstSave','secondSave','nodeNpm','wallpaperTransitions'])assert.equal(prior[key],undefined);
+      assert.equal(prior.writerPreparation.directory,'/tmp/omarchyapps');
+      assert.ok(!prior.phases.some(row=>row.kind==='trusted-text'));
+      assert.equal(prior.phases.filter(row=>row.kind==='trusted-key').at(-1).key,'Meta+Alt+Space');
+      continuationRequest={id,sha256:sha(bytes),scope:'same owned Writer-only launcher retry; original focus timeout remains failed'};
+      writerOnly=true;writerLaunchResume={...reference,epoch:prior.beforeGpu.epoch};
+    }
     if(continueExistingBrowser||request.writerComponent){
       if(continueExistingBrowser)assert.equal(request.continueExistingBrowser,true);
       const originalBytes=await fs.readFile(path.join(output,'report.json')),original=JSON.parse(originalBytes);
@@ -216,10 +240,11 @@ export async function verifyOmarchyApplications(page, command, output, options =
   const fixtureSpec=writerComponent?.fixture||sandboxPrefix?.fixture||browserPrefix?.fixture||createApplicationFixture(randomUUID().replaceAll('-',''));
   const report = {status:'running',identityModuleSha256,continueExistingBrowser,fixtureToken:fixtureSpec.token,fixtureServerSha256:sha(Buffer.from(fixtureSpec.source)),networking:{provider:'offline',fixture:fixtureSpec.url,externalBrowsingClaim:false},phases:[]};
   if(writerOnly){
-    assert.ok(!name.startsWith('control-applications-')&&!continueExistingBrowser&&!writerComponent&&!browserPrefix&&!sandboxPrefix);
+    assert.ok((!name.startsWith('control-applications-')||writerLaunchResume)&&!continueExistingBrowser&&!writerComponent&&!browserPrefix&&!sandboxPrefix);
     assert.equal(process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINUATION,'1');
     report.component={name:'writer',scope:'New Writer save/reopen/edit, native Node/npm, wallpaper and final desktop only; prior Chromium/SVG evidence remains separate.'};
     report.networking.fixture=null;
+    if(writerLaunchResume)report.resumedWriterLaunch=writerLaunchResume;
   }
   if(continuationRequest)report.continuationRequest=continuationRequest;
   if(processWitness)report.processWitness=processWitness;
@@ -315,9 +340,9 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.phases.push({kind:'native-executable-identity',proof,time:Date.now()});await save();return proof;
   }
   async function focusInput(){
-    const canvas=page.locator('#ide-display-canvas');await canvas.focus();
+    const canvas=page.locator('#ide-display-canvas');await canvas.focus({timeout:120000});
     if(await page.evaluate(()=>document.documentElement.dataset.keyboardCapture)!=='on'){
-      await page.locator('#ide-keyboard-toggle').click();await canvas.focus();
+      await page.locator('#ide-keyboard-toggle').click();await canvas.focus({timeout:120000});
     }
     assert.equal(await page.evaluate(()=>document.activeElement?.id),'ide-display-canvas');
     assert.equal(await page.evaluate(()=>document.documentElement.dataset.keyboardCapture),'on');
@@ -528,9 +553,9 @@ export async function verifyOmarchyApplications(page, command, output, options =
   }
   try {
     report.initialBrowserInput=await inputObservation();await save();
-    const canvas=page.locator('#ide-display-canvas');await canvas.focus();
+    const canvas=page.locator('#ide-display-canvas');await canvas.focus({timeout:120000});
     if(await page.evaluate(()=>document.documentElement.dataset.keyboardCapture)!=='on'){
-      await page.locator('#ide-keyboard-toggle').click();await canvas.focus();
+      await page.locator('#ide-keyboard-toggle').click();await canvas.focus({timeout:120000});
     }
     assert.equal(await page.evaluate(()=>document.documentElement.dataset.keyboardCapture),'on');
     await page.evaluate(()=>{
@@ -543,8 +568,20 @@ export async function verifyOmarchyApplications(page, command, output, options =
     if(writerOnly){
       const windows=await clients();assert.ok(!windows.some(row=>/chromium/i.test(row.class)||row.title==='Chromium Additional Terms of Service'),
         'the controller completed its authenticated owned baseline cleanup');
-      const code=`from pathlib import Path;import json,stat;p=Path('/tmp/omarchyapps');assert not p.exists() and not Path(${JSON.stringify(document)}).exists();p.mkdir(mode=0o700);s=p.stat();assert s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o700;rows=[x.split() for x in Path('/proc/swaps').read_text().splitlines()[1:]];active=[x for x in rows if x[0]=='/var/lib/wasm-vm-applications/swapfile'];assert len(active)==1 and int(active[0][2])*1024==536866816 and int(active[0][4])==10;print(json.dumps(dict(scope='empty owned terminal-output directory only; no document, app-profile or browser-output setup',directory=str(p),activeSwap=active[0])))`;
+      if(writerLaunchResume){
+        assert.equal(report.beforeGpu.epoch,writerLaunchResume.epoch);assert.ok(windows.every(row=>/foot/i.test(row.class)),'no application has launched before this retry');
+      }
+      const prepareDirectory=writerLaunchResume?"assert p.is_dir() and not (p/'node').exists() and not (p/'npm').exists()":"assert not p.exists();p.mkdir(mode=0o700)";
+      const code=`from pathlib import Path;import json,stat;p=Path('/tmp/omarchyapps');assert not Path(${JSON.stringify(document)}).exists();${prepareDirectory};s=p.lstat();assert stat.S_ISDIR(s.st_mode) and s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o700;rows=[x.split() for x in Path('/proc/swaps').read_text().splitlines()[1:]];active=[x for x in rows if x[0]=='/var/lib/wasm-vm-applications/swapfile'];assert len(active)==1 and int(active[0][2])*1024==536866816 and int(active[0][4])==10;print(json.dumps(dict(scope='empty owned terminal-output directory only; no document, app-profile or browser-output setup',directory=str(p),activeSwap=active[0])))`;
       const prepared=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");assert.equal(prepared.exit,0);report.writerPreparation=JSON.parse(prepared.stdout);
+      if(writerLaunchResume){
+        await press('Escape');const deadline=Date.now()+120000;let mapped;
+        do{const observed=await run(hypr+'layers');assert.equal(observed.exit,0);
+          mapped=Object.values(JSON.parse(observed.stdout)).flatMap(monitor=>Object.values(monitor.levels||{}).flat()).some(layer=>layer.namespace==='omarchy-menu'&&layer.alpha>0);
+          if(mapped)await sleep(nativePollMs);
+        }while(mapped&&Date.now()<deadline);
+        assert.equal(mapped,false,'the previously opened Apps menu closed through normal Escape');
+      }
     }else if(writerComponent){
       assert.equal(report.beforeGpu.epoch,writerComponent.prior.beforeGpu.epoch,'same live GPU epoch as original failed08');
       const code=`from pathlib import Path;import hashlib,json,stat,os;p=Path('/tmp/omarchyapps');s=p.lstat();assert stat.S_ISDIR(s.st_mode) and s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o700;f=p/'server.py';s=f.lstat();assert stat.S_ISREG(s.st_mode) and s.st_uid==1000 and s.st_nlink==1;digest=hashlib.sha256(f.read_bytes()).hexdigest();assert digest==${JSON.stringify(report.fixtureServerSha256)};pid=int((p/'server.pid').read_text());q=Path('/proc')/str(pid);assert q.stat().st_uid==1000 and str(f).encode() in (q/'cmdline').read_bytes().split(bytes([0])) and (q/'exe').resolve()==Path('/usr/bin/python3').resolve();assert not Path(${JSON.stringify(document)}).exists() and not (p/'node').exists() and not (p/'npm').exists();print(json.dumps(dict(scope='read-only authentication of the untouched failed08 fixture, not a browser success',serverPid=pid,serverSha256=digest)))`;
