@@ -4,7 +4,7 @@
 // controller surface is deliberately an allow-list. Adding a loader controller method therefore
 // requires an intentional protocol change instead of silently exposing arbitrary worker objects.
 
-export const LINUX_WORKER_PROTOCOL_VERSION = 1;
+export const LINUX_WORKER_PROTOCOL_VERSION = 2;
 export const MAX_OUTPUT_BATCH_BYTES = 64 * 1024;
 const DEFAULT_STOP_TIMEOUT_MS = 5_000;
 const DEFAULT_CLEANUP_TIMEOUT_MS = 4_000;
@@ -17,6 +17,7 @@ const DEFAULT_BOOT_TIMEOUT_MS = 180_000;
 // stalls retain the strict 10s watchdog.
 const LONG_RPC_GRACE_MS = Object.freeze({
   stateDigest: 60_000,
+  saveGpuCheckpoint: 240_000,
   snapshotSave: 120_000,
   snapshotRead: 120_000,
   snapshotDecision: 60_000,
@@ -31,6 +32,9 @@ const LONG_RPC_GRACE_MS = Object.freeze({
 export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "setDisplay",
   "displayStats",
+  "gpuStats",
+  "loseGpuContext",
+  "acknowledgeGpuFrame",
   "sendKeyboardEvent",
   "syncKeyboard",
   "sendTabletEvent",
@@ -43,6 +47,7 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "resume",
   "isPaused",
   "stateDigest",
+  "saveGpuCheckpoint",
   "saveDesktopSnapshot",
   "confirmAgentHello",
   "sendAgentInput",
@@ -103,6 +108,7 @@ const BYTE_RESULT = new Set([
   "takeFileDownloadChunk",
   "snapshotRead",
   "snapshotExport",
+  "saveGpuCheckpoint",
   "saveDesktopSnapshot",
   "takeAgentOutput",
 ]);
@@ -299,10 +305,11 @@ export function createLinuxWorkerClient(endpoint, callbacks = {}) {
       case "writer": callbacks.onWriterStatus?.(message.info); break;
       case "quota": callbacks.onQuota?.(message.info); break;
       case "capture-start": callbacks.onCaptureStart?.(message.info); break;
+      case "gpu-event": callbacks.onGpuEvent?.(message.info); break;
       case "display": {
         const frame = message.frame;
-        if (frame?.type === "clear") {
-          callbacks.onDisplayFrame?.({ type: "clear" });
+        if (frame?.type === "clear" || frame?.type === "invalidate") {
+          callbacks.onDisplayFrame?.({ type: frame.type });
           break;
         }
         if (!frame || !(frame.pixels instanceof ArrayBuffer)) {
@@ -316,6 +323,9 @@ export function createLinuxWorkerClient(endpoint, callbacks = {}) {
           resourceWidth: frame.resourceWidth,
           resourceHeight: frame.resourceHeight,
           pixels: new Uint32Array(frame.pixels),
+          ...(frame.presentationToken ? {onRetired:(status,record) => {
+            post(endpoint,{type:'display-retired',version:LINUX_WORKER_PROTOCOL_VERSION,token:frame.presentationToken,status,record});
+          }} : {}),
         });
         break;
       }
@@ -642,6 +652,7 @@ export function createLinuxWorkerRuntime(endpoint, {
   };
 
   const cleanup = () => {
+    bootGpuAcknowledger=null;
     if (!controller) return Promise.resolve();
     if (!cleanupPromise) cleanupPromise = (async () => {
       // The loader may still be awaiting a lazy fetch or persistence transaction. `stop()` is its
@@ -702,6 +713,7 @@ export function createLinuxWorkerRuntime(endpoint, {
     chain = launch.catch((error) => fail(error));
   };
 
+  let bootGpuAcknowledger=null;
   const callbacks = {
     onState: (state) => send({ type: "state", state }),
     onProgress: (label, loaded, total) => send({ type: "progress", label, loaded, total }),
@@ -725,10 +737,12 @@ export function createLinuxWorkerRuntime(endpoint, {
     onWriterStatus: (info) => send({ type: "writer", info }),
     onQuota: (info) => send({ type: "quota", info }),
     onCaptureStart: (info) => send({ type: "capture-start", info }),
+    onGpuFrameAcknowledger: (acknowledge) => { if(typeof acknowledge!=="function")throw Error("Invalid GPU receipt capability");bootGpuAcknowledger=acknowledge; },
+    onGpuEvent: (info) => send({type:'gpu-event',info}),
     onDisplayFrame: (frame) => {
       try {
-        if (frame?.type === "clear") {
-          send({ type: "display", frame: { type: "clear" } });
+        if (frame?.type === "clear" || frame?.type === "invalidate") {
+          send({ type: "display", frame: { type: frame.type } });
           return;
         }
         const source = frame?.pixels;
@@ -742,6 +756,7 @@ export function createLinuxWorkerRuntime(endpoint, {
             resourceWidth: frame?.resourceWidth,
             resourceHeight: frame?.resourceHeight,
             pixels: pixels.buffer,
+            ...(frame?.presentationToken ? {presentationToken:frame.presentationToken} : {}),
           },
         }, [pixels.buffer]);
       } catch (error) {
@@ -861,6 +876,9 @@ export function createLinuxWorkerRuntime(endpoint, {
         // The page already transferred an exact private ArrayBuffer. Re-wrap it without a second copy.
         controller.sendInput(new Uint8Array(message.bytes));
         return;
+      case "display-retired":
+        if (!terminalizing) controller?.acknowledgeGpuFrame?.(message.token,message.status,message.record);
+        return;
       case "call": return handleCall(message);
       case "ping":
         if (!controller) throw new Error("Linux worker heartbeat before ready");
@@ -879,6 +897,11 @@ export function createLinuxWorkerRuntime(endpoint, {
         message.version === LINUX_WORKER_PROTOCOL_VERSION && !fatal) {
       send({ type: "pong" });
       return;
+    }
+    // A real presentation receipt must release its retained frame while an awaited
+    // checkpoint/boot owns the FIFO. It carries no guest execution or arbitrary RPC.
+    if(message?.type==='display-retired' && message.version===LINUX_WORKER_PROTOCOL_VERSION && !fatal && !stopping && (controller || bootGpuAcknowledger)) {
+      try{(controller?.acknowledgeGpuFrame??bootGpuAcknowledger)(message.token,message.status,message.record);}catch(error){void fail(error);}return;
     }
     chain = chain.then(() => handle(event?.data)).catch((error) => fail(error));
   };

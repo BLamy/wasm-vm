@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-92cb-raster/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "2666af0a853ca2b05cef348a7242388f15ace354254daf1746599ab0e7679216"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Original 92cb raster domain
 
 {% hint style="info" %}

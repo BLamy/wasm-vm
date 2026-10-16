@@ -1,3 +1,9 @@
+---
+kind: "Field guide"
+source: "web/docs-source/guides/proofmesh.md"
+scope: "Authored explanation; verification belongs to the named evidence"
+---
+
 # The proposed ProofMesh layer
 
 ProofMesh is a product proposal above the existing browser machine. Its specifications discuss passkey-owned encrypted volumes, verified peer delivery, and a builder/critic work market. The proposal is not a list of APIs already implemented by wasm-vm.

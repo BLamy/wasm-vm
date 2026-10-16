@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/baselines.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "821e7d1380844867884a222c0a2d3a811be3e4a2fcc266ea9e25d51f07f94609"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Performance baselines (E0-T24)
 
 {% hint style="info" %}

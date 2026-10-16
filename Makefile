@@ -1,6 +1,8 @@
-# Local mirror of .github/workflows/ci.yml — identical commands. CI runs the jobs in
-# parallel; locally they run in the order listed under `ci`. If this file and ci.yml
-# disagree, that's a bug (E0-T02).
+# Local validation. GitHub Actions is disabled; deploys use Cloudflare Pages.
+# wvseccomp is a Linux/RISC-V guest executable using Linux-only libc APIs. Its
+# prescribed guest build remains tools/build-wvseccomp.sh; Darwin host gates do
+# not compile it against macOS libc. Linux workspace gates include it normally.
+LOCAL_WORKSPACE = --workspace $(if $(filter Darwin,$(shell uname -s)),--exclude wasm-vm-wvseccomp)
 
 .PHONY: ci fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke perf-gate perf-trend bench-l1 riscof diff-all diff-selftest diff-qemu \
         exhaustive fuzz-decode-smoke fuzz-diff-smoke web-build web-serve web-dist hooks bench capstone-e0 level1-gate tasks-json \
@@ -8,6 +10,70 @@
         web-test-cpu-worker verify-E5-T16a verify-E5-T18a verify-E5-T18c verify-E5-T25a verify-E5-T25b verify-E5-T26a verify-E5-T26b verify-E5-T26c verify-E5-T26d verify-E5-T26e verify-E5-T26f verify-E5-T26m verify-E5-T26m-runtime
 
 ci: fmt clippy test wasm features test-riscv riscv-tests-suite determinism perf-smoke
+
+.PHONY: verify-E6-T11d verify-E6-T11e verify-E6-T11d67 verify-E6-T11d68 verify-E6-T11d69a verify-E6-T11d69b
+verify-E6-T11d69b:
+	python3 tools/virgl-production/verify-feedback-queries.py --output "$${VIRGL_FEEDBACK_QUERIES_EVIDENCE_DIR:-target/evidence/production-feedback-queries-final}"
+
+verify-E6-T11d69a:
+	python3 tools/virgl-production/verify-boolean-queries.py --output "$${VIRGL_BOOLEAN_QUERIES_EVIDENCE_DIR:-target/evidence/production-boolean-queries-final}"
+
+verify-E6-T11d68:
+	python3 tools/virgl-production/verify-indexed-start.py --output "$${VIRGL_INDEXED_START_EVIDENCE_DIR:-target/evidence/production-indexed-start-final}"
+
+verify-E6-T11d67:
+	cargo fmt --all --check
+	cargo clippy -p wasm-vm-core --tests --features virgl-renderer,virgl-control-proof,gpu-trace,trace -- -D warnings
+	cargo test -p wasm-vm-core --lib --features virgl-renderer,virgl-control-proof,gpu-trace,trace
+	cargo test -p wasm-vm-core --features virgl-renderer,virgl-control-proof,gpu-trace,trace --test production_virgl_critic --test virgl_capabilities
+	cargo clippy -p wasm-vm-wasm --target wasm32-unknown-unknown --features virgl-renderer -- -D warnings
+	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
+	node tools/virgl-production/worker-multisample-browser.mjs --output "$${VIRGL_MULTISAMPLE_EVIDENCE_DIR:-target/evidence/production-multisample-final}" --schedules 0,1,2
+	VIRGL_WEB_ROOT=web/dist node tools/virgl-production/browser.mjs "$${VIRGL_NUMERIC_EVIDENCE_DIR:-target/evidence/production-numeric-final}" numeric
+	node tools/verify-virgl-default-demo.mjs --output "$${VIRGL_MULTISAMPLE_DEMO_EVIDENCE_DIR:-target/evidence/production-multisample-demo-final}" --task E6-T11d67
+
+verify-E6-T11d:
+	python3 tools/virgl-production/verify.py --task E6-T11d --output "$${VIRGL_PRODUCTION_EVIDENCE_DIR:-target/evidence/production-guest-final}"
+
+.PHONY: verify-E6-T11d71
+verify-E6-T11d71:
+	python3 tools/virgl-production/verify-keyboard-wait.py --output "$${VIRGL_KEYBOARD_WAIT_EVIDENCE_DIR:-target/evidence/production-keyboard-wait-final}"
+
+.PHONY: verify-E6-T11d72
+verify-E6-T11d72:
+	python3 tools/virgl-production/verify-interactive-clock.py --output "$${VIRGL_INTERACTIVE_CLOCK_EVIDENCE_DIR:-target/evidence/production-interactive-clock-final}"
+
+.PHONY: verify-E6-T11d73
+verify-E6-T11d73:
+	python3 tools/virgl-production/verify-paced-idle.py --output "$${VIRGL_PACED_IDLE_EVIDENCE_DIR:-target/evidence/production-paced-idle-final}"
+
+.PHONY: verify-E6-T11d74a
+verify-E6-T11d74a:
+	python3 tools/virgl-production/verify-gpu-checkpoint.py --output "$${VIRGL_GPU_CHECKPOINT_EVIDENCE_DIR:-target/evidence/production-gpu-checkpoint-final}"
+
+.PHONY: verify-E6-T11d74b
+verify-E6-T11d74b:
+	python3 tools/virgl-production/verify-renderer-checkpoint.py --output "$${VIRGL_RENDERER_CHECKPOINT_EVIDENCE_DIR:-target/evidence/production-renderer-checkpoint-final}"
+
+.PHONY: verify-E6-T11d74c
+verify-E6-T11d74c:
+	python3 tools/virgl-production/verify-paired-worker.py --output "$${VIRGL_PAIRED_WORKER_EVIDENCE_DIR:-target/evidence/production-paired-worker-final}"
+
+.PHONY: verify-E6-T11d74d1
+verify-E6-T11d74d1:
+	python3 tools/virgl-production/verify-scanout-continuity.py --output "$${VIRGL_SCANOUT_CONTINUITY_EVIDENCE_DIR:-target/evidence/production-scanout-continuity-final}"
+
+.PHONY: verify-E6-T11d74d2
+verify-E6-T11d74d2:
+	python3 tools/virgl-production/verify-desktop-capacity.py --output "$${VIRGL_DESKTOP_CAPACITY_EVIDENCE_DIR:-target/evidence/production-desktop-capacity-final}"
+
+.PHONY: verify-E6-T11d74d
+verify-E6-T11d74d:
+	python3 tools/virgl-production/verify-public-gpu-warm.py --output "$${VIRGL_PUBLIC_GPU_WARM_EVIDENCE_DIR:-target/evidence/production-public-gpu-warm-final}"
+
+verify-E6-T11e:
+	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
+	python3 tools/virgl-production/verify.py --task E6-T11e --output "$${VIRGL_RECOVERY_EVIDENCE_DIR:-target/evidence/production-recovery-final}"
 
 # Isolated upstream TGSI translator: native hostile-input sanitizers and real
 # hardware WebGL2 pixel oracles. Does not change the emulator or demo device.
@@ -35,10 +101,13 @@ fmt:
 	cargo fmt --all --check
 
 clippy:
-	cargo clippy --workspace --all-targets --all-features -- -D warnings
+	# zicsr-stub is a quarantined alternative to real CSR semantics, so enabling
+	# every feature together disables APIs used by the production JIT test wall.
+	cargo clippy $(LOCAL_WORKSPACE) --all-targets --features wasm-vm-core/trace,wasm-vm-core/virgl-control-proof,wasm-vm-core/gpu-trace -- -D warnings
+	cargo clippy -p wasm-vm-core --no-default-features --features std,trace,zicsr-stub --lib -- -D warnings
 
 test:
-	cargo test --workspace
+	cargo test $(LOCAL_WORKSPACE)
 	bash tools/ci/no-host-float.sh
 	bash tools/ci/determinism-hazards.sh
 
@@ -87,7 +156,7 @@ test-riscv:
 	cargo test -p wasm-vm-core --features zicsr-stub --test riscv_tests
 	@command -v wasm-pack >/dev/null 2>&1 || { \
 		echo "note: wasm-pack absent — skipping the wasm rv64ui-p run"; exit 0; }
-	wasm-pack test --node crates/wasm --features zicsr-stub
+	wasm-pack test --node crates/wasm --features zicsr-stub --test riscv_tests
 
 # E1-T19: the full riscv-tests regression wall over the committed ELFs (real E1 CSR file),
 # emitting target/riscv-tests-report.{md,json} and enforcing tests/riscv-tests-allowlist.txt.
@@ -166,6 +235,7 @@ fuzz-diff-smoke:
 # itself because it is also an rlib. `--out-name wasm_vm_wasm` keeps the file names the page imports.
 # A/B evidence: evidence/perf-overhaul/webbuild/README.md.
 web-build:
+	bash tools/build-virgl-runtime.sh
 	wasm-pack build crates/wasm-web --target web --profile wasm-release --out-name wasm_vm_wasm
 	cd web && npm ci --no-audit --no-fund
 	cd web && npm run build:docs
@@ -185,6 +255,7 @@ web-build:
 	  cp releases/boot-snapshot/busybox-ready.snap.gz web/releases/boot-snapshot/busybox-ready.snap.gz; \
 	fi
 	bash tools/gen-web-manifest.sh
+	python3 tools/gen-gpu-checkpoint-build.py
 
 # Regenerate web/tasks.json from the /tasks folder (the roadmap's single source of truth).
 # Run after editing any task file; the Roadmap tab fetches ./tasks.json at load.
@@ -2563,3 +2634,66 @@ verify-E0-T27:
 .PHONY: verify-E6-T11d64
 verify-E6-T11d64:
 	python3 tools/virgl-dimensional-depth-surfaces/verify.py $(if $(filter 1,$(D64_REPLAY_UNCHANGED_GATES)),--carry-unchanged-recording,) --output "$${VIRGL_DIMENSIONAL_DEPTH_SURFACE_EVIDENCE_DIR:-target/evidence/virgl-dimensional-depth-surfaces}"
+
+.PHONY: verify-E6-T11d65
+verify-E6-T11d65:
+	python3 tools/virgl-stream-output-shaders/verify.py --output "$${VIRGL_STREAM_OUTPUT_SHADER_EVIDENCE_DIR:-target/evidence/virgl-stream-output-shaders}"
+
+# Original GPU stream-output targets, retained cursors and native capture.
+.PHONY: verify-E6-T11d66
+verify-E6-T11d66:
+	python3 tools/virgl-stream-output-capture/verify.py --output "$${VIRGL_STREAM_OUTPUT_CAPTURE_EVIDENCE_DIR:-target/evidence/stream-output-capture-final}"
+
+.PHONY: verify-E6-T11d70
+verify-E6-T11d70:
+	python3 tools/virgl-production/verify-fragmented-backing.py --output "$${VIRGL_FRAGMENTED_BACKING_EVIDENCE_DIR:-target/evidence/production-fragmented-backing-final}"
+
+.PHONY: verify-E5.5-T05b
+verify-E5.5-T05b:
+	python3 tools/check_task_policy.py
+	git diff --check
+	python3 tools/image/verify-native-app-image.py --output "$${OMARCHY_APP_EVIDENCE_DIR:-target/evidence/omarchy-native-app-image}"
+
+.PHONY: verify-E5.5-T05c
+verify-E5.5-T05c:
+	python3 tools/check_task_policy.py
+	git diff --check
+	node --check tools/virgl-production/omarchy-applications.mjs
+	node --check tools/virgl-production/application-identity.mjs
+	node --test tools/virgl-production/omarchy-application-fixture.test.mjs
+	python3 -m py_compile tools/image/prepare-omarchy-application-memory.py
+	docker run --rm --network none -v "$(CURDIR)/tools/image:/tools:ro" wasm-vm-omarchy-image:profile python3 /tools/test_configure_omarchy_demo.py
+	node tools/virgl-production/omarchy-shader-padding.mjs
+	node tools/virgl-production/omarchy-resource-copy-wire.mjs
+	node tools/virgl-production/omarchy-resource-copy-browser.mjs --output "$${OMARCHY_RESOURCE_COPY_EVIDENCE_DIR:-target/evidence/omarchy-resource-copy}"
+	node tools/virgl-production/omarchy-storage-leases-browser.mjs "$${OMARCHY_STORAGE_LEASE_EVIDENCE_DIR:-target/evidence/omarchy-storage-leases}"
+	CRITIC_FAST_BOOT_WEB_ROOT=web/dist CRITIC_FAST_BOOT_GPU=1 CRITIC_FAST_BOOT_GUESTS=omarchy CRITIC_FAST_BOOT_GPU_TRACE=1 CRITIC_FAST_BOOT_PERSISTENCE=0 CRITIC_FAST_BOOT_APPLICATIONS=1 CRITIC_FAST_BOOT_IMAGE_DIRECTORY="$${OMARCHY_DESKTOP_IMAGE_DIRECTORY:-target/virgl-production/image-18}" node tools/virgl-production/critic-fast-boots.mjs "$${OMARCHY_APP_DESKTOP_EVIDENCE_DIR:-target/evidence/omarchy-applications-desktop-final}"
+
+.PHONY: verify-omarchy-dense-snapshot
+verify-omarchy-dense-snapshot:
+	node --check tools/verify/omarchy-snapshot-dense.mjs
+	node tools/verify/omarchy-snapshot-dense.mjs "$${OMARCHY_DENSE_SNAPSHOT_EVIDENCE_DIR:-target/evidence/omarchy-snapshot-dense}"
+
+.PHONY: verify-E5.5-T05c1
+verify-E5.5-T05c1:
+	python3 tools/check_task_policy.py
+	git diff --check
+	node --check renderer/virgl-command/resources.mjs
+	node --check renderer/virgl-command/tests/production-color-checkpoint.mjs
+	node --check tools/virgl-production/omarchy-color-checkpoint-browser.mjs
+	node --test tools/virgl-production/omarchy-color-checkpoint.test.mjs
+	node tools/verify-virgl-resource-transfers.mjs --node-only true --output "$${OMARCHY_COLOR_LAYOUT_EVIDENCE_DIR:-target/evidence/omarchy-color-layout}"
+	wasm-pack build crates/wasm --target web --out-dir ../../target/virgl-production/pkg --features virgl-renderer,virgl-control-proof
+	$(MAKE) web-dist
+	node tools/virgl-production/omarchy-color-checkpoint-browser.mjs --output "$${OMARCHY_COLOR_CHECKPOINT_EVIDENCE_DIR:-target/evidence/omarchy-color-checkpoint-hardware}"
+	node tools/verify-virgl-default-demo.mjs --output "$${OMARCHY_COLOR_DEMO_EVIDENCE_DIR:-target/evidence/omarchy-color-checkpoint-demo}" --task E5.5-T05c1
+
+# Release phases execute actual browser paths. An explicitly selected incremental
+# phase records its omitted phases; it cannot pass as the full release verdict.
+.PHONY: verify-E5.5-T05d
+verify-E5.5-T05d:
+	@if [ "$${OMARCHY_RELEASE_PHASE:-all}" = all ]; then \
+	  python3 tools/virgl-production/verify-omarchy-application-release-cold.py --output "$${OMARCHY_RELEASE_EVIDENCE_DIR:-target/evidence/omarchy-application-release-final}" --url "$${OMARCHY_RELEASE_URL:-https://wasm-vm.pages.dev/}" --application-image "$${OMARCHY_DESKTOP_IMAGE_DIRECTORY:-target/virgl-production/image-18}" --inventory "$${OMARCHY_APPLICATION_INVENTORY:-target/evidence/omarchy-native-app-image-final01/runtime-elf.json}"; \
+	else \
+	  python3 tools/virgl-production/verify-omarchy-application-release.py --output "$${OMARCHY_RELEASE_EVIDENCE_DIR:-target/evidence/omarchy-application-release-final}" --url "$${OMARCHY_RELEASE_URL:-https://wasm-vm.pages.dev/}" --phase "$${OMARCHY_RELEASE_PHASE}" --application-image "$${OMARCHY_DESKTOP_IMAGE_DIRECTORY:-target/virgl-production/image-18}" --inventory "$${OMARCHY_APPLICATION_INVENTORY:-target/evidence/omarchy-native-app-image-final01/runtime-elf.json}"; \
+	fi

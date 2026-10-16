@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/worker-devices.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "033f67aa520a6b535119d24532dc13d4f1538f99ec30afd334b8edf5f3b13b2b"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # E4-T23 — Split-device placement: what runs where, and why
 
 {% hint style="info" %}

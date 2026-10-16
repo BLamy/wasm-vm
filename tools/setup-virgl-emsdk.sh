@@ -3,6 +3,12 @@
 # shell profile or selecting a system-wide SDK. Prints the emcc path on stdout.
 set -euo pipefail
 
+# Git hooks export repository-local variables. They must not make the pinned
+# SDK's git -C queries resolve the caller's repository instead of the SDK.
+while IFS= read -r sdk_git_variable; do
+    unset "$sdk_git_variable"
+done < <(git rev-parse --local-env-vars)
+
 readonly version=4.0.22
 readonly sdk_commit=15915cad554b707837024dc2758b6a1c5b94b036
 readonly release_commit=bebaf7e50e31865b0724f17eaa52e161e2dfef5a

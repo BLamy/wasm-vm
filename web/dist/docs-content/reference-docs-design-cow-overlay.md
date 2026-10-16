@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/design/cow-overlay.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "f96bada6e2b61b2bd360989a478f2d8f1c0cbe572c9402cd0ef48d683344413c"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Copy-on-write block overlay (E3-T04)
 
 {% hint style="info" %}

@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/perf/jit-register-handoff-2026-10.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "46589ae110a868017f33267f1da94ac8b0af19201757138e37f4546cb892d746"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Browser JIT register handoff — October 2026
 
 {% hint style="info" %}

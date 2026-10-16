@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-original-corpus/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "2707340301c0465d737f0712a4da89435e684a1d72aaa4a15ad3d1203913ebb7"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Virgl original corpus
 
 {% hint style="info" %}

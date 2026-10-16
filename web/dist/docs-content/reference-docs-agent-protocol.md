@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/agent-protocol.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "5309cd6dffb8b2a2e8b3b17154d130f1efb5489dac4471eefc5eaab07aac0f69"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # wasm-vm agent channel protocol
 
 {% hint style="info" %}

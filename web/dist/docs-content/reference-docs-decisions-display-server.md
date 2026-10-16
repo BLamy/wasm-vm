@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/decisions/display-server.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "9e5ab89e22a8ff6f045919a4681d888388a2caff0cc6f4a5fdf8016f62ba3540"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Display-server decision
 
 {% hint style="info" %}

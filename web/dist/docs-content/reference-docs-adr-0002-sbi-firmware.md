@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/adr/0002-sbi-firmware.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "c5e56cd7c00ca60e5a3e2e08558dd40eeaf7c0298d61d9e8601da4e77193d718"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # ADR 0002 — SBI firmware: built-in Rust SBI, OpenSBI kept as an M-mode testcase
 
 {% hint style="info" %}

@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "8fbce72121556c523a81b94a3a2d4e1229173f444856103d7e68e0594325c53c"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # wasm-vm
 
 {% hint style="info" %}

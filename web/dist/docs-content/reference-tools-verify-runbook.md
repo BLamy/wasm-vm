@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/verify/runbook.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "18d25d3085543996845a408ba5c2b7e3f5a232ded8376d7f45106f1c490e1fc2"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Verifier runbook (E0-T25)
 
 {% hint style="info" %}

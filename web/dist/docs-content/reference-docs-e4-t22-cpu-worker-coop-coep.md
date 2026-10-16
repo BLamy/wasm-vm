@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/e4-t22-cpu-worker-coop-coep.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "007b1194b6ca65dcd99b3728b6a48ddca6f3fb3c648ece2320420c4dec90e4da"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # E4-T22 — CPU worker on SharedArrayBuffer: build, isolation & deployment
 
 {% hint style="info" %}

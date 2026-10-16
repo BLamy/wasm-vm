@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/float-images-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "9b430d930b4215d2f7dc3307cafbd6b0923b19c2b86c847b864ff1834c3493c0"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Original floating image storage
 
 {% hint style="info" %}

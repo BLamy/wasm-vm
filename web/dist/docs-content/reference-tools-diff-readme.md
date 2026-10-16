@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/diff/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "b6a1aaceaea6202671042fd729282d41fa22c04507045b1f6d281cc8b27f4953"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Differential trace harness (E0-T20)
 
 {% hint style="info" %}

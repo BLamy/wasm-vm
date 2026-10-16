@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-original-programs/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "65919b15f3d34febc5bf4214f7cd5642ab45f883e15784a59ead1ad4e85a5970"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Virgl original programs
 
 {% hint style="info" %}

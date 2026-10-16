@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/perf/level3-interpreter-baseline.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "66328ef56c9d6b4dca88951b95319e8b340ea63faa6b74638890cc671dc1434c"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Level-3 interpreter performance baseline (E4-T04)
 
 {% hint style="info" %}

@@ -1,3 +1,9 @@
+---
+kind: "Field guide"
+source: "web/docs-source/guides/architecture.md"
+scope: "Authored explanation; verification belongs to the named evidence"
+---
+
 # How the machine fits together
 
 The browser runs the emulator. The emulator presents a RISC-V virtual platform. The guest kernel and userland execute above that platform as RISC-V binaries.

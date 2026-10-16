@@ -1,12 +1,7 @@
 {
   "activationBlockers": [
-    "Seven PRECISE-bearing captured shaders remain rejected; twelve translate with execution proof limited to the textured-scene pair, four component fixtures, and the flat fragment paired with a literal translated vertex shader.",
-    "PRECISE semantics have no approved lowering.",
-    "Command execution, transport and retained scanout have isolated proof paths; production GPU negotiation and a real Mesa guest remain gated.",
-    "Mesa has unconditional capabilities not suppressible by zero capset fields.",
-    "Reduced capset requires new guest initialization and reduced-profile captures.",
-    "Future GLES3 requires transform feedback, UBOs, MRT, format and draw semantics proof.",
-    "Owned mixed numeric shaders reject unknown raw numeric constants. Direct numeric CONST uses in all seven remaining originals need an explicit enforced runtime domain or separately proven full-domain lowering before Mesa activation."
+    "Production E6-T11d final exact-head guest/independent verification and cold-clone gate remain in progress.",
+    "E6-T11e integrated context-loss, recovery and final independent verification remain pending."
   ],
   "backend": "WebGL2 / ESSL 3.00",
   "boundedTableLoops": {
@@ -873,6 +868,30 @@
     "guestRendererImplemented": false,
     "numCapsets": 0,
     "virglFeature": false
+  },
+  "productionIntegration": {
+    "aggregateGpuBytes": 134217728,
+    "capset": {
+      "bytes": 1408,
+      "id": 2,
+      "source": "typed Rust QualifiedCapabilities after physical host qualification",
+      "version": 2
+    },
+    "clock": "instruction time with paced idle selected by original keyboard; warm restore preserves the selected mode and exact guest time, then re-anchors the host clock",
+    "contexts": 32,
+    "drawsPerSubmission": 256,
+    "factory": "createVirglProductionBridge",
+    "guestApi": "OpenGL ES 3.0 / GLSL ES 3.00",
+    "historicalProfileLimits": "unchanged",
+    "indexWorkPerSubmission": 262144,
+    "liveRetainedResources": 512,
+    "pendingJobs": 1,
+    "perResourceBytes": 33554432,
+    "perTransferBytes": 33554432,
+    "rendererSubContexts": 64,
+    "snapshot": "authenticated factory RAM/disk/GPU/clock pairs reconstruct a fresh physical renderer; ordinary software snapshot/import APIs reject accelerated sessions",
+    "softwareFallback": "existing paired Omarchy warm image through gpu=0",
+    "status": "final-verification-in-progress"
   },
   "radialCoefficientAdmission": {
     "certificate": "Adjacent MAX(CONST4.x,-CONST4.x), FSLT against exact word0x3727c5ac, UIF consuming the current scalar producer version and one matching ELSE/ENDIF. Only the linear predecessor is excluded.",

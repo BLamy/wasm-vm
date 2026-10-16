@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/control-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "f6d1c9853f51196a7b9d484c1bc64336ea314e9eed1e62d18fa8d29c6a32ddb7"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Proof-only VirtIO 3D control bridge
 
 {% hint style="info" %}

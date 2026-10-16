@@ -1,3 +1,9 @@
+---
+kind: "Field guide"
+source: "web/docs-source/guides/verification.md"
+scope: "Authored explanation; verification belongs to the named evidence"
+---
+
 # Reproduce a claim
 
 A verification result belongs to a named claim, code revision, command, and evidence digest. The repository separates an implementing worker from a fresh critic so a summary alone cannot close a task.
@@ -23,6 +29,21 @@ That result establishes the report's architectural boundary. Storage recovery, n
 | Recorded browser capture | Visible behavior on the built page, with its console and interaction record |
 
 The operating policy's 2026-09-01 update waives host rr traces and retires `ssh dev`. Proof runs happen on the local machine, with local Docker for Linux-only tooling. Historical runbooks retain their old host commands as records; follow current [AGENTS.md](https://github.com/BLamy/wasm-vm/blob/main/AGENTS.md) for new work.
+
+## Task states
+
+These read-only examples use Docstream's native task markers. Each icon has an accessible state name. They explain the workflow; they are not live task results. The [repository roadmap](./roadmap.html) publishes the actual task ledger.
+
+- [ ] **Pending** — eligible work has not started.
+- [~] **In progress** — the worker owns the active implementation.
+- [?] **Implemented / evidence needed** — an implementation is submitted, or its proof needs completion. The task file retains the exact `implemented` or `evidence-needed` status; this shared icon does not collapse their meaning.
+- [b] **Blocked** — a named dependency prevents acceptance; its repro and `blocked_on` remain in the task.
+- [d] **Verification debt** — historical landed work is parked outside the active lane, without current exact-head proof. Docstream calls this visual state **Parked**.
+- [!] **Refuted** — evidence contradicted the claim and semantic rework is required.
+- [x] **Verified** — a separate critic interrogated the evidence and failed to refute the stated boundary.
+- [-] **Cancelled** — the task was explicitly retired or replaced.
+
+The `Properties` disclosure identifies this guide's authored scope. Reference pages carry their original source revision and SHA-256. Neither a property nor a marked checkbox creates evidence, and this reader cannot edit either. Only the repository's verifier workflow can set `verified`.
 
 ## Local gates
 

@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/packed-float-images-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "c684887a7300654ece2cadbc8655d3db9cc716e5794a97b14d8a1da947e540fc"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Original R11G11B10 image storage
 
 {% hint style="info" %}

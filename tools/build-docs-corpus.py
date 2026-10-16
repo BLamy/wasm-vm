@@ -21,6 +21,7 @@ BASE = "2691b24e6c00478f8d69f81180b6827761de246a"
 SOURCE = ROOT / "web/docs-source/guides"
 OUT = ROOT / "web/docs-content"
 REPO_URL = "https://github.com/BLamy/wasm-vm"
+DOCSTREAM_VERSION = json.loads((ROOT / "web/package.json").read_text())["dependencies"]["@brett_lamy/docstream"]
 GUIDES = [
     ("overview", "The field guide", "Start here"),
     ("quickstart", "Boot your first guest", "Start here"),
@@ -87,6 +88,12 @@ def source_url(path: str, anchor: str = "") -> str:
 
 def digest(text) -> str:
     return hashlib.sha256(text.encode() if isinstance(text, str) else text).hexdigest()
+
+
+def with_properties(body: str, **properties: str) -> str:
+    """Publication metadata is separate from the exact authoritative source blobs."""
+    yaml = "\n".join(f"{key}: {json.dumps(value, ensure_ascii=False)}" for key, value in properties.items())
+    return f"---\n{yaml}\n---\n\n{body}"
 
 
 def baseline_sources(paths: list[str]) -> dict[str, bytes]:
@@ -244,7 +251,7 @@ def main() -> None:
     catalog, ledger = [], []
     for page, title, group in GUIDES:
         path = SOURCE / f"{page}.md"
-        text = path.read_text()
+        text = with_properties(path.read_text(), kind="Field guide", source=f"web/docs-source/guides/{page}.md", scope="Authored explanation; verification belongs to the named evidence")
         (OUT / f"{page}.md").write_text(text)
         catalog.append({"id":page,"title":title,"group":group,"category":"Guides","kind":"guide","url":f"./docs-content/{page}.md","source":f"web/docs-source/guides/{page}.md","sourceUrl":f"./docs-content/{page}.md","sha256":digest(text),"search":re.sub(r"[`#*{}%]", "", text)})
     for path in prose:
@@ -279,7 +286,12 @@ def main() -> None:
                 note = "Historical tooling. The current operating policy waives rr and retires ssh dev. Use local guest traces and deterministic/browser evidence for new work."
             else:
                 note = "Technical reference. Read the stated acceptance boundary and source context before treating a described milestone as current verification."
-            published = f"# {title}\n\n{{% hint style=\"info\" %}}\n{note}\n{{% endhint %}}\n\n" + body.strip() + "\n"
+            published = with_properties(
+                f"# {title}\n\n{{% hint style=\"info\" %}}\n{note}\n{{% endhint %}}\n\n" + body.strip() + "\n",
+                kind="Preserved source record" if status == "preserved" else "Technical reference",
+                source=path, source_revision=BASE, source_sha256=digest(text),
+                scope="Historical snapshot; use current field guides for present capabilities" if path in HISTORICAL_SNAPSHOTS else "Pinned source; publication does not refresh verification",
+            )
             (OUT / f"{page}.md").write_text(published)
             item.update({"page":page,"replacement":f"./docs.html?page={page}","publishedSha256":digest(published)})
             catalog.append({"id":page,"title":title,"group":"Reference library","category":category_for(path),"kind":"reference","disposition":status,"url":f"./docs-content/{page}.md","source":path,"sourceUrl":source_url(path),"sourceSha256":digest(text),"sha256":digest(published),"search":re.sub(r"[`#*{}%]", "", published)})
@@ -310,6 +322,8 @@ Task acceptance/status and verifier logs are operating state, not help-center pr
 
 Plain-text licenses, notices, diagnostic transcripts, fixture text, manifests, golden traces and primary-source PDFs are catalogued separately from Markdown/RST prose. Their extension does not remove them from the accounting; they remain preserved sources rather than newly authored reader pages. Build metadata such as upstream `CMakeLists.txt` is explicitly labelled by role.
 
+This ledger is an immutable inventory of the stated migration revision. Later task logs and release evidence keep their own source revisions; the current [desktop guide](./docs.html?page=desktop) names the application-image evidence separately. A reference's native **Properties** sheet exposes its exact original revision and SHA-256. Guide properties identify authored explanations, not an independent verification result.
+
 ## Inspect the complete ledger
 
 [Download the full document-by-document migration ledger](./docs-content/migration-ledger.json).
@@ -318,8 +332,9 @@ Use the reader's **Archive ledger** to search every preserved source path. The R
 
 ## Package and build
 
-The reader uses the exact `@brett_lamy/docstream@1.8.0` npm release. Run `npm run build:docs` and `npm run check:docs` in `web/` to regenerate the corpus, bundles, and validation receipt.
+The reader uses the exact `@brett_lamy/docstream@{DOCSTREAM_VERSION}` npm release, including read-only document properties and native task-state icons. Run `npm run build:docs` and `npm run check:docs` in `web/` to regenerate the corpus, bundles, and validation receipt.
 """
+    coverage = with_properties(coverage, kind="Migration inventory", source="web/docs-content/coverage.md", generated_by="tools/build-docs-corpus.py", source_revision=BASE, scope="Baseline accounting; later evidence retains its own revision")
     (OUT / "coverage.md").write_text(coverage)
     catalog.append({"id":"coverage","title":"Documentation coverage","group":"Build and prove","category":"Guides","kind":"guide","url":"./docs-content/coverage.md","source":"web/docs-content/coverage.md","sourceUrl":"./docs-content/coverage.md","sha256":digest(coverage),"search":coverage})
     for item in ledger:
@@ -327,7 +342,7 @@ The reader uses the exact `@brett_lamy/docstream@1.8.0` npm release. Run `npm ru
             raise RuntimeError(f"Unpublished rewritten document: {item['path']}")
     ids=[p['id'] for p in catalog]
     if len(ids)!=len(set(ids)): raise RuntimeError("Duplicate page IDs")
-    manifest={"schema":1,"docstreamVersion":"1.8.0","sourceRevision":BASE,"pages":catalog,"counts":{"baselineProse":len(prose),"auxiliaryRecords":len(auxiliary),"totalDocuments":len(ledger),"pages":len(catalog),**counts}}
+    manifest={"schema":1,"docstreamVersion":DOCSTREAM_VERSION,"sourceRevision":BASE,"pages":catalog,"counts":{"baselineProse":len(prose),"auxiliaryRecords":len(auxiliary),"totalDocuments":len(ledger),"pages":len(catalog),**counts}}
     (OUT / "catalog.json").write_text(json.dumps(manifest,ensure_ascii=False,separators=(",",":"))+"\n")
     (OUT / "migration-ledger.json").write_text(json.dumps({"schema":1,"sourceRevision":BASE,"counts":counts,"documents":ledger},indent=2,ensure_ascii=False)+"\n")
     design=ROOT/"design";design.mkdir(exist_ok=True)

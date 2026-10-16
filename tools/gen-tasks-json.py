@@ -100,7 +100,9 @@ def build_git_activity():
     """
     try:
         out = subprocess.run(
-            ["git", "-C", REPO, "log", "--all", "--date=short",
+            # Activity is part of the shipped build. Other worktrees, remote
+            # tracking refs and stashes must not change a build at this HEAD.
+            ["git", "-C", REPO, "log", "HEAD", "--date=short",
              "--format=\x01%H\x1f%ad\x1f%s", "--name-only"],
             capture_output=True, text=True, check=True).stdout
     except Exception as e:  # no git / not a repo → timeline is simply empty

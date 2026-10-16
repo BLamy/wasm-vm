@@ -1,13 +1,35 @@
+---
+kind: "Field guide"
+source: "web/docs-source/guides/desktop.md"
+scope: "Authored explanation; verification belongs to the named evidence"
+---
+
 # Display, input, and audio
 
 The host workbench exposes display and serial surfaces. Guest input passes through explicit keyboard, pointer, clipboard, and audio boundaries. Each boundary has a contract and recorded failure drills.
 
 ## Display and guest graphics
 
-Read the display contract before choosing a present path. Desktop bring-up uses named images and a documented boot order. The [current graphics guide](./docs.html?page=graphics) separates the guest-rendered display from partial VirGL offload and its selected command, resource, state, shader, and draw boundaries. Default production acceleration remains disabled.
+Read the display contract before choosing a present path. Desktop bring-up uses named images and a documented boot order. The [current graphics guide](./docs.html?page=graphics) describes Omarchy's qualified GPU warm checkpoint, explicit cold boot, software warm snapshot, and the admitted command, resource, state, shader, and draw boundaries. GPU context-loss recovery has a separate verification task.
 
 {% hint style="info" %}
 The marketing hero is a Three.js architecture illustration rendered directly by the browser. It is independent of guest VirGL support and is not evidence of a guest GPU feature.
+{% endhint %}
+
+## Application image and release scope
+
+The application image contains native RISC-V **Chromium 153.0.8010.52**, **LibreOffice 26.8.0** and **Node 26.11.1 / npm 12.2.0** in an 860-package image. These are guest Linux applications, separate from the host browser running the emulator.
+
+The [independent E5.5-T05c verdict](https://github.com/BLamy/wasm-vm/blob/dddae3bc2c15b1332dedcb208f3b7e6c6f852127/evidence/omarchy-applications-desktop/verifier/VERDICT.md) covers actual native Chromium browsing and trusted form input, normal sandboxed SVG decoding, Writer typing/save/close/reopen/edit/resave, Node/npm, and the qualified production compositor and scanout. It retains the original failed attempts and the explicitly authenticated missing-proof continuation; it does not claim that every application rasterizes through the GPU. Its exact source and evidence boundaries remain part of that verdict.
+
+The [application catalogue](https://github.com/BLamy/wasm-vm/blob/dddae3bc2c15b1332dedcb208f3b7e6c6f852127/tools/image/omarchy-apps/catalog.json) accounts for 147 upstream Omarchy 4.0.2 entries: 32 were already present, 97 have native repository packages, five have portable alternatives, and 13 still require source-port work. Chromium and LibreOffice are two explicit additions beyond that list. The 13 unresolved ports are not established incompatibilities, and this is not a claim that all 147 applications are complete.
+
+The [launcher](./app.html#ide) uses matched warm factories for the application image. Accelerated mode restores RAM, disk, GPU resources and the guest clock together. Software mode restores its matching RAM and disk snapshot. Read [guest graphics](./docs.html?page=graphics) for warm, explicit cold and software modes.
+
+Open applications from Omarchy's Apps menu. With keyboard capture enabled, the stock browser shortcut is **Super + Shift + B**, and **Super + Alt + Space** opens the Apps menu. Search for **LibreOffice Writer**, **Calc** or **Impress**. The Foot terminal also has `node` and `npm` available.
+
+{% hint style="info" %}
+Desktop restoration and application startup are separate measurements. Large guest applications can still take several minutes to start. Chromium's terms dialog and LibreOffice's welcome screens are their genuine first-run interfaces; complete them in the guest when they appear.
 {% endhint %}
 
 ## Keyboard capture

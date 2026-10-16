@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "compliance/EXCLUSIONS.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "3e81129488a2f71178c2da4cc26de0440eb96d5f477e1976efd4d7339ef04d2e"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # RISCOF known-exclusion list (E1-T20; emptied E1-T26)
 
 {% hint style="info" %}

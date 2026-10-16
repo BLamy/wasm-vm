@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "tools/rr/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "25d7b8c65c538d96b17ca83b248c3b7a2586ccd3e9dcae12d3009bfa92db5730"
+scope: "Historical snapshot; use current field guides for present capabilities"
+---
+
 # Historical rr tooling
 
 {% hint style="info" %}

@@ -1,0 +1,1 @@
+{"status": "passed", "cases": 3, "branches": {"declaredComponentMismatch": [39, 11, 39, 47, 1, 3, 0, 0, 4], "reversedDisjointIntervals": [46, 14, 46, 57, 0, 1, 0, 0, 4]}}

@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-signed-integers/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "3815d5161983aef12bcb6c65fc59a762bce4e3eb3cc1f63055d838696d6f6ba5"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Private signed comparison and maximum proof
 
 {% hint style="info" %}

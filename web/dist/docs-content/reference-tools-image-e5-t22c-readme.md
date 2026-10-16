@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/image/e5-t22c/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "10780f62b7dd6dcc608254b987842abf35b9be64cf313479ec77feac8c58d16b"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Pinned in-place display adaptation
 
 {% hint style="info" %}

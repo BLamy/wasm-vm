@@ -1,7 +1,7 @@
 /** Explicit proof-only VirtIO bridges. Ordinary device negotiation is unchanged. */
-import { createResourceStore, createWebGL2TransferBackend, createStandardDesktopResourceStore, createStandardPackedDepthTransferBackend, createStandardDimensionalResourceStore, createStandardDimensionalTransferBackend, createStandardDimensionalViewResourceStore, createStandardDimensionalViewTransferBackend, createStandardDimensionalDepthResourceStore, createStandardDimensionalDepthTransferBackend, createStandardDimensionalDepthViewResourceStore, createStandardDimensionalColorSurfaceResourceStore, createStandardDimensionalDepthSurfaceResourceStore, createStandardDimensionalDepthViewTransferBackend } from './resources.mjs';
+import { PRODUCTION_RESOURCE_LIMITS, createResourceStore, createProductionResourceStore, createProductionTransferBackend, createWebGL2TransferBackend, createStandardDesktopResourceStore, createStandardPackedDepthTransferBackend, createStandardDimensionalResourceStore, createStandardDimensionalTransferBackend, createStandardDimensionalViewResourceStore, createStandardDimensionalViewTransferBackend, createStandardDimensionalDepthResourceStore, createStandardDimensionalDepthTransferBackend, createStandardDimensionalDepthViewResourceStore, createStandardDimensionalColorSurfaceResourceStore, createStandardDimensionalDepthSurfaceResourceStore, createStandardStreamOutputResourceStore, createStandardDimensionalDepthViewTransferBackend } from './resources.mjs';
 import { createRetainedScanout, normalizeScanoutEvent } from './scanout.mjs';
-import { createVirglStateRenderer, createVirglAsyncRenderer, createVirglStandardShadowSamplerAsyncRenderer, createVirglStandardDimensionalAsyncRenderer, createVirglStandardDimensionalViewAsyncRenderer, createVirglStandardDimensionalDepthViewAsyncRenderer, createVirglStandardDimensionalShadowAsyncRenderer, createVirglStandardDimensionalColorSurfaceAsyncRenderer, createVirglStandardDimensionalDepthSurfaceAsyncRenderer } from './state.mjs';
+import { createVirglStateRenderer, createVirglAsyncRenderer, createVirglStandardShadowSamplerAsyncRenderer, createVirglStandardDimensionalAsyncRenderer, createVirglStandardDimensionalViewAsyncRenderer, createVirglStandardDimensionalDepthViewAsyncRenderer, createVirglStandardDimensionalShadowAsyncRenderer, createVirglStandardDimensionalColorSurfaceAsyncRenderer, createVirglStandardDimensionalDepthSurfaceAsyncRenderer, createVirglStandardStreamOutputAsyncRenderer, createVirglProductionAsyncRenderer } from './state.mjs';
 
 const ok = () => Object.freeze({ ok: true });
 const fail = (code, message) => Object.freeze({ ok: false, error: Object.freeze({ code, message }) });
@@ -43,7 +43,7 @@ const shapes = Object.freeze({
   detachBacking: ['resource'], unrefResource: ['resource'], reset: [],
 });
 const META = ['id', 'target', 'format', 'bind', 'width', 'height', 'depth', 'arraySize', 'lastLevel', 'nrSamples', 'flags'];
-function normalize(input, asynchronous = false) {
+function normalize(input, asynchronous = false, byteLimit = 4194304, segmentLimit = 256) {
   const common = record(input, ['epoch', 'type', 'context', 'resource', 'metadata', 'debugName', 'segments', 'backingGeneration'], ['epoch', 'type']);
   need(typeof common.type === 'string' && Object.hasOwn(shapes, common.type), 'invalid-parameter', 'Unknown control operation.');
   const required = ['epoch', 'type', ...shapes[common.type]];
@@ -63,7 +63,7 @@ function normalize(input, asynchronous = false) {
     need(event.metadata.id === event.resource.id, 'invalid-parameter', 'Metadata identity differs.');
   }
   if (event.type === 'attachBacking') {
-    need(Array.isArray(event.segments) && event.segments.length > 0 && event.segments.length <= 256,
+    need(Array.isArray(event.segments) && event.segments.length > 0 && event.segments.length <= segmentLimit,
       'invalid-parameter', 'Invalid backing segment count.');
     let total = 0;
     event.segments = event.segments.map((value) => {
@@ -73,7 +73,7 @@ function normalize(input, asynchronous = false) {
         BigInt('0x' + segment.address) + BigInt(segment.length) <= 0x10000000000000000n,
       'invalid-parameter', 'Invalid backing range.');
       total += segment.length;
-      need(total <= 4194304, 'out-of-memory', 'Backing exceeds resource limit.');
+      need(total <= byteLimit, 'out-of-memory', 'Backing exceeds resource limit.');
       return segment;
     });
   }
@@ -85,7 +85,7 @@ const nextHex = (value) => {
   need(next <= 0xffffffffffffffffn, 'invalid-parameter', 'Sequence space exhausted.');
   return next.toString(16).padStart(16, '0');
 };
-function normalizeJob(input, resourceLimit) {
+function normalizeJob(input, resourceLimit, byteLimit = 4194304, production = false) {
   const type = Object.getOwnPropertyDescriptor(input, 'type')?.value;
   if (type === 'cancelJob') {
     const event = record(input, ['type', 'epoch', 'sequence']); hex(event.epoch); hex(event.sequence); return event;
@@ -95,7 +95,7 @@ function normalizeJob(input, resourceLimit) {
   hex(event.epoch); hex(event.sequence); event.context = identity(event.context);
   event.header = record(event.header, ['type', 'flags', 'fenceId', 'contextId', 'ringIndex']);
   for (const key of ['type', 'flags', 'contextId', 'ringIndex']) uint(event.header[key]); hex(event.header.fenceId);
-  need((event.header.flags === 0 || event.header.flags === 1) && event.header.ringIndex === 0 && event.header.contextId === event.context.id,
+  need((event.header.flags === 0 || event.header.flags === 1) && event.header.ringIndex === 0 && (event.header.contextId === event.context.id || (production && event.header.type === 0x105 && event.header.contextId === 0)),
     'invalid-parameter', 'Unsupported submission header.');
   need(Array.isArray(event.resources) && event.resources.length <= resourceLimit, 'invalid-parameter', 'Invalid accepted resource set.');
   const ids = new Set();
@@ -106,7 +106,7 @@ function normalizeJob(input, resourceLimit) {
     need(resource.metadata.id === resource.identity.id, 'invalid-parameter', 'Accepted metadata identity mismatch.');
     if (resource.backing !== null) {
       resource.backing = record(resource.backing, ['generation', 'byteLength']); hex(resource.backing.generation); uint(resource.backing.byteLength);
-      need(resource.backing.generation !== '0000000000000000' && resource.backing.byteLength <= 4194304, 'invalid-parameter', 'Invalid accepted backing.');
+      need(resource.backing.generation !== '0000000000000000' && resource.backing.byteLength <= byteLimit, 'invalid-parameter', 'Invalid accepted backing.');
     }
     return resource;
   });
@@ -119,7 +119,7 @@ function normalizeJob(input, resourceLimit) {
     const t = event.transfer = record(event.transfer, ['box', 'offset', 'resourceId', 'level', 'stride', 'layerStride', 'direction']);
     t.box = record(t.box, ['x', 'y', 'z', 'width', 'height', 'depth']); for (const value of Object.values(t.box)) uint(value);
     for (const key of ['resourceId', 'level', 'stride', 'layerStride', 'direction']) uint(t[key]); hex(t.offset);
-    need(t.resourceId > 0 && (t.direction === 1 || t.direction === 2) && event.header.type === (t.direction === 1 ? 0x205 : 0x206), 'invalid-parameter', 'Transfer direction mismatch.');
+    need(t.resourceId > 0 && (t.direction === 1 || t.direction === 2) && (event.header.type === (t.direction === 1 ? 0x205 : 0x206) || (production && t.direction === 1 && event.header.type === 0x105)), 'invalid-parameter', 'Transfer direction mismatch.');
     // Preserve full wire width until after the checked profile/backing bound.
     need(BigInt('0x' + t.offset) <= 0xffffffffn, 'invalid-parameter', 'Outer transfer offset cannot narrow to this profile.');
   }
@@ -168,23 +168,31 @@ export function createVirglStandardDimensionalColorSurfaceSubmitBridge(options) 
 /** Selected original one-layer cube/array depth rendering; capsets remain gated. */
 export function createVirglStandardDimensionalDepthSurfaceSubmitBridge(options) { return createBridge(options, true, false, true, true, true, true, true, true, true, true); }
 
+export function createVirglStandardStreamOutputSubmitBridge(options) {return createBridge(options, true, false, true, true, true, true, true, true, true, true, true);}
+
+/** Qualified production composition. Its caller must install the typed capset only after host qualification succeeds. */
+export function createVirglProductionBridge(options) { return createBridge(options, true, true, true, true, true, true, true, true, true, true, true, true); }
+
 export function createVirglScanoutBridge(options) { return createBridge(options, true, true); }
 
-function createBridge(options, asynchronous, scanoutEnabled = false, desktop = false, dimensional = false, dimensionalViews = false, dimensionalDepth = false, dimensionalDepthViews = false, dimensionalShadows = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false) {
+function createBridge(options, asynchronous, scanoutEnabled = false, desktop = false, dimensional = false, dimensionalViews = false, dimensionalDepth = false, dimensionalDepthViews = false, dimensionalShadows = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false, streamOutput = false, production = false) {
   let owners = null;
   try {
+    const byteLimit = production ? 33554432 : 4194304;
     const config = record(options, ['gl', 'shaderBridge', 'resourceLimits', 'stateLimits', ...(asynchronous ? ['transport', 'jobLimits', 'drawLimits'] : []), ...(scanoutEnabled ? ['presenter'] : [])], ['gl', 'shaderBridge', ...(asynchronous ? ['transport'] : []), ...(scanoutEnabled ? ['presenter'] : [])]);
     if (scanoutEnabled) { const methods = config.presenter; need(methods && typeof methods === 'object', 'invalid-parameter', 'Missing presenter capability.');
       for (const key of ['rebind','enqueueOwned','inspect','readPixels','dispose']) need(typeof methods[key] === 'function', 'invalid-parameter', 'Invalid presenter capability.'); }
     const transport = asynchronous ? record(config.transport, ['gatherInput', 'scatterOutput', 'complete', ...(dimensional ? ['gatherLayeredInput', 'scatterLayeredOutput'] : [])]) : null;
     if (asynchronous) for (const key of Object.keys(transport)) need(typeof transport[key] === 'function', 'invalid-parameter', 'Missing transport method.');
     const fresh = () => {
-      const { backend } = unwrap((dimensionalDepthViews ? createStandardDimensionalDepthViewTransferBackend : dimensionalDepth ? createStandardDimensionalDepthTransferBackend : dimensionalViews ? createStandardDimensionalViewTransferBackend : dimensional ? createStandardDimensionalTransferBackend : desktop ? createStandardPackedDepthTransferBackend : createWebGL2TransferBackend)(config.gl));
+      const { backend } = unwrap((production ? createProductionTransferBackend : dimensionalDepthViews ? createStandardDimensionalDepthViewTransferBackend : dimensionalDepth ? createStandardDimensionalDepthTransferBackend : dimensionalViews ? createStandardDimensionalViewTransferBackend : dimensional ? createStandardDimensionalTransferBackend : desktop ? createStandardPackedDepthTransferBackend : createWebGL2TransferBackend)(config.gl));
       let store;
       try {
-        const created = unwrap((dimensionalDepthSurfaces ? createStandardDimensionalDepthSurfaceResourceStore : dimensionalColorSurfaces ? createStandardDimensionalColorSurfaceResourceStore : dimensionalDepthViews ? createStandardDimensionalDepthViewResourceStore : dimensionalDepth ? createStandardDimensionalDepthResourceStore : dimensionalViews ? createStandardDimensionalViewResourceStore : dimensional ? createStandardDimensionalResourceStore : desktop ? createStandardDesktopResourceStore : createResourceStore)({ backend, ...(config.resourceLimits === undefined ? {} : { limits: config.resourceLimits }) }));
+        const created = unwrap((production ? createProductionResourceStore : streamOutput ? createStandardStreamOutputResourceStore : dimensionalDepthSurfaces ? createStandardDimensionalDepthSurfaceResourceStore : dimensionalColorSurfaces ? createStandardDimensionalColorSurfaceResourceStore : dimensionalDepthViews ? createStandardDimensionalDepthViewResourceStore : dimensionalDepth ? createStandardDimensionalDepthResourceStore : dimensionalViews ? createStandardDimensionalViewResourceStore : dimensional ? createStandardDimensionalResourceStore : desktop ? createStandardDesktopResourceStore : createResourceStore)({ backend, ...(config.resourceLimits === undefined ? {} : { limits: config.resourceLimits }) }));
         store = created.store;
-        const { renderer } = unwrap((dimensionalDepthSurfaces ? createVirglStandardDimensionalDepthSurfaceAsyncRenderer : dimensionalColorSurfaces ? createVirglStandardDimensionalColorSurfaceAsyncRenderer : dimensionalShadows ? createVirglStandardDimensionalShadowAsyncRenderer : dimensionalDepthViews ? createVirglStandardDimensionalDepthViewAsyncRenderer : dimensionalViews ? createVirglStandardDimensionalViewAsyncRenderer : dimensional ? createVirglStandardDimensionalAsyncRenderer : desktop ? createVirglStandardShadowSamplerAsyncRenderer : asynchronous ? createVirglAsyncRenderer : createVirglStateRenderer)({ gl: config.gl, shaderBridge: config.shaderBridge,
+        const { renderer } = unwrap((production ? createVirglProductionAsyncRenderer : streamOutput ? createVirglStandardStreamOutputAsyncRenderer : dimensionalDepthSurfaces ? createVirglStandardDimensionalDepthSurfaceAsyncRenderer : dimensionalColorSurfaces ? createVirglStandardDimensionalColorSurfaceAsyncRenderer : dimensionalShadows ? createVirglStandardDimensionalShadowAsyncRenderer : dimensionalDepthViews ? createVirglStandardDimensionalDepthViewAsyncRenderer : dimensionalViews ? createVirglStandardDimensionalViewAsyncRenderer : dimensional ? createVirglStandardDimensionalAsyncRenderer : desktop ? createVirglStandardShadowSamplerAsyncRenderer : asynchronous ? createVirglAsyncRenderer : createVirglStateRenderer)({ gl: config.gl, shaderBridge: config.shaderBridge,
+          ...(production ? {primitiveAssembly: "lists"} : {}),
+          ...(streamOutput ? {streamOutputAccess: created.streamOutputAccess} : {}),
           ...(desktop ? { uniformAccess: created.uniformAccess, imageAccess: created.imageAccess } : {}),
           resources: store, bindings: created.bindings, ...(asynchronous ? { asyncAccess: created.asyncAccess, ...(config.jobLimits === undefined ? {} : { jobLimits: config.jobLimits }), ...(config.drawLimits === undefined ? {} : { drawLimits: config.drawLimits }) } : {}), ...(config.stateLimits === undefined ? {} : { limits: config.stateLimits }) }));
         return Object.freeze({ store, renderer, bindings: created.bindings, ...(asynchronous ? { asyncAccess: created.asyncAccess } : {}) });
@@ -193,7 +201,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
     owners = fresh();
     let epoch = '0000000000000001', highestGeneration = '0000000000000000', poisoned = false, disposed = false, busy = false;
     const contexts = new Map(), resources = new Map();
-    let pending = null, lastSequence = null, lastFailure = null;
+    let pending = null, lastSequence = null, lastFailure = null, lastRendererResult = null;
     const counters = { begun: 0, completed: 0, failed: 0, cancelled: 0, exchanges: 0, inputBytes: 0, outputBytes: 0, pumps: 0, draws: 0 };
     const resolve = (map, token, code) => {
       const found = map.get(token.id);
@@ -201,7 +209,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
       return found;
     };
     const scanout = scanoutEnabled ? createRetainedScanout({ getOwners: () => owners, resolveResource: (token) => resolve(resources, token, 'invalid-resource-id'),
-      presenter: config.presenter, onFault: (error) => { poisoned = true; lastFailure = { code: 'bridge-poisoned', message: String(error?.message ?? error) }; } }) : null;
+      presenter: config.presenter, production, onFault: (error) => { poisoned = true; lastFailure = { code: 'bridge-poisoned', message: String(error?.message ?? error) }; } }) : null;
     const scanoutResult = (result) => { if (!result?.ok) throw new Fault(result?.error?.code ?? 'bridge-poisoned', result?.error?.message ?? 'Scanout operation failed.'); return result; };
     const newIdentity = (map, token, code) => {
       need(!map.has(token.id) && token.generation > highestGeneration, code, 'Duplicate or stale creation identity.');
@@ -226,11 +234,16 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
         accepted.set(entry.identity.id, { transport: entry.identity, storageGeneration: current.storageGeneration,
           backing: current.backing ? { ...current.backing } : null });
       }
+      let temporary = null;
+      if (production && event.kind === 'transfer' && !contexts.get(event.context.id).resources.has(event.transfer.resourceId)) {
+        temporary = {context:event.context.id,resource:event.transfer.resourceId};
+        unwrap(owners.store.attachContext(temporary.context,temporary.resource));
+      }
       const commands = event.kind === 'commands' ? event.commands : transferCommands(event.transfer);
       const started = owners.renderer.beginSubmission(event.context.id, commands, { contextId: event.context.id });
-      if (!started.ok) return fail(mappedCode(started.error.code), started.error.message);
+      if (!started.ok) { if (temporary) unwrap(owners.store.detachContext(temporary.context,temporary.resource)); return fail(mappedCode(started.error.code), started.error.message); }
       pending = { epoch: event.epoch, sequence: event.sequence, context: event.context, job: started.job, accepted,
-        exchangeSequence: '0000000000000000', cancelled: false, status: 'ready', appliedCommands: 0, draws: 0 };
+        temporary, exchangeSequence: '0000000000000000', cancelled: false, status: 'ready', appliedCommands: 0, draws: 0 };
       lastSequence = event.sequence; counters.begun++; return ok();
     };
     const dmaArgs = (job, request) => {
@@ -248,8 +261,8 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
         uint(rows.layerStride); uint(rows.layerCount);
         need(rows.rowCount > 0 && rows.rowCount <= 16384 && rows.rowBytes > 0 && rows.rowStride >= rows.rowBytes &&
           rows.layerCount > 0 && rows.layerCount <= 2048 && rows.rowStride * rows.rowCount <= 0xffffffff &&
-          rows.layerStride >= rows.rowStride * rows.rowCount && rows.rowBytes * rows.rowCount <= 4194304 &&
-          rows.tightBytes === rows.rowBytes * rows.rowCount * rows.layerCount && rows.tightBytes <= 4194304 &&
+          rows.layerStride >= rows.rowStride * rows.rowCount && rows.rowBytes * rows.rowCount <= byteLimit &&
+          rows.tightBytes === rows.rowBytes * rows.rowCount * rows.layerCount && rows.tightBytes <= byteLimit &&
           rows.offset + (rows.layerCount - 1) * rows.layerStride + (rows.rowCount - 1) * rows.rowStride + rows.rowBytes <= resource.backing.byteLength,
         'invalid-parameter', 'Invalid layered DMA row layout.');
         return [job.epoch, job.sequence, nextHex(job.exchangeSequence), resource.transport.id, resource.transport.generation,
@@ -257,7 +270,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
           rows.layerStride, rows.layerCount];
       }
       need(rows.rowCount > 0 && rows.rowBytes > 0 && rows.rowStride >= rows.rowBytes && rows.tightBytes === rows.rowBytes * rows.rowCount &&
-        rows.tightBytes <= 4194304 && rows.offset + (rows.rowCount - 1) * rows.rowStride + rows.rowBytes <= resource.backing.byteLength,
+        rows.tightBytes <= byteLimit && rows.offset + (rows.rowCount - 1) * rows.rowStride + rows.rowBytes <= resource.backing.byteLength,
         'invalid-parameter', 'Invalid dense DMA row layout.');
       return [job.epoch, job.sequence, nextHex(job.exchangeSequence), resource.transport.id, resource.transport.generation,
         resource.backing.transportGeneration, BigInt(rows.offset).toString(16).padStart(16, '0'), rows.rowBytes, rows.rowStride, rows.rowCount];
@@ -276,6 +289,8 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
         const state = job.scanout ? scanoutResult(scanout.step(job.job)) : unwrap(owners.renderer.step(job.job)); job.status = state.status; job.appliedCommands = state.appliedCommands;
         need(!job.scanout || !poisoned || job.cancelled, 'bridge-poisoned', 'Scanout ownership retirement failed.');
         if (state.status === 'done') {
+          if (job.temporary) { unwrap(owners.store.detachContext(job.temporary.context,job.temporary.resource)); job.temporary=null; }
+          if (streamOutput) lastRendererResult = state.result;
           if (!job.cancelled) {
             const result = state.result; job.appliedCommands = result.appliedCommands; job.draws = result.draws.length;
             const uncertain = result.gpuComplete !== true;
@@ -327,11 +342,11 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
         busy = true;
         let event;
         try {
-          try { event = scanoutEnabled && ['bindScanout','beginScanout'].includes(Object.getOwnPropertyDescriptor(input, 'type')?.value) ? normalizeScanoutEvent(input) : asynchronous && (Object.getOwnPropertyDescriptor(input, 'type')?.value === 'beginJob' || Object.getOwnPropertyDescriptor(input, 'type')?.value === 'cancelJob') ? normalizeJob(input, desktop ? 64 : 16) : normalize(input, asynchronous); }
+          try { event = scanoutEnabled && ['bindScanout','beginScanout'].includes(Object.getOwnPropertyDescriptor(input, 'type')?.value) ? normalizeScanoutEvent(input, production) : asynchronous && (Object.getOwnPropertyDescriptor(input, 'type')?.value === 'beginJob' || Object.getOwnPropertyDescriptor(input, 'type')?.value === 'cancelJob') ? normalizeJob(input, production ? PRODUCTION_RESOURCE_LIMITS.resources : desktop ? 64 : 16, byteLimit, production) : normalize(input, asynchronous, byteLimit, production ? PRODUCTION_RESOURCE_LIMITS.segments : 256); }
           catch (error) { return fail(error instanceof Fault ? error.code : 'invalid-parameter', 'Malformed control event.'); }
           if (event.type === 'reset') {
             need(BigInt('0x' + event.epoch) === BigInt('0x' + epoch) + 1n, 'invalid-parameter', 'Reset epoch must advance once.');
-            poisoned = true; epoch = event.epoch; contexts.clear(); resources.clear(); pending = null; lastSequence = null; lastFailure = null;
+            poisoned = true; epoch = event.epoch; contexts.clear(); resources.clear(); pending = null; lastSequence = null; lastFailure = null; lastRendererResult = null;
             cleanup(); owners = fresh();
             // A callback may have applied before throwing, so Rust can reuse that
             // uncommitted generation. The new epoch invalidates its old identity.
@@ -366,7 +381,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
               const created = unwrap(store.createContext(context.id));
               try { unwrap(renderer.createContext(context.id)); }
               catch (error) { if (!store.destroyContext(context.id).ok) { poisoned = true; throw new Fault('bridge-poisoned', 'Context rollback failed.'); } throw error; }
-              contexts.set(context.id, { transport: context, storageGeneration: created.context.generation });
+              contexts.set(context.id, { transport: context, storageGeneration: created.context.generation, resources:new Set() });
               highestGeneration = context.generation; break;
             }
             case 'destroyContext':
@@ -381,8 +396,8 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
               resources.set(resource.id, { transport: resource, storageGeneration: created.resource.generation, metadata: { ...event.metadata } });
               highestGeneration = resource.generation; break;
             }
-            case 'attachResource': unwrap(store.attachContext(context.id, resource.id)); break;
-            case 'detachResource': unwrap(store.detachContext(context.id, resource.id)); break;
+            case 'attachResource': unwrap(store.attachContext(context.id, resource.id)); contexts.get(context.id).resources.add(resource.id); break;
+            case 'detachResource': unwrap(store.detachContext(context.id, resource.id)); contexts.get(context.id).resources.delete(resource.id); break;
             case 'attachBacking': {
               unwrap(store.attachBacking(resource.id, event.segments.map((s) => s.data)));
               if (asynchronous) {
@@ -416,7 +431,7 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
           contexts: [...contexts.values()].map((v) => ({ transport: { ...v.transport }, storageGeneration: v.storageGeneration })),
           resources: [...resources.values()].map((v) => ({ transport: { ...v.transport }, storageGeneration: v.storageGeneration, ...(asynchronous ? { backing: v.backing ? { ...v.backing } : null } : {}) })),
           ...(scanout ? { scanout: scanout.inspect() } : {}),
-          store: owners.store.inspect(), renderer: owners.renderer.inspect() };
+          ...(streamOutput ? {lastRendererResult} : {}), store: owners.store.inspect(), renderer: owners.renderer.inspect() };
       },
       dispose() {
         if (busy) return fail('bridge-poisoned', 'Reentrant disposal.');
@@ -428,6 +443,47 @@ function createBridge(options, asynchronous, scanoutEnabled = false, desktop = f
       },
     };
     if (asynchronous) bridge.pump = pump;
+    if (production) {
+      const checkpointReady = () => {
+        need(!busy && !disposed && !poisoned && pending === null && !config.gl.isContextLost(),
+          'bridge-poisoned','Checkpoint requires a healthy idle renderer.');
+        const display=scanout.inspect();
+        need(display.activeCaptures===0 && display.retainedFrames===0 && display.presenter.retainedFrames===0,
+          'invalid-parameter','Checkpoint requires drained presentation.');
+      };
+      bridge.checkpointState = () => {
+        let owned=false;
+        try {
+          checkpointReady();busy=true;owned=true;
+          const queries=unwrap(owners.renderer.checkpointQueryState()).queries;
+          const contents=unwrap(owners.store.checkpointContents());
+          const store=unwrap(owners.store.inspect()), renderer=unwrap(owners.renderer.inspect());
+          return Object.freeze({ok:true,contents,logical:{epoch,highestGeneration,lastSequence,
+            contexts:[...contexts.values()].map(v=>({transport:v.transport,storageGeneration:v.storageGeneration,resources:[...v.resources].sort((a,b)=>a-b)})),
+            resources:[...resources.values()].map(v=>({transport:v.transport,storageGeneration:v.storageGeneration,metadata:v.metadata,backing:v.backing ?? null})),
+            store:{resources:store.resources,contexts:store.contexts},renderer:renderer.contexts,queries,
+            scanout:scanout.inspect().binding}});
+        } catch(error) { return fail(error instanceof Fault?error.code:'invalid-parameter',String(error.message)); }
+        finally { if(owned)busy=false; }
+      };
+      bridge.checkpointReady = () => {
+        try { checkpointReady();unwrap(owners.renderer.checkpointQueryState());return ok(); }
+        catch(error) { return fail(error instanceof Fault?error.code:'invalid-parameter',String(error.message)); }
+      };
+      bridge.rebaseCheckpointEpoch = (expected,next) => {
+        try {
+          checkpointReady();hex(expected);hex(next);
+          need(expected===epoch && next>epoch && next!=='ffffffffffffffff','invalid-parameter','Stale checkpoint epoch rebase.');
+          scanoutResult(scanout.rebaseCheckpointEpoch(expected,next));epoch=next;return ok();
+        } catch(error) { return fail(error instanceof Fault?error.code:'invalid-parameter',String(error.message)); }
+      };
+      bridge.repairCheckpointScanout = async (cancelled=()=>false) => {
+        let owned=false;
+        try { need(typeof cancelled==='function','invalid-parameter','Invalid checkpoint cancellation capability.');checkpointReady();busy=true;owned=true;return scanoutResult(await scanout.repairCheckpointFrame(cancelled)); }
+        catch(error) { return fail(error instanceof Fault?error.code:'invalid-parameter',String(error.message)); }
+        finally { if(owned)busy=false; }
+      };
+    }
     if (scanout) bridge.present2D = (frame) => {
       if (busy || disposed || poisoned) return fail('bridge-poisoned', 'Bridge is not available for presentation.');
       busy = true; try { return scanout.present2D(frame); } finally { busy = false; }

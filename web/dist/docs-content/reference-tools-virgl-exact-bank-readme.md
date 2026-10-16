@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-exact-bank/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "ab48c4b7b0c46899a39cacf5a98fd2b2cead0da0018ab7e376417285b5699f9b"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Exact raw bank consumer — E6-T12g6m3a
 
 {% hint style="info" %}

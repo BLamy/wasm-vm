@@ -88,12 +88,25 @@ fn sparse_codec_round_trips_and_bounds_a_hostile_run_on_wasm32() {
 }
 
 #[wasm_bindgen_test]
+fn dense_ram_encoding_remains_bounded_on_wasm32() {
+    for width in [1usize, 2, 4, 8, 10, 11, 12, 128] {
+        let shape: Vec<u8> = (0..65536).map(|n| u8::from(n % (width + 1) == 0)).collect();
+        let encoded = encode_sparse(&shape);
+        assert!(encoded.len() <= shape.len() + 5);
+        assert_eq!(encoded.capacity(), encoded.len());
+        let mut restored = Ram::new(shape.len()).unwrap();
+        restored.restore(&encoded).unwrap();
+        assert_eq!(restored.as_bytes(), shape);
+    }
+}
+
+#[wasm_bindgen_test]
 fn reserved_section_is_refused_as_unsupported_on_wasm32() {
-    // CPU landed in E3-T12b; the virtio sections are still reserved-but-unimplemented.
-    assert!(!is_supported_section(section::VIRTIO_RNG));
+    // Desktop visitors now support RNG; the future reservation has no restorer.
+    assert!(!is_supported_section(section::RESERVED_FUTURE));
     let mut w = SnapshotWriter::new(&[0xC0; 32], &[0xBA; 32], 1);
     w.section(section::RAM, b"ok");
-    w.section(section::VIRTIO_RNG, b"reserved");
+    w.section(section::RESERVED_FUTURE, b"reserved");
     let blob = w.finish();
     let (_, reader) = SectionReader::new(&blob).unwrap();
     let results: Vec<_> = reader.collect();
@@ -101,7 +114,7 @@ fn reserved_section_is_refused_as_unsupported_on_wasm32() {
     assert_eq!(
         results[1],
         Err(SnapshotError::UnsupportedSection {
-            tag: section::VIRTIO_RNG
+            tag: section::RESERVED_FUTURE
         })
     );
 }

@@ -8,9 +8,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 BIN="${BIN:-target/release/wasm-vm}"
-KERNEL="${KERNEL:-releases/kernel/6.6.63/Image}"
-IMAGE="${OMARCHY_IMAGE:-target/omarchy-profile-sdr-r3.ext4}"
-CHUNKS="${OMARCHY_CHUNKS:-target/omarchy-profile-chunks-sdr-r3-256k}"
+KERNEL="${KERNEL:-releases/kernel/6.6.63-omarchy-evdev1024/Image}"
+IMAGE="${OMARCHY_IMAGE:-target/omarchy-applications/software04/guest.ext4}"
+CHUNKS="${OMARCHY_CHUNKS:-target/omarchy-applications/software04}"
 MANIFEST="$CHUNKS/manifest.json"
 OUT_DIR="${OMARCHY_SNAPSHOT_DIR:-releases/boot-snapshot}"
 RAM_GZ="$OUT_DIR/omarchy-ready.snap.gz"
@@ -57,7 +57,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# APFS clone avoids a second 4 GiB physical copy while keeping the release image immutable. The
+# APFS clone avoids a second full physical copy while keeping the release image immutable. The
 # ordinary copy fallback is for Linux builders where clonefile is unavailable.
 if ! cp -c "$IMAGE" "$WORK" 2>/dev/null; then
   rm -f "$WORK"
@@ -65,6 +65,9 @@ if ! cp -c "$IMAGE" "$WORK" 2>/dev/null; then
 fi
 
 echo "[omarchy-snapshot] booting to mapped Foot + the package-owned Omarchy shell…"
+OMARCHY_CAPTURE_SHELL_PROFILE="${OMARCHY_CAPTURE_SHELL_PROFILE:-browser-software}" \
+OMARCHY_EXPECT_RENDERER="${OMARCHY_EXPECT_RENDERER:-llvmpipe}" \
+OMARCHY_EXPECT_LP_NUM_THREADS="${OMARCHY_EXPECT_LP_NUM_THREADS:-0}" \
 node tools/verify/omarchy-native-capture.mjs "$BIN" boot \
   --kernel "$KERNEL" \
   --drive "file=$WORK" \

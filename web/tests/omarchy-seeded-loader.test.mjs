@@ -135,6 +135,7 @@ async function runFresh({
     validateDecodedCacheEntries: () => {},
     validateGuestClock: () => {},
     validateICountDivider: () => {},
+    validateInteractiveClock: () => {},
     TextEncoder,
     TextDecoder,
     URLSearchParams,

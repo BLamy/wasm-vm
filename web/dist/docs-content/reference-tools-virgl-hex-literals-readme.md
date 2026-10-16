@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-hex-literals/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "7b7c9cb56b44c7ce945ab63693377944537a5b14dba9f3d10875d61cda379fea"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Canonical hexadecimal FLT32 proof
 
 {% hint style="info" %}

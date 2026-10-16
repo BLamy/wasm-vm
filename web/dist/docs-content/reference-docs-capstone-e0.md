@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/capstone-e0.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "c7683c9cccf6972eb2236c2285afaeeed9e7ec955611f11a4f2aeeb4a6c4e917"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Epic 0 capstone — Hello from RV64, byte-for-byte against Spike
 
 {% hint style="info" %}

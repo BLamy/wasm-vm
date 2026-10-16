@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-fragment-coordinates/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "0c91362a60f582412aa98c7e599ab07f5329d88dc4aca72e48250f60032a3106"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Virgl fragment coordinates
 
 {% hint style="info" %}

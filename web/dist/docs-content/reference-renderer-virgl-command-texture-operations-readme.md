@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/texture-operations-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "da24fae0048d808838b4aa08cf4159edcf688e303e8bb9b11e43b536fca7eca8"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Original texture operation consumer
 
 {% hint style="info" %}

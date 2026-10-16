@@ -295,8 +295,10 @@ pub struct Machine {
     /// [`Self::mono_clock`]. `None` (the default) keeps the deterministic ICount clock so every
     /// existing determinism / lockstep / predecode-diff gate stays byte-identical.
     wall_time: Option<time::TimeSource>,
+    /// Opt-in ICount idle ceiling. Busy execution retains the deterministic retire clock.
+    idle_pacer: Option<time::IdlePacer>,
     /// E4-T24: the injected monotonic host clock (CLI `Instant`, browser `performance.now()`, or a
-    /// test mock). Read only on the wall-clock path so `crates/core` never names a host time API.
+    /// test mock). Read only for wall time or opt-in idle pacing; core names no host time API.
     mono_clock: Option<alloc::boxed::Box<dyn time::MonotonicClock>>,
     /// E4-T24: the last discontinuous `mtime` jump (the documented suspend/resume exception), for the
     /// host to surface / the guest to resync from the RTC. Cleared by [`Self::take_time_jump`].
@@ -1016,6 +1018,7 @@ impl Machine {
             jit_enabled: false,
             compile_queue: compile_queue::CompileQueue::default(),
             wall_time: None,
+            idle_pacer: None,
             mono_clock: None,
             last_time_jump: None,
             fabric_epoch: alloc::rc::Rc::new(core::cell::Cell::new(0)),
@@ -1698,7 +1701,7 @@ impl Machine {
     }
 
     /// Explicit proof-only constructor; default assembly remains unaccelerated.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_control3d_proof(
         &mut self,
@@ -1714,7 +1717,7 @@ impl Machine {
     }
 
     /// Host-selected captured-desktop control envelope; not a production API profile.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_standard_desktop_control3d_proof(
         &mut self,
@@ -1732,7 +1735,7 @@ impl Machine {
         self.install_virtio_gpu(device, state)
     }
 
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_submit3d_proof(
         &mut self,
@@ -1754,7 +1757,7 @@ impl Machine {
     }
 
     /// Host-selected desktop control/store profile with ordered submission ownership.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_standard_desktop_submit3d_proof(
         &mut self,
@@ -1777,7 +1780,7 @@ impl Machine {
     }
 
     /// Host-selected original layered allocation/DMA; this grants no capsets.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_standard_dimensional_submit3d_proof(
         &mut self,
@@ -1800,7 +1803,7 @@ impl Machine {
     }
 
     /// Host-selected original cube/array depth layout; production caps stay off.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_standard_dimensional_depth_submit3d_proof(
         &mut self,
@@ -1822,7 +1825,30 @@ impl Machine {
         self.install_virtio_gpu(device, state)
     }
 
-    #[cfg(feature = "virgl-control-proof")]
+    /// Host-selected original buffer stream-output layout; production caps stay off.
+    #[cfg(feature = "virgl-renderer")]
+    #[allow(clippy::type_complexity)]
+    pub fn enable_virtio_gpu_standard_stream_output_submit3d_proof(
+        &mut self,
+        frame_sink: alloc::boxed::Box<dyn dev::virtio::gpu::FrameSink>,
+        control_sink: alloc::boxed::Box<dyn dev::virtio::gpu::control3d::Control3dSink>,
+        submit_sink: alloc::boxed::Box<dyn dev::virtio::gpu::submit3d::Submit3dSink>,
+        mailbox: dev::virtio::gpu::submit3d::Submit3dMailbox,
+    ) -> Option<(
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::mmio::VirtioMmio>>,
+        alloc::rc::Rc<core::cell::RefCell<dev::virtio::gpu::GpuState>>,
+    )> {
+        let (device, state) =
+            dev::virtio::gpu::VirtioGpu::new_with_standard_stream_output_submit3d_proof_state(
+                frame_sink,
+                control_sink,
+                submit_sink,
+                mailbox,
+            );
+        self.install_virtio_gpu(device, state)
+    }
+
+    #[cfg(feature = "virgl-renderer")]
     #[allow(clippy::type_complexity)]
     pub fn enable_virtio_gpu_scanout3d_proof(
         &mut self,
@@ -1843,7 +1869,7 @@ impl Machine {
         self.install_virtio_gpu(device, state)
     }
 
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn submit3d_gather(
         &mut self,
         exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
@@ -1852,16 +1878,18 @@ impl Machine {
             .gpu
             .as_ref()
             .ok_or(dev::virtio::gpu::control3d::Control3dError::InvalidParameter)?;
-        dev::virtio::gpu::submit3d_dma(
+        let bytes = dev::virtio::gpu::submit3d_dma(
             &self.virtio[*index].0,
             state,
             &mut self.bus,
             exchange,
             None,
             None,
-        )
+        )?;
+        state.borrow_mut().mirror_legacy_input(exchange, &bytes)?;
+        Ok(bytes)
     }
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn submit3d_scatter(
         &mut self,
         exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
@@ -1882,7 +1910,7 @@ impl Machine {
         .map(|_| ())
     }
 
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn submit3d_gather_layered(
         &mut self,
         exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
@@ -1903,7 +1931,7 @@ impl Machine {
         )
     }
 
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn submit3d_scatter_layered(
         &mut self,
         exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
@@ -1924,6 +1952,46 @@ impl Machine {
             Some((layer_stride, layer_count)),
         )
         .map(|_| ())
+    }
+
+    #[allow(clippy::type_complexity)]
+    /// Replace the never-negotiated assembly device with a qualified host GPU.
+    /// The transport itself remains at the same DTB/MMIO/IRQ address.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn attach_qualified_virgl(
+        &mut self,
+        control_sink: alloc::boxed::Box<dyn dev::virtio::gpu::control3d::Control3dSink>,
+        submit_sink: alloc::boxed::Box<dyn dev::virtio::gpu::submit3d::Submit3dSink>,
+        mailbox: dev::virtio::gpu::submit3d::Submit3dMailbox,
+        capabilities: dev::virtio::gpu::capabilities::QualifiedCapabilities,
+    ) -> Result<(), &'static str> {
+        if self.irq_stats().retired != 0 {
+            return Err("GPU must be attached before guest execution");
+        }
+        let Some((old, control_queue, cursor_queue, index)) = self.gpu.as_ref() else {
+            return Err("No GPU slot is installed");
+        };
+        if old.borrow().control3d_proof_installed()
+            || control_queue.is_some()
+            || cursor_queue.is_some()
+        {
+            return Err("GPU must be attached before its first probe");
+        }
+        let index = *index;
+        let (device, state) = dev::virtio::gpu::VirtioGpu::new_with_qualified_renderer(
+            alloc::boxed::Box::new(dev::virtio::gpu::NullSink),
+            control_sink,
+            submit_sink,
+            mailbox,
+            capabilities,
+        );
+        self.virtio[index]
+            .0
+            .borrow_mut()
+            .replace_unnegotiated_device(alloc::boxed::Box::new(device))
+            .map_err(|_| "GPU transport has already been negotiated")?;
+        self.gpu = Some((state, None, None, index));
+        Ok(())
     }
 
     #[allow(clippy::type_complexity)]
@@ -1957,7 +2025,7 @@ impl Machine {
 
     /// Snapshots cannot describe the installed proof renderer, even when its
     /// public maps are empty: independent renderer leases may still exist.
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     pub fn control3d_proof_installed(&self) -> bool {
         self.gpu
             .as_ref()
@@ -2357,7 +2425,7 @@ impl Machine {
         blob: &[u8],
         host_viewport: desktop_restore::DisplaySize,
     ) -> Result<desktop_restore::DesktopRestoreReport, desktop_restore::DesktopRestoreError> {
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         if self.control3d_proof_installed() {
             return Err(desktop_restore::DesktopRestoreError::CommitRefused {
                 code: "proof_3d_installed",
@@ -2468,7 +2536,7 @@ impl Machine {
     pub fn save_desktop_snapshot(
         &mut self,
     ) -> Result<alloc::vec::Vec<u8>, desktop_snapshot::DesktopSnapshotSaveError> {
-        #[cfg(feature = "virgl-control-proof")]
+        #[cfg(feature = "virgl-renderer")]
         if self.control3d_proof_installed() {
             return Err(
                 desktop_snapshot::DesktopSnapshotSaveError::ComponentRefused {
@@ -3124,11 +3192,74 @@ impl Machine {
     /// [`crate::resume::SnapshotError::NotQuiesced`], no blob emitted) rather than serialize a torn
     /// boundary — a parked descriptor chain must never be captured half-processed.
     pub fn save_resume(&mut self) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
-        #[cfg(feature = "virgl-control-proof")]
-        if self.control3d_proof_installed() {
+        self.save_resume_inner(None)
+    }
+
+    /// Service only original GPU queue work and completion mailboxes while the guest is paused.
+    /// No instruction, guest clock tick, other device poll or translated block executes here.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn drain_accelerated_checkpoint_boundary(&mut self) -> Result<bool, &'static str> {
+        if !self.control3d_proof_installed() {
+            return Err("qualified renderer required");
+        }
+        let Some((state, control_vq, cursor_vq, index)) = &mut self.gpu else {
+            return Err("GPU unavailable");
+        };
+        dev::virtio::gpu::service_with_cursor(
+            &self.virtio[*index].0,
+            control_vq,
+            cursor_vq,
+            state,
+            &mut self.bus,
+        );
+        self.virtio[*index]
+            .1
+            .set(self.virtio[*index].0.borrow().irq_level());
+        let ready = state.borrow().checkpoint_ready().is_ok();
+        self.sync_plic();
+        self.drain_code_writes();
+        self.fabric_idle_epoch = None;
+        Ok(ready)
+    }
+
+    /// Native half of an explicitly paired accelerated checkpoint. `renderer_digest` identifies
+    /// the separately reconstructed physical renderer; it is never a WebGL handle or RAM fallback.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn save_accelerated_resume(
+        &mut self,
+        renderer_digest: &[u8; 32],
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        let bytes = self.save_resume_inner(Some(renderer_digest))?;
+        dev::virtio::gpu::checkpoint::seal_resume(bytes, renderer_digest).map_err(|_| {
+            crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::VIRTIO_GPU,
+            }
+        })
+    }
+
+    fn save_resume_inner(
+        &mut self,
+        gpu_witness: Option<&[u8; 32]>,
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        #[cfg(not(feature = "virgl-renderer"))]
+        let _ = gpu_witness;
+        #[cfg(feature = "virgl-renderer")]
+        if self.control3d_proof_installed() && gpu_witness.is_none() {
             return Err(crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
             });
+        }
+        #[cfg(feature = "virgl-renderer")]
+        if let Some(witness) = gpu_witness {
+            let error = crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::VIRTIO_GPU,
+            };
+            let Some((state, ..)) = &self.gpu else {
+                return Err(error);
+            };
+            if witness.iter().all(|b| *b == 0) || state.borrow().checkpoint_ready().is_err() {
+                return Err(error);
+            }
         }
         self.quiesce()?;
         use crate::resume::{ComponentSnapshot, SnapshotWriter, section};
@@ -3214,11 +3345,26 @@ impl Machine {
                 .snapshot_transport(&mut v);
             append_resume_queue(&mut v, vq);
             append_resume_queue(&mut v, cursor_vq);
-            let payload = state.borrow().to_snapshot().map_err(|_| {
-                crate::resume::SnapshotError::BadComponentState {
-                    tag: section::VIRTIO_GPU,
-                }
-            })?;
+            let gpu = state.borrow();
+            #[cfg(feature = "virgl-renderer")]
+            let payload = if let Some(witness) = gpu_witness {
+                gpu.to_gpu_checkpoint(witness).map_err(|_| {
+                    crate::resume::SnapshotError::BadComponentState {
+                        tag: section::VIRTIO_GPU,
+                    }
+                })?
+            } else {
+                gpu.to_snapshot()
+                    .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                        tag: section::VIRTIO_GPU,
+                    })?
+            };
+            #[cfg(not(feature = "virgl-renderer"))]
+            let payload =
+                gpu.to_snapshot()
+                    .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                        tag: section::VIRTIO_GPU,
+                    })?;
             v.extend_from_slice(&payload);
             w.section(section::VIRTIO_GPU, &v);
         }
@@ -3348,8 +3494,41 @@ impl Machine {
     /// [`crate::resume::SnapshotError::OverlayGenerationMismatch`]) with the target machine left
     /// byte-identical to its pre-restore state — a resumed CPU/RAM never lands on a diverged disk.
     pub fn load_resume(&mut self, blob: &[u8]) -> Result<(), crate::resume::SnapshotError> {
-        #[cfg(feature = "virgl-control-proof")]
-        if self.control3d_proof_installed() {
+        self.load_resume_inner(blob, None).map(|_| ())
+    }
+
+    /// Restore only the native half of a matching, independently reconstructed GPU checkpoint.
+    /// Return the saved and fresh transport epochs so the host reconstruction lane can remap its
+    /// logical identities. The ordinary load API retains its explicit accelerated refusal.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn load_accelerated_resume(
+        &mut self,
+        blob: &[u8],
+        renderer_digest: &[u8; 32],
+    ) -> Result<(u64, u64), crate::resume::SnapshotError> {
+        let payload =
+            dev::virtio::gpu::checkpoint::open_resume(blob, renderer_digest).map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: crate::resume::section::VIRTIO_GPU,
+                }
+            })?;
+        self.load_resume_inner(payload, Some(renderer_digest))?
+            .ok_or(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::VIRTIO_GPU,
+            })
+    }
+
+    fn load_resume_inner(
+        &mut self,
+        blob: &[u8],
+        gpu_witness: Option<&[u8; 32]>,
+    ) -> Result<Option<(u64, u64)>, crate::resume::SnapshotError> {
+        #[cfg(not(feature = "virgl-renderer"))]
+        let _ = gpu_witness;
+        #[cfg(feature = "virgl-renderer")]
+        if (self.control3d_proof_installed() && gpu_witness.is_none())
+            || (gpu_witness.is_some() && !self.control3d_proof_installed())
+        {
             return Err(crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
             });
@@ -3372,6 +3551,39 @@ impl Machine {
         for sec in reader {
             sections.push(sec?);
         }
+        #[cfg(feature = "virgl-renderer")]
+        if gpu_witness.is_some() {
+            // The accelerated envelope is an exact machine boundary. Missing, duplicate or
+            // unknown sections must not leave destination CPU/RAM/device state mixed with it.
+            let mut expected = alloc::vec![section::CPU, section::RAM, section::CLOCK];
+            for (tag, present) in [
+                (section::CLINT, self.clint.is_some()),
+                (section::PLIC, self.plic.is_some()),
+                (section::UART, self.uart.is_some()),
+                (section::RTC, self.rtc.is_some()),
+                (section::VIRTIO_BLK, self.blk.is_some()),
+                (section::VIRTIO_NET, self.net.is_some()),
+                (section::VIRTIO_GPU, self.gpu.is_some()),
+                (section::VIRTIO_KEYBOARD, self.keyboard.is_some()),
+                (section::VIRTIO_TABLET, self.tablet.is_some()),
+                (section::VIRTIO_MOUSE, self.mouse.is_some()),
+                (section::VIRTIO_SND, self.snd.is_some()),
+                (section::VIRTIO_CONSOLE, self.console.is_some()),
+                (section::VIRTIO_RNG, self.rng.is_some()),
+            ] {
+                if present {
+                    expected.push(tag);
+                }
+            }
+            expected.sort_unstable();
+            let mut actual: alloc::vec::Vec<_> = sections.iter().map(|s| s.tag).collect();
+            actual.sort_unstable();
+            if actual != expected {
+                return Err(crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_GPU,
+                });
+            }
+        }
         let desktop_sections = [
             (section::VIRTIO_GPU, self.gpu.is_some()),
             (section::VIRTIO_KEYBOARD, self.keyboard.is_some()),
@@ -3387,6 +3599,12 @@ impl Machine {
                 return Err(crate::resume::SnapshotError::BadComponentState { tag });
             }
         }
+        #[cfg(feature = "virgl-renderer")]
+        let mut staged_gpu_checkpoint = None;
+        #[cfg(feature = "virgl-renderer")]
+        let mut gpu_epochs = None;
+        #[cfg(not(feature = "virgl-renderer"))]
+        let gpu_epochs = None;
         for sec in &sections {
             match sec.tag {
                 section::CPU => Hart::new().restore(sec.payload)?,
@@ -3435,6 +3653,28 @@ impl Machine {
                 }
                 section::VIRTIO_GPU => {
                     let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
+                    #[cfg(feature = "virgl-renderer")]
+                    if let Some(witness) = gpu_witness {
+                        let Some((state, ..)) = &self.gpu else {
+                            return Err(crate::resume::SnapshotError::BadComponentState {
+                                tag: sec.tag,
+                            });
+                        };
+                        staged_gpu_checkpoint = Some(
+                            state
+                                .borrow()
+                                .prepare_gpu_checkpoint(
+                                    payload,
+                                    witness,
+                                    self.ram_base(),
+                                    self.ram_len() as u64,
+                                )
+                                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                                    tag: sec.tag,
+                                })?,
+                        );
+                        continue;
+                    }
                     let mut device = dev::virtio::gpu::VirtioGpu::new();
                     device.restore_snapshot(payload).map_err(|_| {
                         crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
@@ -3510,6 +3750,16 @@ impl Machine {
                         reader.u16()?;
                     }
                     let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
+                    #[cfg(feature = "virgl-renderer")]
+                    if let Some(prepared) = staged_gpu_checkpoint.take() {
+                        gpu_epochs = Some((prepared.saved_epoch, prepared.restored_epoch));
+                        state.borrow_mut().commit_gpu_checkpoint(prepared);
+                    } else {
+                        state.borrow_mut().restore_snapshot(payload).map_err(|_| {
+                            crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                        })?;
+                    }
+                    #[cfg(not(feature = "virgl-renderer"))]
                     state.borrow_mut().restore_snapshot(payload).map_err(|_| {
                         crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
                     })?;
@@ -3794,7 +4044,7 @@ impl Machine {
         // may discard the previous wall anchor; every refusal above preserves it untouched.
         #[cfg(not(feature = "zicsr-stub"))]
         self.rebase_guest_clock();
-        Ok(())
+        Ok(gpu_epochs)
     }
 
     /// RISCOF signature dump (E1-T20): the memory region `[begin, end)` formatted as the
@@ -4046,6 +4296,7 @@ impl Machine {
             ts.sync_floor(clint.borrow().mtime);
         }
         self.wall_time = Some(ts);
+        self.idle_pacer = None;
         self.mono_clock = Some(clock);
         self.rebase_guest_clock();
     }
@@ -4054,9 +4305,39 @@ impl Machine {
     pub fn guest_clock_mode(&self) -> time::TimeMode {
         if self.wall_time.is_some() {
             time::TimeMode::WallClock
+        } else if self.idle_pacer.is_some() {
+            time::TimeMode::PacedICount
         } else {
             time::TimeMode::ICount
         }
+    }
+
+    /// Keep retire-derived busy time, but prevent idle jumps from outrunning host input.
+    /// Selection is explicit and preserves guest time, deadlines and the sub-tick phase.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub fn set_paced_icount_clock(
+        &mut self,
+        clock: alloc::boxed::Box<dyn time::MonotonicClock>,
+    ) -> Result<(), &'static str> {
+        let mtime = self
+            .clint
+            .as_ref()
+            .ok_or("paced ICount requires an attached CLINT")?
+            .borrow()
+            .mtime;
+        if self.clock_div == 0 || self.tick_accum >= self.clock_div {
+            return Err("paced ICount requires a valid saved clock phase");
+        }
+        let pacer = time::IdlePacer::new(
+            clock.now_nanos(),
+            mtime,
+            u64::from(platform::virt::TIMEBASE_FREQ_HZ),
+        );
+        self.wall_time = None;
+        self.idle_pacer = Some(pacer);
+        self.mono_clock = Some(clock);
+        self.last_time_jump = None;
+        Ok(())
     }
 
     /// Retirements per tick in ICount mode; retained, but inactive, in wall mode.
@@ -4074,7 +4355,7 @@ impl Machine {
         if self.clint.is_none() {
             return Err("ICount divider requires an attached CLINT");
         }
-        if self.wall_time.is_some() {
+        if self.wall_time.is_some() || self.idle_pacer.is_some() {
             return Err("ICount divider requires ICount mode");
         }
         if self.clock_div == 0 || self.tick_accum >= self.clock_div {
@@ -4100,11 +4381,18 @@ impl Machine {
             ts.rebase_wall(clock.now_nanos(), clint.borrow().mtime);
             self.last_time_jump = None;
         }
+        if let (Some(pacer), Some(clock), Some(clint)) =
+            (&mut self.idle_pacer, &self.mono_clock, &self.clint)
+        {
+            pacer.rebase(clock.now_nanos(), clint.borrow().mtime);
+            self.last_time_jump = None;
+        }
     }
 
     /// E4-T24: revert to the deterministic ICount clock (retire-derived `mtime`).
     pub fn set_icount_clock(&mut self) {
         self.wall_time = None;
+        self.idle_pacer = None;
         self.mono_clock = None;
         self.last_time_jump = None;
     }
@@ -4162,6 +4450,10 @@ impl Machine {
             deadline = Some(deadline.map_or(stimecmp, |d| d.min(stimecmp)));
         }
         if let Some(d) = deadline {
+            let d = match (&mut self.idle_pacer, &self.mono_clock) {
+                (Some(pacer), Some(clock)) => pacer.limit_deadline(clock.now_nanos(), mtime, d),
+                _ => d,
+            };
             // Jump the machine clock to the deadline; next boundary re-evaluates MTIP/STIP as a
             // level (mtime >= cmp) and delivers the timer. tick_accum (sub-tick remainder from
             // retirements) is left untouched — whole-tick jumps are independent of the divider.
@@ -4177,6 +4469,30 @@ impl Machine {
         self.net
             .as_ref()
             .is_some_and(|(state, _, _)| state.borrow().backend.external_io_pending())
+    }
+
+    /// Browser GPU fences and retained scanout receipts complete between CPU
+    /// chunks. Tickless idle must not turn that wait into an immediate timeout.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn external_gpu_io_pending(&self) -> bool {
+        #[cfg(feature = "virgl-renderer")]
+        {
+            self.gpu
+                .as_ref()
+                .is_some_and(|(state, _, _, _)| state.borrow().external_renderer_io_pending())
+        }
+        #[cfg(not(feature = "virgl-renderer"))]
+        false
+    }
+
+    /// Original keyboard breaks arrive between host execution chunks. Skipping
+    /// directly to a repeat timer before that turn would manufacture a long
+    /// guest key hold from a short physical press.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn external_keyboard_io_pending(&self) -> bool {
+        self.keyboard
+            .as_ref()
+            .is_some_and(|(state, _, _)| state.borrow().awaiting_host_key_release())
     }
 
     /// E2-T20: run the sliding-window interrupt-storm detector. Called only when a trap lands
@@ -5612,7 +5928,10 @@ impl Machine {
         // this block ran), so this WFI is a real idle wait. Skip the idle spin by jumping mtime to
         // the nearest armed timer deadline — deterministic, so native and wasm agree. Turns a ~20×
         // `sleep` into near-real-time. No-op if no timer armed.
-        if !self.external_net_io_pending() {
+        if !self.external_net_io_pending()
+            && !self.external_gpu_io_pending()
+            && !self.external_keyboard_io_pending()
+        {
             self.wfi_fast_forward();
         }
     }
@@ -6051,6 +6370,9 @@ mod clock_advance_tests;
 
 #[cfg(all(test, not(feature = "zicsr-stub")))]
 mod partial_resume_tests;
+
+#[cfg(all(test, not(feature = "zicsr-stub")))]
+mod paced_idle_clock_tests;
 
 #[cfg(test)]
 mod tests {

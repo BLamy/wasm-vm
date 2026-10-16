@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/compact-vertex-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "520045ca261d53fe4d8663dba0f9b16e9f8ac8cfa8b4a3e2abcd1da560eb0fd0"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Compact floating vertex fetch
 
 {% hint style="info" %}

@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/design/image-pipeline.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "8c41aedca3f8c20c9ca50bb3bd84d4388aba3a1746dbb1135c46fbd95d7be02b"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Disk-image build pipeline v2 (E3-T11)
 
 {% hint style="info" %}

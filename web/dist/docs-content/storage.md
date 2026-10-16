@@ -1,3 +1,9 @@
+---
+kind: "Field guide"
+source: "web/docs-source/guides/storage.md"
+scope: "Authored explanation; verification belongs to the named evidence"
+---
+
 # Storage and persistence
 
 A guest disk is an explicit boot input. The loader supports an initramfs, a whole disk, or a chunked disk. Persistence adds a writable local overlay to a chunked image.

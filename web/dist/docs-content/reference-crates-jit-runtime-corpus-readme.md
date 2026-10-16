@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "crates/jit-runtime/corpus/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "bd7194bc3b986b6ad6167af7b5a1c0b57ec012c83b320b94bf5c9350863e5e56"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # E4-T25 lockstep/fuzz regression corpus
 
 {% hint style="info" %}

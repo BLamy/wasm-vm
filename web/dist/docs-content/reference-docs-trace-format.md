@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/trace-format.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "8af632d8f947a156379b279019c6c3f94ea2db81a798858f05b9d1aba45f99e9"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Canonical instruction-trace format (v1)
 
 {% hint style="info" %}

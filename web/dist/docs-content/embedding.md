@@ -1,3 +1,9 @@
+---
+kind: "Field guide"
+source: "web/docs-source/guides/embedding.md"
+scope: "Authored explanation; verification belongs to the named evidence"
+---
+
 # Embed the machine
 
 Use the generated browser assets from a coherent web build. The Linux loader returns a controller; the bare-metal wrapper runs an ELF directly. These are two entry points to wasm-vm, with different callbacks and lifecycle boundaries.

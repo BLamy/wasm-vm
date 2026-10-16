@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/demos/level-4.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "bdd2c21b2051a8df99211474bd9ead9cde591c66a116f47498b61468ecf0f929"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Level-4 capstone procedure (E4-T28f)
 
 {% hint style="info" %}

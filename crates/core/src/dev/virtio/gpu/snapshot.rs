@@ -30,7 +30,7 @@ const MAX_SNAPSHOT_RESOURCES: u32 = 1 << 20;
 /// A GPU snapshot rejection.  All variants have stable [`Self::code`] values for host logs.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum GpuSnapshotError {
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     Proof3dInstalled,
     Truncated,
     BadMagic,
@@ -100,7 +100,7 @@ impl GpuSnapshotError {
     /// Stable, machine-readable error code.
     pub const fn code(&self) -> &'static str {
         match self {
-            #[cfg(feature = "virgl-control-proof")]
+            #[cfg(feature = "virgl-renderer")]
             Self::Proof3dInstalled => "proof_3d_installed",
             Self::Truncated => "truncated",
             Self::BadMagic => "bad_magic",
@@ -130,14 +130,22 @@ impl GpuSnapshotError {
 
 /// Encode the complete host-owned GPU state in deterministic resource-id order.
 pub(crate) fn encode(state: &GpuState) -> Result<Vec<u8>, GpuSnapshotError> {
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     if state.control3d_proof_installed() {
         return Err(GpuSnapshotError::Proof3dInstalled);
     }
+    encode_2d(state, state.scanout_resource)
+}
+
+/// The accelerated envelope separately carries its renderer scanout reference.
+pub(super) fn encode_2d(
+    state: &GpuState,
+    scanout: Option<u32>,
+) -> Result<Vec<u8>, GpuSnapshotError> {
     let records = state.resources.snapshot_records();
     let resource_count =
         u32::try_from(records.len()).map_err(|_| GpuSnapshotError::InvalidCount)?;
-    let scanout_resource = state.scanout_resource.unwrap_or(NONE_RESOURCE);
+    let scanout_resource = scanout.unwrap_or(NONE_RESOURCE);
     let mut out = Vec::new();
     reserve(&mut out, HEADER_LEN)?;
     out.extend_from_slice(&GPU_SNAPSHOT_MAGIC);
@@ -209,10 +217,41 @@ fn push_resource_header(
 
 /// Decode into a detached map, validate every binding, and only then replace live state.
 pub(crate) fn restore(state: &mut GpuState, bytes: &[u8]) -> Result<(), GpuSnapshotError> {
-    #[cfg(feature = "virgl-control-proof")]
+    #[cfg(feature = "virgl-renderer")]
     if state.control3d_proof_installed() {
         return Err(GpuSnapshotError::Proof3dInstalled);
     }
+    let prepared = prepare(bytes)?;
+    apply(state, prepared);
+    Ok(())
+}
+
+pub(super) struct PreparedGpu {
+    parsed: ParsedGpu,
+    pub(super) resources: ResourceMap,
+    scanout_resource: Option<u32>,
+    cursor_states: [CursorState; DEFAULT_NUM_SCANOUTS as usize],
+}
+
+impl PreparedGpu {
+    #[cfg(feature = "virgl-renderer")]
+    pub(super) fn valid_backing_range(&self, base: u64, length: u64) -> bool {
+        let Some(end) = base.checked_add(length) else {
+            return false;
+        };
+        self.parsed.records.iter().all(|(_, r)| {
+            r.backing.iter().all(|(address, n)| {
+                *n > 0
+                    && *address >= base
+                    && address
+                        .checked_add(u64::from(*n))
+                        .is_some_and(|last| last <= end)
+            })
+        })
+    }
+}
+
+pub(super) fn prepare(bytes: &[u8]) -> Result<PreparedGpu, GpuSnapshotError> {
     let parsed = parse(bytes)?;
     let resources = ResourceMap::from_snapshot_records(&parsed.records).map_err(|reason| {
         let resource_id = resource_id_from_reason(reason);
@@ -240,7 +279,7 @@ pub(crate) fn restore(state: &mut GpuState, bytes: &[u8]) -> Result<(), GpuSnaps
     };
 
     let mut cursor_states = [CursorState::hidden(0); DEFAULT_NUM_SCANOUTS as usize];
-    for (index, cursor) in parsed.cursors.into_iter().enumerate() {
+    for (index, cursor) in parsed.cursors.iter().copied().enumerate() {
         let scanout_id = index as u32;
         if cursor.pos.scanout_id != scanout_id {
             return Err(GpuSnapshotError::InvalidCursorScanout { scanout_id });
@@ -272,6 +311,21 @@ pub(crate) fn restore(state: &mut GpuState, bytes: &[u8]) -> Result<(), GpuSnaps
         cursor_states[index] = cursor;
     }
 
+    Ok(PreparedGpu {
+        parsed,
+        resources,
+        scanout_resource,
+        cursor_states,
+    })
+}
+
+pub(super) fn apply(state: &mut GpuState, prepared: PreparedGpu) {
+    let PreparedGpu {
+        parsed,
+        resources,
+        scanout_resource,
+        cursor_states,
+    } = prepared;
     // No fallible parse or reference validation remains.  This is the one commit point for live
     // state; the sink callback below observes the already-validated replacement only.
     state.resources = resources;
@@ -314,7 +368,6 @@ pub(crate) fn restore(state: &mut GpuState, bytes: &[u8]) -> Result<(), GpuSnaps
             );
         }
     }
-    Ok(())
 }
 
 struct ParsedGpu {

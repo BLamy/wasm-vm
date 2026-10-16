@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/standard-state-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "8009b23eb265fdb965c5a7de77ed9e4c88fe41ccf25e41feec23036abd565858"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Standard shader bindings
 
 {% hint style="info" %}

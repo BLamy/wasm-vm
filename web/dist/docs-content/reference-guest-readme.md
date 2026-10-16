@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "guest/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "e6ea52491a59bb12eebc2cac18350b6fcf6e858195a8383d6136fb29d883c4a8"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Golden bare-metal guest binaries (E0-T14)
 
 {% hint style="info" %}

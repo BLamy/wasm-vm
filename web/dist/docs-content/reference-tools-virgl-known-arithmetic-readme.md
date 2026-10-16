@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-known-arithmetic/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "faa9972b1c382cc26e76bc0eeeb346420587a5bbc83400d1580d6014f5e52475"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Materialized known arithmetic
 
 {% hint style="info" %}

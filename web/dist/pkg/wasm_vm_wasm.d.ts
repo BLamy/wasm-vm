@@ -51,6 +51,7 @@ export class WasmLinux {
      * synchronously before returning so context-loss replay owns its latest frame.
      */
     attachDisplay(callback: Function): boolean;
+    attachVirgl(host_words: Uint32Array, format_roles: Uint32Array, renderer: string, callback: Function): void;
     /**
      * E5-T21d: report whether this guest owns the page-provided capture ring.
      */
@@ -71,11 +72,21 @@ export class WasmLinux {
     cancelFileDownload(id: number): void;
     cancelFileUpload(stream: number): void;
     /**
+     * Exact COW bytes from the same ephemeral disk backend used by the guest.
+     * Persistent and secondary-drive shapes explicitly remain outside this factory profile.
+     */
+    captureGpuDiskDelta(): Uint8Array;
+    /**
      * E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
      * can proceed instead of blocking on our open handle. Call before wiping; the machine must
      * not persist afterward. No-op off the persistent path.
      */
     closeStorage(): void;
+    /**
+     * This deliberately borrows only the independent mailbox. It can be called
+     * synchronously by begin_job while Machine/GpuState are already borrowed.
+     */
+    complete(epoch: string, sequence: string, exchange_sequence: string, outcome_code: number, gpu_complete: boolean, applied_commands: number, draws: number): void;
     /**
      * E5-T26e: acknowledge a fresh application HELLO from the host T23d Channel. The console
      * transport must already be open; a true result is the only value accepted by the browser
@@ -93,6 +104,11 @@ export class WasmLinux {
      * deliberately separate: only guest SET_SCANOUT can change the latter. EDID is a copy.
      */
     displayStats(): any;
+    /**
+     * Drain original queued GPU work while paused, without executing another guest instruction.
+     */
+    drainGpuCheckpointBoundary(): boolean;
+    enableGpuCommandTrace(): void;
     /**
      * E4-T29 Phase 2 (browser Linux path): attach the in-wasm JIT executor to THIS Linux guest and
      * arm tier-up. The accelerated interpreter remains the fallback for cold/untranslatable blocks;
@@ -121,11 +137,17 @@ export class WasmLinux {
     fileTransferStatus(): string;
     finishFileDownload(id: number, success: boolean): void;
     /**
+     * Exact identities and row arithmetic are validated by core before RAM access.
+     */
+    gatherInput(epoch: string, sequence: string, exchange_sequence: string, resource_id: number, resource_generation: string, backing_generation: string, offset: string, row_bytes: number, row_stride: number, row_count: number): Uint8Array;
+    gatherLayeredInput(epoch: string, sequence: string, exchange_sequence: string, resource_id: number, resource_generation: string, backing_generation: string, offset: string, row_bytes: number, row_stride: number, row_count: number, layer_stride: number, layer_count: number): Uint8Array;
+    /**
      * E4-T01: the accumulated profile as a plain JS object — `{ totalNs, sampleCount, walkCount,
      * collisions, regions: [{ pc, samples, pct }], subsystems: [{ name, ns }] }` — mirroring the
      * `getStats` surface the UI already consumes. `pc` is a hex string (a guest PC exceeds 2^53).
      */
     getProfile(): any;
+    gpuCommandTrace(): string;
     /**
      * Read-only state: does not sample the clock or consume jump notifications. mtime is a decimal
      * string so worker structured cloning cannot round a guest u64 through JavaScript Number.
@@ -153,6 +175,7 @@ export class WasmLinux {
      * This is diagnostic-only: it does not drain, resize, or otherwise mutate the device.
      */
     inputDeviceStats(): any;
+    invalidateVirgl(): void;
     /**
      * E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns
      * `{hasExecutor, compiledBlocks, executedBlocks, retiredViaJit}` read straight from the installed
@@ -165,6 +188,7 @@ export class WasmLinux {
      * result means that this machine was assembled without the virtio-input keyboard capability.
      */
     keyboardLedState(): any;
+    loadAcceleratedSnapshotBlob(blob: Uint8Array, renderer_digest: Uint8Array): any;
     /**
      * Restore machine state from a resume blob (all-or-nothing; the coherence header is validated
      * FIRST). A rejected blob is mapped through [`resume::ColdBootReason`] so the JS boundary gets the
@@ -316,6 +340,7 @@ export class WasmLinux {
      * `"trap:<cause>"` once terminal.
      */
     runChunk(max_instrs: number, persist_max_dirty_bytes?: number | null): any;
+    saveAcceleratedSnapshot(renderer_digest: Uint8Array): Uint8Array;
     /**
      * E5-T26f: take the live GPU/input/sound/agent component state at one bounded scheduler
      * boundary. The core composes the existing codecs; this boundary only owns the JS byte copy.
@@ -330,6 +355,8 @@ export class WasmLinux {
      * starts with `"save_error"`.
      */
     saveSnapshot(): any;
+    scatterLayeredOutput(epoch: string, sequence: string, exchange_sequence: string, resource_id: number, resource_generation: string, backing_generation: string, offset: string, row_bytes: number, row_stride: number, row_count: number, layer_stride: number, layer_count: number, bytes: Uint8Array): void;
+    scatterOutput(epoch: string, sequence: string, exchange_sequence: string, resource_id: number, resource_generation: string, backing_generation: string, offset: string, row_bytes: number, row_stride: number, row_count: number, bytes: Uint8Array): void;
     /**
      * E5-T26f: enqueue one owned host-to-guest frame on the named virtio-console agent port.
      * Returning the accepted byte count lets the page Channel fail closed on bounded
@@ -792,6 +819,19 @@ export interface InitOutput {
     readonly __jit_lr: (a: bigint, b: number) => bigint;
     readonly __jit_sc: (a: bigint, b: bigint, c: number) => bigint;
     readonly __jit_store: (a: bigint, b: bigint, c: number) => void;
+    readonly wasmlinux_attachVirgl: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number];
+    readonly wasmlinux_captureGpuDiskDelta: (a: number) => [number, number, number];
+    readonly wasmlinux_complete: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => [number, number];
+    readonly wasmlinux_drainGpuCheckpointBoundary: (a: number) => [number, number, number];
+    readonly wasmlinux_enableGpuCommandTrace: (a: number) => [number, number];
+    readonly wasmlinux_gatherInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number) => [number, number, number];
+    readonly wasmlinux_gatherLayeredInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number, number];
+    readonly wasmlinux_gpuCommandTrace: (a: number) => [number, number, number, number];
+    readonly wasmlinux_invalidateVirgl: (a: number) => [number, number];
+    readonly wasmlinux_loadAcceleratedSnapshotBlob: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
+    readonly wasmlinux_saveAcceleratedSnapshot: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmlinux_scatterLayeredOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number, t: number, u: number) => [number, number];
+    readonly wasmlinux_scatterOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number];
     readonly setSlirpDhcpLeaseSeconds: (a: number) => void;
     readonly setSlirpDohEndpoint: (a: number, b: number) => void;
     readonly setSlirpMtu: (a: number) => void;
@@ -803,11 +843,11 @@ export interface InitOutput {
     readonly slirpTailscaleCommand: (a: number, b: number) => number;
     readonly wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56: (a: number, b: number, c: any) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h0b706747458e1fca: (a: number, b: number, c: any, d: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h659a05315284d40e: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_2: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_3: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h659a05315284d40e_4: (a: number, b: number, c: any) => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h23dbae85235c57c2: (a: number, b: number) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_2: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_3: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_4: (a: number, b: number, c: any) => void;
+    readonly wasm_bindgen__convert__closures_____invoke__had759ba7c4081673: (a: number, b: number) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
     readonly __wbindgen_exn_store: (a: number) => void;

@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-kernel="${OMARCHY_KERNEL:-releases/kernel/6.6.63/Image}"
+kernel="${OMARCHY_KERNEL:-releases/kernel/6.6.63-omarchy-evdev1024/Image}"
 out="${OMARCHY_MANIFEST_OUT:-web/artifacts-omarchy.json}"
 ram="${OMARCHY_RAM_SNAPSHOT:-releases/boot-snapshot/omarchy-ready.snap.gz}"
 delta="${OMARCHY_OVERLAY_DELTA:-releases/boot-snapshot/omarchy-overlay-delta.bin.gz}"

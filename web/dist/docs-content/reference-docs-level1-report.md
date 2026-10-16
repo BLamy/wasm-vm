@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/level1-report.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "b6db02a1a71706862439fd70d10832b72d93a99599bc8c57e84e47920b23b6ca"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Level 1 compliance gate report —  THRESHOLD MET
 
 {% hint style="info" %}

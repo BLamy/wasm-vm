@@ -1,0 +1,12 @@
+{
+  "task": "E6-T11d",
+  "sourceHead": "423edd8c084f969f5171af93b683dbd1534f2fa8",
+  "status": "worker-submission",
+  "archiveBytes": 2313686,
+  "archiveSha256": "9b92e4b8a7d1471f92ec575654835e647a499a72111df36bf672db624d6591df",
+  "recordIndexSha256": "8f7ae10758c136ff60e1d61a3931fbd4802816ea30a35213e5c82146418fe6a1",
+  "records": 25,
+  "reopenedMembers": 25,
+  "authenticatedInheritedReferences": 38,
+  "runtimeChanged": false
+}

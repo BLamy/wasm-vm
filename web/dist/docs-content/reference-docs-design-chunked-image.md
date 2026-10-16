@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/design/chunked-image.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "d486fda8741278d2fd6f0745ac0abb6f169a244fc3cb288715c9f19430dd9e31"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Chunked disk-image format (E3-T01)
 
 {% hint style="info" %}

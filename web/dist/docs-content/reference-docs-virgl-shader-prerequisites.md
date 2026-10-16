@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/virgl-shader-prerequisites.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "7b8468aef940f30985aaefeb12206d1e5d071b42394635147d4ea750ba97d276"
+scope: "Historical snapshot; use current field guides for present capabilities"
+---
+
 # Historical shader prerequisite proposal
 
 {% hint style="info" %}

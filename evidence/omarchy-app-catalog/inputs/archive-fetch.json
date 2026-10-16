@@ -1,0 +1,61 @@
+{
+  "status": "source-audit",
+  "packages": [
+    {
+      "name": "chromium",
+      "version": "153.0.8010.52-1",
+      "architecture": "riscv64",
+      "url": "https://riscv.mirror.pkgbuild.com/repo/extra/chromium-153.0.8010.52-1-riscv64.pkg.tar.zst",
+      "path": "target/omarchy-full/packages/chromium-153.0.8010.52-1-riscv64.pkg.tar.zst",
+      "bytes": 147860476,
+      "sha256": "97852f4a211c1c479d490a81ad6e5aa89e017406c113c3a2a21fbb4033995f51",
+      "signatureBytes": 566,
+      "signatureSha256": "b5ae26afecf5a6f10a2512646b17deae200a80598948fa75a1b490298b7702d1",
+      "seconds": 384.3600871562958,
+      "status": "downloaded-digest-checked-signature-verification-pending",
+      "installed": false
+    },
+    {
+      "name": "libreoffice-fresh",
+      "version": "26.8.0-2",
+      "architecture": "riscv64",
+      "url": "https://riscv.mirror.pkgbuild.com/repo/extra/libreoffice-fresh-26.8.0-2-riscv64.pkg.tar.zst",
+      "path": "target/omarchy-full/packages/libreoffice-fresh-26.8.0-2-riscv64.pkg.tar.zst",
+      "bytes": 155667201,
+      "sha256": "f750564f25d382d3e43c2e91e805418e0cfaf44b48e8bcd473cdc9d992a2dfb1",
+      "signatureBytes": 566,
+      "signatureSha256": "951f79a6c8c0595a1723a95c3fbbd1f1f710a6b5e847a07a4279ea6ee43ddda2",
+      "seconds": 298.04050183296204,
+      "status": "downloaded-digest-checked-signature-verification-pending",
+      "installed": false
+    },
+    {
+      "name": "nodejs",
+      "version": "26.11.1-1",
+      "architecture": "riscv64",
+      "url": "https://riscv.mirror.pkgbuild.com/repo/extra/nodejs-26.11.1-1-riscv64.pkg.tar.zst",
+      "path": "target/omarchy-full/packages/nodejs-26.11.1-1-riscv64.pkg.tar.zst",
+      "bytes": 15749314,
+      "sha256": "23b487e63357bedd57419e1c08637911b8bfd5046a0fddd9eacd26199d0a622a",
+      "signatureBytes": 566,
+      "signatureSha256": "861aa9264dbae619ac4aa5fbb036c98d455f823e6205e22c595c54eff2f1427a",
+      "seconds": 33.19038391113281,
+      "status": "downloaded-digest-checked-signature-verification-pending",
+      "installed": false
+    },
+    {
+      "name": "npm",
+      "version": "12.2.0-1",
+      "architecture": "any",
+      "url": "https://riscv.mirror.pkgbuild.com/repo/extra/npm-12.2.0-1-any.pkg.tar.zst",
+      "path": "target/omarchy-full/packages/npm-12.2.0-1-any.pkg.tar.zst",
+      "bytes": 1834267,
+      "sha256": "c9b2c6858857a9c643fbc42ff3ea6643e6e4e3c969e7260480aea0aa89358a5f",
+      "signatureBytes": 566,
+      "signatureSha256": "709091cb82b27792499cee21e60974afb092dd5188bb81cff873a9f259eb3f56",
+      "seconds": 17.70533299446106,
+      "status": "downloaded-digest-checked-signature-verification-pending",
+      "installed": false
+    }
+  ]
+}

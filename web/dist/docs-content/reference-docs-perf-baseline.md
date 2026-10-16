@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/perf-baseline.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "c6b147c740c1b618d8f4176fe6fe91cf39b3a7e6b3696e13a19393008ae0988e"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Boot-time performance baseline (E2-T25)
 
 {% hint style="info" %}

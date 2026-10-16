@@ -109,7 +109,36 @@ if (presentation && displayViewportEl) {
     },
   });
 }
+let pendingGpuFrame = null, gpuFrameRequest = null;
 function handleDisplayFrame(frame) {
+  if ((frame?.type === 'clear' || frame?.type === 'invalidate') && pendingGpuFrame) {
+    pendingGpuFrame.onRetired('cancelled'); pendingGpuFrame = null;
+    if (gpuFrameRequest !== null) cancelAnimationFrame(gpuFrameRequest);
+    gpuFrameRequest = null;
+  }
+  if (typeof frame?.onRetired === 'function') {
+    if (!presentation) { frame.onRetired('failed'); return false; }
+    if (pendingGpuFrame) pendingGpuFrame.onRetired('superseded');
+    pendingGpuFrame = frame;
+    if (gpuFrameRequest === null) {
+      const request = requestAnimationFrame(() => {
+        if (gpuFrameRequest !== request) return;
+        gpuFrameRequest = null;
+        const owned = pendingGpuFrame; pendingGpuFrame = null;
+        if (!owned) return;
+        try {
+          const before = presentation.snapshot().drawnPresents;
+          const accepted = presentation.presentNow(owned);
+          displayViewport?.applyCanvasStyle();
+          const after = presentation.snapshot();
+          owned.onRetired(accepted && after.drawnPresents > before ? 'drawn' : 'failed',
+            {backend:after.backend,resourceWidth:owned.resourceWidth,resourceHeight:owned.resourceHeight});
+        } catch { owned.onRetired('failed'); }
+      });
+      gpuFrameRequest = request;
+    }
+    return true;
+  }
   if (!presentation) return false;
   try {
     const reached = presentation.present(frame);
@@ -935,6 +964,8 @@ function clearLinuxOwnerUi({ clearBootError = true } = {}) {
   updatePointerIndicator();
   ui.detachSink();
   fileTransferUI.attachController(null);
+  clearInterval(gpuStatsTimer);
+  gpuStatsTimer = null;
   if (diagnosticJitStatsTimer !== null) {
     clearInterval(diagnosticJitStatsTimer);
   diagnosticJitStatsTimer = null;
@@ -1325,9 +1356,12 @@ async function runLinuxBootOwned(opts, banner, request) {
       workerHeartbeatTimeoutMs: query.has("workerHeartbeatTimeoutMs")
         ? Math.max(1, Number(query.get("workerHeartbeatTimeoutMs")) || 1)
         : query.has("testHooks") ? 300 : undefined,
+      // The authenticated GPU warm artifact is large: allow its download and
+      // reconstruction to finish on slower links. The loader separately bounds
+      // fresh-frame/CPU readiness after reconstruction to 30 seconds.
       workerBootTimeoutMs: query.has("workerBootTimeoutMs")
         ? Math.max(1, Number(query.get("workerBootTimeoutMs")) || 1)
-        : undefined,
+        : opts.virgl && opts.bootSnapshot !== false ? 600_000 : undefined,
       // E3-net: `?slirpNet` in the URL boots with the slirp local stack (real DHCP/ARP/ICMP) instead
       // of the loopback backend — so the guest can pull a real IP and reach the gateway.
       slirpNet: opts.slirpNet ?? (
@@ -1366,6 +1400,13 @@ async function runLinuxBootOwned(opts, banner, request) {
           cursorDiagnostics.push({ reason: "cursor-callback-error", error: String(error?.message || error) });
           if (cursorDiagnostics.length > 256) cursorDiagnostics.shift();
         }
+      },
+      onGpuEvent: (event) => {
+        if (!linuxRequestIsCurrent(request)) return;
+        if (event.type === "qualified") {
+          document.documentElement.dataset.gpuQualified = "true";
+          if (gpuStatusEl) gpuStatusEl.textContent = "GPU qualified. Starting the accelerated guest…";
+        } else if (event.type === "context-lost") showGpuStatus({lost:true,qualified:false});
       },
       onState: (s) => {
         if (!linuxRequestIsCurrent(request)) return;
@@ -1462,6 +1503,12 @@ async function runLinuxBootOwned(opts, banner, request) {
       return;
     }
     linuxCtl = bootController;
+    clearInterval(gpuStatsTimer);
+    if (opts.virgl) {
+      const publishGpu = async () => { if (linuxCtl === bootController) showGpuStatus(await bootController.gpuStats()); };
+      void publishGpu();
+      gpuStatsTimer = setInterval(() => void publishGpu().catch(() => {}), 2000);
+    }
     try {
       agentSession.attach(bootController);
       window.__agentChannel = agentSession.channel;
@@ -1728,7 +1775,15 @@ async function runLinuxBootOwned(opts, banner, request) {
     lastBootError = e.message || String(e); // surfaced to the Docker tab's typed-error path
     term.writeln(`\x1b[31mcannot boot: ${e.message || e}\x1b[0m`);
     emitGuestLifecycleEvent("wvm:guest-error", { message: lastBootError });
-    setStatus(_useCpuWorker
+    if (opts.virgl) {
+      for (const id of ["gpu-retry", "gpu-cold-retry"]) {
+        const action = document.getElementById(id); if (action) action.hidden = false;
+      }
+      if (gpuStatusEl) gpuStatusEl.textContent = "The GPU desktop could not start. Try a cold GPU boot or software rendering.";
+      document.documentElement.dataset.gpuBootError = "true";
+      setOsLauncherVisible(true, "The GPU desktop could not start. Retry Omarchy, or choose a recovery option.");
+    }
+    setStatus(opts.virgl ? "GPU desktop could not start. Choose a cold boot or software rendering below." : _useCpuWorker
       ? `linux worker fatal: ${lastBootError} — reload with ?worker=0 for the main-thread fallback`
       : `cannot boot: ${lastBootError}`);
     bootBtns.forEach((b) => b && !b.dataset.unavailable && (b.disabled = false));
@@ -1939,6 +1994,22 @@ let nodeAlpineAvailable = false;
 // E5.5-T03a: whether the immutable Omarchy desktop manifest is present. Its 4 GiB image is
 // chunked on R2 and deliberately does not participate in Alpine's persistent overlay/snapshot path.
 let omarchyAvailable = false;
+const graphicsSelect = document.getElementById("desktop-graphics");
+if (graphicsSelect) graphicsSelect.value = _startupQuery.get("gpu") === "0" || !_useCpuWorker ? "software" : "gpu";
+const gpuStatusEl = document.getElementById("gpu-status");
+let gpuStatsTimer = null;
+function showGpuStatus(stats) {
+  if (!gpuStatusEl || !stats) return;
+  document.documentElement.dataset.gpuQualified = String(Boolean(stats.qualified));
+  if (stats.lost) {
+    const retry = document.getElementById("gpu-retry"); if (retry) retry.hidden = false;
+    gpuStatusEl.textContent = "GPU connection lost. Reload to restart, or choose software rendering in the launcher.";
+    emitGuestLifecycleEvent("wvm:guest-error", { message: gpuStatusEl.textContent, gpuContextLost: true });
+  } else if (stats.qualified) {
+    const counts = stats.counters ?? {};
+    gpuStatusEl.textContent = `GPU active · ${counts.completed ?? 0} completed jobs · ${counts.draws ?? 0} draws · ${counts.exchanges ?? 0} transfers`;
+  }
+}
 // Guest readiness: flips true when the booted guest reaches a usable shell prompt. The Docker/IDE tabs
 // gate on this; a `wvm:guest-ready` window event fires once per boot. Reset when a new boot starts.
 let guestReady = false;
@@ -2037,9 +2108,18 @@ async function bootAlpineFlavor(manifestUrl, chip, imageManifestUrl, bootProfile
 async function bootOmarchy() {
   const query = new URLSearchParams(location.search);
   const assetBase = query.get("omarchyAssetBase") || R2_ASSETS;
+  const accelerated = graphicsSelect?.value !== "software" && _useCpuWorker && !query.has("persist");
+  delete document.documentElement.dataset.gpuBootError;
+  for (const id of ["gpu-retry", "gpu-cold-retry"]) {
+    const action = document.getElementById(id); if (action) action.hidden = true;
+  }
+  if (gpuStatusEl) gpuStatusEl.textContent = accelerated ? "Checking GPU support…" : "Software desktop snapshot selected.";
   const boot = await runLinuxBoot(
     {
-      manifestUrl: "./artifacts-omarchy.json",
+      manifestUrl: accelerated ? "./artifacts-omarchy-virgl.json" : "./artifacts-omarchy.json",
+      virgl: accelerated,
+      interactiveClock: accelerated ? "paced-on-keyboard" : undefined,
+      gpuTrace: query.has("testHooks") && query.has("gpuTrace"),
       mode: "chunked",
       requestImageManifestBaseUrl: assetBase.replace(/\/+$/, ""),
       bootProfileUrl: null,
@@ -2049,7 +2129,7 @@ async function bootOmarchy() {
       // Explicit cold/persistent options are diagnostic capture tools; the launcher's default is
       // an independent in-memory copy of the shipped desktop, including on repeat visits.
       persist: query.get("persist") === "1",
-      freshDesktop: !query.has("noSnapshot") && !query.has("persist"),
+      freshDesktop: !accelerated && !query.has("noSnapshot") && !query.has("persist"),
       bootSnapshot: !query.has("noSnapshot"),
       ramMib: 1024,
       imageLen: 4 * 1024 * 1024 * 1024,
@@ -2074,7 +2154,9 @@ async function bootOmarchy() {
           "Booting <b>Omarchy</b> (immutable desktop image)… the display and serial console are live guest output.",
         );
         setGuestChip("omarchy");
-        if (osLauncherStatusEl) osLauncherStatusEl.textContent = "Starting Omarchy — first boot downloads only the desktop chunks it touches.";
+        if (osLauncherStatusEl) osLauncherStatusEl.textContent = query.has("noSnapshot")
+          ? "Starting Omarchy — downloading the desktop chunks it needs."
+          : "Restoring Omarchy’s desktop and graphics…";
       },
     },
   );
@@ -2091,6 +2173,8 @@ window.wvmDemo = {
   isGuestUp: () => !!linuxCtl,
   async setDisplay(width, height) { return await linuxCtl?.setDisplay?.(width, height) ?? false; },
   async displayStats() { return await linuxCtl?.displayStats?.() ?? null; },
+  async gpuStats() { return await linuxCtl?.gpuStats?.() ?? null; },
+  async loseGpuContext(when="now") { return await linuxCtl?.loseGpuContext?.(when) ?? false; },
   // E5-T20d/T20e: inspect the real context/ring pair without exposing a second unlock path.
   audioAutoplay: () => audioAutoplayPolicy,
   audioSink: () => audioSink,
@@ -2233,22 +2317,33 @@ window.wvmDemo = {
       // serialized machine describe one coherent filesystem rather than a RAM-only write.
       const overlayStable = (stats) => !stats ||
         (Number(stats.pendingBlocks || 0) === 0 && !stats.flushWaiting && !stats.writeWaiting);
-      if (controller.persist) {
-        for (let attempt = 0; attempt < 20; attempt += 1) {
-          await controller.persist();
-          if (!controller.persistStats) break;
-          const stats = await controller.persistStats();
-          if (overlayStable(stats)) {
-            // A guest WRITE can enqueue its overlay block in the tick that delivered the fenced
-            // command marker. Require a second idle sample after yielding so that late queue work
-            // cannot advance the generation immediately after the snapshot is recorded.
-            await new Promise((resolve) => setTimeout(resolve, 50));
-            if (overlayStable(await controller.persistStats())) break;
+      for (let snapshotAttempt = 0; snapshotAttempt < 20; snapshotAttempt += 1) {
+        if (controller.persist) {
+          for (let attempt = 0; attempt < 20; attempt += 1) {
+            await controller.persist();
+            if (!controller.persistStats) break;
+            const stats = await controller.persistStats();
+            if (overlayStable(stats)) {
+              // A guest WRITE can enqueue its overlay block in the tick that delivered the fenced
+              // command marker. Require a second idle sample after yielding so that late queue work
+              // cannot advance the generation immediately after the snapshot is recorded.
+              await new Promise((resolve) => setTimeout(resolve, 50));
+              if (overlayStable(await controller.persistStats())) break;
+            }
+            await new Promise((resolve) => setTimeout(resolve, 25));
           }
+        }
+        try {
+          await controller.snapshotSave();
+          break;
+        } catch (error) {
+          // Core quiescence may acknowledge the durable WRITE and then park
+          // the next queued WRITE. Flush that new batch before trying again;
+          // preserve its refusal until the disk/RAM pair is actually coherent.
+          if (snapshotAttempt === 19 || !String(error?.message || error).startsWith("not_quiesced:")) throw error;
           await new Promise((resolve) => setTimeout(resolve, 25));
         }
       }
-      await controller.snapshotSave();
       const state = await this.snapshotStatus();
       return { ok: true, elapsedMs: performance.now() - started, ...state };
     } catch (error) {
@@ -3193,6 +3288,8 @@ setInteractiveState();
     if (normalized === "omarchy" && navigateToDesktop && !_omarchyDesktopMode) {
       const next = new URL(location.href);
       next.searchParams.set("guest", "omarchy");
+      if (graphicsSelect?.value === "software") next.searchParams.set("gpu", "0");
+      else next.searchParams.delete("gpu");
       next.searchParams.set("desktop", "1");
       next.hash = "ide";
       location.assign(next.href);

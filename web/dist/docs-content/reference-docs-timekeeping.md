@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/timekeeping.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "114e3315cb9cf92e9065e58b05868d947252d4333c310c0e65c662ee346fb260"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Browser timekeeping (E2-T23)
 
 {% hint style="info" %}

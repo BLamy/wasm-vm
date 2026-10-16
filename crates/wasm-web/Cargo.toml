@@ -19,7 +19,7 @@ crate-type = ["cdylib"]
 path = "src/lib.rs"
 
 [dependencies]
-wasm-vm-wasm = { path = "../wasm" }
+wasm-vm-wasm = { path = "../wasm", features = ["virgl-renderer"] }
 
 # `make web-build` runs `wasm-pack build crates/wasm-web --profile wasm-release`; wasm-pack reads a
 # custom profile's wasm-opt flags from the `custom` table. -O3 measured best with fat LTO.

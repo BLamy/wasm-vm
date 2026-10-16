@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/perf/flamegraphs.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "1023778e60e6d8896d1dfb9c901154770a41fd8510a646be2beba27e28d575e7"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Flamegraphs of the emulator itself (E4-T02)
 
 {% hint style="info" %}

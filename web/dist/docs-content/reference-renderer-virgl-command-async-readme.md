@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/async-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "e8f014fbb665f56baf4ab85341ea91b9a79d34d13d7df9ca8ec6628d9eefe2dc"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Asynchronous renderer jobs
 
 {% hint style="info" %}

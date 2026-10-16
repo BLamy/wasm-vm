@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/float-consumer-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "fc54462b61f0feac081f08792070008c2a330fa2c698c7a47848b300b9c21345"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Original floating image consumer
 
 {% hint style="info" %}

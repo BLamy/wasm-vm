@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/platform.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "c09ef2cf88db2872875249ae9bb5c8694b04a4bf256456cc801c69f7e195fbc0"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # The "wasm-vm virt" machine platform (E2-T01)
 
 {% hint style="info" %}

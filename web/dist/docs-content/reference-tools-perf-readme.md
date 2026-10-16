@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/perf/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "113a4d19a30c6bd5040c3f0fdaf5b903b44d53d1c76983fd3a6030fbd0d2a85b"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # tools/perf — perf-overhaul benchmark harness
 
 {% hint style="info" %}

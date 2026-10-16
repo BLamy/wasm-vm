@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-power/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "6df7ac9216a7139b3140f3083462f2c18454b553427d42992c082a95a512b653"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Virgl power
 
 {% hint style="info" %}

@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "bench/module-costs/results/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "957f53d8dc9c45abb804be6e0a012c05fdf105900a7258d0c22f2651b822ae9a"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # results — E4-T19 cost matrix
 
 {% hint style="info" %}

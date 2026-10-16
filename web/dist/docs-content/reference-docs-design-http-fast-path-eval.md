@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/design/http-fast-path-eval.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "38d4c019e6e08a2690042028b62c9491865473a2988dd94a0ebfbaf83689e5a8"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # E3-T18 HTTP fast-path evaluation
 
 {% hint style="info" %}

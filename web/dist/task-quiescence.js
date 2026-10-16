@@ -29,6 +29,7 @@ export function createTaskQuiescence(onIdle = () => {}) {
   return {
     run,
     stop,
+    waitForIdle: async () => { const current=active; if(current) await current; },
     isActive: () => active != null,
     isStopping: () => stopping,
   };

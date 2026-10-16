@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-capture/tests/recorder_README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "7b3d0e8fdb7a694ec375ce05cd660f2b5f468b889ab7169ae1b6440194ae4145"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Native recorder contract harness
 
 {% hint style="info" %}

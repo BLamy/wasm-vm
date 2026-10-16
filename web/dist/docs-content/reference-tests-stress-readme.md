@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tests/stress/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "bf8b5599d567b59c1015afbae81c993f2cb582e15a913a26aad930d6f6234997"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Stress validation (E2-T24)
 
 {% hint style="info" %}

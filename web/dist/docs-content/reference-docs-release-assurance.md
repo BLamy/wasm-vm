@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/RELEASE_ASSURANCE.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "b01dccffaeea2c74c16829965c5faca191db2c3d72cbac9050b3a0a22b9a5a14"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Release assurance boundary
 
 {% hint style="info" %}

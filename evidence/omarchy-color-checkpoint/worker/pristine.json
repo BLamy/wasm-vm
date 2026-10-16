@@ -1,0 +1,11 @@
+{
+  "path": "evidence/omarchy-color-checkpoint/worker/pristine.tar.gz",
+  "bytes": 4265349,
+  "sha256": "4e517b8afbf31d51decbe677dc209b282205ece36cd900144d5447a2d6eabcb3",
+  "recordsSha256": "33864bead928e20083a7f221301acf970c57744feb42b3cbebeafb92094a9fca",
+  "originals": 140,
+  "originalBytes": 512461299,
+  "deduplicatedFrozenFiles": 110,
+  "uniqueNewPayloads": 27,
+  "sourceHead": "43f227ae83acb3fc1c5f9c3bcd9766d2710d0875"
+}

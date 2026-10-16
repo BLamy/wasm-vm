@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/product/proofmesh-roadmap.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "493a5652f1ad61c29854e993206f6b4c2fa78604b64370d9456790a0fa43eb6d"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # ProofMesh product roadmap
 
 {% hint style="info" %}

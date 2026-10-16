@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-gears-shaders/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "6fee25576780db1e7f03897ca230d48add7ea6f441e27994b41fb00c635152de"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Virgl gears shaders
 
 {% hint style="info" %}

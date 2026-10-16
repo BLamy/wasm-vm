@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/input.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "61e65d8f445892dc2e52c30b5677674823b13865e3dc9a388a58f69f982fd959"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Browser keyboard input
 
 {% hint style="info" %}

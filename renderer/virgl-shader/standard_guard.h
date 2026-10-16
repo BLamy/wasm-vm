@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "standard_stream_output.h"
 
 #define STANDARD_IO 32u
 #define STANDARD_GENERIC 16u
@@ -25,6 +26,7 @@ struct standard_io {
 /* Independent of profile/raw_ir: this is structural metadata, never a word,
  * range, liveness, precision, or private-draw certificate. */
 struct standard_profile {
+   struct standard_stream_output stream_output;
    int stage;
    uint8_t declared[STD_FILES][STANDARD_CONSTANTS];
    struct standard_io input[STANDARD_IO], output[STANDARD_IO], system[2];

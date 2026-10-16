@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-shader/INTEGER-IMAGES.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "123080127541968172a16936b2be592f9e9862c33fd43f8f838e6ac069c2bb3c"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Integer images
 
 {% hint style="info" %}

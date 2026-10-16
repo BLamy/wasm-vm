@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/design/ws-proxy-protocol.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "86a07e30a85b672ff9edf38dd7f4581b6695a082afa3bfe9a740117307625eaf"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # WebSocket TCP/UDP proxy — framing protocol (E3-T16 / E3-T14)
 
 {% hint style="info" %}

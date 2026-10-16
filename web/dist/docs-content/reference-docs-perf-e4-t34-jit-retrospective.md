@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/perf/e4-t34-jit-retrospective.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "1c6996467db0e8171d869e66e6b49f7d6ffad943e4199ad2c7ac39d3de320efe"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # E4-T34 JIT retrospective: what worked, what failed, and the next bets
 
 {% hint style="info" %}

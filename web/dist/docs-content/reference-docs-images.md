@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/images.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "87a506354925c0139d372aaa19ed57bd2e05fa1686a41adadfc3de1e5819dca2"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Image artifacts
 
 {% hint style="info" %}

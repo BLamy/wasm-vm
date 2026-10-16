@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-saturation/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "be0af094485713bca26b86deb0327a7efecb0b31194b767629db8efc0501a94f"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Instruction-local numeric saturation evidence
 
 {% hint style="info" %}

@@ -1,0 +1,160 @@
+{
+  "schema": 1,
+  "task": "E6-T11d68",
+  "status": "held",
+  "workerSubmissionCommit": "d929e6b5",
+  "runtimeHead": "01730dff4bb381755d560910cddb0380da096404",
+  "workerArchive": {
+    "path": "evidence/virgl-production-indexed-start/worker/exact-head-submission-and-cold.tar.gz",
+    "bytes": 6315616,
+    "sha256": "c973a1abcd9f5f6ae81cd8cedccc050d79ac3294d20473267f9c6a6cd2e85021"
+  },
+  "workerIdentities": 257,
+  "independentArchive": {
+    "path": "evidence/virgl-production-indexed-start/verifier/independent-original-indexed-start-01.tar.gz",
+    "bytes": 3063381,
+    "sha256": "7ccc6d6522045181a658e8c9fb653b901bf9a126fbaff29ff75400e555ddf00a"
+  },
+  "coldReport": {
+    "path": "target/evidence/production-indexed-start-cold-01/report.json",
+    "sha256": "8a637dae0423e5222163854bcce3191c180a759a70b67ca94a7aabf8804d1619",
+    "identities": 123,
+    "all11GatesPassed": true,
+    "ordinaryFullHistoryClone": true,
+    "scrubbedEnvironment": "cold.py removes RUSTFLAGS/RUST_LOG and CARGO_/VIRGL_/CRITIC_ variables before clone/build/full acceptance; inspected source unchanged",
+    "carry": false
+  },
+  "modulePins": {
+    "renderer/virgl-command/decoder.mjs": "0ce1d4be7e3cd08817b86854b29ff983b3406f8646e3389e23fd89f86ca7d47c",
+    "renderer/virgl-command/state.mjs": "0e0c6a02190beb1ff4bf45faeebb55d3074e27d46ba3a8a92e7ed49726ee7887",
+    "target/virgl-production/pkg/wasm_vm_wasm_bg.wasm": "47dbdd5004fac3de52a750c13f0cfbf130151da9b3afa3586b5b906e389c0781"
+  },
+  "coldRows": [
+    {
+      "group": "hardware",
+      "name": "index1/schedule0",
+      "rawSha256": "24895377c66f6d38dc4b5873cf37d6cc37f23899e383adaffd3b69dad2285977",
+      "assertions": 10378,
+      "machineDigest": "799e66491594cc666c7b430ea294db3c6ef9ba12858a5760701eaaece8543d69",
+      "owners": 0,
+      "syncs": 0
+    },
+    {
+      "group": "hardware",
+      "name": "index2/schedule0",
+      "rawSha256": "b1dc050b4ae29b282e271f580c6b3a59690f5d91b2be47a32f9f0a00ef672c01",
+      "assertions": 10380,
+      "machineDigest": "dc54f807d7cad08a39f49163c79e014acfd4f561592a4fdd457c55dc897e40e9",
+      "owners": 0,
+      "syncs": 0
+    },
+    {
+      "group": "hardware",
+      "name": "index4/schedule0",
+      "rawSha256": "5401658ab03d53bae4ade5f62e2e3a5766db42c589a1cb89ff31c819195a8ca3",
+      "assertions": 10378,
+      "machineDigest": "72c51f6db5e9c0967dfb3d42a98592ceaecdf1fd1197357bbed394ad3047eabc",
+      "owners": 0,
+      "syncs": 0
+    },
+    {
+      "group": "hardware",
+      "name": "index1/schedule1",
+      "rawSha256": "c948b6890cb7ef71ca5293efa7be9cf01ba8419028e04b9abf26fbb7d3179d03",
+      "assertions": 10686,
+      "machineDigest": "799e66491594cc666c7b430ea294db3c6ef9ba12858a5760701eaaece8543d69",
+      "owners": 0,
+      "syncs": 0
+    },
+    {
+      "group": "hardware",
+      "name": "index2/schedule1",
+      "rawSha256": "fe9a40b080e36bf248d4b80068150d93f452fe99c1e8e12e64ec09f247074069",
+      "assertions": 10688,
+      "machineDigest": "dc54f807d7cad08a39f49163c79e014acfd4f561592a4fdd457c55dc897e40e9",
+      "owners": 0,
+      "syncs": 0
+    },
+    {
+      "group": "hardware",
+      "name": "index4/schedule1",
+      "rawSha256": "ec5908889a5d784978758ef4d7645295813904976124d13baaa071dcaf9511af",
+      "assertions": 10686,
+      "machineDigest": "72c51f6db5e9c0967dfb3d42a98592ceaecdf1fd1197357bbed394ad3047eabc",
+      "owners": 0,
+      "syncs": 0
+    },
+    {
+      "group": "hardware",
+      "name": "index1/schedule2",
+      "rawSha256": "f847225a1458bdfdcf507aff946e84e6544b878c3e53ca9d40dfeef67c398fbd",
+      "assertions": 10838,
+      "machineDigest": "799e66491594cc666c7b430ea294db3c6ef9ba12858a5760701eaaece8543d69",
+      "owners": 0,
+      "syncs": 0
+    },
+    {
+      "group": "hardware",
+      "name": "index2/schedule2",
+      "rawSha256": "30895f8cf348e78a36ec850f3f76a6b2a43e347f5a94c62b39aeb9c0527e55c3",
+      "assertions": 10840,
+      "machineDigest": "dc54f807d7cad08a39f49163c79e014acfd4f561592a4fdd457c55dc897e40e9",
+      "owners": 0,
+      "syncs": 0
+    },
+    {
+      "group": "hardware",
+      "name": "index4/schedule2",
+      "rawSha256": "87db5a93a816c48c142268c5782f79db9703ba5f51f2bf98a5df0b78518ccef7",
+      "assertions": 10838,
+      "machineDigest": "72c51f6db5e9c0967dfb3d42a98592ceaecdf1fd1197357bbed394ad3047eabc",
+      "owners": 0,
+      "syncs": 0
+    },
+    {
+      "group": "promoted-novel",
+      "name": "ignored-start-u32-restart-offset12-schedule173205-production",
+      "rawSha256": "6ee182cedd28258e07d69f8112bb98ed1c059c9e520895415c2ad61f9b57f0f3",
+      "assertions": 9462,
+      "machineDigest": "f15cca21995924d28c6d09aea67baf3c5cf8f00c7196a3663ec21332e634a561",
+      "owners": 0,
+      "syncs": 0
+    },
+    {
+      "group": "promoted-novel",
+      "name": "ignored-start-u32-restart-offset12-schedule173205-private",
+      "rawSha256": "e2da924d29e487f73b8be87a4fbd19d452d1262b55d8552d45ebc10b99390e13",
+      "assertions": 8224,
+      "machineDigest": "bc1c16b07d0b41960a5fcf6abdb576777c4816a015481eac33b9e9dc065242c0",
+      "owners": 0,
+      "syncs": 0
+    },
+    {
+      "group": "promoted-novel",
+      "name": "ignored-start-u32-restart-offset12-schedule987654-production",
+      "rawSha256": "288fc9f6153a6b1a6da332c0442040e70cd36fd1f84a0ab4898a685b87c789db",
+      "assertions": 9460,
+      "machineDigest": "f15cca21995924d28c6d09aea67baf3c5cf8f00c7196a3663ec21332e634a561",
+      "owners": 0,
+      "syncs": 0
+    },
+    {
+      "group": "promoted-novel",
+      "name": "ignored-start-u32-restart-offset12-schedule987654-private",
+      "rawSha256": "ee3270015a9bb831489c91abe67c7e239032cf73de06aa21f87cad2a073faf3a",
+      "assertions": 8250,
+      "machineDigest": "bc1c16b07d0b41960a5fcf6abdb576777c4816a015481eac33b9e9dc065242c0",
+      "owners": 0,
+      "syncs": 0
+    }
+  ],
+  "coldAssertions": 131108,
+  "defaultDemo": {
+    "passed": 127,
+    "failed": 0,
+    "errors": [],
+    "proofExportAbsent": true,
+    "wasmSha256": "c9f24482f55b6111a24f932aae95d81203beecfbb8d14458ed9d1787f1e1a3a8"
+  },
+  "scope": "Original production indexed-start hint only; parent default Omarchy/API/recovery/deployment remain separately pending."
+}

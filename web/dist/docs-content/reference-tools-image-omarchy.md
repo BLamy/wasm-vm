@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/image/OMARCHY.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "fcecd84ffc9b05dcb5341edb654d2d996a74d80fcfcd71b999f29d1f36456e58"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Prepared Omarchy image
 
 {% hint style="info" %}

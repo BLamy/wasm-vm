@@ -1,3 +1,6 @@
+import {executeFramebufferBlit} from "./multisample.mjs";
+import {createBooleanQueries} from "./queries.mjs";
+import {PRODUCTION_RESOURCE_LIMITS} from "./resources.mjs";
 /** Typed VirGL state and bounded triangle draws. See state-README.md and draw-README.md. */
 import {byteColorFormat} from "./color-images.mjs";
 import {floatColorFormat} from "./float-images.mjs";
@@ -7,7 +10,7 @@ import {packedNormalizedColorFormat} from "./packed-normalized-images.mjs";
 import {packedUnsignedColorFormat} from "./packed-unsigned-images.mjs";
 import {floatingDepthFormat} from "./floating-depth-images.mjs";
 import {unormDepthFormat, packedDepthFormat} from "./unorm-depth-images.mjs";
-import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, decodeStandardPackedUnsignedImageSubmission, decodeStandardFloatingDepthImageSubmission, decodeStandardUnormDepthImageSubmission, decodeStandardPackedDepthImageSubmission, decodeStandardStencilSubmission, decodeStandardShadowSamplerSubmission, decodeStandardDimensionalSubmission, decodeStandardDimensionalViewSubmission, decodeStandardDimensionalDepthViewSubmission, decodeStandardDimensionalColorSurfaceSubmission, decodeStandardDimensionalDepthSurfaceSubmission, vertexFormat } from "./decoder.mjs";
+import { decodeSubmission, decodeStandardSubmission, decodeStandardUniformSubmission, decodeStandardImageSubmission, decodeStandardColorSubmission, decodeStandardFloatImageSubmission, decodeStandardPackedFloatImageSubmission, decodeStandardSharedExponentImageSubmission, decodeStandardIntegerImageSubmission, decodeStandardMultipleColorSubmission, decodeStandardPackedNormalizedImageSubmission, decodeStandardPackedUnsignedImageSubmission, decodeStandardFloatingDepthImageSubmission, decodeStandardUnormDepthImageSubmission, decodeStandardPackedDepthImageSubmission, decodeStandardStencilSubmission, decodeStandardShadowSamplerSubmission, decodeStandardDimensionalSubmission, decodeStandardDimensionalViewSubmission, decodeStandardDimensionalDepthViewSubmission, decodeStandardDimensionalColorSurfaceSubmission, decodeStandardDimensionalDepthSurfaceSubmission, decodeStandardStreamOutputSubmission, decodeProductionSubmission, vertexFormat } from "./decoder.mjs";
 import { LIMITS as SHADER_LIMITS } from "../virgl-shader/index.mjs";
 import { createKeyCache, hashKey } from "./cache.mjs";
 import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank, checkRadialBank, checkRasterBank, checkConversionBank, checkExactBank, COORDINATE_KEY, DISCARD_KEY,
@@ -18,13 +21,18 @@ import { parseConstantDomain, checkFiniteBank, checkIndirectBank, checkLoopBank,
   parseStandardInstanceBaseShaderMetadata, normalizeStandardInstanceBaseShaderResult, normalizeStandardInstanceBaseShaderPair, deriveStandardInstanceBaseShaderInterface,
   parseStandardShadowTextureShaderMetadata, normalizeStandardShadowTextureShaderResult, normalizeStandardShadowTextureShaderPair, deriveStandardShadowTextureShaderInterface,
   parseStandardDimensionalTextureShaderMetadata, normalizeStandardDimensionalTextureShaderResult, normalizeStandardDimensionalTextureShaderPair, deriveStandardDimensionalTextureShaderInterface,
-  parseStandardDimensionalShadowTextureShaderMetadata, normalizeStandardDimensionalShadowTextureShaderResult, normalizeStandardDimensionalShadowTextureShaderPair, deriveStandardDimensionalShadowTextureShaderInterface } from "./constant-domain.mjs";
+  parseStandardDimensionalShadowTextureShaderMetadata, normalizeStandardDimensionalShadowTextureShaderResult, normalizeStandardDimensionalShadowTextureShaderPair, deriveStandardDimensionalShadowTextureShaderInterface,
+  parseStandardStreamOutputShaderMetadata, normalizeStandardStreamOutputShaderResult, normalizeStandardStreamOutputShaderPair, deriveStandardStreamOutputShaderInterface, originalStreamOutputWords, selectOriginalStreamBuffer } from "./constant-domain.mjs";
 
 export const STATE_PROFILE = "virgl-tiny-state-v1";
 export const STATE_LIMITS = Object.freeze({ contexts: 8, subContexts: 16, objects: 256,
   programs: 64, shaderBytes: 1048576, uniformBytes: 65536 });
+export const PRODUCTION_STATE_LIMITS = Object.freeze({ ...STATE_LIMITS,
+  contexts: PRODUCTION_RESOURCE_LIMITS.contexts, subContexts: 64 });
 export const DRAW_PROFILE = "virgl-tiny-indexed-draw-v1";
 export const DRAW_LIMITS = Object.freeze({ drawsPerSubmission: 64, indicesPerSubmission: 65536 });
+export const PRODUCTION_DRAW_LIMITS = Object.freeze({ drawsPerSubmission: 256, indicesPerSubmission: 262144 });
+export const PRODUCTION_JOB_LIMITS = Object.freeze({ jobs: 1, commandsPerStep: 64, submissionBytes: 262144, transferBytes: 33554432 });
 export const ASYNC_PROFILE = "virgl-tiny-async-jobs-v1";
 export const STANDARD_ASYNC_PROFILE = "virgl-standard-async-jobs-v1";
 export const STANDARD_UNIFORM_ASYNC_PROFILE = "virgl-standard-uniform-async-jobs-v1";
@@ -55,7 +63,7 @@ export const STANDARD_TEXTURE_ASYNC_PROFILE = "virgl-standard-texture-async-jobs
 export const JOB_LIMITS = Object.freeze({ jobs: 1, commandsPerStep: 64, submissionBytes: 262144, transferBytes: 4194304 });
 export const CACHE_LIMITS = Object.freeze({ translations: 128, translationBytes: 4194304,
   programBytes: 4194304, states: 256, stateBytes: 1048576, debugBytes: 4194304 });
-const NAMES = ["NULL", "BLEND", "RASTERIZER", "DSA", "SHADER", "VERTEX_ELEMENTS", "SAMPLER_VIEW", "SAMPLER_STATE", "SURFACE"];
+const NAMES = ["NULL", "BLEND", "RASTERIZER", "DSA", "SHADER", "VERTEX_ELEMENTS", "SAMPLER_VIEW", "SAMPLER_STATE", "SURFACE", "QUERY", "STREAMOUT_TARGET"];
 const BINDINGS = { 1: "blend", 2: "rasterizer", 3: "dsa", 5: "vertexElements" };
 const DRAW_MODES = Object.freeze({ 0: "POINTS", 1: "LINES", 2: "LINE_LOOP", 3: "LINE_STRIP", 4: "TRIANGLES", 5: "TRIANGLE_STRIP", 6: "TRIANGLE_FAN" });
 const vertexComponents = (element) => vertexFormat(element.sourceFormat).components;
@@ -339,9 +347,17 @@ export function createVirglStandardDimensionalDepthSurfaceAsyncRenderer(options)
   return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
 }
 
-function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, orderedStencil = false, instanceBase = false, shadowSamplers = false, dimensional = false, dimensionalViews = false, dimensionalDepthViews = false, dimensionalShadows = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false) {
+export function createVirglStandardStreamOutputAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
+export function createVirglProductionAsyncRenderer(options) {
+  return createRenderer(options, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true);
+}
+
+function createRenderer(options, drawing, asynchronous = false, standard = false, uniform = false, bufferRoles = false, images = false, colors = false, textureOperations = false, floats = false, packed = false, shared = false, integers = false, multipleColors = false, normalized = false, unsigned = false, floatingDepth = false, unormDepth = false, packedDepth = false, stencil = false, orderedStencil = false, instanceBase = false, shadowSamplers = false, dimensional = false, dimensionalViews = false, dimensionalDepthViews = false, dimensionalShadows = false, dimensionalColorSurfaces = false, dimensionalDepthSurfaces = false, streamOutput = false, production = false) {
   return result(() => {
-    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : [])]);
+    const config = dataRecord(options, ["gl", "resources", "bindings", "shaderBridge", "limits", "cacheLimits", ...(drawing ? ["drawLimits"] : []), ...(asynchronous ? ["asyncAccess", "jobLimits"] : []), ...(standard ? ["primitiveAssembly"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : []), ...(streamOutput ? ["streamOutputAccess"] : [])], ["gl", "resources", "bindings", "shaderBridge", ...(asynchronous ? ["asyncAccess"] : []), ...(uniform ? ["uniformAccess"] : []), ...(images ? ["imageAccess"] : []), ...(streamOutput ? ["streamOutputAccess"] : [])]);
     const { gl, resources, bindings, shaderBridge } = config;
     const primitiveAssembly = standard ? config.primitiveAssembly ?? "native" : "native";
     require(["native", "lists"].includes(primitiveAssembly), "invalid-input", "Unknown standard primitive assembly selection.");
@@ -357,8 +373,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     require(resources && ["inspect", "retainStorage", "releaseStorage", "prepareTransfer", "executeTransfer"].every((name) => typeof resources[name] === "function") &&
       bindings && typeof bindings.resolve === "function" && shaderBridge && typeof shaderBridge.translate === "function", "invalid-input", "Resource and shader capabilities are required.");
     require(!drawing || typeof resources.readStorage === "function", "invalid-input", "Drawing requires actual storage readback.");
-    const supplied = dataRecord(config.limits ?? {}, Object.keys(STATE_LIMITS), []), limits = { ...STATE_LIMITS, ...supplied };
-    for (const key of Object.keys(limits)) require(Number.isSafeInteger(limits[key]) && limits[key] >= 0 && limits[key] <= STATE_LIMITS[key], "invalid-input", "Limits may only tighten defaults.");
+    const stateLimits = production ? PRODUCTION_STATE_LIMITS : STATE_LIMITS;
+    const supplied = dataRecord(config.limits ?? {}, Object.keys(stateLimits), []), limits = { ...stateLimits, ...supplied };
+    for (const key of Object.keys(limits)) require(Number.isSafeInteger(limits[key]) && limits[key] >= 0 && limits[key] <= stateLimits[key], "invalid-input", "Limits may only tighten defaults.");
     Object.freeze(limits);
     const cacheLimits = { ...CACHE_LIMITS, ...dataRecord(config.cacheLimits ?? {}, Object.keys(CACHE_LIMITS), []) };
     for (const key of Object.keys(cacheLimits)) require(Number.isSafeInteger(cacheLimits[key]) && cacheLimits[key] >= 0 && cacheLimits[key] <= CACHE_LIMITS[key],
@@ -366,9 +383,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     Object.freeze(cacheLimits);
     let drawLimits = null;
     if (drawing) {
-      const suppliedDraw = dataRecord(config.drawLimits ?? {}, Object.keys(DRAW_LIMITS), []);
-      drawLimits = { ...DRAW_LIMITS, ...suppliedDraw };
-      for (const key of Object.keys(drawLimits)) require(Number.isSafeInteger(drawLimits[key]) && drawLimits[key] >= 0 && drawLimits[key] <= DRAW_LIMITS[key],
+      const drawCeiling = production ? PRODUCTION_DRAW_LIMITS : DRAW_LIMITS;
+      const suppliedDraw = dataRecord(config.drawLimits ?? {}, Object.keys(drawCeiling), []);
+      drawLimits = { ...drawCeiling, ...suppliedDraw };
+      for (const key of Object.keys(drawLimits)) require(Number.isSafeInteger(drawLimits[key]) && drawLimits[key] >= 0 && drawLimits[key] <= drawCeiling[key],
         "invalid-input", "Draw limits may only tighten defaults.");
       Object.freeze(drawLimits);
     }
@@ -377,8 +395,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     if (asynchronous) {
       require(asyncAccess && ["prepareTransfer", "validate", "provideInput", "upload", "beginTransferRead", "beginStorageRead", "poll", "release", "inspect"]
         .every((name) => typeof asyncAccess[name] === "function"), "invalid-input", "Asynchronous resource access is required.");
-      jobLimits = { ...JOB_LIMITS, ...dataRecord(config.jobLimits ?? {}, Object.keys(JOB_LIMITS), []) };
-      for (const key of Object.keys(jobLimits)) require(Number.isSafeInteger(jobLimits[key]) && jobLimits[key] >= (key === "commandsPerStep" ? 1 : 0) && jobLimits[key] <= JOB_LIMITS[key],
+      const jobCeiling = production ? PRODUCTION_JOB_LIMITS : JOB_LIMITS;
+      jobLimits = { ...jobCeiling, ...dataRecord(config.jobLimits ?? {}, Object.keys(jobCeiling), []) };
+      for (const key of Object.keys(jobLimits)) require(Number.isSafeInteger(jobLimits[key]) && jobLimits[key] >= (key === "commandsPerStep" ? 1 : 0) && jobLimits[key] <= jobCeiling[key],
         "invalid-input", "Job limits may only tighten defaults; step budget must be positive.");
       Object.freeze(jobLimits);
     }
@@ -393,9 +412,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     const integerFormat = format => integerColorFormat(format) || (unsigned ? packedUnsignedColorFormat(format) : null);
     const comparisonSampler = type => shadowSamplers && (type === "sampler2DShadow" || dimensionalShadows &&
       ["samplerCubeShadow", "sampler2DArrayShadow"].includes(type));
-    const profile = dimensionalDepthSurfaces ? STANDARD_DIMENSIONAL_DEPTH_SURFACE_ASYNC_PROFILE : dimensionalColorSurfaces ? STANDARD_DIMENSIONAL_COLOR_SURFACE_ASYNC_PROFILE : dimensionalShadows ? STANDARD_DIMENSIONAL_SHADOW_ASYNC_PROFILE : dimensionalDepthViews ? STANDARD_DIMENSIONAL_DEPTH_VIEW_ASYNC_PROFILE : dimensionalViews ? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE : dimensional ? STANDARD_DIMENSIONAL_ASYNC_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : orderedStencil ? STANDARD_ORDERED_STENCIL_ASYNC_PROFILE : stencil ? STANDARD_STENCIL_ASYNC_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
-    const decodeCommands = dimensionalDepthSurfaces ? decodeStandardDimensionalDepthSurfaceSubmission : dimensionalColorSurfaces ? decodeStandardDimensionalColorSurfaceSubmission : dimensionalDepthViews ? decodeStandardDimensionalDepthViewSubmission : dimensionalViews ? decodeStandardDimensionalViewSubmission : dimensional ? decodeStandardDimensionalSubmission : shadowSamplers ? decodeStandardShadowSamplerSubmission : stencil ? decodeStandardStencilSubmission : packedDepth ? decodeStandardPackedDepthImageSubmission : unormDepth ? decodeStandardUnormDepthImageSubmission : floatingDepth ? decodeStandardFloatingDepthImageSubmission : unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
-    const parseShaderMetadata = dimensionalShadows ? parseStandardDimensionalShadowTextureShaderMetadata : dimensionalViews ? parseStandardDimensionalTextureShaderMetadata : shadowSamplers ? parseStandardShadowTextureShaderMetadata : instanceBase ? parseStandardInstanceBaseShaderMetadata : multipleColors ? parseStandardMultipleColorShaderMetadata : integers ? parseStandardIntegerImageShaderMetadata : textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
+    const profile = streamOutput ? "virgl-standard-stream-output-async-jobs-v1" : dimensionalDepthSurfaces ? STANDARD_DIMENSIONAL_DEPTH_SURFACE_ASYNC_PROFILE : dimensionalColorSurfaces ? STANDARD_DIMENSIONAL_COLOR_SURFACE_ASYNC_PROFILE : dimensionalShadows ? STANDARD_DIMENSIONAL_SHADOW_ASYNC_PROFILE : dimensionalDepthViews ? STANDARD_DIMENSIONAL_DEPTH_VIEW_ASYNC_PROFILE : dimensionalViews ? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE : dimensional ? STANDARD_DIMENSIONAL_ASYNC_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : orderedStencil ? STANDARD_ORDERED_STENCIL_ASYNC_PROFILE : stencil ? STANDARD_STENCIL_ASYNC_PROFILE : packedDepth ? STANDARD_PACKED_DEPTH_IMAGE_ASYNC_PROFILE : unormDepth ? STANDARD_UNORM_DEPTH_IMAGE_ASYNC_PROFILE : floatingDepth ? STANDARD_FLOATING_DEPTH_IMAGE_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : textureOperations ? STANDARD_TEXTURE_ASYNC_PROFILE : colors ? STANDARD_COLOR_ASYNC_PROFILE : images ? STANDARD_IMAGE_ASYNC_PROFILE : bufferRoles ? STANDARD_BUFFER_ASYNC_PROFILE : uniform ? STANDARD_UNIFORM_ASYNC_PROFILE : standard ? STANDARD_ASYNC_PROFILE : asynchronous ? ASYNC_PROFILE : drawing ? DRAW_PROFILE : STATE_PROFILE;
+    const decodeCommands = production ? decodeProductionSubmission : streamOutput ? decodeStandardStreamOutputSubmission : dimensionalDepthSurfaces ? decodeStandardDimensionalDepthSurfaceSubmission : dimensionalColorSurfaces ? decodeStandardDimensionalColorSurfaceSubmission : dimensionalDepthViews ? decodeStandardDimensionalDepthViewSubmission : dimensionalViews ? decodeStandardDimensionalViewSubmission : dimensional ? decodeStandardDimensionalSubmission : shadowSamplers ? decodeStandardShadowSamplerSubmission : stencil ? decodeStandardStencilSubmission : packedDepth ? decodeStandardPackedDepthImageSubmission : unormDepth ? decodeStandardUnormDepthImageSubmission : floatingDepth ? decodeStandardFloatingDepthImageSubmission : unsigned ? decodeStandardPackedUnsignedImageSubmission : normalized ? decodeStandardPackedNormalizedImageSubmission : multipleColors ? decodeStandardMultipleColorSubmission : integers ? decodeStandardIntegerImageSubmission : shared ? decodeStandardSharedExponentImageSubmission : packed ? decodeStandardPackedFloatImageSubmission : floats ? decodeStandardFloatImageSubmission : colors ? decodeStandardColorSubmission : images ? decodeStandardImageSubmission : uniform ? decodeStandardUniformSubmission : standard ? decodeStandardSubmission : decodeSubmission;
+    const parseShaderMetadata = streamOutput ? parseStandardStreamOutputShaderMetadata : dimensionalShadows ? parseStandardDimensionalShadowTextureShaderMetadata : dimensionalViews ? parseStandardDimensionalTextureShaderMetadata : shadowSamplers ? parseStandardShadowTextureShaderMetadata : instanceBase ? parseStandardInstanceBaseShaderMetadata : multipleColors ? parseStandardMultipleColorShaderMetadata : integers ? parseStandardIntegerImageShaderMetadata : textureOperations ? parseStandardTextureShaderMetadata : uniform ? parseStandardUniformShaderMetadata : standard ? parseStandardShaderMetadata : parseConstantDomain;
+    const captureAccess = streamOutput ? config.streamOutputAccess : null;
+    require(!streamOutput || captureAccess && ['allocatePacked', 'release', 'markWritten'].every(k => typeof captureAccess[k] === 'function') && typeof shaderBridge.translateStreamOutput === 'function' && typeof shaderBridge.translatePairStreamOutput === 'function' && gl.getParameter(gl.MAX_TRANSFORM_FEEDBACK_INTERLEAVED_COMPONENTS) >= 64,
+      'unsupported-host', 'Original capture requires its retained native capability and checked compiler.');
     const idle = () => require(activeJob === null, "busy", "A renderer job is active; cancel and drain it before changing state.");
     const contexts = new Map(), objects = new Set(), programs = new Set();
     let disposed = false, nextGeneration = 1, subCount = 0, shaderBytes = 0, uniformBytes = 0, leaseCount = 0;
@@ -409,6 +431,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       require(!gl.isContextLost(), "backend-error", "WebGL context is lost.");
       const error = gl.getError(); require(error === gl.NO_ERROR, "backend-error", `WebGL error ${error}.`);
     };
+    const booleanQueries = production ? createBooleanQueries(gl, resources, require, unwrap, check) : null;
     check();
     const provoking = assemblyLists ? gl.getExtension("WEBGL_provoking_vertex") : null;
     require(!assemblyLists || provoking && typeof provoking.provokingVertexWEBGL === "function" &&
@@ -483,7 +506,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         const sub = { id, generation: generation(), names: new Map(), live: new Set(), programs: new Map(), vao, framebuffer,
           blend: null, rasterizer: null, dsa: null, vertexElements: null, shaders: [null, null], surfaces: [], depthSurface: null,
           vertexBuffers: [], indexBuffer: null, views: [Array(32).fill(null), Array(32).fill(null)],
-          samplers: [Array(32).fill(null), Array(32).fill(null)], constants: [[], []],
+          samplers: [Array(32).fill(null), Array(32).fill(null)], constants: [[], []], ...(streamOutput ? {streamTuple: null, streamTuples: new Map(), captureFragment: null} : {}),
           ...(uniform ? { uniformBuffers: [Array(13).fill(null), Array(13).fill(null)] } : {}), viewport: null, scissor: null,
           blendColor: [0, 0, 0, 0], stencilRef: { front: 0, back: 0 }, defaults: { width: 0, height: 0 }, resets: {} };
         subCount++; return sub;
@@ -508,20 +531,22 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       }
     };
     const translatedStage = (sub, request) => {
-      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(textureOperations ? [dimensionalShadows ? STANDARD_DIMENSIONAL_SHADOW_ASYNC_PROFILE : dimensionalDepthViews ? STANDARD_DIMENSIONAL_DEPTH_VIEW_ASYNC_PROFILE : dimensionalViews ? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
+      if (streamOutput) request = {...request, streamOutputWords: request.streamOutputWords ?? [0], captureBuffer: 0};
+      const key = JSON.stringify([sub.generation, "stage", request.stage, request.text, ...(streamOutput ? [request.streamOutputWords] : []), ...(textureOperations ? [dimensionalShadows ? STANDARD_DIMENSIONAL_SHADOW_ASYNC_PROFILE : dimensionalDepthViews ? STANDARD_DIMENSIONAL_DEPTH_VIEW_ASYNC_PROFILE : dimensionalViews ? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) return cached;
       work.translations++;
-      const response = integers ? shaderBridge.translateImages({ ...request, signedColorMask: 0, unsignedColorMask: 0 }) : shaderBridge.translate(request);
-      const translated = dimensionalShadows ? unwrap(normalizeStandardDimensionalShadowTextureShaderResult(response, request.stage)) : dimensionalViews ? unwrap(normalizeStandardDimensionalTextureShaderResult(response, request.stage)) : shadowSamplers ? unwrap(normalizeStandardShadowTextureShaderResult(response, request.stage)) : instanceBase ? unwrap(normalizeStandardInstanceBaseShaderResult(response, request.stage)) : multipleColors ? unwrap(normalizeStandardMultipleColorShaderResult(response, request.stage)) : integers ? unwrap(normalizeStandardIntegerImageShaderResult(response, request.stage)) : textureOperations ? unwrap(normalizeStandardTextureShaderResult(response, request.stage)) : uniform ? unwrap(normalizeStandardUniformShaderResult(response, request.stage)) : standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));
+      const response = streamOutput ? shaderBridge.translateStreamOutput({...request, signedColorMask: 0, unsignedColorMask: 0}) : integers ? shaderBridge.translateImages({ ...request, signedColorMask: 0, unsignedColorMask: 0 }) : shaderBridge.translate(request);
+      const translated = streamOutput ? unwrap(normalizeStandardStreamOutputShaderResult(response, request.stage)) : dimensionalShadows ? unwrap(normalizeStandardDimensionalShadowTextureShaderResult(response, request.stage)) : dimensionalViews ? unwrap(normalizeStandardDimensionalTextureShaderResult(response, request.stage)) : shadowSamplers ? unwrap(normalizeStandardShadowTextureShaderResult(response, request.stage)) : instanceBase ? unwrap(normalizeStandardInstanceBaseShaderResult(response, request.stage)) : multipleColors ? unwrap(normalizeStandardMultipleColorShaderResult(response, request.stage)) : integers ? unwrap(normalizeStandardIntegerImageShaderResult(response, request.stage)) : textureOperations ? unwrap(normalizeStandardTextureShaderResult(response, request.stage)) : uniform ? unwrap(normalizeStandardUniformShaderResult(response, request.stage)) : standard ? unwrap(normalizeStandardShaderResult(response, request.stage)) : freeze(unwrap(response));
       unwrap(parseShaderMetadata(translated.metadata, request.stage));
+      require(!streamOutput || JSON.stringify(originalStreamOutputWords(translated.metadata)) === JSON.stringify(request.streamOutputWords), 'shader-domain-error', 'Checked compiler changed original capture words.');
       require(typeof translated.glsl === "string" && /^#version 300 es\b/m.test(translated.glsl),
         "shader-error", "Shader bridge returned incompatible output.");
       translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
       return translated;
     };
-    const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null, bufferZeroMask = 0, colorOutputs = null) => {
-      const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey,
+    const translatedPair = (sub, vertex, fragment, interfaceKey, validate, inputTypes = null, bufferZeroMask = 0, colorOutputs = null, captureBuffer = -1) => {
+      const key = JSON.stringify([sub.generation, "pair", vertex.fields.text, fragment.fields.text, interfaceKey, ...(streamOutput ? [vertex.fields.streamOutputWords, captureBuffer] : []),
         ...(inputTypes?.key ? [inputTypes.key] : []), ...(uniform ? [bufferZeroMask] : []), ...(integers ? [colorOutputs.key] : []), ...(textureOperations ? [dimensionalShadows ? STANDARD_DIMENSIONAL_SHADOW_ASYNC_PROFILE : dimensionalDepthViews ? STANDARD_DIMENSIONAL_DEPTH_VIEW_ASYNC_PROFILE : dimensionalViews ? STANDARD_DIMENSIONAL_VIEW_ASYNC_PROFILE : shadowSamplers ? STANDARD_SHADOW_SAMPLER_ASYNC_PROFILE : instanceBase ? STANDARD_INSTANCED_STENCIL_ASYNC_PROFILE : unsigned ? STANDARD_PACKED_UNSIGNED_IMAGE_ASYNC_PROFILE : normalized ? STANDARD_PACKED_NORMALIZED_IMAGE_ASYNC_PROFILE : multipleColors ? STANDARD_MULTIPLE_COLOR_ASYNC_PROFILE : integers ? STANDARD_INTEGER_IMAGE_ASYNC_PROFILE : shared ? STANDARD_SHARED_EXPONENT_IMAGE_ASYNC_PROFILE : packed ? STANDARD_PACKED_FLOAT_IMAGE_ASYNC_PROFILE : floats ? STANDARD_FLOAT_IMAGE_ASYNC_PROFILE : STANDARD_TEXTURE_ASYNC_PROFILE] : [])]);
       const cached = translationCache.get(sub, key);
       if (cached) { validate(cached); return cached; }
@@ -531,10 +556,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const selectors = { signedMask: inputTypes?.signedMask ?? 0, unsignedMask: inputTypes?.unsignedMask ?? 0,
         packedSignedMask: inputTypes?.packedSignedMask ?? 0, packedNormalizedMask: inputTypes?.packedNormalizedMask ?? 0, bufferZeroMask,
         ...(integers ? { signedColorMask: colorOutputs.signedColorMask, unsignedColorMask: colorOutputs.unsignedColorMask } : {}) };
-      const response = integers ? shaderBridge.translatePairImages({ ...request, ...selectors }) : uniform ? shaderBridge.translatePairUniforms({ ...request, ...selectors }) : inputTypes?.packedSignedMask ? shaderBridge.translatePairVertexFormats({ ...request, ...masks,
+      const response = streamOutput ? shaderBridge.translatePairStreamOutput({...request, ...selectors, streamOutputWords: vertex.fields.streamOutputWords, captureBuffer: Math.max(0, captureBuffer)}) : integers ? shaderBridge.translatePairImages({ ...request, ...selectors }) : uniform ? shaderBridge.translatePairUniforms({ ...request, ...selectors }) : inputTypes?.packedSignedMask ? shaderBridge.translatePairVertexFormats({ ...request, ...masks,
         packedSignedMask: inputTypes.packedSignedMask, packedNormalizedMask: inputTypes.packedNormalizedMask }) :
         masks ? shaderBridge.translatePairTyped({ ...request, ...masks }) : shaderBridge.translatePair(request);
-      const translated = dimensionalShadows ? unwrap(normalizeStandardDimensionalShadowTextureShaderPair(response, selectors)) : dimensionalViews ? unwrap(normalizeStandardDimensionalTextureShaderPair(response, selectors)) : shadowSamplers ? unwrap(normalizeStandardShadowTextureShaderPair(response, selectors)) : instanceBase ? unwrap(normalizeStandardInstanceBaseShaderPair(response, selectors)) : multipleColors ? unwrap(normalizeStandardMultipleColorShaderPair(response, selectors)) : integers ? unwrap(normalizeStandardIntegerImageShaderPair(response, selectors)) : textureOperations ? unwrap(normalizeStandardTextureShaderPair(response, selectors)) : uniform ? unwrap(normalizeStandardUniformShaderPair(response, selectors)) : standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
+      const translated = streamOutput ? unwrap(normalizeStandardStreamOutputShaderPair(response, selectors)) : dimensionalShadows ? unwrap(normalizeStandardDimensionalShadowTextureShaderPair(response, selectors)) : dimensionalViews ? unwrap(normalizeStandardDimensionalTextureShaderPair(response, selectors)) : shadowSamplers ? unwrap(normalizeStandardShadowTextureShaderPair(response, selectors)) : instanceBase ? unwrap(normalizeStandardInstanceBaseShaderPair(response, selectors)) : multipleColors ? unwrap(normalizeStandardMultipleColorShaderPair(response, selectors)) : integers ? unwrap(normalizeStandardIntegerImageShaderPair(response, selectors)) : textureOperations ? unwrap(normalizeStandardTextureShaderPair(response, selectors)) : uniform ? unwrap(normalizeStandardUniformShaderPair(response, selectors)) : standard ? unwrap(masks ? normalizeStandardShaderTypedPair(response, masks) :
         normalizeStandardShaderPair(response)) : freeze(unwrap(response));
       validate(translated);
       translationCache.put(sub, key, translated, 1024 + 2 * (key.length + JSON.stringify(translated).length));
@@ -543,6 +568,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     const collectObject = (sub, object) => {
       if (object.references !== 0) return;
       sub.live.delete(object); objects.delete(object);
+      if (object.type === 9) booleanQueries.destroy(sub, object);
       if (object.imageRange) unwrap(imageAccess.release(object.imageRange));
       if (object.lease) release(object.lease);
       if (object.shader) {
@@ -570,6 +596,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       object.references--; collectObject(sub, object);
     }
     const disposeSub = (sub) => {
+      if (streamOutput) {
+        for (const tuple of sub.streamTuples.values()) for (const target of tuple.targets) if (target) objectRef(sub, target, null);
+        sub.streamTuples.clear(); sub.streamTuple = null;
+        if (sub.captureFragment) {objectRef(sub, sub.captureFragment, null);sub.captureFragment = null;}
+      }
       for (const program of [...sub.programs.values()]) deleteProgram(sub, program);
       translationCache.removeOwner(sub); stateCache.removeOwner(sub);
       for (const surface of sub.surfaces) objectRef(sub, surface, null);
@@ -584,11 +615,19 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       gl.deleteVertexArray(sub.vao); gl.deleteFramebuffer(sub.framebuffer); subCount--;
     };
     const createObject = (ctx, sub, command) => {
-      const fields = command.fields, type = command.objectType;
+      let fields = command.fields; const type = command.objectType;
       require(!sub.names.has(fields.handle), "duplicate-object", "Object handle is already public.");
       require(objects.size < limits.objects, "limit-exceeded", "Live object limit exceeded.");
       const object = { handle: fields.handle, type, name: command.objectName, generation: generation(), fields, public: true, references: 1 };
       try {
+        if (type === 9 && production) {
+          Object.assign(object, retain(ctx, fields.resourceHandle, 'query', 'query-buffer'));
+          unwrap(resources.validateQueryStorage(object.lease)); booleanQueries.create(object);
+        }
+        if (type === 10 && streamOutput) {
+          Object.assign(object, retain(ctx, fields.resourceHandle, "stream-output", "standard-buffer"));
+          require(fields.bufferOffset <= object.metadata.byteLength && fields.bufferSize <= object.metadata.byteLength - fields.bufferOffset, "out-of-bounds", "Original stream-output target exceeds retained storage.");
+        }
         if (type === 5) {
           require(fields.elements.length <= maxAttributes, "limit-exceeded", "Vertex elements exceed host attribute slots.");
           if (!standard) for (const element of fields.elements) require(element.sourceOffset % 4 === 0, "invalid-state", "Vertex element offset must be float-aligned.");
@@ -596,7 +635,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (type === 6 || type === 8) {
           const floating = floatingDepth && Boolean(floatingDepthFormat(fields.format)) || unormDepth && Boolean(unormDepthFormat(fields.format)) || packedDepth && Boolean(packedDepthFormat(fields.format));
           const depth = type === 8 && (fields.format === 16 || floating);
-          Object.assign(object, retain(ctx, fields.resourceHandle, depth ? "depth-surface" : type === 6 ? "view" : "surface", floating ? ["depth-texture", "mip-depth-texture", ...((dimensionalDepthViews && type === 6 || dimensionalDepthSurfaces && type === 8) ? ["dimensional-depth-texture"] : [])] : depth ? "depth-texture" : images ? ["texture", "mip-texture", ...(dimensionalViews && type === 6 || dimensionalColorSurfaces && type === 8 && fields.format === 67 ? ["dimensional-texture"] : [])] : "texture"));
+          Object.assign(object, retain(ctx, fields.resourceHandle, depth ? "depth-surface" : type === 6 ? "view" : "surface", floating ? ["depth-texture", "mip-depth-texture", ...((dimensionalDepthViews && type === 6 || dimensionalDepthSurfaces && type === 8) ? ["dimensional-depth-texture"] : [])] : depth ? "depth-texture" : images ? ["texture", "mip-texture", ...(dimensionalViews && type === 6 || dimensionalColorSurfaces && type === 8 && (fields.format === 67 || production) ? ["dimensional-texture"] : [])] : "texture"));
+          if (production && type === 6 && fields.target === 0) {
+            fields = {...fields,target:object.metadata.target}; object.fields = fields;
+            require(fields.target === 2 ? fields.firstLayer === 0 && fields.lastLayer === 0 : fields.target === 3 ? fields.firstLayer === 0 && fields.lastLayer === 0 : fields.target === 4 ? fields.firstLayer === 0 && fields.lastLayer === 5 : fields.firstLayer <= fields.lastLayer && fields.lastLayer < object.metadata.arraySize,
+              "incompatible-resource", "Implicit original sampler target has an invalid layer range.");
+          }
           require(object.metadata.format === fields.format, "incompatible-resource", "View format and storage format differ.");
           if (images && (!depth || floating)) {
             if (type === 6) {
@@ -616,7 +660,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           }
         }
         if (type === 4) {
-          const translated = translatedStage(sub, { stage: fields.stageName, text: fields.text });
+          const translated = translatedStage(sub, { stage: fields.stageName, text: fields.text, ...(streamOutput ? {streamOutputWords: fields.streamOutputWords} : {}) });
           const contract = unwrap(parseShaderMetadata(translated.metadata, fields.stageName));
           object.constantDomain = contract.domain;
           object.constantAccess = contract.access ?? null;
@@ -659,6 +703,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (object.shader) shaderBytes += object.shaderBytes;
         sub.names.set(object.handle, object); sub.live.add(object); objects.add(object);
       } catch (error) {
+        if (type === 9 && object.queryParts) booleanQueries.destroy(sub, object);
         if (object.imageRange) unwrap(imageAccess.release(object.imageRange));
         if (object.lease) release(object.lease);
         if (object.shader) gl.deleteShader(object.shader);
@@ -708,12 +753,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         "shader-link-error", "View specialization requires the checked stage 2D TEX family.");
         const view = sub.views[stage][sampler.index], fields = view?.fields;
         const target = dimensionalViews ? dimensionalSamplerTarget(sampler.type, dimensionalShadows) : 2;
-        if (dimensionalViews && fields) require(fields.target === target && (target === 2 || fields.format === 67 &&
-          ["sampler3D", "samplerCube", "sampler2DArray"].includes(sampler.type) || dimensionalDepthViews && [4, 7].includes(target) &&
+        if (dimensionalViews && fields) require(fields.target === target && (target === 2 || (fields.format === 67 || production && !depthFormat(fields.format)) &&
+          (production ? /^(?:i|u)?sampler(?:3D|Cube|2DArray)$/.test(sampler.type) : ["sampler3D", "samplerCube", "sampler2DArray"].includes(sampler.type)) || dimensionalDepthViews && [4, 7].includes(target) &&
           depthFormat(fields.format) && ["samplerCube", "sampler2DArray", ...(dimensionalShadows ? ["samplerCubeShadow", "sampler2DArrayShadow"] : [])].includes(sampler.type)),
         "incompatible-resource", "Original sampler dimension or return type disagrees with retained storage.");
         if (integers && fields) {
-          const image = integerFormat(fields.format), nativeType = dimensionalViews && target !== 2 ? sampler.type : image ? image.signed ? "isampler2D" : "usampler2D" : "sampler2D";
+          const image = integerFormat(fields.format), nativeType = dimensionalViews && target !== 2 ? (production ? `${image ? image.signed ? "i" : "u" : ""}sampler${({3:"3D",4:"Cube",7:"2DArray"})[target]}` : sampler.type) : image ? image.signed ? "isampler2D" : "usampler2D" : "sampler2D";
           require(comparisonSampler(sampler.type) ? Boolean(depthFormat(fields.format)) : sampler.type === nativeType, "incompatible-resource", "Original sampler return type disagrees with retained image storage.");
         }
         // Linking may precede view binding. The fixed legacy RGBA identity
@@ -862,22 +907,23 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       catch (error) { gl.deleteBuffer(buffer); throw error; }
       unusedUniformBuffer = buffer; uniformBytes += 16384; return buffer;
     };
-    function link(sub, vertex, fragment) {
+    function link(sub, vertex, fragment, captureBuffer = -1) {
       require(vertex?.fields.stage === 0 && fragment?.fields.stage === 1, "missing-shader", "Link requires a vertex shader and a fragment shader.");
       const sampling = samplingFor(sub, fragment, vertex);
-      const blendFold = selectedBlendFold(sub, fragment), colorOutputs = integers ? colorsFor(sub, fragment) : null;
+      const blendFold = selectedBlendFold(sub, fragment), colorOutputs = integers ? (captureBuffer >= 0 || streamOutput && fragment === sub.captureFragment) ? {signedColorMask: 0, unsignedColorMask: 0, key: "capture-native-float-v1"} : colorsFor(sub, fragment) : null;
       const inputTypes = inputTypesFor(sub, vertex);
       let vs = vertex.translation.metadata;
       let fs = fragment.translation.metadata;
       const bufferZeroMask = zeroMask(sub, vertex, fragment);
       let fragmentBase = fragment.translation.glsl;
+      if (streamOutput && captureBuffer >= 0) {vs = selectOriginalStreamBuffer(vs, captureBuffer);fs = selectOriginalStreamBuffer(fs, captureBuffer);}
       const interfaceInfo = standard ? (() => {
-        const owned = unwrap(dimensionalShadows ? deriveStandardDimensionalShadowTextureShaderInterface(vs, fs) : dimensionalViews ? deriveStandardDimensionalTextureShaderInterface(vs, fs) : shadowSamplers ? deriveStandardShadowTextureShaderInterface(vs, fs) : instanceBase ? deriveStandardInstanceBaseShaderInterface(vs, fs) : multipleColors ? deriveStandardMultipleColorShaderInterface(vs, fs) : integers ? deriveStandardIntegerImageShaderInterface(vs, fs) : textureOperations ? deriveStandardTextureShaderInterface(vs, fs) : uniform ? deriveStandardUniformShaderInterface(vs, fs) : deriveStandardShaderInterface(vs, fs));
+        const owned = unwrap(streamOutput ? deriveStandardStreamOutputShaderInterface(vs, fs) : dimensionalShadows ? deriveStandardDimensionalShadowTextureShaderInterface(vs, fs) : dimensionalViews ? deriveStandardDimensionalTextureShaderInterface(vs, fs) : shadowSamplers ? deriveStandardShadowTextureShaderInterface(vs, fs) : instanceBase ? deriveStandardInstanceBaseShaderInterface(vs, fs) : multipleColors ? deriveStandardMultipleColorShaderInterface(vs, fs) : integers ? deriveStandardIntegerImageShaderInterface(vs, fs) : textureOperations ? deriveStandardTextureShaderInterface(vs, fs) : uniform ? deriveStandardUniformShaderInterface(vs, fs) : deriveStandardShaderInterface(vs, fs));
         return { ...owned, inputs: new Map(owned.inputs.map(input => [input.semanticIndex, input])) };
       })() : shaderInterface(vs, fs, fragment.coordinateContract, fragment.discardContract);
       // Generations identify these exact owned immutable bodies/metadata, not public names.
       // Derive the complete pair interface even when another vertex used this fragment.
-      const key = `${sub.generation}:${vertex.generation}:${fragment.generation}:${interfaceInfo.key}|${sampling.key}` +
+      const key = `${sub.generation}:${vertex.generation}:${fragment.generation}:${interfaceInfo.key}|${sampling.key}` + (streamOutput ? `|capture:${captureBuffer}` : "") +
         (blendFold ? `|blend-source-constant-v1:${blendFold}` : "") + (inputTypes.key ? `|${inputTypes.key}` : "") + (uniform ? `|buffer-zero:${bufferZeroMask}` : "") + (integers ? `|${colorOutputs.key}` : "");
       const cached = programCache.get(sub, key);
       if (cached) return cached;
@@ -910,7 +956,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             (uniform || pair.fragment?.glsl === fragment.translation.glsl) && JSON.stringify(pair.fragment?.metadata) === JSON.stringify(selectedFragment) &&
             typeof pair.vertex?.glsl === "string" && pair.vertex.glsl.length <= SHADER_LIMITS.glslBytes &&
             /^#version 300 es\b/m.test(pair.vertex.glsl) && JSON.stringify(pair.vertex.metadata) === JSON.stringify(expectedVertex),
-          "shader-link-error", "Pair compiler output does not match the selected shader interface."), inputTypes, bufferZeroMask, colorOutputs);
+          "shader-link-error", "Pair compiler output does not match the selected shader interface."), inputTypes, bufferZeroMask, colorOutputs, captureBuffer);
+          if (streamOutput) program.streamOutput = pair.vertex.metadata.streamOutput;
           if (standard || interfaceInfo.flat) {
             program.vertexText = pair.vertex.glsl; vs = pair.vertex.metadata;
             if (uniform) { fragmentBase = pair.fragment.glsl; fs = pair.fragment.metadata; }
@@ -943,8 +990,18 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         }
         program.native = gl.createProgram(); require(program.native, "backend-error", "Program allocation failed.");
         gl.attachShader(program.native, program.variantShader ?? vertex.shader); gl.attachShader(program.native, program.fragmentVariantShader ?? fragment.shader);
-        work.programLinks++; gl.linkProgram(program.native);
+        work.programLinks++; if (streamOutput && captureBuffer >= 0) gl.transformFeedbackVaryings(program.native, program.streamOutput.varyings.map(v => v.name), gl.INTERLEAVED_ATTRIBS);
+        gl.linkProgram(program.native);
         require(gl.getProgramParameter(program.native, gl.LINK_STATUS), "shader-link-error", `WebGL program link failed: ${gl.getProgramInfoLog(program.native)}`);
+        if (streamOutput && captureBuffer >= 0) {
+          const expected = program.streamOutput.varyings;
+          require(gl.getProgramParameter(program.native, gl.TRANSFORM_FEEDBACK_VARYINGS) === expected.length && gl.getProgramParameter(program.native, gl.TRANSFORM_FEEDBACK_BUFFER_MODE) === gl.INTERLEAVED_ATTRIBS, "shader-reflection-error", "Native capture varying count/mode mismatch.");
+          program.reflection.streamOutput = expected.map((varying, index) => {
+            const actual = gl.getTransformFeedbackVarying(program.native, index);
+            require(actual && actual.name === varying.name && actual.size === 1 && actual.type === [null, gl.UNSIGNED_INT, gl.UNSIGNED_INT_VEC2, gl.UNSIGNED_INT_VEC3, gl.UNSIGNED_INT_VEC4][varying.components], "shader-reflection-error", "Native capture varying type/order mismatch.");
+            return {...varying, nativeType: actual.type, size: actual.size};
+          });
+        }
         for (let index = 0; index < gl.getProgramParameter(program.native, gl.ACTIVE_ATTRIBUTES); index++) {
           const actual = gl.getActiveAttrib(program.native, index), declared = vs.attributes.find((attribute) => attribute.name === actual.name);
           const system = standard ? vs.systemValues.find(value => value.name === actual.name) : null;
@@ -1187,6 +1244,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         throw error;
       }
     }
+    const internalCaptureFragment = sub => {
+      if (sub.captureFragment) return sub.captureFragment;
+      const fields = freeze({stage: 1, stageName: "fragment", text: "FRAG\nDCL OUT[0], COLOR[0]\nIMM[0] FLT32 {0, 0, 0, 0}\n0: MOV OUT[0], IMM[0]\n1: END\n", streamOutputWords: [0]});
+      createObject({id: 0}, sub, {objectType: 4, objectName: "SHADER", fields: {...fields, handle: 0}});
+      const object = sub.names.get(0);sub.names.delete(0);object.public = false;sub.captureFragment = object;return object;
+    };
     const selectedProgram = (sub) => sub.shaders.every(Boolean) ? link(sub, sub.shaders[0], sub.shaders[1]) : null;
     const applyInstanceBase = (program, base) => {
       for (const uniform of program.instanceUniforms) if (uniform.active) gl.uniform1ui(uniform.location, base);
@@ -1206,7 +1269,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         }
         // Each one-instance native call fetches element zero relative to this
         // phase. A positive divisor keeps original vertex indices out of it.
-        gl.vertexAttribDivisor(attribute.location, Math.min(element.instanceDivisor, DRAW_LIMITS.indicesPerSubmission));
+        gl.vertexAttribDivisor(attribute.location, Math.min(element.instanceDivisor, drawLimits.indicesPerSubmission));
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
     };
@@ -1241,6 +1304,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         state = freeze({ blend: sub.blend?.fields ?? null, rasterizer: sub.rasterizer?.fields ?? null, dsa: sub.dsa?.fields ?? null,
           viewport: sub.viewport, scissor: sub.scissor, blendColor: [...sub.blendColor], stencilRef: { ...sub.stencilRef },
           mask: colorMask(sub), ...(multipleColors ? { colorMasks: Array.from({ length: 4 }, (_, slot) => colorMask(sub, slot)) } : {}),
+          originUpperLeft: production && Boolean((sub.surfaces.find(Boolean) ?? sub.depthSurface)?.metadata.flags & 1),
           winsysY: sub.viewport?.scale[1] < 0 ? -1 : 1 });
         stateCache.put(sub, key, state, 512 + 2 * (key.length + JSON.stringify(state).length));
       }
@@ -1303,11 +1367,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const { ctx, sub, program, shaders, banks } = plan;
       require(context(ctx.id) === ctx && ctx.subs.get(sub.id) === sub && ctx.current === sub.id,
         "stale-context", "Draw context or subcontext identity changed.");
-      require(sub.shaders.every((shader, stage) => shader === shaders[stage]) &&
+      require(sub.shaders[0] === shaders[0] && (plan.discard ? sub.captureFragment === shaders[1] : sub.shaders[1] === shaders[1]) &&
         sub.programs.get(program.key) === program && programs.has(program) &&
         samplingFor(sub, shaders[1], shaders[0]).key === program.samplingKey &&
         selectedBlendFold(sub, shaders[1]) === program.blendFold &&
-        (!integers || colorsFor(sub, shaders[1]).key === program.colorKey) &&
+        (!integers || (plan.discard ? "capture-native-float-v1" : colorsFor(sub, shaders[1]).key) === program.colorKey) &&
         inputTypesFor(sub, shaders[0]).key === program.inputKey &&
         sub.constants.every((bank, stage) => bank === banks[stage]),
       "stale-draw", "Draw shader, program or constant-bank identity changed.");
@@ -1346,7 +1410,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     };
     const attachColorSurface = (slot, surface) => {
       const attachment = gl.COLOR_ATTACHMENT0 + slot, storage = surface ? resolve(surface.lease).storage : null;
-      if (surface?.metadata.kind === "dimensional-texture") {
+      if (storage?.renderbuffer) gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, storage.renderbuffer);
+      else if (surface?.metadata.kind === "dimensional-texture") {
         if (surface.metadata.target === 4) gl.framebufferTexture2D(gl.FRAMEBUFFER, attachment,
           gl.TEXTURE_CUBE_MAP_POSITIVE_X + surface.fields.firstLayer, storage.texture, surface.fields.level);
         else gl.framebufferTextureLayer(gl.FRAMEBUFFER, attachment, storage.texture, surface.fields.level, surface.fields.firstLayer);
@@ -1355,7 +1420,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
     const restore = (sub, plan = null, constantAttributes = null) => {
       check(); vertexLayout(sub);
       if (plan) validateDrawPlan(plan);
-      const program = plan ? plan.program : selectedProgram(sub);
+      const program = plan ? plan.program : production ? null : selectedProgram(sub);
       const { key: stateKey, state } = cachedState(sub, program, Boolean(plan));
       const uploads = plan ? plan.uploads : constantUploads(program, sub.constants, false);
       // Shared-exponent refresh executes native helper draws. Complete those
@@ -1376,9 +1441,10 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, null, 0);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.STENCIL_ATTACHMENT, gl.TEXTURE_2D, null, 0);
         if (sub.depthSurface) {
-          const target = sub.depthSurface, texture = resolve(target.lease).storage.texture;
+          const target = sub.depthSurface, storage = resolve(target.lease).storage, texture = storage.texture;
           const attachment = (floatingDepthFormat(target.fields.format)?.stencil || packedDepth && packedDepthFormat(target.fields.format)?.stencil) ? gl.DEPTH_STENCIL_ATTACHMENT : gl.DEPTH_ATTACHMENT;
-          if (dimensionalDepthSurfaces && target.metadata.kind === "dimensional-depth-texture") {
+          if (storage.renderbuffer) gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, storage.renderbuffer);
+          else if (dimensionalDepthSurfaces && target.metadata.kind === "dimensional-depth-texture") {
             if (target.metadata.target === 4) gl.framebufferTexture2D(gl.FRAMEBUFFER, attachment,
               gl.TEXTURE_CUBE_MAP_POSITIVE_X + target.fields.firstLayer, texture, target.fields.level);
             else gl.framebufferTextureLayer(gl.FRAMEBUFFER, attachment, texture, target.fields.level, target.fields.firstLayer);
@@ -1435,7 +1501,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         }
         // No admitted draw has an instance index >= the total-work ceiling.
         // Larger wire divisors therefore have the identical constant-zero fetch.
-        if (standard) gl.vertexAttribDivisor(attribute.location, Math.min(element.instanceDivisor, DRAW_LIMITS.indicesPerSubmission));
+        if (standard) gl.vertexAttribDivisor(attribute.location, Math.min(element.instanceDivisor, drawLimits.indicesPerSubmission));
         gl.enableVertexAttribArray(attribute.location);
       }
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
@@ -1537,9 +1603,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const scissor = state.scissor;
       gl.scissor(scissor?.minX ?? 0, scissor?.minY ?? 0, scissor ? scissor.maxX - scissor.minX : 0, scissor ? scissor.maxY - scissor.minY : 0);
       if (rasterizer?.cullFace === 2) gl.enable(gl.CULL_FACE); else gl.disable(gl.CULL_FACE);
-      // All supported resource flags are zero: pinned lower-left FBOs invert
-      // Gallium front_ccw (vrend_update_frontface_state).
-      gl.cullFace(gl.BACK); gl.frontFace(rasterizer?.frontCcw ? gl.CW : gl.CCW);
+      // Pinned vrend_update_frontface_state inverts Gallium front_ccw only
+      // for a lower-left framebuffer; production also admits Y_0_TOP.
+      gl.cullFace(gl.BACK); gl.frontFace(Boolean(rasterizer?.frontCcw) !== state.originUpperLeft ? gl.CW : gl.CCW);
       const blend = state.blend, target = blend?.renderTargets[0];
       if (blend?.dither) gl.enable(gl.DITHER); else gl.disable(gl.DITHER);
       const enabled = target?.blendEnable === true && !(!multipleColors && integers && integerFormat(sub.surfaces[0]?.metadata.format));
@@ -1564,22 +1630,23 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       check();
       return stateKey;
     };
-    const prepareDraw = (ctx, sub, command, submission, job = null) => {
-      const fields = command.fields;
+    const prepareDraw = (ctx, sub, command, submission, job = null, captureProgram = null, capturePass = false) => {
+      const fields = streamOutput && !command.fields.indexed && command.fields.countFromStreamOutput ? freeze({...command.fields, count: command.fields.countFromStreamOutput, start: 0}) : command.fields;
+      const discard = streamOutput && (capturePass || sub.rasterizer?.fields.rasterizerDiscard === true);
       require(!images || job, "unsupported-draw", "Original image draws require an owned completion job.");
       // VirGL1.3 uses zero to select an ordinary draw, still with one instance.
       const instances = standard ? Math.max(1, fields.instanceCount) : 1;
-      require(fields.count > 0 && (fields.indexed ? fields.start === 0 : fields.start <= 0x7fffffff - fields.count),
-        "unsupported-draw", "Draws must be nonempty; indexed start must be zero and array ranges must fit signed GL integers.");
+      require(fields.count > 0 && (fields.indexed ? production || fields.start === 0 : fields.start <= 0x7fffffff - fields.count),
+        "unsupported-draw", "Draws must be nonempty; private indexed starts must be zero and array ranges must fit signed GL integers.");
       require(submission.draws.length < drawLimits.drawsPerSubmission && fields.count <= Math.floor((drawLimits.indicesPerSubmission - submission.indices) / instances),
         "limit-exceeded", "Submission draw or index budget exceeded.");
-      require(sub.shaders.every(Boolean), "incomplete-draw", "Drawing requires both shader stages.");
+      require(sub.shaders[0] && (discard || sub.shaders[1]), "incomplete-draw", "Drawing requires the selected shader stages.");
       const primarySurface = multipleColors ? sub.surfaces.find(Boolean) : sub.surfaces[0];
-      require(primarySurface && sub.viewport && sub.vertexElements && (!fields.indexed || sub.indexBuffer),
+      require((discard || primarySurface) && (discard || sub.viewport) && sub.vertexElements && (!fields.indexed || sub.indexBuffer),
         "incomplete-draw", "Drawing requires a surface, viewport, vertex elements and any indexed draw's index buffer.");
-      require(!sub.dsa?.fields.depthEnable || sub.depthSurface, "incomplete-draw", "Active depth testing requires a depth attachment.");
+      require(discard || !sub.dsa?.fields.depthEnable || sub.depthSurface, "incomplete-draw", "Active depth testing requires a depth attachment.");
       let stencilLowering = null;
-      if (stencil) {
+      if (stencil && !discard) {
         const state = stencilState(sub), format = sub.depthSurface?.fields.format;
         const present = floatingDepthFormat(format)?.stencil || packedDepthFormat(format)?.stencil;
         if (state.enabled && present) {
@@ -1596,7 +1663,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           }
         }
       }
-      const banks = Object.freeze([...sub.constants]), shaders = Object.freeze([...sub.shaders]);
+      const banks = Object.freeze([...sub.constants]), shaders = Object.freeze([sub.shaders[0], discard ? internalCaptureFragment(sub) : sub.shaders[1]]);
       // Presence and numeric authority apply to the complete declared prefix,
       // even if reflection prunes it. Reject before linking or any draw allocation.
       const approvedBanks = Object.freeze(shaders.map((shader, stage) => shader.constantExactDomain ?
@@ -1606,14 +1673,14 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         unwrap(checkRadialBank(banks[stage], shader.constantRadialDomain.count, shader.constantConstraint !== null)) : shader.constantAccess ?
         unwrap(shader.constantConstraint ? checkLoopBank(banks[stage], shader.constantConstraint.count) :
           checkIndirectBank(banks[stage], shader.constantAccess.count, shader.constantDomain !== null)) : null));
-      const program = selectedProgram(sub), surface = resolve(primarySurface.lease);
+      const program = captureProgram ?? (discard ? link(sub, shaders[0], shaders[1]) : selectedProgram(sub)), surface = primarySurface ? resolve(primarySurface.lease) : null;
       const uploads = constantUploads(program, banks, true, approvedBanks);
       for (const sampler of program.samplers) {
         const view = sub.views[sampler.stage][sampler.index], state = sub.samplers[sampler.stage][sampler.index];
         require(view && state, "incomplete-draw", "Drawing requires an active sampler view and sampler state.");
         if (dimensionalViews) require(view.fields.target === dimensionalSamplerTarget(sampler.type, dimensionalShadows) &&
-          (view.fields.target === 2 || view.metadata.kind === "dimensional-texture" && view.metadata.format === 67 &&
-            ["sampler3D", "samplerCube", "sampler2DArray"].includes(sampler.type) || dimensionalDepthViews &&
+          (view.fields.target === 2 || view.metadata.kind === "dimensional-texture" && (view.metadata.format === 67 || production) &&
+            (production ? /^(?:i|u)?sampler(?:3D|Cube|2DArray)$/.test(sampler.type) : ["sampler3D", "samplerCube", "sampler2DArray"].includes(sampler.type)) || dimensionalDepthViews &&
             view.metadata.kind === "dimensional-depth-texture" && [4, 7].includes(view.fields.target) && depthFormat(view.fields.format) &&
             ["samplerCube", "sampler2DArray", ...(dimensionalShadows ? ["samplerCubeShadow", "sampler2DArrayShadow"] : [])].includes(sampler.type)),
         "incompatible-resource", "Native dimensional sampler has no compatible original retained view.");
@@ -1666,10 +1733,132 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           throw error;
         }
       }
+      let capturePlans = [];
+      if (streamOutput && !capturePass && sub.streamTuple) {
+        const metadata = sub.shaders[0].translation.metadata.streamOutput;
+        const used = [...new Set(metadata.outputs.map(output => output.outputBuffer))];
+        const targets = sub.streamTuple.targets;
+        require(used.every(buffer => targets[buffer]), "incomplete-draw", "Original capture layout needs each bound output target.");
+        const targetBuffers = used.map(buffer => resolve(targets[buffer].lease).storage.buffer);
+        require(new Set(targetBuffers).size === targetBuffers.length, "feedback-conflict", "Original output slots cannot alias buffer storage.");
+        const inputs = [...sub.vertexBuffers.filter(Boolean), ...(sub.indexBuffer ? [sub.indexBuffer] : []), ...sub.uniformBuffers.flat().filter(Boolean)];
+        require(inputs.every(input => !targetBuffers.includes(resolve(input.lease).storage.buffer)), "feedback-conflict", "Active feedback storage also supplies a draw input.");
+        for (const buffer of used) {
+          const capture = link(sub, sub.shaders[0], internalCaptureFragment(sub), buffer);
+          capturePlans.push(prepareDraw(ctx, sub, command, submission, job, capture, true));
+        }
+      }
+      // Capture-only attributes can survive native pruning. Include them in the
+      // common fenced constant-attribute batch, while each program keeps its own locations.
+      const allConstants = [...new Map([...constants, ...capturePlans.flatMap(plan => plan.constants)].map(value => [value.attribute.index, value])).values()];
       return Object.freeze({ ctx, sub, command, fields, instances, vertexWork: fields.count * instances,
+        ...(streamOutput ? {discard, capturePass, capturePlans, streamTuple: sub.streamTuple} : {}),
         ...(orderedStencil ? { stencilLowering } : {}),
         surface, ...(multipleColors ? { primarySurface } : {}), attributes, constants, index, indexStorage, indexOffset, indexSize, indexByteLength,
-        program, shaders, banks, uploads, ...(uniform ? { uniformBanks, uniformRanges: Object.freeze(uniformRanges) } : {}) });
+        program, shaders, banks, uploads, ...(streamOutput && !capturePass ? {constants: allConstants} : {}), ...(uniform ? { uniformBanks, uniformRanges: Object.freeze(uniformRanges) } : {}) });
+    };
+    const captureOriginal = (plan, bytes, constantAttributes, job) => {
+      const {sub, fields, instances, streamTuple: tuple} = plan;
+      require(tuple.failed !== true, "stale-capture", "A failed native capture tuple requires replacement or reset.");
+      const primitiveSize = fields.mode === 0 ? 1 : fields.mode <= 3 ? 2 : 3;
+      const values = fields.indexed ? (() => {
+        const data = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        return Array.from({length: fields.count}, (_, i) => plan.indexSize === 1 ? data.getUint8(i) : plan.indexSize === 2 ? data.getUint16(i * 2, true) : data.getUint32(i * 4, true));
+      })() : Array.from({length: fields.count}, (_, i) => fields.start + i);
+      const primitives = [];
+      let segment = [];
+      const flush = () => {
+        if (fields.mode === 0) for (const value of segment) primitives.push([value]);
+        else if (fields.mode === 1) for (let i = 1; i < segment.length; i += 2) primitives.push([segment[i - 1], segment[i]]);
+        else if (fields.mode <= 3) {
+          for (let i = 1; i < segment.length; i++) primitives.push([segment[i - 1], segment[i]]);
+          if (fields.mode === 2 && segment.length >= 2) primitives.push([segment.at(-1), segment[0]]);
+        } else if (fields.mode === 4) for (let i = 2; i < segment.length; i += 3) primitives.push(segment.slice(i - 2, i + 1));
+        else if (fields.mode === 5) for (let i = 2; i < segment.length; i++) primitives.push(i % 2 ? [segment[i - 1], segment[i - 2], segment[i]] : [segment[i - 2], segment[i - 1], segment[i]]);
+        else for (let i = 2; i < segment.length; i++) primitives.push([segment[0], segment[i - 1], segment[i]]);
+        segment = [];
+      };
+      for (const value of values) {if (fields.indexed && fields.primitiveRestart && value === fields.restartIndex) flush();else segment.push(value);}flush();
+      require(primitives.length * primitiveSize <= fields.count * 3, "limit-exceeded", "Capture primitive work exceeds the original source ceiling.");
+      let capacity = primitives.length * primitiveSize * instances;
+      for (const capture of plan.capturePlans) {
+        const metadata = capture.program.streamOutput, buffer = metadata.captureBuffer, target = tuple.targets[buffer], stride = metadata.strides[buffer] * 4;
+        require(stride > 0 && tuple.cursors[buffer] <= target.fields.bufferSize, "out-of-bounds", "Original capture cursor exceeds its retained target.");
+        capacity = Math.min(capacity, Math.floor((target.fields.bufferSize - tuple.cursors[buffer]) / stride));
+      }
+      const capturedPrimitives = Math.min(primitives.length * instances, Math.floor(capacity / primitiveSize));
+      const vertexIds = primitives.flat(), vertices = capturedPrimitives * primitiveSize;
+      const captures = [];
+      // Bound every allocation and native operation before capture begins. The
+      // original submission ceiling bounds expansion to three vertices/source.
+      require(vertices <= fields.count * instances * 3 && job.streamCalls + vertices * plan.capturePlans.length <= drawLimits.indicesPerSubmission * 12,
+        "limit-exceeded", "Native stream-output work exceeds the submission ceiling.");
+      for (const capture of plan.capturePlans) {
+        const metadata = capture.program.streamOutput, buffer = metadata.captureBuffer, target = tuple.targets[buffer];
+        const copies = vertices * metadata.varyings.length;
+        require(job.streamCopies + copies <= drawLimits.indicesPerSubmission * 384, "limit-exceeded", "Native capture scatter exceeds its bounded work.");
+        job.streamCopies += copies;
+        if (!vertices) continue;
+        const packed = unwrap(captureAccess.allocatePacked(vertices * metadata.packedStrideBytes));job.streamAllocations.push(packed.token);
+        const feedback = gl.createTransformFeedback();require(feedback, "backend-error", "Native feedback allocation failed.");job.streamFeedbacks.push(feedback);
+        captures.push({capture, metadata, target, buffer, packed, feedback, cursor: tuple.cursors[buffer]});
+      }
+      if (captures.length) tuple.failed = true;
+      for (const [captureIndex, entry] of captures.entries()) {
+        const {capture, metadata, target, buffer, packed, feedback, cursor} = entry;
+        const owned = resolve(target.lease);
+        if (!job.streamHolds.has(target.generation)) {objectRef(sub, null, target);job.streamHolds.set(target.generation, {sub, object: target});}
+        for (const sampler of capture.program.samplers) {
+          const token = sub.views[sampler.stage][sampler.index].imageRange;
+          if (!job.imageHolds.has(token)) job.imageHolds.set(token, unwrap(imageAccess.hold(token)).token);
+        }
+        restore(sub, capture, constantAttributes);
+        for (const range of capture.uniformRanges) {
+          unwrap(uniformAccess.validate(range.token));unwrap(uniformAccess.submit(range.token));job.pendingUniformRanges.delete(range.token);
+          if (job.uniformHolds.has(range.generation)) unwrap(uniformAccess.release(range.token));else job.uniformHolds.set(range.generation, range.token);
+        }
+        // The internal C-compiled fragment has no guest effects. A complete
+        // default framebuffer avoids guest integer-output compatibility rules.
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);gl.drawBuffers([gl.BACK]);gl.readBuffer(gl.BACK);gl.enable(gl.RASTERIZER_DISCARD);
+        gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, feedback);gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, packed.storage.buffer);gl.bindBuffer(gl.TRANSFORM_FEEDBACK_BUFFER, null);check();
+        let active = false, out = 0;
+        const runCapture = () => { try {
+          gl.beginTransformFeedback(gl.POINTS);active = true;check();
+          for (let instance = 0; out < vertices && instance < instances; instance++) {
+            applyInstanceBase(capture.program, instance);applyInstanceAttributes(capture, instance);check();
+            for (let i = 0; i < vertexIds.length && out < vertices;) {
+              let count = 1;
+              while (i + count < vertexIds.length && out + count < vertices && vertexIds[i + count] === vertexIds[i] + count) count++;
+              gl.drawArrays(gl.POINTS, vertexIds[i], count);job.streamCalls++;check();i += count;out += count;
+            }
+          }
+          gl.endTransformFeedback();active = false;check();
+        } finally {
+          if (active && !gl.isContextLost()) gl.endTransformFeedback();
+          gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, null);gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null);gl.bindBuffer(gl.TRANSFORM_FEEDBACK_BUFFER, null);
+          gl.disable(gl.RASTERIZER_DISCARD);
+        } };
+        // Each physical pass captures POINTS. Measure only the first output
+        // buffer and normalize that draw by its own original primitive size.
+        if (production && captureIndex === 0) booleanQueries.measureFeedback(sub, primitiveSize, runCapture); else runCapture();
+        // Invalidate readers before any partial native write. A failed scatter
+        // drains with this job and never presents old contents as current.
+        unwrap(captureAccess.markWritten(target.lease));
+        gl.bindBuffer(gl.COPY_READ_BUFFER, packed.storage.buffer);gl.bindBuffer(gl.COPY_WRITE_BUFFER, owned.storage.buffer);
+        try {
+          for (let vertex = 0; vertex < vertices; vertex++) for (const varying of metadata.varyings) {
+            const output = metadata.outputs[varying.outputIndex];
+            gl.copyBufferSubData(gl.COPY_READ_BUFFER, gl.COPY_WRITE_BUFFER, vertex * metadata.packedStrideBytes + varying.packedOffset,
+              target.fields.bufferOffset + cursor + vertex * metadata.strides[buffer] * 4 + output.destinationOffset * 4, varying.components * 4);check();
+          }
+        } finally {gl.bindBuffer(gl.COPY_READ_BUFFER, null);gl.bindBuffer(gl.COPY_WRITE_BUFFER, null);}
+        tuple.cursors[buffer] += vertices * metadata.strides[buffer] * 4;
+        entry.record = {buffer, targetGeneration: target.generation, resourceGeneration: target.resourceGeneration, offset: target.fields.bufferOffset,
+          cursorBefore: cursor, cursorAfter: tuple.cursors[buffer], vertices, packedStrideBytes: metadata.packedStrideBytes, varyingReflection: capture.program.reflection.streamOutput};
+      }
+      tuple.failed = false;
+      return {tuple: tuple.key, primitiveSize, requestedPrimitives: primitives.length * instances, capturedPrimitives, overflow: capturedPrimitives < primitives.length * instances,
+        captures: captures.map(entry => entry.record), nativeCalls: job.streamCalls, scatterCalls: job.streamCopies};
     };
     const issueDraw = (plan, bytes, submission, constantAttributes = null, job = null) => {
       const { ctx, sub, command, fields, instances, vertexWork, surface, attributes, indexStorage, indexOffset, indexSize, indexByteLength } = plan;
@@ -1695,7 +1884,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       if (empty) { actualMinIndex = null; actualMaxIndex = null; }
       require(!standard || empty || actualMaxIndex <= maxElementIndex,
         "unsupported-draw", "Actual vertex index exceeds the native maximum element index.");
-      const vertexFetches = attributes.map(({ attribute, element, buffer }) => {
+      for (const candidate of [plan, ...(plan.capturePlans ?? [])]) validateDrawPlan(candidate);
+      require(!streamOutput || !plan.capturePlans.length || empty || actualMaxIndex <= 0x7fffffff, "unsupported-draw", "Original feedback vertex identity exceeds legal native array capture indices.");
+      const vertexFetches = [...attributes, ...(plan.capturePlans ?? []).flatMap(candidate => candidate.attributes)].map(({ attribute, element, buffer }) => {
         const offset = buffer.fields.offset + element.sourceOffset, stride = buffer.fields.stride;
         const format = vertexFormat(element.sourceFormat), elementBytes = format.elementBytes;
         const divisor = element.instanceDivisor;
@@ -1713,14 +1904,21 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           ...(standard ? { sourceFormat: element.sourceFormat, elementBytes,
             nativeType: packedSignedArray ? gl.UNSIGNED_INT_2_10_10_10_REV : gl[format.type], normalized: format.normalized && !packedSignedArray,
             ...(format.integer ? { nativeIntegerInput: true } : {}),
-            divisor, nativeDivisor: constant ? 0 : Math.min(divisor, DRAW_LIMITS.indicesPerSubmission), firstElement: first, lastElement: last,
+            divisor, nativeDivisor: constant ? 0 : Math.min(divisor, drawLimits.indicesPerSubmission), firstElement: first, lastElement: last,
             ...(empty ? { fetchEmpty: true } : {}),
             ...(constant ? { constant: true, componentWords: constantAttributes.get(attribute.index).words,
               genericValues: [...constantAttributes.get(attribute.index).values] } : {}) } : {}) };
       });
       // readStorage changes copy/pixel bindings. Restore every supported binding
       // after its synchronous GPU read, immediately before issuing the real draw.
+      let captured = null;
+      if (streamOutput && plan.capturePlans.length) {
+        try { captured = captureOriginal(plan, bytes, constantAttributes, job); }
+        catch (error) { if (production) booleanQueries.invalidateFeedback(sub); throw error; }
+      }
       const stateKey = restore(sub, plan, constantAttributes);
+      if (plan.discard && !surface) {gl.bindFramebuffer(gl.FRAMEBUFFER, null);gl.drawBuffers([gl.BACK]);gl.readBuffer(gl.BACK);}
+      if (plan.discard) gl.enable(gl.RASTERIZER_DISCARD);
       const splitStencil = plan.stencilLowering === "triangles";
       const assembled = splitStencil || assemblyLists && [2, 6].includes(fields.mode);
       const nativeMode = splitStencil ? 4 : assembled ? fields.mode === 2 ? 1 : 4 : fields.mode;
@@ -1827,7 +2025,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             else job.uniformHolds.set(range.generation, range.token);
           }
         }
-        if (splitStencil) {
+        const raster = () => { if (splitStencil) {
           for (let instance = 0; nativeCount > 0 && instance < instances; instance++) {
             if (instanceBase) {
               applyInstanceBase(plan.program, instance); applyInstanceAttributes(plan, instance); check();
@@ -1846,7 +2044,8 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           if (plan.stencilLowering === "front") { applyStencil(sub, 0); check(); }
           if (instances > 1) gl.drawArraysInstanced(mode, fields.start, fields.count, instances);
           else gl.drawArrays(mode, fields.start, fields.count);
-        }
+        } };
+        if (production) booleanQueries.measure(sub, raster); else raster();
       } finally {
         if (instanceBase && splitStencil) {
           applyInstanceBase(plan.program, 0); applyInstanceAttributes(plan, 0);
@@ -1869,6 +2068,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       submission.indices += vertexWork;
       submission.draws.push({ byteOffset: command.byteOffset, opcode: 8, count: fields.count, indexed: fields.indexed, mode: fields.mode, start: fields.start,
         indexOffset, indexByteLength, actualMinIndex, actualMaxIndex,
+        ...(streamOutput ? {streamOutput: captured, rasterizerDiscard: plan.discard, countFromStreamOutput: command.fields.countFromStreamOutput} : {}),
         ...(standard ? { instanceCount: fields.instanceCount, effectiveInstances: instances, vertexWork, indexSize,
           primitiveRestart: fields.primitiveRestart, restartIndex: fields.restartIndex, validIndexCount, restartCount,
           normalizedIndices: normalize, nativeIndexSize, nativeIndexOffset, normalizedIndexBytes: normalize ? nativeCount * 4 : 0,
@@ -1876,7 +2076,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           ...(orderedStencil ? { stencilLowering: plan.stencilLowering, nativeDrawCalls } : {}) } : {}),
         contextId: ctx.id, contextGeneration: ctx.generation, subContextId: sub.id, subContextGeneration: sub.generation,
         indexResourceId: indexStorage?.metadata.id ?? null, indexResourceGeneration: indexStorage?.generation ?? null,
-        vertexFetches, framebuffer: { resourceId: surface.metadata.id, resourceGeneration: surface.generation,
+        vertexFetches, framebuffer: surface ? { resourceId: surface.metadata.id, resourceGeneration: surface.generation,
           width: images ? (plan.primarySurface ?? sub.surfaces[0]).dimensions.width : surface.metadata.width, height: images ? (plan.primarySurface ?? sub.surfaces[0]).dimensions.height : surface.metadata.height,
           ...(images ? { level: (plan.primarySurface ?? sub.surfaces[0]).fields.level } : {}),
           ...(dimensionalColorSurfaces ? { target: plan.primarySurface.metadata.target, layer: plan.primarySurface.fields.firstLayer } : {}),
@@ -1887,7 +2087,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
               ...(dimensionalColorSurfaces ? { target: target.metadata.target, layer: target.fields.firstLayer } : {}) } : null;
           }) } : {}),
           depthResourceId: sub.depthSurface?.metadata.id ?? null, depthResourceGeneration: sub.depthSurface?.resourceGeneration ?? null,
-          ...(dimensionalDepthSurfaces && sub.depthSurface ? { depth: { target: sub.depthSurface.metadata.target, format: sub.depthSurface.fields.format, level: sub.depthSurface.fields.level, layer: sub.depthSurface.fields.firstLayer, width: sub.depthSurface.dimensions.width, height: sub.depthSurface.dimensions.height } } : {}) },
+          ...(dimensionalDepthSurfaces && sub.depthSurface ? { depth: { target: sub.depthSurface.metadata.target, format: sub.depthSurface.fields.format, level: sub.depthSurface.fields.level, layer: sub.depthSurface.fields.firstLayer, width: sub.depthSurface.dimensions.width, height: sub.depthSurface.dimensions.height } } : {}) } : null,
         vertexShader: ref(sub.shaders[0]), fragmentShader: ref(sub.shaders[1]),
         ...(uniform ? { bufferZeroMask: plan.program.bufferZeroMask, uniformRanges: plan.uniformRanges.map(range => ({
           stage: range.block.stage, slot: range.block.slot, binding: range.block.binding,
@@ -1921,6 +2121,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           break;
         }
         case 3: destroyObject(sub, lookup(sub, fields.handle, command.objectType)); break;
+        case 19: booleanQueries.begin(sub, lookup(sub, fields.handle, 9)); break;
+        case 20: booleanQueries.end(sub, lookup(sub, fields.handle, 9)); break;
+        case 21: booleanQueries.get(lookup(sub, fields.handle, 9)); break;
         case 4: {
           if (fields.viewports.length === 0) break;
           const viewport = fields.viewports[0], { scale, translate } = viewport;
@@ -1938,11 +2141,14 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             resolve(depthSurface.lease);
           }
           for (const surface of surfaces) if (surface) {
-            require(images ? (["texture", "mip-texture"].includes(surface.metadata.kind) || dimensionalColorSurfaces && surface.metadata.kind === "dimensional-texture" && surface.metadata.format === 67) : surface.metadata.kind === "texture", "incompatible-resource", "A depth surface cannot be a color attachment.");
+            require(images ? (["texture", "mip-texture"].includes(surface.metadata.kind) || dimensionalColorSurfaces && surface.metadata.kind === "dimensional-texture" && (surface.metadata.format === 67 || production)) : surface.metadata.kind === "texture", "incompatible-resource", "A depth surface cannot be a color attachment.");
             resolve(surface.lease);
             require(!depthSurface || ((images ? surface.dimensions.width : surface.metadata.width) === (floatingDepth ? depthSurface.dimensions?.width ?? depthSurface.metadata.width : depthSurface.metadata.width) && (images ? surface.dimensions.height : surface.metadata.height) === (floatingDepth ? depthSurface.dimensions?.height ?? depthSurface.metadata.height : depthSurface.metadata.height)),
               "incompatible-resource", "Color and depth attachment dimensions differ.");
           }
+          const attachments = [...surfaces,depthSurface].filter(Boolean);
+          require(attachments.every(target => target.metadata.nrSamples === attachments[0].metadata.nrSamples),
+            "incompatible-resource", "Framebuffer attachment sample counts differ.");
           for (let index = 0; index < Math.max(sub.surfaces.length, surfaces.length); index++) objectRef(sub, sub.surfaces[index], surfaces[index]);
           sub.depthSurface = objectRef(sub, sub.depthSurface, depthSurface);
           sub.surfaces = surfaces; break;
@@ -1960,6 +2166,26 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           } catch (error) { for (const buffer of buffers) if (buffer) release(buffer.lease); throw error; }
           for (const buffer of sub.vertexBuffers) if (buffer) release(buffer.lease);
           sub.vertexBuffers = buffers; break;
+        }
+        case 16: case 17: {
+          require(production && job, "unsupported-blit", "Image copies require a retained production job.");
+          let source = null, destination = null;
+          const copying = op === 17, role = !copying && fields.mask & 48 ? "depth-surface" : "surface";
+          try {
+            source = retain(ctx,fields.source.resourceHandle,role,["texture","mip-texture","depth-texture","mip-depth-texture"]);
+            destination = retain(ctx,fields.destination.resourceHandle,role,["texture","mip-texture","depth-texture","mip-depth-texture"]);
+            require(!copying || source.metadata.nrSamples === 0 && destination.metadata.nrSamples === 0 &&
+              [1, 67].includes(source.metadata.format) && source.metadata.format === destination.metadata.format,
+              "unsupported-blit", "Resource copies require matching single-sample RGBA8 or BGRA8 images.");
+            const blit = copying ? {mask: 15, filter: 0, scissor: null,
+              source: {...fields.source, format: source.metadata.format},
+              destination: {...fields.destination, format: destination.metadata.format}} : fields;
+            for (const entry of [source,destination]) if (!job.imageSources.has(entry.resourceGeneration)) {
+              const held = unwrap(imageAccess.holdStorage(entry.lease));job.imageSources.set(held.generation,held.token);
+            }
+            executeFramebufferBlit(gl,blit,resolve(source.lease),resolve(destination.lease),require,check);
+            unwrap(imageAccess.markWritten(destination.lease));return;
+          } finally {if (source) release(source.lease);if (destination) release(destination.lease);}
         }
         case 7: {
           require(!images || job, "unsupported-clear", "Original image clears require an owned completion job.");
@@ -2046,6 +2272,18 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         case 13: sub.stencilRef = fields; break;
         case 14: sub.blendColor = fields.color; break;
         case 15: if (fields.scissors.length) sub.scissor = fields.scissors[0]; break;
+        case 25: {
+          if (!streamOutput) break;
+          const targets = fields.handles.map(handle => lookup(sub, handle, 10, true));
+          if (!targets.some(Boolean)) {sub.streamTuple = null;break;}
+          const key = targets.map(target => target?.generation ?? 0).join(":");
+          let tuple = sub.streamTuples.get(key);
+          if (!tuple) {
+            require(sub.streamTuples.size < limits.objects, "limit-exceeded", "Retained output tuple budget exceeded.");
+            tuple = {key, targets: targets.map(target => objectRef(sub, null, target)), cursors: [0, 0, 0, 0]};sub.streamTuples.set(key, tuple);
+          }
+          sub.streamTuple = tuple;sub.resets.streamOutputAppendBitmask = fields.appendBitmask;break;
+        }
         case 27: {
           require(uniform, "unsupported-command", "Uniform bindings require explicit host selection.");
           if (fields.stage > 1 || fields.index > 12) { sub.resets[`${command.name}:${fields.stage}:${fields.index}`] = fields; break; }
@@ -2075,7 +2313,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
           const shader = lookup(sub, fields.handle, 4, true);
           require(!shader || shader.fields.stage === fields.stage, "wrong-shader-stage", "Shader stage and binding disagree.");
           const candidate = [...sub.shaders]; candidate[fields.stage] = shader;
-          if (candidate.every(Boolean)) link(sub, candidate[0], candidate[1]);
+          if (!production && candidate.every(Boolean)) link(sub, candidate[0], candidate[1]);
           sub.shaders[fields.stage] = objectRef(sub, sub.shaders[fields.stage], shader); break;
         }
         case 38: sub.defaults = fields; break;
@@ -2098,7 +2336,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         vertexBuffers: sub.vertexBuffers.map((buffer) => buffer ? { ...buffer.fields, resourceGeneration: buffer.resourceGeneration } : null),
         indexBuffer: sub.indexBuffer ? { ...sub.indexBuffer.fields, resourceGeneration: sub.indexBuffer.resourceGeneration } : null,
         samplerViews: sub.views.map((slots) => slots.map(ref)), samplerStates: sub.samplers.map((slots) => slots.map(ref)),
-        constants: sub.constants.map((words) => [...words]),
+        constants: sub.constants.map((words) => [...words]), ...(streamOutput ? {streamOutput: sub.streamTuple ? {key: sub.streamTuple.key, targets: sub.streamTuple.targets.map(ref), cursors: [...sub.streamTuple.cursors]} : null} : {}),
         ...(uniform ? { uniformBuffers: sub.uniformBuffers.map(entries => entries.map(bank => bank ?
           { ...bank.fields, resourceGeneration: bank.resourceGeneration } : null)) } : {}), viewport: sub.viewport, scissor: sub.scissor, blendColor: [...sub.blendColor],
         stencilRef: { ...sub.stencilRef }, framebufferDefaults: { ...sub.defaults } },
@@ -2123,6 +2361,12 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       if (!uniform) return;
       for (const token of job.uniformHolds.values()) unwrap(uniformAccess.release(token));
       job.uniformHolds.clear();
+    };
+    const releaseCaptures = job => {
+      if (!streamOutput) return;
+      for (const token of job.streamAllocations) unwrap(captureAccess.release(token));job.streamAllocations.length = 0;
+      for (const feedback of job.streamFeedbacks) gl.deleteTransformFeedback(feedback);job.streamFeedbacks.length = 0;
+      for (const {sub, object} of job.streamHolds.values()) objectRef(sub, object, null);job.streamHolds.clear();
     };
     const releaseNormalizedIndices = (job) => {
       for (const buffer of job.normalizedIndices) gl.deleteBuffer(buffer);
@@ -2165,8 +2409,9 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       job.imageHolds.clear(); job.imageSources.clear();
     };
     const finishJob = (job, gpuComplete) => {
+      if (production && gpuComplete && !job.error) booleanQueries.pollPending();
       releaseJobAccess(job);
-      releaseNormalizedIndices(job); releaseUniformHolds(job); releaseImageHolds(job);
+      releaseNormalizedIndices(job); releaseUniformHolds(job); releaseImageHolds(job); releaseCaptures(job);
       if (job.sync) { gl.deleteSync(job.sync); job.sync = null; }
       activeJob = null;
       const extra = { appliedCommands: job.index, draws: job.submission.draws, gpuComplete };
@@ -2201,6 +2446,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
       const job = getJob(token);
       let polling = false;
       try {
+        if (production && !job.error && !gl.isContextLost()) booleanQueries.pollPending();
         if (job.phase === "cancelling" || job.phase === "retiring") {
           if (job.pending?.readStarted) {
             polling = true;
@@ -2350,6 +2596,11 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         alive(); idle(); programCache.clear(); translationCache.clear(); stateCache.clear();
         activeFrame = null; lastFrame = null; debugBytes = 0; return success();
       }); },
+      ...(production ? {checkpointQueryState() { return result(() => {
+        alive(); idle();const state=booleanQueries.checkpointState();
+        require(state.every(q=>!q.requested && q.nativeParts===0 && q.state!=='active' && q.state!=='ended'),
+          'busy','Checkpoint requires drained original queries.');return success({queries:state});
+      }); }} : {}),
       beginFrame(number) { return result(() => {
         alive(); idle(); require(Number.isSafeInteger(number) && number >= 0 && number > lastFrameNumber, "invalid-frame", "Host frame numbers must be increasing safe integers.");
         require(activeFrame === null, "busy", "A host frame capture is active.");
@@ -2386,6 +2637,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
               ...(images ? { imageHolds: activeJob?.imageHolds.size ?? 0, imageSources: activeJob?.imageSources.size ?? 0 } : {}),
             ...(uniform ? { uniformPending: activeJob?.pendingUniformRanges.size ?? 0, uniformHolds: activeJob?.uniformHolds.size ?? 0 } : {}) } : {}) } } : {}),
           budgets: { contexts: contexts.size, subContexts: subCount, objects: objects.size, programs: programs.size,
+            ...(production ? {queries: booleanQueries.inspect()} : {}),
             shaders: [...objects].filter((o) => o.type === 4).length, samplers: [...objects].filter((o) => o.type === 7).length,
             leases: leaseCount, shaderBytes, uniformBytes,
             cacheBytes: translationCache.inspect().bytes + programCache.inspect().bytes + stateCache.inspect().bytes, debugBytes },
@@ -2397,7 +2649,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
         if (activeJob) {
           recordOutcome(activeJob.sequence, failure(new StateFault("cancelled", "Renderer disposed."), {
             appliedCommands: activeJob.index, draws: activeJob.submission.draws, gpuComplete: false }));
-          work.failedSubmissions++; releaseJobAccess(activeJob); releaseNormalizedIndices(activeJob); releaseUniformHolds(activeJob); releaseImageHolds(activeJob);
+          work.failedSubmissions++; releaseJobAccess(activeJob); releaseNormalizedIndices(activeJob); releaseUniformHolds(activeJob); releaseImageHolds(activeJob); releaseCaptures(activeJob);
           if (activeJob.sync) gl.deleteSync(activeJob.sync); activeJob = null;
         }
         for (const ctx of contexts.values()) for (const sub of ctx.subs.values()) disposeSub(sub);
@@ -2428,7 +2680,7 @@ function createRenderer(options, drawing, asynchronous = false, standard = false
             activeJob = { token, ctx, sequence, commands: decoded.commands, byteLength: decoded.byteLength, index: 0,
               command: null, submission: { draws: [], indices: 0 }, phase: "ready", pending: null, request: null,
               error: null, serial: 0, completedSerial: -1, hadFence: false, sync: null,
-              normalizedIndices: [], normalizedBytes: 0, normalizationScratchBytes: 0,
+              normalizedIndices: [], normalizedBytes: 0, normalizationScratchBytes: 0, ...(streamOutput ? {streamAllocations: [], streamFeedbacks: [], streamHolds: new Map(), streamCalls: 0, streamCopies: 0} : {}),
               ...(uniform ? { pendingUniformRanges: new Set(), uniformHolds: new Map() } : {}), ...(images ? { imageHolds: new Map(), imageSources: new Map() } : {}) };
             return success({ job: token, profile, byteLength: decoded.byteLength, commandCount: decoded.commands.length });
             } catch (error) {

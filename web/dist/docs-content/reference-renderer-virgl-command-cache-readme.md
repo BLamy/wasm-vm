@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/cache-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "9ffbd3cc25b9a18fcc6f5f94330e779226ed4cea59092afc64b6d0317e08739c"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Bounded renderer reuse
 
 {% hint style="info" %}

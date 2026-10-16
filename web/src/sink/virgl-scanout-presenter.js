@@ -85,10 +85,13 @@ export function createVirglScanoutPresenter(options) {
       finally { busy = false; }
     };
     const presenter = {
-      rebind: operation((next) => {
+      rebind: operation((next,preserveDisplay = false) => {
         generation(next); need(next > bindingGeneration, 'Binding generation must advance.');
-        // Clear retained recovery pixels before publishing the new binding.
-        controller.clear(); cancelScheduled();
+        need(typeof preserveDisplay === 'boolean','Display preservation must be explicit.');
+        // Revoke recovery/queued pixels before publishing a new generation. A
+        // production page flip retains its visible front buffer until replaced.
+        if (preserveDisplay) controller.invalidate(); else controller.clear();
+        cancelScheduled();
         const old = pending; pending = null; bindingGeneration = next;
         if (old) settle(old, 'cancelled');
         return ok();

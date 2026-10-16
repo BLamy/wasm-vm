@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "709c9cc19a9a4a7a2ede6bfd4dc73dc75288b126adba1189126249a957adc54f"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Bounded VirGL command decoder
 
 {% hint style="info" %}

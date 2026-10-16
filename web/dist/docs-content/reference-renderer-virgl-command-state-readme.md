@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "renderer/virgl-command/state-README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "7da36fe02d8588822932e6e86cd6b2fb1e34a56004a9cb475fb4df3d0a7e3d82"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Bounded VirGL objects and state
 
 {% hint style="info" %}

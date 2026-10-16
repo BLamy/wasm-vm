@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/desktop-boot-order.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "0168200fe1e9918b53a2c7b814ea36821ecb5bf5dd8bcc93101122324edeaef5"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Desktop boot-order proof
 
 {% hint style="info" %}

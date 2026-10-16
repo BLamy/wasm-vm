@@ -1,0 +1,9 @@
+{
+  "status": "HELD every member reopened; VERDICT refuted D72 stock-input acceptance",
+  "archive": "independent-wall-policy-stock-repeat-refutation.tar.gz",
+  "bytes": 464612,
+  "sha256": "cc05a41cc85fc77f6a195b9c6086b7d7095fa04e7e82b8960ec6bf044cd24e26",
+  "pairedIdentities": 99,
+  "reopenedMembers": 100,
+  "scope": "Fresh independent D72 stock-input refutation, predictions, coverage and unchanged component holds; no exclusive cause/parent/recovery/deployment verdict."
+}

@@ -1,103 +1,64 @@
-# Browser timekeeping (E2-T23)
+# Guest timekeeping
 
-Guest time in the browser comes from **two independent clocks that are never derived from each
-other**. Understanding which is which explains every observable behavior below.
+The guest's monotonic timer (`mtime`, the `time` CSR and Linux clocksource) is
+independent of the goldfish RTC. The RTC reads host `Date.now()` for civil time;
+changing a monotonic clock policy never derives it from the RTC. Linux normally
+seeds its civil clock from the RTC at boot and then advances it using its chosen
+clocksource, so guest `date` can drift with the execution policy.
 
-## The two clocks
+## Monotonic clock modes
 
-| Clock | Source | Truth it carries | Where the guest reads it |
+| Mode | Busy execution | Idle `WFI` | Host input |
 |---|---|---|---|
-| **`mtime` / clocksource** | **retired-instruction count** (`clint`, `clock_div = 10`, 10 MHz DTB timebase) | monotonic-since-boot, **execution-paced** | CLINT `mtime`, the `time` CSR, `CLOCK_MONOTONIC`, `/proc/uptime`, timer deadlines (`sleep`, scheduler tick) |
-| **goldfish RTC** | **`Date.now()`** (`JsWallClock`, E2-T16) | true wall-clock time | read once at boot to seed the system clock; on demand via `hwclock` |
+| `icount` | One tick per configured number of retired instructions | May jump to the nearest armed timer deadline when no pending device work forbids it | None |
+| `paced-icount` | Same retirement count and divider as ICount | Deadline jumps are capped by elapsed monotonic host time | `performance.now()` through the native clock adapter |
+| `wall` | Elapsed monotonic host time | No deterministic deadline fast-forward | `performance.now()` through the native clock adapter |
 
-`mtime` advances **one tick per `clock_div` retired instructions** — it is a deterministic
-retire-count clock, *not* a host clock. This is deliberate: native and wasm retire the same
-instructions, so a timer interrupt lands at the same retire index on both (the property the
-Level-1 / RISCOF suites assert, and what snapshot-replay depends on). The host wall clock lives
-only in the goldfish RTC, behind the `WallClock` trait, so `crates/core` stays host-clock-free
-(the determinism gate enforces this).
+The machine timebase is 10 MHz. The default instruction divider is 10; production
+Omarchy boots use an explicit divider of 64. Switching the divider or selecting a
+host-paced policy preserves the current decimal `mtime`; it does not reset time.
+The browser API returns `mtime` as a string to preserve all 64 bits.
 
-**We never derive one clock from the other.** `mtime` is not scaled from `Date.now()`, and the
-RTC is not scaled from `mtime`. They measure different things.
+ICount remains the deterministic native/Wasm replay policy. Its idle jump is a
+function of guest state, so idle virtual time can advance much faster than host
+time. Pending keyboard, network and GPU work can suppress that jump. A finite
+input RPC completing does not prove that Linux or a Wayland client consumed it.
 
-## Consequence: the guest software clock drifts behind wall time
+Paced ICount adds a ceiling only to idle deadline jumps. It never forces busy
+time to follow host time, slows instruction retirement, or samples the host clock
+on the busy path. Busy retirement can therefore put `mtime` ahead of the idle
+ceiling; the ceiling cannot move time backward. The host epoch is private and is
+not serialized in a guest snapshot. This mode retains the ordinary ICount JIT
+path. Wall mode instead uses the conservative wall-clock JIT policy.
 
-Linux seeds its system clock from the RTC **once at boot** (correct wall time at that instant),
-then advances it using the **clocksource** — which is `mtime`, i.e. execution-paced. So after
-boot the guest's `date` runs **behind** real wall time by however much wall time exceeded guest
-execution time. This is expected, not a bug. To realign, the guest reads the RTC again
-(`hwclock -s`); a real deployment would run NTP or periodic `hwclock -s`.
+## Production keyboard policy
 
-## Measured behavior (headless Chromium under Playwright — `web/tests/timekeeping.spec.js`)
+Accelerated Omarchy starts in ICount64. Its `paced-on-keyboard` policy selects
+`paced-icount` immediately before staging the first eligible original EV_KEY
+make (PC105 key codes 1–248). A lock reconciliation make can be first, including
+while booting or explicitly paused. This is not a desktop-ready or trusted-DOM
+attestation. The loader verifies the actual selected mode, unchanged `mtime`,
+divider and timebase before publishing that make. Failed selection stops the
+controller; later events cannot bypass it.
 
-Numbers are environment-dependent (they scale with interpreter speed); the *shape* is the point.
+Explicit `wall-on-keyboard` remains supported, as do directly selected `wall`
+and `paced-icount`. Software guests and callers omitting the interactive policy
+keep their existing boot clocks. The policy does not change keyboard repeat
+settings, input event ordering, typing delays or snapshot formats. Native paced
+clock verification is separate from successful stock desktop input acceptance.
 
-Two regimes, before and after the **WFI fast-forward** (E2-T23b, below):
+## Pause and background behavior
 
-| Measurement | Before fast-forward | After fast-forward (current) |
-|---|---|---|
-| guest `sleep 2` | ~40 s wall (**~20×**) | **~2.5 s wall (~1.2×)** — near real time |
-| guest `date` vs host after boot | ~12 s **behind** | ~**ahead** (idle compressed to ~0 wall) |
-| guest/wall ratio while idle | ~0.05 (clock crawls in `WFI`) | ≫1 (idle skipped; virtual time runs ahead) |
-| pause (explicit `window.__linux.pause()`) | both clocks freeze | both clocks freeze |
+Explicit pause stops execution. Resume rebases the selected host-paced clock
+before scheduling, excluding the paused host interval. ICount has no host-time
+debt to discard. The RTC continues to read real civil time across a pause.
 
-### The WFI fast-forward (E2-T23b) — fixes idle/sleep slowness, keeps determinism
-Originally there was no idle fast-forward, so a sleeping/idle guest's clock crawled: `sleep N` spun
-`WFI` until the retire-count `mtime` reached the deadline, costing ~`N / ratio` wall-seconds (~20× in
-the browser). `Machine::wfi_fast_forward()` (`crates/core/src/lib.rs`) fixes this: when a `WFI`
-retires with no interrupt pending, `mtime` jumps straight to the nearest armed timer deadline
-(`min(mtimecmp, stimecmp)`) so the timer fires the next boundary and the guest wakes immediately in
-wall-clock terms.
+The display scheduler can keep the guest running while the page is hidden and
+present on its bounded background timer. Hidden is therefore distinct from an
+explicit controller pause. A resumed paced-clock observation can include both
+host-paced idle ticks and busy retirement ticks; evidence must bound both rather
+than assuming every tick represents elapsed host time.
 
-This **keeps determinism**: the jump is a pure function of machine state (`mtime`, `mtimecmp`,
-`stimecmp`) with no host clock, so native and wasm fast-forward by the identical amount and every
-timer still lands at the same retire index on both. RISCOF signatures are unchanged (the jump alters
-only the idle spin count, not final state — verified: full suite 615/615, all rv64 architectural
-tests green). When no timer is armed (a genuine deadlock, caught by the WFI watchdog) it is a no-op.
-
-**Consequence — deterministic virtual time (like QEMU `icount`):** because idle is now compressed to
-~0 wall time, the guest clock runs *ahead* of real wall time instead of behind (measured ~118× the
-wall rate while idle). This is the inherent tradeoff of a *deterministic* fast-forward: making the
-guest track real wall time during idle would require a host-clock reference, which would break
-determinism (the rejected `performance.now()` design). Practical effects: `sleep`/idle are
-near-real-time and interactive; explicit timed waits like `read -t N` may expire early in wall-clock
-terms; `date` runs fast (resync with `hwclock -s`). Input remains prompt — host keystrokes/IRQs are
-sampled every run-loop boundary regardless of the clock jump.
-
-## Suspend / background policy
-
-For embeddings without the T09d display scheduler, `main.js` idles the executor on
-`document.visibilitychange` (hidden → `pause()`, visible → `resume()`), implemented in
-`web/loader.js` as a flag that stops/starts the `setTimeout` run loop. The production page owns a
-visibility-aware display scheduler, so it keeps the guest live while hidden and drains presentation
-on its bounded 250 ms timer; callers that need the legacy full pause can still invoke
-`window.__linux.pause()` explicitly.
-
-Because `mtime` is a **retire-count** clock, this is trivially safe:
-
-- Pausing stops retiring instructions → **guest monotonic time freezes** and continues seamlessly
-  on resume. The "one giant `mtime` jump on foreground" that a `performance.now()`-derived clock
-  would produce (clock-skew warnings, RCU stalls, a burst of catch-up timer interrupts) **cannot
-  occur** — there is no accumulated wall-time debt to reconcile.
-- No slew clamp, catch-up budget, or `notify_resumed()` reconciliation is needed. The measured
-  resume delivered zero stalls/lockups and a responsive shell (verified in the spec).
-- The goldfish RTC keeps true wall time across the gap (it is `Date.now()`), so on resume the RTC
-  reads correctly even though `date` (the execution-paced software clock) has drifted from wall time.
-
-## Acceptance-criteria reconciliation (honest)
-
-The task file was written assuming a `performance.now()`-derived `mtime`; the project chose to
-**keep the deterministic retire-count clock** (determinism > wall-accurate time). Against that
-choice:
-
-- **#1 `sleep 5` in ~5 s wall — met (loosely) by the WFI fast-forward.** A guest `sleep` is now
-  near-real-time (`sleep 2` ≈ 2.5 s, ~1.2×) instead of ~20×. It is not held to ±100 ms — the clock
-  is deterministic virtual time, not wall-locked — but the slowdown is gone.
-- **#2 background 60 s → no stall/storm, shell responsive, RTC correct — met.** Pause/resume froze
-  both clocks cleanly; no rcu-stall/soft-lockup/storm; RTC (`Date.now`) unaffected.
-- **#3 `uptime` after background reflects the policy — met.** It reflects *executed* time (frozen
-  during the pause), exactly as this doc specifies.
-- **#4 `date` monotonic over a soak — met** (monotonic, execution-paced).
-
-Native behavior is unchanged throughout: the same retire-count clock, just fast enough that the
-guest/wall ratio is near 1.
+Historical E2-T23 measurements of `sleep 2`, accelerated idle and civil-clock
+drift describe the earlier ICount implementation and are not performance or
+interactive responsiveness guarantees for the current accelerated desktop.

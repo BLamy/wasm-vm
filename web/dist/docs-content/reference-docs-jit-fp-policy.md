@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/jit-fp-policy.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "7dbbde3caea57bf91ad233b443889ecd72963955153350f1a042baa15be41205"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # JIT F/D floating-point policy — the measured decision (E4-T15)
 
 {% hint style="info" %}

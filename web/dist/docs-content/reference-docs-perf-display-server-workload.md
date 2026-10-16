@@ -1,3 +1,11 @@
+---
+kind: "Preserved source record"
+source: "docs/perf/display-server-workload.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "6a6b9346f6bdd70c0c5ce15fc394b11511f95a286a9e121f46ba76c5b53efd2e"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Display-server workload contract (E5-T16a)
 
 {% hint style="info" %}

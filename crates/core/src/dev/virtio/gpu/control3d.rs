@@ -14,7 +14,11 @@ use crate::{bus::Bus, dev::virtio::queue::DescriptorChain, mmio::SystemBus};
 pub const MAX_CONTEXTS: usize = 8;
 pub const MAX_RESOURCES: usize = 16;
 pub const MAX_DESKTOP_RESOURCES: usize = 64;
+pub const MAX_PRODUCTION_RESOURCES: usize = 512;
+pub const MAX_PRODUCTION_CONTEXTS: usize = 32;
 pub const MAX_BACKING_ENTRIES: usize = 256;
+/// Bounded original Linux page-fragmented lists; private proof profiles stay256.
+pub const MAX_PRODUCTION_BACKING_ENTRIES: usize = 16_384;
 pub const MAX_RESOURCE_BYTES: u64 = 4 * 1024 * 1024;
 pub const MAX_GPU_BYTES: u64 = 32 * 1024 * 1024;
 pub const MAX_BACKING_BYTES: u64 = 32 * 1024 * 1024;
@@ -44,18 +48,55 @@ pub struct Resource3dMetadata {
 }
 
 impl Resource3dMetadata {
-    /// Same bounded resource classes as the verified renderer; no GL dependency.
+    #[cfg(test)]
     fn sizes(
+        &self,
+        desktop: bool,
+        dimensional: bool,
+        depth: bool,
+        stream: bool,
+    ) -> Result<(u64, u64), Control3dError> {
+        self.sizes_limited(
+            desktop,
+            dimensional,
+            depth,
+            stream,
+            MAX_RESOURCE_BYTES,
+            false,
+        )
+    }
+    /// Bounded resource accounting for the selected host profile.
+    fn sizes_limited(
         self,
         desktop_resources: bool,
         dimensional_resources: bool,
         dimensional_depth_resources: bool,
+        stream_output_resources: bool,
+        resource_limit: u64,
+        production: bool,
     ) -> Result<(u64, u64), Control3dError> {
-        if self.width == 0 || self.height == 0 || self.nr_samples != 0 || self.flags != 0 {
+        if self.width == 0
+            || self.height == 0
+            || (self.nr_samples != 0
+                && !(production
+                    && self.target == 2
+                    && self.last_level == 0
+                    && matches!(self.nr_samples, 2 | 4)
+                    && self.bind & 3 != 0
+                    && self.flags == 0))
+            || (self.flags != 0
+                && !(production
+                    && self.flags == 1
+                    && self.target == 2
+                    && matches!(self.format, 1 | 2 | 67)))
+        {
             return Err(Control3dError::InvalidParameter);
         }
         if dimensional_resources && matches!(self.target, 3 | 4 | 7) {
             if self.format != 67 && !dimensional_depth_resources {
+                return Err(Control3dError::InvalidParameter);
+            }
+            if !production && self.format != 67 && !matches!(self.format, 16 | 18 | 20 | 21 | 126) {
                 return Err(Control3dError::InvalidParameter);
             }
             let (public_pixel, gpu_pixel) = self.dimensional_format()?;
@@ -66,7 +107,7 @@ impl Resource3dMetadata {
                 let pixels = u64::from(width) * u64::from(height) * u64::from(layers);
                 bytes += pixels * u64::from(public_pixel);
                 gpu_bytes += pixels * u64::from(gpu_pixel);
-                if bytes > MAX_RESOURCE_BYTES || gpu_bytes > MAX_RESOURCE_BYTES {
+                if bytes > resource_limit || gpu_bytes > resource_limit {
                     return Err(Control3dError::OutOfMemory);
                 }
             }
@@ -76,11 +117,14 @@ impl Resource3dMetadata {
             return Err(Control3dError::InvalidParameter);
         }
         let (bytes, staging) = match (self.target, self.format, self.bind) {
+            (0, 64, 131_072) if production && self.height == 1 && self.last_level == 0 => {
+                (u64::from(self.width), false)
+            }
             (0, 64, bind)
                 if desktop_resources
                     && self.height == 1
                     && self.last_level == 0
-                    && bind & !112 == 0 =>
+                    && bind & !(if stream_output_resources { 2160 } else { 112 }) == 0 =>
             {
                 (u64::from(self.width), false)
             }
@@ -95,8 +139,8 @@ impl Resource3dMetadata {
                     let (width, height) = self.mip_extent(level)?;
                     let pixels = u64::from(width) * u64::from(height);
                     logical += pixels * u64::from(public_pixel);
-                    gpu += pixels * u64::from(gpu_pixel);
-                    if logical > MAX_RESOURCE_BYTES || gpu > MAX_RESOURCE_BYTES {
+                    gpu += pixels * u64::from(gpu_pixel) * u64::from(self.nr_samples.max(1));
+                    if logical > resource_limit || gpu > resource_limit {
                         return Err(Control3dError::OutOfMemory);
                     }
                 }
@@ -111,7 +155,7 @@ impl Resource3dMetadata {
             }
             _ => return Err(Control3dError::InvalidParameter),
         };
-        if bytes > MAX_RESOURCE_BYTES {
+        if bytes > resource_limit {
             return Err(Control3dError::OutOfMemory);
         }
         Ok((bytes, if staging { 0 } else { bytes }))
@@ -138,6 +182,9 @@ impl Resource3dMetadata {
         self,
         level: u32,
     ) -> Result<(u32, u32, u32, u32), Control3dError> {
+        if self.nr_samples != 0 {
+            return Err(Control3dError::InvalidParameter);
+        }
         if self.target == 0 {
             if level != 0 {
                 return Err(Control3dError::InvalidParameter);
@@ -155,9 +202,7 @@ impl Resource3dMetadata {
     }
 
     fn dimensional_format(self) -> Result<(u32, u32), Control3dError> {
-        if self.format == 67
-            || matches!(self.target, 4 | 7) && matches!(self.format, 16 | 18 | 20 | 21 | 126)
-        {
+        if !matches!(self.format, 16 | 18 | 20 | 21 | 126) || matches!(self.target, 4 | 7) {
             image2d_format(self.format, self.bind)
         } else {
             Err(Control3dError::InvalidParameter)
@@ -200,6 +245,157 @@ impl Resource3dMetadata {
                 self.array_size
             },
         ))
+    }
+}
+
+#[cfg(test)]
+mod production_query_resource_tests {
+    use super::*;
+
+    #[test]
+    fn original_custom_query_buffers_are_production_only_and_byte_accounted() {
+        let buffer = Resource3dMetadata {
+            resource_id: 1,
+            target: 0,
+            format: 64,
+            bind: 131_072,
+            width: 32,
+            height: 1,
+            depth: 1,
+            array_size: 1,
+            last_level: 0,
+            nr_samples: 0,
+            flags: 0,
+        };
+        let size = |metadata: Resource3dMetadata, production| {
+            metadata.sizes_limited(true, true, true, true, 33_554_432, production)
+        };
+        assert_eq!(size(buffer, true), Ok((32, 32)));
+        assert!(size(buffer, false).is_err());
+        for invalid in [
+            Resource3dMetadata {
+                height: 2,
+                ..buffer
+            },
+            Resource3dMetadata { depth: 2, ..buffer },
+            Resource3dMetadata {
+                array_size: 2,
+                ..buffer
+            },
+            Resource3dMetadata {
+                last_level: 1,
+                ..buffer
+            },
+            Resource3dMetadata {
+                nr_samples: 2,
+                ..buffer
+            },
+            Resource3dMetadata { flags: 1, ..buffer },
+            Resource3dMetadata {
+                bind: 131_088,
+                ..buffer
+            },
+            Resource3dMetadata { width: 0, ..buffer },
+            Resource3dMetadata {
+                width: 33_554_433,
+                ..buffer
+            },
+        ] {
+            assert!(
+                size(invalid, true).is_err(),
+                "accepted invalid custom query buffer {invalid:?}"
+            );
+        }
+        assert_eq!(
+            size(
+                Resource3dMetadata {
+                    width: 33_554_432,
+                    ..buffer
+                },
+                true
+            ),
+            Ok((33_554_432, 33_554_432))
+        );
+    }
+}
+
+#[cfg(test)]
+mod production_multisample_tests {
+    use super::*;
+
+    fn image() -> Resource3dMetadata {
+        Resource3dMetadata {
+            resource_id: 1,
+            target: 2,
+            format: 67,
+            bind: 2,
+            width: 2048,
+            height: 1024,
+            depth: 1,
+            array_size: 1,
+            last_level: 0,
+            nr_samples: 4,
+            flags: 0,
+        }
+    }
+
+    #[test]
+    fn sample_storage_is_bounded_and_cannot_cross_the_old_profile() {
+        let image = image();
+        let limit = 32 * 1024 * 1024;
+        assert_eq!(
+            image.sizes_limited(true, true, true, true, limit, true),
+            Ok((8 * 1024 * 1024, limit))
+        );
+        assert_eq!(
+            image.sizes_limited(true, true, true, true, limit, false),
+            Err(Control3dError::InvalidParameter)
+        );
+        assert_eq!(
+            Resource3dMetadata {
+                height: 1025,
+                ..image
+            }
+            .sizes_limited(true, true, true, true, limit, true),
+            Err(Control3dError::OutOfMemory)
+        );
+        for nr_samples in [1, 3, 5, u32::MAX] {
+            assert_eq!(
+                Resource3dMetadata {
+                    nr_samples,
+                    ..image
+                }
+                .sizes_limited(true, true, true, true, limit, true),
+                Err(Control3dError::InvalidParameter)
+            );
+        }
+        for metadata in [
+            Resource3dMetadata { target: 3, ..image },
+            Resource3dMetadata {
+                last_level: 1,
+                ..image
+            },
+            Resource3dMetadata { flags: 1, ..image },
+            Resource3dMetadata { bind: 8, ..image },
+        ] {
+            assert_eq!(
+                metadata.sizes_limited(true, true, true, true, limit, true),
+                Err(Control3dError::InvalidParameter)
+            );
+        }
+        assert_eq!(
+            image.transfer_extent(0),
+            Err(Control3dError::InvalidParameter)
+        );
+        assert_eq!(
+            Resource3dMetadata {
+                format: 16,
+                bind: 1,
+                ..image
+            }
+            .sizes_limited(true, true, true, true, limit, true),
+            Ok((4 * 1024 * 1024, 16 * 1024 * 1024))
+        );
     }
 }
 
@@ -464,6 +660,8 @@ pub(crate) struct Control3dState {
     desktop_resources: bool,
     dimensional_resources: bool,
     dimensional_depth_resources: bool,
+    stream_output_resources: bool,
+    production_limits: bool,
     epoch: u64,
     next_generation: u64,
     next_backing_generation: u64,
@@ -477,28 +675,83 @@ pub(crate) struct Control3dState {
 
 impl Control3dState {
     pub(crate) fn new(sink: Box<dyn Control3dSink>) -> Self {
-        Self::with_resource_profile(sink, false, false, false)
+        Self::with_resource_profile(sink, false, false, false, false)
     }
     pub(crate) fn new_standard_desktop(sink: Box<dyn Control3dSink>) -> Self {
-        Self::with_resource_profile(sink, true, false, false)
+        Self::with_resource_profile(sink, true, false, false, false)
     }
     pub(crate) fn new_standard_dimensional(sink: Box<dyn Control3dSink>) -> Self {
-        Self::with_resource_profile(sink, true, true, false)
+        Self::with_resource_profile(sink, true, true, false, false)
     }
     pub(crate) fn new_standard_dimensional_depth(sink: Box<dyn Control3dSink>) -> Self {
-        Self::with_resource_profile(sink, true, true, true)
+        Self::with_resource_profile(sink, true, true, true, false)
+    }
+    pub(crate) fn new_standard_stream_output(sink: Box<dyn Control3dSink>) -> Self {
+        Self::with_resource_profile(sink, true, true, true, true)
+    }
+    pub(crate) fn new_production(sink: Box<dyn Control3dSink>) -> Self {
+        let mut state = Self::with_resource_profile(sink, true, true, true, true);
+        state.production_limits = true;
+        state
+    }
+    fn context_count_limit(&self) -> usize {
+        if self.production_limits {
+            MAX_PRODUCTION_CONTEXTS
+        } else {
+            MAX_CONTEXTS
+        }
+    }
+    fn resource_count_limit(&self) -> usize {
+        if self.production_limits {
+            MAX_PRODUCTION_RESOURCES
+        } else if self.desktop_resources {
+            MAX_DESKTOP_RESOURCES
+        } else {
+            MAX_RESOURCES
+        }
+    }
+    fn backing_entries_limit(&self) -> usize {
+        if self.production_limits {
+            MAX_PRODUCTION_BACKING_ENTRIES
+        } else {
+            MAX_BACKING_ENTRIES
+        }
+    }
+    fn resource_limit(&self) -> u64 {
+        if self.production_limits {
+            32 * 1024 * 1024
+        } else {
+            MAX_RESOURCE_BYTES
+        }
+    }
+    fn gpu_limit(&self) -> u64 {
+        if self.production_limits {
+            128 * 1024 * 1024
+        } else {
+            MAX_GPU_BYTES
+        }
+    }
+    fn backing_limit(&self) -> u64 {
+        if self.production_limits {
+            128 * 1024 * 1024
+        } else {
+            MAX_BACKING_BYTES
+        }
     }
     fn with_resource_profile(
         sink: Box<dyn Control3dSink>,
         desktop_resources: bool,
         dimensional_resources: bool,
         dimensional_depth_resources: bool,
+        stream_output_resources: bool,
     ) -> Self {
         Self {
             sink,
             desktop_resources,
             dimensional_resources,
             dimensional_depth_resources,
+            stream_output_resources,
+            production_limits: false,
             epoch: 1,
             next_generation: 1,
             next_backing_generation: 1,
@@ -532,6 +785,31 @@ impl Control3dState {
             gpu_bytes: self.gpu_bytes,
             backing_bytes: self.backing_bytes,
         }
+    }
+    pub(super) fn checkpoint_sizes(
+        &self,
+        metadata: Resource3dMetadata,
+    ) -> Result<(u64, u64), Control3dError> {
+        metadata.sizes_limited(
+            self.desktop_resources,
+            self.dimensional_resources,
+            self.dimensional_depth_resources,
+            self.stream_output_resources,
+            32 * 1024 * 1024,
+            self.production_limits,
+        )
+    }
+    /// Only the detached, bounded production checkpoint decoder constructs this state.
+    pub(super) fn commit_checkpoint(&mut self, snapshot: Control3dSnapshot, epoch: u64) {
+        self.epoch = epoch;
+        self.next_generation = snapshot.next_generation;
+        self.next_backing_generation = snapshot.next_backing_generation;
+        self.poisoned = false;
+        self.contexts = snapshot.contexts;
+        self.resources = snapshot.resources;
+        self.logical_bytes = snapshot.logical_bytes;
+        self.gpu_bytes = snapshot.gpu_bytes;
+        self.backing_bytes = snapshot.backing_bytes;
     }
     pub(crate) fn poison(&mut self) {
         self.poisoned = true;
@@ -630,7 +908,7 @@ impl Control3dState {
                 if self.contexts.iter().any(|c| c.identity.id == header.ctx_id) {
                     return Err(Control3dError::InvalidContextId);
                 }
-                if self.contexts.len() >= MAX_CONTEXTS {
+                if self.contexts.len() >= self.context_count_limit() {
                     return Err(Control3dError::OutOfMemory);
                 }
                 self.contexts
@@ -696,8 +974,27 @@ impl Control3dState {
                     self.contexts[ci].resources.remove(index);
                 }
             }
-            p::CMD_RESOURCE_CREATE_3D => {
-                let bytes = fixed::<{ p::RESOURCE_CREATE_3D_SIZE }>(chain, bus)?;
+            p::CMD_RESOURCE_CREATE_3D | p::CMD_RESOURCE_CREATE_2D => {
+                let bytes = if header.ty == p::CMD_RESOURCE_CREATE_2D && self.production_limits {
+                    let original = fixed::<40>(chain, bus)?;
+                    let mut converted = [0u8; p::RESOURCE_CREATE_3D_SIZE];
+                    for (at, value) in [
+                        (24, word(&original, 24)),
+                        (28, 2),
+                        (32, word(&original, 28)),
+                        (36, 2),
+                        (40, word(&original, 32)),
+                        (44, word(&original, 36)),
+                        (48, 1),
+                        (52, 1),
+                        (64, 1),
+                    ] {
+                        converted[at..at + 4].copy_from_slice(&value.to_le_bytes());
+                    }
+                    converted
+                } else {
+                    fixed::<{ p::RESOURCE_CREATE_3D_SIZE }>(chain, bus)?
+                };
                 if word(&bytes, 68) != 0 {
                     return Err(Control3dError::InvalidParameter);
                 }
@@ -716,21 +1013,22 @@ impl Control3dState {
                 };
                 if metadata.resource_id == 0
                     || self.contains(metadata.resource_id)
-                    || two_d.get(metadata.resource_id).is_some()
+                    || (two_d.get(metadata.resource_id).is_some()
+                        && !(self.production_limits && header.ty == p::CMD_RESOURCE_CREATE_2D))
                 {
                     return Err(Control3dError::InvalidResourceId);
                 }
-                let (logical, gpu) = metadata.sizes(
+                let (logical, gpu) = metadata.sizes_limited(
                     self.desktop_resources,
                     self.dimensional_resources,
                     self.dimensional_depth_resources,
+                    self.stream_output_resources,
+                    self.resource_limit(),
+                    self.production_limits,
                 )?;
-                let max_resources = if self.desktop_resources {
-                    MAX_DESKTOP_RESOURCES
-                } else {
-                    MAX_RESOURCES
-                };
-                if self.resources.len() >= max_resources || gpu > MAX_GPU_BYTES - self.gpu_bytes {
+                if self.resources.len() >= self.resource_count_limit()
+                    || gpu > self.gpu_limit() - self.gpu_bytes
+                {
                     return Err(Control3dError::OutOfMemory);
                 }
                 self.resources
@@ -772,10 +1070,13 @@ impl Control3dState {
                     self.resources[index].backing = None;
                     self.resources[index].backing_generation = None;
                 } else {
-                    let (logical, gpu) = self.resources[index].metadata.sizes(
+                    let (logical, gpu) = self.resources[index].metadata.sizes_limited(
                         self.desktop_resources,
                         self.dimensional_resources,
                         self.dimensional_depth_resources,
+                        self.stream_output_resources,
+                        self.resource_limit(),
+                        self.production_limits,
                     )?;
                     self.send(Control3dOperation::UnrefResource { resource })?;
                     self.resources.remove(index);
@@ -807,7 +1108,7 @@ impl Control3dState {
             .ok_or(Control3dError::OutOfMemory)?;
         let count = word(&bytes, 28) as usize;
         if count == 0
-            || count > MAX_BACKING_ENTRIES
+            || count > self.backing_entries_limit()
             || readable_len(chain) != Some(32 + count as u64 * 16)
         {
             return Err(Control3dError::InvalidParameter);
@@ -829,7 +1130,7 @@ impl Control3dState {
                 return Err(Control3dError::InvalidParameter);
             }
             total += u64::from(length);
-            if total > MAX_RESOURCE_BYTES || total > MAX_BACKING_BYTES - self.backing_bytes {
+            if total > self.resource_limit() || total > self.backing_limit() - self.backing_bytes {
                 return Err(Control3dError::OutOfMemory);
             }
             entries.push(BackingEntry { addr, length });
@@ -888,3 +1189,7 @@ fn fixed<const N: usize>(
 #[cfg(test)]
 #[path = "control3d_dimensional_depth_tests.rs"]
 mod dimensional_depth_tests;
+
+#[cfg(test)]
+#[path = "control3d_stream_output_tests.rs"]
+mod stream_output_tests;

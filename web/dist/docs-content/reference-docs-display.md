@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "docs/display.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "846068e3ac37b6c1427720dd53e920aefef67302d16ac0b07ee9636553dcd809"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Browser display modes
 
 {% hint style="info" %}

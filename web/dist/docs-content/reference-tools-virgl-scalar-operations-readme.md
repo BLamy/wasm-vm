@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-scalar-operations/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "63898714aea19e6df2e9ba81c834a1438d4b7d889a48b4ec00429c5433cb0154"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Finite scalar evidence — E6-T12g6f
 
 {% hint style="info" %}

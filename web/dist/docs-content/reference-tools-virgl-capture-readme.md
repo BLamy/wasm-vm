@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-capture/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "cee09145499b720e35a2674ae13b3c3ebfb98ede4c6c17ee9d8ab9728fc50222"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Real guest VirGL reference captures
 
 {% hint style="info" %}

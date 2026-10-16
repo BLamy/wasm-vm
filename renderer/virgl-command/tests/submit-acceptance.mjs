@@ -93,7 +93,7 @@ function instrument(gl, c, schedule = 0) {
       }
       if (key === "drawElements") { drawCount++; calls.push({ mode: args[0], count: args[1], type: args[2], offset: args[3], turn }); record("drawElements", { count: args[1], offset: args[3] }); }
       const result = value.apply(target, args);
-      if (/^create(Buffer|Texture|Framebuffer|VertexArray|Sampler|Program|Shader)$/.test(key) && result) {
+      if (/^create(Buffer|Texture|Framebuffer|VertexArray|Sampler|Program|Shader|Query)$/.test(key) && result) {
         objects.set(result, { id: nextId++, kind: key.slice(6) });
         if (key === "createBuffer") buffers.set(result, { firstTarget: null, bytes: 0, produced: false, sync: null });
       }
@@ -104,7 +104,7 @@ function instrument(gl, c, schedule = 0) {
         record("fenceSync", { sync: entry.id });
       }
       if (key === "flush") record("flush");
-      if (/^delete(Buffer|Texture|Framebuffer|VertexArray|Sampler|Program|Shader|Sync)$/.test(key) && args[0]) {
+      if (/^delete(Buffer|Texture|Framebuffer|VertexArray|Sampler|Program|Shader|Sync|Query)$/.test(key) && args[0]) {
         record(key, { object: id(args[0]) }); objects.delete(args[0]);
         if (key === "deleteBuffer") buffers.delete(args[0]); if (key === "deleteSync") syncs.delete(args[0]);
       }
@@ -494,4 +494,4 @@ export async function runBrowserAcceptance({WasmVirglSubmitProof,createVirglSubm
 }
 
 // Shared literal queue and hardware-oracle fixtures; selection is supplied by the caller.
-export { checker, makeRig, context, resource, idCommand, header, submission, backing, transfer, originalReplay, orderedDma, uncertainGpuFailure, protocolAttacks };
+export { checker, makeRig, Queue, context, resource, idCommand, header, submission, backing, transfer, originalReplay, orderedDma, uncertainGpuFailure, protocolAttacks };

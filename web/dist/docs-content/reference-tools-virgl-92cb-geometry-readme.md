@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "tools/virgl-92cb-geometry/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "c5d6bf056488d66a7f81e1c82b73b46f179a422f9d547637ecac74d3dfb242de"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Original 92cb draw geometry
 
 {% hint style="info" %}

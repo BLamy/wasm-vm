@@ -30,8 +30,14 @@ fn original_depth_fields_costs_and_npot_layers() {
         for bind in [1, 8, 9] {
             let cube = original(4, format, bind);
             let array = original(7, format, bind);
-            assert_eq!(cube.sizes(true, true, true), Ok((cube_bytes, cube_gpu)));
-            assert_eq!(array.sizes(true, true, true), Ok((array_bytes, array_gpu)));
+            assert_eq!(
+                cube.sizes(true, true, true, false),
+                Ok((cube_bytes, cube_gpu))
+            );
+            assert_eq!(
+                array.sizes(true, true, true, false),
+                Ok((array_bytes, array_gpu))
+            );
             assert_eq!(cube.transfer_extent(0), Ok((5, 5, 6, public)));
             assert_eq!(cube.transfer_extent(1), Ok((2, 2, 6, public)));
             assert_eq!(cube.transfer_extent(2), Ok((1, 1, 6, public)));
@@ -49,7 +55,7 @@ fn original_depth_fields_costs_and_npot_layers() {
             for meta in [cube, array] {
                 for (desktop, dimensional) in [(false, false), (true, false), (true, true)] {
                     assert_eq!(
-                        meta.sizes(desktop, dimensional, false),
+                        meta.sizes(desktop, dimensional, false, false),
                         Err(Control3dError::InvalidParameter)
                     );
                 }
@@ -68,16 +74,19 @@ fn depth_native_budget_neighbors_and_illegal_original_shapes() {
     meta.height = 512;
     meta.array_size = 1;
     meta.last_level = 0;
-    assert_eq!(meta.sizes(true, true, true), Ok((2_097_152, 4_194_304)));
+    assert_eq!(
+        meta.sizes(true, true, true, false),
+        Ok((2_097_152, 4_194_304))
+    );
     meta.array_size = 2;
     assert_eq!(
-        meta.sizes(true, true, true),
+        meta.sizes(true, true, true, false),
         Err(Control3dError::OutOfMemory)
     );
     meta.array_size = 1;
     meta.width = 513;
     assert_eq!(
-        meta.sizes(true, true, true),
+        meta.sizes(true, true, true, false),
         Err(Control3dError::OutOfMemory)
     );
     let base = original(4, 18, 9);
@@ -133,7 +142,7 @@ fn depth_native_budget_neighbors_and_illegal_original_shapes() {
         },
     ] {
         assert_eq!(
-            bad.sizes(true, true, true),
+            bad.sizes(true, true, true, false),
             Err(Control3dError::InvalidParameter),
             "{bad:?}"
         );

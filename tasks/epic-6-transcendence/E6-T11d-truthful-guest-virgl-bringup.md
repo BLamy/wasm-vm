@@ -3,9 +3,8 @@ id: E6-T11d
 epic: 6
 title: Advertise proven VirGL capabilities and initialize real guest Mesa
 priority: 525.02704
-status: blocked
-depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64]
-blocked_on: E6-T11d64
+status: verified
+depends_on: [E6-T12i, E6-T11d1, E6-T11d2, E6-T11d3, E6-T11d4, E6-T11d5, E6-T11d6, E6-T11d7, E6-T11d8, E6-T11d9, E6-T11d10, E6-T11d11, E6-T11d12, E6-T11d13, E6-T11d14, E6-T11d15, E6-T11d16, E6-T11d17, E6-T11d18, E6-T11d19, E6-T11d20, E6-T11d21, E6-T11d22, E6-T11d23, E6-T11d24, E6-T11d25, E6-T11d26, E6-T11d27, E6-T11d28, E6-T11d29, E6-T11d30, E6-T11d31, E6-T11d32, E6-T11d33, E6-T11d34, E6-T11d35, E6-T11d36, E6-T11d37, E6-T11d38, E6-T11d39, E6-T11d40, E6-T11d41, E6-T11d42, E6-T11d43, E6-T11d44, E6-T11d45, E6-T11d46, E6-T11d47, E6-T11d48, E6-T11d49, E6-T11d50, E6-T11d51, E6-T11d52, E6-T11d53, E6-T11d54, E6-T11d55, E6-T11d56, E6-T11d57, E6-T11d58, E6-T11d59, E6-T11d60, E6-T11d61, E6-T11d62, E6-T11d63, E6-T11d64, E6-T11d65, E6-T11d66, E6-T11d67, E6-T11d68, E6-T11d69a, E6-T11d69b, E6-T11d70, E6-T11d71, E6-T11d74d]
 estimate: S
 risk: high
 capstone: false
@@ -828,3 +827,539 @@ See E6-T11d64 for exact commands and digests. It is the next ordered S boundary.
 The explicitly requested reviewed website publication E0-T27 temporarily occupies
 the sole active lane; the original instruction to finish guest graphics continues
 after it. No capset, complete API, Linux renderer or300-MIPS claim is made.
+
+### 2026-10-13 — worker — dimensional depth verified; original stream output
+
+E6-T11d64 is independently verified at6f43010dfa7b3e08bfe62f62543b7ee0468e1a21
+and published as draft PR543 above PR542 in native stack500. Both existing stack
+identities and all143 prior PR identities/order/titles/bodies/heads/bases/open-draft
+states are unchanged; no PR was merged. The verified partial marker is live at
+Cloudflare deployment9724effa-3c8e-42ba-996a-1edf07049acb, with127/0 default tests
+and zero browser errors. Its reopened deployment seal is committed.
+
+Six valid original stream-output requests still refuse under the D64 decoder and
+resource policy: nonzero original shader outputs, object10 target, opcode25 target
+binding, rasterizer discard bit3, nonzero original count override and buffer
+role2048. Reproduce with
+`node target/evidence/transform-feedback-readiness-fb8c9241/readiness.mjs`
+from the recorded readiness source. The complete packets, source pins and results
+are recorded; this is JS-only readiness, with no native GPU or guest-queue claim.
+The recorded fb8c9241 runtime is byte-identical at the D64 verifier head.
+
+Pinned Mesa26.2.2 serializes four dword strides and two words per original output,
+and reports64 separate/interleaved components. STREAM_OUTPUT is original VirGL
+bind2048. The pinned virglrenderer1.3.0 source uses nonzero COUNT_FROM_SO directly
+as the nonindexed count with start0, rather than as an object handle. Complete
+primary source bodies, archive digests and67 matching vendored source pins are
+recorded. Ordered S boundaries E6-T11d65 (typed capture compiler) and E6-T11d66
+(original targets/native capture) close this API family before positive typed
+capability negotiation and actual Mesa/Hyprland worker/scanout bring-up. The
+user's explicit four-part request keeps this graphics chain ahead of unrelated
+queue entries. No production acceleration or MIPS claim follows from readiness.
+
+
+### 2026-10-13 — worker — production worker/scanout integration
+
+D66 is independently verified at e092c647b8fad4948e3385d4fdca21c1ee4bc97a.
+The user's explicit request continues production graphics ahead of the unrelated
+queue entry. All dependencies are verified; this single integration boundary now
+owns typed capability negotiation, production worker marshalling and actual guest
+initialization/scanout. No new positive production capability is claimed by this
+activation. The original native stack is continued above D66; existing PRs stay open.
+
+The local immutable QEMU reference pre-check uses the shipped kernel
+3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d and original
+Omarchy image bfcde69e5eeb2b5baba96a451f0671092b5973e8cc3a7f581722adf513651200.
+Pinned Mesa26.2.2 and virglrenderer1.3.0 render kmscube successfully. Its complete
+288-event initialization/control log and source/library/package identities are
+in target/evidence/production-integration-orientation/qemu-kmscube. This reference
+pre-check is comparison data; it does not prove browser production rendering.
+
+### 2026-10-13 — worker — concrete GLES floor gap; integration checkpoint
+
+The independent public-route numeric probe reports `GL_MAX_SAMPLES=1`, below the
+GLES 3.0 minimum of four. Exact reproduction: run the pinned binary
+`target/evidence/critic-egl-index-03/egl-index` in the actual GPU Omarchy serial
+shell after sourcing `/etc/environment.d/60-omarchy-browser.conf`. The transcript
+`target/evidence/critic-omarchy-gpu-ui-local07-03/numeric-guest.log` records all 29
+limits and `GL_CORE_NUMERIC_FAIL`. This task is blocked on ordered S prerequisite
+E6-T11d67, which must add real native multisample storage and resolve before
+raising the capability. Existing production integration is checkpointed without
+a verified claim. The old four warm boots and the independent dimensional,
+shader binding, WFI, and original-command boundary results remain held where
+their source and evidence digests are unchanged.
+
+### 2026-10-14 — worker — independently held components; default Omarchy still pending
+
+D67 is independently verified at caccaf2b after its frozen runtime
+3bb4ba9b93f19165cf61d4c2cea82f128430e1a6, real multisample/resolve and exact-head
+pristine-clone proof. The parent resumed its integration lane; this entry does
+not claim full production completion. Runtime integration checkpoints are
+deab12b4 (reference-derived framebuffer origin/front-face), c43a7ce3 (coherent
+public snapshot write draining and literal rejected-transfer tracing), and
+1aa4e465962e119a632cec57768a383ffc411d5a (Quickshell-only GLES client format).
+
+The completed component submission is sealed in
+`evidence/virgl-production-bringup/worker/integration-components-and-fast-boots-01.tar.gz`
+with SHA256 d6d7cb47a50dcc8280d0832b6a01bb377dc9761fe04a9228d0cd8fc58e54febb;
+its paired JSON authenticates 95 files. Original acceptance21 demonstrates
+actual Mesa, all29 numeric limits, required multisample formats and actual GL
+resolve, a1000-frame kmscube run, Hyprland/Foot and readable upright GPU pixels.
+Its guest digest is5a0121bc99fc6617714d737bdb0c7a24389838e07fc83e8318c3de29d155adde.
+The archived QEMU comparison holds13 actual initialization/control families
+and correctly framed original draws; implicit backing detach at resource-unref
+is explicitly bound to pinned QEMU source. This private component run does not
+substitute for the full default Omarchy session.
+
+All four original software boot profiles pass initial/repeat launches in
+`production-fast-boots-all-fixed-05`: BusyBox2.118/1.025 seconds; Alpine2.079/1.025;
+Node Alpine2.066/2.028; Omarchy7.061/6.034. Both Alpine variants also preserve an
+actual durable guest marker through public coherent snapshot save/reload. Actual
+Node v20.15.1 runs on each launch. A paused public save drains a subsequently
+queued guest write rather than bypassing disk/RAM generation coherence; the
+recorded original write-in-flight refusal and four independent negative tests
+remain preserved. These are gpu=0 software warm claims; accelerated guest boots
+still intentionally require cold restart. Default built demo is127 passed/0
+failed with zero console errors and no private proof VM/RAM exports.
+
+Fresh adversarial intermediate inspection is sealed separately in
+`evidence/virgl-production-bringup/verifier/independent-integration-inspections-01.tar.gz`,
+SHA2562dcbf6c70d1d04eba422a62957299adbc9240f10f66a1162ece01b27db3e31f3,
+251 files. It holds all12 asymmetric origin/culling cases, all-four warm boots,
+public snapshot negative boundaries/sabotage, and the Quickshell client API
+selection. Existing native capset/attachment/WFI and D67 results are carried
+when their source/dependency/evidence identities are unchanged.
+
+The full Omarchy session remains unproven: its Qt6.11.2 desktop-GL default asks
+EGL for renderable-bit8 and gets no config. The app-local public QSurfaceFormat
+GLES3 selector instead requests bit64, gets three real configs and non-null
+window surfaces. Independent ELF inspection holds original28 dependency order,
+RPATH/RUNPATH and unchanged .text/.rodata. However, the original diagnostic
+default bar has only two colors and eight host submission failures; the core
+also rejects transfer commands. Candidate image12 installs that same narrowly
+scoped adapter without LD_PRELOAD. Original-command trace captures and actual
+default-session service logs are now required to identify the concrete remaining
+failures. No parent/recovery/deployment verified verdict or300-MIPS claim is made.
+
+The owned capture harness now waits for the public guest-ready boundary before
+servicing diagnostic serial commands during desktop startup. Command injection
+before that boundary could lose the request during kernel boot; this is a
+capture orchestration correction. `node --check tools/virgl-production/critic-fast-boots.mjs`
+and `node --test tools/virgl-production/critic-fast-boots-protocol.test.mjs` pass.
+
+### 2026-10-14 — verifier — promoted default bar-content acceptance
+
+The fresh verifier authored `critic-fast-boots-bar-content.mjs` and its four
+bounded tests. Actual old blank-bar pixels from the sealed diagnostic screenshot
+eebbda015d2dcc2e7d4f7ba240e59c53ef2400a8efb0e68719271d626834bd6e are the
+authenticated negative fixture: foregroundPixels0, rejected. A cursor-sized
+mark and a single horizontal divider also fail; separated literal glyph cells
+pass. The helper captures unchanged RGBA and PNG from the same original canvas
+frame inside the fresh actual compositor layer, excludes its border and refuses
+overlapping visible clients. It demands distributed foreground contrast rather
+than merely a positive-alpha mapped rectangle; readable text/icons still require
+independent visual inspection. The existing public input proof invokes it after
+trusted screensaver wake and confirmed original Foot focus, before typing the
+trusted guest marker. `node --check tools/virgl-production/critic-fast-boots-input.mjs`
+and `node --test tools/virgl-production/critic-fast-boots-bar-content.test.mjs`
+pass. This promotes a proof requirement; actual final populated-bar acceptance
+is still pending and no task status changes.
+
+### 2026-10-14 — worker — original Qt indexed-start refusal; ordered S68
+
+Actual installed candidate12 uses the unmodified default SDDM/uwsm/Hyprland/Foot/
+Quickshell session at UID1000 and the scoped GLES3 initializer. Its original
+production worker completes Mesa/Hyprland draws, but Quickshell submits eight
+valid indexed draws with start1/count62/triangle-strip/primitive-restart. The
+consumer returns unsupported-draw at state.mjs1627 before each native draw.
+The first exact original words are
+[786440,1,62,5,1,1,0,0,1,65535,0,4294967295,0], context9, sequence0183,
+byteOffset4244: gpu.ndjson request1515/failure1517 in
+target/evidence/production-omarchy-gpu-profile12-09. The complete failed streams
+are preserved in target/evidence/production-omarchy-original-draw-failures-01.json.
+At the original post-failure snapshot, all eight original0x207 requests receive
+0x1205 and no0x205 request is rejected; the prior diagnostic transfer failures
+are not reproduced by this installed default candidate.
+
+Exact reproducer: CRITIC_FAST_BOOT_WEB_ROOT=web/dist CRITIC_FAST_BOOT_GPU=1
+CRITIC_FAST_BOOT_GPU_TRACE=1 CRITIC_FAST_BOOT_GUESTS=omarchy
+CRITIC_FAST_BOOT_PERSISTENCE=0 CRITIC_FAST_BOOT_HOLD_FAILURE=1
+CRITIC_FAST_BOOT_IMAGE_DIRECTORY=target/virgl-production/image-12
+node tools/virgl-production/critic-fast-boots.mjs OUTPUT. Original built runtime
+and source hashes are in the capture's report/source records. The first mapped
+bar has alpha0 before its real rendering; the capture preserves both that early
+input-acceptance refusal and the subsequent eight actual GPU failures.
+
+Pinned VirGL1.3.0 vrend_draw_vbo6139–6157 uses only sub_ctx->ib.offset for indexed
+GL calls. DRAW.start is ignored, not multiplied into the byte offset. Ordered
+S68 must allow that original production hint while preserving the independently
+validated binding offset, count/span, actual fetched indices, private profile
+refusals, GPU fences and ownership. Parent remains blocked until S68 is freshly
+verified. No capset increase or completed production claim is justified here.
+
+### 2026-10-14 — worker — independent mandatory query gap preserved
+
+The independent actual GLES3 probe also refutes complete API admission: both
+mandatory boolean query BEGIN calls return GL_INVALID_ENUM; transform-feedback
+query admission has no GL error but its original result resource/commands are
+refused. Ordered pending S69 records the separate query/result ownership
+boundary after S68; positive numeric/format/source holds remain incremental.
+The default-session negative is now sealed with94 original files in
+`evidence/virgl-production-readiness/default-omarchy-indexed-and-query-gap/original-negative.tar.gz`,
+SHA25602ff956cc3d933cf7dda9c0db44c4cf8d04878d5bae4bd84b78f5d4f8dbdaaaf.
+The immutable candidate12 is staged on R2 with image SHA256
+f0a72ae2e4433df266fe57dd2443a567dd93396b98c96825b5ce6b3dc4ac9e8c and manifest
+87e23271916159e1aaed163df43caeec67cd568c4c7e8843527572412fec2c95:10422 existing
+chunks were authenticated and112 were uploaded. The live pointer remains the
+earlier candidate; this is artifact staging, not completed deployment.
+
+Later original0x205 failures target texture75,1280x800 RGBA8, bind10, without
+any attached backing. Their exact transferWords and resource control state are
+preserved for comparison against the native renderer's iovec/bounds contract.
+Do not suppress those errors or infer a valid transfer from its box alone. The
+initial default bar still lacks proven content; final public input is pending.
+
+### 2026-10-14 — planning — bounded query successors
+
+Pending core-query planning69 is cancelled in favor of ordered69a(boolean
+lifetime/result publication) and69b(real logical TF counts). Their exact
+independent negative remains recorded; complete API/default Omarchy and final
+recovery/deployment remain unclaimed.
+
+### 2026-10-14 — worker — resume final default desktop integration
+
+D69a and D69b are independently verified, including mandatory GLES queries;
+D69b verdict commit `dd8cf845` retains frozen runtimeaa451b81. Continue the
+existing native PR stack with one final desktop-acceptance layer. Parent scope
+now proves original default image12/SDDM/UID1000/Quickshell/Foot startup and
+trusted keyboard/cursor through the production worker and scanout. Previous
+actual default keyboard, startup-heartbeat and post-query console scanout
+budget negatives remain preserved and unclaimed.
+
+First iteration changes only the acceptance harness: wake actual screensaver
+before requiring visible bar; prove absent marker and fresh real Foot focus
+immediately before trusted physical typing; preserve passive worker/timer
+timestamps across fatal cleanup. No watchdog limit or runtime behavior is
+weakened. Record the actual default run before choosing any runtime repair.
+
+### 2026-10-14 — worker — default desktop input observed; freeze final readiness proof
+
+At ordinary built head `b0655aba825d6ebbae5369d97c3aa2f70862823c`, the normal
+SDDM/UID1000 image12 session initially produced an exactly blank mapped bar.
+The first failure happened before any typing and is preserved in
+`target/evidence/production-parent-omarchy-default01/public-desktop-input*` and
+the fresh critic custody directory `critic-production-parent-default-firstpaint-negative01`.
+The later owned retry `control-input-later-bar-trusted-input01` observed readable
+bar glyphs/icons (830 contrasting pixels over12 rows), actual mapped/focused
+Foot PID673 and trusted physical typing of `touch /tmp/gpukeyboard43touch`.
+The marker was absent before typing and serial observation afterward returned
+`TRUSTED_TOUCH_43`, exit0. This is supplemental evidence; the initial report
+stays failed and the center-position check does not yet prove cursor movement.
+
+The harness now waits up to360 seconds for actual distributed bar content,
+preserves every exact probe crop, and fails immediately on invalid geometry
+or occlusion. It observes the initial guest cursor, chooses a physically
+distinct target and requires both final coordinates and actual displacement.
+The local source descriptor stages the already published immutable image12
+manifest `87e23271916159e1aaed163df43caeec67cd568c4c7e8843527572412fec2c95`;
+the live Pages site remains on its previous descriptor until deployment.
+No runtime semantics or watchdog have changed. Syntax checks, all6 existing
+bar-content/protocol tests and `make web-dist` passed; outputs are
+`target/parent-content-cursor-{checks,build}01.{stdout,stderr}`.
+Final parent acceptance and clean-clone proof follow this frozen harness.
+
+### 2026-10-14 — worker — clean-clone asset-resolution negative
+
+`production-parent-cold01/production/fast-boot-images/report.json` refutes
+portability of the old test-server resolver: Omarchy failed before restore
+because the ignored198380324-byte boot snapshot was requested at its retired
+legacy R2 URL (404). The published exact object is at
+`sha256/0c34dc9389c52af167ed8e5f9e34c543b58c91205fc6b4e383bc3b0711ead256/releases/boot-snapshot/omarchy-ready.snap.gz`
+(HTTP200 and matching extent observed by HEAD). Local cached fast-boot success
+is insufficient for this portability claim. The resolver now tries the same
+content-addressed R2 key used by deployment, falling back to the legacy key
+only after404 for older small assets. Every returned release still must match
+its original manifest size/SHA256. Each attempted URL/status and successful
+byte digest is recorded; host harness hashes and current head are also explicit.
+Cursor diagnostics now use the existing `window.__cursor.state()` API.
+Syntax checks and all6 affected harness tests passed, outputs
+`target/parent-r2-portability-checks01.{stdout,stderr}`. Runtime/image/dist bytes
+are unchanged; the ongoing old-head actual Mesa/cube/compositor run is component
+evidence, never relabelled. Record the repaired server in a new final cold clone
+(the failed first clone is retained as the portability negative).
+
+### 2026-10-14 — worker — preserve unexplained final transport rejection
+
+The old-head full parent run reached actual VirGL-only Mesa,768 checked
+textured pixels,1000 cube frames (6006 draws,2017 completions,1007 presents,
+49301ms wall), Hyprland IPC and mapped Foot client, with zero failed GPU jobs
+and no browser errors. It then failed the blanket assertion that every guest
+transport response is below0x1200. `production-parent-frozen01/guest/failure.json`
+and its original GPU/serial logs are preserved. This is not a passed run.
+The prior unbacked-transfer finding is not assumed to explain this rejection.
+The harness now persists the original final transport records, Hyprland output
+and display screenshot before unchanged assertions. An explicitly labelled
+diagnostic copy is installed into the running cold02 clone before its actual
+guest phase; `supplemental-final-record-harness.json` records both source hashes
+and disclaims pristine final acceptance. No error is whitelisted or suppressed.
+`node --check tools/virgl-production/acceptance.mjs` passed.
+
+### 2026-10-14 — worker — block on original fragmented-backing boundary
+
+Fresh critic `critic-production-parent-sg-original-01` records256 valid tiny
+nonoverlapping original backing entries accepted and physically round-tripped,
+while257/420 entries receive0x1205 before host attachment despite known-valid
+RAM addresses, lengths and padding and only1028/1680 total bytes. Exact repro:
+`node target/evidence/critic-production-parent-sg-novel01/browser.mjs --output target/evidence/critic-production-parent-sg-original-repro --schedules 271828`.
+The257 row is `run-0001.json.gz`, SHA256
+c15566452a6171a3cd8734ac94c18974827be24b606d3b33dafdec972f0c8ebc;420 row
+`run-0002.json.gz`, SHA2565b250f996a411fa64ea53a153a4c91ba62bce2e4bf7be5294e96cc697749d9a1.
+Production32MiB byte capacity still inherits the historical256-entry guard in
+both Rust and JS. The pinned native QEMU mapping ceiling is16384. Ordered
+S/high E6-T11d70 closes this one original bounded attachment boundary and must
+be independently verified before final bring-up resumes. Old frozen/cold/public
+captures retain their original assets and identities; no rejection whitelist
+and no production completion or deployment claim is made.
+
+### 2026-10-14 — worker — resume after independently verified fragmented backing
+
+D70 is independently verified at `3c4e653b7c9c6525765949eadbe06c34181f8121`
+with original native/physical SG bytes, complete guarded GPU roundtrips, private
+ceilings, separate-descriptor malformed-tail recovery, negative control and
+final pristine clone. Resume the parent on its new verified production runtime.
+The old default image12 capture now confirms sequence789 ATTACH_BACKING
+resource45/424 entries returned0x1205 while all19 recorded bar crops were blank.
+Its kernel error interrupted the monitors JSON response before typing; no
+error filtering or parser workaround is introduced. Old cold02 confirms
+resource55/358-entry rejection followed by rejected transfer, while all10
+software warm phases and the exact198380324-byte immutable R2 snapshot download
+passed. The original parent failure runs are sealed at
+`target/evidence/production-parent-backing-negatives01/parent-original-backing-and-portability-negatives.tar.gz`,
+8005532 bytes,240 members,SHA256
+5e34795511002143829f202d0ade9823db29ae887454d32b61d54b5bec3a7b0c.
+Final new-runtime parent and clean-clone acceptance follow; earlier component
+holds survive only within their unchanged boundaries.
+
+### 2026-10-14 — worker — post-fragmented-backing proof and keyboard prerequisite
+
+Frozen runtime `5943a2df2e0e0d55290843fd1e89e5cdefe5fecf` passed all twelve
+commands in `VIRGL_PRODUCTION_EVIDENCE_DIR=target/evidence/production-parent-frozen02
+make verify-E6-T11d`. Actual guest Mesa/cube/Hyprland produced a complete original
+command stream with 5021 successful core responses, correctly framed to the end.
+All ten software fast-boot/repeat/persistence phases passed. The stock public
+UID1000 desktop produced a readable package bar, actual Foot command typed by
+sixty trusted events, and cursor movement. Its normal `gpuTrace=false` capture
+proves visible rendering and input; transport-wide error freedom is claimed only
+for the separately recorded actual-guest component. The brief hot debugger sample
+is diagnostic, so the hot run does not substantiate a clean timing claim.
+
+The untouched pristine command `python3 tools/virgl-production/cold.py --task
+E6-T11d --output target/evidence/production-parent-cold03` passed preceding gates,
+all software images, actual guest rendering and handshake. Its stock input check
+failed: original sixty balanced DOM transitions and corresponding Linux evdev
+frames spell `touch /tmp/gpukeyboard42touch`, but the final canvas shows
+`touchhhhhhhh` and the guest marker remains absent. Exact failed screenshot
+SHA256 `7d61ac2d511113e8c4654a4eea528e4bf57a5b98321439e85c2a0583c4032842`;
+`public-desktop/public-desktop-input.json` records all twenty unsuccessful marker
+reads. Fresh critic reproduced a related original held-key WFI gap with
+`cargo test -p wasm-vm-core --features virgl-renderer,trace --test
+production_keyboard_wfi_critic -- --nocapture`: one traced WFI jumps mtime0 to
+500000 or5000000000 despite an original delivered H with no release. Both cache
+modes reproduce. This identifies a clock boundary to repair, without claiming it
+is the exclusive cause of the desktop repetition. Ordered S/high E6-T11d71 must
+be independently verified before parent acceptance resumes.
+
+Durable worker artifact
+`evidence/virgl-production-bringup/worker/post-fragmented-backing-positive-and-clean-input-negative-02.tar.gz`
+contains 327 original files plus its receipt, all reopened: 10582011 bytes,
+SHA256 `1cc9f51f83fa84d30f2373130c6f49bf585d56f2e92fe6d7ab19f7f728a044b5`.
+It also preserves the Cloudflare attempt: exact public artifact byte checks passed,
+but Pages rejected the currently signed-in account. The user is switching Wrangler
+back to the existing project account. No successful deployment or final parent
+verification is claimed. Evidence-only live harness heads `6549a30b`/`ed63d292`
+retain identical runtime and original artifact pins while adding actual HTTPS
+body capture. Parent is blocked on the keyboard prerequisite; deployment remains
+an additional acceptance requirement.
+
+### 2026-10-15 — worker — resume final publishing after clock verification
+
+The ordered keyboard and pacing prerequisites now have independent verdicts.
+The final D72 worker/verifier archives carry actual production Mesa,1000 cube
+frames, Hyprland/Foot scanout, original stock keyboard/bar/cursor and all four
+software image fast-boot proofs at the unchanged ordinary d055 Wasm boundary.
+D71 closure and D73 preserve native wait/idle predictions and controls. Parent
+resumes for current marketing/docs/roadmap copy, deployable bundle and actual
+Cloudflare publication/source/default/site/software checks. Native/rendering
+and successful long-boot components carry by explicit code/dependency/digest
+equivalence; failed historical wrappers remain failed. Context-loss recovery
+remains E6-T11e and no300MIPS claim is introduced.
+
+### 2026-10-15 — worker — published source, default boot follow-up
+
+Cloudflare uploaded committedf0357748 successfully (deployment6f079192).
+Declared narrow ledger supersession accounts for seven changed dist assets;
+Bash exit0 and preupload/after inventory equality are recorded in
+`target/evidence/production-parent-final-publishing03`. The old deployment13
+outer wrapper remains failed at its stricter artifact-only postcondition.
+Local03 docs/default127/0/site checks pass. First HTTPS default127/0 holds but
+its recorder rejects Cloudflare's legitimate308 .html canonicalization; the
+paused actual HTTPS GPU worker qualifies/JIT-attaches at0 retired but its
+recording also assumed localrequire-corp rather than shippedcredentialless.
+Preserved raw failures are not product passes; narrow recorder corrections
+retain exact bodies/redirect destinations and the permitted favicon404.
+
+The user reports that production Omarchy does not fast-boot. Exact current
+repro: `/app?guest=omarchy&desktop=1#ide` omitsgpu, selectsGPU/cold boot in
+main.js1983. The paired warm snapshot belongs tosoftwaregraphics. Ordered
+S/mediumD74 makes the existing warm route default while preserving explicit
+GPU selection. Parent publication waits for that independent verdict.
+
+### 2026-10-15 — worker — retain accelerated default; implement real warm restore
+
+The user clarified that GPU rendering must remain enabled for warm boots.
+The unshipped software-default proposal is cancelled, with ordered native/host/
+worker/public warm-checkpoint slices74a–d. Parent publication now waits for
+74d; earlier rendering and source-delivery evidence is unchanged.
+
+
+### 2026-10-15 — worker — resume final production closure after verified warm publication
+
+E6-T11d74d is independently verified at
+`2f16a7553bb721e770830f27b13984f3b577be49`. Resume the parent solely to close
+its accumulated rendering/negotiation/production evidence. The runtime, image,
+clock and public pair stay frozen. Under the incremental rule, unchanged
+capability ABI, actual Mesa/no-software rendering and1000-frame/cube holds carry;
+verified fragmented backing, timekeeping, production worker ownership, scanout,
+capacity and warm-publication successors cover their changed boundaries. This
+closure does not claim full Omarchy application coverage or failure survival;
+the user has separately requested Chromium, LibreOffice and the compatible
+upstream application set, and E6-T11e remains a separate ordered boundary.
+
+Continue the same native stack above PR568 on
+`codex/production-guest-gpu-closure`; no stack is replaced or PR merged.
+
+
+### 2026-10-15 — worker — source-bound production parent closure submitted
+
+Metadata source `423edd8c084f969f5171af93b683dbd1534f2fa8`; no runtime,
+artifact or browser behavior changes. Closure capsule
+`evidence/virgl-production-final-closure/worker/closure.tar.gz` is2313686bytes,
+SHA256 `9b92e4b8a7d1471f92ec575654835e647a499a72111df36bf672db624d6591df`;
+`records.json` SHA256
+`8f7ae10758c136ff60e1d61a3931fbd4802816ea30a35213e5c82146418fe6a1`.
+All25members were reopened/rehash checked. Exact read-only command
+`python3 evidence/virgl-production-final-closure/worker/authenticate.py`
+passes25member hashes, all38inherited file/manifest references without dropping
+a reference, and current critical source bodies. Task/status changes are the
+only implementation difference; the helper authenticates the composed claim.
+
+The prepared map is the fresh critic's original13604-byte metadata record, SHA256
+`0b8c766bb4755c0e7a70d549e8b04a49b079d0b680a6da527972d608dae00045`.
+Its observed1a172cf3head is retained, not relabelled current. It maps unchanged
+capability serializer SHA256
+`4c05de5b32c0482ba3135967a067959d0f4c890767c64679531704fbceef2244`,
+independent fixed caps oracle
+`5d6843966a88cc394213808779f9daaadbab19ef7fe07b7d94c45368afc6cd3b`,
+and decoder
+`804134a7ba9a52c7335ec3ff14e5ac2a55a09307ed833e2c7266268ae7a704e2`
+to the unchanged D72/e17 boundary. Changed worker/RAM/loader/journal/renderer/
+capacity behavior is covered by verified successors, never by blanket equality.
+
+The durable original D72 component is
+`evidence/virgl-production-interactive-clock/worker/paced-keyboard-policy-submission.tar.gz`,
+SHA256 `01f6feaca7b0079b0a4dfa83fc4bdfeb757ca8b258af26c9bd8882273374a37d`;
+internal prefix `production-paced-policy-private-window04/`. It binds actual
+Mesa26.2.2 GLES3 VirGL,768literal pixels,1000cube frames,13handshake families,
+Hyprland/Foot and no software DRI. Original full GPU log SHA256
+`a5aafe364806b475cbb7c437a31c26c6ef0e58ebe0d0b14b7672994645f2d6df`
+contains31516DRAWs and1347fenced submits. The later final-state point has
+31192draws+1pending and is not described as drained. Guest digest is
+`d27ddf4d5d4b6e6007ed6836750fbbaf31500d87a74f7747bd8431f83fe1faaa`.
+Original report, acceptance, Mesa probe, cube state, full trace, QEMU/reference
+handshake comparison and exact hashes remain in that published archive/map.
+
+The independent capability-byte negative control is embedded verbatim under
+`independent-capability-negative/` in this closure capsule. Its original sealed
+archive is2005109bytes, SHA256
+`ff5bc0b9f9f4bd0d68f96dd2e4bb860d446dca863b462fe3bcb4ea78dd9893e4`;
+receipt SHA256
+`d247387f1a137efa279b3f7de923daf5f0a47c320670eb3903ddaaaf8e7bdaf6`.
+Healthy exits0; changing actual cap byte284 to3 contradicts independent oracle4
+and exits101. This is the critic's test/evidence, not a worker-generated oracle.
+
+Verified successors: D72 `8c902c70`, D73 `7e2739f2`,74c `baf3d103`,
+74d1 `612b1b7b`,74d2 `3027442a`,74d `2f16a755`. Their task logs,
+worker/verifier archives and digest manifests are bound in the capsule. The
+final847full-pristine high-risk gauntlet and actual HTTPS923 GPU initial/repeat,
+ten software fast-boot/persistence phases,127/0 and unified-site db04 recorder
+closure are held by the fresh74d verdict. Runtime main/loader remain exactly847.
+Production Pagesb320083f uses originalpair2aa173104561bytes/worker06622;
+rawimagef0a72 and manifest87e232 identify distinct authenticated objects.
+
+Claim: qualified, truthfully advertised production VirGL initializes real guest
+Mesa/Hyprland and renders through the production worker/physical scanout, including
+useful GPU warm restoration. No new runtime boundary changed, so the repository's
+incremental rule carries unchanged high-risk/pristine/cube holds. Failed original
+wrappers remain failed and their narrowly missing proofs are explicitly mapped.
+This does not claim300MIPS, arbitrary host support, complete Omarchy applications
+or recovery/context-loss survival. E6-T11e and the user's explicit Chromium/
+LibreOffice/full-compatible-application image remain separate work. Fresh
+`production_boundary_critic` receives this exact capsule/diff and owns the verdict.
+
+
+### 2026-10-15 — independent verifier — production parent closure
+
+VERDICT: verified
+
+Fresh adversarial review of worker `9077193b`, metadata source `423edd8c`;
+no production implementation edits. This verdict closes qualified production
+VirGL/Mesa/compositor bring-up and its useful published GPU warm path. It does
+not close recovery, the newly requested application image or300MIPS.
+
+- **Custody/source — HELD.** Rehashed all25 unique parent capsule members and
+  the exact38 inherited path/size/hash tuples. Preserved prepared map0b8c766b
+  and original independent cap-negative archiveff5bc0b9 are embedded unchanged.
+  Portable independent replay resolves the original raw records from committed
+  D72/embedded archives with **zero ignored scratch inputs read**. All74 parent
+  dependencies are verified. Serializer4c05de5b, fixed independent C oracle5d684396
+  and decoder804134a7 match D72/e17; current main, loader, build identity and
+  ordinary Wasm7a99aa33 match frozen847. Native/RAM/renderer/clock/scanout/capacity
+  changes carry only from their named verified successors.
+- **Actual guest — HELD.** Durable D72 `production-paced-policy-private-window04/`
+  proves VirGL-only Mesa26.2.2 GLES3,29 actual numeric limits,15 multisample
+  allocations/resolve,768 literal pixels,1000 cube frames and Hyprland/Foot.
+  The13-family handshake and raw GPUa5aafe36/guestd27ddf4d remain exact. Corrected
+  one worker-log citation: cube after6009draws/delta6006; the later **final-state**
+  snapshot has31192draws+1ready-pending; full trace31516DRAWs/1347fenced submits.
+  No drained-owner claim follows. Original sealed worker prose remains intact.
+- **Publication/regression — HELD.** Fresh74d `2f16a755` and its exact worker
+  f8b2fd2f/verifier8bd65228 capsules carry their full physical/source coverage.
+  Independently authenticated original847 full-pristine16 gates and923 build,
+  actual HTTPS initial/repeat pair2aa/worker06622 with new real Mesa seeds5/2,
+  each+5completed/+4draws/+256output bytes, trusted markers42/84, usable bar
+  workspace effects and healthy final GPU. All10 software phases/default127/0
+  pass. Site14 separately passes8 local+8HTTPS flows. HTTPS12 remains failed
+  at its site recorder; its three exit0 runtime components compose with site14.
+- **Attacks/coverage — HELD.** Equal-count reference substitution fails the
+  independent exact-set oracle. An owned isolated one-byte archive change fails
+  the unchanged authenticator at its digest assertion, exit1 before references;
+  the original is unchanged. Original cap-byte284=3 versus independent oracle4
+  retains healthy0/changed101. Python tracing executes all31 new helper lines;
+  no changed statement is unexecuted. Other new paths are authenticated
+  declarative metadata/status/index/claim text. No new runtime diff exists;
+  unchanged held native/cold/cube evidence was not needlessly restarted.
+
+Full predictions, citations, coverage and preserved setup correction are in
+`evidence/virgl-production-final-closure/verifier/VERDICT.md` and
+`review.tar.gz` (2376752bytes,32members/31indexed files), SHA256
+`024aba3526514193e57b9668a166acdda09e7c3e21dcc5e6d526a1e2dfaaf2eb`;
+manifest SHA256
+`3fd6ed3cc56872be21910e25cf28d7627896e134e184289ae5cd1f0777462436`.
+Every member was reopened and rehashed. Its paired receipt is adjacent.
+SUITE: retain the portable read-only verifier `authenticate.py`, exact-reference
+omission check, archive negative and existing promoted physical/ABI/queue tests.
+Commands: `python3 evidence/virgl-production-final-closure/verifier/authenticate.py
+--repo <checkout> --output <audit.json>`; worker helper line tracing and isolated
+archive negative; Python AST; policy/queue. Overall GPU recovery/full-offload,
+arbitrary host/application compatibility, Chromium/LibreOffice and300MIPS are
+not certified. E6-T11e and the application-image request remain separate work.

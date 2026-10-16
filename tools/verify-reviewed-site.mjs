@@ -7,25 +7,27 @@ import {fileURLToPath,pathToFileURL} from 'node:url';
 import {createServer} from 'node:http';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
+import {expectedPublishedSource} from './virgl-production/published-source.mjs';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 assert.equal(process.argv[2],'--output');assert.ok(process.argv[3]);
 assert.ok(process.argv.length===4||(process.argv.length===6&&process.argv[4]==='--url'));
 const output=path.resolve(process.argv[3]),dist=path.join(repo,'web/dist');
+const remote=process.argv[4]==='--url';
 const git=(...args)=>execFileSync('git',args,{cwd:repo,encoding:'utf8'}).trim();
 const report={schema:'reviewed-site-assembled-route-record-v1',task:'E0-T27',head:git('rev-parse','HEAD'),
  command:[process.execPath,...process.argv.slice(1)],startedAt:new Date().toISOString(),status:'running',
  actualGuestGpu:false,performanceAuthority:false,errors:[],originalRouteBodies:[],interruptedResponseBodies:[],canceledRequests:[],requests:[],screenshots:[],served:[],steps:[]};
 await fs.mkdir(output,{recursive:true});
 let browser,server,legacyTransition=null;
-const served=new Map(),bodyReads=[];
+const served=new Map(),bodyReads=[],capturedRequests=new WeakMap();
 const screenshot=async(page,name)=>{const destination=path.join(output,name);await page.screenshot({path:destination,fullPage:false});report.screenshots.push({path:name,sha256:hash(await fs.readFile(destination))});};
 try{
  assert.equal(git('status','--porcelain','--untracked-files=no'),'','record from a clean committed source');
  const catalog=JSON.parse(await fs.readFile(path.join(dist,'docs-content/catalog.json')));
  const ledger=JSON.parse(await fs.readFile(path.join(dist,'docs-content/migration-ledger.json')));
- assert.equal(catalog.docstreamVersion,'1.8.0');assert.equal(catalog.pages.length,154);assert.equal(ledger.documents.length,1995);
+ assert.equal(catalog.docstreamVersion,'1.9.1');assert.equal(catalog.pages.length,154);assert.equal(ledger.documents.length,1995);
  report.corpus={pages:catalog.pages.length,records:ledger.documents.length,version:catalog.docstreamVersion};
  let base=process.argv[5];
  if(!base){
@@ -48,36 +50,45 @@ try{
  }
  report.base=base;
  const {chromium}=await import(pathToFileURL(path.join(repo,'web/node_modules/playwright/index.mjs')));
- browser=await chromium.launch({executablePath:process.env.CHROME||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:false,args:['--enable-gpu']});
+ browser=await chromium.launch({executablePath:process.env.CHROME||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true,args:['--enable-gpu','--use-gl=angle','--use-angle=metal']});
  report.browserVersion=browser.version();
- // Read the original HTTP response before forwarding the unchanged routing
- // module. An immediate client redirect may otherwise destroy Chrome's CDP
- // response handle before the recorder can retrieve this changed source.
+ // Authenticate each original same-origin response before forwarding its
+ // unchanged body. Navigation can retire Chrome's response handle before the
+ // asynchronous recorder reads it, including assets unrelated to a redirect.
  const captureRouteSource=async context=>{
-  await context.route('**/tabs.js',async route=>{
-   const original=await route.fetch();assert.equal(original.status(),200);
-   const bytes=await original.body();const expected=await fs.readFile(path.join(dist,'tabs.js'));
-   assert.equal(hash(bytes),hash(expected),'original routing module drift');
-   const bodyPath='original-routes/tabs.js';await fs.mkdir(path.dirname(path.join(output,bodyPath)),{recursive:true});
+  await context.route('**/*',async route=>{
+   const url=new URL(route.request().url());
+   if(url.origin!==new URL(base).origin||route.request().method()!=='GET'){await route.continue();return;}
+   const original=await route.fetch();
+   if(original.status()!==200){await route.fulfill({response:original});return;}
+   const rawName=url.pathname==='/'?'index.html':decodeURIComponent(url.pathname.slice(1));
+   const name=path.extname(rawName)?rawName:`${rawName}.html`;
+   const bytes=await original.body(),raw=await fs.readFile(path.join(dist,name));
+   const expected=remote?expectedPublishedSource(name,raw):raw;
+   assert.equal(hash(bytes),hash(expected),'original source drift '+name);
+   const bodyPath=`original-routes/${report.originalRouteBodies.length}/${name}`;await fs.mkdir(path.dirname(path.join(output,bodyPath)),{recursive:true});
    await fs.writeFile(path.join(output,bodyPath),bytes);
-   report.originalRouteBodies.push({url:route.request().url(),path:'tabs.js',bodyPath,status:original.status(),bytes:bytes.length,sha256:hash(bytes),forwardedUnchanged:true});
+   const receipt={url:route.request().url(),path:name,bodyPath,status:original.status(),bytes:bytes.length,sha256:hash(bytes),forwardedUnchanged:true};
+   report.originalRouteBodies.push(receipt);capturedRequests.set(route.request(),receipt);
    await route.fulfill({response:original,body:bytes});
   });
  };
  const watch=page=>{
-  page.on('console',m=>{if(m.type()==='error')report.errors.push({url:page.url(),message:m.text()});});
+  page.on('console',m=>{if(m.type()!=='error')return;const location=m.location().url;if(location===new URL('favicon.ico',base).href&&/404/.test(m.text()))(report.allowedFavicon404??=[]).push({url:location,message:m.text()});else report.errors.push({url:page.url(),source:location,message:m.text()});});
   page.on('pageerror',e=>report.errors.push({url:page.url(),message:e.message}));
   page.on('requestfailed',r=>{const item={url:r.url(),message:r.failure()?.errorText};
    if(item.message==='net::ERR_ABORTED')report.canceledRequests.push(item);else report.errors.push(item);});
   page.on('response',r=>{const transition=legacyTransition;bodyReads.push((async()=>{try{const url=new URL(r.url());if(url.origin!==new URL(base).origin||r.status()!==200)return;
    const bytes=await r.body();const rawName=url.pathname==='/'?'index.html':url.pathname.slice(1);
    const name=path.extname(rawName)?rawName:`${rawName}.html`;
-   const expected=await fs.readFile(path.join(dist,name));assert.equal(hash(bytes),hash(expected),'served body drift '+name);
+   const raw=await fs.readFile(path.join(dist,name)),expected=remote?expectedPublishedSource(name,raw):raw;assert.equal(hash(bytes),hash(expected),'served body drift '+name);
    const bodyPath='served/'+name;await fs.mkdir(path.dirname(path.join(output,bodyPath)),{recursive:true});await fs.writeFile(path.join(output,bodyPath),bytes);
    report.requests.push({url:r.url(),path:name,status:r.status(),bodyPath,bytes:bytes.length,sha256:hash(bytes)});
   }catch(error){
    const item={url:r.url(),message:error.message};
-   if(transition&&/Network.getResponseBody.*No resource with given identifier found/.test(error.message))report.interruptedResponseBodies.push({...item,legacyTransition:transition});
+   const original=capturedRequests.get(r.request());
+   if(original&&/Network.getResponseBody.*No resource with given identifier found/.test(error.message))report.interruptedResponseBodies.push({...item,legacyTransition:transition,originalBodyPath:original.bodyPath,sha256:original.sha256,acquisition:'exact-request-original-response-forwarded-unchanged'});
+   else if(transition&&/Network.getResponseBody.*No resource with given identifier found/.test(error.message))report.interruptedResponseBodies.push({...item,legacyTransition:transition});
    else if(r.request().failure()?.errorText!=='net::ERR_ABORTED')report.errors.push(item);
   }})());});
  };
@@ -98,8 +109,16 @@ try{
   assert.equal(new URL(page.url()).hash,'#ide');
   assert.equal(await page.locator('#os-launcher').isVisible(),true);
   assert.equal(await page.locator('#os-launcher-title').innerText(),'Choose an operating system');
+  assert.equal(await page.locator('#desktop-graphics').inputValue(),'gpu');
+  assert.match(await page.locator('#desktop-graphics option[value="gpu"]').textContent(),/GPU rendering.*warm boot/);
+  const omarchyDetail=await page.locator('[data-os="omarchy"] .os-option-detail').innerText();
+  assert.match(omarchyDetail,/restores from a prepared checkpoint/);
+  assert.match(omarchyDetail,/GPU compositing after a hardware check/);
+  assert.match(omarchyDetail,/Chromium, LibreOffice, Node\.js and Foot/);
+  assert.match(await page.locator('#os-launcher').innerText(),/first warm launch downloads a checkpoint/);
   assert.equal(await page.locator('#panel-ide').getAttribute('data-os-selected'),null);
   assert.equal(await page.locator('#rm-lanes, #panel-docs, #docs-mount, iframe').count(),0);
+  await page.waitForLoadState('networkidle');await Promise.all(bodyReads);
  };
  await page.locator('.nav-cta').click();await launcher();
  assert.equal(await page.locator('nav[aria-label="Primary navigation"] a[href="./docs.html"]').count(),1);
@@ -109,6 +128,11 @@ try{
  await page.locator('nav[aria-label="Primary navigation"] a[href="./roadmap.html"]').click();
  await page.waitForFunction(()=>document.querySelector('#rm-headline')?.textContent.includes('tasks verified'));
  const tasks=JSON.parse(await fs.readFile(path.join(dist,'tasks.json')));
+ const queue=await fs.readFile(path.join(repo,'tasks/QUEUE.md'),'utf8');
+ const counts=queue.match(/\*\*(\d+) \/ (\d+) tasks verified\.\*\*/);assert.ok(counts,'canonical queue headline');
+ assert.deepEqual(tasks.headline,{verified:Number(counts[1]),total:Number(counts[2])},'published task counts match canonical queue');
+ for(const id of ['E6-T11d70','E6-T11d71','E6-T11d72','E6-T11d73'])assert.equal(tasks.tasks.find(task=>task.id===id)?.status,'verified','published prerequisite '+id);
+ report.taskLedger={...tasks.headline,verifiedGraphicsPrerequisites:['E6-T11d70','E6-T11d71','E6-T11d72','E6-T11d73']};
  assert.equal(await page.locator('#rm-headline').innerText(),`${tasks.headline.verified} / ${tasks.headline.total} tasks verified across ${tasks.epics.length} epics`);
  assert.equal(await page.locator('.site-header .brand[href="./"]').count(),1);
  assert.equal(await page.locator('#panel-ide, #docs-mount').count(),0);
@@ -166,8 +190,33 @@ try{
  assert.equal(await page.locator('.reader-header a[href="./app.html#ide"]').count(),1);
  assert.equal(await page.locator('.reader-header a[href="./"]').count(),1);
  await page.goto(new URL('docs.html?page=graphics',base).href,{waitUntil:'load'});await page.locator('.reader-document h1').waitFor();
- assert.match(await page.locator('.reader-document').innerText(),/production acceleration disabled|production acceleration.*disabled/);
+ const properties=page.locator('[data-document-properties]');
+ assert.equal(await properties.count(),1);
+ assert.equal(await properties.getAttribute('open'),null);
+ await properties.locator('summary').focus();await page.keyboard.press('Enter');
+ assert.equal(await properties.evaluate(el=>el.open),true);
+ assert.equal(await properties.locator('input,textarea,button').count(),0,'publication properties are read-only');
+ assert.match(await properties.innerText(),/web\/docs-source\/guides\/graphics\.md/);
+ await properties.locator('summary').press('Enter');
+ const graphicsText=await page.locator('.reader-document').innerText();
+ assert.match(graphicsText,/GPU rendering restores an authenticated Omarchy warm checkpoint/);
+ assert.match(graphicsText,/Acceptance checks new guest GPU work after startup/);
+ assert.match(graphicsText,/cannot silently become a cold boot or a software session/);
+ assert.match(graphicsText,/Software rendering/);
+ assert.match(graphicsText,/WebGL2/);
+ assert.match(graphicsText,/300-MIPS/);
  await screenshot(page,'desktop-reader.png');report.steps.push({name:'production reader routes and truthful graphics boundary',status:'passed'});
+ await page.goto(new URL('docs.html?page=verification',base).href,{waitUntil:'load'});await page.locator('.reader-document h1').waitFor();
+ const nativeStates=['pending','in-progress','implemented','blocked','parked','refuted','verified','cancelled'];
+ assert.deepEqual(await page.locator('.reader-document .docs-task-control[data-task-state]').evaluateAll(els=>els.map(el=>el.dataset.taskState)),nativeStates);
+ assert.equal(await page.locator('.reader-document input[aria-readonly="true"]').count(),8);
+ const stateBefore=await page.locator('.reader-document .docs-task-control[data-task-state]').evaluateAll(els=>els.map(el=>el.dataset.taskState));
+ await page.locator('.reader-document [data-task-state="pending"] input').click();
+ await page.locator('.reader-document [data-task-state="pending"] input').press('Space');
+ assert.deepEqual(await page.locator('.reader-document .docs-task-control[data-task-state]').evaluateAll(els=>els.map(el=>el.dataset.taskState)),stateBefore);
+ assert.equal(await page.locator('.reader-document [data-task-state="pending"] input').isChecked(),false);
+ await screenshot(page,'desktop-reader-task-states.png');
+ report.steps.push({name:'Docstream 1.9.1 native properties and eight read-only task states',status:'passed'});
  for(const [entry,id] of [['docs-embedding.html','embedding'],['docs-guest.html','storage'],['docs-containers.html','containers'],['docs-verification.html','verification'],['docs-explainers.html','explainers']]){
   for(const address of [entry,entry.slice(0,-5)]){
   await page.goto(new URL(address,base).href,{waitUntil:'load'});await page.locator('.reader-document h1').waitFor();
@@ -208,27 +257,23 @@ try{
  await phone.locator('.reader-sidebar nav a').first().click();assert.equal(await phone.getByRole('button',{name:'Browse docs'}).getAttribute('aria-expanded'),'false');
  await phone.locator('.reader-document h1').waitFor();assert.ok(await phone.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
  await screenshot(phone,'mobile-reader.png');report.steps.push({name:'assembled mobile motion/search/navigation/reflow',status:'passed'});
+ await phone.goto(new URL('docs.html?page=verification',base).href,{waitUntil:'load'});await phone.locator('.reader-document h1').waitFor();
+ await phone.locator('[data-document-properties] summary').click();
+ assert.equal(await phone.locator('[data-document-properties]').evaluate(el=>el.open),true);
+ assert.equal(await phone.locator('[data-document-properties] input, [data-document-properties] textarea').count(),0);
+ assert.equal(await phone.locator('.reader-document .docs-task-control[data-task-state] input[aria-readonly="true"]').count(),8);
+ assert.ok(await phone.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+ await screenshot(phone,'mobile-reader-properties.png');
  await Promise.all([page.waitForLoadState('networkidle'),phone.waitForLoadState('networkidle')]);
  await Promise.all(bodyReads);
- // A redirect may retire an unchanged module's CDP resource before its body
- // can be read. Keep that diagnostic, and require a successful original-body
- // capture from the normal initialized app plus unchanged baseline bytes.
- const unchangedRedirectModules=new Set(['ide.js','vendor/xterm/xterm.js','omarchy-startup-state.js','coi-serviceworker-register.js','cpu-isolation.js']);
+ // Every retired response must have its own authenticated original response;
+ // a different request for the same URL cannot satisfy this receipt.
  for(const item of report.interruptedResponseBodies){
   const name=new URL(item.url).pathname.slice(1);
-  const original=report.originalRouteBodies.find(row=>row.url===item.url&&row.forwardedUnchanged);
-  if(original){
-   item.originalBodyPath=original.bodyPath;item.sha256=original.sha256;
-   assert.equal(hash(await fs.readFile(path.join(output,original.bodyPath))),hash(await fs.readFile(path.join(dist,name))));
-   continue;
-  }
-  assert.ok(unchangedRedirectModules.has(name),'unproven interrupted response '+name);
-  const current=await fs.readFile(path.join(dist,name));
-  const baseline=execFileSync('git',['show',`2aca65e9328aa1433fb516511ca554fdd96b422d:web/dist/${name}`],{cwd:repo,maxBuffer:16*1024*1024});
-  assert.equal(hash(current),hash(baseline),'interrupted response is changed routing code '+name);
-  const captured=report.requests.find(row=>row.path===name&&row.sha256===hash(current));
-  assert.ok(captured,'no complete original body for interrupted unchanged module '+name);
-  item.heldBodyPath=captured.bodyPath;item.sha256=captured.sha256;item.baselineHead='2aca65e9328aa1433fb516511ca554fdd96b422d';
+  const original=report.originalRouteBodies.find(row=>row.url===item.url&&row.forwardedUnchanged&&row.bodyPath===item.originalBodyPath);
+  assert.ok(original,'unproven interrupted response '+name);
+  const raw=await fs.readFile(path.join(dist,original.path));
+  assert.equal(hash(await fs.readFile(path.join(output,original.bodyPath))),hash(remote?expectedPublishedSource(original.path,raw):raw));
  }
  await Promise.all([desktop.close(),mobile.close()]);
  assert.deepEqual(report.errors,[]);assert.equal(git('rev-parse','HEAD'),report.head);assert.equal(git('status','--porcelain','--untracked-files=no'),'');

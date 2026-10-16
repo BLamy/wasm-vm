@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "web/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "1df1afdf33ecd1d41430dae5e7e4b5416d5f362e4d03db5a90f9bf0f9b821501"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # Browser demo (E0-T23)
 
 {% hint style="info" %}

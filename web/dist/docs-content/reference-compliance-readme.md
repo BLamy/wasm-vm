@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "compliance/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "12ba5235488f864d86f4d4b89acda30a5276470f25a0014327daef02afe00c66"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # RISCOF architectural compliance (E1-T20)
 
 {% hint style="info" %}

@@ -1,0 +1,14 @@
+{
+  "schema": "critic-c1-incremental-carry-and-runtime-identity-v1",
+  "C_baseline": "dddae3bc2c15b1332dedcb208f3b7e6c6f852127",
+  "frozen_C1": "43f227ae83acb3fc1c5f9c3bcd9766d2710d0875",
+  "C_verdict_path": "evidence/omarchy-applications-desktop/verifier/VERDICT.md",
+  "C_verdict_sha256": "854943d682f2fc32dbb544e1d8c6a6f365e4da3bc5966c9d1f2a8f24923a279d",
+  "all_tracked_historical_evidence_tree_identical": "bf16e451009f235fcc8f1c4ee1b425d157ecdf68",
+  "unchanged_core_shader_and_named_checkpoint_worker_dependencies": true,
+  "changed_product_boundary": "Only resources.mjs:427-428 and exact shipping copies; separately proved by C1. Original application historical runtime identity is retained, not relabeled as new factory proof.",
+  "runtime_file_count": 46,
+  "GPU_CHECKPOINT_BUILD_ID_recomputed": "222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0",
+  "ordinary_Wasm_sha256": "7d6a781fd222f39a2315ec334b6df70517c4fd0ef3443e1c8669804e4c408e89",
+  "scope": "Original C scoped application/shader/storage/snapshot/copy/build HELD results carry. This does not execute new apps/OS boots or assert a new factory pair, release/deployment."
+}

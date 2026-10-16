@@ -1,3 +1,11 @@
+---
+kind: "Technical reference"
+source: "web/tailscale-connect/README.md"
+source_revision: "2691b24e6c00478f8d69f81180b6827761de246a"
+source_sha256: "9b1bb399106b7df652095f383019486583773f8a705401b74994371ff612d1ef"
+scope: "Pinned source; publication does not refresh verification"
+---
+
 # @tailscale/connect
 
 {% hint style="info" %}

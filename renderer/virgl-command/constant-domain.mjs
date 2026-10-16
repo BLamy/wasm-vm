@@ -1572,3 +1572,73 @@ export function deriveStandardDimensionalShadowTextureShaderInterface(vertex, fr
       standardDimensionalMetadata(fragment, "fragment", true, selectors, true)) });
   } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
 }
+
+// Original raw capture contracts are separate from dimensional raster admission.
+export const STANDARD_STREAM_OUTPUT_SHADER_PROFILE = 'virgl-webgl2-standard-stream-output-gles3-v1';
+function standardStreamMetadata(value, stage, paired, selectors) {
+  const keys = [...STANDARD_METADATA_KEYS, 'guestUniformBlocks', 'textureQueries', 'colorOutputMasks', 'instanceUniforms', 'shadowUniforms', 'streamOutput'];
+  const input = record(value, keys);
+  require(input.profile === STANDARD_STREAM_OUTPUT_SHADER_PROFILE, 'Stream output requires its selected compiler profile.');
+  const {streamOutput: raw, ...common} = input;
+  const metadata = standardDimensionalMetadata({...common, profile: STANDARD_DIMENSIONAL_SHADOW_TEXTURE_SHADER_PROFILE}, stage, paired, selectors, true);
+  const stream = record(raw, ['encoding', 'captureBuffer', 'strides', 'outputs', 'varyings', 'packedStrideBytes']);
+  const uint = (n, max) => Number.isInteger(n) && n >= 0 && n <= max;
+  require(stream.encoding === 'raw-32bit-words' && uint(stream.captureBuffer, 3), 'Invalid original capture selection.');
+  const strides = array(stream.strides, 4);require(strides.length === 4 && strides.every(n => uint(n, 65535)), 'Invalid original dword strides.');
+  const outputs = array(stream.outputs, 128).map(v => record(v, ['registerIndex', 'startComponent', 'numComponents', 'outputBuffer', 'destinationOffset', 'stream']));
+  require(outputs.length > 0 || strides.every(n => n === 0), 'Empty original output metadata requires zero strides.');
+  const count = [0, 0, 0, 0], wanted = [];let packed = 0;
+  for (const [i, o] of outputs.entries()) {
+    require(stage === 'vertex' && uint(o.registerIndex, 31) && uint(o.startComponent, 3) && uint(o.numComponents, 4) && o.numComponents > 0 && o.startComponent + o.numComponents <= 4 && uint(o.outputBuffer, 3) && uint(o.destinationOffset, 65535) && o.stream === 0, 'Invalid original output range.');
+    const declared = metadata.outputs.find(v => v.index === o.registerIndex), mask = ((1 << o.numComponents) - 1) << o.startComponent;
+    require(declared && (declared.componentMask & mask) === mask && strides[o.outputBuffer] > 0 && o.destinationOffset + o.numComponents <= strides[o.outputBuffer], 'Capture exceeds its declared register or stride.');
+    for (const old of outputs.slice(0, i)) require(old.outputBuffer !== o.outputBuffer || o.destinationOffset >= old.destinationOffset + old.numComponents || old.destinationOffset >= o.destinationOffset + o.numComponents, 'Original capture ranges overlap.');
+    count[o.outputBuffer] += o.numComponents;require(count[o.outputBuffer] <= 64, 'Original capture components exceed the selected floor.');
+    if (o.outputBuffer === stream.captureBuffer) {
+      wanted.push({outputIndex: i, name: 'wv_so_' + i, type: o.numComponents === 1 ? 'uint' : 'uvec' + o.numComponents, components: o.numComponents, packedOffset: packed});packed += o.numComponents * 4;
+    }
+  }
+  const varyings = array(stream.varyings, 128).map(v => record(v, ['outputIndex', 'name', 'type', 'components', 'packedOffset']));
+  require(varyings.length === wanted.length && varyings.every((v, i) => Object.keys(wanted[i]).every(k => v[k] === wanted[i][k])) && stream.packedStrideBytes === packed, 'Capture varying order/type/offset disagrees with original words.');
+  return standardFreeze({...metadata, profile: input.profile, streamOutput: {encoding: stream.encoding, captureBuffer: stream.captureBuffer, strides, outputs, varyings, packedStrideBytes: packed}});
+}
+function standardStreamBody(value, stage, paired, selectors) {
+  const body = record(value, ['glsl', 'metadata']);require(typeof body.glsl === 'string' && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl), 'Invalid checked capture shader source.');
+  return standardFreeze({glsl: body.glsl, metadata: standardStreamMetadata(body.metadata, stage, paired, selectors)});
+}
+export function parseStandardStreamOutputShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {return standardFreeze({ok: true, domain: null, metadata: standardStreamMetadata(value, stage, false, {...STANDARD_UNIFORM_SELECTORS, ...standardMultipleColors(hostColors)})});}
+  catch(error) {if (!(error instanceof DomainFault)) throw error;return failure('shader-domain-error', error.message);}
+}
+export function normalizeStandardStreamOutputShaderResult(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const response = record(value, ['ok', 'glsl', 'metadata', 'error'], ['ok']);
+    if (response.ok === false) {record(response, ['ok', 'error']);return standardError(response.error);}
+    require(response.ok === true, 'Invalid capture compiler response.');record(response, ['ok', 'glsl', 'metadata']);
+    return standardFreeze({ok: true, ...standardStreamBody({glsl: response.glsl, metadata: response.metadata}, stage, false, {...STANDARD_UNIFORM_SELECTORS, ...standardMultipleColors(hostColors)})});
+  } catch(error) {if (!(error instanceof DomainFault)) throw error;return failure('shader-domain-error', error.message);}
+}
+export function normalizeStandardStreamOutputShaderPair(value, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors), response = record(value, ['ok', 'vertex', 'fragment', 'interfaceKey', 'error'], ['ok']);
+    if (response.ok === false) {record(response, ['ok', 'error']);return standardError(response.error);}
+    require(response.ok === true, 'Invalid checked capture pair.');record(response, ['ok', 'vertex', 'fragment', 'interfaceKey']);
+    const vertex = standardStreamBody(response.vertex, 'vertex', true, selectors), fragment = standardStreamBody(response.fragment, 'fragment', true, selectors), derived = standardInterface(vertex.metadata, fragment.metadata);
+    require(response.interfaceKey === derived.key, 'Capture pair interface key disagrees.');
+    for (const input of derived.inputs) {const output = vertex.metadata.outputs.find(v => v.semantic === 'GENERIC' && v.semanticIndex === input.semanticIndex);require(output.type === input.type && output.interpolation === input.interpolation, 'Capture pair generic promotion disagrees.');}
+    return standardFreeze({ok: true, vertex, fragment, interfaceKey: response.interfaceKey});
+  } catch(error) {if (!(error instanceof DomainFault)) throw error;return failure('shader-link-error', error.message);}
+}
+export function deriveStandardStreamOutputShaderInterface(vertex, fragment, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {const selectors = standardMultipleSelectors(hostSelectors);return standardFreeze({ok: true, ...standardInterface(standardStreamMetadata(vertex, 'vertex', true, selectors), standardStreamMetadata(fragment, 'fragment', true, selectors))});}
+  catch(error) {if (!(error instanceof DomainFault)) throw error;return failure('shader-link-error', error.message);}
+}
+export function originalStreamOutputWords(metadata) {
+  const s = metadata.streamOutput;
+  return s.outputs.length ? [s.outputs.length, ...s.strides, ...s.outputs.flatMap(o => [(o.registerIndex | o.startComponent << 8 | o.numComponents << 10 | o.outputBuffer << 13 | o.destinationOffset << 16) >>> 0, o.stream])] : [0];
+}
+export function selectOriginalStreamBuffer(metadata, buffer) {
+  const s = metadata.streamOutput, varyings = [];let packed = 0;
+  for (const [i, o] of s.outputs.entries()) if (o.outputBuffer === buffer) {varyings.push({outputIndex: i, name: 'wv_so_' + i, type: o.numComponents === 1 ? 'uint' : 'uvec' + o.numComponents, components: o.numComponents, packedOffset: packed});packed += o.numComponents * 4;}
+  return {...metadata, streamOutput: {...s, captureBuffer: buffer, varyings, packedStrideBytes: packed}};
+}
