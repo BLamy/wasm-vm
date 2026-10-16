@@ -25389,18 +25389,18 @@
         },
         {
           "date": "2026-10-16",
-          "commits": 6,
+          "commits": 7,
           "labels": [
+            "Publish matched native Omarchy application warm boot manifests",
             "Name the recorded GPU completion counter accurately",
             "Record coherent software factory and bounded preparation attempts",
-            "Record closed swap and publication evidence with original negatives",
-            "Bind swap reload proof to the newly captured pair"
+            "Record closed swap and publication evidence with original negatives"
           ]
         }
       ],
       "firstActivity": "2026-10-15",
       "lastActivity": "2026-10-16",
-      "commitCount": 9
+      "commitCount": 10
     },
     {
       "id": "E6-T01",
