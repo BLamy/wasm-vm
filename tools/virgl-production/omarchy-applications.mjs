@@ -568,6 +568,23 @@ export async function verifyOmarchyApplications(page, command, output, options =
     }
     await waitActive(row=>row.address===dialog.address);return current;
   }
+  async function saveFileDialog(dialog){
+    const result=await run(hypr+'monitors');assert.equal(result.exit,0);
+    const monitor=JSON.parse(result.stdout).find(row=>row.id===dialog.monitor);assert.equal(monitor.scale,1);
+    const box=await page.locator('#ide-display-canvas').boundingBox();assert.ok(box?.width>0&&box.height>0);
+    // The pinned GTK Save chooser exposes its Name entry and action in the
+    // title bar. Use those actual controls, retaining its visible Documents folder.
+    const nameTarget={x:dialog.at[0]+dialog.size[0]*0.5,y:dialog.at[1]+24};
+    const saveTarget={x:dialog.at[0]+dialog.size[0]-48,y:dialog.at[1]+24};
+    const click=async target=>{
+      assert.ok(target.x>=0&&target.x<monitor.width&&target.y>=0&&target.y<monitor.height);
+      await focusInput();await page.mouse.click(box.x+target.x*box.width/monitor.width,box.y+target.y*box.height/monitor.height,{delay:120});
+    };
+    await click(nameTarget);report.phases.push({kind:'native-save-name-focus',dialog,target:nameTarget,time:Date.now()});await save();
+    await press('Control+a');await type(path.basename(document));await shot('writer-save-name');
+    await waitActive(row=>row.address===dialog.address&&row.pid===dialog.pid&&row.title==='Save');
+    await click(saveTarget);report.phases.push({kind:'native-save-button',dialog,target:saveTarget,time:Date.now()});await save();
+  }
   async function verifySandboxedImage(chromium) {
     const expected={pid:chromium.pid,starttime:report.chromium.before.data.starttime,exe:'/usr/lib/chromium/chromium'};
     const code=`import gi,hashlib,json,os,base64;from pathlib import Path;expected=json.loads(${JSON.stringify(JSON.stringify(expected))})\ndef process():\n p=Path('/proc')/str(expected['pid']);s=(p/'stat').read_text();value=dict(pid=expected['pid'],starttime=s[s.rfind(')')+2:].split()[19],exe=os.readlink(p/'exe'));assert value==expected;return value\nbefore=process();gi.require_version('GdkPixbuf','2.0');from gi.repository import GdkPixbuf;assert 'GLYCIN_DISABLE_SANDBOX' not in os.environ;p='/usr/share/icons/Adwaita/scalable/status/image-missing.svg';source=open(p,'rb').read();b=GdkPixbuf.Pixbuf.new_from_file_at_scale(p,48,48,True);pixels=b.get_pixels();after=process();assert before==after;print(json.dumps({'chromiumBefore':before,'chromiumAfter':after,'width':b.get_width(),'height':b.get_height(),'channels':b.get_n_channels(),'stride':b.get_rowstride(),'pixelSha256':hashlib.sha256(pixels).hexdigest(),'sourceSha256':hashlib.sha256(source).hexdigest(),'pixels':base64.b64encode(pixels).decode(),'source':base64.b64encode(source).decode()}),flush=True)`;
@@ -761,7 +778,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.fittedSaveDialog=await focusFileDialog(report.saveDialog);
     if(writerSaveResume)await waitReadableBar();
     await shot('writer-save-dialog');
-    await press('Control+l');await press('Control+a');await type(document);await press('Enter');await waitClosed(row=>row.address===report.saveDialog.address);
+    await saveFileDialog(report.fittedSaveDialog);await waitClosed(row=>row.address===report.saveDialog.address);
     report.firstSave=await readDocument('first-save',[first]);assert.ok(report.firstSave.text.includes(first));
     await shot('writer-saved');await press('Control+q');await waitClosed(row=>/libreoffice|soffice/i.test(row.class));
     await launchWriter();await press('Control+o');report.openDialog=await waitActive(row=>/^Open(?: File)?$/i.test(row.title));report.fittedOpenDialog=await focusFileDialog(report.openDialog);await shot('writer-open-dialog');
