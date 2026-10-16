@@ -111,7 +111,10 @@ try{
   assert.equal(await page.locator('#os-launcher-title').innerText(),'Choose an operating system');
   assert.equal(await page.locator('#desktop-graphics').inputValue(),'gpu');
   assert.match(await page.locator('#desktop-graphics option[value="gpu"]').textContent(),/GPU rendering.*warm boot/);
-  assert.match(await page.locator('[data-os="omarchy"] .os-option-detail').innerText(),/restores from a GPU warm checkpoint/);
+  const omarchyDetail=await page.locator('[data-os="omarchy"] .os-option-detail').innerText();
+  assert.match(omarchyDetail,/restores from a prepared checkpoint/);
+  assert.match(omarchyDetail,/GPU compositing after a hardware check/);
+  assert.match(omarchyDetail,/Chromium, LibreOffice, Node\.js and Foot/);
   assert.match(await page.locator('#os-launcher').innerText(),/first warm launch downloads a checkpoint/);
   assert.equal(await page.locator('#panel-ide').getAttribute('data-os-selected'),null);
   assert.equal(await page.locator('#rm-lanes, #panel-docs, #docs-mount, iframe').count(),0);
