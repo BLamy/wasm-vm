@@ -24,6 +24,36 @@ export async function typeGuestText(page, text) {
   }
 }
 
+// Select the fixture's actual painted controls, not its DOM autofocus state.
+// DOM autofocus does not prove native widget/seat focus. These pixels come from
+// scanout; the final submitted value and trust flags still come from the guest.
+export function locateFixtureNoteControls(rgba,width,height) {
+  assert.ok(Number.isSafeInteger(width)&&width>=300&&width<=4096);
+  assert.ok(Number.isSafeInteger(height)&&height>=200&&height<=4096);
+  assert.ok(width*height<=4194304,'bounded native control observation');
+  assert.equal(rgba.length,width*height*4);
+  const seen=new Uint8Array(width*height),queue=new Int32Array(width*height),rectangles=[];
+  const white=i=>rgba[i*4]>=220&&rgba[i*4+1]>=220&&rgba[i*4+2]>=220&&rgba[i*4+3]===255;
+  for(let seed=0;seed<seen.length;seed++){
+    if(seen[seed]||!white(seed))continue;
+    let head=0,tail=1,left=width,right=0,top=height,bottom=0;queue[0]=seed;seen[seed]=1;
+    while(head<tail){
+      const i=queue[head++],x=i%width,y=Math.floor(i/width);
+      left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);
+      const visit=j=>{if(!seen[j]&&white(j)){seen[j]=1;queue[tail++]=j;}};
+      if(x>0)visit(i-1);if(x+1<width)visit(i+1);if(y>0)visit(i-width);if(y+1<height)visit(i+width);
+    }
+    const w=right-left+1,h=bottom-top+1;
+    if(w>=80&&h>=32&&h<=96&&tail>=w*h*0.55)rectangles.push({x:left,y:top,width:w,height:h,pixels:tail});
+  }
+  const inputs=rectangles.filter(r=>r.width>=250&&r.width/r.height>=4);
+  assert.equal(inputs.length,1,'one actual painted fixture input');
+  const input=inputs[0],buttons=rectangles.filter(r=>r.width<input.width*0.6&&r.y>input.y+input.height&&
+    r.y<input.y+input.height+100&&Math.abs(r.x-input.x)<32);
+  assert.equal(buttons.length,1,'one actual painted Save note button below the input');
+  return {input,save:buttons[0]};
+}
+
 const html = `<!doctype html><meta charset="utf-8"><title>Omarchy native Chromium</title>
 <style>body{font:24px sans-serif;background:#1a1b26;color:#c0caf5;padding:50px}input,button{font:24px sans-serif;padding:12px;margin:12px 0}input{width:650px}button{display:block}#result{color:#9ece6a}</style>
 <h1>Native Chromium on RISC-V</h1><p>Guest loopback fixture. External networking is offline.</p>
@@ -600,6 +630,34 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.phases.push({kind:'native-address-navigation',target,client,before,enteredAt,after:await inputObservation(),time:Date.now()});await save();
     return enteredAt;
   }
+  async function fixtureControls(chromium,label){
+    await waitActive(row=>row.pid===chromium.pid&&row.address===chromium.address);
+    const client=(await clients()).find(row=>row.pid===chromium.pid&&row.address===chromium.address);
+    assert.ok(client?.visible&&client.size[0]>=300&&client.size[1]>=200);
+    const result=await run(hypr+'monitors');assert.equal(result.exit,0);
+    const monitor=JSON.parse(result.stdout).find(row=>row.id===client.monitor);assert.equal(monitor.scale,1);
+    const crop={x:client.at[0],y:client.at[1],width:client.size[0],height:client.size[1]};
+    assert.ok(Object.values(crop).every(Number.isSafeInteger)&&crop.x>=0&&crop.y>=0&&
+      crop.width>=300&&crop.height>=200&&crop.width<=4096&&crop.height<=4096&&crop.width*crop.height<=4194304);
+    const observed=await page.evaluate(crop=>{
+      const canvas=document.getElementById('ide-display-canvas');
+      if(window.__presentation.state().backend!=='canvas2d'||crop.x<0||crop.y<0||
+        crop.x+crop.width>canvas.width||crop.y+crop.height>canvas.height)throw Error('original bounded native scanout is required');
+      return {width:canvas.width,height:canvas.height,rgba:Array.from(canvas.getContext('2d').getImageData(crop.x,crop.y,crop.width,crop.height).data)};
+    },crop);
+    assert.equal(observed.width,monitor.width);assert.equal(observed.height,monitor.height);
+    const pixels=Buffer.from(observed.rgba),controls=locateFixtureNoteControls(pixels,crop.width,crop.height);
+    const filename=name+'-chromium-'+label+'-controls.rgba';await fs.writeFile(path.join(output,filename),pixels);
+    (report.noteControls??=[]).push({label,client,crop,controls,path:filename,bytes:pixels.length,sha256:sha(pixels)});await save();
+    return {client,monitor,controls};
+  }
+  async function clickFixtureControl(observed,key){
+    const {client,monitor,controls}=observed,rect=controls[key];assert.ok(rect);
+    const target={x:client.at[0]+rect.x+rect.width/2,y:client.at[1]+rect.y+rect.height/2};
+    await focusInput();const box=await page.locator('#ide-display-canvas').boundingBox();assert.ok(box?.width>0&&box.height>0);
+    await page.mouse.click(box.x+target.x*box.width/monitor.width,box.y+target.y*box.height/monitor.height,{delay:120});
+    report.phases.push({kind:'native-fixture-control-click',control:key,target,time:Date.now()});await save();
+  }
   async function cancelTestKeyringPrompt(chromium) {
     const prompts=(await clients()).filter(row=>row.class==='gcr-prompter'&&row.visible!==false);
     if(!prompts.length)return false;
@@ -999,7 +1057,10 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.browserReady=JSON.parse(ready.stdout);assert.deepEqual(report.browserReady,{readyState:'complete',hasFocus:true,activeElement:'note',location:fixtureSpec.url});
     const requested=await run('cat /tmp/omarchyapps/requested');assert.equal(requested.exit,0);assert.equal(requested.stdout.trim(),fixtureSpec.route);report.browserRequest=requested;
     await shot('chromium-fixture');
-    const note='omarchy chromium riscv 42';await type(note);await press('Tab');await press('Space');
+    const controls=await fixtureControls(chromium,'before-input');
+    await clickFixtureControl(controls,'input');
+    const note='omarchy chromium riscv 42';await type(note);await shot('chromium-note-typed');
+    await clickFixtureControl(await fixtureControls(chromium,'before-save'),'save');
     let submitted;
     for(let n=0;n<30;n++){submitted=await run('cat /tmp/omarchyapps/submission.json');if(submitted.exit===0)break;await sleep(1000);}
     assert.equal(submitted.exit,0);report.browserSubmission=JSON.parse(submitted.stdout);

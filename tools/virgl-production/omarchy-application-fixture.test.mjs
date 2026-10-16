@@ -9,7 +9,28 @@ import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {once} from 'node:events';
 import {createInterface} from 'node:readline';
-import {createApplicationFixture,readFixtureTransition,authenticateBrowserPrefix,isWriterDocumentWindow,isWriterTipWindow} from './omarchy-applications.mjs';
+import {createApplicationFixture,readFixtureTransition,authenticateBrowserPrefix,isWriterDocumentWindow,isWriterTipWindow,locateFixtureNoteControls} from './omarchy-applications.mjs';
+
+test('native note controls are selected from visible pixels across tiled layouts and hover colors',()=>{
+  for(const width of [621,1256])for(const shade of [225,239]){
+    const height=750,rgba=Buffer.alloc(width*height*4);
+    for(let i=0;i<width*height;i++)rgba.set([26,27,38,255],i*4);
+    const paint=(r,color)=>{for(let y=r.y;y<r.y+r.height;y++)for(let x=r.x;x<r.x+r.width;x++)rgba.set(color,(y*width+x)*4);};
+    const input={x:2,y:441,width:Math.min(676,width-2),height:52},save={x:2,y:520,width:133,height:54};
+    paint(input,[255,255,255,255]);paint(save,[shade,shade,shade,255]);
+    // Real glyphs make holes in each light control; the native bubble is purple.
+    paint({x:12,y:455,width:170,height:18},[0,0,0,255]);
+    paint({x:12,y:537,width:90,height:14},[0,0,0,255]);
+    paint({x:width-250,y:100,width:240,height:200},[192,192,255,255]);
+    const bounds=locateFixtureNoteControls(rgba,width,height),rectangle=({pixels,...r})=>r;
+    assert.deepEqual(rectangle(bounds.input),input);assert.deepEqual(rectangle(bounds.save),save);
+    paint(input,[26,27,38,255]);assert.throws(()=>locateFixtureNoteControls(rgba,width,height),/one actual painted fixture input/);
+    paint(input,[255,255,255,255]);paint({x:2,y:320,width:300,height:52},[255,255,255,255]);
+    assert.throws(()=>locateFixtureNoteControls(rgba,width,height),/one actual painted fixture input/);
+  }
+  assert.throws(()=>locateFixtureNoteControls(Buffer.alloc(0),621,750));
+  assert.throws(()=>locateFixtureNoteControls(Buffer.alloc(0),4096,4096),/bounded native control observation/);
+});
 
 test('the original Bash job notification cannot obscure or replace a fixture transition receipt',()=>{
   const token='8203261826a440b9bd4746d04943f145';
