@@ -37,12 +37,14 @@ const captureGpuPair = process.env.CRITIC_FAST_BOOT_CAPTURE_GPU_PAIR === '1';
 const applicationWorkload = process.env.CRITIC_FAST_BOOT_APPLICATIONS === '1';
 const restoredApplications = process.env.CRITIC_FAST_BOOT_RESTORED_APPLICATIONS === '1';
 const swapCheckpoint = process.env.CRITIC_FAST_BOOT_SWAP === '1';
+const factoryGuardOnly = process.env.CRITIC_FAST_BOOT_FACTORY_GUARD_ONLY === '1';
 const shellIpcWorkload = process.env.CRITIC_FAST_BOOT_SHELL_IPC === '1';
 const applicationContinuation = process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINUATION === '1';
 const applicationComponent=process.env.CRITIC_FAST_BOOT_APPLICATION_COMPONENT;
 assert.ok(applicationComponent===undefined||applicationComponent==='writer','known explicit application component');
 const remoteUrl = process.env.CRITIC_FAST_BOOT_URL;
 if(omarchyPersist)assert.ok(!acceleratedGpu&&guests.includes('omarchy'),'explicit software Omarchy persistence');
+if(factoryGuardOnly)assert.ok(warmGpu&&guests.length===1&&guests[0]==='omarchy'&&!applicationWorkload&&!captureGpuPair&&!swapCheckpoint&&!restoredApplications,'separate read-only factory exclusion after real GPU restore');
 if(restoredApplications)assert.ok(warmGpu&&!applicationWorkload&&!captureGpuPair&&!swapCheckpoint,'restored application launch proof uses its own warm session');
 if(swapCheckpoint)assert.ok(guests.length===1&&guests[0]==='omarchy'&&!coldGpu&&!captureGpuPair&&!applicationWorkload&&!restoredApplications&&!remoteUrl,'separate local Omarchy warm swap fixture, never the clean factory or publication timing');
 const failureHoldMs=Number(process.env.CRITIC_FAST_BOOT_HOLD_FAILURE_MS||1800000);
@@ -63,7 +65,7 @@ await fs.mkdir(output, {recursive:false});
 const noteRecorderMemory=()=>appendFileSync(path.join(output,'recorder-memory.ndjson'),JSON.stringify({time:Date.now(),...process.memoryUsage()})+'\n');
 noteRecorderMemory();const recorderMemoryTimer=setInterval(noteRecorderMemory,30000);recorderMemoryTimer.unref();
 if(gpuTrace)await fs.writeFile(path.join(output,'gpu.ndjson'),'');
-const report = {status:'running', scope:restoredApplications?'native application launches after a fresh factory restoration; repeat timing is verified separately':swapCheckpoint?'separate swapped-page checkpoint fixture, not factory or publication timing':'actual production UI fast boots and repeat launches',
+const report = {status:'running', scope:factoryGuardOnly?'read-only native factory process/client exclusion; no application interaction or repeat-latency claim':restoredApplications?'native application launches after a fresh factory restoration; repeat timing is verified separately':swapCheckpoint?'separate swapped-page checkpoint fixture, not factory or publication timing':'actual production UI fast boots and repeat launches',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
   webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, warmGpu, applicationContinuation, restoredApplications, omarchyPersist, swapCheckpointMode:swapCheckpoint, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
 if(applicationComponent)report.applicationComponent={name:applicationComponent,scope:'Only missing native Writer/Node/npm/wallpaper and final desktop proof; not Chromium/SVG or publication timing.'};
@@ -104,6 +106,10 @@ if(applicationWorkload||restoredApplications){
 }
 if(swapCheckpoint){
   const filename='omarchy-swap-checkpoint.mjs',bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
+  report.harnessHashes[filename]=hash(bytes);await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
+}
+if(factoryGuardOnly){
+  const filename='omarchy-factory-guard.mjs',bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
   report.harnessHashes[filename]=hash(bytes);await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
 }
 let browser, server, activePage, phase = 'inventory';
@@ -632,7 +638,7 @@ try{
     if(guest==='omarchy')query.set('desktop','1');
     if(guest==='omarchy'&&(omarchyPersist||swapCheckpoint&&!acceleratedGpu))query.set('persist','1');
     const url=origin+'/app?'+query+'#ide';
-    for(const round of coldGpu||captureGpuPair||applicationContinuation||restoredApplications?['initial']:['initial','repeat']){
+    for(const round of coldGpu||captureGpuPair||applicationContinuation||restoredApplications||factoryGuardOnly?['initial']:['initial','repeat']){
       phase=guest+'-'+round;let started=Date.now();
       let repeatCheckpoint,phaseEgl,publicDesktopInput,publicDesktopFinal,warmPixels,warmTiming,postWorkloadInput,restoredAppLaunches,swapResult;
       if(round==='initial')await page.goto(url);
@@ -665,6 +671,10 @@ try{
       }
       await waitActualReady(page,guest,started);
       const restoredMs=Date.now()-started;
+      if(factoryGuardOnly){
+        const {verifyCleanFactory}=await import('./omarchy-factory-guard.mjs');
+        report.factoryGuard=await verifyCleanFactory(page,guestCommand,output);
+      }
       const command=guest==='node-alpine'
         ? `node -e 'console.log("FAST_NODE_"+(6*7)+"_PASS");console.log(process.version)'`
         : `printf 'FAST_${guest.toUpperCase().replaceAll('-','_')}_%s_PASS\n' "$((6*7))"; uname -m`;
@@ -709,7 +719,7 @@ try{
             const {verifyOmarchyApplications}=await import('./omarchy-applications.mjs');
             report.applications=await verifyOmarchyApplications(page,guestCommand,output,{name:phase+'-native-applications',executables:applicationExecutables,component:applicationComponent});
           }
-          if(!swapCheckpoint){
+          if(!swapCheckpoint&&!factoryGuardOnly){
           const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
           const captureFactory=captureGpuPair?async({foot,barContent})=>{
             const active=await guestCommand(page,'XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow',300000);assert.equal(active.exit,0);assert.equal(JSON.parse(active.stdout).pid,foot.pid,'factory captures actual Foot, not the screensaver');
