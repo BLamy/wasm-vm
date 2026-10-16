@@ -638,7 +638,7 @@ try{
       assert.equal(result.exit,0,phase+' live guest command');
       assert.match(result.stdout,guest==='node-alpine'?/FAST_NODE_42_PASS/:/FAST_.*_42_PASS/);
       const state=await snapshot(page);
-      if(warmGpu&&!captureGpuPair)warmTiming=gpuWarmTiming(state,round);
+      if(warmGpu&&!captureGpuPair&&!applicationContinuation)warmTiming=gpuWarmTiming(state,round);
       assert.equal(state.restored,!coldGpu,phase+' selected cold/warm path');
       assert.ok(state.workers.length>=1,phase+' actual worker');
       assert.deepEqual(state.workerErrors,[]);
