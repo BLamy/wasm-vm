@@ -614,7 +614,9 @@ export async function verifyOmarchyApplications(page, command, output, options =
       for(const type of ['keydown','keyup','pointerdown','pointerup'])document.addEventListener(type,window.__appTrustedListener,true);
     });
     report.beforeGpu=await shot('initial');
-    await waitReadableBar();
+    // The retained Save chooser is intentionally still in true fullscreen.
+    // Prove its bar after the authenticated normal maximize action below.
+    if(!writerSaveResume)await waitReadableBar();
     let chromium;
     if(writerOnly){
       const windows=await clients();assert.ok(!windows.some(row=>/chromium/i.test(row.class)||row.title==='Chromium Additional Terms of Service'),
@@ -756,7 +758,9 @@ export async function verifyOmarchyApplications(page, command, output, options =
     if(!writerSaveResume)report.writer=await identity(await launchWriter(sandboxPrefix?.prior.writer.window.pid),'/usr/lib/libreoffice/program/soffice.bin');
     assert.match(report.writer.process.stdout,/\/usr\/lib\/libreoffice\/program\/soffice.bin/);
     const first='Omarchy riscv document 42';if(!writerSaveResume)report.saveDialog=await saveWriterText(report.writer.window,first);
-    report.fittedSaveDialog=await focusFileDialog(report.saveDialog);await shot('writer-save-dialog');
+    report.fittedSaveDialog=await focusFileDialog(report.saveDialog);
+    if(writerSaveResume)await waitReadableBar();
+    await shot('writer-save-dialog');
     await press('Control+l');await press('Control+a');await type(document);await press('Enter');await waitClosed(row=>row.address===report.saveDialog.address);
     report.firstSave=await readDocument('first-save',[first]);assert.ok(report.firstSave.text.includes(first));
     await shot('writer-saved');await press('Control+q');await waitClosed(row=>/libreoffice|soffice/i.test(row.class));
