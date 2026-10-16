@@ -8,7 +8,20 @@ import path from 'node:path';
 import {spawn} from 'node:child_process';
 import {once} from 'node:events';
 import {createInterface} from 'node:readline';
-import {createApplicationFixture} from './omarchy-applications.mjs';
+import {createApplicationFixture,readFixtureTransition} from './omarchy-applications.mjs';
+
+test('the original Bash job notification cannot obscure or replace a fixture transition receipt',()=>{
+  const token='8203261826a440b9bd4746d04943f145';
+  const receipt={scope:'authenticated owned fixture retained before generation change',serverPid:5040,
+    serverSha256:'0d72911b0f34a15405434cf265f6206cc81757964e6030a4d938e5a825cb5365',
+    retainedFixture:'/tmp/omarchyapps-before-'+token};
+  const literalNotification='[1]+  Terminated                 python3 /tmp/omarchyapps/server.py > /tmp/omarchyapps/server.log 2>&1 < /dev/null';
+  assert.deepEqual(readFixtureTransition(JSON.stringify(receipt)+'\n'+literalNotification+'\n\n',token),receipt);
+  assert.throws(()=>readFixtureTransition(literalNotification,token));
+  assert.throws(()=>readFixtureTransition(JSON.stringify(receipt)+'\n'+JSON.stringify(receipt),token));
+  assert.throws(()=>readFixtureTransition(JSON.stringify(receipt)+'\nunexpected native output',token));
+  assert.throws(()=>readFixtureTransition(JSON.stringify(receipt),'0'.repeat(32)));
+});
 
 test('a previous fixture document cannot write the next navigation readiness or submission',async()=>{
   const previous=createApplicationFixture('0'.repeat(32)),current=createApplicationFixture('1'.repeat(32));

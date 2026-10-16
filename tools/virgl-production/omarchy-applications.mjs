@@ -70,6 +70,21 @@ export function createApplicationFixture(token) {
   return {token,route,readyPath,submitPath,url:'http://127.0.0.1:8765'+route,source};
 }
 
+export function readFixtureTransition(stdout,token) {
+  assert.match(token,/^[a-f0-9]{32}$/);assert.equal(typeof stdout,'string');
+  const rows=stdout.split(/\r?\n/).filter(line=>line.trim()),receipts=[];
+  for(const line of rows){
+    if(line.startsWith('{'))receipts.push(JSON.parse(line));
+    else assert.match(line,/^\[\d+\]\+\s+Terminated\s+python3 \/tmp\/omarchyapps\/server\.py > \/tmp\/omarchyapps\/server\.log 2>&1 < \/dev\/null$/,
+      'only the known Bash background-job notification may accompany the fixture receipt');
+  }
+  assert.equal(receipts.length,1);const receipt=receipts[0];
+  assert.equal(receipt.scope,'authenticated owned fixture retained before generation change');
+  assert.equal(receipt.serverSha256,sha(Buffer.from(server)));
+  assert.ok(Number.isSafeInteger(receipt.serverPid)&&receipt.serverPid>1);
+  assert.equal(receipt.retainedFixture,'/tmp/omarchyapps-before-'+token);return receipt;
+}
+
 export async function verifyOmarchyApplications(page, command, output, options = {}) {
   // Re-read at each invocation: a retry can update only this helper's dependency
   // while Node retains the application module from the previous recording.
@@ -308,7 +323,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.equal(report.wallpaper.exit,0);
     if(continueExistingBrowser){
       const code=`from pathlib import Path;import hashlib,json,stat,os,signal,time;p=Path('/tmp/omarchyapps');s=p.lstat();assert stat.S_ISDIR(s.st_mode) and s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o700;source=p/'server.py';f=source.lstat();assert stat.S_ISREG(f.st_mode) and f.st_uid==1000 and f.st_nlink==1 and f.st_size==${Buffer.byteLength(server)};digest=hashlib.sha256(source.read_bytes()).hexdigest();assert digest==${JSON.stringify(sha(Buffer.from(server)))};pidfile=p/'server.pid';f=pidfile.lstat();assert stat.S_ISREG(f.st_mode) and f.st_uid==1000 and f.st_nlink==1 and 0<f.st_size<32;pid=int(pidfile.read_text());assert pid>1;q=Path('/proc')/str(pid);assert q.stat().st_uid==1000 and (q/'cmdline').read_bytes().split(bytes([0]))[-2]==str(source).encode() and (q/'exe').resolve()==Path('/usr/bin/python3').resolve();assert not (p/'submission.json').exists() and not Path(${JSON.stringify(document)}).exists();os.kill(pid,signal.SIGTERM);deadline=time.monotonic()+10\ndef stopped():\n try:return (q/'stat').read_text().split(')')[-1].split()[0]=='Z'\n except FileNotFoundError:return True\nwhile not stopped() and time.monotonic()<deadline:time.sleep(0.01)\nassert stopped();retained=p.with_name('omarchyapps-before-'+${JSON.stringify(fixtureSpec.token)});assert not retained.exists();p.rename(retained);p.mkdir(mode=0o700);print(json.dumps({'scope':'authenticated owned fixture retained before generation change','serverPid':pid,'serverSha256':digest,'retainedFixture':str(retained)}))`;
-      const fixture=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");assert.equal(fixture.exit,0);report.existingFixture=JSON.parse(fixture.stdout);
+      const fixture=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");assert.equal(fixture.exit,0);report.existingFixture=readFixtureTransition(fixture.stdout,fixtureSpec.token);
     }else{
       const setup=await run('test "$(id -u)" = 1000 && test ! -e /tmp/omarchyapps && test ! -e '+document+' && mkdir -m 700 /tmp/omarchyapps');assert.equal(setup.exit,0);
     }
