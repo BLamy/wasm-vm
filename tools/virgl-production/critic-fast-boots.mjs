@@ -694,6 +694,19 @@ try{
         assert.ok(state.display?.successfulPresents>0,phase+' actual guest scanout');
         assert.equal(state.overlayHidden,true,phase+' desktop ready surface');
         assert.equal(state.gpu?.qualified??false,acceleratedGpu,phase+' selected graphics route');
+        if(!acceleratedGpu&&!swapCheckpoint){
+          const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
+          // Persistent repeats retain the first marker. Exercise a distinct new
+          // trusted command instead of deleting evidence or reusing its result.
+          const repeat=omarchyPersist&&round==='repeat';
+          publicDesktopInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:phase+'-software-desktop-input',accelerated:false,
+            ...(repeat?{text:'touch /tmp/gpukeyboard84touch',markerAbsent:'test ! -e /tmp/gpukeyboard84touch',
+              markerRead:'test -f /tmp/gpukeyboard84touch && echo TRUSTED_TOUCH_84',expected:'TRUSTED_TOUCH_84'}:{})});
+          const final=await snapshot(page);final.pageErrors=[...pageErrors];
+          assert.deepEqual(final.workerErrors,[]);assert.deepEqual(final.pageErrors,[]);assert.deepEqual(final.display.errors,[]);
+          assert.equal(final.gpu?.qualified??false,false);assert.ok(final.display.drawnPresents>0);
+          publicDesktopFinal=final;await fs.writeFile(path.join(output,phase+'-software-desktop-final.json'),JSON.stringify(final,null,2)+'\n');
+        }
         if(acceleratedGpu){
           assert.ok(state.gpu.counters?.completed>0,phase+' actual GPU completion');
           assert.ok(state.gpu.counters?.draws>0,phase+' actual GPU draws');

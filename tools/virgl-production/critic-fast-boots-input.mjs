@@ -186,7 +186,7 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   assert.equal(barContent.status, 'passed', 'actual package bar renders distributed content before the bounded deadline');
   await record('bar-content', {barContent, barProbes});
   if (options.barActions !== false) {
-    const barActions = await verifyDesktopActions(page, command, output, {name, monitor: barContent.monitor, layer: barContent.layer, foot});
+    const barActions = await verifyDesktopActions(page, command, output, {name, monitor: barContent.monitor, layer: barContent.layer, foot,accelerated:options.accelerated??true});
     await record('bar-actions', {barActions});
     await page.mouse.click(box.x + target.x * box.width / monitor.width,
       box.y + target.y * box.height / monitor.height);

@@ -3,9 +3,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-export async function verifyDesktopActions(page, command, output, {name, monitor, layer, foot}) {
+export async function verifyDesktopActions(page, command, output, {name, monitor, layer, foot, accelerated=true}) {
+  assert.equal(typeof accelerated,'boolean');
   const report = {status: 'running', scope: 'trusted pointer and original Omarchy workspace buttons',
-    monitor, layer, foot, actions: []};
+    accelerated, monitor, layer, foot, actions: []};
   const save = () => fs.writeFile(path.join(output, name + '-bar-actions.json'), JSON.stringify(report, null, 2) + '\n');
   const readWorkspace = async () => {
     const reply = await command(page, 'XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activeworkspace', 300000);
@@ -19,7 +20,8 @@ export async function verifyDesktopActions(page, command, output, {name, monitor
   assert.ok(layer.h >= 20 && layer.h <= 40, 'actual default top bar geometry');
   const point = (x, y) => [box.x + x * box.width / monitor.width, box.y + y * box.height / monitor.height];
   try {
-    report.before = {workspace: await readWorkspace(), gpu: await page.evaluate(() => wvmDemo.gpuStats())};
+    report.before = {workspace: await readWorkspace(), gpu: await page.evaluate(() => wvmDemo.gpuStats()),
+      display:await page.evaluate(()=>globalThis.__presentation.state())};
     assert.equal(report.before.workspace.id, foot.workspace.id, 'default Foot workspace is active');
     assert.ok([1, 2, 3, 4, 5].includes(foot.workspace.id));
     await page.evaluate(() => {
@@ -63,9 +65,16 @@ export async function verifyDesktopActions(page, command, output, {name, monitor
       row.finished = Date.now();
       await canvas.screenshot({path: path.join(output, name + '-workspace-' + expected + '.png')});
     }
-    report.after = {workspace: await readWorkspace(), gpu: await page.evaluate(() => wvmDemo.gpuStats())};
-    assert.equal(report.after.gpu.counters.failed, 0);
-    assert.ok(report.after.gpu.counters.draws > report.before.gpu.counters.draws, 'bar actions render new guest draws');
+    report.after = {workspace: await readWorkspace(), gpu: await page.evaluate(() => wvmDemo.gpuStats()),
+      display:await page.evaluate(()=>globalThis.__presentation.state())};
+    if(accelerated){
+      assert.equal(report.after.gpu.counters.failed, 0);
+      assert.ok(report.after.gpu.counters.draws > report.before.gpu.counters.draws, 'bar actions render new guest draws');
+    }else{
+      assert.equal(report.after.gpu?.qualified??false,false,'software choice stays on the software route');
+      assert.ok(report.after.display.drawnPresents>report.before.display.drawnPresents,'software bar actions produce new actual scanout frames');
+      assert.deepEqual(report.after.display.errors,[]);
+    }
   } catch (error) { report.status = 'failed'; report.error = error.stack || String(error); throw error; }
   finally {
     report.continuity = await page.evaluate(() => {
