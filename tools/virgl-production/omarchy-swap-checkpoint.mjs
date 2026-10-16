@@ -28,6 +28,7 @@ root=Path(${JSON.stringify(directory)}); size=4194304; pages=1024; seed=${seed};
 assert os.getuid()==1000 and os.sysconf('SC_PAGE_SIZE')==4096
 def start(): return Path('/proc/self/stat').read_text().rsplit(')',1)[1].split()[19]
 def swap(): return int(re.search(r'^VmSwap:\\s+(\\d+)',Path('/proc/self/status').read_text(),re.M)[1])*1024
+def vmstats(): return {k:int(v) for k,v in (line.split() for line in Path('/proc/vmstat').read_text().splitlines()) if k in ['pswpin','pswpout','pgmajfault']}
 def write(name,value):
  p=root/(name+'.tmp');p.write_text(json.dumps(value));p.replace(root/(name+'.json'))
 data=bytearray(bytes(range(256))*(size//256))
@@ -65,11 +66,13 @@ while not (root/'refault').exists():
  state=mapstate();assert state['resident']==0 and state['present']==0 and state['swapped']==pages;waitingChecks+=1
  time.sleep(0.2)
 restoredBefore=mapstate();assert restoredBefore['present']==0 and restoredBefore['swapped']==pages and restoredBefore['resident']==0
-blockBefore=list(map(int,Path('/sys/block/vda/stat').read_text().split()));majorBefore=resource.getrusage(resource.RUSAGE_SELF).ru_majflt
+blockBefore=list(map(int,Path('/sys/block/vda/stat').read_text().split()));vmBefore=vmstats();majorBefore=resource.getrusage(resource.RUSAGE_SELF).ru_majflt
 observed=m[:];assert observed==data;after=mapstate();assert after['present']==pages and after['swapped']==0 and after['resident']==pages
-blockAfter=list(map(int,Path('/sys/block/vda/stat').read_text().split()));majorAfter=resource.getrusage(resource.RUSAGE_SELF).ru_majflt
-assert blockAfter[2]-blockBefore[2]>=size//512 and majorAfter>majorBefore,(blockBefore,blockAfter,majorBefore,majorAfter)
-write('result',dict(identity,restoredBefore=restoredBefore,after=after,observedSha256=hashlib.sha256(observed).hexdigest(),afterSwapBytes=swap(),blockBefore=blockBefore,blockAfter=blockAfter,majorBefore=majorBefore,majorAfter=majorAfter,waitingChecks=waitingChecks))
+blockAfter=list(map(int,Path('/sys/block/vda/stat').read_text().split()));vmAfter=vmstats();majorAfter=resource.getrusage(resource.RUSAGE_SELF).ru_majflt
+assert blockAfter[2]-blockBefore[2]>=size//512 and vmAfter['pswpin']-vmBefore['pswpin']>=pages and vmAfter['pgmajfault']>vmBefore['pgmajfault'],(blockBefore,blockAfter,vmBefore,vmAfter,majorBefore,majorAfter)
+# Retain per-process rusage too. On the original RISC-V6.6.63 kernel the
+# VMA-lock retry path can count a swap-in globally and as a minor task fault.
+write('result',dict(identity,restoredBefore=restoredBefore,after=after,observedSha256=hashlib.sha256(observed).hexdigest(),afterSwapBytes=swap(),blockBefore=blockBefore,blockAfter=blockAfter,vmBefore=vmBefore,vmAfter=vmAfter,majorBefore=majorBefore,majorAfter=majorAfter,waitingChecks=waitingChecks))
 m.close()
 `;
 }
@@ -122,7 +125,8 @@ export async function refaultSwapFixture(page,command,output,prepared) {
   for(const field of ['pid','starttime','address','seed','expectedSha256','scriptSha256','exe','exeSha256'])assert.equal(result[field],paged[field]);
   assert.equal(result.restoredBefore.present,0);assert.equal(result.restoredBefore.swapped,1024);assert.equal(result.restoredBefore.resident,0);
   assert.equal(result.after.present,1024);assert.equal(result.after.swapped,0);assert.equal(result.after.resident,1024);assert.equal(result.observedSha256,prepared.literalSha256);
-  assert.ok(result.blockAfter[2]-result.blockBefore[2]>=SWAP_PROBE_BYTES/512);assert.ok(result.majorAfter>result.majorBefore);
-  const receipt={status:'passed',scope:'All4MiB page-unique literal bytes refault after real paired restore; mincore excludes resident swap-cache satisfaction before capture and before refault, with actual vda reads and major faults',prepared,trigger,result};
+  assert.ok(result.blockAfter[2]-result.blockBefore[2]>=SWAP_PROBE_BYTES/512);
+  assert.ok(result.vmAfter.pswpin-result.vmBefore.pswpin>=1024);assert.ok(result.vmAfter.pgmajfault>result.vmBefore.pgmajfault);
+  const receipt={status:'passed',scope:'All4MiB page-unique literal bytes refault after real paired restore; mincore excludes resident swap-cache satisfaction before capture/refault, with actual vda reads, swap-ins and global major faults. Original per-process rusage is retained without asserting it counts this kernel retry path.',prepared,trigger,result};
   await fs.writeFile(path.join(output,name+'-refault-result.json'),JSON.stringify(receipt,null,2)+'\n');return receipt;
 }
