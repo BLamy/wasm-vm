@@ -8,7 +8,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 BIN="${BIN:-target/release/wasm-vm}"
-KERNEL="${KERNEL:-releases/kernel/6.6.63/Image}"
+KERNEL="${KERNEL:-releases/kernel/6.6.63-omarchy-evdev1024/Image}"
 IMAGE="${OMARCHY_IMAGE:-target/omarchy-profile-sdr-r3.ext4}"
 CHUNKS="${OMARCHY_CHUNKS:-target/omarchy-profile-chunks-sdr-r3-256k}"
 MANIFEST="$CHUNKS/manifest.json"
