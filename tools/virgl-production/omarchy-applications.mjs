@@ -383,7 +383,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     if(active.pid===window.pid&&active.title==='Welcome to LibreOffice!'){
       const proof=await identity(active,'/usr/lib/libreoffice/program/soffice.bin');
       report.writerWelcome??=[];assert.ok(report.writerWelcome.length<3,'bounded normal first-run welcome pages');
-      for(let step=0;step<3;step++){
+      for(let step=0;step<3&&report.writerWelcome.length<3;step++){
         const result=await run(hypr+'activewindow');assert.equal(result.exit,0);const dialog=JSON.parse(result.stdout);
         if(dialog.address===window.address&&isWriterDocumentWindow(dialog))break;
         assert.equal(dialog.pid,window.pid);assert.equal(dialog.title,'Welcome to LibreOffice!');assert.equal(dialog.class,'soffice');
