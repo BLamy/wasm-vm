@@ -97,6 +97,7 @@ try:
             run("whitespace", ["git", "diff", "--check"])
             run("publisher-tests", ["node", "--test", "tools/publish-omarchy-chunks.test.mjs", "tools/verify/omarchy-r2-proxy.test.mjs"])
             run("software-manifest-tests", ["node", "--test", "tools/gen-omarchy-manifest.test.mjs"])
+            run("release-record-tests", ["node", "--test", "tools/virgl-production/finalize-release-record.test.mjs"])
             run("factory-readiness-tests", ["node", "--test", "tools/virgl-production/omarchy-factory-ready.test.mjs"])
             run("isolated-input-tests", ["node", "--test", "tools/virgl-production/isolated-input.test.mjs"],
                 {"OMARCHY_INPUT_TEST_OUTPUT": str(output/"isolated-input-tests")})
@@ -106,7 +107,7 @@ try:
             for name in ("critic-fast-boots", "critic-fast-boots-input", "critic-desktop-actions",
                          "omarchy-swap-checkpoint", "omarchy-factory-guard", "omarchy-factory-ready", "omarchy-factory-prewarm",
                          "omarchy-restored-app-launches", "omarchy-release-recovery", "recompress-gpu-factory",
-                         "isolated-input", "isolated-input-worker"):
+                         "isolated-input", "isolated-input-worker", "finalize-release-record"):
                 run("syntax-"+name, ["node", "--check", "tools/virgl-production/"+name+".mjs"])
             run("docs", ["node", "tools/check-docs.mjs"])
             run("docs-dist", ["python3", "tools/check-docs-dist.py"])

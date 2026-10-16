@@ -9,6 +9,7 @@ import {fileURLToPath} from 'node:url';
 import {chromium} from '../../web/node_modules/playwright/index.mjs';
 import {expectedPublishedSource} from './published-source.mjs';
 import {assertWarmFailureUi} from './critic-warm-ui-fixtures.mjs';
+import {finalizeReleaseRecord} from './finalize-release-record.mjs';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 assert.equal(process.argv[2],'--output');assert.ok(process.argv[3]);
@@ -24,7 +25,7 @@ const pairUrl=new URL(pin.url,url).href;
 const report={schema:'omarchy-published-recovery-v1',status:'running',
   scope:'One corrupted published GPU download is refused without automatic fallback; a trusted visible software choice restores the published software factory. Wider context-loss/reset fuzzing remains E6-T11e.',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
-  command:[process.execPath,...process.argv.slice(1)],url:url.href,pin,sources:[],requests:[],trusted:[],pageErrors:[],routeErrors:[]};
+  command:[process.execPath,...process.argv.slice(1)],url:url.href,pin,sources:[],requests:[],trusted:[],pageErrors:[],routeErrors:[],browserLifecycle:[]};
 const save=()=>fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');
 await save();let browser,context,page,stage='refusal';
 function observe(){
@@ -58,11 +59,13 @@ async function state(){
 try{
   browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     args:['--enable-gpu','--use-gl=angle','--use-angle=metal']});
+  browser.on('disconnected',()=>report.browserLifecycle.push({event:'browser-disconnected',stage,time:Date.now()}));
   const hardware=await browser.newBrowserCDPSession();report.hardware=await hardware.send('SystemInfo.getInfo');
   report.commandLine=await hardware.send('Browser.getBrowserCommandLine');
   assert.equal(report.hardware.gpu.featureStatus.webgl2??report.hardware.gpu.featureStatus.webgl,'enabled');
   assert.ok(!report.commandLine.arguments.some(s=>/swiftshader|llvmpipe|softpipe|--disable-gpu(?:$|=)/i.test(s)));
   context=await browser.newContext({viewport:{width:1280,height:850},serviceWorkers:'block'});
+  context.on('close',()=>report.browserLifecycle.push({event:'context-close',stage,time:Date.now()}));
   await context.route('**/*',async route=>{
     const request=route.request(),actual=new URL(request.url());
     report.requests.push({stage,url:actual.href,method:request.method()});
@@ -90,6 +93,8 @@ try{
     }catch(error){report.routeErrors.push({stage,url:actual.href,error:error.stack??String(error)});await route.abort();}
   });
   await context.addInitScript(observe);page=await context.newPage();
+  page.on('close',()=>report.browserLifecycle.push({event:'page-close',stage,time:Date.now()}));
+  page.on('crash',()=>report.browserLifecycle.push({event:'page-crash',stage,time:Date.now()}));
   await page.exposeFunction('__recordRecoveryPointer',value=>report.trusted.push(value));
   page.on('pageerror',error=>report.pageErrors.push({stage,message:String(error)}));
   page.on('console',message=>{if(message.type()==='error'&&!/favicon\.ico/.test(message.location().url??''))report.pageErrors.push({stage,message:message.text()});});
@@ -115,6 +120,9 @@ try{
   await page.screenshot({path:path.join(output,'software-recovered.png'),fullPage:true});
   report.status='passed';
 }catch(error){report.status='failed';report.error=error.stack??String(error);await page?.screenshot({path:path.join(output,'failure.png'),fullPage:true}).catch(()=>{});}
-finally{await context?.close();await browser?.close();report.finishedAt=new Date().toISOString();await save();}
+finally{await finalizeReleaseRecord(report,save,[
+  {name:'context',close:()=>context?.close()},
+  {name:'browser',close:()=>browser?.close()},
+]);}
 console.log(JSON.stringify({status:report.status,error:report.error,sources:report.sources.length}));
 if(report.status!=='passed')process.exitCode=1;
