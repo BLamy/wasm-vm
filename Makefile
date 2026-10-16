@@ -2687,3 +2687,9 @@ verify-E5.5-T05c1:
 	$(MAKE) web-dist
 	node tools/virgl-production/omarchy-color-checkpoint-browser.mjs --output "$${OMARCHY_COLOR_CHECKPOINT_EVIDENCE_DIR:-target/evidence/omarchy-color-checkpoint-hardware}"
 	node tools/verify-virgl-default-demo.mjs --output "$${OMARCHY_COLOR_DEMO_EVIDENCE_DIR:-target/evidence/omarchy-color-checkpoint-demo}" --task E5.5-T05c1
+
+# Release phases execute actual browser paths. An explicitly selected incremental
+# phase records its omitted phases; it cannot pass as the full release verdict.
+.PHONY: verify-E5.5-T05d
+verify-E5.5-T05d:
+	python3 tools/virgl-production/verify-omarchy-application-release.py --output "$${OMARCHY_RELEASE_EVIDENCE_DIR:-target/evidence/omarchy-application-release-final}" --url "$${OMARCHY_RELEASE_URL:-https://wasm-vm.pages.dev/}" --phase "$${OMARCHY_RELEASE_PHASE:-all}" --application-image "$${OMARCHY_DESKTOP_IMAGE_DIRECTORY:-target/virgl-production/image-18}" --inventory "$${OMARCHY_APPLICATION_INVENTORY:-target/evidence/omarchy-native-app-image-final01/runtime-elf.json}"
