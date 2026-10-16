@@ -114,7 +114,11 @@ export async function verifyRestoredApplicationLaunches(page,command,output,opti
     const writerStarted=Date.now();await press('Meta+Alt+Space');
     await wait(()=>read('layers'),rows=>Object.values(rows).flatMap(m=>Object.values(m.levels??{}).flat()).some(row=>row.namespace==='omarchy-menu'&&row.alpha>0),'stock Apps menu maps',300000);
     await focus();report.steps.push({kind:'trusted-text',text:'libreoffice writer',time:Date.now()});await save();await typeGuestText(page,'libreoffice writer');await sleep(1500);await shot('apps-menu');await press('Enter');
-    const writer=await findWindow(isWriterDocumentWindow,'native Writer editor maps',1200000);
+    // The retained production run reached the genuine first-run editor after
+    // the original twenty-minute observer expired. This compatibility check
+    // records its larger budget explicitly; it makes no launch-speed claim.
+    report.writerObservationBudgetMs=1800000;await save();
+    const writer=await findWindow(isWriterDocumentWindow,'native Writer editor maps',report.writerObservationBudgetMs);
     report.writer=await identity.process(writer,'/usr/lib/libreoffice/program/soffice.bin',name+'-writer');
     for(let step=0;step<3;step++){const dialog=await read('activewindow');if(!await writerFirstRun(dialog,writer))break;await sleep(1500);}
     let front=await wait(()=>read('activewindow'),row=>row.pid===writer.pid&&row.title!=='Welcome to LibreOffice!'&&row.visible!==false,'native welcome has completed',120000);
