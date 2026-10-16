@@ -110,6 +110,7 @@ try:
             boot(phase, {"CRITIC_FAST_BOOT_GPU": "warm", "CRITIC_FAST_BOOT_GPU_TRACE": "1"})
         elif phase == "factory":
             boot(phase, {"CRITIC_FAST_BOOT_GPU": "warm", "CRITIC_FAST_BOOT_FACTORY_GUARD_ONLY": "1"})
+            boot("factory-software", {"CRITIC_FAST_BOOT_GPU": "0", "CRITIC_FAST_BOOT_FACTORY_GUARD_ONLY": "1"})
         elif phase == "other-images":
             boot(phase, {"CRITIC_FAST_BOOT_GPU": "0", "CRITIC_FAST_BOOT_GUESTS": "busybox,alpine,node-alpine",
                          "CRITIC_FAST_BOOT_PERSISTENCE": "1", "CRITIC_FAST_BOOT_SAVE_ON_REPEAT": "1"})

@@ -49,7 +49,7 @@ const applicationComponent=process.env.CRITIC_FAST_BOOT_APPLICATION_COMPONENT;
 assert.ok(applicationComponent===undefined||applicationComponent==='writer','known explicit application component');
 const remoteUrl = process.env.CRITIC_FAST_BOOT_URL;
 if(omarchyPersist)assert.ok(!acceleratedGpu&&guests.includes('omarchy'),'explicit software Omarchy persistence');
-if(factoryGuardOnly)assert.ok(warmGpu&&guests.length===1&&guests[0]==='omarchy'&&!applicationWorkload&&!captureGpuPair&&!swapCheckpoint&&!restoredApplications,'separate read-only factory exclusion after real GPU restore');
+if(factoryGuardOnly)assert.ok(!coldGpu&&guests.length===1&&guests[0]==='omarchy'&&!applicationWorkload&&!captureGpuPair&&!swapCheckpoint&&!restoredApplications&&!omarchyPersist,'separate read-only factory exclusion after a real accelerated or software restore');
 if(gpuTimingOnly)assert.ok(warmGpu&&!gpuTrace&&!captureGpuPair&&!applicationWorkload&&!restoredApplications&&!swapCheckpoint&&!factoryGuardOnly,'ordinary warm GPU timing has no trace, test-hook workload or capture');
 if(prewarmApplications)assert.ok(warmGpu&&captureGpuPair&&!applicationWorkload&&!restoredApplications,'application cache preparation belongs only to a clean owned warm factory producer');
 if(restoredApplications)assert.ok(warmGpu&&!applicationWorkload&&!captureGpuPair&&!swapCheckpoint,'restored application launch proof uses its own warm session');
@@ -716,7 +716,7 @@ try{
         assert.ok(state.display?.successfulPresents>0,phase+' actual guest scanout');
         assert.equal(state.overlayHidden,true,phase+' desktop ready surface');
         assert.equal(state.gpu?.qualified??false,acceleratedGpu,phase+' selected graphics route');
-        if(!acceleratedGpu&&!swapCheckpoint){
+        if(!acceleratedGpu&&!swapCheckpoint&&!factoryGuardOnly){
           const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
           // Persistent repeats retain the first marker. Exercise a distinct new
           // trusted command instead of deleting evidence or reusing its result.
