@@ -9,7 +9,24 @@ import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {once} from 'node:events';
 import {createInterface} from 'node:readline';
-import {createApplicationFixture,readFixtureTransition,authenticateBrowserPrefix,isWriterDocumentWindow,isWriterTipWindow,locateFixtureNoteControls} from './omarchy-applications.mjs';
+import {createApplicationFixture,readFixtureTransition,authenticateBrowserPrefix,authenticateColdWriterOpenPrefix,isWriterDocumentWindow,isWriterTipWindow,locateFixtureNoteControls} from './omarchy-applications.mjs';
+
+test('a cold Writer continuation preserves the failed Tip/Open recording and actual first save',async()=>{
+  const bytes=await fs.readFile(new URL('./fixtures/omarchy-writer-tip-open.json',import.meta.url));
+  const digest=b=>createHash('sha256').update(b).digest('hex');
+  const result=authenticateColdWriterOpenPrefix(bytes,digest(bytes));
+  assert.equal(result.pendingWriter.pid,11701);assert.equal(result.open.title,'Open');
+  assert.equal(result.prior.firstSave.sha256,'719cb212524f8393c9cf9fc7b227787f272671114e8a8526f669ac29ddef45af');
+  assert.throws(()=>authenticateColdWriterOpenPrefix(bytes,'0'.repeat(64)));
+  for(const mutate of [p=>p.status='passed',p=>p.component={name:'writer'},p=>p.error='other failure',
+    p=>p.acceptedInventorySha256='0'.repeat(64),p=>p.firstSave.text='injected',p=>p.firstSave.bytes=1048576,
+    p=>p.secondSave={},p=>p.reopenLaunch.window.pid++,p=>p.writerTip.window.address='stale',
+    p=>p.phases[0].result.stdout='[]',p=>p.beforeGpu.counters.failed=1,p=>p.phases[1].state.epoch='stale',
+    p=>p.trusted[0].trusted=false,p=>p.inputFailure.capture='off',p=>p.inputFailure.device.pendingEvents=1]){
+    const value=JSON.parse(bytes);mutate(value);const changed=Buffer.from(JSON.stringify(value));
+    assert.throws(()=>authenticateColdWriterOpenPrefix(changed,digest(changed)));
+  }
+});
 
 test('native note controls are selected from visible pixels across tiled layouts and hover colors',()=>{
   for(const width of [621,1256])for(const shade of [225,239]){

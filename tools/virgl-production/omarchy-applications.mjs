@@ -249,6 +249,34 @@ export function authenticateWriterReopenPrefix(bytes,expectedSha256) {
   return {prior};
 }
 
+export function authenticateColdWriterOpenPrefix(bytes,expectedSha256) {
+  assert.match(expectedSha256,/^[a-f0-9]{64}$/);assert.equal(sha(bytes),expectedSha256);
+  const prior=JSON.parse(bytes);assert.equal(prior.status,'failed');assert.equal(prior.component,undefined);
+  assert.match(prior.error,/^Error: Actual guest application window did not close\n/);
+  assert.match(prior.error,/at async openWriterFile /);
+  assert.equal(prior.acceptedInventorySha256,'ae72ccdf528974e203726b058a639201bfa19950ee4190658baad14e0440ab86');
+  assert.equal(prior.firstSave.text,'Omarchy riscv document 42');assert.ok(prior.firstSave.bytes>0&&prior.firstSave.bytes<1048576);
+  assert.match(prior.firstSave.sha256,/^[a-f0-9]{64}$/);
+  for(const field of ['openDialog','reopenedWindow','reopenedWriter','secondSave','nodeNpm','wallpaperTransitions'])assert.equal(prior[field],undefined);
+  const pendingWriter=prior.reopenLaunch.window;assert.ok(isWriterDocumentWindow(pendingWriter));
+  const last=prior.phases.filter(row=>row.kind==='guest-command'&&row.command===hypr+'clients').at(-1);
+  assert.equal(last.result.exit,0);const windows=JSON.parse(last.result.stdout);
+  assert.ok(windows.every(row=>/foot/i.test(row.class)||row.pid===pendingWriter.pid));
+  assert.ok(windows.some(row=>row.address===pendingWriter.address&&row.pid===pendingWriter.pid&&isWriterDocumentWindow(row)));
+  const tips=windows.filter(row=>isWriterTipWindow(row,pendingWriter.pid));assert.equal(tips.length,1);
+  const opens=windows.filter(row=>row.pid===pendingWriter.pid&&row.class==='soffice'&&row.title==='Open');assert.equal(opens.length,1);
+  assert.equal(tips[0].address,prior.writerTip.window.address);
+  assert.equal(prior.beforeGpu.qualified,true);assert.equal(prior.beforeGpu.counters.failed,0);assert.deepEqual(prior.pageErrors,[]);
+  for(const row of prior.phases.filter(row=>row.kind==='gpu-health')){
+    assert.equal(row.state.epoch,prior.beforeGpu.epoch);assert.equal(row.state.qualified,true);assert.equal(row.state.counters.failed,0);
+  }
+  assert.ok(prior.trusted.length>100&&prior.trusted.every(row=>row.trusted===true));
+  assert.equal(prior.inputFailure.focus,'ide-display-canvas');assert.equal(prior.inputFailure.capture,'on');
+  assert.deepEqual(prior.inputFailure.held,[]);
+  for(const field of ['pendingEvents','droppedEvents','droppedFrames'])assert.equal(prior.inputFailure.device[field],0);
+  return {prior,pendingWriter,tip:tips[0],open:opens[0]};
+}
+
 export function authenticateWriterOpenPrefix(bytes,expectedSha256) {
   assert.match(expectedSha256,/^[a-f0-9]{64}$/);assert.equal(sha(bytes),expectedSha256);
   const prior=JSON.parse(bytes);assert.equal(prior.status,'failed');assert.equal(prior.component.name,'writer');
@@ -288,7 +316,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
   const name = options.name || 'native-applications';
   let writerOnly=options.component==='writer';
   assert.ok(options.component===undefined||writerOnly,'known explicit application component');
-  let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest,processWitness,browserPrefix,sandboxPrefix,writerComponent,writerLaunchResume,writerSaveResume,writerSavedResume,writerReopenResume,writerOpenResume;
+  let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest,processWitness,browserPrefix,sandboxPrefix,writerComponent,writerLaunchResume,writerSaveResume,writerSavedResume,writerReopenResume,writerOpenResume,coldWriterOpen=false;
   async function retainedComponent(reference,authenticate,scope){
     assert.ok(processWitness,'same-process native witness is required');
     assert.match(reference.path,/^control-applications-[a-z0-9-]+\.json$/);assert.match(reference.sourceSha256,/^[a-f0-9]{64}$/);
@@ -307,6 +335,24 @@ export async function verifyOmarchyApplications(page, command, output, options =
     const bytes=await fs.readFile(path.join(output,'control-request-'+id+'.json')),request=JSON.parse(bytes);
     assert.equal(request.id,id);assert.equal(request.kind,'retry-applications');
     continueExistingBrowser ||= request.continueExistingBrowser===true;
+    if(request.resumeColdWriterOpen){
+      assert.ok(!continueExistingBrowser&&!request.writerComponent&&!request.resumeAfterBrowser&&!request.resumeAfterSandbox&&!request.processWitness&&!request.resumeWriterLaunch&&!request.resumeWriterSave&&!request.resumeWriterSavedDocument&&!request.resumeWriterReopen&&!request.resumeWriterOpen);
+      const reference=request.resumeColdWriterOpen;assert.equal(reference.path,'omarchy-initial-native-applications.json');
+      for(const key of ['sha256','controllerSha256','sourceSha256','shellConfigSha256'])assert.match(reference[key],/^[a-f0-9]{64}$/);
+      const parentBytes=await fs.readFile(path.join(output,'report.json'));assert.equal(sha(parentBytes),reference.controllerSha256);
+      const parent=JSON.parse(parentBytes);assert.equal(parent.status,'failed');assert.equal(parent.failedPhase,'omarchy-initial');
+      assert.equal(parent.warmGpu,false);assert.equal(parent.applicationContinuation,false);assert.ok(!parent.remoteUrl);
+      assert.equal(parent.harnessHashes['omarchy-applications.mjs'],reference.sourceSha256);
+      const sourcePath='executed-harness/omarchy-applications.mjs';assert.equal(sha(await fs.readFile(path.join(output,sourcePath))),reference.sourceSha256);
+      assert.equal(sha(await fs.readFile(path.join(output,'candidate-manifest.json'))),parent.candidate.manifestSha256);
+      const authenticated=authenticateColdWriterOpenPrefix(await fs.readFile(path.join(output,reference.path)),reference.sha256);
+      assert.equal(authenticated.prior.identityModuleSha256,identityModuleSha256);
+      assert.equal(reference.shellConfigSha256,'73c5b469059b9aa8159cf6712a62a5d067216414fbe94d2ffb35ea3fdfa2341d');
+      const documentBytes=await fs.readFile(path.join(output,'omarchy-initial-native-applications-first-save.odt'));
+      assert.equal(documentBytes.length,authenticated.prior.firstSave.bytes);assert.equal(sha(documentBytes),authenticated.prior.firstSave.sha256);
+      continuationRequest={id,sha256:sha(bytes),scope:'same native reopened Writer and original first ODT after preserved cold Tip/Open timeout; remaining application/desktop proof only'};
+      coldWriterOpen=true;writerOnly=true;writerOpenResume={...authenticated,reference:{...reference,sourcePath}};
+    }
     if(request.resumeWriterSave){
       assert.ok(!continueExistingBrowser&&!request.writerComponent&&!request.resumeAfterBrowser&&!request.resumeAfterSandbox&&!request.processWitness&&!request.resumeWriterLaunch);
       const reference=request.resumeWriterSave;
@@ -498,7 +544,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
   const report = {status:'running',identityModuleSha256,continueExistingBrowser,fixtureToken:fixtureSpec.token,fixtureServerSha256:sha(Buffer.from(fixtureSpec.source)),networking:{provider:'offline',fixture:fixtureSpec.url,externalBrowsingClaim:false},phases:[]};
   if(writerOnly){
     assert.ok((!name.startsWith('control-applications-')||writerLaunchResume||writerSaveResume||writerSavedResume||writerReopenResume||writerOpenResume)&&!continueExistingBrowser&&!writerComponent&&!browserPrefix&&!sandboxPrefix);
-    assert.equal(process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINUATION,'1');
+    assert.ok(coldWriterOpen||process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINUATION==='1','explicit authenticated owned application continuation');
     report.component={name:'writer',scope:'New Writer save/reopen/edit, native Node/npm, wallpaper and final desktop only; prior Chromium/SVG evidence remains separate.'};
     report.networking.fixture=null;
     if(writerLaunchResume)report.resumedWriterLaunch=writerLaunchResume;
@@ -825,25 +871,44 @@ export async function verifyOmarchyApplications(page, command, output, options =
     await waitActive(row=>row.address===dialog.address&&row.pid===dialog.pid&&row.title==='Save');
     await click(saveTarget);report.phases.push({kind:'native-save-button',dialog,target:saveTarget,time:Date.now()});await save();
   }
+  async function dismissObservedWriterTip(window){
+    const tips=(await clients()).filter(row=>isWriterTipWindow(row,window.pid));
+    if(!tips.length)return false;assert.equal(tips.length,1);const tip=tips[0],deadline=Date.now()+600000;
+    for(let attempt=0;attempt<2;attempt++){
+      assert.ok(Date.now()<deadline,'original native Tip close deadline');
+      let result=await run(hypr+'activewindow');assert.equal(result.exit,0);let active=JSON.parse(result.stdout);
+      // An Open chooser can coexist with the late Tip. Cancel that actual
+      // focused chooser before clicking the Tip underneath it.
+      if(active.pid===window.pid&&/^Open(?: File)?$/i.test(active.title)){
+        await shot('writer-tip-overlapping-open');await press('Escape');
+        await waitClosed(row=>row.address===active.address,Math.max(1,deadline-Date.now()));
+      }
+      active=await waitActive(row=>row.address===tip.address&&isWriterTipWindow(row,window.pid),Math.max(1,deadline-Date.now()));
+      await shot('writer-tip-of-the-day');result=await run(hypr+'monitors');assert.equal(result.exit,0);
+      const monitor=JSON.parse(result.stdout).find(row=>row.id===active.monitor);assert.equal(monitor.scale,1);
+      const target={x:active.at[0]+active.size[0]-60,y:active.at[1]+active.size[1]-27};
+      assert.ok(target.x>=0&&target.x<monitor.width&&target.y>=0&&target.y<monitor.height);
+      await focusInput();const box=await page.locator('#ide-display-canvas').boundingBox();assert.ok(box?.width>0&&box.height>0);
+      await page.mouse.click(box.x+target.x*box.width/monitor.width,box.y+target.y*box.height/monitor.height,{delay:120});
+      report.writerTip={window:active,target,attempt,action:'trusted native OK button',time:Date.now()};await save();
+      while(Date.now()<deadline){
+        await gpuHealth();const windows=await clients();
+        if(!windows.some(row=>row.address===tip.address)){
+          await waitActive(row=>row.address===window.address&&isWriterDocumentWindow(row));return true;
+        }
+        if(windows.some(row=>row.pid===window.pid&&/^Open(?: File)?$/i.test(row.title)))break;
+        await sleep(nativePollMs);
+      }
+    }
+    throw Error('The observed native Writer Tip did not close within its original bound');
+  }
   async function openWriterFile(window){
-    // The packaged Tip of the Day can map after the document window. Observe
-    // that actual modal before dismissing it; an early Ctrl+O alone cannot
-    // prove the document received the shortcut.
+    await dismissObservedWriterTip(window);
     await press('Control+o');
     const active=await waitActive(row=>row.pid===window.pid&&
       (/^Open(?: File)?$/i.test(row.title)||isWriterTipWindow(row,window.pid)));
     if(/^Open(?: File)?$/i.test(active.title))return active;
-    await shot('writer-tip-of-the-day');
-    const result=await run(hypr+'monitors');assert.equal(result.exit,0);
-    const monitor=JSON.parse(result.stdout).find(row=>row.id===active.monitor);assert.equal(monitor.scale,1);
-    const target={x:active.at[0]+active.size[0]-60,y:active.at[1]+active.size[1]-27};
-    assert.ok(target.x>=0&&target.x<monitor.width&&target.y>=0&&target.y<monitor.height);
-    await focusInput();const box=await page.locator('#ide-display-canvas').boundingBox();assert.ok(box?.width>0&&box.height>0);
-    await page.mouse.click(box.x+target.x*box.width/monitor.width,box.y+target.y*box.height/monitor.height,{delay:120});
-    report.writerTip={window:active,target,action:'trusted native OK button',time:Date.now()};await save();
-    await waitClosed(row=>row.address===active.address,600000);
-    await waitActive(row=>row.address===window.address&&isWriterDocumentWindow(row));
-    await press('Control+o');
+    await dismissObservedWriterTip(window);await press('Control+o');
     return await waitActive(row=>row.pid===window.pid&&/^Open(?: File)?$/i.test(row.title));
   }
   async function verifySandboxedImage(chromium) {
@@ -932,13 +997,16 @@ export async function verifyOmarchyApplications(page, command, output, options =
           const current=windows.find(row=>row.address===pending.address&&row.pid===pending.pid);
           assert.ok(isWriterDocumentWindow(current));
           report.reopenLaunch=await identity(current,'/usr/lib/libreoffice/program/soffice.bin');
-          const active=await waitActive(row=>isWriterTipWindow(row,pending.pid));
-          assert.equal(active.address,writerOpenResume.tip.address);
+          if(coldWriterOpen)assert.equal(report.reopenLaunch.before.data.starttime,writerOpenResume.prior.reopenLaunch.before.data.starttime);
+          else {
+            const active=await waitActive(row=>isWriterTipWindow(row,pending.pid));
+            assert.equal(active.address,writerOpenResume.tip.address);
+          }
         }
         const code=`from pathlib import Path;import hashlib,json;p=Path.home()/'.config/hypr/hyprland.lua';b=p.read_bytes();print(json.dumps(dict(path=str(p),sha256=hashlib.sha256(b).hexdigest())))`;
         const result=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");assert.equal(result.exit,0);
         report.applicationShellConfig=JSON.parse(result.stdout);assert.equal(report.applicationShellConfig.sha256,
-          writerReopenResume?writerReopenResume.reference.shellConfigSha256:writerOpenResume.prior.applicationShellConfig.sha256);
+          writerReopenResume?writerReopenResume.reference.shellConfigSha256:writerOpenResume.reference.shellConfigSha256||writerOpenResume.prior.applicationShellConfig.sha256);
       }
       const prepareDirectory=(writerLaunchResume||writerSaveResume||writerSavedResume||writerReopenResume||writerOpenResume)?"assert p.is_dir() and not (p/'node').exists() and not (p/'npm').exists()":"assert not p.exists();p.mkdir(mode=0o700)";
       const documentGuard=(writerSavedResume||writerReopenResume||writerOpenResume)?`f=Path(${JSON.stringify(document)});d=f.lstat();assert stat.S_ISREG(d.st_mode) and d.st_uid==1000 and d.st_nlink==1 and 0<d.st_size<1048576`:`assert not Path(${JSON.stringify(document)}).exists()`;
