@@ -77,12 +77,12 @@ releases/chunked-alpine/
 releases/chunked-omarchy/
 releases/chunked-node-alpine/
 
-# The 192 MiB Omarchy desktop RAM snapshot exceeds GitHub's file limit. Its
-# exact bytes are pinned in web/artifacts-omarchy.json and hosted immutably on R2.
+# Omarchy RAM/GPU snapshots exceed GitHub's file limit. Keep versioned release
+# names local too; descriptors pin their exact immutable public R2 bytes.
+# Small paired disk deltas remain tracked for reproducible local builds.
 # Restore it for local acceptance/deployment with tools/fetch-omarchy-snapshot.mjs.
-releases/boot-snapshot/omarchy-ready.snap.gz
-# Accelerated factory RAM/disk/GPU bytes are pinned in the public manifest and R2.
-releases/boot-snapshot/omarchy-virgl-ready.wvgpair
+releases/boot-snapshot/omarchy-*.snap.gz
+releases/boot-snapshot/omarchy-*.wvgpair
 
 # Full paused guest RAM is local replay evidence; committed receipts pin its SHA-256.
 evidence/omarchy-profile/input-wait-r*/desktop/failed-input.ram.gz
