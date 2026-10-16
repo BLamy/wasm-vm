@@ -6,7 +6,8 @@ import {createHash} from 'node:crypto';
 import {appendFile, mkdir, readFile, realpath, stat, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
-import {publishChunks, DEFAULT_BUCKET, DEFAULT_PUBLIC_BASE, CHUNK_SIZE, UPLOAD_TIMEOUT_MS} from './publish-omarchy-chunks.mjs';
+import {publishChunks, validateLocalManifest, DEFAULT_BUCKET, DEFAULT_PUBLIC_BASE, CHUNK_SIZE, UPLOAD_TIMEOUT_MS} from './publish-omarchy-chunks.mjs';
+import {createWranglerProcessProxy} from './verify/omarchy-r2-owner.mjs';
 
 export const WRANGLER_VERSION='4.151.0';
 export const ACCOUNT_ID='cc8e2f38f1862286b90e834d8f267d1a';
@@ -26,21 +27,53 @@ export async function checkedPayload(key, sourcePath) {
   return {bytes,digest,contentType:chunk?'application/octet-stream':'application/json'};
 }
 
-export function createBindingUploader({getProxy,bucket=DEFAULT_BUCKET,record=async()=>{},putTimeoutMs=UPLOAD_TIMEOUT_MS}) {
+export function createBindingUploader({getProxy,bucket=DEFAULT_BUCKET,record=async()=>{},putTimeoutMs=UPLOAD_TIMEOUT_MS,startupTimeoutMs=60000,disposeTimeoutMs=10000}) {
   assert.equal(typeof getProxy,'function');
-  let starting,live,closed=false;
+  let starting,live,closed=false,cancelStartup;
+  const disposals=new Map();
+  const disposeOwner=owner=>{
+    if(!disposals.has(owner))disposals.set(owner,(async()=>{
+      let timer;
+      try{await Promise.race([Promise.resolve().then(()=>owner.dispose()),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('R2 owner disposal timed out')),disposeTimeoutMs);})]);}
+      finally{clearTimeout(timer);}
+    })());
+    return disposals.get(owner);
+  };
   const binding=async()=>{
     assert.equal(closed,false,'uploader is open');
-    starting??=(async()=>{
-      live=await getProxy();
-      assert.equal(typeof live?.env?.ASSETS?.put,'function','actual R2 binding');
-      assert.equal(typeof live?.dispose,'function','owned proxy lifecycle');
-      await record({phase:'binding-open'});
-      return live.env.ASSETS;
-    })();
+    starting??=new Promise((resolve,reject)=>{
+      let finished=false;
+      const fail=error=>{if(finished)return;finished=true;clearTimeout(timer);reject(error);};
+      const timer=setTimeout(()=>fail(Error('R2 binding startup timed out')),startupTimeoutMs);
+      cancelStartup=()=>fail(Error('R2 binding startup cancelled'));
+      Promise.resolve().then(getProxy).then(async owner=>{
+        live=owner;
+        if(finished||closed){await disposeOwner(owner);return;}
+        assert.equal(typeof owner?.env?.ASSETS?.put,'function','actual R2 binding');
+        assert.equal(typeof owner?.dispose,'function','owned proxy lifecycle');
+        await record({phase:'binding-open'});
+        if(finished||closed){await disposeOwner(owner);return;}
+        finished=true;clearTimeout(timer);resolve(owner.env.ASSETS);
+      }).catch(error=>{fail(error);});
+    });
     return starting;
   };
   return {
+    async check({key,expectedSize,expectedSha}) {
+      assert.match(key,/^chunked-omarchy\/(?:chunks\/[0-9a-f]{64}\.bin|manifest-[0-9a-f]{64}\.json)$/);
+      assert.ok(Number.isSafeInteger(expectedSize)&&expectedSize>0&&expectedSize<=MAX_MANIFEST_BYTES);
+      const r2=await binding();
+      const value=r2.read?await r2.read(key,expectedSize):await(async()=>{
+        const object=await r2.get(key);
+        if(!object)return null;
+        return {size:object.size,bytes:object.size<=expectedSize?Buffer.from(await object.arrayBuffer()):null};
+      })();
+      const state=!value?'missing':value.size===expectedSize&&value.bytes?.length===expectedSize&&hash(value.bytes)===expectedSha?'exact':'mismatch';
+      const result={state,status:null,transport:'authenticated-wrangler-r2'};
+      await record({phase:'r2-binding-check',key,expectedSize,expectedSha,state,
+        actualSize:value?.size??null,actualSha256:value?.bytes?hash(value.bytes):null});
+      return result;
+    },
     async upload({bucket:requestedBucket,key,sourcePath}) {
       assert.equal(closed,false,'uploader is open');
       assert.equal(requestedBucket,bucket,'upload bucket is fixed');
@@ -65,8 +98,9 @@ export function createBindingUploader({getProxy,bucket=DEFAULT_BUCKET,record=asy
     async dispose() {
       if(closed)return;
       closed=true;
+      cancelStartup?.();
       if(starting)await starting.catch(()=>{});
-      if(live){await live.dispose();await record({phase:'binding-closed'});}
+      if(live){await disposeOwner(live);await record({phase:'binding-closed'});}
     },
   };
 }
@@ -105,12 +139,13 @@ async function main() {
   const journal=path.join(output,'uploads.ndjson'),configPath=path.join(output,'wrangler.json');
   await writeFile(journal,'',{flag:'wx',mode:0o600});
   const sourcePins=[];
-  for(const source of [fileURLToPath(import.meta.url),fileURLToPath(new URL('./publish-omarchy-chunks.mjs',import.meta.url))]){
+  for(const source of [fileURLToPath(import.meta.url),...['./publish-omarchy-chunks.mjs','./verify/omarchy-r2-owner.mjs','./verify/omarchy-r2-worker.mjs'].map(name=>fileURLToPath(new URL(name,import.meta.url)))]){
     const bytes=await readFile(source),copy='executed-'+path.basename(source);
     await writeFile(path.join(output,copy),bytes,{flag:'wx'});
     sourcePins.push({path:source,copy,bytes:bytes.length,sha256:hash(bytes)});
   }
-  const inputManifest=await readFile(path.resolve(options.manifestPath));
+  const validated=await validateLocalManifest(path.resolve(options.manifestPath));
+  const inputManifest=validated.manifestBytes;
   await writeFile(path.join(output,'input-manifest.json'),inputManifest,{flag:'wx'});
   let recording=Promise.resolve(),recordingError;
   const record=event=>{
@@ -123,11 +158,12 @@ async function main() {
   const config={name:'wasm-vm-release-publisher',account_id:ACCOUNT_ID,compatibility_date:'2026-10-01',
     r2_buckets:[{binding:'ASSETS',bucket_name:DEFAULT_BUCKET,remote:true}]};
   await writeFile(configPath,JSON.stringify(config,null,2)+'\n',{flag:'wx',mode:0o600});
-  const adapter=createBindingUploader({getProxy:()=>wranglerProxy({modulePath:path.resolve(options.modulePath),configPath,record}),record});
+  const adapter=createBindingUploader({getProxy:()=>createWranglerProcessProxy({modulePath:path.resolve(options.modulePath),configPath,record}),record});
   const start=new Date().toISOString();let result,failure,cleanupError;
   try {
     let lastPrint=0;
     result=await publishChunks({manifestPath:path.resolve(options.manifestPath),publish:options.publish,
+      validatedManifest:validated,objectChecker:options.publish?adapter.check:null,
       bucket:DEFAULT_BUCKET,publicBase:DEFAULT_PUBLIC_BASE,uploader:adapter.upload,
       onProgress:event=>{
         if(recordingError)throw recordingError;
@@ -140,11 +176,13 @@ async function main() {
   try{await adapter.dispose();}catch(error){cleanupError=String(error);}
   await recording;
   if(recordingError&&!failure)failure={message:recordingError.message,stack:recordingError.stack};
+  if(result&&(result.manifestSha256!==hash(inputManifest)||hash(await readFile(path.resolve(options.manifestPath)))!==hash(inputManifest))&&!failure)
+    failure={message:'Captured, published and current manifest identities differ'};
   for(const source of sourcePins)if(hash(await readFile(source.path))!==source.sha256&&!failure)
     failure={message:'Publisher source changed during the recorded run: '+source.path};
   const receipt={schema:1,startedUtc:start,finishedUtc:new Date().toISOString(),status:failure||cleanupError?'failed':'passed',
     mode:options.publish?'publish':'plan',scriptSha256:hash(await readFile(fileURLToPath(import.meta.url))),
-    wranglerVersion:WRANGLER_VERSION,config,sourcePins,
+    wranglerVersion:WRANGLER_VERSION,verificationTransport:options.publish?'authenticated-wrangler-r2':'local-plan',config,sourcePins,
     manifest:{path:path.resolve(options.manifestPath),bytes:inputManifest.length,sha256:hash(inputManifest)},result,failure,cleanupError,
     uploadJournal:{path:'uploads.ndjson',bytes:(await stat(journal)).size,sha256:hash(await readFile(journal))}};
   await writeFile(path.join(output,'receipt.json'),JSON.stringify(receipt,null,2)+'\n');

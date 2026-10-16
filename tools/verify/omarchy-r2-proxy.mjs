@@ -7,6 +7,7 @@ import {pathToFileURL,fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {createBindingUploader,WRANGLER_VERSION} from '../publish-omarchy-chunks-proxy.mjs';
 import {publishChunks,DEFAULT_PUBLIC_BASE} from '../publish-omarchy-chunks.mjs';
+import {createWranglerProcessProxy} from './omarchy-r2-owner.mjs';
 const options={};for(let i=2;i<process.argv.length;i+=2)options[process.argv[i]]=process.argv[i+1];
 assert.ok(options['--output']&&options['--wrangler-module'],'--output and --wrangler-module required');
 const output=path.resolve(options['--output']),entry=path.resolve(options['--wrangler-module']);
@@ -18,7 +19,7 @@ const {getPlatformProxy}=await import(pathToFileURL(entry).href);
 const config=path.join(output,'local-wrangler.json');
 await writeFile(config,JSON.stringify({name:'omarchy-local-publisher-proof',compatibility_date:'2026-10-01',r2_buckets:[{binding:'ASSETS',bucket_name:'wasm-vm',remote:false}]},null,2)+'\n');
 const report={scope:'Actual local workerd R2 conditional/checksum and existing strict publisher integration; not remote authentication or public HTTPS proof',status:'running',wranglerVersion:pkg.version,events:[],publicReads:[],startedUtc:new Date().toISOString()};
-let proxy,adapter,closed=0;
+let proxy,adapter,processProxy,processAdapter,closed=0;
 try{
   proxy=await getPlatformProxy({configPath:config,envFiles:[],persist:false,remoteBindings:false});
   const r2=proxy.env.ASSETS;
@@ -44,6 +45,13 @@ try{
     assert.deepEqual(Buffer.from(await object.arrayBuffer()),literal);
     assert.equal(Buffer.from(object.checksums.sha256).toString('hex'),digest);
   }
+  const extra=Buffer.alloc(262144,219),eh=hash(extra);
+  await writeFile(path.join(fixture,'chunks',eh+'.bin'),extra);
+  await writeFile(manifestPath,JSON.stringify({...manifest,image_len:1048576,chunks:[ah,bh,ah,eh]})+'\n');
+  report.authenticated=await publishChunks({manifestPath,publish:true,objectChecker:adapter.check,uploader:adapter.upload});
+  assert.equal(report.authenticated.verifiedExisting,2);assert.equal(report.authenticated.uploaded,1);
+  assert.equal(report.authenticated.finalManifest,'uploaded-verified');
+  assert.equal(report.events.filter(x=>x.phase==='conditional-put').at(-1).key,report.authenticated.manifestKey);
   const key='chunked-omarchy/chunks/'+ah+'.bin',before=await r2.head(key);
   await adapter.upload({bucket:'wasm-vm',key,sourcePath:path.join(fixture,'chunks',ah+'.bin')});
   const after=await r2.head(key);assert.equal(after.version,before.version,'conditional existing object is not overwritten');
@@ -53,7 +61,7 @@ try{
   assert.equal(await r2.head('local-checksum-negative'),null,'actual R2 refuses corrupted bytes');
   let repeatOpens=0;const repeat=createBindingUploader({getProxy:async()=>{repeatOpens++;throw Error('existing exact objects need no authentication');}});
   report.repeat=await publishChunks({manifestPath,publish:true,fetchImpl,uploader:repeat.upload});
-  assert.equal(report.repeat.verifiedExisting,2);assert.equal(report.repeat.finalManifest,'existing-exact');assert.equal(repeatOpens,0);await repeat.dispose();
+  assert.equal(report.repeat.verifiedExisting,3);assert.equal(report.repeat.finalManifest,'existing-exact');assert.equal(repeatOpens,0);await repeat.dispose();
   // A corrupt existing object prevents every write, including a different
   // missing chunk and the final manifest. This is deliberately local sabotage.
   const badDir=path.join(output,'corrupt-fixture');await mkdir(path.join(badDir,'chunks'),{recursive:true});
@@ -66,17 +74,24 @@ try{
     sha256:hash(Buffer.from(await(await r2.get(object.key)).arrayBuffer())),
   })));
   const listedBefore=await listedState();let forbiddenWrites=0;
-  await assert.rejects(publishChunks({manifestPath:badManifest,publish:true,fetchImpl,uploader:async()=>{forbiddenWrites++;}}),/refusing to overwrite/);
+  await assert.rejects(publishChunks({manifestPath:badManifest,publish:true,objectChecker:adapter.check,uploader:async()=>{forbiddenWrites++;}}),/refusing to overwrite/);
   assert.equal(forbiddenWrites,0);assert.deepEqual(await listedState(),listedBefore);
   report.corruption={writes:forbiddenWrites,missingChunkStillMissing:await r2.head('chunked-omarchy/chunks/'+dh+'.bin')===null};
   assert.equal(report.corruption.missingChunkStillMissing,true);report.status='passed';
+  processProxy=await createWranglerProcessProxy({modulePath:entry,configPath:config,record:async event=>report.events.push(event)});
+  processAdapter=createBindingUploader({getProxy:async()=>processProxy,record:async event=>report.events.push(event)});
+  report.ownedProcessFirst=await publishChunks({manifestPath,publish:true,objectChecker:processAdapter.check,uploader:processAdapter.upload});
+  assert.equal(report.ownedProcessFirst.uploaded,3);assert.equal(report.ownedProcessFirst.finalManifest,'uploaded-verified');
+  report.ownedProcessRepeat=await publishChunks({manifestPath,publish:true,objectChecker:processAdapter.check,uploader:processAdapter.upload});
+  assert.equal(report.ownedProcessRepeat.verifiedExisting,3);assert.equal(report.ownedProcessRepeat.finalManifest,'existing-exact');
 }catch(error){report.status='failed';report.error={message:error.message,stack:error.stack};process.exitCode=1;}
 finally{
+  if(processAdapter)await processAdapter.dispose();else await processProxy?.dispose();
   if(adapter)await adapter.dispose();
   if(proxy&&!closed){await proxy.dispose();closed++;}
   report.closedOwners=closed;report.finishedUtc=new Date().toISOString();
   report.sources=[];
-  for(const p of [fileURLToPath(import.meta.url),path.resolve('tools/publish-omarchy-chunks-proxy.mjs'),path.resolve('tools/publish-omarchy-chunks.mjs'),entry]){
+  for(const p of [fileURLToPath(import.meta.url),...['tools/publish-omarchy-chunks-proxy.mjs','tools/publish-omarchy-chunks.mjs','tools/verify/omarchy-r2-owner.mjs','tools/verify/omarchy-r2-worker.mjs'].map(p=>path.resolve(p)),entry]){
     const b=await readFile(p);report.sources.push({path:p,bytes:b.length,sha256:hash(b)});
   }
   await writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');
