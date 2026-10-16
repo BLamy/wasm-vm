@@ -63,9 +63,34 @@ export async function verifyOmarchyApplications(page, command, output, options =
   identityModule.searchParams.set('recording',identityModuleSha256);
   const {createApplicationIdentityProof}=await import(identityModule.href);
   const name = options.name || 'native-applications';
-  const report = {status:'running',identityModuleSha256,networking:{provider:'offline',fixture:'http://127.0.0.1:8765/',externalBrowsingClaim:false},phases:[]};
+  let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest;
+  if(name.startsWith('control-applications-')){
+    // The original failed controller predates this option. Its retained, owned
+    // control request binds the incremental helper without mutating that loaded
+    // controller or restarting the live guest.
+    const id=name.slice('control-applications-'.length);assert.match(id,/^[a-z0-9-]+$/);
+    const bytes=await fs.readFile(path.join(output,'control-request-'+id+'.json')),request=JSON.parse(bytes);
+    assert.equal(request.id,id);assert.equal(request.kind,'retry-applications');
+    continueExistingBrowser ||= request.continueExistingBrowser===true;
+    if(continueExistingBrowser){
+      assert.equal(request.continueExistingBrowser,true);
+      const original=JSON.parse(await fs.readFile(path.join(output,'report.json')));
+      assert.equal(original.status,'failed');assert.equal(original.warmGpu,true);
+      assert.equal(original.applicationContinuation,true);assert.ok(!original.remoteUrl);
+      assert.ok(original.errors.some(error=>error.includes('native Chromium loaded and focused the guest loopback page')));
+      continuationRequest={id,sha256:sha(bytes),scope:'owned failed local warm application run; original navigation failure remains retained'};
+    }
+  }
+  if(continueExistingBrowser)assert.ok(continuationRequest,'existing browser continuation requires the retained owned failure and request');
+  const report = {status:'running',identityModuleSha256,continueExistingBrowser,networking:{provider:'offline',fixture:'http://127.0.0.1:8765/',externalBrowsingClaim:false},phases:[]};
+  if(continuationRequest)report.continuationRequest=continuationRequest;
   const file = path.join(output,name+'.json');
-  const identityProof=createApplicationIdentityProof(page,command,output,options);
+  const inventoryBytes=await fs.readFile(path.join(output,'input-runtime-elf.json'));
+  assert.equal(sha(inventoryBytes),'ae72ccdf528974e203726b058a639201bfa19950ee4190658baad14e0440ab86','accepted signed application inventory');
+  const prompters=JSON.parse(inventoryBytes).filter(row=>row.path==='usr/lib/gcr-prompter');assert.equal(prompters.length,1);assert.equal(prompters[0].machine,243);
+  const executables={...options.executables,'/usr/lib/gcr-prompter':prompters[0].sha256};
+  report.acceptedInventorySha256=sha(inventoryBytes);
+  const identityProof=createApplicationIdentityProof(page,command,output,{...options,executables});
   let identitySequence=0;
   const pageErrors=[];
   const onError=error=>pageErrors.push(String(error));
@@ -135,6 +160,23 @@ export async function verifyOmarchyApplications(page, command, output, options =
   }
   async function press(key){report.phases.push({kind:'trusted-key',key,time:Date.now()});await page.keyboard.press(key,{delay:100});await save();}
   async function type(text){report.phases.push({kind:'trusted-text',text,time:Date.now()});await typeGuestText(page,text);await save();}
+  async function cancelTestKeyringPrompt(chromium) {
+    const prompts=(await clients()).filter(row=>row.class==='gcr-prompter'&&row.visible!==false);
+    if(!prompts.length)return false;
+    assert.equal(prompts.length,1,'one actual native keyring prompt in the owned application guest');
+    const prompt=prompts[0];assert.equal(prompt.title,'');assert.equal(prompt.floating,true);
+    report.keyringPrompts??=[];assert.ok(report.keyringPrompts.length<2,'bounded normal keyring cancellation');
+    const proof=await identity(prompt,'/usr/lib/gcr-prompter');
+    await waitActive(row=>row.pid===prompt.pid,15000);
+    const label='chromium-keyring-'+report.keyringPrompts.length;await shot(label);
+    // The public test guest has no account credentials to put in a new keyring.
+    // Escape selects the normal native Cancel response; keep libsecret and its
+    // sandboxed image loader enabled.
+    await press('Escape');await waitClosed(row=>row.address===prompt.address,60000);
+    await waitActive(row=>row.pid===chromium.pid,60000);
+    report.keyringPrompts.push({window:prompt,proof,action:'trusted Escape / native Cancel',screenshot:label,time:Date.now()});
+    await save();return true;
+  }
   async function wallpaperTransition() {
     const current=await run(hypr+'activeworkspace');assert.equal(current.exit,0);
     const workspace=JSON.parse(current.stdout).id;
@@ -248,12 +290,18 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.equal(report.paging.sha256,sha(pagingExpected),'independently generated complete refault bytes');
     report.wallpaper=await run('readlink -f "$HOME/.local/state/omarchy/current/background"; sha256sum "$HOME/.local/state/omarchy/current/background" /usr/share/omarchy/shell/plugins/background/Background.qml; '+hypr+'monitors');
     assert.equal(report.wallpaper.exit,0);
-    const setup=await run('test "$(id -u)" = 1000 && test ! -e /tmp/omarchyapps && test ! -e '+document+' && mkdir -m 700 /tmp/omarchyapps');assert.equal(setup.exit,0);
-    const payload=Buffer.from(server).toString('base64');
-    const fixture=await run(`printf '%s' '${payload}' | base64 -d > /tmp/omarchyapps/server.py; python3 /tmp/omarchyapps/server.py > /tmp/omarchyapps/server.log 2>&1 < /dev/null & echo $! > /tmp/omarchyapps/server.pid`);assert.equal(fixture.exit,0);
+    if(continueExistingBrowser){
+      const code=`from pathlib import Path;import hashlib,json,stat,os;p=Path('/tmp/omarchyapps');s=p.lstat();assert stat.S_ISDIR(s.st_mode) and s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o700;source=p/'server.py';f=source.lstat();assert stat.S_ISREG(f.st_mode) and f.st_uid==1000 and f.st_nlink==1 and f.st_size==${Buffer.byteLength(server)};digest=hashlib.sha256(source.read_bytes()).hexdigest();assert digest==${JSON.stringify(sha(Buffer.from(server)))};pidfile=p/'server.pid';f=pidfile.lstat();assert stat.S_ISREG(f.st_mode) and f.st_uid==1000 and f.st_nlink==1 and 0<f.st_size<32;pid=int(pidfile.read_text());assert pid>1;q=Path('/proc')/str(pid);assert q.stat().st_uid==1000 and (q/'cmdline').read_bytes().split(bytes([0]))[-2]==str(source).encode() and (q/'exe').resolve()==Path('/usr/bin/python3').resolve();assert not (p/'submission.json').exists() and not Path(${JSON.stringify(document)}).exists();old=p/'ready.json';retained=p/'ready-before-continuation.json';assert not retained.exists();old.rename(retained) if old.exists() else None;print(json.dumps({'scope':'authenticated existing owned loopback fixture only','serverPid':pid,'serverSha256':digest,'priorReadyRetained':retained.exists()}))`;
+      const fixture=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");assert.equal(fixture.exit,0);report.existingFixture=JSON.parse(fixture.stdout);
+    }else{
+      const setup=await run('test "$(id -u)" = 1000 && test ! -e /tmp/omarchyapps && test ! -e '+document+' && mkdir -m 700 /tmp/omarchyapps');assert.equal(setup.exit,0);
+      const payload=Buffer.from(server).toString('base64');
+      const fixture=await run(`printf '%s' '${payload}' | base64 -d > /tmp/omarchyapps/server.py; python3 /tmp/omarchyapps/server.py > /tmp/omarchyapps/server.log 2>&1 < /dev/null & echo $! > /tmp/omarchyapps/server.pid`);assert.equal(fixture.exit,0);
+    }
     report.defaults=await run('env XDG_CURRENT_DESKTOP=Hyprland xdg-settings get default-web-browser; '+hypr+'binds; free -m; uname -m');assert.equal(report.defaults.exit,0);assert.match(report.defaults.stdout,/chromium.desktop/);
     const initialEula=await run('test -f "$HOME/.config/chromium/EULA Accepted"');assert.ok([0,1].includes(initialEula.exit));
-    await press('Meta+Shift+b');
+    if(continueExistingBrowser)assert.equal(initialEula.exit,0,'continuation requires the already accepted native first-run dialog');
+    else await press('Meta+Shift+b');
     // The native Arch first-run dialog has no Wayland app ID. Its exact title
     // selects a candidate only; identity() still checks the running signed ELF.
     let chromium=await waitWindow(row=>row.visible!==false&&(/chromium/i.test(row.class)||
@@ -269,12 +317,19 @@ export async function verifyOmarchyApplications(page, command, output, options =
       chromium=await waitWindow(row=>/chromium/i.test(row.class)&&row.visible!==false&&row.address!==dialogAddress,600000);
     }
     report.chromium=await identity(chromium,'/usr/lib/chromium/chromium');
+    await cancelTestKeyringPrompt(chromium);
     await waitActive(row=>row.pid===chromium.pid);
     assert.match(report.chromium.process.stdout,/\/usr\/lib\/chromium\/chromium/);
     await shot('chromium-open');
     await press('Control+l');await type('http://127.0.0.1:8765/');await press('Enter');
-    let ready,diagnostic=0,nextDiagnostic=0;const navigationStarted=Date.now();
+    let ready,diagnostic=0,nextDiagnostic=0,nextPromptProbe=0;const navigationStarted=Date.now();
     do {
+      if(Date.now()>=nextPromptProbe){
+        nextPromptProbe=Date.now()+15000;
+        if(await cancelTestKeyringPrompt(chromium)){
+          await press('Control+l');await type('http://127.0.0.1:8765/');await press('Enter');
+        }
+      }
       await gpuHealth();ready=await run('cat /tmp/omarchyapps/ready.json');if(ready.exit===0)break;
       if(Date.now()>=nextDiagnostic){
         nextDiagnostic=Date.now()+120000;
