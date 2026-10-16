@@ -98,12 +98,15 @@ try:
             run("publisher-tests", ["node", "--test", "tools/publish-omarchy-chunks.test.mjs", "tools/verify/omarchy-r2-proxy.test.mjs"])
             run("software-manifest-tests", ["node", "--test", "tools/gen-omarchy-manifest.test.mjs"])
             run("factory-readiness-tests", ["node", "--test", "tools/virgl-production/omarchy-factory-ready.test.mjs"])
+            run("isolated-input-tests", ["node", "--test", "tools/virgl-production/isolated-input.test.mjs"],
+                {"OMARCHY_INPUT_TEST_OUTPUT": str(output/"isolated-input-tests")})
             run("snapshot-fetch-syntax", ["node", "--check", "tools/fetch-omarchy-snapshot.mjs"])
             run("capture-syntax", ["node", "--check", "tools/verify/omarchy-native-capture.mjs"])
             run("software-builder-syntax", ["bash", "-n", "tools/build-omarchy-snapshot.sh"])
             for name in ("critic-fast-boots", "critic-fast-boots-input", "critic-desktop-actions",
                          "omarchy-swap-checkpoint", "omarchy-factory-guard", "omarchy-factory-ready", "omarchy-factory-prewarm",
-                         "omarchy-restored-app-launches", "omarchy-release-recovery", "recompress-gpu-factory"):
+                         "omarchy-restored-app-launches", "omarchy-release-recovery", "recompress-gpu-factory",
+                         "isolated-input", "isolated-input-worker"):
                 run("syntax-"+name, ["node", "--check", "tools/virgl-production/"+name+".mjs"])
             run("docs", ["node", "tools/check-docs.mjs"])
             run("docs-dist", ["python3", "tools/check-docs-dist.py"])

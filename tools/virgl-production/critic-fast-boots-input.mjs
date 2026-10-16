@@ -1,5 +1,6 @@
 // Actual public Omarchy session: default uid/config/bar/Foot and trusted UI input.
 import assert from 'node:assert/strict';
+import {assertPhysicalKeyHolds} from './isolated-input.mjs';
 import {assertInteractivePauseProbe} from './critic-fast-boots-final.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -217,8 +218,13 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
     box.y + target.y * box.height / monitor.height);
   await canvas.focus();
   assert.equal(await page.evaluate(() => document.activeElement?.id), 'ide-display-canvas');
+  const typingInputStart=await page.evaluate(()=>window.__criticTrustedInputEvents.length);
   await page.keyboard.type(text, {delay: options.delay ?? 50});
   await page.keyboard.press('Enter');
+  const typingInput=await page.evaluate(at=>window.__criticTrustedInputEvents.slice(at),typingInputStart);
+  await record('physical-typing', {typingInput});
+  const typingTiming=assertPhysicalKeyHolds(typingInput,Math.max(250,4*(options.delay??50)));
+  await record('physical-typing-timing', {typingTiming});
   await record('typed', {typedText: text, immediateFocus, markerAbsent});
   await canvas.screenshot({path: path.join(output, name + '-typed.png')});
   let marker;

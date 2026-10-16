@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import {assertPublicDesktopFinal} from './critic-fast-boots-final.mjs';
 import {verifyWarmGpuPixels} from './critic-warm-pixels.mjs';
 import {expectedPublishedSource} from './published-source.mjs';
+import {attachIsolatedInput} from './isolated-input.mjs';
 import fs from 'node:fs/promises';
 import {createReadStream,appendFileSync} from 'node:fs';
 import path from 'node:path';
@@ -43,6 +44,7 @@ const restoredApplications = process.env.CRITIC_FAST_BOOT_RESTORED_APPLICATIONS 
 const swapCheckpoint = process.env.CRITIC_FAST_BOOT_SWAP === '1';
 const factoryGuardOnly = process.env.CRITIC_FAST_BOOT_FACTORY_GUARD_ONLY === '1';
 const gpuTimingOnly = process.env.CRITIC_FAST_BOOT_GPU_TIMING_ONLY === '1';
+const isolatedInput=guests.includes('omarchy')&&!gpuTimingOnly&&!factoryGuardOnly;
 const prewarmApplications = process.env.CRITIC_FAST_BOOT_PREWARM_APPLICATIONS === '1';
 const shellIpcWorkload = process.env.CRITIC_FAST_BOOT_SHELL_IPC === '1';
 const applicationContinuation = process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINUATION === '1';
@@ -78,7 +80,7 @@ const report = {status:'running', scope:factoryGuardOnly?'read-only native facto
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
   webRoot:web, releaseCache, publicAssetOrigin:publicAssetOrigin.href, saveOnRepeat, gpuTrace, gpuTimingOnly, remoteUrl, warmGpu, applicationContinuation, restoredApplications, omarchyPersist, swapCheckpointMode:swapCheckpoint, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
 if(applicationComponent)report.applicationComponent={name:applicationComponent,scope:'Only missing native Writer/Node/npm/wallpaper and final desktop proof; not Chromium/SVG or publication timing.'};
-for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs','critic-canvas-observation.mjs']){
+for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs','critic-canvas-observation.mjs','isolated-input.mjs','isolated-input-worker.mjs']){
   const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
   report.harnessHashes[filename]=hash(bytes);
   await fs.mkdir(path.join(output,'executed-harness'),{recursive:true});
@@ -128,12 +130,16 @@ if(prewarmApplications){
   }
 }
 if(captureGpuPair||fullDesktopReady){
-  for(const filename of ['omarchy-factory-ready.mjs','omarchy-factory-guard.mjs']){
+  for(const filename of ['omarchy-factory-ready.mjs','omarchy-factory-guard.mjs',
+    'fixtures/omarchy-writer-filter.json','fixtures/omarchy-writer-filter-original.rgba',
+    'fixtures/omarchy-original-wallpaper-grid.rgba']){
     const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
-    report.harnessHashes[filename]=hash(bytes);await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
+    report.harnessHashes[filename]=hash(bytes);
+    const destination=path.join(output,'executed-harness',filename);await fs.mkdir(path.dirname(destination),{recursive:true});
+    await fs.writeFile(destination,bytes);
   }
 }
-let browser, server, activePage, phase = 'inventory';
+let browser, server, activePage, activeInputDriver, phase = 'inventory';
 const sourcePaths = ['index.html','main.js','loader.js','linux-worker.js','linux-worker-protocol.js',
   'linux-worker-host.js','pkg/wasm_vm_wasm.js','pkg/wasm_vm_wasm_bg.wasm','src/sink/presentation.js',
   'artifacts.json','artifacts-alpine.json','artifacts-node-alpine.json','artifacts-omarchy.json'];
@@ -565,7 +571,7 @@ function gpuWarmTiming(state,round){
 }
 try{
   await readExpectedGpuPair();
-  browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',args:['--enable-gpu','--use-gl=angle','--use-angle=metal']});
+  browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',args:['--enable-gpu','--use-gl=angle','--use-angle=metal',...(isolatedInput?['--remote-debugging-port=0']:[])]});
   if(acceleratedGpu){const session=await browser.newBrowserCDPSession(), hardware=await session.send('SystemInfo.getInfo');
     const commandLine=await session.send('Browser.getBrowserCommandLine');
     assert.equal(hardware.gpu.featureStatus.webgl2??hardware.gpu.featureStatus.webgl,'enabled');
@@ -580,6 +586,12 @@ try{
     const context=await browser.newContext({viewport:{width:1280,height:850},serviceWorkers:swapCheckpoint?'block':'allow'});
     await context.addInitScript(observeOriginalWorker);
     const page=activePage=await context.newPage();
+    if(guest==='omarchy'&&isolatedInput){
+      const log=guest+'-physical-input.ndjson';
+      activeInputDriver=await attachIsolatedInput(browser,page,path.join(output,log));
+      (report.inputDrivers??=[]).push({guest,log,targetId:activeInputDriver.targetId,
+        scope:'Original trusted CDP input, with key/button release timers isolated from recorder serialization; no Runtime/GPU binding stream in the driver'});
+    }
     // Passive document lifecycle evidence. Unexpected reloads remain failures;
     // recording them must never retry, pause, or redirect the running guest.
     const lifecycle = await context.newCDPSession(page);
@@ -923,6 +935,11 @@ try{
     }
     await page.evaluate(()=>window.__linuxCtl?.stop?.()).catch(()=>{});
     await Promise.all(liveReads); await captureWorkerShellSources(); assert.deepEqual(liveReadErrors, [], 'published original source bodies');
+    if(activeInputDriver){
+      const state=await activeInputDriver.dispose();activeInputDriver=null;
+      report.inputDrivers.at(-1).closed=state;
+      assert.deepEqual(state,{heldKeys:[],heldButtons:[]},'isolated input driver finishes without held input');
+    }
     await context.close();activePage=null;
     (report.browserErrors??=[]).push({guest,errors:[...pageErrors]});
     assert.deepEqual(pageErrors,[],guest+' complete-context page/console errors');
@@ -941,6 +958,10 @@ try{
   if(activePage)await holdOwnedFailure(activePage);
 }finally{
   clearInterval(recorderMemoryTimer);noteRecorderMemory();
+  if(activeInputDriver){
+    try{report.inputDrivers.at(-1).failureCleanup=await activeInputDriver.dispose();}
+    catch(error){report.errors.push('input driver cleanup: '+String(error));report.status='failed';process.exitCode=1;}
+  }
   await browser?.close();
   await factoryUpload?.file?.close();
   await gpuRecording;

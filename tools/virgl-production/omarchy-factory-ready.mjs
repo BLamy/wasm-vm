@@ -6,6 +6,7 @@ import {createHash} from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {verifyCleanFactory} from './omarchy-factory-guard.mjs';
+import {assertPhysicalKeyHolds} from './isolated-input.mjs';
 
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const quote=text=>"'"+text.replaceAll("'","'\\''")+"'";
@@ -21,6 +22,34 @@ export const wallpaperReference=Object.freeze({
 export function wallpaperMatches(bytes) {
   assert.equal(bytes.length,wallpaperReference.columns*wallpaperReference.rows*4);
   return createHash('sha256').update(bytes).digest('hex')===wallpaperReference.gridSha256;
+}
+
+const writerReferenceJson=await fs.readFile(new URL('./fixtures/omarchy-writer-filter.json',import.meta.url));
+assert.equal(createHash('sha256').update(writerReferenceJson).digest('hex'),'5812a22c8cf21fe0182a5449bbf25f84c60b739fbb58899cf210da819bcd47b4');
+export const writerFilterReference=JSON.parse(writerReferenceJson);
+const writerPixels=await fs.readFile(new URL('./fixtures/omarchy-writer-filter-original.rgba',import.meta.url));
+assert.equal(createHash('sha256').update(writerPixels).digest('hex'),'62ee8dcfce8d1c26b044b413e19e8b09695e8f12ead3619a9336570d8a70a595');
+export function writerFilterMatches(bytes){
+  assert.equal(bytes.length,writerPixels.length);
+  let offset=0;
+  for(const rect of writerFilterReference.rectangles){
+    const cellWidth=rect.width/rect.columns;
+    for(let cell=0;cell<rect.columns;cell++){
+      let ink=0,matched=0,unexpected=0;
+      for(let y=0;y<rect.height;y++)for(let x=cell*cellWidth;x<(cell+1)*cellWidth;x++){
+        const i=offset+(y*rect.width+x)*4;
+        if(bytes[i+3]!==255)return false;
+        const same=[0,1,2].every(c=>Math.abs(bytes[i+c]-writerPixels[i+c])<=8);
+        if(Math.max(...writerPixels.subarray(i,i+3))>85){ink++;if(same)matched++;}
+        else if(!same&&Math.max(...bytes.subarray(i,i+3))>85)unexpected++;
+      }
+      // Check every glyph cell separately: a missing last character must fail,
+      // even when most of the query field is unchanged background.
+      if((ink>0&&matched/ink<0.97)||unexpected>1)return false;
+    }
+    offset+=rect.width*rect.height*4;
+  }
+  return true;
 }
 
 // No idle-CPU claim: Qt can keep rendering an already initialized background.
@@ -120,11 +149,32 @@ export async function verifyOmarchyFactoryReady(page,command,output,{name='facto
     report.chromiumEntry=await run(ipc+'pathFor apps.chromium');assert.match(report.chromiumEntry,/Chromium/);
     report.writerEntry=await run(ipc+'pathFor apps.libreoffice-writer');assert.match(report.writerEntry,/LibreOffice Writer/);
     await canvas.screenshot({path:path.join(output,name+'-apps.png'),timeout:120000});
+    const filterPixels=()=>page.evaluate(reference=>{
+      const canvas=document.getElementById('ide-display-canvas');
+      if(canvas.width!==reference.width||canvas.height!==reference.height)throw Error('original native menu dimensions required');
+      const context=canvas.getContext('2d'),rgba=[];
+      for(const rect of reference.rectangles)rgba.push(...context.getImageData(rect.x,rect.y,rect.width,rect.height).data);
+      return {rgba,presentation:window.__presentation.state()};
+    },writerFilterReference);
+    const beforeFilter=await filterPixels();
+    assert.equal(writerFilterMatches(Buffer.from(beforeFilter.rgba)),false,'initial Apps frame is not the completed Writer filter');
+    report.writerFilterBefore={sha256:createHash('sha256').update(Buffer.from(beforeFilter.rgba)).digest('hex'),presentation:beforeFilter.presentation};
     await canvas.focus();report.phases.push({kind:'trusted-text',text:'libreoffice writer',time:Date.now()});await save();
     await page.keyboard.type('libreoffice writer',{delay:100});
-    // Existing read-only pathFor also provides an IPC round trip before the
-    // screenshot. The exact search glyphs remain in the independent visual proof.
     assert.match(await run(ipc+'pathFor apps.libreoffice-writer'),/LibreOffice Writer/);
+    report.writerFilterSamples=[];let filterMatches=0;
+    const filterDeadline=Date.now()+300000;
+    do{
+      const sample=await filterPixels(),bytes=Buffer.from(sample.rgba),matched=writerFilterMatches(bytes);
+      report.writerFilterSamples.push({time:Date.now(),matched,sha256:createHash('sha256').update(bytes).digest('hex'),presentation:sample.presentation});
+      filterMatches=matched?filterMatches+1:0;await health();await save();
+      if(filterMatches>=2){
+        report.writerFilter={status:'passed',referenceSha256:writerFilterReference.fixtures[0].sha256,matches:filterMatches};
+        await fs.writeFile(path.join(output,name+'-writer-search.rgba'),bytes);break;
+      }
+      await sleep(1500);
+    }while(Date.now()<filterDeadline);
+    assert.equal(report.writerFilter?.status,'passed','complete native query and single Writer result are physically presented');
     await canvas.screenshot({path:path.join(output,name+'-writer-search.png'),timeout:120000});
     await press('Escape');
     assert.ok(layer(await read('layers'),'omarchy-menu'),'first Escape clears a nonempty native filter');
@@ -132,6 +182,7 @@ export async function verifyOmarchyFactoryReady(page,command,output,{name='facto
     await until('trusted Apps close',()=>read('layers'),rows=>!layer(rows,'omarchy-menu'));
     report.menuTrusted=await page.evaluate(at=>window.__criticTrustedInputEvents.slice(at),inputAt);
     assert.ok(report.menuTrusted.length>=40&&report.menuTrusted.every(row=>row.trusted),'all menu/search events are real browser input');
+    report.menuInputTiming=assertPhysicalKeyHolds(report.menuTrusted,250);
     await press('Meta+'+report.originalWorkspace);
     await until('original Foot restored',()=>read('activewindow'),row=>row.pid===foot.pid);
     report.launcherService=await run('XDG_RUNTIME_DIR=/run/user/1000 systemctl --user show wayland-wm-app-daemon.service -p ActiveState -p SubState -p Result');

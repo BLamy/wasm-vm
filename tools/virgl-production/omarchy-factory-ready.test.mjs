@@ -1,7 +1,32 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import test from 'node:test';
-import {wallpaperMatches,startupWindowReady} from './omarchy-factory-ready.mjs';
+import {wallpaperMatches,startupWindowReady,writerFilterMatches,writerFilterReference} from './omarchy-factory-ready.mjs';
+
+test('Writer search requires every native query glyph, actual Writer row/icon and the single-result panel',async()=>{
+  const original=await fs.readFile(new URL('./fixtures/omarchy-writer-filter-original.rgba',import.meta.url));
+  const partial=await fs.readFile(new URL('./fixtures/omarchy-writer-filter-partial.rgba',import.meta.url));
+  assert.equal(writerFilterMatches(original),true);
+  assert.equal(writerFilterMatches(partial),false,'the retained real partial-l screenshot is insufficient');
+  assert.equal(writerFilterMatches(Buffer.alloc(original.length)),false);
+  assert.throws(()=>writerFilterMatches(original.subarray(4)));
+  for(const region of ['last-query-glyph','wrong-result','missing-icon','extra-result-panel']){
+    const changed=Buffer.from(original);let offset=0;
+    for(const rect of writerFilterReference.rectangles){
+      if((region==='last-query-glyph'&&rect.name==='query')||
+         (region==='wrong-result'&&rect.name==='writer')||
+         (region==='missing-icon'&&rect.name==='icon')||
+         (region==='extra-result-panel'&&rect.name==='panel-bottom')){
+        const left=region==='last-query-glyph'?rect.width-rect.width/rect.columns:0;
+        for(let y=0;y<rect.height;y++)for(let x=left;x<rect.width;x++){
+          const i=offset+(y*rect.width+x)*4;changed.set([26,27,38,255],i);
+        }
+      }
+      offset+=rect.width*rect.height*4;
+    }
+    assert.equal(writerFilterMatches(changed),false,region);
+  }
+});
 
 test('wallpaper gate accepts the independently verified original grid and rejects incomplete or wrong frames',async()=>{
   const original=await fs.readFile(new URL('./fixtures/omarchy-original-wallpaper-grid.rgba',import.meta.url));
