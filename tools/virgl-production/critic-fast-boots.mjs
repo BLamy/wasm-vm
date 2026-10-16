@@ -42,6 +42,7 @@ const restoredApplications = process.env.CRITIC_FAST_BOOT_RESTORED_APPLICATIONS 
 const swapCheckpoint = process.env.CRITIC_FAST_BOOT_SWAP === '1';
 const factoryGuardOnly = process.env.CRITIC_FAST_BOOT_FACTORY_GUARD_ONLY === '1';
 const gpuTimingOnly = process.env.CRITIC_FAST_BOOT_GPU_TIMING_ONLY === '1';
+const prewarmApplications = process.env.CRITIC_FAST_BOOT_PREWARM_APPLICATIONS === '1';
 const shellIpcWorkload = process.env.CRITIC_FAST_BOOT_SHELL_IPC === '1';
 const applicationContinuation = process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINUATION === '1';
 const applicationComponent=process.env.CRITIC_FAST_BOOT_APPLICATION_COMPONENT;
@@ -50,6 +51,7 @@ const remoteUrl = process.env.CRITIC_FAST_BOOT_URL;
 if(omarchyPersist)assert.ok(!acceleratedGpu&&guests.includes('omarchy'),'explicit software Omarchy persistence');
 if(factoryGuardOnly)assert.ok(warmGpu&&guests.length===1&&guests[0]==='omarchy'&&!applicationWorkload&&!captureGpuPair&&!swapCheckpoint&&!restoredApplications,'separate read-only factory exclusion after real GPU restore');
 if(gpuTimingOnly)assert.ok(warmGpu&&!gpuTrace&&!captureGpuPair&&!applicationWorkload&&!restoredApplications&&!swapCheckpoint&&!factoryGuardOnly,'ordinary warm GPU timing has no trace, test-hook workload or capture');
+if(prewarmApplications)assert.ok(warmGpu&&captureGpuPair&&!applicationWorkload&&!restoredApplications,'application cache preparation belongs only to a clean owned warm factory producer');
 if(restoredApplications)assert.ok(warmGpu&&!applicationWorkload&&!captureGpuPair&&!swapCheckpoint,'restored application launch proof uses its own warm session');
 if(swapCheckpoint)assert.ok(guests.length===1&&guests[0]==='omarchy'&&!coldGpu&&!captureGpuPair&&!applicationWorkload&&!restoredApplications&&!remoteUrl,'separate local Omarchy warm swap fixture, never the clean factory or publication timing');
 const failureHoldMs=Number(process.env.CRITIC_FAST_BOOT_HOLD_FAILURE_MS||1800000);
@@ -116,6 +118,12 @@ if(swapCheckpoint){
 if(factoryGuardOnly){
   const filename='omarchy-factory-guard.mjs',bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
   report.harnessHashes[filename]=hash(bytes);await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
+}
+if(prewarmApplications){
+  for(const filename of ['omarchy-factory-prewarm.mjs','omarchy-factory-guard.mjs']){
+    const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
+    report.harnessHashes[filename]=hash(bytes);await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
+  }
 }
 let browser, server, activePage, phase = 'inventory';
 const sourcePaths = ['index.html','main.js','loader.js','linux-worker.js','linux-worker-protocol.js',
@@ -752,6 +760,10 @@ try{
             await fs.writeFile(path.join(output,phase+'-ordinary-gpu-final.json'),JSON.stringify(publicDesktopFinal,null,2)+'\n');
           }
           if(!swapCheckpoint&&!factoryGuardOnly&&!gpuTimingOnly){
+          if(prewarmApplications){
+            const {prewarmFactoryApplications}=await import('./omarchy-factory-prewarm.mjs');
+            report.factoryPrewarm=await prewarmFactoryApplications(page,guestCommand,output);
+          }
           const {verifyPublicDesktopInput}=await import('./critic-fast-boots-input.mjs');
           const captureFactory=captureGpuPair?async({foot,barContent})=>{
             const active=await guestCommand(page,'XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j activewindow',300000);assert.equal(active.exit,0);assert.equal(JSON.parse(active.stdout).pid,foot.pid,'factory captures actual Foot, not the screensaver');
