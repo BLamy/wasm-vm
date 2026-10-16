@@ -34,7 +34,12 @@ const saveOnRepeat = process.env.CRITIC_FAST_BOOT_SAVE_ON_REPEAT === '1';
 const gpuTrace = process.env.CRITIC_FAST_BOOT_GPU_TRACE === '1';
 const captureGpuPair = process.env.CRITIC_FAST_BOOT_CAPTURE_GPU_PAIR === '1';
 const applicationWorkload = process.env.CRITIC_FAST_BOOT_APPLICATIONS === '1';
+const applicationContinuation = process.env.CRITIC_FAST_BOOT_APPLICATION_CONTINUATION === '1';
 const remoteUrl = process.env.CRITIC_FAST_BOOT_URL;
+const failureHoldMs=Number(process.env.CRITIC_FAST_BOOT_HOLD_FAILURE_MS||1800000);
+assert.ok(Number.isSafeInteger(failureHoldMs)&&failureHoldMs>=60000&&failureHoldMs<=7200000,'bounded diagnostic hold');
+if(applicationContinuation)assert.ok(applicationWorkload&&warmGpu&&localGpuPairFile&&candidateDirectory&&!remoteUrl,
+  'application continuation requires the explicitly owned local recorded pair and image; no repeat/publication claim');
 if(captureGpuPair||localGpuPairFile)assert.ok(acceleratedGpu&&!remoteUrl,'GPU factory capture requires the owned local accelerated session');
 if (remoteUrl) {
   const url = new URL(remoteUrl);
@@ -48,7 +53,7 @@ await fs.mkdir(output, {recursive:false});
 if(gpuTrace)await fs.writeFile(path.join(output,'gpu.ndjson'),'');
 const report = {status:'running', scope:'actual production UI fast boots and repeat launches',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
-  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, warmGpu, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
+  webRoot:web, releaseCache, saveOnRepeat, gpuTrace, remoteUrl, warmGpu, applicationContinuation, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
 for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs']){
   const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
   report.harnessHashes[filename]=hash(bytes);
@@ -432,7 +437,7 @@ async function serviceOwnedControl(page) {
 }
 async function holdOwnedFailure(page) {
   if (process.env.CRITIC_FAST_BOOT_HOLD_FAILURE !== '1') return;
-  const deadline = Date.now() + 1800000;
+  const deadline = Date.now() + failureHoldMs;
   await fs.writeFile(path.join(output, 'control-state.json'), JSON.stringify({state: 'held-failure', deadline}));
   while (Date.now() < deadline) {
     if (await fs.stat(path.join(output, 'abort')).then(() => true, () => false)) break;
@@ -590,7 +595,7 @@ try{
     if(gpuTrace){query.set('testHooks','1');query.set('gpuTrace','1');query.set('workerHeartbeatTimeoutMs','10000');}
     if(guest==='omarchy')query.set('desktop','1');
     const url=origin+'/app?'+query+'#ide';
-    for(const round of coldGpu||captureGpuPair?['initial']:['initial','repeat']){
+    for(const round of coldGpu||captureGpuPair||applicationContinuation?['initial']:['initial','repeat']){
       phase=guest+'-'+round;let started=Date.now();
       let repeatCheckpoint,phaseEgl,publicDesktopInput,publicDesktopFinal,warmPixels,warmTiming,postWorkloadInput;
       if(round==='initial')await page.goto(url);
@@ -650,6 +655,20 @@ try{
           report.gpuEgl=egl;
           phaseEgl=egl;
           if(applicationWorkload){
+            if(applicationContinuation){
+              // The explicit source pair contains our earlier first-run dialog
+              // and loopback fixture. Reset only that authenticated public test
+              // setup before a new trusted application launch.
+              const code="from pathlib import Path;import os,json,signal,stat,shutil,subprocess;p=Path('/tmp/omarchyapps');s=p.lstat();assert stat.S_ISDIR(s.st_mode) and s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o700;pid=int((p/'server.pid').read_text());q=Path('/proc')/str(pid);assert q.stat().st_uid==1000 and b'/tmp/omarchyapps/server.py' in (q/'cmdline').read_bytes().split(bytes([0]));rows=json.loads(subprocess.check_output(['hyprctl','-i','0','-j','clients'],env=dict(os.environ,XDG_RUNTIME_DIR='/run/user/1000')));dialogs=[r for r in rows if r['class']=='' and r['title']=='Chromium Additional Terms of Service'];assert len(dialogs)==1;chrome=Path('/proc')/str(dialogs[0]['pid']);assert chrome.stat().st_uid==1000 and os.readlink(chrome/'exe')=='/usr/lib/chromium/chromium';assert not Path('/home/omarchy/Documents/omarchy-native-applications-42.odt').exists();os.kill(pid,signal.SIGTERM);os.kill(dialogs[0]['pid'],signal.SIGTERM);shutil.rmtree(p);print(json.dumps({'scope':'owned recorded application baseline only','serverPid':pid,'chromiumPid':dialogs[0]['pid'],'uid':1000}))";
+              report.applicationContinuationPreparation=await guestCommand(page,'python3 -c '+"'"+code.replaceAll("'","'\\''")+"'",180000);
+              assert.equal(report.applicationContinuationPreparation.exit,0);
+              await fs.writeFile(path.join(output,'application-continuation-preparation.json'),JSON.stringify(report.applicationContinuationPreparation,null,2)+'\n');
+              const closingDeadline=Date.now()+60000;let rows;
+              do{const observed=await guestCommand(page,'XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients',60000);assert.equal(observed.exit,0);rows=JSON.parse(observed.stdout);
+                if(!rows.some(row=>/chromium/i.test(row.class)||row.title==='Chromium Additional Terms of Service'))break;await new Promise(resolve=>setTimeout(resolve,1000));
+              }while(Date.now()<closingDeadline);
+              assert.ok(!rows.some(row=>/chromium/i.test(row.class)||row.title==='Chromium Additional Terms of Service'),'recorded first-run browser closed before fresh trusted launch');
+            }
             const {verifyOmarchyApplications}=await import('./omarchy-applications.mjs');
             report.applications=await verifyOmarchyApplications(page,guestCommand,output,{name:phase+'-native-applications',executables:applicationExecutables});
           }

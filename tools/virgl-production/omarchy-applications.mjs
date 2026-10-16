@@ -273,8 +273,18 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.match(report.chromium.process.stdout,/\/usr\/lib\/chromium\/chromium/);
     await shot('chromium-open');
     await press('Control+l');await type('http://127.0.0.1:8765/');await press('Enter');
-    let ready;const navigationStarted=Date.now();
-    do {await gpuHealth();ready=await run('cat /tmp/omarchyapps/ready.json');if(ready.exit===0)break;await sleep(1500);} while(Date.now()-navigationStarted<600000);
+    let ready,diagnostic=0,nextDiagnostic=0;const navigationStarted=Date.now();
+    do {
+      await gpuHealth();ready=await run('cat /tmp/omarchyapps/ready.json');if(ready.exit===0)break;
+      if(Date.now()>=nextDiagnostic){
+        nextDiagnostic=Date.now()+120000;
+        await run('ps -u 1000 -o pid,ppid,stat,time,wchan:24,comm,args | tail -n 35; free -m; cat /proc/uptime; '+hypr+'activewindow; '+hypr+'clients; tail -n 12 /tmp/omarchyapps/server.log; journalctl --user --no-pager -n 18',60000);
+        const clock=await page.evaluate(()=>__linuxCtl.guestClockState());
+        report.phases.push({kind:'navigation-diagnostic',clock,elapsedMs:Date.now()-navigationStarted,time:Date.now()});
+        await shot('chromium-navigation-wait-'+diagnostic++);
+      }
+      await sleep(1500);
+    } while(Date.now()-navigationStarted<600000);
     assert.equal(ready.exit,0,'native Chromium loaded and focused the guest loopback page');
     report.browserNavigationMs=Date.now()-navigationStarted;
     assert.ok(report.browserNavigationMs<=600000,'native Chromium navigation finished within the measured 600-second deadline');
