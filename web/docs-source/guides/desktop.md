@@ -18,8 +18,12 @@ The [independent E5.5-T05c verdict](https://github.com/BLamy/wasm-vm/blob/dddae3
 
 The [application catalogue](https://github.com/BLamy/wasm-vm/blob/dddae3bc2c15b1332dedcb208f3b7e6c6f852127/tools/image/omarchy-apps/catalog.json) accounts for 147 upstream Omarchy 4.0.2 entries: 32 were already present, 97 have native repository packages, five have portable alternatives, and 13 still require source-port work. Chromium and LibreOffice are two explicit additions beyond that list. The 13 unresolved ports are not established incompatibilities, and this is not a claim that all 147 applications are complete.
 
-{% hint style="warning" %}
-The new application image is not yet the public warm desktop. E5.5-T05d must publish matching accelerated and software checkpoint/disk pairs, verify restored application launches and HTTPS delivery, and update the default manifests together. The [launcher](./index.html#ide) uses its published manifest, not this guide's package list. Read [guest graphics](./docs.html?page=graphics) for warm, explicit cold and software modes.
+The [launcher](./index.html#ide) uses matched warm factories for the application image. Accelerated mode restores RAM, disk, GPU resources and the guest clock together. Software mode restores its matching RAM and disk snapshot. Read [guest graphics](./docs.html?page=graphics) for warm, explicit cold and software modes.
+
+Open applications from Omarchy's Apps menu. With keyboard capture enabled, the stock browser shortcut is **Super + Shift + B**, and **Super + Alt + Space** opens the Apps menu. Search for **LibreOffice Writer**, **Calc** or **Impress**. The Foot terminal also has `node` and `npm` available.
+
+{% hint style="info" %}
+Desktop restoration and application startup are separate measurements. Large guest applications can still take several minutes to start. Chromium's terms dialog and LibreOffice's welcome screens are their genuine first-run interfaces; complete them in the guest when they appear.
 {% endhint %}
 
 ## Keyboard capture

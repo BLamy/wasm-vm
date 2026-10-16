@@ -1,5 +1,5 @@
 {
-  "generated": "Content-hashed accelerated Omarchy; prepared RAM/disk/GPU/clock pair, pinned VirGL-only Mesa GLES3 and Quickshell GLES profile, no software DRI",
+  "generated": "Content-hashed native application desktop; coherent RAM/disk/GPU/clock pair with Mesa VirGL and a clean Omarchy session",
   "artifacts": {
     "kernel": {
       "url": "releases/kernel/6.6.63-omarchy-evdev1024/Image",
@@ -7,14 +7,14 @@
       "size": 24208896
     },
     "gpuCheckpoint": {
-      "url": "releases/boot-snapshot/omarchy-virgl-ready.wvgpair",
-      "sha256": "2aa73b5d39fa6702cecc5c57193896b8798271a3075e1b0294bed3db864deb4f",
-      "size": 173104561
+      "url": "releases/boot-snapshot/omarchy-apps-virgl-ready-7456e9bd6aa3.wvgpair",
+      "sha256": "7456e9bd6aa37c227f4695a466ad277c2b9de030a9cdfc89f8956ddca3c9963c",
+      "size": 187218254
     }
   },
   "chunkedImage": {
-    "key": "chunked-omarchy/manifest-87e23271916159e1aaed163df43caeec67cd568c4c7e8843527572412fec2c95.json",
-    "sha256": "87e23271916159e1aaed163df43caeec67cd568c4c7e8843527572412fec2c95",
-    "size": 1179757
+    "key": "chunked-omarchy/manifest-8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8.json",
+    "sha256": "8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8",
+    "size": 3539054
   }
 }
