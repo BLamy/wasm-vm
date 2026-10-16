@@ -6,9 +6,10 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {spawn} from 'node:child_process';
+import {createHash} from 'node:crypto';
 import {once} from 'node:events';
 import {createInterface} from 'node:readline';
-import {createApplicationFixture,readFixtureTransition} from './omarchy-applications.mjs';
+import {createApplicationFixture,readFixtureTransition,authenticateBrowserPrefix} from './omarchy-applications.mjs';
 
 test('the original Bash job notification cannot obscure or replace a fixture transition receipt',()=>{
   const token='8203261826a440b9bd4746d04943f145';
@@ -54,5 +55,31 @@ test('a previous fixture document cannot write the next navigation readiness or 
     clearTimeout(timer);lines.close();
     if(child.exitCode===null&&child.signalCode===null){const exit=once(child,'exit');child.kill('SIGTERM');await exit;}
     await fs.rm(root,{recursive:true});
+  }
+});
+
+// The observed31 browser receipt is carried only as an authenticated prefix;
+// this boundary test does not stand in for its native browser recording.
+test('a retained browser prefix rejects altered identity, stale navigation and manufactured success',()=>{
+  const token='21ecfcdf7f024fa4bf335cbeb074af12',fixture=createApplicationFixture(token);
+  const original={status:'failed',continueExistingBrowser:true,
+    error:'AssertionError: native GdkPixbuf decodes the packaged icon under the normal sandbox',
+    fixtureToken:token,fixtureServerSha256:'e8e1e6e686a0ff93146084b7f3cc7747cb44ee4119f5a411792393eb5555911c',
+    networking:{provider:'offline',fixture:fixture.url,externalBrowsingClaim:false},browserNavigationMs:95550,
+    browserReady:{readyState:'complete',hasFocus:true,activeElement:'note',location:fixture.url},
+    browserRequest:{exit:0,stdout:fixture.route},browserSubmission:{message:'omarchy chromium riscv 42',clickTrusted:true,inputTrusted:Array(25).fill(true)},
+    phases:[{kind:'guest-command',command:'timeout -k 1s 10s env RUST_LOG=debug python3 -c original',result:{exit:124}}],
+    trusted:Array.from({length:132},()=>({trusted:true})),chromium:{executable:'/usr/lib/chromium/chromium'},
+    chromiumGpu:{qualified:true,counters:{failed:0}}};
+  const encode=value=>Buffer.from(JSON.stringify(value)),digest=bytes=>createHash('sha256').update(bytes).digest('hex');
+  const bytes=encode(original);assert.equal(authenticateBrowserPrefix(bytes,digest(bytes)).fixture.url,fixture.url);
+  assert.throws(()=>authenticateBrowserPrefix(bytes,'0'.repeat(64)));
+  for(const mutate of [p=>p.status='passed',p=>p.fixtureToken='0'.repeat(32),p=>p.browserNavigationMs=600001,
+    p=>p.browserReady.location='http://127.0.0.1:8765/',p=>p.browserRequest.stdout='/',
+    p=>p.browserSubmission.clickTrusted=false,p=>p.browserSubmission.inputTrusted[0]=false,
+    p=>p.browserSubmission.message='other',p=>p.phases[0].result.exit=0,p=>p.firstSave={},
+    p=>p.trusted[0].trusted=false,p=>p.chromiumGpu.counters.failed=1]){
+    const value=structuredClone(original);mutate(value);const altered=encode(value);
+    assert.throws(()=>authenticateBrowserPrefix(altered,digest(altered)));
   }
 });

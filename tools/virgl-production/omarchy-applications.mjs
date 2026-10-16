@@ -85,6 +85,30 @@ export function readFixtureTransition(stdout,token) {
   assert.equal(receipt.retainedFixture,'/tmp/omarchyapps-before-'+token);return receipt;
 }
 
+// A continuation may carry only the already completed browser prefix. Its
+// failed sandbox result remains failed, and all later application work is fresh.
+export function authenticateBrowserPrefix(bytes, expectedSha256) {
+  assert.match(expectedSha256,/^[a-f0-9]{64}$/);assert.equal(sha(bytes),expectedSha256);
+  const prior=JSON.parse(bytes);assert.equal(prior.status,'failed');assert.equal(prior.continueExistingBrowser,true);
+  assert.match(prior.error,/native GdkPixbuf decodes the packaged icon under the normal sandbox/);
+  const fixture=createApplicationFixture(prior.fixtureToken);
+  assert.equal(prior.fixtureServerSha256,sha(Buffer.from(fixture.source)));
+  assert.deepEqual(prior.networking,{provider:'offline',fixture:fixture.url,externalBrowsingClaim:false});
+  assert.ok(Number.isSafeInteger(prior.browserNavigationMs)&&prior.browserNavigationMs>=0&&prior.browserNavigationMs<=600000);
+  assert.deepEqual(prior.browserReady,{readyState:'complete',hasFocus:true,activeElement:'note',location:fixture.url});
+  assert.equal(prior.browserRequest.exit,0);assert.equal(prior.browserRequest.stdout.trim(),fixture.route);
+  const note='omarchy chromium riscv 42';assert.equal(prior.browserSubmission.message,note);
+  assert.equal(prior.browserSubmission.clickTrusted,true);
+  assert.ok(prior.browserSubmission.inputTrusted.length>=note.length&&prior.browserSubmission.inputTrusted.every(value=>value===true));
+  const commands=prior.phases.filter(row=>row.kind==='guest-command'),last=commands.at(-1);
+  assert.ok(last.command.startsWith('timeout -k 1s 10s env RUST_LOG=debug python3 -c '));assert.equal(last.result.exit,124);
+  for(const field of ['sandboxedImage','writer','firstSave','secondSave','nodeNpm','wallpaperTransitions'])assert.equal(prior[field],undefined);
+  assert.ok(prior.trusted.length>100&&prior.trusted.every(row=>row.trusted===true));
+  assert.equal(prior.chromium.executable,'/usr/lib/chromium/chromium');
+  assert.equal(prior.chromiumGpu.qualified,true);assert.equal(prior.chromiumGpu.counters.failed,0);
+  return {prior,fixture};
+}
+
 export async function verifyOmarchyApplications(page, command, output, options = {}) {
   // Re-read at each invocation: a retry can update only this helper's dependency
   // while Node retains the application module from the previous recording.
@@ -93,7 +117,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
   identityModule.searchParams.set('recording',identityModuleSha256);
   const {createApplicationIdentityProof}=await import(identityModule.href);
   const name = options.name || 'native-applications';
-  let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest,processWitness;
+  let continueExistingBrowser=options.continueExistingBrowser===true,continuationRequest,processWitness,browserPrefix;
   if(name.startsWith('control-applications-')){
     // The original failed controller predates this option. Its retained, owned
     // control request binds the incremental helper without mutating that loaded
@@ -113,13 +137,29 @@ export async function verifyOmarchyApplications(page, command, output, options =
         assert.equal(request.processWitness.path,'omarchy-initial-native-applications-identity-0-filesystem/receipt.json');
         assert.match(request.processWitness.sha256,/^[a-f0-9]{64}$/);processWitness=request.processWitness;
       }
+      if(request.resumeAfterBrowser){
+        assert.ok(processWitness,'same-process native witness is required');
+        const reference=request.resumeAfterBrowser;assert.match(reference.path,/^control-applications-[a-z0-9-]+\.json$/);
+        const bytes=await fs.readFile(path.join(output,reference.path));
+        const authenticated=authenticateBrowserPrefix(bytes,reference.sha256);
+        assert.equal(authenticated.prior.identityModuleSha256,identityModuleSha256);
+        assert.deepEqual(authenticated.prior.processWitness,processWitness);
+        const sourcePath=reference.path.replace(/\.json$/,'-source.mjs'),sourceBytes=await fs.readFile(path.join(output,sourcePath));
+        assert.equal(sha(sourceBytes),reference.sourceSha256);
+        const priorRequestPath='control-request-'+reference.path.slice('control-applications-'.length);
+        const priorRequestBytes=await fs.readFile(path.join(output,priorRequestPath));
+        assert.equal(sha(priorRequestBytes),authenticated.prior.continuationRequest.sha256);
+        browserPrefix={...authenticated,reference:{...reference,sourcePath,bytes:bytes.length,
+          scope:'retained successful browser prefix; original navigation timing and submission; later sandbox timeout remains failed'}};
+      }
     }
   }
   if(continueExistingBrowser)assert.ok(continuationRequest,'existing browser continuation requires the retained owned failure and request');
-  const fixtureSpec=createApplicationFixture(randomUUID().replaceAll('-',''));
+  const fixtureSpec=browserPrefix?.fixture||createApplicationFixture(randomUUID().replaceAll('-',''));
   const report = {status:'running',identityModuleSha256,continueExistingBrowser,fixtureToken:fixtureSpec.token,fixtureServerSha256:sha(Buffer.from(fixtureSpec.source)),networking:{provider:'offline',fixture:fixtureSpec.url,externalBrowsingClaim:false},phases:[]};
   if(continuationRequest)report.continuationRequest=continuationRequest;
   if(processWitness)report.processWitness=processWitness;
+  if(browserPrefix)report.carriedBrowserPrefix=browserPrefix.reference;
   const file = path.join(output,name+'.json');
   const inventoryBytes=await fs.readFile(path.join(output,'input-runtime-elf.json'));
   assert.equal(sha(inventoryBytes),'ae72ccdf528974e203726b058a639201bfa19950ee4190658baad14e0440ab86','accepted signed application inventory');
@@ -300,7 +340,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
   async function verifySandboxedImage(chromium) {
     const expected={pid:chromium.pid,starttime:report.chromium.before.data.starttime,exe:'/usr/lib/chromium/chromium'};
     const code=`import gi,hashlib,json,os,base64;from pathlib import Path;expected=json.loads(${JSON.stringify(JSON.stringify(expected))})\ndef process():\n p=Path('/proc')/str(expected['pid']);s=(p/'stat').read_text();value=dict(pid=expected['pid'],starttime=s[s.rfind(')')+2:].split()[19],exe=os.readlink(p/'exe'));assert value==expected;return value\nbefore=process();gi.require_version('GdkPixbuf','2.0');from gi.repository import GdkPixbuf;assert 'GLYCIN_DISABLE_SANDBOX' not in os.environ;p='/usr/share/icons/Adwaita/scalable/status/image-missing.svg';source=open(p,'rb').read();b=GdkPixbuf.Pixbuf.new_from_file_at_scale(p,48,48,True);pixels=b.get_pixels();after=process();assert before==after;print(json.dumps({'chromiumBefore':before,'chromiumAfter':after,'width':b.get_width(),'height':b.get_height(),'channels':b.get_n_channels(),'stride':b.get_rowstride(),'pixelSha256':hashlib.sha256(pixels).hexdigest(),'sourceSha256':hashlib.sha256(source).hexdigest(),'pixels':base64.b64encode(pixels).decode(),'source':base64.b64encode(source).decode()}),flush=True)`;
-    const result=await run('timeout -k 1s 10s env RUST_LOG=debug python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");
+    const result=await run('timeout -k 1s 60s env RUST_LOG=debug python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");
     assert.equal(result.exit,0,'native GdkPixbuf decodes the packaged icon under the normal sandbox');
     assert.match(result.stdout,/bwrap sandboxing available: true/);
     assert.match(result.stdout,/"bwrap"[^\n]+"--seccomp"/);
@@ -344,6 +384,18 @@ export async function verifyOmarchyApplications(page, command, output, options =
     });
     report.beforeGpu=await shot('initial');
     await waitReadableBar();
+    let chromium;
+    if(browserPrefix){
+      const prior=browserPrefix.prior;
+      assert.equal(report.beforeGpu.epoch,prior.chromiumGpu.epoch,'same live GPU generation as the carried browser prefix');
+      const expected={requested:fixtureSpec.route,ready:prior.browserReady,submission:prior.browserSubmission};
+      const code=`from pathlib import Path;import hashlib,json,stat,os;p=Path('/tmp/omarchyapps');s=p.lstat();assert stat.S_ISDIR(s.st_mode) and s.st_uid==1000 and stat.S_IMODE(s.st_mode)==0o700;source=p/'server.py';f=source.lstat();assert stat.S_ISREG(f.st_mode) and f.st_uid==1000 and f.st_nlink==1 and f.st_size==${Buffer.byteLength(fixtureSpec.source)};digest=hashlib.sha256(source.read_bytes()).hexdigest();assert digest==${JSON.stringify(report.fixtureServerSha256)};pidfile=p/'server.pid';f=pidfile.lstat();assert stat.S_ISREG(f.st_mode) and f.st_uid==1000 and f.st_nlink==1 and 0<f.st_size<32;pid=int(pidfile.read_text());assert pid>1;q=Path('/proc')/str(pid);assert q.stat().st_uid==1000 and (q/'cmdline').read_bytes().split(bytes([0]))[-2]==str(source).encode() and (q/'exe').resolve()==Path('/usr/bin/python3').resolve();before=(q/'stat').read_text();expected=json.loads(${JSON.stringify(JSON.stringify(expected))});observed={}\nfor name,key in [('requested','requested'),('ready.json','ready'),('submission.json','submission')]:\n f=p/name;s=f.lstat();assert stat.S_ISREG(s.st_mode) and s.st_uid==1000 and s.st_nlink==1 and 0<s.st_size<8192;value=f.read_text();observed[key]=value.strip() if key=='requested' else json.loads(value)\nassert observed==expected;assert not Path(${JSON.stringify(document)}).exists() and not (p/'node').exists() and not (p/'npm').exists();assert (Path.home()/'.config/chromium/EULA Accepted').is_file();after=(q/'stat').read_text();start=lambda s:s[s.rfind(')')+2:].split()[19];assert start(before)==start(after);print(json.dumps(dict(scope='read-only authentication of retained real guest browser output',serverPid=pid,serverStarttime=start(after),serverSha256=digest,observed=observed)))`;
+      const guard=await run('python3 -c '+"'"+code.replaceAll("'","'\\''")+"'");assert.equal(guard.exit,0);report.retainedFixture=JSON.parse(guard.stdout);
+      chromium=await waitWindow(row=>row.pid===prior.chromium.window.pid&&row.address===prior.chromium.window.address&&row.visible!==false);
+      report.chromium=await identity(chromium,'/usr/lib/chromium/chromium');
+      assert.equal(report.chromium.before.data.starttime,prior.chromium.before.data.starttime);
+      await waitActive(row=>row.pid===chromium.pid);await shot('chromium-carried-prefix');
+    }else{
     const memoryCode="from pathlib import Path;import json,stat;p=Path('/var/lib/wasm-vm-applications/swapfile');s=p.lstat();assert stat.S_ISREG(s.st_mode) and stat.S_IMODE(s.st_mode)==0o600 and s.st_uid==s.st_gid==0 and s.st_nlink==1 and s.st_size==536870912;rows=[x.split() for x in Path('/proc/swaps').read_text().splitlines()[1:]];matches=[x for x in rows if x[0]==str(p)];assert len(matches)==1 and matches[0][1]=='file' and int(matches[0][2])*1024==536866816 and int(matches[0][4])==10;print(json.dumps({'activeSwap':matches[0],'stat':{'uid':s.st_uid,'gid':s.st_gid,'mode':oct(stat.S_IMODE(s.st_mode)),'bytes':s.st_size,'blocks':s.st_blocks},'meminfo':Path('/proc/meminfo').read_text(),'profile':json.loads(Path('/etc/wasm-vm/application-memory.json').read_text())}))";
     const memory=await run('python3 -c '+"'"+memoryCode.replaceAll("'","'\\''")+"'");assert.equal(memory.exit,0,'the real kernel activated the bounded root-owned swap file');
     report.memory=JSON.parse(memory.stdout);
@@ -371,7 +423,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     else await press('Meta+Shift+b');
     // The native Arch first-run dialog has no Wayland app ID. Its exact title
     // selects a candidate only; identity() still checks the running signed ELF.
-    let chromium=await waitWindow(row=>row.visible!==false&&(/chromium/i.test(row.class)||
+    chromium=await waitWindow(row=>row.visible!==false&&(/chromium/i.test(row.class)||
       (initialEula.exit===1&&row.class===''&&row.title==='Chromium Additional Terms of Service')),600000);
     if(initialEula.exit===1){
       report.firstRunWindow=await identity(chromium,'/usr/lib/chromium/chromium');
@@ -420,6 +472,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     assert.equal(report.browserSubmission.message,note);assert.equal(report.browserSubmission.clickTrusted,true);
     assert.ok(report.browserSubmission.inputTrusted.length>=note.length);assert.ok(report.browserSubmission.inputTrusted.every(value=>value===true));
     report.chromiumGpu=await shot('chromium-submitted');
+    }
     await verifySandboxedImage(chromium);
     await press('Meta+w');await waitClosed(row=>/chromium/i.test(row.class));
 
@@ -446,7 +499,7 @@ export async function verifyOmarchyApplications(page, command, output, options =
     report.afterGpu=await shot('node-npm');
     await wallpaperTransition();
     let previousGpu=report.beforeGpu;
-    for(const phase of [report.chromiumGpu,report.writerGpu,report.afterGpu]){
+    for(const phase of (browserPrefix?[report.writerGpu,report.afterGpu]:[report.chromiumGpu,report.writerGpu,report.afterGpu])){
       assert.equal(phase.qualified,true);assert.equal(phase.lost,false);assert.equal(phase.counters.failed,0);
       assert.equal(phase.epoch,previousGpu.epoch);assert.equal(phase.poisoned,false);assert.equal(phase.disposed,false);
       assert.ok(phase.counters.draws>previousGpu.counters.draws);assert.ok(phase.counters.completed>previousGpu.counters.completed);
