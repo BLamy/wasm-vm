@@ -10,6 +10,7 @@ import {chromium} from '../../web/node_modules/playwright/index.mjs';
 import {expectedPublishedSource} from './published-source.mjs';
 import {assertWarmFailureUi} from './critic-warm-ui-fixtures.mjs';
 import {finalizeReleaseRecord} from './finalize-release-record.mjs';
+import {indexPublishedReleaseAssets} from './published-release-assets.mjs';
 
 const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 assert.equal(process.argv[2],'--output');assert.ok(process.argv[3]);
@@ -26,8 +27,13 @@ const report={schema:'omarchy-published-recovery-v1',status:'running',
   scope:'The original published GPU request receives its independently published same-size last-bit-flip fixture through native HTTPS; refusal precedes a trusted visible software choice restoring the published software factory. Wider context-loss/reset fuzzing remains E6-T11e.',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
   command:[process.execPath,...process.argv.slice(1)],url:url.href,pin,sources:[],requests:[],trusted:[],pageErrors:[],routeErrors:[],browserLifecycle:[]};
-const save=()=>fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');
+let saved=Promise.resolve();
+const save=()=>{const body=JSON.stringify(report,null,2)+'\n';saved=saved.then(()=>fs.writeFile(path.join(output,'report.json'),body));return saved;};
 await save();let browser,context,page,stage='refusal';
+let rejectRouteFailure;
+const routeFailure=new Promise((_,reject)=>{rejectRouteFailure=reject;});
+void routeFailure.catch(()=>{});
+const guarded=promise=>Promise.race([promise,routeFailure]);
 function observe(){
   globalThis.__releaseRecovery={boots:[],errors:[],desktopReady:[],states:[]};
   for(const [type,name]of [['wvm:guest-error','errors'],['wvm:desktop-ready','desktopReady'],['wvm:guest-state','states']])
@@ -57,6 +63,8 @@ async function state(){
   });
 }
 try{
+  const names=['artifacts.json','artifacts-alpine.json','artifacts-node-alpine.json','artifacts-omarchy.json','artifacts-omarchy-virgl.json'];
+  const releasePins=indexPublishedReleaseAssets(await Promise.all(names.map(async name=>({name,bytes:await fs.readFile(path.join(web,name))}))),url);
   browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     args:['--enable-gpu','--use-gl=angle','--use-angle=metal']});
   browser.on('disconnected',()=>report.browserLifecycle.push({event:'browser-disconnected',stage,time:Date.now()}));
@@ -86,13 +94,19 @@ try{
       const original=await route.fetch({timeout:180000});
       if(original.status()!==200){await route.fulfill({response:original});return;}
       const relative=actual.pathname==='/app'?'app.html':actual.pathname==='/'?'index.html':decodeURIComponent(actual.pathname.slice(1));
-      const body=await original.body(),expected=expectedPublishedSource(relative,await fs.readFile(path.join(web,relative)));
-      assert.equal(hash(body),hash(expected),'original published source '+relative);
+      const body=await original.body();let releasePin;
+      if(relative.startsWith('releases/')){
+        releasePin=releasePins.get(actual.href);assert.ok(releasePin,'unlisted staged boot asset '+relative);
+        assert.equal(body.length,releasePin.size);assert.equal(hash(body),releasePin.sha256,'published release asset '+relative);
+      }else{
+        const expected=expectedPublishedSource(relative,await fs.readFile(path.join(web,relative)));
+        assert.equal(hash(body),hash(expected),'original published source '+relative);
+      }
       const bodyPath=path.join('source',relative);await fs.mkdir(path.dirname(path.join(output,bodyPath)),{recursive:true});
       await fs.writeFile(path.join(output,bodyPath),body);
-      report.sources.push({stage,path:relative,url:actual.href,status:200,bytes:body.length,sha256:hash(body),bodyPath,forwardedUnchanged:true});
+      report.sources.push({stage,path:relative,url:actual.href,status:200,bytes:body.length,sha256:hash(body),bodyPath,forwardedUnchanged:true,...(releasePin?{releasePin}: {})});
       await route.fulfill({response:original,body});
-    }catch(error){report.routeErrors.push({stage,url:actual.href,error:error.stack??String(error)});await route.abort();}
+    }catch(error){report.routeErrors.push({stage,url:actual.href,error:error.stack??String(error)});await save();rejectRouteFailure(error);await route.abort().catch(error=>report.routeErrors.push({stage,url:actual.href,error:String(error),during:'abort'}));}
   });
   await context.addInitScript(observe);page=await context.newPage();
   page.on('close',()=>report.browserLifecycle.push({event:'page-close',stage,time:Date.now()}));
@@ -101,7 +115,7 @@ try{
   page.on('pageerror',error=>report.pageErrors.push({stage,message:String(error)}));
   page.on('console',message=>{if(message.type()==='error'&&!/favicon\.ico/.test(message.location().url??''))report.pageErrors.push({stage,message:message.text()});});
   await page.goto(new URL('app?guest=omarchy&desktop=1#ide',url).href);
-  await page.waitForFunction(()=>globalThis.__releaseRecovery?.errors.length>0,null,{timeout:300000});
+  await guarded(page.waitForFunction(()=>globalThis.__releaseRecovery?.errors.length>0,null,{timeout:300000}));
   await page.waitForTimeout(1000);report.refusal=await state();
   assertWarmFailureUi({...report.refusal,pageErrors:report.pageErrors.filter(r=>r.stage==='refusal')},'digest-mismatch');
   assert.ok(report.corruption);assert.deepEqual(report.routeErrors,[]);
@@ -109,9 +123,11 @@ try{
     'the original worker hashes the exact published same-size corrupted body');
   await page.screenshot({path:path.join(output,'refused.png'),fullPage:true});await save();
   stage='explicit-software';
-  await Promise.all([page.waitForURL('**/app?guest=omarchy&desktop=1&gpu=0#ide'),page.locator('#gpu-retry').click()]);
-  await page.waitForFunction(()=>globalThis.wvmDemo?.isGuestReady?.()&&globalThis.__linux?.restoredFromBootSnapshot?.()&&
-    globalThis.__releaseRecovery?.desktopReady.length>0,null,{timeout:600000});
+  report.softwareActionStarted=Date.now();await save();
+  await guarded(Promise.all([page.waitForURL('**/app?guest=omarchy&desktop=1&gpu=0#ide',{waitUntil:'commit',timeout:60000}),page.locator('#gpu-retry').click()]));
+  report.softwareNavigation={url:page.url(),time:Date.now()};await save();
+  await guarded(page.waitForFunction(()=>globalThis.wvmDemo?.isGuestReady?.()&&globalThis.__linux?.restoredFromBootSnapshot?.()&&
+    globalThis.__releaseRecovery?.desktopReady.length>0,null,{timeout:600000}));
   report.software=await state();
   assert.equal(report.software.isolated,true);assert.equal(report.software.ready,true);assert.equal(report.software.restored,true);
   assert.equal(report.software.graphics,'software');assert.equal(report.software.boots.length,1);
