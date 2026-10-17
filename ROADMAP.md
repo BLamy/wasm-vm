@@ -107,6 +107,7 @@ Level 5  THE WINDOW      framebuffer/GPU + input + compositor → GUI apps, a su
 Level 6  TRANSCENDENCE   SMP, WebGPU-3D, shareable snapshots, self-hosting        [Layer G*]
 Level 7  BABEL           box64 + full network + persistence → x86_64 bins, a desktop [Layer F]
 Level 8  CHROME IN CHROME (CANCELLED 2026-07-06) — see the Level 8 section
+Level 9  SESSION TIME TRAVEL local recordings, exact replay, timeline and branches [Layer G]
 ```
 
 `*` **Layer G (determinism & record/replay) is cross-cutting**, not a level of its own — it
@@ -143,6 +144,7 @@ hardened.
 | A real desktop (mixed riscv64 + x86_64 apps) | E7 | E→F |
 | Stock chromium-riscv64 booting | ~~E8~~ (cancelled) | — |
 | A nested, time-travelable browser | ~~E8~~ (cancelled) | — |
+| Locally saved VM sessions with replay, timeline seeking and branching | E9 | G |
 | Pull + run riscv64 OCI containers, cached in-browser | E3.5 | C+ (on C, B) |
 | Pico SDK RV32 firmware driving a visible Pico 2 board | E3.75 | Aµ→Bµ side branch |
 
@@ -368,7 +370,7 @@ mixed riscv64 + x86_64 desktop session is interactive.
 > roadmap; **Epic 3.5 — OCI Workloads in the Browser** (`tasks/epic-3.5-oci-workloads/`)
 > takes the "real software runs in here" crown instead: pull and run genuine riscv64 OCI
 > container images, cached in browser storage. The Layer-G record/replay ideas below remain
-> archived here and may return as their own epic if VM time-travel becomes a goal again.
+> archived here; full-system session replay is now separately scoped in Epic 9.
 
 **Thesis (archived):** The summit is not our own browser fork — it is **stock Chromium**, unmodified,
 booted inside the machine and made *time-travelable by the VM around it*. This is the
@@ -395,6 +397,38 @@ machine on the web defines its own next levels.
 chromium-riscv64, loads a real web page and interacts with it; then the operator reverses
 execution — snapshot-seek plus deterministic replay-forward — to any earlier point in the
 browsing session, bit-identically, with zero Chromium modifications.
+
+---
+
+## Level 9 — SESSION TIME TRAVEL *(implementation started)*
+
+Created 2026-10-15 at Brett's request. Save VM sessions locally in the browser and reopen
+them in a time traveler: play/pause, seek, step backward/forward, inspect past machine and
+file state, and continue from a past position on a new branch. The first milestone is a
+usable session library with coherent saved checkpoints; exact replay follows as a separate
+backend milestone rather than being implied by a scrubber or screenshot preview.
+
+The [epic plan and 24 ordered S tasks](tasks/epic-9-session-time-travel/README.md) cover:
+
+- Local IndexedDB session storage, atomic publication, immutable historical disk roots,
+  checkpoint restore, session management, quota handling and safe deletion.
+- Exact event positions and recorded user input, time, entropy, asynchronous I/O and
+  network observations; offline replay with divergence detection and zero live egress.
+- Incremental RAM keyframes, cancellable seeking, coherent GPU history and guest-visible
+  GPU result replay, accessible timeline controls and isolated continuation branches.
+- Local export/import, measured storage/recording/seek budgets, recovery attacks and an
+  independently verified production capstone with unified documentation.
+
+Start with the full-system single-hart RV64 Linux profile. Literal localStorage is only
+for small preferences; session payloads use chunked browser storage. GPU sessions reuse
+the accepted production RAM/disk/GPU checkpoint path and need additional result/order
+recording. Existing recordings remain bound to their machine/assets/profile identities.
+
+Epic 8 stays cancelled. Epic 6.5 remains a separate Linux userspace ABI/replay branch;
+neither completing it nor booting stock Chromium gates the saved-checkpoint milestone.
+Only recorded history can be replayed. The user selected Epic 9 for implementation on
+2026-10-17; its execution priorities are 524.901–524.924, with T01 starting the work.
+Runtime record/replay is still pending and is not claimed by the contract slice.
 
 ---
 
