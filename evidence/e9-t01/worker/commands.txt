@@ -1,0 +1,7 @@
+Frozen implementation: 2a7ab8a8fcf738498330d6e12fba3beb379c8e9a
+make --no-print-directory verify-E9-T01 > evidence/e9-t01/worker/acceptance.json
+python3 -B -m py_compile tools/verify/e9-session-contract.py
+python3 tools/check_task_policy.py > evidence/e9-t01/worker/task-policy.log
+git diff --check
+Asset byte checks: stream SHA-256 and size against the pinned manifest for locally available payloads; availability/results/paths are recorded in assets.json.
+The C probe is a frozen future guest workload definition; it is not compiled or executed by T01.

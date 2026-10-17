@@ -443,7 +443,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Epic 9 — `epic-9-session-time-travel`
 
-- [~] `524.901` [E9-T01](epic-9-session-time-travel/E9-T01-execution-contract.md) — Freeze the full-system session replay contract *(deps: E0-T16, E3-T12d)*
+- [?] `524.901` [E9-T01](epic-9-session-time-travel/E9-T01-execution-contract.md) — Freeze the full-system session replay contract *(deps: E0-T16, E3-T12d)*
 - [ ] `524.902` [E9-T02](epic-9-session-time-travel/E9-T02-session-manifest.md) — Define bounded session manifests and compatibility checks *(deps: E9-T01)*
 - [ ] `524.903` [E9-T03](epic-9-session-time-travel/E9-T03-session-store.md) — Persist multiple session logs with atomic publication *(deps: E9-T02, E3-T12d)*
 - [ ] `524.904` [E9-T04](epic-9-session-time-travel/E9-T04-historical-disk-roots.md) — Preserve immutable disk state for historical checkpoints *(deps: E9-T02, E3-T12c3)*
