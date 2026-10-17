@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 514,
+    "verified": 515,
     "total": 729
   },
   "epics": [
@@ -34255,7 +34255,7 @@
       "epicKey": "9",
       "title": "Persist multiple session logs with atomic publication",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E9-T02",
         "E3-T12d"
@@ -34269,34 +34269,37 @@
       "criteria": [
         {
           "text": "Stream bounded chunks and publish the manifest/commit cursor only after referenced chunks are durable; never retain an additional whole-session copy.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Reload two different sessions and recover the exact committed prefix after termination between data and commit writes.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Serialize competing writers with existing browser ownership mechanisms; detect missing/corrupt chunks and keep incomplete records out of the playable list.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "### 2026-10-17 — worker — started\n\nE9-T02 and E3-T12d are verified. This high-risk S boundary adds a separate append-only,\nchunked IndexedDB session store. Existing resume-snapshot persistence remains independent.\nPublication will advance a commit cursor only after its immutable referenced data is durable;\nWeb Locks will own writes and interrupted publication will retain the old committed prefix.\nThe user authorized continuing through all of Epic 9; this layer remains unmerged.",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-10-17 — worker — started\n\nE9-T02 and E3-T12d are verified. This high-risk S boundary adds a separate append-only,\nchunked IndexedDB session store. Existing resume-snapshot persistence remains independent.\nPublication will advance a commit cursor only after its immutable referenced data is durable;\nWeb Locks will own writes and interrupted publication will retain the old committed prefix.\nThe user authorized continuing through all of Epic 9; this layer remains unmerged.\n\n### 2026-10-17 — worker — implemented\n\nFrozen code: `8461ae9f661deb0841dabf00ab9b99e1fd431e2f`.\nCommand: `E9_STORE_EVIDENCE_DIR=target/evidence/e9-t03-worker-final make verify-E9-T03`.\nThe clean-head recorder passed all 14 commands: affected format/lint, all 129 storage\ntests and one adapter test, no_std wasm build, exact independent metadata bundle rebuild,\nnine shared codec Node/Wasm cases, T01 contract, retained-runtime byte checks and the\nactual built-page Chromium run. Full command outputs and compact receipts are committed\nunder `evidence/e9-t03/worker/`. Original recordings remain under\n`target/evidence/e9-t03-worker-final/`, including the persistent Chromium profile,\n`browser/browser-trace.zip`, `browser/javascript-coverage.json` and full browser report.\nThe top-level report SHA-256 is\n`63983b74f3018128ea0d649fc7baeaa24c2163865eadc111100bb11af95bea1d`; its 420 file\nreceipts bind the original evidence. `worker/SHA256.json` binds the compact copies.\n\nThe recording reopens two distinct exact manifests after reload, preserving sequence\n`9007199254740994`; streams 100,663,419 bytes through 97 bounded persisted chunks; and\nforces actual renderer crashes at chunk, object, pre-commit and completed-commit cuts.\nThe first three retain revision 1 and the final cut retains revision 2. Twenty two-tab\nraces with varied seeds admit one writer and preserve that winner's immutable prefix.\nMissing external payloads, corrupt/deleted chunks, malformed inputs and quota-fault\ninjection refuse without altering the committed sessions. Cancellation drains the old\nlease through the browser's lock-release acknowledgement before reacquisition. The live\nretained-memory check peaks 2,471,464 bytes above baseline after periodic DevTools GC;\nraw samples are retained separately, with no throughput/transient-allocation claim.\nThe CPU suite reports 127 passed / 0 failed, the storage pip is verified and console/page\nerrors are empty; `browser.png` records that result.\n\nThe original GPU factory runtime is preserved byte for byte (47 files including its\nstamp, build `222950026e3e01ed…`), rather than relabeling its pair for a rebuilt Wasm.\nThe actual factory warm boot uses the retained worker, restores the authenticated pair,\nretires 3,999,540 new instructions and presents in fresh epoch `0000000000000004` with\nno GPU loss/poison/failure; `gpu-factory-ready.png` records the desktop. Its accepted\nstatic-desktop repair present has no guest sequence. This proves existing factory\nreadiness, not E9 GPU replay qualification. Disk-root content semantics remain T04 and\ncoherent live restore remains T05.\n\nThe pre-commit hook completed the local bundle build, then its restage hit an inactive\nindex lock. That owned lock was preserved, the built `web/dist` was explicitly staged,\nand the code commit used `SKIP_WEB_BUILD=1`; `bundle-build.log` preserves the build.\nA fresh verifier must now interrogate this evidence, perform its bounded attacks and\nsabotage check, and inspect one pristine-clone proof at the final code/test head before\nsetting verified. Public deployment/proof follows that verdict; all PRs remain open.\n\n### 2026-10-17 — verifier — promoted proof candidate (final verdict pending)\n\nFresh-session predictions were written before opening worker evidence in\n`evidence/e9-t03/verifier/predictions.md`. P1–P8 held; P9's original receipts and gates\nheld, with the single final-head pristine-clone proof still pending. All 420 original\nfile receipts and source hashes matched, and all 47 retained GPU files matched the\npredecessor byte for byte. The original profile stayed untouched; only its copy ran.\n\nFour independent two-tab races/crashes (seeds 13411–13414) preserved exact old cursors\n1/1/1 and committed cursor 2 at the four boundaries. Descriptor/cursor tampering\nfailed closed. The supplement independently checked every original large-object byte\nagainst its pattern oracle and promoted real-IDB integrity/reuse/final-transaction,\ncancellation/close, native-error, version-change and catalog-bound tests into\n`tools/verify/e9-session-store-critic.mjs`, called by the acceptance target. A scratch\ncopy with the append guard removed admitted checkpoint removal, and the rejection\nassertion failed as required. Its initial malformed sabotage setup was correctly\nrefused by the codec; the corrected narrow supplement passed without runtime changes.\n\nCompact reports and recording digests are under `evidence/e9-t03/verifier/`; original\nindependent traces/profile copy remain in `target/evidence/e9-t03-verifier/`. Combined\nprecise coverage leaves no wholly unexecuted nonempty source line and explicitly\nwaives five defensive environment/deletion branch ranges. The per-hunk coverage table\nand scoped waiver reasons are in the verifier README and coverage receipt. Status\nremains implemented until the verifier inspects the final pristine-clone proof.\n\n### 2026-10-17 — verifier — VERDICT: verified\n\n- P1–P9 **HELD**. Both distinct reload manifests and all four crash manifests match\n  independently reconstructed hashes; new seeds 13411–13414 preserve exact prefixes.\n  The 97-part raw-IDB pattern/hash oracle, two-tab ownership, corruption exclusion,\n  final-transaction races and lease lifecycle attacks held. Source/evidence points and\n  per-hunk coverage/waivers are recorded in `evidence/e9-t03/verifier/verdict.md`.\n- **SABOTAGE HELD**: removing the append guard in a scratch-served copy admits a\n  committed checkpoint removal, and the rejection assertion fails. Original code\n  returns `NotAppend`. The initial malformed scratch fixture and corrected narrow\n  retry are preserved honestly; no implementation fix was needed.\n- **FINAL PRISTINE PROOF HELD** at test head\n  `c51133cacd48408e9ef054370b0503a32f645f32`, with runtime unchanged from\n  `8461ae9f661deb0841dabf00ab9b99e1fd431e2f`. The normal sparse clone is clean,\n  starts without target/npm caches or Git alternates, scrubs the prescribed environment,\n  and passes all 14 `make verify-E9-T03` commands. All 442 cold receipts match. The\n  browser again reports 127/0, no errors and all promoted critic cases; the real factory\n  pair restores with resumed CPU and a fresh-epoch physical draw, using three actual\n  public R2 HTTP-200 fallback downloads. Compact proof is in the verifier `cold/` folder;\n  original profile/trace remain in `target/evidence/e9-t03-cold-final/acceptance/browser/`.\n- **SUITE**: the bounded critic helper is permanently called by `make verify-E9-T03`.\n  No product contradiction or remaining semantic proof gap was found. T04/T05/T17/T18\n  retain their declared disk-content, coherent restore and replay boundaries.\n\nCold receipt SHA-256:\n`f0e4812a4d12c2b6fb114983d74fce71e3b3acfd6c552817775da50e18983de6`.\nCold acceptance report SHA-256:\n`c04bb9c95bca209d663fb6789891cafe56323c9622e5608a7f9026e3cfa99acf`.\nAll original worker receipts were also independently revalidated. The status/queue\ncommit changes verification metadata only; no runtime or test code follows the proven head.",
       "adversarial": "Terminate between each publication step and race two tabs writing the same session. A partially published session, mixed writers or loss of a previously committed prefix refutes.",
       "file": "tasks/epic-9-session-time-travel/E9-T03-session-store.md",
       "activity": [
         {
           "date": "2026-10-17",
-          "commits": 1,
+          "commits": 5,
           "labels": [
-            "docs(tasks): start atomic multi-session storage"
+            "verify(session): validate exact-head browser storage evidence",
+            "test(session): promote adversarial storage proof",
+            "docs(tasks): submit atomic session storage evidence",
+            "feat(storage): persist atomic multi-session history"
           ]
         }
       ],
       "firstActivity": "2026-10-17",
       "lastActivity": "2026-10-17",
-      "commitCount": 1
+      "commitCount": 5
     },
     {
       "id": "E9-T04",
