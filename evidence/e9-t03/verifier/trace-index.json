@@ -1,0 +1,826 @@
+[
+  {
+    "callId": "call@50",
+    "beforeLine": 345,
+    "afterLine": 347,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@52",
+    "beforeLine": 349,
+    "afterLine": 351,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@846",
+    "beforeLine": 388,
+    "afterLine": 393,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({cut,id,ref,bytes}) => {",
+    "error": "Target page, context or browser has been closed"
+  },
+  {
+    "callId": "call@860",
+    "beforeLine": 415,
+    "afterLine": 417,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@862",
+    "beforeLine": 419,
+    "afterLine": 421,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => { const lease=await store.writer(id); await lease.release(); return true; }",
+    "error": null
+  },
+  {
+    "callId": "call@878",
+    "beforeLine": 452,
+    "afterLine": 457,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({cut,id,ref,bytes}) => {",
+    "error": "Target page, context or browser has been closed"
+  },
+  {
+    "callId": "call@892",
+    "beforeLine": 479,
+    "afterLine": 481,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@894",
+    "beforeLine": 483,
+    "afterLine": 485,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => { const lease=await store.writer(id); await lease.release(); return true; }",
+    "error": null
+  },
+  {
+    "callId": "call@910",
+    "beforeLine": 517,
+    "afterLine": 522,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({cut,id,ref,bytes}) => {",
+    "error": "Target page, context or browser has been closed"
+  },
+  {
+    "callId": "call@924",
+    "beforeLine": 543,
+    "afterLine": 545,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@926",
+    "beforeLine": 547,
+    "afterLine": 549,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => { const lease=await store.writer(id); await lease.release(); return true; }",
+    "error": null
+  },
+  {
+    "callId": "call@942",
+    "beforeLine": 579,
+    "afterLine": 584,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({cut,id,ref,bytes}) => {",
+    "error": "Target page, context or browser has been closed"
+  },
+  {
+    "callId": "call@956",
+    "beforeLine": 608,
+    "afterLine": 610,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@958",
+    "beforeLine": 612,
+    "afterLine": 614,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => { const lease=await store.writer(id); await lease.release(); return true; }",
+    "error": null
+  },
+  {
+    "callId": "call@970",
+    "beforeLine": 640,
+    "afterLine": 643,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@968",
+    "beforeLine": 639,
+    "afterLine": 645,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@974",
+    "beforeLine": 651,
+    "afterLine": 653,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@978",
+    "beforeLine": 659,
+    "afterLine": 661,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@980",
+    "beforeLine": 663,
+    "afterLine": 667,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@982",
+    "beforeLine": 664,
+    "afterLine": 668,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@986",
+    "beforeLine": 675,
+    "afterLine": 677,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@990",
+    "beforeLine": 683,
+    "afterLine": 685,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@994",
+    "beforeLine": 688,
+    "afterLine": 691,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@992",
+    "beforeLine": 687,
+    "afterLine": 692,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@998",
+    "beforeLine": 699,
+    "afterLine": 701,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1002",
+    "beforeLine": 707,
+    "afterLine": 709,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1006",
+    "beforeLine": 712,
+    "afterLine": 715,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1004",
+    "beforeLine": 711,
+    "afterLine": 717,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1010",
+    "beforeLine": 723,
+    "afterLine": 725,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1014",
+    "beforeLine": 731,
+    "afterLine": 733,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1016",
+    "beforeLine": 735,
+    "afterLine": 739,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1018",
+    "beforeLine": 736,
+    "afterLine": 740,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1022",
+    "beforeLine": 747,
+    "afterLine": 749,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1026",
+    "beforeLine": 755,
+    "afterLine": 757,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1030",
+    "beforeLine": 760,
+    "afterLine": 763,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1028",
+    "beforeLine": 759,
+    "afterLine": 764,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1034",
+    "beforeLine": 771,
+    "afterLine": 773,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1038",
+    "beforeLine": 779,
+    "afterLine": 781,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1042",
+    "beforeLine": 784,
+    "afterLine": 787,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1040",
+    "beforeLine": 783,
+    "afterLine": 788,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1046",
+    "beforeLine": 795,
+    "afterLine": 797,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1050",
+    "beforeLine": 803,
+    "afterLine": 805,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1052",
+    "beforeLine": 807,
+    "afterLine": 811,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1054",
+    "beforeLine": 808,
+    "afterLine": 812,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1058",
+    "beforeLine": 819,
+    "afterLine": 821,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1062",
+    "beforeLine": 827,
+    "afterLine": 829,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1064",
+    "beforeLine": 831,
+    "afterLine": 835,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1066",
+    "beforeLine": 832,
+    "afterLine": 836,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1070",
+    "beforeLine": 843,
+    "afterLine": 845,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1074",
+    "beforeLine": 851,
+    "afterLine": 853,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1078",
+    "beforeLine": 856,
+    "afterLine": 859,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1076",
+    "beforeLine": 855,
+    "afterLine": 861,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1082",
+    "beforeLine": 867,
+    "afterLine": 869,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1086",
+    "beforeLine": 875,
+    "afterLine": 877,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1090",
+    "beforeLine": 880,
+    "afterLine": 883,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1088",
+    "beforeLine": 879,
+    "afterLine": 884,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1094",
+    "beforeLine": 891,
+    "afterLine": 893,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1098",
+    "beforeLine": 899,
+    "afterLine": 901,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1100",
+    "beforeLine": 903,
+    "afterLine": 907,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1102",
+    "beforeLine": 904,
+    "afterLine": 908,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1106",
+    "beforeLine": 915,
+    "afterLine": 917,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1110",
+    "beforeLine": 923,
+    "afterLine": 925,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1114",
+    "beforeLine": 928,
+    "afterLine": 931,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1112",
+    "beforeLine": 927,
+    "afterLine": 933,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1118",
+    "beforeLine": 939,
+    "afterLine": 941,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1122",
+    "beforeLine": 947,
+    "afterLine": 949,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1124",
+    "beforeLine": 951,
+    "afterLine": 955,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1126",
+    "beforeLine": 952,
+    "afterLine": 956,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1130",
+    "beforeLine": 963,
+    "afterLine": 965,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1134",
+    "beforeLine": 971,
+    "afterLine": 973,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1136",
+    "beforeLine": 975,
+    "afterLine": 979,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1138",
+    "beforeLine": 976,
+    "afterLine": 980,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1142",
+    "beforeLine": 987,
+    "afterLine": 989,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1146",
+    "beforeLine": 995,
+    "afterLine": 997,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1150",
+    "beforeLine": 1000,
+    "afterLine": 1003,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1148",
+    "beforeLine": 999,
+    "afterLine": 1005,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1154",
+    "beforeLine": 1011,
+    "afterLine": 1013,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1158",
+    "beforeLine": 1019,
+    "afterLine": 1021,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1160",
+    "beforeLine": 1023,
+    "afterLine": 1027,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1162",
+    "beforeLine": 1024,
+    "afterLine": 1028,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1166",
+    "beforeLine": 1035,
+    "afterLine": 1037,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1170",
+    "beforeLine": 1043,
+    "afterLine": 1045,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1172",
+    "beforeLine": 1047,
+    "afterLine": 1051,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1174",
+    "beforeLine": 1048,
+    "afterLine": 1052,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1178",
+    "beforeLine": 1059,
+    "afterLine": 1061,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1182",
+    "beforeLine": 1067,
+    "afterLine": 1069,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1186",
+    "beforeLine": 1072,
+    "afterLine": 1075,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1184",
+    "beforeLine": 1071,
+    "afterLine": 1077,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1190",
+    "beforeLine": 1083,
+    "afterLine": 1085,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1194",
+    "beforeLine": 1091,
+    "afterLine": 1093,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1198",
+    "beforeLine": 1096,
+    "afterLine": 1099,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1196",
+    "beforeLine": 1095,
+    "afterLine": 1100,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({id,delay})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1202",
+    "beforeLine": 1107,
+    "afterLine": 1109,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1206",
+    "beforeLine": 1115,
+    "afterLine": 1117,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1210",
+    "beforeLine": 1122,
+    "afterLine": 1125,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({ref,bytes,chunkRef,chunk})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1214",
+    "beforeLine": 1131,
+    "afterLine": 1133,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async () => {",
+    "error": null
+  },
+  {
+    "callId": "call@1218",
+    "beforeLine": 1139,
+    "afterLine": 1141,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1220",
+    "beforeLine": 1143,
+    "afterLine": 1145,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1224",
+    "beforeLine": 1151,
+    "afterLine": 1153,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1226",
+    "beforeLine": 1155,
+    "afterLine": 1157,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({name,ref,bytes,fault})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1228",
+    "beforeLine": 1159,
+    "afterLine": 1161,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async ({name,ref,bytes,fault})=>{",
+    "error": null
+  },
+  {
+    "callId": "call@1230",
+    "beforeLine": 1163,
+    "afterLine": 1165,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async id => {",
+    "error": null
+  },
+  {
+    "callId": "call@1242",
+    "beforeLine": 1559,
+    "afterLine": 1561,
+    "api": "page.evaluate",
+    "expressionFirstLine": "async()=>({restored:window.__linux.restoredFromBootSnapshot(),",
+    "error": null
+  }
+]

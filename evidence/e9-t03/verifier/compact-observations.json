@@ -1,0 +1,41 @@
+{
+  "streaming": {
+    "ref": {
+      "sha256": "85ef7d9af1213e77e2b8585805d66d434c0875dc5a20fc1dac7d57277caa46f9",
+      "length": "100663419"
+    },
+    "length": 100663419,
+    "peakDelta": 2471464,
+    "rawPeakDelta": 4338332,
+    "budget": 67108864
+  },
+  "gpu": {
+    "restored": true,
+    "epoch": "0000000000000004",
+    "current_retirements": [
+      {
+        "epoch": "0000000000000004",
+        "sequence": null,
+        "bindingGeneration": "0000000000000329",
+        "resource": {
+          "generation": "0000000000000010",
+          "id": 13
+        },
+        "status": "drawn",
+        "presentation": {
+          "backend": "canvas2d",
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        }
+      }
+    ],
+    "qualified": true,
+    "lost": false,
+    "disposed": false,
+    "poisoned": false,
+    "retired": 3999540,
+    "workers": [
+      "http://127.0.0.1:51556/gpu-runtime-worker.js"
+    ]
+  }
+}

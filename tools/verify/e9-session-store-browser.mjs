@@ -8,6 +8,7 @@ import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {chromium} from '../../web/node_modules/playwright/index.mjs';
+import {checkSessionStoreCritic} from './e9-session-store-critic.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const outputIndex = process.argv.indexOf('--output');
@@ -399,6 +400,7 @@ try {
     report.checks[fault]={...result,manifest:digest(Buffer.from(result.manifest))};
   }
   assert.deepEqual(await opened(page,'corruption-victim'),victimBefore);
+  report.checks.critic = await checkSessionStoreCritic(page, {name, fixture});
   report.checks.localStorageAfter=await page.evaluate(()=>JSON.stringify({...localStorage}));
   assert.equal(report.checks.localStorageAfter,report.checks.noLocalStorage);
   await Promise.all(remoteReads);
@@ -437,7 +439,7 @@ finally {
   if(context)await context.close().catch(()=>{});
   report.served=[...served.values()];report.finished=new Date().toISOString();
   report.sources={};
-  for(const name of ['web/session-store.js','web/roadmap.js','crates/storage/src/session_publication.rs','crates/session-web/src/lib.rs','web/dist/session-store.js','web/dist/pkg/wasm_vm_wasm_bg.wasm','web/dist/session-pkg/wasm_vm_session_bg.wasm','tools/verify/e9-session-store-browser.mjs']) {
+  for(const name of ['web/session-store.js','web/roadmap.js','crates/storage/src/session_publication.rs','crates/session-web/src/lib.rs','web/dist/session-store.js','web/dist/pkg/wasm_vm_wasm_bg.wasm','web/dist/session-pkg/wasm_vm_session_bg.wasm','tools/verify/e9-session-store-browser.mjs','tools/verify/e9-session-store-critic.mjs']) {
     try {report.sources[name]=digest(await fs.readFile(path.join(root,name)));}catch{}
   }
   await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');

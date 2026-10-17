@@ -85,3 +85,28 @@ and the code commit used `SKIP_WEB_BUILD=1`; `bundle-build.log` preserves the bu
 A fresh verifier must now interrogate this evidence, perform its bounded attacks and
 sabotage check, and inspect one pristine-clone proof at the final code/test head before
 setting verified. Public deployment/proof follows that verdict; all PRs remain open.
+
+### 2026-10-17 — verifier — promoted proof candidate (final verdict pending)
+
+Fresh-session predictions were written before opening worker evidence in
+`evidence/e9-t03/verifier/predictions.md`. P1–P8 held; P9's original receipts and gates
+held, with the single final-head pristine-clone proof still pending. All 420 original
+file receipts and source hashes matched, and all 47 retained GPU files matched the
+predecessor byte for byte. The original profile stayed untouched; only its copy ran.
+
+Four independent two-tab races/crashes (seeds 13411–13414) preserved exact old cursors
+1/1/1 and committed cursor 2 at the four boundaries. Descriptor/cursor tampering
+failed closed. The supplement independently checked every original large-object byte
+against its pattern oracle and promoted real-IDB integrity/reuse/final-transaction,
+cancellation/close, native-error, version-change and catalog-bound tests into
+`tools/verify/e9-session-store-critic.mjs`, called by the acceptance target. A scratch
+copy with the append guard removed admitted checkpoint removal, and the rejection
+assertion failed as required. Its initial malformed sabotage setup was correctly
+refused by the codec; the corrected narrow supplement passed without runtime changes.
+
+Compact reports and recording digests are under `evidence/e9-t03/verifier/`; original
+independent traces/profile copy remain in `target/evidence/e9-t03-verifier/`. Combined
+precise coverage leaves no wholly unexecuted nonempty source line and explicitly
+waives five defensive environment/deletion branch ranges. The per-hunk coverage table
+and scoped waiver reasons are in the verifier README and coverage receipt. Status
+remains implemented until the verifier inspects the final pristine-clone proof.

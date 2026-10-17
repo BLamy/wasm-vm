@@ -73,6 +73,7 @@ finally:
                "crates/storage/tests/session_publication.rs", "crates/session-web/Cargo.toml",
                "crates/session-web/src/lib.rs", "web/session-store.js", "web/roadmap.js",
                "tools/verify/e9-session-store.py", "tools/verify/e9-session-store-browser.mjs",
+               "tools/verify/e9-session-store-critic.mjs",
                "tools/verify/e9-retained-gpu-runtime.py", "web/gpu-runtime/manifest.json",
                "web/gpu-runtime-worker.js", "web/linux-worker-host.js", "web/main.js",
                "Cargo.lock", "rust-toolchain.toml", "Makefile"]
