@@ -1,0 +1,122 @@
+{
+  "console_types": {
+    "verbose": 22,
+    "warning": 11,
+    "info": 10
+  },
+  "console_errors": [],
+  "events": [
+    {
+      "line": 364,
+      "class": "BrowserContext",
+      "method": "page",
+      "paramsKeys": [
+        "pageId"
+      ]
+    },
+    {
+      "line": 390,
+      "class": "BrowserContext",
+      "method": "pageClosed",
+      "paramsKeys": [
+        "pageId"
+      ]
+    },
+    {
+      "line": 392,
+      "class": "BrowserContext",
+      "method": "pageClosed",
+      "paramsKeys": [
+        "pageId"
+      ]
+    },
+    {
+      "line": 428,
+      "class": "BrowserContext",
+      "method": "page",
+      "paramsKeys": [
+        "pageId"
+      ]
+    },
+    {
+      "line": 454,
+      "class": "BrowserContext",
+      "method": "pageClosed",
+      "paramsKeys": [
+        "pageId"
+      ]
+    },
+    {
+      "line": 456,
+      "class": "BrowserContext",
+      "method": "pageClosed",
+      "paramsKeys": [
+        "pageId"
+      ]
+    },
+    {
+      "line": 492,
+      "class": "BrowserContext",
+      "method": "page",
+      "paramsKeys": [
+        "pageId"
+      ]
+    },
+    {
+      "line": 519,
+      "class": "BrowserContext",
+      "method": "pageClosed",
+      "paramsKeys": [
+        "pageId"
+      ]
+    },
+    {
+      "line": 521,
+      "class": "BrowserContext",
+      "method": "pageClosed",
+      "paramsKeys": [
+        "pageId"
+      ]
+    },
+    {
+      "line": 556,
+      "class": "BrowserContext",
+      "method": "page",
+      "paramsKeys": [
+        "pageId"
+      ]
+    },
+    {
+      "line": 581,
+      "class": "BrowserContext",
+      "method": "pageClosed",
+      "paramsKeys": [
+        "pageId"
+      ]
+    },
+    {
+      "line": 583,
+      "class": "BrowserContext",
+      "method": "pageClosed",
+      "paramsKeys": [
+        "pageId"
+      ]
+    },
+    {
+      "line": 617,
+      "class": "BrowserContext",
+      "method": "page",
+      "paramsKeys": [
+        "pageId"
+      ]
+    },
+    {
+      "line": 1120,
+      "class": "BrowserContext",
+      "method": "pageClosed",
+      "paramsKeys": [
+        "pageId"
+      ]
+    }
+  ]
+}

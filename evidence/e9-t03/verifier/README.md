@@ -1,8 +1,9 @@
 # E9-T03 fresh critic evidence
 
-Predictions were written before opening worker evidence. P1–P8 held. P9's original
-file/source checks and all worker gates held; the final pristine-clone gate is pending.
-This is a test/evidence candidate, not a final verdict. Runtime bytes remain at
+Predictions were written before opening worker evidence. P1–P8 held. P9 and all original
+file/source checks held. The single pristine clone at final test head `c51133ca` passed
+all 14 gates and all 442 file receipts. See `verdict.md` for the final decision.
+Runtime bytes remain at
 `8461ae9f661deb0841dabf00ab9b99e1fd431e2f`.
 
 The original worker report SHA-256 is
@@ -49,7 +50,7 @@ epoch 4. A null guest sequence is allowed by the existing readiness contract.
 | Cargo metadata, module export, Make recipe | Affected native/clippy/no_std/Wasm gates execute; dependency manifests and target declarations are declarative configuration, waived. |
 | Contract source pointer and design docs | Contract gate passes and pointer retains exact predecessor build stamp. Documentation has no execution requirement, waived. |
 | Roadmap, generated task catalogs, queue and SW version | Recorded DOM shows verified storage pip. Catalogs add the 24 E9 records without changing existing task records. Queue/policy pass. Generated catalog and cache-version values are declarative metadata, waived. |
-| Recorder and promoted tests | Original recorder executes all 14 commands; supplement executes critic helper. The final clean clone will execute the promoted helper through the acceptance target. Receipts/reports are evidence metadata, waived. |
+| Recorder and promoted tests | Original recorder executes all 14 commands; supplement executes critic helper. The final clean clone executed the promoted helper through the acceptance target. Receipts/reports are evidence metadata, waived. |
 
 No new architectural, disk-descendant, replay, throughput or cross-browser claim is
 made by these tests. Guest/rr evidence does not apply to this metadata-only boundary.

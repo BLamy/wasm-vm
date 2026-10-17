@@ -3,7 +3,7 @@ id: E9-T03
 epic: 9
 title: Persist multiple session logs with atomic publication
 priority: 524.903
-status: implemented
+status: verified
 depends_on: [E9-T02, E3-T12d]
 estimate: S
 risk: high
@@ -110,3 +110,34 @@ precise coverage leaves no wholly unexecuted nonempty source line and explicitly
 waives five defensive environment/deletion branch ranges. The per-hunk coverage table
 and scoped waiver reasons are in the verifier README and coverage receipt. Status
 remains implemented until the verifier inspects the final pristine-clone proof.
+
+### 2026-10-17 — verifier — VERDICT: verified
+
+- P1–P9 **HELD**. Both distinct reload manifests and all four crash manifests match
+  independently reconstructed hashes; new seeds 13411–13414 preserve exact prefixes.
+  The 97-part raw-IDB pattern/hash oracle, two-tab ownership, corruption exclusion,
+  final-transaction races and lease lifecycle attacks held. Source/evidence points and
+  per-hunk coverage/waivers are recorded in `evidence/e9-t03/verifier/verdict.md`.
+- **SABOTAGE HELD**: removing the append guard in a scratch-served copy admits a
+  committed checkpoint removal, and the rejection assertion fails. Original code
+  returns `NotAppend`. The initial malformed scratch fixture and corrected narrow
+  retry are preserved honestly; no implementation fix was needed.
+- **FINAL PRISTINE PROOF HELD** at test head
+  `c51133cacd48408e9ef054370b0503a32f645f32`, with runtime unchanged from
+  `8461ae9f661deb0841dabf00ab9b99e1fd431e2f`. The normal sparse clone is clean,
+  starts without target/npm caches or Git alternates, scrubs the prescribed environment,
+  and passes all 14 `make verify-E9-T03` commands. All 442 cold receipts match. The
+  browser again reports 127/0, no errors and all promoted critic cases; the real factory
+  pair restores with resumed CPU and a fresh-epoch physical draw, using three actual
+  public R2 HTTP-200 fallback downloads. Compact proof is in the verifier `cold/` folder;
+  original profile/trace remain in `target/evidence/e9-t03-cold-final/acceptance/browser/`.
+- **SUITE**: the bounded critic helper is permanently called by `make verify-E9-T03`.
+  No product contradiction or remaining semantic proof gap was found. T04/T05/T17/T18
+  retain their declared disk-content, coherent restore and replay boundaries.
+
+Cold receipt SHA-256:
+`f0e4812a4d12c2b6fb114983d74fce71e3b3acfd6c552817775da50e18983de6`.
+Cold acceptance report SHA-256:
+`c04bb9c95bca209d663fb6789891cafe56323c9622e5608a7f9026e3cfa99acf`.
+All original worker receipts were also independently revalidated. The status/queue
+commit changes verification metadata only; no runtime or test code follows the proven head.

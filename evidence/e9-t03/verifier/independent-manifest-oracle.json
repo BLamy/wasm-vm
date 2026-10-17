@@ -1,0 +1,46 @@
+[
+  {
+    "id": "session-a",
+    "expected_manifest_sha256": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19",
+    "observed_manifest_sha256": "5611c6267d4604f67b9c60f7727bba06c6c15c60e136420e28848c2ad2206d19",
+    "held": true
+  },
+  {
+    "id": "session-b",
+    "expected_manifest_sha256": "45ebdc8ab230537a6780bf34efec3561c9dea04addb6157a91f6ff00b99fa780",
+    "observed_manifest_sha256": "45ebdc8ab230537a6780bf34efec3561c9dea04addb6157a91f6ff00b99fa780",
+    "held": true
+  },
+  {
+    "id": "crash-chunk-durable",
+    "expected_revision": "1",
+    "observed_revision": "1",
+    "expected_manifest_sha256": "3bb15fb3d087e68c6382554cf4878681a5784720802817859500235945f75582",
+    "observed_manifest_sha256": "3bb15fb3d087e68c6382554cf4878681a5784720802817859500235945f75582",
+    "held": true
+  },
+  {
+    "id": "crash-object-durable",
+    "expected_revision": "1",
+    "observed_revision": "1",
+    "expected_manifest_sha256": "d1686bb7a1ad41b8a0a2ffa935c4cea9afa9ebdce76b8dd558779da1104b8553",
+    "observed_manifest_sha256": "d1686bb7a1ad41b8a0a2ffa935c4cea9afa9ebdce76b8dd558779da1104b8553",
+    "held": true
+  },
+  {
+    "id": "crash-before-commit",
+    "expected_revision": "1",
+    "observed_revision": "1",
+    "expected_manifest_sha256": "5c6b672dca6fd5bfc0718d41611401734a5d45d847ba1d5af904f9938abaedcd",
+    "observed_manifest_sha256": "5c6b672dca6fd5bfc0718d41611401734a5d45d847ba1d5af904f9938abaedcd",
+    "held": true
+  },
+  {
+    "id": "crash-commit-durable",
+    "expected_revision": "2",
+    "observed_revision": "2",
+    "expected_manifest_sha256": "8cff1bdee25143dfa2a7a65da819e35ba3dcd782402f0017c0222b75df4fe325",
+    "observed_manifest_sha256": "8cff1bdee25143dfa2a7a65da819e35ba3dcd782402f0017c0222b75df4fe325",
+    "held": true
+  }
+]
