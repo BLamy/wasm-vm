@@ -46,6 +46,7 @@ done
 # deployable bundle; omitting it leaves the generated main.js with a production-only 404.
 [ -d web/src ] && cp -R web/src "$DIST/src"
 [ -d web/renderer ] && cp -R web/renderer "$DIST/renderer"
+[ -d web/gpu-runtime ] && cp -R web/gpu-runtime "$DIST/gpu-runtime"
 # Docstream's compiled reader, lazy feature chunks, portable corpus, and complete
 # migration ledger form the site’s single documentation library.
 [ -d web/docs-bundle ] && cp -R web/docs-bundle "$DIST/docs-bundle"
@@ -53,11 +54,13 @@ done
 
 # The built wasm ES module (from make web-build).
 cp -R web/pkg "$DIST/pkg"
+cp -R web/session-pkg "$DIST/session-pkg"
 # wasm-pack places `*` in pkg/.gitignore because its publish directory is normally generated. The
 # deploy bundle itself is committed, however, and inline-js bindings import files below pkg/snippets.
 # Remove the nested ignore rule so the pre-commit `git add web/dist` cannot silently omit a runtime
 # dependency and leave an exact-clone deployment with a 404.
 rm -f "$DIST/pkg/.gitignore"
+rm -f "$DIST/session-pkg/.gitignore"
 
 # Small runtime assets (guest ELFs, riscv-tests) — NOT web/releases (large; deploy-time copy).
 if [ -d web/assets ]; then
@@ -148,6 +151,8 @@ python3 tools/finalize-docs-dist.py "$DIST"
 # shell-owned resources too.
 if [ -e "$DIST/sw.js" ]; then
   ver=$( { cat "$DIST"/pkg/*_bg.wasm "$DIST"/*.js "$DIST"/*.html "$DIST"/*.json "$DIST"/*.css 2>/dev/null;
+    rg --files "$DIST/session-pkg" | LC_ALL=C sort | while IFS= read -r session_asset; do cat "$session_asset"; done
+    rg --files "$DIST/gpu-runtime" | LC_ALL=C sort | while IFS= read -r retained_asset; do cat "$retained_asset"; done
     if [ -d "$DIST/renderer" ]; then
       rg --files "$DIST/renderer" | LC_ALL=C sort | while IFS= read -r gpu_asset; do cat "$gpu_asset"; done
     fi

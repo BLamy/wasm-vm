@@ -1,0 +1,1644 @@
+/** Consumer contract only: no shader admission or guest transport is added here. */
+export const CONDITIONAL_PROFILE = "virgl-webgl2-raw-bits-v7";
+export const STRUCTURED_PROFILE = "virgl-webgl2-raw-bits-v8";
+export const STRUCTURED_CONDITIONAL_PROFILE = "virgl-webgl2-raw-bits-v9";
+export const INDIRECT_PROFILE = "virgl-webgl2-raw-bits-v10";
+export const INDIRECT_CONDITIONAL_PROFILE = "virgl-webgl2-raw-bits-v11";
+export const LOOP_PROFILE = "virgl-webgl2-raw-bits-v12";
+export const RADIAL_PROFILE = "virgl-webgl2-raw-bits-v14";
+export const RADIAL_INDIRECT_PROFILE = "virgl-webgl2-raw-bits-v15";
+export const RADIAL_LOOP_PROFILE = "virgl-webgl2-raw-bits-v16";
+export const RADIAL_DOMAIN_KIND = "constant-bank-radial-coefficient-f32-v1";
+export const PRECISE_WORD_KIND = "tgsi-precise-word-local-v1";
+export const CONSTANT_DOMAIN_KIND = "constant-bank-finite-f32-v1";
+export const CONSTANT_ACCESS_KIND = "constant-bank-static-indirect-v1";
+export const CONSTANT_CONSTRAINT_KIND = "constant-bank-counted-table-i32-v1";
+export const RASTER_PROFILE = "virgl-webgl2-raw-bits-v27";
+export const RASTER_DOMAIN_KIND = "constant-bank-raster-copy-f32-v1";
+export const ARITHMETIC_PROFILE = "virgl-webgl2-raw-bits-v28";
+export const ARITHMETIC_KIND = "tgsi-precise-binary32-rne-v1";
+export const CONVERSION_PROFILE = "virgl-webgl2-raw-bits-v29";
+export const CONVERSION_BANK_PROFILE = "virgl-webgl2-raw-bits-v30";
+export const CONVERSION_KIND = "tgsi-signed32-binary32-v1";
+export const CONVERSION_DOMAIN_KIND = "constant-bank-f2i-range-v1";
+export const SCALAR_PROFILE = "virgl-webgl2-raw-bits-v31";
+export const SCALAR_KIND = "tgsi-finite-scalar-binary32-v1";
+export const MINIMUM_PROFILE = "virgl-webgl2-raw-bits-v32";
+export const MINIMUM_KIND = "tgsi-minimum-word-local-v1";
+export const FRACTION_PROFILE = "virgl-webgl2-raw-bits-v33";
+export const FRACTION_KIND = "tgsi-fraction-binary32-rne-v1";
+export const SATURATION_PROFILE = "virgl-webgl2-raw-bits-v34";
+export const SATURATION_KIND = "tgsi-numeric-saturation-local-v1";
+export const EXPONENT_PROFILE = "virgl-webgl2-raw-bits-v35";
+export const EXPONENT_KIND = "tgsi-bounded-exponent-logarithm-v1";
+export const POWER_PROFILE = "virgl-webgl2-raw-bits-v37";
+export const POWER_KIND = "tgsi-bounded-power-v1";
+export const SINE_PROFILE = "virgl-webgl2-raw-bits-v36";
+export const SINE_KIND = "tgsi-bounded-sine-v1";
+export const COORDINATE_PROFILE = "virgl-webgl2-raw-bits-v38";
+export const COORDINATE_KIND = "tgsi-fragment-position-v1";
+export const COORDINATE_KEY = "|tgsi-fragment-position-v1:in0/linear/lower-left/half-integer/window-z/reciprocal-w";
+export const DISCARD_PROFILE = "virgl-webgl2-raw-bits-v39";
+export const DISCARD_KIND = "tgsi-fragment-discard-v1";
+export const DISCARD_KEY = "|tgsi-fragment-discard-v1:ordered-any-negative/raw-words/always-";
+export const KNOWN_ARITHMETIC_PROFILE = "virgl-webgl2-raw-bits-v40";
+export const KNOWN_ARITHMETIC_KIND = "tgsi-known-arithmetic-v1";
+export const BRANCH_PROFILE = "virgl-webgl2-raw-bits-v41";
+export const BRANCH_KIND = "tgsi-proved-raw-uif-v1";
+export const EXACT_BANK_PROFILE = "virgl-webgl2-raw-bits-v42";
+export const EXACT_BANK_KIND = "constant-bank-exact-u32-v1";
+const rawProfiles = (...versions) => versions.map((version) => `virgl-webgl2-raw-bits-v${version}`);
+const ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 27 }, (_, i) => i + 1)));
+const CONVERSION_BASES = new Set(rawProfiles(...Array.from({ length: 28 }, (_, i) => i + 1)));
+const SCALAR_BASES = new Set(rawProfiles(...Array.from({ length: 30 }, (_, i) => i + 1)));
+const MINIMUM_BASES = new Set(rawProfiles(...Array.from({ length: 31 }, (_, i) => i + 1)));
+const FRACTION_BASES = new Set(rawProfiles(...Array.from({ length: 32 }, (_, i) => i + 1)));
+const SATURATION_BASES = new Set(rawProfiles(...Array.from({ length: 33 }, (_, i) => i + 1)));
+const EXPONENT_BASES = new Set(rawProfiles(...Array.from({ length: 34 }, (_, i) => i + 1)));
+const POWER_BASES = new Set(rawProfiles(...Array.from({ length: 36 }, (_, i) => i + 1)));
+const SINE_BASES = new Set(rawProfiles(...Array.from({ length: 35 }, (_, i) => i + 1)));
+const COORDINATE_BASES = new Set(rawProfiles(...Array.from({ length: 37 }, (_, i) => i + 1)));
+const DISCARD_BASES = new Set(rawProfiles(...Array.from({ length: 38 }, (_, i) => i + 1)));
+const KNOWN_ARITHMETIC_BASES = new Set(rawProfiles(...Array.from({ length: 39 }, (_, i) => i + 1)));
+const BRANCH_BASES = new Set(rawProfiles(...Array.from({ length: 40 }, (_, i) => i + 1)));
+const EXACT_BANK_BASES = new Set(["virgl-webgl2-straight-line-v5", ...rawProfiles(...Array.from({ length: 41 }, (_, i) => i + 1))]);
+const PRECISE_PROFILES = new Set(rawProfiles(17, 18, 19, 20, 21, 22, 23, 24, 25, 26));
+const RADIAL_PROFILES = new Set([RADIAL_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(24, 25, 26)]);
+const LOOP_PROFILES = new Set([LOOP_PROFILE, RADIAL_LOOP_PROFILE, ...rawProfiles(23, 26)]);
+const INDIRECT_PROFILES = new Set([INDIRECT_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE, RADIAL_INDIRECT_PROFILE, RADIAL_LOOP_PROFILE,
+  ...rawProfiles(21, 22, 23, 25, 26)]);
+const CONDITIONAL_PROFILES = new Set([CONDITIONAL_PROFILE, STRUCTURED_CONDITIONAL_PROFILE, INDIRECT_CONDITIONAL_PROFILE, LOOP_PROFILE,
+  ...RADIAL_PROFILES, ...rawProfiles(18, 20, 22, 23)]);
+const UNCONDITIONAL_PROFILES = new Set(["virgl-webgl2-straight-line-v5", "virgl-webgl2-straight-line-v6",
+  ...rawProfiles(1, 2, 3, 4, 5, 6, 13, 17, 19, 21), STRUCTURED_PROFILE]);
+const METADATA_KEYS = ["profile", "stage", "inputs", "outputs", "attributes", "uniforms", "samplers", "uniformBlocks"];
+const DOMAIN_KEYS = ["kind", "stage", "slot", "name", "count"];
+class DomainFault extends Error {}
+function require(value, message) { if (!value) throw new DomainFault(message); }
+function descriptors(value) {
+  try { return Object.getOwnPropertyDescriptors(value); }
+  catch { throw new DomainFault("Unusable own data properties."); }
+}
+function isArray(value) {
+  try { return Array.isArray(value); }
+  catch { throw new DomainFault("Unusable array identity."); }
+}
+function record(value, allowed, required = allowed) {
+  require(value !== null && typeof value === "object" && !isArray(value), "Expected an own data record.");
+  const fields = descriptors(value), result = {};
+  for (const key of Reflect.ownKeys(fields)) {
+    require(allowed.includes(key) && Object.hasOwn(fields[key], "value"), "Unknown or accessor property.");
+    result[key] = fields[key].value;
+  }
+  for (const key of required) require(Object.hasOwn(result, key), `Missing ${key}.`);
+  return result;
+}
+function array(value, maximum) {
+  require(isArray(value), "Expected an own data array.");
+  const fields = descriptors(value), length = fields.length?.value;
+  require(Number.isInteger(length) && length >= 0 && length <= maximum, "Array extent exceeds the bounded contract.");
+  require(Reflect.ownKeys(fields).length === length + 1, "Array must be dense and contain no extra properties.");
+  const result = [];
+  for (let index = 0; index < length; index++) {
+    require(fields[index] && Object.hasOwn(fields[index], "value"), "Array entries must be own data properties.");
+    result.push(fields[index].value);
+  }
+  return result;
+}
+function failure(code, message) { return Object.freeze({ ok: false, error: Object.freeze({ code, message }) }); }
+
+function rasterContract(value) {
+  const domain = record(value, [...DOMAIN_KEYS, "components"]);
+  require(domain.kind === RASTER_DOMAIN_KIND && (domain.stage === "vertex" || domain.stage === "fragment") &&
+    domain.slot === 0 && domain.name === (domain.stage === "vertex" ? "vsconst0" : "fsconst0"),
+  "Unknown or inconsistent copied-bank raster domain.");
+  require(Number.isInteger(domain.count) && domain.count >= 1 && domain.count <= 47,
+    "Raster bank extent exceeds its declared bound.");
+  const components = array(domain.components, 46).map(value => record(value, ["register", "mask"]));
+  require(components.length > 0 && components.every((entry, position) =>
+    Number.isInteger(entry.register) && entry.register >= 0 && entry.register < Math.min(domain.count, 46) &&
+    Number.isInteger(entry.mask) && entry.mask >= 1 && entry.mask <= 15 &&
+    (position === 0 || components[position - 1].register < entry.register)),
+  "Raster components must be nonempty, bounded, sorted and unique.");
+  return Object.freeze({ ...domain, components: Object.freeze(components.map(Object.freeze)) });
+}
+
+function conversionBankContract(value) {
+  const domain = record(value, [...DOMAIN_KEYS, "components"]);
+  require(domain.kind === CONVERSION_DOMAIN_KIND && (domain.stage === "vertex" || domain.stage === "fragment") &&
+    domain.slot === 0 && domain.name === (domain.stage === "vertex" ? "vsconst0" : "fsconst0"),
+  "Unknown or inconsistent signed conversion bank.");
+  require(Number.isInteger(domain.count) && domain.count >= 1 && domain.count <= 47, "Conversion bank extent exceeds its bound.");
+  const components = array(domain.components, 46).map(value => record(value, ["register", "mask"]));
+  require(components.length > 0 && components.every((entry, position) => Number.isInteger(entry.register) &&
+    entry.register >= 0 && entry.register < Math.min(domain.count, 46) && Number.isInteger(entry.mask) &&
+    entry.mask >= 1 && entry.mask <= 15 && (position === 0 || components[position - 1].register < entry.register)),
+  "Conversion components must be nonempty, bounded, sorted and unique.");
+  return Object.freeze({ ...domain, components: Object.freeze(components.map(Object.freeze)) });
+}
+
+function exactBankContract(value) {
+  const domain = record(value, [...DOMAIN_KEYS, "components"]);
+  require(domain.kind === EXACT_BANK_KIND && (domain.stage === "vertex" || domain.stage === "fragment") &&
+    domain.slot === 0 && domain.name === (domain.stage === "vertex" ? "vsconst0" : "fsconst0"),
+  "Unknown or inconsistent exact-word bank domain.");
+  require(Number.isInteger(domain.count) && domain.count >= 1 && domain.count <= 47,
+    "Exact-word bank extent exceeds its declared bound.");
+  const components = array(domain.components, 184).map(value => record(value, ["register", "component", "word"]));
+  require(components.length > 0 && components.every((entry, position) =>
+    Number.isInteger(entry.register) && entry.register >= 0 && entry.register < Math.min(domain.count, 46) &&
+    Number.isInteger(entry.component) && entry.component >= 0 && entry.component <= 3 &&
+    Number.isInteger(entry.word) && entry.word >= 0 && entry.word <= 0xffffffff &&
+    (position === 0 || components[position - 1].register * 4 + components[position - 1].component < entry.register * 4 + entry.component)),
+  "Exact-word components must be nonempty, bounded, sorted and unique exact u32s.");
+  return Object.freeze({ ...domain, components: Object.freeze(components.map(Object.freeze)) });
+}
+
+/** Recognize a trusted compiler result without changing any of its metadata. */
+export function parseConstantDomain(metadata, expectedStage) {
+  try {
+    require(expectedStage === "vertex" || expectedStage === "fragment", "Unknown shader stage.");
+    const value = record(metadata, [...METADATA_KEYS, "constantDomains", "constantAccesses", "constantConstraints", "constantRadialDomains", "preciseWordContract", "rasterBaseProfile", "constantRasterDomains", "arithmeticBaseProfile", "preciseArithmeticContract", "conversionBaseProfile", "signedConversionContract", "constantConversionDomains", "scalarBaseProfile", "scalarWordContract", "minimumBaseProfile", "minimumWordContract", "fractionBaseProfile", "fractionWordContract", "saturationBaseProfile", "saturationContract", "exponentBaseProfile", "exponentContract", "sineBaseProfile", "sineContract", "powerBaseProfile", "powerContract", "coordinateBaseProfile", "coordinateContract", "discardBaseProfile", "discardContract", "knownArithmeticBaseProfile", "knownArithmeticContract", "branchBaseProfile", "branchContract", "exactBaseProfile", "constantExactDomains"], METADATA_KEYS);
+    require(value.stage === expectedStage, "Constant domain stage disagrees with the shader stage.");
+    require(value.profile !== "virgl-webgl2-straight-line-v6" || expectedStage === "vertex",
+      "Wide ordinary constants require a vertex shader.");
+    const exact = value.profile === EXACT_BANK_PROFILE;
+    require(exact === Object.hasOwn(value, "exactBaseProfile") && exact === Object.hasOwn(value, "constantExactDomains"),
+      "Exact-word contract disagrees with its profile.");
+    if (exact) {
+      require(EXACT_BANK_BASES.has(value.exactBaseProfile), "Exact-word bank requires an existing raw base profile.");
+      const base = { ...value, profile: value.exactBaseProfile };
+      delete base.exactBaseProfile; delete base.constantExactDomains;
+      const checked = parseConstantDomain(base, expectedStage);
+      if (!checked.ok) return checked;
+      const domains = array(value.constantExactDomains, 1), uniforms = array(value.uniforms, 1);
+      require(domains.length === 1 && uniforms.length === 1, "Exact-word bank requires one domain and one declared uniform.");
+      const exactDomain = exactBankContract(domains[0]);
+      const uniform = record(uniforms[0], ["name", "type", "count", "encoding"]);
+      require(exactDomain.stage === expectedStage && uniform.name === exactDomain.name &&
+        uniform.count === exactDomain.count && uniform.type === "uvec4[]" && uniform.encoding === "float32-bits",
+      "Exact-word domain disagrees with its complete declared bank.");
+      for (const key of ["domain", "access", "constraint", "radialDomain", "rasterDomain", "conversionDomain"])
+        if (checked[key] != null) require(checked[key].stage === exactDomain.stage && checked[key].slot === 0 &&
+          checked[key].name === exactDomain.name && checked[key].count === exactDomain.count,
+        "Exact-word and inherited metadata disagree on their declared bank.");
+      return Object.freeze({ ...checked, exactDomain, exactBase: checked });
+    }
+    const branch = value.profile === BRANCH_PROFILE;
+    require(branch === Object.hasOwn(value, "branchBaseProfile") && branch === Object.hasOwn(value, "branchContract"),
+      "Branch contract disagrees with its profile.");
+    if (branch) {
+      require(BRANCH_BASES.has(value.branchBaseProfile), "Branch liveness requires an existing raw base profile.");
+      const policy = record(value.branchContract, ["kind", "stage", "condition", "proof", "liveness", "syntax", "deadReads", "indices", "authority", "storage"]);
+      require(policy.kind === BRANCH_KIND && policy.stage === expectedStage && policy.condition === "post-swizzle-x-raw-word-nonzero" &&
+        policy.proof === "producer-known-zero-or-proved-one-bit" && policy.liveness === "exclude-proved-unreachable-predecessors" &&
+        policy.syntax === "complete-unmodified-original-before-pruning" && policy.deadReads === "declarations-and-grammar-only-no-published-facts" &&
+        policy.indices === "original-instruction-positions" && policy.authority === "no-new-dynamic-word-numeric-or-bank-facts" &&
+        policy.storage === "instruction-flags-no-ir-growth", "Unknown proved branch policy.");
+      const base = { ...value, profile: value.branchBaseProfile };
+      delete base.branchBaseProfile; delete base.branchContract;
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, branchLiveness: Object.freeze(policy) }) : checked;
+    }
+    const knownArithmetic = value.profile === KNOWN_ARITHMETIC_PROFILE;
+    require(knownArithmetic === Object.hasOwn(value, "knownArithmeticBaseProfile") && knownArithmetic === Object.hasOwn(value, "knownArithmeticContract"),
+      "Known arithmetic contract disagrees with its profile.");
+    if (knownArithmetic) {
+      require(KNOWN_ARITHMETIC_BASES.has(value.knownArithmeticBaseProfile), "Known arithmetic requires an existing raw base profile.");
+      const policy = record(value.knownArithmeticContract, ["kind", "stage", "operations", "source", "rounding", "result", "emission", "authority", "storage"]);
+      require(policy.kind === KNOWN_ARITHMETIC_KIND && policy.stage === expectedStage &&
+        policy.source === "fully-known-authorized-normal-or-zero-post-modifier" && policy.rounding === "binary32-nearest-ties-to-even-integer" &&
+        policy.result === "normal-or-zero-only" && policy.emission === "literal-word-and-matching-shadow" &&
+        policy.authority === "exact-emitted-producer-version-only" && policy.storage === "unused-third-operand-four-word-cache", "Unknown known arithmetic policy.");
+      const operations = array(policy.operations, 3);
+      require(operations.length > 0 && operations.every((op, i) => ["ADD", "MUL", "RCP"].includes(op) &&
+        (i === 0 || operations[i - 1] < op)), "Invalid known arithmetic operation set.");
+      const base = { ...value, profile: value.knownArithmeticBaseProfile };
+      delete base.knownArithmeticBaseProfile; delete base.knownArithmeticContract;
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, knownArithmetic: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
+    }
+    const discard = value.profile === DISCARD_PROFILE;
+    require(discard === Object.hasOwn(value, "discardBaseProfile") && discard === Object.hasOwn(value, "discardContract"),
+      "Discard contract disagrees with its profile.");
+    if (discard) {
+      require(expectedStage === "fragment" && DISCARD_BASES.has(value.discardBaseProfile), "Discard requires a fragment raw base profile.");
+      const policy = record(value.discardContract, ["kind", "stage", "operations", "source", "comparison", "modifiers", "liveness", "authority", "alwaysDiscards"]);
+      require(policy.kind === DISCARD_KIND && policy.stage === "fragment" && policy.source === "all-four-post-swizzle-word-lanes" &&
+        policy.comparison === "ordered-binary32-any-negative-zero-and-nan-false" && policy.modifiers === "absolute-before-negation" &&
+        policy.liveness === "exclude-proved-discarded-predecessors" && policy.authority === "no-new-numeric-range-or-initialization-facts" &&
+        typeof policy.alwaysDiscards === "boolean", "Unknown fragment discard policy.");
+      const operations = array(policy.operations, 2);
+      require(operations.length > 0 && operations.every((op, i) => ["KILL", "KILL_IF"].includes(op) &&
+        (i === 0 || operations[i - 1] === "KILL" && op === "KILL_IF")), "Invalid discard operation set.");
+      const outputs = array(value.outputs, 1).map(output => record(output, ["index", "name", "type", "semantic", "semanticIndex", "componentMask", "writtenMask"]));
+      require(outputs.length === 1 && outputs[0].index === 0 && outputs[0].name === "fsout_c0" && outputs[0].type === "vec4" &&
+        outputs[0].semantic === "COLOR" && outputs[0].semanticIndex === 0 && outputs[0].componentMask === 15 &&
+        Number.isInteger(outputs[0].writtenMask) && outputs[0].writtenMask >= 0 && outputs[0].writtenMask <= 15 &&
+        (policy.alwaysDiscards || outputs[0].writtenMask === 15), "Discard output lacks its surviving initialization proof.");
+      const base = { ...value, profile: value.discardBaseProfile, outputs };
+      delete base.discardBaseProfile; delete base.discardContract;
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, discard: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
+    }
+    const coordinates = value.profile === COORDINATE_PROFILE;
+    require(coordinates === Object.hasOwn(value, "coordinateBaseProfile") && coordinates === Object.hasOwn(value, "coordinateContract"),
+      "Coordinate convention disagrees with its profile.");
+    const inputEntries = array(value.inputs, 8);
+    const positionEntries = inputEntries.filter(input => {
+      require(input !== null && typeof input === "object" && !isArray(input), "Expected an input data record.");
+      const semantic = descriptors(input).semantic;
+      require(semantic && Object.hasOwn(semantic, "value"), "Input semantic must be an own data property.");
+      return semantic.value === "POSITION";
+    });
+    require(coordinates ? positionEntries.length === 1 : positionEntries.length === 0,
+      "Fragment POSITION requires its coordinate policy.");
+    if (coordinates) {
+      require(expectedStage === "fragment" && COORDINATE_BASES.has(value.coordinateBaseProfile),
+        "Coordinates require a fragment raw base profile.");
+      const policy = record(value.coordinateContract, ["kind", "stage", "input", "semanticIndex", "source", "interpolation", "origin", "pixelCenter", "components", "precision", "rasterization", "surfaceOrigin", "authority"]);
+      require(policy.kind === COORDINATE_KIND && policy.stage === "fragment" && policy.input === 0 && policy.semanticIndex === 0 &&
+        policy.source === "gl_FragCoord" && policy.interpolation === "linear" && policy.origin === "lower-left" &&
+        policy.pixelCenter === "half-integer" && policy.components === "window-xy-depth-z-reciprocal-clip-w" &&
+        policy.precision === "essl3-highp-builtin" && policy.rasterization === "single-sample-half-pixel" &&
+        policy.surfaceOrigin === "lower-left" && policy.authority === "existing-input-no-static-range-facts", "Unknown coordinate convention.");
+      const inputs = inputEntries.map(input => record(input, ["index", "name", "type", "semantic", "semanticIndex", "componentMask", "interpolation"]));
+      const registers = new Set(), semantics = new Set();
+      for (const input of inputs) {
+        require(Number.isInteger(input.index) && input.index >= 0 && input.index <= 7 && !registers.has(input.index) && input.type === "vec4", "Invalid coordinate interface register.");
+        registers.add(input.index);
+        if (input.semantic === "POSITION") {
+          require(input.index === 0 && input.name === "gl_FragCoord" && input.semanticIndex === 0 && input.componentMask === 15 && input.interpolation === "linear", "Invalid fragment POSITION metadata.");
+        } else {
+          require(input.semantic === "GENERIC" && input.index > 0 && Number.isInteger(input.semanticIndex) && input.semanticIndex >= 0 && input.semanticIndex <= 7 &&
+            input.name === `vso_g${input.semanticIndex}` && [3, 7, 15].includes(input.componentMask) && ["smooth", "flat"].includes(input.interpolation) &&
+            !semantics.has(input.semanticIndex), "Invalid GENERIC coordinate neighbor.");
+          semantics.add(input.semanticIndex);
+        }
+      }
+      const base = { ...value, profile: value.coordinateBaseProfile, inputs: inputs.filter(input => input.semantic !== "POSITION") };
+      delete base.coordinateBaseProfile; delete base.coordinateContract;
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, coordinates: Object.freeze(policy) }) : checked;
+    }
+    const power = value.profile === POWER_PROFILE;
+    require(power === Object.hasOwn(value, "powerBaseProfile") && power === Object.hasOwn(value, "powerContract"),
+      "Power contract disagrees with its profile.");
+    if (power) {
+      require(POWER_BASES.has(value.powerBaseProfile), "Power requires an existing raw base profile.");
+      const policy = record(value.powerContract, ["kind", "stage", "operations", "source", "proof", "domain", "error", "precision", "modifiers", "authority", "result"]);
+      require(policy.kind === POWER_KIND && policy.stage === expectedStage &&
+        policy.source === "post-swizzle-x-pair-replicated-before-mask" && policy.proof === "static-post-modifier-word-facts-integer-exponent-envelope" &&
+        policy.domain === "zero-positive-or-positive-normal-log-envelope-120" && policy.error === "relative-le-2^-14-zero-exact" &&
+        policy.precision === "measured-physical-host-explicit-budget" && policy.modifiers === "negation-before-evaluation" &&
+        policy.authority === "existing-numeric-authority" && policy.result === "ordinary-highp-no-static-range-facts",
+        "Unknown bounded power policy.");
+      const operations = array(policy.operations, 1);
+      require(operations.length === 1 && operations[0] === "POW", "Power requires exactly one POW operation.");
+      const base = { ...value, profile: value.powerBaseProfile };
+      delete base.powerBaseProfile; delete base.powerContract;
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, power: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
+    }
+    const sine = value.profile === SINE_PROFILE;
+    require(sine === Object.hasOwn(value, "sineBaseProfile") && sine === Object.hasOwn(value, "sineContract"),
+      "Sine contract disagrees with its profile.");
+    if (sine) {
+      require(SINE_BASES.has(value.sineBaseProfile), "Sine requires an existing raw base profile.");
+      const policy = record(value.sineContract, ["kind", "stage", "operations", "source", "proof", "domain", "error", "precision", "modifiers", "authority", "result"]);
+      require(policy.kind === SINE_KIND && policy.stage === expectedStage &&
+        policy.source === "post-swizzle-x-replicated-before-mask" && policy.proof === "static-post-modifier-word-facts" &&
+        policy.domain === "normal-or-zero-minus8-to8" && policy.error === "absolute-le-2^-20" &&
+        policy.precision === "measured-physical-host-no-essl-guarantee" && policy.modifiers === "negation-before-evaluation" &&
+        policy.authority === "existing-numeric-authority" && policy.result === "ordinary-highp-no-static-range-facts",
+        "Unknown bounded sine policy.");
+      const operations = array(policy.operations, 1);
+      require(operations.length === 1 && operations[0] === "SIN", "Sine requires exactly one SIN operation.");
+      const base = { ...value, profile: value.sineBaseProfile };
+      delete base.sineBaseProfile; delete base.sineContract;
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, sine: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
+    }
+    const exponent = value.profile === EXPONENT_PROFILE;
+    require(exponent === Object.hasOwn(value, "exponentBaseProfile") && exponent === Object.hasOwn(value, "exponentContract"),
+      "Exponent contract disagrees with its profile.");
+    if (exponent) {
+      require(EXPONENT_BASES.has(value.exponentBaseProfile), "Exponent operations require an existing raw base profile.");
+      const policy = record(value.exponentContract, ["kind", "stage", "operations", "source", "proof", "exponentDomain", "logarithmDomain", "exponentError", "logarithmError", "modifiers", "authority", "result"]);
+      require(policy.kind === EXPONENT_KIND && policy.stage === expectedStage &&
+        policy.source === "post-swizzle-x-replicated-before-mask" && policy.proof === "static-post-modifier-word-facts" &&
+        policy.exponentDomain === "normal-or-zero-minus125-to126" && policy.logarithmDomain === "positive-normal" &&
+        policy.exponentError === "(3+2*abs(x))-ulp" && policy.logarithmError === "3-ulp-outside-[0.5,2];abs-lt-2^-21-inside" &&
+        policy.modifiers === "negation-before-evaluation" && policy.authority === "existing-numeric-authority" &&
+        policy.result === "ordinary-highp-no-static-range-facts", "Unknown bounded exponent/logarithm policy.");
+      const operations = array(policy.operations, 2);
+      require(operations.length > 0 && operations.every((op, i) => ["EX2", "LG2"].includes(op) &&
+        (i === 0 || operations[i - 1] < op)), "Exponent operations must be nonempty, sorted and unique.");
+      const base = { ...value, profile: value.exponentBaseProfile };
+      delete base.exponentBaseProfile; delete base.exponentContract;
+      // v35 descends through whole prior contracts; no self wrapping or lost bank.
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, exponent: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
+    }
+    const saturation = value.profile === SATURATION_PROFILE;
+    require(saturation === Object.hasOwn(value, "saturationBaseProfile") && saturation === Object.hasOwn(value, "saturationContract"),
+      "Saturation contract disagrees with its profile.");
+    if (saturation) {
+      require(SATURATION_BASES.has(value.saturationBaseProfile), "Saturation requires an existing raw base profile.");
+      const policy = record(value.saturationContract, ["kind", "stage", "operations", "equation", "authority", "divisionDomain", "division", "modifiers", "zero"]);
+      require(policy.kind === SATURATION_KIND && policy.stage === expectedStage &&
+        policy.equation === "post-operation-ternary-zero-one" && policy.authority === "existing-numeric-authority" &&
+        policy.divisionDomain === "static-normal-divisor-unit-or-known-bounded-quotient" && policy.division === "positive-denominator-highp-2.5-ulp" &&
+        policy.modifiers === "negation-before-operation" && policy.zero === "underlying-numeric-result",
+      "Unknown instruction-local saturation policy.");
+      const operations = array(policy.operations, 2);
+      require(operations.length > 0 && operations.every((op, i) => ["DIV_SAT", "MOV_SAT"].includes(op) &&
+        (i === 0 || operations[i - 1] < op)), "Saturation operations must be nonempty, sorted and unique.");
+      const base = { ...value, profile: value.saturationBaseProfile };
+      delete base.saturationBaseProfile; delete base.saturationContract;
+      // Whole prior obligations descend strictly; v34 cannot wrap itself.
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, saturation: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
+    }
+    const fraction = value.profile === FRACTION_PROFILE;
+    require(fraction === Object.hasOwn(value, "fractionBaseProfile") && fraction === Object.hasOwn(value, "fractionWordContract"),
+      "Fraction contract disagrees with its profile.");
+    if (fraction) {
+      require(FRACTION_BASES.has(value.fractionBaseProfile), "Fraction requires an existing raw base profile.");
+      const policy = record(value.fractionWordContract, ["kind", "stage", "operations", "equation", "rounding", "specials", "subnormals", "zero", "modifiers", "authority"]);
+      require(policy.kind === FRACTION_KIND && policy.stage === expectedStage && policy.equation === "x-minus-floor" &&
+        policy.rounding === "nearest-even" && policy.specials === "canonical-quiet-0x7fc00000" &&
+        policy.subnormals === "gradual" && policy.zero === "canonical-positive" &&
+        policy.modifiers === "negation-before-evaluation" && policy.authority === "existing-numeric-or-static-word-authority",
+      "Unknown instruction-local fraction policy.");
+      const operations = array(policy.operations, 1);
+      require(operations.length === 1 && operations[0] === "FRC_PRECISE", "Fraction operations must contain exactly FRC_PRECISE.");
+      const base = { ...value, profile: value.fractionBaseProfile };
+      delete base.fractionBaseProfile; delete base.fractionWordContract;
+      // v33 cannot wrap itself. Each whole prior policy descends to a lower
+      // profile, bounding the complete chain to six wrappers.
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, fraction: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
+    }
+    const minimum = value.profile === MINIMUM_PROFILE;
+    require(minimum === Object.hasOwn(value, "minimumBaseProfile") && minimum === Object.hasOwn(value, "minimumWordContract"),
+      "Minimum contract disagrees with its profile.");
+    if (minimum) {
+      require(MINIMUM_BASES.has(value.minimumBaseProfile), "Minimum requires an existing raw base profile.");
+      const policy = record(value.minimumWordContract, ["kind", "stage", "operations", "ordinary", "precise", "modifiers", "output"]);
+      require(policy.kind === MINIMUM_KIND && policy.stage === expectedStage &&
+        policy.ordinary === "existing-finite-numeric-authority" && policy.precise === "ordered-less-first-otherwise-second-original-word" &&
+        policy.modifiers === "negation-before-selection" && policy.output === "existing-numeric-or-selected-raw-authority",
+      "Unknown instruction-local minimum policy.");
+      const operations = array(policy.operations, 2), names = ["MIN", "MIN_PRECISE"];
+      require(operations.length > 0 && operations.every((op, position) => names.includes(op) &&
+        (position === 0 || names.indexOf(operations[position - 1]) < names.indexOf(op))),
+      "Minimum operations must be nonempty, sorted and unique.");
+      const base = { ...value, profile: value.minimumBaseProfile };
+      delete base.minimumBaseProfile; delete base.minimumWordContract;
+      // v32 cannot wrap itself. Every descending prior wrapper preserves its
+      // whole contract, so the chain is bounded to five wrappers.
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, minimum: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
+    }
+    const scalar = value.profile === SCALAR_PROFILE;
+    require(scalar === Object.hasOwn(value, "scalarBaseProfile") && scalar === Object.hasOwn(value, "scalarWordContract"),
+      "Scalar contract disagrees with its profile.");
+    if (scalar) {
+      require(SCALAR_BASES.has(value.scalarBaseProfile), "Scalar operations require an existing raw base profile.");
+      const policy = record(value.scalarWordContract, ["kind", "stage", "operations", "domain", "truncation", "sign", "result"]);
+      require(policy.kind === SCALAR_KIND && policy.stage === expectedStage &&
+        policy.domain === "existing-finite-numeric-authority" && policy.truncation === "toward-zero-preserve-zero-sign" &&
+        policy.sign === "negative-one-positive-one-canonical-zero" && policy.result === "normal-or-signed-zero",
+      "Unknown finite scalar policy.");
+      const operations = array(policy.operations, 2), names = ["TRUNC", "SSG"];
+      require(operations.length > 0 && operations.every((op, position) => names.includes(op) &&
+        (position === 0 || names.indexOf(operations[position - 1]) < names.indexOf(op))),
+      "Scalar operations must be nonempty, sorted and unique.");
+      const base = { ...value, profile: value.scalarBaseProfile };
+      delete base.scalarBaseProfile; delete base.scalarWordContract;
+      // v31 cannot wrap itself. The prior conversion/arithmetic/raster gates
+      // retain all obligations and bound the complete chain to four wrappers.
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, scalar: Object.freeze({ ...policy, operations: Object.freeze(operations) }) }) : checked;
+    }
+    const conversionBank = value.profile === CONVERSION_BANK_PROFILE;
+    const conversion = conversionBank || value.profile === CONVERSION_PROFILE;
+    require(conversion === Object.hasOwn(value, "conversionBaseProfile") &&
+      conversion === Object.hasOwn(value, "signedConversionContract") &&
+      conversionBank === Object.hasOwn(value, "constantConversionDomains"), "Signed conversion contract disagrees with its profile.");
+    if (conversion) {
+      require(CONVERSION_BASES.has(value.conversionBaseProfile), "Conversion requires an existing raw base profile.");
+      const policy = record(value.signedConversionContract, ["kind", "stage", "operations", "integerToFloat", "floatToInteger", "domain"]);
+      require(policy.kind === CONVERSION_KIND && policy.stage === expectedStage && policy.integerToFloat === "nearest-even" &&
+        policy.floatToInteger === "toward-zero" && policy.domain === "finite-negative-le-2^31-positive-lt-2^31",
+      "Unknown signed conversion policy.");
+      const operations = array(policy.operations, 2), names = ["I2F", "F2I"];
+      require(operations.length > 0 && operations.every((op, position) => names.includes(op) &&
+        (position === 0 || names.indexOf(operations[position - 1]) < names.indexOf(op))) &&
+        (!conversionBank || operations.includes("F2I")), "Conversion operations must be nonempty, sorted and unique.");
+      const base = { ...value, profile: value.conversionBaseProfile };
+      delete base.conversionBaseProfile; delete base.signedConversionContract; delete base.constantConversionDomains;
+      // Only v1..v28 bases are admitted: conversion cannot recursively wrap
+      // itself, and arithmetic/raster each retain their own bounded base check.
+      const checked = parseConstantDomain(base, expectedStage);
+      if (!checked.ok) return checked;
+      let conversionDomain = null;
+      if (conversionBank) {
+        const domains = array(value.constantConversionDomains, 1), uniforms = array(value.uniforms, 1);
+        require(domains.length === 1 && uniforms.length === 1, "Conversion requires one range domain and one bank.");
+        conversionDomain = conversionBankContract(domains[0]);
+        const uniform = record(uniforms[0], ["name", "type", "count", "encoding"]);
+        require(conversionDomain.stage === expectedStage && uniform.name === conversionDomain.name &&
+          uniform.count === conversionDomain.count && uniform.type === "uvec4[]" && uniform.encoding === "float32-bits",
+        "Conversion range domain disagrees with the complete declared bank.");
+      }
+      return Object.freeze({ ...checked, conversion: Object.freeze({ ...policy, operations: Object.freeze(operations) }), conversionDomain });
+    }
+    const arithmetic = value.profile === ARITHMETIC_PROFILE;
+    require(arithmetic === Object.hasOwn(value, "arithmeticBaseProfile") &&
+      arithmetic === Object.hasOwn(value, "preciseArithmeticContract"),
+    "Binary32 arithmetic contract disagrees with its outer profile.");
+    if (arithmetic) {
+      require(ARITHMETIC_BASES.has(value.arithmeticBaseProfile), "Arithmetic requires an existing raw base profile.");
+      let precision = record(value.preciseArithmeticContract, ["kind", "stage", "operations", "rounding", "nan", "subnormals"]);
+      require(precision.kind === ARITHMETIC_KIND && precision.stage === expectedStage &&
+        precision.rounding === "nearest-even" && precision.nan === "canonical-quiet-0x7fc00000" &&
+        precision.subnormals === "gradual", "Unknown binary32 arithmetic policy.");
+      const operations = array(precision.operations, 2), names = ["ADD", "MUL"];
+      require(operations.length > 0 && operations.every((op, position) => names.includes(op) &&
+        (position === 0 || names.indexOf(operations[position - 1]) < names.indexOf(op))),
+      "Arithmetic operations must be nonempty, sorted and unique.");
+      precision = Object.freeze({ ...precision, operations: Object.freeze(operations) });
+      const base = { ...value, profile: value.arithmeticBaseProfile };
+      delete base.arithmeticBaseProfile; delete base.preciseArithmeticContract;
+      // v28 cannot be a base; v27 has only preexisting finite bases. Thus the
+      // complete combined contract is checked in at most two nested calls.
+      const checked = parseConstantDomain(base, expectedStage);
+      return checked.ok ? Object.freeze({ ...checked, arithmetic: precision }) : checked;
+    }
+    const raster = value.profile === RASTER_PROFILE;
+    require(raster === Object.hasOwn(value, "rasterBaseProfile") && raster === Object.hasOwn(value, "constantRasterDomains"),
+      "Copied-bank raster contract disagrees with its outer profile.");
+    if (raster) {
+      require(CONDITIONAL_PROFILES.has(value.rasterBaseProfile), "Raster profile requires an existing finite-bank base profile.");
+      const base = { ...value, profile: value.rasterBaseProfile };
+      delete base.rasterBaseProfile; delete base.constantRasterDomains;
+      // Only existing base profiles pass this gate, so recursion is exactly one
+      // level. Every simultaneous base obligation is parsed without alteration.
+      const checked = parseConstantDomain(base, expectedStage);
+      if (!checked.ok) return checked;
+      const domains = array(value.constantRasterDomains, 1);
+      require(domains.length === 1 && checked.domain !== null, "Raster profile requires one copied-word and one finite-bank domain.");
+      const rasterDomain = rasterContract(domains[0]);
+      require(rasterDomain.stage === expectedStage && rasterDomain.count === checked.domain.count &&
+        rasterDomain.name === checked.domain.name, "Raster domain disagrees with its complete finite bank.");
+      require(!checked.constraint || rasterDomain.components.every(entry => entry.register !== 9 || !(entry.mask & 1)),
+        "Integer loop count cannot acquire copied raster authority.");
+      return Object.freeze({ ...checked, rasterDomain });
+    }
+    require(CONDITIONAL_PROFILES.has(value.profile) || UNCONDITIONAL_PROFILES.has(value.profile) || INDIRECT_PROFILES.has(value.profile), "Unknown shader profile.");
+    const precise = PRECISE_PROFILES.has(value.profile);
+    require(precise === Object.hasOwn(value, "preciseWordContract"), "Shader precision contract disagrees with its profile.");
+    let precision = null;
+    if (precise) {
+      precision = record(value.preciseWordContract, ["kind", "stage", "operations"]);
+      require(precision.kind === PRECISE_WORD_KIND && precision.stage === expectedStage, "Unknown or inconsistent word precision contract.");
+      const operations = array(precision.operations, 4), names = ["FSEQ", "FSNE", "MAX", "MOV"];
+      require(operations.length > 0 && operations.every((op, position) => names.includes(op) &&
+        (position === 0 || names.indexOf(operations[position - 1]) < names.indexOf(op))),
+      "Word precision operations must be nonempty, sorted, unique and instruction-local.");
+      precision = Object.freeze({ ...precision, operations: Object.freeze(operations) });
+    }
+    const loop = LOOP_PROFILES.has(value.profile);
+    const radial = RADIAL_PROFILES.has(value.profile);
+    require(radial || !Object.hasOwn(value, "constantRadialDomains"), "Shader profile forbids a radial coefficient domain.");
+    require(loop || !Object.hasOwn(value, "constantConstraints"), "Shader profile forbids a constant count constraint.");
+    const indirect = INDIRECT_PROFILES.has(value.profile);
+    let access = null;
+    if (indirect) {
+      require(Object.hasOwn(value, "constantAccesses"), "Indirect shader profile requires a constant access contract.");
+      const accesses = array(value.constantAccesses, 1), uniforms = array(value.uniforms, 1);
+      require(accesses.length === 1 && uniforms.length === 1, "Indirect shader requires one access contract and one constant bank.");
+      access = record(accesses[0], [...DOMAIN_KEYS, "indices"]);
+      const uniform = record(uniforms[0], ["name", "type", "count", "encoding"]);
+      const name = expectedStage === "vertex" ? "vsconst0" : "fsconst0";
+      require(access.kind === CONSTANT_ACCESS_KIND && access.stage === expectedStage && access.slot === 0 && access.name === name,
+        "Unknown or inconsistent constant-bank access.");
+      require(Number.isInteger(access.count) && access.count >= 1 && access.count <= 47 &&
+        uniform.name === name && uniform.type === "uvec4[]" && uniform.encoding === "float32-bits" && uniform.count === access.count,
+      "Constant access does not match the declared bank extent and encoding.");
+      const indices = array(access.indices, 46);
+      require(indices.length > 0 && indices.every((index, position) => Number.isInteger(index) && index >= 0 &&
+        index <= 45 && index < access.count && (position === 0 || indices[position - 1] < index)),
+      "Constant access indices must be nonempty, sorted, unique and guest-addressable.");
+      access = Object.freeze({ ...access, indices: Object.freeze(indices) });
+    } else {
+      require(!Object.hasOwn(value, "constantAccesses"), "Shader profile forbids a constant access contract.");
+    }
+    if (!CONDITIONAL_PROFILES.has(value.profile)) {
+      require(!Object.hasOwn(value, "constantDomains"), "Unconditional shader profile carries a conditional contract.");
+      return Object.freeze({ ok: true, domain: null, ...(indirect ? { access } : {}), ...(precise ? { precision } : {}) });
+    }
+    require(Object.hasOwn(value, "constantDomains"), "Conditional shader profile requires a constant domain.");
+    const domains = array(value.constantDomains, 1), uniforms = array(value.uniforms, 1);
+    require(domains.length === 1 && uniforms.length === 1, "Conditional shader requires one domain and one constant bank.");
+    const domain = record(domains[0], DOMAIN_KEYS);
+    const uniform = record(uniforms[0], ["name", "type", "count", "encoding"]);
+    const name = expectedStage === "vertex" ? "vsconst0" : "fsconst0";
+    require(domain.kind === CONSTANT_DOMAIN_KIND && domain.stage === expectedStage && domain.slot === 0 && domain.name === name,
+      "Unknown or inconsistent constant-bank domain.");
+    require(Number.isInteger(domain.count) && domain.count >= 1 && domain.count <= 47 &&
+      uniform.name === name && uniform.type === "uvec4[]" && uniform.encoding === "float32-bits" && uniform.count === domain.count,
+    "Constant domain does not match the declared bank extent and encoding.");
+    let constraint = null;
+    if (loop) {
+      require(Object.hasOwn(value, "constantConstraints"), "Loop shader profile requires a constant count constraint.");
+      const constraints = array(value.constantConstraints, 1);
+      require(constraints.length === 1, "Loop shader requires one constant count constraint.");
+      constraint = record(constraints[0], [...DOMAIN_KEYS, "register", "component", "maximum"]);
+      require(constraint.kind === CONSTANT_CONSTRAINT_KIND && constraint.stage === expectedStage && constraint.slot === 0 &&
+        constraint.name === name && constraint.register === 9 && constraint.component === 0 && constraint.maximum === 18,
+      "Unknown or inconsistent constant count constraint.");
+      require((constraint.count === 46 || constraint.count === 47) && constraint.count === domain.count && constraint.count === access.count,
+        "Constant count constraint does not match the complete declared bank extent.");
+      require(access.indices.filter((index) => index >= 10).length === 36,
+        "Loop constant access must cover every certified index from 10 through 45.");
+      constraint = Object.freeze(constraint);
+    }
+    let radialDomain = null;
+    if (radial) {
+      require(Object.hasOwn(value, "constantRadialDomains"), "Radial shader requires a coefficient domain.");
+      const domains = array(value.constantRadialDomains, 1);
+      require(domains.length === 1, "Radial shader requires exactly one coefficient domain.");
+      radialDomain = record(domains[0], [...DOMAIN_KEYS, "register", "component", "minimumMagnitude"]);
+      require(radialDomain.kind === RADIAL_DOMAIN_KIND && radialDomain.stage === expectedStage &&
+        radialDomain.slot === 0 && radialDomain.name === name && radialDomain.count === domain.count &&
+        radialDomain.count >= 5 && radialDomain.register === 4 && radialDomain.component === 0 &&
+        radialDomain.minimumMagnitude === 0x3727c5ac,
+      "Unknown or inconsistent radial coefficient domain.");
+      radialDomain = Object.freeze(radialDomain);
+    }
+    return Object.freeze({ ok: true, domain: Object.freeze(domain), ...(indirect ? { access } : {}),
+      ...(loop ? { constraint } : {}), ...(radial ? { radialDomain } : {}), ...(precise ? { precision } : {}) });
+  } catch (error) {
+    if (!(error instanceof DomainFault)) throw error;
+    return failure("shader-domain-error", error.message);
+  }
+}
+
+/** Finite binary32 encodings include both zero signs and every subnormal. */
+export function finiteBinary32Word(word) {
+  return Number.isInteger(word) && word >= 0 && word <= 0xffffffff && (word & 0x7f800000) !== 0x7f800000;
+}
+
+/** The copied raster domain permits both zero signs and finite normals. */
+export function rasterBinary32Word(word) {
+  if (!Number.isInteger(word) || word < 0 || word > 0xffffffff) return false;
+  const magnitude = word & 0x7fffffff, exponent = word & 0x7f800000;
+  return magnitude === 0 || (exponent !== 0 && exponent !== 0x7f800000);
+}
+
+/** TGSI's defined F2I input range, including subnormals and both zero signs. */
+export function signedConversionBinary32Word(word) {
+  if (!Number.isInteger(word) || word < 0 || word > 0xffffffff) return false;
+  const magnitude = word & 0x7fffffff;
+  return magnitude < 0x4f000000 || (word >= 0x80000000 && magnitude === 0x4f000000);
+}
+
+/** All inherited checks and exact comparisons use the same owned declared prefix. */
+export function checkExactBank(words, domain, base) {
+  try {
+    const contract = exactBankContract(domain);
+    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation", "exponent", "sine", "power", "coordinates", "discard", "knownArithmetic", "branchLiveness"], ["ok", "domain"]);
+    require(base.ok === true && base.domain !== undefined, "Exact-word bank requires an approved inherited contract.");
+    for (const [key, kind, extra] of [["domain", CONSTANT_DOMAIN_KIND, []], ["access", CONSTANT_ACCESS_KIND, ["indices"]],
+      ["constraint", CONSTANT_CONSTRAINT_KIND, ["register", "component", "maximum"]],
+      ["radialDomain", RADIAL_DOMAIN_KIND, ["register", "component", "minimumMagnitude"]],
+      ["rasterDomain", RASTER_DOMAIN_KIND, ["components"]], ["conversionDomain", CONVERSION_DOMAIN_KIND, ["components"]]]) {
+      if (base[key] != null) {
+        const obligation = record(base[key], [...DOMAIN_KEYS, ...extra]);
+        require(obligation.kind === kind && obligation.stage === contract.stage && obligation.slot === 0 &&
+          obligation.name === contract.name && obligation.count === contract.count,
+        "Exact-word and inherited obligations disagree on their bank.");
+        base[key] = obligation;
+      }
+    }
+    const checked = base.conversionDomain ? checkConversionBank(words, base.conversionDomain, base) :
+      base.rasterDomain ? checkRasterBank(words, base.rasterDomain, !!base.constraint, !!base.radialDomain) :
+      base.radialDomain ? checkRadialBank(words, contract.count, !!base.constraint) : base.constraint ?
+        checkLoopBank(words, contract.count) : checkIndirectBank(words, contract.count, base.domain !== null);
+    if (!checked.ok) return checked;
+    for (const entry of contract.components)
+      if (checked.words[entry.register * 4 + entry.component] !== entry.word)
+        return failure("constant-exact-domain-error", "Current constant word disagrees with the exact shader assumption.");
+    return checked;
+  } catch (error) {
+    if (!(error instanceof DomainFault)) throw error;
+    return failure("constant-exact-domain-error", error.message);
+  }
+}
+
+/** Every base approval and F2I component check uses one owned complete prefix. */
+export function checkConversionBank(words, domain, base) {
+  try {
+    const contract = conversionBankContract(domain);
+    base = record(base, ["ok", "domain", "access", "constraint", "radialDomain", "rasterDomain", "precision", "arithmetic", "conversion", "conversionDomain", "scalar", "minimum", "fraction", "saturation", "exponent", "sine", "power", "coordinates", "discard", "knownArithmetic", "branchLiveness"], ["ok", "domain"]);
+    require(base.ok === true, "Conversion requires an approved base contract.");
+    for (const [key, kind, extra] of [["domain", CONSTANT_DOMAIN_KIND, []], ["access", CONSTANT_ACCESS_KIND, ["indices"]],
+      ["constraint", CONSTANT_CONSTRAINT_KIND, ["register", "component", "maximum"]],
+      ["radialDomain", RADIAL_DOMAIN_KIND, ["register", "component", "minimumMagnitude"]],
+      ["rasterDomain", RASTER_DOMAIN_KIND, ["components"]]]) if (base[key] != null) {
+      const obligation = record(base[key], [...DOMAIN_KEYS, ...extra]);
+      require(obligation.kind === kind && obligation.slot === 0 && obligation.count === contract.count &&
+        obligation.stage === contract.stage && obligation.name === contract.name,
+      "Conversion and base obligations disagree on their bank.");
+      base[key] = obligation;
+    }
+    const checked = base.rasterDomain ? checkRasterBank(words, base.rasterDomain, !!base.constraint, !!base.radialDomain) :
+      base.radialDomain ? checkRadialBank(words, contract.count, !!base.constraint) : base.constraint ?
+        checkLoopBank(words, contract.count) : checkIndirectBank(words, contract.count, base.domain !== null);
+    if (!checked.ok) return checked;
+    for (const entry of contract.components) for (let lane = 0; lane < 4; lane++)
+      if ((entry.mask & (1 << lane)) && !signedConversionBinary32Word(checked.words[entry.register * 4 + lane]))
+        return failure("constant-conversion-domain-error", "F2I bank word is outside the defined signed32 conversion range.");
+    return checked;
+  } catch (error) {
+    if (!(error instanceof DomainFault)) throw error;
+    return failure("constant-conversion-domain-error", error.message);
+  }
+}
+
+/** Validate and own exactly the reflected prefix; no absent word is synthesized. */
+export function checkFiniteBank(words, uploadCount) {
+  try {
+    require(Number.isInteger(uploadCount) && uploadCount >= 0 && uploadCount <= 46, "Invalid reflected constant upload extent.");
+    const bank = array(words, 184);
+    require(bank.length % 4 === 0, "Constant bank must contain complete vec4 registers.");
+    const count = uploadCount * 4;
+    if (bank.length < count) return failure("incomplete-draw", "Drawing requires every active constant word.");
+    const prefix = bank.slice(0, count);
+    require(prefix.every(finiteBinary32Word), "Active constant word is outside the finite-binary32 domain.");
+    return Object.freeze({ ok: true, words: Object.freeze(prefix) });
+  } catch (error) {
+    if (!(error instanceof DomainFault)) throw error;
+    return failure("constant-domain-error", error.message);
+  }
+}
+
+/** Own the entire declared guest-addressable bank, independent of reflection. */
+export function checkIndirectBank(words, declaredCount, finite) {
+  try {
+    require(Number.isInteger(declaredCount) && declaredCount >= 1 && declaredCount <= 47 && typeof finite === "boolean",
+      "Invalid indirect constant-bank contract.");
+    const bank = array(words, 184);
+    require(bank.length % 4 === 0, "Constant bank must contain complete vec4 registers.");
+    const count = Math.min(declaredCount, 46) * 4;
+    if (bank.length < count) return failure("incomplete-draw", "Drawing requires every declared indirect constant word.");
+    const prefix = bank.slice(0, count);
+    require(prefix.every((word) => Number.isInteger(word) && word >= 0 && word <= 0xffffffff),
+      "Indirect constant word is not an exact u32.");
+    require(!finite || prefix.every(finiteBinary32Word), "Indirect constant word is outside the finite-binary32 domain.");
+    return Object.freeze({ ok: true, words: Object.freeze(prefix) });
+  } catch (error) {
+    if (!(error instanceof DomainFault)) throw error;
+    return failure(finite === true ? "constant-domain-error" : "constant-access-error", error.message);
+  }
+}
+
+/** The finite prefix and raw signed count are approved on one owned snapshot. */
+export function checkLoopBank(words, declaredCount) {
+  if (declaredCount !== 46 && declaredCount !== 47)
+    return failure("constant-constraint-error", "Invalid counted-table bank extent.");
+  const checked = checkIndirectBank(words, declaredCount, true);
+  if (!checked.ok) return checked;
+  const word = checked.words[36];
+  if (!(word >= 0x80000000 || word <= 18))
+    return failure("constant-constraint-error", "Raw signed constant count exceeds the proved maximum of 18.");
+  return checked;
+}
+
+/** One owned full finite prefix proves the radial and any loop obligation. */
+export function checkRadialBank(words, declaredCount, counted = false) {
+  if (!Number.isInteger(declaredCount) || declaredCount < 5 || declaredCount > 47 ||
+      typeof counted !== "boolean" || (counted && declaredCount !== 46 && declaredCount !== 47))
+    return failure("constant-radial-domain-error", "Invalid radial constant-bank extent.");
+  const checked = checkIndirectBank(words, declaredCount, true);
+  if (!checked.ok) return checked;
+  const magnitude = checked.words[16] & 0x7fffffff;
+  if (magnitude < 0x3727c5ac)
+    return failure("constant-radial-domain-error", "Radial coefficient permits an undefined linear predecessor.");
+  if (counted) {
+    const count = checked.words[36];
+    if (!(count >= 0x80000000 || count <= 18))
+      return failure("constant-constraint-error", "Raw signed constant count exceeds the proved maximum of 18.");
+  }
+  return checked;
+}
+
+/** All base and copied-word approvals refer to the same owned full prefix. */
+export function checkRasterBank(words, domain, counted = false, radial = false) {
+  try {
+    require(typeof counted === "boolean" && typeof radial === "boolean", "Invalid combined raster obligations.");
+    const contract = rasterContract(domain);
+    require(!counted || ((contract.count === 46 || contract.count === 47) &&
+      contract.components.every(entry => entry.register !== 9 || !(entry.mask & 1))),
+    "Integer loop count cannot supply ordinary raster data.");
+    require(!radial || contract.count >= 5, "Radial raster bank requires the coefficient register.");
+    const checked = checkIndirectBank(words, contract.count, true);
+    if (!checked.ok) return checked;
+    if (counted) {
+      const count = checked.words[36];
+      if (!(count >= 0x80000000 || count <= 18))
+        return failure("constant-constraint-error", "Raw signed constant count exceeds the proved maximum of 18.");
+    }
+    if (radial && (checked.words[16] & 0x7fffffff) < 0x3727c5ac)
+      return failure("constant-radial-domain-error", "Radial coefficient permits an undefined linear predecessor.");
+    for (const entry of contract.components)
+      for (let lane = 0; lane < 4; lane++)
+        if ((entry.mask & (1 << lane)) && !rasterBinary32Word(checked.words[entry.register * 4 + lane]))
+          return failure("constant-raster-domain-error", "Copied bank word is outside the normal-or-signed-zero raster domain.");
+    return checked;
+  } catch (error) {
+    if (!(error instanceof DomainFault)) throw error;
+    return failure("constant-raster-domain-error", error.message);
+  }
+}
+
+// This separate consumer never derives exact authority from ordinary native
+// shader semantics. The legacy parser and every legacy contract above remain
+// independent; only the host-selected standard renderer calls these exports.
+export const STANDARD_SHADER_PROFILE = "virgl-webgl2-standard-gles3-v1";
+const STANDARD_METADATA_KEYS = ["profile", "stage", "inputs", "outputs", "attributes",
+  "systemValues", "uniforms", "samplers", "uniformBlocks", "rasterUniforms", "broadcastColor0", "standardSemantics"];
+const STANDARD_SEMANTICS = Object.freeze({
+  kind: "native-gles3-highp-v1", precision: "native-highp", undefinedDomains: "native-gles3",
+  preciseQualifier: "no-gpu-shader5", registerStorage: "uvec4", flatVaryingStorage: "uvec4",
+  scalarResults: "tgsi-x-replicated", exactAuthority: false, gpuExecutionBound: false,
+});
+const STANDARD_IO_KEYS = ["index", "name", "type", "semantic", "semanticIndex", "componentMask"];
+function standardFreeze(value) {
+  if (value && typeof value === "object") {
+    for (const child of Object.values(value)) standardFreeze(child);
+    Object.freeze(value);
+  }
+  return value;
+}
+const STANDARD_FLOAT_INPUTS = Object.freeze({ signedMask: 0, unsignedMask: 0 });
+function standardInputTypes(value) {
+  const masks = record(value, ["signedMask", "unsignedMask"]);
+  require([masks.signedMask, masks.unsignedMask].every(mask => Number.isInteger(mask) && mask >= 0 && mask <= 0xffff) &&
+    (masks.signedMask & masks.unsignedMask) === 0, "Invalid host vertex input masks.");
+  return masks;
+}
+function standardIO(value, stage, file, paired, masks) {
+  const output = file === "outputs", system = file === "systemValues";
+  const input = record(value, [...STANDARD_IO_KEYS, "syntacticWriteMask", "interpolation"],
+    [...STANDARD_IO_KEYS, ...(output ? ["syntacticWriteMask"] : [])]);
+  require(Number.isInteger(input.index) && input.index >= 0 && input.index < (system ? 2 : stage === "vertex" && !output ? 16 : 32) &&
+    Number.isInteger(input.componentMask) && input.componentMask >= 1 && input.componentMask <= 15 &&
+    Number.isInteger(input.semanticIndex), "Invalid standard physical register or component extent.");
+  if (output) require(Number.isInteger(input.syntacticWriteMask) && input.syntacticWriteMask >= 0 && input.syntacticWriteMask <= 15 &&
+    (input.syntacticWriteMask & ~input.componentMask) === 0, "Invalid syntactic output write mask.");
+  else require(!Object.hasOwn(input, "syntacticWriteMask"), "Input declarations cannot carry write authority.");
+  let interpolation = null;
+  if (system) {
+    require(input.semanticIndex === 0 && (stage === "vertex" && ["VERTEXID", "INSTANCEID"].includes(input.semantic) && input.type === "int" &&
+      input.name === (input.semantic === "VERTEXID" ? "gl_VertexID" : "gl_InstanceID") ||
+      stage === "fragment" && input.semantic === "PCOORD" && input.type === "vec4" && input.name === "gl_PointCoord"),
+    "Unknown standard system value.");
+  } else if (stage === "vertex" && !output) {
+    const type = masks.signedMask & (1 << input.index) ? "ivec4" : masks.unsignedMask & (1 << input.index) ? "uvec4" : "vec4";
+    require(input.semantic === "ATTRIBUTE" && input.type === type && input.semanticIndex === 0 &&
+      input.componentMask === 15 && input.name === "in_" + input.index, "Invalid standard vertex attribute.");
+  } else if (input.semantic === "GENERIC") {
+    require(input.semanticIndex >= 0 && input.semanticIndex < 16 &&
+      input.name === "vso_g" + input.semanticIndex && ["smooth", "flat"].includes(input.interpolation) &&
+      input.type === (input.interpolation === "flat" ? "uvec4" : "vec4") &&
+      (!output || stage === "vertex") && (paired || !output || input.interpolation === "smooth"),
+    "Invalid standard generic declaration.");
+    interpolation = input.interpolation;
+  } else if (input.semantic === "POSITION") {
+    require(input.semanticIndex === 0 && input.type === "vec4" &&
+      (stage === "vertex" && output ? input.index === 0 && input.name === "gl_Position" && input.componentMask === 15 :
+        stage === "fragment" && !output && input.name === "gl_FragCoord" && input.interpolation === "linear"),
+    "Invalid standard position declaration.");
+    if (stage === "fragment") interpolation = "linear";
+  } else if (input.semantic === "PSIZE") {
+    require(stage === "vertex" && output && input.semanticIndex === 0 && input.type === "float" && input.name === "gl_PointSize",
+      "Invalid standard point-size declaration.");
+  } else if (input.semantic === "PCOORD") {
+    require(stage === "fragment" && !output && input.semanticIndex === 0 && input.type === "vec4" &&
+      input.name === "gl_PointCoord" && input.interpolation === "linear", "Invalid standard point-coordinate declaration.");
+    interpolation = "linear";
+  } else {
+    require(stage === "fragment" && output && input.semantic === "COLOR" &&
+      input.semanticIndex === 0 && input.name === "fsout_c0" && input.type === "vec4",
+    "This execution profile requires a single declared COLOR0.");
+  }
+  require(interpolation !== null || !Object.hasOwn(input, "interpolation"), "Unexpected interpolation field.");
+  return { index: input.index, name: input.name, type: input.type, semantic: input.semantic,
+    semanticIndex: input.semanticIndex, componentMask: input.componentMask,
+    ...(output ? { syntacticWriteMask: input.syntacticWriteMask } : {}),
+    ...(interpolation === null ? {} : { interpolation }) };
+}
+function standardIOArray(value, stage, file, paired, masks) {
+  const entries = array(value, file === "systemValues" ? 2 : file === "attributes" || stage === "vertex" && file === "inputs" ? 16 : 32)
+    .map(entry => standardIO(entry, stage, file === "attributes" ? "inputs" : file, paired, masks));
+  const semantics = new Set();
+  for (let index = 0; index < entries.length; index++) {
+    const entry = entries[index], key = entry.semantic + "/" + entry.semanticIndex;
+    require(index === 0 || entries[index - 1].index < entry.index, "Physical registers must be sorted and unique.");
+    if (entry.semantic !== "ATTRIBUTE") {
+      require(!semantics.has(key), "Semantic declarations must be unique."); semantics.add(key);
+    }
+  }
+  return entries;
+}
+function standardMetadata(value, stage, paired = false, masks = STANDARD_FLOAT_INPUTS) {
+  const input = record(value, STANDARD_METADATA_KEYS);
+  require(["vertex", "fragment"].includes(stage) && input.stage === stage && input.profile === STANDARD_SHADER_PROFILE,
+    "Standard execution requires the distinct standard compiler profile.");
+  const semantics = record(input.standardSemantics, Object.keys(STANDARD_SEMANTICS));
+  for (const [key, expected] of Object.entries(STANDARD_SEMANTICS))
+    require(semantics[key] === expected, "Standard numerical/word semantics disagree.");
+  require(input.broadcastColor0 === false, "Broadcast color requires a later execution profile.");
+  const inputs = standardIOArray(input.inputs, stage, "inputs", paired, masks),
+    outputs = standardIOArray(input.outputs, stage, "outputs", paired, masks),
+    attributes = standardIOArray(input.attributes, stage, "attributes", paired, masks),
+    systemValues = standardIOArray(input.systemValues, stage, "systemValues", paired, masks);
+  if (stage === "vertex") require(((masks.signedMask | masks.unsignedMask) &
+    ~attributes.reduce((mask, attribute) => mask | (1 << attribute.index), 0)) === 0,
+  "Host typed masks exceed declared vertex attributes.");
+  require(stage === "vertex" ? outputs.filter(entry => entry.semantic === "POSITION").length === 1 &&
+    JSON.stringify(attributes) === JSON.stringify(inputs) : outputs.length === 1 &&
+    attributes.length === 0, "Standard stage declarations disagree.");
+  const pointCoord = [...inputs, ...systemValues].some(entry => entry.semantic === "PCOORD");
+  const expectedRaster = stage === "vertex" ? [{ name: "wv_point_size", type: "vec2", semantic: "POINT_SIZE" }] :
+    pointCoord ? [{ name: "wv_point_coord_y", type: "float", semantic: "POINT_COORD_Y" }] : [];
+  const rasterUniforms = array(input.rasterUniforms, 1).map(value => {
+    const entry = record(value, ["name", "type", "semantic"]);
+    return { name: entry.name, type: entry.type, semantic: entry.semantic };
+  });
+  require(JSON.stringify(rasterUniforms) === JSON.stringify(expectedRaster), "Standard raster uniform contract disagrees with its declarations.");
+  const uniforms = array(input.uniforms, 1).map(value => {
+    const entry = record(value, ["name", "type", "count", "encoding"]);
+    require(entry.name === (stage === "vertex" ? "vsconst0" : "fsconst0") && entry.type === "uvec4[]" &&
+      entry.encoding === "raw-32bit-words" && Number.isInteger(entry.count) && entry.count >= 1 && entry.count <= 512,
+    "Invalid standard constant bank.");
+    return { name: entry.name, type: entry.type, count: entry.count, encoding: entry.encoding };
+  });
+  const samplers = array(input.samplers, 16).map(value => {
+    const entry = record(value, ["index", "name", "type"]);
+    require(Number.isInteger(entry.index) && entry.index >= 0 && entry.index < 16 &&
+      entry.name === (stage === "vertex" ? "vssamp" : "fssamp") + entry.index && entry.type === "sampler2D",
+    "Invalid standard sampler declaration.");
+    return { index: entry.index, name: entry.name, type: entry.type };
+  });
+  require(samplers.every((entry, index) => index === 0 || samplers[index - 1].index < entry.index),
+    "Standard samplers must be sorted and unique.");
+  const uniformBlocks = array(input.uniformBlocks, stage === "vertex" ? 1 : 0).map(value => {
+    const block = record(value, ["name", "byteLength", "members"]);
+    require(block.name === "VirglBlock" && block.byteLength === 656, "Invalid standard system block.");
+    const members = array(block.members, 1).map(value => {
+      const member = record(value, ["name", "offset", "type", "default"]);
+      require(member.name === "winsys_adjust_y" && member.offset === 640 && member.type === "float" && member.default === 1,
+        "Invalid standard system member.");
+      return { name: member.name, offset: member.offset, type: member.type, default: member.default };
+    });
+    require(members.length === 1, "Missing standard coordinate member.");
+    return { name: block.name, byteLength: block.byteLength, members };
+  });
+  require(stage !== "vertex" || uniformBlocks.length === 1, "Missing declared standard system block.");
+  return standardFreeze({ profile: input.profile, stage, inputs, outputs, attributes, systemValues,
+    uniforms, samplers, uniformBlocks, rasterUniforms, broadcastColor0: false, standardSemantics: { ...STANDARD_SEMANTICS } });
+}
+function standardBody(value, stage, paired, masks = STANDARD_FLOAT_INPUTS) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
+    "Standard compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardMetadata(body.metadata, stage, paired, masks) });
+}
+function standardError(value) {
+  const error = record(value, ["code", "message"]);
+  require(typeof error.code === "string" && error.code.length > 0 && error.code.length <= 128 &&
+    typeof error.message === "string" && error.message.length <= 4096, "Invalid standard compiler error.");
+  return failure(error.code, error.message);
+}
+function standardInterface(vertex, fragment) {
+  const outputs = new Map(vertex.outputs.filter(entry => entry.semantic === "GENERIC").map(entry => [entry.semanticIndex, entry]));
+  const inputs = fragment.inputs.filter(entry => entry.semantic === "GENERIC").sort((a, b) => a.semanticIndex - b.semanticIndex);
+  for (const input of inputs) {
+    const output = outputs.get(input.semanticIndex);
+    require(output && (input.componentMask & ~output.componentMask) === 0,
+      "Standard fragment input exceeds its vertex declaration.");
+  }
+  return { key: "standard-generic-interpolation-v1:" +
+    inputs.map(entry => "g" + entry.semanticIndex + "/" + entry.componentMask + "/" + entry.interpolation).join(";"),
+    flat: inputs.some(entry => entry.interpolation === "flat"),
+    coordinates: fragment.inputs.some(entry => entry.semantic === "POSITION"), discard: false, inputs };
+}
+export function parseStandardShaderMetadata(value, stage) {
+  try { return standardFreeze({ ok: true, domain: null, metadata: standardMetadata(value, stage) }); }
+  catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardShaderResult(value, stage) {
+  try {
+    const response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) {
+      record(response, ["ok", "error"]); return standardError(response.error);
+    }
+    require(response.ok === true, "Invalid standard compiler result.");
+    record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardBody({ glsl: response.glsl, metadata: response.metadata }, stage, false) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+function normalizedStandardPair(value, masks) {
+  try {
+    const response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) {
+      record(response, ["ok", "error"]); return standardError(response.error);
+    }
+    require(response.ok === true, "Invalid standard pair result.");
+    record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardBody(response.vertex, "vertex", true, masks), fragment = standardBody(response.fragment, "fragment", true);
+    require(response.interfaceKey === standardInterface(vertex.metadata, fragment.metadata).key, "Standard pair key disagrees.");
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function normalizeStandardShaderPair(value) {
+  return normalizedStandardPair(value, STANDARD_FLOAT_INPUTS);
+}
+export function normalizeStandardShaderTypedPair(value, inputTypes) {
+  try { return normalizedStandardPair(value, standardInputTypes(inputTypes)); }
+  catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardShaderInterface(vertex, fragment) {
+  try {
+    return standardFreeze({ ok: true, ...standardInterface(standardMetadata(vertex, "vertex"), standardMetadata(fragment, "fragment")) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+
+// Dimensional banks are admitted only by this explicitly selected consumer.
+// Reuse the proven IO/system contract after snapshotting the new own records.
+export const STANDARD_UNIFORM_SHADER_PROFILE = "virgl-webgl2-standard-uniform-gles3-v1";
+const STANDARD_UNIFORM_SELECTORS = Object.freeze({ signedMask: 0, unsignedMask: 0,
+  packedSignedMask: 0, packedNormalizedMask: 0, bufferZeroMask: 0 });
+function standardUniformSelectors(value) {
+  const input = record(value, Object.keys(STANDARD_UNIFORM_SELECTORS));
+  const { signedMask, unsignedMask, packedSignedMask, packedNormalizedMask, bufferZeroMask } = input;
+  require([signedMask, unsignedMask, packedSignedMask, packedNormalizedMask].every(mask =>
+    Number.isInteger(mask) && mask >= 0 && mask <= 0xffff) && !(signedMask & unsignedMask) &&
+    !((signedMask | unsignedMask) & packedSignedMask) && !(packedNormalizedMask & ~packedSignedMask) &&
+    Number.isInteger(bufferZeroMask) && bufferZeroMask >= 0 && bufferZeroMask <= 3,
+  "Invalid host uniform/vertex format selectors.");
+  return input;
+}
+function standardUniformMetadata(value, stage, paired, selectors) {
+  const input = record(value, [...STANDARD_METADATA_KEYS, "guestUniformBlocks"]);
+  require(input.profile === STANDARD_UNIFORM_SHADER_PROFILE, "Uniform banks require the distinct compiler profile.");
+  const common = Object.fromEntries(STANDARD_METADATA_KEYS.map(key => [key, input[key]]));
+  common.profile = STANDARD_SHADER_PROFILE;
+  const metadata = standardMetadata(common, stage, paired, selectors);
+  if (stage === "vertex") require((selectors.packedSignedMask & ~metadata.attributes.reduce((mask, entry) =>
+    mask | (1 << entry.index), 0)) === 0, "Packed selectors exceed declared vertex attributes.");
+  const prefix = stage === "vertex" ? "vs" : "fs", blockPrefix = stage === "vertex" ? "VS" : "FS";
+  const blocks = array(input.guestUniformBlocks, 13).map(value => {
+    const block = record(value, ["name", "stage", "slot", "byteLength", "encoding", "members"]);
+    require(Number.isInteger(block.slot) && block.slot >= 0 && block.slot <= 12 &&
+      block.stage === stage && block.name === "Virgl" + blockPrefix + "Const" + block.slot &&
+      block.encoding === "raw-32bit-words", "Invalid original uniform bank identity.");
+    const members = array(block.members, 1).map(value => {
+      const member = record(value, ["name", "type", "count", "offset", "arrayStride"]);
+      require(member.name === prefix + "const" + block.slot && member.type === "uvec4[]" &&
+        Number.isInteger(member.count) && member.count >= 1 && member.count <= (block.slot ? 1024 : 512) &&
+        member.offset === 0 && member.arrayStride === 16 && block.byteLength === member.count * 16,
+      "Invalid raw-word std140 bank layout.");
+      return { name: member.name, type: member.type, count: member.count, offset: 0, arrayStride: 16 };
+    });
+    require(members.length === 1, "Missing original uniform bank array.");
+    return { name: block.name, stage, slot: block.slot, byteLength: block.byteLength, encoding: block.encoding, members };
+  });
+  require(blocks.every((entry, index) => !index || blocks[index - 1].slot < entry.slot), "Uniform banks must be sorted and unique.");
+  const bufferedZero = Boolean(selectors.bufferZeroMask & (stage === "vertex" ? 1 : 2));
+  require(blocks.some(block => block.slot === 0) === bufferedZero && (!bufferedZero || metadata.uniforms.length === 0),
+    "Slot zero storage disagrees with the host selector.");
+  return standardFreeze({ ...metadata, profile: input.profile, guestUniformBlocks: blocks });
+}
+function standardUniformBody(value, stage, paired, selectors) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
+    "Uniform compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardUniformMetadata(body.metadata, stage, paired, selectors) });
+}
+export function parseStandardUniformShaderMetadata(value, stage) {
+  try { return standardFreeze({ ok: true, domain: null,
+    metadata: standardUniformMetadata(value, stage, false, STANDARD_UNIFORM_SELECTORS) }); }
+  catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardUniformShaderResult(value, stage) {
+  try {
+    const response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid uniform compiler result.");
+    record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardUniformBody({ glsl: response.glsl, metadata: response.metadata },
+      stage, false, STANDARD_UNIFORM_SELECTORS) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardUniformShaderPair(value, hostSelectors = STANDARD_UNIFORM_SELECTORS) {
+  try {
+    const selectors = standardUniformSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid uniform pair result.");
+    record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardUniformBody(response.vertex, "vertex", true, selectors),
+      fragment = standardUniformBody(response.fragment, "fragment", true, selectors);
+    require(response.interfaceKey === standardInterface(vertex.metadata, fragment.metadata).key, "Uniform pair key disagrees.");
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardUniformShaderInterface(vertex, fragment, hostSelectors = STANDARD_UNIFORM_SELECTORS) {
+  try {
+    const selectors = standardUniformSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardUniformMetadata(vertex, "vertex", true, selectors),
+      standardUniformMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+
+// Selected retained-image query contract; historical normalizers remain closed.
+export const STANDARD_TEXTURE_SHADER_PROFILE = "virgl-webgl2-standard-texture-gles3-v1";
+function standardTextureMetadata(value, stage, paired, selectors) {
+  const input = record(value, [...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries"]);
+  require(input.profile === STANDARD_TEXTURE_SHADER_PROFILE, "Texture operations require their distinct compiler profile.");
+  const common = Object.fromEntries([...STANDARD_METADATA_KEYS, "guestUniformBlocks"].map(key => [key, input[key]]));
+  common.profile = STANDARD_UNIFORM_SHADER_PROFILE;
+  const metadata = standardUniformMetadata(common, stage, paired, selectors);
+  const queries = array(input.textureQueries, 16).map(value => {
+    const query = record(value, ["index", "name", "type", "semantic"]);
+    require(Number.isInteger(query.index) && query.index >= 0 && query.index < 16 &&
+      query.name === (stage === "vertex" ? "vs" : "fs") + "samplevels" + query.index &&
+      query.type === "int" && query.semantic === "TEXTURE_LEVELS" &&
+      metadata.samplers.some(sampler => sampler.index === query.index), "Invalid original texture query identity.");
+    return { index: query.index, name: query.name, type: query.type, semantic: query.semantic };
+  });
+  require(queries.every((entry, index) => !index || queries[index - 1].index < entry.index), "Texture queries must be sorted and unique.");
+  return standardFreeze({ ...metadata, profile: input.profile, textureQueries: queries });
+}
+function standardTextureBody(value, stage, paired, selectors) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl), "Texture compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardTextureMetadata(body.metadata, stage, paired, selectors) });
+}
+export function parseStandardTextureShaderMetadata(value, stage) {
+  try { return standardFreeze({ ok: true, domain: null,
+    metadata: standardTextureMetadata(value, stage, false, STANDARD_UNIFORM_SELECTORS) }); }
+  catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardTextureShaderResult(value, stage) {
+  try {
+    const response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid texture compiler result."); record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardTextureBody({ glsl: response.glsl, metadata: response.metadata }, stage, false, STANDARD_UNIFORM_SELECTORS) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardTextureShaderPair(value, hostSelectors = STANDARD_UNIFORM_SELECTORS) {
+  try {
+    const selectors = standardUniformSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid texture pair result."); record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardTextureBody(response.vertex, "vertex", true, selectors), fragment = standardTextureBody(response.fragment, "fragment", true, selectors);
+    require(response.interfaceKey === standardInterface(vertex.metadata, fragment.metadata).key, "Texture pair key disagrees.");
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardTextureShaderInterface(vertex, fragment, hostSelectors = STANDARD_UNIFORM_SELECTORS) {
+  try {
+    const selectors = standardUniformSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardTextureMetadata(vertex, "vertex", true, selectors),
+      standardTextureMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+
+// Original integer image authority is selected by the host, never inferred from
+// a guest profile string. Project already checked native types through the closed
+// predecessor contract, then restore them in an entirely owned representation.
+export const STANDARD_INTEGER_IMAGE_SHADER_PROFILE = "virgl-webgl2-standard-integer-image-gles3-v1";
+const STANDARD_IMAGE_COLORS = Object.freeze({ signedColorMask: 0, unsignedColorMask: 0 });
+const STANDARD_IMAGE_SELECTORS = Object.freeze({ ...STANDARD_UNIFORM_SELECTORS, ...STANDARD_IMAGE_COLORS });
+function standardImageColors(value) {
+  const colors = record(value, Object.keys(STANDARD_IMAGE_COLORS));
+  require([colors.signedColorMask, colors.unsignedColorMask].every(mask =>
+    Number.isInteger(mask) && mask >= 0 && mask <= 1) && !(colors.signedColorMask & colors.unsignedColorMask),
+  "Integer image colors require disjoint host COLOR0 masks.");
+  return colors;
+}
+function standardImageSelectors(value) {
+  const input = record(value, Object.keys(STANDARD_IMAGE_SELECTORS));
+  return { ...standardUniformSelectors(Object.fromEntries(Object.keys(STANDARD_UNIFORM_SELECTORS).map(key => [key, input[key]]))),
+    ...standardImageColors({ signedColorMask: input.signedColorMask, unsignedColorMask: input.unsignedColorMask }) };
+}
+function standardImageMetadata(value, stage, paired, selectors) {
+  const input = record(value, [...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries", "colorOutputMasks"]);
+  require(input.profile === STANDARD_INTEGER_IMAGE_SHADER_PROFILE,
+    "Integer images require their distinct compiler profile.");
+  require(paired || stage !== "vertex" || !(selectors.signedColorMask | selectors.unsignedColorMask),
+    "A vertex stage cannot select color outputs.");
+  const colors = record(input.colorOutputMasks, ["signedMask", "unsignedMask"]);
+  const signedMask = stage === "fragment" ? selectors.signedColorMask : 0,
+    unsignedMask = stage === "fragment" ? selectors.unsignedColorMask : 0;
+  require(colors.signedMask === signedMask && colors.unsignedMask === unsignedMask,
+    "Native color output masks disagree with the retained host format.");
+  const samplers = array(input.samplers, 16).map(value => {
+    const sampler = record(value, ["index", "name", "type"]);
+    require(["sampler2D", "isampler2D", "usampler2D"].includes(sampler.type),
+      "Unsupported original native 2D sampler type.");
+    return sampler;
+  });
+  const outputs = array(input.outputs, 32).map(value => {
+    const output = record(value, [...STANDARD_IO_KEYS, "syntacticWriteMask", "interpolation"],
+      [...STANDARD_IO_KEYS, "syntacticWriteMask"]);
+    if (stage === "fragment") require(output.type === (signedMask ? "ivec4" : unsignedMask ? "uvec4" : "vec4"),
+      "Native COLOR0 type disagrees with its host attachment.");
+    return output;
+  });
+  const common = Object.fromEntries([...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries"].map(key => [key, input[key]]));
+  common.profile = STANDARD_TEXTURE_SHADER_PROFILE;
+  common.samplers = samplers.map(sampler => ({ ...sampler, type: "sampler2D" }));
+  common.outputs = outputs.map(output => stage === "fragment" ? { ...output, type: "vec4" } : output);
+  const metadata = standardTextureMetadata(common, stage, paired, selectors);
+  return standardFreeze({ ...metadata, profile: input.profile,
+    samplers: metadata.samplers.map((sampler, index) => ({ ...sampler, type: samplers[index].type })),
+    outputs: metadata.outputs.map((output, index) => ({ ...output, type: outputs[index].type })),
+    colorOutputMasks: { signedMask, unsignedMask } });
+}
+function standardImageBody(value, stage, paired, selectors) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
+    "Integer image compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardImageMetadata(body.metadata, stage, paired, selectors) });
+}
+export function parseStandardIntegerImageShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardImageColors(hostColors);
+    return standardFreeze({ ok: true, domain: null,
+      metadata: standardImageMetadata(value, stage, false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardIntegerImageShaderResult(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardImageColors(hostColors), response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid integer image compiler result."); record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardImageBody({ glsl: response.glsl, metadata: response.metadata }, stage,
+      false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardIntegerImageShaderPair(value, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardImageSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid integer image pair result."); record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardImageBody(response.vertex, "vertex", true, selectors),
+      fragment = standardImageBody(response.fragment, "fragment", true, selectors),
+      derived = standardInterface(vertex.metadata, fragment.metadata);
+    require(response.interfaceKey === derived.key, "Integer image pair key disagrees.");
+    for (const input of derived.inputs) {
+      const output = vertex.metadata.outputs.find(output => output.semantic === "GENERIC" && output.semanticIndex === input.semanticIndex);
+      require(output.type === input.type && output.interpolation === input.interpolation,
+        "Integer image pair lacks the compiler's promoted generic output.");
+    }
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardIntegerImageShaderInterface(vertex, fragment, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardImageSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardImageMetadata(vertex, "vertex", true, selectors),
+      standardImageMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+
+// A separate host-selected consumer admits original COLOR0..3 declarations.
+// Reuse the closed predecessor for every non-color field and each projected IO;
+// never grant authority to a profile string supplied by the guest.
+function standardMultipleColors(value) {
+  const colors = record(value, Object.keys(STANDARD_IMAGE_COLORS));
+  require([colors.signedColorMask, colors.unsignedColorMask].every(mask =>
+    Number.isInteger(mask) && mask >= 0 && mask <= 15) && !(colors.signedColorMask & colors.unsignedColorMask),
+  "Multiple colors require disjoint four-bit host masks.");
+  return colors;
+}
+function standardMultipleSelectors(value) {
+  const input = record(value, Object.keys(STANDARD_IMAGE_SELECTORS));
+  return { ...standardUniformSelectors(Object.fromEntries(Object.keys(STANDARD_UNIFORM_SELECTORS).map(key => [key, input[key]]))),
+    ...standardMultipleColors({ signedColorMask: input.signedColorMask, unsignedColorMask: input.unsignedColorMask }) };
+}
+function standardMultipleMetadata(value, stage, paired, selectors) {
+  if (stage !== "fragment") return standardImageMetadata(value, stage, paired, selectors);
+  const input = record(value, [...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries", "colorOutputMasks"]),
+    colors = record(input.colorOutputMasks, ["signedMask", "unsignedMask"]);
+  require(colors.signedMask === selectors.signedColorMask && colors.unsignedMask === selectors.unsignedColorMask,
+    "Native multiple color masks disagree with their host attachments.");
+  require(typeof input.broadcastColor0 === "boolean", "Invalid original broadcast property.");
+  const semantics = new Set(), outputs = array(input.outputs, 4).map(value => {
+    const output = record(value, [...STANDARD_IO_KEYS, "syntacticWriteMask", "interpolation"],
+      [...STANDARD_IO_KEYS, "syntacticWriteMask"]);
+    require(output.semantic === "COLOR" && Number.isInteger(output.semanticIndex) && output.semanticIndex >= 0 && output.semanticIndex < 4 &&
+      output.name === "fsout_c" + output.semanticIndex && !semantics.has(output.semanticIndex),
+    "Invalid or repeated original color semantic.");
+    semantics.add(output.semanticIndex);
+    const bit = 1 << output.semanticIndex, type = colors.signedMask & bit ? "ivec4" : colors.unsignedMask & bit ? "uvec4" : "vec4";
+    require(output.type === type, "Native color output type disagrees with its own attachment.");
+    const checked = standardIO({ ...output, name: "fsout_c0", semanticIndex: 0, type: "vec4" }, stage, "outputs", paired, selectors);
+    return { ...checked, name: output.name, semanticIndex: output.semanticIndex, type: output.type };
+  });
+  require(outputs.length > 0 && outputs.every((output, index) => !index || outputs[index - 1].index < output.index),
+    "Original color registers must be nonempty, sorted and unique.");
+  require(!input.broadcastColor0 || outputs.length === 1 && outputs[0].semanticIndex === 0,
+    "Original COLOR0 broadcast requires exactly its one declared output.");
+  const emitted = input.broadcastColor0 ? 15 : outputs.reduce((mask, output) => mask | (1 << output.semanticIndex), 0);
+  require(!((colors.signedMask | colors.unsignedMask) & ~emitted), "Host masks exceed emitted color semantics.");
+  const first = outputs[0], firstBit = 1 << first.semanticIndex,
+    projectedSelectors = { ...selectors, signedColorMask: colors.signedMask & firstBit ? 1 : 0,
+      unsignedColorMask: colors.unsignedMask & firstBit ? 1 : 0 };
+  const metadata = standardImageMetadata({ ...input, broadcastColor0: false,
+    outputs: [{ ...first, name: "fsout_c0", semanticIndex: 0 }],
+    colorOutputMasks: { signedMask: projectedSelectors.signedColorMask, unsignedMask: projectedSelectors.unsignedColorMask } },
+  stage, paired, projectedSelectors);
+  return standardFreeze({ ...metadata, outputs, broadcastColor0: input.broadcastColor0,
+    colorOutputMasks: { signedMask: colors.signedMask, unsignedMask: colors.unsignedMask } });
+}
+function standardMultipleBody(value, stage, paired, selectors) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
+    "Multiple color compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardMultipleMetadata(body.metadata, stage, paired, selectors) });
+}
+export function parseStandardMultipleColorShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors);
+    return standardFreeze({ ok: true, domain: null,
+      metadata: standardMultipleMetadata(value, stage, false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardMultipleColorShaderResult(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors), response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid multiple color compiler result."); record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardMultipleBody({ glsl: response.glsl, metadata: response.metadata }, stage,
+      false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardMultipleColorShaderPair(value, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid multiple color pair result."); record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardMultipleBody(response.vertex, "vertex", true, selectors),
+      fragment = standardMultipleBody(response.fragment, "fragment", true, selectors),
+      derived = standardInterface(vertex.metadata, fragment.metadata);
+    require(response.interfaceKey === derived.key, "Multiple color pair key disagrees.");
+    for (const input of derived.inputs) {
+      const output = vertex.metadata.outputs.find(output => output.semantic === "GENERIC" && output.semanticIndex === input.semanticIndex);
+      require(output.type === input.type && output.interpolation === input.interpolation,
+        "Multiple color pair lacks the compiler's promoted generic output.");
+    }
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardMultipleColorShaderInterface(vertex, fragment, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardMultipleMetadata(vertex, "vertex", true, selectors),
+      standardMultipleMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+
+// Host selection owns this additional native binding. Every other field still
+// passes through the complete, closed multiple-color metadata contract.
+export const STANDARD_INSTANCE_BASE_SHADER_PROFILE = "virgl-webgl2-standard-instance-base-gles3-v1";
+function standardInstanceMetadata(value, stage, paired, selectors) {
+  const keys = [...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries", "colorOutputMasks"];
+  const input = record(value, [...keys, "instanceUniforms"]);
+  require(input.profile === STANDARD_INSTANCE_BASE_SHADER_PROFILE, "Instance offsets require their distinct compiler profile.");
+  const common = Object.fromEntries(keys.map(key => [key, input[key]]));
+  common.profile = STANDARD_INTEGER_IMAGE_SHADER_PROFILE;
+  const metadata = standardMultipleMetadata(common, stage, paired, selectors);
+  const uniforms = array(input.instanceUniforms, 1).map(value => {
+    const uniform = record(value, ["name", "type", "semantic", "default"]);
+    require(uniform.name === "wv_instance_base" && uniform.type === "uint" &&
+      uniform.semantic === "INSTANCE_BASE" && Object.is(uniform.default, 0), "Invalid owned instance offset uniform.");
+    return { name: uniform.name, type: uniform.type, semantic: uniform.semantic, default: uniform.default };
+  });
+  const expected = stage === "vertex" && metadata.systemValues.some(value => value.semantic === "INSTANCEID") ?
+    [{ name: "wv_instance_base", type: "uint", semantic: "INSTANCE_BASE", default: 0 }] : [];
+  require(JSON.stringify(uniforms) === JSON.stringify(expected), "Instance offset contract disagrees with original system declarations.");
+  return standardFreeze({ ...metadata, profile: input.profile, instanceUniforms: uniforms });
+}
+function standardInstanceBody(value, stage, paired, selectors) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
+    "Instance offset compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardInstanceMetadata(body.metadata, stage, paired, selectors) });
+}
+export function parseStandardInstanceBaseShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors);
+    return standardFreeze({ ok: true, domain: null,
+      metadata: standardInstanceMetadata(value, stage, false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardInstanceBaseShaderResult(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors), response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid instance offset compiler result."); record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardInstanceBody({ glsl: response.glsl, metadata: response.metadata }, stage,
+      false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardInstanceBaseShaderPair(value, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid instance offset pair result."); record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardInstanceBody(response.vertex, "vertex", true, selectors),
+      fragment = standardInstanceBody(response.fragment, "fragment", true, selectors), derived = standardInterface(vertex.metadata, fragment.metadata);
+    require(response.interfaceKey === derived.key, "Instance offset pair key disagrees.");
+    for (const input of derived.inputs) {
+      const output = vertex.metadata.outputs.find(output => output.semantic === "GENERIC" && output.semanticIndex === input.semanticIndex);
+      require(output.type === input.type && output.interpolation === input.interpolation,
+        "Instance offset pair lacks the compiler's promoted generic output.");
+    }
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardInstanceBaseShaderInterface(vertex, fragment, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardInstanceMetadata(vertex, "vertex", true, selectors),
+      standardInstanceMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+
+// Only the selected shadow compiler owns these stage/slot native controls.
+export const STANDARD_SHADOW_TEXTURE_SHADER_PROFILE = "virgl-webgl2-standard-shadow-texture-gles3-v1";
+function standardShadowMetadata(value, stage, paired, selectors) {
+  const keys = [...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries", "colorOutputMasks", "instanceUniforms"];
+  const input = record(value, [...keys, "shadowUniforms"]);
+  require(input.profile === STANDARD_SHADOW_TEXTURE_SHADER_PROFILE, "Shadow textures require their distinct compiler profile.");
+  const samplers = array(input.samplers, 16).map(value => {
+    const sampler = record(value, ["index", "name", "type"]);
+    require(["sampler2D", "isampler2D", "usampler2D", "sampler2DShadow"].includes(sampler.type),
+      "Unsupported original shadow sampler type.");
+    return sampler;
+  });
+  const common = Object.fromEntries(keys.map(key => [key, input[key]]));
+  common.profile = STANDARD_INSTANCE_BASE_SHADER_PROFILE;
+  common.samplers = samplers.map(sampler => ({ ...sampler, type: sampler.type === "sampler2DShadow" ? "sampler2D" : sampler.type }));
+  const metadata = standardInstanceMetadata(common, stage, paired, selectors);
+  const controls = array(input.shadowUniforms, 32).map(value => record(value, ["index", "name", "type", "semantic"]));
+  require(controls.length % 2 === 0, "Shadow controls require complete mask/add pairs.");
+  for (let at = 0; at < controls.length; at += 2) {
+    const mask = controls[at], add = controls[at + 1], index = mask.index,
+      prefix = stage === "vertex" ? "vs" : "fs";
+    require(Number.isInteger(index) && index >= 0 && index < 16 && add.index === index &&
+      (at === 0 || controls[at - 2].index < index) &&
+      samplers.some(sampler => sampler.index === index && sampler.type === "sampler2DShadow"),
+    "Shadow controls must own sorted unique declared comparison slots.");
+    require(mask.name === prefix + "shadmask" + index && add.name === prefix + "shadadd" + index &&
+      mask.type === "vec4" && add.type === "vec4" && mask.semantic === "SHADOW_MASK" && add.semantic === "SHADOW_ADD",
+    "Invalid owned shadow view controls.");
+  }
+  // Query-only shadow slots have no comparison result and need no mask/add.
+  return standardFreeze({ ...metadata, profile: input.profile,
+    samplers: metadata.samplers.map((sampler, index) => ({ ...sampler, type: samplers[index].type })),
+    shadowUniforms: controls });
+}
+function standardShadowBody(value, stage, paired, selectors) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
+    "Shadow texture compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardShadowMetadata(body.metadata, stage, paired, selectors) });
+}
+export function parseStandardShadowTextureShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors);
+    return standardFreeze({ ok: true, domain: null,
+      metadata: standardShadowMetadata(value, stage, false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardShadowTextureShaderResult(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors), response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid shadow texture compiler result."); record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardShadowBody({ glsl: response.glsl, metadata: response.metadata }, stage,
+      false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardShadowTextureShaderPair(value, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid shadow texture pair result."); record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardShadowBody(response.vertex, "vertex", true, selectors),
+      fragment = standardShadowBody(response.fragment, "fragment", true, selectors), derived = standardInterface(vertex.metadata, fragment.metadata);
+    require(response.interfaceKey === derived.key, "Shadow texture pair key disagrees.");
+    for (const input of derived.inputs) {
+      const output = vertex.metadata.outputs.find(output => output.semantic === "GENERIC" && output.semanticIndex === input.semanticIndex);
+      require(output.type === input.type && output.interpolation === input.interpolation,
+        "Shadow texture pair lacks the compiler's promoted generic output.");
+    }
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardShadowTextureShaderInterface(vertex, fragment, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardShadowMetadata(vertex, "vertex", true, selectors),
+      standardShadowMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+
+// Dimensional metadata is admitted only through the separately selected compiler.
+export const STANDARD_DIMENSIONAL_TEXTURE_SHADER_PROFILE = "virgl-webgl2-standard-dimensional-texture-gles3-v1";
+function standardDimensionalMetadata(value, stage, paired, selectors, dimensionalShadows = false) {
+  const keys = [...STANDARD_METADATA_KEYS, "guestUniformBlocks", "textureQueries", "colorOutputMasks", "instanceUniforms", "shadowUniforms"];
+  const input = record(value, keys);
+  require(input.profile === (dimensionalShadows ? STANDARD_DIMENSIONAL_SHADOW_TEXTURE_SHADER_PROFILE : STANDARD_DIMENSIONAL_TEXTURE_SHADER_PROFILE), "Dimensional textures require their distinct compiler profile.");
+  const types = { sampler2D: "sampler2D", isampler2D: "isampler2D", usampler2D: "usampler2D", sampler2DShadow: "sampler2DShadow",
+    sampler3D: "sampler2D", isampler3D: "isampler2D", usampler3D: "usampler2D",
+    samplerCube: "sampler2D", isamplerCube: "isampler2D", usamplerCube: "usampler2D",
+    sampler2DArray: "sampler2D", isampler2DArray: "isampler2D", usampler2DArray: "usampler2D",
+    ...(dimensionalShadows ? { samplerCubeShadow: "sampler2DShadow", sampler2DArrayShadow: "sampler2DShadow" } : {}) };
+  const samplers = array(input.samplers, 16).map(value => {
+    const sampler = record(value, ["index", "name", "type"]);
+    require(typeof sampler.type === "string" && Object.hasOwn(types, sampler.type), "Unsupported original dimensional sampler type.");
+    return sampler;
+  });
+  const metadata = standardShadowMetadata({ ...input, profile: STANDARD_SHADOW_TEXTURE_SHADER_PROFILE,
+    samplers: samplers.map(sampler => ({ ...sampler, type: types[sampler.type] })) }, stage, paired, selectors);
+  return standardFreeze({ ...metadata, profile: input.profile,
+    samplers: metadata.samplers.map((sampler, index) => ({ ...sampler, type: samplers[index].type })) });
+}
+function standardDimensionalBody(value, stage, paired, selectors, dimensionalShadows = false) {
+  const body = record(value, ["glsl", "metadata"]);
+  require(typeof body.glsl === "string" && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl),
+    "Dimensional texture compiler returned incompatible GLSL.");
+  return standardFreeze({ glsl: body.glsl, metadata: standardDimensionalMetadata(body.metadata, stage, paired, selectors, dimensionalShadows) });
+}
+export function parseStandardDimensionalTextureShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors);
+    return standardFreeze({ ok: true, domain: null,
+      metadata: standardDimensionalMetadata(value, stage, false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardDimensionalTextureShaderResult(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors), response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid dimensional texture compiler result."); record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardDimensionalBody({ glsl: response.glsl, metadata: response.metadata }, stage,
+      false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardDimensionalTextureShaderPair(value, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid dimensional texture pair result."); record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardDimensionalBody(response.vertex, "vertex", true, selectors),
+      fragment = standardDimensionalBody(response.fragment, "fragment", true, selectors), derived = standardInterface(vertex.metadata, fragment.metadata);
+    require(response.interfaceKey === derived.key, "Dimensional texture pair key disagrees.");
+    for (const input of derived.inputs) {
+      const output = vertex.metadata.outputs.find(output => output.semantic === "GENERIC" && output.semanticIndex === input.semanticIndex);
+      require(output.type === input.type && output.interpolation === input.interpolation,
+        "Dimensional texture pair lacks the compiler's promoted generic output.");
+    }
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardDimensionalTextureShaderInterface(vertex, fragment, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardDimensionalMetadata(vertex, "vertex", true, selectors),
+      standardDimensionalMetadata(fragment, "fragment", true, selectors)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+
+// Only an explicitly selected consumer admits the D61 dimensional comparison authority.
+export const STANDARD_DIMENSIONAL_SHADOW_TEXTURE_SHADER_PROFILE = "virgl-webgl2-standard-dimensional-shadow-texture-gles3-v1";
+export function parseStandardDimensionalShadowTextureShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors);
+    return standardFreeze({ ok: true, domain: null,
+      metadata: standardDimensionalMetadata(value, stage, false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }, true) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardDimensionalShadowTextureShaderResult(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const colors = standardMultipleColors(hostColors), response = record(value, ["ok", "glsl", "metadata", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid dimensional texture compiler result."); record(response, ["ok", "glsl", "metadata"]);
+    return standardFreeze({ ok: true, ...standardDimensionalBody({ glsl: response.glsl, metadata: response.metadata }, stage,
+      false, { ...STANDARD_UNIFORM_SELECTORS, ...colors }, true) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-domain-error", error.message); }
+}
+export function normalizeStandardDimensionalShadowTextureShaderPair(value, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors), response = record(value, ["ok", "vertex", "fragment", "interfaceKey", "error"], ["ok"]);
+    if (response.ok === false) { record(response, ["ok", "error"]); return standardError(response.error); }
+    require(response.ok === true, "Invalid dimensional texture pair result."); record(response, ["ok", "vertex", "fragment", "interfaceKey"]);
+    const vertex = standardDimensionalBody(response.vertex, "vertex", true, selectors, true),
+      fragment = standardDimensionalBody(response.fragment, "fragment", true, selectors, true), derived = standardInterface(vertex.metadata, fragment.metadata);
+    require(response.interfaceKey === derived.key, "Dimensional texture pair key disagrees.");
+    for (const input of derived.inputs) {
+      const output = vertex.metadata.outputs.find(output => output.semantic === "GENERIC" && output.semanticIndex === input.semanticIndex);
+      require(output.type === input.type && output.interpolation === input.interpolation,
+        "Dimensional texture pair lacks the compiler's promoted generic output.");
+    }
+    return standardFreeze({ ok: true, vertex, fragment, interfaceKey: response.interfaceKey });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+export function deriveStandardDimensionalShadowTextureShaderInterface(vertex, fragment, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors);
+    return standardFreeze({ ok: true, ...standardInterface(standardDimensionalMetadata(vertex, "vertex", true, selectors, true),
+      standardDimensionalMetadata(fragment, "fragment", true, selectors, true)) });
+  } catch (error) { if (!(error instanceof DomainFault)) throw error; return failure("shader-link-error", error.message); }
+}
+
+// Original raw capture contracts are separate from dimensional raster admission.
+export const STANDARD_STREAM_OUTPUT_SHADER_PROFILE = 'virgl-webgl2-standard-stream-output-gles3-v1';
+function standardStreamMetadata(value, stage, paired, selectors) {
+  const keys = [...STANDARD_METADATA_KEYS, 'guestUniformBlocks', 'textureQueries', 'colorOutputMasks', 'instanceUniforms', 'shadowUniforms', 'streamOutput'];
+  const input = record(value, keys);
+  require(input.profile === STANDARD_STREAM_OUTPUT_SHADER_PROFILE, 'Stream output requires its selected compiler profile.');
+  const {streamOutput: raw, ...common} = input;
+  const metadata = standardDimensionalMetadata({...common, profile: STANDARD_DIMENSIONAL_SHADOW_TEXTURE_SHADER_PROFILE}, stage, paired, selectors, true);
+  const stream = record(raw, ['encoding', 'captureBuffer', 'strides', 'outputs', 'varyings', 'packedStrideBytes']);
+  const uint = (n, max) => Number.isInteger(n) && n >= 0 && n <= max;
+  require(stream.encoding === 'raw-32bit-words' && uint(stream.captureBuffer, 3), 'Invalid original capture selection.');
+  const strides = array(stream.strides, 4);require(strides.length === 4 && strides.every(n => uint(n, 65535)), 'Invalid original dword strides.');
+  const outputs = array(stream.outputs, 128).map(v => record(v, ['registerIndex', 'startComponent', 'numComponents', 'outputBuffer', 'destinationOffset', 'stream']));
+  require(outputs.length > 0 || strides.every(n => n === 0), 'Empty original output metadata requires zero strides.');
+  const count = [0, 0, 0, 0], wanted = [];let packed = 0;
+  for (const [i, o] of outputs.entries()) {
+    require(stage === 'vertex' && uint(o.registerIndex, 31) && uint(o.startComponent, 3) && uint(o.numComponents, 4) && o.numComponents > 0 && o.startComponent + o.numComponents <= 4 && uint(o.outputBuffer, 3) && uint(o.destinationOffset, 65535) && o.stream === 0, 'Invalid original output range.');
+    const declared = metadata.outputs.find(v => v.index === o.registerIndex), mask = ((1 << o.numComponents) - 1) << o.startComponent;
+    require(declared && (declared.componentMask & mask) === mask && strides[o.outputBuffer] > 0 && o.destinationOffset + o.numComponents <= strides[o.outputBuffer], 'Capture exceeds its declared register or stride.');
+    for (const old of outputs.slice(0, i)) require(old.outputBuffer !== o.outputBuffer || o.destinationOffset >= old.destinationOffset + old.numComponents || old.destinationOffset >= o.destinationOffset + o.numComponents, 'Original capture ranges overlap.');
+    count[o.outputBuffer] += o.numComponents;require(count[o.outputBuffer] <= 64, 'Original capture components exceed the selected floor.');
+    if (o.outputBuffer === stream.captureBuffer) {
+      wanted.push({outputIndex: i, name: 'wv_so_' + i, type: o.numComponents === 1 ? 'uint' : 'uvec' + o.numComponents, components: o.numComponents, packedOffset: packed});packed += o.numComponents * 4;
+    }
+  }
+  const varyings = array(stream.varyings, 128).map(v => record(v, ['outputIndex', 'name', 'type', 'components', 'packedOffset']));
+  require(varyings.length === wanted.length && varyings.every((v, i) => Object.keys(wanted[i]).every(k => v[k] === wanted[i][k])) && stream.packedStrideBytes === packed, 'Capture varying order/type/offset disagrees with original words.');
+  return standardFreeze({...metadata, profile: input.profile, streamOutput: {encoding: stream.encoding, captureBuffer: stream.captureBuffer, strides, outputs, varyings, packedStrideBytes: packed}});
+}
+function standardStreamBody(value, stage, paired, selectors) {
+  const body = record(value, ['glsl', 'metadata']);require(typeof body.glsl === 'string' && body.glsl.length <= 262144 && /^#version 300 es\b/m.test(body.glsl), 'Invalid checked capture shader source.');
+  return standardFreeze({glsl: body.glsl, metadata: standardStreamMetadata(body.metadata, stage, paired, selectors)});
+}
+export function parseStandardStreamOutputShaderMetadata(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {return standardFreeze({ok: true, domain: null, metadata: standardStreamMetadata(value, stage, false, {...STANDARD_UNIFORM_SELECTORS, ...standardMultipleColors(hostColors)})});}
+  catch(error) {if (!(error instanceof DomainFault)) throw error;return failure('shader-domain-error', error.message);}
+}
+export function normalizeStandardStreamOutputShaderResult(value, stage, hostColors = STANDARD_IMAGE_COLORS) {
+  try {
+    const response = record(value, ['ok', 'glsl', 'metadata', 'error'], ['ok']);
+    if (response.ok === false) {record(response, ['ok', 'error']);return standardError(response.error);}
+    require(response.ok === true, 'Invalid capture compiler response.');record(response, ['ok', 'glsl', 'metadata']);
+    return standardFreeze({ok: true, ...standardStreamBody({glsl: response.glsl, metadata: response.metadata}, stage, false, {...STANDARD_UNIFORM_SELECTORS, ...standardMultipleColors(hostColors)})});
+  } catch(error) {if (!(error instanceof DomainFault)) throw error;return failure('shader-domain-error', error.message);}
+}
+export function normalizeStandardStreamOutputShaderPair(value, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {
+    const selectors = standardMultipleSelectors(hostSelectors), response = record(value, ['ok', 'vertex', 'fragment', 'interfaceKey', 'error'], ['ok']);
+    if (response.ok === false) {record(response, ['ok', 'error']);return standardError(response.error);}
+    require(response.ok === true, 'Invalid checked capture pair.');record(response, ['ok', 'vertex', 'fragment', 'interfaceKey']);
+    const vertex = standardStreamBody(response.vertex, 'vertex', true, selectors), fragment = standardStreamBody(response.fragment, 'fragment', true, selectors), derived = standardInterface(vertex.metadata, fragment.metadata);
+    require(response.interfaceKey === derived.key, 'Capture pair interface key disagrees.');
+    for (const input of derived.inputs) {const output = vertex.metadata.outputs.find(v => v.semantic === 'GENERIC' && v.semanticIndex === input.semanticIndex);require(output.type === input.type && output.interpolation === input.interpolation, 'Capture pair generic promotion disagrees.');}
+    return standardFreeze({ok: true, vertex, fragment, interfaceKey: response.interfaceKey});
+  } catch(error) {if (!(error instanceof DomainFault)) throw error;return failure('shader-link-error', error.message);}
+}
+export function deriveStandardStreamOutputShaderInterface(vertex, fragment, hostSelectors = STANDARD_IMAGE_SELECTORS) {
+  try {const selectors = standardMultipleSelectors(hostSelectors);return standardFreeze({ok: true, ...standardInterface(standardStreamMetadata(vertex, 'vertex', true, selectors), standardStreamMetadata(fragment, 'fragment', true, selectors))});}
+  catch(error) {if (!(error instanceof DomainFault)) throw error;return failure('shader-link-error', error.message);}
+}
+export function originalStreamOutputWords(metadata) {
+  const s = metadata.streamOutput;
+  return s.outputs.length ? [s.outputs.length, ...s.strides, ...s.outputs.flatMap(o => [(o.registerIndex | o.startComponent << 8 | o.numComponents << 10 | o.outputBuffer << 13 | o.destinationOffset << 16) >>> 0, o.stream])] : [0];
+}
+export function selectOriginalStreamBuffer(metadata, buffer) {
+  const s = metadata.streamOutput, varyings = [];let packed = 0;
+  for (const [i, o] of s.outputs.entries()) if (o.outputBuffer === buffer) {varyings.push({outputIndex: i, name: 'wv_so_' + i, type: o.numComponents === 1 ? 'uint' : 'uvec' + o.numComponents, components: o.numComponents, packedOffset: packed});packed += o.numComponents * 4;}
+  return {...metadata, streamOutput: {...s, captureBuffer: buffer, varyings, packedStrideBytes: packed}};
+}

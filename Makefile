@@ -237,10 +237,12 @@ fuzz-diff-smoke:
 web-build:
 	bash tools/build-virgl-runtime.sh
 	wasm-pack build crates/wasm-web --target web --profile wasm-release --out-name wasm_vm_wasm
+	wasm-pack build crates/session-web --target web --profile wasm-release --out-name wasm_vm_session
 	cd web && npm ci --no-audit --no-fund
 	cd web && npm run build:docs
-	mkdir -p web/pkg web/assets/riscv-tests
+	mkdir -p web/pkg web/session-pkg web/assets/riscv-tests
 	cp -R crates/wasm-web/pkg/. web/pkg/
+	cp -R crates/session-web/pkg/. web/session-pkg/
 	cp guest/prebuilt/hello.elf guest/prebuilt/loops.elf web/assets/
 	cp tests/riscv-tests-bin/* web/assets/riscv-tests/
 	# Boot artifacts must live UNDER web/ (the Pages publish_dir) so they deploy with the site.
@@ -445,6 +447,10 @@ verify-E9-T01:
 .PHONY: verify-E9-T02
 verify-E9-T02:
 	python3 -B tools/verify/e9-session-manifest.py --output "$${E9_MANIFEST_EVIDENCE_DIR:-target/evidence/e9-manifest-final}"
+
+.PHONY: verify-E9-T03
+verify-E9-T03:
+	python3 -B tools/verify/e9-session-store.py --output "$${E9_STORE_EVIDENCE_DIR:-target/evidence/e9-session-store-final}"
 
 # E1-T20: RISCOF architectural compliance (DUT=wasm-vm vs Spike). Needs `bash compliance/provision.sh`
 # first (riscof venv + arch-test) + the Docker toolchain image (Spike). Enforces compliance/EXCLUSIONS.md.

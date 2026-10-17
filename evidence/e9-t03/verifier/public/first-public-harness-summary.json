@@ -1,0 +1,150 @@
+{
+  "report_sha256": "80e40504955dfc6c7f39fada204716cd6c20f3163aa3a44d3d7946f0aec7832d",
+  "trace_sha256": "0116b5a364a46146f55bc18f50987a1d3387fd37d0d88ae834814b15d6f49866",
+  "status": "failed",
+  "checks": [
+    "suite",
+    "roadmap",
+    "noLocalStorage",
+    "adapterHash",
+    "runtimeRefusals",
+    "session-a",
+    "session-b",
+    "streaming",
+    "externalEvent",
+    "refusals",
+    "leaseDrain",
+    "quotaFault",
+    "missing",
+    "corrupt",
+    "critic",
+    "localStorageAfter"
+  ],
+  "suite": {
+    "passed": 127,
+    "failed": 0
+  },
+  "crashes": 4,
+  "races": 20,
+  "console_errors": [
+    {
+      "member": "trace.trace",
+      "line": 17,
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "location": {
+        "url": "https://wasm-vm.pages.dev/favicon.ico",
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "errors": {
+    "count": 21,
+    "favicon": 1,
+    "304_checker_assertions": 20
+  },
+  "selected_304": [
+    {
+      "member": "trace.network",
+      "line": 212,
+      "url": "https://wasm-vm.pages.dev/roadmap.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 214,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 269,
+      "url": "https://wasm-vm.pages.dev/session-store.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 271,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 358,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 364,
+      "url": "https://wasm-vm.pages.dev/roadmap.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 416,
+      "url": "https://wasm-vm.pages.dev/session-store.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 418,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 504,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 517,
+      "url": "https://wasm-vm.pages.dev/roadmap.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 563,
+      "url": "https://wasm-vm.pages.dev/session-store.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 564,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 650,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 651,
+      "url": "https://wasm-vm.pages.dev/roadmap.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 707,
+      "url": "https://wasm-vm.pages.dev/session-store.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 709,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 811,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 815,
+      "url": "https://wasm-vm.pages.dev/roadmap.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 853,
+      "url": "https://wasm-vm.pages.dev/session-store.js"
+    },
+    {
+      "member": "trace.network",
+      "line": 855,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js"
+    }
+  ],
+  "network_304_total": 325,
+  "public_byte_receipt_sha256": "7818c45206ee69e09946a6395d1cd3a7930ec30102e94e46a18c502694ab123c"
+}

@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 512,
-    "total": 705
+    "verified": 515,
+    "total": 729
   },
   "epics": [
     {
@@ -56,11 +56,15 @@
     {
       "key": "8",
       "title": "Chrome in Chrome"
+    },
+    {
+      "key": "9",
+      "title": "9"
     }
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-10-16"
+    "end": "2026-10-17"
   },
   "tasks": [
     {
@@ -34139,6 +34143,1052 @@
       "verificationLog": "(empty)",
       "adversarial": "Cold-start rule is absolute — run `docs/demos/level-8.md` on a machine/profile that never built the\nproject; any undocumented step refutes. Prove *stock*: hash the running browser against the\nupstream/distro build, confirm the E8-T10 marker scan is clean, and confirm nothing inside Chromium\nparticipates in recording — an instrumented or forked browser refutes the entire epic. Prove\n*time-travel*: seek to many random earlier points and reverse-step repeatedly, demanding\nbit-identical state each time (drift refutes); vary all host nondeterminism (clock, RNG, scheduling,\nhost load) across replays and demand zero guest-state effect. Prove *offline*: physically disable the\nnetwork and replay the whole session — any network reach or divergence refutes. Prove *robustness*:\ndo it on a GPU-heavy and a JS-heavy page, under SMP; a nondeterministic divergence refutes. Compare\nhonestly against Replay.io's instrumented approach in the log — our claim is the *same stock binary*\nmade reversible by the VM, and the evidence must back exactly that.",
       "file": "tasks/epic-8-chrome-in-chrome/E8-T11-capstone-time-travelable-browser.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T01",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Freeze the full-system session replay contract",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E0-T16",
+        "E3-T12d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Define local session time travel for the existing full-system RV64 Linux VM, starting with one hart. Inventory every host-to-guest source and assign each to a recording task or an explicit unsupported-mode gate.",
+      "boundary": "## Boundary\n\nDocumentation and pinned workload/measurement definitions only. Distinguish a saved checkpoint, visual preview, exact replay position and a new live branch. Reuse existing snapshot and GPU work rather than assuming instruction traces are a complete session recording.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T01` checks the frozen contract, source anchors/digests, owner tasks,\nasset/workload pins and numeric budgets. The [contract](../../docs/design/session-replay.md)\nand [machine-readable definitions](../../docs/design/session-replay-contract.json) are the\nhandoff to T02 and the capture slices. This direct check makes no guest runtime,\nperformance or acceleration qualification claim.\n\n",
+      "criteria": [
+        {
+          "text": "A source-to-owner matrix covers UART, keyboard/tablet/mouse, resize, clock/lifecycle rebases, timers, entropy, block/network completions, DMA, file transfers, audio input and GPU readbacks/completions.",
+          "checked": true
+        },
+        {
+          "text": "Freeze the event boundary, schema/version policy, one-hart scope and explicit refusal for unrecorded devices or execution modes; compare every matrix row with actual current adapters.",
+          "checked": true
+        },
+        {
+          "text": "Pin software and accelerated desktop fixtures, reference environment, expected state witnesses and numeric recording/storage/seek budgets before implementation or performance tuning. Separate preview latency from actual restored-state readiness.",
+          "checked": true
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-10-17 — worker — started\n\nThe user explicitly selected Epic 9 after the backlog review. Its priority band is now\n524.901–524.924, ahead of the optional userspace runtime; other task statuses are unchanged.\nE0-T16 and E3-T12d are verified. This low-risk S slice changes documentation and the\ndeterministic contract checker only; it makes no runtime replay claim.\n\nThe original checkout has unrelated uncommitted work. This isolated checkout starts at\n`ec178d579aed126c30eae1ee608e62557b276c08` and imports only the existing Epic 9 plan.\n\n\n### 2026-10-17 — worker — contract submission\n\nImplementation/evidence head: `2a7ab8a8fcf738498330d6e12fba3beb379c8e9a`; current trunk boundary:\n`05fa92c82288a4de217eac7345ba2766737a8c16`. The initial isolated source was older\nthan current trunk; it was rebased before submission and the source inventory was\nre-audited. Only the final receipt below is submitted. The original dirty checkout\nwas not changed.\n\nCommands at the frozen implementation:\n\n- `make --no-print-directory verify-E9-T01 > evidence/e9-t01/worker/acceptance.json`\n- `python3 -B -m py_compile tools/verify/e9-session-contract.py`\n- `python3 tools/check_task_policy.py > evidence/e9-t01/worker/task-policy.log`\n- `git diff --check`\n\nEvidence: `evidence/e9-t01/worker/acceptance.json` (SHA-256\n`280dc04f70fe5c85d4c912f31eae329f526d747ecca9b132d2519f73a3238f39`),\n`assets.json`, `commands.txt`, `task-policy.log` and `SHA256SUMS` in the same directory.\nThe asset receipt independently streams the SHA-256/length of all six advertised\npayloads found in local checkouts; it records each exact asset path and identity.\n\nClaim: the direct result checks 23 named guest-affecting sources against 32 current\nsource files, assigns each to capture or an explicit gate, freezes lossless event\ncoordinates/version/bounds and pins software plus production accelerated assets,\nstimulus/state witnesses, reference environment and numeric future budgets. Existing\nGPU worker/renderer/clock checkpoint successors replace the cancelled E6-T11 dependency.\nThe GPU reconstruction journal is explicitly not a whole-session replay engine.\nThe probe C file is a pinned future guest workload definition, not compiled/executed\nruntime evidence. GPU/clock/microphone session recording remains unqualified.\n\nRisk: low, documentation/fixture definitions and direct checker only. No emulator,\nwasm surface, browser flow or production output changes; Rust/workspace/browser/deploy\ngates and guest instruction recording do not apply to this definition-only claim.\nThe final task/queue/evidence commit changes metadata only; the acceptance receipt\nbinds all contract/checker/Makefile content and audited source digests. Fresh review\nmust judge the direct result and attempt the task's missing-input inventory check.\n\n### 2026-10-17 — verifier — predictions before evidence\n\nRead the complete task, AGENTS.md and the scoped diff against\n`05fa92c82288a4de217eac7345ba2766737a8c16` before opening the worker receipts.\nThis is a fresh low-risk direct-result review; no runtime replay claim is under test.\n\n- P1: The recorded acceptance result will identify implementation head\n  `2a7ab8a8fcf738498330d6e12fba3beb379c8e9a`, 23 source rows, 32 audited files and\n  two pending fixture qualifications. Its content/source digests will match this\n  checkout; rerunning `make verify-E9-T01` will differ only in the metadata commit.\n- P2: Every guest-affecting external input found by inspecting the current Wasm,\n  clock, storage/network/audio and production GPU adapters will have an explicit\n  source row and capture owner or refusal gate, including observations that never\n  originate in a DOM input handler.\n- P3: The contract will distinguish checkpoints, previews, exact replay and live\n  branches, bind non-retiring transitions and observation order losslessly, and\n  refuse unrecorded modes/devices before guest mutation. No planned profile will\n  be presented as already admitted runtime replay.\n- P4: Both fixture manifests and advertised payload identities will agree with\n  independently hashed local assets; stimulus, expected witnesses, reference host,\n  fixed work and numeric budgets will be concrete enough to constrain successor\n  measurements, with preview and actual restored-state latency separately bounded.\n\n### 2026-10-17 — verifier — VERDICT: verified\n\nVERDICT: verified\n\n- P1 — HELD. All four files in `evidence/e9-t01/worker/SHA256SUMS:1-4`\n  match independently recomputed hashes, including acceptance SHA-256\n  `280dc04f70fe5c85d4c912f31eae329f526d747ecca9b132d2519f73a3238f39`.\n  The recorded result identifies the frozen implementation, 23 rows, 32 source\n  files and two pending profiles (`acceptance.json:448-497`). The direct rerun at\n  metadata head `86ee25b213c246f19ecb4977ebd6feaad65488c6` passes and is identical\n  after removing only `source_commit`; all five proof-file hashes and all source\n  hashes still match. The submission diff after `2a7ab8a8` contains only the task,\n  queue and receipts. No stale source evidence found.\n- P2 — HELD. Compared all 23 matrix rows (`docs/design/session-replay.md:103-125`)\n  with the actual exported input/control methods, assembly and provider seams,\n  rather than accepting symbol existence as completeness proof. UART refills\n  (`crates/wasm/src/lib.rs:3711`), evdev frame/drop behavior (`:3919`, `:3998`,\n  `:4011`, `:4036`), display changes (`:3220`), agent admission (`:3253`, `:3338`),\n  file-transfer readiness/cancel/persist controls\n  (`crates/wasm/src/browser_file_transfer.rs:263-391`), and storage acknowledgements\n  (`crates/wasm/src/lib.rs:4259-4283`, `:4604`) have named capture owners.\n  The attempted missing-input search specifically checked non-DOM observations:\n  RTC polling and time-setting samples (`crates/core/src/dev/rtc.rs:155-216`),\n  paced idle and external pending state (`crates/core/src/lib.rs:4453-4495`),\n  SLIRP host time (`crates/wasm/src/lib.rs:3040`), relay close/error/send outcomes\n  (`crates/wasm/src/ws_transport.rs:38-125`), entropy DMA\n  (`crates/core/src/dev/virtio/rng.rs:170-184`), audio ring/clock/sink observations\n  (`crates/wasm/src/lib.rs:1977`, `:2082`, `:2166`;\n  `crates/core/src/dev/virtio/snd/mod.rs:1482`, `:1927-1946`), physical GPU queries,\n  synchronous errors and scatter/mailbox completions\n  (`web/renderer/virgl-command/queries.mjs:62-70`,\n  `crates/wasm/src/virgl_host.rs:262`,\n  `crates/wasm/src/virgl_linux.rs:205-350`), plus generated key releases/drains\n  (`web/loader.js:1210-1230`). Each maps to the clock, timers, network, entropy,\n  audio, GPU or checkpoint row. No guest-visible source absent from the matrix,\n  or admitted mode lacking a capture/gate, was found.\n- P3 — HELD. The four operations are distinct at\n  `docs/design/session-replay.md:45-55`; non-retiring transitions, observation\n  ordinals, paused controls, exact stops and callback staging are defined at\n  `:63-94`. Version/refusal policy, decimal wide counters, bounded payloads and\n  coherent pending-state publication are explicit at `:135-159`. Admission at\n  `:19-36` refuses incomplete/unrecorded modes before mutation; the initial profile\n  and accelerated candidate are explicitly planned/pending, including paced-clock,\n  microphone and 3D gates. These are definition claims, not claims that current\n  live callbacks already obey the future recording boundary.\n- P4 — HELD. Both pinned manifests exactly match the current production JSON;\n  independently streamed SHA-256 and length checks also match all six asset\n  records (`evidence/e9-t01/worker/assets.json:5-57`). The production pair is\n  204,057,731 bytes with SHA-256\n  `3583ea9927d142e33c9b1de5963d89bd1f0b1022df7047c8a8b02d7f734a01bd`.\n  The chunked-image descriptor and renderer build-source pin match their current\n  definitions; predecessor status checks pass. Direct `sw_vers`, `sysctl`,\n  Chrome plist, `rustc --version` and `node --version` readings match the frozen\n  reference. Literal before/after bytes, shell stimulus, response bytes, input\n  transition schedule, LCG seek selection, five alternating equal-work pairs and\n  witnesses are concrete (`docs/design/session-replay-contract.json:723-808`;\n  `docs/design/session-replay.md:167-228`). Seven numeric metrics per profile\n  separately bound preview and actual state readiness. The pinned C probe declares\n  exact red RGBA/error observations and explicitly leaves guest compilation and\n  acceleration qualification to T17/T18; its source identity is not runtime proof.\n- COVERAGE — The Make target and checker happy path execute in the direct rerun.\n  Contract, workload, fixture and task-plan hunks were inspected as declarative\n  output; the queue is regenerated under task policy. Runtime execution of the\n  future probe and decoder/capture/error paths is waived for this definition-only\n  low-risk slice, which changes none of those runtime paths. Checker rejection\n  branches are defensive tooling and do not require a sabotage run at this tier.\n  No requested acceptance behavior remains unexercised or unreviewed.\n- SUITE — Retain `make verify-E9-T01` as the permanent source/fixture drift check.\n  No duplicate test or runtime fixture is promoted for documentation-only claims.\n\nCommands: read-only scoped diff and adapter inspection; independent receipt and\nasset streaming hash comparison; `make --no-print-directory verify-E9-T01` with\nstructural comparison against the worker receipt; reference-host/version reads;\n`python3 tools/check_task_policy.py`; `python3 tools/build_queue.py`;\n`git diff --check`. No cold clone, sabotage, runtime/browser regression or deployment\nis required by this low-risk boundary.",
+      "adversarial": "Find one real guest-visible input absent from the matrix, or a claimed supported mode without an assigned capture path. An inventory of browser DOM events alone is insufficient.",
+      "file": "tasks/epic-9-session-time-travel/E9-T01-execution-contract.md",
+      "activity": [
+        {
+          "date": "2026-10-17",
+          "commits": 3,
+          "labels": [
+            "docs(replay): verify E9-T01 execution contract",
+            "docs(replay): submit E9-T01 contract evidence",
+            "docs(replay): freeze the full-system session contract"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-17",
+      "lastActivity": "2026-10-17",
+      "commitCount": 3
+    },
+    {
+      "id": "E9-T02",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Define bounded session manifests and compatibility checks",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E9-T01"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Identify exactly which machine, assets and replay policy a saved session needs.",
+      "boundary": "## Boundary\n\nThe versioned session/event/checkpoint index codec and compatibility admission; no execution or UI. Preserve historical data when a build cannot replay it.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T02`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Bind immutable VM/Wasm build, base-image/kernel identities, RAM/hart/device topology, event policy, checkpoint format and GPU profile when applicable.",
+          "checked": true
+        },
+        {
+          "text": "Represent instruction positions and sequence numbers without JavaScript precision loss; preserve exact values across the 2^53 boundary.",
+          "checked": true
+        },
+        {
+          "text": "Reject unknown required versions, inconsistent lengths/digests and foreign build/image/profile combinations with typed errors; keep the original session intact. Define retained runtime assets or an honest unavailable state after updates.",
+          "checked": true
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-10-17 — worker — started\n\nE9-T01 is verified. This high-risk S slice implements bounded, lossless metadata/event/index\ncodecs and read-only compatibility admission in the shared no_std storage library.\nExecution, storage publication and UI remain separate successor boundaries. The user\nauthorized continuing through the entire epic; branches remain stacked and unmerged.\n\n\n### 2026-10-17 — worker — submitted for independent verification\n\nFrozen code head: `eb5a2484f1f7ff4d68ab2ccc7881b12fe65eae06` (task diff begins after\n`653b95b570d1c61facbcabcd3be2cfb07ae44f82`). Claim: the shared no_std session codec binds\nVM/Wasm/base/kernel/initramfs/RAM/hart/device/GPU identities and the complete replay\npolicy before admission; it preserves exact decimal-string transition/sequence/retirement\nvalues above 2^53. Bounded manifest/event/chunk decoding refuses malformed, duplicate,\nunknown-required, inconsistent-length/digest and foreign metadata with typed results.\nAdmission and retained-runtime availability are read-only; unavailable historical builds or\nasset bytes do not trigger a migration or deletion. Exact metadata must declare device and\nclock capture sources and admission separately checks installed capture adapters. This is\nmetadata compatibility, not a runtime replay qualification.\n\nRecorded acceptance: `make verify-E9-T02` on this clean head, and the identical command\nfrom a pristine full clone with `RUSTFLAGS`, `RUSTDOCFLAGS`, `RUST_LOG` and all `CARGO_*`\noverrides removed. Clone command, exact clone path/head and scrub list are recorded in\n`evidence/e9-t02/worker/cold/clone.json`; it used `git clone --no-local --no-hardlinks\n--single-branch --depth 1 --branch codex/e9-session-manifest` against this local repository,\nwith no object alternates. Both runs passed all eight recorded commands: task policy,\nworkspace format, isolated Wasm format, affected-library lint, 115 native storage tests,\nno_std wasm32 storage build, Wasm lint and nine shared cases executing in Node. Exact\nargument vectors, exit codes, durations, source hashes and log digests are in:\n\n- `evidence/e9-t02/worker/warm/report.json`\n- `evidence/e9-t02/worker/cold/recording/report.json`\n- `evidence/e9-t02/worker/SHA256SUMS`\n\nThe independently specified JSON asset oracles are rehashed in each run. The golden\nbegin/end sequences are `9007199254740993` / `9007199254740994`, with transition\n`9007199254741094` at the event. Mutations independently cover each identity, capture\nomissions, duplicate/oversized sections, unknown versions, corrupt/truncated chunks,\nsequence/position overflow, GPU pair bindings and absent retained assets. The shared\nnative/Wasm cases and their literal fixtures are permanent artifacts.\n\nRisk-tier scope: the full affected storage wall and wasm32 codec boundary, with adversarial\nparser/identity attacks and the final pristine-clone proof. No guest architectural, JIT or\nconcurrency behavior changes here, so a guest instruction trace would not exercise this\nboundary. Deterministic native/Wasm assertions are the recorded evidence. No production\nVM/Wasm exports, UI or browser behavior are introduced; the isolated test-only harness\nuses the workspace dependency versions and committed production browser bytes remain\nunchanged. Browser/deployment gates apply to the successor runtime/UI integrations.\n\nFresh verifier: `/root/verify_e9_t02` is independently auditing the diff, recording prior\npredictions, attacking admission and checking execution coverage. This worker entry does\nnot set `verified`.\n\n### 2026-10-17 — verifier — VERDICT: verified\n\nVERDICT: verified\n\nFresh session `/root/verify_e9_t02` read the whole task and frozen diff before evidence,\nthen committed the prior predictions and results in `evidence/e9-t02/verifier/`.\nCode head remains `eb5a2484f1f7ff4d68ab2ccc7881b12fe65eae06`; worker submission was\n`e5ea3379e423b8e8757410b017a56ef4fa4a0acd`. No implementation edits were made.\n\n- **P1/P5/P6 HELD — identities, capture and preservation.** Each immutable machine and\n  policy identity is refused independently; retained exact runtime/assets produce the\n  proper Available/Unavailable state. Every device field, GPU renderer/profile and an\n  asset whose digest matches but byte length differs received independent mutations.\n  Canonical original bytes remain unchanged. See shared native/Wasm corpus and\n  `verifier/promoted-tests.log:17-35`, `verifier/promotion-report.json`.\n- **P2/P3/P4 HELD — exact counters and bounded integrity.** Both sides of 2^53 and u64\n  limits stay exact; unknown versions/fields, duplicated/oversized sections, corrupt or\n  truncated payloads, sequence/phase/witness regression, count/endpoints and arithmetic\n  overflow are refused with typed errors. JS JSON/BigInt independently preserves the\n  fixture byte digest `71e97341111e6704982bd3bb5d39a4de95a1c1dc2cd5fe95ada1f75d75ee2def`\n  (`verifier/js-oracle.json`). Eight promoted critic tests pass with zero ignored cases\n  at `verifier/promoted-tests.log:42`; the nine shared native/Wasm cases are unchanged.\n- **P7 HELD — evidence/environment.** All 23 committed worker artifact hashes and all\n  16 warm/cold source hashes match. The single pristine clone was independently inspected:\n  clean exact code head, no object alternates, matching source/evidence bytes. Its scrubbed\n  acceptance passed eight gates, 106+9 native tests and nine Wasm/Node tests\n  (`worker/cold/recording/storage-native.log:152,167`, `wasm-node.log:50`). See\n  `verifier/warm-audit.json` and `verifier/cold-audit.json`. No production browser/Wasm\n  artifacts or test-only runtime behavior changed.\n- **P8 HELD — bounded novel attack.** Duplicate same/contradictory payload discriminants,\n  duplicate payload bytes and a foreign required payload field all return Malformed,\n  preserving input bytes (`verifier/promoted-tests.log:14-20`). Authenticated same-transition\n  phase regression and excessive/duplicate sequence/count attacks also fail closed.\n- **P9 HELD — sabotage.** In a scratch copy only, forcing GPU identity equality true makes\n  the existing `gpu_checkpoint_binding` test fail at `cases.rs:704:5`, observed Ok versus\n  expected IdentityMismatch(\"GPU\"), exit 101 (`verifier/sabotage.log:53-56`, SHA-256\n  `d4dbac430b55c33abdf398657568bc1f5c45dfa12d8bc7a3f572ff596b67df57`).\n- **P10 HELD — coverage.** LLVM measures 546/550 lines and 784/811 regions for the unchanged\n  codec. Every remaining unique source region is explicitly waived at four locations:\n  impossible secondary hex failure (:129), concrete infallible serializer error conversion\n  (:412), and bounded sums that cannot overflow u64 (:643/:681). Every changed hunk is\n  executed or justified in `verifier/coverage-ledger.md`; exact binary/profile/export\n  digests and commands are in `verifier/coverage-receipt.json`, with per-line counts in\n  `verifier/final-coverage.txt`. Large artifacts remain locally under\n  `target/evidence/e9-t02-verifier`.\n\nSUITE: promote `crates/storage/tests/session_manifest_critic.rs` (eight deterministic\nregressions). Preserve the shared literal golden fixtures, nine native/Wasm cases and\n`make verify-E9-T02`. Promoted test format, affected-test Clippy and native execution all\npass (`verifier/promotion-report.json`). As only tests/evidence/metadata changed after the\nfrozen runtime, incremental harness checks suffice; the final cold proof was not repeated.\nThe complete prediction-by-prediction result is `verifier/verdict.md`.",
+      "adversarial": "Mutate each identity independently, use oversized/duplicate sections and counters above 2^53. A misleading compatible verdict or destructive automatic migration refutes the claim.",
+      "file": "tasks/epic-9-session-time-travel/E9-T02-session-manifest.md",
+      "activity": [
+        {
+          "date": "2026-10-17",
+          "commits": 3,
+          "labels": [
+            "Verify E9-T02 session metadata admission",
+            "docs(replay): submit E9-T02 native and Wasm evidence",
+            "docs(tasks): start bounded session manifest codec"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-17",
+      "lastActivity": "2026-10-17",
+      "commitCount": 3
+    },
+    {
+      "id": "E9-T03",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Persist multiple session logs with atomic publication",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E9-T02",
+        "E3-T12d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Store many independent sessions locally in the browser and reopen them after a tab reload.",
+      "boundary": "## Boundary\n\nOne chunked append-only IndexedDB session store with a commit cursor. Keep the existing resume-snapshot store intact; localStorage is limited to small preferences, not VM blobs.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T03` records the affected native/no_std and independent metadata-Wasm checks, the real built-page IndexedDB crash/race proof, and the retained GPU factory runtime regression. It requires local Chromium and downloads authenticated public release artifacts when they are absent from a pristine checkout. This slice does not claim guest checkpoint decoding or replay qualification.\n\n",
+      "criteria": [
+        {
+          "text": "Stream bounded chunks and publish the manifest/commit cursor only after referenced chunks are durable; never retain an additional whole-session copy.",
+          "checked": true
+        },
+        {
+          "text": "Reload two different sessions and recover the exact committed prefix after termination between data and commit writes.",
+          "checked": true
+        },
+        {
+          "text": "Serialize competing writers with existing browser ownership mechanisms; detect missing/corrupt chunks and keep incomplete records out of the playable list.",
+          "checked": true
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-10-17 — worker — started\n\nE9-T02 and E3-T12d are verified. This high-risk S boundary adds a separate append-only,\nchunked IndexedDB session store. Existing resume-snapshot persistence remains independent.\nPublication will advance a commit cursor only after its immutable referenced data is durable;\nWeb Locks will own writes and interrupted publication will retain the old committed prefix.\nThe user authorized continuing through all of Epic 9; this layer remains unmerged.\n\n### 2026-10-17 — worker — implemented\n\nFrozen code: `8461ae9f661deb0841dabf00ab9b99e1fd431e2f`.\nCommand: `E9_STORE_EVIDENCE_DIR=target/evidence/e9-t03-worker-final make verify-E9-T03`.\nThe clean-head recorder passed all 14 commands: affected format/lint, all 129 storage\ntests and one adapter test, no_std wasm build, exact independent metadata bundle rebuild,\nnine shared codec Node/Wasm cases, T01 contract, retained-runtime byte checks and the\nactual built-page Chromium run. Full command outputs and compact receipts are committed\nunder `evidence/e9-t03/worker/`. Original recordings remain under\n`target/evidence/e9-t03-worker-final/`, including the persistent Chromium profile,\n`browser/browser-trace.zip`, `browser/javascript-coverage.json` and full browser report.\nThe top-level report SHA-256 is\n`63983b74f3018128ea0d649fc7baeaa24c2163865eadc111100bb11af95bea1d`; its 420 file\nreceipts bind the original evidence. `worker/SHA256.json` binds the compact copies.\n\nThe recording reopens two distinct exact manifests after reload, preserving sequence\n`9007199254740994`; streams 100,663,419 bytes through 97 bounded persisted chunks; and\nforces actual renderer crashes at chunk, object, pre-commit and completed-commit cuts.\nThe first three retain revision 1 and the final cut retains revision 2. Twenty two-tab\nraces with varied seeds admit one writer and preserve that winner's immutable prefix.\nMissing external payloads, corrupt/deleted chunks, malformed inputs and quota-fault\ninjection refuse without altering the committed sessions. Cancellation drains the old\nlease through the browser's lock-release acknowledgement before reacquisition. The live\nretained-memory check peaks 2,471,464 bytes above baseline after periodic DevTools GC;\nraw samples are retained separately, with no throughput/transient-allocation claim.\nThe CPU suite reports 127 passed / 0 failed, the storage pip is verified and console/page\nerrors are empty; `browser.png` records that result.\n\nThe original GPU factory runtime is preserved byte for byte (47 files including its\nstamp, build `222950026e3e01ed…`), rather than relabeling its pair for a rebuilt Wasm.\nThe actual factory warm boot uses the retained worker, restores the authenticated pair,\nretires 3,999,540 new instructions and presents in fresh epoch `0000000000000004` with\nno GPU loss/poison/failure; `gpu-factory-ready.png` records the desktop. Its accepted\nstatic-desktop repair present has no guest sequence. This proves existing factory\nreadiness, not E9 GPU replay qualification. Disk-root content semantics remain T04 and\ncoherent live restore remains T05.\n\nThe pre-commit hook completed the local bundle build, then its restage hit an inactive\nindex lock. That owned lock was preserved, the built `web/dist` was explicitly staged,\nand the code commit used `SKIP_WEB_BUILD=1`; `bundle-build.log` preserves the build.\nA fresh verifier must now interrogate this evidence, perform its bounded attacks and\nsabotage check, and inspect one pristine-clone proof at the final code/test head before\nsetting verified. Public deployment/proof follows that verdict; all PRs remain open.\n\n### 2026-10-17 — verifier — promoted proof candidate (final verdict pending)\n\nFresh-session predictions were written before opening worker evidence in\n`evidence/e9-t03/verifier/predictions.md`. P1–P8 held; P9's original receipts and gates\nheld, with the single final-head pristine-clone proof still pending. All 420 original\nfile receipts and source hashes matched, and all 47 retained GPU files matched the\npredecessor byte for byte. The original profile stayed untouched; only its copy ran.\n\nFour independent two-tab races/crashes (seeds 13411–13414) preserved exact old cursors\n1/1/1 and committed cursor 2 at the four boundaries. Descriptor/cursor tampering\nfailed closed. The supplement independently checked every original large-object byte\nagainst its pattern oracle and promoted real-IDB integrity/reuse/final-transaction,\ncancellation/close, native-error, version-change and catalog-bound tests into\n`tools/verify/e9-session-store-critic.mjs`, called by the acceptance target. A scratch\ncopy with the append guard removed admitted checkpoint removal, and the rejection\nassertion failed as required. Its initial malformed sabotage setup was correctly\nrefused by the codec; the corrected narrow supplement passed without runtime changes.\n\nCompact reports and recording digests are under `evidence/e9-t03/verifier/`; original\nindependent traces/profile copy remain in `target/evidence/e9-t03-verifier/`. Combined\nprecise coverage leaves no wholly unexecuted nonempty source line and explicitly\nwaives five defensive environment/deletion branch ranges. The per-hunk coverage table\nand scoped waiver reasons are in the verifier README and coverage receipt. Status\nremains implemented until the verifier inspects the final pristine-clone proof.\n\n### 2026-10-17 — verifier — VERDICT: verified\n\n- P1–P9 **HELD**. Both distinct reload manifests and all four crash manifests match\n  independently reconstructed hashes; new seeds 13411–13414 preserve exact prefixes.\n  The 97-part raw-IDB pattern/hash oracle, two-tab ownership, corruption exclusion,\n  final-transaction races and lease lifecycle attacks held. Source/evidence points and\n  per-hunk coverage/waivers are recorded in `evidence/e9-t03/verifier/verdict.md`.\n- **SABOTAGE HELD**: removing the append guard in a scratch-served copy admits a\n  committed checkpoint removal, and the rejection assertion fails. Original code\n  returns `NotAppend`. The initial malformed scratch fixture and corrected narrow\n  retry are preserved honestly; no implementation fix was needed.\n- **FINAL PRISTINE PROOF HELD** at test head\n  `c51133cacd48408e9ef054370b0503a32f645f32`, with runtime unchanged from\n  `8461ae9f661deb0841dabf00ab9b99e1fd431e2f`. The normal sparse clone is clean,\n  starts without target/npm caches or Git alternates, scrubs the prescribed environment,\n  and passes all 14 `make verify-E9-T03` commands. All 442 cold receipts match. The\n  browser again reports 127/0, no errors and all promoted critic cases; the real factory\n  pair restores with resumed CPU and a fresh-epoch physical draw, using three actual\n  public R2 HTTP-200 fallback downloads. Compact proof is in the verifier `cold/` folder;\n  original profile/trace remain in `target/evidence/e9-t03-cold-final/acceptance/browser/`.\n- **SUITE**: the bounded critic helper is permanently called by `make verify-E9-T03`.\n  No product contradiction or remaining semantic proof gap was found. T04/T05/T17/T18\n  retain their declared disk-content, coherent restore and replay boundaries.\n\nCold receipt SHA-256:\n`f0e4812a4d12c2b6fb114983d74fce71e3b3acfd6c552817775da50e18983de6`.\nCold acceptance report SHA-256:\n`c04bb9c95bca209d663fb6789891cafe56323c9622e5608a7f9026e3cfa99acf`.\nAll original worker receipts were also independently revalidated. The status/queue\ncommit changes verification metadata only; no runtime or test code follows the proven head.",
+      "adversarial": "Terminate between each publication step and race two tabs writing the same session. A partially published session, mixed writers or loss of a previously committed prefix refutes.",
+      "file": "tasks/epic-9-session-time-travel/E9-T03-session-store.md",
+      "activity": [
+        {
+          "date": "2026-10-17",
+          "commits": 5,
+          "labels": [
+            "verify(session): validate exact-head browser storage evidence",
+            "test(session): promote adversarial storage proof",
+            "docs(tasks): submit atomic session storage evidence",
+            "feat(storage): persist atomic multi-session history"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-17",
+      "lastActivity": "2026-10-17",
+      "commitCount": 5
+    },
+    {
+      "id": "E9-T04",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Preserve immutable disk state for historical checkpoints",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T02",
+        "E3-T12c3"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Rewind guest files along with CPU and RAM without overwriting the current persistent disk.",
+      "boundary": "## Boundary\n\nVersioned copy-on-write overlay roots and their reference/identity rules. Each checkpoint references an immutable disk generation; replay writes use a private overlay.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T04`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Create two roots around a real guest file change and restore the matching content from each.",
+          "checked": false
+        },
+        {
+          "text": "Keep checkpoint disk roots stable while recording continues and when a separate live branch writes the same block.",
+          "checked": false
+        },
+        {
+          "text": "Reject mismatched base images/generations before applying state; preserve shared ancestors when a child session is deleted.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Interleave writes and checkpoint publication, then restore both roots in reverse order. Any newer file bytes leaking into the older state, or mutation of a sibling root, is a failure.",
+      "file": "tasks/epic-9-session-time-travel/E9-T04-historical-disk-roots.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T05",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Capture and restore coherent software session checkpoints",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T03",
+        "E9-T04"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Save a usable single-hart software-rendered machine at a session position and restore it after reload.",
+      "boundary": "## Boundary\n\nCoordinate CPU/RAM/device state, clock policy, input queues, log cursor and historical disk root at one bounded quiescence point. Accelerated guests remain explicitly gated until T17/T18.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T05`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Record and restore exact CPU/device/disk witnesses from the same boundary, including pending I/O and held keyboard state.",
+          "checked": false
+        },
+        {
+          "text": "A failed capture or rejected restore leaves the previous committed checkpoint and current machine usable; never publish half a tuple.",
+          "checked": false
+        },
+        {
+          "text": "Use real native and built-browser fixtures; restore guest-visible memory and files rather than accepting a screenshot as state proof.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Capture during disk I/O and input transitions, force quiesce timeout and corrupt one component. Demand all-or-nothing admission and an independently checked post-restore guest witness.",
+      "file": "tasks/epic-9-session-time-travel/E9-T05-coherent-software-checkpoints.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T06",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Add the local saved-session library and checkpoint controls",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T05"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Let a user find, name and reopen real locally stored session checkpoints.",
+      "boundary": "## Boundary\n\nThe session library UI over the actual store: list, rename, start recording, checkpoint, stop and open. Display duration, storage usage, build/image identity and compatibility state; label previews and exact restore points separately.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T06`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Two saved sessions remain visible after reload; renaming and opening one selects its actual stored checkpoint and matching guest state.",
+          "checked": false
+        },
+        {
+          "text": "Show capturing, restoring, incomplete, incompatible and storage-error states, with keyboard-accessible controls and responsive layouts.",
+          "checked": false
+        },
+        {
+          "text": "Existing sessions with no event log offer checkpoint restoration only; recording does not fabricate history from before it was enabled.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Try an incompatible saved build, rapid selection changes and keyboard-only operation. The displayed selected session must agree with the active machine, not an old preview.",
+      "file": "tasks/epic-9-session-time-travel/E9-T06-session-library.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T07",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Manage session quotas retention and shared-data deletion",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T03",
+        "E9-T04",
+        "E9-T06"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Keep local recordings within explicit user-controlled storage limits without corrupting shared history.",
+      "boundary": "## Boundary\n\nQuota handling and reference-aware session deletion/garbage collection; no cloud storage. Expose origin usage, persistent-storage request outcome and retention controls.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T07`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Quota exhaustion stops or pauses recording with a clear state and preserves the last committed prefix; do not silently discard a named session.",
+          "checked": false
+        },
+        {
+          "text": "Delete one branch and reclaim only unreachable chunks; shared checkpoints, disk roots and sibling sessions still restore.",
+          "checked": false
+        },
+        {
+          "text": "Interrupt garbage collection and reopen storage safely; surface browser eviction or missing data honestly and provide delete/retry actions.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Force quota failure during append and interrupt GC after reference updates. Check every surviving session against its original content hashes and disk roots.",
+      "file": "tasks/epic-9-session-time-travel/E9-T07-retention-and-quota.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T08",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Prove the saved-checkpoint experience across reload",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T06",
+        "E9-T07"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Deliver the first usable milestone: a local session library with real restore points.",
+      "boundary": "## Boundary\n\nRecorded built-browser integration of accepted checkpoint/store/library boundaries. This milestone does not claim continuous replay or arbitrary-time seeking.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T08`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Create two sessions, make different guest file changes, checkpoint each, reload the tab and restore the correct session/files/input state.",
+          "checked": false
+        },
+        {
+          "text": "Exercise rename, quota feedback and deletion through visible controls; preserve another session during deletion.",
+          "checked": false
+        },
+        {
+          "text": "Record original browser sources, guest state/disk witnesses, screenshots and zero unexpected errors; document the checkpoint-only capability in the unified docs.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Choose restore order independently, reuse the same guest filenames and reopen a fresh tab. A thumbnail or unchanged terminal screenshot cannot substitute for the guest file/state checks.",
+      "file": "tasks/epic-9-session-time-travel/E9-T08-checkpoint-milestone.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T09",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Place recorded events at exact guest execution boundaries",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T01",
+        "E9-T02"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Give recording and replay one exact instruction position and ordered delivery mechanism.",
+      "boundary": "## Boundary\n\nThe single-hart event clock, ordered queue and bounded run-to-event fence across interpreter and JIT. Host callbacks stage data rather than mutate guest state at unrecorded moments.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T09`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Equal-position events preserve a monotonic tie-break sequence, including timer delivery and WFI/idle advancement.",
+          "checked": false
+        },
+        {
+          "text": "A JIT block cannot run past a pending event boundary; interpreter/JIT and varied run quanta reach identical state at that boundary.",
+          "checked": false
+        },
+        {
+          "text": "Counters survive snapshot/restore and values above 2^53; sequence exhaustion or an unsupported scheduling mode fails explicitly.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Deliver events at a block edge, inside a compiled block and across WFI. Vary browser callback order and run quanta; a shifted injection point or duplicated event is a refutation.",
+      "file": "tasks/epic-9-session-time-travel/E9-T09-event-clock.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T10",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Record user and host-control inputs at delivery",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T09"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Capture actual user inputs and host actions as guest-visible ordered events.",
+      "boundary": "## Boundary\n\nUART, keyboard, absolute/relative pointer, resize and offered clipboard/file-transfer ingress through the common delivery queue. Store large payloads by content hash; explicitly gate unsupported input channels.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T10`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Record exact delivered bytes/events, including releases, modifiers, pointer mode changes and a file upload, with event clock keys rather than DOM timestamps alone.",
+          "checked": false
+        },
+        {
+          "text": "Repeated input and same-position sequences retain their original order and payload identity across store/reload.",
+          "checked": false
+        },
+        {
+          "text": "Pause/resume/stop boundaries and failed or cancelled transfers produce a documented, replayable prefix; no hidden live input may enter replay.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Use rapid typing, focus loss with a held key, duplicate-position pointer events and a cancelled partial upload. Compare guest-observed events and file bytes, not just host event counts.",
+      "file": "tasks/epic-9-session-time-travel/E9-T10-user-input-recording.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T11",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Record guest-visible time and entropy observations",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T09"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make host time and random inputs reproducible at their original guest positions.",
+      "boundary": "## Boundary\n\nClock/RTC updates, lifecycle rebases, idle/timer decisions and supplied entropy, using the contract inventory. Deterministically derived values need a frozen policy; externally supplied values need recorded bytes.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T11`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "A workload reading time and RNG around sleeps, pause/resume and tab lifecycle changes replays identical observations.",
+          "checked": false
+        },
+        {
+          "text": "Replay consumes recorded values without reading the current host clock or CSPRNG for guest-visible results.",
+          "checked": false
+        },
+        {
+          "text": "Malformed entropy lengths, clock-policy mismatches and exhausted records stop with a typed divergence error.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Replay under a different wall clock and entropy provider, including background/resume transitions. Any influence from the replay host refutes the boundary.",
+      "file": "tasks/epic-9-session-time-travel/E9-T11-clock-and-entropy-recording.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T12",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Record asynchronous device payloads and completion order",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T09"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prevent host scheduling of I/O from changing the recorded guest execution.",
+      "boundary": "## Boundary\n\nRecord external completion delivery and any guest-visible bytes/DMA writes for supported block, console/file-agent and audio-input adapters. GPU results are reserved for T18, and unrecorded adapters must refuse recording.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T12`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Separate immutable base-disk payload references from nondeterministic completion delivery; identify each request and record exactly one accepted completion.",
+          "checked": false
+        },
+        {
+          "text": "Replay payload bytes, completion sequence and interrupt effects under deliberately different host callback schedules.",
+          "checked": false
+        },
+        {
+          "text": "Include pending adapter state and event cursors in checkpoints; cancellations and stale-generation replies cannot mutate a restored guest.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Reorder and delay host callbacks, cancel an in-flight request at a checkpoint and inject an old completion after restore. Compare guest memory and queue/interrupt witnesses.",
+      "file": "tasks/epic-9-session-time-travel/E9-T12-device-completion-recording.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T13",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Capture network sessions and replay them with zero live egress",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T09",
+        "E9-T03"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Reproduce recorded network observations offline without repeating external actions.",
+      "boundary": "## Boundary\n\nThe VM transport boundary for incoming bytes, connection outcomes, delivery order and replay egress suppression. Record relevant outgoing intent for validation; retain payloads locally by hash.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T13`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "A pinned real guest network exchange records byte payloads, close/error outcomes and exact delivery positions, then replays with the original server unavailable.",
+          "checked": false
+        },
+        {
+          "text": "During replay, the provider cannot open sockets or send packets/HTTP actions; observe zero egress with an independent transport witness.",
+          "checked": false
+        },
+        {
+          "text": "A changed guest send intent, missing payload or exhausted network trace stops as divergence; do not retry against a live server.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Record a state-changing request against a local counter server, replay repeatedly and prove the counter never increments again. Replay with changed DNS/server content and failed connectivity.",
+      "file": "tasks/epic-9-session-time-travel/E9-T13-network-capture.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T14",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Replay recorded sessions and detect the first divergence",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T05",
+        "E9-T10",
+        "E9-T11",
+        "E9-T12",
+        "E9-T13"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Re-execute a recorded software VM from its starting checkpoint using only recorded external inputs.",
+      "boundary": "## Boundary\n\nThe replay driver, intent matching, exact event consumption and state-digest comparison. Runtime JIT artifacts may be rebuilt; observable guest behavior must remain identical.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T14`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Original and replayed CPU/RAM/device/disk digests match at selected event positions in native and built-browser runs, with interpreter and JIT.",
+          "checked": false
+        },
+        {
+          "text": "Replay completion and trace exhaustion stop at the declared end; switching to live execution requires an explicit separate branch action.",
+          "checked": false
+        },
+        {
+          "text": "Report the first missing/extra/misordered event or digest mismatch with its exact position; retain the recording and do not conceal drift by loading a later checkpoint.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Corrupt one event or omit one DMA payload, then vary execution quanta and host schedules. Require a precise divergence instead of an apparently successful replay.",
+      "file": "tasks/epic-9-session-time-travel/E9-T14-deterministic-replay.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T15",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Add incremental RAM keyframes with bounded storage work",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T05",
+        "E9-T14"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Create periodic seek points without serializing a full Omarchy-sized checkpoint every second.",
+      "boundary": "## Boundary\n\nDirty-page/incremental RAM checkpoint encoding and bounded chain/reference management, reusing accepted disk roots and device snapshots. Compression stays outside long UI-thread tasks.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T15`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Reconstruct exact state from a full base plus deltas across guest writes, DMA and restore; all memory mutation paths participate in dirty tracking.",
+          "checked": false
+        },
+        {
+          "text": "Bound delta-chain length and checkpoint work under the T01 budgets; record actual full/delta sizes, pause time and encode/decode memory.",
+          "checked": false
+        },
+        {
+          "text": "Missing/corrupt ancestor chunks refuse restore; deduplicated chunks remain live while referenced by another keyframe or session.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Write memory through CPU stores and device DMA, including a page modified back to its earlier value. Remove an ancestor and check refusal; compare reconstruction with an independent full snapshot.",
+      "file": "tasks/epic-9-session-time-travel/E9-T15-incremental-checkpoints.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T16",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Seek and reverse-step with cancellable replay-forward",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T14",
+        "E9-T15"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Reach a selected recorded instruction by restoring an earlier keyframe and replaying forward.",
+      "boundary": "## Boundary\n\nKeyframe lookup, exact run-to-target and seek request ownership. Rapid scrubbing cancels superseded work; a stale response cannot replace the latest selected machine.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T16`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Targets before/after events and between keyframes reach the same state digest as a from-start replay.",
+          "checked": false
+        },
+        {
+          "text": "Forward-step and reverse-step use precise instruction semantics, including traps, WFI and boundaries sharing an event position.",
+          "checked": false
+        },
+        {
+          "text": "Rapid alternating seeks terminate or cancel within the declared bound; only the latest request publishes state, progress and its rendered result.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Issue 100 seeded forward/backward seeks with overlapping requests. Delay an old seek completion and prove it cannot win; independently derive target digests by replaying from the initial checkpoint.",
+      "file": "tasks/epic-9-session-time-travel/E9-T16-seek-controller.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T17",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Restore historical accelerated desktop checkpoint pairs",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T05",
+        "E9-T16",
+        "E6-T11d74c",
+        "E6-T11d74d"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Use coherent RAM/disk/GPU checkpoint pairs as accelerated session keyframes.",
+      "boundary": "## Boundary\n\nIntegrate the accepted production GPU checkpoint path, renderer/profile identity, physical scanout and fresh epoch ownership with the session store. Reuse verified predecessor work; no raw WebGL handles are serialized.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T17`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Capture two real accelerated desktop positions and restore the matching guest state, disk root, GPU resources and physical scanout from each.",
+          "checked": false
+        },
+        {
+          "text": "Require actual post-restore guest rendering/input and current-epoch scanout; old screenshots, retained readiness messages and software fallback do not prove accelerated restore.",
+          "checked": false
+        },
+        {
+          "text": "Reject incompatible host/profile/build or lost-context captures cleanly. Reuse the verified E6-T11d74a/b/c/d native/renderer/worker/publication path; the cancelled E6-T11 container is not an executable prerequisite. Retain the authenticated clock policy and fresh epochs.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Cross-wire RAM/disk/GPU components, change the host profile, lose context while capturing and send stale epoch completions. Require explicit refusal and preservation of the original session.",
+      "file": "tasks/epic-9-session-time-travel/E9-T17-gpu-session-checkpoints.md",
+      "activity": [
+        {
+          "date": "2026-10-17",
+          "commits": 1,
+          "labels": [
+            "docs(replay): bind the contract to production GPU checkpoints"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-17",
+      "lastActivity": "2026-10-17",
+      "commitCount": 1
+    },
+    {
+      "id": "E9-T18",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Replay guest-visible GPU results and completion ordering",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T17",
+        "E9-T09",
+        "E9-T14"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prevent GPU execution from introducing unrecorded guest-visible differences during replay.",
+      "boundary": "## Boundary\n\nThe graphics nondeterminism adapter: readback bytes, query/fence/error results, shared-memory writes and completion order. Separate exact guest state from presentation pixels across different physical GPUs.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T18`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Record every admitted guest-visible result at its event boundary and replay exact bytes/order, including pending jobs across a keyframe.",
+          "checked": false
+        },
+        {
+          "text": "An actual guest GPU workload produces matching replay state and documented physical rendering witnesses; do not assume command replay alone gives cross-GPU bit-identical pixels.",
+          "checked": false
+        },
+        {
+          "text": "Missing results, unsupported profiles, context loss and stale resource epochs produce explicit outcomes without live result substitution or stranded fences.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Change upload/draw/readback completion timing and host results, then replay. Corrupt one recorded readback and require divergence; inject a stale GPU reply after a seek.",
+      "file": "tasks/epic-9-session-time-travel/E9-T18-gpu-result-replay.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T19",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Build the session timeline and accessible time-travel controls",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T06",
+        "E9-T16"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Expose play/pause, seek, forward/backward step and event/keyframe navigation over real recorded state.",
+      "boundary": "## Boundary\n\nThe timeline UI and embedding control surface over the accepted seek controller. Show recording/replay/live mode, exact position, event markers, previews, progress, cancellation and errors.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T19`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Mouse, touch and keyboard users can select a saved session, scrub, step and navigate keyframes; previews never masquerade as completed machine restoration.",
+          "checked": false
+        },
+        {
+          "text": "Visible position, active VM state and rendered frame agree after each completed seek; obsolete progress cannot overwrite a newer request.",
+          "checked": false
+        },
+        {
+          "text": "Reflow on narrow screens, preserve focus/status announcements and keep controls responsive during restoration; unsupported accelerated sessions are clearly gated until T17/T18 are accepted.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Operate the timeline with keyboard only, scrub faster than restores finish and select incompatible/incomplete sessions. Check displayed positions against independently observed VM digests.",
+      "file": "tasks/epic-9-session-time-travel/E9-T19-timeline-ui.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T20",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Continue from the past on an isolated recording branch",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T19",
+        "E9-T04",
+        "E9-T14"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Let a user resume from a past position while preserving the original session and its future.",
+      "boundary": "## Boundary\n\nBranch creation with a new session/log identity and private writable disk root. Network access stays offline until a deliberate go-live transition establishes fresh connections; never retransmit recorded actions as a side effect of branching.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T20`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Create two continuations from one past position and preserve original future events, files and shared ancestors unchanged.",
+          "checked": false
+        },
+        {
+          "text": "Branch writes and new inputs appear only in the selected child; reopen and replay parent and siblings independently.",
+          "checked": false
+        },
+        {
+          "text": "An explicit go-live action resets or refuses historical external connections under the documented policy; no automatic reconnection or side-effect replay occurs during seek.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Write the same file differently in parent and two children, then delete/reopen in varying order. Use an external counter to detect unintended reconnects or duplicate state-changing sends.",
+      "file": "tasks/epic-9-session-time-travel/E9-T20-branch-from-history.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T21",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Export and import complete bounded local session bundles",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T07",
+        "E9-T16",
+        "E9-T18"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Let users back up and move a recorded session with its required content and compatibility identity.",
+      "boundary": "## Boundary\n\nAn explicit user-invoked local bundle format; include manifest, log, reachable keyframes, historical disk references and pinned runtime/assets needed by the declared portability policy. Cloud sync is not included.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T21`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Export/import into a fresh browser profile and replay using declared bundled or retained assets, without relying on the exporter's caches.",
+          "checked": false
+        },
+        {
+          "text": "Verify digests, section limits, duplicate entries, required versions and total decompressed size before publishing imported state; reject incompatible sessions non-destructively.",
+          "checked": false
+        },
+        {
+          "text": "Document that recordings contain guest data and input/network payloads; provide explicit export/delete controls and no automatic upload.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Import truncated, foreign-build, path-traversal, duplicate and decompression-bomb bundles. An import failure must not alter another local session or write outside its store.",
+      "file": "tasks/epic-9-session-time-travel/E9-T21-session-export-import.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T22",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Measure recording storage and seek overhead on real guests",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T15",
+        "E9-T16",
+        "E9-T18",
+        "E9-T19"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Prove the predeclared recording, storage-growth and seek budgets on software and GPU desktop workloads.",
+      "boundary": "## Boundary\n\nA repeatable equal-work benchmark and bounded regressions, using T01 fixture identities/reference environment. Measure with recording enabled/disabled and distinguish preview, checkpoint restore and replay-forward times.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T22`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "Publish raw repeated samples, p50/p95 latency, recording overhead, peak memory, bytes per minute and checkpoint cadence for pinned real workloads.",
+          "checked": false
+        },
+        {
+          "text": "Run the seeded seek workload across short and longer sessions, with cached and initial-load measurements reported separately; apply the unchanged T01 budgets.",
+          "checked": false
+        },
+        {
+          "text": "Changing a budget after a failed run requires an explicit revised contract and retains the failed evidence; no MIPS or instant-scrubbing claim follows from a thumbnail.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Repeat with dirty RAM, sustained file/network traffic and GPU readback, using independent seeds. Keep first loads and unfavorable samples; fabricated idle-only wins or changed workload amounts refute.",
+      "file": "tasks/epic-9-session-time-travel/E9-T22-replay-performance.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T23",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Harden recording and seeking against crashes and corrupt history",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T07",
+        "E9-T18",
+        "E9-T20",
+        "E9-T21",
+        "E9-T22"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Keep recorded history and the browser usable across interruption, malformed data and device loss.",
+      "boundary": "## Boundary\n\nIntegration recovery of accepted session boundaries: append/keyframe/branch/GC interruption, quota/eviction, multi-tab ownership, cancelled seeks and graphics context loss.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T23`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "A seeded fault matrix preserves the last committed prefix and every unaffected parent/sibling session; incomplete work never becomes playable.",
+          "checked": false
+        },
+        {
+          "text": "Exercise at least 10000 bounded manifest/event/keyframe mutations and varied completion schedules with no panic, out-of-bounds access, unbounded allocation or hung control request.",
+          "checked": false
+        },
+        {
+          "text": "Actual built-browser context loss, reload and stale-epoch injection resolve pending requests and show a recoverable state; evidence includes exact positions, digests and original failures.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Choose new interruption points around commits and fence completion, race two tabs, and sabotage a cancellation/generation check to show that the promoted tests detect it.",
+      "file": "tasks/epic-9-session-time-travel/E9-T23-recovery-hardening.md",
+      "activity": [],
+      "firstActivity": null,
+      "lastActivity": null,
+      "commitCount": 0
+    },
+    {
+      "id": "E9-T24",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "CAPSTONE locally saved replayable VM sessions with a time-travel UI",
+      "priority": null,
+      "status": "pending",
+      "depends_on": [
+        "E9-T08",
+        "E9-T13",
+        "E9-T18",
+        "E9-T19",
+        "E9-T20",
+        "E9-T21",
+        "E9-T22",
+        "E9-T23"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": true,
+      "goal": "Ship a user-visible local time traveler that records, reopens, rewinds and branches real VM sessions.",
+      "boundary": "## Boundary\n\nFinal integration, unified Docstream documentation and production publication of the accepted boundaries. No new replay semantics or hidden fixture substitutions belong in this capstone.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T24`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "criteria": [
+        {
+          "text": "From a fresh browser profile, record a software Linux session and a qualified accelerated desktop session with real input, file edits and a local witnessed network exchange.",
+          "checked": false
+        },
+        {
+          "text": "Reload, choose each saved session, seek backward/forward and step at exact positions; match CPU/RAM/device/disk state and applicable GPU result witnesses against the recording, with zero replay egress.",
+          "checked": false
+        },
+        {
+          "text": "Branch from the past, edit a file and prove parent/sibling history unchanged; export/import one session into another fresh profile and replay it.",
+          "checked": false
+        },
+        {
+          "text": "Exercise visible timeline, compatibility, storage and recovery states, verify the existing guest/fast-boot regressions, record final clean-clone evidence and obtain fresh independent verification.",
+          "checked": false
+        },
+        {
+          "text": "Update the unified docs and roadmap capability, build locally, deploy through the existing Cloudflare process and directly verify the public path with original sources and zero unexpected errors.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 5,
+      "criteriaDone": 0,
+      "verificationLog": "(pending; no implementation or verification claim)",
+      "adversarial": "Select independent seek positions, remove caches/network, and replay on the declared supported host profile. Reject canned footage, a software frame labelled GPU, hidden live requests, changed fixtures or an unverified implementation claim.",
+      "file": "tasks/epic-9-session-time-travel/E9-T24-capstone-local-time-traveler.md",
       "activity": [],
       "firstActivity": null,
       "lastActivity": null,

@@ -1,0 +1,58 @@
+{
+  "source_sha256": "0fe9bba47be9eab491b6bcfa98bc5e31d74ca36a019288df94d32a1a643a896f",
+  "recordings": [
+    {
+      "recording": "worker",
+      "scriptId": "1359",
+      "coverage_sha256": "7e26d4857b28aa465697d86810b7693361cd96afc00f1111fe0f84d6defb1dab"
+    },
+    {
+      "recording": "supplement-final",
+      "scriptId": "25",
+      "coverage_sha256": "5b61d74a6f9b2eaad0a8e155a2e5af2e92d6adf811cadc52ba3ac02980093070"
+    }
+  ],
+  "uncovered_lines": [],
+  "unexecuted_ranges_with_waivers": [
+    {
+      "start": 1391,
+      "end": 1399,
+      "line": 20,
+      "source": "?? error",
+      "classification": "waived",
+      "reason": "Unknown/non-Error normalization fallback; real native ConstraintError/VersionError and quota errors already exercise the storage mapping. No platform known-error shape needs this fallback."
+    },
+    {
+      "start": 3292,
+      "end": 3318,
+      "line": 52,
+      "source": "catch { reject(failure); }",
+      "classification": "waived",
+      "reason": "Defensive abort-after-settlement catch; every actual IndexedDB fault/abort in scope settles during an active transaction. It cannot publish data."
+    },
+    {
+      "start": 5194,
+      "end": 5260,
+      "line": 91,
+      "source": "() => { failed = true; reject(new SessionStoreError('Blocked')); }",
+      "classification": "waived",
+      "reason": "Blocked upgrade callback is compatibility scaffolding: the version-1 namespace has no older live schema connection. Current-format reads/writes and versionchange close/error refusal are exercised."
+    },
+    {
+      "start": 6938,
+      "end": 6966,
+      "line": 126,
+      "source": "error => reject(wrap(error))",
+      "classification": "waived",
+      "reason": "Browser Web Lock service rejection fallback; supported secure-origin lock grant, contention, pending-close and renderer-destruction release are exercised. No additional ownership mechanism is claimed."
+    },
+    {
+      "start": 10658,
+      "end": 10667,
+      "line": 206,
+      "source": "continue;",
+      "classification": "waived",
+      "reason": "Concurrent out-of-band catalog deletion guard; the append-only T03 API does not delete committed rows. A missing initial row is exercised by direct open; retention deletion belongs a later boundary."
+    }
+  ]
+}

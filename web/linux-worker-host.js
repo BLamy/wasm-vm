@@ -16,12 +16,17 @@ export async function stopLinuxController(controller) {
 }
 
 export async function startLinuxBootWorker(opts = {}) {
+  const retainedGpu = opts.gpuRuntime === "published-factory-v1";
+  if (opts.gpuRuntime !== undefined && !retainedGpu) throw new Error("unknown GPU runtime");
+  if (retainedGpu && (opts.virgl !== true || opts.bootSnapshot === false)) {
+    throw new Error("published GPU runtime requires an accelerated factory warm boot");
+  }
   const WorkerCtor = opts.WorkerCtor ?? globalThis.Worker;
   if (typeof WorkerCtor !== "function") {
     throw new Error("whole-machine Web Worker is unavailable");
   }
 
-  const worker = new WorkerCtor(new URL("./linux-worker.js", import.meta.url), {
+  const worker = new WorkerCtor(new URL(retainedGpu ? "./gpu-runtime-worker.js" : "./linux-worker.js", import.meta.url), {
     type: "module",
     name: "wasm-vm-linux",
   });
@@ -46,6 +51,7 @@ export async function startLinuxBootWorker(opts = {}) {
     workerHeartbeatTimeoutMs,
     workerBootTimeoutMs,
     WorkerCtor: _ignored,
+    gpuRuntime: _runtimeChoice,
     ...dataOpts
   } = opts;
   try { onWorker(worker); } catch (error) {

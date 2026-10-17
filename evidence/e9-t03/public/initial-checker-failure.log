@@ -1,0 +1,69 @@
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   'Failed to load resource: the server responded with a status of 404 ()',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n',
++   'AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n' +
++     '\n' +
++     '304 !== 200\n'
++ ]
+- []
+
+    at file:///Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/tools/verify/e9-session-store-browser.mjs:408:10

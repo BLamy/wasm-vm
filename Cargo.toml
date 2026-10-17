@@ -11,6 +11,7 @@ members = [
     "crates/wvseccomp",
     "crates/wasm",
     "crates/wasm-web",
+    "crates/session-web",
     "crates/wasm-emit",
     "crates/jit-translate",
     "crates/jit-runtime",

@@ -1,0 +1,1058 @@
+{
+  "status": "passed",
+  "head": "54a270afbd17758e4edddb4f332123fc5d380037",
+  "report_sha256": "b091582b530875f696333768333e87aee9abd6a63bac132112d1c5bd6b3ab1bf",
+  "trace_sha256": "083e7809b2798fb6a4498cfa51cfdf90d555359f67bbdcc45ab9e974e920dc42",
+  "coverage_sha256": "2768a45bdf4b794ed4f7cc99b3db3405fe423d94035807ff2306179fdc2d97e5",
+  "sources": {
+    "web/session-store.js": "0fe9bba47be9eab491b6bcfa98bc5e31d74ca36a019288df94d32a1a643a896f",
+    "web/roadmap.js": "54a927853d896a9ab3448de45d2cb20456aa05a2a9c0a26aae0978bcb6b54c88",
+    "crates/storage/src/session_publication.rs": "a5044b1240232cf48cf4f2b81d62042237e42f1eb1645e4db2618c2755735dde",
+    "crates/session-web/src/lib.rs": "263b5e9f0ff3b5a289bcd9e1c350b6d45fcc0b80bc7bf51a290ff503590bf0d9",
+    "web/dist/session-store.js": "0fe9bba47be9eab491b6bcfa98bc5e31d74ca36a019288df94d32a1a643a896f",
+    "web/dist/pkg/wasm_vm_wasm_bg.wasm": "1987670630ccd9c74d70c7d92b374f1fef799268b3dcf8334084415ca0329170",
+    "web/dist/session-pkg/wasm_vm_session_bg.wasm": "9ec4b3ccaaee0027c19a32eeb6362180ffef3e65dce8eba44cda89640cc3dd73",
+    "tools/verify/e9-session-store-browser.mjs": "b0a899326474e21e5900e64ecf11084190b04bc897dfa500047100df15ccc5a3",
+    "tools/verify/e9-session-store-critic.mjs": "e32409615d3902b280d694230542e60285809e7f0adf646239428fe27a8469c4"
+  },
+  "served": [
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm.js",
+      "bytes": 129443,
+      "sha256": "56778a348c690f847568f23006630a963a73f4686271218cd99637f97d918e69",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js"
+    },
+    {
+      "path": "web/dist/roadmap.js",
+      "bytes": 58225,
+      "sha256": "54a927853d896a9ab3448de45d2cb20456aa05a2a9c0a26aae0978bcb6b54c88",
+      "url": "https://wasm-vm.pages.dev/roadmap.js"
+    },
+    {
+      "path": "web/dist/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1782859,
+      "sha256": "1987670630ccd9c74d70c7d92b374f1fef799268b3dcf8334084415ca0329170",
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm"
+    },
+    {
+      "path": "web/dist/session-store.js",
+      "bytes": 17812,
+      "sha256": "0fe9bba47be9eab491b6bcfa98bc5e31d74ca36a019288df94d32a1a643a896f",
+      "url": "https://wasm-vm.pages.dev/session-store.js"
+    },
+    {
+      "path": "web/dist/session-pkg/wasm_vm_session.js",
+      "bytes": 9350,
+      "sha256": "cd9495a303145d7ecb5442e18897fee46972c8331efc26f8c0fe2569b3bce093",
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js"
+    },
+    {
+      "path": "web/dist/session-pkg/wasm_vm_session_bg.wasm",
+      "bytes": 301955,
+      "sha256": "9ec4b3ccaaee0027c19a32eeb6362180ffef3e65dce8eba44cda89640cc3dd73",
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm"
+    }
+  ],
+  "cache_revalidations": [
+    {
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "sha256": "54a927853d896a9ab3448de45d2cb20456aa05a2a9c0a26aae0978bcb6b54c88"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "sha256": "56778a348c690f847568f23006630a963a73f4686271218cd99637f97d918e69"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "sha256": "0fe9bba47be9eab491b6bcfa98bc5e31d74ca36a019288df94d32a1a643a896f"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "sha256": "cd9495a303145d7ecb5442e18897fee46972c8331efc26f8c0fe2569b3bce093"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "sha256": "56778a348c690f847568f23006630a963a73f4686271218cd99637f97d918e69"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "sha256": "54a927853d896a9ab3448de45d2cb20456aa05a2a9c0a26aae0978bcb6b54c88"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "sha256": "0fe9bba47be9eab491b6bcfa98bc5e31d74ca36a019288df94d32a1a643a896f"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "sha256": "cd9495a303145d7ecb5442e18897fee46972c8331efc26f8c0fe2569b3bce093"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "sha256": "56778a348c690f847568f23006630a963a73f4686271218cd99637f97d918e69"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "sha256": "54a927853d896a9ab3448de45d2cb20456aa05a2a9c0a26aae0978bcb6b54c88"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "sha256": "0fe9bba47be9eab491b6bcfa98bc5e31d74ca36a019288df94d32a1a643a896f"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "sha256": "cd9495a303145d7ecb5442e18897fee46972c8331efc26f8c0fe2569b3bce093"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "sha256": "56778a348c690f847568f23006630a963a73f4686271218cd99637f97d918e69"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "sha256": "54a927853d896a9ab3448de45d2cb20456aa05a2a9c0a26aae0978bcb6b54c88"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "sha256": "0fe9bba47be9eab491b6bcfa98bc5e31d74ca36a019288df94d32a1a643a896f"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "sha256": "cd9495a303145d7ecb5442e18897fee46972c8331efc26f8c0fe2569b3bce093"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "sha256": "56778a348c690f847568f23006630a963a73f4686271218cd99637f97d918e69"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "sha256": "54a927853d896a9ab3448de45d2cb20456aa05a2a9c0a26aae0978bcb6b54c88"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "sha256": "0fe9bba47be9eab491b6bcfa98bc5e31d74ca36a019288df94d32a1a643a896f"
+    },
+    {
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "sha256": "cd9495a303145d7ecb5442e18897fee46972c8331efc26f8c0fe2569b3bce093"
+    }
+  ],
+  "ignored_favicon_errors": [
+    {
+      "url": "https://wasm-vm.pages.dev/favicon.ico",
+      "text": "Failed to load resource: the server responded with a status of 404 ()"
+    }
+  ],
+  "raw_console_errors": [
+    {
+      "member": "trace.trace",
+      "line": 18,
+      "text": "Failed to load resource: the server responded with a status of 404 ()",
+      "location": {
+        "url": "https://wasm-vm.pages.dev/favicon.ico",
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    }
+  ],
+  "trace_events": 1743,
+  "selected_network": [
+    {
+      "member": "trace.network",
+      "line": 13,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 23,
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 66,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 1782859,
+        "mimeType": "application/wasm",
+        "compression": 1161801,
+        "_sha1": "620e5ce876070fae801dfea71840bb89241c664b.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 69,
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 71,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 73,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 301955,
+        "mimeType": "application/wasm",
+        "compression": 192473,
+        "_sha1": "dbbd9ea0109de158222801a476c6e31481c2d0fe.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 213,
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 214,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 266,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 1782859,
+        "mimeType": "application/wasm",
+        "compression": 1782373,
+        "_sha1": "620e5ce876070fae801dfea71840bb89241c664b.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 270,
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 272,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 273,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 301955,
+        "mimeType": "application/wasm",
+        "compression": 301473,
+        "_sha1": "dbbd9ea0109de158222801a476c6e31481c2d0fe.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 286,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 294,
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 339,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 1782859,
+        "mimeType": "application/wasm",
+        "compression": 1782372,
+        "_sha1": "620e5ce876070fae801dfea71840bb89241c664b.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 343,
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 345,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 346,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 301955,
+        "mimeType": "application/wasm",
+        "compression": 301467,
+        "_sha1": "dbbd9ea0109de158222801a476c6e31481c2d0fe.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 358,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 378,
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 412,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 1782859,
+        "mimeType": "application/wasm",
+        "compression": 1782368,
+        "_sha1": "620e5ce876070fae801dfea71840bb89241c664b.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 415,
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 417,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 419,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 301955,
+        "mimeType": "application/wasm",
+        "compression": 301462,
+        "_sha1": "dbbd9ea0109de158222801a476c6e31481c2d0fe.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 439,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 440,
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 485,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 1782859,
+        "mimeType": "application/wasm",
+        "compression": 1782372,
+        "_sha1": "620e5ce876070fae801dfea71840bb89241c664b.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 488,
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 490,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 492,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 301955,
+        "mimeType": "application/wasm",
+        "compression": 301470,
+        "_sha1": "dbbd9ea0109de158222801a476c6e31481c2d0fe.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 504,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 506,
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 558,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 1782859,
+        "mimeType": "application/wasm",
+        "compression": 1782374,
+        "_sha1": "620e5ce876070fae801dfea71840bb89241c664b.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 562,
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 564,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 565,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 301955,
+        "mimeType": "application/wasm",
+        "compression": 301474,
+        "_sha1": "dbbd9ea0109de158222801a476c6e31481c2d0fe.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 577,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 579,
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 631,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 1782859,
+        "mimeType": "application/wasm",
+        "compression": 1782377,
+        "_sha1": "620e5ce876070fae801dfea71840bb89241c664b.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 636,
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 637,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 638,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 301955,
+        "mimeType": "application/wasm",
+        "compression": 301469,
+        "_sha1": "dbbd9ea0109de158222801a476c6e31481c2d0fe.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 658,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 662,
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 704,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 1782859,
+        "mimeType": "application/wasm",
+        "compression": 1782375,
+        "_sha1": "620e5ce876070fae801dfea71840bb89241c664b.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 708,
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 710,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 711,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 301955,
+        "mimeType": "application/wasm",
+        "compression": 301465,
+        "_sha1": "dbbd9ea0109de158222801a476c6e31481c2d0fe.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 726,
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 739,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 777,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 1782859,
+        "mimeType": "application/wasm",
+        "compression": 1782379,
+        "_sha1": "620e5ce876070fae801dfea71840bb89241c664b.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 782,
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 783,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 784,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 301955,
+        "mimeType": "application/wasm",
+        "compression": 301471,
+        "_sha1": "dbbd9ea0109de158222801a476c6e31481c2d0fe.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 796,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 817,
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 850,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 1782859,
+        "mimeType": "application/wasm",
+        "compression": 1782374,
+        "_sha1": "620e5ce876070fae801dfea71840bb89241c664b.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 855,
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 856,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "status": 304,
+      "content": {
+        "size": -1,
+        "mimeType": "x-unknown"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 857,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 301955,
+        "mimeType": "application/wasm",
+        "compression": 301469,
+        "_sha1": "dbbd9ea0109de158222801a476c6e31481c2d0fe.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 872,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 890,
+      "url": "https://wasm-vm.pages.dev/roadmap.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 923,
+      "url": "https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 1782859,
+        "mimeType": "application/wasm",
+        "compression": 1782376,
+        "_sha1": "620e5ce876070fae801dfea71840bb89241c664b.wasm"
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 928,
+      "url": "https://wasm-vm.pages.dev/session-store.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 929,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session.js",
+      "status": 200,
+      "content": {
+        "size": -1,
+        "mimeType": "application/javascript",
+        "compression": 0
+      }
+    },
+    {
+      "member": "trace.network",
+      "line": 930,
+      "url": "https://wasm-vm.pages.dev/session-pkg/wasm_vm_session_bg.wasm",
+      "status": 200,
+      "content": {
+        "size": 301955,
+        "mimeType": "application/wasm",
+        "compression": 301467,
+        "_sha1": "dbbd9ea0109de158222801a476c6e31481c2d0fe.wasm"
+      }
+    }
+  ],
+  "suite": {
+    "passed": 127,
+    "failed": 0
+  },
+  "crashes": [
+    {
+      "cut": "chunk-durable",
+      "prediction": "1",
+      "observed": "1",
+      "paused": {
+        "phase": "chunk-durable",
+        "id": "crash-chunk-durable",
+        "hash": "2afca3862dabcc3986ca2712cd191d442e2acdcdd07414a13ee6239dcb44d66f"
+      },
+      "manifestSha256": "3bb15fb3d087e68c6382554cf4878681a5784720802817859500235945f75582"
+    },
+    {
+      "cut": "object-durable",
+      "prediction": "1",
+      "observed": "1",
+      "paused": {
+        "phase": "object-durable",
+        "id": "crash-object-durable",
+        "hash": "0b54fd6cc9b162086aa9d17636919c1470de4869f6d76cc02fd56814cb2912e1"
+      },
+      "manifestSha256": "d1686bb7a1ad41b8a0a2ffa935c4cea9afa9ebdce76b8dd558779da1104b8553"
+    },
+    {
+      "cut": "before-commit",
+      "prediction": "1",
+      "observed": "1",
+      "paused": {
+        "phase": "before-commit",
+        "id": "crash-before-commit",
+        "hash": null
+      },
+      "manifestSha256": "5c6b672dca6fd5bfc0718d41611401734a5d45d847ba1d5af904f9938abaedcd"
+    },
+    {
+      "cut": "commit-durable",
+      "prediction": "2",
+      "observed": "2",
+      "paused": {
+        "phase": "commit-durable",
+        "id": "crash-commit-durable",
+        "hash": null
+      },
+      "manifestSha256": "8cff1bdee25143dfa2a7a65da819e35ba3dcd782402f0017c0222b75df4fe325"
+    }
+  ],
+  "races": 20,
+  "critic": {
+    "faults": [
+      {
+        "fault": "object-length",
+        "code": "Corrupt",
+        "playable": false,
+        "unavailable": true,
+        "manifestUnchanged": true
+      },
+      {
+        "fault": "object-parts",
+        "code": "Corrupt",
+        "playable": false,
+        "unavailable": true,
+        "manifestUnchanged": true
+      },
+      {
+        "fault": "cursor-zero",
+        "code": "Corrupt",
+        "playable": false,
+        "unavailable": true,
+        "manifestUnchanged": true
+      },
+      {
+        "fault": "cursor-overflow",
+        "code": "Corrupt",
+        "playable": false,
+        "unavailable": true,
+        "manifestUnchanged": true
+      }
+    ],
+    "reuseFaults": [
+      {
+        "fault": "chunk-content",
+        "code": "Corrupt"
+      },
+      {
+        "fault": "object-content",
+        "code": "Corrupt"
+      }
+    ],
+    "publication": [
+      {
+        "fault": "stale-cursor",
+        "code": "StaleCommit"
+      },
+      {
+        "fault": "changed-object",
+        "code": "Corrupt"
+      },
+      {
+        "fault": "missing-chunk",
+        "code": "Corrupt"
+      }
+    ],
+    "platformFaults": [
+      {
+        "fault": "object-quota",
+        "code": "Quota"
+      },
+      {
+        "fault": "native-constraint",
+        "code": "Storage"
+      },
+      {
+        "fault": "throwing-observer",
+        "code": "accepted"
+      }
+    ],
+    "cancellation": "WriterClosed",
+    "cancelledRow": null,
+    "close": {
+      "store": "Closed",
+      "writer": "WriterClosed"
+    },
+    "closedAcquisition": "Closed",
+    "version": {
+      "closed": "Closed",
+      "oldOpen": "Storage"
+    },
+    "catalogCommit": "Bound",
+    "catalogList": "Bound",
+    "reacquired": true,
+    "restored": true,
+    "reopened": true
+  },
+  "gpu": {
+    "restored": true,
+    "epoch": "0000000000000004",
+    "drawn": [
+      {
+        "epoch": "0000000000000004",
+        "sequence": null,
+        "bindingGeneration": "0000000000000329",
+        "resource": {
+          "generation": "0000000000000010",
+          "id": 13
+        },
+        "status": "drawn",
+        "presentation": {
+          "backend": "canvas2d",
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        }
+      }
+    ],
+    "retired": 2999712,
+    "workers": [
+      "https://wasm-vm.pages.dev/gpu-runtime-worker.js"
+    ]
+  },
+  "first_selected_200_trace_lines": {
+    "/pkg/wasm_vm_wasm.js": 13,
+    "/roadmap.js": 23,
+    "/pkg/wasm_vm_wasm_bg.wasm": 66,
+    "/session-store.js": 69,
+    "/session-pkg/wasm_vm_session.js": 71,
+    "/session-pkg/wasm_vm_session_bg.wasm": 73
+  },
+  "premature_304": []
+}

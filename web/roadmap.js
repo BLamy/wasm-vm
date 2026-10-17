@@ -214,6 +214,18 @@ export const ROADMAP = [
     blurb: "Cancelled 2026-07-06 — superseded by E3.5 OCI Workloads. The record/replay ideas may return as their own epic.",
     caps: [],
   },
+  {
+    epic: "E9",
+    title: "Session Time Travel",
+    status: "next",
+    blurb: "Local session history is being built in layers: durable storage, coherent checkpoints, then exact replay and timeline controls.",
+    caps: [
+      { name: "Durable multi-session history store", status: "verified", evidence: "E9-T03: bounded IndexedDB chunks, atomic commit cursors, reload/crash and two-tab writer proofs" },
+      { name: "Coherent saved machine and disk checkpoints", status: "pending", evidence: "E9-T04–T08" },
+      { name: "Exact replay, seeking and reverse-step", status: "pending", evidence: "E9-T09–T18" },
+      { name: "Session timeline and branches", status: "pending", evidence: "E9-T19–T20" },
+    ],
+  },
 ];
 
 // ════════════════════════════════════════════════════════════════════════════
