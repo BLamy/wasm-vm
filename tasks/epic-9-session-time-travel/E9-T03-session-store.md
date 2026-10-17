@@ -3,7 +3,7 @@ id: E9-T03
 epic: 9
 title: Persist multiple session logs with atomic publication
 priority: 524.903
-status: pending
+status: in-progress
 depends_on: [E9-T02, E3-T12d]
 estimate: S
 risk: high
@@ -34,4 +34,10 @@ Terminate between each publication step and race two tabs writing the same sessi
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-17 — worker — started
+
+E9-T02 and E3-T12d are verified. This high-risk S boundary adds a separate append-only,
+chunked IndexedDB session store. Existing resume-snapshot persistence remains independent.
+Publication will advance a commit cursor only after its immutable referenced data is durable;
+Web Locks will own writes and interrupted publication will retain the old committed prefix.
+The user authorized continuing through all of Epic 9; this layer remains unmerged.

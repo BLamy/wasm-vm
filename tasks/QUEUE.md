@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E9-T03** — Persist multiple session logs with atomic publication
 1. **E9-T04** — Preserve immutable disk state for historical checkpoints
 1. **E9-T09** — Place recorded events at exact guest execution boundaries
 1. **E6-T11e** — Survive hostile guest 3D requests and browser graphics context loss
@@ -448,7 +447,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 - [x] `524.901` [E9-T01](epic-9-session-time-travel/E9-T01-execution-contract.md) — Freeze the full-system session replay contract *(deps: E0-T16, E3-T12d)*
 - [x] `524.902` [E9-T02](epic-9-session-time-travel/E9-T02-session-manifest.md) — Define bounded session manifests and compatibility checks *(deps: E9-T01)*
-- [ ] `524.903` [E9-T03](epic-9-session-time-travel/E9-T03-session-store.md) — Persist multiple session logs with atomic publication *(deps: E9-T02, E3-T12d)*
+- [~] `524.903` [E9-T03](epic-9-session-time-travel/E9-T03-session-store.md) — Persist multiple session logs with atomic publication *(deps: E9-T02, E3-T12d)*
 - [ ] `524.904` [E9-T04](epic-9-session-time-travel/E9-T04-historical-disk-roots.md) — Preserve immutable disk state for historical checkpoints *(deps: E9-T02, E3-T12c3)*
 - [ ] `524.905` [E9-T05](epic-9-session-time-travel/E9-T05-coherent-software-checkpoints.md) — Capture and restore coherent software session checkpoints *(deps: E9-T03, E9-T04)*
 - [ ] `524.906` [E9-T06](epic-9-session-time-travel/E9-T06-session-library.md) — Add the local saved-session library and checkpoint controls *(deps: E9-T05)*
