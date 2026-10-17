@@ -4,7 +4,7 @@ epic: 9
 title: Restore historical accelerated desktop checkpoint pairs
 priority: 524.917
 status: pending
-depends_on: [E9-T05, E9-T16, E5-T26f, E6-T11]
+depends_on: [E9-T05, E9-T16, E6-T11d74c, E6-T11d74d]
 estimate: S
 risk: high
 capstone: false
@@ -22,7 +22,7 @@ Integrate the accepted production GPU checkpoint path, renderer/profile identity
 
 - [ ] Capture two real accelerated desktop positions and restore the matching guest state, disk root, GPU resources and physical scanout from each.
 - [ ] Require actual post-restore guest rendering/input and current-epoch scanout; old screenshots, retained readiness messages and software fallback do not prove accelerated restore.
-- [ ] Reject incompatible host/profile/build or lost-context captures cleanly. If E6-T11 is decomposed, replace its dependency with the actual verified production checkpoint successors before activation.
+- [ ] Reject incompatible host/profile/build or lost-context captures cleanly. Reuse the verified E6-T11d74a/b/c/d native/renderer/worker/publication path; the cancelled E6-T11 container is not an executable prerequisite. Retain the authenticated clock policy and fresh epochs.
 
 ## Deterministic acceptance
 

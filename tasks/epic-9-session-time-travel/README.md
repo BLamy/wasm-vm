@@ -66,8 +66,8 @@ runtime profile for recording or accelerated replay.
 - For GPU sessions use the accepted production RAM/disk/GPU pair and fresh resource epochs.
   Record guest-visible readbacks, query/error/fence results and completion order; rendering
   the same commands alone does not prove identical guest-visible observations.
-- Expect large snapshots: the currently pinned Omarchy desktop candidate is 198,380,324
-  compressed bytes (about 189 MiB). Use bounded chunk streaming, incremental RAM pages, shared immutable
+- Expect large snapshots: the pinned production GPU pair is 204,057,731 bytes
+  (about 195 MiB). Use bounded chunk streaming, incremental RAM pages, shared immutable
   content and safe reference-aware GC rather than a full snapshot at every timeline tick.
   T01 freezes measured workload identities and numeric budgets before tuning begins.
 
@@ -82,10 +82,10 @@ unchanged accepted evidence incrementally; no new GitHub Actions or external ser
 required. The final release follows the existing local build and Cloudflare deployment
 process, not an automatic deployment caused by adding this epic.
 
-The GPU slice currently names E6-T11 and E5-T26f as coarse prerequisites from this
-checkout. Before activation, bind any decomposed/cancelled container to its actual verified
-production checkpoint successor slices. Existing accepted GPU work should be integrated,
-not reimplemented or treated as proof of a complete session replay engine.
+The GPU slice names the verified E6-T11d74c/d production worker/accelerated warm-boot
+successors (including their native/renderer predecessors). The original E6-T11 container
+is cancelled. Integrate this accepted RAM/disk/GPU/clock pair; its renderer reconstruction
+journal is not proof of a complete session replay engine.
 
 ## Task index
 
@@ -107,7 +107,7 @@ not reimplemented or treated as proof of a complete session replay engine.
 | E9-T14 | [Replay recorded sessions and detect the first divergence](E9-T14-deterministic-replay.md) | E9-T05, E9-T10, E9-T11, E9-T12, E9-T13 | high |
 | E9-T15 | [Add incremental RAM keyframes with bounded storage work](E9-T15-incremental-checkpoints.md) | E9-T05, E9-T14 | high |
 | E9-T16 | [Seek and reverse-step with cancellable replay-forward](E9-T16-seek-controller.md) | E9-T14, E9-T15 | high |
-| E9-T17 | [Restore historical accelerated desktop checkpoint pairs](E9-T17-gpu-session-checkpoints.md) | E9-T05, E9-T16, E5-T26f, E6-T11 | high |
+| E9-T17 | [Restore historical accelerated desktop checkpoint pairs](E9-T17-gpu-session-checkpoints.md) | E9-T05, E9-T16, E6-T11d74c, E6-T11d74d | high |
 | E9-T18 | [Replay guest-visible GPU results and completion ordering](E9-T18-gpu-result-replay.md) | E9-T17, E9-T09, E9-T14 | high |
 | E9-T19 | [Build the session timeline and accessible time-travel controls](E9-T19-timeline-ui.md) | E9-T06, E9-T16 | medium |
 | E9-T20 | [Continue from the past on an isolated recording branch](E9-T20-branch-from-history.md) | E9-T19, E9-T04, E9-T14 | high |

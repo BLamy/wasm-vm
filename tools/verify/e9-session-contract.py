@@ -19,7 +19,7 @@ SOURCE_IDS = {
     "uart", "keyboard", "pointer", "display", "lifecycle", "mtime", "rtc",
     "entropy", "timers", "block-read", "block-write", "dma", "network",
     "network-time", "file-transfer", "agent", "clipboard", "audio-playback",
-    "audio-capture", "software-gpu", "gpu-results", "storage-control",
+    "audio-capture", "software-gpu", "gpu-results", "storage-control", "checkpoint-control",
 }
 SHA256 = re.compile(r"[0-9a-f]{64}\Z")
 
@@ -82,7 +82,8 @@ def main() -> int:
         "device", "intent", "status", "payload",
     }, "event records must bind both intent and effects to exact positions")
     require({"smp", "userspace-abi", "rp2350", "host-shared-folder", "unbound-extra-disk",
-             "live-microphone", "guest-3d", "wall-mtime", "unrecorded-hot-attachment"}
+             "live-microphone", "guest-3d", "wall-mtime", "paced-mtime",
+             "interactive-clock-switch", "unrecorded-hot-attachment"}
             <= set(contract["unsupported"]), "missing initial-profile refusal")
 
     rows = contract["sources"]
@@ -121,8 +122,21 @@ def main() -> int:
         actual = read_json(name)
         require(actual["artifacts"] == fixture["artifacts"] and
                 actual.get("chunkedImage") == fixture["chunked_image"], f"asset pins differ: {name}")
-        require(fixture["harts"] == 1 and fixture["clock"] == {"mode": "icount", "divider": 10},
-                "initial fixture must use the one-hart ICount profile")
+        expected_clock = {"mode": "icount", "divider": 10}
+        if fixture["id"] == "desktop-gpu-candidate-v1":
+            expected_clock = {"mode": "icount", "divider": 64, "interactive": "paced-on-keyboard",
+                              "restored_modes": ["icount", "paced-icount"]}
+            require(fixture["manifest"] == "web/artifacts-omarchy-virgl.json",
+                    "accelerated fixture must pin the actual production pair")
+            require(sha256(fixture["gpu_build_identity_source"]) == fixture["gpu_build_identity_sha256"],
+                    "production GPU checkpoint build identity changed")
+            require(fixture["verified_predecessors"] == [
+                "E6-T11d74a", "E6-T11d74b", "E6-T11d74c", "E6-T11d74d",
+            ] and all(re.search(r"^status: verified$", tasks.get(task, ""), re.MULTILINE)
+                      for task in fixture["verified_predecessors"]),
+                    "production checkpoint predecessors must actually be verified")
+        require(fixture["harts"] == 1 and fixture["clock"] == expected_clock,
+                "fixture clock policy differs from the frozen one-hart profile")
         require(fixture["qualification"] == "pending" and fixture["admit_after"],
                 "asset identity is not runtime qualification")
         require(all(task in tasks for task in fixture["admit_after"]), "unknown fixture gate")

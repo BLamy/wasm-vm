@@ -29,8 +29,9 @@ checkpoint. Do not splice an incompatible old RAM image into a new recording.
 
 The initial exclusions are SMP/parallel harts, the userspace Linux ABI runtime,
 RP2350/Hazard3, host shared folders/9p, external extra disks without their own immutable
-roots, live microphone capture, guest 3D acceleration and opt-in wall-clock `mtime`.
-Microphone, wall-clock and 3D support require the owners below plus separate qualification;
+roots, live microphone capture, guest 3D acceleration, opt-in wall-clock/paced `mtime`
+and interactive keyboard-triggered clock switching. Microphone, host-paced clock and 3D
+recording require the owners below plus separate qualification;
 the presence of a browser API does not admit them. Hot attachment or execution-policy
 changes during a recording must be refused unless represented by a supported event.
 Profiling and JIT compilation are derived host work, not guest time sources.
@@ -103,8 +104,8 @@ Owners name implementation tasks; an assignment does not mean the adapter exists
 | `keyboard` | `send_keyboard_event` / `sync_keyboard`; evdev frame contents, focus release, lock reconciliation and SYN_REPORT. | T10; retain frame boundaries and bounded-queue/drop outcomes. |
 | `pointer` | Tablet/mouse send/sync methods; absolute coordinates, relative motion, buttons and wheel. | T10; record delivered device frames, not raw DOM events. |
 | `display` | `set_display`; guest display configuration, pointer geometry and config-change interrupt. | T10; record accepted dimensions and outcome. Host CSS-only reflow is presentation. |
-| `lifecycle` | Loader pause/resume, `createGuestClockLifecycle`, restore rebases and clock/divider changes. | T10/T11; freeze clock policy, record admitted transitions, refuse an unsupported change. |
-| `mtime` | `sample_wall_clock_now` / `TimeSource::sample_wall`; host samples, clamps and rebases can affect counters/interrupts. | T11; initial profile uses ICount. Wall mode is gated until its samples/order are captured. |
+| `lifecycle` | Loader pause/resume, `createGuestClockLifecycle`, restore rebases and clock/divider changes, including `beforeKeyboardEvent` selecting paced/wall mode. | T10/T11; freeze clock policy, record admitted transitions, refuse an unsupported change. |
+| `mtime` | `sample_wall_clock_now` / `TimeSource::sample_wall` and `IdlePacer::limit_deadline`; host samples, idle ceilings, clamps and rebases affect counters/interrupts. | T11; initial profile uses ICount. Wall/paced modes and interactive switching are gated until their samples/order are captured. |
 | `rtc` | `JsWallClock`, `GoldfishRtc::read` and `poll`; TIME_LOW sample/high latch and alarm polling. | T11; capture all guest-affecting samples and their call intent, not just user-requested date reads. |
 | `entropy` | `CryptoEntropy::fill` and virtio-rng service; random bytes are DMA-written into guest buffers. | T11/T12; capture the actual byte slices and completion effects; never reseed from live Web Crypto during replay. |
 | `timers` | CLINT/SBI synchronization and WFI fast-forward, including external-I/O-pending inhibition. | T09/T11; regenerate deterministic state, replay external observations/pending state. |
@@ -118,8 +119,9 @@ Owners name implementation tasks; an assignment does not mean the adapter exists
 | `clipboard` | `ClipboardService` and the desktop agent bridge; permission outcomes select which host text/control frames reach the guest. | T10; capture delivered frames and relevant outcomes. Never re-read the live clipboard or request permission while replaying. |
 | `audio-playback` | `SharedAudioClock`, `SharedAudioSink`, JsHostTimer and virtio-snd pacing; atomic ring fill, clock and sink success/failure alter completions/XRUNs. | T12; capture guest-visible observations even if the output is muted. Live playback is presentation only during replay. |
 | `audio-capture` | `SharedAudioCapture`, capture lifecycle/XRUN notifications and microphone ring; PCM bytes, short reads, silence and errors. | T12; initial admission refuses live capture. Qualification must record the exact observed bytes and status/order, including samples arriving concurrently through SAB. |
-| `software-gpu` | Current assembly uses virtio-gpu `NullSink` plus shadow resources and a host presentation callback. | T05/T10/T12; checkpoint device state and record external configuration. Host framebuffer presentation is not proof of guest 3D acceleration. |
-| `gpu-results` | Guest 3D context/readback/fence/query/error completion adapter is not implemented by the current `NullSink` assembly. | T17/T18; explicitly gated. Capture guest-visible bytes, shared writes and completion order once a qualified production adapter exists. |
+| `software-gpu` | The software assembly uses virtio-gpu `NullSink` plus shadow resources and a host presentation callback. The production VirGL assembly is separate. | T05/T10/T12; checkpoint device state and record external configuration. Host framebuffer presentation is not proof of guest 3D acceleration. |
+| `gpu-results` | Production `attach_virgl`, `scatter_output`/layered writes, `complete` mailbox, synchronous control results, physical query availability/results and renderer errors. | T17/T18; whole-session replay remains gated. Capture guest-visible bytes, shared writes, success/failure and completion order through the existing production adapter. |
+| `checkpoint-control` | Loader `saveGpuCheckpoint` releases held input, pumps/drains original GPU work and binds native/RAM, disk, renderer, epoch and clock state. | T05/T10/T12/T17; record generated releases and drain effects even while paused, before publishing the keyframe. Reuse the authenticated pair and reconstruct fresh host resources; its renderer journal alone is not a complete VM recording. |
 | `storage-control` | Writer lock, quota resume/read-only/reset choices and imported/extra disk roots. | T04/T10/T12; immutable historical roots and recorded outcomes. Refuse destructive reset, foreign imports and unbound extra disks inside an admitted recording. |
 
 Read-only profiler timestamps, heartbeat deadlines, renderer FPS and UI animation clocks
@@ -172,15 +174,25 @@ checkpoints again. At the first checkpoint the file must contain the before byte
 the second it must contain the after bytes. Seek positions before/after every delivery,
 including between keyframes, must match original CPU/CSR/RAM/device/disk witnesses.
 
-The Omarchy desktop assets are a **pinned qualification candidate**, not proof that guest
-3D acceleration exists. The current adapter is software virtio-gpu. The accelerated
-fixture freezes the same file/input stimulus, 640×480 → 803×603 resize, and the GPU probe
-source in `session-gpu-probe.c` (clear, finish, readback and error observations). T17/T18
-must supply a verified production renderer/build receipt and compile/run that exact probe
-in the guest before admitting this profile. No software-rendered screenshot may stand in
-for this qualification. Missing qualification is an explicit refusal, not a passing run.
-The fixture source/assets and numeric budgets are frozen now; runtime qualification is
-later work. Updating any pin requires a new contract version and documented reason.
+The accelerated fixture pins `web/artifacts-omarchy-virgl.json`, the published 204,057,731
+byte RAM/disk/GPU pair, its 4 GiB image-manifest identity and the production renderer/build
+identity. The already verified E6-T11d74a/b/c/d path supplies native checkpointing, physical
+renderer reconstruction, atomic worker restore and the accelerated warm boot. T17 must
+integrate these successors rather than depend on the cancelled E6-T11 planning container.
+The production renderer's reconstruction journal already records transport exchanges;
+it does not replace exact whole-VM input/time/network replay.
+
+The fixture freezes the same file/input stimulus, 640×480 → 803×603 resize, and the GPU
+probe source in `session-gpu-probe.c` (clear, finish, readback and error observations).
+Its current launch policy is ICount/divider 64 with `paced-on-keyboard`; an authenticated
+warm pair may already contain paced-clock state. T11 must capture idle-clock samples and
+the exact interactive switch before this profile is admitted to E9 recording. Do not
+silently convert its time policy to divider 10 or apply a fresh unrecorded host rebase.
+T17/T18 must reuse the verified production renderer and compile/run the frozen probe in
+the guest before admitting session replay. No software-rendered screenshot may stand in
+for accelerated qualification. The asset/renderer predecessor is verified; E9 recording
+qualification remains pending. Updating any pin requires a new contract version and
+documented reason.
 
 The reference host is the inspected Apple M4 Max, 16 CPU cores, 128 GiB RAM, macOS
 26.6.2 (25G83), Chrome 155.0.8059.80 and Playwright 1.49.1. Use a fresh browser profile,
