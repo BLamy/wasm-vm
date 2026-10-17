@@ -1,0 +1,63 @@
+   Compiling libc v0.2.186
+   Compiling cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.106
+   Compiling getrandom v0.3.4
+   Compiling quote v1.0.46
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.24
+   Compiling getrandom v0.4.3
+   Compiling serde_core v1.0.228
+   Compiling rustix v1.1.4
+   Compiling zerocopy v0.8.52
+   Compiling zmij v1.0.21
+   Compiling bitflags v2.13.0
+   Compiling autocfg v1.5.1
+   Compiling once_cell v1.21.4
+   Compiling serde_json v1.0.150
+   Compiling serde v1.0.228
+   Compiling fastrand v2.4.1
+   Compiling quick-error v1.2.3
+   Compiling fnv v1.0.7
+   Compiling generic-array v0.14.7
+   Compiling itoa v1.0.18
+   Compiling bit-vec v0.8.0
+   Compiling memchr v2.8.2
+   Compiling num-traits v0.2.19
+   Compiling regex-syntax v0.8.11
+   Compiling bit-set v0.8.0
+   Compiling unarray v0.1.4
+   Compiling errno v0.3.14
+   Compiling cpufeatures v0.2.17
+   Compiling wait-timeout v0.2.1
+   Compiling rand_core v0.9.5
+   Compiling syn v2.0.118
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling rand v0.9.4
+   Compiling rand_xorshift v0.4.0
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling tempfile v3.27.0
+   Compiling rusty-fork v0.3.1
+   Compiling serde_derive v1.0.228
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.9.0
+   Compiling proptest v1.11.0
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/storage)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.50s
+     Running tests/session_manifest.rs (target/evidence/e9-t02-verifier/coverage-target/debug/deps/session_manifest-3ccf8efa84650d08)
+
+running 9 tests
+test topology_and_index_attacks ... ok
+test schema_duplicates_and_bounds ... ok
+test unavailable_history_is_preserved ... ok
+test noncanonical_numbers_and_hashes ... ok
+test golden_wide_positions ... ok
+test gpu_checkpoint_binding ... ok
+test identities_and_capture_admission ... ok
+test topology_requires_capture ... ok
+test event_and_chunk_integrity ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.49s
+

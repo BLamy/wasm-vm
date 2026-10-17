@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "node": "v24.20.0",
+  "begin": "9007199254740993",
+  "end": "9007199254740994",
+  "fixture_sha256": "71e97341111e6704982bd3bb5d39a4de95a1c1dc2cd5fe95ada1f75d75ee2def",
+  "serialized_sha256": "71e97341111e6704982bd3bb5d39a4de95a1c1dc2cd5fe95ada1f75d75ee2def"
+}

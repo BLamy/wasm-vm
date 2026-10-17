@@ -1,0 +1,1025 @@
+    1|       |//! Bounded session metadata, exact event positions and read-only replay admission (E9-T02).
+    2|       |//! These codecs do not execute a guest, migrate history, fetch assets or delete old data.
+    3|       |//! All public encode/admit paths validate first; wide JSON integers are decimal strings.
+    4|       |
+    5|       |use alloc::collections::BTreeSet;
+    6|       |use alloc::format;
+    7|       |use alloc::string::{String, ToString};
+    8|       |use alloc::vec::Vec;
+    9|       |use core::fmt;
+   10|       |use serde::{Deserialize, Deserializer, Serialize, Serializer, de::DeserializeOwned};
+   11|       |use sha2::{Digest, Sha256};
+   12|       |
+   13|       |pub const MAX_MANIFEST_BYTES: usize = 1 << 20;
+   14|       |pub const MAX_INLINE_BYTES: usize = 1 << 20;
+   15|       |pub const MAX_EVENT_BYTES: usize = 4 * MAX_INLINE_BYTES + 65_536;
+   16|       |pub const MAX_CHUNK_BYTES: u64 = 4 << 20;
+   17|       |pub const MAX_SESSION_BYTES: u64 = 4 << 30;
+   18|       |pub const MAX_INDEX_ENTRIES: usize = 4096;
+   19|       |pub const MAX_EVENTS_PER_CHUNK: u32 = 65_536;
+   20|       |pub const CAPTURE_INPUTS: &[&str] = &[
+   21|       |    "uart",
+   22|       |    "keyboard",
+   23|       |    "pointer",
+   24|       |    "display",
+   25|       |    "lifecycle",
+   26|       |    "mtime",
+   27|       |    "rtc",
+   28|       |    "entropy",
+   29|       |    "timers",
+   30|       |    "block-read",
+   31|       |    "block-write",
+   32|       |    "dma",
+   33|       |    "network",
+   34|       |    "network-time",
+   35|       |    "file-transfer",
+   36|       |    "agent",
+   37|       |    "clipboard",
+   38|       |    "audio-playback",
+   39|       |    "audio-capture",
+   40|       |    "software-gpu",
+   41|       |    "gpu-results",
+   42|       |    "storage-control",
+   43|       |    "checkpoint-control",
+   44|       |];
+   45|       |
+   46|       |#[derive(Debug, Clone, PartialEq, Eq)]
+   47|       |pub enum SessionError {
+   48|       |    TooLarge(&'static str),
+   49|       |    Malformed(String),
+   50|       |    Version {
+   51|       |        section: &'static str,
+   52|       |        major: u16,
+   53|       |        minor: u16,
+   54|       |    },
+   55|       |    UnsupportedRequired(String),
+   56|       |    Invalid(&'static str),
+   57|       |    Duplicate(&'static str),
+   58|       |    IndexOrder,
+   59|       |    Overflow,
+   60|       |    LengthMismatch {
+   61|       |        expected: u64,
+   62|       |        actual: u64,
+   63|       |    },
+   64|       |    DigestMismatch,
+   65|       |    IdentityMismatch(&'static str),
+   66|       |    MissingAsset(&'static str),
+   67|       |    MissingCapture(String),
+   68|       |}
+   69|       |
+   70|       |impl fmt::Display for SessionError {
+   71|      1|    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+   72|      1|        write!(f, "{self:?}")
+   73|      1|    }
+   74|       |}
+   75|       |
+   76|       |/// Never deserialize a JSON number through f64, including values above 2^53.
+   77|       |#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+   78|       |pub struct ExactU64(pub u64);
+   79|       |
+   80|       |impl Serialize for ExactU64 {
+   81|  21.4k|    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+   82|  21.4k|        serializer.serialize_str(&self.0.to_string())
+   83|  21.4k|    }
+   84|       |}
+   85|       |
+   86|       |impl<'de> Deserialize<'de> for ExactU64 {
+   87|  1.56k|    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+   88|  1.56k|        let text = String::deserialize(deserializer)?;
+                          ^1.56k                                  ^6
+   89|  1.56k|        if text.is_empty()
+   90|  1.55k|            || text.len() > 20
+   91|  1.55k|            || (text.len() > 1 && text.starts_with('0'))
+                                                ^1.50k
+   92|  18.7k|            || !text.bytes().all(|c| c.is_ascii_digit())
+                              ^1.55k       ^1.55k
+   93|       |        {
+   94|      9|            return Err(serde::de::Error::custom(
+   95|      9|                "expected canonical unsigned decimal string",
+   96|      9|            ));
+   97|  1.55k|        }
+   98|  1.55k|        text.parse().map(Self).map_err(serde::de::Error::custom)
+   99|  1.56k|    }
+  100|       |}
+  101|       |
+  102|       |#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+  103|       |pub struct ContentHash(pub [u8; 32]);
+  104|       |
+  105|       |impl ContentHash {
+  106|     33|    pub fn of(bytes: &[u8]) -> Self {
+  107|     33|        Self(Sha256::digest(bytes).into())
+  108|     33|    }
+  109|       |}
+  110|       |
+  111|       |impl Serialize for ContentHash {
+  112|  8.55k|    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+  113|  8.55k|        serializer.serialize_str(&crate::encode_hex32(&self.0))
+  114|  8.55k|    }
+  115|       |}
+  116|       |
+  117|       |impl<'de> Deserialize<'de> for ContentHash {
+  118|    607|    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+  119|    607|        let text = String::deserialize(deserializer)?;
+                          ^606                                    ^1
+  120|    606|        if text.len() != 64
+  121|    605|            || !text
+  122|    605|                .bytes()
+  123|  38.5k|                .all(|c| c.is_ascii_digit() || (b'a'..=b'f').contains(&c))
+                               ^605                           ^14.0k       ^14.0k   ^14.0k
+  124|       |        {
+  125|      3|            return Err(serde::de::Error::custom("expected lowercase SHA-256"));
+  126|    603|        }
+  127|    603|        crate::decode_hex32(&text)
+  128|    603|            .map(Self)
+  129|    603|            .ok_or_else(|| serde::de::Error::custom("invalid SHA-256"))
+                                         ^0
+  130|    607|    }
+  131|       |}
+  132|       |
+  133|       |#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+  134|       |#[serde(deny_unknown_fields)]
+  135|       |pub struct Version {
+  136|       |    pub major: u16,
+  137|       |    pub minor: u16,
+  138|       |}
+  139|       |
+  140|       |impl Version {
+  141|       |    pub const V1: Self = Self { major: 1, minor: 0 };
+  142|  1.03k|    fn validate(self, section: &'static str) -> Result<(), SessionError> {
+  143|  1.03k|        if self != Self::V1 {
+  144|      7|            return Err(SessionError::Version {
+  145|      7|                section,
+  146|      7|                major: self.major,
+  147|      7|                minor: self.minor,
+  148|      7|            });
+  149|  1.02k|        }
+  150|  1.02k|        Ok(())
+  151|  1.03k|    }
+  152|       |}
+  153|       |
+  154|       |#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+  155|       |#[serde(rename_all = "lowercase")]
+  156|       |pub enum Phase {
+  157|       |    Before,
+  158|       |    Observe,
+  159|       |    After,
+  160|       |}
+  161|       |
+  162|       |/// Sequence distinguishes paused controls; transition distinguishes non-retiring traps/IRQs.
+  163|       |#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+  164|       |#[serde(deny_unknown_fields)]
+  165|       |pub struct Position {
+  166|       |    pub transition: ExactU64,
+  167|       |    pub phase: Phase,
+  168|       |    pub ordinal: u32,
+  169|       |    pub sequence: ExactU64,
+  170|       |    pub retired: ExactU64,
+  171|       |}
+  172|       |
+  173|       |impl Position {
+  174|       |    pub const ZERO: Self = Self {
+  175|       |        transition: ExactU64(0),
+  176|       |        phase: Phase::Before,
+  177|       |        ordinal: 0,
+  178|       |        sequence: ExactU64(0),
+  179|       |        retired: ExactU64(0),
+  180|       |    };
+  181|  17.6k|    pub fn follows(self, earlier: Self) -> bool {
+  182|  17.6k|        (self.transition, self.phase, self.ordinal, self.sequence)
+  183|  17.6k|            >= (
+  184|  17.6k|                earlier.transition,
+  185|  17.6k|                earlier.phase,
+  186|  17.6k|                earlier.ordinal,
+  187|  17.6k|                earlier.sequence,
+  188|  17.6k|            )
+  189|  17.6k|            && self.sequence >= earlier.sequence
+  190|  17.6k|            && self.retired >= earlier.retired
+  191|  17.6k|            && self.retired.0 <= self.transition.0
+  192|  17.6k|    }
+  193|       |}
+  194|       |
+  195|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  196|       |#[serde(deny_unknown_fields)]
+  197|       |pub struct BlobRef {
+  198|       |    pub sha256: ContentHash,
+  199|       |    pub length: ExactU64,
+  200|       |}
+  201|       |
+  202|       |impl BlobRef {
+  203|     24|    pub fn of(bytes: &[u8]) -> Self {
+  204|     24|        Self {
+  205|     24|            sha256: ContentHash::of(bytes),
+  206|     24|            length: ExactU64(bytes.len() as u64),
+  207|     24|        }
+  208|     24|    }
+  209|  9.32k|    pub fn validate(&self) -> Result<(), SessionError> {
+  210|  9.32k|        if self.length.0 == 0 || self.length.0 > MAX_SESSION_BYTES {
+                                               ^9.31k
+  211|      7|            return Err(SessionError::Invalid("blob length"));
+  212|  9.31k|        }
+  213|  9.31k|        Ok(())
+  214|  9.32k|    }
+  215|     11|    pub fn verify(&self, bytes: &[u8]) -> Result<(), SessionError> {
+  216|     11|        self.validate()?;
+                                     ^1
+  217|     10|        if self.length.0 != bytes.len() as u64 {
+  218|      1|            return Err(SessionError::LengthMismatch {
+  219|      1|                expected: self.length.0,
+  220|      1|                actual: bytes.len() as u64,
+  221|      1|            });
+  222|      9|        }
+  223|      9|        if self.sha256 != ContentHash::of(bytes) {
+  224|      1|            return Err(SessionError::DigestMismatch);
+  225|      8|        }
+  226|      8|        Ok(())
+  227|     11|    }
+  228|       |}
+  229|       |
+  230|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  231|       |#[serde(deny_unknown_fields)]
+  232|       |pub struct DeviceIdentity {
+  233|       |    pub id: String,
+  234|       |    pub kind: String,
+  235|       |    pub mmio_base: ExactU64,
+  236|       |    pub mmio_length: u32,
+  237|       |    pub irq: u32,
+  238|       |    pub state_version: u16,
+  239|       |}
+  240|       |
+  241|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  242|       |#[serde(deny_unknown_fields)]
+  243|       |pub struct GpuIdentity {
+  244|       |    pub renderer_build: ContentHash,
+  245|       |    pub profile: ContentHash,
+  246|       |}
+  247|       |
+  248|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  249|       |#[serde(deny_unknown_fields)]
+  250|       |pub struct MachineIdentity {
+  251|       |    pub vm_build: ContentHash,
+  252|       |    pub wasm_build: ContentHash,
+  253|       |    pub base_image: ContentHash,
+  254|       |    pub kernel: ContentHash,
+  255|       |    pub initramfs: Option<ContentHash>,
+  256|       |    pub ram_bytes: ExactU64,
+  257|       |    pub harts: u16,
+  258|       |    pub devices: Vec<DeviceIdentity>,
+  259|       |    pub gpu: Option<GpuIdentity>,
+  260|       |}
+  261|       |
+  262|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  263|       |#[serde(rename_all = "kebab-case")]
+  264|       |pub enum ClockMode {
+  265|       |    Icount,
+  266|       |    Wall,
+  267|       |    PacedIcount,
+  268|       |}
+  269|       |
+  270|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  271|       |#[serde(deny_unknown_fields)]
+  272|       |pub struct ClockPolicy {
+  273|       |    pub mode: ClockMode,
+  274|       |    pub divider: u32,
+  275|       |    pub timebase_hz: ExactU64,
+  276|       |    pub interactive: Option<String>,
+  277|       |}
+  278|       |
+  279|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  280|       |#[serde(rename_all = "kebab-case")]
+  281|       |pub enum RecordingMode {
+  282|       |    CheckpointsOnly,
+  283|       |    ExactReplay,
+  284|       |}
+  285|       |
+  286|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  287|       |#[serde(deny_unknown_fields)]
+  288|       |pub struct ReplayPolicy {
+  289|       |    pub mode: RecordingMode,
+  290|       |    pub profile: String,
+  291|       |    pub event_version: Version,
+  292|       |    pub checkpoint_version: Version,
+  293|       |    pub boundary_version: u16,
+  294|       |    pub clock: ClockPolicy,
+  295|       |    pub required_inputs: Vec<String>,
+  296|       |}
+  297|       |
+  298|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  299|       |#[serde(deny_unknown_fields)]
+  300|       |pub struct RuntimeAsset {
+  301|       |    pub role: String,
+  302|       |    pub content: BlobRef,
+  303|       |}
+  304|       |
+  305|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  306|       |#[serde(deny_unknown_fields)]
+  307|       |pub struct Extension {
+  308|       |    pub kind: String,
+  309|       |    pub required: bool,
+  310|       |    pub bytes: Vec<u8>,
+  311|       |}
+  312|       |
+  313|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  314|       |#[serde(deny_unknown_fields)]
+  315|       |pub struct EventChunkIndex {
+  316|       |    pub first: Position,
+  317|       |    pub last: Position,
+  318|       |    pub count: u32,
+  319|       |    pub content: BlobRef,
+  320|       |}
+  321|       |
+  322|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  323|       |#[serde(deny_unknown_fields)]
+  324|       |pub struct CheckpointIndex {
+  325|       |    pub id: String,
+  326|       |    pub position: Position,
+  327|       |    pub next_sequence: ExactU64,
+  328|       |    pub machine: BlobRef,
+  329|       |    pub disk_root: ContentHash,
+  330|       |    pub gpu: Option<BlobRef>,
+  331|       |}
+  332|       |
+  333|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  334|       |#[serde(deny_unknown_fields)]
+  335|       |pub struct SessionManifest {
+  336|       |    pub version: Version,
+  337|       |    pub id: String,
+  338|       |    pub machine: MachineIdentity,
+  339|       |    pub policy: ReplayPolicy,
+  340|       |    pub assets: Vec<RuntimeAsset>,
+  341|       |    pub begin: Position,
+  342|       |    pub end: Position,
+  343|       |    pub events: Vec<EventChunkIndex>,
+  344|       |    pub checkpoints: Vec<CheckpointIndex>,
+  345|       |    pub extensions: Vec<Extension>,
+  346|       |}
+  347|       |
+  348|       |/// A caller's real execution build/policy plus capture adapters it has actually installed.
+  349|       |/// Equality is compatibility only; later slices own executable capability qualification.
+  350|       |#[derive(Debug, Clone, PartialEq, Eq)]
+  351|       |pub struct RuntimeDescriptor {
+  352|       |    pub machine: MachineIdentity,
+  353|       |    pub policy: ReplayPolicy,
+  354|       |    pub captured_inputs: Vec<String>,
+  355|       |}
+  356|       |
+  357|       |/// Created by hashing real retained bytes, never by deserializing a catalogue claim.
+  358|       |#[derive(Debug, Clone, PartialEq, Eq)]
+  359|       |pub struct VerifiedAsset(BlobRef);
+  360|       |impl VerifiedAsset {
+  361|      9|    pub fn from_bytes(bytes: &[u8]) -> Self {
+  362|      9|        Self(BlobRef::of(bytes))
+  363|      9|    }
+  364|       |}
+  365|       |
+  366|       |#[derive(Debug, Clone, PartialEq, Eq)]
+  367|       |pub enum RuntimeAvailability {
+  368|       |    Available {
+  369|       |        runtime_index: usize,
+  370|       |    },
+  371|       |    UnavailableRuntime,
+  372|       |    UnavailableAsset {
+  373|       |        sha256: ContentHash,
+  374|       |        length: ExactU64,
+  375|       |    },
+  376|       |}
+  377|       |
+  378|  13.6k|fn label(value: &str, limit: usize, field: &'static str) -> Result<(), SessionError> {
+  379|  13.6k|    if value.is_empty()
+  380|  13.6k|        || value.len() > limit
+  381|  13.6k|        || !value
+  382|  13.6k|            .bytes()
+  383|   561k|            .all(|b| b.is_ascii_alphanumeric() || b"-_.:/".contains(&b))
+                           ^13.6k                               ^10.1k   ^10.1k   ^10.1k
+  384|       |    {
+  385|     15|        return Err(SessionError::Invalid(field));
+  386|  13.6k|    }
+  387|  13.6k|    Ok(())
+  388|  13.6k|}
+  389|       |
+  390|    274|fn unique_labels(values: &[String], limit: usize, field: &'static str) -> Result<(), SessionError> {
+  391|    274|    if values.len() > limit {
+  392|      1|        return Err(SessionError::TooLarge(field));
+  393|    273|    }
+  394|    273|    let mut seen = BTreeSet::new();
+  395|  3.20k|    for value in values {
+                               ^273
+  396|  3.20k|        label(value, 64, field)?;
+                                             ^1
+  397|  3.20k|        if !seen.insert(value) {
+  398|      1|            return Err(SessionError::Duplicate(field));
+  399|  3.20k|        }
+  400|       |    }
+  401|    271|    Ok(())
+  402|    274|}
+  403|       |
+  404|    125|fn decode<T: DeserializeOwned>(bytes: &[u8], limit: usize) -> Result<T, SessionError> {
+  405|    125|    if bytes.len() > limit {
+  406|      2|        return Err(SessionError::TooLarge("encoded data"));
+  407|    123|    }
+  408|    123|    serde_json::from_slice(bytes).map_err(|e| SessionError::Malformed(format!("{e}")))
+                                                                                    ^30
+  409|    125|}
+  410|       |
+  411|     68|fn encode<T: Serialize>(value: &T, limit: usize) -> Result<Vec<u8>, SessionError> {
+  412|     68|    let bytes = serde_json::to_vec(value).map_err(|e| SessionError::Malformed(format!("{e}")))?;
+                                                                                            ^0              ^0
+  413|     68|    if bytes.len() > limit {
+  414|      3|        return Err(SessionError::TooLarge("encoded data"));
+  415|     65|    }
+  416|     65|    Ok(bytes)
+  417|     68|}
+  418|       |
+  419|       |impl SessionManifest {
+  420|     62|    pub fn from_bytes(bytes: &[u8]) -> Result<Self, SessionError> {
+  421|     62|        let manifest: Self = decode(bytes, MAX_MANIFEST_BYTES)?;
+                          ^53       ^53                                     ^9
+  422|     53|        manifest.validate()?;
+                                         ^1
+  423|     52|        Ok(manifest)
+  424|     62|    }
+  425|       |
+  426|     32|    pub fn to_bytes(&self) -> Result<Vec<u8>, SessionError> {
+  427|     32|        self.validate()?;
+                                     ^1
+  428|     31|        encode(self, MAX_MANIFEST_BYTES)
+  429|     32|    }
+  430|       |
+  431|    308|    pub fn validate(&self) -> Result<(), SessionError> {
+  432|    308|        self.version.validate("manifest")?;
+                                                       ^2
+  433|    306|        self.policy.event_version.validate("events")?;
+                                                                  ^1
+  434|    305|        self.policy.checkpoint_version.validate("checkpoints")?;
+                                                                            ^1
+  435|    304|        label(&self.id, 64, "session id")?;
+                                                       ^7
+  436|    297|        if self.machine.harts != 1
+  437|    296|            || !(16 << 20..=1 << 30).contains(&self.machine.ram_bytes.0)
+  438|    293|            || !self.machine.ram_bytes.0.is_multiple_of(4096)
+  439|       |        {
+  440|      5|            return Err(SessionError::Invalid("one-hart RAM topology"));
+  441|    292|        }
+  442|    292|        if self.machine.devices.is_empty() || self.machine.devices.len() > 32 {
+                                                            ^291
+  443|      2|            return Err(SessionError::Invalid("device topology"));
+  444|    290|        }
+  445|    290|        let mut ids = BTreeSet::new();
+  446|    290|        let mut ranges = Vec::new();
+  447|    290|        let mut has_gpu = false;
+  448|    505|        for device in &self.machine.devices {
+                                    ^290
+  449|    505|            label(&device.id, 64, "device id")?;
+                                                            ^1
+  450|    504|            if !ids.insert(&device.id) {
+  451|      1|                return Err(SessionError::Duplicate("device id"));
+  452|    503|            }
+  453|    502|            if !matches!(
+  454|    503|                device.kind.as_str(),
+  455|    503|                "uart16550"
+  456|    294|                    | "clint"
+  457|     89|                    | "plic"
+  458|     85|                    | "goldfish-rtc"
+  459|     80|                    | "virtio-blk"
+  460|     73|                    | "virtio-net"
+  461|     66|                    | "virtio-rng"
+  462|     60|                    | "virtio-keyboard"
+  463|     54|                    | "virtio-tablet"
+  464|     48|                    | "virtio-mouse"
+  465|     42|                    | "virtio-snd"
+  466|     36|                    | "virtio-gpu2d"
+  467|     29|                    | "virtio-gpu3d"
+  468|      8|                    | "virtio-console"
+  469|       |            ) {
+  470|      1|                return Err(SessionError::UnsupportedRequired(device.kind.clone()));
+  471|    502|            }
+  472|    502|            has_gpu |= device.kind == "virtio-gpu3d";
+  473|    502|            let end = device
+                              ^501
+  474|    502|                .mmio_base
+  475|    502|                .0
+  476|    502|                .checked_add(u64::from(device.mmio_length))
+  477|    502|                .ok_or(SessionError::Overflow)?;
+                                                            ^1
+  478|    501|            if device.mmio_length == 0 || device.irq > 1023 || device.state_version != 1 {
+                                                        ^500                 ^499
+  479|      3|                return Err(SessionError::Invalid("device shape"));
+  480|    498|            }
+  481|    498|            ranges.push((device.mmio_base.0, end));
+  482|       |        }
+  483|    283|        ranges.sort_unstable();
+  484|    283|        if ranges.windows(2).any(|w| w[0].1 > w[1].0) {
+                                                   ^213     ^213
+  485|      1|            return Err(SessionError::Invalid("overlapping devices"));
+  486|    282|        }
+  487|    282|        if has_gpu != self.machine.gpu.is_some() {
+  488|      2|            return Err(SessionError::Invalid("GPU profile"));
+  489|    280|        }
+  490|    280|        let profile = if has_gpu {
+  491|     20|            "rv64-linux-gpu-v1"
+  492|       |        } else {
+  493|    260|            "rv64-linux-software-v1"
+  494|       |        };
+  495|    280|        if self.policy.profile != profile || self.policy.boundary_version != 1 {
+                                                           ^279
+  496|      2|            return Err(SessionError::Invalid("replay profile"));
+  497|    278|        }
+  498|    278|        let clock = &self.policy.clock;
+  499|    278|        if !(1..=1024).contains(&clock.divider)
+  500|    277|            || clock.timebase_hz.0 != 10_000_000
+  501|      1|            || !matches!(
+  502|    276|                clock.interactive.as_deref(),
+  503|      8|                None | Some("wall-on-keyboard" | "paced-on-keyboard")
+  504|       |            )
+  505|    275|            || (clock.interactive.is_some() && (!has_gpu || clock.mode != ClockMode::Icount))
+                                                              ^7          ^6
+  506|       |        {
+  507|      4|            return Err(SessionError::Invalid("clock policy"));
+  508|    274|        }
+  509|    274|        unique_labels(&self.policy.required_inputs, 32, "capture inputs")?;
+                                                                                       ^3
+  510|  3.19k|        for input in &self.policy.required_inputs {
+                                   ^271
+  511|  3.19k|            if !CAPTURE_INPUTS.contains(&input.as_str()) {
+  512|      1|                return Err(SessionError::UnsupportedRequired(input.clone()));
+  513|  3.19k|            }
+  514|       |        }
+  515|    270|        if self.policy.mode == RecordingMode::ExactReplay && self.policy.required_inputs.is_empty()
+                                                                           ^267                        ^267
+  516|       |        {
+  517|      1|            return Err(SessionError::Invalid("exact replay capture set"));
+  518|    269|        }
+  519|    269|        if self.policy.mode == RecordingMode::ExactReplay {
+  520|    266|            let mut mandatory = alloc::vec!["lifecycle", "storage-control", "checkpoint-control"];
+  521|    461|            for device in &self.machine.devices {
+                                        ^266
+  522|    461|                mandatory.extend_from_slice(match device.kind.as_str() {
+  523|    461|                    "uart16550" => &["uart"],
+                                                 ^187
+  524|    274|                    "clint" => &["timers"],
+                                             ^187
+  525|     87|                    "goldfish-rtc" => &["rtc"],
+                                                    ^5
+  526|     82|                    "virtio-blk" => &["block-read", "block-write", "dma"],
+                                                  ^7
+  527|     75|                    "virtio-net" => &["network", "network-time", "dma"],
+                                                  ^7
+  528|     68|                    "virtio-rng" => &["entropy", "dma"],
+                                                  ^6
+  529|     62|                    "virtio-keyboard" => &["keyboard", "dma"],
+                                                       ^6
+  530|     56|                    "virtio-tablet" | "virtio-mouse" => &["pointer", "dma"],
+                                                    ^50               ^12
+  531|     44|                    "virtio-snd" => &["audio-playback", "dma"],
+                                                  ^6
+  532|     38|                    "virtio-gpu2d" => &["software-gpu", "display", "dma"],
+                                                    ^7
+  533|     31|                    "virtio-gpu3d" => &["gpu-results", "display", "dma"],
+                                                    ^20
+  534|     11|                    "virtio-console" => &["agent", "clipboard", "dma"],
+                                                      ^7
+  535|      4|                    _ => &[], // Topology kinds have already been validated above.
+  536|       |                });
+  537|       |            }
+  538|    266|            if clock.mode != ClockMode::Icount || clock.interactive.is_some() {
+                                                                ^262              ^262
+  539|     10|                mandatory.push("mtime");
+  540|    256|            }
+  541|  1.24k|            for input in mandatory {
+                                       ^266
+  542|  1.24k|                if !self
+  543|  1.24k|                    .policy
+  544|  1.24k|                    .required_inputs
+  545|  1.24k|                    .iter()
+  546|  7.73k|                    .any(|known| known == input)
+                                   ^1.24k
+  547|       |                {
+  548|     72|                    return Err(SessionError::MissingCapture(input.into()));
+  549|  1.17k|                }
+  550|       |            }
+  551|      3|        }
+  552|    197|        if self.extensions.len() > 16 {
+  553|      1|            return Err(SessionError::TooLarge("extensions"));
+  554|    196|        }
+  555|    196|        let mut extensions = BTreeSet::new();
+  556|    197|        for extension in &self.extensions {
+                                       ^196
+  557|    197|            label(&extension.kind, 64, "extension kind")?;
+                                                                      ^1
+  558|    196|            if !extensions.insert(&extension.kind) {
+  559|      1|                return Err(SessionError::Duplicate("extension kind"));
+  560|    195|            }
+  561|    195|            if extension.bytes.len() > 8192 {
+  562|      1|                return Err(SessionError::TooLarge("extension bytes"));
+  563|    194|            }
+  564|    194|            if extension.required {
+  565|      1|                return Err(SessionError::UnsupportedRequired(extension.kind.clone()));
+  566|    193|            }
+  567|       |        }
+  568|    192|        if self.assets.len() > 16 {
+  569|      1|            return Err(SessionError::TooLarge("runtime assets"));
+  570|    191|        }
+  571|    191|        let mut roles = BTreeSet::new();
+  572|    767|        for asset in &self.assets {
+                                   ^191
+  573|    767|            label(&asset.role, 64, "asset role")?;
+                                                              ^1
+  574|    765|            if !matches!(
+  575|    766|                asset.role.as_str(),
+  576|    766|                "vm" | "wasm" | "kernel" | "base" | "initramfs" | "gpu-renderer" | "gpu-pair"
+                                     ^577     ^390       ^203     ^16           ^15              ^1
+  577|       |            ) {
+  578|      1|                return Err(SessionError::UnsupportedRequired(asset.role.clone()));
+  579|    765|            }
+  580|    765|            if !roles.insert(asset.role.as_str()) {
+  581|      1|                return Err(SessionError::Duplicate("asset role"));
+  582|    764|            }
+  583|    764|            asset.content.validate()?;
+                                                  ^1
+  584|       |        }
+  585|  1.09k|        for (role, hash) in [
+  586|    187|            ("vm", Some(self.machine.vm_build)),
+  587|    187|            ("wasm", Some(self.machine.wasm_build)),
+  588|    187|            ("kernel", Some(self.machine.kernel)),
+  589|    187|            ("base", Some(self.machine.base_image)),
+  590|    187|            ("initramfs", self.machine.initramfs),
+  591|       |            (
+  592|    187|                "gpu-renderer",
+  593|    187|                self.machine.gpu.as_ref().map(|g| g.renderer_build),
+  594|       |            ),
+  595|       |        ] {
+  596|  1.09k|            if let Some(hash) = hash {
+                                      ^752
+  597|    752|                let asset = self
+                                  ^747
+  598|    752|                    .assets
+  599|    752|                    .iter()
+  600|  1.91k|                    .find(|a| a.role == role)
+                                   ^752
+  601|    752|                    .ok_or(SessionError::MissingAsset(role))?;
+                                                                          ^5
+  602|    747|                if asset.content.sha256 != hash {
+  603|      4|                    return Err(SessionError::IdentityMismatch(role));
+  604|    743|                }
+  605|    341|            }
+  606|       |        }
+  607|    178|        if self.events.len() > MAX_INDEX_ENTRIES
+  608|    177|            || self.checkpoints.is_empty()
+  609|    177|            || self.checkpoints.len() > MAX_INDEX_ENTRIES
+  610|       |        {
+  611|      2|            return Err(SessionError::TooLarge("session index"));
+  612|    176|        }
+  613|    176|        if !self.begin.follows(Position::ZERO) || !self.end.follows(self.begin) {
+                                                                ^175^175
+  614|      1|            return Err(SessionError::IndexOrder);
+  615|    175|        }
+  616|       |        // Retention may start at a late keyframe without resetting its original counters.
+  617|    175|        let mut sequence = self.begin.sequence.0;
+  618|    175|        let mut previous = self.begin;
+  619|    175|        let mut total = 0u64;
+  620|    175|        for chunk in &self.events {
+                          ^172
+  621|    172|            chunk.content.validate()?;
+                                                  ^1
+  622|    171|            if chunk.count == 0
+  623|    170|                || chunk.count > MAX_EVENTS_PER_CHUNK
+  624|    169|                || chunk.content.length.0 > MAX_CHUNK_BYTES
+  625|       |            {
+  626|      3|                return Err(SessionError::Invalid("event chunk shape"));
+  627|    168|            }
+  628|    168|            let first = sequence.checked_add(1).ok_or(SessionError::Overflow)?;
+                              ^167                                                         ^1
+  629|    167|            let last = first
+                              ^166
+  630|    167|                .checked_add(u64::from(chunk.count) - 1)
+  631|    167|                .ok_or(SessionError::Overflow)?;
+                                                            ^1
+  632|    166|            if chunk.first.sequence.0 != first
+  633|    165|                || chunk.last.sequence.0 != last
+  634|    164|                || (chunk.count == 1 && chunk.first != chunk.last)
+                                                      ^162
+  635|    163|                || !chunk.first.follows(previous)
+  636|    163|                || !chunk.last.follows(chunk.first)
+  637|    163|                || !self.end.follows(chunk.last)
+  638|       |            {
+  639|      3|                return Err(SessionError::IndexOrder);
+  640|    163|            }
+  641|    163|            total = total
+  642|    163|                .checked_add(chunk.content.length.0)
+  643|    163|                .ok_or(SessionError::Overflow)?;
+                                                            ^0
+  644|    163|            sequence = last;
+  645|    163|            previous = chunk.last;
+  646|       |        }
+  647|    166|        if self.end.sequence.0 != sequence
+  648|    165|            || (self.policy.mode == RecordingMode::CheckpointsOnly && !self.events.is_empty())
+                                                                                    ^3
+  649|       |        {
+  650|      2|            return Err(SessionError::IndexOrder);
+  651|    164|        }
+  652|    164|        let mut checkpoint_ids = BTreeSet::new();
+  653|    164|        previous = self.begin;
+  654|  8.35k|        for checkpoint in &self.checkpoints {
+                                        ^164
+  655|  8.35k|            label(&checkpoint.id, 64, "checkpoint id")?;
+                                                                    ^1
+  656|  8.35k|            if !checkpoint_ids.insert(&checkpoint.id) {
+  657|      1|                return Err(SessionError::Duplicate("checkpoint id"));
+  658|  8.35k|            }
+  659|  8.35k|            checkpoint.machine.validate()?;
+                                                       ^2
+  660|  8.35k|            if let Some(gpu) = &checkpoint.gpu {
+                                      ^13
+  661|     13|                gpu.validate()?;
+                                            ^1
+  662|  8.34k|            }
+  663|  8.35k|            if checkpoint.gpu.is_some() != has_gpu {
+  664|      1|                return Err(SessionError::Invalid("checkpoint GPU binding"));
+  665|  8.35k|            }
+  666|  8.35k|            let next = checkpoint
+                              ^8.35k
+  667|  8.35k|                .position
+  668|  8.35k|                .sequence
+  669|  8.35k|                .0
+  670|  8.35k|                .checked_add(1)
+  671|  8.35k|                .ok_or(SessionError::Overflow)?;
+                                                            ^1
+  672|  8.35k|            if checkpoint.next_sequence.0 != next
+  673|  8.34k|                || !checkpoint.position.follows(previous)
+  674|  8.34k|                || !self.end.follows(checkpoint.position)
+  675|       |            {
+  676|      2|                return Err(SessionError::IndexOrder);
+  677|  8.34k|            }
+  678|  8.34k|            total = total
+  679|  8.34k|                .checked_add(checkpoint.machine.length.0)
+  680|  8.34k|                .and_then(|n| n.checked_add(checkpoint.gpu.as_ref().map_or(0, |g| g.length.0)))
+  681|  8.34k|                .ok_or(SessionError::Overflow)?;
+                                                            ^0
+  682|  8.34k|            previous = checkpoint.position;
+  683|       |        }
+  684|    155|        if self.checkpoints[0].position != self.begin {
+  685|      1|            return Err(SessionError::Invalid("initial checkpoint"));
+  686|    154|        }
+  687|    154|        if total > MAX_SESSION_BYTES {
+  688|      1|            return Err(SessionError::TooLarge("session payload"));
+  689|    153|        }
+  690|    153|        Ok(())
+  691|    308|    }
+  692|       |
+  693|       |    /// Read-only compatibility; no attempt to migrate, clear or mutate the recording.
+  694|     43|    pub fn admit(&self, runtime: &RuntimeDescriptor) -> Result<(), SessionError> {
+  695|     43|        self.validate()?;
+                                     ^1
+  696|     42|        let a = &self.machine;
+  697|     42|        let b = &runtime.machine;
+  698|    278|        for (name, equal) in [
+  699|     42|            ("vm_build", a.vm_build == b.vm_build),
+  700|     42|            ("wasm_build", a.wasm_build == b.wasm_build),
+  701|     42|            ("base_image", a.base_image == b.base_image),
+  702|     42|            ("kernel", a.kernel == b.kernel),
+  703|     42|            ("initramfs", a.initramfs == b.initramfs),
+  704|     42|            ("RAM", a.ram_bytes == b.ram_bytes),
+  705|     42|            ("harts", a.harts == b.harts),
+  706|     42|            ("devices", a.devices == b.devices),
+  707|     42|            ("GPU", a.gpu == b.gpu),
+  708|     42|        ] {
+  709|    278|            if !equal {
+  710|     26|                return Err(SessionError::IdentityMismatch(name));
+  711|    252|            }
+  712|       |        }
+  713|     16|        if self.policy != runtime.policy {
+  714|      7|            return Err(SessionError::IdentityMismatch("replay policy"));
+  715|      9|        }
+  716|     63|        for input in &self.policy.required_inputs {
+                                   ^9
+  717|     63|            if !runtime.captured_inputs.contains(input) {
+  718|      3|                return Err(SessionError::MissingCapture(input.clone()));
+  719|     60|            }
+  720|       |        }
+  721|      6|        Ok(())
+  722|     43|    }
+  723|       |
+  724|       |    /// Resolve old builds only when their exact runtime and all verified asset bytes remain.
+  725|      6|    pub fn availability(
+  726|      6|        &self,
+  727|      6|        runtimes: &[RuntimeDescriptor],
+  728|      6|        assets: &[VerifiedAsset],
+  729|      6|    ) -> Result<RuntimeAvailability, SessionError> {
+  730|      6|        self.validate()?;
+                                     ^1
+  731|      5|        let Some(runtime_index) = runtimes
+                               ^4
+  732|      5|            .iter()
+  733|      8|            .position(|runtime| self.admit(runtime).is_ok())
+                           ^5
+  734|       |        else {
+  735|      1|            return Ok(RuntimeAvailability::UnavailableRuntime);
+  736|       |        };
+  737|      7|        for asset in &self.assets {
+                                   ^4
+  738|     21|            if !assets.iter().any(|available| available.0 == asset.content) {
+                              ^7            ^7
+  739|      3|                return Ok(RuntimeAvailability::UnavailableAsset {
+  740|      3|                    sha256: asset.content.sha256,
+  741|      3|                    length: asset.content.length,
+  742|      3|                });
+  743|      4|            }
+  744|       |        }
+  745|      1|        Ok(RuntimeAvailability::Available { runtime_index })
+  746|      6|    }
+  747|       |}
+  748|       |
+  749|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  750|       |#[serde(tag = "storage", rename_all = "lowercase", deny_unknown_fields)]
+  751|       |pub enum EventPayload {
+  752|       |    Inline { bytes: Vec<u8> },
+  753|       |    Blob { content: BlobRef },
+  754|       |}
+  755|       |
+  756|       |#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+  757|       |#[serde(deny_unknown_fields)]
+  758|       |pub struct EventRecord {
+  759|       |    pub version: Version,
+  760|       |    pub kind: String,
+  761|       |    pub required: bool,
+  762|       |    pub transition: ExactU64,
+  763|       |    pub phase: Phase,
+  764|       |    pub ordinal: u32,
+  765|       |    pub sequence: ExactU64,
+  766|       |    pub retired: ExactU64,
+  767|       |    pub device: String,
+  768|       |    pub intent: Vec<u8>,
+  769|       |    pub status: String,
+  770|       |    pub payload: EventPayload,
+  771|       |}
+  772|       |
+  773|       |impl EventRecord {
+  774|    155|    pub fn position(&self) -> Position {
+  775|    155|        Position {
+  776|    155|            transition: self.transition,
+  777|    155|            phase: self.phase,
+  778|    155|            ordinal: self.ordinal,
+  779|    155|            sequence: self.sequence,
+  780|    155|            retired: self.retired,
+  781|    155|        }
+  782|    155|    }
+  783|     55|    pub fn from_bytes(bytes: &[u8]) -> Result<Self, SessionError> {
+  784|     55|        let record: Self = decode(bytes, MAX_EVENT_BYTES)?;
+                          ^33     ^33                                  ^22
+  785|     33|        record.validate()?;
+                                       ^1
+  786|     32|        Ok(record)
+  787|     55|    }
+  788|     38|    pub fn to_bytes(&self) -> Result<Vec<u8>, SessionError> {
+  789|     38|        self.validate()?;
+                                     ^1
+  790|     37|        encode(self, MAX_EVENT_BYTES)
+  791|     38|    }
+  792|    113|    pub fn validate(&self) -> Result<(), SessionError> {
+  793|    113|        self.version.validate("event")?;
+                                                    ^3
+  794|    110|        label(&self.kind, 64, "event kind")?;
+                                                         ^1
+  795|    109|        label(&self.device, 64, "event device")?;
+                                                             ^1
+  796|    108|        label(&self.status, 128, "event status")?;
+                                                              ^1
+  797|    107|        if self.sequence.0 == 0 || !self.position().follows(Position::ZERO) {
+                                                 ^106^106
+  798|      1|            return Err(SessionError::IndexOrder);
+  799|    106|        }
+  800|    106|        if self.intent.len() > 65_536 {
+  801|      1|            return Err(SessionError::TooLarge("event intent"));
+  802|    105|        }
+  803|    105|        let known = matches!(
+                                  ^101
+  804|    105|            self.kind.as_str(),
+  805|    105|            "uart"
+  806|     32|                | "keyboard"
+  807|     30|                | "tablet"
+  808|     28|                | "mouse"
+  809|     26|                | "display"
+  810|     24|                | "clock"
+  811|     22|                | "rtc"
+  812|     20|                | "entropy"
+  813|     18|                | "block"
+  814|     16|                | "network"
+  815|     14|                | "agent"
+  816|     12|                | "file-transfer"
+  817|     10|                | "audio"
+  818|      8|                | "gpu"
+  819|      6|                | "lifecycle"
+  820|       |        );
+  821|    105|        if !known && (self.required || !self.kind.starts_with("annotation.")) {
+                                    ^4               ^3
+  822|      2|            return Err(SessionError::UnsupportedRequired(self.kind.clone()));
+  823|    103|        }
+  824|    103|        if known && !self.required {
+                                  ^101
+  825|      2|            return Err(SessionError::Invalid("optional guest effect"));
+  826|    101|        }
+  827|     96|        match &self.payload {
+  828|     96|            EventPayload::Inline { bytes } if bytes.len() > MAX_INLINE_BYTES => {
+                                                                                         ^1
+  829|      1|                return Err(SessionError::TooLarge("inline event"));
+  830|       |            }
+  831|      5|            EventPayload::Blob { content } => {
+  832|      5|                content.validate()?;
+                                                ^1
+  833|      4|                if content.length.0 > MAX_CHUNK_BYTES {
+  834|      1|                    return Err(SessionError::TooLarge("event blob"));
+  835|      3|                }
+  836|       |            }
+  837|     95|            _ => {}
+  838|       |        }
+  839|     98|        Ok(())
+  840|    113|    }
+  841|       |}
+  842|       |
+  843|     19|fn validate_records(records: &[EventRecord]) -> Result<(), SessionError> {
+  844|     19|    if records.is_empty() || records.len() > MAX_EVENTS_PER_CHUNK as usize {
+                                           ^18
+  845|      2|        return Err(SessionError::Invalid("event count"));
+  846|     17|    }
+  847|     17|    let mut previous: Option<Position> = None;
+  848|     30|    for record in records {
+                                ^17
+  849|     30|        record.validate()?;
+                                       ^2
+  850|     28|        if let Some(earlier) = previous {
+                                  ^13
+  851|     13|            let next = earlier
+                              ^12
+  852|     13|                .sequence
+  853|     13|                .0
+  854|     13|                .checked_add(1)
+  855|     13|                .ok_or(SessionError::Overflow)?;
+                                                            ^1
+  856|     12|            if record.sequence.0 != next || !record.position().follows(earlier) {
+                                                          ^10^10    ^10
+  857|      4|                return Err(SessionError::IndexOrder);
+  858|      8|            }
+  859|     15|        }
+  860|     23|        previous = Some(record.position());
+  861|       |    }
+  862|     10|    Ok(())
+  863|     19|}
+  864|       |
+  865|       |impl EventChunkIndex {
+  866|       |    /// Bound the output while writing: never serialize an arbitrarily large vector first.
+  867|     12|    pub fn from_records(records: &[EventRecord]) -> Result<(Self, Vec<u8>), SessionError> {
+  868|     12|        validate_records(records)?;
+                                               ^7
+  869|      5|        let mut bytes = Vec::new();
+  870|      5|        bytes.push(b'[');
+  871|     10|        for (index, record) in records.iter().enumerate() {
+                                             ^5      ^5     ^5
+  872|     10|            let encoded = record.to_bytes()?;
+                              ^9                         ^1
+  873|      9|            if bytes
+  874|      9|                .len()
+  875|      9|                .checked_add(encoded.len())
+  876|      9|                .and_then(|n| n.checked_add(2))
+  877|      9|                .is_none_or(|n| n > MAX_CHUNK_BYTES as usize)
+  878|       |            {
+  879|      1|                return Err(SessionError::TooLarge("event chunk"));
+  880|      8|            }
+  881|      8|            if index != 0 {
+  882|      4|                bytes.push(b',');
+  883|      4|            }
+  884|      8|            bytes.extend_from_slice(&encoded);
+  885|       |        }
+  886|      3|        bytes.push(b']');
+  887|      3|        Ok((
+  888|      3|            Self {
+  889|      3|                first: records[0].position(),
+  890|      3|                last: records[records.len() - 1].position(),
+  891|      3|                count: records.len() as u32,
+  892|      3|                content: BlobRef::of(&bytes),
+  893|      3|            },
+  894|      3|            bytes,
+  895|      3|        ))
+  896|     12|    }
+  897|       |
+  898|     13|    pub fn decode_records(&self, bytes: &[u8]) -> Result<Vec<EventRecord>, SessionError> {
+  899|     13|        if self.count == 0
+  900|     12|            || self.count > MAX_EVENTS_PER_CHUNK
+  901|     11|            || self.content.length.0 > MAX_CHUNK_BYTES
+  902|       |        {
+  903|      3|            return Err(SessionError::Invalid("event chunk shape"));
+  904|     10|        }
+  905|     10|        self.content.verify(bytes)?;
+                                                ^2
+  906|      8|        let records: Vec<EventRecord> = decode(bytes, MAX_CHUNK_BYTES as usize)?;
+                          ^7       ^7                                                        ^1
+  907|      7|        validate_records(&records)?;
+                                                ^2
+  908|      5|        if records.len() != self.count as usize
+  909|      4|            || records[0].position() != self.first
+  910|      3|            || records[records.len() - 1].position() != self.last
+  911|       |        {
+  912|      2|            return Err(SessionError::Invalid("event index differs from payload"));
+  913|      3|        }
+  914|      3|        Ok(records)
+  915|     13|    }
+  916|       |}
+

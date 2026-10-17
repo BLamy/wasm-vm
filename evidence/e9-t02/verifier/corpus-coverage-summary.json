@@ -1,0 +1,46 @@
+{
+  "binary": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-target/debug/deps/session_manifest-3ccf8efa84650d08",
+  "summary": {
+    "branches": {
+      "count": 0,
+      "covered": 0,
+      "notcovered": 0,
+      "percent": 0
+    },
+    "functions": {
+      "count": 42,
+      "covered": 39,
+      "percent": 92.85714285714286
+    },
+    "instantiations": {
+      "count": 58,
+      "covered": 48,
+      "percent": 82.75862068965517
+    },
+    "lines": {
+      "count": 550,
+      "covered": 542,
+      "percent": 98.54545454545455
+    },
+    "mcdc": {
+      "count": 0,
+      "covered": 0,
+      "notcovered": 0,
+      "percent": 0
+    },
+    "regions": {
+      "count": 811,
+      "covered": 776,
+      "notcovered": 35,
+      "percent": 95.68434032059187
+    }
+  },
+  "uncovered_segment_starting_lines": [
+    71,
+    72,
+    73,
+    414,
+    501,
+    603
+  ]
+}

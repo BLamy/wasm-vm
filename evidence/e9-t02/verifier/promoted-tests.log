@@ -1,0 +1,43 @@
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/storage)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.32s
+     Running tests/session_manifest_critic.rs (target/debug/deps/session_manifest_critic-26996613427e1428)
+
+running 8 tests
+exact decimal sequence 9007199254740991
+exact decimal sequence 9007199254740992
+exact decimal sequence 9007199254740993
+exact decimal sequence 18446744073709551415
+internal asset binding refused: vm
+missing and blob-deserializer wide integer/hash paths refused
+internal asset binding refused: wasm
+internal asset binding refused: kernel
+duplicate/foreign payload rejected: "storage":"inline","storage":"inline"
+test missing_wide_fields_and_invalid_blob_numbers_are_malformed ... ok
+duplicate/foreign payload rejected: "storage":"blob","storage":"inline"
+device identity refused: id
+duplicate/foreign payload rejected: "storage":"inline","foreign_required":true
+internal asset binding refused: base
+duplicate/foreign payload rejected: "storage":"inline","bytes":[99]
+matching hash with foreign byte length is unavailable
+test duplicate_payload_discriminants_and_foreign_fields_are_refused ... ok
+test adjacent_wide_positions_and_length_identity ... ok
+GPU identity refused: renderer_build
+device identity refused: kind
+device identity refused: mmio_base
+GPU identity refused: profile
+GPU checkpoint payload length refused
+device identity refused: mmio_length
+test valid_gpu_renderer_and_profile_refuse_independently ... ok
+device identity refused: irq
+device identity refused: state_version
+test every_device_field_is_an_immutable_identity ... ok
+entrypoint validation, invalid labels/assets and both event-range overflow paths refused
+test public_entrypoints_propagate_validation_and_shape_refusals ... ok
+authenticated order/duplicate/count attacks refused; same-coordinate paused sequences preserved
+test authenticated_duplicate_phase_and_count_attacks ... ok
+bounded manifest encoder refused valid oversized index encoding
+bounded event/chunk encoders refused serialized byte overflow
+test serialization_caps_and_invalid_token_paths ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.61s
+

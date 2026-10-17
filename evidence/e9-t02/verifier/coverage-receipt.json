@@ -1,0 +1,267 @@
+{
+  "source_head": "eb5a2484f1f7ff4d68ab2ccc7881b12fe65eae06",
+  "source_sha256": "4d2db19241a6df151b24104017d1856825d238704eb8f4473aefa856b9c639be",
+  "tool_version": "LLVM (http://llvm.org/):\n  LLVM version 22.1.2-rust-1.96.0-stable\n  Optimized build.",
+  "commands": [
+    [
+      "/Users/blamy/.rustup/toolchains/1.96.0-aarch64-apple-darwin/lib/rustlib/aarch64-apple-darwin/bin/llvm-profdata",
+      "merge",
+      "-sparse",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/attacks-complete-42411-1711428232396776836_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/attacks-complete-42418-17500358728434333666_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/attacks-complete-42442-1711428232396776836_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/attacks-complete-42444-1711428232396776836_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/attacks-complete-42454-1711428232396776836_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39626-11798297433124307420_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39629-11730094380441916487_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39638-11135191154847411149_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39641-3881250626380577220_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39642-1141136298480010938_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39645-4564229742932583851_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39647-75665524794432063_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39650-8585996070172454923_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39651-1405317803382445415_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39656-13211091467951509430_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39658-18098379421827147912_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39667-4681458585577667569_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39677-17006973212261229018_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39853-1711428232396776836_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39860-1711428232396776836_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39870-1711428232396776836_0.profraw",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-raw/corpus-39873-9428274261431770990_0.profraw",
+      "-o",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/final.profdata"
+    ],
+    [
+      "/Users/blamy/.rustup/toolchains/1.96.0-aarch64-apple-darwin/lib/rustlib/aarch64-apple-darwin/bin/llvm-cov",
+      "export",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-target/debug/deps/session_manifest-3ccf8efa84650d08",
+      "-object",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-target/debug/deps/attacks-3d3e8a7c34ad378a",
+      "-instr-profile=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/final.profdata",
+      "-format=text"
+    ],
+    [
+      "/Users/blamy/.rustup/toolchains/1.96.0-aarch64-apple-darwin/lib/rustlib/aarch64-apple-darwin/bin/llvm-cov",
+      "show",
+      "-show-instantiations=false",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-target/debug/deps/session_manifest-3ccf8efa84650d08",
+      "-object",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/coverage-target/debug/deps/attacks-3d3e8a7c34ad378a",
+      "-instr-profile=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/final.profdata",
+      "-show-line-counts-or-regions",
+      "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/storage/src/session.rs"
+    ]
+  ],
+  "summary": {
+    "branches": {
+      "count": 0,
+      "covered": 0,
+      "notcovered": 0,
+      "percent": 0
+    },
+    "functions": {
+      "count": 42,
+      "covered": 40,
+      "percent": 95.23809523809523
+    },
+    "instantiations": {
+      "count": 116,
+      "covered": 98,
+      "percent": 84.48275862068965
+    },
+    "lines": {
+      "count": 550,
+      "covered": 546,
+      "percent": 99.27272727272727
+    },
+    "mcdc": {
+      "count": 0,
+      "covered": 0,
+      "notcovered": 0,
+      "percent": 0
+    },
+    "regions": {
+      "count": 811,
+      "covered": 784,
+      "notcovered": 27,
+      "percent": 96.6707768187423
+    }
+  },
+  "uncovered_segment_starting_lines": [],
+  "unexecuted_unique_source_regions": [
+    {
+      "start": 412,
+      "start_column": 95,
+      "end": 412,
+      "end_column": 96
+    },
+    {
+      "start": 412,
+      "start_column": 79,
+      "end": 412,
+      "end_column": 86
+    },
+    {
+      "start": 129,
+      "start_column": 28,
+      "end": 129,
+      "end_column": 52
+    },
+    {
+      "start": 643,
+      "start_column": 47,
+      "end": 643,
+      "end_column": 48
+    },
+    {
+      "start": 681,
+      "start_column": 47,
+      "end": 681,
+      "end_column": 48
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-target/debug/deps/session_manifest-3ccf8efa84650d08",
+      "bytes": 4443136,
+      "sha256": "3c98daf7f24e78f2ea1bfbb7dc0a0bbfd56dfc15668325a955efc8ba52818088"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-target/debug/deps/attacks-3d3e8a7c34ad378a",
+      "bytes": 4297752,
+      "sha256": "1b9d3482e898a002b1642ae0bdc49710b0735312ec0448b7e3840b32dd5cd521"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/attacks-complete-42411-1711428232396776836_0.profraw",
+      "bytes": 257792,
+      "sha256": "e0202e6b84eddf9f509742fc4205de81638e86c6cfa79388112b846195ca23b8"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/attacks-complete-42418-17500358728434333666_0.profraw",
+      "bytes": 167432,
+      "sha256": "ee5f0c1872e394979ba485b26a85290c73c10765afb4752ec190eb0aaa48be10"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/attacks-complete-42442-1711428232396776836_0.profraw",
+      "bytes": 257792,
+      "sha256": "ab3fd74999730a346368545fcad0cc07e8db33ee80a443e51d003bb866cfc80f"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/attacks-complete-42444-1711428232396776836_0.profraw",
+      "bytes": 257792,
+      "sha256": "d194533e6bd5bd28a26fc65763857c88fa64a2e6fa98e06f82ebfe57b1a11f33"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/attacks-complete-42454-1711428232396776836_0.profraw",
+      "bytes": 257792,
+      "sha256": "525a788a92c3e2df3b1790523e23376e1537ca84c8ca13284ae472949ebdb4a3"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39626-11798297433124307420_0.profraw",
+      "bytes": 264,
+      "sha256": "7a0a3ad51bfbe6019fe5419d6702ba2c330e70cfa33d44221e665a1ab8a93d07"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39629-11730094380441916487_0.profraw",
+      "bytes": 568,
+      "sha256": "9e2d78b43fabd334be669df06eaf7ca3b8cc977fcfb2c7f9eb3cddee6f5cdd4a"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39638-11135191154847411149_0.profraw",
+      "bytes": 416,
+      "sha256": "9b5f3fbbba2167b45b0e86c2080f1fefc913bd1ef1fafd4254ef78fc60930d90"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39641-3881250626380577220_0.profraw",
+      "bytes": 320,
+      "sha256": "b919ecbd36ff5a07911563f7af85a411c3718d53685aea62c77fce2ae0c8e0ef"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39642-1141136298480010938_0.profraw",
+      "bytes": 560,
+      "sha256": "e3d02218fc1accda182dfc31837696dbed28e474d4385ce0031b4543be780c4c"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39645-4564229742932583851_0.profraw",
+      "bytes": 424,
+      "sha256": "9af5004864245e239c0166db5498ef0a6a6b52339d08fadb0163fbd2d2cbf9ec"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39647-75665524794432063_0.profraw",
+      "bytes": 1800,
+      "sha256": "09664cd1ee282600ad695c831772d0ff71fd631ce9a97feeb925ed55078486d3"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39650-8585996070172454923_0.profraw",
+      "bytes": 672,
+      "sha256": "f0a64d8850a6bb63a9bb9ca805d74aa644a68a21ca8e9f8bb18030fc8dfa0780"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39651-1405317803382445415_0.profraw",
+      "bytes": 1240,
+      "sha256": "0ac3494c5d268776c273d6a443773dad2b5cd2199c9f3dfedd5964603b41eedd"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39656-13211091467951509430_0.profraw",
+      "bytes": 1896,
+      "sha256": "2f75406baa3fc9aa428082c19420467ff7918a7af9d4346b89b3ed6f104a2214"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39658-18098379421827147912_0.profraw",
+      "bytes": 688,
+      "sha256": "63c54595b9dfae80e83d738d72a55c46af4653f063fee337c25a0fc93a2be2f8"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39667-4681458585577667569_0.profraw",
+      "bytes": 2400,
+      "sha256": "79956405da0e8a5855ffb6a8c98cd426e434b931fc06cf4e349f39233df282e5"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39677-17006973212261229018_0.profraw",
+      "bytes": 3928,
+      "sha256": "c87bd5ba4ce702206e1bbdcdf504f44fce384e2beab07870ae1ed995e4f13fa6"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39853-1711428232396776836_0.profraw",
+      "bytes": 257792,
+      "sha256": "41dba617212930f5405ace17c4796674f90495f27c2dc172170f56ef6d775265"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39860-1711428232396776836_0.profraw",
+      "bytes": 257792,
+      "sha256": "0c0477b8f57b6fbf8f40d3a87d6090fdcd84b0295e1afc8e485ea5cc4dfb72cd"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39870-1711428232396776836_0.profraw",
+      "bytes": 257792,
+      "sha256": "78a38a756b847325c75175c4b3bc30d73310eed0e90f32d1651738afc1e6a217"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/coverage-raw/corpus-39873-9428274261431770990_0.profraw",
+      "bytes": 169336,
+      "sha256": "eb2050cb9fe1ebb1df1f3f417eee2464068d71074724d8019733776cab8085ba"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/final.profdata",
+      "bytes": 683264,
+      "sha256": "2981a2cbe45dd1f1958a5cddf3741f4a13a277d07a3cca6f9295521162302a53"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/final-coverage.json",
+      "bytes": 6286421,
+      "sha256": "b359a91978fd0670de151a41c3746252a3088e17b5ce57e58b4fb4debf78e88e"
+    },
+    {
+      "path": "target/evidence/e9-t02-verifier/final-coverage.txt",
+      "bytes": 49995,
+      "sha256": "d3434c187853020f118d0ff9fa31e5626382d300c0356a364f6b69896a9775f5"
+    }
+  ],
+  "waivers": {
+    "session.rs:129": "Lowercase 64-digit hex is checked before decode_hex32, so the secondary invalid-hex error closure is unreachable. Hash parser success and syntax refusal both execute.",
+    "session.rs:412": "All serializers here emit finite enum/integer/string/vector values into an infallible Vec writer. serde_json serializer error closure is unreachable for these concrete types; encoded-size refusal is exercised.",
+    "session.rs:643": "At most 4096 event entries times at most 4 MiB is 2^34, below u64 overflow. The checked guard is defensive.",
+    "session.rs:681": "At most 4096 machine/GPU checkpoints times at most 2 * 4 GiB is 2^45; adding event bytes stays below u64 overflow. The checked guard is defensive."
+  }
+}

@@ -1,0 +1,242 @@
+{
+  "status": "passed",
+  "report_sha256": "4e8708db09e454bbf7189bb08f73b68bbb5c93df47c16600761ad60074f336f0",
+  "head": "eb5a2484f1f7ff4d68ab2ccc7881b12fe65eae06",
+  "checks": [
+    {
+      "source": "crates/storage/src/lib.rs",
+      "sha256": "0965a32d6c7dd66579709e350ff46e13888ca93cbb03712205c0f2a9c4dd1624",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "crates/storage/src/session.rs",
+      "sha256": "4d2db19241a6df151b24104017d1856825d238704eb8f4473aefa856b9c639be",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "crates/storage/tests/session_manifest.rs",
+      "sha256": "f9339c622314c3bec0e91a35da5831db9070bd8fafa397f2bcef7ee36fade978",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "crates/storage/tests/session_manifest/cases.rs",
+      "sha256": "a61f06281ebfb50ae660fe9d0f25a5de56bf92ecfdbd3da5d04f1cd1447771bd",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "tools/verify/session-wasm/tests/session_manifest.rs",
+      "sha256": "e400879f89c6a7e8934d50216438991410ff8576b1fc8d08d297d03934173d2c",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "tools/verify/session-wasm/Cargo.toml",
+      "sha256": "4b98eab1909dc73a22f770684c46ef9a6f22a25902530c82681db9fde89808ce",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "tools/verify/session-wasm/Cargo.lock",
+      "sha256": "bfc25a5c403b8d24d9d9b29b63e757e7a38ce76b6d00da3065cb8fa1b1d03d3d",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "tools/verify/session-wasm/src/lib.rs",
+      "sha256": "9cab080d596e945d49061d32c057e0daab0654ef27f89de2288518ec414830f7",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "tools/verify/e9-session-manifest.py",
+      "sha256": "e5bd142c7ecc206b570fc131d07ff414250b8f65cd5ebf4867799fc009239ff2",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "Makefile",
+      "sha256": "70291b7a8fb76ceedd0b93a0256cf8b91615b21c2806bff230727d9cdec44576",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "Cargo.lock",
+      "sha256": "c4bf1460022ccefc88a2c5fc8d3bd8f42eab0db6157dfaa068bbda501963e534",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "rust-toolchain.toml",
+      "sha256": "0a7758acebb8cbcc2ba66675476f1c4dff67d31c5d662fccca504f19d2e6aef9",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "docs/design/session-format.md",
+      "sha256": "082b65b29a42cc16b53f9809810e9bf5d98a528b1459255cb35ff413d05ee921",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "crates/storage/tests/session_manifest/fixtures/chunk-v1.json",
+      "sha256": "8c6d43611138c1c0c18448cc55a721062ea4bb4b14ca35cc19fd909f75839fd0",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "crates/storage/tests/session_manifest/fixtures/event-v1.json",
+      "sha256": "56aaa4d267156229519c931c7b8c060efcd5858ad3f11e7b2d0b3604061c6ff2",
+      "matches_frozen_head": true
+    },
+    {
+      "source": "crates/storage/tests/session_manifest/fixtures/manifest-v1.json",
+      "sha256": "71e97341111e6704982bd3bb5d39a4de95a1c1dc2cd5fe95ada1f75d75ee2def",
+      "matches_frozen_head": true
+    },
+    {
+      "evidence": "fixture-oracles.json",
+      "sha256": "94e2a80db4e16d922910af60f1ee95ac67df9acb9a81545c7db04a3c0d8fe232",
+      "bytes": 150
+    },
+    {
+      "evidence": "format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "evidence": "no-std-wasm.log",
+      "sha256": "4c8f704f4f6776be9e67f153f4d4e98b59d431585ded707f8912295ef5a6ce29",
+      "bytes": 334
+    },
+    {
+      "evidence": "policy.log",
+      "sha256": "6a874369fde2654423adce0376e4808fcdefdad92c2b6a21b546799535188222",
+      "bytes": 32
+    },
+    {
+      "evidence": "storage-clippy.log",
+      "sha256": "59639588a6f1826f129cbcd121edc07279dab94786f5fa5bde6b3439b2e845cc",
+      "bytes": 72
+    },
+    {
+      "evidence": "storage-native.log",
+      "sha256": "44fc8a18f7b97d5239506930f2fba2e82e74d2a8a80e259611aaac37697a3594",
+      "bytes": 8649
+    },
+    {
+      "evidence": "wasm-clippy.log",
+      "sha256": "2806c976a3d6091e42fe366b2d2b8206fd028a40def1e6cf2aa80a78a7fae4af",
+      "bytes": 1279
+    },
+    {
+      "evidence": "wasm-format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "evidence": "wasm-node.log",
+      "sha256": "b5a7957147061f99656097a31b75d010f1fbc2fae8682ab9daa0e19a67f2d898",
+      "bytes": 1581
+    }
+  ],
+  "gates": [
+    {
+      "name": "policy",
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "seconds": 0.07549214363098145,
+      "exit_code": 0
+    },
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "seconds": 2.7636029720306396,
+      "exit_code": 0
+    },
+    {
+      "name": "wasm-format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "tools/verify/session-wasm/Cargo.toml",
+        "--all",
+        "--check"
+      ],
+      "seconds": 4.348716974258423,
+      "exit_code": 0
+    },
+    {
+      "name": "storage-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-storage",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "seconds": 0.1802690029144287,
+      "exit_code": 0
+    },
+    {
+      "name": "storage-native",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-storage",
+        "--",
+        "--nocapture"
+      ],
+      "seconds": 16.833802938461304,
+      "exit_code": 0
+    },
+    {
+      "name": "no-std-wasm",
+      "command": [
+        "cargo",
+        "build",
+        "-p",
+        "wasm-vm-storage",
+        "--target",
+        "wasm32-unknown-unknown"
+      ],
+      "seconds": 24.762492895126343,
+      "exit_code": 0
+    },
+    {
+      "name": "wasm-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "tools/verify/session-wasm/Cargo.toml",
+        "--locked",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--test",
+        "session_manifest",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "seconds": 45.0887131690979,
+      "exit_code": 0
+    },
+    {
+      "name": "wasm-node",
+      "command": [
+        "wasm-pack",
+        "test",
+        "--node",
+        "tools/verify/session-wasm",
+        "--locked",
+        "--test",
+        "session_manifest"
+      ],
+      "seconds": 24.559550762176514,
+      "exit_code": 0
+    }
+  ],
+  "production_web_wasm_diff": false
+}

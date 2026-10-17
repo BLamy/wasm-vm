@@ -1,0 +1,49 @@
+{
+  "status": "passed",
+  "frozen_head": "eb5a2484f1f7ff4d68ab2ccc7881b12fe65eae06",
+  "runtime_source_sha256": "4d2db19241a6df151b24104017d1856825d238704eb8f4473aefa856b9c639be",
+  "promoted_test_sha256": "c533fa33293e37b21e7053c82ca64906539df34f8101e4c02a546c58c2b1eef2",
+  "shared_cases_sha256": "a61f06281ebfb50ae660fe9d0f25a5de56bf92ecfdbd3da5d04f1cd1447771bd",
+  "commands": [
+    {
+      "name": "promoted-format",
+      "command": [
+        "rustfmt",
+        "--edition",
+        "2024",
+        "--check",
+        "crates/storage/tests/session_manifest_critic.rs"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "promoted-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-storage",
+        "--test",
+        "session_manifest_critic",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0
+    },
+    {
+      "name": "promoted-tests",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-storage",
+        "--test",
+        "session_manifest_critic",
+        "--",
+        "--nocapture"
+      ],
+      "exit_code": 0
+    }
+  ]
+}

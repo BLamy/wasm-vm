@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "new_ignored_tests": false,
+  "runtime_test_only_semantics": false,
+  "runtime_debug_assertions": false,
+  "runtime_unsafe": false,
+  "worker_native_wasm_logs_have_unexpected_panic": false
+}

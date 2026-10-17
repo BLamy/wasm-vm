@@ -3,7 +3,7 @@ id: E9-T02
 epic: 9
 title: Define bounded session manifests and compatibility checks
 priority: 524.902
-status: implemented
+status: verified
 depends_on: [E9-T01]
 estimate: S
 risk: high
@@ -87,3 +87,56 @@ unchanged. Browser/deployment gates apply to the successor runtime/UI integratio
 Fresh verifier: `/root/verify_e9_t02` is independently auditing the diff, recording prior
 predictions, attacking admission and checking execution coverage. This worker entry does
 not set `verified`.
+
+### 2026-10-17 — verifier — VERDICT: verified
+
+VERDICT: verified
+
+Fresh session `/root/verify_e9_t02` read the whole task and frozen diff before evidence,
+then committed the prior predictions and results in `evidence/e9-t02/verifier/`.
+Code head remains `eb5a2484f1f7ff4d68ab2ccc7881b12fe65eae06`; worker submission was
+`e5ea3379e423b8e8757410b017a56ef4fa4a0acd`. No implementation edits were made.
+
+- **P1/P5/P6 HELD — identities, capture and preservation.** Each immutable machine and
+  policy identity is refused independently; retained exact runtime/assets produce the
+  proper Available/Unavailable state. Every device field, GPU renderer/profile and an
+  asset whose digest matches but byte length differs received independent mutations.
+  Canonical original bytes remain unchanged. See shared native/Wasm corpus and
+  `verifier/promoted-tests.log:17-35`, `verifier/promotion-report.json`.
+- **P2/P3/P4 HELD — exact counters and bounded integrity.** Both sides of 2^53 and u64
+  limits stay exact; unknown versions/fields, duplicated/oversized sections, corrupt or
+  truncated payloads, sequence/phase/witness regression, count/endpoints and arithmetic
+  overflow are refused with typed errors. JS JSON/BigInt independently preserves the
+  fixture byte digest `71e97341111e6704982bd3bb5d39a4de95a1c1dc2cd5fe95ada1f75d75ee2def`
+  (`verifier/js-oracle.json`). Eight promoted critic tests pass with zero ignored cases
+  at `verifier/promoted-tests.log:42`; the nine shared native/Wasm cases are unchanged.
+- **P7 HELD — evidence/environment.** All 23 committed worker artifact hashes and all
+  16 warm/cold source hashes match. The single pristine clone was independently inspected:
+  clean exact code head, no object alternates, matching source/evidence bytes. Its scrubbed
+  acceptance passed eight gates, 106+9 native tests and nine Wasm/Node tests
+  (`worker/cold/recording/storage-native.log:152,167`, `wasm-node.log:50`). See
+  `verifier/warm-audit.json` and `verifier/cold-audit.json`. No production browser/Wasm
+  artifacts or test-only runtime behavior changed.
+- **P8 HELD — bounded novel attack.** Duplicate same/contradictory payload discriminants,
+  duplicate payload bytes and a foreign required payload field all return Malformed,
+  preserving input bytes (`verifier/promoted-tests.log:14-20`). Authenticated same-transition
+  phase regression and excessive/duplicate sequence/count attacks also fail closed.
+- **P9 HELD — sabotage.** In a scratch copy only, forcing GPU identity equality true makes
+  the existing `gpu_checkpoint_binding` test fail at `cases.rs:704:5`, observed Ok versus
+  expected IdentityMismatch("GPU"), exit 101 (`verifier/sabotage.log:53-56`, SHA-256
+  `d4dbac430b55c33abdf398657568bc1f5c45dfa12d8bc7a3f572ff596b67df57`).
+- **P10 HELD — coverage.** LLVM measures 546/550 lines and 784/811 regions for the unchanged
+  codec. Every remaining unique source region is explicitly waived at four locations:
+  impossible secondary hex failure (:129), concrete infallible serializer error conversion
+  (:412), and bounded sums that cannot overflow u64 (:643/:681). Every changed hunk is
+  executed or justified in `verifier/coverage-ledger.md`; exact binary/profile/export
+  digests and commands are in `verifier/coverage-receipt.json`, with per-line counts in
+  `verifier/final-coverage.txt`. Large artifacts remain locally under
+  `target/evidence/e9-t02-verifier`.
+
+SUITE: promote `crates/storage/tests/session_manifest_critic.rs` (eight deterministic
+regressions). Preserve the shared literal golden fixtures, nine native/Wasm cases and
+`make verify-E9-T02`. Promoted test format, affected-test Clippy and native execution all
+pass (`verifier/promotion-report.json`). As only tests/evidence/metadata changed after the
+frozen runtime, incremental harness checks suffice; the final cold proof was not repeated.
+The complete prediction-by-prediction result is `verifier/verdict.md`.
