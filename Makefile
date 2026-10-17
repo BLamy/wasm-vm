@@ -437,6 +437,11 @@ verify-list: ; @bash tools/verify/list.sh
 check-task-policy:
 	python3 tools/check_task_policy.py
 
+# E9-T01 is documentation/fixture definition work, not an implemented replay engine.
+.PHONY: verify-E9-T01
+verify-E9-T01:
+	@python3 -B tools/verify/e9-session-contract.py
+
 # E1-T20: RISCOF architectural compliance (DUT=wasm-vm vs Spike). Needs `bash compliance/provision.sh`
 # first (riscof venv + arch-test) + the Docker toolchain image (Spike). Enforces compliance/EXCLUSIONS.md.
 riscof:

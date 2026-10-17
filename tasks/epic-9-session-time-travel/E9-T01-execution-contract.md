@@ -26,7 +26,11 @@ Documentation and pinned workload/measurement definitions only. Distinguish a sa
 
 ## Deterministic acceptance
 
-`make verify-E9-T01`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.
+`make verify-E9-T01` checks the frozen contract, source anchors/digests, owner tasks,
+asset/workload pins and numeric budgets. The [contract](../../docs/design/session-replay.md)
+and [machine-readable definitions](../../docs/design/session-replay-contract.json) are the
+handoff to T02 and the capture slices. This direct check makes no guest runtime,
+performance or acceleration qualification claim.
 
 ## Adversarial verification
 

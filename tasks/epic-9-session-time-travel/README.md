@@ -1,6 +1,7 @@
 # Epic 9 — Session Time Travel
 
-Status: **planned**, created 2026-10-15 at the user's request. Implementation started 2026-10-17 at the user's direction with T01. The execution priority
+Status: **started**, created 2026-10-15 at the user's request. Implementation started
+2026-10-17 at the user's direction with T01. The execution priority
 band is 524.901–524.924 (originally 901–924), ahead of the optional userspace runtime.
 Other task statuses are unchanged.
 
@@ -39,6 +40,11 @@ that runtime. Recording cannot reconstruct events from before it was enabled.
 
 ## Execution contract
 
+T01 establishes the [frozen full-system contract](../../docs/design/session-replay.md),
+including the adapter inventory, fixture pins and numeric budgets. Task frontmatter is
+authoritative for implementation/verification status; asset pins alone do not qualify a
+runtime profile for recording or accelerated replay.
+
 - Start with the existing full-system, single-hart RV64 Linux profile. Unsupported SMP,
   userspace ABI mode, RP2350 or unrecorded devices must be refused explicitly; extending
   them requires separate work and proof. This is not a claim of cross-host arbitrary-race
@@ -60,16 +66,16 @@ that runtime. Recording cannot reconstruct events from before it was enabled.
 - For GPU sessions use the accepted production RAM/disk/GPU pair and fresh resource epochs.
   Record guest-visible readbacks, query/error/fence results and completion order; rendering
   the same commands alone does not prove identical guest-visible observations.
-- Expect large snapshots: the accelerated Omarchy candidate inspected for this discussion
-  is about 173 MB. Use bounded chunk streaming, incremental RAM pages, shared immutable
+- Expect large snapshots: the currently pinned Omarchy desktop candidate is 198,380,324
+  compressed bytes (about 189 MiB). Use bounded chunk streaming, incremental RAM pages, shared immutable
   content and safe reference-aware GC rather than a full snapshot at every timeline tick.
   T01 freezes measured workload identities and numeric budgets before tuning begins.
 
 ## Verification and scheduling
 
-Each task is an S boundary with one planned `make verify-E9-Tnn` acceptance entry point.
-These targets do not exist yet and must be implemented with their slices. T01 is the active contract slice; later tasks remain pending. No runtime replay
-behavior is declared verified by the plan or contract.
+Each task is an S boundary with one `make verify-E9-Tnn` acceptance entry point.
+T01's direct contract check exists; later targets must be implemented with their slices.
+No runtime replay behavior is declared verified by the plan or contract.
 Use AGENTS.md's risk-tier gates, original guest/browser recordings, exact source/content
 identities, state digests and a fresh adversarial verifier during implementation. Carry
 unchanged accepted evidence incrementally; no new GitHub Actions or external service is
