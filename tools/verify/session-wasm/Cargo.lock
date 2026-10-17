@@ -287,6 +287,7 @@ dependencies = [
 name = "session-codec-wasm-proof"
 version = "0.0.0"
 dependencies = [
+ "serde_json",
  "wasm-bindgen-test",
  "wasm-vm-storage",
 ]

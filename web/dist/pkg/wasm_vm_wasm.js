@@ -247,6 +247,17 @@ export class WasmLinux {
         }
     }
     /**
+     * Own a bounded disk delta after draining original disk work, without retiring instructions.
+     * The owner must keep execution paused and join this Promise before releasing storage. Each
+     * pass resolves actual pending fetch/durability work before retrying native quiescence.
+     * The exact u64 generation is encoded without crossing the legacy f64 generation API.
+     * @returns {Promise<Uint8Array>}
+     */
+    captureDiskDelta() {
+        const ret = wasm.wasmlinux_captureDiskDelta(this.__wbg_ptr);
+        return ret;
+    }
+    /**
      * Exact COW bytes from the same ephemeral disk backend used by the guest.
      * Persistent and secondary-drive shapes explicitly remain outside this factory profile.
      * @returns {Uint8Array}

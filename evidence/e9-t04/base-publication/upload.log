@@ -1,0 +1,56 @@
+
+ ⛅️ wrangler 4.151.1
+────────────────────
+Resource location: remote 
+
+Creating object "chunked-alpine/chunks/10d45ed084617cbb031d9dcc7d4466733d52342e27937113d3841ba2c7653738.bin" in bucket "wasm-vm".
+Upload complete.
+
+ ⛅️ wrangler 4.151.1
+────────────────────
+Resource location: remote 
+
+Creating object "chunked-alpine/chunks/29e5c94170396393036c40f8c46545f2021c93ad2a6920c085cff6b67317ffde.bin" in bucket "wasm-vm".
+Upload complete.
+
+ ⛅️ wrangler 4.151.1
+────────────────────
+Resource location: remote 
+
+Creating object "chunked-alpine/chunks/45775ab235623c7b14f8588f6275c0dc9ec54505f7fd2c4a8d16ce97e46e2bf7.bin" in bucket "wasm-vm".
+Upload complete.
+
+ ⛅️ wrangler 4.151.1
+────────────────────
+Resource location: remote 
+
+Creating object "chunked-alpine/chunks/6aa0a874f217d212ee3b8e5784b4bd3ec6cf8c9a0776ed029147b358b3ccf651.bin" in bucket "wasm-vm".
+Upload complete.
+
+ ⛅️ wrangler 4.151.1
+────────────────────
+Resource location: remote 
+
+Creating object "chunked-alpine/chunks/6ca5f6c3bd0ce5f787785ffc8d6c412d1c9df36f30981f41ef964169313d5ced.bin" in bucket "wasm-vm".
+Upload complete.
+
+ ⛅️ wrangler 4.151.1
+────────────────────
+Resource location: remote 
+
+Creating object "chunked-alpine/chunks/9b6e637c8d5b4de6d3d858bfd70a97157800f4005b2b857c995ba18efbb58c39.bin" in bucket "wasm-vm".
+Upload complete.
+
+ ⛅️ wrangler 4.151.1
+────────────────────
+Resource location: remote 
+
+Creating object "chunked-alpine/chunks/c3250b86fce0206d0d049456d6a3eefb2072895f72beaa739b53d3951e1d0fd2.bin" in bucket "wasm-vm".
+Upload complete.
+
+ ⛅️ wrangler 4.151.1
+────────────────────
+Resource location: remote 
+
+Creating object "chunked-alpine/chunks/f55580f4c09ad2f001a9a56780ef494eabfc70bf082e8e899ea8b267a9867492.bin" in bucket "wasm-vm".
+Upload complete.

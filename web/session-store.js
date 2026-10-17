@@ -137,6 +137,10 @@ export class SessionStore {
     descriptor(value, {sha256: hash, length: value.length});
     return {sha256: hash, length: value.length};
   }
+  async objectReference(hash) {
+    this.#active();
+    return this.#root(hash);
+  }
   async *stream(expected) {
     const ref = reference(expected), object = await this.#object(ref), hash = new SessionSha256();
     try {

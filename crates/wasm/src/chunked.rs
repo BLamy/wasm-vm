@@ -281,13 +281,22 @@ impl<B: OverlayBackend> BlockBackend for ChunkedBackend<B> {
     }
 }
 
-/// Shared handle to the actual ephemeral disk, not a mirror of its writes.
-/// The machine's forwarding backend and checkpoint exporter own the same COW store.
-#[derive(Clone)]
-pub(crate) struct CheckpointDisk(Rc<RefCell<ChunkedBackend>>);
+pub(crate) trait DiskSnapshot {
+    fn snapshot_delta(&self, generation: u64) -> Result<OverlayDelta, BlockError>;
+}
 
-impl CheckpointDisk {
-    pub(crate) fn new(backend: ChunkedBackend) -> Self {
+/// Shared handle to the actual disk, not a mirror of its writes.
+/// The machine's forwarding backend and checkpoint exporter own the same COW store.
+pub(crate) struct CheckpointDisk<B: OverlayBackend = MemOverlay>(Rc<RefCell<ChunkedBackend<B>>>);
+
+impl<B: OverlayBackend> Clone for CheckpointDisk<B> {
+    fn clone(&self) -> Self {
+        Self(self.0.clone())
+    }
+}
+
+impl<B: OverlayBackend> CheckpointDisk<B> {
+    pub(crate) fn new(backend: ChunkedBackend<B>) -> Self {
         Self(Rc::new(RefCell::new(backend)))
     }
     pub(crate) fn snapshot_delta(&self, generation: u64) -> Result<OverlayDelta, BlockError> {
@@ -301,9 +310,17 @@ impl CheckpointDisk {
             .ok_or(BlockError::Io)
     }
 }
-impl BlockBackend for CheckpointDisk {
+impl<B: OverlayBackend> DiskSnapshot for CheckpointDisk<B> {
+    fn snapshot_delta(&self, generation: u64) -> Result<OverlayDelta, BlockError> {
+        CheckpointDisk::snapshot_delta(self, generation)
+    }
+}
+impl<B: OverlayBackend> BlockBackend for CheckpointDisk<B> {
     fn capacity_sectors(&self) -> u64 {
         self.0.borrow().capacity_sectors()
+    }
+    fn is_read_only(&self) -> bool {
+        self.0.borrow().is_read_only()
     }
     fn read(&mut self, sector: u64, bytes: &mut [u8]) -> Result<(), BlockError> {
         self.0
@@ -341,6 +358,55 @@ mod tests {
     fn sha_hex(bytes: &[u8]) -> String {
         let d = Sha256::digest(bytes);
         d.iter().map(|b| format!("{b:02x}")).collect()
+    }
+
+    #[test]
+    fn checkpoint_persistent_disk_refuses_uncommitted_and_unacknowledged_writes() {
+        let (data, manifest, cache, _) = setup(32, 8192);
+        for (index, bytes) in data.chunks(8192).enumerate() {
+            cache.borrow_mut().insert(index, bytes.to_vec());
+        }
+        let overlay = wasm_vm_storage::WriteBackOverlay::new(&manifest);
+        let queue = overlay.shared_queue();
+        let disk = OverlayDisk::attach(overlay, &manifest).unwrap();
+        let mut live = CheckpointDisk::new(ChunkedBackend::from_persistent_disk(disk, cache));
+        let capture: Box<dyn DiskSnapshot> = Box::new(live.clone());
+        assert_eq!(live.write(1, &[0x51; 512]), Err(BlockError::WritePending));
+        assert!(capture.snapshot_delta(9_007_199_254_740_993).is_err());
+        let pending = queue.borrow().pending_flush();
+        let persisted: Vec<_> = pending
+            .iter()
+            .map(|(index, generation, _)| (*index, *generation))
+            .collect();
+        queue.borrow_mut().mark_persisted(&persisted);
+        assert!(
+            capture.snapshot_delta(9_007_199_254_740_993).is_err(),
+            "device write still awaits acknowledgement"
+        );
+        live.write(1, &[0x51; 512]).unwrap();
+        let first = capture.snapshot_delta(9_007_199_254_740_993).unwrap();
+        assert_eq!(first.generation, 9_007_199_254_740_993);
+        assert_eq!(&first.blocks[0].1[512..1024], &[0x51; 512]);
+        assert_eq!(live.write(1, &[0x62; 512]), Err(BlockError::WritePending));
+        assert!(capture.snapshot_delta(9_007_199_254_740_994).is_err());
+        let pending = queue.borrow().pending_flush();
+        queue
+            .borrow_mut()
+            .mark_persisted(&pending.iter().map(|(i, g, _)| (*i, *g)).collect::<Vec<_>>());
+        live.write(1, &[0x62; 512]).unwrap();
+        let second = capture.snapshot_delta(9_007_199_254_740_994).unwrap();
+        assert_eq!(&second.blocks[0].1[512..1024], &[0x62; 512]);
+        assert_eq!(
+            &first.blocks[0].1[512..1024],
+            &[0x51; 512],
+            "later live writes cannot change an owned capture"
+        );
+        assert!(!live.is_read_only());
+        live.0.borrow().read_only_flag().set(true);
+        assert!(live.is_read_only());
+        assert_eq!(live.write(1, &[0x73; 512]), Err(BlockError::ReadOnly));
+        assert!(queue.borrow().is_empty());
+        assert_eq!(capture.snapshot_delta(second.generation).unwrap(), second);
     }
 
     #[test]

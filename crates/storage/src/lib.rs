@@ -20,6 +20,7 @@ use sha2::{Digest, Sha256};
 mod blobstore;
 mod cache;
 mod dbmeta;
+pub mod disk_root;
 mod fetch;
 pub mod oci;
 mod overlay;

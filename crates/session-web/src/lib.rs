@@ -1,8 +1,26 @@
 //! Browser adapters over the shared session codec. No storage or VM mutation here.
 use sha2::{Digest, Sha256};
 use wasm_bindgen::prelude::*;
+use wasm_vm_storage::disk_root;
 use wasm_vm_storage::session::{SessionError, SessionManifest};
 use wasm_vm_storage::session_publication;
+
+#[wasm_bindgen(js_name = sessionValidateDiskRoot)]
+pub fn validate_disk_root(bytes: &[u8]) -> Result<Vec<u8>, JsError> {
+    disk_root::DiskRoot::from_bytes(bytes)
+        .and_then(|r| r.to_bytes())
+        .map_err(js_error)
+}
+
+#[wasm_bindgen(js_name = sessionAdmitDiskRoot)]
+pub fn admit_disk_root(bytes: &[u8], image: &str, generation: &str) -> Result<Vec<u8>, JsError> {
+    disk_root::admit_json(bytes, image, generation).map_err(js_error)
+}
+
+#[wasm_bindgen(js_name = sessionDiskRootReferences)]
+pub fn disk_root_references(bytes: &[u8]) -> Result<Vec<u8>, JsError> {
+    disk_root::references_json(bytes).map_err(js_error)
+}
 
 fn js_error(error: SessionError) -> JsError {
     JsError::new(&format!("session metadata: {error:?}"))

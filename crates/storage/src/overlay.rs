@@ -80,6 +80,12 @@ pub trait OverlayBackend {
         let _ = barrier;
         true
     }
+    /// An owned immutable view of the complete write set, in block order. Unsupported backends,
+    /// an exceeded bound, or pending durability refuse capture rather than invent a partial root.
+    fn snapshot_blocks(&self, max_blocks: usize) -> Option<Vec<(u64, [u8; OVERLAY_BLOCK])>> {
+        let _ = max_blocks;
+        None
+    }
     /// The 32-byte binding to the base image this overlay belongs to ([`ImageManifest::base_hash`]).
     fn base_binding(&self) -> &[u8; 32];
     /// The total image length in bytes (same as the base).
@@ -122,6 +128,14 @@ impl OverlayBackend for MemOverlay {
     fn commit(&mut self) -> Result<(), OverlayError> {
         Ok(()) // in-memory: already "durable" for the session
     }
+    fn snapshot_blocks(&self, max_blocks: usize) -> Option<Vec<(u64, [u8; OVERLAY_BLOCK])>> {
+        (self.blocks.len() <= max_blocks).then(|| {
+            self.blocks
+                .iter()
+                .map(|(index, bytes)| (*index, *bytes))
+                .collect()
+        })
+    }
     fn base_binding(&self) -> &[u8; 32] {
         &self.base_binding
     }
@@ -139,7 +153,7 @@ pub struct OverlayDisk<B: OverlayBackend> {
     index: ChunkIndex,
 }
 
-impl OverlayDisk<MemOverlay> {
+impl<B: OverlayBackend> OverlayDisk<B> {
     /// Own the complete current COW write set, bound to its base and resume generation.
     /// This includes seeded blocks as well as writes made since the seed was loaded.
     pub fn snapshot_delta(
@@ -147,19 +161,11 @@ impl OverlayDisk<MemOverlay> {
         generation: u64,
         max_blocks: usize,
     ) -> Option<crate::OverlayDelta> {
-        if self.overlay.blocks.len() > max_blocks {
-            return None;
-        }
         Some(crate::OverlayDelta {
-            image_len: self.overlay.image_len,
-            base_binding: self.overlay.base_binding,
+            image_len: self.overlay.image_len(),
+            base_binding: *self.overlay.base_binding(),
             generation,
-            blocks: self
-                .overlay
-                .blocks
-                .iter()
-                .map(|(index, bytes)| (*index, *bytes))
-                .collect(),
+            blocks: self.overlay.snapshot_blocks(max_blocks)?,
         })
     }
 }

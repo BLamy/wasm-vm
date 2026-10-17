@@ -207,6 +207,9 @@ export async function startLinuxBoot(opts = {}) {
     // A demo desktop always starts from the shipped RAM+disk pair in memory. No shared writer
     // lock, durable user overlay, or long cold boot on the next visit.
     freshDesktop = false,
+    // E9-T04: cold-boot a historical disk into an ephemeral private COW backend. CPU/RAM
+    // checkpoint restore is coordinated separately by E9-T05; never combine this with a factory pair.
+    sessionDiskRoot = null,
     virgl = false,
     onGpuEvent = null,
     ramMib = 256,
@@ -355,6 +358,15 @@ export async function startLinuxBoot(opts = {}) {
     if (virgl && opts.bootSnapshot !== false && persist) throw new Error("GPU warm boot currently requires persist=false");
     if (freshDesktop && (!isChunked || persist || extraDiskUrl || opts.bootSnapshot === false)) {
       throw new Error("fresh desktop requires an ephemeral chunked warm boot");
+    }
+    if (sessionDiskRoot !== null && (!isChunked || persist || freshDesktop || virgl || extraDiskUrl
+      || opts.bootSnapshot !== false)) {
+      throw new Error("historical disk roots require an ephemeral software chunked boot with bootSnapshot=false");
+    }
+    if (sessionDiskRoot !== null && (typeof sessionDiskRoot !== 'object' || Array.isArray(sessionDiskRoot)
+      || !Object.keys(sessionDiskRoot).every(key => ['database', 'sha256', 'generation'].includes(key))
+      || typeof sessionDiskRoot.sha256 !== 'string' || typeof sessionDiskRoot.generation !== 'string')) {
+      throw new Error("invalid historical disk root descriptor");
     }
     const manifest = await fetchJsonAsset(manifestUrl, "boot manifest");
     const omarchyImage = requestImageManifestBaseUrl != null
@@ -531,7 +543,16 @@ export async function startLinuxBoot(opts = {}) {
     // resume the VM behind the dialog. It gates the pump/run independently of `paused`.
     let quotaPaused = false;
     let lastPersistRetry = 0; // throttle pending-byte retries while quotaReadOnly
-    if(gpuWarmData) {
+    if (sessionDiskRoot !== null) {
+      const {SessionStore} = await import('./session-store.js');
+      const {SessionDiskRoots} = await import('./session-disk-roots.js');
+      const store = await SessionStore.open(sessionDiskRoot.database);
+      let delta;
+      try { delta = await new SessionDiskRoots(store).restore(sessionDiskRoot.sha256, imageManifestText, sessionDiskRoot.generation); }
+      finally { await store.close(); }
+      machine = WasmLinux.newChunkedDiskSeeded(ramMib, kernel, imageManifestText, baseUrl,
+        cacheBudgetMib, bootProfile, bootargs, emitOutput, enableMic, delta);
+    } else if(gpuWarmData) {
       machine=WasmLinux.newChunkedDiskSeeded(ramMib,kernel,imageManifestText,baseUrl,cacheBudgetMib,bootProfile,bootargs,emitOutput,enableMic,gpuWarmData.disk);
     } else if (freshDesktop) {
       onState("restoring");
@@ -1229,6 +1250,19 @@ export async function startLinuxBoot(opts = {}) {
         return pair;
       }finally{gpuCaptureBusy=false;if(!wasPaused&&!stopped){guestClockLifecycle.resume();paused=false;schedule();}}
     };
+    const captureDiskDelta = async () => {
+      if (!paused || stopped || gpuCaptureBusy || productionGpu || extraDiskBytes || !isChunked) {
+        throw Error('session_disk_capture: pause a software chunked guest without extra disks first');
+      }
+      gpuCaptureBusy = true;
+      try {
+        await taskQuiescence.waitForIdle();
+        if (stopped) throw Error('session_disk_capture: owner stopped');
+        // Own the asynchronous disk barriers in the same lifecycle stop() joins before closing
+        // storage or releasing its writer lock. No scheduler slice can enter while paused/busy.
+        return await taskQuiescence.run(() => machine.captureDiskDelta());
+      } finally { gpuCaptureBusy = false; }
+    };
     // The reconstructed renderer must physically present in its fresh epoch and
     // the resumed CPU must execute before input connects. A desktop need not
     // submit another draw until that input arrives; requiring one here strands
@@ -1382,6 +1416,7 @@ export async function startLinuxBoot(opts = {}) {
       // E5-T26f: serialize the live composite desktop envelope through the same controller
       // surface used by the page in both direct and whole-machine-worker boot modes.
       saveGpuCheckpoint,
+      captureDiskDelta,
       saveDesktopSnapshot: () => {
         if (virgl) throw new Error("Accelerated GPU sessions require a cold restart; graphics handles cannot be saved.");
         if (typeof machine.saveDesktopSnapshot !== "function") {
