@@ -3,7 +3,7 @@ id: E9-T02
 epic: 9
 title: Define bounded session manifests and compatibility checks
 priority: 524.902
-status: pending
+status: in-progress
 depends_on: [E9-T01]
 estimate: S
 risk: high
@@ -34,4 +34,9 @@ Mutate each identity independently, use oversized/duplicate sections and counter
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-17 — worker — started
+
+E9-T01 is verified. This high-risk S slice implements bounded, lossless metadata/event/index
+codecs and read-only compatibility admission in the shared no_std storage library.
+Execution, storage publication and UI remain separate successor boundaries. The user
+authorized continuing through the entire epic; branches remain stacked and unmerged.
