@@ -4,7 +4,7 @@ epic: 9
 title: Preserve immutable disk state for historical checkpoints
 priority: 524.904
 status: in-progress
-depends_on: [E9-T02, E3-T12c3]
+depends_on: [E9-T02, E9-T03, E3-T12c3]
 estimate: S
 risk: high
 capstone: false
@@ -44,3 +44,6 @@ or rewrites the live persistent store. Shared block references remain reachable 
 every surviving root. The proof will use real guest file changes and an independent
 filesystem reader, interleaved publication/live writes, sibling roots, and identity and
 generation refusal cases. Coherent CPU/RAM/device capture remains the T05 boundary.
+
+The persisted-root implementation also uses E9-T03's immutable object store and writer
+leases, so that already-verified prerequisite is explicit in the frontmatter.
