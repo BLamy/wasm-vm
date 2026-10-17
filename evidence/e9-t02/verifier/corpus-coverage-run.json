@@ -1,0 +1,15 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "-p",
+    "wasm-vm-storage",
+    "--test",
+    "session_manifest",
+    "--",
+    "--nocapture"
+  ],
+  "exit_code": 0,
+  "flags": "-C instrument-coverage",
+  "source_sha256": "4d2db19241a6df151b24104017d1856825d238704eb8f4473aefa856b9c639be"
+}

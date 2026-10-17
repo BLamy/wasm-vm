@@ -1,0 +1,36 @@
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling cfg-if v1.0.4
+   Compiling unicode-ident v1.0.24
+   Compiling futures-task v0.3.32
+   Compiling memchr v2.8.2
+   Compiling futures-core v0.3.32
+   Compiling serde_core v1.0.228
+   Compiling zmij v1.0.21
+   Compiling sha2 v0.10.9
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling futures-util v0.3.32
+   Compiling wasm-bindgen v0.2.126
+   Compiling js-sys v0.3.103
+   Compiling serde v1.0.228
+   Compiling serde_json v1.0.150
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/storage)
+   Compiling session-codec-wasm-proof v0.0.0 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/tools/verify/session-wasm)
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling wasm-bindgen-test v0.3.76
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 21.43s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running tests/session_manifest.rs (target/wasm32-unknown-unknown/debug/deps/session_manifest-5e1ab39e1be66854.wasm)
+running 9 tests
+test unavailable_history_is_preserved ... ok
+test topology_requires_capture ... ok
+test topology_and_index_attacks ... ok
+test schema_duplicates_and_bounds ... ok
+test noncanonical_numbers_and_hashes ... ok
+test identities_and_capture_admission ... ok
+test gpu_checkpoint_binding ... ok
+test golden_wide_positions ... ok
+test event_and_chunk_integrity ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 filtered out; finished in 1.01s
+

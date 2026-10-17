@@ -1,0 +1,1 @@
+{"version":{"major":1,"minor":0},"kind":"uart","required":true,"transition":"9007199254741094","phase":"observe","ordinal":0,"sequence":"9007199254740994","retired":"9007199254740994","device":"uart0","intent":[105,110,112,117,116],"status":"ok","payload":{"storage":"inline","bytes":[97,100,118,97,110,99,101,10]}}

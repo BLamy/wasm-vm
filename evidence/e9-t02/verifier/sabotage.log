@@ -1,0 +1,67 @@
+   Compiling libc v0.2.186
+   Compiling cfg-if v1.0.4
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.106
+   Compiling getrandom v0.3.4
+   Compiling quote v1.0.46
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.24
+   Compiling zerocopy v0.8.52
+   Compiling serde_core v1.0.228
+   Compiling rustix v1.1.4
+   Compiling getrandom v0.4.3
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.21
+   Compiling bitflags v2.13.0
+   Compiling fastrand v2.4.1
+   Compiling serde_json v1.0.150
+   Compiling serde v1.0.228
+   Compiling once_cell v1.21.4
+   Compiling bit-vec v0.8.0
+   Compiling generic-array v0.14.7
+   Compiling fnv v1.0.7
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.2
+   Compiling num-traits v0.2.19
+   Compiling quick-error v1.2.3
+   Compiling bit-set v0.8.0
+   Compiling regex-syntax v0.8.11
+   Compiling unarray v0.1.4
+   Compiling errno v0.3.14
+   Compiling wait-timeout v0.2.1
+   Compiling cpufeatures v0.2.17
+   Compiling rand_core v0.9.5
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling syn v2.0.118
+   Compiling rand v0.9.4
+   Compiling rand_xorshift v0.4.0
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling tempfile v3.27.0
+   Compiling rusty-fork v0.3.1
+   Compiling serde_derive v1.0.228
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.9.0
+   Compiling proptest v1.11.0
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t02-verifier/sabotage-storage)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 31.87s
+     Running tests/session_manifest.rs (target/evidence/e9-t02-verifier/sabotage-target/debug/deps/session_manifest-fdf2fcca3e906913)
+
+running 1 test
+
+thread 'gpu_checkpoint_binding' (454571) panicked at tests/session_manifest/cases.rs:704:5:
+assertion `left == right` failed
+  left: Ok(())
+ right: Err(IdentityMismatch("GPU"))
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test gpu_checkpoint_binding ... FAILED
+
+failures:
+
+failures:
+    gpu_checkpoint_binding
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--test session_manifest`

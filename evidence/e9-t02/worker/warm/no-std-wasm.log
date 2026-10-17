@@ -1,0 +1,7 @@
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling syn v2.0.118
+   Compiling serde_derive v1.0.228
+   Compiling serde v1.0.228
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/storage)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 24.55s

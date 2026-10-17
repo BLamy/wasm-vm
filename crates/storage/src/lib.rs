@@ -26,6 +26,7 @@ mod overlay;
 mod overlay_delta;
 mod prefetch;
 mod pullthrough;
+pub mod session;
 mod snapmeta;
 mod writeback;
 pub use blobstore::{BlobBackend, BlobError, BlobId, BlobStore, MemBlobBackend, blob_id};

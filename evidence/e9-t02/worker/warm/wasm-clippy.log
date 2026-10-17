@@ -1,0 +1,31 @@
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling rustversion v1.0.22
+    Checking unicode-ident v1.0.24
+    Checking slab v0.4.12
+    Checking once_cell v1.21.4
+    Checking pin-project-lite v0.2.17
+   Compiling wasm-bindgen-shared v0.2.126
+    Checking futures-core v0.3.32
+    Checking futures-task v0.3.32
+    Checking oorandom v11.1.5
+    Checking libm v0.2.16
+    Checking nu-ansi-term v0.50.3
+    Checking cast v0.3.0
+    Checking wasm-bindgen-test-shared v0.2.126
+    Checking futures-util v0.3.32
+    Checking num-traits v0.2.19
+   Compiling wasm-bindgen v0.2.126
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-macro v0.2.126
+    Checking serde v1.0.228
+    Checking wasm-vm-storage v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/storage)
+    Checking js-sys v0.3.103
+    Checking session-codec-wasm-proof v0.0.0 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/tools/verify/session-wasm)
+    Checking wasm-bindgen-futures v0.4.76
+    Checking wasm-bindgen-test v0.3.76
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 44.98s
