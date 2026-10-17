@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "original_files_checked": 676,
+  "compact_files_checked": 13,
+  "original_report_sha256": "b091582b530875f696333768333e87aee9abd6a63bac132112d1c5bd6b3ab1bf",
+  "recording_receipt_sha256": "55020877e5c1b437cd7db8f402ae332ac1302fe41ab2ef10fa0df381173ab368",
+  "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-public-cache-correct",
+  "harness_head": "54a270afbd17758e4edddb4f332123fc5d380037"
+}

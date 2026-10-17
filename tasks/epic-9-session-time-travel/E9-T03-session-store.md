@@ -141,3 +141,24 @@ Cold acceptance report SHA-256:
 `c04bb9c95bca209d663fb6789891cafe56323c9622e5608a7f9026e3cfa99acf`.
 All original worker receipts were also independently revalidated. The status/queue
 commit changes verification metadata only; no runtime or test code follows the proven head.
+
+### 2026-10-17 — verifier — publication harness addendum — VERDICT: verified
+
+All P1–P9 product/cold results remain **HELD**. Runtime, dependencies and critic tests
+remain unchanged since `c51133ca`; the narrow driver correction is
+`54a270afbd17758e4edddb4f332123fc5d380037`. H1–H5 predictions and nine exact-source
+response/console guard checks held. A 304 is accepted only after the same run verifies
+that path's 200 body against local dist; the favicon exemption requires the exact
+`https://wasm-vm.pages.dev/favicon.ico` console location and 404 text. The earlier
+checker failure is fully explained by those permitted HTTP conditions.
+
+The corrected public run exits 0, binds all 676 original file receipts, and retains
+127/0, four crashes, 20 races and every promoted critic case. It restores the actual
+retained factory worker, retires 2,999,712 new instructions and draws in fresh epoch 4.
+All 59 selected public-file hashes match local dist. No original profile was opened or
+modified, and no unrelated gate or cold clone was repeated. Exact trace points, guard
+checks, file digests and the closure review are in
+`evidence/e9-t03/verifier/publication-addendum.md`; status remains verified.
+
+Corrected public report SHA-256:
+`b091582b530875f696333768333e87aee9abd6a63bac132112d1c5bd6b3ab1bf`.

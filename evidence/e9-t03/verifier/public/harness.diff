@@ -1,0 +1,61 @@
+commit 54a270afbd17758e4edddb4f332123fc5d380037
+Author: Brett Lamy <blamy@Bretts-MacBook-Pro.local>
+Date:   Sat Oct 17 19:01:58 2026 -0400
+
+    test(web): handle public cache revalidation in storage proof
+
+diff --git a/tools/verify/e9-session-store-browser.mjs b/tools/verify/e9-session-store-browser.mjs
+index b83cf7bb..c2ff7da4 100644
+--- a/tools/verify/e9-session-store-browser.mjs
++++ b/tools/verify/e9-session-store-browser.mjs
+@@ -27,7 +27,7 @@ const fixture = {template, blobs: payloads.map(bytes => ({ref: ref(bytes), bytes
+ const report = {task: 'E9-T03', status: 'running', development, command: [process.execPath, ...process.argv.slice(1)],
+   head: execFileSync('git', ['rev-parse', 'HEAD'], {cwd: root, encoding: 'utf8'}).trim(), started: new Date().toISOString(),
+   errors: [], checks: {}, crashes: [], races: [], served: []};
+-const served = new Map(), remoteReads = []; let server, browser, context, page, sampler;
++const served = new Map(), remoteReads = []; let server, context, page, sampler;
+ await fs.mkdir(output, {recursive: true});
+ 
+ async function attach(target, name) {
+@@ -98,7 +98,6 @@ try {
+   report.profile=path.join(output,'chromium-profile');
+   context = await chromium.launchPersistentContext(report.profile, {executablePath: process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless:true,
+     args:['--enable-gpu', '--use-gl=angle', '--use-angle=metal'], viewport:{width:1440,height:1000},serviceWorkers:'block'});
+-  browser=context.browser();
+   const versionPage=context.pages()[0]??await context.newPage(), versionSession=await context.newCDPSession(versionPage);
+   report.browser=(await versionSession.send('Browser.getVersion')).product.replace(/^Chrome\//,'');
+   await versionSession.detach();
+@@ -110,6 +109,12 @@ try {
+     if (url.origin !== remote.origin || !['/session-store.js','/roadmap.js','/pkg/wasm_vm_wasm.js','/pkg/wasm_vm_wasm_bg.wasm','/session-pkg/wasm_vm_session.js','/session-pkg/wasm_vm_session_bg.wasm'].includes(url.pathname)) return;
+     remoteReads.push((async () => {
+       try {
++        if (response.status() === 304) {
++          // This fresh profile has already authenticated the cached response body.
++          assert.ok(served.has(url.pathname), '304 without a verified cached body: ' + url.pathname);
++          (report.cacheRevalidations ??= []).push({url: response.url(), sha256: served.get(url.pathname).sha256});
++          return;
++        }
+         assert.equal(response.status(),200);
+         const bytes=await response.body(), file=path.join(web,url.pathname.slice(1));
+         assert.equal(digest(bytes),digest(await fs.readFile(file)),'published source drift '+url.pathname);
+@@ -117,7 +122,12 @@ try {
+       } catch(error) {report.errors.push(String(error));}
+     })());
+   });
+-  page.on('console', message => { if (message.type() === 'error' && !/favicon.*404/.test(message.text())) report.errors.push(message.text()); });
++  page.on('console', message => {
++    if (message.type() !== 'error') return;
++    if (message.location().url === new URL('/favicon.ico', report.url).href && /\b404\b/.test(message.text())) {
++      (report.ignoredFaviconErrors ??= []).push({url: message.location().url, text: message.text()});
++    } else report.errors.push(message.text());
++  });
+   page.on('pageerror', error => report.errors.push(error.message));
+   const name = 'wasm-vm-sessions-v1-proof-' + Date.now().toString(36);
+   report.namespace = name;
+@@ -443,6 +453,5 @@ finally {
+     try {report.sources[name]=digest(await fs.readFile(path.join(root,name)));}catch{}
+   }
+   await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');
+-  await browser?.close().catch(()=>{});
+   if(server){server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
+ }

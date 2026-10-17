@@ -87,3 +87,8 @@ Final pristine acceptance report SHA-256:
 `c04bb9c95bca209d663fb6789891cafe56323c9622e5608a7f9026e3cfa99acf`.
 `SHA256.json` and `recording-receipts.json` bind the compact files and retained original
 recordings, respectively.
+
+Publication follow-up: [publication-addendum.md](publication-addendum.md) records the
+narrow harness review at `54a270af`. All original HELD product/cold results carry
+forward; authenticated HTTP revalidation and exact favicon attribution pass, and the
+corrected public process exits 0 with all browser/product assertions intact.
