@@ -5,9 +5,9 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import time
-import tomllib
 
 ROOT = Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser(description=__doc__)
@@ -27,6 +27,14 @@ def clean():
     assert not subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=all"], cwd=ROOT), "source tree must be clean"
 
 
+def lock_versions(path):
+    # Cargo writes name/version first in every package stanza; no external TOML module needed.
+    text = (ROOT / path).read_text()
+    pairs = re.findall(r'\[\[package\]\]\nname = "([^"\n]+)"\nversion = "([^"\n]+)"', text)
+    assert len(pairs) == text.count("[[package]]"), "unrecognized Cargo lock format"
+    return set(pairs)
+
+
 def run(name, command):
     print(name, flush=True)
     started = time.time()
@@ -41,11 +49,9 @@ def run(name, command):
 
 try:
     clean()
-    workspace_lock = tomllib.loads((ROOT / "Cargo.lock").read_text())
-    proof_lock = tomllib.loads((ROOT / "tools/verify/session-wasm/Cargo.lock").read_text())
-    dependencies = {(p["name"], p["version"]) for p in workspace_lock["package"]}
-    assert all((p["name"], p["version"]) in dependencies for p in proof_lock["package"]
-               if p["name"] != "session-codec-wasm-proof"), "proof dependencies drifted from the production library"
+    dependencies = lock_versions("Cargo.lock")
+    proof_dependencies = lock_versions("tools/verify/session-wasm/Cargo.lock")
+    assert all(p in dependencies for p in proof_dependencies if p[0] != "session-codec-wasm-proof"), "proof dependencies drifted from the production library"
     # These byte strings are the independently specified fixture assets, not codec output.
     fixture = ROOT / "crates/storage/tests/session_manifest/fixtures"
     manifest = json.loads((fixture / "manifest-v1.json").read_bytes())
