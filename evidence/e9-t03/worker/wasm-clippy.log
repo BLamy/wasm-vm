@@ -1,0 +1,3 @@
+    Checking wasm-vm-storage v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/storage)
+    Checking wasm-vm-session-web v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/session-web)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.94s
