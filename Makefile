@@ -442,6 +442,10 @@ check-task-policy:
 verify-E9-T01:
 	@python3 -B tools/verify/e9-session-contract.py
 
+.PHONY: verify-E9-T02
+verify-E9-T02:
+	python3 -B tools/verify/e9-session-manifest.py --output "$${E9_MANIFEST_EVIDENCE_DIR:-target/evidence/e9-manifest-final}"
+
 # E1-T20: RISCOF architectural compliance (DUT=wasm-vm vs Spike). Needs `bash compliance/provision.sh`
 # first (riscof venv + arch-test) + the Docker toolchain image (Spike). Enforces compliance/EXCLUSIONS.md.
 riscof:

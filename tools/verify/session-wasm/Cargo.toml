@@ -1,0 +1,17 @@
+[package]
+name = "session-codec-wasm-proof"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# An isolated proof harness: shared metadata code needs no emulator or browser ABI.
+[workspace]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+wasm-vm-storage = { path = "../../../crates/storage" }
+
+[dev-dependencies]
+wasm-bindgen-test = "=0.3.76"
