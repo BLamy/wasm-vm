@@ -2118,6 +2118,7 @@ async function bootOmarchy() {
     {
       manifestUrl: accelerated ? "./artifacts-omarchy-virgl.json" : "./artifacts-omarchy.json",
       virgl: accelerated,
+      gpuRuntime: accelerated && !query.has("noSnapshot") ? "published-factory-v1" : undefined,
       interactiveClock: accelerated ? "paced-on-keyboard" : undefined,
       gpuTrace: query.has("testHooks") && query.has("gpuTrace"),
       mode: "chunked",

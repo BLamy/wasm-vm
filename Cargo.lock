@@ -2394,6 +2394,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "wasm-vm-session-web"
+version = "0.0.1"
+dependencies = [
+ "sha2",
+ "wasm-bindgen",
+ "wasm-vm-storage",
+]
+
+[[package]]
 name = "wasm-vm-slirp"
 version = "0.0.0"
 dependencies = [

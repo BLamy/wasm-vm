@@ -26,7 +26,7 @@ One chunked append-only IndexedDB session store with a commit cursor. Keep the e
 
 ## Deterministic acceptance
 
-`make verify-E9-T03`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.
+`make verify-E9-T03` records the affected native/no_std and independent metadata-Wasm checks, the real built-page IndexedDB crash/race proof, and the retained GPU factory runtime regression. It requires local Chromium and downloads authenticated public release artifacts when they are absent from a pristine checkout. This slice does not claim guest checkpoint decoding or replay qualification.
 
 ## Adversarial verification
 

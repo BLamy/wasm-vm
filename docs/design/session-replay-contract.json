@@ -716,7 +716,7 @@
         "E6-T11d74c",
         "E6-T11d74d"
       ],
-      "gpu_build_identity_source": "web/gpu-checkpoint-build.js",
+      "gpu_build_identity_source": "web/gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/gpu-checkpoint-build.js",
       "gpu_build_identity_sha256": "11465609b9eee469237c6a31f6718c0a1bab06729e7f361a685b51ac0b48d3aa"
     }
   ],
