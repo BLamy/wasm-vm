@@ -9,6 +9,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+BASELINE_HEAD = 'c52ab64ba390f13b82190aea4977df08c8f91616'
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--output', type=Path, required=True)
 args = parser.parse_args()
@@ -66,7 +67,7 @@ try:
         assert all(message in log for message in known) and log.count('\nerror:') == 6 \
             and 'error[E' not in log, 'full local gauntlet has a new failure'
         report['baseline_exception'] = {'gate': 'zicsr-stub clippy dead_code',
-            'parent': subprocess.check_output(['git', 'rev-parse', 'HEAD^'], cwd=ROOT, text=True).strip(),
+            'parent': BASELINE_HEAD,
             'finding': 'The same five dead-code diagnostics reproduce on the untouched parent; no T14 code appears in them.'}
         run('remaining-local-gauntlet', ['make', 'test', 'wasm', 'features', 'test-riscv',
                                          'riscv-tests-suite', 'determinism', 'perf-smoke'], 7200)
