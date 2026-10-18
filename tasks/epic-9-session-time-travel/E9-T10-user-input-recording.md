@@ -75,7 +75,7 @@ change. This is an input recording claim, not complete VM replay (T11–T14 rema
 - `GIT_OPTIONAL_LOCKS=0 python3 -u target/e9-t10-cold-incremental.py` passed the same
   acceptance target at the proof repair head, continuing the **same pristine-origin**
   clone and its own initially empty compiler target. All original **682 native tests**,
-  affected wasm builds, **53** JS protocol/input tests and the real **127 passed / 0 failed**
+  affected wasm builds, **76** JS protocol/input tests and the real **127 passed / 0 failed**
   built-page run remain authenticated. The repair changed only proof tooling and task
   metadata. The cold clone imported no worker target or node_modules; its idle source
   was losslessly moved to task RAM to preserve disk space, with before/after inventories
