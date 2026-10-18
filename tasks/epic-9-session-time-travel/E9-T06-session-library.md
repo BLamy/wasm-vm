@@ -3,7 +3,7 @@ id: E9-T06
 epic: 9
 title: Add the local saved-session library and checkpoint controls
 priority: 524.906
-status: implemented
+status: in-progress
 depends_on: [E9-T05]
 estimate: S
 risk: medium
@@ -119,3 +119,58 @@ remain unchanged.
 This carries the previously held behavioral results forward; it is not a verification
 verdict. The fresh critic separately found that a missing-point digest error overflows at
 390px and requested two focused cleanup-path recordings. Those remain to be repaired/proven.
+
+### 2026-10-18 — verifier — VERDICT: refuted
+
+- **P8 responsive error state — FAILED.** Predicted no horizontal overflow at 390px when
+  a selected compatible checkpoint disappears before keyboard Open. After deleting the
+  existing 23-part machine-object descriptor and confirming absence, Open correctly reports
+  `incomplete`, but its 64-character `Corrupt` digest makes `scrollWidth=586` versus
+  `clientWidth=388` (right/viewport 390). Rechecked the measured DOM and screenshot.
+  Citation: `evidence/e9-t06/verifier-initial/missing-point-report.json:1124`,
+  SHA-256 `3e660bf218cd2b5ec5b448961a75b77a018550fbc4ee070639d6d96ed960d22f`,
+  and `missing-point-error.png`. Original trace
+  `target/evidence/e9-t06-verifier/n1-v5/trace.ndjson:372` / `call@157`, ZIP SHA-256
+  `016d7f323d14c5784af8516b3f1584be3f8537792a5c08bffcfe1dc4af092256`.
+  The new CSS wraps active/details but omits status (`web/session-library.css:9-12`);
+  `session-library.js:76` emits this real error. **Demand:** wrap status/error text and
+  record the same bounded 390px disappearance case locally and on production.
+- **N1 admission/ownership; P1-P7/P9 — HELD.** The target object existed before sabotage;
+  after it vanished, admission rejected before replacing the owner. Alpha stayed paused
+  with zero retired instructions and identical complete tuple SHA-256
+  `599fd981f229ea7c99600f274f6ae16873b940352ffd64e74f748abf7f96e73b` before/after.
+  Both gzip frames are exact aliases of the retained worker Alpha point. Worker trace
+  lines 744,869,874,940,944,995,1069,1128,1166,1191,1195,1271,1298,1302,1362,1404
+  support durable names/points, paused RPC rejection, preview fencing, unavailable/error
+  states and actual file/RAM witnesses. Independent frame decoding authenticates all
+  component digests and Alpha's 22 queued UART bytes. See packet `predictions.json`.
+- **P0/P10 provenance and public behavior — HELD.** Independently authenticated all
+  worker 553 payloads / 16 sources, 19 copies / 5 aliases and all 554 originals, then public
+  808 originals, 12 copies / 5 aliases and 19 Git-matching assets. Public receipt
+  `2d441f7fa17fcebeef82d4db2273a120fbe497a1d56b9c9a59378d434cb232a8`
+  preserves 127 passed / 0 failed, errors `[]`, exact paused Alpha/Beta tuples and the
+  physically drawn qualified retained GPU. No native/store/dependency/runtime bytes changed.
+- **C1 navigation coverage — HELD.** Four sealed public segments 70/82/82/78 concatenate
+  exactly to 312 aggregate entries. The lost earlier-document export is repaired. UTF-16
+  coverage union records every added `main.js` line and every library method; all other
+  required changed hunks execute or have explicit bounded waivers in packet `coverage.md`.
+- **C2 writer cleanup — NEEDS EVIDENCE.** `session-library.js:162-164` (owner loss during
+  recording) and `session-library.js:180` (failed initial capture cleanup) never execute in the supplied
+  coverage. Record the promoted driver's isolated tail: exactly one actual Start/save
+  failure must leave a draft, publish no row, clear recording and permit immediate writer
+  reacquisition; successful Start followed by ordinary retirement must release the writer,
+  clear active/recording identity and preserve its committed manifest/point hashes.
+- **SUITE:** promoted `tools/verify/e9-session-library-missing-object-browser.mjs`,
+  parameterized by `--recording-report`, `--web-dir`, `--output` and optional production
+  `--url`/`--check-public-assets`. It copies/authenticates the original profile, binds a
+  clean source head/assets, records raw tuples/DOM/trace/coverage and checks original
+  immutability. Picker setup uses the native API; Tab reachability, visible focus and Enter
+  Open are real keyboard actions. The two cleanup blocks await the actual writer/LockManager
+  release acknowledgement; the test never releases the product's writer to hide a bug.
+
+Original recordings/profiles are unchanged; all prior HELD results carry forward. Scope is
+S/medium UI composition over unchanged T05 APIs, so rework is CSS plus the two focused
+proofs; no broad native/workspace rerun or automatic cold clone. Commands: independent
+SHA-256/provenance/frame/trace/coverage audits; `node --check` on the promoted regression.
+The initial N1 source/failed report/screenshot and original digests are retained in
+`evidence/e9-t06/verifier-initial/`; `coverage-audit.json.gz` and `coverage.md` hold the hunk inventory.

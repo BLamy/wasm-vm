@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "head": "b97f739cdb161cb16f7d64ca983fb48fea80df76",
+  "originals": 554,
+  "packet_copies": 19,
+  "exact_aliases": 5,
+  "provenance_sha256": "6dd297e21c9c1bc454c2453602bcf6910b0b23181cbe9789a2d493d3241c91dd"
+}
