@@ -3,7 +3,7 @@ id: E9-T10
 epic: 9
 title: Record user and host-control inputs at delivery
 priority: 524.910
-status: pending
+status: in-progress
 depends_on: [E9-T09]
 estimate: S
 risk: high
@@ -34,4 +34,6 @@ Use rapid typing, focus loss with a held key, duplicate-position pointer events 
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-18 — worker — started
+
+E9-T09 is independently verified at `3434d69d069dce7a0fdc52162b7a9c21a3db53a9`; its final published catalog and stack head is `b25fb9de9e04b8be20a95ed1747066c1617e49b9`. This high-risk slice records owned, normalized input through the actual device delivery boundary, retaining an explicitly incomplete input prefix until all replay adapters are installed. No implementation or verification claim yet.
