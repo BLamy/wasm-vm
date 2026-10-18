@@ -3,7 +3,7 @@ id: E9-T13
 epic: 9
 title: Capture network sessions and replay them with zero live egress
 priority: 524.913
-status: in-progress
+status: implemented
 depends_on: [E9-T09, E9-T03]
 estimate: S
 risk: high
@@ -520,3 +520,78 @@ The next frozen submission runs all25 selected commands, including the existing
 127-test built suite, actual native/browser JIT, the new component proofs,
 byte/object oracle and retained GPU gate. Earlier04f628 remains withdrawn.
 No fresh full verifier verdict, publication or public proof is claimed.
+
+### 2026-10-18 — worker — WFI repair and component proof; frozen local submission
+
+Frozen runtime and built deploy bundle:
+2f2aa7aba484f6954ca04358385828093e561b83.
+make verify-E9-T13 passes all25 selected commands from a separate clean
+source/Git checkout with an initially empty compiler target, fresh locked
+Node install, scrubbed compiler flags and authenticated offline dependencies.
+Immutable Git objects are shared read-only as disclosed; source, refs/index,
+compiler and installed Node files are independent. All37 source hashes agree.
+The local guest/Playwright evidence policy applies; no retired-host rr is claimed.
+
+- Main report:
+  /Volumes/e9-t13-wfi-cold/cold-proof-e9-t13-2f2aa7aba484/report.json,
+  SHA256 eee0a035d1157b4db78e3ab6bb6a661c2963758876506f171adc9a91c59d2bcb.
+- Cold receipt:
+  /Volumes/e9-t13-wfi-cold/cold-worker-e9-t13-2f2aa7aba484/receipt.json,
+  SHA256 b1221d5fb5063b5e4ead4c72ca451400b27ad4ed56960ac3082e9d84f0d040c9.
+- Lossless primary packet:
+  evidence/e9-t13/worker-wfi-final/provenance.json,
+  SHA256 dcfded2590ed9e6471f8d6cd9c07f4c93523f5c1e34d97a2b7d0b3a5aafeedf9;
+  923 original files,43731247 compressed bytes.
+- Full archive, including derived fresh Chromium GPU profiles:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-full-archive/provenance.json,
+  SHA256 8534fbf92c7b0df21fe6bb5cf9243d1dac1e041be6ca99e7bf8e75aa6304dd0c.
+- Supplemental separately attributed native line recording:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-native-line-proof/report.json,
+  SHA256 22149b1059c2bb7dd62b3047c7be8a30d96be79171fa7c517babcaa83603e72c.
+  Existing9 and new8 worker tests run under instrument-coverage with separate
+  raw-profile directories, executable objects and exports. All180 overlapping
+  native artifacts match the main cold recording byte-for-byte. The12 actual
+  JIT frames used by its oracle are explicitly carried from the same frozen
+  main run, not labelled as freshly executed by this supplementary component run.
+
+All400 core tests,17 network/component tests and affected native, Wasm,
+storage/session/legacy-net and actual native/browser JIT checks pass.
+The built page reaches127 passed,0 failed and zero console errors. It records
+five original network outcomes and six matching offline replays with18 probe
+and28 ABI refusals, one original counter request, zero replay provider factories
+and zero independently witnessed replay fetch/socket attempts.
+
+Four additional live WFI cases cover outstanding guest TX, recorded external
+work and idle controls. Complete Record/Replay frames and instruction traces
+match across budgets; pending work retires the next instruction while the idle
+controls jump to the declared timer deadline. The same cases are independently
+decoded from raw native/browser frames and traced RV64 words. Browser component
+recordings reopen and replay actual Failed/Cancelled guest send outcomes and
+failed links through real SessionStore journals. Exact cursor9007199254740999,
+actual lease cleanup after a throwing factory, reserved wire kinds, wrong
+network policy and absent-source stage/read refusals are retained. The
+struct/hashlib oracle checks their states, event payloads, statuses and CAS
+objects. The retained GPU factory passes with2999712 guest retirements and a
+fresh resource13 draw in epoch4. These remain qualified transport/component
+claims; complete software Linux replay is T14.
+
+The final packet retains original precheck failures, corrected harnesses,
+producers, cache-release inventory and the new task-only8GiB RAM scratch receipt.
+It preserves prior findings/manifests without recursively copying their packets.
+All source/Git metadata, old executable/rlib evidence and original recordings
+remain available; no earlier failed run is relabelled passing.
+
+The only prepared publication payload is now2f2aa7:750 files,84317110 bytes.
+Its original frozen files, unchanged boot/R2 bindings, five Pages boot extras
+and file-size limits are authenticated without publishing.
+Prepared receipt:
+  /Volumes/e9-final-proof-ram/e9-t13-wfi-publication-prepared/receipt.json,
+  SHA256 9f5ec1661f7d1895c59b332750dab1a803b8477358c86a0da62f75e2a1714163.
+All older candidates remain withdrawn and were never deployed.
+
+This is a local worker submission, not a verifier verdict. G1–G8 now have
+additional ordinary worker recordings for the separate critic to assess.
+The previously stopped independent execution/sensitivity/suite charter is
+unfinished and was not retried or replaced by another model/session.
+Cloudflare human authorization and required public deployment/browser proof
+also remain pending. No T13 runtime is published and no dependent is cleared.
