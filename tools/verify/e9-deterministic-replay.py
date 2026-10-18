@@ -11,6 +11,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 BASELINE_HEAD = 'c52ab64ba390f13b82190aea4977df08c8f91616'
+CARRIED_PROOF_NONRUNTIME = {
+    'tools/verify/e9-deterministic-replay.py',
+    'docs/design/session-replay-contract.json',
+    'docs/design/session-replay.md',
+}
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--output', type=Path, required=True)
 args = parser.parse_args()
@@ -71,8 +76,9 @@ def carry_previous_native(directory):
     old = json.loads((previous / 'report.json').read_text())
     changed = subprocess.check_output(['git', 'diff', '--name-only', old['head'], head],
                                       cwd=ROOT, text=True).splitlines()
-    assert old['task'] == 'E9-T14' and changed == ['tools/verify/e9-deterministic-replay.py'], \
-        'carried proof must differ only in its recording script'
+    assert old['task'] == 'E9-T14' and set(changed) <= CARRIED_PROOF_NONRUNTIME \
+        and 'tools/verify/e9-deterministic-replay.py' in changed, \
+        'carried proof must differ only in its recording script and audited design contract'
     shutil.copy2(previous / 'full-local-gauntlet.log', output / 'carried-full-local-gauntlet.log')
     shutil.copy2(previous / 'remaining-local-gauntlet.log', output / 'carried-native-workspace.log')
     native = (output / 'carried-native-workspace.log').read_text()
@@ -87,8 +93,9 @@ def carry_previous_wasm(metadata):
     record = json.loads(Path(metadata).read_text())
     changed = subprocess.check_output(['git', 'diff', '--name-only', record['head'], head],
                                       cwd=ROOT, text=True).splitlines()
-    assert record['exit_code'] == 0 and changed == ['tools/verify/e9-deterministic-replay.py'], \
-        'carried wasm proof must differ only in its recording script'
+    assert record['exit_code'] == 0 and set(changed) <= CARRIED_PROOF_NONRUNTIME \
+        and 'tools/verify/e9-deterministic-replay.py' in changed, \
+        'carried wasm proof must differ only in its recording script and audited design contract'
     source = Path(record['log']).resolve()
     assert digest(source) == record['sha256'] and 'test result: ok.' in source.read_text(), 'wasm proof log'
     shutil.copy2(source, output / 'carried-wasm-workspace.log')

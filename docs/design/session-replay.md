@@ -505,3 +505,32 @@ Linux replay. Existing SLIRP, WebSocket, DNS, Tailscale and file-socket provider
 remain outside this assembly. T14 composes the software VM and replay driver;
 provider timing is represented by recorded frame/outcome/pending deliveries rather
 than live provider timers during replay.
+
+### Deterministic software replay (E9-T14)
+
+The initial exact session uses the pinned Alpine kernel and 512 MiB base image, one
+RV64 hart, 256 MiB RAM, ICount10 and the full software device profile. A recording
+contains the initial native machine frame, ordered delivered inputs and external
+observations, and state-digest witnesses. The session store commits witness
+metadata with the initial identity before event chunks are appended; it refuses
+changes to that identity. Reopening for execution checks the current runtime,
+kernel, base, device topology, clock and required provider inventory before the
+replay driver receives the initial frame.
+
+The driver restores only the initial frame and runs toward the declared end. It
+matches each guest observation, host delivery, device and network completion in
+sequence, comparing full CPU, RAM, device and disk resume digests at selected
+positions. Browser console draining is itself an ordered channel 21 event: the
+host cannot discard UART/SBI bytes at a different scheduling boundary on replay.
+The replay's end fence persists across run calls; exhaustion cannot resume live
+execution. A changed input, missing DMA payload, extra or misordered delivery, or
+state-digest mismatch stops at the first observed coordinate without seeking to
+a later checkpoint. Branching back to live execution is a separate T20 action.
+
+The source-matrix hashes below were re-audited for T14. The changed core clock
+and machine paths add only replay fences and the full software installer; the
+existing user-input, time, device and network anchors retain their recording
+roles. The wasm paths add exact record/replay entry points and suppress live
+providers during replay. The browser journal adds durable exact events and
+immutable state witnesses. The contract's planned status still denotes the full
+Epic 9 qualification, including keyframes, seeking, GPU replay and branching.
