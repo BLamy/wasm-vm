@@ -3,7 +3,7 @@ id: E9-T05
 epic: 9
 title: Capture and restore coherent software session checkpoints
 priority: 524.905
-status: pending
+status: in-progress
 depends_on: [E9-T03, E9-T04]
 estimate: S
 risk: high
