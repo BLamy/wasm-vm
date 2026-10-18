@@ -1,0 +1,84 @@
+{
+  "reason": "Relocate only rebuildable compiler outputs and this task\u2019s disposable development browser profiles to its RAM scratch volume. Frozen source, release packages and every original recorded evidence/log/guest artifact stay on persistent storage. Original precheck paths remain usable through symlinks.",
+  "started": 1792320342.5549371,
+  "moves": [
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/wasm32-unknown-unknown",
+      "destination": "/Volumes/e9-build-scratch/relocated-0-wasm32-unknown-unknown",
+      "sha256": "c25b36fdc15092f40482427c62dfa0b928ebc6c8dfdc078fb1f8f0a8b7803fea",
+      "bytes": 941479908,
+      "files": 1287
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/wasm-release",
+      "destination": "/Volumes/e9-build-scratch/relocated-1-wasm-release",
+      "sha256": "e95f9fe07c6bcf7ae274c37a8fd58baf6c2625417bfebf5d49b1c2657e90b1c7",
+      "bytes": 111123582,
+      "files": 285
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-browser-precheck/chromium-profile",
+      "destination": "/Volumes/e9-build-scratch/relocated-2-chromium-profile",
+      "sha256": "87c9eae3b91d205dcd83468e1e160e5d34b0929d7a7224d3cc0d7715a827984a",
+      "bytes": 63620507,
+      "files": 312
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-browser-precheck-2/chromium-profile",
+      "destination": "/Volumes/e9-build-scratch/relocated-3-chromium-profile",
+      "sha256": "635dea666e18a11c59b4d2bb23a31cdd94078025cfeb3fabcbf1d9473dbd97a3",
+      "bytes": 108154455,
+      "files": 387
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-browser-precheck-3/chromium-profile",
+      "destination": "/Volumes/e9-build-scratch/relocated-4-chromium-profile",
+      "sha256": "c105c960e33709d0d1e0ea5e1cad07007bc30bb1bddba10cd4199b3a8b061b6f",
+      "bytes": 191905996,
+      "files": 561
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-browser-precheck-4/chromium-profile",
+      "destination": "/Volumes/e9-build-scratch/relocated-5-chromium-profile",
+      "sha256": "27861087ccfe4b5f3d7ad812ea228e3361e69da6558e4ec67fb9357f2d49e965",
+      "bytes": 205978471,
+      "files": 625
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-browser-precheck-5/chromium-profile",
+      "destination": "/Volumes/e9-build-scratch/relocated-6-chromium-profile",
+      "sha256": "7589211b4b731584cee086ecf057d491aa1d139a54579f04efaa6ee4e256154f",
+      "bytes": 204049059,
+      "files": 581
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-quick-profile",
+      "destination": "/Volumes/e9-build-scratch/relocated-7-e9-t10-quick-profile",
+      "sha256": "a50fe2998308afb3666ee77f8f81903348cbd5e13906acb6b96680b10c21f01b",
+      "bytes": 45165239,
+      "files": 1019
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-file-precheck-profile",
+      "destination": "/Volumes/e9-build-scratch/relocated-8-e9-t10-file-precheck-profile",
+      "sha256": "e019e94ca12547fba19554df0a44b9c42c8e6164014e76ccc11af0e7012c0593",
+      "bytes": 145992391,
+      "files": 725
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-concurrent-stop-precheck/chromium-profile",
+      "destination": "/Volumes/e9-build-scratch/relocated-9-chromium-profile",
+      "sha256": "b3a628bee316256a4a31aa8211da4706c895d302e8fd6ce38d904168757641ca",
+      "bytes": 110211073,
+      "files": 379
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-concurrent-stop-direct-precheck/chromium-profile",
+      "destination": "/Volumes/e9-build-scratch/relocated-10-chromium-profile",
+      "sha256": "966c7394315be10ff127da03cb819697e8c60d46423a5952ea5ee018f1149cc7",
+      "bytes": 45251280,
+      "files": 311
+    }
+  ],
+  "finished": 1792320349.3987541
+}

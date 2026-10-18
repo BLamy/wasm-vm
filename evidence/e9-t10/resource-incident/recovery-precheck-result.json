@@ -1,0 +1,310 @@
+{
+  "position": {
+    "transition": "0",
+    "retired": "0",
+    "phase": "before",
+    "sequence": "9",
+    "ordinal": 9,
+    "replay": false,
+    "paused": true,
+    "stopped": true
+  },
+  "end": {
+    "transition": "0",
+    "phase": "before",
+    "ordinal": 9,
+    "sequence": "9",
+    "retired": "0"
+  },
+  "receipts": [
+    {
+      "transition": "0",
+      "phase": "before",
+      "ordinal": 1,
+      "sequence": "1",
+      "retired": "0",
+      "channel": 3,
+      "outcome": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "bytes": [
+        1,
+        0,
+        48,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "transition": "0",
+      "phase": "before",
+      "ordinal": 2,
+      "sequence": "2",
+      "retired": "0",
+      "channel": 4,
+      "outcome": [
+        "0",
+        "2",
+        "0",
+        "0"
+      ],
+      "bytes": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        48,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "transition": "0",
+      "phase": "before",
+      "ordinal": 3,
+      "sequence": "3",
+      "retired": "0",
+      "channel": 3,
+      "outcome": [
+        "0",
+        "2",
+        "0",
+        "0"
+      ],
+      "bytes": [
+        1,
+        0,
+        48,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "transition": "0",
+      "phase": "before",
+      "ordinal": 4,
+      "sequence": "4",
+      "retired": "0",
+      "channel": 4,
+      "outcome": [
+        "0",
+        "4",
+        "0",
+        "0"
+      ],
+      "bytes": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        48,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "transition": "0",
+      "phase": "before",
+      "ordinal": 5,
+      "sequence": "5",
+      "retired": "0",
+      "channel": 3,
+      "outcome": [
+        "0",
+        "4",
+        "0",
+        "0"
+      ],
+      "bytes": [
+        1,
+        0,
+        46,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "transition": "0",
+      "phase": "before",
+      "ordinal": 6,
+      "sequence": "6",
+      "retired": "0",
+      "channel": 4,
+      "outcome": [
+        "0",
+        "6",
+        "0",
+        "0"
+      ],
+      "bytes": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        46,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "transition": "0",
+      "phase": "before",
+      "ordinal": 7,
+      "sequence": "7",
+      "retired": "0",
+      "channel": 3,
+      "outcome": [
+        "0",
+        "6",
+        "0",
+        "0"
+      ],
+      "bytes": [
+        1,
+        0,
+        46,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "transition": "0",
+      "phase": "before",
+      "ordinal": 8,
+      "sequence": "8",
+      "retired": "0",
+      "channel": 4,
+      "outcome": [
+        "0",
+        "8",
+        "0",
+        "0"
+      ],
+      "bytes": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        46,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "transition": "0",
+      "phase": "before",
+      "ordinal": 9,
+      "sequence": "9",
+      "retired": "0",
+      "channel": 16,
+      "outcome": [
+        "0",
+        "2",
+        "0",
+        "0"
+      ],
+      "bytes": [
+        2
+      ]
+    }
+  ]
+}

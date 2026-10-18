@@ -1,0 +1,4 @@
+{
+  "reason": "Worker browser IDB connection closed after available disk dropped to approximately 2 GiB during parallel pristine checkout. Stop candidate proof while investigating local storage pressure; no code change or passing cold claim.",
+  "targets": []
+}
