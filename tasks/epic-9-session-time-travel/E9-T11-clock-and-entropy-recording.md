@@ -3,7 +3,7 @@ id: E9-T11
 epic: 9
 title: Record guest-visible time and entropy observations
 priority: 524.911
-status: pending
+status: in-progress
 depends_on: [E9-T09]
 estimate: S
 risk: high
@@ -34,4 +34,12 @@ Replay under a different wall clock and entropy provider, including background/r
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-18 — worker — begin
+
+E9-T11 is the first eligible task after independently verified E9-T10. Risk is high
+because external clock samples and random bytes affect guest architectural state.
+The slice will freeze the admitted ICount policy, intercept actual RTC observations
+(including alarm polling) and entropy fills at ordered observation positions, and
+prove the same workload consumes recorded values under different host providers.
+Complete provider replay remains gated by T12–T14. No implementation or verification
+claim is made by this activation entry.
