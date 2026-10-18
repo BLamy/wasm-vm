@@ -69,6 +69,18 @@ export async function runNetworkCaptureProbe(){
    }finally{r.free();}
   }
   machine.restoreEventCheckpoint(pending);const unchanged=machine.saveEventCheckpoint();refuse('stale callback',()=>machine.completeNetworkEvent(stale,encodeNetworkEvent(1,{id:request.id,payload:request.frame})));need(equal(unchanged,machine.saveEventCheckpoint()),'stale completion is atomic');stale.free();
+  // A queued result cannot exist without enough distinct accepted network deliveries.
+  const baseline=machine.saveEventCheckpoint(),viewCheckpoint=new DataView(baseline.buffer);
+  let invalidCheckpoint;
+  for(let at=84;at<baseline.length;){
+   const tag=viewCheckpoint.getUint32(at,true),length=viewCheckpoint.getUint32(at+4,true),end=at+8+length;
+   if(tag===21){
+    need(viewCheckpoint.getUint32(end-4,true)===0,'pending checkpoint has no RX result');
+    invalidCheckpoint=new Uint8Array(baseline.length+7);invalidCheckpoint.set(baseline.subarray(0,end));invalidCheckpoint.set(baseline.subarray(end),end+7);
+    const v=new DataView(invalidCheckpoint.buffer);v.setUint32(at+4,length+7,true);v.setUint32(end-4,1,true);v.setUint32(end,3,true);invalidCheckpoint.set([0xe1,0x9a,0x73],end+4);break;
+   }at=end;
+  }
+  need(invalidCheckpoint,'network checkpoint section');refuse('unaccounted checkpoint receive',()=>machine.restoreEventCheckpoint(invalidCheckpoint));need(equal(baseline,machine.saveEventCheckpoint()),'invalid checkpoint leaves state unchanged');
   // Dropping a required CAS payload is detected by normal durable reads, without a provider.
   const payload=receipts.map(networkEventParts).find(p=>p.object).object;
   report.requiredPayload=payload[0];need(report.transport.recordFactories===1&&report.transport.requests===1&&report.transport.replayFactories===0,'transport suppression');

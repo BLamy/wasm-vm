@@ -691,3 +691,90 @@ fn real_connection_refusal_and_32_callback_schedules_replay_without_transport() 
     }
     evidence("schedule-witness.txt", summary.as_bytes());
 }
+
+#[test]
+fn checkpoint_conserves_all_represented_results_before_mutation_or_lease_revocation() {
+    let mut original = fixture(false);
+    let initial = original.save_session_resume().unwrap();
+    capture(&mut original, Event::Pending(true));
+    let one_pending = original.save_session_resume().unwrap();
+    original.load_session_resume(&initial).unwrap();
+    until(&mut original, START, 31, &mut Trace::default());
+    let request = original.session_network_requests().unwrap().remove(0);
+    capture(
+        &mut original,
+        Event::Send {
+            request,
+            result: SendResult::Sent,
+        },
+    );
+    let acknowledged = original.save_session_resume().unwrap();
+    let cases = [
+        (
+            acknowledged.clone(),
+            rewrite_network(&acknowledged, |b| {
+                assert_eq!(&b[b.len() - 4..], &0u32.to_le_bytes());
+                let at = b.len() - 4;
+                b[at..].copy_from_slice(&1u32.to_le_bytes());
+                b.extend_from_slice(&3u32.to_le_bytes());
+                b.extend_from_slice(&[0xe1, 0x9a, 0x73]);
+            }),
+        ),
+        (initial.clone(), rewrite_network(&initial, |b| b[32] = 1)),
+        (initial.clone(), rewrite_network(&initial, |b| b[33] = 1)),
+        (
+            one_pending.clone(),
+            rewrite_network(&one_pending, |b| b[32] = 1),
+        ),
+    ];
+    for (i, (valid, invalid)) in cases.into_iter().enumerate() {
+        let mut replayed = fixture(true);
+        replayed.load_session_resume(&valid).unwrap();
+        let before = replayed.save_session_resume().unwrap();
+        assert!(
+            replayed.load_session_resume(&invalid).is_err(),
+            "accepted impossible represented results case={i}"
+        );
+        assert_eq!(
+            replayed.save_session_resume().unwrap(),
+            before,
+            "rejected replay restore mutated case={i}"
+        );
+        let mut recording = fixture(false);
+        recording.load_session_resume(&valid).unwrap();
+        let lease = recording.lease_session_network(None).unwrap();
+        let before = recording.save_session_resume().unwrap();
+        assert!(
+            recording.load_session_resume(&invalid).is_err(),
+            "accepted recording case={i}"
+        );
+        assert_eq!(recording.save_session_resume().unwrap(), before);
+        recording
+            .complete_session_network(&lease, Event::Pending(false))
+            .unwrap();
+        recording.take_session_deliveries().unwrap();
+        evidence(&format!("conservation-invalid-{i}.resume"), &invalid);
+        evidence(&format!("conservation-unchanged-{i}.resume"), &before);
+    }
+    // All four represented terms can coexist with exactly four accepted results.
+    original.load_session_resume(&acknowledged).unwrap();
+    capture(
+        &mut original,
+        Event::Link {
+            status: LinkStatus::Open,
+            code: 0,
+        },
+    );
+    capture(&mut original, Event::Pending(true));
+    capture(&mut original, Event::Receive(vec![0xe1, 0x9a, 0x73]));
+    let valid = original.save_session_resume().unwrap();
+    assert_eq!(original.session_network_cursor(), Ok(4));
+    assert_eq!(original.bus_mut().load16(BASE + 0x12002), Ok(0));
+    let mut replayed = fixture(true);
+    replayed.load_session_resume(&valid).unwrap();
+    assert_eq!(replayed.save_session_resume().unwrap(), valid);
+    until(&mut replayed, END, 31, &mut Trace::default());
+    assert_eq!(replayed.bus_mut().load16(BASE + 0x12002), Ok(1));
+    assert_eq!(replayed.bus_mut().load8(BASE + 0x1400c), Ok(0xe1));
+    evidence("conservation-valid-all-terms.resume", &valid);
+}

@@ -465,6 +465,10 @@ state. Host transports remain outside the machine. Recording obtains a private
 incarnation-bound lease before constructing a provider; replay refuses that
 construction and every live callback. Restore and virtio reset revoke old leases.
 Replacing the qualified backend with a live adapter is refused.
+Checkpoint decoding also bounds the jointly represented send acknowledgements,
+queued receives, current link outcome and external-pending flag by the accepted
+network cursor, using checked arithmetic. Impossible results refuse before any
+state or callback incarnation changes.
 
 Channel 20 envelopes bind each outgoing intent acknowledgement, incoming frame,
 connection outcome or external-work change to the common before-boundary coordinate.

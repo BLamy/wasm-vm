@@ -199,7 +199,15 @@ impl NetworkHub {
         for _ in 0..r.count()? {
             g.receive.push_back(r.bytes()?.to_vec());
         }
-        if g.owned() > MAX_OWNED
+        // Every represented external result required its own accepted cursor increment.
+        // TX intents are guest-derived and instead consume allocator identities below.
+        let represented = g
+            .sent
+            .checked_add(g.receive.len() as u64)
+            .and_then(|n| n.checked_add(u64::from(g.link != 0)))
+            .and_then(|n| n.checked_add(u64::from(g.external_pending)));
+        if represented.is_none_or(|n| n > g.cursor)
+            || g.owned() > MAX_OWNED
             || g.sent
                 .checked_add(g.pending.len() as u64)
                 .is_none_or(|n| n > g.next_id)
