@@ -3,7 +3,7 @@ id: E9-T13
 epic: 9
 title: Capture network sessions and replay them with zero live egress
 priority: 524.913
-status: implemented
+status: in-progress
 depends_on: [E9-T09, E9-T03]
 estimate: S
 risk: high
@@ -132,3 +132,57 @@ official Wrangler login and a narrow existing-file write adaptation were
 prepared outside the repository. Fresh independent verification must assess
 the local claim and retain any publication proof gap until the new bundle is
 deployed and directly checked. Complete software VM replay remains T14.
+
+### 2026-10-18 — verifier — VERDICT: refuted
+
+- P6 joint checkpoint observation conservation — FAILED and rechecked. Predicted
+  that acknowledged sends plus queued receive frames cannot exceed the network
+  cursor: each required a distinct accepted observation. At runtime43031,
+  crates/core/src/session_network/codec.rs:181–207 checks sent<=cursor and
+  sent+pending<=next_id separately but accepts sent1/queuedRX1/cursor1. The critic
+  runs the pinned guest to1024, acknowledges its real TX once, saves, then adds
+  only queued RXe19a73 to section21. Original clock/RAM/virtqueues and all other
+  sections remain unchanged. Mutant SHA256
+  e3412357af0cbbb62d137bea487fa4159e82faebd8795bf6bee5e6a6d0606a82
+  is accepted into replay; receive-conservation-trace-recheck/to-9216.trace:1516
+  loads injected0xe1 from DMA into x6 at transition2539, and line1517 stores it
+  into the guest report at2540. Trace SHA256
+  9c87c28578c0a6a80985105335f6589a7b65ad5a9eb56c22f3cb5898c9c12895.
+  At9216, usedRX1/report[1,1,1] and DMAe19a73 are visible while sequence/cursor
+  remain1; finish_session_network_replay(1) returns Ok. Observed frame SHA256
+  5117fa6d87a50e8301d8dda48ccb4e25041cbd4ab8b2e0c96426e41520218914.
+  Two untraced and two independently recorded traced runs agree. Demand: enforce
+  the joint relation with checked arithmetic before restore mutation/incarnation
+  replacement, add a transactional live-lease regression, and re-record the
+  selected high-risk runtime gates on a new frozen head.
+- P1/P2/P3/P9/P10 — HELD for the authenticated local happy paths. Independently
+  checked all216 primary/393 full-archive original+gzip entries,379 acceptance
+  inventory files,35 source hashes and58 contract hashes against Git43031, the
+  clean cold source and its disclosed independent/empty compiler origin. All24
+  commands passed. A separate Python struct/hashlib decoder validates actual
+  positions, HTTP bytes, descriptors, guest DMA/used/IRQ witnesses, durable CAS
+  objects, six exact trace suffixes and whole browser frames. All24 native/browser
+  compiled-edge CPU witnesses agree with independently computed loop arithmetic
+  at5000/5001/5002 and q31/1/8/4096. These observations remain scoped to the
+  documented experimental Ethernet proof bridge; full Linux/TCP replay is T14.
+- P13 publication — NEEDS EVIDENCE, separate from the semantic refutation. No T13
+  deployment/public-browser recording exists yet. T12 live assets are not proof
+  for this changed runtime. Preserve this gap until the repaired bundle is
+  published and directly checked.
+- COVERAGE/SUITE — Remaining independent capacity/schedule/forwarding attacks,
+  changed-hunk coverage and scratch sabotage are still under review. No complete
+  coverage or permanent-suite promotion is claimed before correctness holds.
+  Held evidence, predictions, original failures and exact source/dependency
+  boundaries will be carried forward according to the incremental policy.
+
+Evidence: evidence/e9-t13/verifier-refutation/provenance.json, SHA256
+3af3e6c6b86ae94683ef9a213276ae1565ab6af118b5a8c165611e65ed079a1b.
+The42 lossless entries include original/mutant/observed frames, both repeated
+guest traces, exact executable/source/linked-core hashes, prediction, producers,
+receipts, logs, independent decoder and the held ledger. Originals remain at
+/Volumes/e9-final-proof-ram/t13-critic-main. No implementation code changed.
+Commands: python3 run_receive_conservation.py; python3 record_refutation_trace.py;
+python3 authenticate.py; python3 guest_oracle.py (all from that critic directory).
+The first two intentionally retain the failing assertion. Policy is checked before
+queue regeneration and this refutation commit. Task returns to in-progress for
+worker repair; no dependent may start.

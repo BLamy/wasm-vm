@@ -1,0 +1,433 @@
+{
+  "task": "E9-T13",
+  "verdict": "refuted",
+  "runtime": "43031d92822be59b8ddd15a599428194dc1470aa",
+  "claim": "de83cc42af476d963f616a6bae65603c99034394",
+  "created": 1792342412.4043798,
+  "files": [
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/archive_refutation.py",
+      "relative": "archive_refutation.py",
+      "size": 2196,
+      "sha256": "93557082f8c0b609e4f1b9202773b6cc857d0299174a7194ce27fb27ca47f36d",
+      "mode": "0o644",
+      "gzip": "archive_refutation.py.gz",
+      "gzip_bytes": 1230,
+      "gzip_sha256": "f692026c3a3999f83312cedb534fac0a298d24166731845b9319cd018def1b2e"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/authenticate.py",
+      "relative": "authenticate.py",
+      "size": 5419,
+      "sha256": "2811ac5d5fee73d1d4febcc2dc4533f4ee64ddecb6467d94204fbbb79a16d96e",
+      "mode": "0o644",
+      "gzip": "authenticate.py.gz",
+      "gzip_bytes": 1925,
+      "gzip_sha256": "9752f5e6399a825f557210d74559165de280e5fa8e8e51a7e1023d91b88e7e63"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/authentication.json",
+      "relative": "authentication.json",
+      "size": 16811,
+      "sha256": "8369506087dd9c53b05d21f31ceef99ed4c988588d4ad380cf4aa861cc640d55",
+      "mode": "0o644",
+      "gzip": "authentication.json.gz",
+      "gzip_bytes": 3024,
+      "gzip_sha256": "4144c096ccbba461df8338a6118a474eb33d489dc4424ae2589dfa34d6affaf6"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/cold-fsck.log",
+      "relative": "cold-fsck.log",
+      "size": 59606,
+      "sha256": "038758b0b62d7f4ab59a6fde0e74bf94b606e008b786c03840c9993154c3d394",
+      "mode": "0o644",
+      "gzip": "cold-fsck.log.gz",
+      "gzip_bytes": 27430,
+      "gzip_sha256": "53207e920e1a17191c8c87504a1ed1cf7abaad1b7319bb0d713e0573af5051b8"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/guest-oracle.json",
+      "relative": "guest-oracle.json",
+      "size": 21438,
+      "sha256": "752a63cf17b3bad7844b870379547cb9308922da3a77df8cb8e7198258c39d6b",
+      "mode": "0o644",
+      "gzip": "guest-oracle.json.gz",
+      "gzip_bytes": 1978,
+      "gzip_sha256": "c2b29e20e55484d419bf45f99a5981a24be0c5f5c54de76eba8a7479693e8b94"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/guest_oracle.py",
+      "relative": "guest_oracle.py",
+      "size": 9475,
+      "sha256": "1eaa3af65d29a76f119f439d424f76aee9a493b482695c5306b8a5e4526d270c",
+      "mode": "0o644",
+      "gzip": "guest_oracle.py.gz",
+      "gzip_bytes": 3335,
+      "gzip_sha256": "31af5101932e2b36dc6a325642b43589febc05cdf98376f6d4428925cb45d82c"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/ledger.md",
+      "relative": "ledger.md",
+      "size": 5910,
+      "sha256": "d1dfe599286aeeef526fe8d001a4e5772de5389e99b683d31e4ecd9875506f7d",
+      "mode": "0o644",
+      "gzip": "ledger.md.gz",
+      "gzip_bytes": 2957,
+      "gzip_sha256": "0e994576528d09f9674cde4062b1cea3616fa82dfa3c34fbc189a9834d600f01"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/orientation.json",
+      "relative": "orientation.json",
+      "size": 826,
+      "sha256": "7417ffb933ecaa63fdc1c145663f0726782a9b63569f6a1b6709da14898a2cc0",
+      "mode": "0o644",
+      "gzip": "orientation.json.gz",
+      "gzip_bytes": 468,
+      "gzip_sha256": "d04b8a6ef607ff2a5eecdc2fabb3612aed1f856304c8ea072d6d67e51b304bb2"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/oriented-task.patch",
+      "relative": "oriented-task.patch",
+      "size": 349925,
+      "sha256": "3fa8c2358de05ca3046ed511efd00c0b49e6537b8df6fbbefe71235a42d4843c",
+      "mode": "0o644",
+      "gzip": "oriented-task.patch.gz",
+      "gzip_bytes": 85477,
+      "gzip_sha256": "85fd2a049329a0c3b33f6d33c02d9e36dde3bda393ddf7fbc6f80486fce80f1d"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/predictions.md",
+      "relative": "predictions.md",
+      "size": 5482,
+      "sha256": "4bcfad31c249058060bcaa0d1ac71595b906d2bed858c81ea56c204d7f39c1c7",
+      "mode": "0o644",
+      "gzip": "predictions.md.gz",
+      "gzip_bytes": 2762,
+      "gzip_sha256": "22d417c4124767ff1f59860a26a8c40c7d090b4948cafa3cfe3d4c0f4f6c46a4"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation",
+      "relative": "receive-conservation",
+      "size": 6043336,
+      "sha256": "bc19a9ae8d7dd0e85accd03d31edca034d5de72694add07380e0689297dc1754",
+      "mode": "0o755",
+      "gzip": "receive-conservation.gz",
+      "gzip_bytes": 1832838,
+      "gzip_sha256": "fad5385fef70fe288438e8ec301c57b76ac3460cd6f56795f540b08fb0fc0231"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-audit.json",
+      "relative": "receive-conservation-audit.json",
+      "size": 4825,
+      "sha256": "fe2c3f91ca4a5813578b0ec970388172c780900ceddff9c48b89fb2bb884d7d4",
+      "mode": "0o644",
+      "gzip": "receive-conservation-audit.json.gz",
+      "gzip_bytes": 526,
+      "gzip_sha256": "b8f8e624e8f6431a24c69e19188728fc998baa84318a0e6d256b7fb54928e198"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-build.log",
+      "relative": "receive-conservation-build.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "0o644",
+      "gzip": "receive-conservation-build.log.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-first/mutant.resume",
+      "relative": "receive-conservation-first/mutant.resume",
+      "size": 12090,
+      "sha256": "e3412357af0cbbb62d137bea487fa4159e82faebd8795bf6bee5e6a6d0606a82",
+      "mode": "0o644",
+      "gzip": "receive-conservation-first/mutant.resume.gz",
+      "gzip_bytes": 4446,
+      "gzip_sha256": "a5157f0654dbac3d0ceb2683b893e1f3503abc7714aa67e17360404ec69a6baa"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-first/observed.resume",
+      "relative": "receive-conservation-first/observed.resume",
+      "size": 12135,
+      "sha256": "5117fa6d87a50e8301d8dda48ccb4e25041cbd4ab8b2e0c96426e41520218914",
+      "mode": "0o644",
+      "gzip": "receive-conservation-first/observed.resume.gz",
+      "gzip_bytes": 4465,
+      "gzip_sha256": "0fd1a514db86b7065fea5ca83df23f32316efc26252226030548157e46027e8e"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-first/original.resume",
+      "relative": "receive-conservation-first/original.resume",
+      "size": 12083,
+      "sha256": "f9b6b8cebe76c5d04b2135c9735f98934915e0c15b65d017455d7740d91c87a5",
+      "mode": "0o644",
+      "gzip": "receive-conservation-first/original.resume.gz",
+      "gzip_bytes": 4437,
+      "gzip_sha256": "ae70650648aa2a7253d0d892d323e6fd29369ec4486287d7bfd7f9bfd49d3e36"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-first.log",
+      "relative": "receive-conservation-first.log",
+      "size": 619,
+      "sha256": "adb7a299f40a3d1834f5cea008e71a71a9942eed24039df66298f03fb1514e05",
+      "mode": "0o644",
+      "gzip": "receive-conservation-first.log.gz",
+      "gzip_bytes": 394,
+      "gzip_sha256": "a3aa5e23b04c34b52c4b1036e3040516fdc6c9992bb1317af79988bc85bee7ee"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-prediction.md",
+      "relative": "receive-conservation-prediction.md",
+      "size": 1040,
+      "sha256": "2be5f16bc9df8c132a3543b85665e321e4c3d83f3528eac7821af9b45f74f9a4",
+      "mode": "0o644",
+      "gzip": "receive-conservation-prediction.md.gz",
+      "gzip_bytes": 602,
+      "gzip_sha256": "c390c13f1f450f6b8d3faff251539c79a20589956b8702112b04968bb71034ff"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-receipt.json",
+      "relative": "receive-conservation-receipt.json",
+      "size": 1256,
+      "sha256": "fa358ed806a99652c7f395065335e1a90f8cfc0dbc9f1e9cc72ca0ce41a971e0",
+      "mode": "0o644",
+      "gzip": "receive-conservation-receipt.json.gz",
+      "gzip_bytes": 637,
+      "gzip_sha256": "6714bd74ee1d8af7dd5a4bdf8b395613d779f00488e6fe1eb2d35d7f859b61f9"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-recheck/mutant.resume",
+      "relative": "receive-conservation-recheck/mutant.resume",
+      "size": 12090,
+      "sha256": "e3412357af0cbbb62d137bea487fa4159e82faebd8795bf6bee5e6a6d0606a82",
+      "mode": "0o644",
+      "gzip": "receive-conservation-recheck/mutant.resume.gz",
+      "gzip_bytes": 4446,
+      "gzip_sha256": "a5157f0654dbac3d0ceb2683b893e1f3503abc7714aa67e17360404ec69a6baa"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-recheck/observed.resume",
+      "relative": "receive-conservation-recheck/observed.resume",
+      "size": 12135,
+      "sha256": "5117fa6d87a50e8301d8dda48ccb4e25041cbd4ab8b2e0c96426e41520218914",
+      "mode": "0o644",
+      "gzip": "receive-conservation-recheck/observed.resume.gz",
+      "gzip_bytes": 4465,
+      "gzip_sha256": "0fd1a514db86b7065fea5ca83df23f32316efc26252226030548157e46027e8e"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-recheck/original.resume",
+      "relative": "receive-conservation-recheck/original.resume",
+      "size": 12083,
+      "sha256": "f9b6b8cebe76c5d04b2135c9735f98934915e0c15b65d017455d7740d91c87a5",
+      "mode": "0o644",
+      "gzip": "receive-conservation-recheck/original.resume.gz",
+      "gzip_bytes": 4437,
+      "gzip_sha256": "ae70650648aa2a7253d0d892d323e6fd29369ec4486287d7bfd7f9bfd49d3e36"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-recheck.log",
+      "relative": "receive-conservation-recheck.log",
+      "size": 619,
+      "sha256": "fa61be8492e382aba35715eebf5154eec2b0d96130d2e8dbee99ac6f5b7941a1",
+      "mode": "0o644",
+      "gzip": "receive-conservation-recheck.log.gz",
+      "gzip_bytes": 394,
+      "gzip_sha256": "8342e1b8cf8c0c926140ee8bbd10df1ba2a1e54b4bb1cabd184cc258908ff7c5"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace",
+      "relative": "receive-conservation-trace",
+      "size": 6030984,
+      "sha256": "f5d077036abc6cd1700bc0807150a5f330aa3b5ead09f65f0ea727f9d842c126",
+      "mode": "0o755",
+      "gzip": "receive-conservation-trace.gz",
+      "gzip_bytes": 1824760,
+      "gzip_sha256": "df5118022424be68aafee3477d1131dee5d3c0cf12090a9f91a3c795381fa4a4"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-build.log",
+      "relative": "receive-conservation-trace-build.log",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-build.log.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-first/mutant.resume",
+      "relative": "receive-conservation-trace-first/mutant.resume",
+      "size": 12090,
+      "sha256": "e3412357af0cbbb62d137bea487fa4159e82faebd8795bf6bee5e6a6d0606a82",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-first/mutant.resume.gz",
+      "gzip_bytes": 4446,
+      "gzip_sha256": "a5157f0654dbac3d0ceb2683b893e1f3503abc7714aa67e17360404ec69a6baa"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-first/observed.resume",
+      "relative": "receive-conservation-trace-first/observed.resume",
+      "size": 12135,
+      "sha256": "5117fa6d87a50e8301d8dda48ccb4e25041cbd4ab8b2e0c96426e41520218914",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-first/observed.resume.gz",
+      "gzip_bytes": 4465,
+      "gzip_sha256": "0fd1a514db86b7065fea5ca83df23f32316efc26252226030548157e46027e8e"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-first/original.resume",
+      "relative": "receive-conservation-trace-first/original.resume",
+      "size": 12083,
+      "sha256": "f9b6b8cebe76c5d04b2135c9735f98934915e0c15b65d017455d7740d91c87a5",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-first/original.resume.gz",
+      "gzip_bytes": 4437,
+      "gzip_sha256": "ae70650648aa2a7253d0d892d323e6fd29369ec4486287d7bfd7f9bfd49d3e36"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-first/to-1024.trace",
+      "relative": "receive-conservation-trace-first/to-1024.trace",
+      "size": 73119,
+      "sha256": "2868e6c4183232fcc67641c51366d90c0217c9066e7de11d89785d2187b4e274",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-first/to-1024.trace.gz",
+      "gzip_bytes": 7594,
+      "gzip_sha256": "5497a2de93a4215ded48f2407ba3f6ef7f1a6b987a073f2e1283fc263c96cb9b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-first/to-9216.trace",
+      "relative": "receive-conservation-trace-first/to-9216.trace",
+      "size": 624982,
+      "sha256": "9c87c28578c0a6a80985105335f6589a7b65ad5a9eb56c22f3cb5898c9c12895",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-first/to-9216.trace.gz",
+      "gzip_bytes": 61136,
+      "gzip_sha256": "21636cac17ec5ddf2f6682ac33490d4358c054013e9c90c093a86cee0ca8066d"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-first.log",
+      "relative": "receive-conservation-trace-first.log",
+      "size": 626,
+      "sha256": "eacceab57721ba863c6fcfb264cdb87b88a568eb53645a02143f1a8740c6675e",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-first.log.gz",
+      "gzip_bytes": 397,
+      "gzip_sha256": "23b43cb9712eb66cb9e81f4d39e60fd242559e509ac4b25207ca88a549ad828f"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-receipt.json",
+      "relative": "receive-conservation-trace-receipt.json",
+      "size": 6154,
+      "sha256": "853e645b3dff44d667712833f3a20e93cf87b0707fff2b2f56f29f8e827c8d78",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-receipt.json.gz",
+      "gzip_bytes": 938,
+      "gzip_sha256": "aa5887124e5bded60cbb14385ad089c71f81771864bb51464278d3c9d7fa4b6f"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-recheck/mutant.resume",
+      "relative": "receive-conservation-trace-recheck/mutant.resume",
+      "size": 12090,
+      "sha256": "e3412357af0cbbb62d137bea487fa4159e82faebd8795bf6bee5e6a6d0606a82",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-recheck/mutant.resume.gz",
+      "gzip_bytes": 4446,
+      "gzip_sha256": "a5157f0654dbac3d0ceb2683b893e1f3503abc7714aa67e17360404ec69a6baa"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-recheck/observed.resume",
+      "relative": "receive-conservation-trace-recheck/observed.resume",
+      "size": 12135,
+      "sha256": "5117fa6d87a50e8301d8dda48ccb4e25041cbd4ab8b2e0c96426e41520218914",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-recheck/observed.resume.gz",
+      "gzip_bytes": 4465,
+      "gzip_sha256": "0fd1a514db86b7065fea5ca83df23f32316efc26252226030548157e46027e8e"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-recheck/original.resume",
+      "relative": "receive-conservation-trace-recheck/original.resume",
+      "size": 12083,
+      "sha256": "f9b6b8cebe76c5d04b2135c9735f98934915e0c15b65d017455d7740d91c87a5",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-recheck/original.resume.gz",
+      "gzip_bytes": 4437,
+      "gzip_sha256": "ae70650648aa2a7253d0d892d323e6fd29369ec4486287d7bfd7f9bfd49d3e36"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-recheck/to-1024.trace",
+      "relative": "receive-conservation-trace-recheck/to-1024.trace",
+      "size": 73119,
+      "sha256": "2868e6c4183232fcc67641c51366d90c0217c9066e7de11d89785d2187b4e274",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-recheck/to-1024.trace.gz",
+      "gzip_bytes": 7594,
+      "gzip_sha256": "5497a2de93a4215ded48f2407ba3f6ef7f1a6b987a073f2e1283fc263c96cb9b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-recheck/to-9216.trace",
+      "relative": "receive-conservation-trace-recheck/to-9216.trace",
+      "size": 624982,
+      "sha256": "9c87c28578c0a6a80985105335f6589a7b65ad5a9eb56c22f3cb5898c9c12895",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-recheck/to-9216.trace.gz",
+      "gzip_bytes": 61136,
+      "gzip_sha256": "21636cac17ec5ddf2f6682ac33490d4358c054013e9c90c093a86cee0ca8066d"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive-conservation-trace-recheck.log",
+      "relative": "receive-conservation-trace-recheck.log",
+      "size": 626,
+      "sha256": "bf8b3e7a52a695b430cec2538343e8280b37aa83c725ea7cbfec62893d09d6c8",
+      "mode": "0o644",
+      "gzip": "receive-conservation-trace-recheck.log.gz",
+      "gzip_bytes": 397,
+      "gzip_sha256": "8f13e76c3db065d4602beced0fd7d32dc0bc0d84cc2557736dc3b94b30ab3eeb"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive_conservation.rs",
+      "relative": "receive_conservation.rs",
+      "size": 2612,
+      "sha256": "99941a36c85bb11b0951eedbea35f6ac8fb071f57e662f471a8052e82c90beac",
+      "mode": "0o644",
+      "gzip": "receive_conservation.rs.gz",
+      "gzip_bytes": 1221,
+      "gzip_sha256": "051eb0f0e93cfe43ce4dafff64eb62c15b1dd572c4baad7364381e573f87910f"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/receive_conservation_trace.rs",
+      "relative": "receive_conservation_trace.rs",
+      "size": 3030,
+      "sha256": "9c9daf554c15be506e486ccc644c1e59f1774672132675070300b8c4e0051b0d",
+      "mode": "0o644",
+      "gzip": "receive_conservation_trace.rs.gz",
+      "gzip_bytes": 1388,
+      "gzip_sha256": "78e92b39681d610cf062b2712e142e216883b060c274f40d719ec78878c92fc0"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/record_refutation_trace.py",
+      "relative": "record_refutation_trace.py",
+      "size": 3152,
+      "sha256": "7c4af32566ba09b106d275f4dae8fb6a6712d1179abef3a049806f91e5c0ec82",
+      "mode": "0o644",
+      "gzip": "record_refutation_trace.py.gz",
+      "gzip_bytes": 1498,
+      "gzip_sha256": "efff5f5e1aee46f5df20825d4d20855947364323f38c2b253866f17058f82e6c"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/t13-critic-main/run_receive_conservation.py",
+      "relative": "run_receive_conservation.py",
+      "size": 1728,
+      "sha256": "fcd279ec6f7dbe1bf69eb08afb832da4655bced92956a51b2b7139c75426fea2",
+      "mode": "0o644",
+      "gzip": "run_receive_conservation.py.gz",
+      "gzip_bytes": 885,
+      "gzip_sha256": "b6d9cc63cc7ed4dcb43cac604938dee03796c33140696c5e583c25906ff16c73"
+    }
+  ],
+  "scope": "First independent conservation refutation plus original pre-inspection predictions, authenticated held happy-path observations, exact independent decoder and original/refutation code/frames/guest traces. No original removed. Further read-only critique continues separately.",
+  "excluded": "Python bytecode and derived dSYM bundles remain on RAM; self-contained repro executables are included. Exact final cold core rlib hash and source/build provenance are preserved; no dependency substituted.",
+  "worker_primary_sha256": "800d1348c378f950d2457cde1e8cca1b69bd89280461b5d69b2539bf39b20576",
+  "worker_full_sha256": "9c47b24009b2bc81d442ff0fb9b17f6d01732152299ddc68a15a264e6b089638"
+}
