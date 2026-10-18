@@ -3,7 +3,7 @@ id: E9-T06
 epic: 9
 title: Add the local saved-session library and checkpoint controls
 priority: 524.906
-status: in-progress
+status: implemented
 depends_on: [E9-T05]
 estimate: S
 risk: medium
@@ -206,3 +206,29 @@ exact actual guest file/RAM restores and a fresh physically drawn retained-GPU f
 The new mobile screenshot was visually inspected. The status remains in-progress until
 the repaired CSS is deployed and the same bounded production proof is recorded. Previously
 HELD results carry forward; only the fresh critic can resolve the refutation.
+
+### 2026-10-18 — worker — repaired public proof, ready for fresh verdict
+
+Published committed CSS/product head `1afabe81e5545eb54da63faddc8214d81e474dc4`
+with evidence-only publication head `41f8978c4156ffeb70e2f3a45ed97bd17d542bb8` via
+`bash tools/deploy-cloudflare.sh`. Deployment: `https://6fc93522.wasm-vm.pages.dev`;
+production: `https://wasm-vm.pages.dev/`. All large artifact hashes were unchanged.
+The five deployment-only manifest URL rewrites were restored before recording.
+
+At the clean publication head ran:
+`GIT_OPTIONAL_LOCKS=0 node tools/verify/e9-session-library-missing-object-browser.mjs --recording-report target/evidence/e9-t06-public-final/report.json --web-dir web/dist --url https://wasm-vm.pages.dev/ --check-public-assets --output target/evidence/e9-t06-public-css-fixed`.
+Report SHA-256: `d5bd94a4d5f204f58c5da68723289e9a7a8a9e7114e63b2caef4490fd13d80e7`.
+All **16** critical public assets match the committed repaired build and unexpected errors
+are empty. The real missing-object error wraps at 390px with scroll/client **388/388**.
+Alpha stays paused with zero retirement and exact tuple
+`8184b6a40902d645e3d3829e6e1398856306a58e924b4fc6c1095432f19a7a2b`.
+The initial-failure draft/no-row/reacquisition check and ordinary owner-retirement/lock-absence
+check also pass in production. The latter preserves revision 1 and its exact manifest SHA-256
+`7499018e7314be7878bb403efe7076e48ff90c103673d97de512da909010a011`.
+
+`evidence/e9-t06/repair-public/` retains eight compact copies and two exact-frame aliases;
+its provenance authenticates **822** original payloads plus the report at the cited path.
+The original public profile is unchanged. The prior full public 19-asset/127-test/GPU proof
+and the repaired local nine-gate run remain held with identical runtime JavaScript/native
+boundaries. This bounded run closes only the changed mobile CSS/publication and requested
+cleanup proofs. Status is implemented; the fresh verifier owns the final verdict.
