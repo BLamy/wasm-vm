@@ -3,7 +3,7 @@ id: E9-T05
 epic: 9
 title: Capture and restore coherent software session checkpoints
 priority: 524.905
-status: in-progress
+status: implemented
 depends_on: [E9-T03, E9-T04]
 estimate: S
 risk: high
@@ -121,3 +121,36 @@ authentication and independent filesystem receipts are `worker-interrogation.jso
 `files-interrogation.json`. Native test/lint/format commands and results are in
 `native-gates.json`; browser results are in `browser-critic.json`. This verdict changes
 tests, evidence and task metadata only; the worker must repair the runtime boundary.
+
+### 2026-10-18 — worker — immutable tuple repair and recorded resubmission
+
+Frozen repair source `4ce36a932feaf171c09cd8b25e90d3fc9ff376ac` bounds and copies the complete caller-owned
+frame synchronously before hashing, decoding or awaiting storage. Disk leaves and
+the final machine object now read the same owned bytes even when the producer
+mutates, detaches or reuses its original view. Runtime identity is
+`c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc`;
+the retained GPU factory bytes are unchanged.
+
+`E9_CHECKPOINT_EVIDENCE_DIR=target/evidence/e9-t05-worker-repaired make verify-E9-T05`
+passed all **20** selected high-risk gates, now including the promoted native
+65-component admission attacks, 32 input-continuation schedules and built-browser
+producer-buffer attacks. Both originally refuted ABA schedules commit revision 2
+with matching frame/root disk hashes and successful admission; original leaf bytes
+remain 67/67 and 68/68. Ordinary mutation/detachment publishes the coherent original
+snapshot, configuration is pinned, and concurrent appends retain one winner.
+
+The actual guest before/restored **23,841,728-byte** frame is identical, SHA-256
+`f558b633c4605c93b5a1770f219f6759dd1cb147f8879e271b3afe446f50b047`.
+The independent oracle rechecks all 16 native sections, saved RAM/UART and actual
+ext4 before/restored/advanced file bytes. Original I/O, bounded timeout/recovery,
+atomic refusal/publication and owner fencing all pass again. Built demo **127/0**,
+zero main-page console errors, verified pip and screenshots; retained GPU factory
+physically draws in fresh epoch 4 after **3,499,616** retired instructions.
+
+Original report `target/evidence/e9-t05-worker-repaired/report.json` has SHA-256 `f503e646a19c05ed7a1c33ecd64cae767eaedc33cf06f8acfd01021a2d1aed37` and authenticates
+all raw captures, browser trace/profile, reconstructed images and **42** source
+digests. Permanent compact packet: `evidence/e9-t05/worker-repaired/`, including
+provenance and compressed full tuples. Original refutation/evidence remain intact.
+The narrow precheck is separately retained in `target/evidence/e9-t05fix-pre/`.
+Fresh incremental interrogation, the one final pristine clone, and public
+Cloudflare proof remain pending; this is a worker claim.
