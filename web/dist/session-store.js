@@ -1,12 +1,16 @@
 // E9-T03: immutable chunk streaming + a last, strict IndexedDB publication transaction.
 // The existing resume-snapshot database and the live disk overlay are independent.
 import init, {SessionSha256, sessionValidateManifest, sessionManifestReferences,
-  sessionEventReferences, sessionCheckAppend} from './session-pkg/wasm_vm_session.js';
+  sessionEventReferences, sessionCheckAppend, sessionValidateDiskRoot,
+  sessionDiskRootReferences} from './session-pkg/wasm_vm_session.js';
 
 export const SESSION_DATABASE = 'wasm-vm-sessions-v1';
 export const SESSION_CHUNK_BYTES = 1024 * 1024;
+export const SESSION_DATABASE_VERSION = 2;
+export const DEFAULT_SESSION_RETENTION = Object.freeze({maxBytes: 2 * 1024 ** 3, maxCheckpoints: 4096});
 const MAX_SOURCE_CHUNK = 4 * 1024 * 1024;
 const MAX_BYTES = 4 * 1024 * 1024 * 1024, MAX_SESSIONS = 256, MAX_U64 = (1n << 64n) - 1n;
+const MAX_GC_OBJECTS = 262144, MAX_GC_CHUNKS = 1048576, MAX_DISK_ROOT_BYTES = 12 * 1024 * 1024;
 const decoder = new TextDecoder('utf-8', {fatal: true});
 const sameBytes = (a, b) => a instanceof Uint8Array && b instanceof Uint8Array && a.length === b.length && a.every((value, index) => value === b[index]);
 const hashPattern = /^[0-9a-f]{64}$/;
@@ -18,6 +22,30 @@ export class SessionStoreError extends Error {
 const fail = (code, detail) => { throw new SessionStoreError(code, detail); };
 const need = (condition, code, detail) => { if (!condition) fail(code, detail); };
 const wrap = error => error instanceof SessionStoreError ? error : new SessionStoreError(error?.name === 'QuotaExceededError' ? 'Quota' : 'Storage', String(error?.message ?? error));
+function retention(value) {
+  need(value && Object.keys(value).sort().join(',') === 'maxBytes,maxCheckpoints'
+    && Number.isSafeInteger(value.maxBytes) && value.maxBytes >= SESSION_CHUNK_BYTES && value.maxBytes <= 64 * 1024 ** 3
+    && Number.isSafeInteger(value.maxCheckpoints) && value.maxCheckpoints >= 1 && value.maxCheckpoints <= 4096, 'Retention');
+  return {maxBytes: value.maxBytes, maxCheckpoints: value.maxCheckpoints};
+}
+function payloadBytes(value) { need(Number.isSafeInteger(value) && value >= 0, 'Corrupt', 'payload usage'); return value; }
+
+// Writers hold a shared maintenance lease for their entire staging/publication lifetime.
+// Cleanup never queues behind them: ifAvailable makes a busy origin an explicit retry state.
+function holdLock(name, mode, active, busy) {
+  need(globalThis.navigator?.locks, 'OwnershipUnavailable');
+  return new Promise((resolve, reject) => {
+    let unlock;
+    const held = new Promise(done => { unlock = done; });
+    const finished = navigator.locks.request(name, {mode, ifAvailable: true}, lock => {
+      if (!lock) { reject(new SessionStoreError(busy)); return; }
+      try { active(); } catch (error) { reject(error); return; }
+      resolve(Object.freeze({release: () => { unlock(); return finished; }}));
+      return held;
+    });
+    finished.catch(error => reject(wrap(error)));
+  });
+}
 function reference(value) {
   need(value && Object.keys(value).sort().join(',') === 'length,sha256'
     && typeof value.sha256 === 'string' && hashPattern.test(value.sha256)
@@ -84,10 +112,29 @@ export class SessionStore {
     need(globalThis.indexedDB, 'Unavailable', 'IndexedDB');
     await init();
     const db = await new Promise((resolve, reject) => {
-      let failed = false;
-      const request = indexedDB.open(name, 1);
-      request.onupgradeneeded = () => { for (const store of ['chunks', 'objects', 'sessions']) request.result.createObjectStore(store); };
-      request.onerror = () => { failed = true; reject(wrap(request.error)); };
+      let failed = false, upgradeFailure;
+      const request = indexedDB.open(name, SESSION_DATABASE_VERSION);
+      request.onupgradeneeded = () => {
+        try {
+          for (const store of ['chunks', 'objects', 'sessions', 'metadata']) {
+            if (!request.result.objectStoreNames.contains(store)) request.result.createObjectStore(store);
+          }
+          const metadata = request.transaction.objectStore('metadata');
+          metadata.put({...DEFAULT_SESSION_RETENTION}, 'limits');
+          let usage = 0;
+          const cursor = request.transaction.objectStore('chunks').openCursor();
+          cursor.onsuccess = () => {
+            try {
+              if (!cursor.result) { metadata.put(usage, 'payloadBytes'); return; }
+              const value = cursor.result.value;
+              // Metadata only: migration never allocates the old payloads or changes history.
+              usage += value instanceof Blob ? value.size : 0;
+              payloadBytes(usage); cursor.result.continue();
+            } catch (error) { upgradeFailure = wrap(error); request.transaction.abort(); }
+          };
+        } catch (error) { upgradeFailure = wrap(error); request.transaction.abort(); }
+      };
+      request.onerror = () => { failed = true; reject(upgradeFailure ?? wrap(request.error)); };
       request.onblocked = () => { failed = true; reject(new SessionStoreError('Blocked')); };
       request.onsuccess = () => { if (failed) request.result.close(); else resolve(request.result); };
     });
@@ -104,26 +151,52 @@ export class SessionStore {
   async writer(id) {
     this.#active();
     need(typeof id === 'string' && idPattern.test(id), 'SessionId');
-    need(globalThis.navigator?.locks, 'OwnershipUnavailable');
-    return new Promise((resolve, reject) => {
-      const finished = navigator.locks.request(`wasm-vm-session-${this.#db.name}-${id}`, {ifAvailable: true}, lock => {
-        if (!lock) { reject(new SessionStoreError('WriterBusy')); return; }
-        if (this.#closed) { reject(new SessionStoreError('Closed')); return; }
-        let release;
-        const held = new Promise(done => { release = done; });
-        const writer = createWriter(id, () => {
-          this.#writers.delete(writer); release();
-          // Resolution of the holding callback precedes the browser's lock-release ack.
-          // release() must await that ack so an immediate reacquisition cannot see Busy.
-          return finished;
-        }, {
-          part: bytes => this.#putPart(bytes, id), object: object => this.#putObject(object, id),
-          publish: (bytes, active) => this.#publish(id, active, bytes),
-        });
-        this.#writers.add(writer); resolve(writer);
-        return held;
+    const maintenance = await this.#maintenance('shared');
+    let owned;
+    try {
+      owned = await holdLock(`wasm-vm-session-${this.#db.name}-${id}`, 'exclusive', () => this.#active(), 'WriterBusy');
+      this.#active();
+      const writer = createWriter(id, () => {
+        this.#writers.delete(writer);
+        return owned.release().finally(() => maintenance.release());
+      }, {
+        part: bytes => this.#putPart(bytes, id), object: object => this.#putObject(object, id),
+        publish: (bytes, active) => this.#publish(id, active, bytes),
       });
-      finished.catch(error => reject(wrap(error)));
+      this.#writers.add(writer); return writer;
+    } catch (error) { if (owned) await owned.release(); await maintenance.release(); throw wrap(error); }
+  }
+  #maintenance(mode) {
+    this.#active();
+    return holdLock(`wasm-vm-session-maintenance-${this.#db.name}`, mode, () => this.#active(), 'MaintenanceBusy');
+  }
+  async withReadLease(callback) {
+    need(typeof callback === 'function', 'ReadLease');
+    const lease = await this.#maintenance('shared');
+    try { this.#active(); return await callback(); }
+    finally { await lease.release(); }
+  }
+  async statistics() {
+    this.#active();
+    return transaction(this.#db, ['metadata', 'sessions', 'objects', 'chunks'], 'readonly', (tx, done, abort) => {
+      const result = {}, fields = [['metadata', 'limits'], ['metadata', 'payloadBytes'], ['sessions', null], ['objects', null], ['chunks', null]];
+      let pending = fields.length;
+      for (const [table, key] of fields) {
+        const request = key ? tx.objectStore(table).get(key) : tx.objectStore(table).count();
+        request.onsuccess = () => {
+          try {
+            result[key ?? table] = request.result;
+            if (--pending === 0) done({limits: retention(result.limits), payloadBytes: payloadBytes(result.payloadBytes),
+              sessions: result.sessions, objects: result.objects, chunks: result.chunks});
+          } catch (error) { abort(error); }
+        };
+      }
+    });
+  }
+  async setRetention(value) {
+    this.#active(); const limits = retention(value);
+    return transaction(this.#db, ['metadata'], 'readwrite', (tx, done) => {
+      tx.objectStore('metadata').put(limits, 'limits'); done(limits);
     });
   }
   async #object(expected) {
@@ -157,12 +230,13 @@ export class SessionStore {
       need(hash.finish() === ref.sha256, 'Corrupt', ref.sha256);
     } finally { hash.free(); }
   }
-  async #small(expected) {
-    need(Number(expected.length) <= MAX_SOURCE_CHUNK, 'Bound', 'event chunk');
+  async #bytes(expected, limit) {
+    need(Number(expected.length) <= limit, 'Bound', 'metadata object');
     const bytes = new Uint8Array(Number(expected.length)); let at = 0;
     for await (const part of this.stream(expected)) { bytes.set(part, at); at += part.length; }
     return bytes;
   }
+  #small(expected) { return this.#bytes(expected, MAX_SOURCE_CHUNK); }
   async #references(parsedManifest) {
     const refs = parsed(() => sessionManifestReferences(parsedManifest.bytes)), all = new Map();
     const add = value => {
@@ -185,7 +259,7 @@ export class SessionStore {
     }
     return verified;
   }
-  async openSession(id) {
+  async #session(id) {
     this.#active(); need(typeof id === 'string' && idPattern.test(id), 'SessionId');
     const row = await read(this.#db, 'sessions', id);
     if (!row) return null;
@@ -193,16 +267,25 @@ export class SessionStore {
       && BigInt(row.revision) <= MAX_U64, 'Corrupt', 'commit cursor');
     const decoded = manifest(row.manifest);
     need(decoded.value.id === id, 'Corrupt', 'manifest ID');
-    await this.#references(decoded);
-    return {id, revision: row.revision, manifest: decoded.bytes};
+    return {row, decoded};
   }
-  async list() {
+  async openSession(id) {
+    const found = await this.#session(id);
+    if (!found) return null;
+    await this.#references(found.decoded);
+    return {id, revision: found.row.revision, manifest: found.decoded.bytes};
+  }
+  async #sessionKeys() {
     this.#active();
     const keys = await transaction(this.#db, ['sessions'], 'readonly', (tx, done) => {
       const request = tx.objectStore('sessions').getAllKeys(undefined, MAX_SESSIONS + 1);
       request.onsuccess = () => done(request.result);
     });
     need(keys.length <= MAX_SESSIONS, 'Bound', 'session count');
+    return keys;
+  }
+  async list() {
+    const keys = await this.#sessionKeys();
     const sessions = [], unavailable = [];
     for (const id of keys) {
       try {
@@ -215,14 +298,114 @@ export class SessionStore {
     }
     return {sessions, unavailable};
   }
+  async deleteSession(id) {
+    this.#active(); need(typeof id === 'string' && idPattern.test(id), 'SessionId');
+    const lease = await this.#maintenance('exclusive');
+    try {
+      const deleted = await transaction(this.#db, ['sessions'], 'readwrite', (tx, done) => {
+        const rows = tx.objectStore('sessions'), request = rows.getKey(id);
+        request.onsuccess = () => { if (request.result !== undefined) rows.delete(id); done(request.result !== undefined); };
+      });
+      // A crash here leaves harmless orphans. No surviving reference was changed; a later
+      // cleanup recomputes the complete mark set instead of trusting a half-written journal.
+      probe('gc-metadata-deleted', id);
+      try { return {deleted, ...await this.#collect()}; }
+      catch (error) { const failure = wrap(error); return {deleted, collected: false, error: {code: failure.code, detail: failure.message}}; }
+    } finally { await lease.release(); }
+  }
+  async collectGarbage() {
+    const lease = await this.#maintenance('exclusive');
+    try { return await this.#collect(); }
+    finally { await lease.release(); }
+  }
+  async #collect() {
+    const objects = new Map(), parts = new Map();
+    const add = object => {
+      const previous = objects.get(object.sha256);
+      need(!previous || JSON.stringify(previous) === JSON.stringify(object), 'Corrupt', 'conflicting live objects');
+      objects.set(object.sha256, object);
+      need(objects.size <= MAX_GC_OBJECTS, 'Bound', 'cleanup object count');
+    };
+    // Never use list(): it intentionally omits incomplete histories. An unreadable survivor
+    // must block reclamation, otherwise its temporarily missing root could erase shared data.
+    for (const id of await this.#sessionKeys()) {
+      const found = await this.#session(id); need(found, 'Corrupt', 'surviving session disappeared');
+      const decoded = found.decoded;
+      need(decoded.value.machine.gpu === null && decoded.value.checkpoints.every(point => point.gpu === null)
+        && decoded.value.extensions.length === 0, 'UnsupportedRetention', 'unknown GPU/extension references');
+      for (const object of await this.#references(decoded)) add(object);
+      const roots = parsed(() => sessionManifestReferences(decoded.bytes)).roots;
+      for (const hash of roots) {
+        const ref = await this.#root(hash), bytes = await this.#bytes(ref, MAX_DISK_ROOT_BYTES);
+        let canonical;
+        try { canonical = sessionValidateDiskRoot(bytes); } catch (error) { fail('DiskRoot', error.message); }
+        need(JSON.parse(decoder.decode(canonical)).base === decoded.value.machine.base_image, 'Corrupt', 'disk root base');
+        for (const block of parsed(() => sessionDiskRootReferences(canonical))) {
+          for await (const _ of this.stream(block)) { /* authenticate all complete-map descendants */ }
+          add(await this.#object(block));
+        }
+      }
+    }
+    for (const object of objects.values()) for (const part of object.parts) {
+      const previous = parts.get(part.sha256);
+      need(!previous || previous.length === part.length, 'Corrupt', 'conflicting live parts');
+      parts.set(part.sha256, part); need(parts.size <= MAX_GC_CHUNKS, 'Bound', 'cleanup chunk count');
+    }
+    probe('gc-marked', 'gc');
+    const result = await transaction(this.#db, ['objects', 'chunks', 'metadata'], 'readwrite', (tx, done, abort) => {
+      let pending = 2, seenObjects = 0, seenChunks = 0, usage = 0, reclaimedBytes = 0, removedObjects = 0, removedChunks = 0;
+      const finished = () => {
+        if (--pending !== 0) return;
+        try {
+          need(seenObjects === objects.size && seenChunks === parts.size, 'Corrupt', 'live data changed during cleanup');
+          tx.objectStore('metadata').put(payloadBytes(usage), 'payloadBytes');
+          probe('gc-before-sweep-commit', 'gc');
+          done({collected: true, payloadBytes: usage, reclaimedBytes, removedObjects, removedChunks});
+        } catch (error) { abort(error); }
+      };
+      for (const table of ['objects', 'chunks']) {
+        const request = tx.objectStore(table).openCursor();
+        request.onsuccess = () => {
+          try {
+            const cursor = request.result;
+            if (!cursor) { finished(); return; }
+            if (table === 'objects') {
+              const expected = objects.get(cursor.key);
+              if (expected) {
+                need(JSON.stringify(cursor.value) === JSON.stringify(expected), 'Corrupt', 'live object changed during cleanup'); seenObjects++;
+              } else { cursor.delete(); removedObjects++; }
+            } else {
+              const expected = parts.get(cursor.key), value = cursor.value;
+              if (expected) {
+                need(value instanceof Blob && value.size === Number(expected.length), 'Corrupt', 'live chunk changed during cleanup');
+                usage = payloadBytes(usage + value.size); seenChunks++;
+              } else { cursor.delete(); removedChunks++; reclaimedBytes += value instanceof Blob ? value.size : 0; }
+            }
+            cursor.continue();
+          } catch (error) { abort(error); }
+        };
+      }
+    });
+    probe('gc-sweep-durable', 'gc'); return result;
+  }
   async #putPart(bytes, id) {
     const ref = {sha256: await sha256(bytes), length: String(bytes.length)};
-    const added = await transaction(this.#db, ['chunks'], 'readwrite', (tx, done, abort) => {
+    const added = await transaction(this.#db, ['chunks', 'metadata'], 'readwrite', (tx, done, abort) => {
       const store = tx.objectStore('chunks'), request = store.getKey(ref.sha256);
       request.onsuccess = () => {
         try {
-          if (request.result === undefined) { store.add(new Blob([bytes]), ref.sha256); done(true); }
-          else done(false);
+          if (request.result !== undefined) { done(false); return; }
+          const metadata = tx.objectStore('metadata'), limits = metadata.get('limits'), usage = metadata.get('payloadBytes');
+          let pending = 2;
+          const checked = () => {
+            if (--pending !== 0) return;
+            try {
+              const next = payloadBytes(payloadBytes(usage.result) + bytes.length);
+              need(next <= retention(limits.result).maxBytes, 'RetentionLimit', 'saved data byte budget');
+              store.add(new Blob([bytes]), ref.sha256); metadata.put(next, 'payloadBytes'); done(true);
+            } catch (error) { abort(error); }
+          };
+          limits.onsuccess = usage.onsuccess = checked;
         } catch (error) { abort(error); }
       };
     });
@@ -268,8 +451,8 @@ export class SessionStore {
     const objects = await this.#references(decoded);
     active();
     probe('before-commit', id);
-    await transaction(this.#db, ['sessions', 'objects', 'chunks'], 'readwrite', (tx, done, abort) => {
-      let pending = 1 + objects.length;
+    await transaction(this.#db, ['sessions', 'objects', 'chunks', 'metadata'], 'readwrite', (tx, done, abort) => {
+      let pending = 2 + objects.length;
       const checked = () => {
         if (--pending !== 0) return;
         try {
@@ -277,6 +460,11 @@ export class SessionStore {
           tx.objectStore('sessions').put({id, revision: String(revision), manifest: decoded.bytes}, id);
           done({id, revision: String(revision), position: decoded.value.end});
         } catch (error) { abort(error); }
+      };
+      const limits = tx.objectStore('metadata').get('limits');
+      limits.onsuccess = () => {
+        try { need(decoded.value.checkpoints.length <= retention(limits.result).maxCheckpoints, 'RetentionLimit', 'restore point budget'); checked(); }
+        catch (error) { abort(error); }
       };
       const request = tx.objectStore('sessions').get(id);
       request.onsuccess = () => {

@@ -192,8 +192,8 @@ export async function startLinuxBoot(opts = {}) {
     const {SessionStore} = await import('./session-store.js');
     const {SessionCheckpoints} = await import('./session-checkpoints.js');
     const store = await SessionStore.open(descriptor.database);
-    try { sessionAdmission = await new SessionCheckpoints(store).admit(descriptor.id, descriptor.checkpoint,
-      GPU_CHECKPOINT_BUILD_ID, SOFTWARE_CHECKPOINT_WASM_SHA256); }
+    try { sessionAdmission = await store.withReadLease(() => new SessionCheckpoints(store).admit(descriptor.id, descriptor.checkpoint,
+      GPU_CHECKPOINT_BUILD_ID, SOFTWARE_CHECKPOINT_WASM_SHA256)); }
     finally { await store.close(); }
     const config = sessionAdmission.configuration;
     opts = {...opts, mode:'chunked', persist:false, bootSnapshot:false, bootProfileUrl:null,

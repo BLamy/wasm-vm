@@ -975,6 +975,7 @@
           <button type="button" data-session="start" disabled>Start recording</button>
           <button type="button" data-session="checkpoint" disabled>Checkpoint</button>
           <button type="button" data-session="stop" disabled>Stop recording</button>
+          <button type="button" data-session="retry" disabled>Retry recording</button>
           <button type="button" data-session="resume" disabled>Resume guest</button>
         </div>
         <p data-session="active">Active: no checkpoint guest</p>
@@ -989,6 +990,17 @@
           <button type="submit" data-session="rename" disabled>Rename session</button>
         </form>
         <div data-session="details" aria-label="Selected session details"></div>
+        <p data-session="storage" class="session-note" aria-live="polite">Reading storage usage…</p>
+        <div class="session-fields">
+          <label>Saved binary data limit (MiB)<input type="number" min="1" max="65536" step="1" data-session="limit-bytes" disabled /></label>
+          <label>Restore points per session<input type="number" min="1" max="4096" step="1" data-session="limit-points" disabled /></label>
+          <button type="button" data-session="limits-save" disabled>Save storage limits</button>
+        </div>
+        <div class="session-actions">
+          <button type="button" data-session="persist" disabled>Request persistent storage</button>
+          <button type="button" data-session="cleanup" disabled>Clean up unreachable data</button>
+          <button type="button" data-session="delete" disabled>Delete selected session</button>
+        </div>
         <p data-session="status" role="status" aria-live="polite">Reading local checkpoints…</p>
       </details>
       <!-- IDE layout (explorer + editor + embedded terminal) is assembled by ide.js, which

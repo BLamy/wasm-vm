@@ -395,7 +395,7 @@ try {
   const victimBefore=await opened(page,'corruption-victim');
   for (const fault of ['missing','corrupt']) {
     const result=await page.evaluate(async ({name,ref,bytes,fault})=>{
-      const db=await new Promise((resolve,reject)=>{const r=indexedDB.open(name,1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
+      const db=await new Promise((resolve,reject)=>{const r=indexedDB.open(name);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
       await new Promise((resolve,reject)=>{const tx=db.transaction(['chunks'],'readwrite',{durability:'strict'});
         if(fault==='missing')tx.objectStore('chunks').delete(ref.sha256);else tx.objectStore('chunks').put(new Blob([new Uint8Array(bytes.length)]),ref.sha256);
         tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error);});

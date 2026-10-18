@@ -44,3 +44,29 @@ failure during append, shared machine/disk/event references, interrupted cleanup
 varied two-tab lock schedules, actual guest restores and a final pristine-source run.
 The retained GPU runtime stays pinned; accelerated history remains gated to T17/T18.
 
+
+### 2026-10-18 — worker — implementation ready for recorded submission
+
+Implemented schema-v2 atomic unique-chunk accounting, explicit byte/point limits,
+shared writer/read maintenance leases, and exclusive nonblocking delete/GC. Cleanup
+marks authenticated machine/assets, out-of-line event payloads and complete disk-root
+leaves from every surviving raw session row. It refuses corrupt or unknown extension
+references before sweeping. Row deletion is durable first; a single strict sweep
+transaction reclaims only unmarked data and updates usage, so interruption leaves
+recoverable orphan storage. Version-one migration preserves existing rows and payloads.
+The visible library reports origin estimates and persistence outcomes, preserves missing
+named rows as incomplete, and exposes limits/delete/cleanup. Quota pauses release the
+writer and keep the guest paused; Retry checks both cursor and manifest identity before
+appending. Open holds a read lease through admission and actual owner replacement.
+
+Development-only self-validation (`--development`, not the final evidence) passed in
+`target/evidence/e9-t07-browser-inner-2`: 127/0, no errors, genuine Chromium quota failure
+during a real guest append, same committed prefix, successful retry, deletion with exact
+sibling tuple/file/RAM restoration, migration, two renderer crashes and 16 varied lease
+schedules. Separate independent parsing in `target/evidence/e9-t07-files-inner` validated
+all native sections and reconstructed shared/private/reopened ext4 files. The first quota
+trial is retained as a failed harness run: Chromium's cached bucket allowance required a
+31-second expiry before the override could produce a genuine failure. The small
+`target/e9-t07-quota-expire-probe.mjs` isolated that behavior. `make verify-E9-T07` now
+records the affected native/Wasm/browser gates at a frozen clean head. Final submission,
+pristine clone, deployment and adversarial verdict are still pending.

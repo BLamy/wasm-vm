@@ -34472,7 +34472,7 @@
       "epicKey": "9",
       "title": "Manage session quotas retention and shared-data deletion",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E9-T03",
         "E9-T04",
@@ -34500,13 +34500,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(pending; no implementation or verification claim)",
+      "verificationLog": "### 2026-10-18 — worker — started\n\nDependencies E9-T03/T04/T06 are independently verified. This S/high-risk slice owns\nbrowser session-storage maintenance: explicit payload/point limits and origin persistence\nfeedback, quota-safe recording pause/retry, and locked reachability-based deletion/cleanup.\nNo named history is automatically discarded. The planned proof includes real browser quota\nfailure during append, shared machine/disk/event references, interrupted cleanup and reopen,\nvaried two-tab lock schedules, actual guest restores and a final pristine-source run.\nThe retained GPU runtime stays pinned; accelerated history remains gated to T17/T18.",
       "adversarial": "Force quota failure during append and interrupt GC after reference updates. Check every surviving session against its original content hashes and disk roots.",
       "file": "tasks/epic-9-session-time-travel/E9-T07-retention-and-quota.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-10-18",
+          "commits": 1,
+          "labels": [
+            "Start session retention and quota task"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-18",
+      "lastActivity": "2026-10-18",
+      "commitCount": 1
     },
     {
       "id": "E9-T08",
