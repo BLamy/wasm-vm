@@ -1,5 +1,5 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
-import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
+import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js';
 import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
 import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
 
@@ -79,6 +79,26 @@ export class SessionDeviceLease {
     }
 }
 if (Symbol.dispose) SessionDeviceLease.prototype[Symbol.dispose] = SessionDeviceLease.prototype.free;
+
+export class SessionNetworkLease {
+    static __wrap(ptr) {
+        const obj = Object.create(SessionNetworkLease.prototype);
+        obj.__wbg_ptr = ptr;
+        SessionNetworkLeaseFinalization.register(obj, obj.__wbg_ptr, obj);
+        return obj;
+    }
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        SessionNetworkLeaseFinalization.unregister(this);
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_sessionnetworklease_free(ptr, 0);
+    }
+}
+if (Symbol.dispose) SessionNetworkLease.prototype[Symbol.dispose] = SessionNetworkLease.prototype.free;
 
 /**
  * Bounded, fixed real RV64 workload used by the public time/entropy check. This proof board
@@ -1893,6 +1913,17 @@ export class WasmMachine {
             throw takeFromExternrefTable0(ret[0]);
         }
     }
+    /**
+     * @param {SessionNetworkLease} lease
+     * @param {Uint8Array} input
+     */
+    completeNetworkEvent(lease, input) {
+        _assertClass(lease, SessionNetworkLease);
+        const ret = wasm.wasmmachine_completeNetworkEvent(this.__wbg_ptr, lease.__wbg_ptr, input);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
     deliverEventBoundary() {
         const ret = wasm.wasmmachine_deliverEventBoundary(this.__wbg_ptr);
         if (ret[1]) {
@@ -1953,6 +1984,17 @@ export class WasmMachine {
         return takeFromExternrefTable0(ret[0]);
     }
     /**
+     * @param {string} cursor
+     */
+    finishNetworkReplay(cursor) {
+        const ptr0 = passStringToWasm0(cursor, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmmachine_finishNetworkReplay(this.__wbg_ptr, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E2-T20: the interrupt/trap counters + storm/WFI diagnosis as a JS object
      * `{ retired, wfi, exceptions:[16], interrupts:[16], claims:[32], storm:bool, wfiReport:string|null }`.
      * E2-T26's UI surfaces these so a browser boot that death-spirals shows a diagnosis instead
@@ -1974,6 +2016,15 @@ export class WasmMachine {
         const ptr0 = passStringToWasm0(configuration, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
         const ret = wasm.wasmmachine_installDeviceSession(this.__wbg_ptr, ptr0, len0, replay);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {any} replay
+     */
+    installNetworkSession(replay) {
+        const ret = wasm.wasmmachine_installNetworkSession(this.__wbg_ptr, replay);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
@@ -2004,6 +2055,19 @@ export class WasmMachine {
         return SessionDeviceLease.__wrap(ret[0]);
     }
     /**
+     * @param {string} id
+     * @returns {SessionNetworkLease}
+     */
+    leaseNetworkRequest(id) {
+        const ptr0 = passStringToWasm0(id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmmachine_leaseNetworkRequest(this.__wbg_ptr, ptr0, len0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return SessionNetworkLease.__wrap(ret[0]);
+    }
+    /**
      * Load a bare-metal rv64 ELF. A malformed image throws a `JsError` naming the
      * `ElfError` variant and leaves the machine usable (RAM is validated before it is
      * written).
@@ -2016,6 +2080,47 @@ export class WasmMachine {
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
+    }
+    /**
+     * @returns {string}
+     */
+    networkCursor() {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ret = wasm.wasmmachine_networkCursor(this.__wbg_ptr);
+            var ptr1 = ret[0];
+            var len1 = ret[1];
+            if (ret[3]) {
+                ptr1 = 0; len1 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred2_0 = ptr1;
+            deferred2_1 = len1;
+            return getStringFromWasm0(ptr1, len1);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
+        }
+    }
+    /**
+     * @returns {any}
+     */
+    networkRequests() {
+        const ret = wasm.wasmmachine_networkRequests(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {boolean}
+     */
+    networkSessionReplay() {
+        const ret = wasm.wasmmachine_networkSessionReplay(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
     }
     /**
      * Construct a machine with `ram_mib` MiB of zeroed guest RAM and a UART0 console
@@ -2086,6 +2191,25 @@ export class WasmMachine {
         const ptr2 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len2 = WASM_VECTOR_LEN;
         const ret = wasm.wasmmachine_replayDeviceCompletion(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, ordinal, bytes);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {string} transition
+     * @param {string} retired
+     * @param {string} sequence
+     * @param {any} ordinal
+     * @param {Uint8Array} input
+     */
+    replayNetworkEvent(transition, retired, sequence, ordinal, input) {
+        const ptr0 = passStringToWasm0(transition, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(retired, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmmachine_replayNetworkEvent(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, ordinal, input);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
@@ -2335,6 +2459,16 @@ export class WasmMachine {
      */
     takeEventDeliveries() {
         const ret = wasm.wasmmachine_takeEventDeliveries(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    takeNetworkDeliveries() {
+        const ret = wasm.wasmmachine_takeNetworkDeliveries(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -3389,6 +3523,9 @@ const FileSha256Finalization = (typeof FinalizationRegistry === 'undefined')
 const SessionDeviceLeaseFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_sessiondevicelease_free(ptr, 1));
+const SessionNetworkLeaseFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_sessionnetworklease_free(ptr, 1));
 const SessionSourceProbeFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_sessionsourceprobe_free(ptr, 1));

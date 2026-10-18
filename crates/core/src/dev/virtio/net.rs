@@ -65,6 +65,13 @@ const LOOPBACK_CAP: usize = 256;
 /// device state ([`NetState`] or the mmio slot) — they are called while the device holds its
 /// `RefCell` borrow (including inside a guest MMIO store during `reset`), so re-entry panics.
 pub trait NetBackend {
+    /// Admission-specific packet bound, checked before allocating a guest transmit buffer.
+    fn max_frame_bytes(&self) -> usize {
+        usize::MAX
+    }
+    /// Guest transport reset revokes any adapter-owned host callbacks.
+    fn reset(&mut self) {}
+
     /// Give an event-driven backend a chance to advance work that arrived independently of a guest
     /// transmit. The run loop calls this before checking [`Self::rx_ready`]. Synchronous backends
     /// need no maintenance and inherit the no-op default; browser slirp uses it to drain WebSocket
@@ -140,6 +147,13 @@ pub struct SwitchableNetBackend {
 }
 
 impl NetBackend for SwitchableNetBackend {
+    fn max_frame_bytes(&self) -> usize {
+        self.inner.borrow().max_frame_bytes()
+    }
+    fn reset(&mut self) {
+        self.inner.borrow_mut().reset();
+    }
+
     fn poll(&mut self) {
         self.inner.borrow_mut().poll();
     }
@@ -283,6 +297,13 @@ impl<B: NetBackend> PcapBackend<B> {
 }
 
 impl<B: NetBackend> NetBackend for PcapBackend<B> {
+    fn max_frame_bytes(&self) -> usize {
+        self.inner.max_frame_bytes()
+    }
+    fn reset(&mut self) {
+        self.inner.reset();
+    }
+
     fn poll(&mut self) {
         self.inner.poll();
     }
@@ -324,6 +345,14 @@ pub struct NetState {
 }
 
 impl NetState {
+    pub(crate) fn session_flags(&self) -> [bool; 2] {
+        [self.kicked, self.reset_pending]
+    }
+    pub(crate) fn restore_session_flags(&mut self, flags: [bool; 2]) {
+        self.kicked = flags[0];
+        self.reset_pending = flags[1];
+    }
+
     /// True when [`service`] has work to do without a fresh kick — an asynchronously-arrived
     /// rx frame the run loop should deliver this boundary.
     pub fn rx_ready(&self) -> bool {
@@ -365,6 +394,7 @@ impl VirtioDevice for VirtioNetDev {
         let mut st = self.state.borrow_mut();
         st.kicked = false;
         st.reset_pending = true;
+        st.backend.reset();
         // Drop any frames the backend staged for the torn-down queue: their destination
         // descriptors belong to a ring being reinitialized (driver reload / reboot).
         while st.backend.rx().is_some() {}
@@ -393,8 +423,11 @@ pub fn new(backend: Box<dyn NetBackend>) -> (VirtioNetDev, Rc<RefCell<NetState>>
 /// Collect every device-readable byte of `chain` from guest memory into a `Vec` (frames are
 /// small — MTU-scale — so a copy is cheap and lets header/frame split across any descriptor
 /// boundary parse identically). `None` on a bad guest address.
-fn read_all(chain: &DescriptorChain, bus: &mut SystemBus) -> Option<Vec<u8>> {
+fn read_all(chain: &DescriptorChain, bus: &mut SystemBus, maximum: usize) -> Option<Vec<u8>> {
     let total: u64 = chain.readable().map(|s| u64::from(s.len)).sum();
+    if total > maximum as u64 {
+        return None;
+    }
     let mut out = Vec::with_capacity(total as usize);
     for seg in chain.readable() {
         for i in 0..u64::from(seg.len) {
@@ -444,7 +477,12 @@ fn service_tx(
 ) -> Result<bool, super::queue::Violation> {
     let mut used = false;
     while let Some(chain) = tx.pop(bus)? {
-        if let Some(buf) = read_all(&chain, bus) {
+        let maximum = state
+            .borrow()
+            .backend
+            .max_frame_bytes()
+            .saturating_add(NET_HDR_LEN);
+        if let Some(buf) = read_all(&chain, bus, maximum) {
             // The frame is everything after the 12-byte virtio_net_hdr. A chain with a
             // short/absent header carries no frame — still return the buffer so we never
             // wedge the ring.

@@ -16,6 +16,7 @@ const MAGIC: &[u8; 8] = b"WVCLK001";
 pub enum SessionError {
     Inactive,
     DeviceCompletion(crate::session_devices::DeviceError),
+    Network(crate::session_network::NetworkError),
     AlreadyActive,
     UnsupportedScheduling,
     PositionPast,
@@ -620,6 +621,11 @@ impl crate::Machine {
         };
         if let Some(error) = self.session_sources.borrow().error() {
             return Err(error);
+        }
+        if let Some(hub) = &self.session_network
+            && let Some(error) = hub.borrow().error
+        {
+            return Err(SessionError::Network(error));
         }
         if let Some(hub) = &self.session_devices
             && let Some(error) = hub.borrow().error

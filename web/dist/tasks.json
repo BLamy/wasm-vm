@@ -34781,7 +34781,7 @@
       "epicKey": "9",
       "title": "Capture network sessions and replay them with zero live egress",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E9-T09",
         "E9-T03"
@@ -34808,13 +34808,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(pending; no implementation or verification claim)",
+      "verificationLog": "### 2026-10-18 — worker — begin\n\nE9-T13 is the next eligible slice after independently verified E9-T12\n(critic commit 564438556f77e038bac5d6bbae34adfbf3f9b184). Risk remains high:\nnetwork payloads, external actions and persisted replay state cross the guest/host\nboundary. The qualified adapter will own bounded Ethernet send intents and incoming\npayload/close/error deliveries, bind them to the common guest event clock, and keep\nthe live transport absent from replay construction. Outgoing bytes must match the\nrecording before a completion can be consumed; a missing payload or exhausted tape\nmust fail explicitly.\n\nA pinned guest program will drive actual virtio-net queues against a local\nstate-changing counter server through the recording transport driver. Independent\nconnection/send/server witnesses must prove replay creates no live network action,\nincluding with the server gone or changed. Native and built-browser runs will retain\ncomplete frames/traces and payload objects under different execution budgets.\nPending queues, request/cursor/reset state and callback incarnations must survive\ncheckpoints without allowing an old reply into the restored VM. The browser demo\nwill expose the owned network replay check with a safe same-origin request; the\nacceptance server supplies the state-changing attack. Full software Linux session\nassembly follows in T14. No implementation or verification claim is made here.",
       "adversarial": "Record a state-changing request against a local counter server, replay repeatedly and prove the counter never increments again. Replay with changed DNS/server content and failed connectivity.",
       "file": "tasks/epic-9-session-time-travel/E9-T13-network-capture.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-10-18",
+          "commits": 1,
+          "labels": [
+            "Begin the owned network capture and offline replay boundary"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-18",
+      "lastActivity": "2026-10-18",
+      "commitCount": 1
     },
     {
       "id": "E9-T14",

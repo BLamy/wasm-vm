@@ -109,7 +109,7 @@
         font: 12px ui-monospace, monospace;
         margin-top: 4px;
       }
-      #event-clock-pip, #input-recording-pip, #time-entropy-pip, #device-completions-pip {
+      #event-clock-pip, #input-recording-pip, #time-entropy-pip, #device-completions-pip, #network-capture-pip {
         display: inline-block;
         width: 8px;
         height: 8px;
@@ -980,6 +980,12 @@
         <p class="session-note">Run a small guest to check exact stops, queued events and restore on the interpreter and JIT.</p>
         <div class="session-actions"><button id="event-clock-run" type="button" disabled>Check boundaries</button></div>
         <p id="event-clock-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
+      <details id="network-capture-panel" class="session-library">
+        <summary><span id="network-capture-pip" class="cap-pip in-progress" aria-hidden="true"></span> Offline network check</summary>
+        <p class="session-note">Record one safe request, then replay the guest response six times without contacting the network again.</p>
+        <div class="session-actions"><button id="network-capture-run" type="button" disabled>Check offline network replay</button></div>
+        <p id="network-capture-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
       </details>
       <details id="device-completions-panel" class="session-library">
         <summary><span id="device-completions-pip" class="cap-pip in-progress" aria-hidden="true"></span> Device delivery check</summary>

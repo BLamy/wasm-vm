@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "readyTransition": "390",
+  "loopInstructions": 2087,
+  "request": "GET /network-probe-response.json HTTP/1.1\r\nHost: session-probe\r\nConnection: close\r\n\r\n",
+  "frameHex": "02000000000152540012345688b5474554202f6e6574776f726b2d70726f62652d726573706f6e73652e6a736f6e20485454502f312e310d0a486f73743a2073657373696f6e2d70726f62650d0a436f6e6e656374696f6e3a20636c6f73650d0a0d0a",
+  "txAddress": "2147627008",
+  "rxAddress": "2147565568",
+  "reportAddress": "2147745792",
+  "reportBytes": 1056,
+  "bytes": 9908,
+  "sha256": "85ba7328592bfbb4928291e1f7f6ef8418701bdea3ad3f10fc6faa29b8847ae4",
+  "scope": "Real RV64 instructions negotiate virtio-net, construct and post Ethernet HTTP-bridge TX/RX descriptors, then repeatedly observe actual queue/interrupt/DMA bytes. The bridge forwards the exact HTTP request to the acceptance counter server; production uses a safe fixed same-origin GET. This is a network boundary fixture, not full Linux replay."
+}

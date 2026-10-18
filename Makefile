@@ -2752,3 +2752,7 @@ verify-E9-T07:
 .PHONY: verify-E9-T12
 verify-E9-T12:
 	python3 -B tools/verify/e9-device-completions.py --output "$${E9_DEVICE_EVIDENCE_DIR:-target/evidence/e9-device-completions-final}"
+
+.PHONY: verify-E9-T13
+verify-E9-T13:
+	python3 -B tools/verify/e9-network-capture.py --output "$${E9_NETWORK_EVIDENCE_DIR:-target/evidence/e9-network-capture-final}"

@@ -43,6 +43,7 @@ mod jit_browser;
 mod session_devices;
 #[cfg(any(test, all(target_arch = "wasm32", not(feature = "zicsr-stub"))))]
 mod session_input;
+mod session_network;
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod session_sources;
 pub use jit_browser::{BROWSER_MAX_BATCHES, BrowserExecutor};
