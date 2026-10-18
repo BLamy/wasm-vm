@@ -21,6 +21,7 @@ report = {'task': 'E9-T06', 'status': 'running', 'started': time.time(), 'comman
 sources = ['web/session-library.js', 'web/session-library.css', 'web/main.js', 'web/index.html', 'web/roadmap.js',
            'web/session-checkpoints.js', 'web/session-store.js', 'web/session-disk-roots.js', 'web/loader.js',
            'web/gpu-checkpoint-build.js', 'tools/verify/e9-session-library.py', 'tools/verify/e9-session-library-browser.mjs',
+           'tools/verify/e9-session-library-missing-object-browser.mjs',
            'Makefile', 'web/package.json', 'web/package-lock.json', 'tools/build-web-dist.sh']
 
 
@@ -60,6 +61,11 @@ try:
     run('browser', ['node', 'tools/verify/e9-session-library-browser.mjs', '--output', str(output / 'browser')])
     browser = json.loads((output / 'browser/report.json').read_text())
     assert browser['head'] == report['head'] and browser['status'] == 'passed' and browser['errors'] == []
+    run('missing-object-and-cleanup', ['node', 'tools/verify/e9-session-library-missing-object-browser.mjs',
+        '--recording-report', str(output / 'browser/report.json'), '--web-dir', str(ROOT / 'web/dist'),
+        '--output', str(output / 'missing-object-and-cleanup')])
+    repair = json.loads((output / 'missing-object-and-cleanup/report.json').read_text())
+    assert repair['head'] == report['head'] and repair['status'] == 'passed' and repair['errors'] == []
     clean()
     report['status'] = 'passed'
 except BaseException as error:

@@ -9,6 +9,7 @@
 .session-library [data-session="active"] { font-weight: 600; overflow-wrap: anywhere; }
 .session-library [data-session="details"] { overflow-wrap: anywhere; font-size: 12px; color: var(--muted, #aaa); }
 .session-library [data-session="details"] p { margin: 5px 0; }
+.session-library [data-session="status"] { overflow-wrap: anywhere; }
 .session-library[data-state="incomplete"] [role="status"], .session-library[data-state="incompatible"] [role="status"], .session-library[data-state="storage-error"] [role="status"] { color: #ffbf69; }
 html.embed .session-library { display: none; }
 @media (max-width: 600px) { .session-library { padding: 10px; } .session-library label { flex-basis: 100%; } .session-library .session-actions > button { flex: 1 1 130px; } }
