@@ -3,7 +3,7 @@ id: E9-T13
 epic: 9
 title: Capture network sessions and replay them with zero live egress
 priority: 524.913
-status: in-progress
+status: implemented
 depends_on: [E9-T09, E9-T03]
 estimate: S
 risk: high
@@ -186,3 +186,68 @@ python3 authenticate.py; python3 guest_oracle.py (all from that critic directory
 The first two intentionally retain the failing assertion. Policy is checked before
 queue regeneration and this refutation commit. Task returns to in-progress for
 worker repair; no dependent may start.
+
+### 2026-10-18 — worker — repaired conservation; recorded exact-head submission
+
+Frozen repaired runtime and deploy bundle:
+e91c7af9bd8ec64c200c7d5a6687d9e4e124db12.
+This addresses the independent refutation at a7b2b475aad61aa9b7fe0e62a0827261ccf9a95f.
+The decoder checks, with overflow refusal, that acknowledged sends + queued
+receive frames + one represented nonzero link result + represented external
+pending work cannot exceed the accepted network cursor. Validation precedes
+restore mutation and callback-incarnation replacement.
+
+The eighth native regression rejects the independently reported extra RX,
+a zero-cursor link, zero-cursor pending work and two represented results at
+cursor one. Both Record and Replay retain identical complete checkpoints on
+refusal; a previously issued valid recording lease still completes afterward.
+A genuine four-result state at cursor four restores and later delivers its
+queued RX. The built-browser probe also refuses the reported extra RX without
+changing its checkpoint. The exact new regression linked against the
+authenticated old43031 core fails with exit101 at case zero; its immutable
+source, binary/build log, red result and linked-core digest are in origin/.
+
+make verify-E9-T13 passes all24 recorded commands on this repaired head.
+The independent clean checkout initially had an empty compiler target and no
+Node installation. That first attempt passed12 gates but npm registry reading
+timed out during browser-build. Its original receipt/report/build log remain
+unaltered. All24 gates were then repeated in the same unchanged clean source,
+using only the compiler cache that attempt itself built and an offline package
+download cache. npm ci installs afresh and enforces the committed lockfile
+integrities; no installed Node tree or foreign compiler cache was copied.
+Both producers, receipts, compiler-origin disclosure and failure logs are retained.
+
+- Final report:
+  /Volumes/e9-final-proof-ram/cold-proof-e9-t13-e91c7af9bd8e-retry/report.json,
+  SHA256 270360a734ea719e09cc6722a91fffd3f56c5f8f9a22fc4d4531a8492271aa31.
+- Durable lossless packet:
+  evidence/e9-t13/worker-conservation-final/provenance.json,
+  SHA256 3afe4dcde2a9e931e41891f1086e0b900d9a79a106a164d9059232e5ba39b96e;
+  239 original files, 54,772,500 compressed bytes.
+- Full archive:
+  /Volumes/e9-final-proof-ram/e9-t13-conservation-full-archive/provenance.json,
+  SHA256 6b2015d244d0c54ce1b945c4c18948a0f8c6387f5831e5f1083738e578e4a71a.
+- Native traces/frames, all malformed and valid conservation checkpoints,
+  browser traces/screenshots/coverage, exact HTTP witnesses, complete CAS
+  exports, native/browser translated-execution frames, source diff and all
+  selected command logs are preserved. Prior refuted worker and critic packets
+  remain intact. Only the task-owned abandoned abb77 compiler cache on RAM was
+  released; its inventory is included, and its source/Git/raw recordings remain.
+
+The repaired run passes400 core tests, eight native network tests, affected
+session/device/storage/wasm gates and actual native/browser translated paths.
+The built page reaches127 passed, zero failed and zero console errors; it
+retains five deliveries, performs six identical offline replays and rejects18
+probe cases plus28 ABI cases. Independent fetch/socket witnesses observe zero
+replay attempts, and the local state-changing counter is reached exactly once.
+The independent Python guest/object oracle and retained GPU browser gate pass.
+These remain transport-boundary proofs with the documented Ethernet HTTP
+bridge; complete Linux session assembly is T14.
+
+Publication remains pending official Cloudflare account authorization, and is
+not counted as passing evidence. The previously prepared43031 publication
+payload is withdrawn and must never be deployed. The repaired e91c bundle is
+the sole publication candidate. Fresh independent review must carry the prior
+HELD results, interrogate this repair and remaining coverage, and retain the
+separate public-site proof gap until the repaired bundle is deployed and tested.
+No worker verification verdict is asserted.
