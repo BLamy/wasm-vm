@@ -249,6 +249,37 @@ impl InputState {
         snapshot::encode(self)
     }
 
+    /// Exact session state, including delivered and suppressed key/button ledgers.
+    /// Unlike a desktop reconnect, this does not synthesize a release or mutate the source.
+    pub fn to_session_snapshot(&self) -> Result<Vec<u8>, InputSnapshotError> {
+        snapshot::encode_session(self)
+    }
+
+    /// Validate the entire session envelope before replacing queue and ledger state.
+    pub fn restore_session_snapshot(&mut self, payload: &[u8]) -> Result<(), InputSnapshotError> {
+        snapshot::restore_session(self, payload)
+    }
+
+    pub(crate) fn to_resume_snapshot(&self, exact: bool) -> Result<Vec<u8>, InputSnapshotError> {
+        if exact {
+            self.to_session_snapshot()
+        } else {
+            self.to_snapshot()
+        }
+    }
+
+    pub(crate) fn restore_resume_snapshot(
+        &mut self,
+        payload: &[u8],
+        exact: bool,
+    ) -> Result<(), InputSnapshotError> {
+        if exact {
+            self.restore_session_snapshot(payload)
+        } else {
+            self.restore_snapshot(payload).map(|_| ())
+        }
+    }
+
     /// Restore a desktop checkpoint and return the release frame needed to clear host-held input.
     pub fn restore_snapshot(
         &mut self,

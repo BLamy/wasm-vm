@@ -1726,3 +1726,6 @@ mod tests {
         assert_eq!(state.borrow().pending_control_messages(), 2);
     }
 }
+
+// Exact software sessions keep the existing host endpoint queues; legacy desktop resumes re-fence.
+mod session_snapshot;

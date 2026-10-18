@@ -19,6 +19,7 @@ use sha2::{Digest, Sha256};
 
 mod blobstore;
 mod cache;
+pub mod checkpoint;
 mod dbmeta;
 pub mod disk_root;
 mod fetch;

@@ -40,6 +40,7 @@ pub enum InputSnapshotError {
     TrailingBytes,
     LengthOverflow,
     OutOfMemory,
+    InvalidSessionLedger,
 }
 
 impl InputSnapshotError {
@@ -61,6 +62,7 @@ impl InputSnapshotError {
             Self::TrailingBytes => "trailing_bytes",
             Self::LengthOverflow => "length_overflow",
             Self::OutOfMemory => "out_of_memory",
+            Self::InvalidSessionLedger => "invalid_session_ledger",
         }
     }
 }
@@ -267,6 +269,87 @@ pub(crate) fn restore(
         host_held_set_discarded: true,
         release_events,
     })
+}
+
+// Session history preserves logical held/suppressed state. The ordinary desktop codec above
+// deliberately reconciles physical input; this separately tagged envelope never generates releases.
+const SESSION_INPUT_MAGIC: &[u8; 8] = b"WVINEX01";
+const MAX_SESSION_INPUT_BYTES: usize = 1 << 20;
+
+pub(crate) fn encode_session(state: &InputState) -> Result<Vec<u8>, InputSnapshotError> {
+    let payload = encode(state)?;
+    if payload.len() > MAX_SESSION_INPUT_BYTES {
+        return Err(InputSnapshotError::LengthOverflow);
+    }
+    let mut out = Vec::new();
+    out.try_reserve_exact(
+        20 + payload.len() + 2 * (state.delivered_keys.len() + state.suppressed_keys.len()),
+    )
+    .map_err(|_| InputSnapshotError::OutOfMemory)?;
+    out.extend_from_slice(SESSION_INPUT_MAGIC);
+    push_u32(&mut out, u32_len(payload.len())?);
+    out.extend_from_slice(&payload);
+    for keys in [&state.delivered_keys, &state.suppressed_keys] {
+        push_u32(&mut out, u32_len(keys.len())?);
+        for key in keys {
+            out.extend_from_slice(&key.to_le_bytes());
+        }
+    }
+    Ok(out)
+}
+
+pub(crate) fn restore_session(
+    state: &mut InputState,
+    payload: &[u8],
+) -> Result<(), InputSnapshotError> {
+    let mut reader = Reader::new(payload);
+    if reader.take(8)? != SESSION_INPUT_MAGIC {
+        return Err(InputSnapshotError::BadMagic);
+    }
+    let length = reader.u32()? as usize;
+    if length > MAX_SESSION_INPUT_BYTES {
+        return Err(InputSnapshotError::LengthOverflow);
+    }
+    let decoded = decode(reader.take(length)?)?;
+    let mut read_keys = || -> Result<BTreeSet<u16>, InputSnapshotError> {
+        let count = reader.u32()?;
+        if count > 65536 {
+            return Err(InputSnapshotError::InvalidSessionLedger);
+        }
+        // Check all bytes before allocating ledger nodes from an untrusted count.
+        reader.require(count as usize * 2)?;
+        let mut keys = BTreeSet::new();
+        let mut previous = None;
+        for _ in 0..count {
+            let key = reader.u16()?;
+            if previous.is_some_and(|p| p >= key) {
+                return Err(InputSnapshotError::InvalidSessionLedger);
+            }
+            keys.insert(key);
+            previous = Some(key);
+        }
+        Ok(keys)
+    };
+    let delivered = read_keys()?;
+    let suppressed = read_keys()?;
+    if !reader.is_empty() {
+        return Err(InputSnapshotError::TrailingBytes);
+    }
+    // No fallible work or host callback follows the complete validation above.
+    state.pending_frames = decoded.pending_frames;
+    state.pending_event_count = decoded.pending_event_count;
+    state.pending_event_budget = decoded.pending_event_budget;
+    state.staged_frame = decoded.staged_frame;
+    state.staged_event_count = decoded.staged_event_count;
+    state.dropped_frames = decoded.dropped_frames;
+    state.dropped_events = decoded.dropped_events;
+    state.status_events_served = decoded.status_events_served;
+    state.rejected_events = decoded.rejected_events;
+    state.kicked = decoded.kicked;
+    state.reset_pending = decoded.reset_pending;
+    state.delivered_keys = delivered;
+    state.suppressed_keys = suppressed;
+    Ok(())
 }
 
 fn decode(payload: &[u8]) -> Result<DecodedInput, InputSnapshotError> {
@@ -1071,5 +1154,114 @@ mod tests {
                 .serialized_event_count,
             MAX_SNAPSHOT_EVENTS as usize
         );
+    }
+}
+
+#[cfg(test)]
+mod session_tests {
+    use super::*;
+    use crate::dev::virtio::input::{EV_KEY, EV_SYN, NullStatusSink, SYN_REPORT};
+    use alloc::boxed::Box;
+
+    fn state() -> InputState {
+        InputState::new_with_capabilities(Box::new(NullStatusSink), None)
+    }
+    fn down(s: &mut InputState, key: u16) {
+        assert!(s.inject_event(EV_KEY, key, 1));
+        s.sync();
+    }
+    fn deliver(s: &mut InputState) {
+        while let Some(event) = s.next_pending_event() {
+            s.complete_pending_event(event);
+        }
+    }
+
+    #[test]
+    fn session_preserves_delivered_suppressed_partial_and_staged_input() {
+        let mut source = state();
+        down(&mut source, 30);
+        deliver(&mut source);
+        down(&mut source, 31);
+        let event = source.next_pending_event().unwrap();
+        source.complete_pending_event(event);
+        assert!(source.inject_event(EV_KEY, 32, 1));
+        source.suppressed_keys.insert(33);
+        source.dropped_frames = (1u64 << 53) + 17;
+        source.status_events_served = u64::MAX - 3;
+        let bytes = source.to_session_snapshot().unwrap();
+        assert_eq!(source.pending_events(), 1);
+        assert_eq!(
+            source.delivered_keys.iter().copied().collect::<Vec<_>>(),
+            [30, 31]
+        );
+        let mut target = state();
+        down(&mut target, 90);
+        deliver(&mut target);
+        target.restore_session_snapshot(&bytes).unwrap();
+        assert_eq!(target.to_session_snapshot().unwrap(), bytes);
+        assert_eq!(source.to_session_snapshot().unwrap(), bytes);
+        assert_eq!(
+            target.suppressed_keys.iter().copied().collect::<Vec<_>>(),
+            [33]
+        );
+        assert_eq!(
+            target.release_all().release_events,
+            [
+                InputEvent::new(EV_KEY, 31, 0),
+                InputEvent::new(EV_KEY, 30, 0),
+                InputEvent::new(EV_SYN, SYN_REPORT, 0)
+            ]
+        );
+    }
+
+    #[test]
+    fn session_input_rejects_malformed_payloads_without_changing_target() {
+        let mut source = state();
+        down(&mut source, 30);
+        down(&mut source, 31);
+        deliver(&mut source);
+        let bytes = source.to_session_snapshot().unwrap();
+        let mut target = state();
+        down(&mut target, 45);
+        deliver(&mut target);
+        let original = target.to_session_snapshot().unwrap();
+        let legacy_len = u32::from_le_bytes(bytes[8..12].try_into().unwrap()) as usize;
+        let ledger = 12 + legacy_len;
+        let mut bad = Vec::new();
+        for n in 0..bytes.len() {
+            bad.push(bytes[..n].to_vec());
+        }
+        let mut extra = bytes.clone();
+        extra.push(0);
+        bad.push(extra);
+        let mut magic = bytes.clone();
+        magic[0] ^= 1;
+        bad.push(magic);
+        let mut length = bytes.clone();
+        length[8..12].copy_from_slice(&u32::MAX.to_le_bytes());
+        bad.push(length);
+        let mut count = bytes.clone();
+        count[ledger..ledger + 4].copy_from_slice(&65537u32.to_le_bytes());
+        bad.push(count);
+        let mut duplicate = bytes.clone();
+        duplicate[ledger + 6..ledger + 8].copy_from_slice(&30u16.to_le_bytes());
+        bad.push(duplicate);
+        let mut reverse = bytes.clone();
+        reverse[ledger + 4..ledger + 6].copy_from_slice(&32u16.to_le_bytes());
+        bad.push(reverse);
+        let mut inner = bytes.clone();
+        inner[12 + 8] = 0xff;
+        bad.push(inner);
+        for payload in bad {
+            assert!(target.restore_session_snapshot(&payload).is_err());
+            assert_eq!(target.to_session_snapshot().unwrap(), original);
+        }
+        assert!(
+            target
+                .restore_session_snapshot(&source.to_snapshot().unwrap())
+                .is_err()
+        );
+        assert!(target.restore_snapshot(&bytes).is_err());
+        assert_eq!(target.to_session_snapshot().unwrap(), original);
     }
 }

@@ -1,0 +1,7727 @@
+{
+  "note": "Counts describe observed V8 blocks/functions, not exhaustive branch coverage.",
+  "coveragePaths": [
+    "target/evidence/e9-t05-worker-repaired/browser/javascript-coverage.json",
+    "target/evidence/e9-t05-repair-critic-coverage.json",
+    "target/evidence/e9-t05-repair-aba-critic-coverage.json"
+  ],
+  "files": {
+    "web/session-checkpoints.js": {
+      "source_sha256": "a6fa93d426c3823cb23c797666b69a49226417a43aacb3ac1b0729d74a095803",
+      "recordings": 3,
+      "hunks": [
+        {
+          "start": 1,
+          "size": 140,
+          "context": "",
+          "observed": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            17,
+            18,
+            19,
+            20,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            48,
+            49,
+            50,
+            51,
+            52,
+            53,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            68,
+            69,
+            70,
+            72,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            83,
+            84,
+            85,
+            86,
+            87,
+            88,
+            89,
+            90,
+            91,
+            92,
+            93,
+            94,
+            95,
+            96,
+            97,
+            98,
+            99,
+            100,
+            101,
+            104,
+            105,
+            106,
+            107,
+            108,
+            109,
+            111,
+            112,
+            115,
+            116,
+            117,
+            118,
+            119,
+            120,
+            121,
+            122,
+            123,
+            124,
+            125,
+            126,
+            127,
+            128,
+            129,
+            130,
+            131,
+            132,
+            133,
+            134,
+            135,
+            136,
+            137,
+            138
+          ],
+          "unobserved": [],
+          "declarative": [
+            1,
+            16,
+            21,
+            34,
+            47,
+            54,
+            66,
+            67,
+            71,
+            73,
+            74,
+            102,
+            103,
+            110,
+            113,
+            114,
+            139,
+            140
+          ]
+        }
+      ],
+      "functions": [
+        {
+          "name": "",
+          "count": 1,
+          "start": 0,
+          "end": 9969,
+          "zeroBlocks": []
+        },
+        {
+          "name": "need",
+          "count": 2303,
+          "start": 490,
+          "end": 581,
+          "zeroBlocks": [
+            {
+              "start": 530,
+              "end": 580
+            }
+          ]
+        },
+        {
+          "name": "hex",
+          "count": 176,
+          "start": 787,
+          "end": 859,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 5632,
+          "start": 814,
+          "end": 849,
+          "zeroBlocks": []
+        },
+        {
+          "name": "checkpointHash",
+          "count": 209,
+          "start": 868,
+          "end": 1011,
+          "zeroBlocks": []
+        },
+        {
+          "name": "checkpointReference",
+          "count": 33,
+          "start": 1047,
+          "end": 1116,
+          "zeroBlocks": []
+        },
+        {
+          "name": "checkpointZeroPosition",
+          "count": 4,
+          "start": 1156,
+          "end": 1230,
+          "zeroBlocks": []
+        },
+        {
+          "name": "checkpointChunks",
+          "count": 50,
+          "start": 1239,
+          "end": 1364,
+          "zeroBlocks": []
+        },
+        {
+          "name": "decodeSoftwareCheckpoint",
+          "count": 22,
+          "start": 1372,
+          "end": 3056,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 9396,
+          "start": 2381,
+          "end": 2414,
+          "zeroBlocks": []
+        },
+        {
+          "name": "readCheckpointObject",
+          "count": 18,
+          "start": 3064,
+          "end": 3488,
+          "zeroBlocks": []
+        },
+        {
+          "name": "fetchObject",
+          "count": 20,
+          "start": 3489,
+          "end": 4225,
+          "zeroBlocks": [
+            {
+              "start": 3735,
+              "end": 3760
+            }
+          ]
+        },
+        {
+          "name": "<instance_members_initializer>",
+          "count": 3,
+          "start": 4263,
+          "end": 4269,
+          "zeroBlocks": []
+        },
+        {
+          "name": "SessionCheckpoints",
+          "count": 3,
+          "start": 4273,
+          "end": 4355,
+          "zeroBlocks": []
+        },
+        {
+          "name": "save",
+          "count": 11,
+          "start": 4359,
+          "end": 7703,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 50,
+          "start": 7376,
+          "end": 7400,
+          "zeroBlocks": []
+        },
+        {
+          "name": "admit",
+          "count": 6,
+          "start": 7707,
+          "end": 9966,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 17,
+          "start": 8162,
+          "end": 8190,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 6,
+          "start": 8269,
+          "end": 8293,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 8574,
+          "start": 9640,
+          "end": 9664,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 18,
+          "start": 9736,
+          "end": 9764,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 1,
+          "start": 0,
+          "end": 9969,
+          "zeroBlocks": []
+        },
+        {
+          "name": "need",
+          "count": 1113,
+          "start": 490,
+          "end": 581,
+          "zeroBlocks": [
+            {
+              "start": 530,
+              "end": 580
+            }
+          ]
+        },
+        {
+          "name": "hex",
+          "count": 120,
+          "start": 787,
+          "end": 859,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 3840,
+          "start": 814,
+          "end": 849,
+          "zeroBlocks": []
+        },
+        {
+          "name": "checkpointHash",
+          "count": 147,
+          "start": 868,
+          "end": 1011,
+          "zeroBlocks": []
+        },
+        {
+          "name": "checkpointReference",
+          "count": 24,
+          "start": 1047,
+          "end": 1116,
+          "zeroBlocks": []
+        },
+        {
+          "name": "checkpointZeroPosition",
+          "count": 3,
+          "start": 1156,
+          "end": 1230,
+          "zeroBlocks": []
+        },
+        {
+          "name": "checkpointChunks",
+          "count": 35,
+          "start": 1239,
+          "end": 1364,
+          "zeroBlocks": []
+        },
+        {
+          "name": "decodeSoftwareCheckpoint",
+          "count": 15,
+          "start": 1372,
+          "end": 3056,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 6405,
+          "start": 2381,
+          "end": 2414,
+          "zeroBlocks": []
+        },
+        {
+          "name": "readCheckpointObject",
+          "count": 18,
+          "start": 3064,
+          "end": 3488,
+          "zeroBlocks": []
+        },
+        {
+          "name": "fetchObject",
+          "count": 14,
+          "start": 3489,
+          "end": 4225,
+          "zeroBlocks": [
+            {
+              "start": 3735,
+              "end": 3760
+            }
+          ]
+        },
+        {
+          "name": "<instance_members_initializer>",
+          "count": 3,
+          "start": 4263,
+          "end": 4269,
+          "zeroBlocks": []
+        },
+        {
+          "name": "SessionCheckpoints",
+          "count": 3,
+          "start": 4273,
+          "end": 4355,
+          "zeroBlocks": []
+        },
+        {
+          "name": "save",
+          "count": 8,
+          "start": 4359,
+          "end": 7703,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 35,
+          "start": 7376,
+          "end": 7400,
+          "zeroBlocks": []
+        },
+        {
+          "name": "admit",
+          "count": 6,
+          "start": 7707,
+          "end": 9966,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 15,
+          "start": 8162,
+          "end": 8190,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 6,
+          "start": 8269,
+          "end": 8293,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 366,
+          "start": 9640,
+          "end": 9664,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 18,
+          "start": 9736,
+          "end": 9764,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 1,
+          "start": 0,
+          "end": 9969,
+          "zeroBlocks": []
+        },
+        {
+          "name": "need",
+          "count": 547,
+          "start": 490,
+          "end": 581,
+          "zeroBlocks": [
+            {
+              "start": 530,
+              "end": 580
+            }
+          ]
+        },
+        {
+          "name": "hex",
+          "count": 72,
+          "start": 787,
+          "end": 859,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 2304,
+          "start": 814,
+          "end": 849,
+          "zeroBlocks": []
+        },
+        {
+          "name": "checkpointHash",
+          "count": 79,
+          "start": 868,
+          "end": 1011,
+          "zeroBlocks": []
+        },
+        {
+          "name": "checkpointReference",
+          "count": 12,
+          "start": 1047,
+          "end": 1116,
+          "zeroBlocks": []
+        },
+        {
+          "name": "checkpointZeroPosition",
+          "count": 1,
+          "start": 1156,
+          "end": 1230,
+          "zeroBlocks": []
+        },
+        {
+          "name": "checkpointChunks",
+          "count": 20,
+          "start": 1239,
+          "end": 1364,
+          "zeroBlocks": []
+        },
+        {
+          "name": "decodeSoftwareCheckpoint",
+          "count": 9,
+          "start": 1372,
+          "end": 3056,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 3843,
+          "start": 2381,
+          "end": 2414,
+          "zeroBlocks": []
+        },
+        {
+          "name": "readCheckpointObject",
+          "count": 6,
+          "start": 3064,
+          "end": 3488,
+          "zeroBlocks": []
+        },
+        {
+          "name": "fetchObject",
+          "count": 8,
+          "start": 3489,
+          "end": 4225,
+          "zeroBlocks": [
+            {
+              "start": 3735,
+              "end": 3760
+            }
+          ]
+        },
+        {
+          "name": "<instance_members_initializer>",
+          "count": 2,
+          "start": 4263,
+          "end": 4269,
+          "zeroBlocks": []
+        },
+        {
+          "name": "SessionCheckpoints",
+          "count": 2,
+          "start": 4273,
+          "end": 4355,
+          "zeroBlocks": []
+        },
+        {
+          "name": "save",
+          "count": 4,
+          "start": 4359,
+          "end": 7703,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 20,
+          "start": 7376,
+          "end": 7400,
+          "zeroBlocks": []
+        },
+        {
+          "name": "admit",
+          "count": 2,
+          "start": 7707,
+          "end": 9966,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 4,
+          "start": 8162,
+          "end": 8190,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 2,
+          "start": 8269,
+          "end": 8293,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 8330,
+          "start": 9640,
+          "end": 9664,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 6,
+          "start": 9736,
+          "end": 9764,
+          "zeroBlocks": []
+        }
+      ]
+    },
+    "web/loader.js": {
+      "source_sha256": "b42df333fa2bb6d65088843246b47cb87c9847aad4bfadcf9b97ff9451210efe",
+      "recordings": 3,
+      "hunks": [
+        {
+          "start": 28,
+          "size": 1,
+          "context": "import { deriveOverlaySeedIdentity } from \"./overlay-seed-identity.js\";",
+          "observed": [
+            28
+          ],
+          "unobserved": [],
+          "declarative": []
+        },
+        {
+          "start": 182,
+          "size": 22,
+          "context": "export async function startLinuxBoot(opts = {}) {",
+          "observed": [
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188,
+            189,
+            190,
+            191,
+            192,
+            193,
+            194,
+            195,
+            196,
+            197,
+            198,
+            199,
+            200,
+            201,
+            202
+          ],
+          "unobserved": [],
+          "declarative": [
+            203
+          ]
+        },
+        {
+          "start": 393,
+          "size": 4,
+          "context": "export async function startLinuxBoot(opts = {}) {",
+          "observed": [
+            393,
+            394,
+            395,
+            396
+          ],
+          "unobserved": [],
+          "declarative": []
+        },
+        {
+          "start": 441,
+          "size": 1,
+          "context": "export async function startLinuxBoot(opts = {}) {",
+          "observed": [
+            441
+          ],
+          "unobserved": [],
+          "declarative": []
+        },
+        {
+          "start": 462,
+          "size": 2,
+          "context": "export async function startLinuxBoot(opts = {}) {",
+          "observed": [
+            462,
+            463
+          ],
+          "unobserved": [],
+          "declarative": []
+        },
+        {
+          "start": 572,
+          "size": 4,
+          "context": "export async function startLinuxBoot(opts = {}) {",
+          "observed": [
+            572,
+            573,
+            574,
+            575
+          ],
+          "unobserved": [],
+          "declarative": []
+        },
+        {
+          "start": 992,
+          "size": 15,
+          "context": "export async function startLinuxBoot(opts = {}) {",
+          "observed": [
+            992,
+            993,
+            994,
+            995,
+            996,
+            997,
+            999,
+            1000,
+            1001,
+            1002,
+            1003,
+            1004,
+            1005
+          ],
+          "unobserved": [],
+          "declarative": [
+            998,
+            1006
+          ]
+        },
+        {
+          "start": 1009,
+          "size": 1,
+          "context": "export async function startLinuxBoot(opts = {}) {",
+          "observed": [
+            1009
+          ],
+          "unobserved": [],
+          "declarative": []
+        },
+        {
+          "start": 1022,
+          "size": 2,
+          "context": "export async function startLinuxBoot(opts = {}) {",
+          "observed": [
+            1022,
+            1023
+          ],
+          "unobserved": [],
+          "declarative": []
+        },
+        {
+          "start": 1311,
+          "size": 31,
+          "context": "export async function startLinuxBoot(opts = {}) {",
+          "observed": [
+            1311,
+            1312,
+            1313,
+            1314,
+            1315,
+            1316,
+            1318,
+            1319,
+            1320,
+            1321,
+            1322,
+            1323,
+            1324,
+            1325,
+            1327,
+            1328,
+            1329,
+            1330,
+            1331,
+            1332,
+            1333,
+            1334,
+            1335,
+            1336,
+            1337,
+            1338,
+            1339,
+            1340
+          ],
+          "unobserved": [],
+          "declarative": [
+            1317,
+            1326,
+            1341
+          ]
+        },
+        {
+          "start": 1364,
+          "size": 1,
+          "context": "export async function startLinuxBoot(opts = {}) {",
+          "observed": [
+            1364
+          ],
+          "unobserved": [],
+          "declarative": []
+        },
+        {
+          "start": 1367,
+          "size": 1,
+          "context": "export async function startLinuxBoot(opts = {}) {",
+          "observed": [
+            1367
+          ],
+          "unobserved": [],
+          "declarative": []
+        },
+        {
+          "start": 1496,
+          "size": 2,
+          "context": "export async function startLinuxBoot(opts = {}) {",
+          "observed": [
+            1496,
+            1497
+          ],
+          "unobserved": [],
+          "declarative": []
+        },
+        {
+          "start": 1655,
+          "size": 20,
+          "context": "export async function startLinuxBoot(opts = {}) {",
+          "observed": [
+            1658,
+            1659,
+            1660,
+            1661,
+            1662,
+            1663,
+            1664,
+            1665,
+            1666,
+            1667,
+            1668,
+            1669,
+            1670,
+            1671,
+            1674
+          ],
+          "unobserved": [],
+          "declarative": [
+            1655,
+            1656,
+            1657,
+            1672,
+            1673
+          ]
+        }
+      ],
+      "functions": [
+        {
+          "name": "",
+          "count": 1,
+          "start": 0,
+          "end": 98409,
+          "zeroBlocks": [
+            {
+              "start": 2733,
+              "end": 2739
+            }
+          ]
+        },
+        {
+          "name": "_yieldChan.port1.onmessage",
+          "count": 0,
+          "start": 2811,
+          "end": 2886,
+          "zeroBlocks": [
+            {
+              "start": 2811,
+              "end": 2886
+            }
+          ]
+        },
+        {
+          "name": "yieldToMain",
+          "count": 0,
+          "start": 2920,
+          "end": 3277,
+          "zeroBlocks": [
+            {
+              "start": 2920,
+              "end": 3277
+            }
+          ]
+        },
+        {
+          "name": "gunzip",
+          "count": 0,
+          "start": 3371,
+          "end": 3596,
+          "zeroBlocks": [
+            {
+              "start": 3371,
+              "end": 3596
+            }
+          ]
+        },
+        {
+          "name": "fetchWithProgress",
+          "count": 3,
+          "start": 3787,
+          "end": 4855,
+          "zeroBlocks": [
+            {
+              "start": 3910,
+              "end": 3983
+            },
+            {
+              "start": 4351,
+              "end": 4376
+            }
+          ]
+        },
+        {
+          "name": "fetchAsset",
+          "count": 6,
+          "start": 5157,
+          "end": 5814,
+          "zeroBlocks": [
+            {
+              "start": 5271,
+              "end": 5362
+            },
+            {
+              "start": 5449,
+              "end": 5797
+            }
+          ]
+        },
+        {
+          "name": "fetchJsonAsset",
+          "count": 3,
+          "start": 5900,
+          "end": 6102,
+          "zeroBlocks": [
+            {
+              "start": 6028,
+              "end": 6100
+            }
+          ]
+        },
+        {
+          "name": "sha256hex",
+          "count": 3,
+          "start": 6157,
+          "end": 6363,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 96,
+          "start": 6307,
+          "end": 6345,
+          "zeroBlocks": []
+        },
+        {
+          "name": "resetDisk",
+          "count": 0,
+          "start": 7459,
+          "end": 8536,
+          "zeroBlocks": [
+            {
+              "start": 7459,
+              "end": 8536
+            }
+          ]
+        },
+        {
+          "name": "startLinuxBoot",
+          "count": 3,
+          "start": 8545,
+          "end": 95390,
+          "zeroBlocks": [
+            {
+              "start": 8657,
+              "end": 10137
+            },
+            {
+              "start": 19231,
+              "end": 19292
+            },
+            {
+              "start": 19325,
+              "end": 19335
+            },
+            {
+              "start": 19494,
+              "end": 19501
+            },
+            {
+              "start": 19560,
+              "end": 19617
+            },
+            {
+              "start": 19644,
+              "end": 19659
+            },
+            {
+              "start": 19661,
+              "end": 19720
+            },
+            {
+              "start": 19829,
+              "end": 19906
+            },
+            {
+              "start": 19939,
+              "end": 19954
+            },
+            {
+              "start": 19956,
+              "end": 20035
+            },
+            {
+              "start": 20068,
+              "end": 20109
+            },
+            {
+              "start": 20111,
+              "end": 20203
+            },
+            {
+              "start": 20393,
+              "end": 20410
+            },
+            {
+              "start": 20412,
+              "end": 20478
+            },
+            {
+              "start": 20493,
+              "end": 20555
+            },
+            {
+              "start": 20557,
+              "end": 20642
+            },
+            {
+              "start": 20657,
+              "end": 20687
+            },
+            {
+              "start": 20688,
+              "end": 20702
+            },
+            {
+              "start": 20704,
+              "end": 20805
+            },
+            {
+              "start": 20820,
+              "end": 20850
+            },
+            {
+              "start": 20851,
+              "end": 20861
+            },
+            {
+              "start": 20863,
+              "end": 20929
+            },
+            {
+              "start": 20951,
+              "end": 21024
+            },
+            {
+              "start": 21026,
+              "end": 21113
+            },
+            {
+              "start": 21147,
+              "end": 21251
+            },
+            {
+              "start": 21253,
+              "end": 21375
+            },
+            {
+              "start": 21409,
+              "end": 21689
+            },
+            {
+              "start": 21691,
+              "end": 21764
+            },
+            {
+              "start": 21809,
+              "end": 21978
+            },
+            {
+              "start": 22106,
+              "end": 22173
+            },
+            {
+              "start": 22210,
+              "end": 22254
+            },
+            {
+              "start": 22273,
+              "end": 22330
+            },
+            {
+              "start": 22911,
+              "end": 22947
+            },
+            {
+              "start": 22949,
+              "end": 23059
+            },
+            {
+              "start": 23448,
+              "end": 23531
+            },
+            {
+              "start": 24799,
+              "end": 24807
+            },
+            {
+              "start": 25167,
+              "end": 25952
+            },
+            {
+              "start": 26004,
+              "end": 26019
+            },
+            {
+              "start": 26348,
+              "end": 26691
+            },
+            {
+              "start": 26697,
+              "end": 27346
+            },
+            {
+              "start": 27400,
+              "end": 27783
+            },
+            {
+              "start": 28076,
+              "end": 28182
+            },
+            {
+              "start": 28997,
+              "end": 29019
+            },
+            {
+              "start": 29450,
+              "end": 29457
+            },
+            {
+              "start": 29546,
+              "end": 29552
+            },
+            {
+              "start": 29645,
+              "end": 29685
+            },
+            {
+              "start": 29956,
+              "end": 30226
+            },
+            {
+              "start": 30276,
+              "end": 30306
+            },
+            {
+              "start": 30308,
+              "end": 30855
+            },
+            {
+              "start": 30900,
+              "end": 30915
+            },
+            {
+              "start": 32349,
+              "end": 32541
+            },
+            {
+              "start": 32577,
+              "end": 33155
+            },
+            {
+              "start": 33177,
+              "end": 33345
+            },
+            {
+              "start": 33369,
+              "end": 33905
+            },
+            {
+              "start": 33927,
+              "end": 39121
+            },
+            {
+              "start": 39170,
+              "end": 39633
+            },
+            {
+              "start": 39804,
+              "end": 40047
+            },
+            {
+              "start": 40094,
+              "end": 40660
+            },
+            {
+              "start": 41024,
+              "end": 41070
+            },
+            {
+              "start": 41072,
+              "end": 41588
+            },
+            {
+              "start": 42060,
+              "end": 42498
+            },
+            {
+              "start": 42652,
+              "end": 43050
+            },
+            {
+              "start": 43673,
+              "end": 43701
+            },
+            {
+              "start": 43790,
+              "end": 43800
+            },
+            {
+              "start": 43808,
+              "end": 43836
+            },
+            {
+              "start": 44939,
+              "end": 44945
+            },
+            {
+              "start": 44970,
+              "end": 44977
+            },
+            {
+              "start": 45253,
+              "end": 45259
+            },
+            {
+              "start": 45285,
+              "end": 45292
+            },
+            {
+              "start": 45369,
+              "end": 45375
+            },
+            {
+              "start": 45403,
+              "end": 45410
+            },
+            {
+              "start": 46056,
+              "end": 46114
+            },
+            {
+              "start": 46556,
+              "end": 46584
+            },
+            {
+              "start": 46803,
+              "end": 47159
+            },
+            {
+              "start": 47166,
+              "end": 47255
+            },
+            {
+              "start": 47764,
+              "end": 47809
+            },
+            {
+              "start": 47811,
+              "end": 47894
+            },
+            {
+              "start": 47935,
+              "end": 47995
+            },
+            {
+              "start": 48859,
+              "end": 48913
+            },
+            {
+              "start": 48915,
+              "end": 49963
+            },
+            {
+              "start": 50299,
+              "end": 50310
+            },
+            {
+              "start": 50311,
+              "end": 50341
+            },
+            {
+              "start": 50343,
+              "end": 50899
+            },
+            {
+              "start": 52724,
+              "end": 53428
+            },
+            {
+              "start": 53458,
+              "end": 53469
+            },
+            {
+              "start": 53470,
+              "end": 53500
+            },
+            {
+              "start": 53502,
+              "end": 55796
+            },
+            {
+              "start": 56057,
+              "end": 56712
+            },
+            {
+              "start": 56895,
+              "end": 56907
+            },
+            {
+              "start": 56931,
+              "end": 56972
+            },
+            {
+              "start": 56978,
+              "end": 57054
+            },
+            {
+              "start": 57082,
+              "end": 57130
+            },
+            {
+              "start": 57164,
+              "end": 57224
+            },
+            {
+              "start": 57621,
+              "end": 57627
+            },
+            {
+              "start": 57686,
+              "end": 57692
+            },
+            {
+              "start": 57741,
+              "end": 57747
+            },
+            {
+              "start": 58828,
+              "end": 58838
+            },
+            {
+              "start": 59490,
+              "end": 59545
+            },
+            {
+              "start": 59552,
+              "end": 59610
+            },
+            {
+              "start": 76457,
+              "end": 77411
+            },
+            {
+              "start": 95162,
+              "end": 95388
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 8812,
+          "end": 8864,
+          "zeroBlocks": [
+            {
+              "start": 8812,
+              "end": 8864
+            }
+          ]
+        },
+        {
+          "name": "onState",
+          "count": 9,
+          "start": 12390,
+          "end": 12398,
+          "zeroBlocks": []
+        },
+        {
+          "name": "onProgress",
+          "count": 442,
+          "start": 12417,
+          "end": 12425,
+          "zeroBlocks": []
+        },
+        {
+          "name": "onOutput",
+          "count": 0,
+          "start": 12442,
+          "end": 12450,
+          "zeroBlocks": [
+            {
+              "start": 12442,
+              "end": 12450
+            }
+          ]
+        },
+        {
+          "name": "onAgentOutput",
+          "count": 0,
+          "start": 12665,
+          "end": 12673,
+          "zeroBlocks": [
+            {
+              "start": 12665,
+              "end": 12673
+            }
+          ]
+        },
+        {
+          "name": "onError",
+          "count": 0,
+          "start": 12689,
+          "end": 12697,
+          "zeroBlocks": [
+            {
+              "start": 12689,
+              "end": 12697
+            }
+          ]
+        },
+        {
+          "name": "onWriterStatus",
+          "count": 0,
+          "start": 12897,
+          "end": 12905,
+          "zeroBlocks": [
+            {
+              "start": 12897,
+              "end": 12905
+            }
+          ]
+        },
+        {
+          "name": "onStorage",
+          "count": 0,
+          "start": 13110,
+          "end": 13118,
+          "zeroBlocks": [
+            {
+              "start": 13110,
+              "end": 13118
+            }
+          ]
+        },
+        {
+          "name": "onQuota",
+          "count": 0,
+          "start": 13391,
+          "end": 13399,
+          "zeroBlocks": [
+            {
+              "start": 13391,
+              "end": 13399
+            }
+          ]
+        },
+        {
+          "name": "onCaptureStart",
+          "count": 0,
+          "start": 13611,
+          "end": 13619,
+          "zeroBlocks": [
+            {
+              "start": 13611,
+              "end": 13619
+            }
+          ]
+        },
+        {
+          "name": "resolveOmarchyChunkedImage",
+          "count": 0,
+          "start": 17502,
+          "end": 18600,
+          "zeroBlocks": [
+            {
+              "start": 17502,
+              "end": 18600
+            }
+          ]
+        },
+        {
+          "name": "emitOutput",
+          "count": 0,
+          "start": 18669,
+          "end": 18788,
+          "zeroBlocks": [
+            {
+              "start": 18669,
+              "end": 18788
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 21528,
+          "end": 21585,
+          "zeroBlocks": [
+            {
+              "start": 21528,
+              "end": 21585
+            }
+          ]
+        },
+        {
+          "name": "readBootAsset",
+          "count": 3,
+          "start": 23814,
+          "end": 24477,
+          "zeroBlocks": [
+            {
+              "start": 23934,
+              "end": 24476
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 442,
+          "start": 23900,
+          "end": 23932,
+          "zeroBlocks": []
+        },
+        {
+          "name": "onCacheStatus",
+          "count": 0,
+          "start": 24100,
+          "end": 24387,
+          "zeroBlocks": [
+            {
+              "start": 24100,
+              "end": 24387
+            }
+          ]
+        },
+        {
+          "name": "onProgress",
+          "count": 0,
+          "start": 24409,
+          "end": 24460,
+          "zeroBlocks": [
+            {
+              "start": 24409,
+              "end": 24460
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 26578,
+          "end": 26614,
+          "zeroBlocks": [
+            {
+              "start": 26578,
+              "end": 26614
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 26918,
+          "end": 26950,
+          "zeroBlocks": [
+            {
+              "start": 26918,
+              "end": 26950
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 27463,
+          "end": 27502,
+          "zeroBlocks": [
+            {
+              "start": 27463,
+              "end": 27502
+            }
+          ]
+        },
+        {
+          "name": "granted",
+          "count": 0,
+          "start": 34845,
+          "end": 35491,
+          "zeroBlocks": [
+            {
+              "start": 34845,
+              "end": 35491
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 40273,
+          "end": 40305,
+          "zeroBlocks": [
+            {
+              "start": 40273,
+              "end": 40305
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 40344,
+          "end": 40385,
+          "zeroBlocks": [
+            {
+              "start": 40344,
+              "end": 40385
+            }
+          ]
+        },
+        {
+          "name": "onEvent",
+          "count": 0,
+          "start": 40488,
+          "end": 40593,
+          "zeroBlocks": [
+            {
+              "start": 40488,
+              "end": 40593
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 41364,
+          "end": 41580,
+          "zeroBlocks": [
+            {
+              "start": 41364,
+              "end": 41580
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 54646,
+          "end": 54688,
+          "zeroBlocks": [
+            {
+              "start": 54646,
+              "end": 54688
+            }
+          ]
+        },
+        {
+          "name": "observeCaptureStart",
+          "count": 0,
+          "start": 57827,
+          "end": 58342,
+          "zeroBlocks": [
+            {
+              "start": 57827,
+              "end": 58342
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 30,
+          "start": 59072,
+          "end": 59079,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 3,
+          "start": 60094,
+          "end": 60118,
+          "zeroBlocks": []
+        },
+        {
+          "name": "settleFinished",
+          "count": 15,
+          "start": 60236,
+          "end": 60405,
+          "zeroBlocks": []
+        },
+        {
+          "name": "finish",
+          "count": 4,
+          "start": 60426,
+          "end": 60646,
+          "zeroBlocks": [
+            {
+              "start": 60604,
+              "end": 60613
+            }
+          ]
+        },
+        {
+          "name": "schedule",
+          "count": 3,
+          "start": 60669,
+          "end": 61486,
+          "zeroBlocks": [
+            {
+              "start": 60722,
+              "end": 60736
+            },
+            {
+              "start": 60745,
+              "end": 61480
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 61175,
+          "end": 61311,
+          "zeroBlocks": [
+            {
+              "start": 61175,
+              "end": 61311
+            }
+          ]
+        },
+        {
+          "name": "handlePersistError",
+          "count": 0,
+          "start": 61999,
+          "end": 62991,
+          "zeroBlocks": [
+            {
+              "start": 61999,
+              "end": 62991
+            }
+          ]
+        },
+        {
+          "name": "runTick",
+          "count": 0,
+          "start": 63373,
+          "end": 70504,
+          "zeroBlocks": [
+            {
+              "start": 63373,
+              "end": 70504
+            }
+          ]
+        },
+        {
+          "name": "tick",
+          "count": 0,
+          "start": 70874,
+          "end": 70907,
+          "zeroBlocks": [
+            {
+              "start": 70874,
+              "end": 70907
+            }
+          ]
+        },
+        {
+          "name": "saveGpuCheckpoint",
+          "count": 0,
+          "start": 70956,
+          "end": 73185,
+          "zeroBlocks": [
+            {
+              "start": 70956,
+              "end": 73185
+            }
+          ]
+        },
+        {
+          "name": "captureDiskDelta",
+          "count": 0,
+          "start": 73216,
+          "end": 73915,
+          "zeroBlocks": [
+            {
+              "start": 73216,
+              "end": 73915
+            }
+          ]
+        },
+        {
+          "name": "softwareCheckpointConfiguration",
+          "count": 7,
+          "start": 73961,
+          "end": 75087,
+          "zeroBlocks": [
+            {
+              "start": 74260,
+              "end": 74367
+            },
+            {
+              "start": 74447,
+              "end": 74504
+            }
+          ]
+        },
+        {
+          "name": "captureSoftwareCheckpoint",
+          "count": 7,
+          "start": 75127,
+          "end": 76049,
+          "zeroBlocks": []
+        },
+        {
+          "name": "held",
+          "count": 12,
+          "start": 75548,
+          "end": 75580,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 75569,
+          "end": 75579,
+          "zeroBlocks": [
+            {
+              "start": 75569,
+              "end": 75579
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 4,
+          "start": 75913,
+          "end": 76001,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 76923,
+          "end": 76979,
+          "zeroBlocks": [
+            {
+              "start": 76923,
+              "end": 76979
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 77195,
+          "end": 77226,
+          "zeroBlocks": [
+            {
+              "start": 77195,
+              "end": 77226
+            }
+          ]
+        },
+        {
+          "name": "setDisplay",
+          "count": 1,
+          "start": 77582,
+          "end": 77665,
+          "zeroBlocks": [
+            {
+              "start": 77629,
+              "end": 77665
+            }
+          ]
+        },
+        {
+          "name": "displayStats",
+          "count": 0,
+          "start": 77687,
+          "end": 77732,
+          "zeroBlocks": [
+            {
+              "start": 77687,
+              "end": 77732
+            }
+          ]
+        },
+        {
+          "name": "gpuStats",
+          "count": 0,
+          "start": 77750,
+          "end": 77890,
+          "zeroBlocks": [
+            {
+              "start": 77750,
+              "end": 77890
+            }
+          ]
+        },
+        {
+          "name": "loseGpuContext",
+          "count": 0,
+          "start": 77914,
+          "end": 78027,
+          "zeroBlocks": [
+            {
+              "start": 77914,
+              "end": 78027
+            }
+          ]
+        },
+        {
+          "name": "acknowledgeGpuFrame",
+          "count": 0,
+          "start": 78056,
+          "end": 78137,
+          "zeroBlocks": [
+            {
+              "start": 78056,
+              "end": 78137
+            }
+          ]
+        },
+        {
+          "name": "sendInput",
+          "count": 0,
+          "start": 78156,
+          "end": 78357,
+          "zeroBlocks": [
+            {
+              "start": 78156,
+              "end": 78357
+            }
+          ]
+        },
+        {
+          "name": "sendAgentInput",
+          "count": 0,
+          "start": 78480,
+          "end": 78643,
+          "zeroBlocks": [
+            {
+              "start": 78480,
+              "end": 78643
+            }
+          ]
+        },
+        {
+          "name": "sendKeyboardEvent",
+          "count": 1,
+          "start": 78939,
+          "end": 79858,
+          "zeroBlocks": [
+            {
+              "start": 79021,
+              "end": 79243
+            },
+            {
+              "start": 79244,
+              "end": 79265
+            },
+            {
+              "start": 79266,
+              "end": 79304
+            },
+            {
+              "start": 79305,
+              "end": 79316
+            },
+            {
+              "start": 79317,
+              "end": 79333
+            },
+            {
+              "start": 79334,
+              "end": 79373
+            },
+            {
+              "start": 79374,
+              "end": 79396
+            },
+            {
+              "start": 79397,
+              "end": 79418
+            },
+            {
+              "start": 79420,
+              "end": 79857
+            }
+          ]
+        },
+        {
+          "name": "syncKeyboard",
+          "count": 0,
+          "start": 79880,
+          "end": 80001,
+          "zeroBlocks": [
+            {
+              "start": 79880,
+              "end": 80001
+            }
+          ]
+        },
+        {
+          "name": "sendTabletEvent",
+          "count": 0,
+          "start": 80211,
+          "end": 80483,
+          "zeroBlocks": [
+            {
+              "start": 80211,
+              "end": 80483
+            }
+          ]
+        },
+        {
+          "name": "syncTablet",
+          "count": 0,
+          "start": 80503,
+          "end": 80622,
+          "zeroBlocks": [
+            {
+              "start": 80503,
+              "end": 80622
+            }
+          ]
+        },
+        {
+          "name": "sendMouseEvent",
+          "count": 0,
+          "start": 80646,
+          "end": 80915,
+          "zeroBlocks": [
+            {
+              "start": 80646,
+              "end": 80915
+            }
+          ]
+        },
+        {
+          "name": "syncMouse",
+          "count": 0,
+          "start": 80934,
+          "end": 81052,
+          "zeroBlocks": [
+            {
+              "start": 80934,
+              "end": 81052
+            }
+          ]
+        },
+        {
+          "name": "keyboardLedState",
+          "count": 0,
+          "start": 81269,
+          "end": 81375,
+          "zeroBlocks": [
+            {
+              "start": 81269,
+              "end": 81375
+            }
+          ]
+        },
+        {
+          "name": "inputDeviceStats",
+          "count": 0,
+          "start": 81401,
+          "end": 81507,
+          "zeroBlocks": [
+            {
+              "start": 81401,
+              "end": 81507
+            }
+          ]
+        },
+        {
+          "name": "stop",
+          "count": 4,
+          "start": 81521,
+          "end": 81657,
+          "zeroBlocks": []
+        },
+        {
+          "name": "pause",
+          "count": 0,
+          "start": 82028,
+          "end": 82052,
+          "zeroBlocks": [
+            {
+              "start": 82028,
+              "end": 82052
+            }
+          ]
+        },
+        {
+          "name": "resume",
+          "count": 0,
+          "start": 82068,
+          "end": 82364,
+          "zeroBlocks": [
+            {
+              "start": 82068,
+              "end": 82364
+            }
+          ]
+        },
+        {
+          "name": "isPaused",
+          "count": 0,
+          "start": 82382,
+          "end": 82394,
+          "zeroBlocks": [
+            {
+              "start": 82382,
+              "end": 82394
+            }
+          ]
+        },
+        {
+          "name": "guestClockState",
+          "count": 2,
+          "start": 82419,
+          "end": 82452,
+          "zeroBlocks": []
+        },
+        {
+          "name": "icountDividerSelection",
+          "count": 0,
+          "start": 82484,
+          "end": 82528,
+          "zeroBlocks": [
+            {
+              "start": 82484,
+              "end": 82528
+            }
+          ]
+        },
+        {
+          "name": "restoredFromBootSnapshot",
+          "count": 0,
+          "start": 82656,
+          "end": 82686,
+          "zeroBlocks": [
+            {
+              "start": 82656,
+              "end": 82686
+            }
+          ]
+        },
+        {
+          "name": "storedSnapshotRestoreEvidence",
+          "count": 0,
+          "start": 82725,
+          "end": 82772,
+          "zeroBlocks": [
+            {
+              "start": 82725,
+              "end": 82772
+            }
+          ]
+        },
+        {
+          "name": "overlaySeedIdentity",
+          "count": 0,
+          "start": 82801,
+          "end": 82826,
+          "zeroBlocks": [
+            {
+              "start": 82801,
+              "end": 82826
+            }
+          ]
+        },
+        {
+          "name": "audioOutputReady",
+          "count": 0,
+          "start": 82852,
+          "end": 82959,
+          "zeroBlocks": [
+            {
+              "start": 82852,
+              "end": 82959
+            }
+          ]
+        },
+        {
+          "name": "audioCaptureReady",
+          "count": 0,
+          "start": 82986,
+          "end": 83095,
+          "zeroBlocks": [
+            {
+              "start": 82986,
+              "end": 83095
+            }
+          ]
+        },
+        {
+          "name": "captureState",
+          "count": 0,
+          "start": 83117,
+          "end": 83253,
+          "zeroBlocks": [
+            {
+              "start": 83117,
+              "end": 83253
+            }
+          ]
+        },
+        {
+          "name": "notifyCaptureEvent",
+          "count": 0,
+          "start": 83281,
+          "end": 83422,
+          "zeroBlocks": [
+            {
+              "start": 83281,
+              "end": 83422
+            }
+          ]
+        },
+        {
+          "name": "stateDigest",
+          "count": 0,
+          "start": 83443,
+          "end": 83470,
+          "zeroBlocks": [
+            {
+              "start": 83443,
+              "end": 83470
+            }
+          ]
+        },
+        {
+          "name": "confirmAgentHello",
+          "count": 0,
+          "start": 83695,
+          "end": 83829,
+          "zeroBlocks": [
+            {
+              "start": 83695,
+              "end": 83829
+            }
+          ]
+        },
+        {
+          "name": "saveDesktopSnapshot",
+          "count": 0,
+          "start": 84157,
+          "end": 84501,
+          "zeroBlocks": [
+            {
+              "start": 84157,
+              "end": 84501
+            }
+          ]
+        },
+        {
+          "name": "restoreDesktopSnapshot",
+          "count": 0,
+          "start": 84730,
+          "end": 85117,
+          "zeroBlocks": [
+            {
+              "start": 84730,
+              "end": 85117
+            }
+          ]
+        },
+        {
+          "name": "jitStats",
+          "count": 0,
+          "start": 85135,
+          "end": 85209,
+          "zeroBlocks": [
+            {
+              "start": 85135,
+              "end": 85209
+            }
+          ]
+        },
+        {
+          "name": "profileStats",
+          "count": 0,
+          "start": 85231,
+          "end": 85309,
+          "zeroBlocks": [
+            {
+              "start": 85231,
+              "end": 85309
+            }
+          ]
+        },
+        {
+          "name": "schedulerStats",
+          "count": 3,
+          "start": 85333,
+          "end": 86188,
+          "zeroBlocks": [
+            {
+              "start": 85490,
+              "end": 85517
+            },
+            {
+              "start": 86041,
+              "end": 86063
+            },
+            {
+              "start": 86077,
+              "end": 86086
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 30,
+          "start": 85597,
+          "end": 85723,
+          "zeroBlocks": []
+        },
+        {
+          "name": "tailscaleCommand",
+          "count": 0,
+          "start": 86214,
+          "end": 86257,
+          "zeroBlocks": [
+            {
+              "start": 86214,
+              "end": 86257
+            }
+          ]
+        },
+        {
+          "name": "dhcpStats",
+          "count": 0,
+          "start": 86365,
+          "end": 86399,
+          "zeroBlocks": [
+            {
+              "start": 86365,
+              "end": 86399
+            }
+          ]
+        },
+        {
+          "name": "fileTransferReady",
+          "count": 0,
+          "start": 86520,
+          "end": 86561,
+          "zeroBlocks": [
+            {
+              "start": 86520,
+              "end": 86561
+            }
+          ]
+        },
+        {
+          "name": "setFileDownloadReady",
+          "count": 0,
+          "start": 86591,
+          "end": 86637,
+          "zeroBlocks": [
+            {
+              "start": 86591,
+              "end": 86637
+            }
+          ]
+        },
+        {
+          "name": "beginFileUpload",
+          "count": 0,
+          "start": 86662,
+          "end": 86751,
+          "zeroBlocks": [
+            {
+              "start": 86662,
+              "end": 86751
+            }
+          ]
+        },
+        {
+          "name": "pushFileUpload",
+          "count": 0,
+          "start": 86775,
+          "end": 86867,
+          "zeroBlocks": [
+            {
+              "start": 86775,
+              "end": 86867
+            }
+          ]
+        },
+        {
+          "name": "cancelFileUpload",
+          "count": 0,
+          "start": 86893,
+          "end": 86937,
+          "zeroBlocks": [
+            {
+              "start": 86893,
+              "end": 86937
+            }
+          ]
+        },
+        {
+          "name": "dismissFileUpload",
+          "count": 0,
+          "start": 86964,
+          "end": 87009,
+          "zeroBlocks": [
+            {
+              "start": 86964,
+              "end": 87009
+            }
+          ]
+        },
+        {
+          "name": "cancelFileDownload",
+          "count": 0,
+          "start": 87037,
+          "end": 87075,
+          "zeroBlocks": [
+            {
+              "start": 87037,
+              "end": 87075
+            }
+          ]
+        },
+        {
+          "name": "finishFileDownload",
+          "count": 0,
+          "start": 87103,
+          "end": 87166,
+          "zeroBlocks": [
+            {
+              "start": 87103,
+              "end": 87166
+            }
+          ]
+        },
+        {
+          "name": "fileTransferStatus",
+          "count": 0,
+          "start": 87194,
+          "end": 87240,
+          "zeroBlocks": [
+            {
+              "start": 87194,
+              "end": 87240
+            }
+          ]
+        },
+        {
+          "name": "takeFileDownloadChunk",
+          "count": 0,
+          "start": 87271,
+          "end": 87312,
+          "zeroBlocks": [
+            {
+              "start": 87271,
+              "end": 87312
+            }
+          ]
+        },
+        {
+          "name": "dismissFileDownload",
+          "count": 0,
+          "start": 87341,
+          "end": 87380,
+          "zeroBlocks": [
+            {
+              "start": 87341,
+              "end": 87380
+            }
+          ]
+        },
+        {
+          "name": "fetchStats",
+          "count": 0,
+          "start": 87599,
+          "end": 87646,
+          "zeroBlocks": [
+            {
+              "start": 87599,
+              "end": 87646
+            }
+          ]
+        },
+        {
+          "name": "persist",
+          "count": 0,
+          "start": 87765,
+          "end": 87848,
+          "zeroBlocks": [
+            {
+              "start": 87765,
+              "end": 87848
+            }
+          ]
+        },
+        {
+          "name": "persistStats",
+          "count": 0,
+          "start": 88053,
+          "end": 88081,
+          "zeroBlocks": [
+            {
+              "start": 88053,
+              "end": 88081
+            }
+          ]
+        },
+        {
+          "name": "readOnly",
+          "count": 0,
+          "start": 88176,
+          "end": 88211,
+          "zeroBlocks": [
+            {
+              "start": 88176,
+              "end": 88211
+            }
+          ]
+        },
+        {
+          "name": "resumeAfterQuota",
+          "count": 0,
+          "start": 88620,
+          "end": 88751,
+          "zeroBlocks": [
+            {
+              "start": 88620,
+              "end": 88751
+            }
+          ]
+        },
+        {
+          "name": "continueReadOnly",
+          "count": 0,
+          "start": 89135,
+          "end": 89378,
+          "zeroBlocks": [
+            {
+              "start": 89135,
+              "end": 89378
+            }
+          ]
+        },
+        {
+          "name": "hasUnpersisted",
+          "count": 0,
+          "start": 89560,
+          "end": 89634,
+          "zeroBlocks": [
+            {
+              "start": 89560,
+              "end": 89634
+            }
+          ]
+        },
+        {
+          "name": "snapshotSave",
+          "count": 0,
+          "start": 90078,
+          "end": 90347,
+          "zeroBlocks": [
+            {
+              "start": 90078,
+              "end": 90347
+            }
+          ]
+        },
+        {
+          "name": "snapshotRead",
+          "count": 0,
+          "start": 90466,
+          "end": 90500,
+          "zeroBlocks": [
+            {
+              "start": 90466,
+              "end": 90500
+            }
+          ]
+        },
+        {
+          "name": "snapshotDecision",
+          "count": 0,
+          "start": 90824,
+          "end": 90993,
+          "zeroBlocks": [
+            {
+              "start": 90824,
+              "end": 90993
+            }
+          ]
+        },
+        {
+          "name": "snapshotAdvanceGen",
+          "count": 0,
+          "start": 91189,
+          "end": 91229,
+          "zeroBlocks": [
+            {
+              "start": 91189,
+              "end": 91229
+            }
+          ]
+        },
+        {
+          "name": "snapshotGeneration",
+          "count": 0,
+          "start": 91496,
+          "end": 91529,
+          "zeroBlocks": [
+            {
+              "start": 91496,
+              "end": 91529
+            }
+          ]
+        },
+        {
+          "name": "snapshotExport",
+          "count": 0,
+          "start": 91716,
+          "end": 91750,
+          "zeroBlocks": [
+            {
+              "start": 91716,
+              "end": 91750
+            }
+          ]
+        },
+        {
+          "name": "snapshotRestore",
+          "count": 0,
+          "start": 91775,
+          "end": 92095,
+          "zeroBlocks": [
+            {
+              "start": 91775,
+              "end": 92095
+            }
+          ]
+        },
+        {
+          "name": "snapshotImport",
+          "count": 0,
+          "start": 92119,
+          "end": 92406,
+          "zeroBlocks": [
+            {
+              "start": 92119,
+              "end": 92406
+            }
+          ]
+        },
+        {
+          "name": "storageEstimate",
+          "count": 0,
+          "start": 92490,
+          "end": 92578,
+          "zeroBlocks": [
+            {
+              "start": 92490,
+              "end": 92578
+            }
+          ]
+        },
+        {
+          "name": "closeStorage",
+          "count": 3,
+          "start": 92795,
+          "end": 92845,
+          "zeroBlocks": [
+            {
+              "start": 92835,
+              "end": 92843
+            }
+          ]
+        },
+        {
+          "name": "releaseWriterLock",
+          "count": 3,
+          "start": 93204,
+          "end": 93697,
+          "zeroBlocks": [
+            {
+              "start": 93589,
+              "end": 93597
+            },
+            {
+              "start": 93623,
+              "end": 93689
+            }
+          ]
+        },
+        {
+          "name": "controller.<computed>",
+          "count": 8,
+          "start": 94988,
+          "end": 95127,
+          "zeroBlocks": []
+        },
+        {
+          "name": "resolveSlirpProvider",
+          "count": 3,
+          "start": 95715,
+          "end": 98320,
+          "zeroBlocks": [
+            {
+              "start": 95813,
+              "end": 95837
+            },
+            {
+              "start": 95906,
+              "end": 95928
+            },
+            {
+              "start": 95975,
+              "end": 96017
+            },
+            {
+              "start": 96022,
+              "end": 96043
+            },
+            {
+              "start": 96092,
+              "end": 96103
+            },
+            {
+              "start": 96117,
+              "end": 96145
+            },
+            {
+              "start": 96211,
+              "end": 96238
+            },
+            {
+              "start": 96968,
+              "end": 96981
+            },
+            {
+              "start": 96993,
+              "end": 97060
+            },
+            {
+              "start": 97170,
+              "end": 97235
+            },
+            {
+              "start": 97297,
+              "end": 97310
+            },
+            {
+              "start": 97312,
+              "end": 97396
+            },
+            {
+              "start": 97428,
+              "end": 97482
+            },
+            {
+              "start": 97484,
+              "end": 97574
+            },
+            {
+              "start": 97606,
+              "end": 97659
+            },
+            {
+              "start": 97661,
+              "end": 97790
+            },
+            {
+              "start": 97848,
+              "end": 97860
+            },
+            {
+              "start": 97862,
+              "end": 97932
+            },
+            {
+              "start": 98022,
+              "end": 98032
+            },
+            {
+              "start": 98104,
+              "end": 98116
+            },
+            {
+              "start": 98191,
+              "end": 98202
+            },
+            {
+              "start": 98280,
+              "end": 98307
+            }
+          ]
+        },
+        {
+          "name": "tailscaleCommand",
+          "count": 0,
+          "start": 98329,
+          "end": 98408,
+          "zeroBlocks": [
+            {
+              "start": 98329,
+              "end": 98408
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 1,
+          "start": 0,
+          "end": 98409,
+          "zeroBlocks": [
+            {
+              "start": 2733,
+              "end": 2739
+            }
+          ]
+        },
+        {
+          "name": "_yieldChan.port1.onmessage",
+          "count": 0,
+          "start": 2811,
+          "end": 2886,
+          "zeroBlocks": [
+            {
+              "start": 2811,
+              "end": 2886
+            }
+          ]
+        },
+        {
+          "name": "yieldToMain",
+          "count": 0,
+          "start": 2920,
+          "end": 3277,
+          "zeroBlocks": [
+            {
+              "start": 2920,
+              "end": 3277
+            }
+          ]
+        },
+        {
+          "name": "gunzip",
+          "count": 0,
+          "start": 3371,
+          "end": 3596,
+          "zeroBlocks": [
+            {
+              "start": 3371,
+              "end": 3596
+            }
+          ]
+        },
+        {
+          "name": "fetchWithProgress",
+          "count": 2,
+          "start": 3787,
+          "end": 4855,
+          "zeroBlocks": [
+            {
+              "start": 3910,
+              "end": 3983
+            },
+            {
+              "start": 4351,
+              "end": 4376
+            }
+          ]
+        },
+        {
+          "name": "fetchAsset",
+          "count": 4,
+          "start": 5157,
+          "end": 5814,
+          "zeroBlocks": [
+            {
+              "start": 5271,
+              "end": 5362
+            },
+            {
+              "start": 5449,
+              "end": 5797
+            }
+          ]
+        },
+        {
+          "name": "fetchJsonAsset",
+          "count": 2,
+          "start": 5900,
+          "end": 6102,
+          "zeroBlocks": [
+            {
+              "start": 6028,
+              "end": 6100
+            }
+          ]
+        },
+        {
+          "name": "sha256hex",
+          "count": 4,
+          "start": 6157,
+          "end": 6363,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 128,
+          "start": 6307,
+          "end": 6345,
+          "zeroBlocks": []
+        },
+        {
+          "name": "resetDisk",
+          "count": 0,
+          "start": 7459,
+          "end": 8536,
+          "zeroBlocks": [
+            {
+              "start": 7459,
+              "end": 8536
+            }
+          ]
+        },
+        {
+          "name": "startLinuxBoot",
+          "count": 5,
+          "start": 8545,
+          "end": 95390,
+          "zeroBlocks": [
+            {
+              "start": 9261,
+              "end": 9287
+            },
+            {
+              "start": 19231,
+              "end": 19292
+            },
+            {
+              "start": 19325,
+              "end": 19335
+            },
+            {
+              "start": 19494,
+              "end": 19501
+            },
+            {
+              "start": 19560,
+              "end": 19617
+            },
+            {
+              "start": 19644,
+              "end": 19659
+            },
+            {
+              "start": 19661,
+              "end": 19720
+            },
+            {
+              "start": 19829,
+              "end": 19906
+            },
+            {
+              "start": 19939,
+              "end": 19954
+            },
+            {
+              "start": 19956,
+              "end": 20035
+            },
+            {
+              "start": 20068,
+              "end": 20109
+            },
+            {
+              "start": 20111,
+              "end": 20203
+            },
+            {
+              "start": 20393,
+              "end": 20410
+            },
+            {
+              "start": 20412,
+              "end": 20478
+            },
+            {
+              "start": 20493,
+              "end": 20555
+            },
+            {
+              "start": 20557,
+              "end": 20642
+            },
+            {
+              "start": 20657,
+              "end": 20687
+            },
+            {
+              "start": 20688,
+              "end": 20702
+            },
+            {
+              "start": 20704,
+              "end": 20805
+            },
+            {
+              "start": 20820,
+              "end": 20850
+            },
+            {
+              "start": 20851,
+              "end": 20861
+            },
+            {
+              "start": 20863,
+              "end": 20929
+            },
+            {
+              "start": 20951,
+              "end": 21024
+            },
+            {
+              "start": 21026,
+              "end": 21113
+            },
+            {
+              "start": 21147,
+              "end": 21251
+            },
+            {
+              "start": 21253,
+              "end": 21375
+            },
+            {
+              "start": 21409,
+              "end": 21689
+            },
+            {
+              "start": 21691,
+              "end": 21764
+            },
+            {
+              "start": 22106,
+              "end": 22173
+            },
+            {
+              "start": 22210,
+              "end": 22254
+            },
+            {
+              "start": 22273,
+              "end": 22330
+            },
+            {
+              "start": 22911,
+              "end": 22947
+            },
+            {
+              "start": 22949,
+              "end": 23059
+            },
+            {
+              "start": 23448,
+              "end": 23531
+            },
+            {
+              "start": 25167,
+              "end": 25952
+            },
+            {
+              "start": 26348,
+              "end": 26691
+            },
+            {
+              "start": 26697,
+              "end": 27346
+            },
+            {
+              "start": 27400,
+              "end": 27783
+            },
+            {
+              "start": 28076,
+              "end": 28182
+            },
+            {
+              "start": 28997,
+              "end": 29019
+            },
+            {
+              "start": 29450,
+              "end": 29457
+            },
+            {
+              "start": 29546,
+              "end": 29552
+            },
+            {
+              "start": 29645,
+              "end": 29685
+            },
+            {
+              "start": 29956,
+              "end": 30226
+            },
+            {
+              "start": 30276,
+              "end": 30306
+            },
+            {
+              "start": 30308,
+              "end": 30855
+            },
+            {
+              "start": 30900,
+              "end": 30915
+            },
+            {
+              "start": 32577,
+              "end": 33155
+            },
+            {
+              "start": 33177,
+              "end": 33345
+            },
+            {
+              "start": 33369,
+              "end": 33905
+            },
+            {
+              "start": 33927,
+              "end": 39121
+            },
+            {
+              "start": 39170,
+              "end": 39633
+            },
+            {
+              "start": 39804,
+              "end": 40047
+            },
+            {
+              "start": 40094,
+              "end": 40660
+            },
+            {
+              "start": 41024,
+              "end": 41070
+            },
+            {
+              "start": 41072,
+              "end": 41588
+            },
+            {
+              "start": 42060,
+              "end": 42498
+            },
+            {
+              "start": 42652,
+              "end": 43050
+            },
+            {
+              "start": 43673,
+              "end": 43701
+            },
+            {
+              "start": 43790,
+              "end": 43800
+            },
+            {
+              "start": 43808,
+              "end": 43836
+            },
+            {
+              "start": 44939,
+              "end": 44945
+            },
+            {
+              "start": 44970,
+              "end": 44977
+            },
+            {
+              "start": 45253,
+              "end": 45259
+            },
+            {
+              "start": 45285,
+              "end": 45292
+            },
+            {
+              "start": 45369,
+              "end": 45375
+            },
+            {
+              "start": 45403,
+              "end": 45410
+            },
+            {
+              "start": 45873,
+              "end": 45915
+            },
+            {
+              "start": 45917,
+              "end": 46803
+            },
+            {
+              "start": 46850,
+              "end": 46864
+            },
+            {
+              "start": 46899,
+              "end": 46915
+            },
+            {
+              "start": 47055,
+              "end": 47083
+            },
+            {
+              "start": 47166,
+              "end": 47255
+            },
+            {
+              "start": 47764,
+              "end": 47809
+            },
+            {
+              "start": 47811,
+              "end": 47894
+            },
+            {
+              "start": 47935,
+              "end": 47995
+            },
+            {
+              "start": 48859,
+              "end": 48913
+            },
+            {
+              "start": 48915,
+              "end": 49963
+            },
+            {
+              "start": 50299,
+              "end": 50310
+            },
+            {
+              "start": 50311,
+              "end": 50341
+            },
+            {
+              "start": 50343,
+              "end": 50899
+            },
+            {
+              "start": 52724,
+              "end": 53428
+            },
+            {
+              "start": 53458,
+              "end": 53469
+            },
+            {
+              "start": 53470,
+              "end": 53500
+            },
+            {
+              "start": 53502,
+              "end": 55796
+            },
+            {
+              "start": 56895,
+              "end": 56907
+            },
+            {
+              "start": 56931,
+              "end": 56972
+            },
+            {
+              "start": 56978,
+              "end": 57054
+            },
+            {
+              "start": 57082,
+              "end": 57130
+            },
+            {
+              "start": 57164,
+              "end": 57224
+            },
+            {
+              "start": 58828,
+              "end": 58838
+            },
+            {
+              "start": 59490,
+              "end": 59545
+            },
+            {
+              "start": 59552,
+              "end": 59610
+            },
+            {
+              "start": 76457,
+              "end": 77411
+            },
+            {
+              "start": 95279,
+              "end": 95333
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 10,
+          "start": 8812,
+          "end": 8864,
+          "zeroBlocks": []
+        },
+        {
+          "name": "onState",
+          "count": 12,
+          "start": 12390,
+          "end": 12398,
+          "zeroBlocks": []
+        },
+        {
+          "name": "onProgress",
+          "count": 212,
+          "start": 12417,
+          "end": 12425,
+          "zeroBlocks": []
+        },
+        {
+          "name": "onOutput",
+          "count": 0,
+          "start": 12442,
+          "end": 12450,
+          "zeroBlocks": [
+            {
+              "start": 12442,
+              "end": 12450
+            }
+          ]
+        },
+        {
+          "name": "onAgentOutput",
+          "count": 0,
+          "start": 12665,
+          "end": 12673,
+          "zeroBlocks": [
+            {
+              "start": 12665,
+              "end": 12673
+            }
+          ]
+        },
+        {
+          "name": "onError",
+          "count": 1,
+          "start": 12689,
+          "end": 12697,
+          "zeroBlocks": []
+        },
+        {
+          "name": "onWriterStatus",
+          "count": 0,
+          "start": 12897,
+          "end": 12905,
+          "zeroBlocks": [
+            {
+              "start": 12897,
+              "end": 12905
+            }
+          ]
+        },
+        {
+          "name": "onStorage",
+          "count": 0,
+          "start": 13110,
+          "end": 13118,
+          "zeroBlocks": [
+            {
+              "start": 13110,
+              "end": 13118
+            }
+          ]
+        },
+        {
+          "name": "onQuota",
+          "count": 0,
+          "start": 13391,
+          "end": 13399,
+          "zeroBlocks": [
+            {
+              "start": 13391,
+              "end": 13399
+            }
+          ]
+        },
+        {
+          "name": "onCaptureStart",
+          "count": 0,
+          "start": 13611,
+          "end": 13619,
+          "zeroBlocks": [
+            {
+              "start": 13611,
+              "end": 13619
+            }
+          ]
+        },
+        {
+          "name": "resolveOmarchyChunkedImage",
+          "count": 0,
+          "start": 17502,
+          "end": 18600,
+          "zeroBlocks": [
+            {
+              "start": 17502,
+              "end": 18600
+            }
+          ]
+        },
+        {
+          "name": "emitOutput",
+          "count": 0,
+          "start": 18669,
+          "end": 18788,
+          "zeroBlocks": [
+            {
+              "start": 18669,
+              "end": 18788
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 21528,
+          "end": 21585,
+          "zeroBlocks": [
+            {
+              "start": 21528,
+              "end": 21585
+            }
+          ]
+        },
+        {
+          "name": "readBootAsset",
+          "count": 2,
+          "start": 23814,
+          "end": 24477,
+          "zeroBlocks": [
+            {
+              "start": 23934,
+              "end": 24476
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 212,
+          "start": 23900,
+          "end": 23932,
+          "zeroBlocks": []
+        },
+        {
+          "name": "onCacheStatus",
+          "count": 0,
+          "start": 24100,
+          "end": 24387,
+          "zeroBlocks": [
+            {
+              "start": 24100,
+              "end": 24387
+            }
+          ]
+        },
+        {
+          "name": "onProgress",
+          "count": 0,
+          "start": 24409,
+          "end": 24460,
+          "zeroBlocks": [
+            {
+              "start": 24409,
+              "end": 24460
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 26578,
+          "end": 26614,
+          "zeroBlocks": [
+            {
+              "start": 26578,
+              "end": 26614
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 26918,
+          "end": 26950,
+          "zeroBlocks": [
+            {
+              "start": 26918,
+              "end": 26950
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 27463,
+          "end": 27502,
+          "zeroBlocks": [
+            {
+              "start": 27463,
+              "end": 27502
+            }
+          ]
+        },
+        {
+          "name": "granted",
+          "count": 0,
+          "start": 34845,
+          "end": 35491,
+          "zeroBlocks": [
+            {
+              "start": 34845,
+              "end": 35491
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 40273,
+          "end": 40305,
+          "zeroBlocks": [
+            {
+              "start": 40273,
+              "end": 40305
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 40344,
+          "end": 40385,
+          "zeroBlocks": [
+            {
+              "start": 40344,
+              "end": 40385
+            }
+          ]
+        },
+        {
+          "name": "onEvent",
+          "count": 0,
+          "start": 40488,
+          "end": 40593,
+          "zeroBlocks": [
+            {
+              "start": 40488,
+              "end": 40593
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 41364,
+          "end": 41580,
+          "zeroBlocks": [
+            {
+              "start": 41364,
+              "end": 41580
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 54646,
+          "end": 54688,
+          "zeroBlocks": [
+            {
+              "start": 54646,
+              "end": 54688
+            }
+          ]
+        },
+        {
+          "name": "observeCaptureStart",
+          "count": 0,
+          "start": 57827,
+          "end": 58342,
+          "zeroBlocks": [
+            {
+              "start": 57827,
+              "end": 58342
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 30,
+          "start": 59072,
+          "end": 59079,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 3,
+          "start": 60094,
+          "end": 60118,
+          "zeroBlocks": []
+        },
+        {
+          "name": "settleFinished",
+          "count": 12,
+          "start": 60236,
+          "end": 60405,
+          "zeroBlocks": []
+        },
+        {
+          "name": "finish",
+          "count": 3,
+          "start": 60426,
+          "end": 60646,
+          "zeroBlocks": [
+            {
+              "start": 60492,
+              "end": 60499
+            },
+            {
+              "start": 60604,
+              "end": 60613
+            }
+          ]
+        },
+        {
+          "name": "schedule",
+          "count": 3,
+          "start": 60669,
+          "end": 61486,
+          "zeroBlocks": [
+            {
+              "start": 60722,
+              "end": 60736
+            },
+            {
+              "start": 60745,
+              "end": 61480
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 61175,
+          "end": 61311,
+          "zeroBlocks": [
+            {
+              "start": 61175,
+              "end": 61311
+            }
+          ]
+        },
+        {
+          "name": "handlePersistError",
+          "count": 0,
+          "start": 61999,
+          "end": 62991,
+          "zeroBlocks": [
+            {
+              "start": 61999,
+              "end": 62991
+            }
+          ]
+        },
+        {
+          "name": "runTick",
+          "count": 0,
+          "start": 63373,
+          "end": 70504,
+          "zeroBlocks": [
+            {
+              "start": 63373,
+              "end": 70504
+            }
+          ]
+        },
+        {
+          "name": "tick",
+          "count": 0,
+          "start": 70874,
+          "end": 70907,
+          "zeroBlocks": [
+            {
+              "start": 70874,
+              "end": 70907
+            }
+          ]
+        },
+        {
+          "name": "saveGpuCheckpoint",
+          "count": 0,
+          "start": 70956,
+          "end": 73185,
+          "zeroBlocks": [
+            {
+              "start": 70956,
+              "end": 73185
+            }
+          ]
+        },
+        {
+          "name": "captureDiskDelta",
+          "count": 0,
+          "start": 73216,
+          "end": 73915,
+          "zeroBlocks": [
+            {
+              "start": 73216,
+              "end": 73915
+            }
+          ]
+        },
+        {
+          "name": "softwareCheckpointConfiguration",
+          "count": 5,
+          "start": 73961,
+          "end": 75087,
+          "zeroBlocks": [
+            {
+              "start": 74447,
+              "end": 74504
+            }
+          ]
+        },
+        {
+          "name": "captureSoftwareCheckpoint",
+          "count": 4,
+          "start": 75127,
+          "end": 76049,
+          "zeroBlocks": [
+            {
+              "start": 75187,
+              "end": 75242
+            },
+            {
+              "start": 75399,
+              "end": 75447
+            }
+          ]
+        },
+        {
+          "name": "held",
+          "count": 9,
+          "start": 75548,
+          "end": 75580,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 75569,
+          "end": 75579,
+          "zeroBlocks": [
+            {
+              "start": 75569,
+              "end": 75579
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 3,
+          "start": 75913,
+          "end": 76001,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 76923,
+          "end": 76979,
+          "zeroBlocks": [
+            {
+              "start": 76923,
+              "end": 76979
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 77195,
+          "end": 77226,
+          "zeroBlocks": [
+            {
+              "start": 77195,
+              "end": 77226
+            }
+          ]
+        },
+        {
+          "name": "setDisplay",
+          "count": 0,
+          "start": 77582,
+          "end": 77665,
+          "zeroBlocks": [
+            {
+              "start": 77582,
+              "end": 77665
+            }
+          ]
+        },
+        {
+          "name": "displayStats",
+          "count": 0,
+          "start": 77687,
+          "end": 77732,
+          "zeroBlocks": [
+            {
+              "start": 77687,
+              "end": 77732
+            }
+          ]
+        },
+        {
+          "name": "gpuStats",
+          "count": 0,
+          "start": 77750,
+          "end": 77890,
+          "zeroBlocks": [
+            {
+              "start": 77750,
+              "end": 77890
+            }
+          ]
+        },
+        {
+          "name": "loseGpuContext",
+          "count": 0,
+          "start": 77914,
+          "end": 78027,
+          "zeroBlocks": [
+            {
+              "start": 77914,
+              "end": 78027
+            }
+          ]
+        },
+        {
+          "name": "acknowledgeGpuFrame",
+          "count": 0,
+          "start": 78056,
+          "end": 78137,
+          "zeroBlocks": [
+            {
+              "start": 78056,
+              "end": 78137
+            }
+          ]
+        },
+        {
+          "name": "sendInput",
+          "count": 0,
+          "start": 78156,
+          "end": 78357,
+          "zeroBlocks": [
+            {
+              "start": 78156,
+              "end": 78357
+            }
+          ]
+        },
+        {
+          "name": "sendAgentInput",
+          "count": 0,
+          "start": 78480,
+          "end": 78643,
+          "zeroBlocks": [
+            {
+              "start": 78480,
+              "end": 78643
+            }
+          ]
+        },
+        {
+          "name": "sendKeyboardEvent",
+          "count": 0,
+          "start": 78939,
+          "end": 79858,
+          "zeroBlocks": [
+            {
+              "start": 78939,
+              "end": 79858
+            }
+          ]
+        },
+        {
+          "name": "syncKeyboard",
+          "count": 0,
+          "start": 79880,
+          "end": 80001,
+          "zeroBlocks": [
+            {
+              "start": 79880,
+              "end": 80001
+            }
+          ]
+        },
+        {
+          "name": "sendTabletEvent",
+          "count": 0,
+          "start": 80211,
+          "end": 80483,
+          "zeroBlocks": [
+            {
+              "start": 80211,
+              "end": 80483
+            }
+          ]
+        },
+        {
+          "name": "syncTablet",
+          "count": 0,
+          "start": 80503,
+          "end": 80622,
+          "zeroBlocks": [
+            {
+              "start": 80503,
+              "end": 80622
+            }
+          ]
+        },
+        {
+          "name": "sendMouseEvent",
+          "count": 0,
+          "start": 80646,
+          "end": 80915,
+          "zeroBlocks": [
+            {
+              "start": 80646,
+              "end": 80915
+            }
+          ]
+        },
+        {
+          "name": "syncMouse",
+          "count": 0,
+          "start": 80934,
+          "end": 81052,
+          "zeroBlocks": [
+            {
+              "start": 80934,
+              "end": 81052
+            }
+          ]
+        },
+        {
+          "name": "keyboardLedState",
+          "count": 0,
+          "start": 81269,
+          "end": 81375,
+          "zeroBlocks": [
+            {
+              "start": 81269,
+              "end": 81375
+            }
+          ]
+        },
+        {
+          "name": "inputDeviceStats",
+          "count": 0,
+          "start": 81401,
+          "end": 81507,
+          "zeroBlocks": [
+            {
+              "start": 81401,
+              "end": 81507
+            }
+          ]
+        },
+        {
+          "name": "stop",
+          "count": 3,
+          "start": 81521,
+          "end": 81657,
+          "zeroBlocks": []
+        },
+        {
+          "name": "pause",
+          "count": 0,
+          "start": 82028,
+          "end": 82052,
+          "zeroBlocks": [
+            {
+              "start": 82028,
+              "end": 82052
+            }
+          ]
+        },
+        {
+          "name": "resume",
+          "count": 0,
+          "start": 82068,
+          "end": 82364,
+          "zeroBlocks": [
+            {
+              "start": 82068,
+              "end": 82364
+            }
+          ]
+        },
+        {
+          "name": "isPaused",
+          "count": 1,
+          "start": 82382,
+          "end": 82394,
+          "zeroBlocks": []
+        },
+        {
+          "name": "guestClockState",
+          "count": 0,
+          "start": 82419,
+          "end": 82452,
+          "zeroBlocks": [
+            {
+              "start": 82419,
+              "end": 82452
+            }
+          ]
+        },
+        {
+          "name": "icountDividerSelection",
+          "count": 0,
+          "start": 82484,
+          "end": 82528,
+          "zeroBlocks": [
+            {
+              "start": 82484,
+              "end": 82528
+            }
+          ]
+        },
+        {
+          "name": "restoredFromBootSnapshot",
+          "count": 1,
+          "start": 82656,
+          "end": 82686,
+          "zeroBlocks": []
+        },
+        {
+          "name": "storedSnapshotRestoreEvidence",
+          "count": 0,
+          "start": 82725,
+          "end": 82772,
+          "zeroBlocks": [
+            {
+              "start": 82725,
+              "end": 82772
+            }
+          ]
+        },
+        {
+          "name": "overlaySeedIdentity",
+          "count": 0,
+          "start": 82801,
+          "end": 82826,
+          "zeroBlocks": [
+            {
+              "start": 82801,
+              "end": 82826
+            }
+          ]
+        },
+        {
+          "name": "audioOutputReady",
+          "count": 0,
+          "start": 82852,
+          "end": 82959,
+          "zeroBlocks": [
+            {
+              "start": 82852,
+              "end": 82959
+            }
+          ]
+        },
+        {
+          "name": "audioCaptureReady",
+          "count": 0,
+          "start": 82986,
+          "end": 83095,
+          "zeroBlocks": [
+            {
+              "start": 82986,
+              "end": 83095
+            }
+          ]
+        },
+        {
+          "name": "captureState",
+          "count": 0,
+          "start": 83117,
+          "end": 83253,
+          "zeroBlocks": [
+            {
+              "start": 83117,
+              "end": 83253
+            }
+          ]
+        },
+        {
+          "name": "notifyCaptureEvent",
+          "count": 0,
+          "start": 83281,
+          "end": 83422,
+          "zeroBlocks": [
+            {
+              "start": 83281,
+              "end": 83422
+            }
+          ]
+        },
+        {
+          "name": "stateDigest",
+          "count": 0,
+          "start": 83443,
+          "end": 83470,
+          "zeroBlocks": [
+            {
+              "start": 83443,
+              "end": 83470
+            }
+          ]
+        },
+        {
+          "name": "confirmAgentHello",
+          "count": 0,
+          "start": 83695,
+          "end": 83829,
+          "zeroBlocks": [
+            {
+              "start": 83695,
+              "end": 83829
+            }
+          ]
+        },
+        {
+          "name": "saveDesktopSnapshot",
+          "count": 0,
+          "start": 84157,
+          "end": 84501,
+          "zeroBlocks": [
+            {
+              "start": 84157,
+              "end": 84501
+            }
+          ]
+        },
+        {
+          "name": "restoreDesktopSnapshot",
+          "count": 0,
+          "start": 84730,
+          "end": 85117,
+          "zeroBlocks": [
+            {
+              "start": 84730,
+              "end": 85117
+            }
+          ]
+        },
+        {
+          "name": "jitStats",
+          "count": 0,
+          "start": 85135,
+          "end": 85209,
+          "zeroBlocks": [
+            {
+              "start": 85135,
+              "end": 85209
+            }
+          ]
+        },
+        {
+          "name": "profileStats",
+          "count": 0,
+          "start": 85231,
+          "end": 85309,
+          "zeroBlocks": [
+            {
+              "start": 85231,
+              "end": 85309
+            }
+          ]
+        },
+        {
+          "name": "schedulerStats",
+          "count": 2,
+          "start": 85333,
+          "end": 86188,
+          "zeroBlocks": [
+            {
+              "start": 85490,
+              "end": 85517
+            },
+            {
+              "start": 86041,
+              "end": 86063
+            },
+            {
+              "start": 86077,
+              "end": 86086
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 20,
+          "start": 85597,
+          "end": 85723,
+          "zeroBlocks": []
+        },
+        {
+          "name": "tailscaleCommand",
+          "count": 0,
+          "start": 86214,
+          "end": 86257,
+          "zeroBlocks": [
+            {
+              "start": 86214,
+              "end": 86257
+            }
+          ]
+        },
+        {
+          "name": "dhcpStats",
+          "count": 0,
+          "start": 86365,
+          "end": 86399,
+          "zeroBlocks": [
+            {
+              "start": 86365,
+              "end": 86399
+            }
+          ]
+        },
+        {
+          "name": "fileTransferReady",
+          "count": 0,
+          "start": 86520,
+          "end": 86561,
+          "zeroBlocks": [
+            {
+              "start": 86520,
+              "end": 86561
+            }
+          ]
+        },
+        {
+          "name": "setFileDownloadReady",
+          "count": 0,
+          "start": 86591,
+          "end": 86637,
+          "zeroBlocks": [
+            {
+              "start": 86591,
+              "end": 86637
+            }
+          ]
+        },
+        {
+          "name": "beginFileUpload",
+          "count": 0,
+          "start": 86662,
+          "end": 86751,
+          "zeroBlocks": [
+            {
+              "start": 86662,
+              "end": 86751
+            }
+          ]
+        },
+        {
+          "name": "pushFileUpload",
+          "count": 0,
+          "start": 86775,
+          "end": 86867,
+          "zeroBlocks": [
+            {
+              "start": 86775,
+              "end": 86867
+            }
+          ]
+        },
+        {
+          "name": "cancelFileUpload",
+          "count": 0,
+          "start": 86893,
+          "end": 86937,
+          "zeroBlocks": [
+            {
+              "start": 86893,
+              "end": 86937
+            }
+          ]
+        },
+        {
+          "name": "dismissFileUpload",
+          "count": 0,
+          "start": 86964,
+          "end": 87009,
+          "zeroBlocks": [
+            {
+              "start": 86964,
+              "end": 87009
+            }
+          ]
+        },
+        {
+          "name": "cancelFileDownload",
+          "count": 0,
+          "start": 87037,
+          "end": 87075,
+          "zeroBlocks": [
+            {
+              "start": 87037,
+              "end": 87075
+            }
+          ]
+        },
+        {
+          "name": "finishFileDownload",
+          "count": 0,
+          "start": 87103,
+          "end": 87166,
+          "zeroBlocks": [
+            {
+              "start": 87103,
+              "end": 87166
+            }
+          ]
+        },
+        {
+          "name": "fileTransferStatus",
+          "count": 0,
+          "start": 87194,
+          "end": 87240,
+          "zeroBlocks": [
+            {
+              "start": 87194,
+              "end": 87240
+            }
+          ]
+        },
+        {
+          "name": "takeFileDownloadChunk",
+          "count": 0,
+          "start": 87271,
+          "end": 87312,
+          "zeroBlocks": [
+            {
+              "start": 87271,
+              "end": 87312
+            }
+          ]
+        },
+        {
+          "name": "dismissFileDownload",
+          "count": 0,
+          "start": 87341,
+          "end": 87380,
+          "zeroBlocks": [
+            {
+              "start": 87341,
+              "end": 87380
+            }
+          ]
+        },
+        {
+          "name": "fetchStats",
+          "count": 0,
+          "start": 87599,
+          "end": 87646,
+          "zeroBlocks": [
+            {
+              "start": 87599,
+              "end": 87646
+            }
+          ]
+        },
+        {
+          "name": "persist",
+          "count": 0,
+          "start": 87765,
+          "end": 87848,
+          "zeroBlocks": [
+            {
+              "start": 87765,
+              "end": 87848
+            }
+          ]
+        },
+        {
+          "name": "persistStats",
+          "count": 0,
+          "start": 88053,
+          "end": 88081,
+          "zeroBlocks": [
+            {
+              "start": 88053,
+              "end": 88081
+            }
+          ]
+        },
+        {
+          "name": "readOnly",
+          "count": 0,
+          "start": 88176,
+          "end": 88211,
+          "zeroBlocks": [
+            {
+              "start": 88176,
+              "end": 88211
+            }
+          ]
+        },
+        {
+          "name": "resumeAfterQuota",
+          "count": 0,
+          "start": 88620,
+          "end": 88751,
+          "zeroBlocks": [
+            {
+              "start": 88620,
+              "end": 88751
+            }
+          ]
+        },
+        {
+          "name": "continueReadOnly",
+          "count": 0,
+          "start": 89135,
+          "end": 89378,
+          "zeroBlocks": [
+            {
+              "start": 89135,
+              "end": 89378
+            }
+          ]
+        },
+        {
+          "name": "hasUnpersisted",
+          "count": 0,
+          "start": 89560,
+          "end": 89634,
+          "zeroBlocks": [
+            {
+              "start": 89560,
+              "end": 89634
+            }
+          ]
+        },
+        {
+          "name": "snapshotSave",
+          "count": 0,
+          "start": 90078,
+          "end": 90347,
+          "zeroBlocks": [
+            {
+              "start": 90078,
+              "end": 90347
+            }
+          ]
+        },
+        {
+          "name": "snapshotRead",
+          "count": 0,
+          "start": 90466,
+          "end": 90500,
+          "zeroBlocks": [
+            {
+              "start": 90466,
+              "end": 90500
+            }
+          ]
+        },
+        {
+          "name": "snapshotDecision",
+          "count": 0,
+          "start": 90824,
+          "end": 90993,
+          "zeroBlocks": [
+            {
+              "start": 90824,
+              "end": 90993
+            }
+          ]
+        },
+        {
+          "name": "snapshotAdvanceGen",
+          "count": 0,
+          "start": 91189,
+          "end": 91229,
+          "zeroBlocks": [
+            {
+              "start": 91189,
+              "end": 91229
+            }
+          ]
+        },
+        {
+          "name": "snapshotGeneration",
+          "count": 0,
+          "start": 91496,
+          "end": 91529,
+          "zeroBlocks": [
+            {
+              "start": 91496,
+              "end": 91529
+            }
+          ]
+        },
+        {
+          "name": "snapshotExport",
+          "count": 0,
+          "start": 91716,
+          "end": 91750,
+          "zeroBlocks": [
+            {
+              "start": 91716,
+              "end": 91750
+            }
+          ]
+        },
+        {
+          "name": "snapshotRestore",
+          "count": 0,
+          "start": 91775,
+          "end": 92095,
+          "zeroBlocks": [
+            {
+              "start": 91775,
+              "end": 92095
+            }
+          ]
+        },
+        {
+          "name": "snapshotImport",
+          "count": 0,
+          "start": 92119,
+          "end": 92406,
+          "zeroBlocks": [
+            {
+              "start": 92119,
+              "end": 92406
+            }
+          ]
+        },
+        {
+          "name": "storageEstimate",
+          "count": 0,
+          "start": 92490,
+          "end": 92578,
+          "zeroBlocks": [
+            {
+              "start": 92490,
+              "end": 92578
+            }
+          ]
+        },
+        {
+          "name": "closeStorage",
+          "count": 3,
+          "start": 92795,
+          "end": 92845,
+          "zeroBlocks": [
+            {
+              "start": 92835,
+              "end": 92843
+            }
+          ]
+        },
+        {
+          "name": "releaseWriterLock",
+          "count": 3,
+          "start": 93204,
+          "end": 93697,
+          "zeroBlocks": [
+            {
+              "start": 93589,
+              "end": 93597
+            },
+            {
+              "start": 93623,
+              "end": 93689
+            }
+          ]
+        },
+        {
+          "name": "controller.<computed>",
+          "count": 6,
+          "start": 94988,
+          "end": 95127,
+          "zeroBlocks": [
+            {
+              "start": 95027,
+              "end": 95087
+            }
+          ]
+        },
+        {
+          "name": "resolveSlirpProvider",
+          "count": 6,
+          "start": 95715,
+          "end": 98320,
+          "zeroBlocks": [
+            {
+              "start": 95813,
+              "end": 95837
+            },
+            {
+              "start": 95906,
+              "end": 95928
+            },
+            {
+              "start": 95975,
+              "end": 96017
+            },
+            {
+              "start": 96022,
+              "end": 96043
+            },
+            {
+              "start": 96092,
+              "end": 96103
+            },
+            {
+              "start": 96117,
+              "end": 96145
+            },
+            {
+              "start": 96211,
+              "end": 96238
+            },
+            {
+              "start": 96968,
+              "end": 96981
+            },
+            {
+              "start": 96993,
+              "end": 97060
+            },
+            {
+              "start": 97170,
+              "end": 97235
+            },
+            {
+              "start": 97297,
+              "end": 97310
+            },
+            {
+              "start": 97312,
+              "end": 97396
+            },
+            {
+              "start": 97428,
+              "end": 97482
+            },
+            {
+              "start": 97484,
+              "end": 97574
+            },
+            {
+              "start": 97606,
+              "end": 97659
+            },
+            {
+              "start": 97661,
+              "end": 97790
+            },
+            {
+              "start": 97848,
+              "end": 97860
+            },
+            {
+              "start": 97862,
+              "end": 97932
+            },
+            {
+              "start": 98022,
+              "end": 98032
+            },
+            {
+              "start": 98104,
+              "end": 98116
+            },
+            {
+              "start": 98191,
+              "end": 98202
+            },
+            {
+              "start": 98280,
+              "end": 98307
+            }
+          ]
+        },
+        {
+          "name": "tailscaleCommand",
+          "count": 0,
+          "start": 98329,
+          "end": 98408,
+          "zeroBlocks": [
+            {
+              "start": 98329,
+              "end": 98408
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 1,
+          "start": 0,
+          "end": 98409,
+          "zeroBlocks": [
+            {
+              "start": 2733,
+              "end": 2739
+            }
+          ]
+        },
+        {
+          "name": "_yieldChan.port1.onmessage",
+          "count": 0,
+          "start": 2811,
+          "end": 2886,
+          "zeroBlocks": [
+            {
+              "start": 2811,
+              "end": 2886
+            }
+          ]
+        },
+        {
+          "name": "yieldToMain",
+          "count": 0,
+          "start": 2920,
+          "end": 3277,
+          "zeroBlocks": [
+            {
+              "start": 2920,
+              "end": 3277
+            }
+          ]
+        },
+        {
+          "name": "gunzip",
+          "count": 0,
+          "start": 3371,
+          "end": 3596,
+          "zeroBlocks": [
+            {
+              "start": 3371,
+              "end": 3596
+            }
+          ]
+        },
+        {
+          "name": "fetchWithProgress",
+          "count": 1,
+          "start": 3787,
+          "end": 4855,
+          "zeroBlocks": [
+            {
+              "start": 3910,
+              "end": 3983
+            },
+            {
+              "start": 4351,
+              "end": 4376
+            }
+          ]
+        },
+        {
+          "name": "fetchAsset",
+          "count": 2,
+          "start": 5157,
+          "end": 5814,
+          "zeroBlocks": [
+            {
+              "start": 5271,
+              "end": 5362
+            },
+            {
+              "start": 5449,
+              "end": 5797
+            }
+          ]
+        },
+        {
+          "name": "fetchJsonAsset",
+          "count": 1,
+          "start": 5900,
+          "end": 6102,
+          "zeroBlocks": [
+            {
+              "start": 6028,
+              "end": 6100
+            }
+          ]
+        },
+        {
+          "name": "sha256hex",
+          "count": 1,
+          "start": 6157,
+          "end": 6363,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 32,
+          "start": 6307,
+          "end": 6345,
+          "zeroBlocks": []
+        },
+        {
+          "name": "resetDisk",
+          "count": 0,
+          "start": 7459,
+          "end": 8536,
+          "zeroBlocks": [
+            {
+              "start": 7459,
+              "end": 8536
+            }
+          ]
+        },
+        {
+          "name": "startLinuxBoot",
+          "count": 1,
+          "start": 8545,
+          "end": 95390,
+          "zeroBlocks": [
+            {
+              "start": 8657,
+              "end": 10137
+            },
+            {
+              "start": 19231,
+              "end": 19292
+            },
+            {
+              "start": 19325,
+              "end": 19335
+            },
+            {
+              "start": 19494,
+              "end": 19501
+            },
+            {
+              "start": 19560,
+              "end": 19617
+            },
+            {
+              "start": 19644,
+              "end": 19659
+            },
+            {
+              "start": 19661,
+              "end": 19720
+            },
+            {
+              "start": 19829,
+              "end": 19906
+            },
+            {
+              "start": 19939,
+              "end": 19954
+            },
+            {
+              "start": 19956,
+              "end": 20035
+            },
+            {
+              "start": 20068,
+              "end": 20109
+            },
+            {
+              "start": 20111,
+              "end": 20203
+            },
+            {
+              "start": 20393,
+              "end": 20410
+            },
+            {
+              "start": 20412,
+              "end": 20478
+            },
+            {
+              "start": 20493,
+              "end": 20555
+            },
+            {
+              "start": 20557,
+              "end": 20642
+            },
+            {
+              "start": 20657,
+              "end": 20687
+            },
+            {
+              "start": 20688,
+              "end": 20702
+            },
+            {
+              "start": 20704,
+              "end": 20805
+            },
+            {
+              "start": 20820,
+              "end": 20850
+            },
+            {
+              "start": 20851,
+              "end": 20861
+            },
+            {
+              "start": 20863,
+              "end": 20929
+            },
+            {
+              "start": 20951,
+              "end": 21024
+            },
+            {
+              "start": 21026,
+              "end": 21113
+            },
+            {
+              "start": 21147,
+              "end": 21251
+            },
+            {
+              "start": 21253,
+              "end": 21375
+            },
+            {
+              "start": 21409,
+              "end": 21689
+            },
+            {
+              "start": 21691,
+              "end": 21764
+            },
+            {
+              "start": 21809,
+              "end": 21978
+            },
+            {
+              "start": 22106,
+              "end": 22173
+            },
+            {
+              "start": 22210,
+              "end": 22254
+            },
+            {
+              "start": 22273,
+              "end": 22330
+            },
+            {
+              "start": 22911,
+              "end": 22947
+            },
+            {
+              "start": 22949,
+              "end": 23059
+            },
+            {
+              "start": 23448,
+              "end": 23531
+            },
+            {
+              "start": 24799,
+              "end": 24807
+            },
+            {
+              "start": 25167,
+              "end": 25952
+            },
+            {
+              "start": 26004,
+              "end": 26019
+            },
+            {
+              "start": 26348,
+              "end": 26691
+            },
+            {
+              "start": 26697,
+              "end": 27346
+            },
+            {
+              "start": 27400,
+              "end": 27783
+            },
+            {
+              "start": 28076,
+              "end": 28182
+            },
+            {
+              "start": 28997,
+              "end": 29019
+            },
+            {
+              "start": 29450,
+              "end": 29457
+            },
+            {
+              "start": 29546,
+              "end": 29552
+            },
+            {
+              "start": 29645,
+              "end": 29685
+            },
+            {
+              "start": 29956,
+              "end": 30226
+            },
+            {
+              "start": 30276,
+              "end": 30306
+            },
+            {
+              "start": 30308,
+              "end": 30855
+            },
+            {
+              "start": 30900,
+              "end": 30915
+            },
+            {
+              "start": 32349,
+              "end": 32541
+            },
+            {
+              "start": 32577,
+              "end": 33155
+            },
+            {
+              "start": 33177,
+              "end": 33345
+            },
+            {
+              "start": 33369,
+              "end": 33905
+            },
+            {
+              "start": 33927,
+              "end": 39121
+            },
+            {
+              "start": 39170,
+              "end": 39633
+            },
+            {
+              "start": 39804,
+              "end": 40047
+            },
+            {
+              "start": 40094,
+              "end": 40660
+            },
+            {
+              "start": 41024,
+              "end": 41070
+            },
+            {
+              "start": 41072,
+              "end": 41588
+            },
+            {
+              "start": 42060,
+              "end": 42498
+            },
+            {
+              "start": 42652,
+              "end": 43050
+            },
+            {
+              "start": 43673,
+              "end": 43701
+            },
+            {
+              "start": 43790,
+              "end": 43800
+            },
+            {
+              "start": 43808,
+              "end": 43836
+            },
+            {
+              "start": 44939,
+              "end": 44945
+            },
+            {
+              "start": 44970,
+              "end": 44977
+            },
+            {
+              "start": 45253,
+              "end": 45259
+            },
+            {
+              "start": 45285,
+              "end": 45292
+            },
+            {
+              "start": 45369,
+              "end": 45375
+            },
+            {
+              "start": 45403,
+              "end": 45410
+            },
+            {
+              "start": 45873,
+              "end": 45915
+            },
+            {
+              "start": 45917,
+              "end": 46803
+            },
+            {
+              "start": 46850,
+              "end": 46864
+            },
+            {
+              "start": 46899,
+              "end": 46915
+            },
+            {
+              "start": 47055,
+              "end": 47083
+            },
+            {
+              "start": 47166,
+              "end": 47255
+            },
+            {
+              "start": 47764,
+              "end": 47809
+            },
+            {
+              "start": 47811,
+              "end": 47894
+            },
+            {
+              "start": 47935,
+              "end": 47995
+            },
+            {
+              "start": 48859,
+              "end": 48913
+            },
+            {
+              "start": 48915,
+              "end": 49963
+            },
+            {
+              "start": 50299,
+              "end": 50310
+            },
+            {
+              "start": 50311,
+              "end": 50341
+            },
+            {
+              "start": 50343,
+              "end": 50899
+            },
+            {
+              "start": 52724,
+              "end": 53428
+            },
+            {
+              "start": 53458,
+              "end": 53469
+            },
+            {
+              "start": 53470,
+              "end": 53500
+            },
+            {
+              "start": 53502,
+              "end": 55796
+            },
+            {
+              "start": 56057,
+              "end": 56712
+            },
+            {
+              "start": 56895,
+              "end": 56907
+            },
+            {
+              "start": 56931,
+              "end": 56972
+            },
+            {
+              "start": 56978,
+              "end": 57054
+            },
+            {
+              "start": 57082,
+              "end": 57130
+            },
+            {
+              "start": 57164,
+              "end": 57224
+            },
+            {
+              "start": 57621,
+              "end": 57627
+            },
+            {
+              "start": 57686,
+              "end": 57692
+            },
+            {
+              "start": 57741,
+              "end": 57747
+            },
+            {
+              "start": 58828,
+              "end": 58838
+            },
+            {
+              "start": 59490,
+              "end": 59545
+            },
+            {
+              "start": 59552,
+              "end": 59610
+            },
+            {
+              "start": 76457,
+              "end": 77411
+            },
+            {
+              "start": 95162,
+              "end": 95388
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 8812,
+          "end": 8864,
+          "zeroBlocks": [
+            {
+              "start": 8812,
+              "end": 8864
+            }
+          ]
+        },
+        {
+          "name": "onState",
+          "count": 3,
+          "start": 12390,
+          "end": 12398,
+          "zeroBlocks": []
+        },
+        {
+          "name": "onProgress",
+          "count": 138,
+          "start": 12417,
+          "end": 12425,
+          "zeroBlocks": []
+        },
+        {
+          "name": "onOutput",
+          "count": 0,
+          "start": 12442,
+          "end": 12450,
+          "zeroBlocks": [
+            {
+              "start": 12442,
+              "end": 12450
+            }
+          ]
+        },
+        {
+          "name": "onAgentOutput",
+          "count": 0,
+          "start": 12665,
+          "end": 12673,
+          "zeroBlocks": [
+            {
+              "start": 12665,
+              "end": 12673
+            }
+          ]
+        },
+        {
+          "name": "onError",
+          "count": 0,
+          "start": 12689,
+          "end": 12697,
+          "zeroBlocks": [
+            {
+              "start": 12689,
+              "end": 12697
+            }
+          ]
+        },
+        {
+          "name": "onWriterStatus",
+          "count": 0,
+          "start": 12897,
+          "end": 12905,
+          "zeroBlocks": [
+            {
+              "start": 12897,
+              "end": 12905
+            }
+          ]
+        },
+        {
+          "name": "onStorage",
+          "count": 0,
+          "start": 13110,
+          "end": 13118,
+          "zeroBlocks": [
+            {
+              "start": 13110,
+              "end": 13118
+            }
+          ]
+        },
+        {
+          "name": "onQuota",
+          "count": 0,
+          "start": 13391,
+          "end": 13399,
+          "zeroBlocks": [
+            {
+              "start": 13391,
+              "end": 13399
+            }
+          ]
+        },
+        {
+          "name": "onCaptureStart",
+          "count": 0,
+          "start": 13611,
+          "end": 13619,
+          "zeroBlocks": [
+            {
+              "start": 13611,
+              "end": 13619
+            }
+          ]
+        },
+        {
+          "name": "resolveOmarchyChunkedImage",
+          "count": 0,
+          "start": 17502,
+          "end": 18600,
+          "zeroBlocks": [
+            {
+              "start": 17502,
+              "end": 18600
+            }
+          ]
+        },
+        {
+          "name": "emitOutput",
+          "count": 0,
+          "start": 18669,
+          "end": 18788,
+          "zeroBlocks": [
+            {
+              "start": 18669,
+              "end": 18788
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 21528,
+          "end": 21585,
+          "zeroBlocks": [
+            {
+              "start": 21528,
+              "end": 21585
+            }
+          ]
+        },
+        {
+          "name": "readBootAsset",
+          "count": 1,
+          "start": 23814,
+          "end": 24477,
+          "zeroBlocks": [
+            {
+              "start": 23934,
+              "end": 24476
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 138,
+          "start": 23900,
+          "end": 23932,
+          "zeroBlocks": []
+        },
+        {
+          "name": "onCacheStatus",
+          "count": 0,
+          "start": 24100,
+          "end": 24387,
+          "zeroBlocks": [
+            {
+              "start": 24100,
+              "end": 24387
+            }
+          ]
+        },
+        {
+          "name": "onProgress",
+          "count": 0,
+          "start": 24409,
+          "end": 24460,
+          "zeroBlocks": [
+            {
+              "start": 24409,
+              "end": 24460
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 26578,
+          "end": 26614,
+          "zeroBlocks": [
+            {
+              "start": 26578,
+              "end": 26614
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 26918,
+          "end": 26950,
+          "zeroBlocks": [
+            {
+              "start": 26918,
+              "end": 26950
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 27463,
+          "end": 27502,
+          "zeroBlocks": [
+            {
+              "start": 27463,
+              "end": 27502
+            }
+          ]
+        },
+        {
+          "name": "granted",
+          "count": 0,
+          "start": 34845,
+          "end": 35491,
+          "zeroBlocks": [
+            {
+              "start": 34845,
+              "end": 35491
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 40273,
+          "end": 40305,
+          "zeroBlocks": [
+            {
+              "start": 40273,
+              "end": 40305
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 40344,
+          "end": 40385,
+          "zeroBlocks": [
+            {
+              "start": 40344,
+              "end": 40385
+            }
+          ]
+        },
+        {
+          "name": "onEvent",
+          "count": 0,
+          "start": 40488,
+          "end": 40593,
+          "zeroBlocks": [
+            {
+              "start": 40488,
+              "end": 40593
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 41364,
+          "end": 41580,
+          "zeroBlocks": [
+            {
+              "start": 41364,
+              "end": 41580
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 54646,
+          "end": 54688,
+          "zeroBlocks": [
+            {
+              "start": 54646,
+              "end": 54688
+            }
+          ]
+        },
+        {
+          "name": "observeCaptureStart",
+          "count": 0,
+          "start": 57827,
+          "end": 58342,
+          "zeroBlocks": [
+            {
+              "start": 57827,
+              "end": 58342
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 10,
+          "start": 59072,
+          "end": 59079,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 1,
+          "start": 60094,
+          "end": 60118,
+          "zeroBlocks": []
+        },
+        {
+          "name": "settleFinished",
+          "count": 4,
+          "start": 60236,
+          "end": 60405,
+          "zeroBlocks": []
+        },
+        {
+          "name": "finish",
+          "count": 1,
+          "start": 60426,
+          "end": 60646,
+          "zeroBlocks": [
+            {
+              "start": 60492,
+              "end": 60499
+            },
+            {
+              "start": 60604,
+              "end": 60613
+            }
+          ]
+        },
+        {
+          "name": "schedule",
+          "count": 1,
+          "start": 60669,
+          "end": 61486,
+          "zeroBlocks": [
+            {
+              "start": 60722,
+              "end": 60736
+            },
+            {
+              "start": 60745,
+              "end": 61480
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 61175,
+          "end": 61311,
+          "zeroBlocks": [
+            {
+              "start": 61175,
+              "end": 61311
+            }
+          ]
+        },
+        {
+          "name": "handlePersistError",
+          "count": 0,
+          "start": 61999,
+          "end": 62991,
+          "zeroBlocks": [
+            {
+              "start": 61999,
+              "end": 62991
+            }
+          ]
+        },
+        {
+          "name": "runTick",
+          "count": 0,
+          "start": 63373,
+          "end": 70504,
+          "zeroBlocks": [
+            {
+              "start": 63373,
+              "end": 70504
+            }
+          ]
+        },
+        {
+          "name": "tick",
+          "count": 0,
+          "start": 70874,
+          "end": 70907,
+          "zeroBlocks": [
+            {
+              "start": 70874,
+              "end": 70907
+            }
+          ]
+        },
+        {
+          "name": "saveGpuCheckpoint",
+          "count": 0,
+          "start": 70956,
+          "end": 73185,
+          "zeroBlocks": [
+            {
+              "start": 70956,
+              "end": 73185
+            }
+          ]
+        },
+        {
+          "name": "captureDiskDelta",
+          "count": 0,
+          "start": 73216,
+          "end": 73915,
+          "zeroBlocks": [
+            {
+              "start": 73216,
+              "end": 73915
+            }
+          ]
+        },
+        {
+          "name": "softwareCheckpointConfiguration",
+          "count": 2,
+          "start": 73961,
+          "end": 75087,
+          "zeroBlocks": [
+            {
+              "start": 74260,
+              "end": 74367
+            },
+            {
+              "start": 74447,
+              "end": 74504
+            }
+          ]
+        },
+        {
+          "name": "captureSoftwareCheckpoint",
+          "count": 1,
+          "start": 75127,
+          "end": 76049,
+          "zeroBlocks": [
+            {
+              "start": 75187,
+              "end": 75242
+            },
+            {
+              "start": 75399,
+              "end": 75447
+            }
+          ]
+        },
+        {
+          "name": "held",
+          "count": 3,
+          "start": 75548,
+          "end": 75580,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 75569,
+          "end": 75579,
+          "zeroBlocks": [
+            {
+              "start": 75569,
+              "end": 75579
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 1,
+          "start": 75913,
+          "end": 76001,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 76923,
+          "end": 76979,
+          "zeroBlocks": [
+            {
+              "start": 76923,
+              "end": 76979
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 77195,
+          "end": 77226,
+          "zeroBlocks": [
+            {
+              "start": 77195,
+              "end": 77226
+            }
+          ]
+        },
+        {
+          "name": "setDisplay",
+          "count": 0,
+          "start": 77582,
+          "end": 77665,
+          "zeroBlocks": [
+            {
+              "start": 77582,
+              "end": 77665
+            }
+          ]
+        },
+        {
+          "name": "displayStats",
+          "count": 0,
+          "start": 77687,
+          "end": 77732,
+          "zeroBlocks": [
+            {
+              "start": 77687,
+              "end": 77732
+            }
+          ]
+        },
+        {
+          "name": "gpuStats",
+          "count": 0,
+          "start": 77750,
+          "end": 77890,
+          "zeroBlocks": [
+            {
+              "start": 77750,
+              "end": 77890
+            }
+          ]
+        },
+        {
+          "name": "loseGpuContext",
+          "count": 0,
+          "start": 77914,
+          "end": 78027,
+          "zeroBlocks": [
+            {
+              "start": 77914,
+              "end": 78027
+            }
+          ]
+        },
+        {
+          "name": "acknowledgeGpuFrame",
+          "count": 0,
+          "start": 78056,
+          "end": 78137,
+          "zeroBlocks": [
+            {
+              "start": 78056,
+              "end": 78137
+            }
+          ]
+        },
+        {
+          "name": "sendInput",
+          "count": 0,
+          "start": 78156,
+          "end": 78357,
+          "zeroBlocks": [
+            {
+              "start": 78156,
+              "end": 78357
+            }
+          ]
+        },
+        {
+          "name": "sendAgentInput",
+          "count": 0,
+          "start": 78480,
+          "end": 78643,
+          "zeroBlocks": [
+            {
+              "start": 78480,
+              "end": 78643
+            }
+          ]
+        },
+        {
+          "name": "sendKeyboardEvent",
+          "count": 0,
+          "start": 78939,
+          "end": 79858,
+          "zeroBlocks": [
+            {
+              "start": 78939,
+              "end": 79858
+            }
+          ]
+        },
+        {
+          "name": "syncKeyboard",
+          "count": 0,
+          "start": 79880,
+          "end": 80001,
+          "zeroBlocks": [
+            {
+              "start": 79880,
+              "end": 80001
+            }
+          ]
+        },
+        {
+          "name": "sendTabletEvent",
+          "count": 0,
+          "start": 80211,
+          "end": 80483,
+          "zeroBlocks": [
+            {
+              "start": 80211,
+              "end": 80483
+            }
+          ]
+        },
+        {
+          "name": "syncTablet",
+          "count": 0,
+          "start": 80503,
+          "end": 80622,
+          "zeroBlocks": [
+            {
+              "start": 80503,
+              "end": 80622
+            }
+          ]
+        },
+        {
+          "name": "sendMouseEvent",
+          "count": 0,
+          "start": 80646,
+          "end": 80915,
+          "zeroBlocks": [
+            {
+              "start": 80646,
+              "end": 80915
+            }
+          ]
+        },
+        {
+          "name": "syncMouse",
+          "count": 0,
+          "start": 80934,
+          "end": 81052,
+          "zeroBlocks": [
+            {
+              "start": 80934,
+              "end": 81052
+            }
+          ]
+        },
+        {
+          "name": "keyboardLedState",
+          "count": 0,
+          "start": 81269,
+          "end": 81375,
+          "zeroBlocks": [
+            {
+              "start": 81269,
+              "end": 81375
+            }
+          ]
+        },
+        {
+          "name": "inputDeviceStats",
+          "count": 0,
+          "start": 81401,
+          "end": 81507,
+          "zeroBlocks": [
+            {
+              "start": 81401,
+              "end": 81507
+            }
+          ]
+        },
+        {
+          "name": "stop",
+          "count": 1,
+          "start": 81521,
+          "end": 81657,
+          "zeroBlocks": []
+        },
+        {
+          "name": "pause",
+          "count": 0,
+          "start": 82028,
+          "end": 82052,
+          "zeroBlocks": [
+            {
+              "start": 82028,
+              "end": 82052
+            }
+          ]
+        },
+        {
+          "name": "resume",
+          "count": 0,
+          "start": 82068,
+          "end": 82364,
+          "zeroBlocks": [
+            {
+              "start": 82068,
+              "end": 82364
+            }
+          ]
+        },
+        {
+          "name": "isPaused",
+          "count": 0,
+          "start": 82382,
+          "end": 82394,
+          "zeroBlocks": [
+            {
+              "start": 82382,
+              "end": 82394
+            }
+          ]
+        },
+        {
+          "name": "guestClockState",
+          "count": 0,
+          "start": 82419,
+          "end": 82452,
+          "zeroBlocks": [
+            {
+              "start": 82419,
+              "end": 82452
+            }
+          ]
+        },
+        {
+          "name": "icountDividerSelection",
+          "count": 0,
+          "start": 82484,
+          "end": 82528,
+          "zeroBlocks": [
+            {
+              "start": 82484,
+              "end": 82528
+            }
+          ]
+        },
+        {
+          "name": "restoredFromBootSnapshot",
+          "count": 0,
+          "start": 82656,
+          "end": 82686,
+          "zeroBlocks": [
+            {
+              "start": 82656,
+              "end": 82686
+            }
+          ]
+        },
+        {
+          "name": "storedSnapshotRestoreEvidence",
+          "count": 0,
+          "start": 82725,
+          "end": 82772,
+          "zeroBlocks": [
+            {
+              "start": 82725,
+              "end": 82772
+            }
+          ]
+        },
+        {
+          "name": "overlaySeedIdentity",
+          "count": 0,
+          "start": 82801,
+          "end": 82826,
+          "zeroBlocks": [
+            {
+              "start": 82801,
+              "end": 82826
+            }
+          ]
+        },
+        {
+          "name": "audioOutputReady",
+          "count": 0,
+          "start": 82852,
+          "end": 82959,
+          "zeroBlocks": [
+            {
+              "start": 82852,
+              "end": 82959
+            }
+          ]
+        },
+        {
+          "name": "audioCaptureReady",
+          "count": 0,
+          "start": 82986,
+          "end": 83095,
+          "zeroBlocks": [
+            {
+              "start": 82986,
+              "end": 83095
+            }
+          ]
+        },
+        {
+          "name": "captureState",
+          "count": 0,
+          "start": 83117,
+          "end": 83253,
+          "zeroBlocks": [
+            {
+              "start": 83117,
+              "end": 83253
+            }
+          ]
+        },
+        {
+          "name": "notifyCaptureEvent",
+          "count": 0,
+          "start": 83281,
+          "end": 83422,
+          "zeroBlocks": [
+            {
+              "start": 83281,
+              "end": 83422
+            }
+          ]
+        },
+        {
+          "name": "stateDigest",
+          "count": 0,
+          "start": 83443,
+          "end": 83470,
+          "zeroBlocks": [
+            {
+              "start": 83443,
+              "end": 83470
+            }
+          ]
+        },
+        {
+          "name": "confirmAgentHello",
+          "count": 0,
+          "start": 83695,
+          "end": 83829,
+          "zeroBlocks": [
+            {
+              "start": 83695,
+              "end": 83829
+            }
+          ]
+        },
+        {
+          "name": "saveDesktopSnapshot",
+          "count": 0,
+          "start": 84157,
+          "end": 84501,
+          "zeroBlocks": [
+            {
+              "start": 84157,
+              "end": 84501
+            }
+          ]
+        },
+        {
+          "name": "restoreDesktopSnapshot",
+          "count": 0,
+          "start": 84730,
+          "end": 85117,
+          "zeroBlocks": [
+            {
+              "start": 84730,
+              "end": 85117
+            }
+          ]
+        },
+        {
+          "name": "jitStats",
+          "count": 0,
+          "start": 85135,
+          "end": 85209,
+          "zeroBlocks": [
+            {
+              "start": 85135,
+              "end": 85209
+            }
+          ]
+        },
+        {
+          "name": "profileStats",
+          "count": 0,
+          "start": 85231,
+          "end": 85309,
+          "zeroBlocks": [
+            {
+              "start": 85231,
+              "end": 85309
+            }
+          ]
+        },
+        {
+          "name": "schedulerStats",
+          "count": 0,
+          "start": 85333,
+          "end": 86188,
+          "zeroBlocks": [
+            {
+              "start": 85333,
+              "end": 86188
+            }
+          ]
+        },
+        {
+          "name": "tailscaleCommand",
+          "count": 0,
+          "start": 86214,
+          "end": 86257,
+          "zeroBlocks": [
+            {
+              "start": 86214,
+              "end": 86257
+            }
+          ]
+        },
+        {
+          "name": "dhcpStats",
+          "count": 0,
+          "start": 86365,
+          "end": 86399,
+          "zeroBlocks": [
+            {
+              "start": 86365,
+              "end": 86399
+            }
+          ]
+        },
+        {
+          "name": "fileTransferReady",
+          "count": 0,
+          "start": 86520,
+          "end": 86561,
+          "zeroBlocks": [
+            {
+              "start": 86520,
+              "end": 86561
+            }
+          ]
+        },
+        {
+          "name": "setFileDownloadReady",
+          "count": 0,
+          "start": 86591,
+          "end": 86637,
+          "zeroBlocks": [
+            {
+              "start": 86591,
+              "end": 86637
+            }
+          ]
+        },
+        {
+          "name": "beginFileUpload",
+          "count": 0,
+          "start": 86662,
+          "end": 86751,
+          "zeroBlocks": [
+            {
+              "start": 86662,
+              "end": 86751
+            }
+          ]
+        },
+        {
+          "name": "pushFileUpload",
+          "count": 0,
+          "start": 86775,
+          "end": 86867,
+          "zeroBlocks": [
+            {
+              "start": 86775,
+              "end": 86867
+            }
+          ]
+        },
+        {
+          "name": "cancelFileUpload",
+          "count": 0,
+          "start": 86893,
+          "end": 86937,
+          "zeroBlocks": [
+            {
+              "start": 86893,
+              "end": 86937
+            }
+          ]
+        },
+        {
+          "name": "dismissFileUpload",
+          "count": 0,
+          "start": 86964,
+          "end": 87009,
+          "zeroBlocks": [
+            {
+              "start": 86964,
+              "end": 87009
+            }
+          ]
+        },
+        {
+          "name": "cancelFileDownload",
+          "count": 0,
+          "start": 87037,
+          "end": 87075,
+          "zeroBlocks": [
+            {
+              "start": 87037,
+              "end": 87075
+            }
+          ]
+        },
+        {
+          "name": "finishFileDownload",
+          "count": 0,
+          "start": 87103,
+          "end": 87166,
+          "zeroBlocks": [
+            {
+              "start": 87103,
+              "end": 87166
+            }
+          ]
+        },
+        {
+          "name": "fileTransferStatus",
+          "count": 0,
+          "start": 87194,
+          "end": 87240,
+          "zeroBlocks": [
+            {
+              "start": 87194,
+              "end": 87240
+            }
+          ]
+        },
+        {
+          "name": "takeFileDownloadChunk",
+          "count": 0,
+          "start": 87271,
+          "end": 87312,
+          "zeroBlocks": [
+            {
+              "start": 87271,
+              "end": 87312
+            }
+          ]
+        },
+        {
+          "name": "dismissFileDownload",
+          "count": 0,
+          "start": 87341,
+          "end": 87380,
+          "zeroBlocks": [
+            {
+              "start": 87341,
+              "end": 87380
+            }
+          ]
+        },
+        {
+          "name": "fetchStats",
+          "count": 0,
+          "start": 87599,
+          "end": 87646,
+          "zeroBlocks": [
+            {
+              "start": 87599,
+              "end": 87646
+            }
+          ]
+        },
+        {
+          "name": "persist",
+          "count": 0,
+          "start": 87765,
+          "end": 87848,
+          "zeroBlocks": [
+            {
+              "start": 87765,
+              "end": 87848
+            }
+          ]
+        },
+        {
+          "name": "persistStats",
+          "count": 0,
+          "start": 88053,
+          "end": 88081,
+          "zeroBlocks": [
+            {
+              "start": 88053,
+              "end": 88081
+            }
+          ]
+        },
+        {
+          "name": "readOnly",
+          "count": 0,
+          "start": 88176,
+          "end": 88211,
+          "zeroBlocks": [
+            {
+              "start": 88176,
+              "end": 88211
+            }
+          ]
+        },
+        {
+          "name": "resumeAfterQuota",
+          "count": 0,
+          "start": 88620,
+          "end": 88751,
+          "zeroBlocks": [
+            {
+              "start": 88620,
+              "end": 88751
+            }
+          ]
+        },
+        {
+          "name": "continueReadOnly",
+          "count": 0,
+          "start": 89135,
+          "end": 89378,
+          "zeroBlocks": [
+            {
+              "start": 89135,
+              "end": 89378
+            }
+          ]
+        },
+        {
+          "name": "hasUnpersisted",
+          "count": 0,
+          "start": 89560,
+          "end": 89634,
+          "zeroBlocks": [
+            {
+              "start": 89560,
+              "end": 89634
+            }
+          ]
+        },
+        {
+          "name": "snapshotSave",
+          "count": 0,
+          "start": 90078,
+          "end": 90347,
+          "zeroBlocks": [
+            {
+              "start": 90078,
+              "end": 90347
+            }
+          ]
+        },
+        {
+          "name": "snapshotRead",
+          "count": 0,
+          "start": 90466,
+          "end": 90500,
+          "zeroBlocks": [
+            {
+              "start": 90466,
+              "end": 90500
+            }
+          ]
+        },
+        {
+          "name": "snapshotDecision",
+          "count": 0,
+          "start": 90824,
+          "end": 90993,
+          "zeroBlocks": [
+            {
+              "start": 90824,
+              "end": 90993
+            }
+          ]
+        },
+        {
+          "name": "snapshotAdvanceGen",
+          "count": 0,
+          "start": 91189,
+          "end": 91229,
+          "zeroBlocks": [
+            {
+              "start": 91189,
+              "end": 91229
+            }
+          ]
+        },
+        {
+          "name": "snapshotGeneration",
+          "count": 0,
+          "start": 91496,
+          "end": 91529,
+          "zeroBlocks": [
+            {
+              "start": 91496,
+              "end": 91529
+            }
+          ]
+        },
+        {
+          "name": "snapshotExport",
+          "count": 0,
+          "start": 91716,
+          "end": 91750,
+          "zeroBlocks": [
+            {
+              "start": 91716,
+              "end": 91750
+            }
+          ]
+        },
+        {
+          "name": "snapshotRestore",
+          "count": 0,
+          "start": 91775,
+          "end": 92095,
+          "zeroBlocks": [
+            {
+              "start": 91775,
+              "end": 92095
+            }
+          ]
+        },
+        {
+          "name": "snapshotImport",
+          "count": 0,
+          "start": 92119,
+          "end": 92406,
+          "zeroBlocks": [
+            {
+              "start": 92119,
+              "end": 92406
+            }
+          ]
+        },
+        {
+          "name": "storageEstimate",
+          "count": 0,
+          "start": 92490,
+          "end": 92578,
+          "zeroBlocks": [
+            {
+              "start": 92490,
+              "end": 92578
+            }
+          ]
+        },
+        {
+          "name": "closeStorage",
+          "count": 1,
+          "start": 92795,
+          "end": 92845,
+          "zeroBlocks": [
+            {
+              "start": 92835,
+              "end": 92843
+            }
+          ]
+        },
+        {
+          "name": "releaseWriterLock",
+          "count": 1,
+          "start": 93204,
+          "end": 93697,
+          "zeroBlocks": [
+            {
+              "start": 93589,
+              "end": 93597
+            },
+            {
+              "start": 93623,
+              "end": 93689
+            }
+          ]
+        },
+        {
+          "name": "controller.<computed>",
+          "count": 2,
+          "start": 94988,
+          "end": 95127,
+          "zeroBlocks": [
+            {
+              "start": 95027,
+              "end": 95087
+            }
+          ]
+        },
+        {
+          "name": "resolveSlirpProvider",
+          "count": 1,
+          "start": 95715,
+          "end": 98320,
+          "zeroBlocks": [
+            {
+              "start": 95813,
+              "end": 95837
+            },
+            {
+              "start": 95906,
+              "end": 95928
+            },
+            {
+              "start": 95975,
+              "end": 96017
+            },
+            {
+              "start": 96022,
+              "end": 96043
+            },
+            {
+              "start": 96092,
+              "end": 96103
+            },
+            {
+              "start": 96117,
+              "end": 96145
+            },
+            {
+              "start": 96211,
+              "end": 96238
+            },
+            {
+              "start": 96968,
+              "end": 96981
+            },
+            {
+              "start": 96993,
+              "end": 97060
+            },
+            {
+              "start": 97170,
+              "end": 97235
+            },
+            {
+              "start": 97297,
+              "end": 97310
+            },
+            {
+              "start": 97312,
+              "end": 97396
+            },
+            {
+              "start": 97428,
+              "end": 97482
+            },
+            {
+              "start": 97484,
+              "end": 97574
+            },
+            {
+              "start": 97606,
+              "end": 97659
+            },
+            {
+              "start": 97661,
+              "end": 97790
+            },
+            {
+              "start": 97848,
+              "end": 97860
+            },
+            {
+              "start": 97862,
+              "end": 97932
+            },
+            {
+              "start": 98022,
+              "end": 98032
+            },
+            {
+              "start": 98104,
+              "end": 98116
+            },
+            {
+              "start": 98191,
+              "end": 98202
+            },
+            {
+              "start": 98280,
+              "end": 98307
+            }
+          ]
+        },
+        {
+          "name": "tailscaleCommand",
+          "count": 0,
+          "start": 98329,
+          "end": 98408,
+          "zeroBlocks": [
+            {
+              "start": 98329,
+              "end": 98408
+            }
+          ]
+        }
+      ]
+    },
+    "web/linux-worker-protocol.js": {
+      "source_sha256": "50c02f3babe38c93830d82088c477f415f4a4aa5440589de4d91be10099ff900",
+      "recordings": 1,
+      "hunks": [
+        {
+          "start": 7,
+          "size": 1,
+          "context": "",
+          "observed": [
+            7
+          ],
+          "unobserved": [],
+          "declarative": []
+        },
+        {
+          "start": 22,
+          "size": 1,
+          "context": "const LONG_RPC_GRACE_MS = Object.freeze({",
+          "observed": [
+            22
+          ],
+          "unobserved": [],
+          "declarative": []
+        },
+        {
+          "start": 54,
+          "size": 2,
+          "context": "export const LINUX_CONTROLLER_METHODS = Object.freeze([",
+          "observed": [
+            54,
+            55
+          ],
+          "unobserved": [],
+          "declarative": []
+        },
+        {
+          "start": 118,
+          "size": 1,
+          "context": "const BYTE_RESULT = new Set([",
+          "observed": [
+            118
+          ],
+          "unobserved": [],
+          "declarative": []
+        }
+      ],
+      "functions": [
+        {
+          "name": "",
+          "count": 1,
+          "start": 0,
+          "end": 32427,
+          "zeroBlocks": []
+        },
+        {
+          "name": "errorFrom",
+          "count": 0,
+          "start": 3344,
+          "end": 3526,
+          "zeroBlocks": [
+            {
+              "start": 3344,
+              "end": 3526
+            }
+          ]
+        },
+        {
+          "name": "privateBytes",
+          "count": 2,
+          "start": 3623,
+          "end": 3915,
+          "zeroBlocks": [
+            {
+              "start": 3675,
+              "end": 3699
+            },
+            {
+              "start": 3759,
+              "end": 3889
+            }
+          ]
+        },
+        {
+          "name": "post",
+          "count": 15,
+          "start": 3917,
+          "end": 4011,
+          "zeroBlocks": []
+        },
+        {
+          "name": "listen",
+          "count": 1,
+          "start": 4013,
+          "end": 4377,
+          "zeroBlocks": [
+            {
+              "start": 4176,
+              "end": 4180
+            },
+            {
+              "start": 4254,
+              "end": 4376
+            }
+          ]
+        },
+        {
+          "name": "endpoint.onmessage",
+          "count": 1,
+          "start": 4193,
+          "end": 4249,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 4296,
+          "end": 4374,
+          "zeroBlocks": [
+            {
+              "start": 4296,
+              "end": 4374
+            }
+          ]
+        },
+        {
+          "name": "deferred",
+          "count": 2,
+          "start": 4379,
+          "end": 4779,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 2,
+          "start": 4460,
+          "end": 4506,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 4712,
+          "end": 4720,
+          "zeroBlocks": [
+            {
+              "start": 4712,
+              "end": 4720
+            }
+          ]
+        },
+        {
+          "name": "createLinuxWorkerClient",
+          "count": 1,
+          "start": 4979,
+          "end": 19335,
+          "zeroBlocks": []
+        },
+        {
+          "name": "now",
+          "count": 60,
+          "start": 6237,
+          "end": 6310,
+          "zeroBlocks": [
+            {
+              "start": 6298,
+              "end": 6310
+            }
+          ]
+        },
+        {
+          "name": "terminate",
+          "count": 1,
+          "start": 6333,
+          "end": 6662,
+          "zeroBlocks": [
+            {
+              "start": 6361,
+              "end": 6368
+            },
+            {
+              "start": 6482,
+              "end": 6506
+            },
+            {
+              "start": 6546,
+              "end": 6587
+            },
+            {
+              "start": 6624,
+              "end": 6658
+            }
+          ]
+        },
+        {
+          "name": "reportError",
+          "count": 0,
+          "start": 6687,
+          "end": 6862,
+          "zeroBlocks": [
+            {
+              "start": 6687,
+              "end": 6862
+            }
+          ]
+        },
+        {
+          "name": "settleDone",
+          "count": 1,
+          "start": 6886,
+          "end": 6986,
+          "zeroBlocks": [
+            {
+              "start": 6927,
+              "end": 6934
+            }
+          ]
+        },
+        {
+          "name": "armBootTimeout",
+          "count": 1,
+          "start": 7014,
+          "end": 7479,
+          "zeroBlocks": [
+            {
+              "start": 7049,
+              "end": 7073
+            },
+            {
+              "start": 7166,
+              "end": 7173
+            },
+            {
+              "start": 7242,
+              "end": 7342
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 7370,
+          "end": 7462,
+          "zeroBlocks": [
+            {
+              "start": 7370,
+              "end": 7462
+            }
+          ]
+        },
+        {
+          "name": "fail",
+          "count": 0,
+          "start": 7497,
+          "end": 7820,
+          "zeroBlocks": [
+            {
+              "start": 7497,
+              "end": 7820
+            }
+          ]
+        },
+        {
+          "name": "startHeartbeat",
+          "count": 1,
+          "start": 7848,
+          "end": 8826,
+          "zeroBlocks": [
+            {
+              "start": 7888,
+              "end": 7895
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 5,
+          "start": 7954,
+          "end": 8799,
+          "zeroBlocks": [
+            {
+              "start": 8077,
+              "end": 8111
+            },
+            {
+              "start": 8133,
+              "end": 8187
+            },
+            {
+              "start": 8295,
+              "end": 8411
+            },
+            {
+              "start": 8499,
+              "end": 8617
+            },
+            {
+              "start": 8749,
+              "end": 8793
+            }
+          ]
+        },
+        {
+          "name": "onMessage",
+          "count": 31,
+          "start": 8849,
+          "end": 14824,
+          "zeroBlocks": [
+            {
+              "start": 8966,
+              "end": 9085
+            },
+            {
+              "start": 9208,
+              "end": 9301
+            },
+            {
+              "start": 9390,
+              "end": 9641
+            },
+            {
+              "start": 9648,
+              "end": 9707
+            },
+            {
+              "start": 9714,
+              "end": 9777
+            },
+            {
+              "start": 9784,
+              "end": 9839
+            },
+            {
+              "start": 9846,
+              "end": 9916
+            },
+            {
+              "start": 9923,
+              "end": 9985
+            },
+            {
+              "start": 10116,
+              "end": 10204
+            },
+            {
+              "start": 10267,
+              "end": 10360
+            },
+            {
+              "start": 10431,
+              "end": 10438
+            },
+            {
+              "start": 10471,
+              "end": 10475
+            },
+            {
+              "start": 10686,
+              "end": 10867
+            },
+            {
+              "start": 10916,
+              "end": 11532
+            },
+            {
+              "start": 11539,
+              "end": 11932
+            },
+            {
+              "start": 12108,
+              "end": 12151
+            },
+            {
+              "start": 12261,
+              "end": 12381
+            },
+            {
+              "start": 12543,
+              "end": 12550
+            },
+            {
+              "start": 12672,
+              "end": 12792
+            },
+            {
+              "start": 12957,
+              "end": 13016
+            },
+            {
+              "start": 13425,
+              "end": 13519
+            },
+            {
+              "start": 13988,
+              "end": 14065
+            },
+            {
+              "start": 14140,
+              "end": 14152
+            },
+            {
+              "start": 14182,
+              "end": 14223
+            },
+            {
+              "start": 14318,
+              "end": 14324
+            },
+            {
+              "start": 14545,
+              "end": 14586
+            },
+            {
+              "start": 14743,
+              "end": 14814
+            }
+          ]
+        },
+        {
+          "name": "onRetired",
+          "count": 0,
+          "start": 10699,
+          "end": 10866,
+          "zeroBlocks": [
+            {
+              "start": 10699,
+              "end": 10866
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 31,
+          "start": 14862,
+          "end": 14939,
+          "zeroBlocks": [
+            {
+              "start": 14905,
+              "end": 14935
+            }
+          ]
+        },
+        {
+          "name": "rpc",
+          "count": 9,
+          "start": 14957,
+          "end": 16218,
+          "zeroBlocks": [
+            {
+              "start": 15045,
+              "end": 15134
+            },
+            {
+              "start": 15150,
+              "end": 15179
+            },
+            {
+              "start": 15227,
+              "end": 15301
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 9,
+          "start": 15325,
+          "end": 16212,
+          "zeroBlocks": [
+            {
+              "start": 15673,
+              "end": 15818
+            },
+            {
+              "start": 16132,
+              "end": 16206
+            }
+          ]
+        },
+        {
+          "name": "sendInput",
+          "count": 2,
+          "start": 16285,
+          "end": 16560,
+          "zeroBlocks": [
+            {
+              "start": 16332,
+              "end": 16345
+            }
+          ]
+        },
+        {
+          "name": "restoredFromBootSnapshot",
+          "count": 0,
+          "start": 16592,
+          "end": 16606,
+          "zeroBlocks": [
+            {
+              "start": 16592,
+              "end": 16606
+            }
+          ]
+        },
+        {
+          "name": "workerRpcStats",
+          "count": 0,
+          "start": 16628,
+          "end": 16943,
+          "zeroBlocks": [
+            {
+              "start": 16628,
+              "end": 16943
+            }
+          ]
+        },
+        {
+          "name": "stop",
+          "count": 1,
+          "start": 16977,
+          "end": 17632,
+          "zeroBlocks": [
+            {
+              "start": 17011,
+              "end": 17031
+            },
+            {
+              "start": 17446,
+              "end": 17511
+            }
+          ]
+        },
+        {
+          "name": "",
+          "count": 1,
+          "start": 17267,
+          "end": 17423,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 0,
+          "start": 17315,
+          "end": 17394,
+          "zeroBlocks": [
+            {
+              "start": 17315,
+              "end": 17394
+            }
+          ]
+        },
+        {
+          "name": "controller.<computed>",
+          "count": 8,
+          "start": 17715,
+          "end": 17745,
+          "zeroBlocks": []
+        },
+        {
+          "name": "boot",
+          "count": 1,
+          "start": 17783,
+          "end": 18311,
+          "zeroBlocks": [
+            {
+              "start": 17813,
+              "end": 17842
+            },
+            {
+              "start": 17865,
+              "end": 17935
+            },
+            {
+              "start": 18048,
+              "end": 18055
+            },
+            {
+              "start": 18232,
+              "end": 18276
+            }
+          ]
+        },
+        {
+          "name": "setHeartbeatSuspended",
+          "count": 1,
+          "start": 18317,
+          "end": 19317,
+          "zeroBlocks": [
+            {
+              "start": 18517,
+              "end": 19316
+            }
+          ]
+        },
+        {
+          "name": "createLinuxWorkerRuntime",
+          "count": 0,
+          "start": 19539,
+          "end": 32426,
+          "zeroBlocks": [
+            {
+              "start": 19539,
+              "end": 32426
+            }
+          ]
+        }
+      ]
+    },
+    "web/roadmap.js": {
+      "source_sha256": "527fa4fba3074023044df4c534b04ebf4b8bdf89ae247cc53aaa640a090c3677",
+      "recordings": 1,
+      "hunks": [
+        {
+          "start": 225,
+          "size": 2,
+          "context": "export const ROADMAP = [",
+          "observed": [
+            225,
+            226
+          ],
+          "unobserved": [],
+          "declarative": []
+        }
+      ],
+      "functions": [
+        {
+          "name": "",
+          "count": 1,
+          "start": 0,
+          "end": 57945,
+          "zeroBlocks": [
+            {
+              "start": 57853,
+              "end": 57918
+            }
+          ]
+        },
+        {
+          "name": "statusMeta",
+          "count": 0,
+          "start": 32867,
+          "end": 32931,
+          "zeroBlocks": [
+            {
+              "start": 32867,
+              "end": 32931
+            }
+          ]
+        },
+        {
+          "name": "isDecomposed",
+          "count": 0,
+          "start": 33190,
+          "end": 33293,
+          "zeroBlocks": [
+            {
+              "start": 33190,
+              "end": 33293
+            }
+          ]
+        },
+        {
+          "name": "effStatus",
+          "count": 0,
+          "start": 33294,
+          "end": 33371,
+          "zeroBlocks": [
+            {
+              "start": 33294,
+              "end": 33371
+            }
+          ]
+        },
+        {
+          "name": "h",
+          "count": 0,
+          "start": 33373,
+          "end": 33528,
+          "zeroBlocks": [
+            {
+              "start": 33373,
+              "end": 33528
+            }
+          ]
+        },
+        {
+          "name": "epicTitle",
+          "count": 0,
+          "start": 33671,
+          "end": 33778,
+          "zeroBlocks": [
+            {
+              "start": 33671,
+              "end": 33778
+            }
+          ]
+        },
+        {
+          "name": "groupByEpic",
+          "count": 0,
+          "start": 33780,
+          "end": 34132,
+          "zeroBlocks": [
+            {
+              "start": 33780,
+              "end": 34132
+            }
+          ]
+        },
+        {
+          "name": "matchesFilter",
+          "count": 0,
+          "start": 34134,
+          "end": 34475,
+          "zeroBlocks": [
+            {
+              "start": 34134,
+              "end": 34475
+            }
+          ]
+        },
+        {
+          "name": "stackBar",
+          "count": 0,
+          "start": 34557,
+          "end": 35386,
+          "zeroBlocks": [
+            {
+              "start": 34557,
+              "end": 35386
+            }
+          ]
+        },
+        {
+          "name": "overallBurndown",
+          "count": 0,
+          "start": 35628,
+          "end": 36390,
+          "zeroBlocks": [
+            {
+              "start": 35628,
+              "end": 36390
+            }
+          ]
+        },
+        {
+          "name": "taskCard",
+          "count": 0,
+          "start": 36392,
+          "end": 37317,
+          "zeroBlocks": [
+            {
+              "start": 36392,
+              "end": 37317
+            }
+          ]
+        },
+        {
+          "name": "rebuildParentIndex",
+          "count": 0,
+          "start": 37468,
+          "end": 37649,
+          "zeroBlocks": [
+            {
+              "start": 37468,
+              "end": 37649
+            }
+          ]
+        },
+        {
+          "name": "subGroup",
+          "count": 0,
+          "start": 38021,
+          "end": 38449,
+          "zeroBlocks": [
+            {
+              "start": 38021,
+              "end": 38449
+            }
+          ]
+        },
+        {
+          "name": "appendColumnCards",
+          "count": 0,
+          "start": 38615,
+          "end": 39079,
+          "zeroBlocks": [
+            {
+              "start": 38615,
+              "end": 39079
+            }
+          ]
+        },
+        {
+          "name": "epicIsDone",
+          "count": 0,
+          "start": 39923,
+          "end": 40093,
+          "zeroBlocks": [
+            {
+              "start": 39923,
+              "end": 40093
+            }
+          ]
+        },
+        {
+          "name": "kanbanBoard",
+          "count": 0,
+          "start": 40384,
+          "end": 40987,
+          "zeroBlocks": [
+            {
+              "start": 40384,
+              "end": 40987
+            }
+          ]
+        },
+        {
+          "name": "parseDay",
+          "count": 0,
+          "start": 41467,
+          "end": 41569,
+          "zeroBlocks": [
+            {
+              "start": 41467,
+              "end": 41569
+            }
+          ]
+        },
+        {
+          "name": "fmtTick",
+          "count": 0,
+          "start": 41570,
+          "end": 41643,
+          "zeroBlocks": [
+            {
+              "start": 41570,
+              "end": 41643
+            }
+          ]
+        },
+        {
+          "name": "renderTimeline",
+          "count": 0,
+          "start": 41670,
+          "end": 47417,
+          "zeroBlocks": [
+            {
+              "start": 41670,
+              "end": 47417
+            }
+          ]
+        },
+        {
+          "name": "render",
+          "count": 0,
+          "start": 47419,
+          "end": 50485,
+          "zeroBlocks": [
+            {
+              "start": 47419,
+              "end": 50485
+            }
+          ]
+        },
+        {
+          "name": "openDetail",
+          "count": 0,
+          "start": 50567,
+          "end": 53841,
+          "zeroBlocks": [
+            {
+              "start": 50567,
+              "end": 53841
+            }
+          ]
+        },
+        {
+          "name": "closeDetail",
+          "count": 0,
+          "start": 53843,
+          "end": 53957,
+          "zeroBlocks": [
+            {
+              "start": 53843,
+              "end": 53957
+            }
+          ]
+        },
+        {
+          "name": "populateFilters",
+          "count": 0,
+          "start": 53959,
+          "end": 54561,
+          "zeroBlocks": [
+            {
+              "start": 53959,
+              "end": 54561
+            }
+          ]
+        },
+        {
+          "name": "wireControls",
+          "count": 0,
+          "start": 54563,
+          "end": 56894,
+          "zeroBlocks": [
+            {
+              "start": 54563,
+              "end": 56894
+            }
+          ]
+        },
+        {
+          "name": "initRoadmap",
+          "count": 1,
+          "start": 56896,
+          "end": 57812,
+          "zeroBlocks": [
+            {
+              "start": 57001,
+              "end": 57235
+            },
+            {
+              "start": 57241,
+              "end": 57476
+            },
+            {
+              "start": 57478,
+              "end": 57811
+            }
+          ]
+        }
+      ]
+    },
+    "web/gpu-checkpoint-build.js": {
+      "source_sha256": "d1e6416becc54bced193f83a0a9d408aaba6a98a700f62bc5b9dd769c7727a89",
+      "recordings": 3,
+      "hunks": [
+        {
+          "start": 2,
+          "size": 3,
+          "context": "",
+          "observed": [
+            2,
+            3,
+            4
+          ],
+          "unobserved": [],
+          "declarative": []
+        }
+      ],
+      "functions": [
+        {
+          "name": "",
+          "count": 1,
+          "start": 0,
+          "end": 340,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 1,
+          "start": 0,
+          "end": 340,
+          "zeroBlocks": []
+        },
+        {
+          "name": "",
+          "count": 1,
+          "start": 0,
+          "end": 340,
+          "zeroBlocks": []
+        }
+      ]
+    }
+  }
+}

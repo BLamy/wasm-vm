@@ -247,3 +247,36 @@ adapter effects; T14 requires matching original/replay state with providers offl
 T16 exact stops around traps/events. Guest instruction traces and state digests remain
 proof artifacts rather than the production per-instruction storage format. The host rr
 layer remains waived under AGENTS.md. No GitHub Actions or new external service is added.
+
+### Software checkpoint implementation (E9-T05)
+
+`captureSoftwareCheckpoint()` requires a paused single-hart chunked software guest with
+ICount time, at most 256 MiB RAM, no secondary disk, microphone, active PCM stream,
+host audio bridge or external network backend. Larger RAM checkpoints await T15's bounded
+incremental representation; capture refuses them before allocating a snapshot.
+The owner fences host mutations and joins its existing task barrier. Up to sixteen native
+passes finish the original disk reads and durable writes without retiring instructions or
+advancing time. One uninterrupted machine borrow then owns CPU, sparse RAM, every assembled
+device, exact input ledgers, the complete COW map and pending UART/output queues. The
+`WVSOFT01` envelope hashes all five components and binds the native and disk base/generation.
+
+Session checkpoints use explicit exact-input and console codec families. They retain
+pressed keys, partially delivered frames, staged events, pending console controls and
+partially consumed agent input. Legacy desktop resume keeps its existing physical-key
+release and fresh-HELLO behavior. Exact restore validates the complete native topology and
+every component before changing the destination. A same-generation sibling COW map still
+fails the full disk-byte comparison.
+
+`SessionCheckpoints.save()` stores immutable objects and disk leaves first, then publishes
+one session manifest through the existing strict commit transaction. A failed capture,
+object write, or publication cannot replace the previous committed cursor. Restoring by
+session/checkpoint ID authenticates retained assets, the current runtime build, the complete
+envelope and every historical disk leaf before constructing a private seeded candidate.
+The candidate restores while paused and cannot acquire the live overlay writer. No guest
+instruction executes before admission succeeds.
+
+These are **checkpoints-only** sessions. Their log cursor remains zero until the event
+engine exists; native architectural counters and clock phase are retained in the native
+snapshot. T09 onward owns transition positions and exact replay, T06 owns the visible saved
+session library, T07 owns transitive retention, and T21 owns portable runtime bundles. An
+unavailable runtime is refused instead of being silently resumed by a newer build.

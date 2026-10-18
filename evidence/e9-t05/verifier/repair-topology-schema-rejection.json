@@ -1,0 +1,17 @@
+{
+  "status": "failed",
+  "checks": null,
+  "errors": [],
+  "error": {
+    "message": "page.evaluate: Error: session metadata: UnsupportedRequired(\"critic-wrong-uart\")\n    at __wbg_Error_92b29b0548f8b746 (http://127.0.0.1:50209/session-pkg/wasm_vm_session.js:213:25)\n    at http://127.0.0.1:50209/session-pkg/wasm_vm_session_bg.wasm:wasm-function[288]:0x54c30\n    at http://127.0.0.1:50209/session-pkg/wasm_vm_session_bg.wasm:wasm-function[270]:0x50c59\n    at sessionValidateManifest (http://127.0.0.1:50209/session-pkg/wasm_vm_session.js:201:22)\n    at SessionCheckpoints.save (http://127.0.0.1:50209/session-checkpoints.js:104:21)\n    at async eval (eval at evaluate (:234:30), <anonymous>:105:9)\n    at async <anonymous>:260:30",
+    "stack": "page.evaluate: Error: session metadata: UnsupportedRequired(\"critic-wrong-uart\")\n    at __wbg_Error_92b29b0548f8b746 (http://127.0.0.1:50209/session-pkg/wasm_vm_session.js:213:25)\n    at http://127.0.0.1:50209/session-pkg/wasm_vm_session_bg.wasm:wasm-function[288]:0x54c30\n    at http://127.0.0.1:50209/session-pkg/wasm_vm_session_bg.wasm:wasm-function[270]:0x50c59\n    at sessionValidateManifest (http://127.0.0.1:50209/session-pkg/wasm_vm_session.js:201:22)\n    at SessionCheckpoints.save (http://127.0.0.1:50209/session-checkpoints.js:104:21)\n    at async eval (eval at evaluate (:234:30), <anonymous>:105:9)\n    at async <anonymous>:260:30\n    at checkSoftwareCheckpointCritic (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/tools/verify/e9-software-checkpoints-critic.mjs:5:29)\n    at /Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/evidence/e9-t05/verifier/run-repair-browser-critic.mjs:29:23"
+  },
+  "trace": {
+    "path": "target/evidence/e9-t05-repair-critic-trace.zip",
+    "sha256": "6109f1e7268d16e7c24c9aa4387bf05220f8bf7748919f57a4ea2e6ccdad3397"
+  },
+  "coverage": {
+    "path": "target/evidence/e9-t05-repair-critic-coverage.json",
+    "sha256": "615eeda7d1abdf83c994c21ca8c08eaadfa1d3ffa2aa4d35832461dcc5c35968"
+  }
+}

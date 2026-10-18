@@ -1,0 +1,43 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.32s
+     Running tests/e9_session_checkpoint_verifier.rs (target/debug/deps/e9_session_checkpoint_verifier-fbc1fe2a118822a4)
+
+running 2 tests
+E9_CRITIC schedule=0 seed=16979 retired=251 trace=0aa59606dff079fb
+E9_CRITIC schedule=1 seed=2654452748 retired=251 trace=23e313549e1ea5dd
+E9_CRITIC schedule=2 seed=5308888517 retired=251 trace=9d58e909849bc480
+E9_CRITIC schedule=3 seed=7963324286 retired=251 trace=4ee4f401dcd5887b
+E9_CRITIC schedule=4 seed=10617760055 retired=251 trace=0f19296e2424dc18
+E9_CRITIC schedule=5 seed=13272195824 retired=251 trace=f3c9efe5105033a1
+E9_CRITIC schedule=6 seed=15926631593 retired=251 trace=22b8beca78b48472
+E9_CRITIC schedule=7 seed=18581067362 retired=251 trace=04044e0c9f4da264
+E9_CRITIC schedule=8 seed=21235503131 retired=251 trace=bcca0a7ef9d4e4ed
+E9_CRITIC atomic-refusals=65 all-components=16 continuation=c6a4feeb69b50471
+test every_late_component_refusal_preserves_the_whole_destination ... ok
+E9_CRITIC schedule=9 seed=23889938900 retired=251 trace=e68f6b3b2d81fb6b
+E9_CRITIC schedule=10 seed=26544374669 retired=251 trace=bf2791c917d58b76
+E9_CRITIC schedule=11 seed=29198810438 retired=251 trace=f0cecc1508d9d6b3
+E9_CRITIC schedule=12 seed=31853246207 retired=251 trace=a56766220567a4d3
+E9_CRITIC schedule=13 seed=34507681976 retired=251 trace=271b9477397ec0fa
+E9_CRITIC schedule=14 seed=37162117745 retired=251 trace=b1d9ff55669ff43a
+E9_CRITIC schedule=15 seed=39816553514 retired=251 trace=569b80a074d2ebd2
+E9_CRITIC schedule=16 seed=42470989283 retired=251 trace=ad4c4c09e1ad8380
+E9_CRITIC schedule=17 seed=45125425052 retired=251 trace=4e6be9216e4351d6
+E9_CRITIC schedule=18 seed=47779860821 retired=251 trace=a7f03553f9ae7d3c
+E9_CRITIC schedule=19 seed=50434296590 retired=251 trace=5c2eb627a203f8ea
+E9_CRITIC schedule=20 seed=53088732359 retired=251 trace=3f9c5623b662b15b
+E9_CRITIC schedule=21 seed=55743168128 retired=251 trace=77bf5cbdf1a89ffe
+E9_CRITIC schedule=22 seed=58397603897 retired=251 trace=09ad4e8bf7a3e96a
+E9_CRITIC schedule=23 seed=61052039666 retired=251 trace=74c545371ff44152
+E9_CRITIC schedule=24 seed=63706475435 retired=251 trace=62c3dbceab4ef959
+E9_CRITIC schedule=25 seed=66360911204 retired=251 trace=079ada8e5974e966
+E9_CRITIC schedule=26 seed=69015346973 retired=251 trace=fd2a1ecf0a575a90
+E9_CRITIC schedule=27 seed=71669782742 retired=251 trace=c46f45a2723b2902
+E9_CRITIC schedule=28 seed=74324218511 retired=251 trace=4e024e6544b00ce9
+E9_CRITIC schedule=29 seed=76978654280 retired=251 trace=7ef32efcc5b46918
+E9_CRITIC schedule=30 seed=79633090049 retired=251 trace=bb7ca9f6fb0ee9e4
+E9_CRITIC schedule=31 seed=82287525818 retired=251 trace=312437d5b9352d78
+test mixed_delivered_pending_staged_input_survives_32_boundary_schedules ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.10s
+

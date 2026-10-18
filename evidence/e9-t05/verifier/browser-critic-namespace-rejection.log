@@ -1,0 +1,8 @@
+page.evaluate: SessionStoreError: Namespace
+    at fail (http://127.0.0.1:65320/session-store.js:18:40)
+    at need (http://127.0.0.1:65320/session-store.js:19:61)
+    at SessionStore.open (http://127.0.0.1:65320/session-store.js:83:5)
+    at eval (eval at evaluate (:234:30), <anonymous>:51:32)
+    at async <anonymous>:260:30
+    at checkSoftwareCheckpointCritic (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/tools/verify/e9-software-checkpoints-critic.mjs:5:29)
+    at /Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/evidence/e9-t05/verifier/run-browser-critic.mjs:29:23

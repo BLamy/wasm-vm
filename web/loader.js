@@ -25,7 +25,7 @@ import init, {
 } from "./pkg/wasm_vm_wasm.js";
 import { decideBootPath, deriveBootSnapshotBaseId } from "./boot-path.js";
 import { deriveOverlaySeedIdentity } from "./overlay-seed-identity.js";
-import { GPU_CHECKPOINT_BUILD_ID } from "./gpu-checkpoint-build.js";
+import { GPU_CHECKPOINT_BUILD_ID, SOFTWARE_CHECKPOINT_WASM_SHA256, SOFTWARE_CHECKPOINT_WASM_BYTES } from "./gpu-checkpoint-build.js";
 import { encodeGpuCheckpointPair, decodeGpuCheckpointPair, deriveGpuCheckpointWitness, gpuCheckpointDigestBytes } from "./gpu-checkpoint.js";
 import { createTaskQuiescence } from "./task-quiescence.js";
 import { validateGuestClock, validateICountDivider, validateInteractiveClock, createGuestClockLifecycle } from "./guest-clock.js";
@@ -179,6 +179,28 @@ export async function resetDisk(
 }
 
 export async function startLinuxBoot(opts = {}) {
+  let sessionAdmission = null;
+  if (opts.sessionCheckpoint != null) {
+    const descriptor = opts.sessionCheckpoint;
+    if (typeof descriptor !== 'object' || Array.isArray(descriptor)
+      || Object.keys(descriptor).some(key => !['database','id','checkpoint'].includes(key))
+      || typeof descriptor.id !== 'string' || typeof descriptor.checkpoint !== 'string'
+      || opts.virgl || opts.persist || opts.freshDesktop || opts.extraDiskUrl || opts.enableMic
+      || opts.sessionDiskRoot || opts.audioSharedBuffer || opts.captureSharedBuffer
+      || opts.slirpNet || opts.slirpDoh || resolveSlirpProvider(opts).provider !== 'offline'
+      || (opts.mode !== undefined && opts.mode !== 'chunked')) throw Error('invalid software session restore profile');
+    const {SessionStore} = await import('./session-store.js');
+    const {SessionCheckpoints} = await import('./session-checkpoints.js');
+    const store = await SessionStore.open(descriptor.database);
+    try { sessionAdmission = await new SessionCheckpoints(store).admit(descriptor.id, descriptor.checkpoint,
+      GPU_CHECKPOINT_BUILD_ID, SOFTWARE_CHECKPOINT_WASM_SHA256); }
+    finally { await store.close(); }
+    const config = sessionAdmission.configuration;
+    opts = {...opts, mode:'chunked', persist:false, bootSnapshot:false, bootProfileUrl:null,
+      ramMib:config.ramMib, bootargs:config.bootargs, baseUrl:config.baseUrl,
+      requestImageManifestBaseUrl:null, guestClock:'icount', icountDivider:config.clock.divider,
+      interactiveClock:undefined, startPaused:true};
+  }
   const {
     manifestUrl = "./artifacts.json",
     // "initramfs" = busybox (the gh-pages default); "disk" = Alpine ext4 over virtio-blk (the whole
@@ -368,7 +390,10 @@ export async function startLinuxBoot(opts = {}) {
       || typeof sessionDiskRoot.sha256 !== 'string' || typeof sessionDiskRoot.generation !== 'string')) {
       throw new Error("invalid historical disk root descriptor");
     }
-    const manifest = await fetchJsonAsset(manifestUrl, "boot manifest");
+    const manifest = sessionAdmission
+      ? {artifacts:{kernel:{url:sessionAdmission.configuration.kernel.url,
+          sha256:sessionAdmission.configuration.kernel.sha256,size:sessionAdmission.kernel.length}}}
+      : await fetchJsonAsset(manifestUrl, "boot manifest");
     const omarchyImage = requestImageManifestBaseUrl != null
       ? resolveOmarchyChunkedImage(manifest, requestImageManifestBaseUrl)
       : null;
@@ -413,7 +438,7 @@ export async function startLinuxBoot(opts = {}) {
     // The kernel is always fetched whole (small). The rootfs is fetched whole for disk/initramfs
     // modes; in chunked mode it is NOT — only the image manifest is fetched now, and its chunks are
     // pulled lazily during boot by WasmLinux.fetchPending.
-    const kernel = await readBootAsset("kernel", km);
+    const kernel = sessionAdmission?.kernel ?? await readBootAsset("kernel", km);
     let secondaryBytes = null;
     let imageManifestText = null;
     let bootProfile = new Uint32Array(0);
@@ -434,7 +459,8 @@ export async function startLinuxBoot(opts = {}) {
           throw new Error("Omarchy chunked image manifest is not valid UTF-8");
         }
       } else {
-        imageManifestText = await fetchAsset(resolvedImageManifestUrl, "chunked image manifest");
+        imageManifestText = sessionAdmission?.configuration.imageManifest
+          ?? await fetchAsset(resolvedImageManifestUrl, "chunked image manifest");
       }
       // E3-T03: an optional boot-profile.json (ordered chunk indices) prefetched up front. Best-
       // effort — a missing profile just means no boot-profile prefetch (readahead still applies).
@@ -543,7 +569,10 @@ export async function startLinuxBoot(opts = {}) {
     // resume the VM behind the dialog. It gates the pump/run independently of `paused`.
     let quotaPaused = false;
     let lastPersistRetry = 0; // throttle pending-byte retries while quotaReadOnly
-    if (sessionDiskRoot !== null) {
+    if (sessionAdmission) {
+      machine = WasmLinux.newChunkedDiskSeeded(ramMib, kernel, imageManifestText, baseUrl,
+        cacheBudgetMib, bootProfile, bootargs, emitOutput, enableMic, sessionAdmission.disk);
+    } else if (sessionDiskRoot !== null) {
       const {SessionStore} = await import('./session-store.js');
       const {SessionDiskRoots} = await import('./session-disk-roots.js');
       const store = await SessionStore.open(sessionDiskRoot.database);
@@ -960,9 +989,24 @@ export async function startLinuxBoot(opts = {}) {
 
     // All initial resume candidates are settled; selection must survive restore and precede execution.
     applyDecodedCacheEntries(machine, decodedCacheEntries);
+    let restoredSessionContext = null;
+    let restoredSessionClock;
+    if (sessionAdmission) {
+      try {
+        if(JSON.stringify(JSON.parse(machine.softwareCheckpointTopology()))!==JSON.stringify(sessionAdmission.configuration.devices)) {
+          throw Error('session checkpoint device topology differs from the actual machine');
+        }
+        machine.restoreSoftwareCheckpoint(sessionAdmission.frame, sessionAdmission.contextBytes);
+        restoredSessionContext = sessionAdmission.context;
+        restoredSessionClock = machine.guestClockState();
+        restoredFromBootSnapshot = true;
+        onState('restored');
+      } catch (error) { machine.closeStorage?.(); machine.free(); throw error; }
+      sessionAdmission = null;
+    }
     let guestClockLifecycle;
     try {
-      guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider, interactiveClock, gpuWarmData?.clockState);
+      guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider, interactiveClock, restoredSessionClock ?? gpuWarmData?.clockState);
       if(gpuWarmData)await productionGpu.activateCheckpoint();
     }catch(error){productionGpu?.dispose();machine.closeStorage?.();throw error;}
     if (jitAdmissionProbe) applyAdmissionProbe(machine, jitAdmissionProbe);
@@ -975,7 +1019,8 @@ export async function startLinuxBoot(opts = {}) {
     let stopped = false;
     let paused = Boolean(startPaused);
     let gpuCaptureBusy=false;
-    const heldKeyboard=new Set(),heldTablet=new Set(),heldMouse=new Set();
+    const heldKeyboard=new Set(restoredSessionContext?.held.keyboard),
+      heldTablet=new Set(restoredSessionContext?.held.tablet),heldMouse=new Set(restoredSessionContext?.held.mouse);
     let observedCaptureStartCount = 0;
     const observeCaptureStart = () => {
       if (typeof machine.virtioSndCaptureState !== "function") return;
@@ -1263,6 +1308,37 @@ export async function startLinuxBoot(opts = {}) {
         return await taskQuiescence.run(() => machine.captureDiskDelta());
       } finally { gpuCaptureBusy = false; }
     };
+    const softwareCheckpointConfiguration = () => {
+      if(stopped || productionGpu || virgl || extraDiskBytes || !isChunked || enableMic
+        || ramMib > 256
+        || audioRequested || captureRequested || opts.slirpNet || network.provider !== 'offline' || slirpDoh
+        || guestClock !== 'icount' || interactiveClock !== undefined) {
+        throw Error('software session checkpoints require the isolated ICount software profile');
+      }
+      const state=guestClockLifecycle.state();
+      if(state?.mode!=='icount')throw Error('software session checkpoint clock changed');
+      return {version:1,runtime:GPU_CHECKPOINT_BUILD_ID,ramMib,bootargs,
+        clock:{mode:'icount',divider:state.clockDiv,timebase_hz:String(state.timebaseHz),interactive:null},
+        kernel:{url:new URL(km.url,globalThis.location.href).href,sha256:km.sha256,length:String(kernel.length)},
+        wasm:{url:new URL('./pkg/wasm_vm_wasm_bg.wasm',import.meta.url).href,
+          sha256:SOFTWARE_CHECKPOINT_WASM_SHA256,length:String(SOFTWARE_CHECKPOINT_WASM_BYTES)},
+        devices:JSON.parse(machine.softwareCheckpointTopology()),imageManifest:imageManifestText,baseUrl};
+    };
+    const captureSoftwareCheckpoint = async () => {
+      if(!paused || stopped || gpuCaptureBusy)throw Error('pause the software guest before capture');
+      const config=softwareCheckpointConfiguration();
+      gpuCaptureBusy=true;
+      try {
+        await taskQuiescence.waitForIdle();
+        if(stopped)throw Error('session checkpoint owner stopped');
+        const {checkpointZeroPosition}=await import('./session-checkpoints.js');
+        const held=keys=>[...keys].sort((a,b)=>a-b);
+        const context={version:{major:1,minor:0},runtime:config.runtime,kernel:config.kernel.sha256,
+          ram_bytes:String(ramMib*1048576),clock:config.clock,position:checkpointZeroPosition(),
+          held:{keyboard:held(heldKeyboard),tablet:held(heldTablet),mouse:held(heldMouse)}};
+        return await taskQuiescence.run(()=>machine.captureSoftwareCheckpoint(new TextEncoder().encode(JSON.stringify(context))));
+      } finally {gpuCaptureBusy=false;}
+    };
     // The reconstructed renderer must physically present in its fresh epoch and
     // the resumed CPU must execute before input connects. A desktop need not
     // submit another draw until that input arrives; requiring one here strands
@@ -1285,10 +1361,10 @@ export async function startLinuxBoot(opts = {}) {
       }
     }
 
-    return {
+    const controller = {
       backend: "main-thread",
       // Host hotplug is separate from guest mode adoption; stats come from the actual GPU map.
-      setDisplay: (width, height) => !stopped && machine.setDisplay(width, height),
+      setDisplay: (width, height) => !stopped && !gpuCaptureBusy && machine.setDisplay(width, height),
       displayStats: () => stopped ? null : machine.displayStats(),
       gpuStats: () => ({...(productionGpu?.inspect() ?? {qualified:false}),...(opts.gpuTrace ? {guestCommands:JSON.parse(machine.gpuCommandTrace())} : {})}),
       loseGpuContext: (when="now") => {if (!opts.gpuTrace || !productionGpu) return false;productionGpu.loseContext(when);return true;},
@@ -1417,6 +1493,8 @@ export async function startLinuxBoot(opts = {}) {
       // surface used by the page in both direct and whole-machine-worker boot modes.
       saveGpuCheckpoint,
       captureDiskDelta,
+      captureSoftwareCheckpoint,
+      softwareCheckpointConfiguration,
       saveDesktopSnapshot: () => {
         if (virgl) throw new Error("Accelerated GPU sessions require a cold restart; graphics handles cannot be saved.");
         if (typeof machine.saveDesktopSnapshot !== "function") {
@@ -1574,6 +1652,26 @@ export async function startLinuxBoot(opts = {}) {
       },
       whenDone,
     };
+    // Worker RPCs are FIFO, while direct callers share this event loop. Fence every mutating
+    // direct control during an awaited capture too; stop alone can revoke the owner and joins
+    // taskQuiescence before releasing storage. GPU receipts must remain able to finish a drain.
+    const captureReads = new Set(['displayStats','gpuStats','keyboardLedState','inputDeviceStats',
+      'isPaused','guestClockState','icountDividerSelection','restoredFromBootSnapshot',
+      'storedSnapshotRestoreEvidence','overlaySeedIdentity','audioOutputReady','audioCaptureReady',
+      'captureState','stateDigest','dhcpStats','fileTransferReady','fileTransferStatus','fetchStats',
+      'persistStats','readOnly','hasUnpersisted','snapshotGeneration','storageEstimate','jitStats',
+      'profileStats','schedulerStats','softwareCheckpointConfiguration','acknowledgeGpuFrame',
+      'setDisplay','sendInput','sendAgentInput','sendKeyboardEvent','syncKeyboard',
+      'sendTabletEvent','syncTablet','sendMouseEvent','syncMouse',
+      'stop','pause','captureDiskDelta','captureSoftwareCheckpoint','saveGpuCheckpoint']);
+    for(const [name,method] of Object.entries(controller)) {
+      if(typeof method!=='function'||captureReads.has(name))continue;
+      controller[name]=(...args)=>{
+        if(gpuCaptureBusy)throw Error('session_checkpoint: capture owns the machine');
+        return method(...args);
+      };
+    }
+    return controller;
   } catch (e) {
     // E3-T09 (critic BUG-1): a granted writer lock must not outlive a failed boot.
     if (releaseLock) {

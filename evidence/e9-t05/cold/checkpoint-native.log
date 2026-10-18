@@ -1,0 +1,333 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.24s
+     Running tests/cpu_resume.rs (target/debug/deps/cpu_resume-f7466d3184546d7e)
+
+running 6 tests
+test malformed_cpu_payload_is_rejected_and_leaves_hart_unchanged ... ok
+test resume_places_the_timer_interrupt_identically ... ok
+test virtio_blk_and_net_sections_round_trip_at_machine_level ... ok
+test whole_machine_resume_round_trips ... ok
+test restore_over_dirty_state_is_byte_identical ... ok
+test resume_trace_matches_continuation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
+
+     Running tests/desktop_machine_audio_resume.rs (target/debug/deps/desktop_machine_audio_resume-e07ff4a856b80f81)
+
+running 9 tests
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-false-source.wav
+envelope-false-rx-true-frames-480-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/layout-compatibility-source.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-false-source.wav
+envelope-true-rx-false-frames-480-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-false-source.wav
+envelope-true-rx-true-frames-480-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[99, 0, 157, 255, 100, 0, 156, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/retained-source-false.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-false-source.wav
+envelope-false-rx-false-frames-480-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+recovery: fresh 480 frames bit-exact; TX used=2 completed exactly once
+Linux XRUN recovery after successful 960-frame PCM: STOP=OK RELEASE=OK; state=Released params=Some(PcmParams { stream_id: 0, buffer_bytes: 3840, period_bytes: 1920, features: 16, channels: 2, format: 5, rate: 7, padding: 0 }) tx_used=2 event_used=1
+Linux recovery PREPARE status=0x8000; state=Prepared; params=Some(PcmParams { stream_id: 0, buffer_bytes: 3840, period_bytes: 1920, features: 16, channels: 2, format: 5, rate: 7, padding: 0 }); control_used=6
+recovery: fresh 480 frames bit-exact; TX used=3 completed exactly once
+test control_release_completes_pending_io_before_response_and_following_prepare ... ok
+test linux_6_6_63_xrun_stop_release_prepare_recovers_without_set_params ... ok
+test sound_layout_version_does_not_invalidate_container_v1_headless_resume ... ok
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-false-fresh.wav
+envelope-false-rx-true-frames-480-clock-0-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-false-fresh.wav
+recovery: fresh 480 frames bit-exact; TX used=2 completed exactly once
+envelope-true-rx-false-frames-480-clock-0-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-false-fresh.wav
+envelope-true-rx-true-frames-480-clock-0-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-false-fresh.wav
+envelope-false-rx-false-frames-480-clock-0-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-true-source.wav
+envelope-false-rx-true-frames-480-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-true-source.wav
+envelope-true-rx-true-frames-480-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[99, 0, 157, 255, 100, 0, 156, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/retained-source-true.wav
+old-unversioned-RX-TX: sound tag 16 refusal, unchanged machine/host
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-true-source.wav
+envelope-true-rx-false-frames-480-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-true-source.wav
+envelope-false-rx-false-frames-480-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+unknown-layout-0: sound tag 16 refusal, unchanged machine/host
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-true-fresh.wav
+envelope-false-rx-true-frames-480-clock-0-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-0-released-true-fresh.wav
+unknown-layout-1: sound tag 16 refusal, unchanged machine/host
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-true-fresh.wav
+envelope-true-rx-true-frames-480-clock-0-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-0-released-true-fresh.wav
+recovery: fresh 480 frames bit-exact; TX used=2 completed exactly once
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-true-fresh.wav
+envelope-false-rx-false-frames-480-clock-0-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-0-released-true-fresh.wav
+test released_params_resume_into_fresh_sink_and_clock_without_set_params ... ok
+envelope-true-rx-false-frames-480-clock-0-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-0-released-true-fresh.wav
+unknown-layout-3: sound tag 16 refusal, unchanged machine/host
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-false-source.wav
+envelope-false-rx-true-frames-480-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-false-source.wav
+envelope-true-rx-true-frames-480-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-false-source.wav
+envelope-false-rx-false-frames-480-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-false-source.wav
+envelope-true-rx-false-frames-480-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+unknown-layout-4294967295: sound tag 16 refusal, unchanged machine/host
+truncated-layout-0: sound tag 16 refusal, unchanged machine/host
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-false-fresh.wav
+envelope-false-rx-true-frames-480-clock-3600000000000-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-false-fresh.wav
+envelope-true-rx-true-frames-480-clock-3600000000000-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-false-fresh.wav
+envelope-true-rx-false-frames-480-clock-3600000000000-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-false-fresh.wav
+envelope-false-rx-false-frames-480-clock-3600000000000-released-false: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-false-fresh.wav
+truncated-layout-1: sound tag 16 refusal, unchanged machine/host
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-true-source.wav
+envelope-false-rx-true-frames-480-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+truncated-layout-2: sound tag 16 refusal, unchanged machine/host
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-true-source.wav
+envelope-true-rx-false-frames-480-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-true-source.wav
+envelope-true-rx-true-frames-480-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=1920 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-true-source.wav
+envelope-false-rx-false-frames-480-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+truncated-layout-3: sound tag 16 refusal, unchanged machine/host
+test old_or_unknown_sound_resume_layout_is_rejected_before_live_mutation ... ok
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-true-fresh.wav
+envelope-false-rx-true-frames-480-clock-3600000000000-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-480-clock-3600000000000-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-true-fresh.wav
+envelope-true-rx-false-frames-480-clock-3600000000000-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-480-clock-3600000000000-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-true-fresh.wav
+envelope-true-rx-true-frames-480-clock-3600000000000-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-480-clock-3600000000000-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=1920 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-true-fresh.wav
+envelope-false-rx-false-frames-480-clock-3600000000000-released-true: source/fresh=480 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=20000000, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-480-clock-3600000000000-released-true-fresh.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-false-source.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-false-source.wav
+envelope-false-rx-true-frames-2048-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+envelope-true-rx-false-frames-2048-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-false-source.wav
+envelope-true-rx-true-frames-2048-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-false-source.wav
+envelope-false-rx-false-frames-2048-clock-0-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-false-fresh.wav
+envelope-false-rx-true-frames-2048-clock-0-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-false-fresh.wav
+envelope-true-rx-false-frames-2048-clock-0-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-false-fresh.wav
+envelope-true-rx-true-frames-2048-clock-0-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-false-fresh.wav
+envelope-false-rx-false-frames-2048-clock-0-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-false-fresh.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-true-source.wav
+envelope-true-rx-false-frames-2048-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-true-source.wav
+envelope-false-rx-true-frames-2048-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-true-source.wav
+envelope-true-rx-true-frames-2048-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-true-source.wav
+envelope-false-rx-false-frames-2048-clock-0-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-true-fresh.wav
+envelope-true-rx-true-frames-2048-clock-0-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-0-released-true-fresh.wav
+envelope-false-rx-true-frames-2048-clock-0-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-0-released-true-fresh.wav
+envelope-true-rx-false-frames-2048-clock-0-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-0-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-true-fresh.wav
+envelope-false-rx-false-frames-2048-clock-0-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-0-released-true-fresh.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-false-source.wav
+envelope-true-rx-true-frames-2048-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-false-source.wav
+envelope-false-rx-true-frames-2048-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-false-source.wav
+envelope-true-rx-false-frames-2048-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-false-source.wav
+envelope-false-rx-false-frames-2048-clock-3600000000000-released-false: source PCM exact, saved control_used=4 tx_used=1 event_used=1 state=Stopped
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-false-fresh.wav
+envelope-false-rx-true-frames-2048-clock-3600000000000-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-false-fresh.wav
+envelope-true-rx-true-frames-2048-clock-3600000000000-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-false-fresh.wav
+envelope-true-rx-false-frames-2048-clock-3600000000000-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-false-fresh.wav
+envelope-false-rx-false-frames-2048-clock-3600000000000-released-false: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-false-fresh.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-true-source.wav
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-true-source.wav
+envelope-true-rx-true-frames-2048-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+envelope-false-rx-true-frames-2048-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-true-source.wav
+envelope-true-rx-false-frames-2048-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=0 queued=1 used=1 status=0x8000 sink_bytes=8192 first_pcm=[73, 0, 183, 255, 74, 0, 182, 255] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-true-source.wav
+envelope-false-rx-false-frames-2048-clock-3600000000000-released-true: source PCM exact, saved control_used=5 tx_used=1 event_used=1 state=Released
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-true-fresh.wav
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-true-fresh.wav
+envelope-true-rx-true-frames-2048-clock-3600000000000-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-true-frames-2048-clock-3600000000000-released-true-fresh.wav
+test configured_unused_rx_preserves_pcm_through_desktop_envelope_too ... ok
+envelope-false-rx-true-frames-2048-clock-3600000000000-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-true-frames-2048-clock-3600000000000-released-true-fresh.wav
+test configured_unused_rx_preserves_tx_cursor_and_fresh_pcm ... ok
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-true-fresh.wav
+envelope-true-rx-false-frames-2048-clock-3600000000000-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-true-rx-false-frames-2048-clock-3600000000000-released-true-fresh.wav
+test fresh_pcm_sink_after_whole_machine_and_desktop_envelope_restore ... ok
+PCM deadline: ordinal=1 queued=1 used=2 status=0x8000 sink_bytes=8192 first_pcm=[165, 6, 91, 249, 166, 6, 90, 249] WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-true-fresh.wav
+envelope-false-rx-false-frames-2048-clock-3600000000000-released-true: source/fresh=2048 PCM frames, control_used=9, tx_used=2 event_used=2, fresh_clock_ns=85333334, WAV=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo/crates/core/../../target/desktop-machine-audio-resume/envelope-false-rx-false-frames-2048-clock-3600000000000-released-true-fresh.wav
+test strict_fresh_machine_pcm_sink_after_whole_machine_resume ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.55s
+
+     Running tests/desktop_machine_resume.rs (target/debug/deps/desktop_machine_resume-9e320149ed3ddc04)
+
+running 8 tests
+test malformed_saved_agent_dma_blocks_tx_until_transport_reset ... ok
+test headless_resume_remains_compatible_without_desktop_sections ... ok
+test agent_resume_frontier_wraps_and_allows_fresh_tx_before_first_guest_step ... ok
+test every_fallible_legacy_section_refuses_before_live_state_or_host_callbacks_change ... ok
+test gpu_queued_control_and_cursor_notifications_survive_resume_without_rekick ... ok
+desktop resume continuation: hash=9865e79b681ad970, retired=1
+test desktop_devices_resume_with_ring_continuity_and_fresh_host_state ... ok
+test pending_console_transmits_survive_while_stale_host_session_is_discarded ... ok
+test malformed_desktop_section_and_missing_device_refuse_without_partial_restore ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.21s
+
+     Running tests/desktop_machine_resume_verifier.rs (target/debug/deps/desktop_machine_resume_verifier-0b0015fbe9eb8d1b)
+
+running 9 tests
+test console_control_request_kicked_before_save_completes_once_after_resume ... ok
+test pending_old_session_agent_hello_cannot_attest_the_resumed_host ... ok
+test sound_request_kicked_before_save_completes_once_after_resume ... ok
+test machine_save_reconciles_held_keyboard_tablet_and_mouse_state ... ok
+test same_topology_in_alternate_assembly_order_restores ... ok
+test malformed_later_machine_payload_must_not_partially_commit_desktop_state ... ok
+test rng_cursor_wrap_preserves_one_pending_completion_exactly_once ... ok
+test source_target_topology_mismatch_is_atomic_both_directions ... ok
+test every_new_section_corruption_missing_and_duplicate_are_atomic ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.39s
+
+     Running tests/e9_session_checkpoint.rs (target/debug/deps/e9_session_checkpoint-9748e450a6189541)
+
+running 4 tests
+test session_missing_duplicate_or_corrupt_components_are_atomic ... ok
+test session_active_audio_refuses_capture_and_restore_without_mutation ... ok
+test session_machine_keeps_delivered_key_without_capture_releases ... ok
+E9_SESSION_NATIVE rv64ud-p-fmadd boundary=37 retired=205 trace=e8bfdbd4c71e5bb8 ram=72228ad9a1b06935fd180e6fea1d47fbd6a6ea785d8eb531e0e6fade3e40e211
+E9_SESSION_NATIVE rv64ud-p-fmadd boundary=111 retired=131 trace=760a13f69d83feb4 ram=72228ad9a1b06935fd180e6fea1d47fbd6a6ea785d8eb531e0e6fade3e40e211
+E9_SESSION_NATIVE rv64ua-p-lrsc boundary=37 retired=220 trace=2d10dbac064060c5 ram=fd085116fa3fb631fbb3950aad34ca6727e2b30261c31117a053f7b5df569d8c
+E9_SESSION_NATIVE rv64ua-p-lrsc boundary=111 retired=220 trace=908c7a5b43fbde80 ram=122f1a6389aa08d9bcfcfd8e28a64585e95599d35d45d1d5a2203ed0b7be040d
+E9_SESSION_NATIVE rv64mi-p-csr boundary=37 retired=217 trace=a0428d4d68817f56 ram=d6645b8638f42a778d6d14a00095915784801b5ddd2c6f08f373b4da2eb3732a
+E9_SESSION_NATIVE rv64mi-p-csr boundary=111 retired=170 trace=0bb1fef72d112e7c ram=a9ee2a511e61e0521ccc3aa1bd1907156abb4df9f59951f66aea814066ff6f79
+E9_SESSION_NATIVE rv64mi-p-zicntr boundary=37 retired=86 trace=51c103791db84f22 ram=68658159022dfbc42213e1d638143888aa6d6d31dfb4170e5c90e6b4c34213df
+E9_SESSION_NATIVE rv64mi-p-zicntr boundary=111 retired=12 trace=f7fcc11221bdc985 ram=68658159022dfbc42213e1d638143888aa6d6d31dfb4170e5c90e6b4c34213df
+test session_native_trace_matches_uninterrupted_guest ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 27.98s
+
+     Running tests/e9_session_checkpoint_verifier.rs (target/debug/deps/e9_session_checkpoint_verifier-fbc1fe2a118822a4)
+
+running 2 tests
+E9_CRITIC schedule=0 seed=16979 retired=251 trace=0aa59606dff079fb
+E9_CRITIC schedule=1 seed=2654452748 retired=251 trace=23e313549e1ea5dd
+E9_CRITIC schedule=2 seed=5308888517 retired=251 trace=9d58e909849bc480
+E9_CRITIC schedule=3 seed=7963324286 retired=251 trace=4ee4f401dcd5887b
+E9_CRITIC schedule=4 seed=10617760055 retired=251 trace=0f19296e2424dc18
+E9_CRITIC schedule=5 seed=13272195824 retired=251 trace=f3c9efe5105033a1
+E9_CRITIC schedule=6 seed=15926631593 retired=251 trace=22b8beca78b48472
+E9_CRITIC schedule=7 seed=18581067362 retired=251 trace=04044e0c9f4da264
+E9_CRITIC schedule=8 seed=21235503131 retired=251 trace=bcca0a7ef9d4e4ed
+E9_CRITIC atomic-refusals=65 all-components=16 continuation=c6a4feeb69b50471
+test every_late_component_refusal_preserves_the_whole_destination ... ok
+E9_CRITIC schedule=9 seed=23889938900 retired=251 trace=e68f6b3b2d81fb6b
+E9_CRITIC schedule=10 seed=26544374669 retired=251 trace=bf2791c917d58b76
+E9_CRITIC schedule=11 seed=29198810438 retired=251 trace=f0cecc1508d9d6b3
+E9_CRITIC schedule=12 seed=31853246207 retired=251 trace=a56766220567a4d3
+E9_CRITIC schedule=13 seed=34507681976 retired=251 trace=271b9477397ec0fa
+E9_CRITIC schedule=14 seed=37162117745 retired=251 trace=b1d9ff55669ff43a
+E9_CRITIC schedule=15 seed=39816553514 retired=251 trace=569b80a074d2ebd2
+E9_CRITIC schedule=16 seed=42470989283 retired=251 trace=ad4c4c09e1ad8380
+E9_CRITIC schedule=17 seed=45125425052 retired=251 trace=4e6be9216e4351d6
+E9_CRITIC schedule=18 seed=47779860821 retired=251 trace=a7f03553f9ae7d3c
+E9_CRITIC schedule=19 seed=50434296590 retired=251 trace=5c2eb627a203f8ea
+E9_CRITIC schedule=20 seed=53088732359 retired=251 trace=3f9c5623b662b15b
+E9_CRITIC schedule=21 seed=55743168128 retired=251 trace=77bf5cbdf1a89ffe
+E9_CRITIC schedule=22 seed=58397603897 retired=251 trace=09ad4e8bf7a3e96a
+E9_CRITIC schedule=23 seed=61052039666 retired=251 trace=74c545371ff44152
+E9_CRITIC schedule=24 seed=63706475435 retired=251 trace=62c3dbceab4ef959
+E9_CRITIC schedule=25 seed=66360911204 retired=251 trace=079ada8e5974e966
+E9_CRITIC schedule=26 seed=69015346973 retired=251 trace=fd2a1ecf0a575a90
+E9_CRITIC schedule=27 seed=71669782742 retired=251 trace=c46f45a2723b2902
+E9_CRITIC schedule=28 seed=74324218511 retired=251 trace=4e024e6544b00ce9
+E9_CRITIC schedule=29 seed=76978654280 retired=251 trace=7ef32efcc5b46918
+E9_CRITIC schedule=30 seed=79633090049 retired=251 trace=bb7ca9f6fb0ee9e4
+E9_CRITIC schedule=31 seed=82287525818 retired=251 trace=312437d5b9352d78
+test mixed_delivered_pending_staged_input_survives_32_boundary_schedules ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.16s
+
+     Running tests/production_gpu_checkpoint_critic.rs (target/debug/deps/production_gpu_checkpoint_critic-a68bdbeb5aaaad9f)
+
+running 7 tests
+CRITIC_CHECKPOINT retained-unref renderer=false save=Ok bytes=3966 load=Ok((1, 2))
+CRITIC_CHECKPOINT prefixes=4138 trailing=2 epochMAX=Err(BadComponentState { tag: 12 }) native_unchanged=true
+test every_truncated_prefix_trailing_data_and_exhausted_epoch_refuse ... ok
+CRITIC_CHECKPOINT retained-unref renderer=true save=Ok bytes=3973 load=Ok((1, 2))
+test accepted_retained_scanout_checkpoint_is_loadable_after_public_unref ... ok
+CRITIC_CHECKPOINT epoch-replay cached=false saved=1 fresh=4 sequence=2 generation=3 used=7 digest=a987309e02433f7ed69e0c9e80351935d5434494e07854b58a855881350b8ffa
+CRITIC_CHECKPOINT outer-corruption byte=132 result=Err(BadComponentState { tag: 12 }) target_x5=0xaabb epoch=1
+CRITIC_CHECKPOINT section=missing-CPU result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=profile-byte offset=2325 result=Err(BadComponentState { tag: 12 })
+test accelerated_whole_machine_corruption_cannot_change_cpu_outside_gpu_digest ... ok
+CRITIC_CHECKPOINT epoch-replay cached=true saved=1 fresh=4 sequence=2 generation=3 used=7 digest=a987309e02433f7ed69e0c9e80351935d5434494e07854b58a855881350b8ffa
+test repeated_restore_reserves_new_epoch_without_resetting_original_highwaters ... ok
+CRITIC_CHECKPOINT section=duplicate-CPU result=Err(BadComponentState { tag: 12 })
+test rehashed_missing_or_duplicate_cpu_section_cannot_mix_target_state ... ok
+CRITIC_CHECKPOINT semantic=profile-extent offset=2037 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT ready-unconsumed cached=false retired=5 used=5 bytes=4121 digest=dcbe0aff820dc5e4cd55893c97a48aa75ec8bf48052ecbc6e400aa69ea7d2615
+CRITIC_CHECKPOINT semantic=inner-version offset=1997 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=inner-witness offset=2005 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=control-magic offset=3630 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=zero-epoch offset=3638 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=generation-not-above-live offset=3646 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT ready-unconsumed cached=true retired=5 used=5 bytes=4121 digest=dcbe0aff820dc5e4cd55893c97a48aa75ec8bf48052ecbc6e400aa69ea7d2615
+test ready_but_unconsumed_original_completion_cannot_be_checkpointed ... ok
+CRITIC_CHECKPOINT semantic=zero-backing-highwater offset=3654 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=wrong-accounting offset=3662 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=poisoned-control offset=3686 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=context-count offset=3687 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=debug-name-extent offset=3703 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=missing-context-member offset=3711 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=resource-count offset=3723 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=duplicate-creation-generation offset=3731 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=metadata-id offset=3739 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=backing-generation-zero offset=3784 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=backing-count offset=3792 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=backing-below-RAM offset=3796 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=backing-end-outside-RAM offset=3804 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=legacy-backing-below-RAM offset=3549 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=exhausted-sequence offset=3832 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=completion-without-admission offset=3848 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=pending-submission offset=3920 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=zero-scanout-generation offset=3933 result=Err(BadComponentState { tag: 12 })
+CRITIC_CHECKPOINT semantic=invalid-binding-discriminator offset=3989 result=Err(BadComponentState { tag: 12 })
+test correctly_framed_but_invalid_native_state_is_rejected_before_commit ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.30s
+
+     Running tests/snapshot_coherence.rs (target/debug/deps/snapshot_coherence-317ef40baba57ffc)
+
+running 5 tests
+test overlay_generation_is_monotonic ... ok
+test same_snapshot_refused_after_overlay_advances ... ok
+test bumped_overlay_generation_is_refused_before_mutation ... ok
+test matching_base_and_generation_restores ... ok
+test changed_base_hash_is_refused_before_mutation ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/virtio_blk_quiesce.rs (target/debug/deps/virtio_blk_quiesce-4fb4e0ca46dd1dea)
+
+running 3 tests
+test quiesce_refuses_unresolvable_chunk_within_bounded_passes ... ok
+test quiesce_is_a_noop_when_nothing_is_parked ... ok
+test quiesce_drains_resolvable_flush_then_snapshots_coherently ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s
+

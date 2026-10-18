@@ -88,6 +88,8 @@ pub enum SndSnapshotError {
     LengthOverflow,
     /// The allocator rejected a bounded reservation.
     OutOfMemory,
+    /// Exact software checkpoints require inactive streams and no host-paced PCM transfers.
+    SessionAudioActive,
 }
 
 impl SndSnapshotError {
@@ -112,6 +114,7 @@ impl SndSnapshotError {
             Self::TrailingBytes => 16,
             Self::LengthOverflow => 17,
             Self::OutOfMemory => 18,
+            Self::SessionAudioActive => 19,
         }
     }
 }
@@ -168,6 +171,40 @@ struct DecodedSnd {
     dropped_xruns: u64,
     kicked: [bool; 4],
     reset_pending: bool,
+}
+
+fn session_admit(decoded: &DecodedSnd) -> Result<(), SndSnapshotError> {
+    if decoded.capture_enabled
+        || decoded.output.state == PcmState::Running
+        || decoded.capture.state == PcmState::Running
+        || decoded.playback.pending_count != 0
+        || decoded.capture_queue.pending_count != 0
+    {
+        return Err(SndSnapshotError::SessionAudioActive);
+    }
+    Ok(())
+}
+pub(super) fn encode_session(state: &SndState) -> Result<Vec<u8>, SndSnapshotError> {
+    let bytes = encode(state)?;
+    session_admit(&decode(&bytes)?)?;
+    Ok(bytes)
+}
+pub(super) fn restore_session(
+    state: &mut SndState,
+    payload: &[u8],
+) -> Result<(), SndSnapshotError> {
+    let decoded = decode(payload)?;
+    session_admit(&decoded)?;
+    restore(state, payload)?;
+    // No PCM descriptors/host rings exist in this admitted profile. Preserve every inactive
+    // queue's saved timing and release metadata instead of applying legacy XRUN repairs.
+    state.playback.observed_epoch = decoded.playback.observed_epoch;
+    state.playback.release_pending = decoded.playback._release_pending;
+    state.playback.next_xrun_ns = decoded.playback._next_xrun_ns;
+    state.playback.period_duration_ns = decoded.playback._period_duration_ns;
+    state.capture.observed_epoch = decoded.capture_queue.observed_epoch;
+    state.capture.release_pending = decoded.capture_queue._release_pending;
+    Ok(())
 }
 
 /// Encode the stable guest-visible portion of a sound state.
@@ -784,6 +821,31 @@ mod tests {
             status(&state.handle_control(&lifecycle_request(VIRTIO_SND_R_PCM_START, stream_id,))),
             VIRTIO_SND_S_OK
         );
+    }
+
+    #[test]
+    fn session_inactive_metadata_is_exact_and_active_audio_refuses_atomically() {
+        let mut source = SndState::new();
+        source.playback.observed_epoch = u64::MAX;
+        source.playback.release_pending = true;
+        source.playback.next_xrun_ns = Some(9_007_199_254_740_993);
+        source.playback.period_duration_ns = 99;
+        source.capture.observed_epoch = 29;
+        source.capture.release_pending = true;
+        let payload = encode_session(&source).unwrap();
+        let mut target = SndState::new();
+        restore_session(&mut target, &payload).unwrap();
+        assert_eq!(encode_session(&target).unwrap(), payload);
+        configure_running(&mut source, 0);
+        assert_eq!(
+            encode_session(&source),
+            Err(SndSnapshotError::SessionAudioActive)
+        );
+        assert_eq!(
+            restore_session(&mut target, &encode(&source).unwrap()),
+            Err(SndSnapshotError::SessionAudioActive)
+        );
+        assert_eq!(encode_session(&target).unwrap(), payload);
     }
 
     #[test]

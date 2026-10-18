@@ -98,6 +98,7 @@
     {
       "id": "keyboard",
       "owners": [
+        "E9-T05",
         "E9-T10"
       ],
       "disposition": "capture",
@@ -113,6 +114,10 @@
         {
           "path": "web/src/input/reconciliation.js",
           "symbol": "export"
+        },
+        {
+          "path": "crates/core/src/dev/virtio/input/snapshot.rs",
+          "symbol": "fn encode_session("
         }
       ]
     },
@@ -403,6 +408,7 @@
     {
       "id": "agent",
       "owners": [
+        "E9-T05",
         "E9-T10",
         "E9-T12"
       ],
@@ -419,6 +425,10 @@
         {
           "path": "web/linux-worker-protocol.js",
           "symbol": "sendAgentInput"
+        },
+        {
+          "path": "crates/core/src/dev/virtio/console/session_snapshot.rs",
+          "symbol": "pub(crate) fn snapshot_session_or_resume("
         }
       ]
     },
@@ -442,6 +452,7 @@
     {
       "id": "audio-playback",
       "owners": [
+        "E9-T05",
         "E9-T12"
       ],
       "disposition": "capture",
@@ -457,6 +468,10 @@
         {
           "path": "crates/core/src/dev/virtio/snd/mod.rs",
           "symbol": "pub trait AudioClock"
+        },
+        {
+          "path": "crates/core/src/dev/virtio/snd/snapshot.rs",
+          "symbol": "fn session_admit("
         }
       ]
     },
@@ -614,6 +629,18 @@
         {
           "path": "crates/wasm/src/virgl_linux.rs",
           "symbol": "pub fn load_accelerated_snapshot_blob("
+        },
+        {
+          "path": "crates/wasm/src/session_checkpoint.rs",
+          "symbol": "pub async fn capture_software_checkpoint("
+        },
+        {
+          "path": "crates/wasm/src/software_checkpoint.rs",
+          "symbol": "pub fn from_bytes("
+        },
+        {
+          "path": "web/session-checkpoints.js",
+          "symbol": "export class SessionCheckpoints"
         }
       ]
     }
@@ -621,20 +648,27 @@
   "source_sha256": {
     "crates/core/src/dev/rtc.rs": "15d1a05661f4be977c8d924b7c86863ef6c531b8cac054e7887fffd4fbfd63fe",
     "crates/core/src/dev/virtio/blk.rs": "71f70f6640c04dba993a35ae3a2397d26b7ef5a17fa932cd5aa8916c2842afdb",
+    "crates/core/src/dev/virtio/console/session_snapshot.rs": "be47837ca866288de760812158064ccb055de04eff7d93d41d3faa7e53273608",
     "crates/core/src/dev/virtio/gpu/snapshot.rs": "44213a7452dccb5fed4f9969df03aaff64d2fc2c5a39c54ace4e1a563544b390",
+    "crates/core/src/dev/virtio/input/snapshot.rs": "3466ff2e5278c1cb29a63439a9208dd2d5efc3147ed063fece77c9e35dde3fce",
     "crates/core/src/dev/virtio/net.rs": "80090a16b52bc63feab98a3dd6afeb3ba874500147031552e6aea7640bfd1387",
     "crates/core/src/dev/virtio/rng.rs": "b1d38c4014b48171a4fb925ac66355df30216c43214869b7f845675e08960785",
-    "crates/core/src/dev/virtio/snd/mod.rs": "3f40a6f9696baab14767ddd116a7be38cd87eb5c6d53353c265b24897a8d7163",
-    "crates/core/src/lib.rs": "932589a8d954b4c24d1838c9eda15ba8638c68ea4b9b03450a6c1fae6bac1db0",
+    "crates/core/src/dev/virtio/snd/mod.rs": "21294eb1046b260ee4efeaa6ac205513c3006243dd11a05ca2d2f2ea0cbf5eb6",
+    "crates/core/src/dev/virtio/snd/snapshot.rs": "20ba49acaff6cd0336a900dac65e05793a26e28a4e438c8a1a1894b0124603e7",
+    "crates/core/src/lib.rs": "e2f98415f38526c2f3e1e5e2972cd2bd6d4dd1bf4ed31ca65123dc46d2033e59",
     "crates/core/src/time.rs": "f5c82f061100dc0f30c6281eae5d7103298622739b629312566348924257765f",
     "crates/slirp/src/lib.rs": "7e08a064d78f516b775cfdf913351155bc9734445a9a063d761c0b7f385703c2",
+    "crates/storage/src/disk_root.rs": "dbe457d5d68b797d173f86bdbdd0d78c06a644e7de04c5440d060e62127e07c9",
     "crates/wasm/src/browser_file_transfer.rs": "5ddc63e9b2e2a64b7587cb7ba7c25ac8da8331264be3790e92d4111dd8e22450",
     "crates/wasm/src/chunked.rs": "53efe9ea5c755b7f0fb6e2de2efcfa58f96bd84748efb1b3980036a02c197d22",
     "crates/wasm/src/crypto_entropy.rs": "762f6afe26f4658772d60a50d31efea71a912849d96bee7db1d4fc6a553a1b01",
     "crates/wasm/src/doh_fetch.rs": "688c4efde913eef0a3147f96017dab7714067bc555f1ef0e5a2d5906936fee95",
     "crates/wasm/src/http_fetch.rs": "db6719f76c0f33e3bc09ff1dac1856ee232b529a0aeb725a0b3116a5b4c414e7",
     "crates/wasm/src/idb_store.rs": "643ce073069f674c9a4b25e42548d95d0e3d7815de3b1e44cf3429cf07f8fcc1",
-    "crates/wasm/src/lib.rs": "5383f6b844213cf16920c081c6409f367708babc58a9353478a72985c3eb3e7c",
+    "crates/wasm/src/lib.rs": "af0f55d5b54948218999e24c1b94b9bdc262d7a3f868240288fddf2e3bfb9668",
+    "crates/wasm/src/session_checkpoint.rs": "af0858d7e803c0c557b40ea0189a98d0af61426a069b4a67ad7afb66a778415e",
+    "crates/wasm/src/session_disk.rs": "b776982f672762b482df89b14ab27420e907a9342c326b2a59f8a96acf72cbae",
+    "crates/wasm/src/software_checkpoint.rs": "f0d475b1c599b3f3bd2eed77c6745c2ab4d6f79793bfcad74ca377536d4e1dbd",
     "crates/wasm/src/virgl_host.rs": "32da1555bf5b1c751b94f8d52dd9cf0d46a1d7f6bfc62cdfded27dd0923b4d81",
     "crates/wasm/src/virgl_linux.rs": "067dbbd59319a3bae79bcec2baf9b24dec71d765940c34eaf634c73b14189949",
     "crates/wasm/src/worker_transport.rs": "709b19ae9d50cd6c7a139440b3465d37dac0046649ca66949f4e7e6eed753dbd",
@@ -644,16 +678,15 @@
     "web/display-resize.js": "f22d8f465c6df49ccc2495e3724a756f4f554ee17bd4db83f19ed48965459f1e",
     "web/gpu-checkpoint.js": "f00f1537455a476eb8d9c54d25378ea23bd18024d84eded310da947ea63846ce",
     "web/guest-clock.js": "fcd9a2b5ce4c2a04cc8a253aa1d330f60e5c9e4e72473c55503d897c2311aad3",
-    "web/linux-worker-protocol.js": "facf609913ba7d1854ce92779cdd264ca97346d73136685486e86d1646afe26e",
-    "web/loader.js": "01c83ff0925458288a00cd0283d6ff1c740e3756d1944c6861d575e70acb788e",
+    "web/linux-worker-protocol.js": "50c02f3babe38c93830d82088c477f415f4a4aa5440589de4d91be10099ff900",
+    "web/loader.js": "b42df333fa2bb6d65088843246b47cb87c9847aad4bfadcf9b97ff9451210efe",
     "web/renderer/virgl-command/checkpoint.mjs": "ba463beecf7d0b1fd141a607a82dd17b37ef407582a23f46d00c6bef85d911af",
     "web/renderer/virgl-command/control-bridge.mjs": "27aecae3704b053d6c01d6d933e6592bcea334ca243047d3fe14536b365a3c5a",
     "web/renderer/virgl-command/queries.mjs": "8a7dd9c146ff437691108f0749c89a2d4ac8573ec35690c02e39cbdbbaca8860",
-    "web/src/audio/microphone.js": "db52dd5c778109e14cf2b758b54482a845aa3fc244b95af5723d70375c2cc0ee",
-    "web/src/input/reconciliation.js": "6ff57347fd7818531e17ca1b00456192258d76532299ba642422f057582fe36d",
+    "web/session-checkpoints.js": "a6fa93d426c3823cb23c797666b69a49226417a43aacb3ac1b0729d74a095803",
     "web/session-disk-roots.js": "7dfd8784ab0086de26f042e3eb9cb63857250ea1a6b58cb0174b6f312bcf97bb",
-    "crates/storage/src/disk_root.rs": "dbe457d5d68b797d173f86bdbdd0d78c06a644e7de04c5440d060e62127e07c9",
-    "crates/wasm/src/session_disk.rs": "b776982f672762b482df89b14ab27420e907a9342c326b2a59f8a96acf72cbae"
+    "web/src/audio/microphone.js": "db52dd5c778109e14cf2b758b54482a845aa3fc244b95af5723d70375c2cc0ee",
+    "web/src/input/reconciliation.js": "6ff57347fd7818531e17ca1b00456192258d76532299ba642422f057582fe36d"
   },
   "fixtures": [
     {

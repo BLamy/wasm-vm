@@ -1197,6 +1197,25 @@ impl SndState {
         snapshot::encode(self)
     }
 
+    pub(crate) fn to_resume_snapshot(&self, exact: bool) -> Result<Vec<u8>, SndSnapshotError> {
+        if exact {
+            snapshot::encode_session(self)
+        } else {
+            self.to_snapshot()
+        }
+    }
+    pub(crate) fn restore_resume_snapshot(
+        &mut self,
+        payload: &[u8],
+        exact: bool,
+    ) -> Result<(), SndSnapshotError> {
+        if exact {
+            snapshot::restore_session(self, payload)
+        } else {
+            self.restore_snapshot(payload).map(|_| ())
+        }
+    }
+
     /// Restore stream configuration while dropping host audio buffers and scheduling XRUN repair.
     pub fn restore_snapshot(
         &mut self,
