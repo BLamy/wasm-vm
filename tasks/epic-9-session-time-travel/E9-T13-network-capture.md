@@ -3,7 +3,7 @@ id: E9-T13
 epic: 9
 title: Capture network sessions and replay them with zero live egress
 priority: 524.913
-status: implemented
+status: in-progress
 depends_on: [E9-T09, E9-T03]
 estimate: S
 risk: high
@@ -251,3 +251,45 @@ the sole publication candidate. Fresh independent review must carry the prior
 HELD results, interrogate this repair and remaining coverage, and retain the
 separate public-site proof gap until the repaired bundle is deployed and tested.
 No worker verification verdict is asserted.
+
+### 2026-10-18 — worker — saved normal-reset failure; semantic rework
+
+The independent session saved a second failing ordinary test before its turn
+was stopped by automatic security review for possible cybersecurity risk.
+The worker preserved and read those existing files; the stopped test execution
+was not retried. No independent final verdict is claimed.
+
+At frozen e91c7af9bd8ec64c200c7d5a6687d9e4e124db12, the normal capacity/reset
+test fails twice at harness/tests/critic.rs:956: a checkpoint taken immediately
+after Status=0 does not roundtrip byte-for-byte. Its existing exact command is
+cargo test --offline --manifest-path
+/Volumes/e9-final-proof-ram/t13-critic-main/harness/Cargo.toml --target-dir
+/Volumes/e9-final-proof-ram/t13-critic-main/coverage-target --test critic
+critic_combined_owned_capacity_frees_exactly_the_acknowledged_tx_bytes
+-- --nocapture. Both recorded exits are101.
+
+Original reset frame SHA256
+cb3066ac4b8a8d1c9c323ebbec8581db6dde6cc51cfa93e15fb14c25eb4fa806;
+restored frame SHA256
+850164c283134047ea402cc71370ef1e74db28620cfb9a2ddeb62ddcf35c7a7b.
+Only section7 differs: payload bytes277,282,283,285 change from1 to0.
+A pending transport reset has invalidated the old service-ring views; exact
+save still serializes them while restore drops them because the transport's
+queues are no longer ready. The repair must capture those invalidated views
+canonically without polling the backend, delivering queued RX or advancing
+the guest, and add an ordinary reset/restore/resume regression.
+
+Lossless saved evidence:
+evidence/e9-t13/worker-reset-finding/provenance.json,
+SHA256 69a4f951b982c044f2a67e90b752c65558ad0ff94b53deff61e254b5b8be4531.
+It retains65 original files, the two repeated failures, all four before/after
+capacity/reset frames from each run, original critic source/build identity,
+pre-evidence predictions and already produced normal schedule artifacts.
+
+The e91c publication candidate is withdrawn and has never been deployed.
+The conservation repair and its local24-command pass remain recorded, but
+this newly observed reset gap requires semantic rework and a new frozen run.
+The independent review is incomplete because its execution was stopped;
+publication also still needs Cloudflare account authorization. The official
+device-code attempt expired after five minutes without that authorization.
+No dependent E9 task may start.
