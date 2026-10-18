@@ -1,0 +1,10 @@
+page.evaluate: Error: session metadata: UnsupportedRequired("critic-wrong-uart")
+    at __wbg_Error_92b29b0548f8b746 (http://127.0.0.1:50209/session-pkg/wasm_vm_session.js:213:25)
+    at http://127.0.0.1:50209/session-pkg/wasm_vm_session_bg.wasm:wasm-function[288]:0x54c30
+    at http://127.0.0.1:50209/session-pkg/wasm_vm_session_bg.wasm:wasm-function[270]:0x50c59
+    at sessionValidateManifest (http://127.0.0.1:50209/session-pkg/wasm_vm_session.js:201:22)
+    at SessionCheckpoints.save (http://127.0.0.1:50209/session-checkpoints.js:104:21)
+    at async eval (eval at evaluate (:234:30), <anonymous>:105:9)
+    at async <anonymous>:260:30
+    at checkSoftwareCheckpointCritic (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/tools/verify/e9-software-checkpoints-critic.mjs:5:29)
+    at /Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/evidence/e9-t05/verifier/run-repair-browser-critic.mjs:29:23

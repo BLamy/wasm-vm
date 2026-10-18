@@ -1,0 +1,17 @@
+{
+  "status": "failed",
+  "checks": null,
+  "errors": [],
+  "error": {
+    "message": "page.evaluate: RangeError: icountDivider requires guestClock=icount\n    at validateICountDivider (http://127.0.0.1:49894/guest-clock.js:37:32)\n    at startLinuxBoot (http://127.0.0.1:49894/loader.js:375:5)\n    at eval (eval at evaluate (:234:30), <anonymous>:104:34)\n    at async <anonymous>:260:30",
+    "stack": "page.evaluate: RangeError: icountDivider requires guestClock=icount\n    at validateICountDivider (http://127.0.0.1:49894/guest-clock.js:37:32)\n    at startLinuxBoot (http://127.0.0.1:49894/loader.js:375:5)\n    at eval (eval at evaluate (:234:30), <anonymous>:104:34)\n    at async <anonymous>:260:30\n    at checkSoftwareCheckpointCritic (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/tools/verify/e9-software-checkpoints-critic.mjs:5:29)\n    at /Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/evidence/e9-t05/verifier/run-repair-browser-critic.mjs:29:23"
+  },
+  "trace": {
+    "path": "target/evidence/e9-t05-repair-critic-trace.zip",
+    "sha256": "5c5dc9242223d60b196c3ce18029a4556246cbbba128681c9e5ffcae2088d554"
+  },
+  "coverage": {
+    "path": "target/evidence/e9-t05-repair-critic-coverage.json",
+    "sha256": "0de87bc17a671eb5e680eb4348b3ecdf15a1e3227e64dc8773afec9d6a996511"
+  }
+}

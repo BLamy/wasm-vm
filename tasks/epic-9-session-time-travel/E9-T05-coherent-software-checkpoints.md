@@ -3,7 +3,7 @@ id: E9-T05
 epic: 9
 title: Capture and restore coherent software session checkpoints
 priority: 524.905
-status: implemented
+status: evidence-needed
 depends_on: [E9-T03, E9-T04]
 estimate: S
 risk: high
@@ -154,3 +154,49 @@ provenance and compressed full tuples. Original refutation/evidence remain intac
 The narrow precheck is separately retained in `target/evidence/e9-t05fix-pre/`.
 Fresh incremental interrogation, the one final pristine clone, and public
 Cloudflare proof remain pending; this is a worker claim.
+
+### 2026-10-18 — fresh verifier — pre-cold audit — VERDICT: needs-evidence
+
+- **R0–R4 / repaired P6a — HELD.** Independently authenticated the repaired receipt
+  `f503e646a19c05ed7a1c33ecd64cae767eaedc33cf06f8acfd01021a2d1aed37`, its **542**
+  listed payloads plus the receipt (**543** originals), **51** compact copies/aliases
+  and **42** frozen source hashes. Both original ABA schedules now publish and admit
+  the original coherent snapshot: exact frame/root disk hashes and leaf bytes
+  **67/67** and **68/68**. The source owns the bounded frame before hashes, parsing
+  or awaits. Ordinary producer mutation/detachment preserves the coherent original;
+  configuration remains pinned and concurrent appends retain one winner. Fresh
+  supplementary browser repetitions agree. Original refutation/evidence stay intact.
+- **Coherent guest / filesystem / regressions — HELD.** Independently decoded all
+  16 sections and sparse RAM of repaired raw tuples, matched before/restored frame
+  SHA-256 `f558b633c4605c93b5a1770f219f6759dd1cb147f8879e271b3afe446f50b047`,
+  reconstructed all three COW images, and read exact before/restored `e9:before\n`
+  and advanced `e9:after\n` through read-only e2fsprogs mounts. Guest memory/UART,
+  held key, original I/O drain, bounded timeout/recovery, all-component refusal,
+  owner fences, 127/0 zero-error demo and retained GPU compatibility remain HELD.
+  The unchanged native 65 admission attacks, 32 continuation schedules and isolated
+  sabotage result carry forward under the incremental policy.
+- **COVERAGE / SUITE — HELD; tests frozen.** Inventoried **94** source/production
+  hunks across **22** files; recorded V8 counts exercise every changed JavaScript
+  hunk. Native codec/integration routes and narrow declaration/configuration/error
+  waivers are documented in `evidence/e9-t05/verifier/audit.md` and
+  `hunk-inventory.json`. Added only bounded direct-loader checks: valid exact restore
+  while paused with zero retired instructions, descriptor/profile refusal, and a
+  supported-but-false UART IRQ that reaches actual-topology rejection and frees only
+  the private candidate. The original source stays byte-identical and usable. These
+  promoted checks pass with zero browser errors and are included in the existing
+  acceptance helper. The first supplementary wall fixture incorrectly kept an ICount
+  divider, and an unknown topology kind correctly rejected at the schema; those
+  harness results are preserved, and the corrected valid-range fixtures pass.
+- **R5 — NEEDS EVIDENCE.** Run the **one** final pristine source proof at this final
+  promoted-test head with scrubbed Rust/Cargo environment, then interrogate its exact
+  receipt and perform the declared Cloudflare/public proof. No cold clone or deployment
+  was run during this audit. This pending proof is not a semantic refutation.
+
+Details, exact commands and authenticated receipts are in
+`evidence/e9-t05/verifier/repair-predictions.md`, `worker-repaired-interrogation.json`,
+`files-repaired-interrogation.json`, `repair-browser-critic.json`,
+`repair-aba-browser.json`, `coverage-blocks.json` and `repair-final-receipt.json`.
+The only source change after the worker recording is the bounded promoted browser
+test helper; native/runtime/dependencies are unchanged. This commit freezes tests and
+changes verification evidence/status only otherwise. All unchanged HELD findings carry
+forward into the final cold/public audit.

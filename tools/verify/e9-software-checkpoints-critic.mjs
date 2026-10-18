@@ -97,12 +97,32 @@ export async function checkSoftwareCheckpointCritic(page, fixture) {
         revision:final.revision,ids:finalManifest.checkpoints.map(item=>item.id)};
       checks.originalStillAdmitted=checkpointHash((await checkpoints.admit('critic','first',GPU_CHECKPOINT_BUILD_ID,
         SOFTWARE_CHECKPOINT_WASM_SHA256)).frame)===originalHash;
+      const directRestore=await startLinuxBoot({sessionCheckpoint:{database,id:'critic',checkpoint:'first'}});
+      try {
+        checks.directLoaderRestore={paused:directRestore.isPaused(),restored:directRestore.restoredFromBootSnapshot(),
+          retired:directRestore.schedulerStats().retiredInstructions,
+          exact:checkpointHash(await directRestore.captureSoftwareCheckpoint())===originalHash};
+      } finally {await directRestore.stop();await directRestore.releaseWriterLock();directRestore.closeStorage();}
+      const topologyLease=await store.writer('wrong-topology');
+      try {
+        const wrongConfiguration=structuredClone(configuration);wrongConfiguration.devices[0].irq=1;
+        await checkpoints.save(topologyLease,'wrong-topology',frame,wrongConfiguration);
+        checks.loaderTopology=await refuse(async()=>{
+          const unexpected=await startLinuxBoot({sessionCheckpoint:{database,id:'wrong-topology',checkpoint:'wrong-topology'}});
+          await unexpected.stop();await unexpected.releaseWriterLock();unexpected.closeStorage();
+        });
+      } finally {await topologyLease.release();}
       checks.sourceUnchanged=checkpointHash(await controller.captureSoftwareCheckpoint())===originalHash;
       checks.sourceRetired=controller.schedulerStats().retiredInstructions;
       checks.profile={};
       candidate.setGuestClock('wall');
       checks.profile.wall=await refuse(()=>candidate.captureSoftwareCheckpoint(parts.contextBytes));
       candidate.setGuestClock('icount');
+      checks.profile.restoreDescriptor=await refuse(()=>startLinuxBoot({
+        sessionCheckpoint:{database,id:'critic',checkpoint:'first',unrecognized:true}}));
+      const wallController=await startLinuxBoot({...configOpts,guestClock:'wall',icountDivider:undefined});
+      try {checks.profile.loaderWall=await refuse(()=>wallController.captureSoftwareCheckpoint());}
+      finally {await wallController.stop();await wallController.releaseWriterLock();wallController.closeStorage();}
       const microphone=WasmLinux.newChunkedDisk(fixture.ram_mib,kernel,configuration.imageManifest,
         fixture.base_url,64,new Uint32Array(),fixture.bootargs,()=>{},true);
       try {checks.profile.microphone=await refuse(()=>microphone.captureSoftwareCheckpoint(parts.contextBytes));}
@@ -128,7 +148,11 @@ export async function checkSoftwareCheckpointCritic(page, fixture) {
   assert.equal(result.race.ids.length,result.expectedAppend.length+1);
   assert.deepEqual(result.race.ids.slice(0,result.expectedAppend.length),result.expectedAppend);
   assert.equal(result.originalStillAdmitted,true);assert.equal(result.sourceUnchanged,true);assert.equal(result.sourceRetired,0);
+  assert.deepEqual(result.directLoaderRestore,{paused:true,restored:true,retired:0,exact:true});
+  assert.equal(result.loaderTopology,'session checkpoint device topology differs from the actual machine');
   assert.equal(result.profile.wall,'session_checkpoint_profile');
+  assert.equal(result.profile.restoreDescriptor,'invalid software session restore profile');
+  assert.match(result.profile.loaderWall,/isolated ICount software profile/);
   assert.equal(result.profile.microphone,'session_checkpoint_profile');
   return result;
 }

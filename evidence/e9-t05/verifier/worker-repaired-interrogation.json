@@ -1,0 +1,133 @@
+{
+  "P0": "HELD",
+  "receipt_sha256": "f503e646a19c05ed7a1c33ecd64cae767eaedc33cf06f8acfd01021a2d1aed37",
+  "head": "4ce36a932feaf171c09cd8b25e90d3fc9ff376ac",
+  "original_files": 542,
+  "compact_files": 51,
+  "sources": 42,
+  "tuples": {
+    "before": {
+      "frame_sha256": "f558b633c4605c93b5a1770f219f6759dd1cb147f8879e271b3afe446f50b047",
+      "frame_bytes": 23841728,
+      "component_sha256": {
+        "context": "86df6ff31ce7e193738558994207b6bc459778077542fb6e9c26c2c4729a01be",
+        "native": "45a448519583fa15d99fb59eb876b613849ca0b6284d183abd88aed13ff723ee",
+        "disk": "20d4102d6d984733332d09810e739a3fcdde9e4d8abb09ba8a1296fef7886018",
+        "input": "c24b7fcc60ca6d28baa385a795fdc7b4979b537d7c79c467b513adbf7a1c2d19",
+        "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "section_sha256": {
+        "1": "0dfcdb0fabe9082095e71520d5ef4551a37d44ec1324f1bb51702a1a1acd7a27",
+        "2": "1cf0ed9aff5db81ec66ab82cbedeb70fa40694ea95144c25a75a625e235a3a00",
+        "3": "010310dd31d51d109fedf04fa315998f04ddb28df6e783ed1bb1db5732085195",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "1cbd31dbf29ac42f31bc5820feeaf237bce2d2e541e8d08e50b2fb5673619833",
+        "6": "e8e840d60fb6e91b7173ca333072648e34d297fa160a6855fe11a2c7bebe423b",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "d564589e21c3246263e288895b7c901bb7b6d7461bc677793ae23e6d20240e33",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "070be9e7c9b5cbc1c4c849c2a145d841330c12fceae85d7092251f94120c90b8",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "a91ab4b44dffe2581d5b3e274ba615f6aea152f8861cab1eb54e3046c34305aa"
+      },
+      "ram_sha256": "e1c217b68ef0ab50820aa119d1709ef3b336ffe8880cae925d3ff488ebcc248a",
+      "ram_bytes": 268435456,
+      "phase": 5,
+      "divider": 10,
+      "stimecmp": "761685160",
+      "generation": "0",
+      "disk_blocks": 55,
+      "input_hex": "65395f71756575653d7175657565642d6265666f72650a"
+    },
+    "after": {
+      "frame_sha256": "8ec08ecd47c8f27da62b4471e48ad8e89801d82d6b89bb1fb565288f789743c1",
+      "frame_bytes": 23872967,
+      "component_sha256": {
+        "context": "86df6ff31ce7e193738558994207b6bc459778077542fb6e9c26c2c4729a01be",
+        "native": "18efb9840bcbbac264e9b48c8e712ff2bfe6c846d91095cacc6fbdb17e9c3009",
+        "disk": "fb5b52b71d256824707ede983760810fa1beaebc744ec3913d14c66625a114a8",
+        "input": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "section_sha256": {
+        "1": "0896bcd99f413efd3f76372bdc7484fa6f867550104865d88c60dbb63de90049",
+        "2": "fe5679d039e9f786e925ab39132258f6cfb68e36d7d1853d47383f59be3b9c6a",
+        "3": "18a806ba4b60375cd84229cf2de66eda2263a6e32ee2ec12a1dcf09514ddbf34",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "1cbd31dbf29ac42f31bc5820feeaf237bce2d2e541e8d08e50b2fb5673619833",
+        "6": "95533c38350aeeb8a47c7903b56a50ae784c9e943745184e7bd648f21519a54c",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "7d12acde355f307b13a8ad46684acb2041f113b5b40947292162074b88752c62",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "070be9e7c9b5cbc1c4c849c2a145d841330c12fceae85d7092251f94120c90b8",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "5e50296c0344d7149195a57b80f535ccac3a63be4901f2f526d560e98fd33581"
+      },
+      "ram_sha256": "413118eb8b5296e5c05a4a902966ee5839c213b4eed921bf1cf9f34b72a3d3f0",
+      "ram_bytes": 268435456,
+      "phase": 7,
+      "divider": 10,
+      "stimecmp": "763765159",
+      "generation": "0",
+      "disk_blocks": 63,
+      "input_hex": ""
+    },
+    "restored": {
+      "frame_sha256": "f558b633c4605c93b5a1770f219f6759dd1cb147f8879e271b3afe446f50b047",
+      "frame_bytes": 23841728,
+      "component_sha256": {
+        "context": "86df6ff31ce7e193738558994207b6bc459778077542fb6e9c26c2c4729a01be",
+        "native": "45a448519583fa15d99fb59eb876b613849ca0b6284d183abd88aed13ff723ee",
+        "disk": "20d4102d6d984733332d09810e739a3fcdde9e4d8abb09ba8a1296fef7886018",
+        "input": "c24b7fcc60ca6d28baa385a795fdc7b4979b537d7c79c467b513adbf7a1c2d19",
+        "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "section_sha256": {
+        "1": "0dfcdb0fabe9082095e71520d5ef4551a37d44ec1324f1bb51702a1a1acd7a27",
+        "2": "1cf0ed9aff5db81ec66ab82cbedeb70fa40694ea95144c25a75a625e235a3a00",
+        "3": "010310dd31d51d109fedf04fa315998f04ddb28df6e783ed1bb1db5732085195",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "1cbd31dbf29ac42f31bc5820feeaf237bce2d2e541e8d08e50b2fb5673619833",
+        "6": "e8e840d60fb6e91b7173ca333072648e34d297fa160a6855fe11a2c7bebe423b",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "d564589e21c3246263e288895b7c901bb7b6d7461bc677793ae23e6d20240e33",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "070be9e7c9b5cbc1c4c849c2a145d841330c12fceae85d7092251f94120c90b8",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "a91ab4b44dffe2581d5b3e274ba615f6aea152f8861cab1eb54e3046c34305aa"
+      },
+      "ram_sha256": "e1c217b68ef0ab50820aa119d1709ef3b336ffe8880cae925d3ff488ebcc248a",
+      "ram_bytes": 268435456,
+      "phase": 5,
+      "divider": 10,
+      "stimecmp": "761685160",
+      "generation": "0",
+      "disk_blocks": 55,
+      "input_hex": "65395f71756575653d7175657565642d6265666f72650a"
+    }
+  },
+  "test_only_changes": {
+    "tools/verify/e9-software-checkpoints-critic.mjs": {
+      "recorded": "878cc8a82f5e35ca1196f14b8d7d7a8df5d733658157583967fba920cc5311e3",
+      "current": "214ad8f8b76317ae4dcbdbbbc137b26012b5fb2093373835f107e1e7e8577509",
+      "reason": "bounded direct-loader admission/descriptor/profile tests; fresh supplementary evidence"
+    }
+  },
+  "P1_tuple": "HELD",
+  "P2_browser": "HELD",
+  "P3_recorded_failures": "HELD",
+  "P4": "HELD",
+  "browser_report_sha256": "6daf02ded3c90ca09ac3017e89a6909eedb7f02c57ee8f04fe8113db57f0b846"
+}

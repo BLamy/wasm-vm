@@ -1,0 +1,78 @@
+{
+  "status": "passed",
+  "checks": [
+    {
+      "schedule": 0,
+      "changed": true,
+      "restored": true,
+      "frameHash": "25656aa7df9bde50a1784ea19e003b6430338c3336e3c2e8a326d9c6d6b853a2",
+      "finalFrameHash": "25656aa7df9bde50a1784ea19e003b6430338c3336e3c2e8a326d9c6d6b853a2",
+      "publication": {
+        "accepted": true,
+        "value": {
+          "id": "aba-0",
+          "revision": "2",
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          }
+        }
+      },
+      "admission": "accepted",
+      "previousRevision": "1",
+      "newRevision": "2",
+      "previousManifestHash": "61a6fceb05508e38e240405d59c22a9a83f6ea3fae66b6ee81fd2e1a2470b0a1",
+      "newManifestHash": "c820fcc12e15b40bc3d1a4b3b4d354ef0e03a20e8b905b364f1e1d4b69fe9ccd",
+      "previousRoot": "8feea47d0834e9d407489f94b1add9ffc8ae0dd008d33874fb27c5db0d376231",
+      "publishedRoot": "8feea47d0834e9d407489f94b1add9ffc8ae0dd008d33874fb27c5db0d376231",
+      "frameDiskHash": "ec1fb2b7657792d645d6f45765f481e72ac35701cfc1d47d31d9280000c8298d",
+      "rootDiskHash": "ec1fb2b7657792d645d6f45765f481e72ac35701cfc1d47d31d9280000c8298d",
+      "frameLeafByte": 67,
+      "rootLeafByte": 67
+    },
+    {
+      "schedule": 1,
+      "changed": true,
+      "restored": true,
+      "frameHash": "28246c90366ce466e45d18574ea94ee672bd39d522fd1ade979fe202ae963a92",
+      "finalFrameHash": "28246c90366ce466e45d18574ea94ee672bd39d522fd1ade979fe202ae963a92",
+      "publication": {
+        "accepted": true,
+        "value": {
+          "id": "aba-1",
+          "revision": "2",
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          }
+        }
+      },
+      "admission": "accepted",
+      "previousRevision": "1",
+      "newRevision": "2",
+      "previousManifestHash": "21ab612f6042ba493f3749142699c7734700e767cbe005bd2063d1a08a886b38",
+      "newManifestHash": "266b585211fffd70975270ce7267b9514bfeaee68dc258cd7300ad0afe3f27f9",
+      "previousRoot": "5a4861e6b1951a85f2440e3b7b7e306a6346938ae3fccd2cd410346234e77879",
+      "publishedRoot": "5a4861e6b1951a85f2440e3b7b7e306a6346938ae3fccd2cd410346234e77879",
+      "frameDiskHash": "844586549f1b81e8e1d24ea8aa4cf39fdb788057fc5b434e575180aa7b35e05c",
+      "rootDiskHash": "844586549f1b81e8e1d24ea8aa4cf39fdb788057fc5b434e575180aa7b35e05c",
+      "frameLeafByte": 68,
+      "rootLeafByte": 68
+    }
+  ],
+  "errors": [],
+  "trace": {
+    "path": "target/evidence/e9-t05-repair-aba-critic-trace.zip",
+    "sha256": "0ffc462bd35d74642c97707bb2b74f36c3454a7becb032526b0f1ea813a93549"
+  },
+  "coverage": {
+    "path": "target/evidence/e9-t05-repair-aba-critic-coverage.json",
+    "sha256": "58299984036bfe1a56a5457339832a6e0b151b4b156dd858ec3776fcce66937e"
+  }
+}

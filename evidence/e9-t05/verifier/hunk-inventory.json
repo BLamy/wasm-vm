@@ -1,0 +1,210 @@
+{
+  "base": "34954a201d25f218663f682215a785319cd1b832",
+  "runtime_head": "4ce36a932feaf171c09cd8b25e90d3fc9ff376ac",
+  "files": {
+    "Makefile": {
+      "sha256": "2cff98f837332a960efd2ec16c831a1a968fff36b9c0cea955ab59020a35cb61",
+      "hunks": [
+        "@@ -458,0 +459,4 @@ verify-E9-T04:"
+      ]
+    },
+    "crates/core/src/dev/virtio/console.rs": {
+      "sha256": "afca8607de20f239c78b8434c35db6218baac1b3d806c4d5495e39cea83a9d44",
+      "hunks": [
+        "@@ -1728,0 +1729,3 @@ mod tests {"
+      ]
+    },
+    "crates/core/src/dev/virtio/console/session_snapshot.rs": {
+      "sha256": "be47837ca866288de760812158064ccb055de04eff7d93d41d3faa7e53273608",
+      "hunks": [
+        "@@ -0,0 +1,275 @@"
+      ]
+    },
+    "crates/core/src/dev/virtio/input/mod.rs": {
+      "sha256": "5987ec06ce6174052b51c2f36b0c6301cb830ad1458bcb26e84b0d02d78a24ea",
+      "hunks": [
+        "@@ -251,0 +252,31 @@ impl InputState {"
+      ]
+    },
+    "crates/core/src/dev/virtio/input/snapshot.rs": {
+      "sha256": "3466ff2e5278c1cb29a63439a9208dd2d5efc3147ed063fece77c9e35dde3fce",
+      "hunks": [
+        "@@ -42,0 +43 @@ pub enum InputSnapshotError {",
+        "@@ -63,0 +65 @@ impl InputSnapshotError {",
+        "@@ -271,0 +274,81 @@ pub(crate) fn restore(",
+        "@@ -1075,0 +1159,109 @@ mod tests {"
+      ]
+    },
+    "crates/core/src/dev/virtio/snd/mod.rs": {
+      "sha256": "21294eb1046b260ee4efeaa6ac205513c3006243dd11a05ca2d2f2ea0cbf5eb6",
+      "hunks": [
+        "@@ -1199,0 +1200,19 @@ impl SndState {"
+      ]
+    },
+    "crates/core/src/dev/virtio/snd/snapshot.rs": {
+      "sha256": "20ba49acaff6cd0336a900dac65e05793a26e28a4e438c8a1a1894b0124603e7",
+      "hunks": [
+        "@@ -90,0 +91,2 @@ pub enum SndSnapshotError {",
+        "@@ -114,0 +117 @@ impl SndSnapshotError {",
+        "@@ -172,0 +176,34 @@ struct DecodedSnd {",
+        "@@ -788,0 +826,25 @@ mod tests {"
+      ]
+    },
+    "crates/core/src/lib.rs": {
+      "sha256": "e2f98415f38526c2f3e1e5e2972cd2bd6d4dd1bf4ed31ca65123dc46d2033e59",
+      "hunks": [
+        "@@ -3195 +3195,14 @@ impl Machine {",
+        "@@ -3232 +3245 @@ impl Machine {",
+        "@@ -3242,0 +3256 @@ impl Machine {",
+        "@@ -3372,3 +3386,4 @@ impl Machine {",
+        "@@ -3382,2 +3397,4 @@ impl Machine {",
+        "@@ -3385,2 +3402 @@ impl Machine {",
+        "@@ -3391 +3407,3 @@ impl Machine {",
+        "@@ -3399,2 +3417,4 @@ impl Machine {",
+        "@@ -3402,2 +3422 @@ impl Machine {",
+        "@@ -3408 +3427,3 @@ impl Machine {",
+        "@@ -3416,2 +3437,4 @@ impl Machine {",
+        "@@ -3419,2 +3442 @@ impl Machine {",
+        "@@ -3436,2 +3458,4 @@ impl Machine {",
+        "@@ -3439,2 +3463 @@ impl Machine {",
+        "@@ -3469 +3492,4 @@ impl Machine {",
+        "@@ -3497 +3523,12 @@ impl Machine {",
+        "@@ -3515 +3552 @@ impl Machine {",
+        "@@ -3524,0 +3562 @@ impl Machine {",
+        "@@ -3553,0 +3592 @@ impl Machine {",
+        "@@ -3555,2 +3594,3 @@ impl Machine {",
+        "@@ -3583 +3623,5 @@ impl Machine {",
+        "@@ -3623,2 +3667,2 @@ impl Machine {",
+        "@@ -3626,0 +3671,5 @@ impl Machine {",
+        "@@ -3688,3 +3737,6 @@ impl Machine {",
+        "@@ -3697,3 +3749,6 @@ impl Machine {",
+        "@@ -3706,3 +3761,6 @@ impl Machine {",
+        "@@ -3712,4 +3770,8 @@ impl Machine {",
+        "@@ -3721 +3783 @@ impl Machine {",
+        "@@ -3802,3 +3864,6 @@ impl Machine {",
+        "@@ -3826,3 +3891,6 @@ impl Machine {",
+        "@@ -3995 +4063 @@ impl Machine {",
+        "@@ -4022 +4090,3 @@ impl Machine {"
+      ]
+    },
+    "crates/session-web/src/lib.rs": {
+      "sha256": "c4601b165e37c3c678cbb45e63c514a99d23596494aaf999122fa6d0cf01f1c7",
+      "hunks": [
+        "@@ -7,0 +8,14 @@ use wasm_vm_storage::session_publication;"
+      ]
+    },
+    "crates/storage/src/checkpoint.rs": {
+      "sha256": "e15b4b425edba76c3a34761f5320903ad0be44f053ad6f23d41b84f106170522",
+      "hunks": [
+        "@@ -0,0 +1,81 @@"
+      ]
+    },
+    "crates/storage/src/lib.rs": {
+      "sha256": "25dad3b54c039d68bb327bbb45f5dde6ae3e7f29012fb015bc5668e6feb1ebf2",
+      "hunks": [
+        "@@ -21,0 +22 @@ mod cache;"
+      ]
+    },
+    "crates/wasm/src/lib.rs": {
+      "sha256": "af0f55d5b54948218999e24c1b94b9bdc262d7a3f868240288fddf2e3bfb9668",
+      "hunks": [
+        "@@ -32,0 +33,2 @@ mod virgl_linux;",
+        "@@ -252,0 +255,2 @@ mod critic_flush_reset;",
+        "@@ -2212,0 +2217,3 @@ struct LinuxInner {",
+        "@@ -2909,0 +2917,3 @@ impl WasmLinux {",
+        "@@ -3147,0 +3158,3 @@ impl WasmLinux {"
+      ]
+    },
+    "crates/wasm/src/session_checkpoint.rs": {
+      "sha256": "af0858d7e803c0c557b40ea0189a98d0af61426a069b4a67ad7afb66a778415e",
+      "hunks": [
+        "@@ -0,0 +1,170 @@"
+      ]
+    },
+    "crates/wasm/src/software_checkpoint.rs": {
+      "sha256": "f0d475b1c599b3f3bd2eed77c6745c2ab4d6f79793bfcad74ca377536d4e1dbd",
+      "hunks": [
+        "@@ -0,0 +1,151 @@"
+      ]
+    },
+    "docs/design/session-replay-contract.json": {
+      "sha256": "f23fca1396dbd68739d3ddf5626362016bdd85fe8e6d2dcdd3b66aff9b30645a",
+      "hunks": [
+        "@@ -100,0 +101 @@",
+        "@@ -115,0 +117,4 @@",
+        "@@ -405,0 +411 @@",
+        "@@ -421,0 +428,4 @@",
+        "@@ -444,0 +455 @@",
+        "@@ -459,0 +471,4 @@",
+        "@@ -616,0 +632,12 @@",
+        "@@ -623,0 +651 @@",
+        "@@ -624,0 +653 @@",
+        "@@ -627,2 +656,3 @@",
+        "@@ -630,0 +661 @@",
+        "@@ -637 +668,4 @@",
+        "@@ -647,2 +681,2 @@",
+        "@@ -652,2 +686 @@",
+        "@@ -655,2 +688,2 @@"
+      ]
+    },
+    "docs/design/session-replay.md": {
+      "sha256": "50fe9240d0609f91ed927f3238bce4f1e26411f7768e4ef32be4f0a1e3b558cb",
+      "hunks": [
+        "@@ -249,0 +250,33 @@ layer remains waived under AGENTS.md. No GitHub Actions or new external service"
+      ]
+    },
+    "tools/gen-gpu-checkpoint-build.py": {
+      "sha256": "8d219f29099ee995a9308cad1ac0072bd75c6a3705d7b01e347a7ce6e33adfda",
+      "hunks": [
+        "@@ -19 +19 @@ def include(path):",
+        "@@ -27 +27 @@ value=identity.hexdigest()"
+      ]
+    },
+    "web/gpu-checkpoint-build.js": {
+      "sha256": "d1e6416becc54bced193f83a0a9d408aaba6a98a700f62bc5b9dd769c7727a89",
+      "hunks": [
+        "@@ -2 +2,3 @@"
+      ]
+    },
+    "web/linux-worker-protocol.js": {
+      "sha256": "50c02f3babe38c93830d82088c477f415f4a4aa5440589de4d91be10099ff900",
+      "hunks": [
+        "@@ -7 +7 @@",
+        "@@ -21,0 +22 @@ const LONG_RPC_GRACE_MS = Object.freeze({",
+        "@@ -52,0 +54,2 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([",
+        "@@ -114,0 +118 @@ const BYTE_RESULT = new Set(["
+      ]
+    },
+    "web/loader.js": {
+      "sha256": "b42df333fa2bb6d65088843246b47cb87c9847aad4bfadcf9b97ff9451210efe",
+      "hunks": [
+        "@@ -28 +28 @@ import { deriveOverlaySeedIdentity } from \"./overlay-seed-identity.js\";",
+        "@@ -181,0 +182,22 @@ export async function startLinuxBoot(opts = {}) {",
+        "@@ -371 +393,4 @@ export async function startLinuxBoot(opts = {}) {",
+        "@@ -416 +441 @@ export async function startLinuxBoot(opts = {}) {",
+        "@@ -437 +462,2 @@ export async function startLinuxBoot(opts = {}) {",
+        "@@ -546 +572,4 @@ export async function startLinuxBoot(opts = {}) {",
+        "@@ -962,0 +992,15 @@ export async function startLinuxBoot(opts = {}) {",
+        "@@ -965 +1009 @@ export async function startLinuxBoot(opts = {}) {",
+        "@@ -978 +1022,2 @@ export async function startLinuxBoot(opts = {}) {",
+        "@@ -1265,0 +1311,31 @@ export async function startLinuxBoot(opts = {}) {",
+        "@@ -1288 +1364 @@ export async function startLinuxBoot(opts = {}) {",
+        "@@ -1291 +1367 @@ export async function startLinuxBoot(opts = {}) {",
+        "@@ -1419,0 +1496,2 @@ export async function startLinuxBoot(opts = {}) {",
+        "@@ -1576,0 +1655,20 @@ export async function startLinuxBoot(opts = {}) {"
+      ]
+    },
+    "web/roadmap.js": {
+      "sha256": "527fa4fba3074023044df4c534b04ebf4b8bdf89ae247cc53aaa640a090c3677",
+      "hunks": [
+        "@@ -225 +225,2 @@ export const ROADMAP = ["
+      ]
+    },
+    "web/session-checkpoints.js": {
+      "sha256": "a6fa93d426c3823cb23c797666b69a49226417a43aacb3ac1b0729d74a095803",
+      "hunks": [
+        "@@ -0,0 +1,140 @@"
+      ]
+    }
+  }
+}

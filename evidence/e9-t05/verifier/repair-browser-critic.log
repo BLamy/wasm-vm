@@ -1,0 +1,148 @@
+{
+  "status": "passed",
+  "checks": {
+    "native": [
+      {
+        "tag": 1,
+        "error": "session_checkpoint_native: BadComponentState { tag: 1 }",
+        "unchanged": true
+      },
+      {
+        "tag": 2,
+        "error": "session_checkpoint_native: BadSparseEncoding",
+        "unchanged": true
+      },
+      {
+        "tag": 3,
+        "error": "session_checkpoint_native: BadComponentState { tag: 3 }",
+        "unchanged": true
+      },
+      {
+        "tag": 4,
+        "error": "session_checkpoint_native: BadComponentState { tag: 4 }",
+        "unchanged": true
+      },
+      {
+        "tag": 5,
+        "error": "session_checkpoint_native: BadComponentState { tag: 5 }",
+        "unchanged": true
+      },
+      {
+        "tag": 8,
+        "error": "session_checkpoint_native: BadComponentState { tag: 8 }",
+        "unchanged": true
+      },
+      {
+        "tag": 6,
+        "error": "session_checkpoint_native: BadComponentState { tag: 6 }",
+        "unchanged": true
+      },
+      {
+        "tag": 7,
+        "error": "session_checkpoint_native: BadComponentState { tag: 7 }",
+        "unchanged": true
+      },
+      {
+        "tag": 12,
+        "error": "session_checkpoint_native: BadComponentState { tag: 12 }",
+        "unchanged": true
+      },
+      {
+        "tag": 13,
+        "error": "session_checkpoint_native: BadComponentState { tag: 13 }",
+        "unchanged": true
+      },
+      {
+        "tag": 14,
+        "error": "session_checkpoint_native: BadComponentState { tag: 14 }",
+        "unchanged": true
+      },
+      {
+        "tag": 15,
+        "error": "session_checkpoint_native: BadComponentState { tag: 15 }",
+        "unchanged": true
+      },
+      {
+        "tag": 16,
+        "error": "session_checkpoint_native: BadComponentState { tag: 16 }",
+        "unchanged": true
+      },
+      {
+        "tag": 10,
+        "error": "session_checkpoint_native: BadComponentState { tag: 10 }",
+        "unchanged": true
+      },
+      {
+        "tag": 11,
+        "error": "session_checkpoint_native: BadComponentState { tag: 11 }",
+        "unchanged": true
+      },
+      {
+        "tag": 9,
+        "error": "session_checkpoint_admission: Malformed",
+        "unchanged": true
+      }
+    ],
+    "publication": [
+      {
+        "case": "mutated",
+        "error": "accepted",
+        "coherent": true,
+        "unchanged": false
+      },
+      {
+        "case": "detached",
+        "error": "accepted",
+        "coherent": true,
+        "unchanged": false
+      }
+    ],
+    "configurationPinned": true,
+    "successfulAppend": [
+      "first",
+      "second",
+      "mutated",
+      "detached",
+      "pinned"
+    ],
+    "expectedAppend": [
+      "first",
+      "second",
+      "mutated",
+      "detached",
+      "pinned"
+    ],
+    "race": {
+      "results": [
+        "committed",
+        "WriterBusy"
+      ],
+      "revision": "6",
+      "ids": [
+        "first",
+        "second",
+        "mutated",
+        "detached",
+        "pinned",
+        "race-a"
+      ]
+    },
+    "originalStillAdmitted": true,
+    "directLoaderRestore": {
+      "paused": true,
+      "restored": true,
+      "retired": 0,
+      "exact": true
+    },
+    "loaderTopology": "session checkpoint device topology differs from the actual machine",
+    "sourceUnchanged": true,
+    "sourceRetired": 0,
+    "profile": {
+      "wall": "session_checkpoint_profile",
+      "restoreDescriptor": "invalid software session restore profile",
+      "loaderWall": "software session checkpoints require the isolated ICount software profile",
+      "microphone": "session_checkpoint_profile"
+    }
+  },
+  "errors": []
+}
