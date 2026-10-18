@@ -1,0 +1,297 @@
+{
+  "kind": "Lossless worker preservation of separate critic read-only assessment; no verification verdict",
+  "task": "E9-T13",
+  "created": 1792346148.1393971,
+  "assessment_author": "/root/verify_e9_t12",
+  "frozen_runtime": "04f628dd02a0bf57331682e05607829e25a0ca46",
+  "parent_verified": "76cc2c8dc1df4b17572bf09c73618e10ad848d63",
+  "repository_head_at_review": "d85d1218165605b577a20306fffd0d58908800e5",
+  "assessment_provenance_sha256": "a7fd8006df45744730cb6d489f5ee64b37b97694886e17836769353af9108ba2",
+  "restrictions": "No VM/test binary or recorded producer launched; no new attack or security-stopped retry. Only source and saved evidence inspected. LLVM utilities read the prior object/counters as coverage data; the object is never executed. Shared implementation/status/queue/index untouched.",
+  "remaining_gaps": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "G6",
+    "G7",
+    "G8",
+    "G9",
+    "P13"
+  ],
+  "entries": [
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/coverage-preparation.json",
+      "artifact": "inputs/00-coverage-preparation.json.gz",
+      "size": 11609,
+      "sha256": "5e060f2f98bbdfe2f9fc55afaeb8d07291e92ab59b737f1462958024a57f1ca8",
+      "gzip_size": 5148,
+      "gzip_sha256": "3161cb00157301e9bb1e896e3386776ec5e5e1808de589086aea69e0b5ed848b"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/normal-native.log",
+      "artifact": "inputs/01-normal-native.log.gz",
+      "size": 98482,
+      "sha256": "b502741d1ddca7943501d0affc421ada51ead18add21c17fae551e5602f997fe",
+      "gzip_size": 13060,
+      "gzip_sha256": "2e25d6b3acae92b3acd408e34da0e1cdcb0273a585342091e547ba59ebbec767"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/normal-coverage-receipt.json",
+      "artifact": "inputs/02-normal-coverage-receipt.json.gz",
+      "size": 12179,
+      "sha256": "31c85dd2ea883265627f13c588dc53928bd6695683b1c87b91ac5c116b690ac7",
+      "gzip_size": 5271,
+      "gzip_sha256": "7c0d9c22ea5b281b394e0428ef6f197b8142d0de8b6136e7754301435ec21393"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/normal-first-attempt/critic.rs",
+      "artifact": "inputs/03-critic.rs.gz",
+      "size": 36417,
+      "sha256": "e3ce5fb2243a110b5e92ecef2daacf25e6a0c7f436379e1542c3c0a7cfe60f19",
+      "gzip_size": 7662,
+      "gzip_sha256": "aaa62af692112e2f27d5a29cb34c5268e9137abe0ad90bc7d561c2cc0a8b50fe"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/harness/tests/critic.rs",
+      "artifact": "inputs/04-critic.rs.gz",
+      "size": 36749,
+      "sha256": "2123ba667438dd8fb69e052d6c46ae41504e105f89402275b459228ede2e7b21",
+      "gzip_size": 7712,
+      "gzip_sha256": "6d45c013b2cb3f095bdd7203e8115f46fda7f02cd048d6973fec32ef9fcc2193"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/guest-oracle.json",
+      "artifact": "inputs/05-guest-oracle.json.gz",
+      "size": 21438,
+      "sha256": "752a63cf17b3bad7844b870379547cb9308922da3a77df8cb8e7198258c39d6b",
+      "gzip_size": 1978,
+      "gzip_sha256": "c2b29e20e55484d419bf45f99a5981a24be0c5f5c54de76eba8a7479693e8b94"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/authentication.json",
+      "artifact": "inputs/06-authentication.json.gz",
+      "size": 16811,
+      "sha256": "8369506087dd9c53b05d21f31ceef99ed4c988588d4ad380cf4aa861cc640d55",
+      "gzip_size": 3024,
+      "gzip_sha256": "4144c096ccbba461df8338a6118a474eb33d489dc4424ae2589dfa34d6affaf6"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/coverage-target/debug/deps/critic-a2812715fe550f16",
+      "artifact": "inputs/07-critic-a2812715fe550f16.gz",
+      "size": 8827560,
+      "sha256": "54106c1ee6d409b85a8f717d6c09c37ffa3b96d65df1071c062398a2ebc8b204",
+      "gzip_size": 2536634,
+      "gzip_sha256": "8c5b638bc2173c7f9dae55a1e2a111367cb85d6e5f9cff84c1da7819f2c52446"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/profiles/normal-12566-7532279334979752817_0.profraw",
+      "artifact": "inputs/08-normal-12566-7532279334979752817_0.profraw.gz",
+      "size": 285672,
+      "sha256": "7fc5521fee13f95634d5b7a0f0948e0af8464d0a723f2ac112c1dff3af4b7ba7",
+      "gzip_size": 112147,
+      "gzip_sha256": "ffbe225e757ff868f14dbeb1cf70d87f4d55bcd45eb32423fadff807f06329b6"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/profiles/reset-12805-7532279334979752817_0.profraw",
+      "artifact": "inputs/09-reset-12805-7532279334979752817_0.profraw.gz",
+      "size": 285672,
+      "sha256": "9929a71a27b6d431c1bfea1f6a2bd5831bb49ad32207c8b1148d7f26ad0a9013",
+      "gzip_size": 111506,
+      "gzip_sha256": "1b317926b74f479b286447df055062db2d537cc32e39b730ca22943355513a00"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/profiles/reset-12807-7532279334979752817_0.profraw",
+      "artifact": "inputs/10-reset-12807-7532279334979752817_0.profraw.gz",
+      "size": 285672,
+      "sha256": "573aeafb61cd4548da2867f7e8fd50d5ee0e109d0d3a5ff15458f2de8b750212",
+      "gzip_size": 111506,
+      "gzip_sha256": "21012f7d067e532a3aed3861512c3d522ec0c65382da4c95e526e09c33830318"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/cold-proof-e9-t13-04f628dd02a0/report.json",
+      "artifact": "inputs/11-report.json.gz",
+      "size": 86763,
+      "sha256": "e8976823db2791f96502b8da745360148f92647eb189d00ae43a4556c18280f5",
+      "gzip_size": 20547,
+      "gzip_sha256": "0357cfd34f7ba11f00e4455da664ed0f421a89d8f2315f46adf57ac4a45ccdc4"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/cold-proof-e9-t13-04f628dd02a0/network-and-session-native.log",
+      "artifact": "inputs/12-network-and-session-native.log.gz",
+      "size": 10455,
+      "sha256": "7f802af7d43b63cdbcaeabf868cee075ab9d0e11e63e9e0ad989ff5833e59aed",
+      "gzip_size": 3347,
+      "gzip_sha256": "108f1d14eb1c36ae452c750802d250a09aa1cf3934aa26a05d1daaba61323800"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/cold-proof-e9-t13-04f628dd02a0/browser/report.json",
+      "artifact": "inputs/13-report.json.gz",
+      "size": 23359,
+      "sha256": "af17a8b5efbdfe1534c2076e9be6f0882a155a3d6435eb2e8488e70bbbf4d5d2",
+      "gzip_size": 4157,
+      "gzip_sha256": "810c1b5b35db43ef5cfba21af890b064e63d8350bfa6503c50519b206fdc79a9"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/cold-proof-e9-t13-04f628dd02a0/browser/javascript-coverage.json",
+      "artifact": "inputs/14-javascript-coverage.json.gz",
+      "size": 2574606,
+      "sha256": "596a44772b829169d0d169b9174c9d4dd2a4fb7605187fc88778e3f9b4e0dc6b",
+      "gzip_size": 465201,
+      "gzip_sha256": "c710bf0c6861f5b61f785936b54eab5b318d8016b8a52be53f506164f90b3d9e"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/cold-proof-e9-t13-04f628dd02a0/retained-gpu-browser/report.json",
+      "artifact": "inputs/15-report.json.gz",
+      "size": 14340,
+      "sha256": "e03384ceffdd90000fdbd8b1e190b57202529c0414b62f34d0dac6dad63fd8a7",
+      "gzip_size": 3858,
+      "gzip_sha256": "765dafb8efad7a6c38d77f39483322d04da65d1c7e96db4479eb09eecc8afa6b"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/cold-proof-e9-t13-04f628dd02a0/retained-gpu-browser/javascript-coverage.json",
+      "artifact": "inputs/16-javascript-coverage.json.gz",
+      "size": 2087625,
+      "sha256": "37d9c40f178c90be6e8f1f3883858bad3dd3157bc17496ecdb40e2809330af91",
+      "gzip_size": 462394,
+      "gzip_sha256": "733225421caa881634c2e094b4f39e50b215d3cb19781e8c4164cb88f19b52b4"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/cold-proof-e9-t13-04f628dd02a0/native/normal-reset-paused.resume",
+      "artifact": "inputs/17-normal-reset-paused.resume.gz",
+      "size": 12083,
+      "sha256": "28e6b071904333fb5581e8f1cf41f9afe25f1329cab9d6263ddc6087751db736",
+      "gzip_size": 4401,
+      "gzip_sha256": "d3ea4d3daa38280287945ad4d25ae794db6cc1ecf0977ea9b6dc94cdd91b9bbd"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/cold-proof-e9-t13-04f628dd02a0/native/normal-reset-final.resume",
+      "artifact": "inputs/18-normal-reset-final.resume.gz",
+      "size": 12072,
+      "sha256": "446ff4e9c7d452fa1b9052268ad051ac58f40334c097e3f158a48639112007d0",
+      "gzip_size": 4392,
+      "gzip_sha256": "9f325e0747c48484d4cfd7ba6fc70125ad25a63dc9e35c0de7af4dfb3ba22973"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/cold-proof-e9-t13-04f628dd02a0/native/normal-reset-original.trace",
+      "artifact": "inputs/19-normal-reset-original.trace.gz",
+      "size": 624982,
+      "sha256": "b277f17a4541496aeba08092dabf01059e788bcf491595368733ef87a63f8592",
+      "gzip_size": 61025,
+      "gzip_sha256": "0a83c0309dd6774115d1b7e2daa61c447d21fef5c8c274b2632a01cb2d522c1b"
+    },
+    {
+      "original_path": "/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/evidence/e9-t13/worker-reset-final/provenance.json",
+      "artifact": "inputs/20-provenance.json.gz",
+      "size": 238995,
+      "sha256": "60304b99d0b98842aa4c5fbacc10025b82169927972fa08f2cd6365d66358d5b",
+      "gzip_size": 40508,
+      "gzip_sha256": "d38f043ac4d0882ec56671a2554d605cfcc6e8019a2a48f29f8ccd44d1a40880"
+    },
+    {
+      "original_path": "/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/evidence/e9-t13/worker-reset-finding/provenance.json",
+      "artifact": "inputs/21-provenance.json.gz",
+      "size": 29988,
+      "sha256": "69a4f951b982c044f2a67e90b752c65558ad0ff94b53deff61e254b5b8be4531",
+      "gzip_size": 6947,
+      "gzip_sha256": "fc4875b5e5ee949cd50434bceafd3d621fddebe880cf6e07ccf4d307503b724b"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/partial-sufficiency-ledger/analyze_saved_records.py",
+      "artifact": "assessment/analyze_saved_records.py.gz",
+      "size": 6193,
+      "sha256": "6748d4dbbdc5413de5faee9672e1958a0611f0f8c73b307494a4383c39087b4f",
+      "gzip_size": 2522,
+      "gzip_sha256": "3b378fecbdfec2aebc83069456b4deea6177e48e61483c15902a1958cbfcbd55"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/partial-sufficiency-ledger/boundary-qa.json",
+      "artifact": "assessment/boundary-qa.json.gz",
+      "size": 6689,
+      "sha256": "3308d0ebd0404b4f6a5fd4953c0b042e04864fbf3cb6a2dcf244ac0fc54c51fb",
+      "gzip_size": 1879,
+      "gzip_sha256": "32a941141e2bc09a0c6e0ea2df164b04d5c54b05f9380f6b53f7215995487d23"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/partial-sufficiency-ledger/build_ledger.py",
+      "artifact": "assessment/build_ledger.py.gz",
+      "size": 32563,
+      "sha256": "32210173a67e7aae538717f4e9f840a164c499a388f2ef62bd25cccff9cd5b17",
+      "gzip_size": 12224,
+      "gzip_sha256": "29601deed9205a99a59dd7c7ec4b246a492a367f509f25140759cc69c221de3a"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/partial-sufficiency-ledger/changed-hunk-ledger.json",
+      "artifact": "assessment/changed-hunk-ledger.json.gz",
+      "size": 141192,
+      "sha256": "c070e0b71a75e7835ab4b0e09adeae123b65e81d2f0e03a0a6005843c526ee33",
+      "gzip_size": 14463,
+      "gzip_sha256": "b02921f30133ea04abc4eebe315ebfe5b46b234f013917ca11d3c761850fe1fb"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/partial-sufficiency-ledger/changed-hunk-ledger.md",
+      "artifact": "assessment/changed-hunk-ledger.md.gz",
+      "size": 25817,
+      "sha256": "708d74ad9e6978448191c316792c591022cc4dacf8810e5a567576ee163b5827",
+      "gzip_size": 9325,
+      "gzip_sha256": "417cacb8129f74e0bed2f7780b94933b566bc7fdb3840b9f34d22808cbcd8535"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/partial-sufficiency-ledger/coverage-decoder.log",
+      "artifact": "assessment/coverage-decoder.log.gz",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_size": 20,
+      "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/partial-sufficiency-ledger/saved-native.lcov",
+      "artifact": "assessment/saved-native.lcov.gz",
+      "size": 1497713,
+      "sha256": "414efa185af6f5b172d0f5274344910a4f9af82c02c455f8d561a87571bd0b6a",
+      "gzip_size": 168057,
+      "gzip_sha256": "1b661a3260564e79eb5b235a4567ec5d30aad66a95e46cc194f19b6922d39ed9"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/partial-sufficiency-ledger/saved-native.profdata",
+      "artifact": "assessment/saved-native.profdata.gz",
+      "size": 92328,
+      "sha256": "9ea263af2f34ccb15b76f7c55dae9bf3b55bb3a5271b9c12a359a8111fbe9305",
+      "gzip_size": 20807,
+      "gzip_sha256": "c25a97e7ae102e0a0ae1ef795cbbd86b21825e325b4ccb204d082ae415901578"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/partial-sufficiency-ledger/source-and-coverage.json",
+      "artifact": "assessment/source-and-coverage.json.gz",
+      "size": 297732,
+      "sha256": "4a127f87263db78a14b55c59d86b903bfd51a1489447d39705d7f87c28b01589",
+      "gzip_size": 38238,
+      "gzip_sha256": "1d5473a8a506af35287c8e1bb1c0226ef8ffca76ef0b4d616522505e46f56c70"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/partial-sufficiency-ledger/provenance.json",
+      "artifact": "assessment/provenance.json.gz",
+      "size": 8082,
+      "sha256": "a7fd8006df45744730cb6d489f5ee64b37b97694886e17836769353af9108ba2",
+      "gzip_size": 2602,
+      "gzip_sha256": "f195c86dc68a64c4a203d22c1d786418fe27cf67e64f043208a681df3b797629"
+    },
+    {
+      "original_path": "/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/tasks/epic-9-session-time-travel/E9-T13-network-capture.md",
+      "artifact": "boundary/task-at-review.md.gz",
+      "size": 24921,
+      "sha256": "406e02c848bd6cbc8b7a069a7169d9c9b80094d08f2adb4098dabc7b035af60d",
+      "gzip_size": 10080,
+      "gzip_sha256": "f413e92b5c824a7dd6e1d64b6dc0ce339dad0ed2cd9c96ea8267b2acaf1d9384"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-preserve-read-only-review.py",
+      "artifact": "archive-producer.py.gz",
+      "size": 3365,
+      "sha256": "a612d61c6e2706e9d1509a3bbea2eac689f117c8e7609f404a7177cb2301f103",
+      "gzip_size": 1650,
+      "gzip_sha256": "267d1fff1316353cb63dc12b69da52a7f38f267bfcaccbefce01a0ca0a099838"
+    }
+  ]
+}

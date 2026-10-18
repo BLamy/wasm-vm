@@ -403,3 +403,37 @@ This entry is a worker blocker report, not a verifier verdict. Status becomes
 blocked with named blocked_on dependencies, leaving the active lane. E9-T14
 through E9-T24 remain pending because their verified dependency chain reaches
 this task. No PR is merged and no new runtime is published.
+
+### 2026-10-18 — worker — preserved separate read-only sufficiency assessment
+
+The existing separate critic /root/verify_e9_t12 completed a bounded read-only
+source/saved-record review at frozen runtime04f628. It issued **no verification
+verdict** and ran no VM/test binary, recorded producer or new attack. Saved raw
+LLVM profiles and their executable object were decoded only as coverage data.
+The stopped independent execution was not retried or replaced.
+
+Its authored ledger accounts for52 files and156 textual hunks, authenticates
+the255 final packet artifacts and35 source hashes, supports canonical pending
+reset capture and all six matching resumes, and carries32 byte-identical
+previously HELD artifacts. The ledger distinguishes direct support, explicit
+waivers and missing evidence; a zero in one recording is not asserted to mean
+the code never ran. It identifies G1–G8 narrow ordinary component-proof gaps:
+broker limits/sticky stop, idle scheduling, installation refusals, Wasm cursor,
+protocol refusals, codec outcomes, browser result serialization and network
+journal policy rejection. Those can guide additional worker evidence without
+claiming the unfinished independent charter.
+
+Lossless preservation of its original34 inputs/outputs and provenance:
+evidence/e9-t13/independent-read-only-review/provenance.json, SHA256
+ac380ac9a586203293c8fc0d89d9da29cc69775d6e02d77caeca541963159f92.
+The original authored ledger SHA256 is
+708d74ad9e6978448191c316792c591022cc4dacf8810e5a567576ee163b5827;
+authored provenance SHA256 is
+a7fd8006df45744730cb6d489f5ee64b37b97694886e17836769353af9108ba2.
+The worker authenticated and compressed these existing files, not their verdict.
+
+G9 independent execution/sensitivity/suite disposition and P13 required public
+publication/browser proof remain unresolved. Official read-only Wrangler whoami
+still reports unauthenticated; no token was printed or copied. A new device
+request awaits human readiness after the previous code expired. Task remains
+blocked and unverified; no dependent task starts and no PR is merged.
