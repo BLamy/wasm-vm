@@ -3,7 +3,7 @@ id: E9-T07
 epic: 9
 title: Manage session quotas retention and shared-data deletion
 priority: 524.907
-status: pending
+status: in-progress
 depends_on: [E9-T03, E9-T04, E9-T06]
 estimate: S
 risk: high
@@ -34,4 +34,13 @@ Force quota failure during append and interrupt GC after reference updates. Chec
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-18 — worker — started
+
+Dependencies E9-T03/T04/T06 are independently verified. This S/high-risk slice owns
+browser session-storage maintenance: explicit payload/point limits and origin persistence
+feedback, quota-safe recording pause/retry, and locked reachability-based deletion/cleanup.
+No named history is automatically discarded. The planned proof includes real browser quota
+failure during append, shared machine/disk/event references, interrupted cleanup and reopen,
+varied two-tab lock schedules, actual guest restores and a final pristine-source run.
+The retained GPU runtime stays pinned; accelerated history remains gated to T17/T18.
+
