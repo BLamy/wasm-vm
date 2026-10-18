@@ -1,0 +1,105 @@
+{
+  "status": "passed",
+  "head": "1b3c68c0def3fb98c8803ed6f95089f90ed7dfe7",
+  "deployment_receipt_sha256": "a307898a9edc4a2727abfec2f6b55f72d2e606b4377393436131ab299da9c4dc",
+  "deployment_log_sha256": "08c4fe0904f243a9d449ce319cd5b57c41ece33e2ea37a4bb19ef6209bfe27d2",
+  "authenticated_files": 733,
+  "tracked": 728,
+  "extras": [
+    "releases/boot-snapshot/alpine-overlay-delta.bin.gz",
+    "releases/boot-snapshot/alpine-ready.snap.gz",
+    "releases/boot-snapshot/busybox-ready.snap.gz",
+    "releases/boot-snapshot/node-alpine-overlay-delta.bin.gz",
+    "releases/boot-snapshot/omarchy-apps-overlay-delta-bc36948ac61a.bin.gz"
+  ],
+  "validated_rewrites": [
+    {
+      "manifest": "artifacts.json",
+      "role": "kernel",
+      "source": "releases/kernel/6.6.63/Image",
+      "public": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "bytes": 24208896
+    },
+    {
+      "manifest": "artifacts.json",
+      "role": "initramfs",
+      "source": "releases/initramfs/initramfs.cpio.gz",
+      "public": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563/releases/initramfs/initramfs.cpio.gz",
+      "sha256": "35a74c93b8a14afd2a1e75a6b8d7d5feaf925ced33e17e80e9197a696649c563",
+      "bytes": 1151596
+    },
+    {
+      "manifest": "artifacts-alpine.json",
+      "role": "kernel",
+      "source": "releases/kernel/6.6.63/Image",
+      "public": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "bytes": 24208896
+    },
+    {
+      "manifest": "artifacts-alpine.json",
+      "role": "rootfs",
+      "source": "releases/rootfs/alpine-rootfs.ext4",
+      "public": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8/releases/rootfs/alpine-rootfs.ext4",
+      "sha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8",
+      "bytes": 536870912
+    },
+    {
+      "manifest": "artifacts-node-alpine.json",
+      "role": "kernel",
+      "source": "releases/kernel/6.6.63/Image",
+      "public": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce/releases/kernel/6.6.63/Image",
+      "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "bytes": 24208896
+    },
+    {
+      "manifest": "artifacts-node-alpine.json",
+      "role": "rootfs",
+      "source": "releases/rootfs/alpine-rootfs.ext4",
+      "public": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8/releases/rootfs/alpine-rootfs.ext4",
+      "sha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8",
+      "bytes": 536870912
+    },
+    {
+      "manifest": "artifacts-node-alpine.json",
+      "role": "bootSnapshot",
+      "source": "releases/boot-snapshot/node-alpine-ready.snap.gz",
+      "public": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/f25825449fb30f6bd6d04ff44f2d703556f03e646c1d50bc0d4bf51ce482ddf0/releases/boot-snapshot/node-alpine-ready.snap.gz",
+      "sha256": "f25825449fb30f6bd6d04ff44f2d703556f03e646c1d50bc0d4bf51ce482ddf0",
+      "bytes": 55211220
+    },
+    {
+      "manifest": "artifacts-omarchy.json",
+      "role": "kernel",
+      "source": "releases/kernel/6.6.63-omarchy-evdev1024/Image",
+      "public": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d/releases/kernel/6.6.63-omarchy-evdev1024/Image",
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d",
+      "bytes": 24208896
+    },
+    {
+      "manifest": "artifacts-omarchy.json",
+      "role": "bootSnapshot",
+      "source": "releases/boot-snapshot/omarchy-apps-ready-98235fbe8cc4.snap.gz",
+      "public": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/98235fbe8cc4baefefdaab086c700d40c5f5c60d9bf3b26f7642903802214b22/releases/boot-snapshot/omarchy-apps-ready-98235fbe8cc4.snap.gz",
+      "sha256": "98235fbe8cc4baefefdaab086c700d40c5f5c60d9bf3b26f7642903802214b22",
+      "bytes": 210695930
+    },
+    {
+      "manifest": "artifacts-omarchy-virgl.json",
+      "role": "kernel",
+      "source": "releases/kernel/6.6.63-omarchy-evdev1024/Image",
+      "public": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d/releases/kernel/6.6.63-omarchy-evdev1024/Image",
+      "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d",
+      "bytes": 24208896
+    },
+    {
+      "manifest": "artifacts-omarchy-virgl.json",
+      "role": "gpuCheckpoint",
+      "source": "releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair",
+      "public": "https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/sha256/3583ea9927d142e33c9b1de5963d89bd1f0b1022df7047c8a8b02d7f734a01bd/releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair",
+      "sha256": "3583ea9927d142e33c9b1de5963d89bd1f0b1022df7047c8a8b02d7f734a01bd",
+      "bytes": 204057731
+    }
+  ]
+}
