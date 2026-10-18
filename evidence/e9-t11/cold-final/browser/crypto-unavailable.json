@@ -1,0 +1,147 @@
+{
+  "code": "ProviderUnavailable",
+  "point": {
+    "transition": "115",
+    "retired": "115",
+    "phase": "observe",
+    "sequence": "3",
+    "ordinal": 1
+  },
+  "replayCode": "ProviderUnavailable",
+  "replayPoint": {
+    "transition": "115",
+    "retired": "115",
+    "phase": "observe",
+    "sequence": "3",
+    "ordinal": 1
+  },
+  "recordHostReads": {
+    "rtc": 1,
+    "entropy": 1
+  },
+  "replayHostReads": {
+    "rtc": 0,
+    "entropy": 0
+  },
+  "tape": {
+    "file": "crypto-unavailable.observations",
+    "bytes": 116,
+    "sha256": "f3926110584d7adc35b584553dd9ef8510dfcb5affb2a628711e1f5e56beb1eb"
+  },
+  "receipts": [
+    {
+      "transition": "0",
+      "retired": "0",
+      "phase": "before",
+      "sequence": "1",
+      "ordinal": 1,
+      "channel": 16,
+      "bytes": [
+        1
+      ],
+      "outcome": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "transition": "24",
+      "retired": "24",
+      "phase": "observe",
+      "sequence": "2",
+      "ordinal": 1,
+      "channel": 17,
+      "bytes": [
+        0,
+        141,
+        219,
+        120,
+        87,
+        160,
+        223,
+        24
+      ],
+      "outcome": [
+        "0",
+        "1",
+        "8",
+        "0"
+      ]
+    },
+    {
+      "transition": "115",
+      "retired": "115",
+      "phase": "observe",
+      "sequence": "3",
+      "ordinal": 1,
+      "channel": 18,
+      "bytes": [],
+      "outcome": [
+        "1",
+        "6",
+        "16",
+        "0"
+      ]
+    }
+  ],
+  "replayed": [
+    {
+      "transition": "0",
+      "retired": "0",
+      "phase": "before",
+      "sequence": "1",
+      "ordinal": 1,
+      "channel": 16,
+      "bytes": [
+        1
+      ],
+      "outcome": [
+        "0",
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "transition": "24",
+      "retired": "24",
+      "phase": "observe",
+      "sequence": "2",
+      "ordinal": 1,
+      "channel": 17,
+      "bytes": [
+        0,
+        141,
+        219,
+        120,
+        87,
+        160,
+        223,
+        24
+      ],
+      "outcome": [
+        "0",
+        "1",
+        "8",
+        "0"
+      ]
+    },
+    {
+      "transition": "115",
+      "retired": "115",
+      "phase": "observe",
+      "sequence": "3",
+      "ordinal": 1,
+      "channel": 18,
+      "bytes": [],
+      "outcome": [
+        "1",
+        "6",
+        "16",
+        "0"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+Built page suite and actual frozen/resumed RTC/RNG guest
+Rechecking prior event-clock and input adapters against the new Wasm
+Recording actual Web Crypto failure and zero-provider replay
+Durable time/entropy recording through direct loader
+Durable time/entropy recording through whole-machine worker
+{"status":"passed","errors":[],"lifecycle":[{"state":"frozen/active","milliseconds":222}]}

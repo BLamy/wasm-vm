@@ -1,0 +1,34 @@
+{
+  "worker": false,
+  "backend": "main-thread",
+  "kernelSha256": "ae2a321f30d6a18d41e100236c2b90c15f35cb3c232a2bc92ab3fd665c191a82",
+  "errors": [],
+  "output": {
+    "bytes": 194,
+    "sha256": "b050426150736a077533b69b4a348b8fa32dd41051d0db0974275ac416a5052b"
+  },
+  "kernel": {
+    "bytes": 2104,
+    "sha256": "ae2a321f30d6a18d41e100236c2b90c15f35cb3c232a2bc92ab3fd665c191a82"
+  },
+  "id": "inputs-e27fad90-1b1c-4744-affd-6c6a294df3a1",
+  "done": "poweroff",
+  "position": {
+    "transition": "527",
+    "retired": "526",
+    "phase": "before",
+    "sequence": "413",
+    "ordinal": 1,
+    "replay": false,
+    "paused": true,
+    "stopped": true
+  },
+  "receipts": 413,
+  "end": {
+    "transition": "527",
+    "phase": "before",
+    "ordinal": 1,
+    "sequence": "413",
+    "retired": "526"
+  }
+}

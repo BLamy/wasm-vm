@@ -1,0 +1,25 @@
+{
+  "worker": true,
+  "backend": "whole-machine-worker",
+  "kernelSha256": "ae2a321f30d6a18d41e100236c2b90c15f35cb3c232a2bc92ab3fd665c191a82",
+  "errors": [],
+  "output": {
+    "bytes": 194,
+    "sha256": "5cb3a9a38232e10e98bf33e1ea8dabdf069d5b002e836501ea77537f327dd2ad"
+  },
+  "kernel": {
+    "bytes": 2104,
+    "sha256": "ae2a321f30d6a18d41e100236c2b90c15f35cb3c232a2bc92ab3fd665c191a82"
+  },
+  "id": "inputs-1bbf0719-b61b-4f6c-814f-2cb96885b2f8",
+  "done": "poweroff",
+  "position": null,
+  "receipts": 413,
+  "end": {
+    "transition": "527",
+    "phase": "before",
+    "ordinal": 1,
+    "sequence": "413",
+    "retired": "526"
+  }
+}
