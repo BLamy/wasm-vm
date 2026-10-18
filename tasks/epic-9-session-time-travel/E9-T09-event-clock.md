@@ -3,7 +3,7 @@ id: E9-T09
 epic: 9
 title: Place recorded events at exact guest execution boundaries
 priority: 524.909
-status: pending
+status: in-progress
 depends_on: [E9-T01, E9-T02]
 estimate: S
 risk: high
@@ -34,4 +34,12 @@ Deliver events at a block edge, inside a compiled block and across WFI. Vary bro
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-18 — worker — started
+
+Selected from Next up after E9-T08's independent verified verdict and public catalog
+publication. High risk: this slice changes execution boundaries and snapshot semantics.
+Implement the non-wrapping single-hart clock, owned ordered delivery queue, and exact
+interpreter/JIT fences; keep later input logging, observation adapters, and replay in their
+own tasks. Record affected native/JIT/wasm gates, deterministic guest-state evidence,
+built-browser proof, the retained GPU regression, and one final pristine-clone proof before
+submission to a fresh adversarial verifier. No implementation claim yet.
