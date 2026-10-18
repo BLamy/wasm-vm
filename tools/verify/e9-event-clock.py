@@ -17,7 +17,7 @@ report={'task':'E9-T09','status':'running','head':subprocess.check_output(['git'
         'scope':'Single-hart ICount common clock/mailbox, exact real interpreter/JIT boundaries and native snapshot state. Linux provider recording/replay remains gated in T10-T14.'}
 sources=['crates/core/src/lib.rs','crates/core/src/session_clock.rs','crates/core/src/resume.rs','crates/core/tests/e9_event_clock.rs',
  'crates/core/tests/predecode_batching.rs','crates/core/tests/riscv_tests_suite.rs','crates/core/examples/retirement_capture_baseline.rs',
- 'crates/jit-runtime/tests/e9_event_clock.rs','crates/jit-runtime/tests/jit_execution.rs','crates/wasm/src/lib.rs','crates/wasm/src/event_clock.rs',
+ 'crates/jit-runtime/tests/e9_event_clock.rs','crates/jit-runtime/tests/e9_event_clock_critic.rs','crates/jit-runtime/tests/jit_execution.rs','crates/wasm/src/lib.rs','crates/wasm/src/event_clock.rs',
  'crates/wasm/src/software_checkpoint.rs','crates/wasm/tests/software_checkpoint.rs','crates/cli/src/main.rs','crates/cli/src/boot.rs','crates/cli/src/boot/agent_proof.rs',
  'web/index.html','web/main.js','web/event-clock-probe.js','web/roadmap.js','web/session-checkpoints.js','web/loader.js','web/gpu-checkpoint-build.js',
  'web/docs-source/guides/storage.md','docs/design/session-replay.md','docs/design/session-replay-contract.json','web/package.json','web/package-lock.json',
@@ -47,7 +47,7 @@ try:
     run('native-clippy',['cargo','clippy','-p','wasm-vm-core','-p','wasm-vm-wasm','-p','wasm-vm-jit-runtime','-p','wasm-vm-cli','--all-targets','--features','trace,virgl-renderer','--','-D','warnings'])
     run('core-native',['cargo','test','-p','wasm-vm-core','--lib','--features','trace,virgl-renderer','--','--nocapture'])
     run('execution-native',['cargo','test','-p','wasm-vm-core','--features','trace,virgl-renderer','--test','e9_event_clock','--test','cpu_resume','--test','snapshot_coherence','--test','predecode_batching','--test','predecode_entry_safety','--test','interrupts','--test','wfi_fast_forward_critic','--test','production_keyboard_wfi_critic','--test','sbi_timer','--','--nocapture'])
-    run('jit-native',['cargo','test','-p','wasm-vm-jit-runtime','--test','e9_event_clock','--test','jit_execution','--test','timekeeping','--test','batching','--test','chaining','--test','precise_traps','--test','partial_blocks','--','--nocapture'])
+    run('jit-native',['cargo','test','-p','wasm-vm-jit-runtime','--test','e9_event_clock','--test','e9_event_clock_critic','--test','jit_execution','--test','timekeeping','--test','batching','--test','chaining','--test','precise_traps','--test','partial_blocks','--','--nocapture'])
     run('native-oracle',['python3','-B','tools/verify/e9-event-clock-files.py','--directory',str(out/'native')])
     run('boundary-native',['cargo','test','-p','wasm-vm-wasm','--lib','--test','software_checkpoint','--','--nocapture'])
     run('core-no-std-wasm',['cargo','build','-p','wasm-vm-core','--no-default-features','--target','wasm32-unknown-unknown'])
