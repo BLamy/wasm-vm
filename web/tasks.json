@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 515,
+    "verified": 516,
     "total": 729
   },
   "epics": [
@@ -34307,7 +34307,7 @@
       "epicKey": "9",
       "title": "Preserve immutable disk state for historical checkpoints",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E9-T02",
         "E9-T03",
@@ -34322,35 +34322,37 @@
       "criteria": [
         {
           "text": "Create two roots around a real guest file change and restore the matching content from each.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Keep checkpoint disk roots stable while recording continues and when a separate live branch writes the same block.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Reject mismatched base images/generations before applying state; preserve shared ancestors when a child session is deleted.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "### 2026-10-17 — worker — started\n\nE9-T02 and E3-T12c3 are verified, and the preceding session-store slice is independently\nverified and published. This high-risk S boundary stores immutable, content-addressed\nmaps of the complete COW write set, bound to the canonical chunked-image identity and\nexact overlay generation. Restoring a root constructs a private overlay; it never seeds\nor rewrites the live persistent store. Shared block references remain reachable from\nevery surviving root. The proof will use real guest file changes and an independent\nfilesystem reader, interleaved publication/live writes, sibling roots, and identity and\ngeneration refusal cases. Coherent CPU/RAM/device capture remains the T05 boundary.\n\nThe persisted-root implementation also uses E9-T03's immutable object store and writer\nleases, so that already-verified prerequisite is explicit in the frontmatter.",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-10-17 — worker — started\n\nE9-T02 and E3-T12c3 are verified, and the preceding session-store slice is independently\nverified and published. This high-risk S boundary stores immutable, content-addressed\nmaps of the complete COW write set, bound to the canonical chunked-image identity and\nexact overlay generation. Restoring a root constructs a private overlay; it never seeds\nor rewrites the live persistent store. Shared block references remain reachable from\nevery surviving root. The proof will use real guest file changes and an independent\nfilesystem reader, interleaved publication/live writes, sibling roots, and identity and\ngeneration refusal cases. Coherent CPU/RAM/device capture remains the T05 boundary.\n\nThe persisted-root implementation also uses E9-T03's immutable object store and writer\nleases, so that already-verified prerequisite is explicit in the frontmatter.\n\n### 2026-10-17 — worker — implemented claim\n\nFrozen runtime/test head: `b5baad0a4b1cddcbd08299b438292258352b2c08`. Exact command:\n`E9_DISK_EVIDENCE_DIR=target/evidence/e9-t04-worker-final make verify-E9-T04`.\nAll 16 gates passed with a clean tree before and after: affected native lint/tests,\nwasm32 builds/lint, bit-identical rebuilt browser bundles, 17 shared Node-Wasm cases\n(including 8 disk-root cases), 32 protocol cases, source-inventory/retained-runtime\nadmission, and the recorded built-browser acceptance. The native and Node-Wasm\nroot tests each executed 32 deterministic schedules varying writes, capture points,\npublication order and private sibling mutations.\n\nEvidence of record: `target/evidence/e9-t04-worker-final/`; receipt SHA-256\n`1e2577042ba20e4ed3bd63fe0eb77efbd41371be85255689112ce40c39366efd`\nauthenticates all 515 original files. The compact copies and digest mapping are in\n`evidence/e9-t04/worker/`. Full Playwright trace, coverage, isolated profile and\nreconstructed ext4 images remain in the original directory.\n\nThe actual software Linux worker wrote/read `e9:before\\n`, `e9:after\\n`, and\n`e9:live\\n`; publication of the first root was held across later guest writes.\nCapture drained original I/O/durability work without retiring guest instructions.\nFresh private workers booted the newer then older disk root and read their matching\nfiles. The older branch wrote `e9:fork\\n` to the same physical block (33281), while\nraw durable live-disk block/meta rows remained byte-identical. Root generation is\nthe native coherence witness; independent branch writes can retain that generation\nand still produce different content hashes. Python independently reconstructed the\ncanonical root/delta format, and Docker e2fsprogs recovered/read all four exact file\ncontents from owned image copies. The pinned base and before-root bytes remained\nunchanged. Wrong base/generation, corrupt/missing blocks, invalid metadata, detached/\nmutated producer views and released writers refused. A strict child session-row\ndeletion plus surviving-root mark union preserved and reauthenticated the parent.\nIts placeholder machine pin fixture makes no coherent-checkpoint claim.\n\nThe built page passed **127/0**, showed the disk-root pip `verified`, and recorded\nzero console/page errors. Screenshots are in the packet. The real published GPU\nfactory also booted through the matching retained v2 client, retired **2,999,712**\ninstructions and physically drew in fresh epoch 4. Its original runtime bytes and\nfrozen pair identity were preserved. E9-T05 coordinates the full machine tuple;\nE9-T07 owns atomic retention/reclamation. Fresh critic and final cold proof pending.\n\n### 2026-10-17 — fresh verifier — pre-cold audit\n\nP0–P8 **HELD**, with predictions recorded before opening evidence in\n`evidence/e9-t04/verifier/predictions.md`. The worker receipt and all 515 originals\nand 51 compact copies authenticate. Independent delta/root decoding, read-only\next4 reads, exact same-block file bytes, live database equality and surviving-root\nunion checks held. The changed-hunk audit and scoped waivers are in\n`evidence/e9-t04/verifier/audit.md`.\n\nPromoted 64 independent native schedules for equal-generation siblings at u64::MAX,\nshared blocks and a one-byte image tail; a temporary sibling-alias sabotage fails\nthe independent byte oracle (exit 101), and the original passes. Promoted actual\nbrowser loader admission/owner races and direct native capture at an original pending\nread and WritePending. Capture itself fetched the original chunk, drained 4096 bytes\nto strict durability, advanced generation 0→1 and left both icount clocks unchanged.\nA corrupt-chunk fixture proves the 16-pass bounded refusal on an isolated real page;\nthe actual demo's zero-console-error gate remains strict. The initial supplementary\nrunner's broad console assertion caught those intentional errors; its log is preserved,\nand the corrected narrow run asserts their exact sequence. No runtime code changed.\n\nCommands: `cargo test -p wasm-vm-storage --test disk_root_verifier -- --nocapture`,\n`cargo clippy -p wasm-vm-storage --test disk_root_verifier -- -D warnings`,\n`cargo fmt --all --check`, `node evidence/e9-t04/verifier/run-browser-critic.mjs`,\nplus read-only Python/Docker receipt/root/filesystem interrogation. The critic helper\nis now called by `make verify-E9-T04`; the native test joins storage tests. Task remains\n`implemented` until the one final pristine source-clone proof and receipt interrogation.\nT03's unchanged findings carry forward; T05/T07 keep their declared boundaries.\n\n### 2026-10-17 — worker — cold-browser harness correction\n\nThe pristine `25e65f56` run passed the first 15 gates, promoted I/O/owner attacks,\n127/0 browser suite, all private-root Linux boots and independent filesystem oracles.\nOnly the retained GPU compatibility boot failed: the missing local release redirects\nto the authenticated R2 object, and Playwright interception rejected that worker fetch.\nAn unchanged full-browser repeat reproduced it. A controlled fresh-profile run then\nfailed with the export route installed and succeeded after removing only that route:\n2,499,808 retired instructions and a qualified physical draw in fresh epoch 4.\n`evidence/e9-t04/harness/route-toggle.json` authenticates both failures, the causal trace\nand its complete source. The driver now removes its unused export route before GPU\nboot and records the full boot result. Runtime, native code and deployed bytes are\nunchanged. Prior HELD findings carry forward; the final scoped cold browser proof\nand fresh verifier verdict remain pending.\n\n### 2026-10-17 — fresh verifier — VERDICT: verified\n\n- P0–P9 **HELD**. Original worker and cold receipts authenticate. Independently decoded\n  root/delta hashes, read-only debugfs file contents and inode block maps, reverse-order\n  boots, same-block sibling writes, immutable old roots, durable live-row equality,\n  exact identity rejection and surviving-root union all held. Native/shared-Wasm\n  worker schedules and the promoted independent 64-schedule attack survive; isolated\n  sibling-alias sabotage fails the oracle as required. Per-hunk coverage and narrow\n  waivers are in `evidence/e9-t04/verifier/audit.md`.\n- **COLD / INCREMENTAL PROOF HELD**. The pristine `25e65f56` source clone passed 15\n  non-browser gates and every root/I/O/owner/filesystem assertion. Two complete browser\n  attempts then failed only the retained GPU asset redirect while the finished export\n  route remained installed. The controlled route toggle authenticated that harness\n  cause. Test-only `0db63b02fc3cdef4ed188a53d03fddfc340b454f` releases the route; its\n  full browser acceptance passed in the same clean exact-head clone with a new profile,\n  scrubbed environment and outside-clone output. All 499 final files and 30 source\n  hashes authenticate; runtime/native/permanent tests and dependencies are unchanged,\n  so the 15 original cold gates carry forward. Original failed receipts remain intact.\n- **BROWSER / COMPATIBILITY HELD**. Final built page: 127/0, verified disk pip, zero\n  demo errors; all promoted critic paths and four independently reconstructed exact\n  ext4 files passed. Genuine filesystem inode maps confirm block 33281 for all four.\n  The unchanged retained v2 factory retires 2,499,808 instructions and physically draws\n  in fresh epoch 4. This proves compatibility, not accelerated replay qualification.\n- **SUITE**. The native critic test and bounded real-browser critic helper are permanent\n  acceptance inputs. No product contradiction or remaining in-scope proof gap was found.\n  T05 owns coherent machine tuples and T07 atomic deletion/reclamation.\n\nExact commands and environment are in the compact `evidence/e9-t04/verifier/cold/`\nreceipts/wrappers; independent final checks are in `cold-verification.json`. Final\nbrowser receipt SHA-256:\n`5d27531082fa9c7881211bfd0534386fe0c1ea3f06e1e9b55fe353fbe3ffcd00`;\nreport SHA-256:\n`d054a6eb3a92d8725fd3dce3ff27effd6254f55fa37ba22095bca85ab45a1e97`.\nThe verdict/status commit changes verification metadata and evidence only.",
       "adversarial": "Interleave writes and checkpoint publication, then restore both roots in reverse order. Any newer file bytes leaking into the older state, or mutation of a sibling root, is a failure.",
       "file": "tasks/epic-9-session-time-travel/E9-T04-historical-disk-roots.md",
       "activity": [
         {
           "date": "2026-10-17",
-          "commits": 2,
+          "commits": 6,
           "labels": [
-            "docs(tasks): record disk root storage dependency",
-            "docs(tasks): start immutable historical disk roots"
+            "docs(verification): verify immutable historical disk roots",
+            "Release proof export interception before retained GPU boot",
+            "test(session): attack immutable disk root boundaries",
+            "docs(evidence): submit historical disk root proof"
           ]
         }
       ],
       "firstActivity": "2026-10-17",
       "lastActivity": "2026-10-17",
-      "commitCount": 2
+      "commitCount": 6
     },
     {
       "id": "E9-T05",
