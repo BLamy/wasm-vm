@@ -679,7 +679,7 @@
     "web/gpu-checkpoint.js": "f00f1537455a476eb8d9c54d25378ea23bd18024d84eded310da947ea63846ce",
     "web/guest-clock.js": "fcd9a2b5ce4c2a04cc8a253aa1d330f60e5c9e4e72473c55503d897c2311aad3",
     "web/linux-worker-protocol.js": "50c02f3babe38c93830d82088c477f415f4a4aa5440589de4d91be10099ff900",
-    "web/loader.js": "b42df333fa2bb6d65088843246b47cb87c9847aad4bfadcf9b97ff9451210efe",
+    "web/loader.js": "b8fc2ef44212c1789d4b1f5a05884523e360b58321b9d822b89efefdd8cc8f5d",
     "web/renderer/virgl-command/checkpoint.mjs": "ba463beecf7d0b1fd141a607a82dd17b37ef407582a23f46d00c6bef85d911af",
     "web/renderer/virgl-command/control-bridge.mjs": "27aecae3704b053d6c01d6d933e6592bcea334ca243047d3fe14536b365a3c5a",
     "web/renderer/virgl-command/queries.mjs": "8a7dd9c146ff437691108f0749c89a2d4ac8573ec35690c02e39cbdbbaca8860",

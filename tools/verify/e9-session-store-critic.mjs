@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 export async function checkSessionStoreCritic(page, {name, fixture}) {
   const result = await page.evaluate(async ({name, fixture}) => {
-    const {SessionStore} = await import('./session-store.js');
+    const {SessionStore, SESSION_DATABASE_VERSION = 1} = await import('./session-store.js');
     const namespace = name + '-critic', id = 'critic-integrity';
     let store = await SessionStore.open(namespace);
     const encode = value => new TextEncoder().encode(JSON.stringify(value));
@@ -17,7 +17,7 @@ export async function checkSessionStoreCritic(page, {name, fixture}) {
     } finally { await writer.release(); }
     const original = await store.openSession(id), machine = value.checkpoints[0].machine;
     const db = await new Promise((resolve, reject) => {
-      const request = indexedDB.open(namespace, 1);
+      const request = indexedDB.open(namespace);
       request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error);
     });
     const read = (table, key) => new Promise((resolve, reject) => {
@@ -128,7 +128,7 @@ export async function checkSessionStoreCritic(page, {name, fixture}) {
     const versionName = namespace + '-version', versionStore = await SessionStore.open(versionName);
     const versionLease = await versionStore.writer('version-change');
     const upgraded = await new Promise((resolve, reject) => {
-      const request = indexedDB.open(versionName, 2);
+      const request = indexedDB.open(versionName, SESSION_DATABASE_VERSION + 1);
       request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error);
     });
     await versionLease.release(); upgraded.close();
@@ -142,7 +142,7 @@ export async function checkSessionStoreCritic(page, {name, fixture}) {
     try { for (const blob of fixture.blobs) await catalogLease.put(blob.ref, [new Uint8Array(blob.bytes)]); }
     finally { await catalogLease.release(); }
     const catalogDb = await new Promise((resolve, reject) => {
-      const request = indexedDB.open(catalogName, 1);
+      const request = indexedDB.open(catalogName);
       request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error);
     });
     const seedCatalog = count => new Promise((resolve, reject) => {

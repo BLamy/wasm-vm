@@ -1,0 +1,23 @@
+{
+  "worker": {
+    "status": "passed",
+    "provenance_sha256": "043dbf94f5d8d166f3dccbf38241f10d938dec10f2cc4bd7d25dce046c69f574",
+    "packet_files": 45,
+    "aliases": 7,
+    "originals": 578
+  },
+  "cold": {
+    "status": "passed",
+    "provenance_sha256": "3408a38dab4aa2d0587ee57d86b70cb72899c2cb7e37510a4e58911e7e7f1e4b",
+    "packet_files": 48,
+    "aliases": 7,
+    "originals": 581
+  },
+  "public": {
+    "status": "passed",
+    "provenance_sha256": "8d1334f0c0148f2090b1e930995ecdf9f2a870111dc02ef3af53631d292b5bab",
+    "packet_files": 32,
+    "aliases": 17,
+    "originals": 1251
+  }
+}

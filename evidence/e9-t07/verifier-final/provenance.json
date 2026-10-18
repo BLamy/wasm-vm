@@ -1,0 +1,224 @@
+{
+  "task": "E9-T07",
+  "verdict": "verified",
+  "frozen_product": "2c9c0a5657dd0ab0d2a7d3a72f2c9742cd90521b",
+  "worker_claim": "cb9af8ca9274e087f75e2237fa085fa21436bc4c",
+  "scope": "Fresh adversarial verifier. Product code unchanged; promotion contains regression harnesses, evidence/status and generated queue only.",
+  "packet": [
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/predictions.json",
+      "path": "predictions.json",
+      "bytes": 3882,
+      "sha256": "380bb99f612fc5fecb51a507c21783e1791c6af4fd03e9af233b52c9795f0c8a",
+      "source_bytes": 3882,
+      "source_sha256": "380bb99f612fc5fecb51a507c21783e1791c6af4fd03e9af233b52c9795f0c8a",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/orientation.json",
+      "path": "orientation.json",
+      "bytes": 565,
+      "sha256": "1b8679acc1f1f09fb9ae7d8375d94ba738880aada94ab35833f78213313c64ba",
+      "source_bytes": 565,
+      "source_sha256": "1b8679acc1f1f09fb9ae7d8375d94ba738880aada94ab35833f78213313c64ba",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/observations.json",
+      "path": "observations.json",
+      "bytes": 9274,
+      "sha256": "ef997afe41edbae4bdcc64364d2a1b1d92da2fb95679231dd53b9dee743063f8",
+      "source_bytes": 9274,
+      "source_sha256": "ef997afe41edbae4bdcc64364d2a1b1d92da2fb95679231dd53b9dee743063f8",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/worker-receipts.json",
+      "path": "worker-receipts.json",
+      "bytes": 636,
+      "sha256": "30d0c45cd9b865cd62e14decb8fcd628b5a5cf6c619598cfeb95631a17c64d9b",
+      "source_bytes": 636,
+      "source_sha256": "30d0c45cd9b865cd62e14decb8fcd628b5a5cf6c619598cfeb95631a17c64d9b",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/cold-receipts.json",
+      "path": "cold-receipts.json",
+      "bytes": 574,
+      "sha256": "a739400e7daf520787df53b3ff5990f64f497357b66aa113a1aa97b92aafe878",
+      "source_bytes": 574,
+      "source_sha256": "a739400e7daf520787df53b3ff5990f64f497357b66aa113a1aa97b92aafe878",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/public-partial-receipts.json",
+      "path": "public-partial-receipts.json",
+      "bytes": 1173,
+      "sha256": "c77adfaed7e3eec05e990ea933020183ac5da9be0cd16e9c224364ba98da82c2",
+      "source_bytes": 1173,
+      "source_sha256": "c77adfaed7e3eec05e990ea933020183ac5da9be0cd16e9c224364ba98da82c2",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/public-gpu-receipts.json",
+      "path": "public-gpu-receipts.json",
+      "bytes": 869,
+      "sha256": "83ae641705675b88a9c88d68e0874d91c83b3a73b9d7e10030ee536c713ab404",
+      "source_bytes": 869,
+      "source_sha256": "83ae641705675b88a9c88d68e0874d91c83b3a73b9d7e10030ee536c713ab404",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/compact-packets.json",
+      "path": "compact-packets.json",
+      "bytes": 600,
+      "sha256": "7190cb70e79c93cab96b99329491d4f169b5c8769ce58a3c4be418adf51fd602",
+      "source_bytes": 600,
+      "source_sha256": "7190cb70e79c93cab96b99329491d4f169b5c8769ce58a3c4be418adf51fd602",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/runtime-identities.json",
+      "path": "runtime-identities.json",
+      "bytes": 592,
+      "sha256": "82c3523a8b996bee2c1df5223a1a75dddc5a6961921819bce430065a36f0c46f",
+      "source_bytes": 592,
+      "source_sha256": "82c3523a8b996bee2c1df5223a1a75dddc5a6961921819bce430065a36f0c46f",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/raw-tuples.json",
+      "path": "raw-tuples.json",
+      "bytes": 27578,
+      "sha256": "44fe5d484f3e1c74c7bab3ee803e09da856b3f69b3a94c300cd60523d4c616e3",
+      "source_bytes": 27578,
+      "source_sha256": "44fe5d484f3e1c74c7bab3ee803e09da856b3f69b3a94c300cd60523d4c616e3",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/raw-tuples-public.json",
+      "path": "raw-tuples-public.json",
+      "bytes": 27578,
+      "sha256": "d3d4e1c70dc3d07fb468a904bf05077f99604e27c1136876ecbe8693aacb2274",
+      "source_bytes": 27578,
+      "source_sha256": "d3d4e1c70dc3d07fb468a904bf05077f99604e27c1136876ecbe8693aacb2274",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/trace-points.json",
+      "path": "trace-points.json",
+      "bytes": 5228,
+      "sha256": "48a859db3fddf4a734daa68e433d3d9961846af2eb7f8388789553759e2de0d2",
+      "source_bytes": 5228,
+      "source_sha256": "48a859db3fddf4a734daa68e433d3d9961846af2eb7f8388789553759e2de0d2",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/trace-snapshot-points.json",
+      "path": "trace-snapshot-points.json",
+      "bytes": 1024,
+      "sha256": "e4c75c097c29db85f2cc7cc9440c32e465fad26f8636015f18d126b258bcd6e0",
+      "source_bytes": 1024,
+      "source_sha256": "e4c75c097c29db85f2cc7cc9440c32e465fad26f8636015f18d126b258bcd6e0",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/coverage-audit.json",
+      "path": "coverage-audit.json",
+      "bytes": 107692,
+      "sha256": "6e9abb27f357c792919e45aac65a065827a864aa462deae34eb831fc2c879869",
+      "source_bytes": 107692,
+      "source_sha256": "6e9abb27f357c792919e45aac65a065827a864aa462deae34eb831fc2c879869",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/incremental-gates.json",
+      "path": "incremental-gates.json",
+      "bytes": 1449,
+      "sha256": "4bf5459010b88be9cb96b30208297686c61df8fe960bfd73a167f5dea5a83f2a",
+      "source_bytes": 1449,
+      "source_sha256": "4bf5459010b88be9cb96b30208297686c61df8fe960bfd73a167f5dea5a83f2a",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/audit-coverage.py",
+      "path": "audit-coverage.source.py",
+      "bytes": 3312,
+      "sha256": "2e09861b5577cf49f57c5eefd52cbdd254b91ee89b7625cee8303b1a423e07ee",
+      "source_bytes": 3312,
+      "source_sha256": "2e09861b5577cf49f57c5eefd52cbdd254b91ee89b7625cee8303b1a423e07ee",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/tuples.py",
+      "path": "tuple-audit.source.py",
+      "bytes": 6600,
+      "sha256": "e4095a2a834bae4875e83326a723e3b0c264d4616f8c11f2c7aa93ad67f2af89",
+      "source_bytes": 6600,
+      "source_sha256": "e4095a2a834bae4875e83326a723e3b0c264d4616f8c11f2c7aa93ad67f2af89",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-verifier-promoted/report.json",
+      "path": "promoted-report.json",
+      "bytes": 1888373,
+      "sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860",
+      "source_bytes": 1888373,
+      "source_sha256": "29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-verifier-promoted/coverage.json",
+      "path": "promoted-coverage.json.gz",
+      "bytes": 162367,
+      "sha256": "a3c049667cf9db77cd3c45b38e71d67c8ababb35875dce327d3be9f037fe51a7",
+      "source_bytes": 739027,
+      "source_sha256": "56383c1e67c81e92a1a0039e802184412f686c05f5afe84b56a7943e4d307d46",
+      "encoding": "gzip"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-verifier-promoted/ui/cleanup-refused.png",
+      "path": "cleanup-refused.png",
+      "bytes": 84638,
+      "sha256": "06af524ed21f0b31a476c0b1db7eedc009c86974179161da4dbc49b9894cf0ab",
+      "source_bytes": 84638,
+      "source_sha256": "06af524ed21f0b31a476c0b1db7eedc009c86974179161da4dbc49b9894cf0ab",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-verifier-promoted/ui/label-delete-retry.png",
+      "path": "label-delete-retry.png",
+      "bytes": 79806,
+      "sha256": "d219fbc2eb138c4518ec44cc64d9b7de5c41b388f3144e1a3981c71168585fd1",
+      "source_bytes": 79806,
+      "source_sha256": "d219fbc2eb138c4518ec44cc64d9b7de5c41b388f3144e1a3981c71168585fd1",
+      "encoding": "identity"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-verifier/coverage-and-hunks.md",
+      "path": "coverage-and-hunks.md",
+      "bytes": 3774,
+      "sha256": "93da0c9a18b097bd5b878a35f929f9b73801e4d8ec3494ed5e14ebe324946a8c",
+      "source_bytes": 3774,
+      "source_sha256": "93da0c9a18b097bd5b878a35f929f9b73801e4d8ec3494ed5e14ebe324946a8c",
+      "encoding": "identity"
+    }
+  ],
+  "original_promoted_traces": [
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-verifier-promoted/critic-trace.zip",
+      "bytes": 2210371,
+      "sha256": "717528dc24d01e9351e54b1d6900f59c44be609787f9067917ac64203bc138ce"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-verifier-promoted/direct-trace.zip",
+      "bytes": 973698,
+      "sha256": "aab284a570c937d5d099aa61aa48392ff78f9dd08516f35b33e34f64011501d7"
+    }
+  ],
+  "coverage_inputs": [
+    "../worker/javascript-coverage.json.gz",
+    "promoted-coverage.json.gz"
+  ],
+  "retained": "All original worker/cold/public/critic traces and profiles remain locally preserved. The failed public run remains failed; its completed storage proof plus oracle and GPU supplement are explicit."
+}

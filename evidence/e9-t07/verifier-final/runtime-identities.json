@@ -1,0 +1,16 @@
+{
+  "software_runtime": "cb49b9110d9344bbe9a426585384fd15d9b702b0cfe687597de51443405c338b",
+  "software_runtime_files": 51,
+  "software_wasm_sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+  "mirrors": [
+    "session-store.js",
+    "session-library.js",
+    "loader.js",
+    "roadmap.js",
+    "gpu-checkpoint-build.js",
+    "tasks.json"
+  ],
+  "retained_gpu_runtime": "222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0",
+  "retained_gpu_files": 47,
+  "retained_manifest_sha256": "aabeebb6c7cbcaa0b5e5aab6cee168309e1ff284f13b25fc33b023f46960db12"
+}

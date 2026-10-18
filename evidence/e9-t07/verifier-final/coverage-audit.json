@@ -1,0 +1,3704 @@
+{
+  "coverage": "target/e9-t07-verifier/coverage-combined-promoted.json",
+  "coverage_sha256": "f23428b151cf84e231b168a927bbbe0357140cc013910e2135cbf8597eae9b43",
+  "offsets": "UTF-16 code units",
+  "files": {
+    "web/session-store.js": {
+      "source_sha256": "ac74f75aed9f650fd3242b8b40f4b3d930cd75c64ae524cd5f2ef575656d68df",
+      "matching_entries": 7,
+      "changed_lines": 223,
+      "unhit": [],
+      "partial": [
+        {
+          "line": 46,
+          "start": 2998,
+          "end": 3043,
+          "covered_units": 17,
+          "code_units": 45,
+          "ignored_syntax": false,
+          "text": "finished.catch(error => reject(wrap(error)));",
+          "hit": true
+        },
+        {
+          "line": 131,
+          "start": 7430,
+          "end": 7478,
+          "covered_units": 45,
+          "code_units": 48,
+          "ignored_syntax": false,
+          "text": "usage += value instanceof Blob ? value.size : 0;",
+          "hit": true
+        },
+        {
+          "line": 133,
+          "start": 7552,
+          "end": 7630,
+          "covered_units": 2,
+          "code_units": 78,
+          "ignored_syntax": false,
+          "text": "} catch (error) { upgradeFailure = wrap(error); request.transaction.abort(); }",
+          "hit": true
+        },
+        {
+          "line": 135,
+          "start": 7652,
+          "end": 7730,
+          "covered_units": 2,
+          "code_units": 78,
+          "ignored_syntax": false,
+          "text": "} catch (error) { upgradeFailure = wrap(error); request.transaction.abort(); }",
+          "hit": true
+        },
+        {
+          "line": 167,
+          "start": 9154,
+          "end": 9255,
+          "covered_units": 79,
+          "code_units": 101,
+          "ignored_syntax": false,
+          "text": "} catch (error) { if (owned) await owned.release(); await maintenance.release(); throw wrap(error); }",
+          "hit": true
+        },
+        {
+          "line": 191,
+          "start": 10464,
+          "end": 10497,
+          "covered_units": 2,
+          "code_units": 33,
+          "ignored_syntax": false,
+          "text": "} catch (error) { abort(error); }",
+          "hit": true
+        },
+        {
+          "line": 364,
+          "start": 19187,
+          "end": 19220,
+          "covered_units": 2,
+          "code_units": 33,
+          "ignored_syntax": false,
+          "text": "} catch (error) { abort(error); }",
+          "hit": true
+        },
+        {
+          "line": 382,
+          "start": 20163,
+          "end": 20265,
+          "covered_units": 99,
+          "code_units": 102,
+          "ignored_syntax": false,
+          "text": "} else { cursor.delete(); removedChunks++; reclaimedBytes += value instanceof Blob ? value.size : 0; }",
+          "hit": true
+        }
+      ],
+      "rows": [
+        {
+          "line": 4,
+          "start": 256,
+          "end": 324,
+          "covered_units": 68,
+          "code_units": 68,
+          "ignored_syntax": false,
+          "text": "sessionEventReferences, sessionCheckAppend, sessionValidateDiskRoot,",
+          "hit": true
+        },
+        {
+          "line": 5,
+          "start": 327,
+          "end": 394,
+          "covered_units": 67,
+          "code_units": 67,
+          "ignored_syntax": false,
+          "text": "sessionDiskRootReferences} from './session-pkg/wasm_vm_session.js';",
+          "hit": true
+        },
+        {
+          "line": 9,
+          "start": 499,
+          "end": 541,
+          "covered_units": 42,
+          "code_units": 42,
+          "ignored_syntax": false,
+          "text": "export const SESSION_DATABASE_VERSION = 2;",
+          "hit": true
+        },
+        {
+          "line": 10,
+          "start": 542,
+          "end": 646,
+          "covered_units": 104,
+          "code_units": 104,
+          "ignored_syntax": false,
+          "text": "export const DEFAULT_SESSION_RETENTION = Object.freeze({maxBytes: 2 * 1024 ** 3, maxCheckpoints: 4096});",
+          "hit": true
+        },
+        {
+          "line": 13,
+          "start": 779,
+          "end": 874,
+          "covered_units": 95,
+          "code_units": 95,
+          "ignored_syntax": false,
+          "text": "const MAX_GC_OBJECTS = 262144, MAX_GC_CHUNKS = 1048576, MAX_DISK_ROOT_BYTES = 12 * 1024 * 1024;",
+          "hit": true
+        },
+        {
+          "line": 25,
+          "start": 1701,
+          "end": 1728,
+          "covered_units": 27,
+          "code_units": 27,
+          "ignored_syntax": false,
+          "text": "function retention(value) {",
+          "hit": true
+        },
+        {
+          "line": 26,
+          "start": 1731,
+          "end": 1810,
+          "covered_units": 79,
+          "code_units": 79,
+          "ignored_syntax": false,
+          "text": "need(value && Object.keys(value).sort().join(',') === 'maxBytes,maxCheckpoints'",
+          "hit": true
+        },
+        {
+          "line": 27,
+          "start": 1815,
+          "end": 1931,
+          "covered_units": 116,
+          "code_units": 116,
+          "ignored_syntax": false,
+          "text": "&& Number.isSafeInteger(value.maxBytes) && value.maxBytes >= SESSION_CHUNK_BYTES && value.maxBytes <= 64 * 1024 ** 3",
+          "hit": true
+        },
+        {
+          "line": 28,
+          "start": 1936,
+          "end": 2057,
+          "covered_units": 121,
+          "code_units": 121,
+          "ignored_syntax": false,
+          "text": "&& Number.isSafeInteger(value.maxCheckpoints) && value.maxCheckpoints >= 1 && value.maxCheckpoints <= 4096, 'Retention');",
+          "hit": true
+        },
+        {
+          "line": 29,
+          "start": 2060,
+          "end": 2132,
+          "covered_units": 72,
+          "code_units": 72,
+          "ignored_syntax": false,
+          "text": "return {maxBytes: value.maxBytes, maxCheckpoints: value.maxCheckpoints};",
+          "hit": true
+        },
+        {
+          "line": 30,
+          "start": 2133,
+          "end": 2134,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 31,
+          "start": 2135,
+          "end": 2258,
+          "covered_units": 123,
+          "code_units": 123,
+          "ignored_syntax": false,
+          "text": "function payloadBytes(value) { need(Number.isSafeInteger(value) && value >= 0, 'Corrupt', 'payload usage'); return value; }",
+          "hit": true
+        },
+        {
+          "line": 32,
+          "start": 2260,
+          "end": 2259,
+          "covered_units": -6,
+          "code_units": 0,
+          "ignored_syntax": true,
+          "text": "",
+          "hit": false
+        },
+        {
+          "line": 33,
+          "start": 2260,
+          "end": 2349,
+          "covered_units": 89,
+          "code_units": 89,
+          "ignored_syntax": true,
+          "text": "// Writers hold a shared maintenance lease for their entire staging/publication lifetime.",
+          "hit": true
+        },
+        {
+          "line": 34,
+          "start": 2350,
+          "end": 2443,
+          "covered_units": 93,
+          "code_units": 93,
+          "ignored_syntax": true,
+          "text": "// Cleanup never queues behind them: ifAvailable makes a busy origin an explicit retry state.",
+          "hit": true
+        },
+        {
+          "line": 35,
+          "start": 2444,
+          "end": 2489,
+          "covered_units": 45,
+          "code_units": 45,
+          "ignored_syntax": false,
+          "text": "function holdLock(name, mode, active, busy) {",
+          "hit": true
+        },
+        {
+          "line": 36,
+          "start": 2492,
+          "end": 2550,
+          "covered_units": 58,
+          "code_units": 58,
+          "ignored_syntax": false,
+          "text": "need(globalThis.navigator?.locks, 'OwnershipUnavailable');",
+          "hit": true
+        },
+        {
+          "line": 37,
+          "start": 2553,
+          "end": 2594,
+          "covered_units": 41,
+          "code_units": 41,
+          "ignored_syntax": false,
+          "text": "return new Promise((resolve, reject) => {",
+          "hit": true
+        },
+        {
+          "line": 38,
+          "start": 2599,
+          "end": 2610,
+          "covered_units": 11,
+          "code_units": 11,
+          "ignored_syntax": false,
+          "text": "let unlock;",
+          "hit": true
+        },
+        {
+          "line": 39,
+          "start": 2615,
+          "end": 2668,
+          "covered_units": 53,
+          "code_units": 53,
+          "ignored_syntax": false,
+          "text": "const held = new Promise(done => { unlock = done; });",
+          "hit": true
+        },
+        {
+          "line": 40,
+          "start": 2673,
+          "end": 2756,
+          "covered_units": 83,
+          "code_units": 83,
+          "ignored_syntax": false,
+          "text": "const finished = navigator.locks.request(name, {mode, ifAvailable: true}, lock => {",
+          "hit": true
+        },
+        {
+          "line": 41,
+          "start": 2763,
+          "end": 2822,
+          "covered_units": 59,
+          "code_units": 59,
+          "ignored_syntax": false,
+          "text": "if (!lock) { reject(new SessionStoreError(busy)); return; }",
+          "hit": true
+        },
+        {
+          "line": 42,
+          "start": 2829,
+          "end": 2887,
+          "covered_units": 58,
+          "code_units": 58,
+          "ignored_syntax": false,
+          "text": "try { active(); } catch (error) { reject(error); return; }",
+          "hit": true
+        },
+        {
+          "line": 43,
+          "start": 2894,
+          "end": 2966,
+          "covered_units": 72,
+          "code_units": 72,
+          "ignored_syntax": false,
+          "text": "resolve(Object.freeze({release: () => { unlock(); return finished; }}));",
+          "hit": true
+        },
+        {
+          "line": 44,
+          "start": 2973,
+          "end": 2985,
+          "covered_units": 12,
+          "code_units": 12,
+          "ignored_syntax": false,
+          "text": "return held;",
+          "hit": true
+        },
+        {
+          "line": 45,
+          "start": 2990,
+          "end": 2993,
+          "covered_units": 3,
+          "code_units": 3,
+          "ignored_syntax": true,
+          "text": "});",
+          "hit": true
+        },
+        {
+          "line": 46,
+          "start": 2998,
+          "end": 3043,
+          "covered_units": 17,
+          "code_units": 45,
+          "ignored_syntax": false,
+          "text": "finished.catch(error => reject(wrap(error)));",
+          "hit": true
+        },
+        {
+          "line": 47,
+          "start": 3046,
+          "end": 3049,
+          "covered_units": 3,
+          "code_units": 3,
+          "ignored_syntax": true,
+          "text": "});",
+          "hit": true
+        },
+        {
+          "line": 48,
+          "start": 3050,
+          "end": 3051,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 115,
+          "start": 6532,
+          "end": 6567,
+          "covered_units": 35,
+          "code_units": 35,
+          "ignored_syntax": false,
+          "text": "let failed = false, upgradeFailure;",
+          "hit": true
+        },
+        {
+          "line": 116,
+          "start": 6574,
+          "end": 6637,
+          "covered_units": 63,
+          "code_units": 63,
+          "ignored_syntax": false,
+          "text": "const request = indexedDB.open(name, SESSION_DATABASE_VERSION);",
+          "hit": true
+        },
+        {
+          "line": 117,
+          "start": 6644,
+          "end": 6677,
+          "covered_units": 33,
+          "code_units": 33,
+          "ignored_syntax": false,
+          "text": "request.onupgradeneeded = () => {",
+          "hit": true
+        },
+        {
+          "line": 118,
+          "start": 6686,
+          "end": 6691,
+          "covered_units": 5,
+          "code_units": 5,
+          "ignored_syntax": true,
+          "text": "try {",
+          "hit": true
+        },
+        {
+          "line": 119,
+          "start": 6702,
+          "end": 6770,
+          "covered_units": 68,
+          "code_units": 68,
+          "ignored_syntax": false,
+          "text": "for (const store of ['chunks', 'objects', 'sessions', 'metadata']) {",
+          "hit": true
+        },
+        {
+          "line": 120,
+          "start": 6783,
+          "end": 6877,
+          "covered_units": 94,
+          "code_units": 94,
+          "ignored_syntax": false,
+          "text": "if (!request.result.objectStoreNames.contains(store)) request.result.createObjectStore(store);",
+          "hit": true
+        },
+        {
+          "line": 121,
+          "start": 6888,
+          "end": 6889,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 122,
+          "start": 6900,
+          "end": 6961,
+          "covered_units": 61,
+          "code_units": 61,
+          "ignored_syntax": false,
+          "text": "const metadata = request.transaction.objectStore('metadata');",
+          "hit": true
+        },
+        {
+          "line": 123,
+          "start": 6972,
+          "end": 7027,
+          "covered_units": 55,
+          "code_units": 55,
+          "ignored_syntax": false,
+          "text": "metadata.put({...DEFAULT_SESSION_RETENTION}, 'limits');",
+          "hit": true
+        },
+        {
+          "line": 124,
+          "start": 7038,
+          "end": 7052,
+          "covered_units": 14,
+          "code_units": 14,
+          "ignored_syntax": false,
+          "text": "let usage = 0;",
+          "hit": true
+        },
+        {
+          "line": 125,
+          "start": 7063,
+          "end": 7133,
+          "covered_units": 70,
+          "code_units": 70,
+          "ignored_syntax": false,
+          "text": "const cursor = request.transaction.objectStore('chunks').openCursor();",
+          "hit": true
+        },
+        {
+          "line": 126,
+          "start": 7144,
+          "end": 7170,
+          "covered_units": 26,
+          "code_units": 26,
+          "ignored_syntax": false,
+          "text": "cursor.onsuccess = () => {",
+          "hit": true
+        },
+        {
+          "line": 127,
+          "start": 7183,
+          "end": 7188,
+          "covered_units": 5,
+          "code_units": 5,
+          "ignored_syntax": true,
+          "text": "try {",
+          "hit": true
+        },
+        {
+          "line": 128,
+          "start": 7203,
+          "end": 7271,
+          "covered_units": 68,
+          "code_units": 68,
+          "ignored_syntax": false,
+          "text": "if (!cursor.result) { metadata.put(usage, 'payloadBytes'); return; }",
+          "hit": true
+        },
+        {
+          "line": 129,
+          "start": 7286,
+          "end": 7320,
+          "covered_units": 34,
+          "code_units": 34,
+          "ignored_syntax": false,
+          "text": "const value = cursor.result.value;",
+          "hit": true
+        },
+        {
+          "line": 130,
+          "start": 7335,
+          "end": 7415,
+          "covered_units": 80,
+          "code_units": 80,
+          "ignored_syntax": true,
+          "text": "// Metadata only: migration never allocates the old payloads or changes history.",
+          "hit": true
+        },
+        {
+          "line": 131,
+          "start": 7430,
+          "end": 7478,
+          "covered_units": 45,
+          "code_units": 48,
+          "ignored_syntax": false,
+          "text": "usage += value instanceof Blob ? value.size : 0;",
+          "hit": true
+        },
+        {
+          "line": 132,
+          "start": 7493,
+          "end": 7539,
+          "covered_units": 46,
+          "code_units": 46,
+          "ignored_syntax": false,
+          "text": "payloadBytes(usage); cursor.result.continue();",
+          "hit": true
+        },
+        {
+          "line": 133,
+          "start": 7552,
+          "end": 7630,
+          "covered_units": 2,
+          "code_units": 78,
+          "ignored_syntax": false,
+          "text": "} catch (error) { upgradeFailure = wrap(error); request.transaction.abort(); }",
+          "hit": true
+        },
+        {
+          "line": 134,
+          "start": 7641,
+          "end": 7643,
+          "covered_units": 2,
+          "code_units": 2,
+          "ignored_syntax": false,
+          "text": "};",
+          "hit": true
+        },
+        {
+          "line": 135,
+          "start": 7652,
+          "end": 7730,
+          "covered_units": 2,
+          "code_units": 78,
+          "ignored_syntax": false,
+          "text": "} catch (error) { upgradeFailure = wrap(error); request.transaction.abort(); }",
+          "hit": true
+        },
+        {
+          "line": 136,
+          "start": 7737,
+          "end": 7739,
+          "covered_units": 2,
+          "code_units": 2,
+          "ignored_syntax": false,
+          "text": "};",
+          "hit": true
+        },
+        {
+          "line": 137,
+          "start": 7746,
+          "end": 7836,
+          "covered_units": 90,
+          "code_units": 90,
+          "ignored_syntax": false,
+          "text": "request.onerror = () => { failed = true; reject(upgradeFailure ?? wrap(request.error)); };",
+          "hit": true
+        },
+        {
+          "line": 154,
+          "start": 8539,
+          "end": 8593,
+          "covered_units": 54,
+          "code_units": 54,
+          "ignored_syntax": false,
+          "text": "const maintenance = await this.#maintenance('shared');",
+          "hit": true
+        },
+        {
+          "line": 155,
+          "start": 8598,
+          "end": 8608,
+          "covered_units": 10,
+          "code_units": 10,
+          "ignored_syntax": false,
+          "text": "let owned;",
+          "hit": true
+        },
+        {
+          "line": 156,
+          "start": 8613,
+          "end": 8618,
+          "covered_units": 5,
+          "code_units": 5,
+          "ignored_syntax": true,
+          "text": "try {",
+          "hit": true
+        },
+        {
+          "line": 157,
+          "start": 8625,
+          "end": 8739,
+          "covered_units": 114,
+          "code_units": 114,
+          "ignored_syntax": false,
+          "text": "owned = await holdLock(`wasm-vm-session-${this.#db.name}-${id}`, 'exclusive', () => this.#active(), 'WriterBusy');",
+          "hit": true
+        },
+        {
+          "line": 158,
+          "start": 8746,
+          "end": 8761,
+          "covered_units": 15,
+          "code_units": 15,
+          "ignored_syntax": false,
+          "text": "this.#active();",
+          "hit": true
+        },
+        {
+          "line": 159,
+          "start": 8768,
+          "end": 8807,
+          "covered_units": 39,
+          "code_units": 39,
+          "ignored_syntax": false,
+          "text": "const writer = createWriter(id, () => {",
+          "hit": true
+        },
+        {
+          "line": 160,
+          "start": 8816,
+          "end": 8845,
+          "covered_units": 29,
+          "code_units": 29,
+          "ignored_syntax": false,
+          "text": "this.#writers.delete(writer);",
+          "hit": true
+        },
+        {
+          "line": 161,
+          "start": 8854,
+          "end": 8914,
+          "covered_units": 60,
+          "code_units": 60,
+          "ignored_syntax": false,
+          "text": "return owned.release().finally(() => maintenance.release());",
+          "hit": true
+        },
+        {
+          "line": 162,
+          "start": 8921,
+          "end": 8925,
+          "covered_units": 4,
+          "code_units": 4,
+          "ignored_syntax": false,
+          "text": "}, {",
+          "hit": true
+        },
+        {
+          "line": 163,
+          "start": 8934,
+          "end": 9021,
+          "covered_units": 87,
+          "code_units": 87,
+          "ignored_syntax": false,
+          "text": "part: bytes => this.#putPart(bytes, id), object: object => this.#putObject(object, id),",
+          "hit": true
+        },
+        {
+          "line": 164,
+          "start": 9030,
+          "end": 9091,
+          "covered_units": 61,
+          "code_units": 61,
+          "ignored_syntax": false,
+          "text": "publish: (bytes, active) => this.#publish(id, active, bytes),",
+          "hit": true
+        },
+        {
+          "line": 166,
+          "start": 9108,
+          "end": 9149,
+          "covered_units": 41,
+          "code_units": 41,
+          "ignored_syntax": false,
+          "text": "this.#writers.add(writer); return writer;",
+          "hit": true
+        },
+        {
+          "line": 167,
+          "start": 9154,
+          "end": 9255,
+          "covered_units": 79,
+          "code_units": 101,
+          "ignored_syntax": false,
+          "text": "} catch (error) { if (owned) await owned.release(); await maintenance.release(); throw wrap(error); }",
+          "hit": true
+        },
+        {
+          "line": 168,
+          "start": 9258,
+          "end": 9259,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 169,
+          "start": 9262,
+          "end": 9282,
+          "covered_units": 20,
+          "code_units": 20,
+          "ignored_syntax": false,
+          "text": "#maintenance(mode) {",
+          "hit": true
+        },
+        {
+          "line": 170,
+          "start": 9287,
+          "end": 9302,
+          "covered_units": 15,
+          "code_units": 15,
+          "ignored_syntax": false,
+          "text": "this.#active();",
+          "hit": true
+        },
+        {
+          "line": 171,
+          "start": 9307,
+          "end": 9418,
+          "covered_units": 111,
+          "code_units": 111,
+          "ignored_syntax": false,
+          "text": "return holdLock(`wasm-vm-session-maintenance-${this.#db.name}`, mode, () => this.#active(), 'MaintenanceBusy');",
+          "hit": true
+        },
+        {
+          "line": 172,
+          "start": 9421,
+          "end": 9422,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 173,
+          "start": 9425,
+          "end": 9456,
+          "covered_units": 31,
+          "code_units": 31,
+          "ignored_syntax": false,
+          "text": "async withReadLease(callback) {",
+          "hit": true
+        },
+        {
+          "line": 174,
+          "start": 9461,
+          "end": 9511,
+          "covered_units": 50,
+          "code_units": 50,
+          "ignored_syntax": false,
+          "text": "need(typeof callback === 'function', 'ReadLease');",
+          "hit": true
+        },
+        {
+          "line": 175,
+          "start": 9516,
+          "end": 9564,
+          "covered_units": 48,
+          "code_units": 48,
+          "ignored_syntax": false,
+          "text": "const lease = await this.#maintenance('shared');",
+          "hit": true
+        },
+        {
+          "line": 176,
+          "start": 9569,
+          "end": 9617,
+          "covered_units": 48,
+          "code_units": 48,
+          "ignored_syntax": false,
+          "text": "try { this.#active(); return await callback(); }",
+          "hit": true
+        },
+        {
+          "line": 177,
+          "start": 9622,
+          "end": 9656,
+          "covered_units": 34,
+          "code_units": 34,
+          "ignored_syntax": false,
+          "text": "finally { await lease.release(); }",
+          "hit": true
+        },
+        {
+          "line": 178,
+          "start": 9659,
+          "end": 9660,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 179,
+          "start": 9663,
+          "end": 9683,
+          "covered_units": 20,
+          "code_units": 20,
+          "ignored_syntax": false,
+          "text": "async statistics() {",
+          "hit": true
+        },
+        {
+          "line": 180,
+          "start": 9688,
+          "end": 9703,
+          "covered_units": 15,
+          "code_units": 15,
+          "ignored_syntax": false,
+          "text": "this.#active();",
+          "hit": true
+        },
+        {
+          "line": 181,
+          "start": 9708,
+          "end": 9818,
+          "covered_units": 110,
+          "code_units": 110,
+          "ignored_syntax": false,
+          "text": "return transaction(this.#db, ['metadata', 'sessions', 'objects', 'chunks'], 'readonly', (tx, done, abort) => {",
+          "hit": true
+        },
+        {
+          "line": 182,
+          "start": 9825,
+          "end": 9965,
+          "covered_units": 140,
+          "code_units": 140,
+          "ignored_syntax": false,
+          "text": "const result = {}, fields = [['metadata', 'limits'], ['metadata', 'payloadBytes'], ['sessions', null], ['objects', null], ['chunks', null]];",
+          "hit": true
+        },
+        {
+          "line": 183,
+          "start": 9972,
+          "end": 10000,
+          "covered_units": 28,
+          "code_units": 28,
+          "ignored_syntax": false,
+          "text": "let pending = fields.length;",
+          "hit": true
+        },
+        {
+          "line": 184,
+          "start": 10007,
+          "end": 10043,
+          "covered_units": 36,
+          "code_units": 36,
+          "ignored_syntax": false,
+          "text": "for (const [table, key] of fields) {",
+          "hit": true
+        },
+        {
+          "line": 185,
+          "start": 10052,
+          "end": 10137,
+          "covered_units": 85,
+          "code_units": 85,
+          "ignored_syntax": false,
+          "text": "const request = key ? tx.objectStore(table).get(key) : tx.objectStore(table).count();",
+          "hit": true
+        },
+        {
+          "line": 186,
+          "start": 10146,
+          "end": 10173,
+          "covered_units": 27,
+          "code_units": 27,
+          "ignored_syntax": false,
+          "text": "request.onsuccess = () => {",
+          "hit": true
+        },
+        {
+          "line": 187,
+          "start": 10184,
+          "end": 10189,
+          "covered_units": 5,
+          "code_units": 5,
+          "ignored_syntax": true,
+          "text": "try {",
+          "hit": true
+        },
+        {
+          "line": 188,
+          "start": 10202,
+          "end": 10240,
+          "covered_units": 38,
+          "code_units": 38,
+          "ignored_syntax": false,
+          "text": "result[key ?? table] = request.result;",
+          "hit": true
+        },
+        {
+          "line": 189,
+          "start": 10253,
+          "end": 10362,
+          "covered_units": 109,
+          "code_units": 109,
+          "ignored_syntax": false,
+          "text": "if (--pending === 0) done({limits: retention(result.limits), payloadBytes: payloadBytes(result.payloadBytes),",
+          "hit": true
+        },
+        {
+          "line": 190,
+          "start": 10377,
+          "end": 10453,
+          "covered_units": 76,
+          "code_units": 76,
+          "ignored_syntax": false,
+          "text": "sessions: result.sessions, objects: result.objects, chunks: result.chunks});",
+          "hit": true
+        },
+        {
+          "line": 191,
+          "start": 10464,
+          "end": 10497,
+          "covered_units": 2,
+          "code_units": 33,
+          "ignored_syntax": false,
+          "text": "} catch (error) { abort(error); }",
+          "hit": true
+        },
+        {
+          "line": 192,
+          "start": 10506,
+          "end": 10508,
+          "covered_units": 2,
+          "code_units": 2,
+          "ignored_syntax": false,
+          "text": "};",
+          "hit": true
+        },
+        {
+          "line": 193,
+          "start": 10515,
+          "end": 10516,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 194,
+          "start": 10521,
+          "end": 10524,
+          "covered_units": 3,
+          "code_units": 3,
+          "ignored_syntax": true,
+          "text": "});",
+          "hit": true
+        },
+        {
+          "line": 195,
+          "start": 10527,
+          "end": 10528,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 196,
+          "start": 10531,
+          "end": 10558,
+          "covered_units": 27,
+          "code_units": 27,
+          "ignored_syntax": false,
+          "text": "async setRetention(value) {",
+          "hit": true
+        },
+        {
+          "line": 197,
+          "start": 10563,
+          "end": 10611,
+          "covered_units": 48,
+          "code_units": 48,
+          "ignored_syntax": false,
+          "text": "this.#active(); const limits = retention(value);",
+          "hit": true
+        },
+        {
+          "line": 198,
+          "start": 10616,
+          "end": 10687,
+          "covered_units": 71,
+          "code_units": 71,
+          "ignored_syntax": false,
+          "text": "return transaction(this.#db, ['metadata'], 'readwrite', (tx, done) => {",
+          "hit": true
+        },
+        {
+          "line": 199,
+          "start": 10694,
+          "end": 10757,
+          "covered_units": 63,
+          "code_units": 63,
+          "ignored_syntax": false,
+          "text": "tx.objectStore('metadata').put(limits, 'limits'); done(limits);",
+          "hit": true
+        },
+        {
+          "line": 233,
+          "start": 12103,
+          "end": 12134,
+          "covered_units": 31,
+          "code_units": 31,
+          "ignored_syntax": false,
+          "text": "async #bytes(expected, limit) {",
+          "hit": true
+        },
+        {
+          "line": 234,
+          "start": 12139,
+          "end": 12206,
+          "covered_units": 67,
+          "code_units": 67,
+          "ignored_syntax": false,
+          "text": "need(Number(expected.length) <= limit, 'Bound', 'metadata object');",
+          "hit": true
+        },
+        {
+          "line": 239,
+          "start": 12398,
+          "end": 12466,
+          "covered_units": 68,
+          "code_units": 68,
+          "ignored_syntax": false,
+          "text": "#small(expected) { return this.#bytes(expected, MAX_SOURCE_CHUNK); }",
+          "hit": true
+        },
+        {
+          "line": 262,
+          "start": 13531,
+          "end": 13551,
+          "covered_units": 20,
+          "code_units": 20,
+          "ignored_syntax": false,
+          "text": "async #session(id) {",
+          "hit": true
+        },
+        {
+          "line": 270,
+          "start": 14000,
+          "end": 14022,
+          "covered_units": 22,
+          "code_units": 22,
+          "ignored_syntax": false,
+          "text": "return {row, decoded};",
+          "hit": true
+        },
+        {
+          "line": 272,
+          "start": 14029,
+          "end": 14052,
+          "covered_units": 23,
+          "code_units": 23,
+          "ignored_syntax": false,
+          "text": "async openSession(id) {",
+          "hit": true
+        },
+        {
+          "line": 273,
+          "start": 14057,
+          "end": 14095,
+          "covered_units": 38,
+          "code_units": 38,
+          "ignored_syntax": false,
+          "text": "const found = await this.#session(id);",
+          "hit": true
+        },
+        {
+          "line": 274,
+          "start": 14100,
+          "end": 14124,
+          "covered_units": 24,
+          "code_units": 24,
+          "ignored_syntax": false,
+          "text": "if (!found) return null;",
+          "hit": true
+        },
+        {
+          "line": 275,
+          "start": 14129,
+          "end": 14167,
+          "covered_units": 38,
+          "code_units": 38,
+          "ignored_syntax": false,
+          "text": "await this.#references(found.decoded);",
+          "hit": true
+        },
+        {
+          "line": 276,
+          "start": 14172,
+          "end": 14245,
+          "covered_units": 73,
+          "code_units": 73,
+          "ignored_syntax": false,
+          "text": "return {id, revision: found.row.revision, manifest: found.decoded.bytes};",
+          "hit": true
+        },
+        {
+          "line": 277,
+          "start": 14248,
+          "end": 14249,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 278,
+          "start": 14252,
+          "end": 14274,
+          "covered_units": 22,
+          "code_units": 22,
+          "ignored_syntax": false,
+          "text": "async #sessionKeys() {",
+          "hit": true
+        },
+        {
+          "line": 285,
+          "start": 14603,
+          "end": 14615,
+          "covered_units": 12,
+          "code_units": 12,
+          "ignored_syntax": false,
+          "text": "return keys;",
+          "hit": true
+        },
+        {
+          "line": 286,
+          "start": 14618,
+          "end": 14619,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 287,
+          "start": 14622,
+          "end": 14636,
+          "covered_units": 14,
+          "code_units": 14,
+          "ignored_syntax": false,
+          "text": "async list() {",
+          "hit": true
+        },
+        {
+          "line": 288,
+          "start": 14641,
+          "end": 14680,
+          "covered_units": 39,
+          "code_units": 39,
+          "ignored_syntax": false,
+          "text": "const keys = await this.#sessionKeys();",
+          "hit": true
+        },
+        {
+          "line": 301,
+          "start": 15233,
+          "end": 15258,
+          "covered_units": 25,
+          "code_units": 25,
+          "ignored_syntax": false,
+          "text": "async deleteSession(id) {",
+          "hit": true
+        },
+        {
+          "line": 302,
+          "start": 15263,
+          "end": 15343,
+          "covered_units": 80,
+          "code_units": 80,
+          "ignored_syntax": false,
+          "text": "this.#active(); need(typeof id === 'string' && idPattern.test(id), 'SessionId');",
+          "hit": true
+        },
+        {
+          "line": 303,
+          "start": 15348,
+          "end": 15399,
+          "covered_units": 51,
+          "code_units": 51,
+          "ignored_syntax": false,
+          "text": "const lease = await this.#maintenance('exclusive');",
+          "hit": true
+        },
+        {
+          "line": 304,
+          "start": 15404,
+          "end": 15409,
+          "covered_units": 5,
+          "code_units": 5,
+          "ignored_syntax": true,
+          "text": "try {",
+          "hit": true
+        },
+        {
+          "line": 305,
+          "start": 15416,
+          "end": 15502,
+          "covered_units": 86,
+          "code_units": 86,
+          "ignored_syntax": false,
+          "text": "const deleted = await transaction(this.#db, ['sessions'], 'readwrite', (tx, done) => {",
+          "hit": true
+        },
+        {
+          "line": 306,
+          "start": 15511,
+          "end": 15578,
+          "covered_units": 67,
+          "code_units": 67,
+          "ignored_syntax": false,
+          "text": "const rows = tx.objectStore('sessions'), request = rows.getKey(id);",
+          "hit": true
+        },
+        {
+          "line": 307,
+          "start": 15587,
+          "end": 15704,
+          "covered_units": 117,
+          "code_units": 117,
+          "ignored_syntax": false,
+          "text": "request.onsuccess = () => { if (request.result !== undefined) rows.delete(id); done(request.result !== undefined); };",
+          "hit": true
+        },
+        {
+          "line": 308,
+          "start": 15711,
+          "end": 15714,
+          "covered_units": 3,
+          "code_units": 3,
+          "ignored_syntax": true,
+          "text": "});",
+          "hit": true
+        },
+        {
+          "line": 309,
+          "start": 15721,
+          "end": 15805,
+          "covered_units": 84,
+          "code_units": 84,
+          "ignored_syntax": true,
+          "text": "// A crash here leaves harmless orphans. No surviving reference was changed; a later",
+          "hit": true
+        },
+        {
+          "line": 310,
+          "start": 15812,
+          "end": 15899,
+          "covered_units": 87,
+          "code_units": 87,
+          "ignored_syntax": true,
+          "text": "// cleanup recomputes the complete mark set instead of trusting a half-written journal.",
+          "hit": true
+        },
+        {
+          "line": 311,
+          "start": 15906,
+          "end": 15939,
+          "covered_units": 33,
+          "code_units": 33,
+          "ignored_syntax": false,
+          "text": "probe('gc-metadata-deleted', id);",
+          "hit": true
+        },
+        {
+          "line": 312,
+          "start": 15946,
+          "end": 15997,
+          "covered_units": 51,
+          "code_units": 51,
+          "ignored_syntax": false,
+          "text": "try { return {deleted, ...await this.#collect()}; }",
+          "hit": true
+        },
+        {
+          "line": 313,
+          "start": 16004,
+          "end": 16140,
+          "covered_units": 136,
+          "code_units": 136,
+          "ignored_syntax": false,
+          "text": "catch (error) { const failure = wrap(error); return {deleted, collected: false, error: {code: failure.code, detail: failure.message}}; }",
+          "hit": true
+        },
+        {
+          "line": 314,
+          "start": 16145,
+          "end": 16181,
+          "covered_units": 36,
+          "code_units": 36,
+          "ignored_syntax": false,
+          "text": "} finally { await lease.release(); }",
+          "hit": true
+        },
+        {
+          "line": 315,
+          "start": 16184,
+          "end": 16185,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 316,
+          "start": 16188,
+          "end": 16212,
+          "covered_units": 24,
+          "code_units": 24,
+          "ignored_syntax": false,
+          "text": "async collectGarbage() {",
+          "hit": true
+        },
+        {
+          "line": 317,
+          "start": 16217,
+          "end": 16268,
+          "covered_units": 51,
+          "code_units": 51,
+          "ignored_syntax": false,
+          "text": "const lease = await this.#maintenance('exclusive');",
+          "hit": true
+        },
+        {
+          "line": 318,
+          "start": 16273,
+          "end": 16310,
+          "covered_units": 37,
+          "code_units": 37,
+          "ignored_syntax": false,
+          "text": "try { return await this.#collect(); }",
+          "hit": true
+        },
+        {
+          "line": 319,
+          "start": 16315,
+          "end": 16349,
+          "covered_units": 34,
+          "code_units": 34,
+          "ignored_syntax": false,
+          "text": "finally { await lease.release(); }",
+          "hit": true
+        },
+        {
+          "line": 320,
+          "start": 16352,
+          "end": 16353,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 321,
+          "start": 16356,
+          "end": 16374,
+          "covered_units": 18,
+          "code_units": 18,
+          "ignored_syntax": false,
+          "text": "async #collect() {",
+          "hit": true
+        },
+        {
+          "line": 322,
+          "start": 16379,
+          "end": 16424,
+          "covered_units": 45,
+          "code_units": 45,
+          "ignored_syntax": false,
+          "text": "const objects = new Map(), parts = new Map();",
+          "hit": true
+        },
+        {
+          "line": 323,
+          "start": 16429,
+          "end": 16452,
+          "covered_units": 23,
+          "code_units": 23,
+          "ignored_syntax": false,
+          "text": "const add = object => {",
+          "hit": true
+        },
+        {
+          "line": 324,
+          "start": 16459,
+          "end": 16503,
+          "covered_units": 44,
+          "code_units": 44,
+          "ignored_syntax": false,
+          "text": "const previous = objects.get(object.sha256);",
+          "hit": true
+        },
+        {
+          "line": 325,
+          "start": 16510,
+          "end": 16620,
+          "covered_units": 110,
+          "code_units": 110,
+          "ignored_syntax": false,
+          "text": "need(!previous || JSON.stringify(previous) === JSON.stringify(object), 'Corrupt', 'conflicting live objects');",
+          "hit": true
+        },
+        {
+          "line": 326,
+          "start": 16627,
+          "end": 16662,
+          "covered_units": 35,
+          "code_units": 35,
+          "ignored_syntax": false,
+          "text": "objects.set(object.sha256, object);",
+          "hit": true
+        },
+        {
+          "line": 327,
+          "start": 16669,
+          "end": 16739,
+          "covered_units": 70,
+          "code_units": 70,
+          "ignored_syntax": false,
+          "text": "need(objects.size <= MAX_GC_OBJECTS, 'Bound', 'cleanup object count');",
+          "hit": true
+        },
+        {
+          "line": 328,
+          "start": 16744,
+          "end": 16746,
+          "covered_units": 2,
+          "code_units": 2,
+          "ignored_syntax": false,
+          "text": "};",
+          "hit": true
+        },
+        {
+          "line": 329,
+          "start": 16751,
+          "end": 16839,
+          "covered_units": 88,
+          "code_units": 88,
+          "ignored_syntax": true,
+          "text": "// Never use list(): it intentionally omits incomplete histories. An unreadable survivor",
+          "hit": true
+        },
+        {
+          "line": 330,
+          "start": 16844,
+          "end": 16934,
+          "covered_units": 90,
+          "code_units": 90,
+          "ignored_syntax": true,
+          "text": "// must block reclamation, otherwise its temporarily missing root could erase shared data.",
+          "hit": true
+        },
+        {
+          "line": 331,
+          "start": 16939,
+          "end": 16984,
+          "covered_units": 45,
+          "code_units": 45,
+          "ignored_syntax": false,
+          "text": "for (const id of await this.#sessionKeys()) {",
+          "hit": true
+        },
+        {
+          "line": 332,
+          "start": 16991,
+          "end": 17086,
+          "covered_units": 95,
+          "code_units": 95,
+          "ignored_syntax": false,
+          "text": "const found = await this.#session(id); need(found, 'Corrupt', 'surviving session disappeared');",
+          "hit": true
+        },
+        {
+          "line": 333,
+          "start": 17093,
+          "end": 17123,
+          "covered_units": 30,
+          "code_units": 30,
+          "ignored_syntax": false,
+          "text": "const decoded = found.decoded;",
+          "hit": true
+        },
+        {
+          "line": 334,
+          "start": 17130,
+          "end": 17233,
+          "covered_units": 103,
+          "code_units": 103,
+          "ignored_syntax": false,
+          "text": "need(decoded.value.machine.gpu === null && decoded.value.checkpoints.every(point => point.gpu === null)",
+          "hit": true
+        },
+        {
+          "line": 335,
+          "start": 17242,
+          "end": 17344,
+          "covered_units": 102,
+          "code_units": 102,
+          "ignored_syntax": false,
+          "text": "&& decoded.value.extensions.length === 0, 'UnsupportedRetention', 'unknown GPU/extension references');",
+          "hit": true
+        },
+        {
+          "line": 336,
+          "start": 17351,
+          "end": 17417,
+          "covered_units": 66,
+          "code_units": 66,
+          "ignored_syntax": false,
+          "text": "for (const object of await this.#references(decoded)) add(object);",
+          "hit": true
+        },
+        {
+          "line": 337,
+          "start": 17424,
+          "end": 17499,
+          "covered_units": 75,
+          "code_units": 75,
+          "ignored_syntax": false,
+          "text": "const roots = parsed(() => sessionManifestReferences(decoded.bytes)).roots;",
+          "hit": true
+        },
+        {
+          "line": 338,
+          "start": 17506,
+          "end": 17533,
+          "covered_units": 27,
+          "code_units": 27,
+          "ignored_syntax": false,
+          "text": "for (const hash of roots) {",
+          "hit": true
+        },
+        {
+          "line": 339,
+          "start": 17542,
+          "end": 17630,
+          "covered_units": 88,
+          "code_units": 88,
+          "ignored_syntax": false,
+          "text": "const ref = await this.#root(hash), bytes = await this.#bytes(ref, MAX_DISK_ROOT_BYTES);",
+          "hit": true
+        },
+        {
+          "line": 340,
+          "start": 17639,
+          "end": 17653,
+          "covered_units": 14,
+          "code_units": 14,
+          "ignored_syntax": false,
+          "text": "let canonical;",
+          "hit": true
+        },
+        {
+          "line": 341,
+          "start": 17662,
+          "end": 17764,
+          "covered_units": 102,
+          "code_units": 102,
+          "ignored_syntax": false,
+          "text": "try { canonical = sessionValidateDiskRoot(bytes); } catch (error) { fail('DiskRoot', error.message); }",
+          "hit": true
+        },
+        {
+          "line": 342,
+          "start": 17773,
+          "end": 17888,
+          "covered_units": 115,
+          "code_units": 115,
+          "ignored_syntax": false,
+          "text": "need(JSON.parse(decoder.decode(canonical)).base === decoded.value.machine.base_image, 'Corrupt', 'disk root base');",
+          "hit": true
+        },
+        {
+          "line": 343,
+          "start": 17897,
+          "end": 17970,
+          "covered_units": 73,
+          "code_units": 73,
+          "ignored_syntax": false,
+          "text": "for (const block of parsed(() => sessionDiskRootReferences(canonical))) {",
+          "hit": true
+        },
+        {
+          "line": 344,
+          "start": 17981,
+          "end": 18074,
+          "covered_units": 93,
+          "code_units": 93,
+          "ignored_syntax": false,
+          "text": "for await (const _ of this.stream(block)) { /* authenticate all complete-map descendants */ }",
+          "hit": true
+        },
+        {
+          "line": 345,
+          "start": 18085,
+          "end": 18116,
+          "covered_units": 31,
+          "code_units": 31,
+          "ignored_syntax": false,
+          "text": "add(await this.#object(block));",
+          "hit": true
+        },
+        {
+          "line": 346,
+          "start": 18125,
+          "end": 18126,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 347,
+          "start": 18133,
+          "end": 18134,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 348,
+          "start": 18139,
+          "end": 18140,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 349,
+          "start": 18145,
+          "end": 18218,
+          "covered_units": 73,
+          "code_units": 73,
+          "ignored_syntax": false,
+          "text": "for (const object of objects.values()) for (const part of object.parts) {",
+          "hit": true
+        },
+        {
+          "line": 350,
+          "start": 18225,
+          "end": 18265,
+          "covered_units": 40,
+          "code_units": 40,
+          "ignored_syntax": false,
+          "text": "const previous = parts.get(part.sha256);",
+          "hit": true
+        },
+        {
+          "line": 351,
+          "start": 18272,
+          "end": 18360,
+          "covered_units": 88,
+          "code_units": 88,
+          "ignored_syntax": false,
+          "text": "need(!previous || previous.length === part.length, 'Corrupt', 'conflicting live parts');",
+          "hit": true
+        },
+        {
+          "line": 352,
+          "start": 18367,
+          "end": 18463,
+          "covered_units": 96,
+          "code_units": 96,
+          "ignored_syntax": false,
+          "text": "parts.set(part.sha256, part); need(parts.size <= MAX_GC_CHUNKS, 'Bound', 'cleanup chunk count');",
+          "hit": true
+        },
+        {
+          "line": 353,
+          "start": 18468,
+          "end": 18469,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 354,
+          "start": 18474,
+          "end": 18499,
+          "covered_units": 25,
+          "code_units": 25,
+          "ignored_syntax": false,
+          "text": "probe('gc-marked', 'gc');",
+          "hit": true
+        },
+        {
+          "line": 355,
+          "start": 18504,
+          "end": 18617,
+          "covered_units": 113,
+          "code_units": 113,
+          "ignored_syntax": false,
+          "text": "const result = await transaction(this.#db, ['objects', 'chunks', 'metadata'], 'readwrite', (tx, done, abort) => {",
+          "hit": true
+        },
+        {
+          "line": 356,
+          "start": 18624,
+          "end": 18743,
+          "covered_units": 119,
+          "code_units": 119,
+          "ignored_syntax": false,
+          "text": "let pending = 2, seenObjects = 0, seenChunks = 0, usage = 0, reclaimedBytes = 0, removedObjects = 0, removedChunks = 0;",
+          "hit": true
+        },
+        {
+          "line": 357,
+          "start": 18750,
+          "end": 18774,
+          "covered_units": 24,
+          "code_units": 24,
+          "ignored_syntax": false,
+          "text": "const finished = () => {",
+          "hit": true
+        },
+        {
+          "line": 358,
+          "start": 18783,
+          "end": 18811,
+          "covered_units": 28,
+          "code_units": 28,
+          "ignored_syntax": false,
+          "text": "if (--pending !== 0) return;",
+          "hit": true
+        },
+        {
+          "line": 359,
+          "start": 18820,
+          "end": 18825,
+          "covered_units": 5,
+          "code_units": 5,
+          "ignored_syntax": true,
+          "text": "try {",
+          "hit": true
+        },
+        {
+          "line": 360,
+          "start": 18836,
+          "end": 18947,
+          "covered_units": 111,
+          "code_units": 111,
+          "ignored_syntax": false,
+          "text": "need(seenObjects === objects.size && seenChunks === parts.size, 'Corrupt', 'live data changed during cleanup');",
+          "hit": true
+        },
+        {
+          "line": 361,
+          "start": 18958,
+          "end": 19026,
+          "covered_units": 68,
+          "code_units": 68,
+          "ignored_syntax": false,
+          "text": "tx.objectStore('metadata').put(payloadBytes(usage), 'payloadBytes');",
+          "hit": true
+        },
+        {
+          "line": 362,
+          "start": 19037,
+          "end": 19075,
+          "covered_units": 38,
+          "code_units": 38,
+          "ignored_syntax": false,
+          "text": "probe('gc-before-sweep-commit', 'gc');",
+          "hit": true
+        },
+        {
+          "line": 363,
+          "start": 19086,
+          "end": 19178,
+          "covered_units": 92,
+          "code_units": 92,
+          "ignored_syntax": false,
+          "text": "done({collected: true, payloadBytes: usage, reclaimedBytes, removedObjects, removedChunks});",
+          "hit": true
+        },
+        {
+          "line": 364,
+          "start": 19187,
+          "end": 19220,
+          "covered_units": 2,
+          "code_units": 33,
+          "ignored_syntax": false,
+          "text": "} catch (error) { abort(error); }",
+          "hit": true
+        },
+        {
+          "line": 365,
+          "start": 19227,
+          "end": 19229,
+          "covered_units": 2,
+          "code_units": 2,
+          "ignored_syntax": false,
+          "text": "};",
+          "hit": true
+        },
+        {
+          "line": 366,
+          "start": 19236,
+          "end": 19280,
+          "covered_units": 44,
+          "code_units": 44,
+          "ignored_syntax": false,
+          "text": "for (const table of ['objects', 'chunks']) {",
+          "hit": true
+        },
+        {
+          "line": 367,
+          "start": 19289,
+          "end": 19340,
+          "covered_units": 51,
+          "code_units": 51,
+          "ignored_syntax": false,
+          "text": "const request = tx.objectStore(table).openCursor();",
+          "hit": true
+        },
+        {
+          "line": 368,
+          "start": 19349,
+          "end": 19376,
+          "covered_units": 27,
+          "code_units": 27,
+          "ignored_syntax": false,
+          "text": "request.onsuccess = () => {",
+          "hit": true
+        },
+        {
+          "line": 369,
+          "start": 19387,
+          "end": 19392,
+          "covered_units": 5,
+          "code_units": 5,
+          "ignored_syntax": true,
+          "text": "try {",
+          "hit": true
+        },
+        {
+          "line": 370,
+          "start": 19405,
+          "end": 19435,
+          "covered_units": 30,
+          "code_units": 30,
+          "ignored_syntax": false,
+          "text": "const cursor = request.result;",
+          "hit": true
+        },
+        {
+          "line": 371,
+          "start": 19448,
+          "end": 19484,
+          "covered_units": 36,
+          "code_units": 36,
+          "ignored_syntax": false,
+          "text": "if (!cursor) { finished(); return; }",
+          "hit": true
+        },
+        {
+          "line": 372,
+          "start": 19497,
+          "end": 19523,
+          "covered_units": 26,
+          "code_units": 26,
+          "ignored_syntax": false,
+          "text": "if (table === 'objects') {",
+          "hit": true
+        },
+        {
+          "line": 373,
+          "start": 19538,
+          "end": 19579,
+          "covered_units": 41,
+          "code_units": 41,
+          "ignored_syntax": false,
+          "text": "const expected = objects.get(cursor.key);",
+          "hit": true
+        },
+        {
+          "line": 374,
+          "start": 19594,
+          "end": 19609,
+          "covered_units": 15,
+          "code_units": 15,
+          "ignored_syntax": false,
+          "text": "if (expected) {",
+          "hit": true
+        },
+        {
+          "line": 375,
+          "start": 19626,
+          "end": 19754,
+          "covered_units": 128,
+          "code_units": 128,
+          "ignored_syntax": false,
+          "text": "need(JSON.stringify(cursor.value) === JSON.stringify(expected), 'Corrupt', 'live object changed during cleanup'); seenObjects++;",
+          "hit": true
+        },
+        {
+          "line": 376,
+          "start": 19769,
+          "end": 19814,
+          "covered_units": 45,
+          "code_units": 45,
+          "ignored_syntax": false,
+          "text": "} else { cursor.delete(); removedObjects++; }",
+          "hit": true
+        },
+        {
+          "line": 377,
+          "start": 19827,
+          "end": 19835,
+          "covered_units": 8,
+          "code_units": 8,
+          "ignored_syntax": false,
+          "text": "} else {",
+          "hit": true
+        },
+        {
+          "line": 378,
+          "start": 19850,
+          "end": 19911,
+          "covered_units": 61,
+          "code_units": 61,
+          "ignored_syntax": false,
+          "text": "const expected = parts.get(cursor.key), value = cursor.value;",
+          "hit": true
+        },
+        {
+          "line": 379,
+          "start": 19926,
+          "end": 19941,
+          "covered_units": 15,
+          "code_units": 15,
+          "ignored_syntax": false,
+          "text": "if (expected) {",
+          "hit": true
+        },
+        {
+          "line": 380,
+          "start": 19958,
+          "end": 20076,
+          "covered_units": 118,
+          "code_units": 118,
+          "ignored_syntax": false,
+          "text": "need(value instanceof Blob && value.size === Number(expected.length), 'Corrupt', 'live chunk changed during cleanup');",
+          "hit": true
+        },
+        {
+          "line": 381,
+          "start": 20093,
+          "end": 20148,
+          "covered_units": 55,
+          "code_units": 55,
+          "ignored_syntax": false,
+          "text": "usage = payloadBytes(usage + value.size); seenChunks++;",
+          "hit": true
+        },
+        {
+          "line": 382,
+          "start": 20163,
+          "end": 20265,
+          "covered_units": 99,
+          "code_units": 102,
+          "ignored_syntax": false,
+          "text": "} else { cursor.delete(); removedChunks++; reclaimedBytes += value instanceof Blob ? value.size : 0; }",
+          "hit": true
+        },
+        {
+          "line": 383,
+          "start": 20278,
+          "end": 20279,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 384,
+          "start": 20292,
+          "end": 20310,
+          "covered_units": 18,
+          "code_units": 18,
+          "ignored_syntax": false,
+          "text": "cursor.continue();",
+          "hit": true
+        },
+        {
+          "line": 385,
+          "start": 20321,
+          "end": 20354,
+          "covered_units": 33,
+          "code_units": 33,
+          "ignored_syntax": false,
+          "text": "} catch (error) { abort(error); }",
+          "hit": true
+        },
+        {
+          "line": 386,
+          "start": 20363,
+          "end": 20365,
+          "covered_units": 2,
+          "code_units": 2,
+          "ignored_syntax": false,
+          "text": "};",
+          "hit": true
+        },
+        {
+          "line": 387,
+          "start": 20372,
+          "end": 20373,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 388,
+          "start": 20378,
+          "end": 20381,
+          "covered_units": 3,
+          "code_units": 3,
+          "ignored_syntax": true,
+          "text": "});",
+          "hit": true
+        },
+        {
+          "line": 389,
+          "start": 20386,
+          "end": 20433,
+          "covered_units": 47,
+          "code_units": 47,
+          "ignored_syntax": false,
+          "text": "probe('gc-sweep-durable', 'gc'); return result;",
+          "hit": true
+        },
+        {
+          "line": 390,
+          "start": 20436,
+          "end": 20437,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 393,
+          "start": 20549,
+          "end": 20650,
+          "covered_units": 101,
+          "code_units": 101,
+          "ignored_syntax": false,
+          "text": "const added = await transaction(this.#db, ['chunks', 'metadata'], 'readwrite', (tx, done, abort) => {",
+          "hit": true
+        },
+        {
+          "line": 397,
+          "start": 20791,
+          "end": 20849,
+          "covered_units": 58,
+          "code_units": 58,
+          "ignored_syntax": false,
+          "text": "if (request.result !== undefined) { done(false); return; }",
+          "hit": true
+        },
+        {
+          "line": 398,
+          "start": 20860,
+          "end": 20975,
+          "covered_units": 115,
+          "code_units": 115,
+          "ignored_syntax": false,
+          "text": "const metadata = tx.objectStore('metadata'), limits = metadata.get('limits'), usage = metadata.get('payloadBytes');",
+          "hit": true
+        },
+        {
+          "line": 399,
+          "start": 20986,
+          "end": 21002,
+          "covered_units": 16,
+          "code_units": 16,
+          "ignored_syntax": false,
+          "text": "let pending = 2;",
+          "hit": true
+        },
+        {
+          "line": 400,
+          "start": 21013,
+          "end": 21036,
+          "covered_units": 23,
+          "code_units": 23,
+          "ignored_syntax": false,
+          "text": "const checked = () => {",
+          "hit": true
+        },
+        {
+          "line": 401,
+          "start": 21049,
+          "end": 21077,
+          "covered_units": 28,
+          "code_units": 28,
+          "ignored_syntax": false,
+          "text": "if (--pending !== 0) return;",
+          "hit": true
+        },
+        {
+          "line": 402,
+          "start": 21090,
+          "end": 21095,
+          "covered_units": 5,
+          "code_units": 5,
+          "ignored_syntax": true,
+          "text": "try {",
+          "hit": true
+        },
+        {
+          "line": 403,
+          "start": 21110,
+          "end": 21179,
+          "covered_units": 69,
+          "code_units": 69,
+          "ignored_syntax": false,
+          "text": "const next = payloadBytes(payloadBytes(usage.result) + bytes.length);",
+          "hit": true
+        },
+        {
+          "line": 404,
+          "start": 21194,
+          "end": 21286,
+          "covered_units": 92,
+          "code_units": 92,
+          "ignored_syntax": false,
+          "text": "need(next <= retention(limits.result).maxBytes, 'RetentionLimit', 'saved data byte budget');",
+          "hit": true
+        },
+        {
+          "line": 405,
+          "start": 21301,
+          "end": 21390,
+          "covered_units": 89,
+          "code_units": 89,
+          "ignored_syntax": false,
+          "text": "store.add(new Blob([bytes]), ref.sha256); metadata.put(next, 'payloadBytes'); done(true);",
+          "hit": true
+        },
+        {
+          "line": 406,
+          "start": 21403,
+          "end": 21436,
+          "covered_units": 33,
+          "code_units": 33,
+          "ignored_syntax": false,
+          "text": "} catch (error) { abort(error); }",
+          "hit": true
+        },
+        {
+          "line": 407,
+          "start": 21447,
+          "end": 21449,
+          "covered_units": 2,
+          "code_units": 2,
+          "ignored_syntax": false,
+          "text": "};",
+          "hit": true
+        },
+        {
+          "line": 408,
+          "start": 21460,
+          "end": 21505,
+          "covered_units": 45,
+          "code_units": 45,
+          "ignored_syntax": false,
+          "text": "limits.onsuccess = usage.onsuccess = checked;",
+          "hit": true
+        },
+        {
+          "line": 454,
+          "start": 23497,
+          "end": 23607,
+          "covered_units": 110,
+          "code_units": 110,
+          "ignored_syntax": false,
+          "text": "await transaction(this.#db, ['sessions', 'objects', 'chunks', 'metadata'], 'readwrite', (tx, done, abort) => {",
+          "hit": true
+        },
+        {
+          "line": 455,
+          "start": 23614,
+          "end": 23647,
+          "covered_units": 33,
+          "code_units": 33,
+          "ignored_syntax": false,
+          "text": "let pending = 2 + objects.length;",
+          "hit": true
+        },
+        {
+          "line": 464,
+          "start": 23990,
+          "end": 24046,
+          "covered_units": 56,
+          "code_units": 56,
+          "ignored_syntax": false,
+          "text": "const limits = tx.objectStore('metadata').get('limits');",
+          "hit": true
+        },
+        {
+          "line": 465,
+          "start": 24053,
+          "end": 24079,
+          "covered_units": 26,
+          "code_units": 26,
+          "ignored_syntax": false,
+          "text": "limits.onsuccess = () => {",
+          "hit": true
+        },
+        {
+          "line": 466,
+          "start": 24088,
+          "end": 24231,
+          "covered_units": 143,
+          "code_units": 143,
+          "ignored_syntax": false,
+          "text": "try { need(decoded.value.checkpoints.length <= retention(limits.result).maxCheckpoints, 'RetentionLimit', 'restore point budget'); checked(); }",
+          "hit": true
+        },
+        {
+          "line": 467,
+          "start": 24240,
+          "end": 24271,
+          "covered_units": 31,
+          "code_units": 31,
+          "ignored_syntax": false,
+          "text": "catch (error) { abort(error); }",
+          "hit": true
+        },
+        {
+          "line": 468,
+          "start": 24278,
+          "end": 24280,
+          "covered_units": 2,
+          "code_units": 2,
+          "ignored_syntax": false,
+          "text": "};",
+          "hit": true
+        }
+      ]
+    },
+    "web/session-library.js": {
+      "source_sha256": "bfaaafdfa66efeb31f3eefbbcc8e53da291b9da8418a81df4f45172730b9e2da",
+      "matching_entries": 5,
+      "changed_lines": 121,
+      "unhit": [],
+      "partial": [
+        {
+          "line": 176,
+          "start": 12711,
+          "end": 12854,
+          "covered_units": 100,
+          "code_units": 143,
+          "ignored_syntax": false,
+          "text": "if ((this.recording && this.recording.controller !== controller) || (this.pausedRecording && this.pausedRecording.controller !== controller)) {",
+          "hit": true
+        },
+        {
+          "line": 177,
+          "start": 12861,
+          "end": 12918,
+          "covered_units": 20,
+          "code_units": 57,
+          "ignored_syntax": false,
+          "text": "if (this.recording) void this.recording.writer.release();",
+          "hit": true
+        },
+        {
+          "line": 189,
+          "start": 13369,
+          "end": 13508,
+          "covered_units": 79,
+          "code_units": 139,
+          "ignored_syntax": false,
+          "text": "if (!owner?.profile || !owner.ready || this.recording || this.pausedRecording) throw Error('Start a ready offline checkpoint guest first');",
+          "hit": true
+        },
+        {
+          "line": 243,
+          "start": 16786,
+          "end": 16917,
+          "covered_units": 73,
+          "code_units": 131,
+          "ignored_syntax": false,
+          "text": "if (!paused || this.adapter.current()?.controller !== paused.controller) throw Error('Paused recording guest is no longer active');",
+          "hit": true
+        },
+        {
+          "line": 247,
+          "start": 17050,
+          "end": 17170,
+          "covered_units": 114,
+          "code_units": 120,
+          "ignored_syntax": false,
+          "text": "if ((saved?.revision ?? null) !== paused.revision || (saved ? this.hash(saved.manifest) : null) !== paused.prefixHash) {",
+          "hit": true
+        },
+        {
+          "line": 289,
+          "start": 19968,
+          "end": 20035,
+          "covered_units": 62,
+          "code_units": 67,
+          "ignored_syntax": false,
+          "text": "const id = this.selected, name = this.metadata.get(id)?.name || id;",
+          "hit": true
+        },
+        {
+          "line": 313,
+          "start": 21814,
+          "end": 21953,
+          "covered_units": 68,
+          "code_units": 139,
+          "ignored_syntax": false,
+          "text": "if (!preview?.compatible || this.recording || this.pausedRecording) throw Error('Choose a compatible checkpoint and stop recording first');",
+          "hit": true
+        },
+        {
+          "line": 319,
+          "start": 22401,
+          "end": 22506,
+          "covered_units": 55,
+          "code_units": 105,
+          "ignored_syntax": false,
+          "text": "if (this.adapter.current()?.controller !== controller) throw Error('Restored guest is no longer active');",
+          "hit": true
+        }
+      ],
+      "rows": [
+        {
+          "line": 9,
+          "start": 460,
+          "end": 576,
+          "covered_units": 116,
+          "code_units": 116,
+          "ignored_syntax": false,
+          "text": "const quotaError = error => ['Quota', 'RetentionLimit'].includes(error.code) || error.name === 'QuotaExceededError';",
+          "hit": true
+        },
+        {
+          "line": 26,
+          "start": 1350,
+          "end": 1489,
+          "covered_units": 139,
+          "code_units": 139,
+          "ignored_syntax": false,
+          "text": "this.generation = 0; this.refreshGeneration = 0; this.busy = false; this.active = null; this.recording = null; this.pausedRecording = null;",
+          "hit": true
+        },
+        {
+          "line": 32,
+          "start": 1820,
+          "end": 1905,
+          "covered_units": 85,
+          "code_units": 85,
+          "ignored_syntax": false,
+          "text": "['open', () => this.open(), 'restoring'], ['retry', () => this.retry(), 'capturing'],",
+          "hit": true
+        },
+        {
+          "line": 33,
+          "start": 1912,
+          "end": 2011,
+          "covered_units": 99,
+          "code_units": 99,
+          "ignored_syntax": false,
+          "text": "['delete', () => this.deleteSelected(), 'deleting'], ['cleanup', () => this.cleanup(), 'cleaning'],",
+          "hit": true
+        },
+        {
+          "line": 34,
+          "start": 2018,
+          "end": 2125,
+          "covered_units": 107,
+          "code_units": 107,
+          "ignored_syntax": false,
+          "text": "['limits-save', () => this.saveLimits(), 'saving'], ['persist', () => this.requestPersistence(), 'saving'],",
+          "hit": true
+        },
+        {
+          "line": 47,
+          "start": 2829,
+          "end": 2953,
+          "covered_units": 124,
+          "code_units": 124,
+          "ignored_syntax": false,
+          "text": "const [{SessionStore}, {SessionCheckpoints, readCheckpointObject, checkpointHash}, {SessionDiskRoots}] = await Promise.all([",
+          "hit": true
+        },
+        {
+          "line": 51,
+          "start": 3180,
+          "end": 3298,
+          "covered_units": 118,
+          "code_units": 118,
+          "ignored_syntax": false,
+          "text": "this.readObject = readCheckpointObject; this.hash = checkpointHash; this.diskRoots = new SessionDiskRoots(this.store);",
+          "hit": true
+        },
+        {
+          "line": 79,
+          "start": 4996,
+          "end": 5011,
+          "covered_units": 15,
+          "code_units": 15,
+          "ignored_syntax": false,
+          "text": "catch (error) {",
+          "hit": true
+        },
+        {
+          "line": 80,
+          "start": 5018,
+          "end": 5075,
+          "covered_units": 57,
+          "code_units": 57,
+          "ignored_syntax": false,
+          "text": "const message = this.pausedRecording && quotaError(error)",
+          "hit": true
+        },
+        {
+          "line": 81,
+          "start": 5084,
+          "end": 5311,
+          "covered_units": 227,
+          "code_units": 227,
+          "ignored_syntax": false,
+          "text": "? `${error.message}. Recording paused; the guest is paused and its current state may be unsaved. The committed prefix is preserved. Free space or raise limits, then Retry recording; Stop recording ends at the committed prefix.`",
+          "hit": true
+        },
+        {
+          "line": 82,
+          "start": 5320,
+          "end": 5453,
+          "covered_units": 133,
+          "code_units": 133,
+          "ignored_syntax": false,
+          "text": ": error.code === 'MaintenanceBusy' ? 'Storage is busy in this or another tab. Stop recording or wait for Open to finish, then retry.'",
+          "hit": true
+        },
+        {
+          "line": 83,
+          "start": 5462,
+          "end": 5621,
+          "covered_units": 159,
+          "code_units": 159,
+          "ignored_syntax": false,
+          "text": ": error.code === 'HistoryChanged' ? 'Saved history changed in another tab. Recording ended without appending; start a new recording to save the current guest.'",
+          "hit": true
+        },
+        {
+          "line": 84,
+          "start": 5630,
+          "end": 5652,
+          "covered_units": 22,
+          "code_units": 22,
+          "ignored_syntax": false,
+          "text": ": `${error.message}.`;",
+          "hit": true
+        },
+        {
+          "line": 85,
+          "start": 5659,
+          "end": 5698,
+          "covered_units": 39,
+          "code_units": 39,
+          "ignored_syntax": false,
+          "text": "this.state(errorState(error), message);",
+          "hit": true
+        },
+        {
+          "line": 86,
+          "start": 5703,
+          "end": 5704,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 94,
+          "start": 6129,
+          "end": 6237,
+          "covered_units": 108,
+          "code_units": 108,
+          "ignored_syntax": false,
+          "text": "for (const id of this.metadata.keys()) if (!this.rows.has(id)) this.rows.set(id, {id, state: 'incomplete'});",
+          "hit": true
+        },
+        {
+          "line": 104,
+          "start": 6763,
+          "end": 6791,
+          "covered_units": 28,
+          "code_units": 28,
+          "ignored_syntax": false,
+          "text": "await this.storageSummary();",
+          "hit": true
+        },
+        {
+          "line": 144,
+          "start": 9840,
+          "end": 9923,
+          "covered_units": 83,
+          "code_units": 83,
+          "ignored_syntax": false,
+          "text": "c.new.disabled = !ready || busy || Boolean(this.recording || this.pausedRecording);",
+          "hit": true
+        },
+        {
+          "line": 145,
+          "start": 9928,
+          "end": 10027,
+          "covered_units": 99,
+          "code_units": 99,
+          "ignored_syntax": false,
+          "text": "c.start.disabled = !ready || busy || !qualified || Boolean(this.recording || this.pausedRecording);",
+          "hit": true
+        },
+        {
+          "line": 146,
+          "start": 10032,
+          "end": 10131,
+          "covered_units": 99,
+          "code_units": 99,
+          "ignored_syntax": false,
+          "text": "c.checkpoint.disabled = busy || !this.recording || owner?.controller !== this.recording.controller;",
+          "hit": true
+        },
+        {
+          "line": 147,
+          "start": 10136,
+          "end": 10204,
+          "covered_units": 68,
+          "code_units": 68,
+          "ignored_syntax": false,
+          "text": "c.stop.disabled = busy || !(this.recording || this.pausedRecording);",
+          "hit": true
+        },
+        {
+          "line": 148,
+          "start": 10209,
+          "end": 10315,
+          "covered_units": 106,
+          "code_units": 106,
+          "ignored_syntax": false,
+          "text": "c.retry.disabled = busy || !this.pausedRecording || owner?.controller !== this.pausedRecording.controller;",
+          "hit": true
+        },
+        {
+          "line": 149,
+          "start": 10320,
+          "end": 10441,
+          "covered_units": 121,
+          "code_units": 121,
+          "ignored_syntax": false,
+          "text": "for (const key of ['cleanup', 'limits-save', 'limit-bytes', 'limit-points', 'persist']) c[key].disabled = !ready || busy;",
+          "hit": true
+        },
+        {
+          "line": 150,
+          "start": 10446,
+          "end": 10499,
+          "covered_units": 53,
+          "code_units": 53,
+          "ignored_syntax": false,
+          "text": "c.delete.disabled = !ready || busy || !this.selected;",
+          "hit": true
+        },
+        {
+          "line": 152,
+          "start": 10608,
+          "end": 10730,
+          "covered_units": 122,
+          "code_units": 122,
+          "ignored_syntax": false,
+          "text": "c.open.disabled = busy || Boolean(this.recording || this.pausedRecording) || !this.preview?.compatible || !c.points.value;",
+          "hit": true
+        },
+        {
+          "line": 156,
+          "start": 10947,
+          "end": 11070,
+          "covered_units": 123,
+          "code_units": 123,
+          "ignored_syntax": false,
+          "text": "c.active.dataset.id = this.active?.id ?? ''; c.active.dataset.point = this.active?.unsaved ? '' : this.active?.point ?? '';",
+          "hit": true
+        },
+        {
+          "line": 158,
+          "start": 11116,
+          "end": 11550,
+          "covered_units": 434,
+          "code_units": 434,
+          "ignored_syntax": false,
+          "text": "? `Active: ${this.metadata.get(this.active.id)?.name || this.active.id} \u00b7 ${this.active.point ? 'last saved ' + this.active.point : 'no committed point'}${this.pausedRecording ? ' \u00b7 recording paused; current memory may be unsaved' : this.recording ? ' \u00b7 recording checkpoints' : this.active.running ? ' \u00b7 running; later changes are unsaved' : this.active.unsaved ? ' \u00b7 paused; current memory is unsaved' : ' \u00b7 paused at saved point'}`",
+          "hit": true
+        },
+        {
+          "line": 176,
+          "start": 12711,
+          "end": 12854,
+          "covered_units": 100,
+          "code_units": 143,
+          "ignored_syntax": false,
+          "text": "if ((this.recording && this.recording.controller !== controller) || (this.pausedRecording && this.pausedRecording.controller !== controller)) {",
+          "hit": true
+        },
+        {
+          "line": 177,
+          "start": 12861,
+          "end": 12918,
+          "covered_units": 20,
+          "code_units": 57,
+          "ignored_syntax": false,
+          "text": "if (this.recording) void this.recording.writer.release();",
+          "hit": true
+        },
+        {
+          "line": 178,
+          "start": 12925,
+          "end": 12976,
+          "covered_units": 51,
+          "code_units": 51,
+          "ignored_syntax": false,
+          "text": "this.recording = null; this.pausedRecording = null;",
+          "hit": true
+        },
+        {
+          "line": 189,
+          "start": 13369,
+          "end": 13508,
+          "covered_units": 79,
+          "code_units": 139,
+          "ignored_syntax": false,
+          "text": "if (!owner?.profile || !owner.ready || this.recording || this.pausedRecording) throw Error('Start a ready offline checkpoint guest first');",
+          "hit": true
+        },
+        {
+          "line": 194,
+          "start": 13802,
+          "end": 13896,
+          "covered_units": 94,
+          "code_units": 94,
+          "ignored_syntax": false,
+          "text": "this.recording = {id, writer, controller: owner.controller, revision: null, prefixHash: null};",
+          "hit": true
+        },
+        {
+          "line": 202,
+          "start": 14358,
+          "end": 14401,
+          "covered_units": 43,
+          "code_units": 43,
+          "ignored_syntax": false,
+          "text": "let quotaPaused = false, committed = false;",
+          "hit": true
+        },
+        {
+          "line": 207,
+          "start": 14698,
+          "end": 14793,
+          "covered_units": 95,
+          "code_units": 95,
+          "ignored_syntax": false,
+          "text": "const publication = await this.checkpoints.save(recording.writer, point, frame, configuration);",
+          "hit": true
+        },
+        {
+          "line": 208,
+          "start": 14800,
+          "end": 14860,
+          "covered_units": 60,
+          "code_units": 60,
+          "ignored_syntax": false,
+          "text": "recording.revision = publication.revision; committed = true;",
+          "hit": true
+        },
+        {
+          "line": 209,
+          "start": 14867,
+          "end": 14955,
+          "covered_units": 88,
+          "code_units": 88,
+          "ignored_syntax": false,
+          "text": "recording.prefixHash = this.hash((await this.store.openSession(recording.id)).manifest);",
+          "hit": true
+        },
+        {
+          "line": 215,
+          "start": 15409,
+          "end": 15426,
+          "covered_units": 17,
+          "code_units": 17,
+          "ignored_syntax": false,
+          "text": "} catch (error) {",
+          "hit": true
+        },
+        {
+          "line": 216,
+          "start": 15433,
+          "end": 15457,
+          "covered_units": 24,
+          "code_units": 24,
+          "ignored_syntax": false,
+          "text": "if (quotaError(error)) {",
+          "hit": true
+        },
+        {
+          "line": 217,
+          "start": 15466,
+          "end": 15485,
+          "covered_units": 19,
+          "code_units": 19,
+          "ignored_syntax": false,
+          "text": "quotaPaused = true;",
+          "hit": true
+        },
+        {
+          "line": 218,
+          "start": 15494,
+          "end": 15550,
+          "covered_units": 56,
+          "code_units": 56,
+          "ignored_syntax": false,
+          "text": "await recording.writer.release(); this.recording = null;",
+          "hit": true
+        },
+        {
+          "line": 219,
+          "start": 15559,
+          "end": 15615,
+          "covered_units": 56,
+          "code_units": 56,
+          "ignored_syntax": false,
+          "text": "if (this.adapter.current()?.controller === controller) {",
+          "hit": true
+        },
+        {
+          "line": 220,
+          "start": 15626,
+          "end": 15744,
+          "covered_units": 118,
+          "code_units": 118,
+          "ignored_syntax": false,
+          "text": "this.pausedRecording = {id: recording.id, controller, revision: recording.revision, prefixHash: recording.prefixHash};",
+          "hit": true
+        },
+        {
+          "line": 221,
+          "start": 15755,
+          "end": 15925,
+          "covered_units": 170,
+          "code_units": 170,
+          "ignored_syntax": false,
+          "text": "this.active = {id: recording.id, point: committed ? point : this.active?.id === recording.id ? this.active.point : null, controller, running: false, unsaved: !committed};",
+          "hit": true
+        },
+        {
+          "line": 222,
+          "start": 15934,
+          "end": 15935,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 223,
+          "start": 15942,
+          "end": 15943,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 224,
+          "start": 15950,
+          "end": 15962,
+          "covered_units": 12,
+          "code_units": 12,
+          "ignored_syntax": false,
+          "text": "throw error;",
+          "hit": true
+        },
+        {
+          "line": 226,
+          "start": 15985,
+          "end": 16096,
+          "covered_units": 111,
+          "code_units": 111,
+          "ignored_syntax": false,
+          "text": "if (!quotaPaused && !wasPaused && this.adapter.current()?.controller === controller) await controller.resume();",
+          "hit": true
+        },
+        {
+          "line": 232,
+          "start": 16260,
+          "end": 16287,
+          "covered_units": 27,
+          "code_units": 27,
+          "ignored_syntax": false,
+          "text": "if (this.pausedRecording) {",
+          "hit": true
+        },
+        {
+          "line": 233,
+          "start": 16294,
+          "end": 16322,
+          "covered_units": 28,
+          "code_units": 28,
+          "ignored_syntax": false,
+          "text": "this.pausedRecording = null;",
+          "hit": true
+        },
+        {
+          "line": 234,
+          "start": 16329,
+          "end": 16440,
+          "covered_units": 111,
+          "code_units": 111,
+          "ignored_syntax": false,
+          "text": "this.state('ready', 'Recording stopped at its committed prefix. Current guest memory may be unsaved.'); return;",
+          "hit": true
+        },
+        {
+          "line": 235,
+          "start": 16445,
+          "end": 16446,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 241,
+          "start": 16725,
+          "end": 16740,
+          "covered_units": 15,
+          "code_units": 15,
+          "ignored_syntax": false,
+          "text": "async retry() {",
+          "hit": true
+        },
+        {
+          "line": 242,
+          "start": 16745,
+          "end": 16781,
+          "covered_units": 36,
+          "code_units": 36,
+          "ignored_syntax": false,
+          "text": "const paused = this.pausedRecording;",
+          "hit": true
+        },
+        {
+          "line": 243,
+          "start": 16786,
+          "end": 16917,
+          "covered_units": 73,
+          "code_units": 131,
+          "ignored_syntax": false,
+          "text": "if (!paused || this.adapter.current()?.controller !== paused.controller) throw Error('Paused recording guest is no longer active');",
+          "hit": true
+        },
+        {
+          "line": 244,
+          "start": 16922,
+          "end": 16972,
+          "covered_units": 50,
+          "code_units": 50,
+          "ignored_syntax": false,
+          "text": "const writer = await this.store.writer(paused.id);",
+          "hit": true
+        },
+        {
+          "line": 245,
+          "start": 16977,
+          "end": 16982,
+          "covered_units": 5,
+          "code_units": 5,
+          "ignored_syntax": true,
+          "text": "try {",
+          "hit": true
+        },
+        {
+          "line": 246,
+          "start": 16989,
+          "end": 17043,
+          "covered_units": 54,
+          "code_units": 54,
+          "ignored_syntax": false,
+          "text": "const saved = await this.store.openSession(paused.id);",
+          "hit": true
+        },
+        {
+          "line": 247,
+          "start": 17050,
+          "end": 17170,
+          "covered_units": 114,
+          "code_units": 120,
+          "ignored_syntax": false,
+          "text": "if ((saved?.revision ?? null) !== paused.revision || (saved ? this.hash(saved.manifest) : null) !== paused.prefixHash) {",
+          "hit": true
+        },
+        {
+          "line": 248,
+          "start": 17179,
+          "end": 17207,
+          "covered_units": 28,
+          "code_units": 28,
+          "ignored_syntax": false,
+          "text": "this.pausedRecording = null;",
+          "hit": true
+        },
+        {
+          "line": 249,
+          "start": 17216,
+          "end": 17287,
+          "covered_units": 71,
+          "code_units": 71,
+          "ignored_syntax": false,
+          "text": "throw Object.assign(Error('HistoryChanged'), {code: 'HistoryChanged'});",
+          "hit": true
+        },
+        {
+          "line": 250,
+          "start": 17294,
+          "end": 17295,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 251,
+          "start": 17302,
+          "end": 17368,
+          "covered_units": 66,
+          "code_units": 66,
+          "ignored_syntax": false,
+          "text": "this.recording = {...paused, writer}; this.pausedRecording = null;",
+          "hit": true
+        },
+        {
+          "line": 252,
+          "start": 17375,
+          "end": 17396,
+          "covered_units": 21,
+          "code_units": 21,
+          "ignored_syntax": false,
+          "text": "await this.capture();",
+          "hit": true
+        },
+        {
+          "line": 253,
+          "start": 17401,
+          "end": 17418,
+          "covered_units": 17,
+          "code_units": 17,
+          "ignored_syntax": false,
+          "text": "} catch (error) {",
+          "hit": true
+        },
+        {
+          "line": 254,
+          "start": 17425,
+          "end": 17471,
+          "covered_units": 46,
+          "code_units": 46,
+          "ignored_syntax": false,
+          "text": "await writer.release(); this.recording = null;",
+          "hit": true
+        },
+        {
+          "line": 255,
+          "start": 17478,
+          "end": 17630,
+          "covered_units": 152,
+          "code_units": 152,
+          "ignored_syntax": false,
+          "text": "if (error.code !== 'HistoryChanged' && this.adapter.current()?.controller === paused.controller && !this.pausedRecording) this.pausedRecording = paused;",
+          "hit": true
+        },
+        {
+          "line": 256,
+          "start": 17637,
+          "end": 17649,
+          "covered_units": 12,
+          "code_units": 12,
+          "ignored_syntax": false,
+          "text": "throw error;",
+          "hit": true
+        },
+        {
+          "line": 257,
+          "start": 17654,
+          "end": 17655,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 258,
+          "start": 17658,
+          "end": 17659,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 259,
+          "start": 17662,
+          "end": 17686,
+          "covered_units": 24,
+          "code_units": 24,
+          "ignored_syntax": false,
+          "text": "async storageSummary() {",
+          "hit": true
+        },
+        {
+          "line": 260,
+          "start": 17691,
+          "end": 17735,
+          "covered_units": 44,
+          "code_units": 44,
+          "ignored_syntax": false,
+          "text": "const stats = await this.store.statistics();",
+          "hit": true
+        },
+        {
+          "line": 261,
+          "start": 17740,
+          "end": 17817,
+          "covered_units": 77,
+          "code_units": 77,
+          "ignored_syntax": false,
+          "text": "this.controls['limit-bytes'].value = String(stats.limits.maxBytes / 1048576);",
+          "hit": true
+        },
+        {
+          "line": 262,
+          "start": 17822,
+          "end": 17896,
+          "covered_units": 74,
+          "code_units": 74,
+          "ignored_syntax": false,
+          "text": "this.controls['limit-points'].value = String(stats.limits.maxCheckpoints);",
+          "hit": true
+        },
+        {
+          "line": 263,
+          "start": 17901,
+          "end": 18006,
+          "covered_units": 105,
+          "code_units": 105,
+          "ignored_syntax": false,
+          "text": "let origin = 'Origin usage and quota unavailable', persistence = 'Persistent-storage status unavailable';",
+          "hit": true
+        },
+        {
+          "line": 264,
+          "start": 18011,
+          "end": 18016,
+          "covered_units": 5,
+          "code_units": 5,
+          "ignored_syntax": true,
+          "text": "try {",
+          "hit": true
+        },
+        {
+          "line": 265,
+          "start": 18023,
+          "end": 18076,
+          "covered_units": 53,
+          "code_units": 53,
+          "ignored_syntax": false,
+          "text": "const estimate = await navigator.storage?.estimate();",
+          "hit": true
+        },
+        {
+          "line": 266,
+          "start": 18083,
+          "end": 18257,
+          "covered_units": 174,
+          "code_units": 174,
+          "ignored_syntax": false,
+          "text": "if (Number.isFinite(estimate?.usage) && Number.isFinite(estimate?.quota)) origin = `Origin estimate ${bytesLabel(estimate.usage)} used / ${bytesLabel(estimate.quota)} quota`;",
+          "hit": true
+        },
+        {
+          "line": 267,
+          "start": 18262,
+          "end": 18322,
+          "covered_units": 60,
+          "code_units": 60,
+          "ignored_syntax": false,
+          "text": "} catch { /* estimates are optional browser information */ }",
+          "hit": true
+        },
+        {
+          "line": 268,
+          "start": 18327,
+          "end": 18332,
+          "covered_units": 5,
+          "code_units": 5,
+          "ignored_syntax": true,
+          "text": "try {",
+          "hit": true
+        },
+        {
+          "line": 269,
+          "start": 18339,
+          "end": 18517,
+          "covered_units": 178,
+          "code_units": 178,
+          "ignored_syntax": false,
+          "text": "if (navigator.storage?.persisted) persistence = await navigator.storage.persisted() ? 'Persistent storage granted' : 'Persistent storage not granted; the browser may evict data';",
+          "hit": true
+        },
+        {
+          "line": 270,
+          "start": 18522,
+          "end": 18570,
+          "covered_units": 48,
+          "code_units": 48,
+          "ignored_syntax": false,
+          "text": "} catch { /* status unavailable is explicit */ }",
+          "hit": true
+        },
+        {
+          "line": 271,
+          "start": 18575,
+          "end": 18905,
+          "covered_units": 330,
+          "code_units": 330,
+          "ignored_syntax": false,
+          "text": "this.controls.storage.textContent = `${bytesLabel(stats.payloadBytes)} saved binary data in ${stats.sessions} sessions (shared chunks counted once). ${origin}. ${persistence}. Limits cover session binary data and points per session; browser metadata and caches use additional space. Lowering a limit never deletes named history.`;",
+          "hit": true
+        },
+        {
+          "line": 272,
+          "start": 18910,
+          "end": 18923,
+          "covered_units": 13,
+          "code_units": 13,
+          "ignored_syntax": false,
+          "text": "return stats;",
+          "hit": true
+        },
+        {
+          "line": 273,
+          "start": 18926,
+          "end": 18927,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 274,
+          "start": 18930,
+          "end": 18950,
+          "covered_units": 20,
+          "code_units": 20,
+          "ignored_syntax": false,
+          "text": "async saveLimits() {",
+          "hit": true
+        },
+        {
+          "line": 275,
+          "start": 18955,
+          "end": 19112,
+          "covered_units": 157,
+          "code_units": 157,
+          "ignored_syntax": false,
+          "text": "await this.store.setRetention({maxBytes: Number(this.controls['limit-bytes'].value) * 1048576, maxCheckpoints: Number(this.controls['limit-points'].value)});",
+          "hit": true
+        },
+        {
+          "line": 276,
+          "start": 19117,
+          "end": 19145,
+          "covered_units": 28,
+          "code_units": 28,
+          "ignored_syntax": false,
+          "text": "await this.storageSummary();",
+          "hit": true
+        },
+        {
+          "line": 277,
+          "start": 19150,
+          "end": 19277,
+          "covered_units": 127,
+          "code_units": 127,
+          "ignored_syntax": false,
+          "text": "this.state('ready', 'Storage limits saved. Existing history is preserved; recording pauses if its next save exceeds a limit.');",
+          "hit": true
+        },
+        {
+          "line": 278,
+          "start": 19280,
+          "end": 19281,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 279,
+          "start": 19284,
+          "end": 19312,
+          "covered_units": 28,
+          "code_units": 28,
+          "ignored_syntax": false,
+          "text": "async requestPersistence() {",
+          "hit": true
+        },
+        {
+          "line": 280,
+          "start": 19317,
+          "end": 19393,
+          "covered_units": 76,
+          "code_units": 76,
+          "ignored_syntax": false,
+          "text": "let message = 'Persistent-storage requests are unavailable in this browser';",
+          "hit": true
+        },
+        {
+          "line": 281,
+          "start": 19398,
+          "end": 19570,
+          "covered_units": 172,
+          "code_units": 172,
+          "ignored_syntax": false,
+          "text": "if (navigator.storage?.persist) message = await navigator.storage.persist() ? 'Persistent storage granted' : 'Persistent storage denied; browser eviction remains possible';",
+          "hit": true
+        },
+        {
+          "line": 282,
+          "start": 19575,
+          "end": 19680,
+          "covered_units": 105,
+          "code_units": 105,
+          "ignored_syntax": false,
+          "text": "await this.storageSummary(); this.state('ready', message + '. Keep an external copy of important data.');",
+          "hit": true
+        },
+        {
+          "line": 283,
+          "start": 19683,
+          "end": 19684,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 284,
+          "start": 19687,
+          "end": 19704,
+          "covered_units": 17,
+          "code_units": 17,
+          "ignored_syntax": false,
+          "text": "async cleanup() {",
+          "hit": true
+        },
+        {
+          "line": 285,
+          "start": 19709,
+          "end": 19787,
+          "covered_units": 78,
+          "code_units": 78,
+          "ignored_syntax": false,
+          "text": "const result = await this.store.collectGarbage(); await this.storageSummary();",
+          "hit": true
+        },
+        {
+          "line": 286,
+          "start": 19792,
+          "end": 19932,
+          "covered_units": 140,
+          "code_units": 140,
+          "ignored_syntax": false,
+          "text": "this.state('ready', `Cleanup completed: reclaimed ${bytesLabel(result.reclaimedBytes)} of unreachable data. Saved sessions are preserved.`);",
+          "hit": true
+        },
+        {
+          "line": 287,
+          "start": 19935,
+          "end": 19936,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 288,
+          "start": 19939,
+          "end": 19963,
+          "covered_units": 24,
+          "code_units": 24,
+          "ignored_syntax": false,
+          "text": "async deleteSelected() {",
+          "hit": true
+        },
+        {
+          "line": 289,
+          "start": 19968,
+          "end": 20035,
+          "covered_units": 62,
+          "code_units": 67,
+          "ignored_syntax": false,
+          "text": "const id = this.selected, name = this.metadata.get(id)?.name || id;",
+          "hit": true
+        },
+        {
+          "line": 290,
+          "start": 20040,
+          "end": 20190,
+          "covered_units": 150,
+          "code_units": 150,
+          "ignored_syntax": false,
+          "text": "if (!id || !window.confirm(`Delete saved session \u201c${name}\u201d? Its restore points will be removed. Shared data used by other sessions is kept.`)) return;",
+          "hit": true
+        },
+        {
+          "line": 291,
+          "start": 20195,
+          "end": 20245,
+          "covered_units": 50,
+          "code_units": 50,
+          "ignored_syntax": false,
+          "text": "const result = await this.store.deleteSession(id);",
+          "hit": true
+        },
+        {
+          "line": 292,
+          "start": 20250,
+          "end": 20303,
+          "covered_units": 53,
+          "code_units": 53,
+          "ignored_syntax": false,
+          "text": "const next = new Map(this.metadata); next.delete(id);",
+          "hit": true
+        },
+        {
+          "line": 293,
+          "start": 20308,
+          "end": 20395,
+          "covered_units": 87,
+          "code_units": 87,
+          "ignored_syntax": true,
+          "text": "// The row is already durably deleted. Failed display metadata stays visibly incomplete",
+          "hit": true
+        },
+        {
+          "line": 294,
+          "start": 20400,
+          "end": 20481,
+          "covered_units": 81,
+          "code_units": 81,
+          "ignored_syntax": true,
+          "text": "// until the user retries deletion; never pretend the saved history still exists.",
+          "hit": true
+        },
+        {
+          "line": 295,
+          "start": 20486,
+          "end": 20502,
+          "covered_units": 16,
+          "code_units": 16,
+          "ignored_syntax": false,
+          "text": "let labelsError;",
+          "hit": true
+        },
+        {
+          "line": 296,
+          "start": 20507,
+          "end": 20577,
+          "covered_units": 70,
+          "code_units": 70,
+          "ignored_syntax": false,
+          "text": "try {this.persistMetadata(next);} catch (error) {labelsError = error;}",
+          "hit": true
+        },
+        {
+          "line": 297,
+          "start": 20582,
+          "end": 20669,
+          "covered_units": 87,
+          "code_units": 87,
+          "ignored_syntax": false,
+          "text": "if (this.active?.id === id) this.active = {...this.active, point: null, unsaved: true};",
+          "hit": true
+        },
+        {
+          "line": 298,
+          "start": 20674,
+          "end": 20739,
+          "covered_units": 65,
+          "code_units": 65,
+          "ignored_syntax": false,
+          "text": "if (this.pausedRecording?.id === id) this.pausedRecording = null;",
+          "hit": true
+        },
+        {
+          "line": 299,
+          "start": 20744,
+          "end": 20765,
+          "covered_units": 21,
+          "code_units": 21,
+          "ignored_syntax": false,
+          "text": "await this.refresh();",
+          "hit": true
+        },
+        {
+          "line": 300,
+          "start": 20770,
+          "end": 20842,
+          "covered_units": 72,
+          "code_units": 72,
+          "ignored_syntax": false,
+          "text": "this.state(result.collected && !labelsError ? 'ready' : 'storage-error',",
+          "hit": true
+        },
+        {
+          "line": 301,
+          "start": 20849,
+          "end": 21182,
+          "covered_units": 333,
+          "code_units": 333,
+          "ignored_syntax": false,
+          "text": "`Saved session deleted. ${result.collected ? `Reclaimed ${bytesLabel(result.reclaimedBytes)} of unreachable data.` : `Cleanup refused: ${result.error.detail}. Repair or delete the incomplete survivor, then retry cleanup.`}${labelsError ? ' Its display label could not be removed; retry Delete to clear the incomplete label.' : ''}`);",
+          "hit": true
+        },
+        {
+          "line": 302,
+          "start": 21185,
+          "end": 21186,
+          "covered_units": 1,
+          "code_units": 1,
+          "ignored_syntax": true,
+          "text": "}",
+          "hit": true
+        },
+        {
+          "line": 313,
+          "start": 21814,
+          "end": 21953,
+          "covered_units": 68,
+          "code_units": 139,
+          "ignored_syntax": false,
+          "text": "if (!preview?.compatible || this.recording || this.pausedRecording) throw Error('Choose a compatible checkpoint and stop recording first');",
+          "hit": true
+        },
+        {
+          "line": 316,
+          "start": 22147,
+          "end": 22191,
+          "covered_units": 44,
+          "code_units": 44,
+          "ignored_syntax": false,
+          "text": "await this.store.withReadLease(async () => {",
+          "hit": true
+        },
+        {
+          "line": 317,
+          "start": 22198,
+          "end": 22304,
+          "covered_units": 106,
+          "code_units": 106,
+          "ignored_syntax": false,
+          "text": "await this.checkpoints.admit(preview.id, point, GPU_CHECKPOINT_BUILD_ID, SOFTWARE_CHECKPOINT_WASM_SHA256);",
+          "hit": true
+        },
+        {
+          "line": 318,
+          "start": 22311,
+          "end": 22394,
+          "covered_units": 83,
+          "code_units": 83,
+          "ignored_syntax": false,
+          "text": "const controller = await this.adapter.replace({id: preview.id, checkpoint: point});",
+          "hit": true
+        },
+        {
+          "line": 319,
+          "start": 22401,
+          "end": 22506,
+          "covered_units": 55,
+          "code_units": 105,
+          "ignored_syntax": false,
+          "text": "if (this.adapter.current()?.controller !== controller) throw Error('Restored guest is no longer active');",
+          "hit": true
+        },
+        {
+          "line": 320,
+          "start": 22513,
+          "end": 22579,
+          "covered_units": 66,
+          "code_units": 66,
+          "ignored_syntax": false,
+          "text": "this.active = {id: preview.id, point, controller, running: false};",
+          "hit": true
+        },
+        {
+          "line": 321,
+          "start": 22584,
+          "end": 22587,
+          "covered_units": 3,
+          "code_units": 3,
+          "ignored_syntax": true,
+          "text": "});",
+          "hit": true
+        },
+        {
+          "line": 328,
+          "start": 22961,
+          "end": 23183,
+          "covered_units": 222,
+          "code_units": 222,
+          "ignored_syntax": false,
+          "text": "this.state('ready', this.pausedRecording ? 'Guest running with unsaved changes. Recording remains paused; Retry recording saves a new point.' : 'Guest running. Use Checkpoint while recording to save a new restore point.');",
+          "hit": true
+        }
+      ]
+    },
+    "web/loader.js": {
+      "source_sha256": "b8fc2ef44212c1789d4b1f5a05884523e360b58321b9d822b89efefdd8cc8f5d",
+      "matching_entries": 4,
+      "changed_lines": 2,
+      "unhit": [],
+      "partial": [],
+      "rows": [
+        {
+          "line": 195,
+          "start": 9553,
+          "end": 9683,
+          "covered_units": 130,
+          "code_units": 130,
+          "ignored_syntax": false,
+          "text": "try { sessionAdmission = await store.withReadLease(() => new SessionCheckpoints(store).admit(descriptor.id, descriptor.checkpoint,",
+          "hit": true
+        },
+        {
+          "line": 196,
+          "start": 9690,
+          "end": 9751,
+          "covered_units": 61,
+          "code_units": 61,
+          "ignored_syntax": false,
+          "text": "GPU_CHECKPOINT_BUILD_ID, SOFTWARE_CHECKPOINT_WASM_SHA256)); }",
+          "hit": true
+        }
+      ]
+    },
+    "web/roadmap.js": {
+      "source_sha256": "e4ab2948e79f0e39466980551c1915f59e011b7fd5794f03e2477749c715979e",
+      "matching_entries": 3,
+      "changed_lines": 2,
+      "unhit": [],
+      "partial": [],
+      "rows": [
+        {
+          "line": 220,
+          "start": 30580,
+          "end": 30602,
+          "covered_units": 22,
+          "code_units": 22,
+          "ignored_syntax": false,
+          "text": "status: \"in-progress\",",
+          "hit": true
+        },
+        {
+          "line": 227,
+          "start": 31446,
+          "end": 31567,
+          "covered_units": 121,
+          "code_units": 121,
+          "ignored_syntax": false,
+          "text": "{ name: \"Storage limits and shared-data deletion\", status: \"in-progress\", evidence: \"E9-T07: worker proof in progress\" },",
+          "hit": true
+        }
+      ]
+    },
+    "web/gpu-checkpoint-build.js": {
+      "source_sha256": "e94e48f7bf99e5d4db95b6fee18c669a85373734cafb6ae7b2110f6d27c4e7bd",
+      "matching_entries": 6,
+      "changed_lines": 1,
+      "unhit": [],
+      "partial": [],
+      "rows": [
+        {
+          "line": 2,
+          "start": 69,
+          "end": 173,
+          "covered_units": 104,
+          "code_units": 104,
+          "ignored_syntax": false,
+          "text": "export const GPU_CHECKPOINT_BUILD_ID=\"cb49b9110d9344bbe9a426585384fd15d9b702b0cfe687597de51443405c338b\";",
+          "hit": true
+        }
+      ]
+    }
+  }
+}

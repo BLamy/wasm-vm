@@ -1,0 +1,49 @@
+   Compiling futures-task v0.3.32
+   Compiling pin-project-lite v0.2.17
+   Compiling futures-core v0.3.32
+   Compiling slab v0.4.12
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling bitflags v2.13.0
+   Compiling byteorder v1.5.0
+   Compiling smallvec v1.15.2
+   Compiling heapless v0.9.3
+   Compiling log v0.4.33
+   Compiling libm v0.2.16
+   Compiling smoltcp v0.13.1
+   Compiling stable_deref_trait v1.2.1
+   Compiling tinyvec_macros v0.1.1
+   Compiling num-traits v0.2.19
+   Compiling bitflags v1.3.2
+   Compiling tinyvec v1.12.0
+   Compiling managed v0.8.0
+   Compiling wasm-vm-wasm-emit v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/wasm-emit)
+   Compiling futures-util v0.3.32
+   Compiling hash32 v0.3.1
+   Compiling console_error_panic_hook v0.1.7
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling getrandom v0.2.17
+   Compiling cast v0.3.0
+   Compiling nu-ansi-term v0.50.3
+   Compiling oorandom v11.1.5
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling unicode-normalization v0.1.25
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/core)
+   Compiling js-sys v0.3.103
+   Compiling wasm-vm-slirp v0.0.0 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/slirp)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/jit-translate)
+   Compiling web-sys v0.3.103
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/wasm)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.89s
+     Running tests/software_checkpoint.rs (target/debug/deps/software_checkpoint-cfc8b33b4a506534)
+
+running 2 tests
+test tuples_reject_wrong_disk_and_clock_even_when_rehashed ... ok
+E9_SOFTWARE_FRAME bytes=6182 generation=9007199254740993 five-component-digests=held
+test tuple_exact_components_and_each_digest ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.66s
+

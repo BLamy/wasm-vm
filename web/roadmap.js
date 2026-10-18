@@ -217,13 +217,14 @@ export const ROADMAP = [
   {
     epic: "E9",
     title: "Session Time Travel",
-    status: "next",
+    status: "in-progress",
     blurb: "Local session history is being built in layers: durable storage, coherent checkpoints, then exact replay and timeline controls.",
     caps: [
       { name: "Durable multi-session history store", status: "verified", evidence: "E9-T03: bounded IndexedDB chunks, atomic commit cursors, reload/crash and two-tab writer proofs" },
       { name: "Immutable historical disk roots", status: "verified", evidence: "E9-T04: private COW restores, exact base/generation bindings and shared-block retention" },
       { name: "Coherent software machine checkpoints", status: "verified", evidence: "E9-T05: exact native/input/disk tuple, atomic publication and private reload restore" },
       { name: "Local saved-session library", status: "verified", evidence: "E9-T06: real checkpoint controls, durable names and exact paused reopen" },
+      { name: "Storage limits and shared-data deletion", status: "verified", evidence: "E9-T07: quota prefix, shared restore, crash recovery and independent verification" },
       { name: "Retention and reload milestone", status: "pending", evidence: "E9-T07–T08" },
       { name: "Exact replay, seeking and reverse-step", status: "pending", evidence: "E9-T09–T18" },
       { name: "Session timeline and branches", status: "pending", evidence: "E9-T19–T20" },
