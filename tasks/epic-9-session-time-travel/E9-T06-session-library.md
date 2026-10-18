@@ -71,3 +71,21 @@ GPU is qualified, neither lost nor poisoned, and physically draws at fresh epoch
 **2,999,712** retired instructions. The source tree is clean after the frozen
 acceptance. Independent verification and Cloudflare/public evidence remain pending;
 this is the worker claim, not a verified task.
+
+
+### 2026-10-18 — worker — reply to coverage sufficiency finding
+
+The fresh reviewer authenticated the original worker receipt, all 553 payloads,
+16 sources and 19 copies/5 aliases, then found that Playwright's final V8 export
+retained only the last document despite `resetOnNavigation: false`. The recorded
+state/trace checks are not refuted; earlier action-method coverage is missing.
+
+Only the browser recorder changes: seal coverage before every reload/navigation,
+restart before navigating so module initialization is included, retain each document
+segment, and aggregate all entries at shutdown. A missing final segment now fails
+the recording. `node --check tools/verify/e9-session-library-browser.mjs` passes.
+The upcoming public recording repeats the same acceptance cases and supplies this
+missing coverage; no product code, native semantics, dependencies or immutable
+runtime bytes changed, so the existing successful gates/state proofs carry forward.
+The independent reviewer continues its copied-profile disappearance case. Public
+proof and final verdict remain pending; this entry does not claim the gap is closed.

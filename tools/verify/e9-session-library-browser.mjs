@@ -19,6 +19,18 @@ const report={task:'E9-T06',status:'running',development,head:execFileSync('git'
   started:new Date().toISOString(),checks:{},errors:[]};
 await fs.mkdir(output,{recursive:true});
 let server,context,page;
+const coverage=[];
+async function collectCoverage(){
+  const entries=await page.coverage.stopJSCoverage(),name=`javascript-coverage-segment-${(report.coverageSegments??[]).length+1}.json`;
+  coverage.push(...entries);await fs.writeFile(path.join(output,name),JSON.stringify(entries));
+  (report.coverageSegments??=[]).push({name,entries:entries.length});
+}
+async function navigate(operation){
+  // Playwright may replace same-URL script entries after a navigation even with reset disabled.
+  // Seal the old document first; start before navigating so new module initialization is covered.
+  await collectCoverage();await page.coverage.startJSCoverage({resetOnNavigation:false});
+  await operation();
+}
 const control=name=>page.locator(`[data-session="${name}"]`);
 async function idle(){await page.waitForFunction(()=>window.__sessionLibrary&&!__sessionLibrary.busy&&__sessionLibrary.root.dataset.state!=='loading',null,{timeout:240000});}
 async function click(name){await control(name).click();await idle();}
@@ -114,7 +126,7 @@ try {
   report.checks.beta=await details(beta);
   console.log('Two actual sessions saved; reloading and opening exact points');
   assert.equal(report.checks.beta.manifest.events.length,0);
-  await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.__ready===true);await idle();
+  await navigate(()=>page.reload({waitUntil:'domcontentloaded'}));await page.waitForFunction(()=>window.__ready===true);await idle();
   report.checks.afterReload=await control('sessions').locator('option').evaluateAll(options=>options.map(option=>({id:option.value,text:option.textContent})));
   assert.equal(report.checks.afterReload.length,2);assert.ok(report.checks.afterReload.some(row=>row.id===beta&&row.text==='Beta saved session'));
   assert.equal(await control('active').getAttribute('data-id'),'');
@@ -193,13 +205,13 @@ try {
   assert.equal(report.checks.rawTuples.find(x=>x.name==='beta-restored.checkpoint.gz').sha256,report.checks.beta.frameHash);
   console.log('Both guest witnesses and responsive controls passed');
   const labels=await page.evaluate(()=>{const value=localStorage.getItem('wasm-vm.session-library.v1');localStorage.setItem('wasm-vm.session-library.v1','{');return value;});
-  await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.__ready===true);await idle();
+  await navigate(()=>page.reload({waitUntil:'domcontentloaded'}));await page.waitForFunction(()=>window.__ready===true);await idle();
   report.checks.labelRecovery={state:await page.locator('#session-library').getAttribute('data-state'),rows:await control('sessions').locator('option').count()};
   assert.equal(report.checks.labelRecovery.state,'storage-error');assert.equal(report.checks.labelRecovery.rows,4);
   await page.locator('#session-library').screenshot({path:path.join(output,'metadata-error.png')});
   await page.evaluate(value=>localStorage.setItem('wasm-vm.session-library.v1',value),labels);
   await page.setViewportSize({width:1440,height:1000});
-  await page.goto(new URL('app.html?noAutoBoot&testHooks=1&workerHeartbeatTimeoutMs=10000',report.url).href,{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.__ready===true);await idle();
+  await navigate(()=>page.goto(new URL('app.html?noAutoBoot&testHooks=1&workerHeartbeatTimeoutMs=10000',report.url).href,{waitUntil:'domcontentloaded'}));await page.waitForFunction(()=>window.__ready===true);await idle();
   report.checks.namesAfterRecovery=await control('sessions').locator('option').allTextContents();
   assert.ok(report.checks.namesAfterRecovery.includes('Alpha saved session')&&report.checks.namesAfterRecovery.includes('Beta saved session'));
   await page.unroute('**/__e9-library-proof/*');
@@ -217,10 +229,12 @@ try {
 finally{
   if(page&&!page.isClosed()){
     try{report.finalUi=await page.locator('#session-library').evaluate(el=>({state:el.dataset.state,text:el.innerText}));}catch{}
-    try{await fs.writeFile(path.join(output,'javascript-coverage.json'),JSON.stringify(await page.coverage.stopJSCoverage()));}catch{}
+    try{await collectCoverage();await fs.writeFile(path.join(output,'javascript-coverage.json'),JSON.stringify(coverage));}
+    catch(error){report.coverageFailure=error.message;if(report.status==='passed'){report.status='failed';process.exitCode=1;}}
     if(report.status==='failed')await page.screenshot({path:path.join(output,'failure.png')}).catch(()=>{});
   }
   if(context){await context.tracing.stop({path:path.join(output,'browser-trace.zip')}).catch(()=>{});await context.close().catch(()=>{});}
   if(server){server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
+  if(report.status==='passed'&&report.coverageSegments?.length!==4){report.status='failed';report.coverageFailure='expected four sealed document coverage segments';process.exitCode=1;}
   report.finished=new Date().toISOString();await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');
 }
