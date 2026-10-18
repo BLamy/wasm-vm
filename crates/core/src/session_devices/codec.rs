@@ -362,15 +362,14 @@ impl DeviceHub {
         if r.bool()? {
             g.capture_ready = Some(DeviceCompletion::decode(r.bytes(MAX_RESULT + 128)?)?);
         }
-        if let Some(ready) = &g.capture_ready {
-            if !self.capture
+        if let Some(ready) = &g.capture_ready
+            && (!self.capture
                 || !matches!(ready.request.intent, DeviceIntent::Capture { .. })
                 || Some(ready.request.id) != g.capture_pending
                 || g.pending.contains_key(&ready.request.id)
-                || ready.request.id > g.next_id
-            {
-                return Err(DeviceError::Snapshot);
-            }
+                || ready.request.id > g.next_id)
+        {
+            return Err(DeviceError::Snapshot);
         }
         // Ownership is reciprocal: an awaiting capture has exactly one pending request,
         // while a ready result has consumed it. An erased owner must not orphan a request.

@@ -791,7 +791,7 @@
     "crates/core/src/session_clock/sources.rs": "36e874000419e12352d3472cfa549473f346ae79b5390bbe5abff11ba59bd5ff",
     "crates/core/src/session_devices.rs": "6d56de3168dc0d6d879d09a4e07dccb536053c82559efce7ab2e589cc5d1b103",
     "crates/core/src/session_devices/block.rs": "5645aad08b4670de4fe5ecde140cdbd55e11c4c7e57a5db85b238b71508edfec",
-    "crates/core/src/session_devices/codec.rs": "11411d2fb5b568ec44330d0d41a33e5aa421dbe3100e1d8c0e15ffb82d8f2261",
+    "crates/core/src/session_devices/codec.rs": "82f88beb179f52b13d3fd3068094984e99f41ddb2df2d0cf332f455799902f21",
     "crates/core/src/time.rs": "f5c82f061100dc0f30c6281eae5d7103298622739b629312566348924257765f",
     "crates/slirp/src/lib.rs": "7e08a064d78f516b775cfdf913351155bc9734445a9a063d761c0b7f385703c2",
     "crates/storage/src/disk_root.rs": "dbe457d5d68b797d173f86bdbdd0d78c06a644e7de04c5440d060e62127e07c9",
