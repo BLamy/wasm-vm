@@ -3,8 +3,7 @@ id: E9-T13
 epic: 9
 title: Capture network sessions and replay them with zero live egress
 priority: 524.913
-status: blocked
-blocked_on: ["Cloudflare account authorization for required Pages publication", "permitted independent verifier execution and completed fresh-session review"]
+status: in-progress
 depends_on: [E9-T09, E9-T03]
 estimate: S
 risk: high
@@ -437,3 +436,39 @@ publication/browser proof remain unresolved. Official read-only Wrangler whoami
 still reports unauthenticated; no token was printed or copied. A new device
 request awaits human readiness after the previous code expired. Task remains
 blocked and unverified; no dependent task starts and no PR is merged.
+
+### 2026-10-18 — worker — ordinary WFI proof finds semantic rework
+
+The partial review's G2 request led to an ordinary worker WFI/pending test,
+not a retry of the stopped independent harness. Frozen04f628's session path
+checks only generic SessionClock.external_pending when consuming idle_pending;
+it skips the owned NIC's guest TX/external work getter. With owned Pending(true),
+after two transitions the saved run has retired1, mtime1000000 and x1=0.
+The predicted result was retired2, mtime2 and x1=1. The only retired instruction
+is wfi at0x80060000 (wfi-red/native/components/wfi-txfalse-pendingtrue.trace:1);
+the second transition jumps to the timer deadline despite outstanding work.
+The no-pending control correctly performs that idle advance.
+
+Lossless worker counterexample packet:
+evidence/e9-t13/worker-wfi-finding/provenance.json, SHA256
+76825ff1d7eb7e6a40ad32065da8775dbac20dd4f43f2b63a6afb7b8dd07fde5.
+It retains199 originals, the pre-state prediction, exact new regression,
+authenticated old-runtime binary, failed101 log, frames/trace and ordinary
+coverage records. The first harness attempt incorrectly compared a budget1
+call before reaching its target; it is retained as a harness failure, not
+this semantic finding. The corrected v2 loops to the target and exhibits
+the predicted pending-work fault.
+
+The existing nine worker tests pass under instrumentation. Its first combined
+oracle attempt required the separate JIT recording and remains recorded as
+failed; an additive view explicitly carries those12 unchanged04f JIT inputs,
+and the combined struct/hashlib oracle passes. No carried recording is called
+a fresh execution. The original independent charter remains unfinished.
+
+Status returns to in-progress for this semantic repair and remaining bounded
+worker component evidence. The prepared04f628 publication candidate is withdrawn
+and has never been deployed. Its prior local24-command pass remains historical;
+the repaired runtime must earn a new frozen risk-tier submission and browser
+bundle. Cloudflare human authorization, required live publication/public proof
+and a completed permitted fresh independent review still gate verification.
+No dependent starts and no PR is merged.
