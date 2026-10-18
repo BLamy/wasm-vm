@@ -59,6 +59,27 @@ A machine snapshot contains CPU, RAM, and device state. A disk overlay contains 
 
 The loader checks build identity, image binding, and overlay generation before applying persisted resume state. Missing, incompatible, stale, foreign, or corrupt snapshots produce a typed cold-boot reason rather than silently pairing unrelated state. A snapshot is a boot optimization, not a substitute for artifact integrity.
 
+## Local saved checkpoints
+
+The [demo](./app.html) has a **Local saved sessions** library. Choose **New checkpoint guest** to start the pinned, single-hart Alpine software guest with 256 MiB RAM, an instruction-count clock and guest networking disabled. Boot assets are downloaded by the host. This profile keeps recording separate from the ordinary desktop's devices and live connections.
+
+1. Make your guest file changes, then choose **Start recording** to save the initial point.
+2. Choose **Checkpoint** for another exact restore point. **Stop recording** saves a final point and ends recording; later changes remain unsaved.
+3. Select a session and restore point, then choose **Open checkpoint**. It restores CPU, RAM, device state, disk changes and pending input together, initially paused. Choose **Resume guest** to continue. Selecting a preview alone leaves the active guest in place.
+4. Rename sessions to distinguish them. A reload or another tab on the same browser origin can reopen the saved points. Opening a point or starting a new checkpoint guest replaces the current guest.
+
+**Checkpoints only.** The current library restores explicit saved points. Continuous input replay, arbitrary-time seeking, reverse-step and accelerated desktop session history are later Epic 9 boundaries. Recording cannot recover execution from before it started. A session requires its exact compatible runtime, Wasm, kernel and image; an update can leave an older named session visibly incompatible without deleting it.
+
+### Limits, quota and deletion
+
+The library reports saved binary bytes, the browser's approximate origin usage/quota and persistent-storage status. **Saved binary data limit** counts unique stored chunks once; browser metadata, caches and other site data consume additional space. **Restore points per session** limits future appends. Lowering either limit preserves existing named history.
+
+Quota or retention failure pauses recording and the guest, preserving the last committed prefix. The status distinguishes unsaved current memory from the saved point. Free space, raise a limit or run **Clean up unreachable data**, then choose **Retry recording** to save a new point. **Stop recording** while quota-paused ends at the committed prefix. Retry refuses history that another tab changed or deleted.
+
+**Delete selected session** asks for confirmation and removes its restore points. Shared machine chunks and disk data referenced by other sessions are preserved. Cleanup can refuse while another tab holds a writer or restore lease, or when surviving history is incomplete; the status explains the failure and lets you retry. Browser eviction or cleared data appears as incomplete history with Open disabled and Delete available.
+
+Checkpoints are stored locally in IndexedDB on the same browser origin. Names are small display metadata in localStorage. Persistent storage can be requested, but browser denial or later site-data clearing can still remove recordings. Keep an external copy of important guest data; portable session bundle export/import belongs to the later release milestone.
+
 {% hint style="info" %}
 Passkey-encrypted user volumes belong to the proposed ProofMesh product layer. The current IndexedDB overlay is not documented as an encrypted, passkey-owned volume.
 {% endhint %}

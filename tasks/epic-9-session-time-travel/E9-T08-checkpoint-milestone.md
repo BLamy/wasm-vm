@@ -26,7 +26,7 @@ Recorded built-browser integration of accepted checkpoint/store/library boundari
 
 ## Deterministic acceptance
 
-`make verify-E9-T08`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.
+`make verify-E9-T08` records the two-guest built-browser integration, independent machine/input/disk witnesses, affected target build and documentation checks.
 
 ## Adversarial verification
 
@@ -44,3 +44,22 @@ after reload and in a fresh tab. Rename, quota-prefix feedback and deletion must
 the other session. The proof includes exact raw tuples, independently reconstructed
 filesystem witnesses, original sources, responsive screenshots and 127/0 with no errors.
 Continuous replay and arbitrary-time seeking remain later task boundaries.
+
+
+### 2026-10-18 — worker — ready for recorded submission
+
+Added the deterministic integration driver, independent raw/native16/sparse-RAM/input
+and ext4 oracle, `make verify-E9-T08`, and the unified storage guide's checkpoint-only
+workflow/retention limits. Runtime, native/Wasm behavior, existing storage/library APIs
+and the pinned GPU factory are unchanged from independently verified T07.
+Development run `target/evidence/e9-t08-browser-inner-2/report.json` passed: genuinely
+fresh Alpha/Beta guests used the same filename with different file bytes, shell RAM,
+queued UART and held keys; exact paused tuples restored Beta after reload and Alpha in
+a fresh tab. Visible rename and point-limit quota feedback preserved Beta's prefix;
+deleting Alpha and reloading preserved Beta's original tuple and guest observations.
+The independent oracle authenticated every component/section and read the four actual
+reconstructed ext4 witnesses (Alpha, Beta, unsaved Beta, reopened Beta). Browser 127/0,
+zero unexpected errors, keyboard focus, 390px controls and rendered unified docs passed.
+The first development failure is retained: the RPC wrapper appends a framing newline,
+so the corrected harness compares base64-encoded file bytes; no VM change was required.
+Final clean-head recording, production proof and fresh independent verdict are pending.
