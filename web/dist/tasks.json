@@ -34421,7 +34421,7 @@
       "epicKey": "9",
       "title": "Add the local saved-session library and checkpoint controls",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E9-T05"
       ],
@@ -34450,10 +34450,18 @@
       "verificationLog": "(pending; no implementation or verification claim)",
       "adversarial": "Try an incompatible saved build, rapid selection changes and keyboard-only operation. The displayed selected session must agree with the active machine, not an old preview.",
       "file": "tasks/epic-9-session-time-travel/E9-T06-session-library.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-10-18",
+          "commits": 1,
+          "labels": [
+            "Start local saved-session library task"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-18",
+      "lastActivity": "2026-10-18",
+      "commitCount": 1
     },
     {
       "id": "E9-T07",
