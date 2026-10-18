@@ -3,8 +3,7 @@ id: E9-T13
 epic: 9
 title: Capture network sessions and replay them with zero live egress
 priority: 524.913
-status: blocked
-blocked_on: Permitted independent G9 execution after automatic security review stopped the prior run
+status: implemented
 depends_on: [E9-T09, E9-T03]
 estimate: S
 risk: high
@@ -802,3 +801,20 @@ after automatic security review stopped the earlier independent execution
 for possible cybersecurity risk. The stopped execution was not retried or
 replaced. Status remains blocked solely on that external execution gate;
 T14–T24 remain pending, and no PR merge is authorized.
+
+### 2026-10-18 — worker — resume independent verification with Daybreak Blue
+
+The human reported access to Daybreak Blue after the earlier platform security
+stop. A read-only Codex CLI access probe using the explicitly selected
+`gpt-daybreak-blue-latest` model exited0 and returned READY without tools or
+file access. Probe paths:
+/Volumes/e9-t13-wfi-cold/e9-t13-daybreak-blue-access-probe.jsonl and
+/Volumes/e9-t13-wfi-cold/e9-t13-daybreak-blue-access-probe.md.
+This is an account/model availability check, not a G9 verification run.
+
+The external block is lifted for a fresh independent attempt; worker status
+returns to implemented. Frozen runtime2f2aa7aba484f6954ca04358385828093e561b83,
+its 25 recorded local gates, public release, and prior separate HELD findings
+are unchanged. The verifier must still execute G9's independent attacks,
+sensitivity check and suite disposition before setting verified. No dependency
+is cleared by this status change, and no merge is authorized.
