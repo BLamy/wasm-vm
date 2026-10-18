@@ -7,6 +7,7 @@ import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {chromium} from '../../web/node_modules/playwright/index.mjs';
+import {recordNetworkComponents} from './e9-network-component-browser.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..'),arg=f=>{const i=process.argv.indexOf(f);return i<0?null:process.argv[i+1];};
 assert.ok(arg('--output'));const output=path.resolve(arg('--output')),development=process.argv.includes('--development'),remote=arg('--url');if(remote)assert.equal(remote,'https://wasm-vm.pages.dev/');
 const web=path.join(root,development?'web':'web/dist'),sha=b=>createHash('sha256').update(b).digest('hex');
@@ -58,16 +59,19 @@ try{
  const data=await page.evaluate(async()=>{
   const data=globalThis.__networkCaptureReport;if(data.status!=='passed')return data;
   const upload=async(name,bytes)=>{const r=await fetch('./__network-proof/'+name,{method:'POST',body:bytes});if(!r.ok)throw Error('proof export');return r.json();};
-  const result={...data,replays:[],receipts:[],persisted:{...data.persisted,objects:[]}};
+  const result={...data,replays:[],receipts:[],idle:[],persisted:{...data.persisted,objects:[]}};
   for(const[key,name]of[['initial','initial.resume'],['pending','pending.resume'],['final','final.resume'],['guest','guest.bin'],['trace','original.trace'],['httpResponse','http-response.bin'],['receiveFrame','receive-frame.bin']])result[key]=await upload(name,data[key]);
   for(const replay of data.replays){const name='replay-'+replay.quantum+'-pending-'+replay.fromPending;result.replays.push({...replay,frame:await upload(name+'.resume',replay.frame),trace:await upload(name+'.trace',replay.trace)});}
   for(const[i,r]of data.receipts.entries())result.receipts.push({...r,bytes:await upload('network-event-'+i+'.bin',r.bytes)});
+  for(const row of data.idle){const name='idle/tx'+row.guestTx+'-pending'+row.pendingWork;result.idle.push({...row,
+   paused:await upload(name+'-paused.resume',row.paused),frame:await upload(name+'-final.resume',row.frame),trace:await upload(name+'-original.trace',row.trace),
+   replayFrame:await upload(name+'-replay.resume',row.replayFrame),replayTrace:await upload(name+'-replay.trace',row.replayTrace)});}
   result.persisted.manifest=await upload('manifest.json',data.persisted.manifest);
   for(const object of data.persisted.objects)result.persisted.objects.push({ref:object.ref,bytes:await upload('objects/'+object.ref.sha256,object.bytes)});
   return result;
  });await save('probe.json',data);assert.equal(data.status,'passed',data.failure);assert.equal(data.receipts.length,5);assert.equal(data.replays.length,6);assert.equal(data.transport.replayFactories,0);
  for(const object of data.persisted.objects){assert.equal(object.bytes.sha256,object.ref.sha256);assert.equal(String(object.bytes.bytes),object.ref.length);}
- report.checks.probe={receipts:5,replays:6,refusals:data.refusals.length,transport:data.transport};
+ assert.equal(data.idle.length,4);report.checks.probe={receipts:5,replays:6,idle:4,refusals:data.refusals.length,transport:data.transport};
  assert.match(await page.locator('#network-capture-pip').getAttribute('class'),/\blive\b/);assert.match(await page.locator('.cap',{hasText:'Offline network recording'}).locator('.cap-pip').getAttribute('class'),/\blive\b/);
  await panel.screenshot({path:path.join(output,'desktop.png')});await page.setViewportSize({width:390,height:844});report.checks.mobile=await panel.evaluate(el=>({width:el.clientWidth,scroll:el.scrollWidth}));assert.ok(report.checks.mobile.scroll<=report.checks.mobile.width+1);await panel.screenshot({path:path.join(output,'mobile.png')});await page.setViewportSize({width:1440,height:1000});
  console.log('Actual browser translated execution and exact checkpoint batch edges');
@@ -108,6 +112,7 @@ try{
    r.replayNetworkEvent('0','0','1',1,encodeNetworkEvent(4));r.takeNetworkDeliveries();refusal('wrong replay end cursor',r,()=>r.finishNetworkReplay('0'));r.finishNetworkReplay('1');
   }finally{m.free();r.free();other.free();}return results;
  });
+ report.checks.components=await recordNetworkComponents(page);assert.equal(report.checks.components.status,'passed');assert.equal(report.checks.components.outcomes.length,2);
  const reloaded=await context.newPage();try{await reloaded.goto(report.url,{waitUntil:'domcontentloaded'});await reloaded.waitForFunction(()=>window.__ready===true,null,{timeout:60000});report.checks.reload=await reloaded.evaluate(async()=>{const{SessionStore}=await import('./session-store.js'),{SessionInputJournal}=await import('./session-inputs.js'),{NETWORK_PROBE_DATABASE}=await import('./network-capture-probe.js');const store=await SessionStore.open(NETWORK_PROBE_DATABASE);try{return{receipts:(await SessionInputJournal.read(store,'network-prefix')).receipts.length};}finally{await store.close();}});assert.equal(report.checks.reload.receipts,5);}finally{await reloaded.close();}
  report.checks.missingPayload=await page.evaluate(async()=>{
   const{NETWORK_PROBE_DATABASE}=await import('./network-capture-probe.js'),{SessionStore}=await import('./session-store.js'),{SessionInputJournal}=await import('./session-inputs.js');

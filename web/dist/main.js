@@ -3279,7 +3279,7 @@ suiteRunBtn.addEventListener("click", runSuite);
 networkCaptureRun.addEventListener('click',async()=>{
  if(running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||!wasmReady)return;
  networkCaptureRunning=true;networkCaptureResult=null;networkCaptureStatus.textContent='Recording one safe request, then replaying offline…';setInteractiveState();refreshRoadmapLive();
- try{networkCaptureResult=await runNetworkCaptureProbe();networkCaptureStatus.textContent='Passed · six replays agree; the network request ran once.';}
+ try{networkCaptureResult=await runNetworkCaptureProbe();networkCaptureStatus.textContent='Passed · offline replays and timer order agree; one network request.';}
  catch(error){networkCaptureResult={status:'failed',failure:String(error)};networkCaptureStatus.textContent='Failed · '+error.message;}
  finally{if(_startupQuery.has('testHooks'))globalThis.__networkCaptureReport=networkCaptureResult;networkCaptureStatus.dataset.status=networkCaptureResult.status;networkCaptureRunning=false;refreshRoadmapLive();setInteractiveState();}
 });

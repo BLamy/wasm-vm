@@ -475,6 +475,12 @@ reset. The reset flag remains recorded; capture neither polls the backend nor
 advances the guest. Restoring before the next service roundtrips that canonical
 state and resumes with the same instruction trace.
 
+Outstanding guest sends and recorded external-pending work suppress WFI idle
+fast-forward under the common session clock. Record and Replay consult the same
+owned state before deciding whether to jump to the next timer deadline. The live
+network check exercises both pending sources and the idle controls with matching
+complete checkpoints and instruction traces across execution budgets.
+
 Channel 20 envelopes bind each outgoing intent acknowledgement, incoming frame,
 connection outcome or external-work change to the common before-boundary coordinate.
 Frames are bounded to 65,535 bytes, each queue to 256 entries and combined owned

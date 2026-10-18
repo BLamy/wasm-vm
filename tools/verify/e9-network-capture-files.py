@@ -7,6 +7,8 @@ sha=lambda b:hashlib.sha256(b).hexdigest()
 u16=lambda b,i=0:struct.unpack_from('<H',b,i)[0]
 u32=lambda b,i=0:struct.unpack_from('<I',b,i)[0]
 u64=lambda b,i=0:struct.unpack_from('<Q',b,i)[0]
+def artifact(info):
+ raw=(root/info['file']).read_bytes();assert len(raw)==info['bytes'] and sha(raw)==info['sha256'];return raw
 def frame(raw):
  assert raw[:12]==b'WVMRESU1\1\0\0\0';at=84;sections={}
  while at<len(raw):
@@ -31,6 +33,19 @@ def event(raw):
  else:raise AssertionError('unknown event')
  payload=raw[at:];assert len(payload)==length<=65535
  return dict(tag=tag,id=request,result=result,payload=payload,header=raw[:at])
+def trace_words(text,start,words):
+ lines=text.splitlines();assert len(lines)==len(words)
+ for i,(line,word)in enumerate(zip(lines,words)):
+  match=re.match(r'core 0: 0x([0-9a-f]+) \(0x([0-9a-f]+)\)',line);assert match
+  assert int(match[1],16)==0x80000000+(start+i)*4 and int(match[2],16)==word
+def owned_network(bytes):
+ assert bytes[:8]==b'WVNETS01';at=40;pending=u32(bytes,at);at+=4;ids=[];owned=0
+ for _ in range(pending):
+  ids.append(u64(bytes,at));n=u32(bytes,at+8);at+=12;assert n<=65535 and at+n<=len(bytes);owned+=n;at+=n
+ receive=u32(bytes,at);at+=4
+ for _ in range(receive):
+  n=u32(bytes,at);at+=4;assert n<=65535 and at+n<=len(bytes);owned+=n;at+=n
+ assert at==len(bytes);return dict(pending=pending,receive=receive,owned=owned,ids=ids)
 initial,_,_=frame((root/'initial.resume').read_bytes());pending,pram,_=frame((root/'pending.resume').read_bytes());final,ram,sections=frame((root/'final.resume').read_bytes())
 assert initial['transition']==initial['sequence']==initial['cursor']==0
 assert (pending['transition'],pending['retired'],pending['sequence'],pending['cursor'])==(1024,1024,1,1)
@@ -79,6 +94,42 @@ if a.browser:
  for target in(5000,5001,5002):
   frames=[gzip.decompress((root/f'jit/target{target}-q{q}.resume.gz').read_bytes())for q in(31,1,8,4096)]
   assert all(raw==frames[0]for raw in frames);value,_,_=frame(frames[0]);assert value['transition']==value['retired']==target and value['cursor']==1
+ assert len(report['idle'])==4
+ words=[0x020041b7,0x000f42b7,0x24028293,0x0051b023,0x10500073,0x00108093]
+ for row in report['idle']:
+  start=390 if row['guestTx']else 0;pending_work=row['pendingWork'];retired=6 if pending_work else 5
+  original=artifact(row['frame']);assert artifact(row['replayFrame'])==original
+  state,_,parts=frame(original);assert(state['transition'],state['retired'])==(start+6,start+retired)
+  assert u64(parts[3])==(start+6 if pending_work else 1000000) and u64(parts[1],8)==int(pending_work)
+  assert u64(parts[1])==0x80000000+(start+retired)*4
+  trace=artifact(row['trace']);assert artifact(row['replayTrace'])==trace;trace_words(trace.decode(),start,words[:retired])
+  before,_,before_parts=frame(artifact(row['paused']));assert before['transition']==before['retired']==start
+  assert bool(owned_network(before_parts[21])['pending'])==(row['guestTx']and pending_work)
+  assert bool(before_parts[21][33])==(not row['guestTx']and pending_work)
+ components=browser_report['checks']['components'];assert components['status']=='passed'and len(components['outcomes'])==2
+ for row in components['outcomes']:
+  result=row['result'];assert result in(1,2)and row['statuses']==(['failed','failed']if result==1 else['cancelled','failed'])
+  final_frame=artifact(row['final']);assert artifact(row['replay'])==final_frame
+  state,_,parts=frame(final_frame);assert(state['transition'],state['retired'],state['cursor'],state['sent'])==(1024,1024,2,1)
+  assert parts[21][32]==3 and u32(parts[21],36)==60+result and owned_network(parts[21])['pending']==0
+  trace=artifact(row['trace']);assert artifact(row['replayTrace'])==trace;trace_words(trace.decode(),0,[u32(program,i*4)for i in range(1024)])
+  beginning,_,_=frame(artifact(row['initial']));assert beginning['transition']==beginning['cursor']==beginning['sequence']==0
+  events=[event(artifact(receipt['bytes']))for receipt in row['receipts']]
+  assert [(e['tag'],e['id'],e['result'])for e in events]==[(1,1,result),(3,3,60+result)]
+  manifest=json.loads(artifact(row['manifest']));assert manifest['end']['sequence']=='2'and'network'in manifest['policy']['required_inputs']
+  objects={object['ref']['sha256']:artifact(object['bytes'])for object in row['objects']}
+  for object in row['objects']:assert sha(objects[object['ref']['sha256']])==object['ref']['sha256']and str(len(objects[object['ref']['sha256']]))==object['ref']['length']
+  encoded=[]
+  for index in manifest['events']:encoded+=json.loads(objects[index['content']['sha256']])
+  assert [e['status']for e in encoded]==row['statuses']
+  for entry,wire in zip(encoded,events):
+   intent=json.loads(bytes(entry['intent']));payload=bytes(entry['payload']['bytes'])if entry['payload']['storage']=='inline'else objects[entry['payload']['content']['sha256']]
+   assert bytes(intent['header'])+payload==wire['header']+wire['payload']
+ wide,_,_=frame(artifact(components['wideCursor']['frame']));assert str(wide['cursor'])==components['wideCursor']['value']=='9007199254740999'
+ assert components['factory']['frees']==components['factory']['factories']==1 and components['factory']['cursor']=='0'
+ assert len(components['refusals'])==6 and components['policyPublication']['puts']==components['policyPublication']['publications']==0
+ absent=json.loads(artifact(components['absentSource']['manifest']));assert'network'not in absent['policy']['required_inputs']and absent['events']==[]and absent['end']['sequence']=='0'
+ missing=json.loads(artifact(components['absentRead']['manifest']));assert'network'not in missing['policy']['required_inputs']and missing['end']['sequence']=='2'
 else:
  raw=(root/'network-envelopes.bin').read_bytes();at=0;rows=[]
  while at<len(raw):n=u32(raw,at);at+=4;rows.append(event(raw[at:at+n]));at+=n
@@ -88,6 +139,18 @@ else:
  schedules=(root/'schedule-witness.txt').read_text().splitlines();assert len(schedules)==32
  for target in(5000,5001,5002):
   frames=[(root/f'jit-network-target{target}-q{q}.resume').read_bytes()for q in(31,1,8,4096)];assert all(raw==frames[0]for raw in frames)
+ component=root/'components'
+ for tx in(False,True):
+  for pending_work in(False,True):
+   name=f'wfi-tx{str(tx).lower()}-pending{str(pending_work).lower()}'
+   original=(component/(name+'-after.resume')).read_bytes();assert(component/(name+'-replayed.resume')).read_bytes()==original
+   before,_,_=frame((component/(name+'-before.resume')).read_bytes());state,_,parts=frame(original)
+   assert state['transition']==before['transition']+2 and state['retired']==before['retired']+(2 if pending_work else 1)
+   assert u64(parts[3])==(before['retired']+2 if pending_work else 1000000)and u64(parts[1],8)==int(pending_work)
+   trace=(component/(name+'.trace')).read_text();assert(component/(name+'-replayed.trace')).read_text()==trace
+   trace_words(trace,0x60000//4,[0x10500073,0x00108093][:2 if pending_work else 1])
+ _,_,full=frame((component/'owned-four-mebibytes-valid.resume').read_bytes());owned=owned_network(full[21]);assert owned['pending']==0 and owned['receive']==65 and owned['owned']==4194304
+ _,_,capacity=frame((component/'tx-capacity-valid.resume').read_bytes());assert owned_network(capacity[21])['ids']==list(range(1,257))
 assert[row['tag']for row in rows]==[3,1,4,2,3]
 assert rows[0]['id']==1 and rows[1]['id']==1 and rows[1]['result']==0 and rows[2]['result']==1 and rows[4]['id']==2
 assert rows[1]['payload']==bytes.fromhex('02000000000152540012345688b5')+b'GET /network-probe-response.json HTTP/1.1\r\nHost: session-probe\r\nConnection: close\r\n\r\n'

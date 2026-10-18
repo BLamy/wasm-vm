@@ -26,7 +26,7 @@ The VM transport boundary for incoming bytes, connection outcomes, delivery orde
 
 ## Deterministic acceptance
 
-`make verify-E9-T13`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.
+`make verify-E9-T13` records the assertions above and the risk-tier evidence required by AGENTS.md.
 
 ## Adversarial verification
 
@@ -472,3 +472,51 @@ the repaired runtime must earn a new frozen risk-tier submission and browser
 bundle. Cloudflare human authorization, required live publication/public proof
 and a completed permitted fresh independent review still gate verification.
 No dependent starts and no PR is merged.
+
+### 2026-10-18 — worker — WFI repaired; component prechecks complete
+
+The session idle decision now consults the owned NIC's pending work as well as
+generic pending controls. Four ordinary native and browser cases distinguish
+outstanding guest TX, recorded external_pending, and their idle controls.
+Pending work retires the next instruction instead of jumping to the timer;
+Record/Replay complete checkpoints and traces match across execution budgets.
+The demo's existing Offline network check now runs these timer-order cases.
+
+The nine existing worker regressions and eight new native component tests pass.
+The latter record256 pending TX intents, exact4MiB RX ownership and one-byte
+overflow, fatal stop/lease/snapshot forwarding, allocator/cursor exhaustion,
+installation refusals, wrong-mode/common-queue/unfinished replay refusals, and
+bounded wire-format/joint-overflow fixtures with transactional restore checks.
+The sent-counter increment overflow is dominated by the earlier cursor check
+under the admitted sent<=cursor invariant; unreachable topology needs no
+fabricated fixture.
+
+Focused development-browser self-validation passes zero console errors,
+four WFI cases, actual failed/cancelled-send plus failed-link durable prefixes,
+matching offline frames/traces, the exact cursor9007199254740999, actual
+factory-throw lease cleanup and six named policy/format/adapter refusals.
+Real SessionStore writers, reopen/read, native Wasm methods and the pinned
+RV64 virtqueues are used. This is a worker precheck, not the final built-page
+submission or an independent verdict. The ordinary struct/hashlib decoder
+passes the retained files; an intermediate report-only variable collision is
+preserved in its original failed log before the correction.
+
+Precheck originals:
+- /Volumes/e9-final-proof-ram/e9-t13-worker-wfi-green/report.json
+- /Volumes/e9-final-proof-ram/e9-t13-components-precheck-v1/report.json
+  (two fixture setup expectations corrected; original failure retained)
+- /Volumes/e9-final-proof-ram/e9-t13-components-precheck-v2/report.json
+- /Volumes/e9-final-proof-ram/e9-t13-wfi-web-precheck/report.json
+- /Volumes/e9-final-proof-ram/e9-t13-wfi-browser-precheck-v1/report.json
+- /Volumes/e9-final-proof-ram/e9-t13-wfi-browser-precheck-v1/network-oracle.json
+
+Formatting, the touched native Clippy target and local web/dist rebuild pass.
+Only1771576522 bytes of this task's derived native incremental cache were
+released for the new clean-clone proof; retained native executables/rlibs were
+hashed unchanged, and source/Git/recordings were preserved. The exact inventory
+is /Volumes/e9-final-proof-ram/e9-t13-wfi-incremental-cache-release.json.
+
+The next frozen submission runs all25 selected commands, including the existing
+127-test built suite, actual native/browser JIT, the new component proofs,
+byte/object oracle and retained GPU gate. Earlier04f628 remains withdrawn.
+No fresh full verifier verdict, publication or public proof is claimed.

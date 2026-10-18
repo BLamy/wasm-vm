@@ -13,7 +13,7 @@ export async function runNetworkCaptureProbe(){
  need(checkpointHash(elf.subarray(120))===meta.sha256,'pinned guest');
  const baseBytes=new Uint8Array(512),imageManifest=JSON.stringify({version:1,image_len:512,chunk_size:512,layout:'split',chunks:[checkpointHash(baseBytes)]}),base=checkpointHash(sessionCanonicalImage(imageManifest));
  const policy={version:1,base:{identity:base,sectors:'1',chunk_bytes:512,chunks:[{sha256:checkpointHash(baseBytes),length:512}]},agent:false,capture:false};
- const fresh=replay=>{const m=new WasmMachine(16);m.loadElf(elf);m.startEventClock(1,1);m.installDeviceSession(JSON.stringify(policy),replay);m.installNetworkSession(replay);m.setTrace(true);return m;};
+ const fresh=(replay,program=elf)=>{const m=new WasmMachine(16);m.loadElf(program);m.startEventClock(1,1);m.installDeviceSession(JSON.stringify(policy),replay);m.installNetworkSession(replay);m.setTrace(true);return m;};
  const run=(m,target,q)=>{while(BigInt(m.eventPosition().transition)<BigInt(target))m.runEventUntil(String(target),q);};
  const report={status:'running',scope:meta.scope,replays:[],refusals:[],program:meta,transport:{recordFactories:0,replayFactories:0,requests:0}};
  const refuse=(name,fn)=>{let message;try{fn();}catch(e){message=String(e);}need(message,name+' refused');report.refusals.push({name,message});};
@@ -84,6 +84,25 @@ export async function runNetworkCaptureProbe(){
   // Dropping a required CAS payload is detected by normal durable reads, without a provider.
   const payload=receipts.map(networkEventParts).find(p=>p.object).object;
   report.requiredPayload=payload[0];need(report.transport.recordFactories===1&&report.transport.requests===1&&report.transport.replayFactories===0,'transport suppression');
+  report.idle=[];
+  // Timer setup; WFI; ADDI; spin. Pending owned work must allow the ADDI,
+  // whereas an idle NIC advances to the declared timer deadline instead.
+  for(const guestTx of[false,true])for(const pendingWork of[false,true]){
+   const variant=elf.slice(),words=[0x020041b7,0x000f42b7,0x24028293,0x0051b023,0x10500073,0x00108093,0x0000006f],start=guestTx?390:0,view=new DataView(variant.buffer);
+   words.forEach((word,i)=>view.setUint32(120+(start+i)*4,word,true));
+   const m=fresh(false,variant),r=fresh(true,variant);
+   try{
+    if(guestTx)run(m,start,31);
+    if(!guestTx||!pendingWork){const request=guestTx?m.networkRequests()[0]:null,lease=m.leaseNetworkRequest(request?.id??'');
+     try{m.completeNetworkEvent(lease,guestTx?encodeNetworkEvent(1,{id:request.id,payload:request.frame}):encodeNetworkEvent(4,{result:Number(pendingWork)}));}finally{lease.free();}m.takeNetworkDeliveries();}
+    const paused=m.saveEventCheckpoint();m.takeTrace();run(m,start+6,8);
+    const position=m.eventPosition(),frame=m.saveEventCheckpoint(),trace=m.takeTrace();
+    need(position.retired===String(start+(pendingWork?6:5))&&position.mtime===String(pendingWork?start+6:1000000),'owned pending work gates idle timer advance');
+    need(m.registers()[2]===(pendingWork?1n:0n),'guest instruction after WFI');
+    r.restoreEventCheckpoint(paused);run(r,start+6,1);const replayFrame=r.saveEventCheckpoint(),replayTrace=r.takeTrace();need(equal(frame,replayFrame),'idle checkpoint replay agrees');need(trace===replayTrace,'idle guest trace agrees');
+    report.idle.push({guestTx,pendingWork,position,paused,frame,trace,replayFrame,replayTrace});
+   }finally{m.free();r.free();}
+  }
   report.status='passed';return report;
  }finally{if(writer)await writer.release();if(store)await store.close();machine?.free();}
 }
