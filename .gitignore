@@ -20,6 +20,7 @@ pkg/
 web/node_modules/
 web/pkg/
 web/session-pkg/
+.wrangler/
 !web/gpu-runtime/**
 /crates/wasm/pkg-shared/
 web/assets/*.elf

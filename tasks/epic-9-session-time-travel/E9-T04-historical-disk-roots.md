@@ -3,8 +3,8 @@ id: E9-T04
 epic: 9
 title: Preserve immutable disk state for historical checkpoints
 priority: 524.904
-status: pending
-depends_on: [E9-T02, E3-T12c3]
+status: verified
+depends_on: [E9-T02, E9-T03, E3-T12c3]
 estimate: S
 risk: high
 capstone: false
@@ -20,9 +20,9 @@ Versioned copy-on-write overlay roots and their reference/identity rules. Each c
 
 ## Acceptance criteria
 
-- [ ] Create two roots around a real guest file change and restore the matching content from each.
-- [ ] Keep checkpoint disk roots stable while recording continues and when a separate live branch writes the same block.
-- [ ] Reject mismatched base images/generations before applying state; preserve shared ancestors when a child session is deleted.
+- [x] Create two roots around a real guest file change and restore the matching content from each.
+- [x] Keep checkpoint disk roots stable while recording continues and when a separate live branch writes the same block.
+- [x] Reject mismatched base images/generations before applying state; preserve shared ancestors when a child session is deleted.
 
 ## Deterministic acceptance
 
@@ -34,4 +34,175 @@ Interleave writes and checkpoint publication, then restore both roots in reverse
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-17 — worker — started
+
+E9-T02 and E3-T12c3 are verified, and the preceding session-store slice is independently
+verified and published. This high-risk S boundary stores immutable, content-addressed
+maps of the complete COW write set, bound to the canonical chunked-image identity and
+exact overlay generation. Restoring a root constructs a private overlay; it never seeds
+or rewrites the live persistent store. Shared block references remain reachable from
+every surviving root. The proof will use real guest file changes and an independent
+filesystem reader, interleaved publication/live writes, sibling roots, and identity and
+generation refusal cases. Coherent CPU/RAM/device capture remains the T05 boundary.
+
+The persisted-root implementation also uses E9-T03's immutable object store and writer
+leases, so that already-verified prerequisite is explicit in the frontmatter.
+
+### 2026-10-17 — worker — implemented claim
+
+Frozen runtime/test head: `b5baad0a4b1cddcbd08299b438292258352b2c08`. Exact command:
+`E9_DISK_EVIDENCE_DIR=target/evidence/e9-t04-worker-final make verify-E9-T04`.
+All 16 gates passed with a clean tree before and after: affected native lint/tests,
+wasm32 builds/lint, bit-identical rebuilt browser bundles, 17 shared Node-Wasm cases
+(including 8 disk-root cases), 32 protocol cases, source-inventory/retained-runtime
+admission, and the recorded built-browser acceptance. The native and Node-Wasm
+root tests each executed 32 deterministic schedules varying writes, capture points,
+publication order and private sibling mutations.
+
+Evidence of record: `target/evidence/e9-t04-worker-final/`; receipt SHA-256
+`1e2577042ba20e4ed3bd63fe0eb77efbd41371be85255689112ce40c39366efd`
+authenticates all 515 original files. The compact copies and digest mapping are in
+`evidence/e9-t04/worker/`. Full Playwright trace, coverage, isolated profile and
+reconstructed ext4 images remain in the original directory.
+
+The actual software Linux worker wrote/read `e9:before\n`, `e9:after\n`, and
+`e9:live\n`; publication of the first root was held across later guest writes.
+Capture drained original I/O/durability work without retiring guest instructions.
+Fresh private workers booted the newer then older disk root and read their matching
+files. The older branch wrote `e9:fork\n` to the same physical block (33281), while
+raw durable live-disk block/meta rows remained byte-identical. Root generation is
+the native coherence witness; independent branch writes can retain that generation
+and still produce different content hashes. Python independently reconstructed the
+canonical root/delta format, and Docker e2fsprogs recovered/read all four exact file
+contents from owned image copies. The pinned base and before-root bytes remained
+unchanged. Wrong base/generation, corrupt/missing blocks, invalid metadata, detached/
+mutated producer views and released writers refused. A strict child session-row
+deletion plus surviving-root mark union preserved and reauthenticated the parent.
+Its placeholder machine pin fixture makes no coherent-checkpoint claim.
+
+The built page passed **127/0**, showed the disk-root pip `verified`, and recorded
+zero console/page errors. Screenshots are in the packet. The real published GPU
+factory also booted through the matching retained v2 client, retired **2,999,712**
+instructions and physically drew in fresh epoch 4. Its original runtime bytes and
+frozen pair identity were preserved. E9-T05 coordinates the full machine tuple;
+E9-T07 owns atomic retention/reclamation. Fresh critic and final cold proof pending.
+
+### 2026-10-17 — fresh verifier — pre-cold audit
+
+P0–P8 **HELD**, with predictions recorded before opening evidence in
+`evidence/e9-t04/verifier/predictions.md`. The worker receipt and all 515 originals
+and 51 compact copies authenticate. Independent delta/root decoding, read-only
+ext4 reads, exact same-block file bytes, live database equality and surviving-root
+union checks held. The changed-hunk audit and scoped waivers are in
+`evidence/e9-t04/verifier/audit.md`.
+
+Promoted 64 independent native schedules for equal-generation siblings at u64::MAX,
+shared blocks and a one-byte image tail; a temporary sibling-alias sabotage fails
+the independent byte oracle (exit 101), and the original passes. Promoted actual
+browser loader admission/owner races and direct native capture at an original pending
+read and WritePending. Capture itself fetched the original chunk, drained 4096 bytes
+to strict durability, advanced generation 0→1 and left both icount clocks unchanged.
+A corrupt-chunk fixture proves the 16-pass bounded refusal on an isolated real page;
+the actual demo's zero-console-error gate remains strict. The initial supplementary
+runner's broad console assertion caught those intentional errors; its log is preserved,
+and the corrected narrow run asserts their exact sequence. No runtime code changed.
+
+Commands: `cargo test -p wasm-vm-storage --test disk_root_verifier -- --nocapture`,
+`cargo clippy -p wasm-vm-storage --test disk_root_verifier -- -D warnings`,
+`cargo fmt --all --check`, `node evidence/e9-t04/verifier/run-browser-critic.mjs`,
+plus read-only Python/Docker receipt/root/filesystem interrogation. The critic helper
+is now called by `make verify-E9-T04`; the native test joins storage tests. Task remains
+`implemented` until the one final pristine source-clone proof and receipt interrogation.
+T03's unchanged findings carry forward; T05/T07 keep their declared boundaries.
+
+### 2026-10-17 — worker — cold-browser harness correction
+
+The pristine `25e65f56` run passed the first 15 gates, promoted I/O/owner attacks,
+127/0 browser suite, all private-root Linux boots and independent filesystem oracles.
+Only the retained GPU compatibility boot failed: the missing local release redirects
+to the authenticated R2 object, and Playwright interception rejected that worker fetch.
+An unchanged full-browser repeat reproduced it. A controlled fresh-profile run then
+failed with the export route installed and succeeded after removing only that route:
+2,499,808 retired instructions and a qualified physical draw in fresh epoch 4.
+`evidence/e9-t04/harness/route-toggle.json` authenticates both failures, the causal trace
+and its complete source. The driver now removes its unused export route before GPU
+boot and records the full boot result. Runtime, native code and deployed bytes are
+unchanged. Prior HELD findings carry forward; the final scoped cold browser proof
+and fresh verifier verdict remain pending.
+
+### 2026-10-17 — fresh verifier — VERDICT: verified
+
+- P0–P9 **HELD**. Original worker and cold receipts authenticate. Independently decoded
+  root/delta hashes, read-only debugfs file contents and inode block maps, reverse-order
+  boots, same-block sibling writes, immutable old roots, durable live-row equality,
+  exact identity rejection and surviving-root union all held. Native/shared-Wasm
+  worker schedules and the promoted independent 64-schedule attack survive; isolated
+  sibling-alias sabotage fails the oracle as required. Per-hunk coverage and narrow
+  waivers are in `evidence/e9-t04/verifier/audit.md`.
+- **COLD / INCREMENTAL PROOF HELD**. The pristine `25e65f56` source clone passed 15
+  non-browser gates and every root/I/O/owner/filesystem assertion. Two complete browser
+  attempts then failed only the retained GPU asset redirect while the finished export
+  route remained installed. The controlled route toggle authenticated that harness
+  cause. Test-only `0db63b02fc3cdef4ed188a53d03fddfc340b454f` releases the route; its
+  full browser acceptance passed in the same clean exact-head clone with a new profile,
+  scrubbed environment and outside-clone output. All 499 final files and 30 source
+  hashes authenticate; runtime/native/permanent tests and dependencies are unchanged,
+  so the 15 original cold gates carry forward. Original failed receipts remain intact.
+- **BROWSER / COMPATIBILITY HELD**. Final built page: 127/0, verified disk pip, zero
+  demo errors; all promoted critic paths and four independently reconstructed exact
+  ext4 files passed. Genuine filesystem inode maps confirm block 33281 for all four.
+  The unchanged retained v2 factory retires 2,499,808 instructions and physically draws
+  in fresh epoch 4. This proves compatibility, not accelerated replay qualification.
+- **SUITE**. The native critic test and bounded real-browser critic helper are permanent
+  acceptance inputs. No product contradiction or remaining in-scope proof gap was found.
+  T05 owns coherent machine tuples and T07 atomic deletion/reclamation.
+
+Exact commands and environment are in the compact `evidence/e9-t04/verifier/cold/`
+receipts/wrappers; independent final checks are in `cold-verification.json`. Final
+browser receipt SHA-256:
+`5d27531082fa9c7881211bfd0534386fe0c1ea3f06e1e9b55fe353fbe3ffcd00`;
+report SHA-256:
+`d054a6eb3a92d8725fd3dce3ff27effd6254f55fa37ba22095bca85ab45a1e97`.
+The verdict/status commit changes verification metadata and evidence only.
+
+### 2026-10-17 — worker — verified runtime published and checked
+
+Published source `2bb4c9531e94914d92b13b575087d41d1b26500d` to <https://7a2f6b85.wasm-vm.pages.dev>
+and production <https://wasm-vm.pages.dev/> with `bash tools/deploy-cloudflare.sh`.
+The exact build identity remains `8947b88d248365ce6991d01dc22ec74170ed99f7d7444620793a4dd21ae7744c`;
+only the verified task catalog/service-worker stamp changed after the critic's proof.
+The built dist is committed, and the five deploy-only R2 URL rewrites were restored.
+
+`node tools/verify/e9-disk-roots-browser.mjs --url https://wasm-vm.pages.dev/ --output target/evidence/e9-t04-public-final`
+passed: all 15 published asset digests match the committed dist, suite 127/0,
+zero console errors, verified pip, all owner/I/O attacks, real before/after/live/fork
+Linux files, same-block private writes, unchanged live database and independent
+filesystem reconstruction. The retained factory resumed 2,499,808 instructions
+and physically drew in fresh epoch 4 without loss or poisoning. Report SHA-256
+`5bca44684fdbf167c44c29bab5ec95d4b443f80ce1b5b81e76577c716d7a66b6`.
+Compact raw deltas, roots, oracle witnesses, screenshots, logs, coverage and all
+original-file digests are in `evidence/e9-t04/public/`; the full browser trace/profile
+and reconstructed images remain at the recorded external evidence path.
+
+### 2026-10-17 — fresh verifier — publication addendum — VERDICT: verified
+
+All prior P0–P9 remain **HELD**. The publication-only H1–H5 predictions held:
+751 originals, 37 compact files and all 30 unchanged source hashes authenticate.
+Independent fresh HTTP reads of all 15 recorded assets plus the service worker on
+both immutable preview and production yield 32 HTTP-200 exact-byte matches. Both
+catalogs show E9-T04 verified, 3/3 criteria and 516 verified tasks. Only catalog
+metadata and the cache stamp changed after the held runtime/cold proof.
+
+The real public run remains 127/0 with zero demo errors, verified pip, and every
+owner/I/O/refusal attack. Independent canonical-root decoding and read-only ext4
+reads/inode maps confirm all four exact file contents at block 33281, stable old
+roots and identical 8471-byte durable live rows. The surviving parent's 37 references
+remain inside the 60-reference union. Public retained GPU compatibility again
+qualifies, retires 2,499,808 instructions and physically draws in fresh epoch 4.
+
+Details and direct HTTP/effect receipts are in
+`evidence/e9-t04/verifier/publication-audit.md`, `publication-http.json` and
+`publication-effects.json`. Public report SHA-256:
+`5bca44684fdbf167c44c29bab5ec95d4b443f80ce1b5b81e76577c716d7a66b6`.
+No runtime/harness edit or unrelated gate rerun was needed. Status remains verified;
+T05/T07 boundaries remain unchanged and PR #579 remains open/draft.

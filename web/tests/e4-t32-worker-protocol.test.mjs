@@ -7,7 +7,10 @@ import {
   createLinuxWorkerClient,
   createLinuxWorkerRuntime,
 } from "../linux-worker-protocol.js";
-import { stopLinuxController } from "../linux-worker-host.js";
+import { startLinuxBootWorker, stopLinuxController } from "../linux-worker-host.js";
+import { createLinuxWorkerRuntime as createPublishedRuntime,
+  LINUX_WORKER_PROTOCOL_VERSION as PUBLISHED_PROTOCOL_VERSION,
+} from "../gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/linux-worker-protocol.js";
 import { createTaskQuiescence } from "../task-quiescence.js";
 import { createGuestClockLifecycle, validateGuestClock } from "../guest-clock.js";
 
@@ -85,6 +88,7 @@ function fakeController(events, done) {
     notifyCaptureEvent: (event) => { events.push(["capture", event]); return true; },
     confirmAgentHello: () => { events.push("agent-hello"); return true; },
     saveGpuCheckpoint: async () => Uint8Array.of(71,80,85),
+    captureDiskDelta: async () => Uint8Array.of(0,87,86).subarray(1),
     saveDesktopSnapshot: () => Uint8Array.of(11, 12),
     sendAgentInput: (bytes) => bytes.byteLength,
     takeAgentOutput: () => Uint8Array.of(13, 14),
@@ -125,6 +129,31 @@ function fakeController(events, done) {
     _uploads: uploads,
   };
 }
+
+test("published factory worker selects its retained protocol client before starting", async () => {
+  const events = [], versions = [];
+  const {page, worker} = endpointPair(events);
+  page.addEventListener('message', ({data}) => versions.push(data.version));
+  worker.addEventListener('message', ({data}) => versions.push(data.version));
+  let resolveDone, workerUrl;
+  const done = new Promise(resolve => { resolveDone = resolve; });
+  class PublishedWorker {
+    constructor(url) {
+      workerUrl = url;
+      createPublishedRuntime(worker, {startBoot: async () => fakeController(events, done)});
+      return page;
+    }
+  }
+  const controller = await startLinuxBootWorker({gpuRuntime:'published-factory-v1', virgl:true, WorkerCtor:PublishedWorker});
+  try {
+    assert.equal(PUBLISHED_PROTOCOL_VERSION, 2);
+    assert.equal(LINUX_WORKER_PROTOCOL_VERSION, 3);
+    assert.ok(workerUrl.pathname.endsWith('/gpu-runtime-worker.js'));
+    assert.equal(await controller.stateDigest(), 'digest');
+    assert.equal(controller.captureDiskDelta, undefined, 'new disk APIs cannot leak into the retained factory');
+    assert.ok(versions.length >= 4 && versions.every(version => version === PUBLISHED_PROTOCOL_VERSION));
+  } finally { resolveDone('stopped'); await controller.whenDone; }
+});
 
 test("loader task quiescence joins held persistence and permanently closes scheduling", async () => {
   const events = [];
@@ -347,6 +376,7 @@ test("every explicit controller method crosses the runtime and no-provider Tails
     assert.deepEqual([...results.get("takeFileDownloadChunk")], [9, 10]);
     assert.deepEqual([...results.get("snapshotRead")], [1, 2]);
     assert.deepEqual([...results.get("snapshotExport")], [3, 4]);
+    assert.deepEqual([...results.get("captureDiskDelta")], [87, 86]);
     assert.equal(await controller.isPaused(), false, "controller remains live after false Tailscale result");
   } finally {
     resolveDone("stopped");
@@ -863,6 +893,7 @@ test("every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat 
     startBoot: async () => {
       const inner = fakeController([], done);
       inner.stateDigest = async () => { await delay(); return "slow-digest"; };
+      inner.captureDiskDelta = async () => { await delay(); return Uint8Array.of(87, 86); };
       inner.snapshotSave = async () => { await delay(); return true; };
       inner.snapshotRead = async () => { await delay(); return Uint8Array.of(1, 2); };
       inner.snapshotDecision = async () => { await delay(); return "resume"; };
@@ -873,6 +904,7 @@ test("every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat 
   });
   const methods = [
     "stateDigest",
+    "captureDiskDelta",
     "snapshotSave",
     "snapshotRead",
     "snapshotDecision",
@@ -886,6 +918,7 @@ test("every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat 
   });
   const controller = await client.boot({});
   assert.equal(await controller.stateDigest(), "slow-digest");
+  assert.deepEqual(await controller.captureDiskDelta(), Uint8Array.of(87, 86));
   assert.equal(await controller.snapshotSave(), true);
   assert.deepEqual(await controller.snapshotRead(), Uint8Array.of(1, 2));
   assert.equal(await controller.snapshotDecision(), "resume");

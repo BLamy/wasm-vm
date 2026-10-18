@@ -7,6 +7,12 @@ identities and budgets are in
 `make verify-E9-T01` to check those definitions against this checkout's actual adapters.
 Changing an inventoried source requires reviewing its row and updating its digest.
 
+E9-T04 implements the immutable disk portion in
+[`historical-disk-roots.md`](historical-disk-roots.md). Its separate software image manifest
+describes the exact pinned 512 MiB raw image; the ordinary public Alpine chunk manifest
+describes a different image and is not substituted for that fixture. This adds a concrete
+chunk layout without changing the frozen raw-image hash, workload or acceptance budgets.
+
 ## Capability and admission
 
 The first executable profile is `rv64-linux-software-v1`: the existing full-system

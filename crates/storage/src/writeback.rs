@@ -216,6 +216,19 @@ impl OverlayBackend for WriteBackOverlay {
         self.queue.borrow().barrier_clear(barrier)
     }
 
+    fn snapshot_blocks(&self, max_blocks: usize) -> Option<Vec<(u64, [u8; OVERLAY_BLOCK])>> {
+        let queue = self.queue.try_borrow().ok()?;
+        if !queue.is_empty() || self.blocks.len() > max_blocks {
+            return None;
+        }
+        Some(
+            self.blocks
+                .iter()
+                .map(|(index, bytes)| (*index, *bytes))
+                .collect(),
+        )
+    }
+
     fn base_binding(&self) -> &[u8; 32] {
         &self.base_binding
     }

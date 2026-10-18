@@ -1,0 +1,68 @@
+{
+  "head": "25e65f56b1b2918634083aa733426e291029e093",
+  "classification": "harness/environment; unchanged runtime",
+  "controlled_toggle": {
+    "route": "**/__e9-proof/*",
+    "before": {
+      "ok": false,
+      "error": "TypeError: Failed to fetch\n    at loadAsset (http://127.0.0.1:61697/gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/boot-asset-cache.js:97:26)\n    at async startLinuxBoot (http://127.0.0.1:61697/gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/loader.js:509:40)\n    at async handleBoot (http://127.0.0.1:61697/gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/linux-worker-protocol.js:790:18)"
+    },
+    "after": {
+      "ok": true
+    },
+    "retired": 2499808,
+    "qualified": true,
+    "lost": false,
+    "poisoned": false,
+    "epoch": "0000000000000004",
+    "fresh_draws": [
+      {
+        "epoch": "0000000000000004",
+        "sequence": null,
+        "bindingGeneration": "0000000000000329",
+        "resource": {
+          "generation": "0000000000000010",
+          "id": 13
+        },
+        "status": "drawn",
+        "presentation": {
+          "backend": "canvas2d",
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        }
+      }
+    ]
+  },
+  "files": [
+    {
+      "path": "target/evidence/e9-t04-cold-final/receipt.json",
+      "bytes": 2870,
+      "sha256": "f0be284c3aa1c9824352c0f4103299ffbf551f442238eb107fc799abf9cdb8b0"
+    },
+    {
+      "path": "target/evidence/e9-t04-cold-final/acceptance/report.json",
+      "bytes": 105526,
+      "sha256": "7e6587476f1f9192744b2821d569e6349e93dd15ae0af838b85d0bdbe903953d"
+    },
+    {
+      "path": "target/evidence/e9-t04-cold-browser-retry/receipt.json",
+      "bytes": 99877,
+      "sha256": "a19b427b3b45999ca42a38742be9807a2e6570a8edfb91f8dab62b5f3a886432"
+    },
+    {
+      "path": "target/evidence/e9-t04-cold-gpu-route-diagnose/logs.json",
+      "bytes": 830131,
+      "sha256": "a1deb6da54e5c2e56f45f132ca62c64bcc0287721f97ab0d85d6cd0df9eab7b9"
+    },
+    {
+      "path": "target/evidence/e9-t04-cold-gpu-route-diagnose/trace.zip",
+      "bytes": 20677242,
+      "sha256": "7441346be1675c0148f620854c26e7cde3ca24923863cd6ece17749cfa455ec8"
+    },
+    {
+      "path": "target/e9-t04-gpu-diagnose.mjs",
+      "bytes": 3409,
+      "sha256": "54f284fa4096524d75c75157f673a1125461e45e4ebb8af592bd187101d5a74d"
+    }
+  ]
+}

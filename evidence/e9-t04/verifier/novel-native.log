@@ -1,0 +1,9 @@
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/storage)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.88s
+     Running tests/disk_root_verifier.rs (target/debug/deps/disk_root_verifier-9f2aa87e21b6a148)
+
+running 1 test
+test equal_generation_tail_and_shared_blocks_survive_sibling_reclamation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s
+

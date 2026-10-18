@@ -26,6 +26,12 @@ export async function startLinuxBootWorker(opts = {}) {
     throw new Error("whole-machine Web Worker is unavailable");
   }
 
+  // The authenticated factory worker retains its original protocol as well as its Wasm/renderer.
+  // Select the matching page client before starting it, so no startup message can be lost.
+  const createClient = retainedGpu
+    ? (await import('./gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/linux-worker-protocol.js')).createLinuxWorkerClient
+    : createLinuxWorkerClient;
+
   const worker = new WorkerCtor(new URL(retainedGpu ? "./gpu-runtime-worker.js" : "./linux-worker.js", import.meta.url), {
     type: "module",
     name: "wasm-vm-linux",
@@ -60,7 +66,7 @@ export async function startLinuxBootWorker(opts = {}) {
   }
 
   let detachVisibility = () => {};
-  const client = createLinuxWorkerClient(worker, {
+  const client = createClient(worker, {
     onState,
     onProgress,
     onOutput,

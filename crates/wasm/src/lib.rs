@@ -249,6 +249,8 @@ use slirp_net::{
 mod chunked;
 #[cfg(all(test, not(feature = "zicsr-stub")))]
 mod critic_flush_reset;
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod session_disk;
 // E3-T10 storage-error classification — pure string logic, native-tested.
 #[cfg(any(all(target_arch = "wasm32", not(feature = "zicsr-stub")), test))]
 mod storage_err;
@@ -2231,8 +2233,8 @@ struct LinuxInner {
     /// disk live (the "continue read-only" choice after a storage-quota hit). `None` off the
     /// persistent path.
     disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>>,
-    /// The actual ephemeral COW backend shared with the machine, for paired GPU checkpoints.
-    checkpoint_disk: Option<chunked::CheckpointDisk>,
+    /// The actual COW backend shared with the machine, for immutable disk captures.
+    checkpoint_disk: Option<Box<dyn chunked::DiskSnapshot>>,
     /// E3-T21c: bounded browser producer/consumer queues plus the shared slirp backend handle.
     /// Present only for slirp boots; the emulator still owns the sole `NetBackend` adapter.
     file_transfers: Option<browser_file_transfer::BrowserFileTransfers>,
@@ -2886,7 +2888,7 @@ impl WasmLinux {
         let mut persist = None;
         let mut disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>> = None;
         let mut file_transfers = None;
-        let mut checkpoint_disk = None;
+        let mut checkpoint_disk: Option<Box<dyn chunked::DiskSnapshot>> = None;
         // E3-T12d: the base binding for the durable resume-snapshot store. Raw in-memory resume
         // wrappers use the separate `resume_base`; this remains None until a persistent namespace
         // (or an explicitly stamped boot-snapshot identity) is selected.
@@ -2911,7 +2913,7 @@ impl WasmLinux {
                     &manifest,
                     store.clone(),
                 ));
-                checkpoint_disk = Some(backend.clone());
+                checkpoint_disk = Some(Box::new(backend.clone()));
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,
@@ -2938,7 +2940,7 @@ impl WasmLinux {
                     chunked::ChunkedBackend::with_overlay(overlay, &manifest, store.clone())
                         .map_err(|e| JsError::new(&format!("overlay attach: {e:?}")))?;
                 let backend = chunked::CheckpointDisk::new(backend);
-                checkpoint_disk = Some(backend.clone());
+                checkpoint_disk = Some(Box::new(backend.clone()));
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,
@@ -3018,6 +3020,8 @@ impl WasmLinux {
                 } else {
                     Some(backend.read_only_flag())
                 };
+                let backend = chunked::CheckpointDisk::new(backend);
+                checkpoint_disk = Some(Box::new(backend.clone()));
                 machine.enable_virtio_blk(Box::new(backend));
                 fetch = Some(std::rc::Rc::new(http_fetch::FetchState::new(
                     manifest, base_url, store, profile,

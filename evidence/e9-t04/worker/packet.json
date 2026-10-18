@@ -1,0 +1,262 @@
+{
+  "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t04-worker-final",
+  "head": "b5baad0a4b1cddcbd08299b438292258352b2c08",
+  "files": [
+    {
+      "path": "adapter-native.log",
+      "bytes": 599,
+      "sha256": "c1aecfd7a3920318fb7dfde307689458fcba3016ab8c14c562a651c13be88f6c"
+    },
+    {
+      "path": "adapter-wasm-clippy.log",
+      "bytes": 191,
+      "sha256": "ddf2592238281671a9e1c179d49d00bf2a35639a8983b11f59adb246e8289bf1"
+    },
+    {
+      "path": "boundary-clippy.log",
+      "bytes": 177,
+      "sha256": "2dbdbb5bee7c7620c94657ef1986e82b37f2eb79f899bb25c0ffbb88f7363efa"
+    },
+    {
+      "path": "boundary-native.log",
+      "bytes": 3551,
+      "sha256": "f334c9a9c02bd1b65765a5bf2de9846c9f4ed6c3cd8f99c1c7c4c36e7754386f"
+    },
+    {
+      "path": "boundary-wasm-clippy.log",
+      "bytes": 177,
+      "sha256": "6c402250a2778d7de92d52c4ee2a41235eb282d8290d195e29103227deb2e79b"
+    },
+    {
+      "path": "browser-build.log",
+      "bytes": 5223,
+      "sha256": "2d722e2b41b8ae729bda7b3e186b530614e2e1e8499f201442c359e8b78429ba"
+    },
+    {
+      "path": "browser.log",
+      "bytes": 270,
+      "sha256": "c6876a0e41045f072383388520260f9a9973dad44c9c23496b9c7ed4113ed172"
+    },
+    {
+      "path": "browser/after.captured.wvod",
+      "bytes": 258613,
+      "sha256": "0f25e57c3bf7f577998232a1439e097e71cb614ad9ce6d19cf63c95496a17a85"
+    },
+    {
+      "path": "browser/after.debugfs.log",
+      "bytes": 28,
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "path": "browser/after.file",
+      "bytes": 9,
+      "sha256": "c93da81a8be3355a13ad4d69801280303b5a5fa53699e91863f76f5c073b7ae6"
+    },
+    {
+      "path": "browser/after.fsck.log",
+      "bytes": 545,
+      "sha256": "af8b2797fe5578f87990da9dd82a698ca78fcf879681dddcb86886bf0608a99d"
+    },
+    {
+      "path": "browser/after.restored.wvod",
+      "bytes": 258613,
+      "sha256": "0f25e57c3bf7f577998232a1439e097e71cb614ad9ce6d19cf63c95496a17a85"
+    },
+    {
+      "path": "browser/after.root.json",
+      "bytes": 6040,
+      "sha256": "25787f55ca1794400c6b0c864f95f353be16fd030204f5eb0b63a8d60214dea5"
+    },
+    {
+      "path": "browser/base.json",
+      "bytes": 366,
+      "sha256": "35c105070b25662f24fa149ad463f517fd582e38737efc0934db882b5a6d48ec"
+    },
+    {
+      "path": "browser/before-again.restored.wvod",
+      "bytes": 201157,
+      "sha256": "b37cd2822e25db0554fcf3dfbc5aba8eada1567dc7a44c76ea121b83c1b00474"
+    },
+    {
+      "path": "browser/before.captured.wvod",
+      "bytes": 201157,
+      "sha256": "b37cd2822e25db0554fcf3dfbc5aba8eada1567dc7a44c76ea121b83c1b00474"
+    },
+    {
+      "path": "browser/before.debugfs.log",
+      "bytes": 28,
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "path": "browser/before.file",
+      "bytes": 10,
+      "sha256": "9db352766463465c7af691d4bed9133f2d8c01d968b62a90c946a44b4666e0c6"
+    },
+    {
+      "path": "browser/before.fsck.log",
+      "bytes": 545,
+      "sha256": "af8b2797fe5578f87990da9dd82a698ca78fcf879681dddcb86886bf0608a99d"
+    },
+    {
+      "path": "browser/before.restored.wvod",
+      "bytes": 201157,
+      "sha256": "b37cd2822e25db0554fcf3dfbc5aba8eada1567dc7a44c76ea121b83c1b00474"
+    },
+    {
+      "path": "browser/before.root.json",
+      "bytes": 4727,
+      "sha256": "7900990347dee433c68803f29ffd05d289b872c56dcae3bee9dd7cad0a47c86d"
+    },
+    {
+      "path": "browser/browser.png",
+      "bytes": 48961,
+      "sha256": "e161887d980035466e0569c2a92aa1ded379b45d2e08745eba9dd693a6c7de7c"
+    },
+    {
+      "path": "browser/filesystem-oracle.json",
+      "bytes": 6662,
+      "sha256": "65af74d0a7a115bb43426c87bb85e3cb5e1667b826391170ba1904710f9303a4"
+    },
+    {
+      "path": "browser/fork.captured.wvod",
+      "bytes": 299653,
+      "sha256": "363306896186efcd0c0ccbad657442485bc7f57c2803ae453900ce93a3b6b66e"
+    },
+    {
+      "path": "browser/fork.debugfs.log",
+      "bytes": 28,
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "path": "browser/fork.file",
+      "bytes": 8,
+      "sha256": "8ad4bbc92316b41761fdd1b63325ceb0d4c78e8fd3cbc29233f9da80d50b55f4"
+    },
+    {
+      "path": "browser/fork.fsck.log",
+      "bytes": 427,
+      "sha256": "d07bdf0e0b56a4c8c6fe179ea2573c2cfa6a809e09ce86c73835001a5feba81d"
+    },
+    {
+      "path": "browser/fork.restored.wvod",
+      "bytes": 299653,
+      "sha256": "363306896186efcd0c0ccbad657442485bc7f57c2803ae453900ce93a3b6b66e"
+    },
+    {
+      "path": "browser/fork.root.json",
+      "bytes": 6980,
+      "sha256": "73ddd8c1d1352ba076b24435aad5bbcafea6e0bc1e5f646643f062367359d927"
+    },
+    {
+      "path": "browser/gpu-factory-ready.png",
+      "bytes": 126287,
+      "sha256": "d9d5cea40fa1bcf7f4335dfdf75525d8641f8edee9764425f4f740530e998d48"
+    },
+    {
+      "path": "browser/live-disk-after.json",
+      "bytes": 8591,
+      "sha256": "443e8c3612c968f1e911647a09323dcac2abd20e68f6c0335994a6a52f39999f"
+    },
+    {
+      "path": "browser/live-disk-before.json",
+      "bytes": 8591,
+      "sha256": "443e8c3612c968f1e911647a09323dcac2abd20e68f6c0335994a6a52f39999f"
+    },
+    {
+      "path": "browser/live.captured.wvod",
+      "bytes": 287341,
+      "sha256": "ef5cb8e30664dea4ebf041a617db6770e34096907e9407473d23377b442e4484"
+    },
+    {
+      "path": "browser/live.debugfs.log",
+      "bytes": 28,
+      "sha256": "600dc7f6657b8e8c2436ed3a67e6e8f6a58c906bc4f51012e0796673278b74c7"
+    },
+    {
+      "path": "browser/live.file",
+      "bytes": 8,
+      "sha256": "d859a5ef206864906ff75ee6275c15228f19c12f23984c3d58451ee4f9d70478"
+    },
+    {
+      "path": "browser/live.fsck.log",
+      "bytes": 545,
+      "sha256": "af8b2797fe5578f87990da9dd82a698ca78fcf879681dddcb86886bf0608a99d"
+    },
+    {
+      "path": "browser/live.restored.wvod",
+      "bytes": 287341,
+      "sha256": "ef5cb8e30664dea4ebf041a617db6770e34096907e9407473d23377b442e4484"
+    },
+    {
+      "path": "browser/live.root.json",
+      "bytes": 6698,
+      "sha256": "2fb8236bdcc7aa4aed5ef5f5a1d3c547380b3c4273fe12729e17a1b8ec12777d"
+    },
+    {
+      "path": "browser/report.json",
+      "bytes": 991768,
+      "sha256": "5ce57b5eeaf4b3675a7261316c63c8e3a3bbf15ec14514dcbff29427faf6e722"
+    },
+    {
+      "path": "browser/roots-complete.png",
+      "bytes": 221510,
+      "sha256": "8eb15c968a3aa8ed62198e1fda63255d5d19930d85df4e9bac1cb4d3096c46f3"
+    },
+    {
+      "path": "contract.log",
+      "bytes": 16282,
+      "sha256": "896774a0c57fa9d57373c05299d9738a4e0ed6a525b956186931fe4fe8f04882"
+    },
+    {
+      "path": "format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "no-std-wasm.log",
+      "bytes": 183,
+      "sha256": "d730ad01f975460f592de150084aa073fa345abcca2c67c53c7710657dea53c2"
+    },
+    {
+      "path": "policy.log",
+      "bytes": 32,
+      "sha256": "54d876372d8d9145f2595a28cee907e9cfcab5352f94b41f724ffd779db1bdc9"
+    },
+    {
+      "path": "report.json",
+      "bytes": 110754,
+      "sha256": "1e2577042ba20e4ed3bd63fe0eb77efbd41371be85255689112ce40c39366efd"
+    },
+    {
+      "path": "retained-gpu.log",
+      "bytes": 215,
+      "sha256": "9996dda3ba4ca26c66f93220894d5e40ceaadb740f08103ada86daaf6cee1077"
+    },
+    {
+      "path": "shared-node-wasm.log",
+      "bytes": 1843,
+      "sha256": "0cbf6cd4b7329e28bacbb80212fbe5a9906eadbe40a17f9a70159a04bac2d0f5"
+    },
+    {
+      "path": "storage-clippy.log",
+      "bytes": 183,
+      "sha256": "95b2b97fb55fe523a284f7ca3f975410785d8371bd86ab0678c2b30c3ea7b4b8"
+    },
+    {
+      "path": "storage-native.log",
+      "bytes": 11896,
+      "sha256": "87f8856bca99380cd77338a8982ba94e3636b2a2d630ad622abf761c8801596b"
+    },
+    {
+      "path": "worker-protocol.log",
+      "bytes": 3121,
+      "sha256": "f66461fac0f4b2963c9d40717b81881081dcf1f2028f776d758a1d8b1f9bbc18"
+    },
+    {
+      "path": "browser/javascript-coverage.json.gz",
+      "bytes": 416879,
+      "sha256": "03453b14b6393d27ffd93bd1dfcad1ce687cfa233a48c9d9ff1974f4887d62c6",
+      "uncompressed_sha256": "3da47453e7be1100ad7ba1a27c53ffeace0dac8b39dae026a7984f79168eab68"
+    }
+  ]
+}

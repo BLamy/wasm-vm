@@ -1,0 +1,18 @@
+{
+  "status": "sensitivity-held",
+  "command": [
+    "cargo",
+    "test",
+    "-p",
+    "wasm-vm-storage",
+    "--test",
+    "disk_root_verifier_sabotage",
+    "--",
+    "--nocapture"
+  ],
+  "exit_code": 101,
+  "baseline_sha256": "3674aa6d6546466c0d62488c44eefe8d7d842d23135a324ac67a3e97e612f5ed",
+  "mutant_sha256": "ef5d94ee28c5ad5b8bab9b3d5f4ca058350e83e7027a45fc8a6389a16a4dbec4",
+  "mutation": "Owned private block 2 is overwritten with sibling bytes before the independent expected-byte assertions. Production source untouched.",
+  "matched_assertion": "independent fill oracle: seed 91d3, round 0, block 2"
+}

@@ -1,0 +1,84 @@
+[INFO]: 🎯  Checking for the Wasm target...
+   Compiling unicode-ident v1.0.24
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling version_check v0.9.5
+   Compiling rustversion v1.0.22
+   Compiling typenum v1.20.1
+   Compiling cfg-if v1.0.4
+   Compiling serde_core v1.0.228
+   Compiling zmij v1.0.21
+   Compiling bumpalo v3.20.3
+   Compiling serde v1.0.228
+   Compiling serde_json v1.0.150
+   Compiling once_cell v1.21.4
+   Compiling libm v0.2.16
+   Compiling futures-task v0.3.32
+   Compiling pin-project-lite v0.2.17
+   Compiling autocfg v1.5.1
+   Compiling futures-core v0.3.32
+   Compiling slab v0.4.12
+   Compiling memchr v2.8.2
+   Compiling itoa v1.0.18
+   Compiling oorandom v11.1.5
+   Compiling futures-util v0.3.32
+   Compiling generic-array v0.14.7
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling cast v0.3.0
+   Compiling nu-ansi-term v0.50.3
+   Compiling num-traits v0.2.19
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-macro v0.2.126
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo/crates/storage)
+   Compiling js-sys v0.3.103
+   Compiling session-codec-wasm-proof v0.0.0 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo/tools/verify/session-wasm)
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling wasm-bindgen-test v0.3.76
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.45s
+[INFO]: ⬇️  Installing wasm-bindgen...
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running unittests src/lib.rs (target/wasm32-unknown-unknown/debug/deps/session_codec_wasm_proof-076d7e90b0177617.wasm)
+no tests to run!
+     Running tests/disk_root.rs (target/wasm32-unknown-unknown/debug/deps/disk_root-62a4e6a261201609.wasm)
+running 8 tests
+test snapshot_backends_require_durability_and_ownership ... ok
+test seeded_interleavings_keep_owned_roots_stable ... ok
+test schema_order_and_bounds ... ok
+test private_forks_restore_in_reverse ... ok
+test payload_failure_cannot_publish_a_partial_disk ... ok
+test identities_refuse_before_loading ... ok
+test golden_exact_generation ... ok
+test deleting_child_pins_preserves_shared_ancestors ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.96s
+
+     Running tests/session_manifest.rs (target/wasm32-unknown-unknown/debug/deps/session_manifest-b428c5a9b2f79a0c.wasm)
+running 9 tests
+test unavailable_history_is_preserved ... ok
+test topology_requires_capture ... ok
+test topology_and_index_attacks ... ok
+test schema_duplicates_and_bounds ... ok
+test noncanonical_numbers_and_hashes ... ok
+test identities_and_capture_admission ... ok
+test gpu_checkpoint_binding ... ok
+test golden_wide_positions ... ok
+test event_and_chunk_integrity ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.22s
+
+   Doc-tests session_codec_wasm_proof
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

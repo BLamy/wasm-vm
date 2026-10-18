@@ -1,0 +1,57 @@
+{
+  "status": "passed",
+  "predictions": [
+    "H1",
+    "H3",
+    "H4",
+    "H5"
+  ],
+  "report_sha256": "5bca44684fdbf167c44c29bab5ec95d4b443f80ce1b5b81e76577c716d7a66b6",
+  "url": "https://wasm-vm.pages.dev/app.html?noAutoBoot&testHooks=1",
+  "source_head": "2bb4c9531e94914d92b13b575087d41d1b26500d",
+  "authenticated_original_files": 751,
+  "authenticated_compact_files": 37,
+  "unchanged_inventoried_sources": 30,
+  "suite": {
+    "passed": 127,
+    "failed": 0
+  },
+  "errors": [],
+  "roots": {
+    "before": {
+      "sha256": "fa1e3b11bb92942ca9af03ecd150b4bb783c5ac17682f33a68b94e17ed8cc452",
+      "generation": "58",
+      "blocks": 51,
+      "filesystem_file_block": 33281,
+      "file_hex": "65393a6265666f72650a"
+    },
+    "after": {
+      "sha256": "c429b0c489496efdaaf65947b6c03269d2e138f3fdc4617014d4b403f547b3b7",
+      "generation": "74",
+      "blocks": 62,
+      "filesystem_file_block": 33281,
+      "file_hex": "65393a61667465720a"
+    },
+    "fork": {
+      "sha256": "d70a69fbc0fd2329eaffad84c831a5faee2cfc32c0a8da18b6fb05b9810f7bd8",
+      "generation": "58",
+      "blocks": 69,
+      "filesystem_file_block": 33281,
+      "file_hex": "65393a666f726b0a"
+    },
+    "live": {
+      "sha256": "b6b68be87304d459016db32a2fae4ab1ad72c8da1955bc94e92180657b805209",
+      "generation": "86",
+      "blocks": 67,
+      "filesystem_file_block": 33281,
+      "file_hex": "65393a6c6976650a"
+    }
+  },
+  "surviving_references": 37,
+  "union_references": 60,
+  "gpu": {
+    "retired": 2499808,
+    "epoch": "0000000000000004",
+    "fresh_draws": 1
+  }
+}
