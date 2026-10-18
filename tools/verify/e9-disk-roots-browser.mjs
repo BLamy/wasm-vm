@@ -7,6 +7,7 @@ import {createServer} from 'node:http';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
+import {checkDiskRootCritic,checkDiskRootIoCritic} from './e9-disk-roots-critic.mjs';
 import {chromium} from '../../web/node_modules/playwright/index.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -262,6 +263,8 @@ try {
   const pip=await page.locator('.cap',{hasText:'Immutable historical disk roots'}).locator('.cap-pip').getAttribute('class');
   assert.match(pip,development?/\b(?:in-progress|verified)\b/:/\bverified\b/);report.checks.roadmap=pip;
   await page.locator('#panel-tests').screenshot({path:path.join(output,'browser.png')});
+  report.checks.critic=await checkDiskRootCritic(page,fixture);
+  report.checks.ioCritic=await checkDiskRootIoCritic(page,fixture);
   report.namespace='wasm-vm-sessions-v1-disk-proof-'+Date.now().toString(36);
   await page.evaluate(async({name,imageText})=>{
     const {SessionStore}=await import('./session-store.js'),{SessionDiskRoots}=await import('./session-disk-roots.js');

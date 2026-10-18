@@ -82,6 +82,7 @@ except BaseException as error:
 finally:
     sources = ["crates/storage/src/disk_root.rs", "crates/storage/src/lib.rs", "crates/storage/src/overlay.rs",
                "crates/storage/src/writeback.rs", "crates/storage/tests/disk_root/cases.rs", "crates/storage/tests/disk_root/root-v1.json",
+               "crates/storage/tests/disk_root_verifier.rs", "tools/verify/e9-disk-roots-critic.mjs",
                "crates/wasm/src/chunked.rs", "crates/wasm/src/lib.rs", "crates/wasm/src/session_disk.rs", "crates/session-web/src/lib.rs",
                "web/session-disk-roots.js", "web/session-store.js", "web/loader.js", "web/linux-worker-protocol.js", "web/linux-worker-host.js",
                "web/tests/e4-t32-worker-protocol.test.mjs", "web/roadmap.js", "web/session-alpine-image.json", "web/session-software-fixture.json",

@@ -86,3 +86,31 @@ factory also booted through the matching retained v2 client, retired **2,999,712
 instructions and physically drew in fresh epoch 4. Its original runtime bytes and
 frozen pair identity were preserved. E9-T05 coordinates the full machine tuple;
 E9-T07 owns atomic retention/reclamation. Fresh critic and final cold proof pending.
+
+### 2026-10-17 — fresh verifier — pre-cold audit
+
+P0–P8 **HELD**, with predictions recorded before opening evidence in
+`evidence/e9-t04/verifier/predictions.md`. The worker receipt and all 515 originals
+and 51 compact copies authenticate. Independent delta/root decoding, read-only
+ext4 reads, exact same-block file bytes, live database equality and surviving-root
+union checks held. The changed-hunk audit and scoped waivers are in
+`evidence/e9-t04/verifier/audit.md`.
+
+Promoted 64 independent native schedules for equal-generation siblings at u64::MAX,
+shared blocks and a one-byte image tail; a temporary sibling-alias sabotage fails
+the independent byte oracle (exit 101), and the original passes. Promoted actual
+browser loader admission/owner races and direct native capture at an original pending
+read and WritePending. Capture itself fetched the original chunk, drained 4096 bytes
+to strict durability, advanced generation 0→1 and left both icount clocks unchanged.
+A corrupt-chunk fixture proves the 16-pass bounded refusal on an isolated real page;
+the actual demo's zero-console-error gate remains strict. The initial supplementary
+runner's broad console assertion caught those intentional errors; its log is preserved,
+and the corrected narrow run asserts their exact sequence. No runtime code changed.
+
+Commands: `cargo test -p wasm-vm-storage --test disk_root_verifier -- --nocapture`,
+`cargo clippy -p wasm-vm-storage --test disk_root_verifier -- -D warnings`,
+`cargo fmt --all --check`, `node evidence/e9-t04/verifier/run-browser-critic.mjs`,
+plus read-only Python/Docker receipt/root/filesystem interrogation. The critic helper
+is now called by `make verify-E9-T04`; the native test joins storage tests. Task remains
+`implemented` until the one final pristine source-clone proof and receipt interrogation.
+T03's unchanged findings carry forward; T05/T07 keep their declared boundaries.

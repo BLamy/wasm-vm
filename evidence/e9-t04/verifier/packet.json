@@ -1,0 +1,78 @@
+{
+  "status": "pre-cold-held",
+  "runtime_head": "b5baad0a4b1cddcbd08299b438292258352b2c08",
+  "original_trace": "target/evidence/e9-t04-critic-trace.zip",
+  "trace_sha256": "c7e0d907337e49d378c12605e7bb6b5903d8df7b36eeab294e5cdad38d2cd7d4",
+  "files": [
+    {
+      "path": "audit.md",
+      "bytes": 12302,
+      "sha256": "4e220db57535de1613754d0914172dbcb91f1d70559e148f752190db57e01075"
+    },
+    {
+      "path": "browser-critic-coverage.json.gz",
+      "bytes": 90035,
+      "sha256": "f3c9de108fa300edf347856bdae5ebf6d7c265ed2a1f6bcb8e348f513997e3c1"
+    },
+    {
+      "path": "browser-critic.json",
+      "bytes": 17868,
+      "sha256": "87a4ea8b7ab1d2d615cd1e3e65d115b6096d91d846d5a5c6faef5771bb6c85dd"
+    },
+    {
+      "path": "browser-critic.log",
+      "bytes": 17868,
+      "sha256": "87a4ea8b7ab1d2d615cd1e3e65d115b6096d91d846d5a5c6faef5771bb6c85dd"
+    },
+    {
+      "path": "format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "independent-files.json",
+      "bytes": 1430,
+      "sha256": "f9444b5346955814c8f20671287393d187deee9ab65a568e756f489874d0d512"
+    },
+    {
+      "path": "io-first-harness.log",
+      "bytes": 2635,
+      "sha256": "e5fb03570cfa270ceb544f65631fe372b2d648af0f8aeae8448a05174ff55a2b"
+    },
+    {
+      "path": "novel-native.log",
+      "bytes": 473,
+      "sha256": "b5a1b63999bf30d3675fd616a26996e34031d391703e8f34150cb5398c30676f"
+    },
+    {
+      "path": "predictions.md",
+      "bytes": 2917,
+      "sha256": "1f8fc08d7f9334ed3bd544da9cf7fe1ec402d3803a4e43c41e2756a7835c6b43"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 417,
+      "sha256": "c09c791dc82d2be52a01c40edb2aff8e40101da24e4e10ffbe42e5b5647ac7b0"
+    },
+    {
+      "path": "run-browser-critic.mjs",
+      "bytes": 2803,
+      "sha256": "9352b12e343909f4b4ff789a8310d549293931225a86587980abc6aa76cef68e"
+    },
+    {
+      "path": "sabotage.json",
+      "bytes": 616,
+      "sha256": "f36a7743f516eab3f1a291af7d9575da2e3f08b6bd7a8829db959e1a8d6c331e"
+    },
+    {
+      "path": "sabotage.log",
+      "bytes": 37901,
+      "sha256": "158f69f5020da70fd6eb8bc042080b0ec8fb0fedbf190cca08e521ee58d9b8df"
+    },
+    {
+      "path": "test-clippy.log",
+      "bytes": 183,
+      "sha256": "30c1392468ea32bf5c9a36f29ef519a9ca6fb4c67508a5080c45983c67fa6b3b"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "status": "passed",
+  "predictions": [
+    "P0",
+    "P1",
+    "P2",
+    "P4"
+  ],
+  "roots": {
+    "before": {
+      "sha256": "7900990347dee433c68803f29ffd05d289b872c56dcae3bee9dd7cad0a47c86d",
+      "generation": "54",
+      "blocks": 49,
+      "file_block": [
+        33281
+      ],
+      "file_hex": "65393a6265666f72650a",
+      "retired": 326590340,
+      "debugfs": "debugfs 1.47.0 (5-Feb-2023)"
+    },
+    "after": {
+      "sha256": "25787f55ca1794400c6b0c864f95f353be16fd030204f5eb0b63a8d60214dea5",
+      "generation": "73",
+      "blocks": 63,
+      "file_block": [
+        33281
+      ],
+      "file_hex": "65393a61667465720a",
+      "retired": 338644736,
+      "debugfs": "debugfs 1.47.0 (5-Feb-2023)"
+    },
+    "fork": {
+      "sha256": "73ddd8c1d1352ba076b24435aad5bbcafea6e0bc1e5f646643f062367359d927",
+      "generation": "54",
+      "blocks": 73,
+      "file_block": [
+        33281
+      ],
+      "file_hex": "65393a666f726b0a",
+      "retired": 333484870,
+      "debugfs": "debugfs 1.47.0 (5-Feb-2023)"
+    },
+    "live": {
+      "sha256": "2fb8236bdcc7aa4aed5ef5f5a1d3c547380b3c4273fe12729e17a1b8ec12777d",
+      "generation": "87",
+      "blocks": 70,
+      "file_block": [
+        33281
+      ],
+      "file_hex": "65393a6c6976650a",
+      "retired": 357705543,
+      "debugfs": "debugfs 1.47.0 (5-Feb-2023)"
+    }
+  },
+  "live_db_bytes": 8591,
+  "survivor_references": 35,
+  "union_references": 61
+}
