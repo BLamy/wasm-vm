@@ -3,7 +3,7 @@ id: E9-T04
 epic: 9
 title: Preserve immutable disk state for historical checkpoints
 priority: 524.904
-status: implemented
+status: verified
 depends_on: [E9-T02, E9-T03, E3-T12c3]
 estimate: S
 risk: high
@@ -129,3 +129,38 @@ and its complete source. The driver now removes its unused export route before G
 boot and records the full boot result. Runtime, native code and deployed bytes are
 unchanged. Prior HELD findings carry forward; the final scoped cold browser proof
 and fresh verifier verdict remain pending.
+
+### 2026-10-17 — fresh verifier — VERDICT: verified
+
+- P0–P9 **HELD**. Original worker and cold receipts authenticate. Independently decoded
+  root/delta hashes, read-only debugfs file contents and inode block maps, reverse-order
+  boots, same-block sibling writes, immutable old roots, durable live-row equality,
+  exact identity rejection and surviving-root union all held. Native/shared-Wasm
+  worker schedules and the promoted independent 64-schedule attack survive; isolated
+  sibling-alias sabotage fails the oracle as required. Per-hunk coverage and narrow
+  waivers are in `evidence/e9-t04/verifier/audit.md`.
+- **COLD / INCREMENTAL PROOF HELD**. The pristine `25e65f56` source clone passed 15
+  non-browser gates and every root/I/O/owner/filesystem assertion. Two complete browser
+  attempts then failed only the retained GPU asset redirect while the finished export
+  route remained installed. The controlled route toggle authenticated that harness
+  cause. Test-only `0db63b02fc3cdef4ed188a53d03fddfc340b454f` releases the route; its
+  full browser acceptance passed in the same clean exact-head clone with a new profile,
+  scrubbed environment and outside-clone output. All 499 final files and 30 source
+  hashes authenticate; runtime/native/permanent tests and dependencies are unchanged,
+  so the 15 original cold gates carry forward. Original failed receipts remain intact.
+- **BROWSER / COMPATIBILITY HELD**. Final built page: 127/0, verified disk pip, zero
+  demo errors; all promoted critic paths and four independently reconstructed exact
+  ext4 files passed. Genuine filesystem inode maps confirm block 33281 for all four.
+  The unchanged retained v2 factory retires 2,499,808 instructions and physically draws
+  in fresh epoch 4. This proves compatibility, not accelerated replay qualification.
+- **SUITE**. The native critic test and bounded real-browser critic helper are permanent
+  acceptance inputs. No product contradiction or remaining in-scope proof gap was found.
+  T05 owns coherent machine tuples and T07 atomic deletion/reclamation.
+
+Exact commands and environment are in the compact `evidence/e9-t04/verifier/cold/`
+receipts/wrappers; independent final checks are in `cold-verification.json`. Final
+browser receipt SHA-256:
+`5d27531082fa9c7881211bfd0534386fe0c1ea3f06e1e9b55fe353fbe3ffcd00`;
+report SHA-256:
+`d054a6eb3a92d8725fd3dce3ff27effd6254f55fa37ba22095bca85ab45a1e97`.
+The verdict/status commit changes verification metadata and evidence only.

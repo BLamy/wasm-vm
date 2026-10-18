@@ -1,0 +1,57 @@
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling rustversion v1.0.22
+   Compiling libc v0.2.186
+   Compiling bumpalo v3.20.3
+    Checking unicode-ident v1.0.24
+    Checking once_cell v1.21.4
+    Checking pin-project-lite v0.2.17
+    Checking futures-core v0.3.32
+    Checking slab v0.4.12
+    Checking futures-task v0.3.32
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+    Checking smallvec v1.15.2
+    Checking bitflags v2.13.0
+   Compiling heapless v0.9.3
+    Checking byteorder v1.5.0
+    Checking log v0.4.33
+   Compiling smoltcp v0.13.1
+    Checking tinyvec_macros v0.1.1
+    Checking stable_deref_trait v1.2.1
+   Compiling libm v0.2.16
+    Checking futures-util v0.3.32
+    Checking tinyvec v1.12.0
+   Compiling num-traits v0.2.19
+    Checking bitflags v1.3.2
+    Checking managed v0.8.0
+    Checking hash32 v0.3.1
+    Checking wasm-vm-wasm-emit v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo/crates/wasm-emit)
+    Checking cast v0.3.0
+    Checking nu-ansi-term v0.50.3
+    Checking wasm-bindgen-test-shared v0.2.126
+    Checking oorandom v11.1.5
+    Checking unicode-normalization v0.1.25
+   Compiling syn v2.0.118
+   Compiling wasm-bindgen v0.2.126
+    Checking cpufeatures v0.2.17
+    Checking getrandom v0.2.17
+    Checking sha2 v0.10.9
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling serde_derive v1.0.228
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling async-trait v0.1.89
+   Compiling wasm-bindgen-macro v0.2.126
+    Checking serde v1.0.228
+    Checking wasm-vm-storage v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo/crates/storage)
+    Checking wasm-vm-jit-translate v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo/crates/jit-translate)
+    Checking wasm-vm-slirp v0.0.0 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo/crates/slirp)
+    Checking js-sys v0.3.103
+    Checking console_error_panic_hook v0.1.7
+    Checking wasm-bindgen-futures v0.4.76
+    Checking web-sys v0.3.103
+    Checking wasm-bindgen-test v0.3.76
+    Checking console_log v1.0.0
+    Checking wasm-vm-wasm v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t04-cold-yrzupmrk/repo/crates/wasm)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 13.33s

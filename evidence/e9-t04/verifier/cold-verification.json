@@ -1,0 +1,57 @@
+{
+  "status": "verified",
+  "head": "0db63b02fc3cdef4ed188a53d03fddfc340b454f",
+  "pristine_source_head": "25e65f56b1b2918634083aa733426e291029e093",
+  "cold_native_gates_carried": 15,
+  "original_cold_receipt_sha256": "f0be284c3aa1c9824352c0f4103299ffbf551f442238eb107fc799abf9cdb8b0",
+  "original_cold_acceptance_sha256": "7e6587476f1f9192744b2821d569e6349e93dd15ae0af838b85d0bdbe903953d",
+  "final_browser_receipt_sha256": "5d27531082fa9c7881211bfd0534386fe0c1ea3f06e1e9b55fe353fbe3ffcd00",
+  "final_browser_report_sha256": "d054a6eb3a92d8725fd3dce3ff27effd6254f55fa37ba22095bca85ab45a1e97",
+  "authenticated_final_files": 499,
+  "authenticated_final_sources": 30,
+  "source_change_since_first_cold": [
+    "tools/verify/e9-disk-roots-browser.mjs"
+  ],
+  "roots": {
+    "before": {
+      "root_sha256": "79d8d0e27cbfe3829e564cd3ca1530da8b58cc123101abff5001aa6ee8b53817",
+      "generation": "55",
+      "blocks": 52,
+      "filesystem_file_block": 33281,
+      "file_hex": "65393a6265666f72650a"
+    },
+    "after": {
+      "root_sha256": "403d128f63a03b60493820ab439219156c7900b46d623466bdd622b244af5fbf",
+      "generation": "70",
+      "blocks": 61,
+      "filesystem_file_block": 33281,
+      "file_hex": "65393a61667465720a"
+    },
+    "fork": {
+      "root_sha256": "54ff224a6281b0e0e81bc50ce63fc2b8a37c50a0f20605b149f65c482d09c2ee",
+      "generation": "55",
+      "blocks": 70,
+      "filesystem_file_block": 33281,
+      "file_hex": "65393a666f726b0a"
+    },
+    "live": {
+      "root_sha256": "094f9afb2944530114de09ab1acbd469c19388150aa55f6d31406e4a5be41926",
+      "generation": "83",
+      "blocks": 68,
+      "filesystem_file_block": 33281,
+      "file_hex": "65393a6c6976650a"
+    }
+  },
+  "gpu": {
+    "retired": 2499808,
+    "epoch": "0000000000000004",
+    "fresh_draws": 1
+  },
+  "suite": {
+    "passed": 127,
+    "failed": 0
+  },
+  "errors": [],
+  "surviving_references": 38,
+  "union_references": 61
+}

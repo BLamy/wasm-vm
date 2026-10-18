@@ -1,6 +1,9 @@
+VERDICT: verified
+
 # E9-T04 fresh verifier audit
 
-P0–P8 HELD; P9 awaits the one final cold-clone receipt. This is not a verified verdict.
+P0–P9 HELD. Final test/recording head `0db63b02fc3cdef4ed188a53d03fddfc340b454f`;
+product/runtime remains `b5baad0a4b1cddcbd08299b438292258352b2c08`.
 Predictions were written in `predictions.md` before opening worker evidence. Base
 `7918fbe0`, frozen product `b5baad0a4b1cddcbd08299b438292258352b2c08`, worker
 submission `40113a6fb98d279905fba30de7219a3780f8747f`. The critic changed only tests,
@@ -60,10 +63,24 @@ recording assertions and evidence. T03's unchanged P1–P9 findings carry forwar
   bytes before the independent oracle. It fails at seed 91d3/round 0/block 2, exit
   101; original test passes. `sabotage.json` binds both source hashes; the temporary
   file was deleted, and no implementation was mutated.
-- **P9 PENDING.** Final test candidate will be cold-proven once. The wrapper has
-  been inspected: exact detached head, no alternates/inherited target/npm cache,
-  scrubbed Rust/Cargo/Git environment, clone-local Cargo targets, output outside
-  clone. It includes all top-level source/config and required compile-time fixtures.
+- **P9 HELD.** The one pristine source clone at permanent-test head `25e65f56`
+  passed 15 non-browser gates. Its full browser run and a same-source retry held every
+  disk/critic/filesystem assertion but failed the retained GPU fetch with the unused
+  export route still installed. A controlled same-origin toggle failed with the route
+  and succeeded after removing only it. This was a harness/environment finding, not
+  an established transient network failure. The test-only `0db63b02` unroutes after
+  the final export and records/asserts the complete boot result. Its full browser
+  acceptance passed in the same clean owned clone with a fresh external profile and
+  the original scrubbed environment. All 499 final files and 30 inventoried sources
+  authenticate; only the browser driver changed from the initial native proof.
+  The original 15 gates therefore carry forward under incremental policy. Exact
+  detached heads, no alternates/initial target or npm caches, clone-local Cargo targets,
+  all source/config inputs and outside-clone output were independently checked.
+  Final browser: 127/0, errors=[], all critic paths, four exact ext4 files and genuine
+  inode block maps at 33281, 38 surviving references within 61 union references,
+  and 2,499,808 actual factory instructions plus a fresh epoch-4 physical draw.
+  `cold-verification.json` binds both original and final receipts. Original failures
+  remain intact and are explicitly linked, rather than rewritten as successful runs.
 
 ## Changed product hunk coverage
 
@@ -125,5 +142,22 @@ demo's zero-console-error gate. The corrected narrow run passed. No product code
 Permanent suite deposit: `crates/storage/tests/disk_root_verifier.rs` runs with storage
 native tests; `tools/verify/e9-disk-roots-critic.mjs` is called by `make verify-E9-T04`'s
 built-browser driver. Narrow test format/clippy and browser assertions pass. The final
-cold proof remains required before status changes to verified. T05 owns coherent
+cold proof and scoped harness correction have been independently verified; no product
+contradiction or remaining in-scope proof gap was found. T05 owns coherent
 CPU/RAM/device/input/clock/log tuples; T07 owns atomic session deletion/reclamation.
+
+
+## Final proof receipts
+
+Final browser receipt SHA-256:
+`5d27531082fa9c7881211bfd0534386fe0c1ea3f06e1e9b55fe353fbe3ffcd00`.
+Final browser report SHA-256:
+`d054a6eb3a92d8725fd3dce3ff27effd6254f55fa37ba22095bca85ab45a1e97`.
+Original cold receipt SHA-256:
+`f0be284c3aa1c9824352c0f4103299ffbf551f442238eb107fc799abf9cdb8b0`.
+Original cold acceptance SHA-256:
+`7e6587476f1f9192744b2821d569e6349e93dd15ae0af838b85d0bdbe903953d`.
+
+Original full cold trace/profile/images, failed repeat and causal-toggle trace remain
+in their authenticated target paths. Compact cold evidence is in `cold/`. No product
+or test changes follow the final proven head; the verdict commit is metadata/evidence.
