@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import time
 from pathlib import Path
@@ -19,13 +20,13 @@ environment = {key: value for key, value in os.environ.items()
                if key not in ('RUSTFLAGS', 'RUSTDOCFLAGS', 'RUST_LOG') and not key.startswith('CARGO_')}
 environment['CARGO_TERM_COLOR'] = 'never'
 environment['CARGO_INCREMENTAL'] = '0'
-environment['CARGO_BUILD_JOBS'] = '8'
+environment['CARGO_BUILD_JOBS'] = '2'
 environment['GIT_OPTIONAL_LOCKS'] = '0'
 head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
 tree = subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], cwd=ROOT, text=True).strip()
 report = {'task': 'E9-T14', 'status': 'running', 'head': head, 'tree': tree,
           'started': time.time(), 'commands': [],
-          'build_environment': {'CARGO_INCREMENTAL': '0', 'CARGO_BUILD_JOBS': '8'},
+          'build_environment': {'CARGO_INCREMENTAL': '0', 'CARGO_BUILD_JOBS': '2'},
           'claim': 'Pinned full Linux recording, durable event tape, exact interpreter/JIT replay, first divergence and stopped end fence.'}
 
 
@@ -56,12 +57,59 @@ def run(name, command, timeout=3600, allow_failure=False):
     return completed.returncode
 
 
+def prune_generated_build_cache(relative):
+    target = (ROOT / 'target').resolve()
+    path = target / relative
+    if path.is_dir():
+        assert path.name == 'debug' and path.resolve().is_relative_to(target), 'build cache path'
+        shutil.rmtree(path)
+        report.setdefault('cache_prunes', []).append(str(path))
+
+
+def carry_previous_native(directory):
+    previous = Path(directory).resolve()
+    old = json.loads((previous / 'report.json').read_text())
+    changed = subprocess.check_output(['git', 'diff', '--name-only', old['head'], head],
+                                      cwd=ROOT, text=True).splitlines()
+    assert old['task'] == 'E9-T14' and changed == ['tools/verify/e9-deterministic-replay.py'], \
+        'carried proof must differ only in its recording script'
+    shutil.copy2(previous / 'full-local-gauntlet.log', output / 'carried-full-local-gauntlet.log')
+    shutil.copy2(previous / 'remaining-local-gauntlet.log', output / 'carried-native-workspace.log')
+    native = (output / 'carried-native-workspace.log').read_text()
+    assert 'no-host-float: OK' in native and 'determinism-hazards: production core' in native \
+        and 'wasm-pack build crates/wasm --target web' in native, 'native gate did not complete before wasm'
+    report['carried_native'] = {'head': old['head'], 'tree': old['tree'], 'source': str(previous),
+        'log_sha256': digest(output / 'carried-native-workspace.log'), 'runtime_diff': changed}
+    return (output / 'carried-full-local-gauntlet.log').read_text()
+
+
+def carry_previous_wasm(metadata):
+    record = json.loads(Path(metadata).read_text())
+    changed = subprocess.check_output(['git', 'diff', '--name-only', record['head'], head],
+                                      cwd=ROOT, text=True).splitlines()
+    assert record['exit_code'] == 0 and changed == ['tools/verify/e9-deterministic-replay.py'], \
+        'carried wasm proof must differ only in its recording script'
+    source = Path(record['log']).resolve()
+    assert digest(source) == record['sha256'] and 'test result: ok.' in source.read_text(), 'wasm proof log'
+    shutil.copy2(source, output / 'carried-wasm-workspace.log')
+    report['carried_wasm'] = {'head': record['head'], 'log_sha256': record['sha256'],
+                              'runtime_diff': changed}
+
+
 try:
     clean()
+    # The scratch volume is bounded. Native and wasm debug test binaries are independent;
+    # discard only generated build artifacts between those evidence stages.
+    prune_generated_build_cache(Path('wasm32-unknown-unknown/debug'))
     run('policy', ['python3', 'tools/check_task_policy.py'])
-    result = run('full-local-gauntlet', ['make', 'ci'], 7200, allow_failure=True)
+    carried_native = os.environ.get('E9_REPLAY_CARRY_NATIVE')
+    if carried_native:
+        result = 1
+        log = carry_previous_native(carried_native)
+    else:
+        result = run('full-local-gauntlet', ['make', 'ci'], 7200, allow_failure=True)
+        log = (output / 'full-local-gauntlet.log').read_text() if result else ''
     if result:
-        log = (output / 'full-local-gauntlet.log').read_text()
         known = ['methods `next_transition`, `reserve_transition`, and `advance` are never used',
                  'enum `Preparation` is never used',
                  'methods `begin`, `end`, and `commit` are never used',
@@ -72,10 +120,20 @@ try:
         report['baseline_exception'] = {'gate': 'zicsr-stub clippy dead_code',
             'parent': BASELINE_HEAD,
             'finding': 'The same five dead-code diagnostics reproduce on the untouched parent; no T14 code appears in them.'}
-        run('remaining-local-gauntlet', ['make', 'test', 'wasm', 'features', 'test-riscv',
-                                         'riscv-tests-suite', 'determinism', 'perf-smoke'], 7200)
+        if not carried_native:
+            run('native-workspace', ['make', 'test'], 7200)
+    run('native-riscv-regression', ['make', 'riscv-tests-suite'], 3600)
     run('replay-native-trace-and-attacks', ['cargo', 'test', '-p', 'wasm-vm-core',
         '--features', 'trace,virgl-renderer', '--test', 'e9_deterministic_replay', '--', '--nocapture'])
+    prune_generated_build_cache(Path('debug'))
+    run('native-performance-smoke', ['make', 'perf-smoke'], 3600)
+    carried_wasm = os.environ.get('E9_REPLAY_CARRY_WASM')
+    if carried_wasm:
+        carry_previous_wasm(carried_wasm)
+    else:
+        run('wasm-workspace', ['make', 'wasm'], 7200)
+    run('remaining-cross-target', ['make', 'features', 'test-riscv', 'determinism'], 7200)
+    prune_generated_build_cache(Path('wasm32-unknown-unknown/debug'))
     run('wasm-replay-clippy', ['cargo', 'clippy', '-p', 'wasm-vm-wasm',
         '--target', 'wasm32-unknown-unknown', '--features', 'virgl-renderer', '--lib', '--', '-D', 'warnings'])
     run('browser-build', ['make', 'web-build'], 3600)
