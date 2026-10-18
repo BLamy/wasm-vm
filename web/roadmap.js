@@ -227,7 +227,7 @@ export const ROADMAP = [
       { name: "Storage limits and shared-data deletion", status: "verified", evidence: "E9-T07: quota prefix, shared restore, crash recovery and independent verification" },
       { name: "Retention and reload milestone", status: "verified", evidence: "E9-T08: independently verified two-guest reload, file/RAM/input, quota, and deletion proof" },
       { name: "Exact event clock and bounded execution", status: "verified", probe: "event-clock", evidence: "E9-T09: independently verified exact stops, ordered effects, WFI/timers and restore on interpreter/JIT" },
-      { name: "Delivered user input recording", status: "in-progress", probe: "input-recording", evidence: "E9-T10: guest input adapters, durable prefixes and replay ingress firewall" },
+      { name: "Delivered user input recording", status: "verified", probe: "input-recording", evidence: "E9-T10: guest input adapters, durable prefixes and replay ingress firewall" },
       { name: "Exact replay, seeking and reverse-step", status: "pending", evidence: "E9-T09–T18" },
       { name: "Session timeline and branches", status: "pending", evidence: "E9-T19–T20" },
     ],
