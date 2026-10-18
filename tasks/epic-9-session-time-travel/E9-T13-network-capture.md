@@ -3,7 +3,7 @@ id: E9-T13
 epic: 9
 title: Capture network sessions and replay them with zero live egress
 priority: 524.913
-status: in-progress
+status: implemented
 depends_on: [E9-T09, E9-T03]
 estimate: S
 risk: high
@@ -293,3 +293,74 @@ The independent review is incomplete because its execution was stopped;
 publication also still needs Cloudflare account authorization. The official
 device-code attempt expired after five minutes without that authorization.
 No dependent E9 task may start.
+
+### 2026-10-18 — worker — reset capture repaired; final recorded local submission
+
+Frozen runtime and built deploy bundle:
+04f628dd02a0bf57331682e05607829e25a0ca46.
+Exact capture now omits net service-ring views invalidated by a pending
+transport reset. It preserves the recorded reset flag, all transport/counter
+state and guest state; it does not service the backend or deliver queued RX.
+The next ordinary service already drops these views before using them.
+
+The ninth ordinary worker regression takes a normal reset with queued work,
+checks revoked old callbacks, captures without advancing the guest, roundtrips
+in Record and Replay and resumes at budgets1/7/4096. Complete final frames and
+instruction traces match all six restored executions. Its exact source linked
+to authenticated pre-repair e91c core fails101 at the reset roundtrip.
+That standalone red binary/source/build log/receipt are retained under origin/;
+receipt SHA256
+2ad50c7f8096dac17d37d4c650ff95efe8bbe4dbc6c46760f4fe3ccbbd5b7873.
+
+A separately predicted worker byte comparison against the critic's already
+saved restored-reset frame holds: new paused checkpoint
+28e6b071904333fb5581e8f1cf41f9afe25f1329cab9d6263ddc6087751db736
+has the same section7 bytes, SHA256
+ded04079b6bfd3de9987a2b67aaeaae17bd402e2e56a19df2356cd725755a6e2,
+with both invalidated cached queues absent. Network cursors outside that
+component remain their respective accepted values. The prediction and read-only
+observation are origin/reset-canonical-observation.json.gz. This is a worker
+check of saved evidence, not an independent verification verdict.
+
+make verify-E9-T13 passes all24 selected commands on the new frozen runtime.
+This run uses a separate clean exact-head source/Git checkout, an initially
+empty compiler target, no inherited Node installation, scrubbed Rust/compiler
+wrapper flags and an offline integrity-checked package download cache.
+Git object storage is shared read-only as disclosed for the full persistent
+disk; compiler caches and source working files are not inherited. Full source,
+dependency/toolchain provenance and all original command logs are retained.
+Only task-owned incremental/Wasm compilation caches were released for RAM
+space, with inventories; native executables/rlibs, built browser assets,
+source/Git metadata and recordings remain intact.
+
+- Final report:
+  /Volumes/e9-final-proof-ram/cold-proof-e9-t13-04f628dd02a0/report.json,
+  SHA256 e8976823db2791f96502b8da745360148f92647eb189d00ae43a4556c18280f5.
+- Durable lossless packet:
+  evidence/e9-t13/worker-reset-final/provenance.json,
+  SHA256 60304b99d0b98842aa4c5fbacc10025b82169927972fa08f2cd6365d66358d5b;
+  255 original files, 27,332,768 compressed bytes.
+- Complete archive including derived browser GPU caches:
+  /Volumes/e9-final-proof-ram/e9-t13-reset-full-archive/provenance.json,
+  SHA256 be39c608d8fa89c862b3ee6aa678445d41d6f2bda172d5de26eb83e68ce0c1ab.
+- Runtime/source diff excludes evidence directories to avoid recursive copies
+  of previous recordings. Their immutable committed manifests and original
+  packets remain available; no prior findings or failing recordings were removed.
+
+All400 core tests and nine network tests pass, alongside affected session,
+device, storage, native/Wasm boundaries and actual native/browser JIT gates.
+The new built page reaches127 passed, zero failed and zero console errors,
+retains five events, performs six identical offline replays, rejects18 probe
+cases and28 ABI cases, and shows the network capability live. The independent
+transport witness remains one original local counter request, zero replay
+provider construction and zero replay fetch/socket attempts. Independent Python
+guest/object checks and the retained GPU browser gate pass.
+
+These are local worker transport-boundary claims with the documented
+experimental Ethernet HTTP bridge; complete Linux replay remains T14.
+The earlier43031/e91c publication candidates are withdrawn and were never
+deployed. A separately staged04f628 candidate is prepared only after this
+complete pass. Cloudflare device authorization expired without human approval,
+and the independent session was stopped by automatic security review before
+completing its coverage/verification charter. Those external proof gaps remain.
+No worker may mark this task verified or start its dependent tasks.
