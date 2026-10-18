@@ -4,7 +4,7 @@ epic: 9
 title: Capture network sessions and replay them with zero live egress
 priority: 524.913
 status: blocked
-blocked_on: Cloudflare account authorization for public proof; permitted independent G9 execution after automatic security review stopped the prior run
+blocked_on: Permitted independent G9 execution after automatic security review stopped the prior run
 depends_on: [E9-T09, E9-T03]
 estimate: S
 risk: high
@@ -660,3 +660,88 @@ The final worker submission at d454fc78f0b32baa59c175541e73fc660fb23cfb
 and its all25 local pass remain valid; only task/evidence/queue metadata changes
 here. No runtime was changed after frozen2f2aa7. E9-T01–T12 remain verified;
 E9-T14–T24 remain pending with no eligible independent Epic9 slice. No PR merges.
+
+### 2026-10-18 — worker — production publication and recorded public proof complete
+
+Frozen runtime2f2aa7aba484f6954ca04358385828093e561b83 is now actually
+published at the main URL https://wasm-vm.pages.dev/.
+Cloudflare's permanent URL for that same production release is
+https://cb3b19fb.wasm-vm.pages.dev.
+The ordinary command used --project-name wasm-vm --branch main
+--commit-dirty=true against the authenticated750-file prepared payload.
+Before/after inventories agree:750 files,84317110 bytes. The selected project
+account was explicit. No runtime, web, tools or design-contract source has
+changed since the frozen locally proven head.
+
+The human refreshed Wrangler authentication. Its first valid session could
+not access the repo's saved project account, so the initial ordinary deploy
+refused before publishing. A normal official device flow then refreshed the
+same26 requested permissions, with offline_access added by the SDK, selecting
+only the existing project account. A fresh read-only project query confirms
+wasm-vm before the successful deployment. Account-query v2 used name instead
+of Wrangler's actual Project Name JSON key; the original result, corrected
+fresh query and additive interpretation are retained. Authentication values,
+actual account labels/identifiers and private auth/debug logs are excluded
+from the public packet.
+
+The complete production browser command ran from the clean frozen source:
+node tools/verify/e9-network-capture-browser.mjs --url https://wasm-vm.pages.dev/ --output /Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser
+
+It passes127 tests,0 failures and zero console errors; five actual network
+receipts and six matching offline replays; all four WFI pending/idle cases;
+12 translated JIT cases;28 ABI refusals; six component refusals and two
+durable failed/cancelled outcome prefixes. Reload reopens five receipts.
+Replay creates zero provider factories and the separate egress witness
+observes zero fetch/socket attempts. Both the touched demo pips are live.
+The Playwright session, source coverage, complete frames/traces, CAS objects
+and desktop/mobile screenshots are retained.
+
+- Successful publication receipt:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-publication-v2/receipt.json,
+  SHA256 3473bc9398b674342a67a63cc23e80cba2f7e978c3f2c88454183e93aa791e63.
+- Production browser report:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/report.json,
+  SHA256 b8e97c1cdc3c41b04876c58d6528d46dc4ea7d4dad9757b43792ae49d18e666c.
+- Production Playwright trace:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/browser-trace.zip,
+  SHA256 43b222d473b6482ee29f099888009b5658e5ac5ddc206474fc1a60245b8916ba.
+- Both-origin raw asset completion:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets-complete/report.json,
+  SHA256 2be08caa1d680983eaf808eb632ff28c45c19e3b026c70eaad4b500c8db7a67e.
+- Supplementary public byte-decoder qualification:
+  /Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-oracle-qualification/report.json,
+  SHA256 108a56406978beca6a66e659f7aa3dda941370596688dd823d56484d90759334.
+- Lossless public packet:
+  evidence/e9-t13/worker-public-final/provenance.json,
+  SHA256 0b829b1ec86a8abb82b8f0d045db3932755d929c1db083525a41fb44777b80b5;
+  189 originals,20919657 compressed bytes.
+- Initial account preflight/refused-publication packet:
+  evidence/e9-t13/project-account-preflight/provenance.json,
+  SHA256 a9c5ca2a5807144f3b3f993c40f686f4a1ea8ab460360964448bcd1e26399f19.
+
+Eighteen critical runtime/guest/boot-manifest assets match prepared bytes on
+both the main and permanent deployment origins. The extra Python3.9 capture
+originally retained34 matching responses and two HTTP308 exceptions because
+that standard library lacks the308 handler. Its additive completion carries
+those34 exact originals and records only both normal same-origin canonical
+HTML chains; no recording bytes are normalized.
+
+The frozen local-counter byte oracle also rejects the public response's empty
+synthetic HTTP reason text where it expects OK. The actual public network
+record is HTTP3/status200/empty statusText at trace.network:232. Its77-byte
+response body matches the saved guest transport body, SHA256
+0a691b80cfbc3aac5134efb5c414724941ee2dde6731cbf0e4366e0f1c3ea1ad.
+A public-only copy changes only that reason assertion to the exact empty value;
+all other original queue/state/pinned-instruction/CAS/WFI/JIT/refusal checks
+pass unchanged. The original failure, one-line diff, frozen base/pinned guest
+and public source point remain explicit. No emulator/web source is changed,
+and the original frozen local oracle still passes its original25-command run.
+
+This is a worker public-proof claim for the separate critic to assess.
+All prior unchanged HELD material is carried; the successful local25-command
+submission is not rerun or relabelled. The publication/account gate is no
+longer externally blocked. Status remains blocked solely on the unfinished
+G9 independent execution/sensitivity/suite charter after automatic security
+review stopped the earlier execution. That execution was not retried or
+replaced by another model/session. No full verified verdict is claimed,
+no T14 dependency is cleared, and no PR is merged.

@@ -1,0 +1,1525 @@
+{
+  "kind": "Lossless worker public deployment and production browser packet; no full verification verdict",
+  "task": "E9-T13",
+  "created": 1792355097.4589949,
+  "frozen_runtime": "2f2aa7aba484f6954ca04358385828093e561b83",
+  "repository_head_at_capture": "ec8ee8ea33bd58591653a4887eb207f5341614c5",
+  "summary_sha256": "a1256a63473252132ede738afc464366e84432db94c3973eb6f771a9f7f38522",
+  "production_url": "https://wasm-vm.pages.dev/",
+  "immutable_deployment_url": "https://cb3b19fb.wasm-vm.pages.dev",
+  "privacy": "Credentials, device codes, consent challenges, actual account labels/identifiers and private auth/debug logs excluded. Only account identifier fingerprints are retained.",
+  "entries": [
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/browser-trace.zip",
+      "artifact": "acceptance/browser/browser-trace.zip.gz",
+      "size": 15847829,
+      "sha256": "43b222d473b6482ee29f099888009b5658e5ac5ddc206474fc1a60245b8916ba",
+      "gzip_size": 15690752,
+      "gzip_sha256": "b95c798da6068dd73a63956da3e3a90f69c20055f9ffec58ff791971b0bdc2ab"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/absent-network-unchanged-manifest.json",
+      "artifact": "acceptance/browser/components/absent-network-unchanged-manifest.json.gz",
+      "size": 2252,
+      "sha256": "50e8adf2f9e1fb158a0ceaa6a9d16c199af2ce779efb72bb24636a819845fbea",
+      "gzip_size": 912,
+      "gzip_sha256": "ed076dc2be9448e41fd2d75f227be76ecda64ee9dc81a534fb0729b92b90a5a1"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/absent-reader-unchanged-manifest.json",
+      "artifact": "acceptance/browser/components/absent-reader-unchanged-manifest.json.gz",
+      "size": 2561,
+      "sha256": "c85ed8dbad26dcba1e5628f7eb87ee846c87652a90c90ee035b385bd2dac1457",
+      "gzip_size": 999,
+      "gzip_sha256": "d5560aadf3ef1db0c6a8846ac8d05df70c105dfdcf8103233c6900a077f98631"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/factory-unchanged.resume",
+      "artifact": "acceptance/browser/components/factory-unchanged.resume.gz",
+      "size": 12349,
+      "sha256": "8e8dd44477f13fe2004b65852e48c789bb66daef3c3d76dc344ed46087d4e395",
+      "gzip_size": 4332,
+      "gzip_sha256": "29f8c407ad3e808c70991cec27234402858860bf244d17cb3346ff5e2b223436"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/objects/0a48bd657a3dfb44ef04e953355fcc0a9f6ad146e3a2984bf4e3c18fa0570ab3",
+      "artifact": "acceptance/browser/components/objects/0a48bd657a3dfb44ef04e953355fcc0a9f6ad146e3a2984bf4e3c18fa0570ab3.gz",
+      "size": 99,
+      "sha256": "0a48bd657a3dfb44ef04e953355fcc0a9f6ad146e3a2984bf4e3c18fa0570ab3",
+      "gzip_size": 111,
+      "gzip_sha256": "16ed8ee40ba7a02b70269d9a56519d40dcce7f6ba54b2038b3558d220d673604"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/objects/29911c6854410dfe75b3d798c23b2ba86e8456ffaeb07264c894106ded79a948",
+      "artifact": "acceptance/browser/components/objects/29911c6854410dfe75b3d798c23b2ba86e8456ffaeb07264c894106ded79a948.gz",
+      "size": 2178164,
+      "sha256": "29911c6854410dfe75b3d798c23b2ba86e8456ffaeb07264c894106ded79a948",
+      "gzip_size": 794176,
+      "gzip_sha256": "46fbf8ddf34b2d18a827062406abb496da2391b62f86484d63840351102ea16f"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/objects/2c07954df9ff25f82944f089d62ea368ffbad0bd29c9006cf8cc3c11284fe6d1",
+      "artifact": "acceptance/browser/components/objects/2c07954df9ff25f82944f089d62ea368ffbad0bd29c9006cf8cc3c11284fe6d1.gz",
+      "size": 10028,
+      "sha256": "2c07954df9ff25f82944f089d62ea368ffbad0bd29c9006cf8cc3c11284fe6d1",
+      "gzip_size": 4096,
+      "gzip_sha256": "1269ac0c1962675042e8c35c86cee9df43f7326878cff717fc3a0de9c39bcb9f"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/objects/4ee2d879b2048ff14e53cc663dea2e1b9fa954ec2a10a919f02d2717dcc9f5b3",
+      "artifact": "acceptance/browser/components/objects/4ee2d879b2048ff14e53cc663dea2e1b9fa954ec2a10a919f02d2717dcc9f5b3.gz",
+      "size": 1285,
+      "sha256": "4ee2d879b2048ff14e53cc663dea2e1b9fa954ec2a10a919f02d2717dcc9f5b3",
+      "gzip_size": 420,
+      "gzip_sha256": "f85dfe1728633b3d50890ba30f917f2dc47de64530f5ec66f2978cd5cfce6d48"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/objects/604e609c629e368bf4a1f25a4299b84469965b0a849181754700a0898fc7f78c",
+      "artifact": "acceptance/browser/components/objects/604e609c629e368bf4a1f25a4299b84469965b0a849181754700a0898fc7f78c.gz",
+      "size": 12377,
+      "sha256": "604e609c629e368bf4a1f25a4299b84469965b0a849181754700a0898fc7f78c",
+      "gzip_size": 4351,
+      "gzip_sha256": "85f53f2e3d0bf2e936854c6d730578a07c05f8bc124039eb58224d44c61942ca"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/objects/6f7151d0d56eb02770dfc7004c8c5968bb7651fdbbd401f984d198f58896cad9",
+      "artifact": "acceptance/browser/components/objects/6f7151d0d56eb02770dfc7004c8c5968bb7651fdbbd401f984d198f58896cad9.gz",
+      "size": 1288,
+      "sha256": "6f7151d0d56eb02770dfc7004c8c5968bb7651fdbbd401f984d198f58896cad9",
+      "gzip_size": 432,
+      "gzip_sha256": "e7574ca70fba74eaf9ebdf49a03baad8ad134827f37c01c1c3b1e59c801db002"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/objects/c471971e77454420add5af5661b3d2ddb8f32c2be70bc3aa171828c9e6282e84",
+      "artifact": "acceptance/browser/components/objects/c471971e77454420add5af5661b3d2ddb8f32c2be70bc3aa171828c9e6282e84.gz",
+      "size": 1198,
+      "sha256": "c471971e77454420add5af5661b3d2ddb8f32c2be70bc3aa171828c9e6282e84",
+      "gzip_size": 630,
+      "gzip_sha256": "372e1f2ab2ab776f791178e0219bd978aa5f2e531111910745b5d3f5195130a0"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/objects/d08150ad88cc67b2b9fbb7abb5365e68ace4b763c0b1d5ab2a33c27e8892b7ae",
+      "artifact": "acceptance/browser/components/objects/d08150ad88cc67b2b9fbb7abb5365e68ace4b763c0b1d5ab2a33c27e8892b7ae.gz",
+      "size": 141,
+      "sha256": "d08150ad88cc67b2b9fbb7abb5365e68ace4b763c0b1d5ab2a33c27e8892b7ae",
+      "gzip_size": 137,
+      "gzip_sha256": "1db41e2621e9d46adf907f276602da7c6b4674507c11d5cd72d989cdc767b9fe"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/objects/f76cb9b2c416294ac081f8839b77297fda02c5c520b9b488f0019d9cdf373e3a",
+      "artifact": "acceptance/browser/components/objects/f76cb9b2c416294ac081f8839b77297fda02c5c520b9b488f0019d9cdf373e3a.gz",
+      "size": 154,
+      "sha256": "f76cb9b2c416294ac081f8839b77297fda02c5c520b9b488f0019d9cdf373e3a",
+      "gzip_size": 144,
+      "gzip_sha256": "eb9c7f3601954d60e8b6fe22150cf23bf5704e13c1357fe1f76b30a86132655f"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/reserved-event.bin",
+      "artifact": "acceptance/browser/components/reserved-event.bin.gz",
+      "size": 10,
+      "sha256": "e7f55c3ec59ec1ab223f5662f3c66c7b961fd1113140197b17ebea42d50091de",
+      "gzip_size": 30,
+      "gzip_sha256": "6666f5650edf3dfa6a5c3606d849616bf9c485b16b75505f2c6d9caca43a9294"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-1-event-0.bin",
+      "artifact": "acceptance/browser/components/result-1-event-0.bin.gz",
+      "size": 121,
+      "sha256": "f5e443101ec62cfc74e6a684bc91ae506a5df695d98a5c07d499037cc5b77e8a",
+      "gzip_size": 126,
+      "gzip_sha256": "04448bdf6f0e6e0ed96c14c5793271a43b7960e0c34447f098726fa8f49fdb6e"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-1-event-1.bin",
+      "artifact": "acceptance/browser/components/result-1-event-1.bin.gz",
+      "size": 14,
+      "sha256": "4bbfad2f97a9e520938f9b90a32825c943368fa6b6ab804c155ffe5013cf83e6",
+      "gzip_size": 34,
+      "gzip_sha256": "66ae09e8a06f557d6a73052736077c19b27fd0ef1c459b34a7e33a89fc869fa0"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-1-final.resume",
+      "artifact": "acceptance/browser/components/result-1-final.resume.gz",
+      "size": 12563,
+      "sha256": "857f02ece15af0b5f32756064d6d575bca0fcaf15bcd1bc52882166ddd7b6ab4",
+      "gzip_size": 4593,
+      "gzip_sha256": "32a4d8d7fa45167144fc64fc4f874c8a48f7019bb1b74f0be633d2f7783de3ac"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-1-initial.resume",
+      "artifact": "acceptance/browser/components/result-1-initial.resume.gz",
+      "size": 12349,
+      "sha256": "8e8dd44477f13fe2004b65852e48c789bb66daef3c3d76dc344ed46087d4e395",
+      "gzip_size": 4332,
+      "gzip_sha256": "29f8c407ad3e808c70991cec27234402858860bf244d17cb3346ff5e2b223436"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-1-manifest.json",
+      "artifact": "acceptance/browser/components/result-1-manifest.json.gz",
+      "size": 2557,
+      "sha256": "6e72d7e5baa12f60c597d5d58571c5dc92d759d188aae1df67df2c1d04e41c31",
+      "gzip_size": 997,
+      "gzip_sha256": "017fc4ab033cf985712fb3b10f468552e8be3140ee1f1fba572db81a847425eb"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-1-original.trace",
+      "artifact": "acceptance/browser/components/result-1-original.trace.gz",
+      "size": 73119,
+      "sha256": "2868e6c4183232fcc67641c51366d90c0217c9066e7de11d89785d2187b4e274",
+      "gzip_size": 7594,
+      "gzip_sha256": "5497a2de93a4215ded48f2407ba3f6ef7f1a6b987a073f2e1283fc263c96cb9b"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-1-replay.resume",
+      "artifact": "acceptance/browser/components/result-1-replay.resume.gz",
+      "size": 12563,
+      "sha256": "857f02ece15af0b5f32756064d6d575bca0fcaf15bcd1bc52882166ddd7b6ab4",
+      "gzip_size": 4593,
+      "gzip_sha256": "32a4d8d7fa45167144fc64fc4f874c8a48f7019bb1b74f0be633d2f7783de3ac"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-1-replay.trace",
+      "artifact": "acceptance/browser/components/result-1-replay.trace.gz",
+      "size": 73119,
+      "sha256": "2868e6c4183232fcc67641c51366d90c0217c9066e7de11d89785d2187b4e274",
+      "gzip_size": 7594,
+      "gzip_sha256": "5497a2de93a4215ded48f2407ba3f6ef7f1a6b987a073f2e1283fc263c96cb9b"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-2-event-0.bin",
+      "artifact": "acceptance/browser/components/result-2-event-0.bin.gz",
+      "size": 121,
+      "sha256": "560a3f4f5e08bcf37707ce3f42208de6b569bbe7a30fc979d0da71fdb77bcb41",
+      "gzip_size": 126,
+      "gzip_sha256": "5c23a15c7d36f9ffee1bf79eca0a6d56ef413282f7c6e27ab5d4d4165a7c76eb"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-2-event-1.bin",
+      "artifact": "acceptance/browser/components/result-2-event-1.bin.gz",
+      "size": 14,
+      "sha256": "8bdee4d3e569f69f11ab2fb5182ced3b2f7a6eb1dfbfc5c1931a31e9ad992697",
+      "gzip_size": 34,
+      "gzip_sha256": "7c364b54360b17fb8e923ce86879037ab05d244e3f16feeb7de3f90876b1e7df"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-2-final.resume",
+      "artifact": "acceptance/browser/components/result-2-final.resume.gz",
+      "size": 12563,
+      "sha256": "f6d6e07047beda9f4991ede540a2d7a5d94177b369d9fdd73ef3ec4e041df68a",
+      "gzip_size": 4593,
+      "gzip_sha256": "8bf229229209ecf57fb670cd11a99c27ae5c7dc8506be250a8db11d3e0a6b259"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-2-initial.resume",
+      "artifact": "acceptance/browser/components/result-2-initial.resume.gz",
+      "size": 12349,
+      "sha256": "8e8dd44477f13fe2004b65852e48c789bb66daef3c3d76dc344ed46087d4e395",
+      "gzip_size": 4332,
+      "gzip_sha256": "29f8c407ad3e808c70991cec27234402858860bf244d17cb3346ff5e2b223436"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-2-manifest.json",
+      "artifact": "acceptance/browser/components/result-2-manifest.json.gz",
+      "size": 2557,
+      "sha256": "9159cdf496133a90fc5669cd498ee7e49045b5e1df55ef135e399a17f9f45a0b",
+      "gzip_size": 997,
+      "gzip_sha256": "8729e004b519400f68ad673f18b68f59ede6a080a27d1745b19984af2ae817fa"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-2-original.trace",
+      "artifact": "acceptance/browser/components/result-2-original.trace.gz",
+      "size": 73119,
+      "sha256": "2868e6c4183232fcc67641c51366d90c0217c9066e7de11d89785d2187b4e274",
+      "gzip_size": 7594,
+      "gzip_sha256": "5497a2de93a4215ded48f2407ba3f6ef7f1a6b987a073f2e1283fc263c96cb9b"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-2-replay.resume",
+      "artifact": "acceptance/browser/components/result-2-replay.resume.gz",
+      "size": 12563,
+      "sha256": "f6d6e07047beda9f4991ede540a2d7a5d94177b369d9fdd73ef3ec4e041df68a",
+      "gzip_size": 4593,
+      "gzip_sha256": "8bf229229209ecf57fb670cd11a99c27ae5c7dc8506be250a8db11d3e0a6b259"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/result-2-replay.trace",
+      "artifact": "acceptance/browser/components/result-2-replay.trace.gz",
+      "size": 73119,
+      "sha256": "2868e6c4183232fcc67641c51366d90c0217c9066e7de11d89785d2187b4e274",
+      "gzip_size": 7594,
+      "gzip_sha256": "5497a2de93a4215ded48f2407ba3f6ef7f1a6b987a073f2e1283fc263c96cb9b"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/wide-cursor.resume",
+      "artifact": "acceptance/browser/components/wide-cursor.resume.gz",
+      "size": 12349,
+      "sha256": "11e168a20191139f11c1398cd7ddd07adf0bbce75aa472f0afa81d6326e9c8f9",
+      "gzip_size": 4345,
+      "gzip_sha256": "a396a8fbe45af135d16e587f3486c7c69561596d208d20c240b63fe98b89132d"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/components/wrong-policy-unchanged-manifest.json",
+      "artifact": "acceptance/browser/components/wrong-policy-unchanged-manifest.json.gz",
+      "size": 2557,
+      "sha256": "6e72d7e5baa12f60c597d5d58571c5dc92d759d188aae1df67df2c1d04e41c31",
+      "gzip_size": 997,
+      "gzip_sha256": "017fc4ab033cf985712fb3b10f468552e8be3140ee1f1fba572db81a847425eb"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/desktop.png",
+      "artifact": "acceptance/browser/desktop.png.gz",
+      "size": 19267,
+      "sha256": "e78b0d69b03035f68c9c9df5d3f498e26f7cefe5953fae45e1481a97a66f7a4e",
+      "gzip_size": 18339,
+      "gzip_sha256": "33eb1a4553455b459a6d8727b308ec1d2fc81520ba72638ff6a9684038e25f42"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/final.resume",
+      "artifact": "acceptance/browser/final.resume.gz",
+      "size": 12967,
+      "sha256": "b3223531e5d35aedf824e02c158f50b347f35bb8076b1d55c63a1979ee8474ea",
+      "gzip_size": 4748,
+      "gzip_sha256": "4872421190a7f9d6731d9242723cb85721c27834f271ec752da1878f46937dbb"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/guest.bin",
+      "artifact": "acceptance/browser/guest.bin.gz",
+      "size": 1056,
+      "sha256": "b219889fc75437606529a1c865c17bf55377d9ef0e5e6b344c6efac80d7dcdb9",
+      "gzip_size": 190,
+      "gzip_sha256": "ac6055f02cbc66cc17e6a4250827cd8401edd53d03377d1a1e21cdce8d700cb8"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/http-response.bin",
+      "artifact": "acceptance/browser/http-response.bin.gz",
+      "size": 165,
+      "sha256": "ebe88cf637eb8f9fe7a19d14530aecb564e322a0ab64f388d5398b7b614ccd15",
+      "gzip_size": 152,
+      "gzip_sha256": "7c0aa3b239b0ebd56278544f9c0e38822eda37f4cc686fe05ddc4f102c306b60"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txfalse-pendingfalse-final.resume",
+      "artifact": "acceptance/browser/idle/txfalse-pendingfalse-final.resume.gz",
+      "size": 12359,
+      "sha256": "3ee581c2f7ea95cc19f66cb4bf4f4845aaf58ca1890a9f8b3527a713d83fa17d",
+      "gzip_size": 4393,
+      "gzip_sha256": "405216626a4a3ac5e90c4945205109d4e23bfd0e7354bce5493bc40c7a430e7b"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txfalse-pendingfalse-original.trace",
+      "artifact": "acceptance/browser/idle/txfalse-pendingfalse-original.trace.gz",
+      "size": 308,
+      "sha256": "eec26b8f10d798fdc9cec81ad8d85bc0529afe2599acc443c2f0b86ea73b5f63",
+      "gzip_size": 123,
+      "gzip_sha256": "a06439dff4d94f583c10399c3967cdb02b172cd1c98e07507b632311de67bb46"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txfalse-pendingfalse-paused.resume",
+      "artifact": "acceptance/browser/idle/txfalse-pendingfalse-paused.resume.gz",
+      "size": 12349,
+      "sha256": "fd00547851b32bb05071eab7e1cd21bc113ad420a2964f5756532c36dd0e914c",
+      "gzip_size": 4360,
+      "gzip_sha256": "16e8e99e722a66b47006af562fd099ed7540082c6db06391423795ca09e64993"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txfalse-pendingfalse-replay.resume",
+      "artifact": "acceptance/browser/idle/txfalse-pendingfalse-replay.resume.gz",
+      "size": 12359,
+      "sha256": "3ee581c2f7ea95cc19f66cb4bf4f4845aaf58ca1890a9f8b3527a713d83fa17d",
+      "gzip_size": 4393,
+      "gzip_sha256": "405216626a4a3ac5e90c4945205109d4e23bfd0e7354bce5493bc40c7a430e7b"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txfalse-pendingfalse-replay.trace",
+      "artifact": "acceptance/browser/idle/txfalse-pendingfalse-replay.trace.gz",
+      "size": 308,
+      "sha256": "eec26b8f10d798fdc9cec81ad8d85bc0529afe2599acc443c2f0b86ea73b5f63",
+      "gzip_size": 123,
+      "gzip_sha256": "a06439dff4d94f583c10399c3967cdb02b172cd1c98e07507b632311de67bb46"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txfalse-pendingtrue-final.resume",
+      "artifact": "acceptance/browser/idle/txfalse-pendingtrue-final.resume.gz",
+      "size": 12359,
+      "sha256": "a8edcbba760101972d9c8a9cf3395e4ba11f28ff342989f46f9b6d43ea801e60",
+      "gzip_size": 4396,
+      "gzip_sha256": "ed23ffd69006684d2a18758f5e939b77a190170cfaedac533ab48927bd8cadb4"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txfalse-pendingtrue-original.trace",
+      "artifact": "acceptance/browser/idle/txfalse-pendingtrue-original.trace.gz",
+      "size": 370,
+      "sha256": "b195e0c0932be14000df3e6278fd2245c786a8955ff84ed9d653595dd6799cd5",
+      "gzip_size": 135,
+      "gzip_sha256": "824808332e55efd360a75f39ecf69d9338a08c1ade5f8d2d22f0bf8edcc340cf"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txfalse-pendingtrue-paused.resume",
+      "artifact": "acceptance/browser/idle/txfalse-pendingtrue-paused.resume.gz",
+      "size": 12349,
+      "sha256": "1aacd0b69a9af2c384dda5a3083606ba24614f943790ed64ea323c23d2c3f280",
+      "gzip_size": 4363,
+      "gzip_sha256": "0726c34e87a59c2019c8f75e202e30eb32c616ef434234cf544902a0d59c5b8a"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txfalse-pendingtrue-replay.resume",
+      "artifact": "acceptance/browser/idle/txfalse-pendingtrue-replay.resume.gz",
+      "size": 12359,
+      "sha256": "a8edcbba760101972d9c8a9cf3395e4ba11f28ff342989f46f9b6d43ea801e60",
+      "gzip_size": 4396,
+      "gzip_sha256": "ed23ffd69006684d2a18758f5e939b77a190170cfaedac533ab48927bd8cadb4"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txfalse-pendingtrue-replay.trace",
+      "artifact": "acceptance/browser/idle/txfalse-pendingtrue-replay.trace.gz",
+      "size": 370,
+      "sha256": "b195e0c0932be14000df3e6278fd2245c786a8955ff84ed9d653595dd6799cd5",
+      "gzip_size": 135,
+      "gzip_sha256": "824808332e55efd360a75f39ecf69d9338a08c1ade5f8d2d22f0bf8edcc340cf"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txtrue-pendingfalse-final.resume",
+      "artifact": "acceptance/browser/idle/txtrue-pendingfalse-final.resume.gz",
+      "size": 12541,
+      "sha256": "cdc9a3104f1731fee8b716aae1338f3bfda5ed9dfe34cb96f17c3e639b1e6756",
+      "gzip_size": 4611,
+      "gzip_sha256": "c638524b94879199a214bbfb33789efee68d40bdd17c0690f5fc8d8869d132f9"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txtrue-pendingfalse-original.trace",
+      "artifact": "acceptance/browser/idle/txtrue-pendingfalse-original.trace.gz",
+      "size": 308,
+      "sha256": "ee7fc1bee218a472458643119edcfb72c087b60b0d7cb9ef56d76d23d9f06e3c",
+      "gzip_size": 125,
+      "gzip_sha256": "bef65e0e67a88cd96446b1eee21badffbd85943e378d084c053a596f76e69e98"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txtrue-pendingfalse-paused.resume",
+      "artifact": "acceptance/browser/idle/txtrue-pendingfalse-paused.resume.gz",
+      "size": 12541,
+      "sha256": "57c027a424f2c2ddc105dec7c0579f62a2b3d9e9e770d004f983724ab461b735",
+      "gzip_size": 4609,
+      "gzip_sha256": "f0947d38738294512e1f0a61016d4081ff7aff361d3dd980451c492620a7c294"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txtrue-pendingfalse-replay.resume",
+      "artifact": "acceptance/browser/idle/txtrue-pendingfalse-replay.resume.gz",
+      "size": 12541,
+      "sha256": "cdc9a3104f1731fee8b716aae1338f3bfda5ed9dfe34cb96f17c3e639b1e6756",
+      "gzip_size": 4611,
+      "gzip_sha256": "c638524b94879199a214bbfb33789efee68d40bdd17c0690f5fc8d8869d132f9"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txtrue-pendingfalse-replay.trace",
+      "artifact": "acceptance/browser/idle/txtrue-pendingfalse-replay.trace.gz",
+      "size": 308,
+      "sha256": "ee7fc1bee218a472458643119edcfb72c087b60b0d7cb9ef56d76d23d9f06e3c",
+      "gzip_size": 125,
+      "gzip_sha256": "bef65e0e67a88cd96446b1eee21badffbd85943e378d084c053a596f76e69e98"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txtrue-pendingtrue-final.resume",
+      "artifact": "acceptance/browser/idle/txtrue-pendingtrue-final.resume.gz",
+      "size": 12652,
+      "sha256": "43252167a63fb4894110475aba9a58b32c6ce3a1fd0f80226489c03aa65ea283",
+      "gzip_size": 4612,
+      "gzip_sha256": "88fa674dac6c35d76724fef10d115b2166511f0945f3e1f6d5dbc15fdb5e6b34"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txtrue-pendingtrue-original.trace",
+      "artifact": "acceptance/browser/idle/txtrue-pendingtrue-original.trace.gz",
+      "size": 370,
+      "sha256": "9b87f237f76ab9236ac63670da11d4a9d1d3b9c7f4aeeeb90477ec8a9fe5f202",
+      "gzip_size": 138,
+      "gzip_sha256": "dfb585078723190e7b5534bb85718810125fb4a494398e7122e0a37c3ba52508"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txtrue-pendingtrue-paused.resume",
+      "artifact": "acceptance/browser/idle/txtrue-pendingtrue-paused.resume.gz",
+      "size": 12652,
+      "sha256": "294eaf7ac1524bb664b1fc70c5ca9be4b8749d5cc8c8704f947bee6ea21929a8",
+      "gzip_size": 4612,
+      "gzip_sha256": "109fb4af9b3487ab9318e92fbbb83b4776cd6682dbcbadf3c947ebd7f7ce9922"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txtrue-pendingtrue-replay.resume",
+      "artifact": "acceptance/browser/idle/txtrue-pendingtrue-replay.resume.gz",
+      "size": 12652,
+      "sha256": "43252167a63fb4894110475aba9a58b32c6ce3a1fd0f80226489c03aa65ea283",
+      "gzip_size": 4612,
+      "gzip_sha256": "88fa674dac6c35d76724fef10d115b2166511f0945f3e1f6d5dbc15fdb5e6b34"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/idle/txtrue-pendingtrue-replay.trace",
+      "artifact": "acceptance/browser/idle/txtrue-pendingtrue-replay.trace.gz",
+      "size": 370,
+      "sha256": "9b87f237f76ab9236ac63670da11d4a9d1d3b9c7f4aeeeb90477ec8a9fe5f202",
+      "gzip_size": 138,
+      "gzip_sha256": "dfb585078723190e7b5534bb85718810125fb4a494398e7122e0a37c3ba52508"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/initial.resume",
+      "artifact": "acceptance/browser/initial.resume.gz",
+      "size": 12349,
+      "sha256": "8e8dd44477f13fe2004b65852e48c789bb66daef3c3d76dc344ed46087d4e395",
+      "gzip_size": 4332,
+      "gzip_sha256": "29f8c407ad3e808c70991cec27234402858860bf244d17cb3346ff5e2b223436"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/javascript-coverage.json",
+      "artifact": "acceptance/browser/javascript-coverage.json.gz",
+      "size": 2580405,
+      "sha256": "afbf90270bfcc47e58f8f1abbcfa5f36262d685133fbc1f3f3729231a67f9319",
+      "gzip_size": 472615,
+      "gzip_sha256": "15caf3a5080e732daededcd8850272a46054d0b11d68e397871c38dec106a89e"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/jit/target5000-q1.resume.gz",
+      "artifact": "acceptance/browser/jit/target5000-q1.resume.gz.gz",
+      "size": 4565,
+      "sha256": "40642dd60c2eed0b35152b6a13a83fa564f250356bc9d61d9295c87d3b04e118",
+      "gzip_size": 4422,
+      "gzip_sha256": "06aebed10b0d0a7c0bb1bfe593f626c81a1cc29a1b2a80e6805875015fcc4fad"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/jit/target5000-q31.resume.gz",
+      "artifact": "acceptance/browser/jit/target5000-q31.resume.gz.gz",
+      "size": 4565,
+      "sha256": "40642dd60c2eed0b35152b6a13a83fa564f250356bc9d61d9295c87d3b04e118",
+      "gzip_size": 4422,
+      "gzip_sha256": "06aebed10b0d0a7c0bb1bfe593f626c81a1cc29a1b2a80e6805875015fcc4fad"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/jit/target5000-q4096.resume.gz",
+      "artifact": "acceptance/browser/jit/target5000-q4096.resume.gz.gz",
+      "size": 4565,
+      "sha256": "40642dd60c2eed0b35152b6a13a83fa564f250356bc9d61d9295c87d3b04e118",
+      "gzip_size": 4422,
+      "gzip_sha256": "06aebed10b0d0a7c0bb1bfe593f626c81a1cc29a1b2a80e6805875015fcc4fad"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/jit/target5000-q8.resume.gz",
+      "artifact": "acceptance/browser/jit/target5000-q8.resume.gz.gz",
+      "size": 4565,
+      "sha256": "40642dd60c2eed0b35152b6a13a83fa564f250356bc9d61d9295c87d3b04e118",
+      "gzip_size": 4422,
+      "gzip_sha256": "06aebed10b0d0a7c0bb1bfe593f626c81a1cc29a1b2a80e6805875015fcc4fad"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/jit/target5001-q1.resume.gz",
+      "artifact": "acceptance/browser/jit/target5001-q1.resume.gz.gz",
+      "size": 4563,
+      "sha256": "83af85ff8c582d202d8b13af1f84dd7182cd88cc08ecae0f2fdaf4a45ff5db72",
+      "gzip_size": 4391,
+      "gzip_sha256": "46e20acbf7f623e4a5a689793475eb27a4de7496325a362cef16924aa3c9c333"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/jit/target5001-q31.resume.gz",
+      "artifact": "acceptance/browser/jit/target5001-q31.resume.gz.gz",
+      "size": 4563,
+      "sha256": "83af85ff8c582d202d8b13af1f84dd7182cd88cc08ecae0f2fdaf4a45ff5db72",
+      "gzip_size": 4391,
+      "gzip_sha256": "46e20acbf7f623e4a5a689793475eb27a4de7496325a362cef16924aa3c9c333"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/jit/target5001-q4096.resume.gz",
+      "artifact": "acceptance/browser/jit/target5001-q4096.resume.gz.gz",
+      "size": 4563,
+      "sha256": "83af85ff8c582d202d8b13af1f84dd7182cd88cc08ecae0f2fdaf4a45ff5db72",
+      "gzip_size": 4391,
+      "gzip_sha256": "46e20acbf7f623e4a5a689793475eb27a4de7496325a362cef16924aa3c9c333"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/jit/target5001-q8.resume.gz",
+      "artifact": "acceptance/browser/jit/target5001-q8.resume.gz.gz",
+      "size": 4563,
+      "sha256": "83af85ff8c582d202d8b13af1f84dd7182cd88cc08ecae0f2fdaf4a45ff5db72",
+      "gzip_size": 4391,
+      "gzip_sha256": "46e20acbf7f623e4a5a689793475eb27a4de7496325a362cef16924aa3c9c333"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/jit/target5002-q1.resume.gz",
+      "artifact": "acceptance/browser/jit/target5002-q1.resume.gz.gz",
+      "size": 4564,
+      "sha256": "38ccd22dbe6f102e4bb765e7647f9cf844b98ab580d4a80c167263691c8e369e",
+      "gzip_size": 4415,
+      "gzip_sha256": "86f6ce17314a9f5371c7b7f5ff073c8d8ad19f182a06b62d2ab979f2055a73de"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/jit/target5002-q31.resume.gz",
+      "artifact": "acceptance/browser/jit/target5002-q31.resume.gz.gz",
+      "size": 4564,
+      "sha256": "38ccd22dbe6f102e4bb765e7647f9cf844b98ab580d4a80c167263691c8e369e",
+      "gzip_size": 4415,
+      "gzip_sha256": "86f6ce17314a9f5371c7b7f5ff073c8d8ad19f182a06b62d2ab979f2055a73de"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/jit/target5002-q4096.resume.gz",
+      "artifact": "acceptance/browser/jit/target5002-q4096.resume.gz.gz",
+      "size": 4564,
+      "sha256": "38ccd22dbe6f102e4bb765e7647f9cf844b98ab580d4a80c167263691c8e369e",
+      "gzip_size": 4415,
+      "gzip_sha256": "86f6ce17314a9f5371c7b7f5ff073c8d8ad19f182a06b62d2ab979f2055a73de"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/jit/target5002-q8.resume.gz",
+      "artifact": "acceptance/browser/jit/target5002-q8.resume.gz.gz",
+      "size": 4564,
+      "sha256": "38ccd22dbe6f102e4bb765e7647f9cf844b98ab580d4a80c167263691c8e369e",
+      "gzip_size": 4415,
+      "gzip_sha256": "86f6ce17314a9f5371c7b7f5ff073c8d8ad19f182a06b62d2ab979f2055a73de"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/manifest.json",
+      "artifact": "acceptance/browser/manifest.json.gz",
+      "size": 3734,
+      "sha256": "13aa97475c270c722911609295661f486ff408d53fae28fa9b6d7d2f0bc1ca29",
+      "gzip_size": 1242,
+      "gzip_sha256": "7379cb660c7e0a0f35d041af30f3ffa1fbecfd5b843d8265df4539ee82bbd057"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/mobile.png",
+      "artifact": "acceptance/browser/mobile.png.gz",
+      "size": 18038,
+      "sha256": "efd16a7f6c71bf5128bd48ec4273cee5041ae9d6c3705045e229764fe831e8e9",
+      "gzip_size": 17760,
+      "gzip_sha256": "bf67ba2ce1f3b161c4671d93878521470525c02fc52d81c8b3b7d2ec58afd558"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/network-event-0.bin",
+      "artifact": "acceptance/browser/network-event-0.bin.gz",
+      "size": 14,
+      "sha256": "c4d7fb0fc401bc4e320be7c088cc2adc4284993f75f15c80b38d10ced3987ace",
+      "gzip_size": 32,
+      "gzip_sha256": "fa93b9823ebea27aba9b3d6578d35e93af9d576f22e1b0007f7accba763916cd"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/network-event-1.bin",
+      "artifact": "acceptance/browser/network-event-1.bin.gz",
+      "size": 121,
+      "sha256": "0fa456296cea3196a8694f6964e0339185f16af20b8ceac7f81b1468c5093f14",
+      "gzip_size": 126,
+      "gzip_sha256": "690c2a16d5b96f86687c83848319b641d86f1ffe0efae0716e6d7d4e7d7ddfb4"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/network-event-2.bin",
+      "artifact": "acceptance/browser/network-event-2.bin.gz",
+      "size": 10,
+      "sha256": "c8bb00bd13651c333a0584488a47b3c7dde953ed70df37002006ad06ad8011b9",
+      "gzip_size": 30,
+      "gzip_sha256": "79ebbd4534a2f0b0a2ae669fe4aa214fcdc514a95fcaac87b8a0b1a4014b77f5"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/network-event-3.bin",
+      "artifact": "acceptance/browser/network-event-3.bin.gz",
+      "size": 192,
+      "sha256": "2bd79f37b96b1d14e4ec88db0518cd8ee7ed5e012117a91179d6aa07da217246",
+      "gzip_size": 184,
+      "gzip_sha256": "a77c1857c41dc3f5101685e73b93aec82211cdbdd152e864fa7c726491c264b2"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/network-event-4.bin",
+      "artifact": "acceptance/browser/network-event-4.bin.gz",
+      "size": 14,
+      "sha256": "d2af06a97d82323594c72a18fbb19b75ffaddf2334fa3cf001ff5530bdb1f557",
+      "gzip_size": 32,
+      "gzip_sha256": "3ac49aa1e34d661a946ef8b8701086a13be7e783834fa8727f66f9b704e3dca7"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/network-oracle.json",
+      "artifact": "acceptance/browser/network-oracle.json.gz",
+      "size": 1655,
+      "sha256": "6a027928a6812420a27de8556d9da7fb8679a32843d553b2511dc008ea1fd7a9",
+      "gzip_size": 614,
+      "gzip_sha256": "f14972f0e0a9ae601ba5e90275b578537cdd41092af996c93ed337f6bacf0ddb"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/objects/0152fd9d54adde1ddec35b4298be5fbf3172dd838e111a4ac5e2dbaf2a215a0d",
+      "artifact": "acceptance/browser/objects/0152fd9d54adde1ddec35b4298be5fbf3172dd838e111a4ac5e2dbaf2a215a0d.gz",
+      "size": 547,
+      "sha256": "0152fd9d54adde1ddec35b4298be5fbf3172dd838e111a4ac5e2dbaf2a215a0d",
+      "gzip_size": 309,
+      "gzip_sha256": "627d6705376cbd6fcd852a3093fe8ede8a4e814f33c9456f7abd17dac4719e6e"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/objects/0a48bd657a3dfb44ef04e953355fcc0a9f6ad146e3a2984bf4e3c18fa0570ab3",
+      "artifact": "acceptance/browser/objects/0a48bd657a3dfb44ef04e953355fcc0a9f6ad146e3a2984bf4e3c18fa0570ab3.gz",
+      "size": 99,
+      "sha256": "0a48bd657a3dfb44ef04e953355fcc0a9f6ad146e3a2984bf4e3c18fa0570ab3",
+      "gzip_size": 111,
+      "gzip_sha256": "16ed8ee40ba7a02b70269d9a56519d40dcce7f6ba54b2038b3558d220d673604"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/objects/28ad5da384dbd6e60d274649db0957c7e4aff7a5c68695774621ef7bfc293482",
+      "artifact": "acceptance/browser/objects/28ad5da384dbd6e60d274649db0957c7e4aff7a5c68695774621ef7bfc293482.gz",
+      "size": 179,
+      "sha256": "28ad5da384dbd6e60d274649db0957c7e4aff7a5c68695774621ef7bfc293482",
+      "gzip_size": 172,
+      "gzip_sha256": "f8a237b789d54cb3832ab846d8cf58fdebc27b99df1a591a790e63cc4b0b754d"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/objects/29911c6854410dfe75b3d798c23b2ba86e8456ffaeb07264c894106ded79a948",
+      "artifact": "acceptance/browser/objects/29911c6854410dfe75b3d798c23b2ba86e8456ffaeb07264c894106ded79a948.gz",
+      "size": 2178164,
+      "sha256": "29911c6854410dfe75b3d798c23b2ba86e8456ffaeb07264c894106ded79a948",
+      "gzip_size": 794176,
+      "gzip_sha256": "46fbf8ddf34b2d18a827062406abb496da2391b62f86484d63840351102ea16f"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/objects/2c07954df9ff25f82944f089d62ea368ffbad0bd29c9006cf8cc3c11284fe6d1",
+      "artifact": "acceptance/browser/objects/2c07954df9ff25f82944f089d62ea368ffbad0bd29c9006cf8cc3c11284fe6d1.gz",
+      "size": 10028,
+      "sha256": "2c07954df9ff25f82944f089d62ea368ffbad0bd29c9006cf8cc3c11284fe6d1",
+      "gzip_size": 4096,
+      "gzip_sha256": "1269ac0c1962675042e8c35c86cee9df43f7326878cff717fc3a0de9c39bcb9f"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/objects/2f2d8bf25da54903bee86d18e53a805c604aafdfb88f62796ae7fb445511ca0a",
+      "artifact": "acceptance/browser/objects/2f2d8bf25da54903bee86d18e53a805c604aafdfb88f62796ae7fb445511ca0a.gz",
+      "size": 667,
+      "sha256": "2f2d8bf25da54903bee86d18e53a805c604aafdfb88f62796ae7fb445511ca0a",
+      "gzip_size": 375,
+      "gzip_sha256": "7f237c7f0c306fed1c907582ecc23c3e7ebba80b622d746a5ec986c8f654a657"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/objects/604e609c629e368bf4a1f25a4299b84469965b0a849181754700a0898fc7f78c",
+      "artifact": "acceptance/browser/objects/604e609c629e368bf4a1f25a4299b84469965b0a849181754700a0898fc7f78c.gz",
+      "size": 12377,
+      "sha256": "604e609c629e368bf4a1f25a4299b84469965b0a849181754700a0898fc7f78c",
+      "gzip_size": 4351,
+      "gzip_sha256": "85f53f2e3d0bf2e936854c6d730578a07c05f8bc124039eb58224d44c61942ca"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/objects/802617d6efc996848d40472fe9cd164f7b4d375fedae129c698226fc369f3765",
+      "artifact": "acceptance/browser/objects/802617d6efc996848d40472fe9cd164f7b4d375fedae129c698226fc369f3765.gz",
+      "size": 565,
+      "sha256": "802617d6efc996848d40472fe9cd164f7b4d375fedae129c698226fc369f3765",
+      "gzip_size": 310,
+      "gzip_sha256": "344b7cd10861b4b683e2aebedf08b841b8f3dc22afc78f3f14fe27a3c8861c3c"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/objects/c471971e77454420add5af5661b3d2ddb8f32c2be70bc3aa171828c9e6282e84",
+      "artifact": "acceptance/browser/objects/c471971e77454420add5af5661b3d2ddb8f32c2be70bc3aa171828c9e6282e84.gz",
+      "size": 1198,
+      "sha256": "c471971e77454420add5af5661b3d2ddb8f32c2be70bc3aa171828c9e6282e84",
+      "gzip_size": 630,
+      "gzip_sha256": "372e1f2ab2ab776f791178e0219bd978aa5f2e531111910745b5d3f5195130a0"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/objects/c719294b55af9d06fc01cba8831f03588c3db696aef712f5f03a794d7525d3a7",
+      "artifact": "acceptance/browser/objects/c719294b55af9d06fc01cba8831f03588c3db696aef712f5f03a794d7525d3a7.gz",
+      "size": 571,
+      "sha256": "c719294b55af9d06fc01cba8831f03588c3db696aef712f5f03a794d7525d3a7",
+      "gzip_size": 315,
+      "gzip_sha256": "0755296efbfde100e30c1de17980bb89fb65818754daf90b0ce33a72f4f63adc"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/objects/d08150ad88cc67b2b9fbb7abb5365e68ace4b763c0b1d5ab2a33c27e8892b7ae",
+      "artifact": "acceptance/browser/objects/d08150ad88cc67b2b9fbb7abb5365e68ace4b763c0b1d5ab2a33c27e8892b7ae.gz",
+      "size": 141,
+      "sha256": "d08150ad88cc67b2b9fbb7abb5365e68ace4b763c0b1d5ab2a33c27e8892b7ae",
+      "gzip_size": 137,
+      "gzip_sha256": "1db41e2621e9d46adf907f276602da7c6b4674507c11d5cd72d989cdc767b9fe"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/objects/da1f870305db916d765eb1e912b7a1495c397d9148650f08e776cd214c135cfa",
+      "artifact": "acceptance/browser/objects/da1f870305db916d765eb1e912b7a1495c397d9148650f08e776cd214c135cfa.gz",
+      "size": 711,
+      "sha256": "da1f870305db916d765eb1e912b7a1495c397d9148650f08e776cd214c135cfa",
+      "gzip_size": 376,
+      "gzip_sha256": "260592ce9fdb36d4eaf19ffed55347aeb937bd198bb24a4fd96acc9c112fc7d8"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/objects/f76cb9b2c416294ac081f8839b77297fda02c5c520b9b488f0019d9cdf373e3a",
+      "artifact": "acceptance/browser/objects/f76cb9b2c416294ac081f8839b77297fda02c5c520b9b488f0019d9cdf373e3a.gz",
+      "size": 154,
+      "sha256": "f76cb9b2c416294ac081f8839b77297fda02c5c520b9b488f0019d9cdf373e3a",
+      "gzip_size": 144,
+      "gzip_sha256": "eb9c7f3601954d60e8b6fe22150cf23bf5704e13c1357fe1f76b30a86132655f"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/original.trace",
+      "artifact": "acceptance/browser/original.trace.gz",
+      "size": 698101,
+      "sha256": "c583c54b9e2b81849841c41493a8de627bda45f16b8d149b7083dea346502bb0",
+      "gzip_size": 71227,
+      "gzip_sha256": "08efe66952ab7c136d1f5d496449e4f7c40b59621bb641798f39795d674c83cf"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/pending.resume",
+      "artifact": "acceptance/browser/pending.resume.gz",
+      "size": 12674,
+      "sha256": "41be26393a52b483c4ed30e132a9e7641f7dd1944d1cdca32ea6f066b6ad20d6",
+      "gzip_size": 4596,
+      "gzip_sha256": "34a067ca618c282f26a8c1f410ff12e813b35116b1e62f339445424249caf59c"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/probe.json",
+      "artifact": "acceptance/browser/probe.json.gz",
+      "size": 21780,
+      "sha256": "fe61343b4d049398d959028a2c2033fa699132442f142c6e6909b3d63215a9c1",
+      "gzip_size": 3907,
+      "gzip_sha256": "fae046e0152a5beeb0cd54439493a113dba54db188deb5dab62a0df5a87d66bd"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/receive-frame.bin",
+      "artifact": "acceptance/browser/receive-frame.bin.gz",
+      "size": 179,
+      "sha256": "28ad5da384dbd6e60d274649db0957c7e4aff7a5c68695774621ef7bfc293482",
+      "gzip_size": 172,
+      "gzip_sha256": "f8a237b789d54cb3832ab846d8cf58fdebc27b99df1a591a790e63cc4b0b754d"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/replay-1-pending-false.resume",
+      "artifact": "acceptance/browser/replay-1-pending-false.resume.gz",
+      "size": 12967,
+      "sha256": "b3223531e5d35aedf824e02c158f50b347f35bb8076b1d55c63a1979ee8474ea",
+      "gzip_size": 4748,
+      "gzip_sha256": "4872421190a7f9d6731d9242723cb85721c27834f271ec752da1878f46937dbb"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/replay-1-pending-false.trace",
+      "artifact": "acceptance/browser/replay-1-pending-false.trace.gz",
+      "size": 698101,
+      "sha256": "c583c54b9e2b81849841c41493a8de627bda45f16b8d149b7083dea346502bb0",
+      "gzip_size": 71227,
+      "gzip_sha256": "08efe66952ab7c136d1f5d496449e4f7c40b59621bb641798f39795d674c83cf"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/replay-1-pending-true.resume",
+      "artifact": "acceptance/browser/replay-1-pending-true.resume.gz",
+      "size": 12967,
+      "sha256": "b3223531e5d35aedf824e02c158f50b347f35bb8076b1d55c63a1979ee8474ea",
+      "gzip_size": 4748,
+      "gzip_sha256": "4872421190a7f9d6731d9242723cb85721c27834f271ec752da1878f46937dbb"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/replay-1-pending-true.trace",
+      "artifact": "acceptance/browser/replay-1-pending-true.trace.gz",
+      "size": 624982,
+      "sha256": "2199d5e8bed7184af99c9df7916483ca5475fc91786fe0d51e08cb8878bb2cc8",
+      "gzip_size": 63598,
+      "gzip_sha256": "9c6bdd46cd92b1bf892fb4fa438ce97f75390cce46809c603c36065dfbfe150e"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/replay-4096-pending-false.resume",
+      "artifact": "acceptance/browser/replay-4096-pending-false.resume.gz",
+      "size": 12967,
+      "sha256": "b3223531e5d35aedf824e02c158f50b347f35bb8076b1d55c63a1979ee8474ea",
+      "gzip_size": 4748,
+      "gzip_sha256": "4872421190a7f9d6731d9242723cb85721c27834f271ec752da1878f46937dbb"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/replay-4096-pending-false.trace",
+      "artifact": "acceptance/browser/replay-4096-pending-false.trace.gz",
+      "size": 698101,
+      "sha256": "c583c54b9e2b81849841c41493a8de627bda45f16b8d149b7083dea346502bb0",
+      "gzip_size": 71227,
+      "gzip_sha256": "08efe66952ab7c136d1f5d496449e4f7c40b59621bb641798f39795d674c83cf"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/replay-4096-pending-true.resume",
+      "artifact": "acceptance/browser/replay-4096-pending-true.resume.gz",
+      "size": 12967,
+      "sha256": "b3223531e5d35aedf824e02c158f50b347f35bb8076b1d55c63a1979ee8474ea",
+      "gzip_size": 4748,
+      "gzip_sha256": "4872421190a7f9d6731d9242723cb85721c27834f271ec752da1878f46937dbb"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/replay-4096-pending-true.trace",
+      "artifact": "acceptance/browser/replay-4096-pending-true.trace.gz",
+      "size": 624982,
+      "sha256": "2199d5e8bed7184af99c9df7916483ca5475fc91786fe0d51e08cb8878bb2cc8",
+      "gzip_size": 63598,
+      "gzip_sha256": "9c6bdd46cd92b1bf892fb4fa438ce97f75390cce46809c603c36065dfbfe150e"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/replay-7-pending-false.resume",
+      "artifact": "acceptance/browser/replay-7-pending-false.resume.gz",
+      "size": 12967,
+      "sha256": "b3223531e5d35aedf824e02c158f50b347f35bb8076b1d55c63a1979ee8474ea",
+      "gzip_size": 4748,
+      "gzip_sha256": "4872421190a7f9d6731d9242723cb85721c27834f271ec752da1878f46937dbb"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/replay-7-pending-false.trace",
+      "artifact": "acceptance/browser/replay-7-pending-false.trace.gz",
+      "size": 698101,
+      "sha256": "c583c54b9e2b81849841c41493a8de627bda45f16b8d149b7083dea346502bb0",
+      "gzip_size": 71227,
+      "gzip_sha256": "08efe66952ab7c136d1f5d496449e4f7c40b59621bb641798f39795d674c83cf"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/replay-7-pending-true.resume",
+      "artifact": "acceptance/browser/replay-7-pending-true.resume.gz",
+      "size": 12967,
+      "sha256": "b3223531e5d35aedf824e02c158f50b347f35bb8076b1d55c63a1979ee8474ea",
+      "gzip_size": 4748,
+      "gzip_sha256": "4872421190a7f9d6731d9242723cb85721c27834f271ec752da1878f46937dbb"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/replay-7-pending-true.trace",
+      "artifact": "acceptance/browser/replay-7-pending-true.trace.gz",
+      "size": 624982,
+      "sha256": "2199d5e8bed7184af99c9df7916483ca5475fc91786fe0d51e08cb8878bb2cc8",
+      "gzip_size": 63598,
+      "gzip_sha256": "9c6bdd46cd92b1bf892fb4fa438ce97f75390cce46809c603c36065dfbfe150e"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser/report.json",
+      "artifact": "acceptance/browser/report.json.gz",
+      "size": 48644,
+      "sha256": "b8e97c1cdc3c41b04876c58d6528d46dc4ea7d4dad9757b43792ae49d18e666c",
+      "gzip_size": 6961,
+      "gzip_sha256": "0c14ab7da935c762d864f51e24b82c1032df70f0f1c8a5279d246dbbb059a223"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/artifacts-alpine.json",
+      "artifact": "public-assets/original/deployment/artifacts-alpine.json.gz",
+      "size": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c",
+      "gzip_size": 505,
+      "gzip_sha256": "6a6342d97b6ce592b71aaade100e0acca909836db9d5bad5aa43c1396d802b83"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/artifacts-node-alpine.json",
+      "artifact": "public-assets/original/deployment/artifacts-node-alpine.json.gz",
+      "size": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf",
+      "gzip_size": 518,
+      "gzip_sha256": "c7bff604a9dbda2806afd1e41c6f69827c29eb18bffb06c72f6d2de00017349c"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/artifacts-omarchy-virgl.json",
+      "artifact": "public-assets/original/deployment/artifacts-omarchy-virgl.json.gz",
+      "size": 1062,
+      "sha256": "78e227e08f0032bddc1e9dc0df77df8274c78f7340c4df9d9dd72630cd4e91ff",
+      "gzip_size": 520,
+      "gzip_sha256": "8867498ad6d0a7dc7a1475abc4176eab89c1a8ab4ef828d8cfba2b780503f5af"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/artifacts-omarchy.json",
+      "artifact": "public-assets/original/deployment/artifacts-omarchy.json.gz",
+      "size": 1229,
+      "sha256": "39500e220a6ec642c5dc5f8d417bdb5147416c0d8bcde191d6c640dde391e3cf",
+      "gzip_size": 545,
+      "gzip_sha256": "e11bff08a1f86c3e69e2700ee66f2fd05a60ae356290dd0578d4a2c5598d34ac"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/artifacts.json",
+      "artifact": "public-assets/original/deployment/artifacts.json.gz",
+      "size": 905,
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404",
+      "gzip_size": 418,
+      "gzip_sha256": "af24aa41e284841f393c706e14213cafb6acb8efa3fd0d98aaba635e4220b83c"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/assets/e9-network-capture.bin",
+      "artifact": "public-assets/original/deployment/assets/e9-network-capture.bin.gz",
+      "size": 9908,
+      "sha256": "85ba7328592bfbb4928291e1f7f6ef8418701bdea3ad3f10fc6faa29b8847ae4",
+      "gzip_size": 4041,
+      "gzip_sha256": "8e1c5e7b0d1de2463edf0144d2050f9513091ec09968e6c6a13cd247ee392b67"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/assets/e9-network-capture.elf",
+      "artifact": "public-assets/original/deployment/assets/e9-network-capture.elf.gz",
+      "size": 10028,
+      "sha256": "2c07954df9ff25f82944f089d62ea368ffbad0bd29c9006cf8cc3c11284fe6d1",
+      "gzip_size": 4096,
+      "gzip_sha256": "1269ac0c1962675042e8c35c86cee9df43f7326878cff717fc3a0de9c39bcb9f"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/assets/e9-network-capture.json",
+      "artifact": "public-assets/original/deployment/assets/e9-network-capture.json.gz",
+      "size": 970,
+      "sha256": "d77954f50f6f773fc754d920368535b1db6e0eab71348df8f0ea78fba4d78205",
+      "gzip_size": 598,
+      "gzip_sha256": "4604f7999c5f7ad06365bc8bd8c0af030441aa4546a79513e70a035351dc7523"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/main.js",
+      "artifact": "public-assets/original/deployment/main.js.gz",
+      "size": 168341,
+      "sha256": "d8222a0fdbfdff30e380b3859f2946b46c2c828784301f6f77fd22f1985b91e2",
+      "gzip_size": 47604,
+      "gzip_sha256": "1c6853ae1bcc775d25e7aef3d3d7f27ded529f36aca831104d73650045527d23"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/network-capture-probe.js",
+      "artifact": "public-assets/original/deployment/network-capture-probe.js.gz",
+      "size": 12651,
+      "sha256": "b50da2efec07de6aaa3ba4c88b6b1dbb0ca18c07dcd82be24c881ce4a7ffb9f1",
+      "gzip_size": 4635,
+      "gzip_sha256": "9243e5e083dc606454824b9805cd043b0e0ead8e1492f777e41e56f2bf7ea873"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/pkg/wasm_vm_wasm.js",
+      "artifact": "public-assets/original/deployment/pkg/wasm_vm_wasm.js.gz",
+      "size": 154827,
+      "sha256": "2caa30439a2c0f6a96eacb26bfa968b8e9096a3b34f0d83fc1bcc4cf280d0136",
+      "gzip_size": 28444,
+      "gzip_sha256": "05dc7b711a1d2481cd4e414c5ae7a2f83bc0c2d1a695f5935b43955ca1d2cc3d"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/pkg/wasm_vm_wasm_bg.wasm",
+      "artifact": "public-assets/original/deployment/pkg/wasm_vm_wasm_bg.wasm.gz",
+      "size": 2178164,
+      "sha256": "29911c6854410dfe75b3d798c23b2ba86e8456ffaeb07264c894106ded79a948",
+      "gzip_size": 794176,
+      "gzip_sha256": "46fbf8ddf34b2d18a827062406abb496da2391b62f86484d63840351102ea16f"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/roadmap.js",
+      "artifact": "public-assets/original/deployment/roadmap.js.gz",
+      "size": 59998,
+      "sha256": "f99740026c83ee21b593f1789ba744f9b485eee0e0d1d1210734b96aa278f6b3",
+      "gzip_size": 18779,
+      "gzip_sha256": "0299de27e99ac1365adb3f4622687e2a3e6e05d9fee9a19afeb28531e5ff5a35"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/session-inputs.js",
+      "artifact": "public-assets/original/deployment/session-inputs.js.gz",
+      "size": 14003,
+      "sha256": "3e2499d7b022815432e9141cad75f20ca16e5203bfca11140cbdcc57ae3aab76",
+      "gzip_size": 4355,
+      "gzip_sha256": "2e4991aeefc2c321e6ce04480601ed97b4b60dfbf8e67ae31bb49113dcbb89a8"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/session-network.js",
+      "artifact": "public-assets/original/deployment/session-network.js.gz",
+      "size": 6036,
+      "sha256": "06a9e2c2cfeda8e958c75d2add81fd3f74f71a58c1906c81ebddd2568eba5107",
+      "gzip_size": 2259,
+      "gzip_sha256": "12061fdc4fa6185d0260090fbc50f12179cc20d86184ec04fd2398a8e3049c15"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/session-pkg/wasm_vm_session.js",
+      "artifact": "public-assets/original/deployment/session-pkg/wasm_vm_session.js.gz",
+      "size": 13995,
+      "sha256": "3fd1b264aca219a71908e13855b42286fe42b01369b0cbebda84ac23e45d22f6",
+      "gzip_size": 2994,
+      "gzip_sha256": "1b94c92ee04558fba91b7cb186356b252050b4dafe7b94e811d423d737f0cfb8"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/deployment/session-pkg/wasm_vm_session_bg.wasm",
+      "artifact": "public-assets/original/deployment/session-pkg/wasm_vm_session_bg.wasm.gz",
+      "size": 434267,
+      "sha256": "abc034c6106d36f64252d2024a8b03e467a6188752d4c0812141b2d3eca438d7",
+      "gzip_size": 143992,
+      "gzip_sha256": "5c77dcba8ad03753889170877ba58b99b6aba1fd8973b4944ce66696af6bd848"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/artifacts-alpine.json",
+      "artifact": "public-assets/original/production/artifacts-alpine.json.gz",
+      "size": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c",
+      "gzip_size": 505,
+      "gzip_sha256": "6a6342d97b6ce592b71aaade100e0acca909836db9d5bad5aa43c1396d802b83"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/artifacts-node-alpine.json",
+      "artifact": "public-assets/original/production/artifacts-node-alpine.json.gz",
+      "size": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf",
+      "gzip_size": 518,
+      "gzip_sha256": "c7bff604a9dbda2806afd1e41c6f69827c29eb18bffb06c72f6d2de00017349c"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/artifacts-omarchy-virgl.json",
+      "artifact": "public-assets/original/production/artifacts-omarchy-virgl.json.gz",
+      "size": 1062,
+      "sha256": "78e227e08f0032bddc1e9dc0df77df8274c78f7340c4df9d9dd72630cd4e91ff",
+      "gzip_size": 520,
+      "gzip_sha256": "8867498ad6d0a7dc7a1475abc4176eab89c1a8ab4ef828d8cfba2b780503f5af"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/artifacts-omarchy.json",
+      "artifact": "public-assets/original/production/artifacts-omarchy.json.gz",
+      "size": 1229,
+      "sha256": "39500e220a6ec642c5dc5f8d417bdb5147416c0d8bcde191d6c640dde391e3cf",
+      "gzip_size": 545,
+      "gzip_sha256": "e11bff08a1f86c3e69e2700ee66f2fd05a60ae356290dd0578d4a2c5598d34ac"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/artifacts.json",
+      "artifact": "public-assets/original/production/artifacts.json.gz",
+      "size": 905,
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404",
+      "gzip_size": 418,
+      "gzip_sha256": "af24aa41e284841f393c706e14213cafb6acb8efa3fd0d98aaba635e4220b83c"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/assets/e9-network-capture.bin",
+      "artifact": "public-assets/original/production/assets/e9-network-capture.bin.gz",
+      "size": 9908,
+      "sha256": "85ba7328592bfbb4928291e1f7f6ef8418701bdea3ad3f10fc6faa29b8847ae4",
+      "gzip_size": 4041,
+      "gzip_sha256": "8e1c5e7b0d1de2463edf0144d2050f9513091ec09968e6c6a13cd247ee392b67"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/assets/e9-network-capture.elf",
+      "artifact": "public-assets/original/production/assets/e9-network-capture.elf.gz",
+      "size": 10028,
+      "sha256": "2c07954df9ff25f82944f089d62ea368ffbad0bd29c9006cf8cc3c11284fe6d1",
+      "gzip_size": 4096,
+      "gzip_sha256": "1269ac0c1962675042e8c35c86cee9df43f7326878cff717fc3a0de9c39bcb9f"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/assets/e9-network-capture.json",
+      "artifact": "public-assets/original/production/assets/e9-network-capture.json.gz",
+      "size": 970,
+      "sha256": "d77954f50f6f773fc754d920368535b1db6e0eab71348df8f0ea78fba4d78205",
+      "gzip_size": 598,
+      "gzip_sha256": "4604f7999c5f7ad06365bc8bd8c0af030441aa4546a79513e70a035351dc7523"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/main.js",
+      "artifact": "public-assets/original/production/main.js.gz",
+      "size": 168341,
+      "sha256": "d8222a0fdbfdff30e380b3859f2946b46c2c828784301f6f77fd22f1985b91e2",
+      "gzip_size": 47604,
+      "gzip_sha256": "1c6853ae1bcc775d25e7aef3d3d7f27ded529f36aca831104d73650045527d23"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/network-capture-probe.js",
+      "artifact": "public-assets/original/production/network-capture-probe.js.gz",
+      "size": 12651,
+      "sha256": "b50da2efec07de6aaa3ba4c88b6b1dbb0ca18c07dcd82be24c881ce4a7ffb9f1",
+      "gzip_size": 4635,
+      "gzip_sha256": "9243e5e083dc606454824b9805cd043b0e0ead8e1492f777e41e56f2bf7ea873"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/pkg/wasm_vm_wasm.js",
+      "artifact": "public-assets/original/production/pkg/wasm_vm_wasm.js.gz",
+      "size": 154827,
+      "sha256": "2caa30439a2c0f6a96eacb26bfa968b8e9096a3b34f0d83fc1bcc4cf280d0136",
+      "gzip_size": 28444,
+      "gzip_sha256": "05dc7b711a1d2481cd4e414c5ae7a2f83bc0c2d1a695f5935b43955ca1d2cc3d"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/pkg/wasm_vm_wasm_bg.wasm",
+      "artifact": "public-assets/original/production/pkg/wasm_vm_wasm_bg.wasm.gz",
+      "size": 2178164,
+      "sha256": "29911c6854410dfe75b3d798c23b2ba86e8456ffaeb07264c894106ded79a948",
+      "gzip_size": 794176,
+      "gzip_sha256": "46fbf8ddf34b2d18a827062406abb496da2391b62f86484d63840351102ea16f"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/roadmap.js",
+      "artifact": "public-assets/original/production/roadmap.js.gz",
+      "size": 59998,
+      "sha256": "f99740026c83ee21b593f1789ba744f9b485eee0e0d1d1210734b96aa278f6b3",
+      "gzip_size": 18779,
+      "gzip_sha256": "0299de27e99ac1365adb3f4622687e2a3e6e05d9fee9a19afeb28531e5ff5a35"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/session-inputs.js",
+      "artifact": "public-assets/original/production/session-inputs.js.gz",
+      "size": 14003,
+      "sha256": "3e2499d7b022815432e9141cad75f20ca16e5203bfca11140cbdcc57ae3aab76",
+      "gzip_size": 4355,
+      "gzip_sha256": "2e4991aeefc2c321e6ce04480601ed97b4b60dfbf8e67ae31bb49113dcbb89a8"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/session-network.js",
+      "artifact": "public-assets/original/production/session-network.js.gz",
+      "size": 6036,
+      "sha256": "06a9e2c2cfeda8e958c75d2add81fd3f74f71a58c1906c81ebddd2568eba5107",
+      "gzip_size": 2259,
+      "gzip_sha256": "12061fdc4fa6185d0260090fbc50f12179cc20d86184ec04fd2398a8e3049c15"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/session-pkg/wasm_vm_session.js",
+      "artifact": "public-assets/original/production/session-pkg/wasm_vm_session.js.gz",
+      "size": 13995,
+      "sha256": "3fd1b264aca219a71908e13855b42286fe42b01369b0cbebda84ac23e45d22f6",
+      "gzip_size": 2994,
+      "gzip_sha256": "1b94c92ee04558fba91b7cb186356b252050b4dafe7b94e811d423d737f0cfb8"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/production/session-pkg/wasm_vm_session_bg.wasm",
+      "artifact": "public-assets/original/production/session-pkg/wasm_vm_session_bg.wasm.gz",
+      "size": 434267,
+      "sha256": "abc034c6106d36f64252d2024a8b03e467a6188752d4c0812141b2d3eca438d7",
+      "gzip_size": 143992,
+      "gzip_sha256": "5c77dcba8ad03753889170877ba58b99b6aba1fd8973b4944ce66696af6bd848"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets/report.json",
+      "artifact": "public-assets/original/report.json.gz",
+      "size": 31443,
+      "sha256": "b97fd649af4d535bfcdd2322fecf4fcf9230b24bb7515bb5744a46894ef763df",
+      "gzip_size": 3246,
+      "gzip_sha256": "e0cbc7a65691031952600a6fd0fccf4b423ab3a083b5e871a3cab0fab1104d2f"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets-complete/deployment/app.html",
+      "artifact": "public-assets/completion/deployment/app.html.gz",
+      "size": 55777,
+      "sha256": "5731888361e5f0d77927713254ff68047b4bfde404cc9ec16582861c3eaab3e1",
+      "gzip_size": 12945,
+      "gzip_sha256": "c88f61e5b812f1f1c360d8e6431717cbd11404926a6c6e8d9c3df63d74e26bd5"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets-complete/deployment/hop-0.bin",
+      "artifact": "public-assets/completion/deployment/hop-0.bin.gz",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_size": 20,
+      "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets-complete/deployment/hop-1.bin",
+      "artifact": "public-assets/completion/deployment/hop-1.bin.gz",
+      "size": 55777,
+      "sha256": "5731888361e5f0d77927713254ff68047b4bfde404cc9ec16582861c3eaab3e1",
+      "gzip_size": 12945,
+      "gzip_sha256": "c88f61e5b812f1f1c360d8e6431717cbd11404926a6c6e8d9c3df63d74e26bd5"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets-complete/production/app.html",
+      "artifact": "public-assets/completion/production/app.html.gz",
+      "size": 55777,
+      "sha256": "5731888361e5f0d77927713254ff68047b4bfde404cc9ec16582861c3eaab3e1",
+      "gzip_size": 12945,
+      "gzip_sha256": "c88f61e5b812f1f1c360d8e6431717cbd11404926a6c6e8d9c3df63d74e26bd5"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets-complete/production/hop-0.bin",
+      "artifact": "public-assets/completion/production/hop-0.bin.gz",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_size": 20,
+      "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets-complete/production/hop-1.bin",
+      "artifact": "public-assets/completion/production/hop-1.bin.gz",
+      "size": 55777,
+      "sha256": "5731888361e5f0d77927713254ff68047b4bfde404cc9ec16582861c3eaab3e1",
+      "gzip_size": 12945,
+      "gzip_sha256": "c88f61e5b812f1f1c360d8e6431717cbd11404926a6c6e8d9c3df63d74e26bd5"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-assets-complete/report.json",
+      "artifact": "public-assets/completion/report.json.gz",
+      "size": 39823,
+      "sha256": "2be08caa1d680983eaf808eb632ff28c45c19e3b026c70eaad4b500c8db7a67e",
+      "gzip_size": 3789,
+      "gzip_sha256": "5961118ef013dd366f4b3552a0b8a17e5527aa6f11a35008f503298696cafab8"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-oracle-qualification/frozen-base.py",
+      "artifact": "public-oracle/frozen-base.py.gz",
+      "size": 13524,
+      "sha256": "aee77f3451f6fa153befa18bace6f524591d59da92d636dda111216a43906907",
+      "gzip_size": 4488,
+      "gzip_sha256": "02f54729ee8622ad94ab35e933dea4a2c9e12c9df2d9bee097184f977f7756a1"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-oracle-qualification/oracle.log",
+      "artifact": "public-oracle/oracle.log.gz",
+      "size": 1339,
+      "sha256": "a762866852a46504434a407ae0703c8b57da7fc9599b2435ddf7b38f41d77d22",
+      "gzip_size": 583,
+      "gzip_sha256": "aa406e9db257dd7855dc9ab9fa14a04997954d38aeec7b845e566c8d3ebc7f99"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-oracle-qualification/qualified-assertion.diff",
+      "artifact": "public-oracle/qualified-assertion.diff.gz",
+      "size": 855,
+      "sha256": "a8ac867f8a1500c7459e405d7006924e7688a018b1fb72e111b2a45c5b1506a6",
+      "gzip_size": 456,
+      "gzip_sha256": "2302360b5e67efa2f423192753ded267607a7211fe8d7a86e75090669ebf69bc"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-oracle-qualification/report.json",
+      "artifact": "public-oracle/report.json.gz",
+      "size": 2516,
+      "sha256": "108a56406978beca6a66e659f7aa3dda941370596688dd823d56484d90759334",
+      "gzip_size": 1325,
+      "gzip_sha256": "e776c9fb149c436e2f759a1051fc63a5fa3ed3afbdc01295e803040464b1edb0"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-oracle-qualification/source/tools/verify/e9-network-capture-files.py",
+      "artifact": "public-oracle/source/tools/verify/e9-network-capture-files.py.gz",
+      "size": 13522,
+      "sha256": "2ccd69821694ceb191285d1cfb763b51baafc38fc9e8302d2e27ec62fd29ab0d",
+      "gzip_size": 4484,
+      "gzip_sha256": "2c7d833709c60266e384fef6062adaf7e5837a419ae022e3d0d523c95bb08a0c"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-oracle-qualification/source/web/assets/e9-network-capture.bin",
+      "artifact": "public-oracle/source/web/assets/e9-network-capture.bin.gz",
+      "size": 9908,
+      "sha256": "85ba7328592bfbb4928291e1f7f6ef8418701bdea3ad3f10fc6faa29b8847ae4",
+      "gzip_size": 4041,
+      "gzip_sha256": "8e1c5e7b0d1de2463edf0144d2050f9513091ec09968e6c6a13cd247ee392b67"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-publication-v2/deployment-public.log",
+      "artifact": "publication/deployment-public.log.gz",
+      "size": 168,
+      "sha256": "960ae02aa97f12b4b6a106886ff6bbd8b5dac5cce9d1e9072dd8744e8cba6940",
+      "gzip_size": 161,
+      "gzip_sha256": "9d5a3d7fe5fdd02142532b98b19c04b3bbb40bf828d25ad227b8768b00389628"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-publication-v2/receipt.json",
+      "artifact": "publication/receipt.json.gz",
+      "size": 2069,
+      "sha256": "3473bc9398b674342a67a63cc23e80cba2f7e978c3f2c88454183e93aa791e63",
+      "gzip_size": 1027,
+      "gzip_sha256": "f706230605fad2b6109406a9f082c2235b46863d65f4e8ec64c2213ca0ec402e"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-corrected-account/project-availability.json",
+      "artifact": "account/corrected-first/project-availability.json.gz",
+      "size": 748,
+      "sha256": "a479b519386f5fa3b77cd1ac98112939f9e820a94eeb18d416ad95bf9594afa7",
+      "gzip_size": 468,
+      "gzip_sha256": "22f55683efacfef4c4182562a0434e5162ba97209336adaeb0cf2a0e5d52bba1"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-corrected-account-v2/project-availability.json",
+      "artifact": "account/corrected-v2/project-availability.json.gz",
+      "size": 732,
+      "sha256": "bae2298bbb98af5b724be6a0f82506c333d54d243c488c2a54707836d29bd0a6",
+      "gzip_size": 464,
+      "gzip_sha256": "c341b5669c7a0d559630b36e5b0fa86005c0c3eac4e71150c0d6da6b30fd896f"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-corrected-account-v3/project-availability.json",
+      "artifact": "account/corrected-v3/project-availability.json.gz",
+      "size": 975,
+      "sha256": "6d92beb5f5a6616afaae42c40f894f2a43f20df3c9fb633671fe334bdc8525da",
+      "gzip_size": 580,
+      "gzip_sha256": "0e9e43dc3e15e0af7cbdc95a0d2f088d8370cd912a2c2032eba59c085f6a488f"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-public-completion-summary.json",
+      "artifact": "summary.json.gz",
+      "size": 2725,
+      "sha256": "a1256a63473252132ede738afc464366e84432db94c3973eb6f771a9f7f38522",
+      "gzip_size": 1416,
+      "gzip_sha256": "1cb8ade14809befca307155c2975362f4595f54bdd9ec3579637b47e16156ae7"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser-run.json",
+      "artifact": "origin/public-browser-run.json.gz",
+      "size": 1507,
+      "sha256": "5f07ff8da7c4971144fc5bf7507db366911c1e58c098a6ee3126c386bc13ef0a",
+      "gzip_size": 760,
+      "gzip_sha256": "287c43c2e8847291732a1d3a993f3d413a8bc1a549af230373b1f7552972b9ec"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser-run.log",
+      "artifact": "origin/public-browser-run.log.gz",
+      "size": 312,
+      "sha256": "bdee9c4d1c1c238a789c1f4a66e46d17f026e7373d66170528faccafe919a8c9",
+      "gzip_size": 212,
+      "gzip_sha256": "c7687a9da9df2d7f0c7454bc53db2631f021e93ef0bf78854febc39aca039630"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-browser-oracle.log",
+      "artifact": "origin/frozen-public-oracle-original-failure.log.gz",
+      "size": 298,
+      "sha256": "ed95e4422f57dd820629910c11fcc978ba72773b15658bf0e9b3b854005ec1bd",
+      "gzip_size": 253,
+      "gzip_sha256": "8c0ca277dba954e1d7a2029b4f17160e643c7840a745476eaabf9d590277e371"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-public-provider-response-points.json",
+      "artifact": "origin/public-provider-response-points.json.gz",
+      "size": 601,
+      "sha256": "bd6a9fb029eb3809e74d9b6aed2ce42281ef64ecb5abcb21354b972d18d1d953",
+      "gzip_size": 377,
+      "gzip_sha256": "f909ea57fbbb9b5c1adc35b89fda93aac9cf27ca29e8c076240400b2f1d5d014"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-project-list-schema-qualification.json",
+      "artifact": "origin/project-list-schema-qualification.json.gz",
+      "size": 1569,
+      "sha256": "de476cb84e8e34e155a78c197af6de8c21610cb82d54c09d0db4b753bb6cefe1",
+      "gzip_size": 584,
+      "gzip_sha256": "425622dae58f445eec25f1f3ebcc0bbd3d29480deccfbcebcbcef5ebfe3df105"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-work-account-device-status.json",
+      "artifact": "origin/work-account-refresh-status.json.gz",
+      "size": 1841,
+      "sha256": "de79f839dcb98c9393a203e2963d1b3f67f806b31b9701af37cd8a4dac5debb5",
+      "gzip_size": 603,
+      "gzip_sha256": "aacb8c7fac8e92f307cc9f0b4b270c870090f36f45d69497a6e54ae357151777"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-work-account-validated-auth-result.json",
+      "artifact": "origin/work-account-authenticated.json.gz",
+      "size": 728,
+      "sha256": "e647df93189be5da22de3f83a39f76ecdda925f2167014b1440a294e39f80d3b",
+      "gzip_size": 410,
+      "gzip_sha256": "1fa1149423510f84f7ac4b2eb057553b6c9c74a740d32b9a698c8865e5134b91"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-corrected-account-auth-result.json",
+      "artifact": "origin/first-correction-still-old-session.json.gz",
+      "size": 728,
+      "sha256": "9ddbde964c561998244e743775edd44641f10b369693e090021e03a3c98a8485",
+      "gzip_size": 412,
+      "gzip_sha256": "9b0cbf1d5d885341e906e46b226636edee2b5caf7a6edf3ebb89c5eca583d7f3"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-wfi-publication-prepared/receipt.json",
+      "artifact": "origin/prepared-payload.json.gz",
+      "size": 246032,
+      "sha256": "9f5ec1661f7d1895c59b332750dab1a803b8477358c86a0da62f75e2a1714163",
+      "gzip_size": 77922,
+      "gzip_sha256": "abbf1bb810f5d75f0ab9a7537b25227979652f246517cce0c599ee7ad2559cd2"
+    },
+    {
+      "original_path": "/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/evidence/e9-t13/project-account-preflight/provenance.json",
+      "artifact": "origin/earlier-account-packet-manifest.json.gz",
+      "size": 5597,
+      "sha256": "a9c5ca2a5807144f3b3f993c40f686f4a1ea8ab460360964448bcd1e26399f19",
+      "gzip_size": 2028,
+      "gzip_sha256": "b01effe55648108b6f61f8680095cfc2de6ab965febb5a359cf74458d2ee1e57"
+    },
+    {
+      "original_path": "/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/evidence/e9-t13/worker-wfi-final/provenance.json",
+      "artifact": "origin/frozen-local-worker-packet-manifest.json.gz",
+      "size": 602229,
+      "sha256": "dcfded2590ed9e6471f8d6cd9c07f4c93523f5c1e34d97a2b7d0b3a5aafeedf9",
+      "gzip_size": 94824,
+      "gzip_sha256": "ecfd386ef4b044169c04f09bb15d419dc1714bed8e0a0bb17ee6df99427f8e3b"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-publish-frozen-wfi-v2.py",
+      "artifact": "producers/e9-t13-publish-frozen-wfi-v2.py.gz",
+      "size": 4854,
+      "sha256": "e38414e33c35b320502a46bed685818cd01dad494e47851369e6d28adef9f168",
+      "gzip_size": 2172,
+      "gzip_sha256": "5ef683546c0fdd0d6d59b50b1e27372b6a085d37aa05c9780ce63de5cf876e76"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-run-public-browser.py",
+      "artifact": "producers/e9-t13-run-public-browser.py.gz",
+      "size": 2800,
+      "sha256": "2526cd4328a3cec288ba3771df12663075541e339e0b75e8815c3c8845d42918",
+      "gzip_size": 1168,
+      "gzip_sha256": "bbfd01108119acff585014d45e00a7ee6d9b41c6cba00a036d5c9bf6190f2366"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-record-public-assets.py",
+      "artifact": "producers/e9-t13-record-public-assets.py.gz",
+      "size": 3578,
+      "sha256": "74cc323917914d8fde603d32b861fdcdfe2ba47143066fe3be083662508e4cb8",
+      "gzip_size": 1584,
+      "gzip_sha256": "471cf6ae29b1dcb8c950dfb733a583cb6184e7aa151081a914015cb806621f5e"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-record-public-assets-v2.py",
+      "artifact": "producers/e9-t13-record-public-assets-v2.py.gz",
+      "size": 3579,
+      "sha256": "c85497ffb6518355cd4744520a966d70f6494b2b9a2b722f5d8c0ac2b3ea0c9d",
+      "gzip_size": 1584,
+      "gzip_sha256": "53fa2400b534d1d920770948945022630a71833b10b7858b671d35c39390a812"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-complete-public-asset-capture.py",
+      "artifact": "producers/e9-t13-complete-public-asset-capture.py.gz",
+      "size": 3883,
+      "sha256": "759ddb12fe9c344534439766d4efc0941136571bd80eecf73a451ebde6c9ccab",
+      "gzip_size": 1714,
+      "gzip_sha256": "d832a3a37a1b5df18847ffb8004766c6724223e89a736e044ef49de8ceabba94"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-run-public-file-oracle.py",
+      "artifact": "producers/e9-t13-run-public-file-oracle.py.gz",
+      "size": 3970,
+      "sha256": "ce3faaa39135db28092294ff387e818d1df4ca811d2209924d4e9847c7dbb2a0",
+      "gzip_size": 1701,
+      "gzip_sha256": "08454b070ce391935a44eb31cae091cf1b633e8e9403caaf9711ba15adca0e3f"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-public-assets-original-syntax-failure.log",
+      "artifact": "producers/e9-t13-public-assets-original-syntax-failure.log.gz",
+      "size": 233,
+      "sha256": "b1ffec25957ead1f7410d82257e2ee250572a67f15d3e71df300d95ae8dbfbdb",
+      "gzip_size": 198,
+      "gzip_sha256": "f6dda3ee60e10d1d66b51262fb7bc9dc9bf1a340be3f092d1f56ba7d481c7c66"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-refresh-work-account.py",
+      "artifact": "producers/e9-t13-refresh-work-account.py.gz",
+      "size": 2344,
+      "sha256": "72e1a9db0845a9a461038f2ac31e6fb8f88a7be3e555e02a2d5c59985a6d24f2",
+      "gzip_size": 1173,
+      "gzip_sha256": "f518733d976313fadef9a03979b1e35d031382c294f820f848a9e20028f759e9"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-work-account-validated-auth.py",
+      "artifact": "producers/e9-t13-work-account-validated-auth.py.gz",
+      "size": 2018,
+      "sha256": "632969164e9ac481ca479c96226d1e57249c7eca911c13957579342329a41e19",
+      "gzip_size": 1055,
+      "gzip_sha256": "27f48895099293e9eca57efb59e883d4ff286ca759bd44889cc2fd42214b6fa5"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-corrected-account-preflight.py",
+      "artifact": "producers/e9-t13-corrected-account-preflight.py.gz",
+      "size": 2494,
+      "sha256": "7554f9e589b22934d68b979eaaf1f83dafc66e70699cb27e0fd111b2b0302378",
+      "gzip_size": 1325,
+      "gzip_sha256": "f3ef6367f84a0835ffd00d6411ff8fec9794c9908616e9b2a64393178b35a441"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-work-account-preflight.py",
+      "artifact": "producers/e9-t13-work-account-preflight.py.gz",
+      "size": 2508,
+      "sha256": "31ce38453239ce3c2596ade91bda01b1f82fe38e8b08d5dc236ccbe52f6534f0",
+      "gzip_size": 1337,
+      "gzip_sha256": "e6e013aa40bdca5d3451217a9dc540312725b83273a020d7b31ae23cc5574d42"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-work-account-preflight-v3.py",
+      "artifact": "producers/e9-t13-work-account-preflight-v3.py.gz",
+      "size": 2754,
+      "sha256": "594702884fe7773ccf0f3967b607b7e4ddbb82e9a5213a336dc5ab42b4f4085d",
+      "gzip_size": 1448,
+      "gzip_sha256": "83438f5cd1c3660b43c50b75495c9fefb94bf270e40099c1668df0908be39c47"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-preserve-public-final.py",
+      "artifact": "producers/e9-t13-preserve-public-final.py.gz",
+      "size": 10600,
+      "sha256": "3dc634725f3766ba2983971676ca552b1fe9e6f3fe57bddb3578cc914b4ca686",
+      "gzip_size": 3702,
+      "gzip_sha256": "e4e47d5433791495d37bcc84f24fac6322f13ff475cce132d8a73fc10909996c"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-public-archive-original-failure.log",
+      "artifact": "producers/e9-t13-public-archive-original-failure.log.gz",
+      "size": 353,
+      "sha256": "0b0e42747f593f2f0785e18f6bbce11da7824b06362101fc65bad67d90d27419",
+      "gzip_size": 244,
+      "gzip_sha256": "6a7e4f1111de2ba347a75b3ac63be08dfb69408bfd5271baebcb19ca4ba0379c"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-public-completion-summary-first-archive-attempt.json",
+      "artifact": "producers/e9-t13-public-completion-summary-first-archive-attempt.json.gz",
+      "size": 2725,
+      "sha256": "b98dbb244f652f783ddc6d9579cb6b93b96f0133283968160466d9629f24917c",
+      "gzip_size": 1416,
+      "gzip_sha256": "9858fe74e1e193dd37388c6271fbbfa9c3b5874a0fcdeefd4c26c42c37db0ff3"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-preserve-public-final-v2.py",
+      "artifact": "archive-producer.py.gz",
+      "size": 11061,
+      "sha256": "f116a0f022ac781e39b6524e6fe1de85add66c11b280c9c62a976df66923b6cb",
+      "gzip_size": 3909,
+      "gzip_sha256": "cc0728d730676d419ac359fe3bf9767f9c42b9eff65048e2948b8401bb1dd7b9"
+    }
+  ]
+}
