@@ -78,3 +78,24 @@ adapters must record their actual results; unsupported adapters remain gated. GP
 results stay in T18. The final command will exercise delayed/reordered callbacks,
 cancellation and restore with guest memory/ring/IRQ witnesses. No implementation
 or verification claim is made by this activation entry.
+
+### 2026-10-18 — worker — respond to fresh checkpoint refutation
+
+The fresh critic reproduced an accepted malformed checkpoint at runtime 76b56b01:
+erasing capture_pending while retaining capture request 4 revoked live leases and
+issued duplicate request 5 at the next transition. Its independently rechecked point
+is /Volumes/e9-t11-cold-scratch/e9-t12-verifier/recheck.log:6–8, mutant SHA-256
+bb64f5b8a82261207e0cae4a36acfebce483c9a357f64f14ec5d627f1064473b.
+The task remains in-progress. The initial cold/browser recordings and successful
+publication 48988385 remain historical evidence; no verified claim is made for them.
+
+The worker repair validates reciprocal ownership between the broker pending map,
+capture owner/result and actual due sound descriptor before any restore commit or
+lease revocation. A missing owner cannot leave a pending capture behind, and removing
+both owner and request cannot erase the obligation of a real due descriptor. Future
+and stopped capture descriptors retain their proper scheduling behavior. The original
+regression fails before the fix; all eight then-existing adapter tests and the new
+future-descriptor round trip pass afterward. Exact red/green logs and raw frames are
+retained losslessly in evidence/e9-t12/repair-precheck/receipt.json. These are worker
+prechecks. The frozen repaired head must earn a new high-risk submission and fresh
+critic verdict before this task can become verified.

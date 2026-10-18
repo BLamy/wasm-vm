@@ -363,19 +363,27 @@ impl DeviceHub {
             g.capture_ready = Some(DeviceCompletion::decode(r.bytes(MAX_RESULT + 128)?)?);
         }
         if let Some(ready) = &g.capture_ready {
-            if !matches!(ready.request.intent, DeviceIntent::Capture { .. })
+            if !self.capture
+                || !matches!(ready.request.intent, DeviceIntent::Capture { .. })
                 || Some(ready.request.id) != g.capture_pending
                 || g.pending.contains_key(&ready.request.id)
                 || ready.request.id > g.next_id
             {
                 return Err(DeviceError::Snapshot);
             }
-        } else if let Some(id) = g.capture_pending
-            && !g
-                .pending
-                .get(&id)
-                .is_some_and(|request| matches!(request.intent, DeviceIntent::Capture { .. }))
-        {
+        }
+        // Ownership is reciprocal: an awaiting capture has exactly one pending request,
+        // while a ready result has consumed it. An erased owner must not orphan a request.
+        let mut captures = g
+            .pending
+            .values()
+            .filter(|request| matches!(request.intent, DeviceIntent::Capture { .. }));
+        let expected = if g.capture_ready.is_some() {
+            None
+        } else {
+            g.capture_pending
+        };
+        if captures.next().map(|request| request.id) != expected || captures.next().is_some() {
             return Err(DeviceError::Snapshot);
         }
         r.finish()?;
@@ -452,8 +460,12 @@ pub(crate) struct DeviceRestore {
 }
 impl DeviceRestore {
     pub(crate) fn sound_matches(&self, state: &crate::dev::virtio::snd::SndState) -> bool {
+        if self.guest.capture_epoch != state.capture_lifecycle_epoch() {
+            return false;
+        }
+        let due = state.session_capture_due_shape(self.guest.clock_ns);
         let Some(id) = self.guest.capture_pending else {
-            return true;
+            return due.is_none();
         };
         let request = self
             .guest
@@ -473,7 +485,6 @@ impl DeviceRestore {
         else {
             return false;
         };
-        self.guest.capture_epoch == state.capture_lifecycle_epoch()
-            && state.session_capture_request_shape() == Some((*samples, *rate, *channels))
+        due == Some((*samples, *rate, *channels))
     }
 }

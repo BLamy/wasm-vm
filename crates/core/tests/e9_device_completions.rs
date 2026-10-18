@@ -398,6 +398,104 @@ fn malformed_pending_device_and_audio_frames_are_transactional_and_keep_live_lea
 }
 
 #[test]
+fn orphaned_capture_checkpoint_is_rejected_before_state_or_leases_change() {
+    use wasm_vm_core::resume::{SectionReader, SnapshotWriter, section};
+    let mut machine = fixture(false);
+    until(&mut machine, START, 13, &mut Trace::default());
+    let before = machine.save_session_resume().unwrap();
+    let request = machine.session_device_requests().unwrap()[0].clone();
+    let live = machine.lease_session_device(request.id).unwrap();
+    for erase_request in [false, true] {
+        let (header, sections) = SectionReader::new(&before).unwrap();
+        let mut writer = SnapshotWriter::new(
+            &header.core_hash,
+            &header.base_image_hash,
+            header.overlay_generation,
+        );
+        for section in sections {
+            let section = section.unwrap();
+            let mut bytes = section.payload.to_vec();
+            if section.tag == section::SESSION_DEVICES {
+                let mut hub_length = u32::from_le_bytes(bytes[..4].try_into().unwrap()) as usize;
+                let owner = 4 + hub_length - 9;
+                assert_eq!(
+                    u64::from_le_bytes(bytes[owner..owner + 8].try_into().unwrap()),
+                    4
+                );
+                bytes[owner..owner + 8].fill(0);
+                if erase_request {
+                    // The fixture has no ready capture result. Remove its pending request as
+                    // well: a due real sound descriptor still requires an owned request.
+                    let config_length =
+                        u32::from_le_bytes(bytes[12..16].try_into().unwrap()) as usize;
+                    let count_at = 16 + config_length + 32;
+                    let count =
+                        u32::from_le_bytes(bytes[count_at..count_at + 4].try_into().unwrap());
+                    let mut at = count_at + 4;
+                    for _ in 0..count {
+                        let size = match bytes[at + 8] {
+                            1 => 49,
+                            2 => 21,
+                            3 => 18,
+                            _ => panic!("unknown fixture request"),
+                        };
+                        if bytes[at + 8] == 3 {
+                            bytes.drain(at..at + size);
+                            bytes[count_at..count_at + 4]
+                                .copy_from_slice(&(count - 1).to_le_bytes());
+                            hub_length -= size;
+                            bytes[..4].copy_from_slice(&(hub_length as u32).to_le_bytes());
+                            break;
+                        }
+                        at += size;
+                    }
+                }
+            }
+            writer.section(section.tag, &bytes);
+        }
+        let malformed = writer.finish();
+        evidence(
+            &format!("orphaned-capture-{erase_request}.resume"),
+            &malformed,
+        );
+        assert!(machine.load_session_resume(&malformed).is_err());
+        assert_eq!(machine.save_session_resume().unwrap(), before);
+    }
+    machine
+        .complete_session_device(&live, Status::Supplied, 0, payload(0))
+        .unwrap();
+    machine.take_session_deliveries().unwrap();
+    evidence("orphaned-capture-source.resume", &before);
+}
+
+#[test]
+fn future_capture_descriptor_restores_without_creating_a_request_early() {
+    let mut machine = fixture(false);
+    let mut trace = Trace::default();
+    until(&mut machine, 1605, 7, &mut trace);
+    assert!(
+        machine
+            .session_device_requests()
+            .unwrap()
+            .iter()
+            .all(|request| { !matches!(request.intent, DeviceIntent::Capture { .. }) })
+    );
+    let future = machine.save_session_resume().unwrap();
+    let mut restored = fixture(false);
+    restored.load_session_resume(&future).unwrap();
+    assert_eq!(restored.save_session_resume().unwrap(), future);
+    until(&mut machine, START, 13, &mut trace);
+    until(&mut restored, START, 17, &mut Trace::default());
+    assert_eq!(
+        restored.save_session_resume().unwrap(),
+        machine.save_session_resume().unwrap()
+    );
+    assert_eq!(restored.session_device_requests().unwrap().len(), 4);
+    evidence("capture-future.resume", &future);
+    evidence("capture-future.trace", trace.0.as_bytes());
+}
+
+#[test]
 fn short_failed_capture_and_guest_stop_never_consume_an_obsolete_quantum() {
     use wasm_vm_core::dev::virtio::snd;
     for (name, status, frames, bytes, expected, pcm_status) in [

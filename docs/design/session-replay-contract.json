@@ -417,6 +417,14 @@
         {
           "path": "crates/core/src/session_devices/codec.rs",
           "symbol": "check_session_devices_snapshot"
+        },
+        {
+          "path": "crates/core/src/session_devices/codec.rs",
+          "symbol": "let mut captures = g"
+        },
+        {
+          "path": "crates/core/src/dev/virtio/snd/mod.rs",
+          "symbol": "session_capture_due_shape"
         }
       ]
     },
@@ -775,7 +783,7 @@
     "crates/core/src/dev/virtio/input/snapshot.rs": "3466ff2e5278c1cb29a63439a9208dd2d5efc3147ed063fece77c9e35dde3fce",
     "crates/core/src/dev/virtio/net.rs": "80090a16b52bc63feab98a3dd6afeb3ba874500147031552e6aea7640bfd1387",
     "crates/core/src/dev/virtio/rng.rs": "eaef4e926231cfe3bea373d7164fae13461a2c86f41fc92faf0803451732343a",
-    "crates/core/src/dev/virtio/snd/mod.rs": "ddd178109e87d255694ec859b45f71620a2abea36781047c92d1e3e85f8db2e7",
+    "crates/core/src/dev/virtio/snd/mod.rs": "4701aa9db527b4b50e340e2d16d8e563895da01d2504a38a6318bc43ae69bbf3",
     "crates/core/src/dev/virtio/snd/session_capture_snapshot.rs": "e929c49d9c0e684a95a590b54d11ebdaf08aa3e2c5411a388c51b7625e4d3d27",
     "crates/core/src/dev/virtio/snd/snapshot.rs": "e89880eb65014d09b25cd5696bb7152beba189a25bb2d814850fbd2dc7c9e24b",
     "crates/core/src/lib.rs": "7b82a4bb6d41974a20338877c73cf8b1d758ec78127acab55040852ee9433035",
@@ -783,7 +791,7 @@
     "crates/core/src/session_clock/sources.rs": "36e874000419e12352d3472cfa549473f346ae79b5390bbe5abff11ba59bd5ff",
     "crates/core/src/session_devices.rs": "6d56de3168dc0d6d879d09a4e07dccb536053c82559efce7ab2e589cc5d1b103",
     "crates/core/src/session_devices/block.rs": "5645aad08b4670de4fe5ecde140cdbd55e11c4c7e57a5db85b238b71508edfec",
-    "crates/core/src/session_devices/codec.rs": "49fd435727efb6ec5bb6ec172c1cb0d002a4989c13abc3d7b73f62631c57ac97",
+    "crates/core/src/session_devices/codec.rs": "11411d2fb5b568ec44330d0d41a33e5aa421dbe3100e1d8c0e15ffb82d8f2261",
     "crates/core/src/time.rs": "f5c82f061100dc0f30c6281eae5d7103298622739b629312566348924257765f",
     "crates/slirp/src/lib.rs": "7e08a064d78f516b775cfdf913351155bc9734445a9a063d761c0b7f385703c2",
     "crates/storage/src/disk_root.rs": "dbe457d5d68b797d173f86bdbdd0d78c06a644e7de04c5440d060e62127e07c9",

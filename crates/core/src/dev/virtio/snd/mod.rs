@@ -1241,14 +1241,21 @@ impl SndState {
         })
     }
 
-    pub(crate) fn session_capture_request_shape(&self) -> Option<(u32, u32, u8)> {
-        self.capture.pending.front().map(|pending| {
-            (
-                (pending.frame_count * usize::from(pending.channels)) as u32,
-                pending.sample_rate_hz,
-                pending.channels,
-            )
-        })
+    pub(crate) fn session_capture_due_shape(&self, now_ns: u64) -> Option<(u32, u32, u8)> {
+        if !self.capture_enabled || self.capture_stream.state() != PcmState::Running {
+            return None;
+        }
+        self.capture
+            .pending
+            .front()
+            .filter(|pending| pending.deadline_ns <= now_ns)
+            .map(|pending| {
+                (
+                    (pending.frame_count * usize::from(pending.channels)) as u32,
+                    pending.sample_rate_hz,
+                    pending.channels,
+                )
+            })
     }
 
     /// Restore stream configuration while dropping host audio buffers and scheduling XRUN repair.
