@@ -3,7 +3,7 @@ id: E9-T07
 epic: 9
 title: Manage session quotas retention and shared-data deletion
 priority: 524.907
-status: implemented
+status: verified
 depends_on: [E9-T03, E9-T04, E9-T06]
 estimate: S
 risk: high
@@ -20,9 +20,9 @@ Quota handling and reference-aware session deletion/garbage collection; no cloud
 
 ## Acceptance criteria
 
-- [ ] Quota exhaustion stops or pauses recording with a clear state and preserves the last committed prefix; do not silently discard a named session.
-- [ ] Delete one branch and reclaim only unreachable chunks; shared checkpoints, disk roots and sibling sessions still restore.
-- [ ] Interrupt garbage collection and reopen storage safely; surface browser eviction or missing data honestly and provide delete/retry actions.
+- [x] Quota exhaustion stops or pauses recording with a clear state and preserves the last committed prefix; do not silently discard a named session.
+- [x] Delete one branch and reclaim only unreachable chunks; shared checkpoints, disk roots and sibling sessions still restore.
+- [x] Interrupt garbage collection and reopen storage safely; surface browser eviction or missing data honestly and provide delete/retry actions.
 
 ## Deterministic acceptance
 
@@ -125,3 +125,72 @@ poisoning. Original failed and supplementary traces/profiles remain at their rec
 paths; no failed report was relabeled and no storage behavior was substituted.
 
 Independent final verdict and promoted regression remain the fresh verifier's work.
+
+
+### 2026-10-18 — verifier — VERDICT: verified
+
+- **P1/P2 quota, prefix and Retry — HELD.** Predictions were recorded before evidence
+  inspection in `evidence/e9-t07/verifier-final/predictions.json`. Genuine Chromium quota
+  failure during a real append pauses the owner, releases all writer/maintenance locks,
+  preserves revision one and exposes Retry. Independent decoding authenticates the public
+  original/after-quota frame
+  `d89e519af2d3916674135a0e1783ef083c98ac9bf508b4ad05912afd1d4d8ae5` and its original
+  disk root; Retry produces revision two while preserving point one.
+  Citation: `verifier-final/raw-tuples-public.json:414,421`, relative to this task's
+  `evidence/e9-t07/` packet; original local trace `trace.trace:892` / `after@call@275`.
+  Independent same-revision manifest replacement returns HistoryChanged with zero owner
+  calls and no locks, so a cursor match alone cannot resurrect changed history.
+- **P3/P4 accounting, migration and reachability — HELD.** Shared fixture payload is
+  9,010 bytes before and after sibling publication; point/byte refusal preserves its
+  original commit and atomic counter. Two identical MiB parts count once. With one MiB already held,
+  only one of two competing unique MiB chunks fits the two-MiB total budget. Actual parent deletion
+  reduces saved data from 60,970,545 to 46,484,443 bytes while every surviving original
+  machine/assets, complete-map disk leaf and out-of-line event payload retains its hash.
+  Public original/restored/reopened frames, all sixteen native sections, sparse RAM,
+  canonical disk roots, shell memory and shared/private/reopened ext4 files independently
+  agree. The additional surviving post-publication-label-quota session also retains the
+  original frame/root. Citation: `verifier-final/raw-tuples{,-public}.json`,
+  `promoted-report.json` accounting/graph checks, and `raw-tuples-public.json:442,475`.
+- **P5/P6/P7 interruption and adversarial recovery — HELD.** Real renderer crashes after
+  durable row deletion and before strict sweep commit reopen safely; all original hashes
+  and canonical surviving manifests agree, then cleanup succeeds. Missing, malformed or
+  unknown surviving references refuse sweeping. The independent collector-held attack
+  excludes readers/writers/deletion/cleanup; 32 genuinely simultaneous three-page schedules
+  exercise both lease winners with no divergence. Visible Delete while busy preserves its
+  row; partial deletion says cleanup refused and exposes repair/delete/retry; repairing
+  the leaf then Cleanup succeeds. A failed display-label removal remains visibly incomplete,
+  disables Open and clears on repeat Delete. A generic Retry-save failure preserves its
+  paused prefix and releases the lease. Citation: `verifier-final/promoted-report.json`
+  crashes/schedules/inverse/ui checks and the two error screenshots.
+- **P8/P9 controls, identity and coverage — HELD.** Public 127/0 suite, zero unexpected
+  errors, quota/persistence/eviction feedback and 390px controls pass. Detailed V8 samples
+  use UTF-16 offsets and exact-source identity; function-only samples after profiler restart
+  are excluded. Every added executable runtime line region has evidence, including a private
+  direct-loader restore from a cloned original profile: exact 23,860,091-byte original frame,
+  paused, zero scheduler slices, no locks. Residual guarded alternatives and generated metadata
+  are explicitly classified in `verifier-final/coverage-and-hunks.md`; full branch coverage is
+  not claimed. Source/dist mirrors and software runtime cb49b911 match their actual inputs;
+  the original 47-file factory remains 22295002 with its original authenticated bytes.
+- **P10 provenance, cold source and production — HELD.** Authenticated all 578 worker,
+  583 cold-receipt, 757 original public and 469 GPU-supplement payloads plus the compact
+  packets and source identities. The clean-source checkout was inspected before disposal;
+  all 31 inputs match, no inherited build/node state or Git alternates, all 21 gates pass.
+  Public storage's original failed report remains failed on the recorded R2 reset at
+  `trace.network:879`; its completed storage assertions, independent original-frame oracle
+  and successful real-public GPU supplement form the authenticated composite. All 57 public
+  current/archive assets match; qualified epoch-four physical draw follows 2,999,712 retired
+  instructions without loss/poisoning. No claim was substituted for missing evidence.
+- **SUITE — promoted.** `tools/verify/e9-session-retention-critic{,-ui}.mjs` now runs after
+  the built-browser proof in `make verify-E9-T07`, with syntax gates and source receipts.
+  The actual promoted command passed against the original frozen local recording;
+  report SHA-256 `29d77431cefbe35a0f49e2e8f3d5eb92c8362abb9775c1162ac1037255799860`.
+  Dropping disk-leaf marks fails on caef6174..., dropping indirect-event marks fails on
+  2e293f0b...; both exact hashes are asserted. New harness syntax/compile and this exact
+  post-browser command pass. The frozen native/runtime/cold/public results carry forward
+  across these test/evidence/status-only changes under the incremental policy.
+
+Final verifier packet: `evidence/e9-t07/verifier-final/`, provenance SHA-256
+`58174c1d02cb1c7e3192668208e07c2f50b6b58ee1811dc69534952e3f7db99c`.
+Original full worker/cold/public recordings and profiles remain local and unchanged;
+the promoted critic's two original traces/profile remain in
+`target/evidence/e9-t07-verifier-promoted/`. No remaining acceptance or coverage finding.

@@ -1,0 +1,34 @@
+{
+  "status": "passed",
+  "head": "2c9c0a5657dd0ab0d2a7d3a72f2c9742cd90521b",
+  "report_sha256": "508cb4029ba568193836b68f7b962b61669613eaaf14c40a28e3c52f4d47097c",
+  "trace_sha256": "ab2f3e121bcf1d74358cadd2f5213bea15596dac7f00839f8bb2750cd030c9a4",
+  "files": 469,
+  "assets": 57,
+  "archived_assets": 47,
+  "gpu": {
+    "qualified": true,
+    "lost": false,
+    "poisoned": false,
+    "epoch": "0000000000000004",
+    "retired": 2999712,
+    "drawn": [
+      {
+        "epoch": "0000000000000004",
+        "sequence": null,
+        "bindingGeneration": "0000000000000329",
+        "resource": {
+          "generation": "0000000000000010",
+          "id": 13
+        },
+        "status": "drawn",
+        "presentation": {
+          "backend": "canvas2d",
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        }
+      }
+    ]
+  },
+  "errors": []
+}

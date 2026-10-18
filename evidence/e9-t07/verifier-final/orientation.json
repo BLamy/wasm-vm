@@ -1,0 +1,11 @@
+{
+  "head": "2c9c0a5657dd0ab0d2a7d3a72f2c9742cd90521b",
+  "base": "a68779f5",
+  "task_sha256": "052f9d0fc658bf049291a2d06806b528c19ff1585f01b6825f6d0b919906d224",
+  "runtime_sha256": {
+    "web/session-store.js": "ac74f75aed9f650fd3242b8b40f4b3d930cd75c64ae524cd5f2ef575656d68df",
+    "web/session-library.js": "bfaaafdfa66efeb31f3eefbbcc8e53da291b9da8418a81df4f45172730b9e2da",
+    "web/loader.js": "b8fc2ef44212c1789d4b1f5a05884523e360b58321b9d822b89efefdd8cc8f5d"
+  },
+  "predictions_sha256": "380bb99f612fc5fecb51a507c21783e1791c6af4fd03e9af233b52c9795f0c8a"
+}

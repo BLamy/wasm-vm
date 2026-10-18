@@ -57,7 +57,8 @@ try:
         assert (ROOT / "crates/session-web/pkg" / name).read_bytes() == (ROOT / "web/dist/session-pkg" / name).read_bytes(), "stale adapter build: " + name
     run("contract", ["python3", "tools/verify/e9-session-contract.py"])
     run("codec-node", ["wasm-pack", "test", "--node", "tools/verify/session-wasm", "--locked"])
-    for name in ["web/session-store.js", "web/session-library.js", "web/loader.js", "tools/verify/e9-session-retention-storage.mjs", "tools/verify/e9-session-retention-browser.mjs"]:
+    for name in ["web/session-store.js", "web/session-library.js", "web/loader.js", "tools/verify/e9-session-retention-storage.mjs", "tools/verify/e9-session-retention-browser.mjs",
+                 "tools/verify/e9-session-retention-critic.mjs", "tools/verify/e9-session-retention-critic-ui.mjs"]:
         run("syntax-" + Path(name).stem, ["node", "--check", name])
     run("worker-protocol", ["node", "--test", "web/tests/e4-t32-worker-protocol.test.mjs"])
     run("browser-dependencies", ["npm", "ci", "--prefix", "web", "--no-audit", "--no-fund"])
@@ -68,6 +69,10 @@ try:
     assert len(browser["checks"]["crashes"]) == 2 and len(browser["checks"]["schedules"]) == 16
     assert browser["checks"]["suite"] == {"passed": 127, "failed": 0}
     assert json.loads((output / "browser/retention-oracle.json").read_text())["status"] == "passed"
+    run("verifier-regressions", ["node", "tools/verify/e9-session-retention-critic.mjs",
+                                  "--recording-report", str(output / "browser/report.json"),
+                                  "--output", str(output / "critic")])
+    assert json.loads((output / "critic/report.json").read_text())["status"] == "passed"
     clean()
     report["status"] = "passed"
 except BaseException as error:
@@ -80,6 +85,7 @@ finally:
                "crates/session-web/src/lib.rs", "web/session-store.js", "web/roadmap.js",
                "tools/verify/e9-session-retention.py", "tools/verify/e9-session-retention-browser.mjs",
                "tools/verify/e9-session-retention-storage.mjs", "tools/verify/e9-session-retention-files.py",
+               "tools/verify/e9-session-retention-critic.mjs", "tools/verify/e9-session-retention-critic-ui.mjs",
                "tools/verify/e9-disk-roots-files.py", "web/session-library.js", "web/session-library.css",
                "web/session-checkpoints.js", "web/session-disk-roots.js", "web/index.html", "web/loader.js",
                "web/gpu-checkpoint-build.js", "docs/design/session-replay-contract.json",

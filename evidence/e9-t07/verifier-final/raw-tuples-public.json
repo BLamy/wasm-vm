@@ -1,0 +1,489 @@
+{
+  "status": "passed",
+  "source_report_sha256": "794798af15f1c2a0dae16710164a8740874ce55df7d62ae1418cd31e2e768d9e",
+  "frames": {
+    "after-initial-failure.checkpoint.gz": {
+      "sha256": "d89e519af2d3916674135a0e1783ef083c98ac9bf508b4ad05912afd1d4d8ae5",
+      "bytes": 23860132,
+      "ram_bytes": 268435456,
+      "ram_sha256": "f68516d63004f0e8cb48af99fdae59d2ce15d019912b440a59fe9c183358229d",
+      "disk_root": "473d5bc944d64db9df2beafd7d60e12fe8d9e45db19e6e8aab8d544c3ae11d41",
+      "generation": "0",
+      "position": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "component_sha256": {
+        "context": "b8b51431a9fa2eaf5b8e52ae052124e51e8e8e333ffb99bb79c31e3dfc4bfb7f",
+        "native": "0e2728da8dc509954e70355e57b7559f68e7aa9cc5c0ae56211be2646eeafa8f",
+        "disk": "7a4358b455491fc53b358eaf489115fc38c5f589c6661290b08adc61a64ac86f",
+        "input": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "native_section_sha256": {
+        "1": "e6cba0b90832f54495f82935ca409bf3121b0dd6892454f8464633196bcfaa9a",
+        "2": "a6a6d14cd90363c382b99effdf227567e9e8dcf6547a6b2fa99e0519a26fd7b8",
+        "3": "fcd9b9453209429b7c3c2fda45cfcb800576b899631c8d5ee0ff9629eee90edf",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "ef6ccddbe8678886d0e785fd3362a5be2c0693f2045aa3c5d7ec700a9ab27d87",
+        "6": "c548d221e6bd9373f256b13441ddc72e31ae7504588879b69c1ceab37b98b452",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "a872c3ef03bd1ce42eb417fcbdcdc742a652ed1cc18c86fab6e5a007eeb72d1f",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "e59b3a18ae004f8703d1ecb17a3f327320b1596d0e51ee5ba0be62143f24db75"
+      }
+    },
+    "after-stale-retry.checkpoint.gz": {
+      "sha256": "05e0e5de30aac1b6741e6dfe509a9a7fc513dd2ad8e0a047f38d8d5efd0680ab",
+      "bytes": 23887190,
+      "ram_bytes": 268435456,
+      "ram_sha256": "9744e7083ec21c50fe2cf35d235cfb943085a3764cf5b609cec8e43aa39210e5",
+      "disk_root": "c61898310df06e70b4d18e9d8120732b7cd0bf9de52bd0a439b4be2ddaedb245",
+      "generation": "0",
+      "position": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "component_sha256": {
+        "context": "b8b51431a9fa2eaf5b8e52ae052124e51e8e8e333ffb99bb79c31e3dfc4bfb7f",
+        "native": "539fe6cedc798ffb79f2f8b464f0196328154fe3991c098ac56910f1d67b1bc7",
+        "disk": "ff0d7138e162e2ad2a62ee9d6a8e9f2358811d073238b6a076989152318b5187",
+        "input": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "native_section_sha256": {
+        "1": "64188284e63632c550ba3747278ec06cbcdb66b90cccd94c8a127674cecd7932",
+        "2": "406a43b76c7a29d7ebab06caed993ec99e7d1a5909c2c2bca1cd53cee79906b8",
+        "3": "568153727655dc1b0462a58302f333ae1ce5452c040f48f7abc3d259d0118dff",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "ef6ccddbe8678886d0e785fd3362a5be2c0693f2045aa3c5d7ec700a9ab27d87",
+        "6": "dcf4b3f49a0656391ece6548e7e4b89ccf225cad61650ef6882fcd70fca41668",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "52a4f34bd8c09979b2688ee2fe41431ac5b45b8c3bd27eb13b6e8ecf4ce7d99d",
+        "13": "a872c3ef03bd1ce42eb417fcbdcdc742a652ed1cc18c86fab6e5a007eeb72d1f",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0fdc5ccbc7df392df9200b0b981295f36f8601863a9e3227ba48f22864b90a92",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "385afd71cca977b52f81ad37fd1d93b5a805c48a6cd11da9ce10e8ae49f2bbaf"
+      }
+    },
+    "before-initial-failure.checkpoint.gz": {
+      "sha256": "d89e519af2d3916674135a0e1783ef083c98ac9bf508b4ad05912afd1d4d8ae5",
+      "bytes": 23860132,
+      "ram_bytes": 268435456,
+      "ram_sha256": "f68516d63004f0e8cb48af99fdae59d2ce15d019912b440a59fe9c183358229d",
+      "disk_root": "473d5bc944d64db9df2beafd7d60e12fe8d9e45db19e6e8aab8d544c3ae11d41",
+      "generation": "0",
+      "position": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "component_sha256": {
+        "context": "b8b51431a9fa2eaf5b8e52ae052124e51e8e8e333ffb99bb79c31e3dfc4bfb7f",
+        "native": "0e2728da8dc509954e70355e57b7559f68e7aa9cc5c0ae56211be2646eeafa8f",
+        "disk": "7a4358b455491fc53b358eaf489115fc38c5f589c6661290b08adc61a64ac86f",
+        "input": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "native_section_sha256": {
+        "1": "e6cba0b90832f54495f82935ca409bf3121b0dd6892454f8464633196bcfaa9a",
+        "2": "a6a6d14cd90363c382b99effdf227567e9e8dcf6547a6b2fa99e0519a26fd7b8",
+        "3": "fcd9b9453209429b7c3c2fda45cfcb800576b899631c8d5ee0ff9629eee90edf",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "ef6ccddbe8678886d0e785fd3362a5be2c0693f2045aa3c5d7ec700a9ab27d87",
+        "6": "c548d221e6bd9373f256b13441ddc72e31ae7504588879b69c1ceab37b98b452",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "a872c3ef03bd1ce42eb417fcbdcdc742a652ed1cc18c86fab6e5a007eeb72d1f",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "e59b3a18ae004f8703d1ecb17a3f327320b1596d0e51ee5ba0be62143f24db75"
+      }
+    },
+    "before-stale-retry.checkpoint.gz": {
+      "sha256": "05e0e5de30aac1b6741e6dfe509a9a7fc513dd2ad8e0a047f38d8d5efd0680ab",
+      "bytes": 23887190,
+      "ram_bytes": 268435456,
+      "ram_sha256": "9744e7083ec21c50fe2cf35d235cfb943085a3764cf5b609cec8e43aa39210e5",
+      "disk_root": "c61898310df06e70b4d18e9d8120732b7cd0bf9de52bd0a439b4be2ddaedb245",
+      "generation": "0",
+      "position": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "component_sha256": {
+        "context": "b8b51431a9fa2eaf5b8e52ae052124e51e8e8e333ffb99bb79c31e3dfc4bfb7f",
+        "native": "539fe6cedc798ffb79f2f8b464f0196328154fe3991c098ac56910f1d67b1bc7",
+        "disk": "ff0d7138e162e2ad2a62ee9d6a8e9f2358811d073238b6a076989152318b5187",
+        "input": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "native_section_sha256": {
+        "1": "64188284e63632c550ba3747278ec06cbcdb66b90cccd94c8a127674cecd7932",
+        "2": "406a43b76c7a29d7ebab06caed993ec99e7d1a5909c2c2bca1cd53cee79906b8",
+        "3": "568153727655dc1b0462a58302f333ae1ce5452c040f48f7abc3d259d0118dff",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "ef6ccddbe8678886d0e785fd3362a5be2c0693f2045aa3c5d7ec700a9ab27d87",
+        "6": "dcf4b3f49a0656391ece6548e7e4b89ccf225cad61650ef6882fcd70fca41668",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "52a4f34bd8c09979b2688ee2fe41431ac5b45b8c3bd27eb13b6e8ecf4ce7d99d",
+        "13": "a872c3ef03bd1ce42eb417fcbdcdc742a652ed1cc18c86fab6e5a007eeb72d1f",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0fdc5ccbc7df392df9200b0b981295f36f8601863a9e3227ba48f22864b90a92",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "385afd71cca977b52f81ad37fd1d93b5a805c48a6cd11da9ce10e8ae49f2bbaf"
+      }
+    },
+    "retention-actual-sibling-point-a975fc92-25f5-4c90-9f9c-b24cb2069639.checkpoint.gz": {
+      "sha256": "d89e519af2d3916674135a0e1783ef083c98ac9bf508b4ad05912afd1d4d8ae5",
+      "bytes": 23860132,
+      "ram_bytes": 268435456,
+      "ram_sha256": "f68516d63004f0e8cb48af99fdae59d2ce15d019912b440a59fe9c183358229d",
+      "disk_root": "473d5bc944d64db9df2beafd7d60e12fe8d9e45db19e6e8aab8d544c3ae11d41",
+      "generation": "0",
+      "position": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "component_sha256": {
+        "context": "b8b51431a9fa2eaf5b8e52ae052124e51e8e8e333ffb99bb79c31e3dfc4bfb7f",
+        "native": "0e2728da8dc509954e70355e57b7559f68e7aa9cc5c0ae56211be2646eeafa8f",
+        "disk": "7a4358b455491fc53b358eaf489115fc38c5f589c6661290b08adc61a64ac86f",
+        "input": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "native_section_sha256": {
+        "1": "e6cba0b90832f54495f82935ca409bf3121b0dd6892454f8464633196bcfaa9a",
+        "2": "a6a6d14cd90363c382b99effdf227567e9e8dcf6547a6b2fa99e0519a26fd7b8",
+        "3": "fcd9b9453209429b7c3c2fda45cfcb800576b899631c8d5ee0ff9629eee90edf",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "ef6ccddbe8678886d0e785fd3362a5be2c0693f2045aa3c5d7ec700a9ab27d87",
+        "6": "c548d221e6bd9373f256b13441ddc72e31ae7504588879b69c1ceab37b98b452",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "a872c3ef03bd1ce42eb417fcbdcdc742a652ed1cc18c86fab6e5a007eeb72d1f",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "e59b3a18ae004f8703d1ecb17a3f327320b1596d0e51ee5ba0be62143f24db75"
+      }
+    },
+    "session-f7ea47d9-51e6-4395-a726-8da1889ea8f1-point-325140d8-6c06-4f6a-b52d-32f85fed2726.checkpoint.gz": {
+      "sha256": "2894ca523a4a971c9ff9aa8d95cc51341191f12a5ffcd18edbfc0ea4961fc5cf",
+      "bytes": 23888440,
+      "ram_bytes": 268435456,
+      "ram_sha256": "3d1ba3347ecb2cc8b959a9c8d5baa1996393793239b2632a0a2e627b798a2609",
+      "disk_root": "8226bc70e57a39af7884908354844b23612bc83b9e7215b428919c5b93fd0001",
+      "generation": "0",
+      "position": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "component_sha256": {
+        "context": "b8b51431a9fa2eaf5b8e52ae052124e51e8e8e333ffb99bb79c31e3dfc4bfb7f",
+        "native": "e19535d6af4f5e80561430dd973aa20ca8ce0ef7b9469818fba8626dce6711d3",
+        "disk": "9e18b20ee575643c1a64586d11191ab82e96ef988a26b64af0810ff95de312dd",
+        "input": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "native_section_sha256": {
+        "1": "1ae81b655b2adba52aa5690728dd1fa390a3faabe79b1efa0cfe7d869c1c17af",
+        "2": "6cce4bb7058b892cbdffc0ec05b9c9188dbd698296ad022f91ad23b4b6a08dc8",
+        "3": "e595a61a5d3020c949b0f9b7aef0af29e981eadfe333e74e1e0bcc302eee53ff",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "ef6ccddbe8678886d0e785fd3362a5be2c0693f2045aa3c5d7ec700a9ab27d87",
+        "6": "fabed934d525fac34bb7794109cf7278d7d1d91002c6f59c775c4c6ce7b26ffd",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "a872c3ef03bd1ce42eb417fcbdcdc742a652ed1cc18c86fab6e5a007eeb72d1f",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "9a254aba1859e06cfd89a2bc12f706e7be42aca51867f1ceeddf4470fe548b12",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "b2666f4d33d5e29102cdd626eb8ae32fdd688a18f214d7947932b73fda7e7631"
+      }
+    },
+    "session-f7ea47d9-51e6-4395-a726-8da1889ea8f1-point-6165910e-452f-4450-831f-d3ee923b7a49.checkpoint.gz": {
+      "sha256": "2894ca523a4a971c9ff9aa8d95cc51341191f12a5ffcd18edbfc0ea4961fc5cf",
+      "bytes": 23888440,
+      "ram_bytes": 268435456,
+      "ram_sha256": "3d1ba3347ecb2cc8b959a9c8d5baa1996393793239b2632a0a2e627b798a2609",
+      "disk_root": "8226bc70e57a39af7884908354844b23612bc83b9e7215b428919c5b93fd0001",
+      "generation": "0",
+      "position": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "component_sha256": {
+        "context": "b8b51431a9fa2eaf5b8e52ae052124e51e8e8e333ffb99bb79c31e3dfc4bfb7f",
+        "native": "e19535d6af4f5e80561430dd973aa20ca8ce0ef7b9469818fba8626dce6711d3",
+        "disk": "9e18b20ee575643c1a64586d11191ab82e96ef988a26b64af0810ff95de312dd",
+        "input": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "native_section_sha256": {
+        "1": "1ae81b655b2adba52aa5690728dd1fa390a3faabe79b1efa0cfe7d869c1c17af",
+        "2": "6cce4bb7058b892cbdffc0ec05b9c9188dbd698296ad022f91ad23b4b6a08dc8",
+        "3": "e595a61a5d3020c949b0f9b7aef0af29e981eadfe333e74e1e0bcc302eee53ff",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "ef6ccddbe8678886d0e785fd3362a5be2c0693f2045aa3c5d7ec700a9ab27d87",
+        "6": "fabed934d525fac34bb7794109cf7278d7d1d91002c6f59c775c4c6ce7b26ffd",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "a872c3ef03bd1ce42eb417fcbdcdc742a652ed1cc18c86fab6e5a007eeb72d1f",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "9a254aba1859e06cfd89a2bc12f706e7be42aca51867f1ceeddf4470fe548b12",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "b2666f4d33d5e29102cdd626eb8ae32fdd688a18f214d7947932b73fda7e7631"
+      }
+    },
+    "session-f7ea47d9-51e6-4395-a726-8da1889ea8f1-point-a975fc92-25f5-4c90-9f9c-b24cb2069639.checkpoint.gz": {
+      "sha256": "d89e519af2d3916674135a0e1783ef083c98ac9bf508b4ad05912afd1d4d8ae5",
+      "bytes": 23860132,
+      "ram_bytes": 268435456,
+      "ram_sha256": "f68516d63004f0e8cb48af99fdae59d2ce15d019912b440a59fe9c183358229d",
+      "disk_root": "473d5bc944d64db9df2beafd7d60e12fe8d9e45db19e6e8aab8d544c3ae11d41",
+      "generation": "0",
+      "position": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "component_sha256": {
+        "context": "b8b51431a9fa2eaf5b8e52ae052124e51e8e8e333ffb99bb79c31e3dfc4bfb7f",
+        "native": "0e2728da8dc509954e70355e57b7559f68e7aa9cc5c0ae56211be2646eeafa8f",
+        "disk": "7a4358b455491fc53b358eaf489115fc38c5f589c6661290b08adc61a64ac86f",
+        "input": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "native_section_sha256": {
+        "1": "e6cba0b90832f54495f82935ca409bf3121b0dd6892454f8464633196bcfaa9a",
+        "2": "a6a6d14cd90363c382b99effdf227567e9e8dcf6547a6b2fa99e0519a26fd7b8",
+        "3": "fcd9b9453209429b7c3c2fda45cfcb800576b899631c8d5ee0ff9629eee90edf",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "ef6ccddbe8678886d0e785fd3362a5be2c0693f2045aa3c5d7ec700a9ab27d87",
+        "6": "c548d221e6bd9373f256b13441ddc72e31ae7504588879b69c1ceab37b98b452",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "a872c3ef03bd1ce42eb417fcbdcdc742a652ed1cc18c86fab6e5a007eeb72d1f",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "e59b3a18ae004f8703d1ecb17a3f327320b1596d0e51ee5ba0be62143f24db75"
+      }
+    },
+    "sibling-reopened.checkpoint.gz": {
+      "sha256": "d89e519af2d3916674135a0e1783ef083c98ac9bf508b4ad05912afd1d4d8ae5",
+      "bytes": 23860132,
+      "ram_bytes": 268435456,
+      "ram_sha256": "f68516d63004f0e8cb48af99fdae59d2ce15d019912b440a59fe9c183358229d",
+      "disk_root": "473d5bc944d64db9df2beafd7d60e12fe8d9e45db19e6e8aab8d544c3ae11d41",
+      "generation": "0",
+      "position": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "component_sha256": {
+        "context": "b8b51431a9fa2eaf5b8e52ae052124e51e8e8e333ffb99bb79c31e3dfc4bfb7f",
+        "native": "0e2728da8dc509954e70355e57b7559f68e7aa9cc5c0ae56211be2646eeafa8f",
+        "disk": "7a4358b455491fc53b358eaf489115fc38c5f589c6661290b08adc61a64ac86f",
+        "input": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "native_section_sha256": {
+        "1": "e6cba0b90832f54495f82935ca409bf3121b0dd6892454f8464633196bcfaa9a",
+        "2": "a6a6d14cd90363c382b99effdf227567e9e8dcf6547a6b2fa99e0519a26fd7b8",
+        "3": "fcd9b9453209429b7c3c2fda45cfcb800576b899631c8d5ee0ff9629eee90edf",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "ef6ccddbe8678886d0e785fd3362a5be2c0693f2045aa3c5d7ec700a9ab27d87",
+        "6": "c548d221e6bd9373f256b13441ddc72e31ae7504588879b69c1ceab37b98b452",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "a872c3ef03bd1ce42eb417fcbdcdc742a652ed1cc18c86fab6e5a007eeb72d1f",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "e59b3a18ae004f8703d1ecb17a3f327320b1596d0e51ee5ba0be62143f24db75"
+      }
+    },
+    "sibling-restored.checkpoint.gz": {
+      "sha256": "d89e519af2d3916674135a0e1783ef083c98ac9bf508b4ad05912afd1d4d8ae5",
+      "bytes": 23860132,
+      "ram_bytes": 268435456,
+      "ram_sha256": "f68516d63004f0e8cb48af99fdae59d2ce15d019912b440a59fe9c183358229d",
+      "disk_root": "473d5bc944d64db9df2beafd7d60e12fe8d9e45db19e6e8aab8d544c3ae11d41",
+      "generation": "0",
+      "position": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "component_sha256": {
+        "context": "b8b51431a9fa2eaf5b8e52ae052124e51e8e8e333ffb99bb79c31e3dfc4bfb7f",
+        "native": "0e2728da8dc509954e70355e57b7559f68e7aa9cc5c0ae56211be2646eeafa8f",
+        "disk": "7a4358b455491fc53b358eaf489115fc38c5f589c6661290b08adc61a64ac86f",
+        "input": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "native_section_sha256": {
+        "1": "e6cba0b90832f54495f82935ca409bf3121b0dd6892454f8464633196bcfaa9a",
+        "2": "a6a6d14cd90363c382b99effdf227567e9e8dcf6547a6b2fa99e0519a26fd7b8",
+        "3": "fcd9b9453209429b7c3c2fda45cfcb800576b899631c8d5ee0ff9629eee90edf",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "ef6ccddbe8678886d0e785fd3362a5be2c0693f2045aa3c5d7ec700a9ab27d87",
+        "6": "c548d221e6bd9373f256b13441ddc72e31ae7504588879b69c1ceab37b98b452",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "a872c3ef03bd1ce42eb417fcbdcdc742a652ed1cc18c86fab6e5a007eeb72d1f",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "e59b3a18ae004f8703d1ecb17a3f327320b1596d0e51ee5ba0be62143f24db75"
+      }
+    }
+  },
+  "witnesses": {
+    "prefix": {
+      "id": "session-f7ea47d9-51e6-4395-a726-8da1889ea8f1",
+      "revision": "1",
+      "point": "point-a975fc92-25f5-4c90-9f9c-b24cb2069639",
+      "frame": "d89e519af2d3916674135a0e1783ef083c98ac9bf508b4ad05912afd1d4d8ae5",
+      "root": "473d5bc944d64db9df2beafd7d60e12fe8d9e45db19e6e8aab8d544c3ae11d41"
+    },
+    "prefixAfterQuota": {
+      "id": "session-f7ea47d9-51e6-4395-a726-8da1889ea8f1",
+      "revision": "1",
+      "point": "point-a975fc92-25f5-4c90-9f9c-b24cb2069639",
+      "frame": "d89e519af2d3916674135a0e1783ef083c98ac9bf508b4ad05912afd1d4d8ae5",
+      "root": "473d5bc944d64db9df2beafd7d60e12fe8d9e45db19e6e8aab8d544c3ae11d41"
+    },
+    "retried": {
+      "id": "session-f7ea47d9-51e6-4395-a726-8da1889ea8f1",
+      "revision": "2",
+      "point": "point-6165910e-452f-4450-831f-d3ee923b7a49",
+      "frame": "2894ca523a4a971c9ff9aa8d95cc51341191f12a5ffcd18edbfc0ea4961fc5cf",
+      "root": "8226bc70e57a39af7884908354844b23612bc83b9e7215b428919c5b93fd0001"
+    },
+    "parentFinal": {
+      "id": "session-f7ea47d9-51e6-4395-a726-8da1889ea8f1",
+      "revision": "3",
+      "point": "point-325140d8-6c06-4f6a-b52d-32f85fed2726",
+      "frame": "2894ca523a4a971c9ff9aa8d95cc51341191f12a5ffcd18edbfc0ea4961fc5cf",
+      "root": "8226bc70e57a39af7884908354844b23612bc83b9e7215b428919c5b93fd0001"
+    },
+    "siblingOriginal": {
+      "id": "retention-actual-sibling",
+      "revision": "1",
+      "point": "point-a975fc92-25f5-4c90-9f9c-b24cb2069639",
+      "frame": "d89e519af2d3916674135a0e1783ef083c98ac9bf508b4ad05912afd1d4d8ae5",
+      "root": "473d5bc944d64db9df2beafd7d60e12fe8d9e45db19e6e8aab8d544c3ae11d41"
+    },
+    "siblingAfterDelete": {
+      "id": "retention-actual-sibling",
+      "revision": "1",
+      "point": "point-a975fc92-25f5-4c90-9f9c-b24cb2069639",
+      "frame": "d89e519af2d3916674135a0e1783ef083c98ac9bf508b4ad05912afd1d4d8ae5",
+      "root": "473d5bc944d64db9df2beafd7d60e12fe8d9e45db19e6e8aab8d544c3ae11d41"
+    }
+  },
+  "shared": {
+    "2d34934241e310d1cf12b922f7958028c2fd76b66094cf7b719314b0a91bc894": 13,
+    "0017c6bacf8edebaf3ae33c5fb326354a037cc998e7359de075d67ab09efe5b6": 14,
+    "e535284b6f32cd691e98d2491929fa8280e183d7540f0983feacaec8ce6da61f": 9,
+    "eaa4d233f931b1fc37bbe9c7c6449d4da58c2ff89475919f60606b3eb55d5609": 13,
+    "c17feb67f0bbbb4135087f13431264da90dda44bb8131bc6ccff47f2c1921256": 13,
+    "caef6174fb1bfe5ad1fb7626745a41377eea7ea5602b541feaf44f0fd8070db9": 4096,
+    "764407ab1e783417ace1bd68942ee9a496d39a6089d416646be2f3275fa9bee1": 4096,
+    "0b75de7f8b366c3ae2eedffbd461687d9b7997e898cd7658a24dd15f4d532c42": 334,
+    "2e293f0bbfeaf7b03c7f0941db15a583ef81c0d0ebaf8794a6c04fecf9a58672": 43,
+    "67f6fdc3e96422add0a72234ad22d510940285a9ace62fc8965a714ec9ba0488": 379
+  },
+  "survivingLabelQuota": {
+    "frame": "d89e519af2d3916674135a0e1783ef083c98ac9bf508b4ad05912afd1d4d8ae5",
+    "root": "473d5bc944d64db9df2beafd7d60e12fe8d9e45db19e6e8aab8d544c3ae11d41",
+    "matches_original_sibling": true
+  },
+  "shared_payload": {
+    "sha256": "2e293f0bbfeaf7b03c7f0941db15a583ef81c0d0ebaf8794a6c04fecf9a58672",
+    "length": "43"
+  },
+  "crash_cuts": [
+    "gc-metadata-deleted",
+    "gc-before-sweep-commit"
+  ],
+  "guest_files": {
+    "shared": {
+      "hex": "7368617265642d7072656669780a",
+      "sha256": "98ca315da93f730053a6429f74e5bd2b5d34ee96357cfe8d9970af2adc2a9f62"
+    },
+    "private": {
+      "hex": "707269766174652d6c617465720a",
+      "sha256": "5db883603907877fcf38e6fd10d36e5bdafcb3acb15df9aac0370699b73fbaa0"
+    },
+    "reopened": {
+      "hex": "7368617265642d7072656669780a",
+      "sha256": "98ca315da93f730053a6429f74e5bd2b5d34ee96357cfe8d9970af2adc2a9f62"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "reports": {
+    "target/evidence/e9-t07-worker-final": {
+      "sha256": "f0a9b8544b110bd2918a781adcc98830c3be2f1bc0fecb9b719e1d5202f9351b",
+      "files": 578,
+      "bytes": 2139604845,
+      "source_files": 31,
+      "head": "2c9c0a5657dd0ab0d2a7d3a72f2c9742cd90521b",
+      "status": "passed"
+    },
+    "target/evidence/e9-t07-worker-final/browser": {
+      "sha256": "a412e98be088f27439831f10f9d8d1becd641a75aa03db0c3a7c1ed4e2e0fddc",
+      "files": 556,
+      "bytes": 2139018165,
+      "source_files": 13,
+      "head": "2c9c0a5657dd0ab0d2a7d3a72f2c9742cd90521b",
+      "status": "passed"
+    }
+  }
+}
