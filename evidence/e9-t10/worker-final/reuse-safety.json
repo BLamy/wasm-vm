@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "head": "fafa1d63b5fa584df445e0c967ea52af966de5f8",
+  "recording_report_sha256": "d4343d91ac1f0888319de10515e0d3e2f441797b7acc10a023e6cc946b344ae1",
+  "cases": [
+    {
+      "attack": "source",
+      "prediction": "recorded source identity mismatch",
+      "status": "rejected-before-output",
+      "exit_code": 1
+    },
+    {
+      "attack": "omitted-source",
+      "prediction": "recorded source inventory mismatch",
+      "status": "rejected-before-output",
+      "exit_code": 1
+    },
+    {
+      "attack": "traversal",
+      "prediction": "unsafe artifact path",
+      "status": "rejected-before-output",
+      "exit_code": 1
+    },
+    {
+      "attack": "bytes",
+      "prediction": "recording digest mismatch",
+      "status": "rejected-before-output",
+      "exit_code": 1
+    }
+  ]
+}

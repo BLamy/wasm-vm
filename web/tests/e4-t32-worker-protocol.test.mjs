@@ -64,6 +64,14 @@ function fakeController(events, done) {
     pause: () => events.push("pause"),
     resume: () => events.push("resume"),
     isPaused: () => false,
+    startInputCapture: () => true,
+    stopInputCapture: () => true,
+    inputPosition: () => ({transition:'0',sequence:'0',retired:'0',ordinal:0,phase:'before'}),
+    takeInputDeliveries: () => [],
+    applyRecordedInput: (...args) => {events.push(['recorded-input', [...args[5]]]);return true;},
+    setInputPointerMode: relative => {events.push(['pointer-mode',relative]);return true;},
+    startInputRecording: () => ({id:'prefix'}),
+    flushInputRecording: () => ({sequence:'0'}),
     stateDigest: () => "digest",
     dhcpStats: () => ({ offers: 1 }),
     fileTransferReady: (slot) => slot === 0,
@@ -334,6 +342,8 @@ test("every explicit controller method crosses the runtime and no-provider Tails
   try {
     const args = {
       setDisplay: [1367, 901],
+      applyRecordedInput: [3,'0','1',1,'0',Uint8Array.of(1,2,3),['0','1','0','0']],
+      setInputPointerMode: [true],
       sendKeyboardEvent: [1, 30, 1],
       syncKeyboard: [],
       sendTabletEvent: [3, 0, 12],

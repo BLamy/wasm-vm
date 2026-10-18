@@ -1,0 +1,2546 @@
+{
+  "status": "passed",
+  "scope": "Independent native framing, lossless positions, owned queue ordering, CPU witnesses and sparse RAM; no emulator codec used.",
+  "frames": [
+    {
+      "file": "jit-600-q1-after.resume",
+      "bytes": 1483,
+      "sha256": "33a9d90ed0f7ec11dfe113eeff822043e9248de827e10ae3a325bdf003103fbc",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "17222bb9b5a1d37ce3eb5f81364c0594a55e12c7c57df11dc751b6480e24990c"
+        },
+        "2": {
+          "bytes": 61,
+          "sha256": "62380ef00d5987965ed3b364b5f6f3228652bf142759de418e110e0f1a3b8144"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "501ffda5153e93f9be7a8cf8162cbb6d8c9344e4ed580762564045f936d7f4c6"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "8884697fff0e8ab04c51c45617879dd666ecf61a3ab90bf31a6b4247a2a83eda"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "29032ae8b4dfdcb7a8e5664be1841d76705bc050d51f30868315fc28be0f10d3"
+        }
+      },
+      "position": {
+        "transition": "604",
+        "retired": "604",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "3"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483664",
+      "registers": [
+        "0",
+        "101",
+        "303",
+        "505",
+        "707",
+        "1100",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "201",
+      "divider": 3,
+      "divider_phase": 1,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40",
+        "data_hex": "16210000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-600-q1-before.resume",
+      "bytes": 1561,
+      "sha256": "b1d351e38bfc5ab8737f2a29231fbde08af416bccf45680449b207db77688684",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "aafc0481eda780cb7be9f6a59dac4719e3236f8b1972f9e8817ced4dd8202023"
+        },
+        "2": {
+          "bytes": 49,
+          "sha256": "77c730008d34f08e0c50dde65af80f98018640cc463a48e93d86d237f5b55e8a"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "d446844fdbac1fc5f441c3bfef2293a45799205dbd8d0333af2ff119a5ce0263"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a227259515c7872ea14931d21bc8fb05e1f8fa1ffbcaee497fe8214eeab1a760"
+        },
+        "18": {
+          "bytes": 148,
+          "sha256": "7f0d3f34863351e2bcd23ba5cbd94afa864418fe86f30b98ba1148e2bd9ee2d5"
+        }
+      },
+      "position": {
+        "transition": "600",
+        "retired": "600",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [
+        {
+          "transition": "600",
+          "ticket": "1",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "e7cf46a078fed4fafd0b5e3aff144802b853f8ae459a4f0c14add3314b7cc3a6",
+          "hex": "0b"
+        },
+        {
+          "transition": "600",
+          "ticket": "2",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "7cb7c4547cf2653590d7a9ace60cc623d25148adfbc88a89aeb0ef88da7839ba",
+          "hex": "16"
+        },
+        {
+          "transition": "602",
+          "ticket": "0",
+          "kind": 0,
+          "address": "2147500033",
+          "bytes": 1,
+          "sha256": "bb7208bc9b5d7c04f1236a82a0093a5e33f40423d5ba8d4266f7092c3ba43b62",
+          "hex": "21"
+        }
+      ],
+      "pc": "2147483648",
+      "registers": [
+        "0",
+        "100",
+        "300",
+        "500",
+        "700",
+        "1100",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "200",
+      "divider": 3,
+      "divider_phase": 0,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "3a580b7f2f8fa3022c4c13cd2f025fd43a974b49759d343a39878bf083015488",
+        "data_hex": "00000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-600-q64-after.resume",
+      "bytes": 1483,
+      "sha256": "3d57ccda1f7d7fb00e8910cbea6a7a0216f9bf171c9702116456af34d964f562",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "17222bb9b5a1d37ce3eb5f81364c0594a55e12c7c57df11dc751b6480e24990c"
+        },
+        "2": {
+          "bytes": 61,
+          "sha256": "b2720fd7edcf4bb95aff921f7d39ff1c9d63f33ea0bfc9d43d78bf7dad5c93ee"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "501ffda5153e93f9be7a8cf8162cbb6d8c9344e4ed580762564045f936d7f4c6"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "8884697fff0e8ab04c51c45617879dd666ecf61a3ab90bf31a6b4247a2a83eda"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "29032ae8b4dfdcb7a8e5664be1841d76705bc050d51f30868315fc28be0f10d3"
+        }
+      },
+      "position": {
+        "transition": "604",
+        "retired": "604",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "3"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483664",
+      "registers": [
+        "0",
+        "101",
+        "303",
+        "505",
+        "707",
+        "1100",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "201",
+      "divider": 3,
+      "divider_phase": 1,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "40fce138ee5303645187d0c89735ecfbe97a537a97e2812d382371c99893bed1",
+        "data_hex": "0b210000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-600-q64-before.resume",
+      "bytes": 1561,
+      "sha256": "de8e515a02da31c065f587e13729b5ce9ce2c3f7efbcaaf5a574aea08c303740",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "aafc0481eda780cb7be9f6a59dac4719e3236f8b1972f9e8817ced4dd8202023"
+        },
+        "2": {
+          "bytes": 49,
+          "sha256": "77c730008d34f08e0c50dde65af80f98018640cc463a48e93d86d237f5b55e8a"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "d446844fdbac1fc5f441c3bfef2293a45799205dbd8d0333af2ff119a5ce0263"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a227259515c7872ea14931d21bc8fb05e1f8fa1ffbcaee497fe8214eeab1a760"
+        },
+        "18": {
+          "bytes": 148,
+          "sha256": "538618f4d9fcc2574bfd7e7887dd24bbbd2b64fd35cef259cc12ca9ed41ca92e"
+        }
+      },
+      "position": {
+        "transition": "600",
+        "retired": "600",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [
+        {
+          "transition": "600",
+          "ticket": "0",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "7cb7c4547cf2653590d7a9ace60cc623d25148adfbc88a89aeb0ef88da7839ba",
+          "hex": "16"
+        },
+        {
+          "transition": "600",
+          "ticket": "2",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "e7cf46a078fed4fafd0b5e3aff144802b853f8ae459a4f0c14add3314b7cc3a6",
+          "hex": "0b"
+        },
+        {
+          "transition": "602",
+          "ticket": "1",
+          "kind": 0,
+          "address": "2147500033",
+          "bytes": 1,
+          "sha256": "bb7208bc9b5d7c04f1236a82a0093a5e33f40423d5ba8d4266f7092c3ba43b62",
+          "hex": "21"
+        }
+      ],
+      "pc": "2147483648",
+      "registers": [
+        "0",
+        "100",
+        "300",
+        "500",
+        "700",
+        "1100",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "200",
+      "divider": 3,
+      "divider_phase": 0,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "3a580b7f2f8fa3022c4c13cd2f025fd43a974b49759d343a39878bf083015488",
+        "data_hex": "00000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-600-q7-after.resume",
+      "bytes": 1483,
+      "sha256": "33a9d90ed0f7ec11dfe113eeff822043e9248de827e10ae3a325bdf003103fbc",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "17222bb9b5a1d37ce3eb5f81364c0594a55e12c7c57df11dc751b6480e24990c"
+        },
+        "2": {
+          "bytes": 61,
+          "sha256": "62380ef00d5987965ed3b364b5f6f3228652bf142759de418e110e0f1a3b8144"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "501ffda5153e93f9be7a8cf8162cbb6d8c9344e4ed580762564045f936d7f4c6"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "8884697fff0e8ab04c51c45617879dd666ecf61a3ab90bf31a6b4247a2a83eda"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "29032ae8b4dfdcb7a8e5664be1841d76705bc050d51f30868315fc28be0f10d3"
+        }
+      },
+      "position": {
+        "transition": "604",
+        "retired": "604",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "3"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483664",
+      "registers": [
+        "0",
+        "101",
+        "303",
+        "505",
+        "707",
+        "1100",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "201",
+      "divider": 3,
+      "divider_phase": 1,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40",
+        "data_hex": "16210000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-600-q7-before.resume",
+      "bytes": 1561,
+      "sha256": "a5d362b32f5da1cb79b3e170b252f43e67461e6ded351da0ffab35e3838f6c23",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "aafc0481eda780cb7be9f6a59dac4719e3236f8b1972f9e8817ced4dd8202023"
+        },
+        "2": {
+          "bytes": 49,
+          "sha256": "77c730008d34f08e0c50dde65af80f98018640cc463a48e93d86d237f5b55e8a"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "d446844fdbac1fc5f441c3bfef2293a45799205dbd8d0333af2ff119a5ce0263"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a227259515c7872ea14931d21bc8fb05e1f8fa1ffbcaee497fe8214eeab1a760"
+        },
+        "18": {
+          "bytes": 148,
+          "sha256": "b80c7c7c920084ae375b5f2bdbba42ee2e9a38dbad8956e2b083bc6c0d1a1d03"
+        }
+      },
+      "position": {
+        "transition": "600",
+        "retired": "600",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [
+        {
+          "transition": "600",
+          "ticket": "0",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "e7cf46a078fed4fafd0b5e3aff144802b853f8ae459a4f0c14add3314b7cc3a6",
+          "hex": "0b"
+        },
+        {
+          "transition": "600",
+          "ticket": "1",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "7cb7c4547cf2653590d7a9ace60cc623d25148adfbc88a89aeb0ef88da7839ba",
+          "hex": "16"
+        },
+        {
+          "transition": "602",
+          "ticket": "2",
+          "kind": 0,
+          "address": "2147500033",
+          "bytes": 1,
+          "sha256": "bb7208bc9b5d7c04f1236a82a0093a5e33f40423d5ba8d4266f7092c3ba43b62",
+          "hex": "21"
+        }
+      ],
+      "pc": "2147483648",
+      "registers": [
+        "0",
+        "100",
+        "300",
+        "500",
+        "700",
+        "1100",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "200",
+      "divider": 3,
+      "divider_phase": 0,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "3a580b7f2f8fa3022c4c13cd2f025fd43a974b49759d343a39878bf083015488",
+        "data_hex": "00000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-601-q1-after.resume",
+      "bytes": 1483,
+      "sha256": "99dcf0a6149af3d56e214bcd8404c925e37f9fc7794bf7847fd7f086024c5988",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "d50de0adbdc45f4c1b0859fa3be04023e62e064d1c38372d3fee8f6d47d43b82"
+        },
+        "2": {
+          "bytes": 61,
+          "sha256": "62380ef00d5987965ed3b364b5f6f3228652bf142759de418e110e0f1a3b8144"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "501ffda5153e93f9be7a8cf8162cbb6d8c9344e4ed580762564045f936d7f4c6"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a1d8ea58dd90d6cebe76254fd09467ef5dda225b2a472c3011626cbe0f9aff72"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "5bb11cec3de065315cac34bb21aab03f24418c116a14cf12be3432b1f871cf80"
+        }
+      },
+      "position": {
+        "transition": "605",
+        "retired": "605",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "3"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483668",
+      "registers": [
+        "0",
+        "101",
+        "303",
+        "505",
+        "707",
+        "1111",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "201",
+      "divider": 3,
+      "divider_phase": 2,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40",
+        "data_hex": "16210000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-601-q1-before.resume",
+      "bytes": 1561,
+      "sha256": "a54b4800ff90fcb2125cf3044a6fdb0ea6bc83cb8dfa0ca9bc23b2149c0851be",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "bbf6cb02ba216494396200d383117c26db7640fef2bd1c8c01900451d16cf8d4"
+        },
+        "2": {
+          "bytes": 49,
+          "sha256": "77c730008d34f08e0c50dde65af80f98018640cc463a48e93d86d237f5b55e8a"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "d446844fdbac1fc5f441c3bfef2293a45799205dbd8d0333af2ff119a5ce0263"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "8884697fff0e8ab04c51c45617879dd666ecf61a3ab90bf31a6b4247a2a83eda"
+        },
+        "18": {
+          "bytes": 148,
+          "sha256": "7a2da2ea408bf5d01d852e7b426fbed44fd3c65dd505326d34e9cc61dcf72f33"
+        }
+      },
+      "position": {
+        "transition": "601",
+        "retired": "601",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [
+        {
+          "transition": "601",
+          "ticket": "1",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "e7cf46a078fed4fafd0b5e3aff144802b853f8ae459a4f0c14add3314b7cc3a6",
+          "hex": "0b"
+        },
+        {
+          "transition": "601",
+          "ticket": "2",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "7cb7c4547cf2653590d7a9ace60cc623d25148adfbc88a89aeb0ef88da7839ba",
+          "hex": "16"
+        },
+        {
+          "transition": "603",
+          "ticket": "0",
+          "kind": 0,
+          "address": "2147500033",
+          "bytes": 1,
+          "sha256": "bb7208bc9b5d7c04f1236a82a0093a5e33f40423d5ba8d4266f7092c3ba43b62",
+          "hex": "21"
+        }
+      ],
+      "pc": "2147483652",
+      "registers": [
+        "0",
+        "101",
+        "300",
+        "500",
+        "700",
+        "1100",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "200",
+      "divider": 3,
+      "divider_phase": 1,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "3a580b7f2f8fa3022c4c13cd2f025fd43a974b49759d343a39878bf083015488",
+        "data_hex": "00000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-601-q64-after.resume",
+      "bytes": 1483,
+      "sha256": "21b616fbab24cd9e3e41bfc930bec174aaf55c82221e58d04be870ee02209067",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "d50de0adbdc45f4c1b0859fa3be04023e62e064d1c38372d3fee8f6d47d43b82"
+        },
+        "2": {
+          "bytes": 61,
+          "sha256": "b2720fd7edcf4bb95aff921f7d39ff1c9d63f33ea0bfc9d43d78bf7dad5c93ee"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "501ffda5153e93f9be7a8cf8162cbb6d8c9344e4ed580762564045f936d7f4c6"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a1d8ea58dd90d6cebe76254fd09467ef5dda225b2a472c3011626cbe0f9aff72"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "5bb11cec3de065315cac34bb21aab03f24418c116a14cf12be3432b1f871cf80"
+        }
+      },
+      "position": {
+        "transition": "605",
+        "retired": "605",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "3"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483668",
+      "registers": [
+        "0",
+        "101",
+        "303",
+        "505",
+        "707",
+        "1111",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "201",
+      "divider": 3,
+      "divider_phase": 2,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "40fce138ee5303645187d0c89735ecfbe97a537a97e2812d382371c99893bed1",
+        "data_hex": "0b210000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-601-q64-before.resume",
+      "bytes": 1561,
+      "sha256": "0f3511fad32bc7b5ba16e6304e023d08282551e3ca5c0b22744dfb8225e44525",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "bbf6cb02ba216494396200d383117c26db7640fef2bd1c8c01900451d16cf8d4"
+        },
+        "2": {
+          "bytes": 49,
+          "sha256": "77c730008d34f08e0c50dde65af80f98018640cc463a48e93d86d237f5b55e8a"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "d446844fdbac1fc5f441c3bfef2293a45799205dbd8d0333af2ff119a5ce0263"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "8884697fff0e8ab04c51c45617879dd666ecf61a3ab90bf31a6b4247a2a83eda"
+        },
+        "18": {
+          "bytes": 148,
+          "sha256": "b577b2c08c2d1b75b5b4e221893d57f7fdb62897d88fbf091411fd024f20a684"
+        }
+      },
+      "position": {
+        "transition": "601",
+        "retired": "601",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [
+        {
+          "transition": "601",
+          "ticket": "0",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "7cb7c4547cf2653590d7a9ace60cc623d25148adfbc88a89aeb0ef88da7839ba",
+          "hex": "16"
+        },
+        {
+          "transition": "601",
+          "ticket": "2",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "e7cf46a078fed4fafd0b5e3aff144802b853f8ae459a4f0c14add3314b7cc3a6",
+          "hex": "0b"
+        },
+        {
+          "transition": "603",
+          "ticket": "1",
+          "kind": 0,
+          "address": "2147500033",
+          "bytes": 1,
+          "sha256": "bb7208bc9b5d7c04f1236a82a0093a5e33f40423d5ba8d4266f7092c3ba43b62",
+          "hex": "21"
+        }
+      ],
+      "pc": "2147483652",
+      "registers": [
+        "0",
+        "101",
+        "300",
+        "500",
+        "700",
+        "1100",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "200",
+      "divider": 3,
+      "divider_phase": 1,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "3a580b7f2f8fa3022c4c13cd2f025fd43a974b49759d343a39878bf083015488",
+        "data_hex": "00000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-601-q7-after.resume",
+      "bytes": 1483,
+      "sha256": "99dcf0a6149af3d56e214bcd8404c925e37f9fc7794bf7847fd7f086024c5988",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "d50de0adbdc45f4c1b0859fa3be04023e62e064d1c38372d3fee8f6d47d43b82"
+        },
+        "2": {
+          "bytes": 61,
+          "sha256": "62380ef00d5987965ed3b364b5f6f3228652bf142759de418e110e0f1a3b8144"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "501ffda5153e93f9be7a8cf8162cbb6d8c9344e4ed580762564045f936d7f4c6"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a1d8ea58dd90d6cebe76254fd09467ef5dda225b2a472c3011626cbe0f9aff72"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "5bb11cec3de065315cac34bb21aab03f24418c116a14cf12be3432b1f871cf80"
+        }
+      },
+      "position": {
+        "transition": "605",
+        "retired": "605",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "3"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483668",
+      "registers": [
+        "0",
+        "101",
+        "303",
+        "505",
+        "707",
+        "1111",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "201",
+      "divider": 3,
+      "divider_phase": 2,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40",
+        "data_hex": "16210000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-601-q7-before.resume",
+      "bytes": 1561,
+      "sha256": "2c02882bb9ac83a9211dc7b95803c150b77754a5a04a7260f51c1207937f6730",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "bbf6cb02ba216494396200d383117c26db7640fef2bd1c8c01900451d16cf8d4"
+        },
+        "2": {
+          "bytes": 49,
+          "sha256": "77c730008d34f08e0c50dde65af80f98018640cc463a48e93d86d237f5b55e8a"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "d446844fdbac1fc5f441c3bfef2293a45799205dbd8d0333af2ff119a5ce0263"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "8884697fff0e8ab04c51c45617879dd666ecf61a3ab90bf31a6b4247a2a83eda"
+        },
+        "18": {
+          "bytes": 148,
+          "sha256": "b596f0f2756c51c458d03922ab2cde565d40e082504c2d9d63d1293c76816f80"
+        }
+      },
+      "position": {
+        "transition": "601",
+        "retired": "601",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [
+        {
+          "transition": "601",
+          "ticket": "0",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "e7cf46a078fed4fafd0b5e3aff144802b853f8ae459a4f0c14add3314b7cc3a6",
+          "hex": "0b"
+        },
+        {
+          "transition": "601",
+          "ticket": "1",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "7cb7c4547cf2653590d7a9ace60cc623d25148adfbc88a89aeb0ef88da7839ba",
+          "hex": "16"
+        },
+        {
+          "transition": "603",
+          "ticket": "2",
+          "kind": 0,
+          "address": "2147500033",
+          "bytes": 1,
+          "sha256": "bb7208bc9b5d7c04f1236a82a0093a5e33f40423d5ba8d4266f7092c3ba43b62",
+          "hex": "21"
+        }
+      ],
+      "pc": "2147483652",
+      "registers": [
+        "0",
+        "101",
+        "300",
+        "500",
+        "700",
+        "1100",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "200",
+      "divider": 3,
+      "divider_phase": 1,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "3a580b7f2f8fa3022c4c13cd2f025fd43a974b49759d343a39878bf083015488",
+        "data_hex": "00000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-605-q1-after.resume",
+      "bytes": 1483,
+      "sha256": "491b320a815c4457aba85f39755fba6d1e60f4e0cc9bb6583e6c97902f141a0b",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "c97cc813bbf43894a8c761cc67a50acc150f87d632e806d6169c74e6dfba16fd"
+        },
+        "2": {
+          "bytes": 61,
+          "sha256": "62380ef00d5987965ed3b364b5f6f3228652bf142759de418e110e0f1a3b8144"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "d1736959f36dd76ace4bd36802edd13fa2dc7e799505dd4bcbcfeddaf90f3fa0"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a227259515c7872ea14931d21bc8fb05e1f8fa1ffbcaee497fe8214eeab1a760"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "f19edb0f9de7f0283c05a7e262696e4294f6ee97887f459345465dc768190666"
+        }
+      },
+      "position": {
+        "transition": "609",
+        "retired": "609",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "3"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483660",
+      "registers": [
+        "0",
+        "102",
+        "306",
+        "510",
+        "707",
+        "1111",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "203",
+      "divider": 3,
+      "divider_phase": 0,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40",
+        "data_hex": "16210000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-605-q1-before.resume",
+      "bytes": 1561,
+      "sha256": "26181f2e56ee44bfaf774e021333762a2166de96f75aa650b8ba0749e51deddf",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "d50de0adbdc45f4c1b0859fa3be04023e62e064d1c38372d3fee8f6d47d43b82"
+        },
+        "2": {
+          "bytes": 49,
+          "sha256": "77c730008d34f08e0c50dde65af80f98018640cc463a48e93d86d237f5b55e8a"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "501ffda5153e93f9be7a8cf8162cbb6d8c9344e4ed580762564045f936d7f4c6"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a1d8ea58dd90d6cebe76254fd09467ef5dda225b2a472c3011626cbe0f9aff72"
+        },
+        "18": {
+          "bytes": 148,
+          "sha256": "e8677e9d2608d3927e5019cfd3a775d003357bcc86218717db60474b31261d38"
+        }
+      },
+      "position": {
+        "transition": "605",
+        "retired": "605",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [
+        {
+          "transition": "605",
+          "ticket": "1",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "e7cf46a078fed4fafd0b5e3aff144802b853f8ae459a4f0c14add3314b7cc3a6",
+          "hex": "0b"
+        },
+        {
+          "transition": "605",
+          "ticket": "2",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "7cb7c4547cf2653590d7a9ace60cc623d25148adfbc88a89aeb0ef88da7839ba",
+          "hex": "16"
+        },
+        {
+          "transition": "607",
+          "ticket": "0",
+          "kind": 0,
+          "address": "2147500033",
+          "bytes": 1,
+          "sha256": "bb7208bc9b5d7c04f1236a82a0093a5e33f40423d5ba8d4266f7092c3ba43b62",
+          "hex": "21"
+        }
+      ],
+      "pc": "2147483668",
+      "registers": [
+        "0",
+        "101",
+        "303",
+        "505",
+        "707",
+        "1111",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "201",
+      "divider": 3,
+      "divider_phase": 2,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "3a580b7f2f8fa3022c4c13cd2f025fd43a974b49759d343a39878bf083015488",
+        "data_hex": "00000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-605-q64-after.resume",
+      "bytes": 1483,
+      "sha256": "13f4b2dbc0732e0822b911cae50db50c83b1463338e19ce89a9a2fee8f042cdf",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "c97cc813bbf43894a8c761cc67a50acc150f87d632e806d6169c74e6dfba16fd"
+        },
+        "2": {
+          "bytes": 61,
+          "sha256": "b2720fd7edcf4bb95aff921f7d39ff1c9d63f33ea0bfc9d43d78bf7dad5c93ee"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "d1736959f36dd76ace4bd36802edd13fa2dc7e799505dd4bcbcfeddaf90f3fa0"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a227259515c7872ea14931d21bc8fb05e1f8fa1ffbcaee497fe8214eeab1a760"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "f19edb0f9de7f0283c05a7e262696e4294f6ee97887f459345465dc768190666"
+        }
+      },
+      "position": {
+        "transition": "609",
+        "retired": "609",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "3"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483660",
+      "registers": [
+        "0",
+        "102",
+        "306",
+        "510",
+        "707",
+        "1111",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "203",
+      "divider": 3,
+      "divider_phase": 0,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "40fce138ee5303645187d0c89735ecfbe97a537a97e2812d382371c99893bed1",
+        "data_hex": "0b210000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-605-q64-before.resume",
+      "bytes": 1561,
+      "sha256": "924d7b42998e3089ee3324d9b0caaa003d8370fda3c3524d6e6104a716942ecb",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "d50de0adbdc45f4c1b0859fa3be04023e62e064d1c38372d3fee8f6d47d43b82"
+        },
+        "2": {
+          "bytes": 49,
+          "sha256": "77c730008d34f08e0c50dde65af80f98018640cc463a48e93d86d237f5b55e8a"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "501ffda5153e93f9be7a8cf8162cbb6d8c9344e4ed580762564045f936d7f4c6"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a1d8ea58dd90d6cebe76254fd09467ef5dda225b2a472c3011626cbe0f9aff72"
+        },
+        "18": {
+          "bytes": 148,
+          "sha256": "665993ce7004eaf1c5c239997c0410a665e56569bf55738f8e20ecc18ebbb497"
+        }
+      },
+      "position": {
+        "transition": "605",
+        "retired": "605",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [
+        {
+          "transition": "605",
+          "ticket": "0",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "7cb7c4547cf2653590d7a9ace60cc623d25148adfbc88a89aeb0ef88da7839ba",
+          "hex": "16"
+        },
+        {
+          "transition": "605",
+          "ticket": "2",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "e7cf46a078fed4fafd0b5e3aff144802b853f8ae459a4f0c14add3314b7cc3a6",
+          "hex": "0b"
+        },
+        {
+          "transition": "607",
+          "ticket": "1",
+          "kind": 0,
+          "address": "2147500033",
+          "bytes": 1,
+          "sha256": "bb7208bc9b5d7c04f1236a82a0093a5e33f40423d5ba8d4266f7092c3ba43b62",
+          "hex": "21"
+        }
+      ],
+      "pc": "2147483668",
+      "registers": [
+        "0",
+        "101",
+        "303",
+        "505",
+        "707",
+        "1111",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "201",
+      "divider": 3,
+      "divider_phase": 2,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "3a580b7f2f8fa3022c4c13cd2f025fd43a974b49759d343a39878bf083015488",
+        "data_hex": "00000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-605-q7-after.resume",
+      "bytes": 1483,
+      "sha256": "491b320a815c4457aba85f39755fba6d1e60f4e0cc9bb6583e6c97902f141a0b",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "c97cc813bbf43894a8c761cc67a50acc150f87d632e806d6169c74e6dfba16fd"
+        },
+        "2": {
+          "bytes": 61,
+          "sha256": "62380ef00d5987965ed3b364b5f6f3228652bf142759de418e110e0f1a3b8144"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "d1736959f36dd76ace4bd36802edd13fa2dc7e799505dd4bcbcfeddaf90f3fa0"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a227259515c7872ea14931d21bc8fb05e1f8fa1ffbcaee497fe8214eeab1a760"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "f19edb0f9de7f0283c05a7e262696e4294f6ee97887f459345465dc768190666"
+        }
+      },
+      "position": {
+        "transition": "609",
+        "retired": "609",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "3"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483660",
+      "registers": [
+        "0",
+        "102",
+        "306",
+        "510",
+        "707",
+        "1111",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "203",
+      "divider": 3,
+      "divider_phase": 0,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40",
+        "data_hex": "16210000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-605-q7-before.resume",
+      "bytes": 1561,
+      "sha256": "52ed04211b06de7b6bd5effe4f6d34999df3629180a9317fec3788f86d32210d",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "d50de0adbdc45f4c1b0859fa3be04023e62e064d1c38372d3fee8f6d47d43b82"
+        },
+        "2": {
+          "bytes": 49,
+          "sha256": "77c730008d34f08e0c50dde65af80f98018640cc463a48e93d86d237f5b55e8a"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "501ffda5153e93f9be7a8cf8162cbb6d8c9344e4ed580762564045f936d7f4c6"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a1d8ea58dd90d6cebe76254fd09467ef5dda225b2a472c3011626cbe0f9aff72"
+        },
+        "18": {
+          "bytes": 148,
+          "sha256": "cbe85c5fddec590d02cad612bbc12ce61d015ff48b343e1aff54a9d7e2431331"
+        }
+      },
+      "position": {
+        "transition": "605",
+        "retired": "605",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [
+        {
+          "transition": "605",
+          "ticket": "0",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "e7cf46a078fed4fafd0b5e3aff144802b853f8ae459a4f0c14add3314b7cc3a6",
+          "hex": "0b"
+        },
+        {
+          "transition": "605",
+          "ticket": "1",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "7cb7c4547cf2653590d7a9ace60cc623d25148adfbc88a89aeb0ef88da7839ba",
+          "hex": "16"
+        },
+        {
+          "transition": "607",
+          "ticket": "2",
+          "kind": 0,
+          "address": "2147500033",
+          "bytes": 1,
+          "sha256": "bb7208bc9b5d7c04f1236a82a0093a5e33f40423d5ba8d4266f7092c3ba43b62",
+          "hex": "21"
+        }
+      ],
+      "pc": "2147483668",
+      "registers": [
+        "0",
+        "101",
+        "303",
+        "505",
+        "707",
+        "1111",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "201",
+      "divider": 3,
+      "divider_phase": 2,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "3a580b7f2f8fa3022c4c13cd2f025fd43a974b49759d343a39878bf083015488",
+        "data_hex": "00000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-mailbox-q1.resume",
+      "bytes": 1486,
+      "sha256": "ae941602f92d6909ddd11f688e5341356486052aa9ceb6cfc5a65367fdb65e85",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "24f5e70ae584026a68ad5374fb9860385f58a308c261242e63c7e16fd7889754"
+        },
+        "2": {
+          "bytes": 64,
+          "sha256": "3e7f095b36a548caabbf12a8e475ea16d1e5d091def58cf09480ee174e33d7e3"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "525dee7dfd8bc47b779719e2b279977f7f971f4cef9d962d5babfaa15a60069b"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "8884697fff0e8ab04c51c45617879dd666ecf61a3ab90bf31a6b4247a2a83eda"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "34d0b273c6967cca397d3a3efead8abf1db242293346b372a715364fa2162ba2"
+        }
+      },
+      "position": {
+        "transition": "1000",
+        "retired": "1000",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "2"
+      },
+      "next_ticket": "2",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483664",
+      "registers": [
+        "0",
+        "167",
+        "1573",
+        "835",
+        "1169",
+        "1826",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "333",
+      "divider": 3,
+      "divider_phase": 1,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "1311062add5075d17c8e899f80bf7b8000d45f756f81e9b5a29511da5e9de3f0",
+        "data_hex": "6c617465720000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-mailbox-q128.resume",
+      "bytes": 1486,
+      "sha256": "ae941602f92d6909ddd11f688e5341356486052aa9ceb6cfc5a65367fdb65e85",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "24f5e70ae584026a68ad5374fb9860385f58a308c261242e63c7e16fd7889754"
+        },
+        "2": {
+          "bytes": 64,
+          "sha256": "3e7f095b36a548caabbf12a8e475ea16d1e5d091def58cf09480ee174e33d7e3"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "525dee7dfd8bc47b779719e2b279977f7f971f4cef9d962d5babfaa15a60069b"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "8884697fff0e8ab04c51c45617879dd666ecf61a3ab90bf31a6b4247a2a83eda"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "34d0b273c6967cca397d3a3efead8abf1db242293346b372a715364fa2162ba2"
+        }
+      },
+      "position": {
+        "transition": "1000",
+        "retired": "1000",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "2"
+      },
+      "next_ticket": "2",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483664",
+      "registers": [
+        "0",
+        "167",
+        "1573",
+        "835",
+        "1169",
+        "1826",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "333",
+      "divider": 3,
+      "divider_phase": 1,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "1311062add5075d17c8e899f80bf7b8000d45f756f81e9b5a29511da5e9de3f0",
+        "data_hex": "6c617465720000000000000000000000"
+      }
+    },
+    {
+      "file": "jit-mailbox-q7.resume",
+      "bytes": 1486,
+      "sha256": "ae941602f92d6909ddd11f688e5341356486052aa9ceb6cfc5a65367fdb65e85",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "24f5e70ae584026a68ad5374fb9860385f58a308c261242e63c7e16fd7889754"
+        },
+        "2": {
+          "bytes": 64,
+          "sha256": "3e7f095b36a548caabbf12a8e475ea16d1e5d091def58cf09480ee174e33d7e3"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "525dee7dfd8bc47b779719e2b279977f7f971f4cef9d962d5babfaa15a60069b"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "8884697fff0e8ab04c51c45617879dd666ecf61a3ab90bf31a6b4247a2a83eda"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "34d0b273c6967cca397d3a3efead8abf1db242293346b372a715364fa2162ba2"
+        }
+      },
+      "position": {
+        "transition": "1000",
+        "retired": "1000",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "2"
+      },
+      "next_ticket": "2",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483664",
+      "registers": [
+        "0",
+        "167",
+        "1573",
+        "835",
+        "1169",
+        "1826",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "333",
+      "divider": 3,
+      "divider_phase": 1,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "1311062add5075d17c8e899f80bf7b8000d45f756f81e9b5a29511da5e9de3f0",
+        "data_hex": "6c617465720000000000000000000000"
+      }
+    },
+    {
+      "file": "paused-control.resume",
+      "bytes": 1472,
+      "sha256": "2b3165970a3ab7ee9879e3435d7ce22b4c27d2e4dc7f17abec3c20f92810408f",
+      "sections": {
+        "1": {
+          "bytes": 1189,
+          "sha256": "03919b337dfa7134eeff82fac53c2d399b711a395497474ffa2cefa26ae2edb2"
+        },
+        "2": {
+          "bytes": 60,
+          "sha256": "efdc89159b40776ff7a8a88eeeb5dcbac09e24c1996b95b055823528fee15caa"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "3fd49af1b3d0aea51f5e5f42260262d9945750845afb1bbe00c501111f4641b6"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a227259515c7872ea14931d21bc8fb05e1f8fa1ffbcaee497fe8214eeab1a760"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "8d0f7a1cf0bc0125eea48f8ebd5511c94def1da42dc16430e72d502501700076"
+        }
+      },
+      "position": {
+        "transition": "0",
+        "retired": "0",
+        "phase": "before",
+        "ordinal": 1,
+        "sequence": "1"
+      },
+      "next_ticket": "1",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483648",
+      "registers": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "0",
+      "divider": 3,
+      "divider_phase": 0,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "023b49cc159567d968c94ba44d434ff557abf6ac195abc0f5a30ca55dd3be96a",
+        "data_hex": "01000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "wfi-after-idle.resume",
+      "bytes": 1553,
+      "sha256": "28972bc57778b9af5d635b71648f6bc5044b3a6e870262bf7c8990b8ca7a9c0f",
+      "sections": {
+        "1": {
+          "bytes": 1219,
+          "sha256": "09e12e0bf57388179c73e45be3e62e578cd26a329f42bcbf5c35fc3756508140"
+        },
+        "2": {
+          "bytes": 81,
+          "sha256": "aa9041872197c891fcbb4d6153ec7953445059e74a4b6a2660f0fd5c25219b7f"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "511c00a176e7cc3a0661e174fb25a24fe57ab0c4a744ba574f6a6a7ef9111997"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "8884697fff0e8ab04c51c45617879dd666ecf61a3ab90bf31a6b4247a2a83eda"
+        },
+        "18": {
+          "bytes": 88,
+          "sha256": "94db078fdc9c2fb394ea41f118fccde2a1ef338dc059003bf250220c45ed0c57"
+        }
+      },
+      "position": {
+        "transition": "11",
+        "retired": "10",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "2"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [
+        {
+          "transition": "11",
+          "ticket": "2",
+          "kind": 0,
+          "address": "2147500033",
+          "bytes": 1,
+          "sha256": "684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1",
+          "hex": "2a"
+        }
+      ],
+      "pc": "2147483688",
+      "registers": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "8",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "33570816",
+        "1000",
+        "0",
+        "0"
+      ],
+      "mtime": "1000",
+      "divider": 3,
+      "divider_phase": 1,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "3867fd147eeca120574a104c655f1a97096706436db6af62a606383c0990f919",
+        "data_hex": "29000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "wfi-after-interrupt.resume",
+      "bytes": 1544,
+      "sha256": "411a343b8b32e633db55bbeafcfff7001e996efc08d594bef30b1252d078f5ae",
+      "sections": {
+        "1": {
+          "bytes": 1239,
+          "sha256": "47627b1ea8fd78803923c97a7c2cae2eae404ba10c2a3142f85b4cc3ef542f80"
+        },
+        "2": {
+          "bytes": 82,
+          "sha256": "525b04f0d88b848c115189dd84ea296c861157e271441155c9ea25138656cf41"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "511c00a176e7cc3a0661e174fb25a24fe57ab0c4a744ba574f6a6a7ef9111997"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "8884697fff0e8ab04c51c45617879dd666ecf61a3ab90bf31a6b4247a2a83eda"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "0b04df03a84fa918484f1bd9ae1d2f662648e6fa2932569ecc6ea23a326af40c"
+        }
+      },
+      "position": {
+        "transition": "12",
+        "retired": "10",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "3"
+      },
+      "next_ticket": "3",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147491840",
+      "registers": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "8",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "33570816",
+        "1000",
+        "0",
+        "0"
+      ],
+      "mtime": "1000",
+      "divider": 3,
+      "divider_phase": 1,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "10b17d2500c740601e431f6c7d23e3175c545e38f1b894a4a111332d84cae107",
+        "data_hex": "292a0000000000000000000000000000"
+      }
+    },
+    {
+      "file": "wfi-before-idle.resume",
+      "bytes": 1512,
+      "sha256": "1c1426889af785a98ce6d4c3650434f7def54d82d66524350eedd290b69d82c4",
+      "sections": {
+        "1": {
+          "bytes": 1219,
+          "sha256": "78f21ee5c4686fd9e5cdee6480dc843503db9ee15ac4649844f80bde36d5ae2a"
+        },
+        "2": {
+          "bytes": 70,
+          "sha256": "285670fe03ca5f9312b4c35cee6768202eaba79e3d03f584e1069033a6a42636"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "0d522aa21431f12ef3e1d4c3698581aa2007f51104eb6c2f44ec674786c4f0bf"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "8884697fff0e8ab04c51c45617879dd666ecf61a3ab90bf31a6b4247a2a83eda"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "1e9fb4d965713a4c95790514aa2ded4a5907728b9c9d23bba4337efaaf3d957c"
+        }
+      },
+      "position": {
+        "transition": "10",
+        "retired": "10",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0"
+      },
+      "next_ticket": "0",
+      "idle_pending": true,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483688",
+      "registers": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "8",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "33570816",
+        "1000",
+        "0",
+        "0"
+      ],
+      "mtime": "3",
+      "divider": 3,
+      "divider_phase": 1,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "4d73f4ed4e324df19bf07e0868142415b619f5a53cebd06590c7115254ece8b2",
+        "data_hex": "00000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "wfi-held.resume",
+      "bytes": 1512,
+      "sha256": "297311e3c820175558fb995056ae885f6b935ebe16c104fe90358e68b07093fd",
+      "sections": {
+        "1": {
+          "bytes": 1219,
+          "sha256": "c4c753dd8c1513189ad11efca9f731fc9827ded287e8cf695cffa89916228d4c"
+        },
+        "2": {
+          "bytes": 70,
+          "sha256": "285670fe03ca5f9312b4c35cee6768202eaba79e3d03f584e1069033a6a42636"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "0d522aa21431f12ef3e1d4c3698581aa2007f51104eb6c2f44ec674786c4f0bf"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a1d8ea58dd90d6cebe76254fd09467ef5dda225b2a472c3011626cbe0f9aff72"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "357f18a7b668957540c38c29fc94ab8073550d02c51ba2779487f0c3ad58be4f"
+        }
+      },
+      "position": {
+        "transition": "11",
+        "retired": "11",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "1"
+      },
+      "next_ticket": "1",
+      "idle_pending": false,
+      "external_pending": true,
+      "pending": [],
+      "pc": "2147483692",
+      "registers": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1",
+        "8",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "33570816",
+        "1000",
+        "0",
+        "0"
+      ],
+      "mtime": "3",
+      "divider": 3,
+      "divider_phase": 2,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "4d73f4ed4e324df19bf07e0868142415b619f5a53cebd06590c7115254ece8b2",
+        "data_hex": "00000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "wide-delivered.resume",
+      "bytes": 1482,
+      "sha256": "12ecf1f4c5f204c2322f0e01a23ddf5c722f131e71130159e5249d57db04a2ba",
+      "sections": {
+        "1": {
+          "bytes": 1199,
+          "sha256": "51a82c9d7e3e83ba12a90bc72fc9256a43e3dbe8dfa70f41251b8fe20af38974"
+        },
+        "2": {
+          "bytes": 60,
+          "sha256": "0542d6fa74390e61362ce9298fcc996fca317392d8b6ea8cb1d5c8489a1b5310"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "f5e0efd1884c22ca6b3708eb531ac07d8e4f704af85f46ac15733ba2e534d25c"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a227259515c7872ea14931d21bc8fb05e1f8fa1ffbcaee497fe8214eeab1a760"
+        },
+        "18": {
+          "bytes": 58,
+          "sha256": "a13ecb8d540ca680120d2764b25c1c274981a5bc3b3010f4813d7f79e41cbbf0"
+        }
+      },
+      "position": {
+        "transition": "9007199254740996",
+        "retired": "9007199254740996",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "9007199254740994"
+      },
+      "next_ticket": "9007199254740994",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [],
+      "pc": "2147483660",
+      "registers": [
+        "0",
+        "1",
+        "3",
+        "5",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "1",
+      "divider": 3,
+      "divider_phase": 0,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "8437cdb917a2638b3684476e3e166284cc424c6efc501b04e883172e515dfd3f",
+        "data_hex": "5b000000000000000000000000000000"
+      }
+    },
+    {
+      "file": "wide-queued.resume",
+      "bytes": 1491,
+      "sha256": "49af072f048f6608fc98e2e6e361b495f7cec7015ed3e76fb6b32354f6bf2d67",
+      "sections": {
+        "1": {
+          "bytes": 1189,
+          "sha256": "03919b337dfa7134eeff82fac53c2d399b711a395497474ffa2cefa26ae2edb2"
+        },
+        "2": {
+          "bytes": 49,
+          "sha256": "77c730008d34f08e0c50dde65af80f98018640cc463a48e93d86d237f5b55e8a"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "3fd49af1b3d0aea51f5e5f42260262d9945750845afb1bbe00c501111f4641b6"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a227259515c7872ea14931d21bc8fb05e1f8fa1ffbcaee497fe8214eeab1a760"
+        },
+        "18": {
+          "bytes": 88,
+          "sha256": "44628e48c2facd4ed7a1f2a48266c36b0e97cc781e50d102ae2cae7489ded5f6"
+        }
+      },
+      "position": {
+        "transition": "9007199254740993",
+        "retired": "9007199254740993",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "9007199254740993"
+      },
+      "next_ticket": "9007199254740994",
+      "idle_pending": false,
+      "external_pending": false,
+      "pending": [
+        {
+          "transition": "9007199254740995",
+          "ticket": "9007199254740993",
+          "kind": 0,
+          "address": "2147500032",
+          "bytes": 1,
+          "sha256": "245843abef9e72e7efac30138a994bf6301e7e1d7d7042a33d42e863d2638811",
+          "hex": "5b"
+        }
+      ],
+      "pc": "2147483648",
+      "registers": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ],
+      "mtime": "0",
+      "divider": 3,
+      "divider_phase": 0,
+      "ram": {
+        "bytes": 1048576,
+        "sha256": "3a580b7f2f8fa3022c4c13cd2f025fd43a974b49759d343a39878bf083015488",
+        "data_hex": "00000000000000000000000000000000"
+      }
+    }
+  ]
+}

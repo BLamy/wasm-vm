@@ -1,0 +1,56 @@
+{
+  "task": "E9-T10",
+  "status": "passed",
+  "head": "28453118399c7dff3a50db5e6431c147af32528f",
+  "scope": "Only verified task/roadmap/service-worker catalog bytes changed. Runtime proof and exact R2 bindings carried from full deployed baseline. Public assets, suite and verified pip/task status checked independently.",
+  "files": [
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-public-metadata/report.json",
+      "path": "public-report.json",
+      "bytes": 25327,
+      "sha256": "d1ad2ef1d0b6d6029921e0f3baa796ded311981abe24f390024823be1adfb2b1"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-public-metadata/browser.png",
+      "path": "browser.png",
+      "bytes": 48974,
+      "sha256": "3e026be5ab2e1cc98eafc8a83f8d3c5c95af154290cedb42b9ef0531c2e18b6e"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-public-metadata/trace.zip",
+      "path": "trace.zip",
+      "bytes": 8391079,
+      "sha256": "5257978d2ab52235c29f7da41ff9db521fd1bc47609a229f118e7703cbf7f65c"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-public-metadata.mjs",
+      "path": "public.source.mjs",
+      "bytes": 4523,
+      "sha256": "fb867ab1cb606e620aaa79eff0c3e38edca01fca0effd8e09b0872d7e894782a"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verified-catalog-publish/report.json",
+      "path": "publication-report.json",
+      "bytes": 122430,
+      "sha256": "8cc2f1bcbcbb0ba7604c11cf58db4dbf2555560d3b9eb46ebeba5b833ed12e5f"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-publish-verified-catalog.py",
+      "path": "publication.source.py",
+      "bytes": 5713,
+      "sha256": "3ce7a6848b6009058e1d52b3086c32ccc60e3ba6623ccf11de329b4d762ac6e5"
+    },
+    {
+      "source": "/tmp/e9-t10-verified-catalog-deploy.log",
+      "path": "deploy.log",
+      "bytes": 366,
+      "sha256": "bab9e1d79c39e75f9eee8b844d47a11c69729492feab35a929bff2be7ef6aa0b"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-cold-release.json",
+      "path": "cold-scratch-release.json",
+      "bytes": 1006,
+      "sha256": "42b63d65a1b6666f88cf12f3deee1a844467dd7beacd17eb6d761aed3f405ccf"
+    }
+  ]
+}

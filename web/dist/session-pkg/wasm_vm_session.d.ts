@@ -22,6 +22,11 @@ export function sessionDiskRootReferences(bytes: Uint8Array): Uint8Array;
 
 export function sessionEventReferences(manifest: Uint8Array, chunk: Uint8Array): Uint8Array;
 
+/**
+ * Canonical bounded record batch -> immutable index. The caller stores these exact bytes.
+ */
+export function sessionIndexEventChunk(bytes: Uint8Array): Uint8Array;
+
 export function sessionManifestReferences(bytes: Uint8Array): Uint8Array;
 
 export function sessionValidateCheckpointContext(bytes: Uint8Array): Uint8Array;
@@ -40,6 +45,7 @@ export interface InitOutput {
     readonly sessionCheckAppend: (a: number, b: number, c: number, d: number) => [number, number];
     readonly sessionDiskRootReferences: (a: number, b: number) => [number, number, number, number];
     readonly sessionEventReferences: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly sessionIndexEventChunk: (a: number, b: number) => [number, number, number, number];
     readonly sessionManifestReferences: (a: number, b: number) => [number, number, number, number];
     readonly sessionValidateCheckpointContext: (a: number, b: number) => [number, number, number, number];
     readonly sessionValidateDiskRoot: (a: number, b: number) => [number, number, number, number];

@@ -1,0 +1,56 @@
+{
+  "runtime_head": "dc5fab60d1b0e4c6c92bc78169232c9d3622825e",
+  "scope": "Preserved failed resource-isolation run and interrupted diagnostic, followed by lossless relocation of task-owned scratch and passing focused recovery. Observed browser database closing coincided with low free disk; no runtime fix or passing claim is inferred from the failed run. Passing currency is in the final packets.",
+  "copies": [
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-worker-final/report.json",
+      "path": "initial-worker-report.json",
+      "sha256": "8fbfeb11280ec0d48088d00f6a5f5efeddcf4231123851ffd270d77d0002af6c"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-worker-final/browser/report.json",
+      "path": "initial-browser-report.json",
+      "sha256": "684b2b1a10dd4b57d27939430a4563e6d3d77a4d3d69f7b01f74e14a745eadcd"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-cold-final/receipt.json",
+      "path": "interrupted-cold-receipt.json",
+      "sha256": "f7fe6c5743cda94c94b3eec3ca6a46edec72e0c05d9ba88e356687856324ff9e"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-cold-final/interruption.json",
+      "path": "cold-interruption.json",
+      "sha256": "e7ea0f46fe0a85ced8d167db64d7b341fa4e2aef4a9d9603c405943416e2be98"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-cold-final/scratch-release.json",
+      "path": "interrupted-scratch-release.json",
+      "sha256": "bc7d03c7472b895e76bc68ce8e41b9ed29f238cbc05a28b4ae313702e473ccff"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-cold-final/cold-wrapper.source.py",
+      "path": "interrupted-cold-wrapper.source.py",
+      "sha256": "d55cefb797e33f4b8f50288f5362a565745e1c61348f13e426ed62ca7a4a3156"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-scratch-relocation.json",
+      "path": "scratch-relocation.json",
+      "sha256": "cc153add67ce50a9ab1c822cd7ae9c9251279be6ed46a309a270f280b09b850b"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-relocate-scratch.py",
+      "path": "scratch-relocation.source.py",
+      "sha256": "a85645cf9301ab8b7eeedbc8c6145848229dd9d8a31d9ea6a062522b92b646ea"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-storage-recovery-precheck.mjs",
+      "path": "recovery-precheck.source.mjs",
+      "sha256": "ea82b58cc14cb5fcf8d214e6a7e35da2ed6a3c64217203d6bd81ee4064aa598e"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-storage-recovery-precheck/result.json",
+      "path": "recovery-precheck-result.json",
+      "sha256": "ff990d60186e0317109ae53bff8fa5e3f362964833c8969d6a4b13fe07b15dd1"
+    }
+  ]
+}

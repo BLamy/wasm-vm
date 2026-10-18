@@ -280,6 +280,8 @@ pub struct ClockPolicy {
 #[serde(rename_all = "kebab-case")]
 pub enum RecordingMode {
     CheckpointsOnly,
+    /// Durable, explicitly incomplete capture; executable replay admission always refuses it.
+    CapturePrefix,
     ExactReplay,
 }
 
@@ -512,6 +514,14 @@ impl SessionManifest {
                 return Err(SessionError::UnsupportedRequired(input.clone()));
             }
         }
+        if self.policy.mode == RecordingMode::CapturePrefix
+            && (self.policy.required_inputs.is_empty()
+                || has_gpu
+                || clock.mode != ClockMode::Icount
+                || clock.interactive.is_some())
+        {
+            return Err(SessionError::Invalid("capture prefix policy"));
+        }
         if self.policy.mode == RecordingMode::ExactReplay && self.policy.required_inputs.is_empty()
         {
             return Err(SessionError::Invalid("exact replay capture set"));
@@ -693,6 +703,11 @@ impl SessionManifest {
     /// Read-only compatibility; no attempt to migrate, clear or mutate the recording.
     pub fn admit(&self, runtime: &RuntimeDescriptor) -> Result<(), SessionError> {
         self.validate()?;
+        if self.policy.mode == RecordingMode::CapturePrefix {
+            return Err(SessionError::MissingCapture(
+                "complete replay adapters".into(),
+            ));
+        }
         let a = &self.machine;
         let b = &runtime.machine;
         for (name, equal) in [

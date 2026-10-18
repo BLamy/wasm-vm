@@ -1,0 +1,69 @@
+{
+  "status": "HELD",
+  "input_validation": {
+    "driver_sha256": "261bdc341f84ecba4137bffc7265ac94f52044a10068f9e9ccdd9f314a716c34",
+    "files": [
+      {
+        "path": "browser-trace.zip",
+        "bytes": 1655709,
+        "sha256": "792bc4d19a6977431132e140f991fe5cfc92eeff38b6bef0b544fe08739d353b"
+      },
+      {
+        "path": "guard.png",
+        "bytes": 230941,
+        "sha256": "c3f27650a55de02aaa1494749159afa3a93fd8dd9fa218d5bfa871e0fdd83637"
+      },
+      {
+        "path": "javascript-coverage.json.gz",
+        "bytes": 439395,
+        "sha256": "c5ed107e8d05698e3f50914bdda24e29433e132bf366b0d91d232ff74d7774ac"
+      },
+      {
+        "path": "report.json",
+        "bytes": 1175,
+        "sha256": "0c8e3c5a5977874653b44c9df5a4d25f949106460d94080250c26f297e8b2895"
+      }
+    ],
+    "native_digest": "d02925fa3b9545b2986fb958414c917ee41c3a9ea928a0b501729d384d58b35d",
+    "cursor": {
+      "transition": "0",
+      "retired": "0",
+      "phase": "before",
+      "sequence": "0",
+      "ordinal": 0,
+      "replay": false,
+      "paused": true,
+      "stopped": false
+    },
+    "trace_point": "browser-trace.zip!/trace.trace:32"
+  },
+  "retained_gpu": {
+    "report_sha256": "180b662aa078c4b76ab4cffe56452d461150b2b60cbd2016d455b81fa1f9244d",
+    "asset_count": 58,
+    "gpu": {
+      "qualified": true,
+      "lost": false,
+      "poisoned": false,
+      "epoch": "0000000000000004",
+      "retired": 2499808,
+      "drawn": [
+        {
+          "epoch": "0000000000000004",
+          "sequence": null,
+          "bindingGeneration": "0000000000000329",
+          "resource": {
+            "generation": "0000000000000010",
+            "id": 13
+          },
+          "status": "drawn",
+          "presentation": {
+            "backend": "canvas2d",
+            "resourceWidth": 1280,
+            "resourceHeight": 800
+          }
+        }
+      ]
+    }
+  },
+  "deployment_receipt_sha256": "ceff4ab162974dcf7a0e7d5b87d95c78d641f090e7109ae59574c0e25758f707"
+}

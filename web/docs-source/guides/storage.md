@@ -57,14 +57,35 @@ The loader checks build identity, image binding, and overlay generation before a
 
 The [demo](./app.html) has a **Local saved sessions** library. Choose **New checkpoint guest** to start the pinned, single-hart Alpine software guest with 256 MiB RAM, an instruction-count clock and guest networking disabled. Boot assets are downloaded by the host. This profile keeps recording separate from the ordinary desktop's devices and live connections.
 
-1. Make your guest file changes, then choose **Start recording** to save the initial point.
+1. Make your guest file changes, then choose **Start checkpoint recording** to save the initial point.
 2. Choose **Checkpoint** for another exact restore point. **Stop recording** saves a final point and ends recording; later changes remain unsaved.
 3. Select a session and restore point, then choose **Open checkpoint**. It restores CPU, RAM, device state, disk changes and pending input together, initially paused. Choose **Resume guest** to continue. Selecting a preview alone leaves the active guest in place.
 4. Rename sessions to distinguish them. A reload or another tab on the same browser origin can reopen the saved points. Opening a point or starting a new checkpoint guest replaces the current guest.
 
-**Checkpoints only.** The current library restores explicit saved points. Continuous input replay, arbitrary-time seeking, reverse-step and accelerated desktop session history are later Epic 9 boundaries. Recording cannot recover execution from before it started. A session requires its exact compatible runtime, Wasm, kernel and image; an update can leave an older named session visibly incompatible without deleting it.
+**Checkpoint restore.** The library restores explicit saved points. Continuous input replay, arbitrary-time seeking, reverse-step and accelerated desktop session history are later Epic 9 boundaries. Recording cannot recover execution from before it started. A session requires its exact compatible runtime, Wasm, kernel and image; an update can leave an older named session visibly incompatible without deleting it.
 
 The demo also has an **Execution boundary check**. It runs a small guest and compares exact stops, queued-event order and restored counters on the interpreter and JIT. The check reports its result in the page and runs separately from your active guest. It proves the common event-clock mechanism; the saved-session library continues to offer explicit checkpoints.
+
+### Delivered input prefixes
+
+Choose **Start input recording** on a ready software guest to pause it and retain an initial
+witness. **Resume guest** continues capture. **Save input prefix** commits queued serial,
+keyboard, pointer and host-control input in delivery order; **Stop input recording** commits
+its final boundary and leaves that guest paused. Start a fresh guest to return to live use.
+
+These rows are labelled incomplete input captures. They preserve exact bytes, frame order
+and accepted/failed/cancelled upload controls, but full provider replay and Open are disabled.
+Clock/entropy, asynchronous device completions and network replay are later Epic 9 adapters.
+Guest file-transfer capture is available through the same controller on a local SLIRP software
+guest; live outbound connections, audio/microphone and accelerated guests are gated.
+
+The **Input recording check** runs a separate small guest, compares serial and input-device
+bytes that guest instructions actually read, reopens the saved prefix and checks that replay
+rejects live ingress. It does not run or qualify whole-machine replay.
+
+A failed input-prefix save pauses execution and preserves the committed prefix and pending
+owned batch. Free space or raise the data limit, then choose **Save input prefix** to retry.
+The recording cannot recover execution from before capture started.
 
 ### Limits, quota and deletion
 

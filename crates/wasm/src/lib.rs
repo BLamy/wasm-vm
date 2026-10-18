@@ -40,6 +40,8 @@ use wasm_bindgen::prelude::*;
 // E4-T29 Phase 2: the in-wasm (browser) compiled-block executor.
 mod event_clock;
 mod jit_browser;
+#[cfg(any(test, all(target_arch = "wasm32", not(feature = "zicsr-stub"))))]
+mod session_input;
 pub use jit_browser::{BROWSER_MAX_BATCHES, BrowserExecutor};
 use wasm_vm_core::bus::mmap::{UART0_BASE, UART0_LEN};
 use wasm_vm_core::dev::console::{ConsoleSink, Uart0Stub};
@@ -280,7 +282,7 @@ mod ws_transport_state;
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod crypto_entropy;
 // E3-T21c: browser producer/consumer queues over the VM-private WVFT agent sockets.
-#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[cfg(any(test, all(target_arch = "wasm32", not(feature = "zicsr-stub"))))]
 mod browser_file_transfer;
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod tailscale_dns;
@@ -2234,6 +2236,7 @@ struct LinuxInner {
     out: std::rc::Rc<RefCell<Vec<u8>>>,
     output: js_sys::Function,
     pending: std::collections::VecDeque<u8>,
+    input_capture: Option<session_input::InputCapture>,
     finished: Option<String>,
     /// E3-T02 lazy-fetch state, present only for a `newChunkedDisk` boot (`None` otherwise). Held in
     /// an `Rc` so `fetchPending` can clone it out and `await` without keeping the inner borrow.
@@ -3175,6 +3178,7 @@ impl WasmLinux {
                 out,
                 output,
                 pending: std::collections::VecDeque::new(),
+                input_capture: None,
                 finished: None,
                 fetch,
                 persist,
@@ -3204,6 +3208,7 @@ impl WasmLinux {
         let sink = SharedAudioSink::new(shared_buffer, capacity_frames, sample_rate_hz)?;
         let clock = SharedAudioClock::new(clock_buffer, sample_rate_hz)?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         if inner.machine.replace_virtio_snd_audio(
             std::rc::Rc::new(clock),
             Box::new(sink),
@@ -3262,7 +3267,15 @@ impl WasmLinux {
             Ok(number as u32)
         };
         let (width, height) = (dimension(width)?, dimension(height)?);
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            let outcome = inner.capture_input(
+                session_input::DISPLAY,
+                &[width.to_le_bytes(), height.to_le_bytes()].concat(),
+                false,
+            )?;
+            return Ok(outcome[0] == 0);
+        }
         let Some((_, state)) = inner.machine.virtio_gpu() else {
             return Ok(false);
         };
@@ -3278,7 +3291,11 @@ impl WasmLinux {
     /// restore bridge before it asks the core to publish a desktop snapshot.
     #[wasm_bindgen(js_name = confirmAgentHello)]
     pub fn confirm_agent_hello(&self) -> Result<bool, JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            let outcome = inner.capture_input(session_input::HELLO, &[], false)?;
+            return Ok(outcome[0] == 0);
+        }
         Ok(inner.machine.confirm_virtio_console_agent_hello().is_some())
     }
 
@@ -3287,6 +3304,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = saveDesktopSnapshot)]
     pub fn save_desktop_snapshot(&self) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         let blob = inner
             .machine
             .save_desktop_snapshot()
@@ -3306,6 +3324,7 @@ impl WasmLinux {
         host_height: u32,
     ) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         let report = inner
             .machine
             .restore_desktop_snapshot(
@@ -3363,7 +3382,11 @@ impl WasmLinux {
     /// backpressure instead of silently reporting that a frame was delivered.
     #[wasm_bindgen(js_name = sendAgentInput)]
     pub fn send_agent_input(&self, bytes: &[u8]) -> Result<u32, JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            let outcome = inner.capture_input(session_input::AGENT, bytes, false)?;
+            return Ok(outcome[1] as u32);
+        }
         let state = inner
             .machine
             .virtio_console()
@@ -3452,6 +3475,7 @@ impl WasmLinux {
     ) -> Result<(), JsError> {
         let source = SharedAudioCapture::new(shared_buffer, capacity_frames, sample_rate_hz)?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         if inner.machine.replace_virtio_snd_capture(Box::new(source)) {
             inner.capture_attached = true;
             Ok(())
@@ -3579,6 +3603,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = setGuestClock)]
     pub fn set_guest_clock(&self, mode: &str) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         select_guest_clock(&mut inner.machine, mode, || {
             JsHostTimer::new()
                 .map(|clock| Box::new(clock) as Box<dyn wasm_vm_core::time::MonotonicClock>)
@@ -3594,6 +3619,7 @@ impl WasmLinux {
             .filter(|v| v.is_finite() && v.fract() == 0.0 && (1.0..=1024.0).contains(v))
             .ok_or_else(|| JsError::new("ICount divider must be an integer from 1 to 1024"))?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         inner
             .machine
             .set_icount_divider(divider as u64)
@@ -3724,6 +3750,16 @@ impl WasmLinux {
         persist_max_dirty_bytes: Option<u32>,
     ) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if let Some(capture) = &inner.input_capture {
+            if capture.replay {
+                return Err(JsError::new(
+                    "full replay runner is not admitted by input-only prefixes",
+                ));
+            }
+            if capture.paused || capture.stopped {
+                return Err(JsError::new("input prefix is paused or stopped"));
+            }
+        }
         let retired_before = inner.machine.irq_stats().retired;
         if inner.finished.is_none() {
             // Interleave RX refills with execution. The 16550 RX FIFO is 16 bytes; feeding it only
@@ -3749,8 +3785,17 @@ impl WasmLinux {
                     let free = inner.uart.borrow().rx_free();
                     let n = free.min(inner.pending.len());
                     if n > 0 {
-                        let batch: Vec<u8> = inner.pending.drain(..n).collect();
-                        inner.uart.borrow_mut().push_input(&batch);
+                        if inner.input_capture.is_some() {
+                            let batch: Vec<u8> = inner.pending.iter().take(n).copied().collect();
+                            let outcome =
+                                inner.capture_input(session_input::UART_FEED, &batch, false)?;
+                            if outcome[0] != 0 {
+                                return Err(JsError::new("UART delivery refused before execution"));
+                            }
+                        } else {
+                            let batch: Vec<u8> = inner.pending.drain(..n).collect();
+                            inner.uart.borrow_mut().push_input(&batch);
+                        }
                     }
                 }
                 let persistence_bounded =
@@ -3936,6 +3981,10 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = sendInput)]
     pub fn send_input(&self, bytes: &[u8]) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(session_input::UART_OFFER, bytes, false)?;
+            return Ok(());
+        }
         inner.pending.extend(bytes.iter().copied());
         Ok(())
     }
@@ -3950,7 +3999,15 @@ impl WasmLinux {
         code: u16,
         value: i32,
     ) -> Result<(), JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(
+                session_input::KEY,
+                &session_input::event_bytes(event_type, code, value),
+                false,
+            )?;
+            return Ok(());
+        }
         let state = inner
             .machine
             .keyboard_input()
@@ -4024,7 +4081,11 @@ impl WasmLinux {
     /// Publish the current host keyboard frame by appending `EV_SYN/SYN_REPORT`.
     #[wasm_bindgen(js_name = syncKeyboard)]
     pub fn sync_keyboard(&self) -> Result<(), JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(session_input::KEY_SYNC, &[], false)?;
+            return Ok(());
+        }
         let state = inner
             .machine
             .keyboard_input()
@@ -4037,7 +4098,15 @@ impl WasmLinux {
     /// pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
     #[wasm_bindgen(js_name = sendTabletEvent)]
     pub fn send_tablet_event(&self, event_type: u16, code: u16, value: i32) -> Result<(), JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(
+                session_input::TABLET,
+                &session_input::event_bytes(event_type, code, value),
+                false,
+            )?;
+            return Ok(());
+        }
         let state = inner
             .machine
             .tablet_input()
@@ -4049,7 +4118,11 @@ impl WasmLinux {
     /// Publish the current host absolute-tablet frame with `EV_SYN/SYN_REPORT`.
     #[wasm_bindgen(js_name = syncTablet)]
     pub fn sync_tablet(&self) -> Result<(), JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(session_input::TABLET_SYNC, &[], false)?;
+            return Ok(());
+        }
         let state = inner
             .machine
             .tablet_input()
@@ -4062,7 +4135,15 @@ impl WasmLinux {
     /// pointer frame so the guest receives exactly one `EV_SYN/SYN_REPORT` terminator.
     #[wasm_bindgen(js_name = sendMouseEvent)]
     pub fn send_mouse_event(&self, event_type: u16, code: u16, value: i32) -> Result<(), JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(
+                session_input::MOUSE,
+                &session_input::event_bytes(event_type, code, value),
+                false,
+            )?;
+            return Ok(());
+        }
         let state = inner
             .machine
             .mouse_input()
@@ -4074,7 +4155,11 @@ impl WasmLinux {
     /// Publish the current host relative-mouse frame with `EV_SYN/SYN_REPORT`.
     #[wasm_bindgen(js_name = syncMouse)]
     pub fn sync_mouse(&self) -> Result<(), JsError> {
-        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            inner.capture_input(session_input::MOUSE_SYNC, &[], false)?;
+            return Ok(());
+        }
         let state = inner
             .machine
             .mouse_input()
@@ -4095,6 +4180,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = setFileDownloadReady)]
     pub fn set_file_download_ready(&self, ready: bool) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         inner
             .file_transfers
             .as_mut()
@@ -4114,6 +4200,16 @@ impl WasmLinux {
         let sha256 = browser_file_transfer::parse_sha256(&sha256_hex)
             .map_err(|error| JsError::new(&format!("file upload SHA-256: {error:?}")))?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            let payload = session_input::upload_begin(slot, &name, total, &sha256_hex)
+                .map_err(|e| JsError::new(&e))?;
+            let outcome = inner.capture_input(session_input::UPLOAD_BEGIN, &payload, false)?;
+            return if outcome[0] == 0 {
+                Ok(outcome[1] as u32)
+            } else {
+                Err(JsError::new("recorded begin upload refusal"))
+            };
+        }
         inner
             .file_transfers
             .as_mut()
@@ -4130,6 +4226,23 @@ impl WasmLinux {
         finished: bool,
     ) -> Result<u32, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            if bytes.len() > wasm_vm_core::session_clock::MAX_PAYLOAD - 5 {
+                return Err(JsError::new("file input chunk exceeds bound"));
+            }
+            let payload = [
+                stream.to_le_bytes().as_slice(),
+                &[u8::from(finished)],
+                bytes,
+            ]
+            .concat();
+            let outcome = inner.capture_input(session_input::UPLOAD_PUSH, &payload, false)?;
+            return if outcome[0] == 0 {
+                Ok(outcome[2] as u32)
+            } else {
+                Err(JsError::new("recorded upload chunk refusal"))
+            };
+        }
         let buffered = inner
             .file_transfers
             .as_mut()
@@ -4142,6 +4255,15 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = cancelFileUpload)]
     pub fn cancel_file_upload(&self, stream: u32) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.input_capture.is_some() {
+            let outcome =
+                inner.capture_input(session_input::UPLOAD_CANCEL, &stream.to_le_bytes(), false)?;
+            return if outcome[0] == 0 {
+                Ok(())
+            } else {
+                Err(JsError::new("recorded upload cancellation refusal"))
+            };
+        }
         inner
             .file_transfers
             .as_mut()
@@ -4153,6 +4275,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = dismissFileUpload)]
     pub fn dismiss_file_upload(&self, stream: u32) -> Result<bool, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         Ok(inner
             .file_transfers
             .as_mut()
@@ -4162,6 +4285,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = cancelFileDownload)]
     pub fn cancel_file_download(&self, id: u32) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         inner
             .file_transfers
             .as_mut()
@@ -4173,6 +4297,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = finishFileDownload)]
     pub fn finish_file_download(&self, id: u32, success: bool) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         inner
             .file_transfers
             .as_mut()
@@ -4206,6 +4331,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = takeFileDownloadChunk)]
     pub fn take_file_download_chunk(&self, id: u32) -> Result<js_sys::Uint8Array, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         let bytes = inner
             .file_transfers
             .as_mut()
@@ -4217,6 +4343,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = dismissFileDownload)]
     pub fn dismiss_file_download(&self, id: u32) -> Result<bool, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         Ok(inner
             .file_transfers
             .as_mut()
@@ -4324,6 +4451,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = saveSnapshot)]
     pub fn save_snapshot(&self) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         let blob = inner.machine.save_resume().map_err(|e| match e {
             resume::SnapshotError::NotQuiesced { reason, in_flight } => {
                 JsError::new(&format!("not_quiesced: {reason:?} in_flight={in_flight}"))
@@ -4425,6 +4553,7 @@ impl WasmLinux {
     pub async fn restore_stored_snapshot(&self) -> Result<String, JsError> {
         let base = {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            inner.refuse_capture_mutation()?;
             match inner.snapshot_base {
                 Some(base) => base,
                 None => return Ok("missing".to_string()),
@@ -4580,6 +4709,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = loadSnapshotBlob)]
     pub fn load_snapshot_blob(&self, blob: Vec<u8>) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_capture_mutation()?;
         inner
             .machine
             .load_resume(&blob)

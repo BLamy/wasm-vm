@@ -112,9 +112,9 @@ advance and interrupt delivery are separate transitions. Wall/paced policies and
 harts are refused by the common clock.
 
 The demo's **Execution boundary check** runs this mechanism on a small real guest. It does
-not admit the Linux library's providers into continuous recording: T10–T13 own input,
-observation, completion and network adapters. The library remains `checkpoints-only`, and
-the native software-frame decoder refuses an event clock under an unbound old context.
+not by itself admit the Linux providers into exact replay. T10 adds the input-only
+`capture-prefix` mode below; T11–T13 own observations, completions and network adapters.
+The saved software-frame decoder still refuses an event clock under an unbound old context.
 
 WFI fast-forward and CLINT/SBI interrupt levels are regenerated when purely derived
 from guest state. RTC alarm polling is different: it samples the host wall clock even
@@ -122,6 +122,71 @@ without a TIME_LOW read, so its observation must be recorded. Guest `rdtime` is 
 from the frozen time policy, whereas `JsWallClock` and audio clocks are external inputs.
 Host scheduling and pending-external-I/O state can change WFI decisions; replay must
 preserve the recorded pending state and delivery order, not recompute it from live I/O.
+
+### Input capture implementation (E9-T10)
+
+`startInputRecording` starts only at a paused, quiescent single-hart software ICount
+boundary, with at most 256 MiB RAM, no secondary disk, persistence pump, outbound connector,
+interactive clock policy, microphone or attached audio clock. Local SLIRP file transfer is
+permitted before any transfer has started. Its network/time observations remain incomplete.
+The recorder retains an exact native/input/disk **witness**, runtime/kernel/Wasm assets and
+initial host key ledgers. Its `WVINPUT1` machine object is version 1: an 8-byte magic,
+`u32 version`, `u64 native_length`, `u32 pending_uart_length`, `u32 host_output_length`,
+then those three exact byte components. Pending pre-capture UART bytes remain in the initial
+witness and acquire FIFO delivery events when execution resumes; they are not discarded or
+relabelled as new offers. Each host queue is bounded to 1 MiB. The disk root binds the same
+native header/generation. This is deliberately not an executable provider checkpoint.
+`CapturePrefix` manifests preserve input evidence, and `SessionManifest::admit` always
+refuses them as full replay. They cannot be promoted by changing the immutable policy.
+A T14 exact recording must start with all required adapters present.
+
+Every ingress is copied into the T09 owned mailbox before applying a synchronous adapter.
+The normal execution loop stops with `HostInputPending` until that adapter acknowledges
+it; an opaque input is never a no-op that execution can pass. Space/counter reservation
+precedes mutation. The receipt retains its exact before-boundary coordinate and a fixed
+outcome tuple. No DOM timestamp is an execution key. Core `HostInput` channel zero is
+invalid; provider payloads are at most 1 MiB, with the existing 256-event/4-MiB outbox.
+
+Input adapter version 1 uses these little-endian payloads. Every wide position/outcome
+crosses JS as a canonical decimal string; fixed device wire values retain their native width.
+
+| Channels | Operation / payload | Outcome `[status, amount, detail, detail]` |
+|---|---|---|
+| 1 / 2 | UART offer bytes / actual FIFO batch (at most 16 bytes). The offer enters an owned, bounded 1-MiB pending queue; FIFO receipts occur at each real refill, before execution. | Accepted bytes, remaining pending bytes. |
+| 3 / 5 / 7 | Keyboard / tablet / relative mouse staging: `u16 type, u16 code, i32 value`. | Pending events, total dropped frames, total rejected events. Successful staging is labelled `staged`. |
+| 4 / 6 / 8 | Frame publication: `u64 accepted_count, u32 retained_count`, retained 8-byte evdev events, then an 8-byte SYN_REPORT if nonempty. Overflowed accepted events remain represented by the count. | Pending events, total dropped frames, total dropped events. `published` or `drop-policy`; replay compares the entire pre-publication frame before syncing. |
+| 9 | Preferred display dimensions: two `u32`, each 1…4095. | Device presence/application; guest mode adoption remains a separate guest action. |
+| 10 / 11 | Exact agent-port bytes (including offered clipboard/control frames) / application HELLO confirmation. Serial clipboard paste uses channel 1. | Accepted byte prefix / handshake outcome; a denied clipboard read with no guest effect creates no event. |
+| 12 | Upload begin: `u32 slot, u32 total, 32-byte SHA-256, UTF-8 basename` (at most 255 bytes). | Stream ID, or exact WVFT error code in the last field. |
+| 13 | Upload chunk: `u32 stream, u8 finished, bytes`. | Accepted bytes, buffered bytes; WVFT error code in the last field on failure. |
+| 14 | Upload cancel: `u32 stream`. | Application or WVFT error code. A cancelled source accepts no late chunk. |
+| 15 | Host pointer route: `u8` absolute=0 / relative=1, ordered after old-mode releases and before new-mode frames. | Acknowledged route. This is host-control intent, not a new guest device. |
+| 16 | Lifecycle: `u8` pause=0 / resume=1 / stop=2. | Acknowledged control. Pause/stop prevent subsequent ordinary execution; stopped input accepts no late callback. |
+
+Status codes are 0 applied, 1 failed/refused, 2 accepted prefix, 3 device-contract rejected,
+and 4 device frame drop policy. Invalid wire shapes, unsupported controls and exhausted
+reservation refuse before an effect and consume no event ID. Device publication/drop is
+recorded separately from its later DMA/interrupt completion (T12). File controls similarly
+record acceptance/cancellation and exact submitted bytes; TCP/time/completion observations
+belong to T11–T13. No successful whole-VM replay is inferred from input-only evidence. Cancellation follows the existing WVFT policy: the guest closes the upload handle and retains the private `.part` prefix for inspection, without publishing the requested completed basename.
+
+`SessionInputJournal` packs immutable, codec-validated chunks up to 4 MiB. Payloads over
+64 KiB use SHA-256 blob references, rooted by the same atomic manifest publication as their
+events. A failed write retains the pending owned batch and leaves the previous published
+prefix byte-identical. The loader pauses before another guest slice; Retry/Save can commit
+the missing batch without duplicating earlier IDs. New paused inputs are retained within
+the bounded outbox. A stop that cannot reserve/write leaves the last committed prefix
+available rather than inventing a final event. Successfully recorded stop freezes the guest;
+a fresh machine is required to return to ordinary live input.
+
+Replay mode is an ingress firewall and a checked input-adapter seam at this milestone.
+It accepts only recorded input at the exact next coordinate and compares the outcome.
+All ordinary live input, unsupported mutation and general execution refuse. It never reads
+a live clipboard/File/Blob. Outcome divergence stops the candidate; T14 owns admission,
+provider replay and general execution. The demo's **Input recording check** executes a
+small real RV64 guest, checks UART and eventq DMA bytes, reopens its durable prefix and
+checks this firewall. The library's input controls expose incomplete saved prefixes without
+enabling Open/seek for them.
 
 ## Source-to-owner matrix
 

@@ -138,3 +138,5 @@ export class SessionCheckpoints {
     return {configuration:config,frame,contextBytes:parts.contextBytes,context:parts.context,disk,kernel};
   }
 }
+
+export {fetchObject as fetchCheckpointAsset};

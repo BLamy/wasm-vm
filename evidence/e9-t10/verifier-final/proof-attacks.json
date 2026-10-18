@@ -1,0 +1,33 @@
+{
+  "status": "HELD",
+  "freeze": "fafa1d63b5fa584df445e0c967ea52af966de5f8",
+  "source_report_sha256": "d4343d91ac1f0888319de10515e0d3e2f441797b7acc10a023e6cc946b344ae1",
+  "runs": [
+    {
+      "name": "four-frozen-harness-attack-cases",
+      "exit": 0,
+      "stdout": "{\"status\": \"passed\", \"rejected_attacks\": 4}\n"
+    },
+    {
+      "name": "novel-external-symlink",
+      "prediction": "artifact escapes recording before creating output",
+      "status": "HELD",
+      "exit": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/proof-attack-uflq4j0d/repo/tools/verify/e9-input-recording-resume.py\", line 65, in <module>\n    assert path.resolve().is_relative_to(base), 'artifact escapes recording'\nAssertionError: artifact escapes recording\n"
+    },
+    {
+      "name": "native-oracle-baseline",
+      "exit": 0,
+      "stdout": "{\"status\": \"passed\", \"frames\": 17, \"traces\": 20}\n"
+    },
+    {
+      "name": "key-release-sabotage",
+      "prediction": "an A release value changed from 0 to 1 at byte 36 fails the independent guest oracle",
+      "status": "HELD",
+      "exit": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/tools/verify/e9-input-recording-files.py\", line 51, in <module>\n    wanted=expected(name);actual=(directory/(name+'.bin')).read_bytes();assert actual==wanted and ram[COPY:COPY+len(wanted)]==wanted\nAssertionError\n"
+    }
+  ],
+  "scratch": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/proof-attack-uflq4j0d",
+  "native_sabotage_byte": 36
+}

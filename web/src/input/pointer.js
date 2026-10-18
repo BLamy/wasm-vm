@@ -110,6 +110,7 @@ export function createWasmPointerAdapter(controller) {
     syncTablet: () => controller.syncTablet(),
     sendMouseEvent: (...args) => controller.sendMouseEvent(...args),
     syncMouse: () => controller.syncMouse(),
+    setInputPointerMode: relative => controller.setInputPointerMode?.(relative),
   };
 }
 
@@ -272,12 +273,21 @@ export function createPointerBridge(
     }
   }
 
+  function publishMode(relative) {
+    if (!ready() || typeof adapter.setInputPointerMode !== "function") return;
+    const transmit = () => adapter.setInputPointerMode(relative);
+    if (serializeTransport) transportTail = transportTail.then(transmit, transmit).catch(error => {
+      diagnostic("pointer-mode-error", {error: error?.message || String(error)});
+    });
+    else transmit();
+  }
+
   function makeAbsolute(reason, { exitLock = true } = {}) {
     pointerLockRequested = false;
     releaseAll(reason);
     const changed = mode !== POINTER_MODES.ABSOLUTE;
     mode = POINTER_MODES.ABSOLUTE;
-    if (changed) modeChanges += 1;
+    if (changed) { modeChanges += 1; publishMode(false); }
     notify(reason);
     if (exitLock && pointerLocked()) exitPointerLock();
     return mode;
@@ -326,6 +336,7 @@ export function createPointerBridge(
     if (mode !== POINTER_MODES.RELATIVE) {
       mode = POINTER_MODES.RELATIVE;
       modeChanges += 1;
+      publishMode(true);
       notify(reason);
     } else if (!requestLock) {
       notify(reason);

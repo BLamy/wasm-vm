@@ -1,0 +1,894 @@
+{
+  "status": "passed",
+  "refusals": [
+    {
+      "name": "unsupported upload recorded as failure",
+      "message": "Error: recorded upload chunk refusal"
+    },
+    {
+      "name": "replay rejects live UART",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "replay rejects live keyboard",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "replay rejects live tablet",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "replay rejects live mouse",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "replay rejects live resize",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "replay rejects live agent",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "replay rejects live upload",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "replay rejects live lifecycle",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "replay rejects live general execution",
+      "message": "Error: full replay runner is not admitted by input-only prefixes"
+    },
+    {
+      "name": "fractional channel",
+      "message": "Error: input wire integer required"
+    },
+    {
+      "name": "noncanonical cursor",
+      "message": "Error: expected a canonical unsigned decimal u64 string"
+    },
+    {
+      "name": "wrong sequence",
+      "message": "Error: input replay cursor mismatch"
+    },
+    {
+      "name": "outcome shape",
+      "message": "Error: input replay bound"
+    },
+    {
+      "name": "outcome divergence stops candidate",
+      "message": "Error: input replay outcome mismatch; prefix stopped"
+    }
+  ],
+  "position": {
+    "transition": "10000",
+    "retired": "10000",
+    "phase": "before",
+    "sequence": "24",
+    "ordinal": 2,
+    "replay": false,
+    "paused": true,
+    "stopped": true
+  },
+  "guestBytes": {
+    "bytes": 133,
+    "sha256": "c00d10830fbdc7acd6ff640a1b81a81c780b5bdc89547b264a64225ea0146185"
+  },
+  "guestSha256": "c00d10830fbdc7acd6ff640a1b81a81c780b5bdc89547b264a64225ea0146185",
+  "initial": {
+    "native": 12671,
+    "disk": 61
+  },
+  "largeOffer": {
+    "bytes": 131072,
+    "sha256": "c0ce222ba29ca2c2ecb5d0f151112c0bfa87991ab4e7ad57574e5a6a1ff7e0ef"
+  },
+  "database": "wasm-vm-sessions-v1-input-probe",
+  "id": "input-probe",
+  "receipts": [
+    {
+      "key": [
+        "0",
+        "before",
+        1,
+        "1",
+        "0",
+        16,
+        [
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      ],
+      "bytes": 1
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        2,
+        "2",
+        "0",
+        3,
+        [
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "b3b0dfa4dfaaee46f3cf4392ecb2b82b8d559e196fc1279ad5f88e4ce467d26b"
+      ],
+      "bytes": 8
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        3,
+        "3",
+        "0",
+        4,
+        [
+          "0",
+          "2",
+          "0",
+          "0"
+        ],
+        "e8fa1fb205871e255a82ee69a36dc7820ac47862af5aa15618305bcf867b21d2"
+      ],
+      "bytes": 28
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        4,
+        "4",
+        "0",
+        3,
+        [
+          "0",
+          "2",
+          "0",
+          "0"
+        ],
+        "0f6c0139cea8543b59457d81001571fd08fd39edf3a535b040caa4f5b5cd656e"
+      ],
+      "bytes": 8
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        5,
+        "5",
+        "0",
+        4,
+        [
+          "0",
+          "4",
+          "0",
+          "0"
+        ],
+        "a71a39e75847aefee8eafca0e9fe67fcd269e39b279d820aa4fada2827a12428"
+      ],
+      "bytes": 28
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        6,
+        "6",
+        "0",
+        3,
+        [
+          "0",
+          "4",
+          "0",
+          "0"
+        ],
+        "2646a8badea60aadecb6ef401a77509494b17b1893f6d1db5ab53c559b9f85bb"
+      ],
+      "bytes": 8
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        7,
+        "7",
+        "0",
+        4,
+        [
+          "0",
+          "6",
+          "0",
+          "0"
+        ],
+        "149971aed8a7e80de8819618ea8718e708d164069eba662ab94ce86333fc6ec7"
+      ],
+      "bytes": 28
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        8,
+        "8",
+        "0",
+        3,
+        [
+          "0",
+          "6",
+          "0",
+          "0"
+        ],
+        "0877ee6aa41b95020ce0bc5a42b5390b407bee3e29580fc9271e94933e54857a"
+      ],
+      "bytes": 8
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        9,
+        "9",
+        "0",
+        4,
+        [
+          "0",
+          "8",
+          "0",
+          "0"
+        ],
+        "ecfcb1a701452c9462cb0205313decadcea4c1bc18bd366c46b2383a8fd75b31"
+      ],
+      "bytes": 28
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        10,
+        "10",
+        "0",
+        5,
+        [
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "473f50dac53507549965465d7736287a0e750733be36d59b324f6342b8846e6c"
+      ],
+      "bytes": 8
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        11,
+        "11",
+        "0",
+        6,
+        [
+          "0",
+          "2",
+          "0",
+          "0"
+        ],
+        "b562f9e0958bad101ed4871f7b316b3d9858ad345bfcdfbcc263c822c87f3e68"
+      ],
+      "bytes": 28
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        12,
+        "12",
+        "0",
+        5,
+        [
+          "0",
+          "2",
+          "0",
+          "0"
+        ],
+        "473f50dac53507549965465d7736287a0e750733be36d59b324f6342b8846e6c"
+      ],
+      "bytes": 8
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        13,
+        "13",
+        "0",
+        6,
+        [
+          "0",
+          "4",
+          "0",
+          "0"
+        ],
+        "b562f9e0958bad101ed4871f7b316b3d9858ad345bfcdfbcc263c822c87f3e68"
+      ],
+      "bytes": 28
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        14,
+        "14",
+        "0",
+        15,
+        [
+          "0",
+          "1",
+          "0",
+          "0"
+        ],
+        "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+      ],
+      "bytes": 1
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        15,
+        "15",
+        "0",
+        7,
+        [
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "d12a0891d9697f43eb1e05b851e6c174c799abe5ed5d400f2c414605666ad5a9"
+      ],
+      "bytes": 8
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        16,
+        "16",
+        "0",
+        7,
+        [
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "5caf804685e1cfcefee5743b68e3cf41a8577b26e2e9799315e2fc5b50b70b1e"
+      ],
+      "bytes": 8
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        17,
+        "17",
+        "0",
+        8,
+        [
+          "0",
+          "3",
+          "0",
+          "0"
+        ],
+        "413e86bb74a6dbc685bc818b95dccf09072b58b9a06b73f625512bfd406b5fda"
+      ],
+      "bytes": 36
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        18,
+        "18",
+        "0",
+        9,
+        [
+          "0",
+          "1",
+          "0",
+          "0"
+        ],
+        "f0e30caeafa21f9102fb5254cc938b9918d6c3e85987ab75e69d519f59ce0441"
+      ],
+      "bytes": 8
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        19,
+        "19",
+        "0",
+        1,
+        [
+          "0",
+          "9",
+          "9",
+          "0"
+        ],
+        "8e7d9e97f0bae1f86d2d8885086957397661f7922459f7665eabeb8a9fe3c115"
+      ],
+      "bytes": 9
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        20,
+        "20",
+        "0",
+        13,
+        [
+          "1",
+          "0",
+          "0",
+          "0"
+        ],
+        "8c7d898e46ac43d2b1a2eac24cffa4146e228c77bca23e8798cf658b183fc5cc"
+      ],
+      "bytes": 131077
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        21,
+        "21",
+        "0",
+        16,
+        [
+          "0",
+          "1",
+          "0",
+          "0"
+        ],
+        "4bf5122f344554c53bde2ebb8cd2b7e3d1600ad631c385a5d7cce23c7785459a"
+      ],
+      "bytes": 1
+    },
+    {
+      "key": [
+        "0",
+        "before",
+        22,
+        "22",
+        "0",
+        2,
+        [
+          "0",
+          "9",
+          "0",
+          "0"
+        ],
+        "8e7d9e97f0bae1f86d2d8885086957397661f7922459f7665eabeb8a9fe3c115"
+      ],
+      "bytes": 9
+    },
+    {
+      "key": [
+        "10000",
+        "before",
+        1,
+        "23",
+        "10000",
+        16,
+        [
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+      ],
+      "bytes": 1
+    },
+    {
+      "key": [
+        "10000",
+        "before",
+        2,
+        "24",
+        "10000",
+        16,
+        [
+          "0",
+          "2",
+          "0",
+          "0"
+        ],
+        "dbc1b4c900ffe48d575b5da5c638040125f65db0fe3e24494b76ea986457d986"
+      ],
+      "bytes": 1
+    }
+  ],
+  "manifest": {
+    "version": {
+      "major": 1,
+      "minor": 0
+    },
+    "id": "input-probe",
+    "machine": {
+      "vm_build": "e3b25717fac71165bb68168feecf422a2af88cdf0cf8f49be51631fab33145db",
+      "wasm_build": "d23d28e987af1a20d25440a1d5eb927934d9ff5ae8c3db220bd485eb4a24206f",
+      "base_image": "746ab785a95b037c9098b961c0ce10fb07e594b2fe0c9da6df66a88c3caab161",
+      "kernel": "9d6e0b5c503cb3609d6519e53a659579ab6cf7dfc47a990b7839ff87675bb268",
+      "initramfs": null,
+      "ram_bytes": "16777216",
+      "harts": 1,
+      "devices": [
+        {
+          "id": "uart0",
+          "kind": "uart16550",
+          "mmio_base": "268435456",
+          "mmio_length": 256,
+          "irq": 10,
+          "state_version": 1
+        },
+        {
+          "id": "clint",
+          "kind": "clint",
+          "mmio_base": "33554432",
+          "mmio_length": 65536,
+          "irq": 0,
+          "state_version": 1
+        },
+        {
+          "id": "plic",
+          "kind": "plic",
+          "mmio_base": "201326592",
+          "mmio_length": 6291456,
+          "irq": 0,
+          "state_version": 1
+        },
+        {
+          "id": "rtc",
+          "kind": "goldfish-rtc",
+          "mmio_base": "1052672",
+          "mmio_length": 4096,
+          "irq": 11,
+          "state_version": 1
+        },
+        {
+          "id": "slot0",
+          "kind": "virtio-blk",
+          "mmio_base": "268439552",
+          "mmio_length": 4096,
+          "irq": 1,
+          "state_version": 1
+        },
+        {
+          "id": "slot1",
+          "kind": "virtio-net",
+          "mmio_base": "268443648",
+          "mmio_length": 4096,
+          "irq": 2,
+          "state_version": 1
+        },
+        {
+          "id": "slot2",
+          "kind": "virtio-rng",
+          "mmio_base": "268447744",
+          "mmio_length": 4096,
+          "irq": 3,
+          "state_version": 1
+        },
+        {
+          "id": "slot3",
+          "kind": "virtio-keyboard",
+          "mmio_base": "268451840",
+          "mmio_length": 4096,
+          "irq": 4,
+          "state_version": 1
+        },
+        {
+          "id": "slot4",
+          "kind": "virtio-tablet",
+          "mmio_base": "268455936",
+          "mmio_length": 4096,
+          "irq": 5,
+          "state_version": 1
+        },
+        {
+          "id": "slot5",
+          "kind": "virtio-mouse",
+          "mmio_base": "268460032",
+          "mmio_length": 4096,
+          "irq": 6,
+          "state_version": 1
+        },
+        {
+          "id": "slot6",
+          "kind": "virtio-snd",
+          "mmio_base": "268464128",
+          "mmio_length": 4096,
+          "irq": 7,
+          "state_version": 1
+        },
+        {
+          "id": "slot7",
+          "kind": "virtio-gpu2d",
+          "mmio_base": "268468224",
+          "mmio_length": 4096,
+          "irq": 8,
+          "state_version": 1
+        },
+        {
+          "id": "slot8",
+          "kind": "virtio-console",
+          "mmio_base": "268472320",
+          "mmio_length": 4096,
+          "irq": 9,
+          "state_version": 1
+        }
+      ],
+      "gpu": null
+    },
+    "policy": {
+      "mode": "capture-prefix",
+      "profile": "rv64-linux-software-v1",
+      "event_version": {
+        "major": 1,
+        "minor": 0
+      },
+      "checkpoint_version": {
+        "major": 1,
+        "minor": 0
+      },
+      "boundary_version": 1,
+      "clock": {
+        "mode": "icount",
+        "divider": 10,
+        "timebase_hz": "10000000",
+        "interactive": null
+      },
+      "required_inputs": [
+        "uart",
+        "keyboard",
+        "pointer",
+        "display",
+        "agent",
+        "clipboard",
+        "file-transfer",
+        "lifecycle"
+      ]
+    },
+    "assets": [
+      {
+        "role": "vm",
+        "content": {
+          "sha256": "e3b25717fac71165bb68168feecf422a2af88cdf0cf8f49be51631fab33145db",
+          "length": "2247"
+        }
+      },
+      {
+        "role": "wasm",
+        "content": {
+          "sha256": "d23d28e987af1a20d25440a1d5eb927934d9ff5ae8c3db220bd485eb4a24206f",
+          "length": "1919430"
+        }
+      },
+      {
+        "role": "kernel",
+        "content": {
+          "sha256": "9d6e0b5c503cb3609d6519e53a659579ab6cf7dfc47a990b7839ff87675bb268",
+          "length": "3856"
+        }
+      },
+      {
+        "role": "base",
+        "content": {
+          "sha256": "746ab785a95b037c9098b961c0ce10fb07e594b2fe0c9da6df66a88c3caab161",
+          "length": "210"
+        }
+      }
+    ],
+    "begin": {
+      "transition": "0",
+      "phase": "before",
+      "ordinal": 0,
+      "sequence": "0",
+      "retired": "0"
+    },
+    "end": {
+      "transition": "10000",
+      "phase": "before",
+      "ordinal": 2,
+      "sequence": "24",
+      "retired": "10000"
+    },
+    "events": [
+      {
+        "first": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 1,
+          "sequence": "1",
+          "retired": "0"
+        },
+        "last": {
+          "transition": "10000",
+          "phase": "before",
+          "ordinal": 2,
+          "sequence": "24",
+          "retired": "10000"
+        },
+        "count": 24,
+        "content": {
+          "sha256": "3ceebf881faf95c2511240a4d9a814d33ec03589b59f0cac12e2fa51c0a9c84e",
+          "length": "10712"
+        }
+      }
+    ],
+    "checkpoints": [
+      {
+        "id": "input-witness",
+        "position": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "next_sequence": "1",
+        "machine": {
+          "sha256": "983e10cfb15a5fd7daff4e1f00f9109a5dd467f43d184c9cc7fc1b6a44e8f2bc",
+          "length": "12699"
+        },
+        "disk_root": "bddc5bfc06ae454b4a45346adb2d88f60da83752751fe19fa7fec1bdb246b6fe",
+        "gpu": null
+      }
+    ],
+    "extensions": []
+  },
+  "gatedMutations": [
+    {
+      "name": "keyboard sync",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "tablet sync",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "mouse sync",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "agent HELLO",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "upload begin",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "upload cancel",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "pointer mode",
+      "message": "Error: live input is forbidden during replay"
+    },
+    {
+      "name": "download readiness",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "upload dismissal",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "download cancellation",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "download completion",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "download payload",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "download dismissal",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "clock mode",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "clock divider",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "desktop save",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "desktop restore",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "ordinary save",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "ordinary restore",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "input witness",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "audio output",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "audio capture",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "software checkpoint",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    },
+    {
+      "name": "stored restore",
+      "message": "Error: input prefix: unsupported mutation; stop and start a fresh machine"
+    }
+  ],
+  "replayedBeforeBoundary": {
+    "transition": "0",
+    "retired": "0",
+    "phase": "before",
+    "sequence": "22",
+    "ordinal": 22,
+    "replay": true,
+    "paused": true,
+    "stopped": false
+  },
+  "divergence": {
+    "transition": "0",
+    "retired": "0",
+    "phase": "before",
+    "sequence": "23",
+    "ordinal": 23,
+    "replay": true,
+    "paused": true,
+    "stopped": true
+  },
+  "bulk": {
+    "id": "input-bulk",
+    "events": 64,
+    "bytes": 4194304,
+    "chunks": 3,
+    "end": {
+      "transition": "0",
+      "phase": "before",
+      "ordinal": 64,
+      "sequence": "64",
+      "retired": "0"
+    }
+  }
+}

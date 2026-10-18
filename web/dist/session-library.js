@@ -23,12 +23,14 @@ class SessionLibrary {
     this.root = root; this.adapter = adapter;
     this.controls = Object.fromEntries([...root.querySelectorAll('[data-session]')].map(el => [el.dataset.session, el]));
     this.rows = new Map(); this.metadata = new Map(); this.selected = ''; this.preview = null;
-    this.generation = 0; this.refreshGeneration = 0; this.busy = false; this.active = null; this.recording = null; this.pausedRecording = null;
+    this.generation = 0; this.refreshGeneration = 0; this.busy = false; this.active = null; this.recording = null; this.pausedRecording = null; this.inputRecording = null;
     this.state('loading', 'Reading local checkpoints…');
     const c = this.controls;
     for (const [key, action, progress] of [
       ['new', () => this.newGuest(), 'restoring'], ['start', () => this.start(), 'capturing'],
       ['checkpoint', () => this.capture(), 'capturing'], ['stop', () => this.stop(), 'capturing'],
+      ['input-start', () => this.startInputs(), 'capturing'], ['input-save', () => this.saveInputs(), 'saving'],
+      ['input-stop', () => this.stopInputs(), 'saving'],
       ['open', () => this.open(), 'restoring'], ['retry', () => this.retry(), 'capturing'],
       ['delete', () => this.deleteSelected(), 'deleting'], ['cleanup', () => this.cleanup(), 'cleaning'],
       ['limits-save', () => this.saveLimits(), 'saving'], ['persist', () => this.requestPersistence(), 'saving'],
@@ -132,7 +134,7 @@ class SessionLibrary {
         this.controls.points.append(option);
       }
       this.controls.points.value = manifest.checkpoints.at(-1)?.id ?? '';
-      this.state(compatible ? 'ready' : 'incompatible', compatible
+      this.state(compatible || manifest.policy.mode === 'capture-prefix' ? 'ready' : 'incompatible', manifest.policy.mode === 'capture-prefix' ? 'Input prefix preview. Delivered inputs are saved; full replay is unavailable until all device adapters are installed.' : compatible
         ? 'Selected preview only. Open restores the chosen exact checkpoint and leaves it paused.'
         : 'Incompatible saved build or profile. Opening is disabled; the active guest is unchanged.');
     } catch (error) {if (token === this.generation) this.state(errorState(error), error.message);}
@@ -141,8 +143,11 @@ class SessionLibrary {
     const c = this.controls; if (!c) return;
     const owner = this.adapter.current(), ready = Boolean(this.store), busy = this.busy;
     const qualified = owner?.profile && owner.ready;
-    c.new.disabled = !ready || busy || Boolean(this.recording || this.pausedRecording);
-    c.start.disabled = !ready || busy || !qualified || Boolean(this.recording || this.pausedRecording);
+    const inputBusy=Boolean(this.inputRecording),inputStopped=Boolean(this.active?.inputStopped);
+    c['input-start'].disabled=!ready||busy||!qualified||Boolean(this.recording||this.pausedRecording)||inputBusy||inputStopped;
+    c['input-save'].disabled=c['input-stop'].disabled=busy||!inputBusy||owner?.controller!==this.inputRecording?.controller;
+    c.new.disabled = !ready || busy || Boolean(this.recording || this.pausedRecording) || inputBusy;
+    c.start.disabled = !ready || busy || !qualified || Boolean(this.recording || this.pausedRecording) || inputBusy || inputStopped;
     c.checkpoint.disabled = busy || !this.recording || owner?.controller !== this.recording.controller;
     c.stop.disabled = busy || !(this.recording || this.pausedRecording);
     c.retry.disabled = busy || !this.pausedRecording || owner?.controller !== this.pausedRecording.controller;
@@ -151,10 +156,12 @@ class SessionLibrary {
     c.sessions.disabled = busy || !ready || !this.rows.size; c.points.disabled = busy || !this.preview;
     c.open.disabled = busy || Boolean(this.recording || this.pausedRecording) || !this.preview?.compatible || !c.points.value;
     c.name.disabled = c.rename.disabled = busy || !this.selected || !ready;
-    c.refresh.disabled = !ready || busy; c.resume.disabled = busy || !qualified;
+    c.refresh.disabled = !ready || busy; c.resume.disabled = busy || !qualified || inputStopped;
     this.root.setAttribute('aria-busy', String(busy));
     c.active.dataset.id = this.active?.id ?? ''; c.active.dataset.point = this.active?.unsaved ? '' : this.active?.point ?? '';
-    c.active.textContent = this.active
+    c.active.textContent = this.active && (this.inputRecording || this.active.inputStopped)
+      ? `Active: ${this.metadata.get(this.active.id)?.name || this.active.id} · ${this.active.inputStopped ? 'input recording stopped; guest paused' : this.active.running ? 'recording delivered input; guest running' : 'recording delivered input; guest paused'}`
+      : this.active
       ? `Active: ${this.metadata.get(this.active.id)?.name || this.active.id} · ${this.active.point ? 'last saved ' + this.active.point : 'no committed point'}${this.pausedRecording ? ' · recording paused; current memory may be unsaved' : this.recording ? ' · recording checkpoints' : this.active.running ? ' · running; later changes are unsaved' : this.active.unsaved ? ' · paused; current memory is unsaved' : ' · paused at saved point'}`
       : owner?.profile ? 'Active: offline checkpoint guest · no saved session selected for this machine' : 'Active: no checkpoint guest';
     const preview = this.preview, meta = this.metadata.get(this.selected);
@@ -162,10 +169,12 @@ class SessionLibrary {
     if (preview) {
       const span = Math.max(0, (meta?.updated ?? 0) - (meta?.started ?? 0));
       const lines = [
-        `${preview.manifest.checkpoints.length} exact restore points · ${bytesLabel(preview.bytes)} referenced data (shared data may be counted by other sessions)`,
+        preview.manifest.policy.mode === 'capture-prefix'
+          ? `${preview.manifest.events.reduce((n,e)=>n+e.count,0)} input events · ${bytesLabel(preview.bytes)} initial witness and runtime data`
+          : `${preview.manifest.checkpoints.length} exact restore points · ${bytesLabel(preview.bytes)} referenced data (shared data may be counted by other sessions)`,
         meta?.started > 0 ? `Capture window ${(span / 1000).toFixed(1)} seconds` : 'Capture duration unavailable',
         `Runtime ${preview.runtime} · Wasm ${preview.manifest.machine.wasm_build} · image ${preview.manifest.machine.base_image}`,
-        'Checkpoints only. No event replay or history from before recording was enabled.',
+        preview.manifest.policy.mode === 'capture-prefix' ? `${preview.manifest.events.reduce((n,e)=>n+e.count,0)} input events saved. Incomplete capture: full replay is unavailable until all device adapters are installed.` : 'Checkpoints only. No event replay or history from before recording was enabled.',
       ];
       for (const text of lines) {const line = document.createElement('p'); line.textContent = text; c.details.append(line);}
     }
@@ -178,7 +187,30 @@ class SessionLibrary {
       this.recording = null; this.pausedRecording = null;
       this.state('ready', 'Recording ended because its guest stopped. Committed checkpoints remain saved.');
     }
+    if(this.inputRecording&&this.inputRecording.controller!==controller){
+      this.inputRecording=null;this.state('ready','Input recording ended with its guest. Its last committed prefix remains saved.');
+    }
     this.render();
+  }
+  async startInputs(){
+    const owner=this.adapter.current();
+    if(!owner?.profile||!owner.ready||this.recording||this.pausedRecording||this.inputRecording)throw Error('Start a ready offline software guest first');
+    const controller=owner.controller,id=uid('inputs-'),now=Date.now();await controller.pause();
+    await controller.startInputRecording({id});
+    this.inputRecording={id,controller};this.active={id,point:'input-witness',controller,running:false};
+    const next=new Map(this.metadata);next.set(id,{id,name:`Inputs ${new Date(now).toLocaleString()}`,started:now,updated:now,points:[]});this.persistMetadata(next);
+    await this.refresh(id);this.state('ready','Input recording started. Resume the guest to continue; Save input prefix commits queued inputs.');
+  }
+  async saveInputs(){
+    const recording=this.inputRecording;if(!recording||this.adapter.current()?.controller!==recording.controller)throw Error('Input recording guest changed');
+    const end=await recording.controller.flushInputRecording();await this.refresh(recording.id);
+    this.state('ready',`Input prefix committed through event ${end.sequence}. Full replay remains unavailable.`);
+  }
+  async stopInputs(){
+    const recording=this.inputRecording;if(!recording)throw Error('No input recording is active');
+    await recording.controller.stopInputCapture();this.inputRecording=null;
+    this.active={...this.active,running:false,inputStopped:true};await this.refresh(recording.id);
+    this.state('ready','Input recording stopped at its committed prefix. The guest is paused; start a new guest to continue.');
   }
   async newGuest() {
     await this.adapter.replace(null); this.active = null;

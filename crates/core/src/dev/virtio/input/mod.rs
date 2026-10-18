@@ -214,6 +214,31 @@ impl InputState {
         true
     }
 
+    /// Exact bounded host publication intent: accepted-event count, retained-event count, then
+    /// the retained wire events and the SYN_REPORT that sync will submit. The count also records
+    /// overflowed staging, whose whole-frame drop must remain reproducible. This is observational.
+    pub fn session_host_frame(&self) -> Option<Vec<u8>> {
+        let size = self
+            .staged_frame
+            .len()
+            .checked_add(1)?
+            .checked_mul(INPUT_EVENT_SIZE)?
+            .checked_add(12)?;
+        if size > crate::session_clock::MAX_PAYLOAD {
+            return None;
+        }
+        let mut out = Vec::with_capacity(size);
+        out.extend_from_slice(&(self.staged_event_count as u64).to_le_bytes());
+        out.extend_from_slice(&(self.staged_frame.len() as u32).to_le_bytes());
+        for event in &self.staged_frame {
+            out.extend_from_slice(&event.to_bytes());
+        }
+        if self.staged_event_count != 0 {
+            out.extend_from_slice(&InputEvent::new(EV_SYN, SYN_REPORT, 0).to_bytes());
+        }
+        Some(out)
+    }
+
     /// Finish the current frame with `EV_SYN/SYN_REPORT` and enqueue it atomically.
     pub fn sync(&mut self) {
         if self.staged_event_count == 0 {

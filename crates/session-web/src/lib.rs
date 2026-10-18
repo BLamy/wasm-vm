@@ -52,6 +52,22 @@ pub fn manifest_references(bytes: &[u8]) -> Result<Vec<u8>, JsError> {
     session_publication::references_json(bytes).map_err(js_error)
 }
 
+/// Canonical bounded record batch -> immutable index. The caller stores these exact bytes.
+#[wasm_bindgen(js_name = sessionIndexEventChunk)]
+pub fn index_event_chunk(bytes: &[u8]) -> Result<Vec<u8>, JsError> {
+    use wasm_vm_storage::session::{EventChunkIndex, EventRecord, MAX_CHUNK_BYTES};
+    if bytes.len() > MAX_CHUNK_BYTES as usize {
+        return Err(js_error(SessionError::TooLarge("event chunk")));
+    }
+    let records: Vec<EventRecord> = serde_json::from_slice(bytes)
+        .map_err(|_| js_error(SessionError::Invalid("event records")))?;
+    let (index, canonical) = EventChunkIndex::from_records(&records).map_err(js_error)?;
+    if canonical != bytes {
+        return Err(js_error(SessionError::Invalid("noncanonical event chunk")));
+    }
+    serde_json::to_vec(&index).map_err(|_| js_error(SessionError::Invalid("event index")))
+}
+
 #[wasm_bindgen(js_name = sessionEventReferences)]
 pub fn event_references(manifest: &[u8], chunk: &[u8]) -> Result<Vec<u8>, JsError> {
     session_publication::event_references_json(manifest, chunk).map_err(js_error)

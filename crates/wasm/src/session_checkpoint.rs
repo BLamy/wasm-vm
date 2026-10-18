@@ -4,6 +4,7 @@ use software_checkpoint::SoftwareCheckpoint;
 use wasm_vm_storage::checkpoint::CheckpointContext;
 
 fn context_for(inner: &LinuxInner, bytes: &[u8]) -> Result<CheckpointContext, JsError> {
+    inner.refuse_capture_mutation()?;
     let context = CheckpointContext::from_bytes(bytes)
         .map_err(|error| JsError::new(&format!("session_checkpoint_context: {error:?}")))?;
     if inner.finished.is_some()

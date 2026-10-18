@@ -1019,6 +1019,35 @@ export async function startLinuxBoot(opts = {}) {
     let stopped = false;
     let paused = Boolean(startPaused);
     let gpuCaptureBusy=false;
+    let inputActive=false,inputStopped=false,inputJournal=null,inputStore=null,inputWriter=null,inputFlush=null;
+    const flushInputRecording=()=>{
+      if(!inputJournal)return Promise.resolve(null);
+      // A caller owns a drain after every earlier save. Sharing an older promise would lose
+      // receipts arriving after its drain, notably a stop while immutable objects are written.
+      const previous=inputFlush;
+      const current=(previous?previous.catch(()=>{}):Promise.resolve()).then(async()=>{
+        await inputJournal.flush();
+        inputJournal.stage(machine.takeInputDeliveries());
+        return inputJournal.flush();
+      }).catch(error=>{paused=true;try{if(!inputStopped&&!machine.inputPosition().paused)machine.inputLifecycle(0);}catch{}throw error;})
+        .finally(()=>{if(inputFlush===current)inputFlush=null;});
+      inputFlush=current;return current;
+    };
+    const startInputCapture=async(replay=false)=>{
+      if(!paused||stopped||gpuCaptureBusy||inputActive||productionGpu||virgl||enableMic||audioRequested||captureRequested
+        ||guestClock!=='icount'||interactiveClock!==undefined)throw Error('pause a software ICount guest before input capture');
+      await taskQuiescence.waitForIdle();
+      if(stopped||!paused)throw Error('input capture owner changed');
+      machine.startInputCapture(replay);inputActive=true;inputStopped=false;
+    };
+    const stopInputCapture=async()=>{
+      if(!inputActive)return;
+      paused=true;
+      if(!inputStopped){machine.inputLifecycle(2);inputStopped=true;}
+      await taskQuiescence.waitForIdle();await flushInputRecording();
+      if(inputWriter){await inputWriter.release();inputWriter=null;}
+      if(inputStore){await inputStore.close();inputStore=null;}
+    };
     const heldKeyboard=new Set(restoredSessionContext?.held.keyboard),
       heldTablet=new Set(restoredSessionContext?.held.tablet),heldMouse=new Set(restoredSessionContext?.held.mouse);
     let observedCaptureStartCount = 0;
@@ -1137,6 +1166,10 @@ export async function startLinuxBoot(opts = {}) {
     // the fetch is a no-op and no second loop can start.
     const runTick = async () => {
       if (stopped || paused || quotaPaused) { tickScheduled = false; return; }
+      if(inputActive){
+        try{await flushInputRecording();}catch(error){onError(error);tickScheduled=false;return;}
+        if(stopped||paused||quotaPaused){tickScheduled=false;return;}
+      }
       // E3-T08/E3-T10 durability pressure, checked BEFORE the run slice:
       //  - writeWaiting: a guest WRITE has changed the synchronous overlay but is still outside
       //    the used ring. Persist NOW so the exact descriptor can complete on the next boundary.
@@ -1399,8 +1432,8 @@ export async function startLinuxBoot(opts = {}) {
           onError(error);
           throw error;
         }
-        if(eventType===1){if(value===1)heldKeyboard.add(code);else if(value===0)heldKeyboard.delete(code);}
         machine.sendKeyboardEvent(eventType, code, value);
+        if(eventType===1){if(value===1)heldKeyboard.add(code);else if(value===0)heldKeyboard.delete(code);}
         return true;
       },
       syncKeyboard: () => {
@@ -1412,8 +1445,8 @@ export async function startLinuxBoot(opts = {}) {
       // methods, preserving T14a's independent slot/queue contract in both boot backends.
       sendTabletEvent: (eventType, code, value) => {
         if (stopped || gpuCaptureBusy) return false;
-        if(eventType===1){if(value===1)heldTablet.add(code);else if(value===0)heldTablet.delete(code);}
         machine.sendTabletEvent(eventType, code, value);
+        if(eventType===1){if(value===1)heldTablet.add(code);else if(value===0)heldTablet.delete(code);}
         return true;
       },
       syncTablet: () => {
@@ -1423,8 +1456,8 @@ export async function startLinuxBoot(opts = {}) {
       },
       sendMouseEvent: (eventType, code, value) => {
         if (stopped || gpuCaptureBusy) return false;
-        if(eventType===1){if(value===1)heldMouse.add(code);else if(value===0)heldMouse.delete(code);}
         machine.sendMouseEvent(eventType, code, value);
+        if(eventType===1){if(value===1)heldMouse.add(code);else if(value===0)heldMouse.delete(code);}
         return true;
       },
       syncMouse: () => {
@@ -1441,6 +1474,7 @@ export async function startLinuxBoot(opts = {}) {
         typeof machine.inputDeviceStats === "function" ? machine.inputDeviceStats() : null
       ),
       stop: async () => {
+        await stopInputCapture();
         finish("stopped");
         await taskQuiescence.stop();
         settleFinished();
@@ -1450,10 +1484,11 @@ export async function startLinuxBoot(opts = {}) {
       // before rescheduling; unpaused background throttling retains the core gap/slew policy.
       // The RTC remains separate. main.js's explicit visibility pause still freezes execution;
       // the desktop worker route does not pause on visibility changes.
-      pause: () => { paused = true; },
+      pause: () => { if(inputActive&&!inputStopped)machine.inputLifecycle(0);paused=true;return flushInputRecording(); },
       resume: () => {
         if(gpuCaptureBusy)throw Error("gpu_checkpoint: capture is busy");
         if (paused && !stopped) {
+          if(inputActive){if(inputStopped)throw Error('input prefix stopped; start a fresh guest');machine.inputLifecycle(1);}
           guestClockLifecycle.resume();
           paused = false;
           schedule(); // idempotent — never spawns a second loop even if a tick is still pending
@@ -1495,6 +1530,46 @@ export async function startLinuxBoot(opts = {}) {
       captureDiskDelta,
       captureSoftwareCheckpoint,
       softwareCheckpointConfiguration,
+      startInputCapture,
+      stopInputCapture,
+      inputPosition:()=>inputActive?machine.inputPosition():null,
+      takeInputDeliveries:()=>{if(inputJournal)throw Error('durable input recording owns its receipts');return machine.takeInputDeliveries();},
+      applyRecordedInput:(...args)=>machine.applyRecordedInput(...args),
+      setInputPointerMode:(relative)=>{if(inputActive&&!stopped)machine.setInputPointerMode(relative);},
+      flushInputRecording,
+      startInputRecording:async({database,id})=>{
+        if(inputActive||!paused||stopped||gpuCaptureBusy||productionGpu||virgl||extraDiskBytes||!isChunked||enableMic
+          ||audioRequested||captureRequested||ramMib>256||usePersist||guestClock!=='icount'||interactiveClock!==undefined
+          ||network.provider!=='offline')throw Error('pause a fresh software ICount guest without live media or outbound connections first');
+        gpuCaptureBusy=true;let store,writer;
+        try{
+          await taskQuiescence.waitForIdle();
+          if(stopped||!paused)throw Error('input recording owner changed');
+          const [{SessionStore},{SessionInputJournal}]=await Promise.all([import('./session-store.js'),import('./session-inputs.js')]);
+          let witness;
+          for(let attempt=0;attempt<64;attempt++){
+            try{witness=machine.captureInputWitness();break;}catch(error){
+              if(!/NotQuiesced|WouldBlock|CacheMiss/.test(String(error)))throw error;
+              await machine.fetchPending();
+            }
+          }
+          if(!witness)throw Error('input witness did not quiesce within its budget');
+          const state=guestClockLifecycle.state();
+          const configuration={version:1,inputPrefixWitness:1,providersComplete:false,runtime:GPU_CHECKPOINT_BUILD_ID,
+            ramMib,bootargs,clock:{mode:'icount',divider:state.clockDiv,timebase_hz:String(state.timebaseHz),interactive:null},
+            kernel:{url:new URL(km.url,globalThis.location.href).href,sha256:km.sha256,length:String(kernel.length)},
+            wasm:{url:new URL('./pkg/wasm_vm_wasm_bg.wasm',import.meta.url).href,sha256:SOFTWARE_CHECKPOINT_WASM_SHA256,length:String(SOFTWARE_CHECKPOINT_WASM_BYTES)},
+            devices:JSON.parse(machine.softwareCheckpointTopology()),imageManifest:imageManifestText,baseUrl,
+            initialHostInput:{keyboard:[...heldKeyboard],tablet:[...heldTablet],mouse:[...heldMouse]},
+            fileTransfer:opts.slirpNet?JSON.parse(machine.fileTransferStatus()):null};
+          store=await SessionStore.open(database);writer=await store.writer(id);
+          const journal=await SessionInputJournal.createWitness(store,writer,configuration,witness.native,witness.disk,witness.pending,witness.output);
+          if(stopped||!paused)throw Error('input recording owner changed');
+          machine.startInputCapture(false);inputActive=true;inputStopped=false;
+          inputJournal=journal;inputStore=store;inputWriter=writer;return {id,end:journal.end};
+        }catch(error){if(writer)await writer.release();if(store)await store.close();throw error;}
+        finally{gpuCaptureBusy=false;}
+      },
       saveDesktopSnapshot: () => {
         if (virgl) throw new Error("Accelerated GPU sessions require a cold restart; graphics handles cannot be saved.");
         if (typeof machine.saveDesktopSnapshot !== "function") {
@@ -1663,7 +1738,7 @@ export async function startLinuxBoot(opts = {}) {
       'profileStats','schedulerStats','softwareCheckpointConfiguration','acknowledgeGpuFrame',
       'setDisplay','sendInput','sendAgentInput','sendKeyboardEvent','syncKeyboard',
       'sendTabletEvent','syncTablet','sendMouseEvent','syncMouse',
-      'stop','pause','captureDiskDelta','captureSoftwareCheckpoint','saveGpuCheckpoint']);
+      'stop','pause','inputPosition','takeInputDeliveries','flushInputRecording','stopInputCapture','captureDiskDelta','captureSoftwareCheckpoint','saveGpuCheckpoint']);
     for(const [name,method] of Object.entries(controller)) {
       if(typeof method!=='function'||captureReads.has(name))continue;
       controller[name]=(...args)=>{
@@ -1671,6 +1746,27 @@ export async function startLinuxBoot(opts = {}) {
         return method(...args);
       };
     }
+    const inputAllowed=new Set(['setDisplay','sendInput','sendAgentInput','sendKeyboardEvent','syncKeyboard',
+      'sendTabletEvent','syncTablet','sendMouseEvent','syncMouse','setInputPointerMode','confirmAgentHello',
+      'beginFileUpload','pushFileUpload','cancelFileUpload','stop','pause','resume','stopInputCapture',
+      'inputPosition','takeInputDeliveries','applyRecordedInput','flushInputRecording','isPaused','stateDigest',
+      'displayStats','gpuStats','keyboardLedState','inputDeviceStats','guestClockState','icountDividerSelection',
+      'fileTransferReady','fileTransferStatus','dhcpStats','schedulerStats','jitStats','profileStats','fetchStats',
+      'persistStats','readOnly','hasUnpersisted','storageEstimate','restoredFromBootSnapshot','storedSnapshotRestoreEvidence',
+      'overlaySeedIdentity','audioOutputReady','audioCaptureReady','captureState','snapshotGeneration','takeAgentOutput']);
+    for(const [name,method]of Object.entries(controller)){
+      if(typeof method!=='function'||inputAllowed.has(name))continue;
+      controller[name]=(...args)=>{
+        if(inputActive&&!inputStopped)throw Error('input prefix: unsupported host control '+name);
+        return method(...args);
+      };
+    }
+    const inputIngress=new Set(['setDisplay','sendInput','sendAgentInput','sendKeyboardEvent','syncKeyboard',
+      'sendTabletEvent','syncTablet','sendMouseEvent','syncMouse','setInputPointerMode','confirmAgentHello',
+      'beginFileUpload','pushFileUpload','cancelFileUpload']);
+    for(const name of inputIngress){const method=controller[name];controller[name]=(...args)=>{
+      try{return method(...args);}catch(error){if(inputActive){paused=true;try{if(!inputStopped&&!machine.inputPosition().paused)machine.inputLifecycle(0);}catch{}}throw error;}
+    };}
     return controller;
   } catch (e) {
     // E3-T09 (critic BUG-1): a granted writer lock must not outlive a failed boot.

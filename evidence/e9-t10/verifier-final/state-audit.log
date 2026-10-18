@@ -1,0 +1,62 @@
+{
+  "worker": {
+    "status": "HELD",
+    "native_frames": 17,
+    "trace_files": 20,
+    "prefixes": 7,
+    "files": {
+      "linux-guest-file.bin": {
+        "bytes": 131129,
+        "sha256": "d76854eeea54b02d6ec86d9dc9acaffd3f9734a3077b792ff014c135075975e9"
+      },
+      "linux-guest-partial.bin": {
+        "bytes": 65528,
+        "sha256": "ccd8ab7bb8cc5df3e2aede25c96a9147ed71becf5165e061e0d964131a3b72d7"
+      },
+      "linux-cancelled-private.bin": {
+        "bytes": 65528,
+        "sha256": "ccd8ab7bb8cc5df3e2aede25c96a9147ed71becf5165e061e0d964131a3b72d7"
+      }
+    }
+  },
+  "cold": {
+    "status": "HELD",
+    "native_frames": 17,
+    "trace_files": 20,
+    "prefixes": 7,
+    "files": {
+      "linux-guest-file.bin": {
+        "bytes": 131129,
+        "sha256": "d76854eeea54b02d6ec86d9dc9acaffd3f9734a3077b792ff014c135075975e9"
+      },
+      "linux-guest-partial.bin": {
+        "bytes": 65528,
+        "sha256": "ccd8ab7bb8cc5df3e2aede25c96a9147ed71becf5165e061e0d964131a3b72d7"
+      },
+      "linux-cancelled-private.bin": {
+        "bytes": 65528,
+        "sha256": "ccd8ab7bb8cc5df3e2aede25c96a9147ed71becf5165e061e0d964131a3b72d7"
+      }
+    }
+  },
+  "public": {
+    "status": "HELD",
+    "native_frames": 0,
+    "trace_files": 0,
+    "prefixes": 7,
+    "files": {
+      "linux-guest-file.bin": {
+        "bytes": 131129,
+        "sha256": "d76854eeea54b02d6ec86d9dc9acaffd3f9734a3077b792ff014c135075975e9"
+      },
+      "linux-guest-partial.bin": {
+        "bytes": 65528,
+        "sha256": "ccd8ab7bb8cc5df3e2aede25c96a9147ed71becf5165e061e0d964131a3b72d7"
+      },
+      "linux-cancelled-private.bin": {
+        "bytes": 65528,
+        "sha256": "ccd8ab7bb8cc5df3e2aede25c96a9147ed71becf5165e061e0d964131a3b72d7"
+      }
+    }
+  }
+}

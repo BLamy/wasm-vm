@@ -1,0 +1,331 @@
+{
+  "task": "E9-T09",
+  "scope": "Unchanged retained GPU factory regression through the current launcher; no event-replay admission for GPU",
+  "status": "passed",
+  "development": false,
+  "head": "fafa1d63b5fa584df445e0c967ea52af966de5f8",
+  "started": "2026-10-18T11:11:13.956Z",
+  "errors": [],
+  "assets": [
+    {
+      "name": "app.html",
+      "bytes": 53704,
+      "sha256": "45573f7a246b15bfd24062acef0192b2f2efc19fef49399b834879ddcba61335"
+    },
+    {
+      "name": "main.js",
+      "bytes": 162368,
+      "sha256": "a753c0eff5abac0165a06c8f4312fb8bca71b402347865031b50b6ba2cf993a0"
+    },
+    {
+      "name": "event-clock-probe.js",
+      "bytes": 10763,
+      "sha256": "32c8de7405fd5bf24ed54a1bd978086d59909cfa0f52c56609d04c8f728d6c8a"
+    },
+    {
+      "name": "session-store.js",
+      "bytes": 28114,
+      "sha256": "ac74f75aed9f650fd3242b8b40f4b3d930cd75c64ae524cd5f2ef575656d68df"
+    },
+    {
+      "name": "session-library.js",
+      "bytes": 26613,
+      "sha256": "c99e960803e7dd5a64f4b7e128e79f810aa5769d5b5ef291b3e190e17c492a78"
+    },
+    {
+      "name": "session-library.css",
+      "bytes": 1692,
+      "sha256": "b16213437edf880242a10f57ca1cf9ca56e36396319b51547f9bc48c7a03bb1f"
+    },
+    {
+      "name": "loader.js",
+      "bytes": 105752,
+      "sha256": "ab2c24ff1d97b5e28a6e6e4ea580876fb3497fe70356217dd9fb7c1aa7de400a"
+    },
+    {
+      "name": "gpu-runtime-worker.js",
+      "bytes": 290,
+      "sha256": "f067214e0b57ca21285761130a6c85aa74d92585c3b5a139b17ba7d48b6813e3"
+    },
+    {
+      "name": "linux-worker-host.js",
+      "bytes": 4051,
+      "sha256": "65ea5ed32b5642a9e102803e0f6b09b4a02ce891ff72b7e480859fa8c7f0247d"
+    },
+    {
+      "name": "gpu-checkpoint-build.js",
+      "bytes": 340,
+      "sha256": "a1ca4b6d38b65ae2d0d40471ba5b4c750e06df85f9a8e106ed1a1abd596fd928"
+    },
+    {
+      "name": "gpu-runtime/manifest.json",
+      "bytes": 8261,
+      "sha256": "aabeebb6c7cbcaa0b5e5aab6cee168309e1ff284f13b25fc33b023f46960db12"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/admission-probe.js",
+      "bytes": 819,
+      "sha256": "03b0035d63b650b85214bd1d357297f8b261660489716513a887234ae223327c"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/boot-asset-cache.js",
+      "bytes": 9253,
+      "sha256": "ec667f890abdb796cf67df4b042a63dd4374d175157b9224c80a927c00bdfdbe"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/boot-path.js",
+      "bytes": 2867,
+      "sha256": "63ebc850add4cea7fb79ddc1a7cd46651cf05c3442e51803a0454475528f7d47"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/cold-counter-recycling.js",
+      "bytes": 1614,
+      "sha256": "8076719edb7126071a1db47fea0ad6b8ad1740032956e883d18a30071190af2b"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/decoded-cache.js",
+      "bytes": 1412,
+      "sha256": "92eb0ef85b5b2580ef1b574b103993d7969b5f1a5cf9d59b8430e5ab300f06ae"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/gpu-checkpoint-build.js",
+      "bytes": 174,
+      "sha256": "11465609b9eee469237c6a31f6718c0a1bab06729e7f361a685b51ac0b48d3aa"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/gpu-checkpoint.js",
+      "bytes": 7331,
+      "sha256": "f00f1537455a476eb8d9c54d25378ea23bd18024d84eded310da947ea63846ce"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/guest-clock.js",
+      "bytes": 7094,
+      "sha256": "fcd9a2b5ce4c2a04cc8a253aa1d330f60e5c9e4e72473c55503d897c2311aad3"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/linux-worker-protocol.js",
+      "bytes": 32223,
+      "sha256": "0fe836848950f15e2aa147972ad37fab95d49dc81531a68bad56c44fd10a607b"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/linux-worker.js",
+      "bytes": 1188,
+      "sha256": "7783b4aecb74b83882a2ca3495ed46932ed7930543d0cab72f4035ccfc13e4b9"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/loader.js",
+      "bytes": 89607,
+      "sha256": "dfc4411dde2c193f6821af7e7fe5a4bc2d9ccd3a8e31e697c825f2f6ee2e70eb"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/overlay-seed-identity.js",
+      "bytes": 692,
+      "sha256": "e7ae8d22f14e55791b70163254f304fc9fa999029952eba595d592c7fd389c4d"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js",
+      "bytes": 437,
+      "sha256": "c936afb7f8914acb030a1ba89003709a47029cddee54eabeb143b291da568804"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js",
+      "bytes": 1314,
+      "sha256": "2877a95db8f6305fce95abf975c0fd7176ea2936c91eae201f662997f37f9fb2"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/pkg/wasm_vm_wasm.js",
+      "bytes": 129443,
+      "sha256": "56778a348c690f847568f23006630a963a73f4686271218cd99637f97d918e69"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1782889,
+      "sha256": "7d6a781fd222f39a2315ec334b6df70517c4fd0ef3443e1c8669804e4c408e89"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/cache.mjs",
+      "bytes": 2989,
+      "sha256": "9e50cc258528e581f79cee0e4e0038994c7968f80046b9db21e7f5e0e4a92cfa"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/checkpoint-codec.mjs",
+      "bytes": 5017,
+      "sha256": "a744a9c9bc0f5fb0543d929429f00dfae55fac7afc6563447d789f2bd3fd6eff"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/checkpoint-dma.mjs",
+      "bytes": 2754,
+      "sha256": "2e7dd9826390cab02558403026625bac4567b1e43d2a604af42de03d630603ac"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/checkpoint-profile.mjs",
+      "bytes": 1517,
+      "sha256": "d4394fe4493527ec8d4f7abdbd3c2d476373ba43d9f9acf3c0c90062ebf8a27d"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/checkpoint.mjs",
+      "bytes": 14336,
+      "sha256": "ba463beecf7d0b1fd141a607a82dd17b37ef407582a23f46d00c6bef85d911af"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/color-images.mjs",
+      "bytes": 2770,
+      "sha256": "8c1b43f830e13f73d1397398e97bf263343f88c1782c683a890cb0f1fbc5e0e1"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/constant-domain.mjs",
+      "bytes": 127535,
+      "sha256": "dd64536abf46bc69ff7866e9822d7acf1a3e7f5216e70919d4a03e633b7c7aca"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/control-bridge.mjs",
+      "bytes": 41527,
+      "sha256": "27aecae3704b053d6c01d6d933e6592bcea334ca243047d3fe14536b365a3c5a"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/decoder.mjs",
+      "bytes": 55229,
+      "sha256": "794147c4251303f662f47d00715c6cbc7e4455c8f4f9677a972b80d0026e3c7b"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/dimensional-depth-images.mjs",
+      "bytes": 8781,
+      "sha256": "44d2d7b39145262ebd2533a8bc9625f1de500e7633cea73184a26c6727e5d68a"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/float-images.mjs",
+      "bytes": 3132,
+      "sha256": "69543e48426c7ded5178b659eb651b5cb765aa559a0bbf96fd8d34f5cf7cfe46"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/floating-depth-gpu.mjs",
+      "bytes": 15338,
+      "sha256": "ebc88ac91fe55fbfeb391fe2d216d4fea41086fb17d28628a2620353f1a66b90"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/floating-depth-images.mjs",
+      "bytes": 947,
+      "sha256": "76e02b32e5a24f65f360adb7cbcc0f9e5d51ee90be7cfbe1a383bfa99cc30370"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/integer-images.mjs",
+      "bytes": 1557,
+      "sha256": "8871226b60ad86ee1f585f8de6e5891241a361ad84aa811a36028fd003d95029"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/multisample.mjs",
+      "bytes": 7360,
+      "sha256": "ffe98e8c3a615403f792905d30dc35d947c1a89a82338ccf60022dd5d34b3c38"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/packed-float-images.mjs",
+      "bytes": 1620,
+      "sha256": "0ea28e0bfcf4a0ae04f634826d4b65cb19a6285850836412c7b06311ce1c5405"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/packed-normalized-images.mjs",
+      "bytes": 2046,
+      "sha256": "5ccf01336a906f3b46b0c8c790c73449331e09ac3cfee2931459d507b6dccd18"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/packed-unsigned-images.mjs",
+      "bytes": 991,
+      "sha256": "1170cf4d69d7281fdc32383354d7c17d6019ece0c7a6f681de86b27a57ea0d61"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/production.mjs",
+      "bytes": 22685,
+      "sha256": "42ad3fc6cbcae3cd30bd37bb22f65411c6b8938f4413d7e7f3ca1c5f9a1ec0b7"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/queries.mjs",
+      "bytes": 6094,
+      "sha256": "8a7dd9c146ff437691108f0749c89a2d4ac8573ec35690c02e39cbdbbaca8860"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/resources.mjs",
+      "bytes": 167021,
+      "sha256": "ce1b15fdbe4fbcb8cf6f21477879cf201c3ae8a803f6b0fecf48264956207bd9"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/scanout.mjs",
+      "bytes": 16610,
+      "sha256": "cbbacc075f94c07797e69b2c778472f36964c567725002efef42717b1ca59436"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/shared-exponent-gpu.mjs",
+      "bytes": 12102,
+      "sha256": "7b44ba7bc7361438807c1709c32929832dbf0b7af95966c68a65b01b23075ad8"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/shared-exponent-images.mjs",
+      "bytes": 563,
+      "sha256": "27de20239649aea73145e1f547c9265692f451fedddf3876639c173cf0d6168f"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/state.mjs",
+      "bytes": 223059,
+      "sha256": "30a429f0edc9aefbe5b00b3a5cfabcb1a1f9ddf089eea9212e0f751a9b3149a0"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-command/unorm-depth-images.mjs",
+      "bytes": 1409,
+      "sha256": "7fb08881153cfd06ed1acb5dba8d6cc61525b8f742a3b0a9715fb0e68e55e1d1"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-shader/build/wasm/virgl-shader.mjs",
+      "bytes": 14434,
+      "sha256": "4b3d0589d178ae6e3a2ad90c0abbddccc8226690e49e8cf91f8509ba64ca4f4a"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-shader/build/wasm/virgl-shader.wasm",
+      "bytes": 446891,
+      "sha256": "5f9b5935cc4a34d7d3b1cbceb3f75572c7ba8de822e09fea365a8d6c7aefb09b"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-shader/index.mjs",
+      "bytes": 22546,
+      "sha256": "1bae07f2e668078c4e447f65d1785815714907b7270ced01b131ce70e6d3f10e"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/renderer/virgl-shader/standard.mjs",
+      "bytes": 20285,
+      "sha256": "842b2b6041ce71d267940cb7732bc936624b410a90fe17ccc108af7fee386d92"
+    },
+    {
+      "name": "gpu-runtime/222950026e3e01edc32462dc531795d49c262c4780d24ac9cebbb01c2d22cea0/task-quiescence.js",
+      "bytes": 1025,
+      "sha256": "514888d3f3fd4bb73afcd7f86559b8e79f47d9558450abf762d12a885b28ea02"
+    }
+  ],
+  "url": "http://127.0.0.1:57100/",
+  "boot": {
+    "ok": true
+  },
+  "gpu": {
+    "qualified": true,
+    "lost": false,
+    "poisoned": false,
+    "epoch": "0000000000000004",
+    "retired": 2499808,
+    "drawn": [
+      {
+        "epoch": "0000000000000004",
+        "sequence": null,
+        "bindingGeneration": "0000000000000329",
+        "resource": {
+          "generation": "0000000000000010",
+          "id": 13
+        },
+        "status": "drawn",
+        "presentation": {
+          "backend": "canvas2d",
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        }
+      }
+    ]
+  },
+  "driver_sha256": "7fa66bc4746d34727fd7015a33ae704149abb646c0e3952389d643c452aef778",
+  "finished": "2026-10-18T11:12:51.213Z"
+}
