@@ -3,7 +3,7 @@ id: E9-T08
 epic: 9
 title: Prove the saved-checkpoint experience across reload
 priority: 524.908
-status: pending
+status: in-progress
 depends_on: [E9-T06, E9-T07]
 estimate: S
 risk: medium
@@ -34,4 +34,13 @@ Choose restore order independently, reuse the same guest filenames and reopen a 
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-18 — worker — started
+
+Dependencies T06/T07 are independently verified. This S/medium milestone adds a recorded
+built-browser integration and unified documentation over their unchanged runtime.
+Two genuinely fresh guests will write different bytes to the same filename, retain
+separate shell RAM and queued input/held keys, then restore through visible controls
+after reload and in a fresh tab. Rename, quota-prefix feedback and deletion must preserve
+the other session. The proof includes exact raw tuples, independently reconstructed
+filesystem witnesses, original sources, responsive screenshots and 127/0 with no errors.
+Continuous replay and arbitrary-time seeking remain later task boundaries.
