@@ -3,7 +3,7 @@ id: E9-T06
 epic: 9
 title: Add the local saved-session library and checkpoint controls
 priority: 524.906
-status: pending
+status: in-progress
 depends_on: [E9-T05]
 estimate: S
 risk: medium

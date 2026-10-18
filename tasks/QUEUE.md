@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E9-T06** — Add the local saved-session library and checkpoint controls
 1. **E9-T09** — Place recorded events at exact guest execution boundaries
 1. **E6-T11e** — Survive hostile guest 3D requests and browser graphics context loss
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
@@ -450,7 +449,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.903` [E9-T03](epic-9-session-time-travel/E9-T03-session-store.md) — Persist multiple session logs with atomic publication *(deps: E9-T02, E3-T12d)*
 - [x] `524.904` [E9-T04](epic-9-session-time-travel/E9-T04-historical-disk-roots.md) — Preserve immutable disk state for historical checkpoints *(deps: E9-T02, E9-T03, E3-T12c3)*
 - [x] `524.905` [E9-T05](epic-9-session-time-travel/E9-T05-coherent-software-checkpoints.md) — Capture and restore coherent software session checkpoints *(deps: E9-T03, E9-T04)*
-- [ ] `524.906` [E9-T06](epic-9-session-time-travel/E9-T06-session-library.md) — Add the local saved-session library and checkpoint controls *(deps: E9-T05)*
+- [~] `524.906` [E9-T06](epic-9-session-time-travel/E9-T06-session-library.md) — Add the local saved-session library and checkpoint controls *(deps: E9-T05)*
 - [ ] `524.907` [E9-T07](epic-9-session-time-travel/E9-T07-retention-and-quota.md) — Manage session quotas retention and shared-data deletion *(deps: E9-T03, E9-T04, E9-T06)*
 - [ ] `524.908` [E9-T08](epic-9-session-time-travel/E9-T08-checkpoint-milestone.md) — Prove the saved-checkpoint experience across reload *(deps: E9-T06, E9-T07)*
 - [ ] `524.909` [E9-T09](epic-9-session-time-travel/E9-T09-event-clock.md) — Place recorded events at exact guest execution boundaries *(deps: E9-T01, E9-T02)*
