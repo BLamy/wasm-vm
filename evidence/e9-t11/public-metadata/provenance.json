@@ -1,0 +1,113 @@
+{
+  "task": "E9-T11",
+  "status": "passed",
+  "scope": "Verified catalog and service-worker publication only. Frozen runtime and original recordings unchanged.",
+  "runtime_head": "e14e4312b9ee8df73b93646c944bf64a2f0db875",
+  "verifier_commit": "c68c0792382d0a4fbdbd6d4718e5662cc99bc2b1",
+  "publication_head": "d2caaea0efe57501756d56bb1f174a5e4f231fde",
+  "production": "https://wasm-vm.pages.dev/",
+  "deployment": "https://1d15bba2.wasm-vm.pages.dev",
+  "full_payload_receipt_sha256": "6d4081e5b57291103c902ae54a10e809b155349d825b1b518a873f81f34ca4df",
+  "carried_public_report_sha256": "694d9225a41b360ccdb26580065a7e5bee147059de99b1ae444c7d4e554b8e49",
+  "verifier_receipt_sha256": "4455f027caa3a412ab7f64440b9ec0d274ba85738e560859fc2db37388b26816",
+  "changed": {
+    "sw.js": {
+      "before": {
+        "bytes": 5053,
+        "sha256": "2c2869c87ec1cd08ae0539344f88a15a5a75a31f93336d5d1524a2f85bd1d6fe"
+      },
+      "after": {
+        "bytes": 5053,
+        "sha256": "6707728fe7c93a679e8fdad29d7412d29b0a6e3e31acb4b4d20e76fb01c59dac"
+      }
+    },
+    "roadmap.js": {
+      "before": {
+        "bytes": 59563,
+        "sha256": "01531fdc87d748fb6779110353f1a55ccd67f30db87a01c25d2851244bd78db0"
+      },
+      "after": {
+        "bytes": 59574,
+        "sha256": "ee1092165380c91ed34a93bfa136e71a6adb2c17302e376cd64080884988e052"
+      }
+    },
+    "tasks.json": {
+      "before": {
+        "bytes": 7224362,
+        "sha256": "0dd5d00713fc76f09b5d6137f46bb0a9004973518128f44d6b677a7cb34fde7f"
+      },
+      "after": {
+        "bytes": 7232607,
+        "sha256": "6ddcb08e5021671ef85b15229aeb13733c3120d179d4b7a587a2c8f2ed8cd310"
+      }
+    }
+  },
+  "files": [
+    {
+      "path": "browser.png",
+      "bytes": 48974,
+      "sha256": "3e026be5ab2e1cc98eafc8a83f8d3c5c95af154290cedb42b9ef0531c2e18b6e"
+    },
+    {
+      "path": "browser.source.mjs",
+      "bytes": 4618,
+      "sha256": "a600f809123309d8a74389725a62538c7dfda19ea86acb7c4f6f96fca450ad53"
+    },
+    {
+      "path": "build-first-attempt.log",
+      "bytes": 2885,
+      "sha256": "1004e1d222344417dd46223065e3560f8d37272b70548b9e2e651149a591c430"
+    },
+    {
+      "path": "build-retry.log",
+      "bytes": 6035,
+      "sha256": "22dcf5a7ea3ac27a50c607563edcc6ee385a7ec5f10988992c44be6db65d008a"
+    },
+    {
+      "path": "closed-proof-identical-sharing.json",
+      "bytes": 38872,
+      "sha256": "b7e7e19a6947da6af646b6b216b4ae7eda28c8a41b795b27757fc62db61660a1"
+    },
+    {
+      "path": "closed-proof-page-sharing.json",
+      "bytes": 32344,
+      "sha256": "d6c1e474772c378da52d961befb9a45af25552a3bf9847bce0f46fa789359551"
+    },
+    {
+      "path": "cold-scratch-release.json",
+      "bytes": 12554,
+      "sha256": "c7a571a3ce43c1cb1e4e72a8c8701b0942d0fb672fc5a47e91791884f5eb54e6"
+    },
+    {
+      "path": "deploy.log",
+      "bytes": 365,
+      "sha256": "8618a2582e5170041d67bb5d784bfe0ded569577a00dcd00a3cdf71913f70475"
+    },
+    {
+      "path": "node-cache-relocation.json",
+      "bytes": 831,
+      "sha256": "ebacbed98238552b3e6fbc8c217449a94c71566f64c478a84137fe9162a2f416"
+    },
+    {
+      "path": "publication-receipt.json",
+      "bytes": 122878,
+      "sha256": "234a9397bbcb5452ba9a64d0bcbcd6e304bb8aafdc2e41413c7bf3e9edeaef86"
+    },
+    {
+      "path": "publisher.source.py",
+      "bytes": 5713,
+      "sha256": "3ce7a6848b6009058e1d52b3086c32ccc60e3ba6623ccf11de329b4d762ac6e5"
+    },
+    {
+      "path": "report.json",
+      "bytes": 26557,
+      "sha256": "5c6e5e094c255eb9fc88ccb08e7c7cbbeebad11562cb6d29511fa52e52cae7fa"
+    },
+    {
+      "path": "trace.zip",
+      "bytes": 8411027,
+      "sha256": "f2b775730e4c67bc3b52407fa2d4d2aa32c541433e5a5fd9e820b8ea01139c14"
+    }
+  ],
+  "resource_note": "Only audited disposable compiler/source scratch was released. Every original recording remains at its original path; CoW sharing preserves all bytes/modes/mtimes. Rebuildable npm dependency bytes/modes moved to task RAM; layout and timestamp granularity documented."
+}

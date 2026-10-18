@@ -268,3 +268,19 @@ queue generation. Worker submission `9abe576db62c7a8f691cc2224fb507df4a384b58`
 changes only task/queue/evidence from runtime e14. All three acceptance criteria are
 verified for the time/entropy adapter boundary. Full software/Linux replay remains
 gated by T12–T14.
+
+
+### 2026-10-18 — worker — verified catalog published
+
+Fresh verifier commit `c68c0792382d0a4fbdbd6d4718e5662cc99bc2b1` verified the
+corrected runtime. Catalog commit `d2caaea0efe57501756d56bb1f174a5e4f231fde` changed only roadmap/task/service-worker
+metadata; the frozen Wasm and all other deployed bytes are unchanged. Bounded catalog
+publication carries the authenticated full deployment and updated exactly three assets.
+The production browser then verified 28 asset hashes, 127 passed/0 failed, zero errors,
+the verified time/entropy capability pip and E9-T11 catalog status, with trace/screenshot.
+Deployment: `https://1d15bba2.wasm-vm.pages.dev`; production https://wasm-vm.pages.dev/.
+Packet: `evidence/e9-t11/public-metadata/provenance.json`, SHA-256 `c1499e5dcc39fcc324d5046b42e39030eb384ca8b0f2dfbe9a978ad9ce7732bd`.
+
+The catalog rebuild initially exhausted host temporary storage. Retrying with task-owned
+RAM temporary storage succeeded without changing runtime bytes. The publication packet
+retains both build logs and resource audits; no original recording was removed.

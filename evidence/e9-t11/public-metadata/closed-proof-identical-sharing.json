@@ -1,0 +1,556 @@
+{
+  "created": 1792330417.093183,
+  "reports": [
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/report.json",
+      "sha256": "63983b74f3018128ea0d649fc7baeaa24c2163865eadc111100bb11af95bea1d"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t04-worker-final/report.json",
+      "sha256": "1e2577042ba20e4ed3bd63fe0eb77efbd41371be85255689112ce40c39366efd"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-worker-final/report.json",
+      "sha256": "d06225f249d7c1ce6b5d3b3826d92e7cdd713649a9fe3c7ea2367ea3f5e5ef92"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-worker-repaired/report.json",
+      "sha256": "f503e646a19c05ed7a1c33ecd64cae767eaedc33cf06f8acfd01021a2d1aed37"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-css-worker-final/report.json",
+      "sha256": "deb146471aff0602b1db395d9c6359b761df63ad2e17d6fe446effb9fb0e9f3d"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-public-css-fixed/report.json",
+      "sha256": "d5bd94a4d5f204f58c5da68723289e9a7a8a9e7114e63b2caef4490fd13d80e7"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-worker-final/report.json",
+      "sha256": "7fffff71f600b025104b7969092b417cb96a9453c3ab760d0a7f63c14359f07d"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-public-gpu-retry/report.json",
+      "sha256": "508cb4029ba568193836b68f7b962b61669613eaaf14c40a28e3c52f4d47097c"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-worker-final/report.json",
+      "sha256": "f0a9b8544b110bd2918a781adcc98830c3be2f1bc0fecb9b719e1d5202f9351b"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t08-browser-inner-2/report.json",
+      "sha256": "e67d0acd5d0782cdb54c4786b6b8695d9759db14973aed71206b9fd77e5860e7"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t08-public-final/report.json",
+      "sha256": "8beb9711992dca26e0c741787951e218e4609d04dbbd1e7b4a78d2f4b240dc79"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t08-worker-final/report.json",
+      "sha256": "172eb74455cc91151d7d55d5112a97af6daeed45e543e6a897fe186cd418b2f4"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-public-final/report.json",
+      "sha256": "07d6410e1d7652be28246870dea0a4210758c7de5bd06439e887e294cdd53ef0"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-worker-final/report.json",
+      "sha256": "403cf05f7a082ca0c74c9d58e8a9d2a98ec765bc3bf893f2a72fb4bc7d5db021"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-public-final/report.json",
+      "sha256": "245f7588ae4346845cca2c182f8e391eadef2fbbe0b9d9039feceaebf5c28b1c"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-worker-final-incremental/report.json",
+      "sha256": "ba9cdf443d8f07059ce87d16aa7b0a7479b4d14ad3b2ec7e4667ebec5a99ad64"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-public-corrected-final/report.json",
+      "sha256": "694d9225a41b360ccdb26580065a7e5bee147059de99b1ae444c7d4e554b8e49"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-public-final/report.json",
+      "sha256": "af659af806c15c76445b95ee0bfebbc15f07e227bc028b381169e11b95cdf376"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-worker-corrected-final/report.json",
+      "sha256": "3d005ff45b6687f8c9c4455c70003c9b3ba7d68adfe91c6008be7c3f80c4c777"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-worker-final/report.json",
+      "sha256": "19e13fd2989eaa6d30ba7c6a8485f221f9e914ce86fabc2966f048245ba80e19"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/report.json",
+      "sha256": "c04bb9c95bca209d663fb6789891cafe56323c9622e5608a7f9026e3cfa99acf"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-cold-final/acceptance/report.json",
+      "sha256": "0241e2c0d9704ec478594e61e324dfa2f3df845b20ff8c267b721e9173d106f2"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-cold-final/acceptance/report.json",
+      "sha256": "2cfc7894e4b8d269b33e370280d94b6b6c583db003d785b98998625f6b6e1ddd"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-cold-final-3/acceptance/report.json",
+      "sha256": "b9454ecaf1b508645f0c7a1f17fcbbffaa406ca5e36a465b48675ed4d74d33ee"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-cold-final-incremental/acceptance/report.json",
+      "sha256": "8cfe898e145bd5d5c73035430cb1ffbd226f15475788d80dc51a29b7dce9a188"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-cold-corrected-final/acceptance/report.json",
+      "sha256": "c7e87c0bc206e838564e03087b3b38dace1a6e73012a7b0eff8f64305b50f7fe"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-cold-final/acceptance/report.json",
+      "sha256": "323a57add267b0516bdb51f24169650c4904b79d9fe769be387f6ba57be97e5b"
+    }
+  ],
+  "scope": "Deduplicate closed proof files with independent copy-on-write clones; preserve logical evidence.",
+  "files": [
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/BD3A19E27B6CF26B/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t04-worker-final/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/EC2BDE90EBB90F33/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/2C74343E0E8530D8/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-worker-final/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/4466C69D5FD96F20/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-worker-repaired/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/6EFEF3754D3F343C/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-css-worker-final/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/2CF3A49A3A53A09B/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-css-worker-final/missing-object-and-cleanup/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/2CF3A49A3A53A09B/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1792302442604749182,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-public-css-fixed/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/7E7E9E65B5448388/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1792302811325334769,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-worker-final/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/3F70989A590E3582/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/A45BDED263380E92/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-public-gpu-retry/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/D5A8852B47D51C3E/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-worker-final/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/A6275939E878D431/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t08-browser-inner-2/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0185954ECA54D649/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t08-public-final/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/FD7F0D381DB48E19/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t08-worker-final/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/8773AF4DAB15558A/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-cold-final-3/acceptance/checkpoint-regression/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/27EB37E45E625844/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-cold-final-3/acceptance/retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0B6ECB6A3C86FA2E/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-public-final/retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/CAF869DFDAFB5B81/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-worker-final/checkpoint-regression/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/75BF9690A57859FF/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-worker-final/retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/6A197070A603FC67/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-cold-final-incremental/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/CD9A63A91CE605C4/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-cold-final-incremental/acceptance/retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/4241988D4784FB26/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-public-final/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/921B79B892133FF8/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-public-final/retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/9C166923006ACFFB/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-worker-final-incremental/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/3E51053E2FDC9AC0/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-worker-final-incremental/retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/F9A2F9F164201947/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-cold-corrected-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/4C3E0A098D8EFC43/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-cold-corrected-final/acceptance/retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/FADB6CB4884DCA18/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/D5FD257C8925C499/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-cold-final/acceptance/retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/CC5EC168A60D0376/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-public-corrected-final/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/658A190F1BDAEAC8/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-public-corrected-final/retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/C7491B7583262525/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-public-final/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/B172F720148CD35C/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-public-final/retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/01ADEF0AC4588745/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-worker-corrected-final/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/565E54C61E4AA2E2/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-worker-corrected-final/retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/164877EB853D242C/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-worker-final/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/37A4F38D07D33567/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/0CFE4CDCA6FCD4BA/model.tflite",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-worker-final/retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/144ABDEF0F4B7D95/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4",
+      "mode": 384,
+      "mtime_ns": 1770062312000000000,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-css-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/a771c438007f6a62d94f1f4f0aacbbf10df7d4d9/49382358-1f30-4752-b5d1-10b0647b6fb6/cc3d4532487a28b6_0",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-css-worker-final/missing-object-and-cleanup/chromium-profile/Default/Service Worker/CacheStorage/a771c438007f6a62d94f1f4f0aacbbf10df7d4d9/49382358-1f30-4752-b5d1-10b0647b6fb6/cc3d4532487a28b6_0",
+      "bytes": 24209171,
+      "sha256": "65287ec95c7d7562e799aea57f1789e6492293742190ffb3b2d7daab932f51f3",
+      "mode": 384,
+      "mtime_ns": 1792302442398113978,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-css-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/a771c438007f6a62d94f1f4f0aacbbf10df7d4d9/49382358-1f30-4752-b5d1-10b0647b6fb6/e771eba6cf2981d9_0",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-css-worker-final/missing-object-and-cleanup/chromium-profile/Default/Service Worker/CacheStorage/a771c438007f6a62d94f1f4f0aacbbf10df7d4d9/49382358-1f30-4752-b5d1-10b0647b6fb6/e771eba6cf2981d9_0",
+      "bytes": 204058006,
+      "sha256": "1435d30e839e01d8d02b8d17cebfe929e20636071a0db4d8b37795f8df022f6f",
+      "mode": 384,
+      "mtime_ns": 1792302442278966866,
+      "independent_inode": true,
+      "mechanism": "macOS cp -c copy-on-write clone; future writes are isolated, no hard links",
+      "logical_bytes_preserved": true
+    }
+  ]
+}
