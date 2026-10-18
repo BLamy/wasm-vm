@@ -1,0 +1,1995 @@
+{
+  "task": "E9-T09",
+  "status": "passed",
+  "development": false,
+  "head": "be521e3ebca19089471c3b5a22c924916e953187",
+  "started": "2026-10-18T08:48:44.940Z",
+  "errors": [],
+  "checks": {
+    "suite": {
+      "passed": 127,
+      "failed": 0
+    },
+    "frames": [
+      {
+        "name": "jit-600-q1-before.resume",
+        "bytes": 1561,
+        "sha256": "b1d351e38bfc5ab8737f2a29231fbde08af416bccf45680449b207db77688684"
+      },
+      {
+        "name": "jit-600-q1-after.resume",
+        "bytes": 1483,
+        "sha256": "33a9d90ed0f7ec11dfe113eeff822043e9248de827e10ae3a325bdf003103fbc"
+      },
+      {
+        "name": "jit-600-q7-before.resume",
+        "bytes": 1561,
+        "sha256": "a5d362b32f5da1cb79b3e170b252f43e67461e6ded351da0ffab35e3838f6c23"
+      },
+      {
+        "name": "jit-600-q7-after.resume",
+        "bytes": 1483,
+        "sha256": "33a9d90ed0f7ec11dfe113eeff822043e9248de827e10ae3a325bdf003103fbc"
+      },
+      {
+        "name": "jit-600-q64-before.resume",
+        "bytes": 1561,
+        "sha256": "de8e515a02da31c065f587e13729b5ce9ce2c3f7efbcaaf5a574aea08c303740"
+      },
+      {
+        "name": "jit-600-q64-after.resume",
+        "bytes": 1483,
+        "sha256": "3d57ccda1f7d7fb00e8910cbea6a7a0216f9bf171c9702116456af34d964f562"
+      },
+      {
+        "name": "jit-601-q1-before.resume",
+        "bytes": 1561,
+        "sha256": "a54b4800ff90fcb2125cf3044a6fdb0ea6bc83cb8dfa0ca9bc23b2149c0851be"
+      },
+      {
+        "name": "jit-601-q1-after.resume",
+        "bytes": 1483,
+        "sha256": "99dcf0a6149af3d56e214bcd8404c925e37f9fc7794bf7847fd7f086024c5988"
+      },
+      {
+        "name": "jit-601-q7-before.resume",
+        "bytes": 1561,
+        "sha256": "2c02882bb9ac83a9211dc7b95803c150b77754a5a04a7260f51c1207937f6730"
+      },
+      {
+        "name": "jit-601-q7-after.resume",
+        "bytes": 1483,
+        "sha256": "99dcf0a6149af3d56e214bcd8404c925e37f9fc7794bf7847fd7f086024c5988"
+      },
+      {
+        "name": "jit-601-q64-before.resume",
+        "bytes": 1561,
+        "sha256": "0f3511fad32bc7b5ba16e6304e023d08282551e3ca5c0b22744dfb8225e44525"
+      },
+      {
+        "name": "jit-601-q64-after.resume",
+        "bytes": 1483,
+        "sha256": "21b616fbab24cd9e3e41bfc930bec174aaf55c82221e58d04be870ee02209067"
+      },
+      {
+        "name": "jit-605-q1-before.resume",
+        "bytes": 1561,
+        "sha256": "26181f2e56ee44bfaf774e021333762a2166de96f75aa650b8ba0749e51deddf"
+      },
+      {
+        "name": "jit-605-q1-after.resume",
+        "bytes": 1483,
+        "sha256": "491b320a815c4457aba85f39755fba6d1e60f4e0cc9bb6583e6c97902f141a0b"
+      },
+      {
+        "name": "jit-605-q7-before.resume",
+        "bytes": 1561,
+        "sha256": "52ed04211b06de7b6bd5effe4f6d34999df3629180a9317fec3788f86d32210d"
+      },
+      {
+        "name": "jit-605-q7-after.resume",
+        "bytes": 1483,
+        "sha256": "491b320a815c4457aba85f39755fba6d1e60f4e0cc9bb6583e6c97902f141a0b"
+      },
+      {
+        "name": "jit-605-q64-before.resume",
+        "bytes": 1561,
+        "sha256": "924d7b42998e3089ee3324d9b0caaa003d8370fda3c3524d6e6104a716942ecb"
+      },
+      {
+        "name": "jit-605-q64-after.resume",
+        "bytes": 1483,
+        "sha256": "13f4b2dbc0732e0822b911cae50db50c83b1463338e19ce89a9a2fee8f042cdf"
+      },
+      {
+        "name": "jit-mailbox-q1.resume",
+        "bytes": 1486,
+        "sha256": "ae941602f92d6909ddd11f688e5341356486052aa9ceb6cfc5a65367fdb65e85"
+      },
+      {
+        "name": "jit-mailbox-q7.resume",
+        "bytes": 1486,
+        "sha256": "ae941602f92d6909ddd11f688e5341356486052aa9ceb6cfc5a65367fdb65e85"
+      },
+      {
+        "name": "jit-mailbox-q128.resume",
+        "bytes": 1486,
+        "sha256": "ae941602f92d6909ddd11f688e5341356486052aa9ceb6cfc5a65367fdb65e85"
+      },
+      {
+        "name": "wfi-before-idle.resume",
+        "bytes": 1512,
+        "sha256": "1c1426889af785a98ce6d4c3650434f7def54d82d66524350eedd290b69d82c4"
+      },
+      {
+        "name": "wfi-held.resume",
+        "bytes": 1512,
+        "sha256": "297311e3c820175558fb995056ae885f6b935ebe16c104fe90358e68b07093fd"
+      },
+      {
+        "name": "wfi-after-idle.resume",
+        "bytes": 1553,
+        "sha256": "28972bc57778b9af5d635b71648f6bc5044b3a6e870262bf7c8990b8ca7a9c0f"
+      },
+      {
+        "name": "wfi-after-interrupt.resume",
+        "bytes": 1544,
+        "sha256": "411a343b8b32e633db55bbeafcfff7001e996efc08d594bef30b1252d078f5ae"
+      },
+      {
+        "name": "wide-queued.resume",
+        "bytes": 1491,
+        "sha256": "49af072f048f6608fc98e2e6e361b495f7cec7015ed3e76fb6b32354f6bf2d67"
+      },
+      {
+        "name": "wide-delivered.resume",
+        "bytes": 1482,
+        "sha256": "12ecf1f4c5f204c2322f0e01a23ddf5c722f131e71130159e5249d57db04a2ba"
+      },
+      {
+        "name": "paused-control.resume",
+        "bytes": 1472,
+        "sha256": "2b3165970a3ab7ee9879e3435d7ce22b4c27d2e4dc7f17abec3c20f92810408f"
+      }
+    ],
+    "probe": {
+      "cases": [
+        {
+          "kind": "compiled-fence",
+          "target": "600",
+          "quantum": 1,
+          "callbackOrder": [
+            "later",
+            "first",
+            "second"
+          ],
+          "compiled": 0,
+          "position": {
+            "transition": "604",
+            "retired": "604",
+            "phase": "before",
+            "sequence": "3",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "201"
+          },
+          "deliveries": [
+            {
+              "transition": "600",
+              "retired": "600",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "ticket": "1",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                11
+              ]
+            },
+            {
+              "transition": "600",
+              "retired": "600",
+              "phase": "before",
+              "sequence": "2",
+              "ordinal": 2,
+              "ticket": "2",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                22
+              ]
+            }
+          ],
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 1,
+            "executedBlocks": 53,
+            "retiredViaJit": 318,
+            "directChainEntries": 0,
+            "directChainLinks": 0,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 53,
+              "stateCopyCalls": 106,
+              "stateCopyBytes": 3480,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 0,
+              "authorityChecks": 0,
+              "memorySplitExits": 0,
+              "deviceBoundaries": 0,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 604,
+            "jitEngineCalls": 53,
+            "jitLogicalBlocksPerEngineCall": 1,
+            "jitRetiredShare": 0.5264900662251656,
+            "chainLinksMade": 0,
+            "chainLinksCut": 0,
+            "chainDispatchEntries": 53,
+            "chainMaxDepth": 0,
+            "chainLinksFollowed": 0,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 1,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 1,
+            "jitCacheInstalls": 1,
+            "jitCacheRetranslations": 0,
+            "jitCacheEvictions": 0,
+            "jitCacheBatches": 1,
+            "jitCacheCodeBytes": 66473,
+            "compileQueue": {
+              "admitted": 1,
+              "droppedBackpressure": 0,
+              "cancelledStale": 0,
+              "popped": 1,
+              "queueHighWater": 1,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 1,
+              "deduped": 47,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 0,
+              "excluded": 0,
+              "queueDepth": 0,
+              "queueHighWater": 1,
+              "candidates": 0,
+              "generation": 3
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 2,
+            "discoveryGeneration": 3,
+            "blockEntryHits": 47,
+            "blockBuilds": 1,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 1,
+              "capacity": 65536
+            }
+          }
+        },
+        {
+          "kind": "compiled-fence",
+          "target": "600",
+          "quantum": 7,
+          "callbackOrder": [
+            "first",
+            "second",
+            "later"
+          ],
+          "compiled": 11,
+          "position": {
+            "transition": "604",
+            "retired": "604",
+            "phase": "before",
+            "sequence": "3",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "201"
+          },
+          "deliveries": [
+            {
+              "transition": "600",
+              "retired": "600",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "ticket": "0",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                11
+              ]
+            },
+            {
+              "transition": "600",
+              "retired": "600",
+              "phase": "before",
+              "sequence": "2",
+              "ordinal": 2,
+              "ticket": "1",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                22
+              ]
+            }
+          ],
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 1,
+            "executedBlocks": 64,
+            "retiredViaJit": 384,
+            "directChainEntries": 0,
+            "directChainLinks": 0,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 64,
+              "stateCopyCalls": 128,
+              "stateCopyBytes": 5376,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 0,
+              "authorityChecks": 0,
+              "memorySplitExits": 0,
+              "deviceBoundaries": 0,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 604,
+            "jitEngineCalls": 64,
+            "jitLogicalBlocksPerEngineCall": 1,
+            "jitRetiredShare": 0.6357615894039735,
+            "chainLinksMade": 0,
+            "chainLinksCut": 0,
+            "chainDispatchEntries": 64,
+            "chainMaxDepth": 0,
+            "chainLinksFollowed": 0,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 1,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 1,
+            "jitCacheInstalls": 1,
+            "jitCacheRetranslations": 0,
+            "jitCacheEvictions": 0,
+            "jitCacheBatches": 1,
+            "jitCacheCodeBytes": 66473,
+            "compileQueue": {
+              "admitted": 1,
+              "droppedBackpressure": 0,
+              "cancelledStale": 0,
+              "popped": 1,
+              "queueHighWater": 1,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 1,
+              "deduped": 36,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 0,
+              "excluded": 0,
+              "queueDepth": 0,
+              "queueHighWater": 1,
+              "candidates": 0,
+              "generation": 3
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 2,
+            "discoveryGeneration": 3,
+            "blockEntryHits": 36,
+            "blockBuilds": 1,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 1,
+              "capacity": 65536
+            }
+          }
+        },
+        {
+          "kind": "compiled-fence",
+          "target": "600",
+          "quantum": 64,
+          "callbackOrder": [
+            "second",
+            "later",
+            "first"
+          ],
+          "compiled": 34,
+          "position": {
+            "transition": "604",
+            "retired": "604",
+            "phase": "before",
+            "sequence": "3",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "201"
+          },
+          "deliveries": [
+            {
+              "transition": "600",
+              "retired": "600",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "ticket": "0",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                22
+              ]
+            },
+            {
+              "transition": "600",
+              "retired": "600",
+              "phase": "before",
+              "sequence": "2",
+              "ordinal": 2,
+              "ticket": "2",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                11
+              ]
+            }
+          ],
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 1,
+            "executedBlocks": 87,
+            "retiredViaJit": 522,
+            "directChainEntries": 0,
+            "directChainLinks": 0,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 87,
+              "stateCopyCalls": 174,
+              "stateCopyBytes": 5896,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 0,
+              "authorityChecks": 0,
+              "memorySplitExits": 0,
+              "deviceBoundaries": 0,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 604,
+            "jitEngineCalls": 87,
+            "jitLogicalBlocksPerEngineCall": 1,
+            "jitRetiredShare": 0.8642384105960265,
+            "chainLinksMade": 0,
+            "chainLinksCut": 0,
+            "chainDispatchEntries": 87,
+            "chainMaxDepth": 0,
+            "chainLinksFollowed": 0,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 1,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 1,
+            "jitCacheInstalls": 1,
+            "jitCacheRetranslations": 0,
+            "jitCacheEvictions": 0,
+            "jitCacheBatches": 1,
+            "jitCacheCodeBytes": 66473,
+            "compileQueue": {
+              "admitted": 1,
+              "droppedBackpressure": 0,
+              "cancelledStale": 0,
+              "popped": 1,
+              "queueHighWater": 1,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 1,
+              "deduped": 13,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 0,
+              "excluded": 0,
+              "queueDepth": 0,
+              "queueHighWater": 1,
+              "candidates": 0,
+              "generation": 3
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 2,
+            "discoveryGeneration": 3,
+            "blockEntryHits": 13,
+            "blockBuilds": 1,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 1,
+              "capacity": 65536
+            }
+          }
+        },
+        {
+          "kind": "compiled-fence",
+          "target": "601",
+          "quantum": 1,
+          "callbackOrder": [
+            "later",
+            "first",
+            "second"
+          ],
+          "compiled": 0,
+          "position": {
+            "transition": "605",
+            "retired": "605",
+            "phase": "before",
+            "sequence": "3",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "201"
+          },
+          "deliveries": [
+            {
+              "transition": "601",
+              "retired": "601",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "ticket": "1",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                11
+              ]
+            },
+            {
+              "transition": "601",
+              "retired": "601",
+              "phase": "before",
+              "sequence": "2",
+              "ordinal": 2,
+              "ticket": "2",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                22
+              ]
+            }
+          ],
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 1,
+            "executedBlocks": 53,
+            "retiredViaJit": 318,
+            "directChainEntries": 0,
+            "directChainLinks": 0,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 53,
+              "stateCopyCalls": 106,
+              "stateCopyBytes": 3480,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 0,
+              "authorityChecks": 0,
+              "memorySplitExits": 0,
+              "deviceBoundaries": 0,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 605,
+            "jitEngineCalls": 53,
+            "jitLogicalBlocksPerEngineCall": 1,
+            "jitRetiredShare": 0.5256198347107438,
+            "chainLinksMade": 0,
+            "chainLinksCut": 0,
+            "chainDispatchEntries": 53,
+            "chainMaxDepth": 0,
+            "chainLinksFollowed": 0,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 1,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 1,
+            "jitCacheInstalls": 1,
+            "jitCacheRetranslations": 0,
+            "jitCacheEvictions": 0,
+            "jitCacheBatches": 1,
+            "jitCacheCodeBytes": 66473,
+            "compileQueue": {
+              "admitted": 1,
+              "droppedBackpressure": 0,
+              "cancelledStale": 0,
+              "popped": 1,
+              "queueHighWater": 1,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 1,
+              "deduped": 47,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 0,
+              "excluded": 0,
+              "queueDepth": 0,
+              "queueHighWater": 1,
+              "candidates": 0,
+              "generation": 3
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 2,
+            "discoveryGeneration": 3,
+            "blockEntryHits": 47,
+            "blockBuilds": 1,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 1,
+              "capacity": 65536
+            }
+          }
+        },
+        {
+          "kind": "compiled-fence",
+          "target": "601",
+          "quantum": 7,
+          "callbackOrder": [
+            "first",
+            "second",
+            "later"
+          ],
+          "compiled": 11,
+          "position": {
+            "transition": "605",
+            "retired": "605",
+            "phase": "before",
+            "sequence": "3",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "201"
+          },
+          "deliveries": [
+            {
+              "transition": "601",
+              "retired": "601",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "ticket": "0",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                11
+              ]
+            },
+            {
+              "transition": "601",
+              "retired": "601",
+              "phase": "before",
+              "sequence": "2",
+              "ordinal": 2,
+              "ticket": "1",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                22
+              ]
+            }
+          ],
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 1,
+            "executedBlocks": 64,
+            "retiredViaJit": 384,
+            "directChainEntries": 0,
+            "directChainLinks": 0,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 64,
+              "stateCopyCalls": 128,
+              "stateCopyBytes": 5376,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 0,
+              "authorityChecks": 0,
+              "memorySplitExits": 0,
+              "deviceBoundaries": 0,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 605,
+            "jitEngineCalls": 64,
+            "jitLogicalBlocksPerEngineCall": 1,
+            "jitRetiredShare": 0.6347107438016529,
+            "chainLinksMade": 0,
+            "chainLinksCut": 0,
+            "chainDispatchEntries": 64,
+            "chainMaxDepth": 0,
+            "chainLinksFollowed": 0,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 1,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 1,
+            "jitCacheInstalls": 1,
+            "jitCacheRetranslations": 0,
+            "jitCacheEvictions": 0,
+            "jitCacheBatches": 1,
+            "jitCacheCodeBytes": 66473,
+            "compileQueue": {
+              "admitted": 1,
+              "droppedBackpressure": 0,
+              "cancelledStale": 0,
+              "popped": 1,
+              "queueHighWater": 1,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 1,
+              "deduped": 36,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 0,
+              "excluded": 0,
+              "queueDepth": 0,
+              "queueHighWater": 1,
+              "candidates": 0,
+              "generation": 3
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 2,
+            "discoveryGeneration": 3,
+            "blockEntryHits": 36,
+            "blockBuilds": 1,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 1,
+              "capacity": 65536
+            }
+          }
+        },
+        {
+          "kind": "compiled-fence",
+          "target": "601",
+          "quantum": 64,
+          "callbackOrder": [
+            "second",
+            "later",
+            "first"
+          ],
+          "compiled": 34,
+          "position": {
+            "transition": "605",
+            "retired": "605",
+            "phase": "before",
+            "sequence": "3",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "201"
+          },
+          "deliveries": [
+            {
+              "transition": "601",
+              "retired": "601",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "ticket": "0",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                22
+              ]
+            },
+            {
+              "transition": "601",
+              "retired": "601",
+              "phase": "before",
+              "sequence": "2",
+              "ordinal": 2,
+              "ticket": "2",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                11
+              ]
+            }
+          ],
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 1,
+            "executedBlocks": 87,
+            "retiredViaJit": 522,
+            "directChainEntries": 0,
+            "directChainLinks": 0,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 87,
+              "stateCopyCalls": 174,
+              "stateCopyBytes": 5896,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 0,
+              "authorityChecks": 0,
+              "memorySplitExits": 0,
+              "deviceBoundaries": 0,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 605,
+            "jitEngineCalls": 87,
+            "jitLogicalBlocksPerEngineCall": 1,
+            "jitRetiredShare": 0.8628099173553719,
+            "chainLinksMade": 0,
+            "chainLinksCut": 0,
+            "chainDispatchEntries": 87,
+            "chainMaxDepth": 0,
+            "chainLinksFollowed": 0,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 1,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 1,
+            "jitCacheInstalls": 1,
+            "jitCacheRetranslations": 0,
+            "jitCacheEvictions": 0,
+            "jitCacheBatches": 1,
+            "jitCacheCodeBytes": 66473,
+            "compileQueue": {
+              "admitted": 1,
+              "droppedBackpressure": 0,
+              "cancelledStale": 0,
+              "popped": 1,
+              "queueHighWater": 1,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 1,
+              "deduped": 13,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 0,
+              "excluded": 0,
+              "queueDepth": 0,
+              "queueHighWater": 1,
+              "candidates": 0,
+              "generation": 3
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 2,
+            "discoveryGeneration": 3,
+            "blockEntryHits": 13,
+            "blockBuilds": 1,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 1,
+              "capacity": 65536
+            }
+          }
+        },
+        {
+          "kind": "compiled-fence",
+          "target": "605",
+          "quantum": 1,
+          "callbackOrder": [
+            "later",
+            "first",
+            "second"
+          ],
+          "compiled": 0,
+          "position": {
+            "transition": "609",
+            "retired": "609",
+            "phase": "before",
+            "sequence": "3",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "203"
+          },
+          "deliveries": [
+            {
+              "transition": "605",
+              "retired": "605",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "ticket": "1",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                11
+              ]
+            },
+            {
+              "transition": "605",
+              "retired": "605",
+              "phase": "before",
+              "sequence": "2",
+              "ordinal": 2,
+              "ticket": "2",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                22
+              ]
+            }
+          ],
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 1,
+            "executedBlocks": 53,
+            "retiredViaJit": 318,
+            "directChainEntries": 0,
+            "directChainLinks": 0,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 53,
+              "stateCopyCalls": 106,
+              "stateCopyBytes": 3480,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 0,
+              "authorityChecks": 0,
+              "memorySplitExits": 0,
+              "deviceBoundaries": 0,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 609,
+            "jitEngineCalls": 53,
+            "jitLogicalBlocksPerEngineCall": 1,
+            "jitRetiredShare": 0.5221674876847291,
+            "chainLinksMade": 0,
+            "chainLinksCut": 0,
+            "chainDispatchEntries": 53,
+            "chainMaxDepth": 0,
+            "chainLinksFollowed": 0,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 1,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 1,
+            "jitCacheInstalls": 1,
+            "jitCacheRetranslations": 0,
+            "jitCacheEvictions": 0,
+            "jitCacheBatches": 1,
+            "jitCacheCodeBytes": 66473,
+            "compileQueue": {
+              "admitted": 1,
+              "droppedBackpressure": 0,
+              "cancelledStale": 0,
+              "popped": 1,
+              "queueHighWater": 1,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 1,
+              "deduped": 48,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 0,
+              "excluded": 0,
+              "queueDepth": 0,
+              "queueHighWater": 1,
+              "candidates": 0,
+              "generation": 3
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 2,
+            "discoveryGeneration": 3,
+            "blockEntryHits": 48,
+            "blockBuilds": 1,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 1,
+              "capacity": 65536
+            }
+          }
+        },
+        {
+          "kind": "compiled-fence",
+          "target": "605",
+          "quantum": 7,
+          "callbackOrder": [
+            "first",
+            "second",
+            "later"
+          ],
+          "compiled": 11,
+          "position": {
+            "transition": "609",
+            "retired": "609",
+            "phase": "before",
+            "sequence": "3",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "203"
+          },
+          "deliveries": [
+            {
+              "transition": "605",
+              "retired": "605",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "ticket": "0",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                11
+              ]
+            },
+            {
+              "transition": "605",
+              "retired": "605",
+              "phase": "before",
+              "sequence": "2",
+              "ordinal": 2,
+              "ticket": "1",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                22
+              ]
+            }
+          ],
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 1,
+            "executedBlocks": 64,
+            "retiredViaJit": 384,
+            "directChainEntries": 0,
+            "directChainLinks": 0,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 64,
+              "stateCopyCalls": 128,
+              "stateCopyBytes": 5376,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 0,
+              "authorityChecks": 0,
+              "memorySplitExits": 0,
+              "deviceBoundaries": 0,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 609,
+            "jitEngineCalls": 64,
+            "jitLogicalBlocksPerEngineCall": 1,
+            "jitRetiredShare": 0.6305418719211823,
+            "chainLinksMade": 0,
+            "chainLinksCut": 0,
+            "chainDispatchEntries": 64,
+            "chainMaxDepth": 0,
+            "chainLinksFollowed": 0,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 1,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 1,
+            "jitCacheInstalls": 1,
+            "jitCacheRetranslations": 0,
+            "jitCacheEvictions": 0,
+            "jitCacheBatches": 1,
+            "jitCacheCodeBytes": 66473,
+            "compileQueue": {
+              "admitted": 1,
+              "droppedBackpressure": 0,
+              "cancelledStale": 0,
+              "popped": 1,
+              "queueHighWater": 1,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 1,
+              "deduped": 37,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 0,
+              "excluded": 0,
+              "queueDepth": 0,
+              "queueHighWater": 1,
+              "candidates": 0,
+              "generation": 3
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 2,
+            "discoveryGeneration": 3,
+            "blockEntryHits": 37,
+            "blockBuilds": 1,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 1,
+              "capacity": 65536
+            }
+          }
+        },
+        {
+          "kind": "compiled-fence",
+          "target": "605",
+          "quantum": 64,
+          "callbackOrder": [
+            "second",
+            "later",
+            "first"
+          ],
+          "compiled": 34,
+          "position": {
+            "transition": "609",
+            "retired": "609",
+            "phase": "before",
+            "sequence": "3",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "203"
+          },
+          "deliveries": [
+            {
+              "transition": "605",
+              "retired": "605",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "ticket": "0",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                22
+              ]
+            },
+            {
+              "transition": "605",
+              "retired": "605",
+              "phase": "before",
+              "sequence": "2",
+              "ordinal": 2,
+              "ticket": "2",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                11
+              ]
+            }
+          ],
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 1,
+            "executedBlocks": 87,
+            "retiredViaJit": 522,
+            "directChainEntries": 0,
+            "directChainLinks": 0,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 87,
+              "stateCopyCalls": 174,
+              "stateCopyBytes": 5896,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 0,
+              "authorityChecks": 0,
+              "memorySplitExits": 0,
+              "deviceBoundaries": 0,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 609,
+            "jitEngineCalls": 87,
+            "jitLogicalBlocksPerEngineCall": 1,
+            "jitRetiredShare": 0.8571428571428571,
+            "chainLinksMade": 0,
+            "chainLinksCut": 0,
+            "chainDispatchEntries": 87,
+            "chainMaxDepth": 0,
+            "chainLinksFollowed": 0,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 1,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 1,
+            "jitCacheInstalls": 1,
+            "jitCacheRetranslations": 0,
+            "jitCacheEvictions": 0,
+            "jitCacheBatches": 1,
+            "jitCacheCodeBytes": 66473,
+            "compileQueue": {
+              "admitted": 1,
+              "droppedBackpressure": 0,
+              "cancelledStale": 0,
+              "popped": 1,
+              "queueHighWater": 1,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 1,
+              "deduped": 14,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 0,
+              "excluded": 0,
+              "queueDepth": 0,
+              "queueHighWater": 1,
+              "candidates": 0,
+              "generation": 3
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 0,
+            "decodedCacheFlushes": 2,
+            "discoveryGeneration": 3,
+            "blockEntryHits": 14,
+            "blockBuilds": 1,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 1,
+              "capacity": 65536
+            }
+          }
+        },
+        {
+          "kind": "mailbox-fence",
+          "quantum": 1,
+          "position": {
+            "transition": "1000",
+            "retired": "1000",
+            "phase": "before",
+            "sequence": "2",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "333"
+          },
+          "deliveries": [
+            {
+              "transition": "601",
+              "retired": "601",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "ticket": "0",
+              "kind": "ram",
+              "address": "2147483652",
+              "bytes": [
+                19,
+                1,
+                49,
+                1
+              ]
+            },
+            {
+              "transition": "605",
+              "retired": "605",
+              "phase": "before",
+              "sequence": "2",
+              "ordinal": 1,
+              "ticket": "1",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                108,
+                97,
+                116,
+                101,
+                114
+              ]
+            }
+          ],
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 2,
+            "executedBlocks": 53,
+            "retiredViaJit": 318,
+            "directChainEntries": 0,
+            "directChainLinks": 0,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 53,
+              "stateCopyCalls": 106,
+              "stateCopyBytes": 3480,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 0,
+              "authorityChecks": 0,
+              "memorySplitExits": 0,
+              "deviceBoundaries": 0,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 1000,
+            "jitEngineCalls": 53,
+            "jitLogicalBlocksPerEngineCall": 1,
+            "jitRetiredShare": 0.318,
+            "chainLinksMade": 0,
+            "chainLinksCut": 0,
+            "chainDispatchEntries": 53,
+            "chainMaxDepth": 0,
+            "chainLinksFollowed": 0,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 3,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 3,
+            "jitCacheInstalls": 3,
+            "jitCacheRetranslations": 0,
+            "jitCacheEvictions": 0,
+            "jitCacheBatches": 2,
+            "jitCacheCodeBytes": 132920,
+            "compileQueue": {
+              "admitted": 3,
+              "droppedBackpressure": 0,
+              "cancelledStale": 0,
+              "popped": 3,
+              "queueHighWater": 1,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 3,
+              "deduped": 112,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 0,
+              "excluded": 0,
+              "queueDepth": 0,
+              "queueHighWater": 1,
+              "candidates": 0,
+              "generation": 4
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 1,
+            "decodedCacheFlushes": 2,
+            "discoveryGeneration": 4,
+            "blockEntryHits": 112,
+            "blockBuilds": 3,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 1,
+              "capacity": 65536
+            }
+          }
+        },
+        {
+          "kind": "mailbox-fence",
+          "quantum": 7,
+          "position": {
+            "transition": "1000",
+            "retired": "1000",
+            "phase": "before",
+            "sequence": "2",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "333"
+          },
+          "deliveries": [
+            {
+              "transition": "601",
+              "retired": "601",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "ticket": "0",
+              "kind": "ram",
+              "address": "2147483652",
+              "bytes": [
+                19,
+                1,
+                49,
+                1
+              ]
+            },
+            {
+              "transition": "605",
+              "retired": "605",
+              "phase": "before",
+              "sequence": "2",
+              "ordinal": 1,
+              "ticket": "1",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                108,
+                97,
+                116,
+                101,
+                114
+              ]
+            }
+          ],
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 2,
+            "executedBlocks": 91,
+            "retiredViaJit": 537,
+            "directChainEntries": 0,
+            "directChainLinks": 0,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 91,
+              "stateCopyCalls": 182,
+              "stateCopyBytes": 11424,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 0,
+              "authorityChecks": 0,
+              "memorySplitExits": 0,
+              "deviceBoundaries": 0,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 1000,
+            "jitEngineCalls": 91,
+            "jitLogicalBlocksPerEngineCall": 1,
+            "jitRetiredShare": 0.537,
+            "chainLinksMade": 0,
+            "chainLinksCut": 0,
+            "chainDispatchEntries": 91,
+            "chainMaxDepth": 0,
+            "chainLinksFollowed": 0,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 3,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 2,
+            "jitCacheInstalls": 3,
+            "jitCacheRetranslations": 0,
+            "jitCacheEvictions": 0,
+            "jitCacheBatches": 1,
+            "jitCacheCodeBytes": 67068,
+            "compileQueue": {
+              "admitted": 3,
+              "droppedBackpressure": 0,
+              "cancelledStale": 0,
+              "popped": 3,
+              "queueHighWater": 2,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 3,
+              "deduped": 83,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 0,
+              "excluded": 0,
+              "queueDepth": 0,
+              "queueHighWater": 2,
+              "candidates": 0,
+              "generation": 4
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 1,
+            "decodedCacheFlushes": 2,
+            "discoveryGeneration": 4,
+            "blockEntryHits": 83,
+            "blockBuilds": 3,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 1,
+              "capacity": 65536
+            }
+          }
+        },
+        {
+          "kind": "mailbox-fence",
+          "quantum": 128,
+          "position": {
+            "transition": "1000",
+            "retired": "1000",
+            "phase": "before",
+            "sequence": "2",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "333"
+          },
+          "deliveries": [
+            {
+              "transition": "601",
+              "retired": "601",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "ticket": "0",
+              "kind": "ram",
+              "address": "2147483652",
+              "bytes": [
+                19,
+                1,
+                49,
+                1
+              ]
+            },
+            {
+              "transition": "605",
+              "retired": "605",
+              "phase": "before",
+              "sequence": "2",
+              "ordinal": 1,
+              "ticket": "1",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                108,
+                97,
+                116,
+                101,
+                114
+              ]
+            }
+          ],
+          "jit": {
+            "hasExecutor": true,
+            "compiledBlocks": 2,
+            "executedBlocks": 147,
+            "retiredViaJit": 881,
+            "directChainEntries": 0,
+            "directChainLinks": 0,
+            "dynamicLinkAttempts": 0,
+            "dynamicLinkHits": 0,
+            "dynamicLinkRefusals": 0,
+            "dynamicLinkRetargets": 0,
+            "dynamicLinkLiveEntries": 0,
+            "dynamicLinkInstalls": 0,
+            "entryCost": {
+              "timingEnabled": false,
+              "timerReads": 0,
+              "hostEntries": 147,
+              "stateCopyCalls": 294,
+              "stateCopyBytes": 9760,
+              "stateCopyNs": 0,
+              "engineEntryNs": 0,
+              "indirectTableDispatches": 0,
+              "authorityChecks": 0,
+              "memorySplitExits": 0,
+              "deviceBoundaries": 0,
+              "deviceBoundaryNs": 0
+            },
+            "jitRegionChaining": true,
+            "jitDynamicChaining": true,
+            "guestRetired": 1000,
+            "jitEngineCalls": 147,
+            "jitLogicalBlocksPerEngineCall": 1,
+            "jitRetiredShare": 0.881,
+            "chainLinksMade": 0,
+            "chainLinksCut": 0,
+            "chainDispatchEntries": 147,
+            "chainMaxDepth": 0,
+            "chainLinksFollowed": 0,
+            "jitResidencyPolicy": "repack-off",
+            "jitResidencyCap": 24,
+            "jitSubmittedMembers": 3,
+            "jitCompilePauseNs": 0,
+            "jitCompilePauseMaxNs": 0,
+            "jitCompilePauseSamples": 2,
+            "jitCacheInstalls": 3,
+            "jitCacheRetranslations": 0,
+            "jitCacheEvictions": 0,
+            "jitCacheBatches": 1,
+            "jitCacheCodeBytes": 67068,
+            "compileQueue": {
+              "admitted": 3,
+              "droppedBackpressure": 0,
+              "cancelledStale": 0,
+              "popped": 3,
+              "queueHighWater": 2,
+              "queueDepth": 0,
+              "capacity": 256
+            },
+            "discovery": {
+              "nominated": 3,
+              "deduped": 19,
+              "droppedStale": 0,
+              "droppedOverflow": 0,
+              "countsDropped": 0,
+              "excluded": 0,
+              "queueDepth": 0,
+              "queueHighWater": 2,
+              "candidates": 0,
+              "generation": 4
+            },
+            "decodedCacheEntries": 4096,
+            "decodedBlocksDiscarded": 1,
+            "decodedCacheFlushes": 2,
+            "discoveryGeneration": 4,
+            "blockEntryHits": 19,
+            "blockBuilds": 3,
+            "admissionProbe": false,
+            "coldCounterRecycling": {
+              "enabled": false,
+              "epochs": "0",
+              "discardedCounters": "0",
+              "threshold": 1,
+              "capacity": 65536
+            }
+          }
+        },
+        {
+          "kind": "external-pending",
+          "position": {
+            "transition": "11",
+            "retired": "11",
+            "phase": "before",
+            "sequence": "1",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "3"
+          },
+          "delivery": {
+            "transition": "10",
+            "retired": "10",
+            "phase": "before",
+            "sequence": "1",
+            "ordinal": 1,
+            "ticket": "0",
+            "kind": "external-pending",
+            "address": "0",
+            "bytes": [
+              1
+            ]
+          }
+        },
+        {
+          "kind": "timer-wfi",
+          "position": {
+            "transition": "12",
+            "retired": "10",
+            "phase": "before",
+            "sequence": "3",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "1000"
+          },
+          "beforeIdle": [
+            {
+              "transition": "10",
+              "retired": "10",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "ticket": "0",
+              "kind": "external-pending",
+              "address": "0",
+              "bytes": [
+                0
+              ]
+            },
+            {
+              "transition": "10",
+              "retired": "10",
+              "phase": "before",
+              "sequence": "2",
+              "ordinal": 2,
+              "ticket": "1",
+              "kind": "ram",
+              "address": "2147500032",
+              "bytes": [
+                41
+              ]
+            }
+          ],
+          "beforeIrq": [
+            {
+              "transition": "11",
+              "retired": "10",
+              "phase": "before",
+              "sequence": "3",
+              "ordinal": 1,
+              "ticket": "2",
+              "kind": "ram",
+              "address": "2147500033",
+              "bytes": [
+                42
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "wide-counter",
+          "position": {
+            "transition": "9007199254740996",
+            "retired": "9007199254740996",
+            "phase": "before",
+            "sequence": "9007199254740994",
+            "ordinal": 0,
+            "pending": 0,
+            "mtime": "1"
+          },
+          "delivery": {
+            "transition": "9007199254740995",
+            "retired": "9007199254740995",
+            "phase": "before",
+            "sequence": "9007199254740994",
+            "ordinal": 1,
+            "ticket": "9007199254740993",
+            "kind": "ram",
+            "address": "2147500032",
+            "bytes": [
+              91
+            ]
+          }
+        },
+        {
+          "kind": "paused-control",
+          "position": {
+            "transition": "0",
+            "retired": "0",
+            "phase": "before",
+            "sequence": "1",
+            "ordinal": 1,
+            "pending": 0,
+            "mtime": "0"
+          },
+          "delivery": {
+            "transition": "0",
+            "retired": "0",
+            "phase": "before",
+            "sequence": "1",
+            "ordinal": 1,
+            "ticket": "0",
+            "kind": "ram",
+            "address": "2147500032",
+            "bytes": [
+              1
+            ]
+          }
+        }
+      ],
+      "refusals": [
+        {
+          "name": "sequence exhaustion",
+          "message": "Error: session_clock: SequenceExhausted"
+        },
+        {
+          "name": "ordinal exhaustion",
+          "message": "Error: session_clock: OrdinalExhausted"
+        },
+        {
+          "name": "transition exhaustion",
+          "message": "Error: session_clock: TransitionExhausted"
+        },
+        {
+          "name": "noncanonical position",
+          "message": "Error: expected a canonical unsigned decimal u64 string"
+        },
+        {
+          "name": "active ELF replacement",
+          "message": "Error: cannot replace an active session's ELF"
+        },
+        {
+          "name": "scheduling 2/3",
+          "message": "Error: session_clock: UnsupportedScheduling (single hart required)"
+        },
+        {
+          "name": "scheduling 4294967297/3",
+          "message": "Error: session_clock: UnsupportedScheduling (single hart required)"
+        },
+        {
+          "name": "scheduling 1/0",
+          "message": "Error: session_clock: UnsupportedScheduling (ICount divider)"
+        },
+        {
+          "name": "scheduling 1/1.5",
+          "message": "Error: session_clock: UnsupportedScheduling (ICount divider)"
+        },
+        {
+          "name": "scheduling 1/NaN",
+          "message": "Error: session_clock: UnsupportedScheduling (ICount divider)"
+        }
+      ]
+    },
+    "mobile": {
+      "width": 388,
+      "scroll": 388,
+      "buttonWidth": 368
+    }
+  },
+  "url": "https://wasm-vm.pages.dev/app.html?noAutoBoot&testHooks=1",
+  "assets": [
+    {
+      "name": "app.html",
+      "bytes": 52482,
+      "sha256": "3ca53e58c70ac99b306d4b52039f1b23a1d8ac59d6a470ac58af3ddb013b30df"
+    },
+    {
+      "name": "main.js",
+      "bytes": 160429,
+      "sha256": "43dd6609ac4c7d675a2ae5cb808b6cbbf70b214acbc3e98ce9f4c36feb938ea9"
+    },
+    {
+      "name": "event-clock-probe.js",
+      "bytes": 10763,
+      "sha256": "32c8de7405fd5bf24ed54a1bd978086d59909cfa0f52c56609d04c8f728d6c8a"
+    },
+    {
+      "name": "roadmap.js",
+      "bytes": 59187,
+      "sha256": "055000794e7c75546b811d785b8e4d7be365f5bdeb0a8a3b46594b2f0ac85257"
+    },
+    {
+      "name": "gpu-checkpoint-build.js",
+      "bytes": 340,
+      "sha256": "db99c225724b67dcf1c9026779c040601f238db2c6cc93b75b302a8fbca1db2a"
+    },
+    {
+      "name": "pkg/wasm_vm_wasm.js",
+      "bytes": 136632,
+      "sha256": "3cbc9d37f9f9ab21ea7578847f3ccc3656fce73d7478d0d5733a62af0917d2b8"
+    },
+    {
+      "name": "pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1897315,
+      "sha256": "b07d03ffc0176ced185137f2d6982819765d0bba23b306e62da93a795d309932"
+    },
+    {
+      "name": "session-pkg/wasm_vm_session.js",
+      "bytes": 13440,
+      "sha256": "960fe8947a66cc5da863c72dd98272443381c81ad7fc53d0c4886c644834ed81"
+    },
+    {
+      "name": "session-pkg/wasm_vm_session_bg.wasm",
+      "bytes": 386124,
+      "sha256": "55f61b58a41413e37769d05cd0de6949df181c8b1931c17beab5410caaeb25df"
+    }
+  ],
+  "source_sha256": {
+    "web/index.html": "90dc32ebbf12bde8c4bf8264dbcc7ac7541e6ba91c7a134659a9cf61b52aff01",
+    "web/main.js": "43dd6609ac4c7d675a2ae5cb808b6cbbf70b214acbc3e98ce9f4c36feb938ea9",
+    "web/event-clock-probe.js": "32c8de7405fd5bf24ed54a1bd978086d59909cfa0f52c56609d04c8f728d6c8a",
+    "web/roadmap.js": "055000794e7c75546b811d785b8e4d7be365f5bdeb0a8a3b46594b2f0ac85257",
+    "web/pkg/wasm_vm_wasm_bg.wasm": "b07d03ffc0176ced185137f2d6982819765d0bba23b306e62da93a795d309932",
+    "crates/core/src/lib.rs": "b9428702d8569c03618bd00fed1cdbeb3aa71d996d220f3993e6d0e495ca1c26",
+    "crates/core/src/session_clock.rs": "89732f934db7ccf55812591ff82527d35169ad4cdfc7fa0e6ed275346e09cdd1",
+    "crates/core/src/resume.rs": "0e5cc8804f4641857f0de748c0c87b57ac092fe432bb67e7a14dbecf903d6e60",
+    "crates/wasm/src/event_clock.rs": "fee4b76859e66508759350bc36137d74dbea3e629b8c182190b694d5066c0d2f",
+    "tools/verify/e9-event-clock-browser.mjs": "b7c674cd970926d94a2b37eec8926a7f5306edf0f91bb9932dcf9c759ce97cb5",
+    "tools/verify/e9-event-clock-files.py": "670f85026e5631797a8f4321e6d375993903ac03b97a1bf2880a59ee776b8a95"
+  },
+  "finished": "2026-10-18T08:49:30.262Z"
+}

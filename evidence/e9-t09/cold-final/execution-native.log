@@ -1,0 +1,136 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t09-cold-t9kkjsar/repo/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.90s
+     Running tests/cpu_resume.rs (target/debug/deps/cpu_resume-f7466d3184546d7e)
+
+running 6 tests
+test malformed_cpu_payload_is_rejected_and_leaves_hart_unchanged ... ok
+test resume_places_the_timer_interrupt_identically ... ok
+test virtio_blk_and_net_sections_round_trip_at_machine_level ... ok
+test whole_machine_resume_round_trips ... ok
+test restore_over_dirty_state_is_byte_identical ... ok
+test resume_trace_matches_continuation ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.25s
+
+     Running tests/e9_event_clock.rs (target/debug/deps/e9_event_clock-725e8bbf63d46938)
+
+running 8 tests
+test paused_controls_keep_sequence_and_ordinal_without_executing_a_transition ... ok
+test pending_boolean_controls_restore_before_their_exact_delivery ... ok
+test delivered_traps_and_firmware_calls_do_not_fabricate_retirements ... ok
+wide transition=9007199254740995 retired=9007199254740995 sequence=9007199254740994
+test precision_pending_queue_and_exhaustion_survive_real_snapshot_restore ... ok
+owned cache=false position=SessionPosition { transition: 42, retired: 42, ordinal: 0, sequence: 3 } state=b3f2c1d77a066a3ab9852a4821d2f4ec275cfb004378928e8dce2973914aeffc
+wfi quantum=1 position=SessionPosition { transition: 3, retired: 1, ordinal: 0, sequence: 2 } mtime=100 state=489daf51d92ee68e9c74d84c909628435716ae216c7cf50e1fec7652979bab4b
+owned cache=true position=SessionPosition { transition: 42, retired: 42, ordinal: 0, sequence: 3 } state=b3f2c1d77a066a3ab9852a4821d2f4ec275cfb004378928e8dce2973914aeffc
+test owned_events_stop_before_delivery_and_invalidate_decoded_code ... ok
+wfi quantum=2 position=SessionPosition { transition: 3, retired: 1, ordinal: 0, sequence: 2 } mtime=100 state=489daf51d92ee68e9c74d84c909628435716ae216c7cf50e1fec7652979bab4b
+test malformed_clock_queue_is_refused_before_any_machine_mutation ... ok
+wfi quantum=7 position=SessionPosition { transition: 3, retired: 1, ordinal: 0, sequence: 2 } mtime=100 state=489daf51d92ee68e9c74d84c909628435716ae216c7cf50e1fec7652979bab4b
+test bounded_mailbox_and_unsupported_scheduling_refuse_before_effects ... ok
+wfi quantum=129 position=SessionPosition { transition: 3, retired: 1, ordinal: 0, sequence: 2 } mtime=100 state=489daf51d92ee68e9c74d84c909628435716ae216c7cf50e1fec7652979bab4b
+test wfi_idle_and_timer_delivery_are_separate_restorable_transitions ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.79s
+
+     Running tests/interrupts.rs (target/debug/deps/interrupts-5c03807fca05acce)
+
+running 13 tests
+test m_mode_with_mie_clear_takes_nothing ... ok
+test mip_mtip_software_write_ignored_device_bit_survives ... ok
+test m_interrupt_not_masked_from_below ... ok
+test deleg_and_enable_warl_masks ... ok
+test higher_priority_but_untakeable_is_skipped ... ok
+test full_priority_chain_in_m_with_mie ... ok
+test delegated_stimer_fires_in_u_not_in_m ... ok
+test m_mode_exception_is_never_delegated_downward ... ok
+test vectored_mtvec_m_interrupt_ssi_enters_at_base_plus_4 ... ok
+test interrupt_taken_after_an_instruction_retires_precise_mepc ... ok
+test delegated_interrupt_delivers_to_stvec_with_scause_and_spp ... ok
+test wfi_with_mie_clear_and_mtip_pending_continues_no_trap ... ok
+test vectored_stvec_interrupt_enters_at_base_plus_4x_cause ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/predecode_batching.rs (target/debug/deps/predecode_batching-beece590fb808c57)
+
+running 3 tests
+mtimecmp latency: pending@40, delivered@129 (latency 89)
+test mtimecmp_midblock_latency_is_bounded ... ok
+hello: batched deterministic — 83 retires, hash 0xec6e61a286135dfd
+loops: batched deterministic — 48 retires, hash 0xb39f666fdc661b5d
+memops: batched deterministic — 117 retires, hash 0x7b228482bdef09dd
+test native_batched_runs_are_deterministic ... ok
+batching verdict-identical across 128 riscv-tests ELFs (18 rv64mi)
+test riscv_tests_pass_or_fail_unchanged_with_batching ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 57.68s
+
+     Running tests/predecode_entry_safety.rs (target/debug/deps/predecode_entry_safety-6dbe944ce370ec2a)
+
+running 7 tests
+test cached_entry_rechecks_revoked_pmp_execute_permission ... ok
+test mode_change_with_full_grant_retains_cached_code ... ok
+test pmp_change_invalidates_cached_interior_permission ... ok
+test guest_mret_invalidates_cached_interior_permission_before_successor ... ok
+test dma_write_between_run_chunks_invalidates_before_next_entry ... ok
+test privilege_change_invalidates_cached_interior_permission ... ok
+test two_virtual_aliases_reuse_one_physical_entry ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s
+
+     Running tests/production_keyboard_wfi_critic.rs (target/debug/deps/production_keyboard_wfi_critic-0dfcdd5610b15857)
+
+running 2 tests
+KEYBOARD_WFI cached=false deadline=500000 held=false original_used=0 actual_mtime=500000 expected_mtime=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_TWO_KEYS cached=false initial=37 busy_ticks=4 used=8 settled_mtime=500037 trace_retires=259 trace_hash=5af09e729e0aa754
+KEYBOARD_TWO_KEYS cached=false initial=1234567 busy_ticks=4 used=8 settled_mtime=1734567 trace_retires=259 trace_hash=5af09e729e0aa754
+KEYBOARD_WFI cached=false deadline=500000 held=true original_used=2 actual_mtime=0 expected_mtime=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_WFI cached=false deadline=5000000000 held=false original_used=0 actual_mtime=5000000000 expected_mtime=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_TWO_KEYS cached=true initial=37 busy_ticks=4 used=8 settled_mtime=500037 trace_retires=259 trace_hash=5af09e729e0aa754
+KEYBOARD_WFI cached=false deadline=5000000000 held=true original_used=2 actual_mtime=0 expected_mtime=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_TWO_KEYS cached=true initial=1234567 busy_ticks=4 used=8 settled_mtime=1734567 trace_retires=259 trace_hash=5af09e729e0aa754
+test two_original_keys_require_both_breaks_and_never_freeze_busy_retirement ... ok
+KEYBOARD_WFI cached=true deadline=500000 held=false original_used=0 actual_mtime=500000 expected_mtime=500000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_WFI cached=true deadline=500000 held=true original_used=2 actual_mtime=0 expected_mtime=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_WFI cached=true deadline=5000000000 held=false original_used=0 actual_mtime=5000000000 expected_mtime=5000000000 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+KEYBOARD_WFI cached=true deadline=5000000000 held=true original_used=2 actual_mtime=0 expected_mtime=0 trace_retires=1 trace_hash=dd8c58e8d6e657e4
+test original_delivered_keyboard_make_preserves_host_turn_before_idle_jump ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+     Running tests/sbi_timer.rs (target/debug/deps/sbi_timer-e38be09357b657c5)
+
+running 6 tests
+test dtb_timebase_is_the_single_constant ... ok
+test past_deadline_fires_immediately_once ... ok
+test set_timer_clears_pending_stip ... ok
+test guest_cannot_forge_stip ... ok
+test future_deadline_fires_on_schedule ... ok
+test cancel_wins_the_race_zero_deliveries ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/snapshot_coherence.rs (target/debug/deps/snapshot_coherence-317ef40baba57ffc)
+
+running 5 tests
+test overlay_generation_is_monotonic ... ok
+test same_snapshot_refused_after_overlay_advances ... ok
+test bumped_overlay_generation_is_refused_before_mutation ... ok
+test matching_base_and_generation_restores ... ok
+test changed_base_hash_is_refused_before_mutation ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/wfi_fast_forward_critic.rs (target/debug/deps/wfi_fast_forward_critic-199fe91a66d86cb0)
+
+running 6 tests
+test jump_lands_exactly_on_mtimecmp_no_overshoot ... ok
+test due_mtimecmp_fires_before_wfi_no_jump ... ok
+test idle_wfi_jumps_to_deadline_and_timer_fires_immediately ... ok
+test masked_pending_interrupt_wfi_time_behavior ... ok
+test external_network_io_suppresses_wfi_deadline_jump ... ok
+test no_timer_armed_means_no_jump ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
