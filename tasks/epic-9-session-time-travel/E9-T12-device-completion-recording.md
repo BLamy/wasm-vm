@@ -3,7 +3,7 @@ id: E9-T12
 epic: 9
 title: Record asynchronous device payloads and completion order
 priority: 524.912
-status: pending
+status: in-progress
 depends_on: [E9-T09]
 estimate: S
 risk: high
@@ -34,4 +34,15 @@ Reorder and delay host callbacks, cancel an in-flight request at a checkpoint an
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-18 — worker — begin
+
+E9-T12 is the top eligible queue task after independently verified and published
+E9-T11. Risk is high: completion ordering, guest DMA/interrupts and persisted pending
+requests cross architectural and asynchronous state boundaries. The slice will bind
+accepted completions to exact guest positions and request identities, keep immutable
+base payload references separate, and restore pending state/cursors while revoking
+stale callback generations. Supported block, console/file-agent and audio-input
+adapters must record their actual results; unsupported adapters remain gated. GPU
+results stay in T18. The final command will exercise delayed/reordered callbacks,
+cancellation and restore with guest memory/ring/IRQ witnesses. No implementation
+or verification claim is made by this activation entry.
