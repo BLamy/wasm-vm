@@ -142,3 +142,16 @@ Commands: `cargo fmt --all --check`; affected core/JIT integration-target clippy
 Evidence: `evidence/e9-t11/verifier-refutation/receipt.json` SHA-256 `db98fba97e7d3eeb21050db282510d3132c7e856884ef573b211cf2ded9fad6e`;
 full fresh notes/profiles/oracles remain in `target/evidence/e9-t11-verifier/`.
 Status remains `in-progress` for semantic repair, never `verified`.
+
+
+### 2026-10-18 — worker — semantic rework after compiled RTC refutation
+
+The fresh verifier's actual-JIT recording refuted the dispatch-dependent armed RTC
+polling cadence. Session dispatch now caps a span at one transition while source
+capture/replay is active and the RTC alarm remains armed. This preserves every poll
+position regardless of host quantum. Disarmed pure compiled work remains available;
+existing exact MMIO fallback handles guest RTC reads. The promoted armed/disarmed JIT
+matrix and byte-budget test are part of the already-selected acceptance binaries, and
+the JIT test source joins the final source-digest inventory. A new frozen worker,
+pristine-clone and public submission will replace the runtime claim; prior evidence
+and the verifier's failed recording remain retained. Status stays `in-progress`.

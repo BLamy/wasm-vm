@@ -380,7 +380,10 @@ Wall and paced clocks remain outside this admission boundary.
 
 The real Goldfish RTC provider records each low-word read, time-set half, alarm arm
 and armed alarm poll. Its high-word latch, offset and alarm state stay in the native
-snapshot. The real virtio-rng provider records each requested fill, exact supplied bytes
+snapshot. While an alarm remains armed, session dispatch permits at most one guest
+transition before polling again, independent of the interpreter/JIT host budget. A disarmed
+RTC leaves pure compiled blocks available; its MMIO accesses use exact interpreter fallback.
+The real virtio-rng provider records each requested fill, exact supplied bytes
 and provider failure. A captured descriptor chain stages every fill before publishing
 DMA or the used ring. Failure or a recording quota cannot publish a partial chain.
 Ordinary unrecorded RNG retains its streaming allocation policy.

@@ -660,6 +660,17 @@ impl crate::Machine {
         {
             budget = budget.min(target - clock.position.transition);
         }
+        // An armed RTC samples its external provider at every transition. A compiled span
+        // would skip those observation positions and make replay depend on the host quantum.
+        // MMIO blocks already fall back through jit_safe, so a disarmed RTC needs no extra fence.
+        if self.session_sources_active()
+            && self
+                .rtc
+                .as_ref()
+                .is_some_and(|(rtc, _)| rtc.borrow().alarm_armed())
+        {
+            budget = budget.min(1);
+        }
         // Pure compiled work cannot cross the retirement where a derived timer becomes due.
         if let Some(clint) = &self.clint {
             let state = clint.borrow();
