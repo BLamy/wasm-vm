@@ -1,0 +1,132 @@
+{
+  "trace_sha256": "103b6397b1ac8eff2662a0f51ac95b8fa106273c29bd68db9453e387fbe2a144",
+  "zip_sha256": "4f8b8b1e4c2c8996d5435f172eb6ed0ad533a92a7a1bc83011a0aac682c7523c",
+  "points": [
+    {
+      "line": 374,
+      "callId": "call@157",
+      "api": "page.evaluate",
+      "expression": "() => ({sameOwner:__linuxCtl===window.__verifierOwner,state:__sessionLibrary.root.dataset.state,\n    active:__sessionLibrary.controls.active.dataset.id,point:__sessionLibrary.controls.active.dataset.point,status:__sessionLibrary.controls.status.textContent})",
+      "result": {
+        "value": {
+          "sameOwner": true,
+          "state": "incomplete",
+          "active": "session-6cb9c34e-0134-4a0d-a4ad-63b590faf689",
+          "point": "point-490d18ff-965b-48b3-9f0f-27d8f2d802a9",
+          "status": "Corrupt: c03e5cc0eb329995172d35533b0200a6e44dff5d4e99fe74ca38fa5c415c2dc3. The last committed checkpoint is preserved."
+        }
+      },
+      "error": null
+    },
+    {
+      "line": 400,
+      "callId": "call@177",
+      "api": "page.evaluate",
+      "expression": "()=>{\n    const library=__sessionLibrary,actual=library.checkpoints.save;\n    window.__verifierInitialFailure={calls:0,restore:()=>{library.checkpoints.save=actual;}};\n    library.checkpoints.save=async function(...args){\n      __verifierInitialFailure.calls++;\n      if(__verifierInitialFailure.calls===1)throw new DOMException('verifier initial capture quota','QuotaExceededError');\n      return actual.apply(this,args);\n    };\n  }",
+      "result": {
+        "value": null
+      },
+      "error": null
+    },
+    {
+      "line": 427,
+      "callId": "call@183",
+      "api": "page.evaluate",
+      "expression": "async()=>{\n    const library=__sessionLibrary,id=library.selected,meta=library.metadata.get(id),opened=await library.store.openSession(id);\n    const result={id,calls:__verifierInitialFailure.calls,state:library.root.dataset.state,metadata:meta,\n      committed:opened!==null,recording:library.recording!==null,active:library.active?.id};\n    __verifierInitialFailure.restore();\n    // Initial-capture cleanup awaits release acknowledgement, so this acquisition must be immediate.\n    const writer=await library.store.writer(id);result.reacquired=writer.id;await writer.release();\n    return result;\n  }",
+      "result": {
+        "value": {
+          "id": "session-1ad2b736-9b96-4a07-892d-6192e93576f7",
+          "calls": 1,
+          "state": "storage-error",
+          "metadata": {
+            "id": "session-1ad2b736-9b96-4a07-892d-6192e93576f7",
+            "name": "Session 10/18/2026, 1:47:56 AM",
+            "started": 1792302476572,
+            "updated": 1792302476572,
+            "points": [],
+            "draft": true
+          },
+          "committed": false,
+          "recording": false,
+          "active": "session-6cb9c34e-0134-4a0d-a4ad-63b590faf689",
+          "reacquired": "session-1ad2b736-9b96-4a07-892d-6192e93576f7"
+        }
+      },
+      "error": null
+    },
+    {
+      "line": 459,
+      "callId": "call@193",
+      "api": "page.evaluate",
+      "expression": "async()=>{\n    const library=__sessionLibrary,id=library.recording.id,opened=await library.store.openSession(id),manifest=JSON.parse(new TextDecoder().decode(opened.manifest));\n    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',opened.manifest)),b=>b.toString(16).padStart(2,'0')).join('');\n    return {id,revision:opened.revision,manifestSha256:hash,points:manifest.checkpoints.map(x=>({id:x.id,machine:x.machine})),events:manifest.events.length};\n  }",
+      "result": {
+        "value": {
+          "id": "session-ac18cb10-b7d2-4b10-85a4-24419024de3a",
+          "revision": "1",
+          "manifestSha256": "0ca2c5291d899c06a9978412cd14b922a496eb068e5794194b0c9fbba11e56f2",
+          "points": [
+            {
+              "id": "point-7282feb6-236f-4bdd-9d79-f56119dbda16",
+              "machine": {
+                "sha256": "28f85384b08433a7f9bcc36a1d2eaee40a976c14699e560a795ffef9200790a6",
+                "length": "23862607"
+              }
+            }
+          ],
+          "events": 0
+        }
+      },
+      "error": null
+    },
+    {
+      "line": 463,
+      "callId": "call@195",
+      "api": "page.evaluate",
+      "expression": "()=>window.__retireLinuxControllerForTest()",
+      "result": {
+        "value": true
+      },
+      "error": null
+    },
+    {
+      "line": 467,
+      "callId": "call@197",
+      "api": "page.waitForFunction",
+      "expression": "async id=>{\n    const state=await navigator.locks.query(),name='wasm-vm-session-wasm-vm-sessions-v1-'+id;\n    return !state.held.some(x=>x.name===name)&&!state.pending.some(x=>x.name===name);\n  }",
+      "result": {
+        "handle": "<JSHandle>"
+      },
+      "error": null
+    },
+    {
+      "line": 472,
+      "callId": "call@199",
+      "api": "page.evaluate",
+      "expression": "async id=>{\n    const library=__sessionLibrary,opened=await library.store.openSession(id),manifest=JSON.parse(new TextDecoder().decode(opened.manifest));\n    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',opened.manifest)),b=>b.toString(16).padStart(2,'0')).join('');\n    const result={recording:library.recording!==null,active:library.controls.active.dataset.id,guestUp:wvmDemo.isGuestUp(),\n      state:library.root.dataset.state,status:library.controls.status.textContent,revision:opened.revision,manifestSha256:hash,\n      points:manifest.checkpoints.map(x=>({id:x.id,machine:x.machine})),checkpointDisabled:library.controls.checkpoint.disabled,stopDisabled:library.controls.stop.disabled};\n    const writer=await library.store.writer(id);result.reacquired=writer.id;await writer.release();return result;\n  }",
+      "result": {
+        "value": {
+          "recording": false,
+          "active": "",
+          "guestUp": false,
+          "state": "ready",
+          "status": "Recording ended because its guest stopped. Committed checkpoints remain saved.",
+          "revision": "1",
+          "manifestSha256": "0ca2c5291d899c06a9978412cd14b922a496eb068e5794194b0c9fbba11e56f2",
+          "points": [
+            {
+              "id": "point-7282feb6-236f-4bdd-9d79-f56119dbda16",
+              "machine": {
+                "sha256": "28f85384b08433a7f9bcc36a1d2eaee40a976c14699e560a795ffef9200790a6",
+                "length": "23862607"
+              }
+            }
+          ],
+          "checkpointDisabled": true,
+          "stopDisabled": true,
+          "reacquired": "session-ac18cb10-b7d2-4b10-85a4-24419024de3a"
+        }
+      },
+      "error": null
+    }
+  ]
+}

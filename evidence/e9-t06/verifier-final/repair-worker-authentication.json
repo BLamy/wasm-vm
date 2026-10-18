@@ -1,0 +1,121 @@
+{
+  "status": "passed",
+  "head": "1afabe81e5545eb54da63faddc8214d81e474dc4",
+  "receipt_sha256": "deb146471aff0602b1db395d9c6359b761df63ad2e17d6fe446effb9fb0e9f3d",
+  "source_files": 17,
+  "payload_files": 1122,
+  "payload_bytes": 1027861819,
+  "commands": [
+    {
+      "name": "policy",
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "seconds": 0.19853997230529785,
+      "exit_code": 0
+    },
+    {
+      "name": "syntax",
+      "command": [
+        "node",
+        "--check",
+        "web/session-library.js"
+      ],
+      "seconds": 0.08818507194519043,
+      "exit_code": 0
+    },
+    {
+      "name": "main-syntax",
+      "command": [
+        "node",
+        "--check",
+        "web/main.js"
+      ],
+      "seconds": 0.09677720069885254,
+      "exit_code": 0
+    },
+    {
+      "name": "worker-protocol",
+      "command": [
+        "node",
+        "--test",
+        "web/tests/e4-t32-worker-protocol.test.mjs"
+      ],
+      "seconds": 1.203751802444458,
+      "exit_code": 0
+    },
+    {
+      "name": "browser-build",
+      "command": [
+        "make",
+        "web-build"
+      ],
+      "seconds": 23.146378993988037,
+      "exit_code": 0
+    },
+    {
+      "name": "contract",
+      "command": [
+        "python3",
+        "tools/verify/e9-session-contract.py"
+      ],
+      "seconds": 0.3262031078338623,
+      "exit_code": 0
+    },
+    {
+      "name": "retained-gpu",
+      "command": [
+        "python3",
+        "tools/verify/e9-retained-gpu-runtime.py"
+      ],
+      "seconds": 0.04806089401245117,
+      "exit_code": 0
+    },
+    {
+      "name": "browser",
+      "command": [
+        "node",
+        "tools/verify/e9-session-library-browser.mjs",
+        "--output",
+        "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-css-worker-final/browser"
+      ],
+      "seconds": 298.81977796554565,
+      "exit_code": 0
+    },
+    {
+      "name": "missing-object-and-cleanup",
+      "command": [
+        "node",
+        "tools/verify/e9-session-library-missing-object-browser.mjs",
+        "--recording-report",
+        "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-css-worker-final/browser/report.json",
+        "--web-dir",
+        "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/web/dist",
+        "--output",
+        "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-css-worker-final/missing-object-and-cleanup"
+      ],
+      "seconds": 64.85309195518494,
+      "exit_code": 0
+    }
+  ],
+  "source_sha256": {
+    "web/session-library.js": "b140c6be3382b349ff5236c147f473e4ae5b1d7999a90d24993e4a8c2fd3d4b8",
+    "web/session-library.css": "b16213437edf880242a10f57ca1cf9ca56e36396319b51547f9bc48c7a03bb1f",
+    "web/main.js": "713efe5bc7ff73f489713bd971e8bda9bbed44f355af15c1e1b852d45e9c0746",
+    "web/index.html": "c7cb9982ac6d10904b8e843cc78f2d5b8331b44ce87f32aea260c488d1797a6c",
+    "web/roadmap.js": "a7af6ec4b58bf760a91761d1e850daefb9cd4219d8331ac4c6c5a3fc1e161c22",
+    "web/session-checkpoints.js": "a6fa93d426c3823cb23c797666b69a49226417a43aacb3ac1b0729d74a095803",
+    "web/session-store.js": "fab02e48194d3376d90ff69aa67a7eabb095b56d427023b10fcca7818f3f684f",
+    "web/session-disk-roots.js": "7dfd8784ab0086de26f042e3eb9cb63857250ea1a6b58cb0174b6f312bcf97bb",
+    "web/loader.js": "b42df333fa2bb6d65088843246b47cb87c9847aad4bfadcf9b97ff9451210efe",
+    "web/gpu-checkpoint-build.js": "d1e6416becc54bced193f83a0a9d408aaba6a98a700f62bc5b9dd769c7727a89",
+    "tools/verify/e9-session-library.py": "6361bc241c385d079ef55bed496b4f6ffa7b059a887582ec2b5608ac6a1647b0",
+    "tools/verify/e9-session-library-browser.mjs": "a4d69e8345a2ab9102c6639dca42adb3b91631ee5da3a51031bed6546d710336",
+    "tools/verify/e9-session-library-missing-object-browser.mjs": "7511c8c6e7358cd2e3a419231d7712f05629371b6f441c1b3469d52708700e47",
+    "Makefile": "5f9f5da7646ccace4b1096872cd3d5cb87cbefbd00eb69b9bdf54599b3da9c63",
+    "web/package.json": "98f5439bf3e211a021f712625143968e9cd31b043e2b34bc649ad954197ff93d",
+    "web/package-lock.json": "1bd432e67f671eb62296d64c473da133a9e97ab482cc946cacb80127bd760153",
+    "tools/build-web-dist.sh": "11301de6ba7139cb7e065fc3cdf95b21c1fd9df39b0fbe30232f361a8356d251"
+  }
+}

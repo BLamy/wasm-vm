@@ -1,0 +1,22 @@
+[
+  {
+    "packet": "worker-repaired",
+    "status": "passed",
+    "head": "1afabe81e5545eb54da63faddc8214d81e474dc4",
+    "originals": 1123,
+    "copies": 20,
+    "aliases": 5,
+    "receipt_sha256": "deb146471aff0602b1db395d9c6359b761df63ad2e17d6fe446effb9fb0e9f3d",
+    "provenance_sha256": "371e9c8833b9b3f920cf9044870b36d8cc04296b7136cfeb89a1b19120a1ad4c"
+  },
+  {
+    "packet": "repair-local",
+    "status": "passed",
+    "head": "1afabe81e5545eb54da63faddc8214d81e474dc4",
+    "originals": 563,
+    "copies": 7,
+    "aliases": 2,
+    "receipt_sha256": "4b83676473c08680b2435dcb930f986f09153bb79ace65dddbff092dc82fd5ce",
+    "provenance_sha256": "0ab7ec4bf12d94ca40ddbfe0633a9addebcb8133ba365f1c6fac099d9e3a18eb"
+  }
+]

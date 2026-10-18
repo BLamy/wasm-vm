@@ -9,6 +9,7 @@ import { ROADMAP } from "./roadmap.js";
 import { startLinuxBoot, resetDisk, tailscaleCommand } from "./loader.js";
 import { startLinuxBootWorker, stopLinuxController } from "./linux-worker-host.js";
 import { resolveOverlayResetSeedIdentity } from "./overlay-reset-target.js";
+import { mountSessionLibrary } from "./session-library.js";
 
 // E4-T32: the complete machine runs in a worker by default. This path needs no SAB/COOP headers;
 // `?worker=0` and the older `?singlethread=1` spelling are explicit main-thread
@@ -733,6 +734,7 @@ const bootProgress = createBootProgressSurface({
 const bootAlpineBtn = document.getElementById("boot-alpine");
 const bootAlpineFullBtn = document.getElementById("boot-alpine-full");
 let linuxCtl = null;
+let sessionLibrary = null;
 let linuxBootPromise = null;
 let linuxBootRequest = null;
 let linuxActiveRequest = null;
@@ -1013,6 +1015,7 @@ function clearLinuxControllerOwner(controller) {
     if (window.__linuxCtl === controller) window.__linuxCtl = null;
   } catch { /* page-only diagnostic */ }
   clearLinuxOwnerUi();
+  sessionLibrary?.ownerChanged();
   return true;
 }
 
@@ -1203,6 +1206,7 @@ function runLinuxBoot(opts, banner, { requestKey = opts.manifestUrl, onClaim = n
     key: requestKey,
     manifestUrl: opts.manifestUrl ?? null,
     imageManifestUrl: opts.imageManifestUrl ?? null,
+    sessionSoftware: opts.sessionSoftware === true,
     generation: ++linuxBootGeneration,
   };
   linuxBootRequest = request;
@@ -1231,8 +1235,9 @@ async function runLinuxBootOwned(opts, banner, request) {
   term.reset();
   // E5-T20e: do not let the guest probe virtio-snd before the AudioWorklet module has either
   // connected successfully or been explicitly downgraded to the context-only fallback.
-  await audioReady;
-  const audioBootEnabled = audioPipelineReady && audioSink !== null;
+  const softwareSession = opts.sessionSoftware === true;
+  if (!softwareSession) await audioReady;
+  const audioBootEnabled = !softwareSession && audioPipelineReady && audioSink !== null;
   if (_workerRequested && !_workerAvailable) {
     term.writeln("\x1b[33m[whole-machine Worker unavailable; using explicit main-thread fallback]\x1b[0m");
   }
@@ -1276,9 +1281,9 @@ async function runLinuxBootOwned(opts, banner, request) {
     : 500_000;
   const websocketRelay = opts.slirpWebsocket ?? query.get("slirpWebsocket") ?? networkWebsocketEl?.value ?? "";
   const privateRelay = opts.slirpRelay ?? query.get("slirpRelay") ?? networkRelayEl?.value ?? "";
-  const slirpDoh = opts.slirpDoh ?? query.get("slirpDoh") ?? "";
+  const slirpDoh = softwareSession ? "" : opts.slirpDoh ?? query.get("slirpDoh") ?? "";
   const selectedProvider = networkProviderEl?.value ?? "offline";
-  const slirpProvider = opts.slirpProvider ?? query.get("slirpProvider") ??
+  const slirpProvider = softwareSession ? "offline" : opts.slirpProvider ?? query.get("slirpProvider") ??
     (opts.slirpTailscale
       ? "tailscale"
       : query.has("slirpWebsocket") || websocketRelay
@@ -1287,7 +1292,7 @@ async function runLinuxBootOwned(opts, banner, request) {
           ? "relay"
           : selectedProvider);
   const slirpRelay = slirpProvider === "websocket" ? websocketRelay : privateRelay;
-  const slirpTailscale = opts.slirpTailscale ?? (["tailscale", "headscale"].includes(slirpProvider) ? {
+  const slirpTailscale = softwareSession ? null : opts.slirpTailscale ?? (["tailscale", "headscale"].includes(slirpProvider) ? {
     workerUrl: "./tailscale-worker.js",
     config: {
       wasmUrl: "./tailscale-connect/main.wasm",
@@ -1364,7 +1369,7 @@ async function runLinuxBootOwned(opts, banner, request) {
         : opts.virgl && opts.bootSnapshot !== false ? 600_000 : undefined,
       // E3-net: `?slirpNet` in the URL boots with the slirp local stack (real DHCP/ARP/ICMP) instead
       // of the loopback backend — so the guest can pull a real IP and reach the gateway.
-      slirpNet: opts.slirpNet ?? (
+      slirpNet: softwareSession ? false : opts.slirpNet ?? (
         opts.fileTransfer || query.has("slirpNet") || slirpProvider !== "offline" || !!slirpDoh
       ),
       slirpProvider,
@@ -1382,10 +1387,10 @@ async function runLinuxBootOwned(opts, banner, request) {
       audioClockBuffer: audioBootEnabled ? audioSink.clockBuffer : null,
       audioCapacityFrames: audioBootEnabled ? audioSink.ring.capacityFrames : 0,
       audioSampleRateHz: audioBootEnabled ? audioSink.sampleRateHz : 0,
-      captureSharedBuffer: microphoneRing?.sharedBuffer ?? null,
-      captureCapacityFrames: microphoneRing?.capacityFrames ?? 0,
-      captureSampleRateHz: microphoneRing ? microphoneSampleRateHz : 0,
-      enableMic: opts.enableMic ?? micEnabled,
+      captureSharedBuffer: softwareSession ? null : microphoneRing?.sharedBuffer ?? null,
+      captureCapacityFrames: softwareSession ? 0 : microphoneRing?.capacityFrames ?? 0,
+      captureSampleRateHz: !softwareSession && microphoneRing ? microphoneSampleRateHz : 0,
+      enableMic: !softwareSession && (opts.enableMic ?? micEnabled),
       onCaptureStart: (info) => {
         void microphoneCapture.onPcmStart(info);
       },
@@ -1462,7 +1467,7 @@ async function runLinuxBootOwned(opts, banner, request) {
           }
         } catch {}
       },
-      onAgentOutput: (bytes) => agentSession.receive(bytes),
+      onAgentOutput: (bytes) => { if (!softwareSession) agentSession.receive(bytes); },
       onError: (e) => {
         if (!linuxRequestIsCurrent(request)) return;
         const message = e?.message || String(e);
@@ -1510,15 +1515,15 @@ async function runLinuxBootOwned(opts, banner, request) {
       gpuStatsTimer = setInterval(() => void publishGpu().catch(() => {}), 2000);
     }
     try {
-      agentSession.attach(bootController);
-      window.__agentChannel = agentSession.channel;
-      window.__desktopAgentChannel = agentSession.channel;
+      if (!softwareSession) agentSession.attach(bootController);
+      window.__agentChannel = softwareSession ? null : agentSession.channel;
+      window.__desktopAgentChannel = softwareSession ? null : agentSession.channel;
     } catch (error) {
       console.warn("wasm-vm: desktop agent bridge unavailable:", error?.message || error);
       agentSession.close("desktop agent unavailable");
     }
-    displayViewport?.setController(bootController);
-    flushMicrophoneGuestEvents(linuxCtl);
+    displayViewport?.setController(softwareSession ? null : bootController);
+    if (!softwareSession) flushMicrophoneGuestEvents(linuxCtl);
     updatePointerIndicator();
     const ctlForRelease = bootController;
     keyboardBridge = createKeyboardBridge(createWasmKeyboardAdapter(linuxCtl), {
@@ -1718,7 +1723,7 @@ async function runLinuxBootOwned(opts, banner, request) {
     // shell re-renders its prompt instead of showing a blank terminal. (markGuestReady has already
     // fired through the deferred restored-ready block above.) Best-effort — a cold boot ignores this.
     try {
-      if (linuxCtl?.restoredFromBootSnapshot?.()) linuxCtl.sendInput?.(new Uint8Array([0x0d]));
+      if (!softwareSession && linuxCtl?.restoredFromBootSnapshot?.()) linuxCtl.sendInput?.(new Uint8Array([0x0d]));
     } catch { /* prompt nudge is best-effort */ }
     fileTransferUI.attachController(opts.fileTransfer ? linuxCtl : null);
     // E3-T24a: a lazy/chunked image reports no per-fetch bytes, so drive the byte-weighted `chunk`
@@ -1762,7 +1767,8 @@ async function runLinuxBootOwned(opts, banner, request) {
     // The guest is live and the input sink is attached. A desktop session owns the display canvas
     // as its keyboard/pointer surface; the editor profiles keep the terminal's original focus UX.
     if (_omarchyDesktopMode) displayCanvas?.focus();
-    else ui.focus();
+    else if (!softwareSession) ui.focus();
+    sessionLibrary?.ownerChanged();
   } catch (e) {
     setupFailed = true;
     if (bootController) {
@@ -1929,6 +1935,13 @@ function guestExec(cmd, timeoutMs = 60000, sendBytes = null, options = {}) {
   const task = async () => {
     const streamStopError = await streamBarrier;
     if (streamStopError) throw streamStopError;
+    // A checkpoint opens with its exact pending UART bytes. IDE directory probes are commands
+    // too: do not append one to a paused software session before the user chooses Resume.
+    const owner = linuxCtl;
+    if (owner && linuxActiveRequest?.sessionSoftware && await owner.isPaused()) {
+      throw new GuestBridgeError("GUEST_PAUSED", "Checkpoint guest is paused; choose Resume before running commands");
+    }
+    if (owner !== linuxCtl) throw new GuestBridgeError("GUEST_STOPPED", "guest changed before an RPC started");
     return new Promise((resolve, reject) => {
       if (!linuxCtl) return reject(new GuestBridgeError("GUEST_UNAVAILABLE", "guest not up"));
       const quiet = options?.quiet === true;
@@ -2502,6 +2515,38 @@ window.wvmDemo = {
     };
   },
 };
+
+// E9-T06: library actions share the ordinary page's one-controller ownership protocol.
+// Restore admission and actual-topology construction finish privately before the old guest retires.
+void mountSessionLibrary(document.getElementById("session-library"), {
+  current: () => linuxCtl ? {controller: linuxCtl, profile: Boolean(linuxActiveRequest?.sessionSoftware), ready: guestReady} : null,
+  async replace(checkpoint) {
+    const response = await fetch("./session-software-fixture.json");
+    if (!response.ok) throw Error("Checkpoint guest configuration unavailable");
+    const fixture = await response.json();
+    const options = {sessionSoftware: true, manifestUrl: fixture.boot_manifest, mode: "chunked",
+      imageManifestUrl: fixture.image_manifest, baseUrl: fixture.base_url, bootProfileUrl: null,
+      persist: false, bootSnapshot: false, ramMib: fixture.ram_mib, bootargs: fixture.bootargs,
+      guestClock: "icount", icountDivider: 10, slirpNet: false, slirpProvider: "offline", enableMic: false,
+      sessionCheckpoint: checkpoint};
+    if (checkpoint) {
+      const candidate = await _bootLinux(options);
+      await stopLinuxController(candidate);
+    }
+    if (linuxBootPromise) await linuxBootPromise;
+    if (linuxCtl) await retireLinuxController(linuxCtl);
+    if (linuxCtl || linuxBootPromise) throw Error("Another guest owns the page");
+    const key = "session-" + crypto.randomUUID();
+    const boot = await runLinuxBoot(options, "offline checkpoint guest", {
+      requestKey: key, onClaim: () => {lastBootError = null; setGuestChip("alpine");},
+    });
+    if (boot.winner !== key || !linuxCtl) throw Error(lastBootError || "Checkpoint guest did not start");
+    return linuxCtl;
+  },
+}).then(library => {
+  sessionLibrary = library;
+  if (_startupQuery.has("testHooks")) window.__sessionLibrary = library;
+});
 
 // E2-T22: "Fit" re-fits the rendered grid to the panel and surfaces the matching `stty` line.
 // A serial console carries no out-of-band winsize, so resize is cooperative: if a guest is live

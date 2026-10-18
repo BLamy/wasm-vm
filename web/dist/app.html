@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>wasm-vm — RV64 in the browser</title>
     <link rel="stylesheet" href="./vendor/xterm/xterm.css" />
+    <link rel="stylesheet" href="./session-library.css" />
     <style>
       :root {
         color-scheme: dark;
@@ -966,6 +967,30 @@
           Select a guest to start the shared VM.
         </p>
       </section>
+      <details id="session-library" class="session-library" open>
+        <summary>Local saved sessions</summary>
+        <p class="session-note">Save exact points in an offline software guest. Checkpoints only; continuous replay comes later. A new guest or Open replaces the current guest.</p>
+        <div class="session-actions">
+          <button type="button" data-session="new" disabled>New checkpoint guest</button>
+          <button type="button" data-session="start" disabled>Start recording</button>
+          <button type="button" data-session="checkpoint" disabled>Checkpoint</button>
+          <button type="button" data-session="stop" disabled>Stop recording</button>
+          <button type="button" data-session="resume" disabled>Resume guest</button>
+        </div>
+        <p data-session="active">Active: no checkpoint guest</p>
+        <div class="session-fields">
+          <label>Selected preview<select data-session="sessions" aria-label="Saved session" disabled></select></label>
+          <label>Exact restore point<select data-session="points" aria-label="Saved checkpoint" disabled></select></label>
+          <button type="button" data-session="open" disabled>Open checkpoint</button>
+          <button type="button" data-session="refresh" disabled>Refresh sessions</button>
+        </div>
+        <form class="session-fields">
+          <label>Session name<input data-session="name" aria-label="Session name" maxlength="96" required autocomplete="off" disabled /></label>
+          <button type="submit" data-session="rename" disabled>Rename session</button>
+        </form>
+        <div data-session="details" aria-label="Selected session details"></div>
+        <p data-session="status" role="status" aria-live="polite">Reading local checkpoints…</p>
+      </details>
       <!-- IDE layout (explorer + editor + embedded terminal) is assembled by ide.js, which
            re-parents the existing .console section (with its #term xterm) into the bottom pane. -->
       <div id="ide-root"><!-- built by ide.js --></div>

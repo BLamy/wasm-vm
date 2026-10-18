@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "head": "41f8978c4156ffeb70e2f3a45ed97bd17d542bb8",
+  "product_head": "1afabe81e5545eb54da63faddc8214d81e474dc4",
+  "receipt_sha256": "d5bd94a4d5f204f58c5da68723289e9a7a8a9e7114e63b2caef4490fd13d80e7",
+  "originals": 822,
+  "copies": 8,
+  "aliases": 2,
+  "public_assets": 16,
+  "css_sha256": "b16213437edf880242a10f57ca1cf9ca56e36396319b51547f9bc48c7a03bb1f",
+  "driver_sha256": "7511c8c6e7358cd2e3a419231d7712f05629371b6f441c1b3469d52708700e47",
+  "original_public_profile_files_unchanged": 787,
+  "prior_public_originals_unchanged": 808,
+  "provenance_sha256": "9239d929c17b5c0a5ea36d5260e9875260cc991f0c8deaa75ca2fb9691655b56",
+  "layout": {
+    "right": 390,
+    "viewport": 390,
+    "scroll": 388,
+    "client": 388
+  },
+  "errors": []
+}

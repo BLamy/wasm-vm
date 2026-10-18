@@ -1,0 +1,16 @@
+Copied persisted library is ready
+Keyboard selected exact Alpha point
+Exact Alpha active tuple authenticated
+Stale compatible Beta admission completed
+{
+  "status": "passed",
+  "activeBefore": "28f85384b08433a7f9bcc36a1d2eaee40a976c14699e560a795ffef9200790a6",
+  "activeAfter": "28f85384b08433a7f9bcc36a1d2eaee40a976c14699e560a795ffef9200790a6",
+  "afterUi": {
+    "sameOwner": true,
+    "state": "incomplete",
+    "active": "session-6cb9c34e-0134-4a0d-a4ad-63b590faf689",
+    "point": "point-490d18ff-965b-48b3-9f0f-27d8f2d802a9",
+    "status": "Corrupt: c03e5cc0eb329995172d35533b0200a6e44dff5d4e99fe74ca38fa5c415c2dc3. The last committed checkpoint is preserved."
+  }
+}

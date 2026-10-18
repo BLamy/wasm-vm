@@ -1,0 +1,43 @@
+{
+  "P0-P7/P9/P10": {
+    "status": "HELD",
+    "reason": "Carry forward the authenticated worker/public session, paused restore, preview, history-limit, error-state, 127/0 suite and retained-GPU results. Product JS, native runtime, store and dependency boundaries are unchanged.",
+    "evidence": "evidence/e9-t06/verifier-initial/predictions.json; worker-repaired and public provenance"
+  },
+  "P8/R2 responsive error": {
+    "status": "HELD",
+    "previous": "FAILED at 586/388",
+    "observed": "Local and production missing-descriptor errors wrap fully at 390px; scroll/client are 388/388 and right/viewport are 390/390.",
+    "evidence": "evidence/e9-t06/repair-local/after-error.png and report.json; evidence/e9-t06/repair-public/after-error.png and report.json:626"
+  },
+  "R1 repair provenance": {
+    "status": "HELD",
+    "observed": "Frozen product 1afabe81; nine gate exits zero; 17 source hashes; 1,122 payloads plus receipt authenticated. Driver 7511c8c6... unchanged.",
+    "evidence": "repair-worker-authentication.json; repair-packet-authentication.json"
+  },
+  "R3 initial capture cleanup": {
+    "status": "HELD",
+    "observed": "Exactly one save rejection through Start leaves draft=true, points=[], no committed row and no recording. Immediate same-ID writer acquisition succeeds; Alpha full tuple stays unchanged.",
+    "evidence": "local trace line 427/call@183; public trace line 860/call@247"
+  },
+  "R4 owner loss cleanup": {
+    "status": "HELD",
+    "observed": "Ordinary retirement clears active/recording and disables checkpoint/stop. LockManager acknowledges the exact lock absent before successful reacquisition. Revision, manifest hash and point references remain identical/open.",
+    "evidence": "local trace lines 459,463,467,472; public trace lines 893,897,902,906"
+  },
+  "C1/C2/R5 coverage": {
+    "status": "HELD",
+    "observed": "Four full-browser document segments concatenate exactly to 312 entries; their union with local/public cleanup evidence executes every added main.js and session-library.js line, including the earlier 162-164/180 gaps.",
+    "evidence": "coverage-audit.json.gz; coverage.md"
+  },
+  "N1 novel attack": {
+    "status": "HELD",
+    "observed": "Real target descriptor existed with 23 parts, then was absent. Admission rejected before replacement, preserving the exact paused Alpha owner and tuple. The responsive counterexample is repaired.",
+    "evidence": "initial verifier counterexample; repaired local/public reports and raw frames"
+  },
+  "R6 repaired publication": {
+    "status": "HELD",
+    "observed": "Production receipt d5bd94a4... authenticates 822 originals, 8 copies and 2 aliases. All 16 critical public asset hashes match product 1afabe81; errors are empty. All 808 prior public originals, including 787 original-profile files, are unchanged.",
+    "evidence": "repair-public-authentication.json; repair-public-raw-authentication.json; public trace points"
+  }
+}
