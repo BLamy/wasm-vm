@@ -778,3 +778,56 @@ fn checkpoint_conserves_all_represented_results_before_mutation_or_lease_revocat
     assert_eq!(replayed.bus_mut().load8(BASE + 0x1400c), Ok(0xe1));
     evidence("conservation-valid-all-terms.resume", &valid);
 }
+
+#[test]
+fn normal_reset_checkpoint_roundtrips_and_resumes_without_polling() {
+    let mut recording = fixture(false);
+    until(&mut recording, START, 31, &mut Trace::default());
+    capture(&mut recording, Event::Pending(true));
+    capture(&mut recording, Event::Receive(vec![0x67, 0x68, 0x69]));
+    let lease = recording.lease_session_network(None).unwrap();
+    recording.bus_mut().store32(0x1000_2070, 0).unwrap();
+    assert_eq!(
+        recording.complete_session_network(&lease, Event::Pending(false)),
+        Err(Error::StaleLease)
+    );
+    assert!(recording.session_network_requests().unwrap().is_empty());
+    let position = recording.session_position();
+    let guest_report = report(&mut recording);
+    let reset = recording.save_session_resume().unwrap();
+    assert_eq!(recording.session_position(), position);
+    assert_eq!(report(&mut recording), guest_report);
+    assert_eq!(recording.save_session_resume().unwrap(), reset);
+    let mut original_trace = Trace::default();
+    until(&mut recording, END, 31, &mut original_trace);
+    let final_frame = recording.save_session_resume().unwrap();
+    for mode in [false, true] {
+        for quantum in [1, 7, 4096] {
+            let mut restored = fixture(mode);
+            restored.load_session_resume(&reset).unwrap();
+            assert_eq!(
+                restored.save_session_resume().unwrap(),
+                reset,
+                "normal reset checkpoint changed on restore mode={mode} q={quantum}"
+            );
+            let mut trace = Trace::default();
+            until(&mut restored, END, quantum, &mut trace);
+            if mode {
+                restored.finish_session_network_replay(2).unwrap();
+            }
+            assert_eq!(restored.save_session_resume().unwrap(), final_frame);
+            assert_eq!(trace.0, original_trace.0);
+            evidence(
+                &format!("normal-reset-mode-{mode}-q{quantum}.resume"),
+                &final_frame,
+            );
+            evidence(
+                &format!("normal-reset-mode-{mode}-q{quantum}.trace"),
+                trace.0.as_bytes(),
+            );
+        }
+    }
+    evidence("normal-reset-paused.resume", &reset);
+    evidence("normal-reset-final.resume", &final_frame);
+    evidence("normal-reset-original.trace", original_trace.0.as_bytes());
+}

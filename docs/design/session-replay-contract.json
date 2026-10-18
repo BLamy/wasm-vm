@@ -814,7 +814,7 @@
     "crates/core/src/dev/virtio/snd/mod.rs": "4701aa9db527b4b50e340e2d16d8e563895da01d2504a38a6318bc43ae69bbf3",
     "crates/core/src/dev/virtio/snd/session_capture_snapshot.rs": "e929c49d9c0e684a95a590b54d11ebdaf08aa3e2c5411a388c51b7625e4d3d27",
     "crates/core/src/dev/virtio/snd/snapshot.rs": "e89880eb65014d09b25cd5696bb7152beba189a25bb2d814850fbd2dc7c9e24b",
-    "crates/core/src/lib.rs": "0a816741ab6ca528b596f741ee23591f854d62c4acafc4845e3ad3d2838692b9",
+    "crates/core/src/lib.rs": "0e6b4dabcdeef34101ccd6d22bf7c5c886f95572a854bd4cb6acd8e3d59fbdd4",
     "crates/core/src/session_clock.rs": "0e7772b82c9d19405f3d53d694790b90f0c2b27d694ade8b673cdb8f4d70ab57",
     "crates/core/src/session_clock/sources.rs": "36e874000419e12352d3472cfa549473f346ae79b5390bbe5abff11ba59bd5ff",
     "crates/core/src/session_devices.rs": "3338126e96c833e8668ce8cf3df96788052b9f73b727775cfb55ed083604b661",

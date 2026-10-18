@@ -3375,8 +3375,12 @@ impl Machine {
         if let (Some((state, rx_vq, tx_vq)), Some((slot, _))) = (&self.net, self.virtio.get(1)) {
             let mut v = alloc::vec::Vec::new();
             slot.borrow().snapshot_transport(&mut v);
+            let st = state.borrow();
+            let [_, reset_pending] = st.session_flags();
+            // The next service drops reset-invalidated ring views before using them.
+            // Encode their canonical absence without polling or delivering owned RX.
             for q in [rx_vq, tx_vq] {
-                match q {
+                match q.as_ref().filter(|_| !reset_pending) {
                     Some(vq) => {
                         v.push(1);
                         let (la, ui) = vq.ring_indices();
@@ -3389,7 +3393,6 @@ impl Machine {
                     }
                 }
             }
-            let st = state.borrow();
             v.extend_from_slice(&st.rx_dropped.to_le_bytes());
             v.extend_from_slice(&st.tx_count.to_le_bytes());
             v.extend_from_slice(&st.rx_count.to_le_bytes());

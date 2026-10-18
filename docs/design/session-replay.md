@@ -470,6 +470,11 @@ queued receives, current link outcome and external-pending flag by the accepted
 network cursor, using checked arithmetic. Impossible results refuse before any
 state or callback incarnation changes.
 
+Exact capture omits service-ring views already invalidated by a pending transport
+reset. The reset flag remains recorded; capture neither polls the backend nor
+advances the guest. Restoring before the next service roundtrips that canonical
+state and resumes with the same instruction trace.
+
 Channel 20 envelopes bind each outgoing intent acknowledgement, incoming frame,
 connection outcome or external-work change to the common before-boundary coordinate.
 Frames are bounded to 65,535 bytes, each queue to 256 entries and combined owned
