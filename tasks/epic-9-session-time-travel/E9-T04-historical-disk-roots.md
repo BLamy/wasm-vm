@@ -164,3 +164,22 @@ browser receipt SHA-256:
 report SHA-256:
 `d054a6eb3a92d8725fd3dce3ff27effd6254f55fa37ba22095bca85ab45a1e97`.
 The verdict/status commit changes verification metadata and evidence only.
+
+### 2026-10-17 — worker — verified runtime published and checked
+
+Published source `2bb4c9531e94914d92b13b575087d41d1b26500d` to <https://7a2f6b85.wasm-vm.pages.dev>
+and production <https://wasm-vm.pages.dev/> with `bash tools/deploy-cloudflare.sh`.
+The exact build identity remains `8947b88d248365ce6991d01dc22ec74170ed99f7d7444620793a4dd21ae7744c`;
+only the verified task catalog/service-worker stamp changed after the critic's proof.
+The built dist is committed, and the five deploy-only R2 URL rewrites were restored.
+
+`node tools/verify/e9-disk-roots-browser.mjs --url https://wasm-vm.pages.dev/ --output target/evidence/e9-t04-public-final`
+passed: all 15 published asset digests match the committed dist, suite 127/0,
+zero console errors, verified pip, all owner/I/O attacks, real before/after/live/fork
+Linux files, same-block private writes, unchanged live database and independent
+filesystem reconstruction. The retained factory resumed 2,499,808 instructions
+and physically drew in fresh epoch 4 without loss or poisoning. Report SHA-256
+`5bca44684fdbf167c44c29bab5ec95d4b443f80ce1b5b81e76577c716d7a66b6`.
+Compact raw deltas, roots, oracle witnesses, screenshots, logs, coverage and all
+original-file digests are in `evidence/e9-t04/public/`; the full browser trace/profile
+and reconstructed images remain at the recorded external evidence path.
