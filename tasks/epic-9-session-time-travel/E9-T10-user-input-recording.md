@@ -117,3 +117,28 @@ available disk and the subsequent passing recovery without a runtime change. The
 recordings, profiles, native traces, guest files and all full logs remain at their recorded
 paths. rr/ssh dev is waived under the repository policy. No independent verification claim
 or merge authorization is made by this worker entry.
+
+### 2026-10-18 — worker — published input recording proof
+
+At clean metadata head `6528fcce222cb2f276e751dda7ef4ddbf10cd50b`,
+`GIT_OPTIONAL_LOCKS=0 python3 -u target/e9-t10-public.py` passed all four recorded
+production commands: `e9-input-recording-browser.mjs --url https://wasm-vm.pages.dev/`,
+the saved-object oracle, the event-clock oracle, and the unchanged retained-GPU
+browser regression. The runtime and all 38 submitted source digests remain those
+of the frozen worker submission.
+
+The actual production page passed **127 / 0**, with zero unexpected console errors.
+Its Linux guest read the exact 131129-byte completed upload and the 65528-byte
+cancelled private prefix, matching the submitted SHA-256 values. Storage-pressure
+retry, concurrent save/release/stop and fresh-tab reload retained **77 receipts**,
+ending at transition `204400000`, retirement `204379225`, sequence `77`, ordinal
+`12`. The independent saved-object and clock oracles held. All **58** retained-GPU
+assets matched, and the real retained guest retired instructions and drew a fresh
+physical presentation.
+
+Original evidence: `target/evidence/e9-t10-public-final/`; report SHA-256
+`245f7588ae4346845cca2c182f8e391eadef2fbbe0b9d9039feceaebf5c28b1c`.
+Authenticated compact packet: `evidence/e9-t10/public-final/`, including the original
+public driver, screenshots, browser traces and oracle logs. The full recordings
+and profiles remain at their original paths. Independent adversarial verification
+remains pending; this publication entry does not set `verified`.
