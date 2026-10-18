@@ -312,6 +312,33 @@ fn changed_intent_duplicate_missing_exhausted_and_position_refuse_before_mutatio
         Err(Error::UnknownRequest)
     );
     assert_eq!(m.save_session_resume().unwrap(), before);
+    // Inject drift into the actual guest TX buffer before its avail publication.
+    let mut changed_guest = fixture(true);
+    until(&mut changed_guest, 370, 1, &mut Trace::default());
+    let address = BASE + 0x23000 + 12 + 14 + 20;
+    let original_byte = changed_guest.bus_mut().load8(address).unwrap();
+    changed_guest
+        .bus_mut()
+        .store8(address, original_byte ^ 1)
+        .unwrap();
+    until(&mut changed_guest, START, 31, &mut Trace::default());
+    assert_ne!(
+        changed_guest.session_network_requests().unwrap()[0].frame,
+        request.frame
+    );
+    let actual = changed_guest.save_session_resume().unwrap();
+    assert_eq!(
+        changed_guest.replay_session_network(
+            receipt.position,
+            Event::Send {
+                request: request.clone(),
+                result: SendResult::Sent
+            }
+        ),
+        Err(Error::Intent)
+    );
+    assert_eq!(changed_guest.save_session_resume().unwrap(), actual);
+    evidence("changed-guest-intent.resume", &actual);
     let mut r = fixture(true);
     r.load_session_resume(&pending).unwrap();
     let before = r.save_session_resume().unwrap();
@@ -392,6 +419,11 @@ fn error_close_cancel_queue_checkpoint_and_reset_revoke_capabilities() {
     );
     capture(&mut m, Event::Receive(vec![0x91, 0x92, 0x93]));
     let queued = m.save_session_resume().unwrap();
+    assert_eq!(
+        m.bus_mut().load16(BASE + 0x12002),
+        Ok(0),
+        "checkpoint must preserve undelivered RX rather than poll it"
+    );
     let mut restored = fixture(true);
     restored.load_session_resume(&queued).unwrap();
     until(&mut restored, START + 4000, 4096, &mut Trace::default());

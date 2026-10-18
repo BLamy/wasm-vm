@@ -46,6 +46,13 @@ try{
   const response=await context.request.get(new URL(name,new URL('./',report.url)).href);assert.equal(response.status(),200,name);const bytes=await response.body();assert.equal(sha(bytes),sha(await fs.readFile(path.join(web,development&&name==='app.html'?'index.html':name))),name);report.assets.push({name,bytes:bytes.length,sha256:sha(bytes)});
  }
  if(!process.argv.includes('--probe-only')){console.log('Built browser ISA suite');await page.locator('#suite-run').click();await page.waitForFunction(()=>document.querySelector('#metric-done')?.textContent==='127',null,{timeout:600000});report.checks.suite={passed:Number(await page.locator('#metric-pass').textContent()),failed:Number(await page.locator('#metric-fail').textContent())};assert.deepEqual(report.checks.suite,{passed:127,failed:0});}else assert.ok(development);
+ await page.evaluate(async()=>{
+  const {NetworkReplay}=await import('./session-network.js'),original=NetworkReplay.prototype.run;let depth=0;
+  globalThis.__independentNetworkEgressWitness={fetchAttempts:[],socketAttempts:0};
+  NetworkReplay.prototype.run=function(...args){depth++;try{return original.apply(this,args);}finally{depth--;}};
+  const fetch=globalThis.fetch;globalThis.fetch=function(...args){if(depth)globalThis.__independentNetworkEgressWitness.fetchAttempts.push(String(args[0]));return fetch.apply(this,args);};
+  const WebSocket=globalThis.WebSocket;globalThis.WebSocket=class extends WebSocket{constructor(...args){if(depth)globalThis.__independentNetworkEgressWitness.socketAttempts++;super(...args);}};
+ });
  console.log('Real guest network, durable payloads and six offline replays');
  const panel=page.locator('#network-capture-panel');await panel.locator('summary').focus();await page.keyboard.press('Enter');await page.locator('#network-capture-run').click();await page.waitForFunction(()=>!!globalThis.__networkCaptureReport,null,{timeout:180000});
  const data=await page.evaluate(async()=>{
@@ -112,6 +119,7 @@ try{
  if(!process.argv.includes('--probe-only'))for(const[id,key]of[['device-completions','__deviceCompletionsReport'],['time-entropy','__timeEntropyReport'],['input-recording','__inputRecordingReport']]){
   console.log('Shared journal regression '+id);await page.locator('#'+id+'-panel summary').click();await page.locator('#'+id+'-run').click();await page.waitForFunction(k=>!!globalThis[k],key,{timeout:180000});const r=await page.evaluate(k=>({status:globalThis[k].status,failure:globalThis[k].failure}),key);assert.equal(r.status,'passed',r.failure);report.checks[id]=r;
  }
+ report.checks.independentEgress=await page.evaluate(()=>globalThis.__independentNetworkEgressWitness);assert.deepEqual(report.checks.independentEgress,{fetchAttempts:[],socketAttempts:0});
  assert.equal(report.transportWitness.browserProviderRequests,1);assert.equal(report.transportWitness.forbiddenReplayProviderRequests,0);
  if(!remote){assert.equal(report.transportWitness.counterRequests,1);assert.equal(report.transportWitness.bridgeRequests,1);assert.equal(report.transportWitness.originalListenerClosed,true);assert.equal(report.transportWitness.changedServerContentServed,0);}
  assert.deepEqual(report.errors,[]);report.status='passed';

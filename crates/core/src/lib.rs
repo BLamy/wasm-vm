@@ -3306,7 +3306,7 @@ impl Machine {
                 return Err(error);
             }
         }
-        if !(exact_inputs && self.session_devices.is_some()) {
+        if !(exact_inputs && (self.session_devices.is_some() || self.session_network.is_some())) {
             self.quiesce()?;
         }
         use crate::resume::{ComponentSnapshot, SnapshotWriter, section};
