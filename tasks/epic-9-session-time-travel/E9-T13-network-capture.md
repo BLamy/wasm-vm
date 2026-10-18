@@ -3,7 +3,8 @@ id: E9-T13
 epic: 9
 title: Capture network sessions and replay them with zero live egress
 priority: 524.913
-status: implemented
+status: blocked
+blocked_on: ["Cloudflare account authorization for required Pages publication", "permitted independent verifier execution and completed fresh-session review"]
 depends_on: [E9-T09, E9-T03]
 estimate: S
 risk: high
@@ -364,3 +365,41 @@ complete pass. Cloudflare device authorization expired without human approval,
 and the independent session was stopped by automatic security review before
 completing its coverage/verification charter. Those external proof gaps remain.
 No worker may mark this task verified or start its dependent tasks.
+
+### 2026-10-18 — worker — blocked on external publication and fresh verification
+
+Local implementation and risk-tier recording are complete at frozen
+04f628dd02a0bf57331682e05607829e25a0ca46; submission commit
+7f5af6e4ad3e566542412a73668fc1f73eb5b8a9 records the claim and full packet.
+The task cannot reach verified until these named external proof gaps change:
+
+1. Required Cloudflare Pages publication needs human account authorization.
+   Exact official login command/environment and the observed five-minute
+   device authorization timeout are retained in
+   evidence/e9-t13/external-proof-blockers/provenance.json under auth_repro.
+   No new device request is started while the human's response is pending.
+   The sole eligible prepared payload is04f628; its750 staged files total
+   about84MiB, with original frozen bytes, unchanged public boot bindings and
+   Pages file limits authenticated. Prepared receipt SHA256
+   8a6341d9ee6a8cdf0bd1bef583c8ffd81b016256c0fa1f375ce6b523de4f3796.
+   Earlier43031/e91c candidates remain withdrawn and were never deployed.
+   After authorized publication, run the retained public-browser command
+   against the exact staged asset hashes; no T12 live asset is T13 proof.
+2. A completed fresh independent review remains required by AGENTS.md.
+   Automatic security review stopped /root/verify_e9_t12 and reported
+   possible cybersecurity risk. The actual stopped dispatch and service
+   response are retained as critic-dispatch.json and
+   independent-service-block.json in that packet. The saved normal-reset
+   failure was repaired using an ordinary worker regression; the stopped
+   independent execution was not retried and no other model/session was
+   substituted. Worker tests and read-only observations cannot issue its verdict.
+
+External accounting packet:
+evidence/e9-t13/external-proof-blockers/provenance.json,
+SHA256 5ec84e92650c0afe8455a7d75dae0296620b401bdbf96c9d56229905f845f81b.
+It contains exact commands, observed results, the prepared-payload inventory,
+public manifest bytes and producer, without credentials or private auth logs.
+This entry is a worker blocker report, not a verifier verdict. Status becomes
+blocked with named blocked_on dependencies, leaving the active lane. E9-T14
+through E9-T24 remain pending because their verified dependency chain reaches
+this task. No PR is merged and no new runtime is published.

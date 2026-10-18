@@ -1,0 +1,5 @@
+{
+  "scope": "Official device login with26 supported previously granted scopes, plus automatic offline_access. Removed obsolete CLI-rejected websearch.run; no privilege expansion. Standard auth path only. Private auth logs excluded from evidence.",
+  "exit_code": 1,
+  "time": 1792343795.301276
+}
