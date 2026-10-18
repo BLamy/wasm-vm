@@ -53,6 +53,7 @@ pub mod sbi;
 pub mod session_clock;
 pub mod session_devices;
 pub mod session_network;
+#[cfg(not(feature = "zicsr-stub"))]
 pub mod session_profile;
 pub mod session_replay;
 pub mod snapshot;
