@@ -1,0 +1,11 @@
+{
+  "scope": "Recover failed metadata-only checkout after disk-space error. Both changed files already exactly match target committed documentation; no implementation or evidence modified.",
+  "head": "0d04ce9d6f0aa80aeaefefff37351861f2b7088f",
+  "paths": [
+    "docs/design/session-replay-contract.json",
+    "docs/design/session-replay.md"
+  ],
+  "exit_code": 1,
+  "output": "error: Your local changes to the following files would be overwritten by checkout:\n\tdocs/design/session-replay-contract.json\n\tdocs/design/session-replay.md\nPlease commit your changes or stash them before you switch branches.\nAborting\n",
+  "created": 1792334879.910582
+}
