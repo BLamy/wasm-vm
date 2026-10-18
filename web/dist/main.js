@@ -11,6 +11,7 @@ import { startLinuxBootWorker, stopLinuxController } from "./linux-worker-host.j
 import { resolveOverlayResetSeedIdentity } from "./overlay-reset-target.js";
 import { mountSessionLibrary } from "./session-library.js";
 import { runEventClockProbe } from "./event-clock-probe.js";
+import { runInputRecordingProbe } from "./input-recording-probe.js";
 
 // E4-T32: the complete machine runs in a worker by default. This path needs no SAB/COOP headers;
 // `?worker=0` and the older `?singlethread=1` spelling are explicit main-thread
@@ -2640,6 +2641,8 @@ const eventClockRun = document.getElementById("event-clock-run");
 const eventClockStatus = document.getElementById("event-clock-status");
 let eventClockRunning = false;
 let eventClockResult = null;
+let inputRecordingRunning=false,inputRecordingResult=null;
+const inputRecordingRun=document.getElementById('input-recording-run'),inputRecordingStatus=document.getElementById('input-recording-status');
 const suiteProgressBar = document.getElementById("suite-progress-bar");
 const hoverCard = document.getElementById("hover-card");
 const hoverName = document.getElementById("hover-name");
@@ -2949,7 +2952,14 @@ function renderRoadmap() {
 function refreshRoadmapLive() {
   const clockCap = ROADMAP.flatMap(epic => epic.caps).find(cap => cap.probe === "event-clock");
   document.getElementById("event-clock-pip").className = `cap-pip ${eventClockResult?.status === "passed" ? "live" : eventClockResult?.status === "failed" ? "regressed" : clockCap.status}`;
+  const inputCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==='input-recording');
+  document.getElementById('input-recording-pip').className=`cap-pip ${inputRecordingResult?.status==='passed'?'live':inputRecordingResult?.status==='failed'?'regressed':inputCap.status}`;
   for (const rc of roadmapCaps) {
+    if(rc.probe==='input-recording'){
+      const state=inputRecordingResult?.status;rc.pip.className=`cap-pip ${state==='passed'?'live':state==='failed'?'regressed':rc.base.status}`;
+      if(rc.evEl)rc.evEl.textContent=state==='passed'?'Guest UART/evdev delivery, durable reopen and live-input refusal · live in browser':state==='failed'?'Input recording check failed in this browser':rc.base.evidence;
+      continue;
+    }
     if (rc.probe === "event-clock") {
       const state = eventClockResult?.status;
       rc.pip.className = `cap-pip ${state === "passed" ? "live" : state === "failed" ? "regressed" : rc.base.status}`;
@@ -2989,7 +2999,8 @@ function refreshRoadmapLive() {
 }
 
 function setInteractiveState() {
-  const busy = running || suiteRunning || eventClockRunning;
+  const busy = running || suiteRunning || eventClockRunning || inputRecordingRunning;
+  inputRecordingRun.disabled=busy||!wasmReady;
   eventClockRun.disabled = busy || !wasmReady;
   runBtn.disabled = busy || !wasmReady;
   resetBtn.disabled = busy || !wasmReady;
@@ -3240,6 +3251,14 @@ runBtn.addEventListener("click", run);
 resetBtn.addEventListener("click", reset);
 benchBtn.addEventListener("click", runBench);
 suiteRunBtn.addEventListener("click", runSuite);
+inputRecordingRun.addEventListener('click',async()=>{
+  if(running||suiteRunning||eventClockRunning||inputRecordingRunning||!wasmReady)return;
+  inputRecordingRunning=true;inputRecordingResult=null;inputRecordingStatus.textContent='Checking delivered inputs and reopening the saved prefix…';setInteractiveState();refreshRoadmapLive();
+  try{inputRecordingResult=await runInputRecordingProbe();inputRecordingStatus.textContent='Passed · guest bytes, saved input order and replay input refusal agree.';}
+  catch(error){inputRecordingResult={status:'failed',failure:String(error)};inputRecordingStatus.textContent='Failed · '+error.message;}
+  finally{if(_startupQuery.has('testHooks'))globalThis.__inputRecordingReport=inputRecordingResult;
+    inputRecordingStatus.dataset.status=inputRecordingResult.status;inputRecordingRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
 eventClockRun.addEventListener("click", async () => {
   if (running || suiteRunning || eventClockRunning || !wasmReady) return;
   eventClockRunning = true;

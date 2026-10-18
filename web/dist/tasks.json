@@ -34628,7 +34628,7 @@
       "epicKey": "9",
       "title": "Record user and host-control inputs at delivery",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E9-T09"
       ],
@@ -34637,7 +34637,7 @@
       "capstone": false,
       "goal": "Capture actual user inputs and host actions as guest-visible ordered events.",
       "boundary": "## Boundary\n\nUART, keyboard, absolute/relative pointer, resize and offered clipboard/file-transfer ingress through the common delivery queue. Store large payloads by content hash; explicitly gate unsupported input channels.\n\n",
-      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T10`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T10`. Records the delivery assertions above, independent native/browser object checks, affected native/wasm gates and real browser captures required by AGENTS.md. A passing result must name its frozen source head.\n\n",
       "criteria": [
         {
           "text": "Record exact delivered bytes/events, including releases, modifiers, pointer mode changes and a file upload, with event clock keys rather than DOM timestamps alone.",
@@ -34654,13 +34654,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(pending; no implementation or verification claim)",
+      "verificationLog": "### 2026-10-18 — worker — started\n\nE9-T09 is independently verified at `3434d69d069dce7a0fdc52162b7a9c21a3db53a9`; its final published catalog and stack head is `b25fb9de9e04b8be20a95ed1747066c1617e49b9`. This high-risk slice records owned, normalized input through the actual device delivery boundary, retaining an explicitly incomplete input prefix until all replay adapters are installed. No implementation or verification claim yet.",
       "adversarial": "Use rapid typing, focus loss with a held key, duplicate-position pointer events and a cancelled partial upload. Compare guest-observed events and file bytes, not just host event counts.",
       "file": "tasks/epic-9-session-time-travel/E9-T10-user-input-recording.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-10-18",
+          "commits": 1,
+          "labels": [
+            "E9-T10: begin delivery-ordered user input capture"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-18",
+      "lastActivity": "2026-10-18",
+      "commitCount": 1
     },
     {
       "id": "E9-T11",

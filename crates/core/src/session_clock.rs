@@ -26,6 +26,7 @@ pub enum SessionError {
     InvalidAddress,
     PendingUndrained,
     MalformedSnapshot,
+    HostInputPending,
 }
 
 /// Quiescent position before the next transition. `sequence` is the last delivered event;
@@ -43,14 +44,23 @@ pub struct SessionPosition {
 /// RAM delivery uses the bus's tracked DMA-write path, including code invalidation.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SessionEffect {
-    WriteRam { address: u64, bytes: Vec<u8> },
+    WriteRam {
+        address: u64,
+        bytes: Vec<u8>,
+    },
     ExternalPending(bool),
+    /// Owned embedding input. Execution stops until a synchronous adapter applies and receipts
+    /// it at this exact boundary; the ordinary run loop can never silently consume it.
+    HostInput {
+        channel: u16,
+        bytes: Vec<u8>,
+    },
 }
 
 impl SessionEffect {
     fn bytes(&self) -> usize {
         match self {
-            Self::WriteRam { bytes, .. } => bytes.len(),
+            Self::WriteRam { bytes, .. } | Self::HostInput { bytes, .. } => bytes.len(),
             Self::ExternalPending(_) => 1,
         }
     }
@@ -61,6 +71,9 @@ pub struct SessionDelivery {
     pub position: SessionPosition,
     pub ticket: u64,
     pub effect: SessionEffect,
+    /// Adapter-defined fixed-size outcome: status, accepted amount, and two diagnostics.
+    /// Reserved with the event before mutation, and retained with its owned input.
+    pub host_result: Option<[u64; 4]>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -160,7 +173,15 @@ impl SessionClock {
             position: self.position,
             ticket: queued.ticket,
             effect: queued.effect,
+            host_result: None,
         }))
+    }
+
+    fn host_due(&self) -> bool {
+        self.pending.front().is_some_and(|q| {
+            q.transition == self.position.transition
+                && matches!(q.effect, SessionEffect::HostInput { .. })
+        })
     }
 
     pub fn acknowledge(&mut self, delivery: SessionDelivery) {
@@ -240,6 +261,12 @@ impl SessionClock {
                 SessionEffect::ExternalPending(value) => {
                     out.extend_from_slice(&[1, u8::from(*value)])
                 }
+                SessionEffect::HostInput { channel, bytes } => {
+                    out.push(2);
+                    out.extend_from_slice(&channel.to_le_bytes());
+                    out.extend_from_slice(&(bytes.len() as u32).to_le_bytes());
+                    out.extend_from_slice(bytes);
+                }
             }
         }
         Ok(out)
@@ -302,6 +329,17 @@ impl SessionClock {
                     }
                 }
                 1 => SessionEffect::ExternalPending(r.boolean()?),
+                2 => {
+                    let channel = u16::from_le_bytes(r.take(2)?.try_into().unwrap());
+                    let n = r.u32()? as usize;
+                    if channel == 0 || n > MAX_PAYLOAD {
+                        return Err(bad);
+                    }
+                    SessionEffect::HostInput {
+                        channel,
+                        bytes: r.take(n)?.to_vec(),
+                    }
+                }
                 _ => return Err(bad),
             };
             owned_bytes += effect.bytes();
@@ -339,6 +377,9 @@ pub(crate) fn validate_effect(
     base: u64,
     length: usize,
 ) -> Result<(), SessionError> {
+    if matches!(effect, SessionEffect::HostInput { channel: 0, .. }) {
+        return Err(SessionError::MalformedSnapshot);
+    }
     if let SessionEffect::WriteRam { address, bytes } = effect {
         let valid = address
             .checked_sub(base)
@@ -445,11 +486,35 @@ impl crate::Machine {
     /// or advancing guest time. This is also the paused-control path; receipts remain ordered
     /// across repeated calls and a snapshot at the same transition.
     pub fn deliver_session_boundary(&mut self) -> Result<(), SessionError> {
+        self.deliver_boundary(false, |_, _, _| unreachable!("host input is fenced"))
+    }
+
+    /// Invoke a trusted, synchronous input adapter before any guest execution can resume. A
+    /// failed application is still an ordered receipt (status in result[0]), never a lost event.
+    /// No callback, await, or second guest runner may cross this exclusive Machine borrow.
+    pub fn deliver_session_host_boundary(
+        &mut self,
+        apply: impl FnMut(&mut Self, u16, &[u8]) -> [u64; 4],
+    ) -> Result<(), SessionError> {
+        self.deliver_boundary(true, apply)
+    }
+
+    fn deliver_boundary(
+        &mut self,
+        allow_host: bool,
+        mut apply: impl FnMut(&mut Self, u16, &[u8]) -> [u64; 4],
+    ) -> Result<(), SessionError> {
         self.session_clock.as_ref().ok_or(SessionError::Inactive)?;
         if self.guest_clock_mode() != crate::time::TimeMode::ICount {
             return Err(SessionError::UnsupportedScheduling);
         }
-        while let Some(delivery) = self.session_clock.as_mut().unwrap().due()? {
+        loop {
+            if !allow_host && self.session_clock.as_ref().unwrap().host_due() {
+                return Err(SessionError::HostInputPending);
+            }
+            let Some(mut delivery) = self.session_clock.as_mut().unwrap().due()? else {
+                break;
+            };
             match &delivery.effect {
                 SessionEffect::WriteRam { address, bytes } => self
                     .bus
@@ -457,6 +522,9 @@ impl crate::Machine {
                     .expect("staged address validated"),
                 SessionEffect::ExternalPending(value) => {
                     self.session_clock.as_mut().unwrap().external_pending = *value
+                }
+                SessionEffect::HostInput { channel, bytes } => {
+                    delivery.host_result = Some(apply(self, *channel, bytes));
                 }
             }
             self.session_clock.as_mut().unwrap().acknowledge(delivery);

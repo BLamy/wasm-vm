@@ -468,6 +468,10 @@ verify-E9-T06:
 verify-E9-T08:
 	python3 -B tools/verify/e9-checkpoint-milestone.py --output "$${E9_MILESTONE_EVIDENCE_DIR:-target/evidence/e9-checkpoint-milestone-final}"
 
+.PHONY: verify-E9-T10
+verify-E9-T10:
+	python3 -B tools/verify/e9-input-recording.py --output "$${E9_INPUT_EVIDENCE_DIR:-target/evidence/e9-input-recording-final}"
+
 .PHONY: verify-E9-T09
 verify-E9-T09:
 	python3 -B tools/verify/e9-event-clock.py --output "$${E9_CLOCK_EVIDENCE_DIR:-target/evidence/e9-event-clock-final}"

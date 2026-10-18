@@ -2397,6 +2397,7 @@ dependencies = [
 name = "wasm-vm-session-web"
 version = "0.0.1"
 dependencies = [
+ "serde_json",
  "sha2",
  "wasm-bindgen",
  "wasm-vm-storage",

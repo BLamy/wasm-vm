@@ -32,6 +32,11 @@ export class WasmLinux {
      */
     advanceOverlayGeneration(): number;
     /**
+     * Trusted replay adapter seam. Every supplied key and outcome is checked; ordinary input
+     * methods cannot reach it. T14 will own authenticated cursor admission and execution.
+     */
+    applyRecordedInput(channel: any, transition: string, sequence: string, ordinal: any, retired: string, bytes: Uint8Array, expected: Array<any>): void;
+    /**
      * E5-T21d: attach the page-owned microphone ring as the guest's capture source. The ring is
      * allocated before boot but contains no host media handle; permission remains lazy until the
      * guest emits its first successful capture PCM_START edge.
@@ -83,6 +88,10 @@ export class WasmLinux {
      * Persistent and secondary-drive shapes explicitly remain outside this factory profile.
      */
     captureGpuDiskDelta(): Uint8Array;
+    /**
+     * Native witness only, deliberately not an admitted full provider checkpoint.
+     */
+    captureInputWitness(): any;
     /**
      * The loader fences all host mutations and execution until this bounded Promise settles.
      * Pending block fetches/durability drain without CPU execution; final serialization has no
@@ -188,6 +197,11 @@ export class WasmLinux {
      * This is diagnostic-only: it does not drain, resize, or otherwise mutate the device.
      */
     inputDeviceStats(): any;
+    /**
+     * Pause=0, resume=1, stop=2. These controls consume the same ordered before-boundary keys.
+     */
+    inputLifecycle(control: any): void;
+    inputPosition(): any;
     invalidateVirgl(): void;
     /**
      * E4-T29: the "JIT actually ran" proof for the browser Linux guest. Returns
@@ -451,6 +465,7 @@ export class WasmLinux {
      * Explicit deterministic retirements-per-tick selection; never silently coerce JS input.
      */
     setICountDivider(value: any): void;
+    setInputPointerMode(relative: boolean): void;
     /**
      * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
      * `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
@@ -475,6 +490,11 @@ export class WasmLinux {
      */
     stampBootSnapshotIdentity(base_id: Uint8Array): void;
     /**
+     * Begin an input-only prefix at the caller's paused initial checkpoint. Provider completeness
+     * is deliberately not asserted here. Replay mode installs an ingress firewall, not a runner.
+     */
+    startInputCapture(replay: boolean): void;
+    /**
      * Final/current guest-RAM SHA-256 for browser evidence. This is the `mem_digest` portion of the
      * native snapshot contract; registers and device state are intentionally not encoded here.
      */
@@ -497,6 +517,7 @@ export class WasmLinux {
      */
     takeAgentOutput(): Uint8Array;
     takeFileDownloadChunk(id: number): Uint8Array;
+    takeInputDeliveries(): any;
     /**
      * E5-T21d: expose the input PCM lifecycle edge to the page. `startCount` increments only for
      * successful guest PCM_START requests; the page uses it to make getUserMedia lazy and to
@@ -859,8 +880,11 @@ export interface InitOutput {
     readonly __jit_lr: (a: bigint, b: number) => bigint;
     readonly __jit_sc: (a: bigint, b: bigint, c: number) => bigint;
     readonly __jit_store: (a: bigint, b: bigint, c: number) => void;
+    readonly wasmlinux_captureDiskDelta: (a: number) => any;
+    readonly wasmlinux_applyRecordedInput: (a: number, b: any, c: number, d: number, e: number, f: number, g: any, h: number, i: number, j: any, k: any) => [number, number];
     readonly wasmlinux_attachVirgl: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number];
     readonly wasmlinux_captureGpuDiskDelta: (a: number) => [number, number, number];
+    readonly wasmlinux_captureInputWitness: (a: number) => [number, number, number];
     readonly wasmlinux_captureSoftwareCheckpoint: (a: number, b: number, c: number) => any;
     readonly wasmlinux_complete: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => [number, number];
     readonly wasmlinux_drainGpuCheckpointBoundary: (a: number) => [number, number, number];
@@ -868,13 +892,18 @@ export interface InitOutput {
     readonly wasmlinux_gatherInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number) => [number, number, number];
     readonly wasmlinux_gatherLayeredInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number, number];
     readonly wasmlinux_gpuCommandTrace: (a: number) => [number, number, number, number];
+    readonly wasmlinux_inputLifecycle: (a: number, b: any) => [number, number];
+    readonly wasmlinux_inputPosition: (a: number) => [number, number, number];
     readonly wasmlinux_invalidateVirgl: (a: number) => [number, number];
     readonly wasmlinux_loadAcceleratedSnapshotBlob: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
     readonly wasmlinux_restoreSoftwareCheckpoint: (a: number, b: number, c: number, d: number, e: number) => [number, number];
     readonly wasmlinux_saveAcceleratedSnapshot: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_scatterLayeredOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number, t: number, u: number) => [number, number];
     readonly wasmlinux_scatterOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number];
+    readonly wasmlinux_setInputPointerMode: (a: number, b: number) => [number, number];
     readonly wasmlinux_softwareCheckpointTopology: (a: number) => [number, number];
+    readonly wasmlinux_startInputCapture: (a: number, b: number) => [number, number];
+    readonly wasmlinux_takeInputDeliveries: (a: number) => [number, number, number];
     readonly wasmmachine_deliverEventBoundary: (a: number) => [number, number];
     readonly wasmmachine_eventPosition: (a: number) => [number, number, number];
     readonly wasmmachine_restoreEventCheckpoint: (a: number, b: number, c: number) => [number, number];
@@ -893,7 +922,6 @@ export interface InitOutput {
     readonly setSlirpTailscaleWorker: (a: number, b: number, c: any) => void;
     readonly slirpDhcpStats: () => [number, number];
     readonly slirpTailscaleCommand: (a: number, b: number) => number;
-    readonly wasmlinux_captureDiskDelta: (a: number) => any;
     readonly wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56: (a: number, b: number, c: any) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h0b706747458e1fca: (a: number, b: number, c: any, d: any) => void;
     readonly wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270: (a: number, b: number, c: any) => void;

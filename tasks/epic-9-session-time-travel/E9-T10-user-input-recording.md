@@ -26,7 +26,7 @@ UART, keyboard, absolute/relative pointer, resize and offered clipboard/file-tra
 
 ## Deterministic acceptance
 
-`make verify-E9-T10`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.
+`make verify-E9-T10`. Records the delivery assertions above, independent native/browser object checks, affected native/wasm gates and real browser captures required by AGENTS.md. A passing result must name its frozen source head.
 
 ## Adversarial verification
 

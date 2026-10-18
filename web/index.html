@@ -109,7 +109,7 @@
         font: 12px ui-monospace, monospace;
         margin-top: 4px;
       }
-      #event-clock-pip {
+      #event-clock-pip, #input-recording-pip {
         display: inline-block;
         width: 8px;
         height: 8px;
@@ -981,12 +981,24 @@
         <div class="session-actions"><button id="event-clock-run" type="button" disabled>Check boundaries</button></div>
         <p id="event-clock-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
       </details>
+      <details id="input-recording-panel" class="session-library">
+        <summary><span id="input-recording-pip" class="cap-pip in-progress" aria-hidden="true"></span> Input recording check</summary>
+        <p class="session-note">Run a small guest to check delivered serial, keyboard and pointer bytes, saved event order, and rejection of live input during replay.</p>
+        <div class="session-actions"><button id="input-recording-run" type="button" disabled>Check delivered inputs</button></div>
+        <p id="input-recording-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
       <details id="session-library" class="session-library" open>
         <summary>Local saved sessions</summary>
-        <p class="session-note">Save exact points in an offline software guest. Checkpoints only; continuous replay comes later. A new guest or Open replaces the current guest.</p>
+        <p class="session-note">Save exact points in an offline software guest. Input recording also saves delivered input in order; full replay comes later. A new guest or Open replaces the current guest.</p>
+        <div class="session-actions">
+          <button type="button" data-session="input-start" disabled>Start input recording</button>
+          <button type="button" data-session="input-save" disabled>Save input prefix</button>
+          <button type="button" data-session="input-stop" disabled>Stop input recording</button>
+        </div>
+        <p class="session-note">Input prefixes remain incomplete until all replay adapters are available. Save commits pending inputs; Stop leaves the guest paused.</p>
         <div class="session-actions">
           <button type="button" data-session="new" disabled>New checkpoint guest</button>
-          <button type="button" data-session="start" disabled>Start recording</button>
+          <button type="button" data-session="start" disabled>Start checkpoint recording</button>
           <button type="button" data-session="checkpoint" disabled>Checkpoint</button>
           <button type="button" data-session="stop" disabled>Stop recording</button>
           <button type="button" data-session="retry" disabled>Retry recording</button>

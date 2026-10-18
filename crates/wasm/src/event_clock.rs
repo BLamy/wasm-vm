@@ -3,7 +3,7 @@
 use super::*;
 use wasm_vm_core::session_clock::{MAX_PAYLOAD, SessionEffect, SessionPosition};
 
-fn exact_u64(text: &str) -> Result<u64, &'static str> {
+pub(crate) fn exact_u64(text: &str) -> Result<u64, &'static str> {
     if text.is_empty()
         || text.len() > 20
         || (text.len() > 1 && text.starts_with('0'))
@@ -14,7 +14,7 @@ fn exact_u64(text: &str) -> Result<u64, &'static str> {
     text.parse().map_err(|_| "unsigned counter exceeds u64")
 }
 
-fn position_object(position: SessionPosition) -> js_sys::Object {
+pub(crate) fn position_object(position: SessionPosition) -> js_sys::Object {
     let object = js_sys::Object::new();
     for (key, value) in [
         ("transition", position.transition.to_string()),
@@ -168,6 +168,9 @@ impl WasmMachine {
                 SessionEffect::WriteRam { address, bytes } => ("ram", address, bytes),
                 SessionEffect::ExternalPending(value) => {
                     ("external-pending", 0, vec![u8::from(value)])
+                }
+                SessionEffect::HostInput { channel, bytes } => {
+                    ("host-input", u64::from(channel), bytes)
                 }
             };
             let _ = js_sys::Reflect::set(&object, &"kind".into(), &kind.into());

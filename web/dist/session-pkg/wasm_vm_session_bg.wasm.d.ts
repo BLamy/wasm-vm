@@ -7,6 +7,7 @@ export const sessionCanonicalImage: (a: number, b: number) => [number, number, n
 export const sessionCheckAppend: (a: number, b: number, c: number, d: number) => [number, number];
 export const sessionDiskRootReferences: (a: number, b: number) => [number, number, number, number];
 export const sessionEventReferences: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+export const sessionIndexEventChunk: (a: number, b: number) => [number, number, number, number];
 export const sessionManifestReferences: (a: number, b: number) => [number, number, number, number];
 export const sessionValidateCheckpointContext: (a: number, b: number) => [number, number, number, number];
 export const sessionValidateDiskRoot: (a: number, b: number) => [number, number, number, number];

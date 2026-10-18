@@ -100,6 +100,29 @@ export class WasmLinux {
         return ret[0];
     }
     /**
+     * Trusted replay adapter seam. Every supplied key and outcome is checked; ordinary input
+     * methods cannot reach it. T14 will own authenticated cursor admission and execution.
+     * @param {any} channel
+     * @param {string} transition
+     * @param {string} sequence
+     * @param {any} ordinal
+     * @param {string} retired
+     * @param {Uint8Array} bytes
+     * @param {Array<any>} expected
+     */
+    applyRecordedInput(channel, transition, sequence, ordinal, retired, bytes, expected) {
+        const ptr0 = passStringToWasm0(transition, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(retired, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_applyRecordedInput(this.__wbg_ptr, channel, ptr0, len0, ptr1, len1, ordinal, ptr2, len2, bytes, expected);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E5-T21d: attach the page-owned microphone ring as the guest's capture source. The ring is
      * allocated before boot but contains no host media handle; permission remains lazy until the
      * guest emits its first successful capture PCM_START edge.
@@ -264,6 +287,17 @@ export class WasmLinux {
      */
     captureGpuDiskDelta() {
         const ret = wasm.wasmlinux_captureGpuDiskDelta(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Native witness only, deliberately not an admitted full provider checkpoint.
+     * @returns {any}
+     */
+    captureInputWitness() {
+        const ret = wasm.wasmlinux_captureInputWitness(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -634,6 +668,26 @@ export class WasmLinux {
      */
     inputDeviceStats() {
         const ret = wasm.wasmlinux_inputDeviceStats(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Pause=0, resume=1, stop=2. These controls consume the same ordered before-boundary keys.
+     * @param {any} control
+     */
+    inputLifecycle(control) {
+        const ret = wasm.wasmlinux_inputLifecycle(this.__wbg_ptr, control);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @returns {any}
+     */
+    inputPosition() {
+        const ret = wasm.wasmlinux_inputPosition(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -1438,6 +1492,15 @@ export class WasmLinux {
         }
     }
     /**
+     * @param {boolean} relative
+     */
+    setInputPointerMode(relative) {
+        const ret = wasm.wasmlinux_setInputPointerMode(this.__wbg_ptr, relative);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * E4-T01: arm/disarm the hot-PC + subsystem-time profiler for this boot. Arming injects a
      * `performance.now()`-backed [`JsHostTimer`]; sampling is 1-in-~1024 retires + cold-path-only
      * timing (~0 overhead). Returns `false` if no `performance` object is available to arm it.
@@ -1484,6 +1547,17 @@ export class WasmLinux {
         const ptr0 = passArray8ToWasm0(base_id, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ret = wasm.wasmlinux_stampBootSnapshotIdentity(this.__wbg_ptr, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Begin an input-only prefix at the caller's paused initial checkpoint. Provider completeness
+     * is deliberately not asserted here. Replay mode installs an ingress firewall, not a runner.
+     * @param {boolean} replay
+     */
+    startInputCapture(replay) {
+        const ret = wasm.wasmlinux_startInputCapture(this.__wbg_ptr, replay);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
@@ -1556,6 +1630,16 @@ export class WasmLinux {
      */
     takeFileDownloadChunk(id) {
         const ret = wasm.wasmlinux_takeFileDownloadChunk(this.__wbg_ptr, id);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    takeInputDeliveries() {
+        const ret = wasm.wasmlinux_takeInputDeliveries(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -2904,27 +2988,27 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000002: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 77, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 79, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270);
             return ret;
         },
         __wbindgen_cast_0000000000000003: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 77, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 79, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_2);
             return ret;
         },
         __wbindgen_cast_0000000000000004: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 77, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 79, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_3);
             return ret;
         },
         __wbindgen_cast_0000000000000005: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 77, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 79, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_4);
             return ret;
         },
         __wbindgen_cast_0000000000000006: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 96, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 99, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__had759ba7c4081673);
             return ret;
         },
