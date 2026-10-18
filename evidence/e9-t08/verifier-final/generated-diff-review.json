@@ -1,0 +1,160 @@
+[
+  {
+    "path": "web/dist/docs-content/catalog.json",
+    "changes": [
+      [
+        "/pages/4/search",
+        [
+          "---\nkind: \"Field guide\"\nsource: \"web/docs-source/guides/storage.md\"\nscope: \"Authored expla",
+          "---\nkind: \"Field guide\"\nsource: \"web/docs-source/guides/storage.md\"\nscope: \"Authored expla"
+        ]
+      ],
+      [
+        "/pages/4/sha256",
+        [
+          "9b7b74d688ee8cdb8986b002bf3814d645c6f3bd73c62b7477372533a8abfdaa",
+          "303d2ed6ff12ef3968fd1660e6becebdb40bdd5ecdbb32bb1775f96cd375b910"
+        ]
+      ]
+    ]
+  },
+  {
+    "path": "web/tasks.json",
+    "changes": [
+      [
+        "/tasks/712/acceptanceContract",
+        [
+          "## Deterministic acceptance\n\n`make verify-E9-T08`. This is a planned target to implement w",
+          "## Deterministic acceptance\n\n`make verify-E9-T08` records the two-guest built-browser inte"
+        ]
+      ],
+      [
+        "/tasks/712/activity",
+        "list length changed"
+      ],
+      [
+        "/tasks/712/commitCount",
+        [
+          "0",
+          "1"
+        ]
+      ],
+      [
+        "/tasks/712/firstActivity",
+        [
+          "None",
+          "2026-10-18"
+        ]
+      ],
+      [
+        "/tasks/712/lastActivity",
+        [
+          "None",
+          "2026-10-18"
+        ]
+      ],
+      [
+        "/tasks/712/status",
+        [
+          "pending",
+          "in-progress"
+        ]
+      ],
+      [
+        "/tasks/712/verificationLog",
+        [
+          "(pending; no implementation or verification claim)",
+          "### 2026-10-18 \u2014 worker \u2014 started\n\nDependencies T06/T07 are independently verified. This S"
+        ]
+      ]
+    ]
+  },
+  {
+    "path": "web/dist/tasks.json",
+    "changes": [
+      [
+        "/tasks/712/acceptanceContract",
+        [
+          "## Deterministic acceptance\n\n`make verify-E9-T08`. This is a planned target to implement w",
+          "## Deterministic acceptance\n\n`make verify-E9-T08` records the two-guest built-browser inte"
+        ]
+      ],
+      [
+        "/tasks/712/activity",
+        "list length changed"
+      ],
+      [
+        "/tasks/712/commitCount",
+        [
+          "0",
+          "1"
+        ]
+      ],
+      [
+        "/tasks/712/firstActivity",
+        [
+          "None",
+          "2026-10-18"
+        ]
+      ],
+      [
+        "/tasks/712/lastActivity",
+        [
+          "None",
+          "2026-10-18"
+        ]
+      ],
+      [
+        "/tasks/712/status",
+        [
+          "pending",
+          "in-progress"
+        ]
+      ],
+      [
+        "/tasks/712/verificationLog",
+        [
+          "(pending; no implementation or verification claim)",
+          "### 2026-10-18 \u2014 worker \u2014 started\n\nDependencies T06/T07 are independently verified. This S"
+        ]
+      ]
+    ]
+  },
+  {
+    "path": "web/dist/docs-bundle/reader.js",
+    "changes": "only generated content revision strings"
+  },
+  {
+    "path": "web/dist/sw.js",
+    "changes": "only generated content revision strings"
+  },
+  {
+    "path": "web/docs.html",
+    "changes": "only generated content revision strings"
+  },
+  {
+    "path": "web/docs-containers.html",
+    "changes": "only generated content revision strings"
+  },
+  {
+    "path": "web/docs-embedding.html",
+    "changes": "only generated content revision strings"
+  },
+  {
+    "path": "web/docs-explainers.html",
+    "changes": "only generated content revision strings"
+  },
+  {
+    "path": "web/docs-guest.html",
+    "changes": "only generated content revision strings"
+  },
+  {
+    "path": "web/docs-verification.html",
+    "changes": "only generated content revision strings"
+  },
+  {
+    "path": "web/dist/docs-content/storage.md",
+    "changes": "generated metadata prefix plus exact storage guide",
+    "prefix": "---\nkind: \"Field guide\"\nsource: \"web/docs-source/guides/storage.md\"\nscope: \"Authored explanation; verification belongs to the named evidence\"\n---\n\n"
+  }
+]

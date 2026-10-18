@@ -225,7 +225,7 @@ export const ROADMAP = [
       { name: "Coherent software machine checkpoints", status: "verified", evidence: "E9-T05: exact native/input/disk tuple, atomic publication and private reload restore" },
       { name: "Local saved-session library", status: "verified", evidence: "E9-T06: real checkpoint controls, durable names and exact paused reopen" },
       { name: "Storage limits and shared-data deletion", status: "verified", evidence: "E9-T07: quota prefix, shared restore, crash recovery and independent verification" },
-      { name: "Retention and reload milestone", status: "pending", evidence: "E9-T07–T08" },
+      { name: "Retention and reload milestone", status: "verified", evidence: "E9-T08: independently verified two-guest reload, file/RAM/input, quota, and deletion proof" },
       { name: "Exact replay, seeking and reverse-step", status: "pending", evidence: "E9-T09–T18" },
       { name: "Session timeline and branches", status: "pending", evidence: "E9-T19–T20" },
     ],

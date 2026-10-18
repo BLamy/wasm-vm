@@ -1,0 +1,1129 @@
+{
+  "status": "passed",
+  "submission_sha256": "172eb74455cc91151d7d55d5112a97af6daeed45e543e6a897fe186cd418b2f4",
+  "browser_report_sha256": "8beb9711992dca26e0c741787951e218e4609d04dbbd1e7b4a78d2f4b240dc79",
+  "checks": [
+    {
+      "prediction": "P0",
+      "result": "HELD",
+      "head": "1b3c68c0def3fb98c8803ed6f95089f90ed7dfe7",
+      "submission_sha256": "172eb74455cc91151d7d55d5112a97af6daeed45e543e6a897fe186cd418b2f4",
+      "browser_report_sha256": "8beb9711992dca26e0c741787951e218e4609d04dbbd1e7b4a78d2f4b240dc79",
+      "commands": 9,
+      "artifacts": 474
+    },
+    {
+      "prediction": "P1",
+      "result": "HELD",
+      "alpha": {
+        "raw_sha256": "df780f05a35317c48dced9fefd6354686a03ccb915d630bc20f270abb2f0cc2e",
+        "raw_bytes": 23863318,
+        "components": {
+          "context": {
+            "offset": 212,
+            "length": 429,
+            "sha256": "bfc6b7979f1f3b0109ac08d83e023ec56db1328ca79da5a199622198672c279c"
+          },
+          "native": {
+            "offset": 641,
+            "length": 23599938,
+            "sha256": "328f6c136ceafe6e85a9fb1fbe0b3f53afa4d0de719ab169ccae8153a2b4cfae"
+          },
+          "disk": {
+            "offset": 23600579,
+            "length": 262717,
+            "sha256": "f1fda9a97f4e4a93685938aa13610b2e70e7f89387d39ce5a5fb136e8e46f9aa"
+          },
+          "input": {
+            "offset": 23863296,
+            "length": 22,
+            "sha256": "8b03d02dd4ebc50559dd35b17afa23a744ef6a384dff4c41c3df0f3622580e67"
+          },
+          "output": {
+            "offset": 23863318,
+            "length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        "native_sections": {
+          "1": "91840e319c00178f6c8682a341dd6d5fc7e7231ad5175c6e489b8e9d75aee8e0",
+          "2": "53b7757acb6b148c407b002532f2b3def97da5753a15dde11cf85a3504d6b0ea",
+          "3": "e88b2065f434744c1ae7e7b34be6e10e6b25959ea746f9cebdc6cbd1ad50ed24",
+          "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+          "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+          "8": "cc8b996af91a4913d348fe4b7fbda49270fcf88a870feb73ba15442c1cdfa650",
+          "6": "e866d942598a26636f173a206dfd2f14c16170c7c04551975e75f22f92cdb298",
+          "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+          "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+          "13": "d564589e21c3246263e288895b7c901bb7b6d7461bc677793ae23e6d20240e33",
+          "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+          "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+          "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+          "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+          "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+          "9": "f96a4b7e3038e2d565489408a0ee36383af3cfabf5d7e79835b3621ee7484a4c"
+        },
+        "ram_sha256": "4755bfb74cae386bf62b0b996c88b9163d6e3b25272a8330c69670be10f9fe9b",
+        "ram_bytes": 268435456,
+        "context": {
+          "version": {
+            "major": 1,
+            "minor": 0
+          },
+          "runtime": "cb49b9110d9344bbe9a426585384fd15d9b702b0cfe687597de51443405c338b",
+          "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "ram_bytes": "268435456",
+          "clock": {
+            "mode": "icount",
+            "divider": 10,
+            "timebase_hz": "10000000",
+            "interactive": null
+          },
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          },
+          "held": {
+            "keyboard": [
+              30
+            ],
+            "tablet": [],
+            "mouse": []
+          }
+        },
+        "input_hex": "65395f71756575653d7175657565642d616c7068610a",
+        "disk_root_sha256": "916d4a657cd474a664cdfbd66ecc704ab5f19888f2d41e36e34fc4abe0f2fc57",
+        "disk_blocks": 64,
+        "image_size": 536870912,
+        "generation": 0
+      },
+      "beta": {
+        "raw_sha256": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+        "raw_bytes": 23859822,
+        "components": {
+          "context": {
+            "offset": 212,
+            "length": 429,
+            "sha256": "a85f5ae039814b1f78277d19b91527fe59d12c9a36d540f52e824b23593c109b"
+          },
+          "native": {
+            "offset": 641,
+            "length": 23596443,
+            "sha256": "9f1ebdc62ef5a65ecb0816c8b39d486b0d4f4b82c1df2d5bba96434d76fda299"
+          },
+          "disk": {
+            "offset": 23597084,
+            "length": 262717,
+            "sha256": "3fc5e5783bae70af6b65551361a3a287402f5f06c0028013415a91d158dd52db"
+          },
+          "input": {
+            "offset": 23859801,
+            "length": 21,
+            "sha256": "040290c64fe4684fab193acc2ab9a9064d01534188b2ac649b873b03b6002c06"
+          },
+          "output": {
+            "offset": 23859822,
+            "length": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        "native_sections": {
+          "1": "6f438d9d5092becc3abaf83b7c32e100c17e3d7d32f193f9b213c8dc93d3122f",
+          "2": "80f2d1d4479d6d972fb2e3f1cd043e3103d432b00a4c144b3676ed9561da71bd",
+          "3": "f5860a7a735490139de9205c2e5d8bd35fc0086d2a9d522bbc2abf0662271b2d",
+          "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+          "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+          "8": "8a4eeb9717b5af9389582530392b1d7835c2a83f8813356c5bdd6790fe39090d",
+          "6": "e866d942598a26636f173a206dfd2f14c16170c7c04551975e75f22f92cdb298",
+          "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+          "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+          "13": "31b1011ac4af178edf930c599d2609437eac9104a1ac4dbcf1332f037335138c",
+          "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+          "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+          "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+          "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+          "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+          "9": "9d463427cbac9066684c78ae334a6cd7981b4e4f8fe42245920cfa6d93610660"
+        },
+        "ram_sha256": "e2311109dda800b2300270adbc7b95f151dfa8ac493ac16a7d39763bc87f791e",
+        "ram_bytes": 268435456,
+        "context": {
+          "version": {
+            "major": 1,
+            "minor": 0
+          },
+          "runtime": "cb49b9110d9344bbe9a426585384fd15d9b702b0cfe687597de51443405c338b",
+          "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+          "ram_bytes": "268435456",
+          "clock": {
+            "mode": "icount",
+            "divider": 10,
+            "timebase_hz": "10000000",
+            "interactive": null
+          },
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          },
+          "held": {
+            "keyboard": [
+              48
+            ],
+            "tablet": [],
+            "mouse": []
+          }
+        },
+        "input_hex": "65395f71756575653d7175657565642d626574610a",
+        "disk_root_sha256": "52b17563457c4c959f0771d35fdca4787a81502abc5372cc42d875f64f9b504f",
+        "disk_blocks": 64,
+        "image_size": 536870912,
+        "generation": 0
+      },
+      "freshBoots": [
+        "fresh-alpha\n",
+        "fresh-beta\n"
+      ]
+    },
+    {
+      "prediction": "P2",
+      "result": "HELD",
+      "exact_restores": [
+        "beta-restored.checkpoint.gz",
+        "alpha-restored.checkpoint.gz"
+      ],
+      "guest_reads": [
+        {
+          "state": {
+            "hash": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+            "bytes": 23859822,
+            "held": {
+              "keyboard": [
+                48
+              ],
+              "tablet": [],
+              "mouse": []
+            },
+            "input": "e9_queue=queued-beta\n",
+            "paused": true,
+            "scheduler": {
+              "quantum": 500000,
+              "maxQuantum": 500000,
+              "slices": 0,
+              "totalSliceMs": 0,
+              "averageSliceMs": 0,
+              "maxSliceMs": 0,
+              "sliceHistogram": [
+                {
+                  "leMs": 4,
+                  "count": 0
+                },
+                {
+                  "leMs": 8,
+                  "count": 0
+                },
+                {
+                  "leMs": 16,
+                  "count": 0
+                },
+                {
+                  "leMs": 32,
+                  "count": 0
+                },
+                {
+                  "leMs": 64,
+                  "count": 0
+                },
+                {
+                  "leMs": 128,
+                  "count": 0
+                },
+                {
+                  "leMs": 256,
+                  "count": 0
+                },
+                {
+                  "leMs": 512,
+                  "count": 0
+                },
+                {
+                  "leMs": 1000,
+                  "count": 0
+                },
+                {
+                  "leMs": null,
+                  "count": 0
+                }
+              ],
+              "maxStretchGapMs": 0,
+              "requestedInstructions": 0,
+              "retiredInstructions": 0,
+              "fetchWaits": 0,
+              "fetchRequestedChunks": 0,
+              "fetchWaitTotalMs": 0,
+              "fetchWaitMaxMs": 0,
+              "outputCalls": 0,
+              "outputBytes": 0,
+              "inputCalls": 0,
+              "inputBytes": 0,
+              "yieldMode": "scheduler.postTask",
+              "schedulerYields": 0,
+              "timerYields": 0,
+              "mainThreadYields": 0
+            },
+            "active": "session-28b7de79-0c44-4b54-95b4-e399deec8ee3",
+            "point": "point-d65d48b2-f591-4bd3-b2f4-d9745ce35332"
+          },
+          "file": "beta-file\n",
+          "memory": "beta-memory/queued-beta"
+        },
+        {
+          "state": {
+            "hash": "df780f05a35317c48dced9fefd6354686a03ccb915d630bc20f270abb2f0cc2e",
+            "bytes": 23863318,
+            "held": {
+              "keyboard": [
+                30
+              ],
+              "tablet": [],
+              "mouse": []
+            },
+            "input": "e9_queue=queued-alpha\n",
+            "paused": true,
+            "scheduler": {
+              "quantum": 500000,
+              "maxQuantum": 500000,
+              "slices": 0,
+              "totalSliceMs": 0,
+              "averageSliceMs": 0,
+              "maxSliceMs": 0,
+              "sliceHistogram": [
+                {
+                  "leMs": 4,
+                  "count": 0
+                },
+                {
+                  "leMs": 8,
+                  "count": 0
+                },
+                {
+                  "leMs": 16,
+                  "count": 0
+                },
+                {
+                  "leMs": 32,
+                  "count": 0
+                },
+                {
+                  "leMs": 64,
+                  "count": 0
+                },
+                {
+                  "leMs": 128,
+                  "count": 0
+                },
+                {
+                  "leMs": 256,
+                  "count": 0
+                },
+                {
+                  "leMs": 512,
+                  "count": 0
+                },
+                {
+                  "leMs": 1000,
+                  "count": 0
+                },
+                {
+                  "leMs": null,
+                  "count": 0
+                }
+              ],
+              "maxStretchGapMs": 0,
+              "requestedInstructions": 0,
+              "retiredInstructions": 0,
+              "fetchWaits": 0,
+              "fetchRequestedChunks": 0,
+              "fetchWaitTotalMs": 0,
+              "fetchWaitMaxMs": 0,
+              "outputCalls": 0,
+              "outputBytes": 0,
+              "inputCalls": 0,
+              "inputBytes": 0,
+              "yieldMode": "scheduler.postTask",
+              "schedulerYields": 0,
+              "timerYields": 0,
+              "mainThreadYields": 0
+            },
+            "active": "session-9b06d28f-1579-436c-ba96-6b78dfdb35e4",
+            "point": "point-9360b0a0-708b-4b50-a5c4-27b33fded945"
+          },
+          "file": "alpha-file\n",
+          "memory": "alpha-memory/queued-alpha"
+        }
+      ]
+    },
+    {
+      "prediction": "P3",
+      "result": "HELD",
+      "quota": {
+        "state": "storage-error",
+        "message": "RetentionLimit: restore point budget. Recording paused; the guest is paused and its current state may be unsaved. The committed prefix is preserved. Free space or raise limits, then Retry recording; Stop recording ends at the committed prefix.",
+        "paused": true,
+        "retry": true
+      },
+      "prefix_hash": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+      "unsaved_hash": "8d8d27470bb3d83ba56159c20725993973304b515eb03cb8776092d298cdba0a"
+    },
+    {
+      "prediction": "P4",
+      "result": "HELD",
+      "durable_beta_hash": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+      "independent_ext4_reads": [
+        {
+          "label": "alpha",
+          "frame": "alpha-original.checkpoint.gz",
+          "expected_hex": "616c7068612d66696c650a",
+          "observed_hex": "616c7068612d66696c650a",
+          "before_recovery": "1abff9375170740d2b0454643b2c67523c019985e8567d569a657123ff4a2140",
+          "after_recovery": "d4aa2ea72decdeedb99eed5a4a40aa3cb44b9c72a061075ac15ef0c1a2cab8fa",
+          "file_sha256": "d5e6b39f632f3cda5fd651f425fb5ae6e89a8831c0ab5fc7329e9c2cebcc386f"
+        },
+        {
+          "label": "beta",
+          "frame": "beta-original.checkpoint.gz",
+          "expected_hex": "626574612d66696c650a",
+          "observed_hex": "626574612d66696c650a",
+          "before_recovery": "f294c9b83abf627721e3aff4729dc2f666e37a1038fcc32e641e127018eabcc7",
+          "after_recovery": "527fc7a39b06590e75a2d7cd3749bb7c3d542966e02a98d55336b7a248c0a08a",
+          "file_sha256": "c4786eb8c6a9259dc5ecfc06db96b2d49dd7274aa699cabcb43c603dd0371449"
+        },
+        {
+          "label": "unsaved",
+          "frame": "beta-unsaved.checkpoint.gz",
+          "expected_hex": "626574612d756e73617665640a",
+          "observed_hex": "626574612d756e73617665640a",
+          "before_recovery": "f77f19a697cb4b795733fbef92f7d29c140fbef8b21c26c1b043d336501c4d03",
+          "after_recovery": "b968be8507a131c751580564d361d60bacffc13afc976fa79993f6fe3b37f881",
+          "file_sha256": "74573b3fde4e2887ae409807f5e6112a4a672c5e0673a0228e74152e8e02e1ea"
+        },
+        {
+          "label": "reopened",
+          "frame": "beta-reopened.checkpoint.gz",
+          "expected_hex": "626574612d66696c650a",
+          "observed_hex": "626574612d66696c650a",
+          "before_recovery": "f294c9b83abf627721e3aff4729dc2f666e37a1038fcc32e641e127018eabcc7",
+          "after_recovery": "ad9f526adc73d1332c163e9cf4bae66516bb405a4cf1aeafd787fd831ac8dff9",
+          "file_sha256": "c4786eb8c6a9259dc5ecfc06db96b2d49dd7274aa699cabcb43c603dd0371449"
+        }
+      ],
+      "docker_image": "sha256:0d1ead8c1106a838e478676dff113f21cdd91eb9456232ff9f6c24679a87d0eb"
+    },
+    {
+      "prediction": "P5",
+      "result": "HELD",
+      "suite": {
+        "passed": 127,
+        "failed": 0
+      },
+      "keyboardFocus": "rename",
+      "mobile": {
+        "width": 388,
+        "scroll": 388
+      },
+      "documentation": {
+        "url": "https://wasm-vm.pages.dev/docs?page=storage",
+        "checkpointOnly": true,
+        "retention": true
+      },
+      "errors": []
+    }
+  ],
+  "frames": {
+    "alpha-original.checkpoint.gz": {
+      "raw_sha256": "df780f05a35317c48dced9fefd6354686a03ccb915d630bc20f270abb2f0cc2e",
+      "raw_bytes": 23863318,
+      "components": {
+        "context": {
+          "offset": 212,
+          "length": 429,
+          "sha256": "bfc6b7979f1f3b0109ac08d83e023ec56db1328ca79da5a199622198672c279c"
+        },
+        "native": {
+          "offset": 641,
+          "length": 23599938,
+          "sha256": "328f6c136ceafe6e85a9fb1fbe0b3f53afa4d0de719ab169ccae8153a2b4cfae"
+        },
+        "disk": {
+          "offset": 23600579,
+          "length": 262717,
+          "sha256": "f1fda9a97f4e4a93685938aa13610b2e70e7f89387d39ce5a5fb136e8e46f9aa"
+        },
+        "input": {
+          "offset": 23863296,
+          "length": 22,
+          "sha256": "8b03d02dd4ebc50559dd35b17afa23a744ef6a384dff4c41c3df0f3622580e67"
+        },
+        "output": {
+          "offset": 23863318,
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "native_sections": {
+        "1": "91840e319c00178f6c8682a341dd6d5fc7e7231ad5175c6e489b8e9d75aee8e0",
+        "2": "53b7757acb6b148c407b002532f2b3def97da5753a15dde11cf85a3504d6b0ea",
+        "3": "e88b2065f434744c1ae7e7b34be6e10e6b25959ea746f9cebdc6cbd1ad50ed24",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "cc8b996af91a4913d348fe4b7fbda49270fcf88a870feb73ba15442c1cdfa650",
+        "6": "e866d942598a26636f173a206dfd2f14c16170c7c04551975e75f22f92cdb298",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "d564589e21c3246263e288895b7c901bb7b6d7461bc677793ae23e6d20240e33",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "f96a4b7e3038e2d565489408a0ee36383af3cfabf5d7e79835b3621ee7484a4c"
+      },
+      "ram_sha256": "4755bfb74cae386bf62b0b996c88b9163d6e3b25272a8330c69670be10f9fe9b",
+      "ram_bytes": 268435456,
+      "context": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "runtime": "cb49b9110d9344bbe9a426585384fd15d9b702b0cfe687597de51443405c338b",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "ram_bytes": "268435456",
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "position": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "held": {
+          "keyboard": [
+            30
+          ],
+          "tablet": [],
+          "mouse": []
+        }
+      },
+      "input_hex": "65395f71756575653d7175657565642d616c7068610a",
+      "disk_root_sha256": "916d4a657cd474a664cdfbd66ecc704ab5f19888f2d41e36e34fc4abe0f2fc57",
+      "disk_blocks": 64,
+      "image_size": 536870912,
+      "generation": 0
+    },
+    "alpha-restored.checkpoint.gz": {
+      "raw_sha256": "df780f05a35317c48dced9fefd6354686a03ccb915d630bc20f270abb2f0cc2e",
+      "raw_bytes": 23863318,
+      "components": {
+        "context": {
+          "offset": 212,
+          "length": 429,
+          "sha256": "bfc6b7979f1f3b0109ac08d83e023ec56db1328ca79da5a199622198672c279c"
+        },
+        "native": {
+          "offset": 641,
+          "length": 23599938,
+          "sha256": "328f6c136ceafe6e85a9fb1fbe0b3f53afa4d0de719ab169ccae8153a2b4cfae"
+        },
+        "disk": {
+          "offset": 23600579,
+          "length": 262717,
+          "sha256": "f1fda9a97f4e4a93685938aa13610b2e70e7f89387d39ce5a5fb136e8e46f9aa"
+        },
+        "input": {
+          "offset": 23863296,
+          "length": 22,
+          "sha256": "8b03d02dd4ebc50559dd35b17afa23a744ef6a384dff4c41c3df0f3622580e67"
+        },
+        "output": {
+          "offset": 23863318,
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "native_sections": {
+        "1": "91840e319c00178f6c8682a341dd6d5fc7e7231ad5175c6e489b8e9d75aee8e0",
+        "2": "53b7757acb6b148c407b002532f2b3def97da5753a15dde11cf85a3504d6b0ea",
+        "3": "e88b2065f434744c1ae7e7b34be6e10e6b25959ea746f9cebdc6cbd1ad50ed24",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "cc8b996af91a4913d348fe4b7fbda49270fcf88a870feb73ba15442c1cdfa650",
+        "6": "e866d942598a26636f173a206dfd2f14c16170c7c04551975e75f22f92cdb298",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "d564589e21c3246263e288895b7c901bb7b6d7461bc677793ae23e6d20240e33",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "f96a4b7e3038e2d565489408a0ee36383af3cfabf5d7e79835b3621ee7484a4c"
+      },
+      "ram_sha256": "4755bfb74cae386bf62b0b996c88b9163d6e3b25272a8330c69670be10f9fe9b",
+      "ram_bytes": 268435456,
+      "context": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "runtime": "cb49b9110d9344bbe9a426585384fd15d9b702b0cfe687597de51443405c338b",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "ram_bytes": "268435456",
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "position": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "held": {
+          "keyboard": [
+            30
+          ],
+          "tablet": [],
+          "mouse": []
+        }
+      },
+      "input_hex": "65395f71756575653d7175657565642d616c7068610a",
+      "disk_root_sha256": "916d4a657cd474a664cdfbd66ecc704ab5f19888f2d41e36e34fc4abe0f2fc57",
+      "disk_blocks": 64,
+      "image_size": 536870912,
+      "generation": 0
+    },
+    "beta-after-delete.checkpoint.gz": {
+      "raw_sha256": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+      "raw_bytes": 23859822,
+      "components": {
+        "context": {
+          "offset": 212,
+          "length": 429,
+          "sha256": "a85f5ae039814b1f78277d19b91527fe59d12c9a36d540f52e824b23593c109b"
+        },
+        "native": {
+          "offset": 641,
+          "length": 23596443,
+          "sha256": "9f1ebdc62ef5a65ecb0816c8b39d486b0d4f4b82c1df2d5bba96434d76fda299"
+        },
+        "disk": {
+          "offset": 23597084,
+          "length": 262717,
+          "sha256": "3fc5e5783bae70af6b65551361a3a287402f5f06c0028013415a91d158dd52db"
+        },
+        "input": {
+          "offset": 23859801,
+          "length": 21,
+          "sha256": "040290c64fe4684fab193acc2ab9a9064d01534188b2ac649b873b03b6002c06"
+        },
+        "output": {
+          "offset": 23859822,
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "native_sections": {
+        "1": "6f438d9d5092becc3abaf83b7c32e100c17e3d7d32f193f9b213c8dc93d3122f",
+        "2": "80f2d1d4479d6d972fb2e3f1cd043e3103d432b00a4c144b3676ed9561da71bd",
+        "3": "f5860a7a735490139de9205c2e5d8bd35fc0086d2a9d522bbc2abf0662271b2d",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "8a4eeb9717b5af9389582530392b1d7835c2a83f8813356c5bdd6790fe39090d",
+        "6": "e866d942598a26636f173a206dfd2f14c16170c7c04551975e75f22f92cdb298",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "31b1011ac4af178edf930c599d2609437eac9104a1ac4dbcf1332f037335138c",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "9d463427cbac9066684c78ae334a6cd7981b4e4f8fe42245920cfa6d93610660"
+      },
+      "ram_sha256": "e2311109dda800b2300270adbc7b95f151dfa8ac493ac16a7d39763bc87f791e",
+      "ram_bytes": 268435456,
+      "context": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "runtime": "cb49b9110d9344bbe9a426585384fd15d9b702b0cfe687597de51443405c338b",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "ram_bytes": "268435456",
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "position": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "held": {
+          "keyboard": [
+            48
+          ],
+          "tablet": [],
+          "mouse": []
+        }
+      },
+      "input_hex": "65395f71756575653d7175657565642d626574610a",
+      "disk_root_sha256": "52b17563457c4c959f0771d35fdca4787a81502abc5372cc42d875f64f9b504f",
+      "disk_blocks": 64,
+      "image_size": 536870912,
+      "generation": 0
+    },
+    "beta-after-quota.checkpoint.gz": {
+      "raw_sha256": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+      "raw_bytes": 23859822,
+      "components": {
+        "context": {
+          "offset": 212,
+          "length": 429,
+          "sha256": "a85f5ae039814b1f78277d19b91527fe59d12c9a36d540f52e824b23593c109b"
+        },
+        "native": {
+          "offset": 641,
+          "length": 23596443,
+          "sha256": "9f1ebdc62ef5a65ecb0816c8b39d486b0d4f4b82c1df2d5bba96434d76fda299"
+        },
+        "disk": {
+          "offset": 23597084,
+          "length": 262717,
+          "sha256": "3fc5e5783bae70af6b65551361a3a287402f5f06c0028013415a91d158dd52db"
+        },
+        "input": {
+          "offset": 23859801,
+          "length": 21,
+          "sha256": "040290c64fe4684fab193acc2ab9a9064d01534188b2ac649b873b03b6002c06"
+        },
+        "output": {
+          "offset": 23859822,
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "native_sections": {
+        "1": "6f438d9d5092becc3abaf83b7c32e100c17e3d7d32f193f9b213c8dc93d3122f",
+        "2": "80f2d1d4479d6d972fb2e3f1cd043e3103d432b00a4c144b3676ed9561da71bd",
+        "3": "f5860a7a735490139de9205c2e5d8bd35fc0086d2a9d522bbc2abf0662271b2d",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "8a4eeb9717b5af9389582530392b1d7835c2a83f8813356c5bdd6790fe39090d",
+        "6": "e866d942598a26636f173a206dfd2f14c16170c7c04551975e75f22f92cdb298",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "31b1011ac4af178edf930c599d2609437eac9104a1ac4dbcf1332f037335138c",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "9d463427cbac9066684c78ae334a6cd7981b4e4f8fe42245920cfa6d93610660"
+      },
+      "ram_sha256": "e2311109dda800b2300270adbc7b95f151dfa8ac493ac16a7d39763bc87f791e",
+      "ram_bytes": 268435456,
+      "context": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "runtime": "cb49b9110d9344bbe9a426585384fd15d9b702b0cfe687597de51443405c338b",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "ram_bytes": "268435456",
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "position": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "held": {
+          "keyboard": [
+            48
+          ],
+          "tablet": [],
+          "mouse": []
+        }
+      },
+      "input_hex": "65395f71756575653d7175657565642d626574610a",
+      "disk_root_sha256": "52b17563457c4c959f0771d35fdca4787a81502abc5372cc42d875f64f9b504f",
+      "disk_blocks": 64,
+      "image_size": 536870912,
+      "generation": 0
+    },
+    "beta-original.checkpoint.gz": {
+      "raw_sha256": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+      "raw_bytes": 23859822,
+      "components": {
+        "context": {
+          "offset": 212,
+          "length": 429,
+          "sha256": "a85f5ae039814b1f78277d19b91527fe59d12c9a36d540f52e824b23593c109b"
+        },
+        "native": {
+          "offset": 641,
+          "length": 23596443,
+          "sha256": "9f1ebdc62ef5a65ecb0816c8b39d486b0d4f4b82c1df2d5bba96434d76fda299"
+        },
+        "disk": {
+          "offset": 23597084,
+          "length": 262717,
+          "sha256": "3fc5e5783bae70af6b65551361a3a287402f5f06c0028013415a91d158dd52db"
+        },
+        "input": {
+          "offset": 23859801,
+          "length": 21,
+          "sha256": "040290c64fe4684fab193acc2ab9a9064d01534188b2ac649b873b03b6002c06"
+        },
+        "output": {
+          "offset": 23859822,
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "native_sections": {
+        "1": "6f438d9d5092becc3abaf83b7c32e100c17e3d7d32f193f9b213c8dc93d3122f",
+        "2": "80f2d1d4479d6d972fb2e3f1cd043e3103d432b00a4c144b3676ed9561da71bd",
+        "3": "f5860a7a735490139de9205c2e5d8bd35fc0086d2a9d522bbc2abf0662271b2d",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "8a4eeb9717b5af9389582530392b1d7835c2a83f8813356c5bdd6790fe39090d",
+        "6": "e866d942598a26636f173a206dfd2f14c16170c7c04551975e75f22f92cdb298",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "31b1011ac4af178edf930c599d2609437eac9104a1ac4dbcf1332f037335138c",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "9d463427cbac9066684c78ae334a6cd7981b4e4f8fe42245920cfa6d93610660"
+      },
+      "ram_sha256": "e2311109dda800b2300270adbc7b95f151dfa8ac493ac16a7d39763bc87f791e",
+      "ram_bytes": 268435456,
+      "context": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "runtime": "cb49b9110d9344bbe9a426585384fd15d9b702b0cfe687597de51443405c338b",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "ram_bytes": "268435456",
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "position": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "held": {
+          "keyboard": [
+            48
+          ],
+          "tablet": [],
+          "mouse": []
+        }
+      },
+      "input_hex": "65395f71756575653d7175657565642d626574610a",
+      "disk_root_sha256": "52b17563457c4c959f0771d35fdca4787a81502abc5372cc42d875f64f9b504f",
+      "disk_blocks": 64,
+      "image_size": 536870912,
+      "generation": 0
+    },
+    "beta-reopened.checkpoint.gz": {
+      "raw_sha256": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+      "raw_bytes": 23859822,
+      "components": {
+        "context": {
+          "offset": 212,
+          "length": 429,
+          "sha256": "a85f5ae039814b1f78277d19b91527fe59d12c9a36d540f52e824b23593c109b"
+        },
+        "native": {
+          "offset": 641,
+          "length": 23596443,
+          "sha256": "9f1ebdc62ef5a65ecb0816c8b39d486b0d4f4b82c1df2d5bba96434d76fda299"
+        },
+        "disk": {
+          "offset": 23597084,
+          "length": 262717,
+          "sha256": "3fc5e5783bae70af6b65551361a3a287402f5f06c0028013415a91d158dd52db"
+        },
+        "input": {
+          "offset": 23859801,
+          "length": 21,
+          "sha256": "040290c64fe4684fab193acc2ab9a9064d01534188b2ac649b873b03b6002c06"
+        },
+        "output": {
+          "offset": 23859822,
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "native_sections": {
+        "1": "6f438d9d5092becc3abaf83b7c32e100c17e3d7d32f193f9b213c8dc93d3122f",
+        "2": "80f2d1d4479d6d972fb2e3f1cd043e3103d432b00a4c144b3676ed9561da71bd",
+        "3": "f5860a7a735490139de9205c2e5d8bd35fc0086d2a9d522bbc2abf0662271b2d",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "8a4eeb9717b5af9389582530392b1d7835c2a83f8813356c5bdd6790fe39090d",
+        "6": "e866d942598a26636f173a206dfd2f14c16170c7c04551975e75f22f92cdb298",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "31b1011ac4af178edf930c599d2609437eac9104a1ac4dbcf1332f037335138c",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "9d463427cbac9066684c78ae334a6cd7981b4e4f8fe42245920cfa6d93610660"
+      },
+      "ram_sha256": "e2311109dda800b2300270adbc7b95f151dfa8ac493ac16a7d39763bc87f791e",
+      "ram_bytes": 268435456,
+      "context": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "runtime": "cb49b9110d9344bbe9a426585384fd15d9b702b0cfe687597de51443405c338b",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "ram_bytes": "268435456",
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "position": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "held": {
+          "keyboard": [
+            48
+          ],
+          "tablet": [],
+          "mouse": []
+        }
+      },
+      "input_hex": "65395f71756575653d7175657565642d626574610a",
+      "disk_root_sha256": "52b17563457c4c959f0771d35fdca4787a81502abc5372cc42d875f64f9b504f",
+      "disk_blocks": 64,
+      "image_size": 536870912,
+      "generation": 0
+    },
+    "beta-restored.checkpoint.gz": {
+      "raw_sha256": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+      "raw_bytes": 23859822,
+      "components": {
+        "context": {
+          "offset": 212,
+          "length": 429,
+          "sha256": "a85f5ae039814b1f78277d19b91527fe59d12c9a36d540f52e824b23593c109b"
+        },
+        "native": {
+          "offset": 641,
+          "length": 23596443,
+          "sha256": "9f1ebdc62ef5a65ecb0816c8b39d486b0d4f4b82c1df2d5bba96434d76fda299"
+        },
+        "disk": {
+          "offset": 23597084,
+          "length": 262717,
+          "sha256": "3fc5e5783bae70af6b65551361a3a287402f5f06c0028013415a91d158dd52db"
+        },
+        "input": {
+          "offset": 23859801,
+          "length": 21,
+          "sha256": "040290c64fe4684fab193acc2ab9a9064d01534188b2ac649b873b03b6002c06"
+        },
+        "output": {
+          "offset": 23859822,
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "native_sections": {
+        "1": "6f438d9d5092becc3abaf83b7c32e100c17e3d7d32f193f9b213c8dc93d3122f",
+        "2": "80f2d1d4479d6d972fb2e3f1cd043e3103d432b00a4c144b3676ed9561da71bd",
+        "3": "f5860a7a735490139de9205c2e5d8bd35fc0086d2a9d522bbc2abf0662271b2d",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "8a4eeb9717b5af9389582530392b1d7835c2a83f8813356c5bdd6790fe39090d",
+        "6": "e866d942598a26636f173a206dfd2f14c16170c7c04551975e75f22f92cdb298",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "31b1011ac4af178edf930c599d2609437eac9104a1ac4dbcf1332f037335138c",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "9d463427cbac9066684c78ae334a6cd7981b4e4f8fe42245920cfa6d93610660"
+      },
+      "ram_sha256": "e2311109dda800b2300270adbc7b95f151dfa8ac493ac16a7d39763bc87f791e",
+      "ram_bytes": 268435456,
+      "context": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "runtime": "cb49b9110d9344bbe9a426585384fd15d9b702b0cfe687597de51443405c338b",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "ram_bytes": "268435456",
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "position": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "held": {
+          "keyboard": [
+            48
+          ],
+          "tablet": [],
+          "mouse": []
+        }
+      },
+      "input_hex": "65395f71756575653d7175657565642d626574610a",
+      "disk_root_sha256": "52b17563457c4c959f0771d35fdca4787a81502abc5372cc42d875f64f9b504f",
+      "disk_blocks": 64,
+      "image_size": 536870912,
+      "generation": 0
+    },
+    "beta-unsaved.checkpoint.gz": {
+      "raw_sha256": "8d8d27470bb3d83ba56159c20725993973304b515eb03cb8776092d298cdba0a",
+      "raw_bytes": 23887126,
+      "components": {
+        "context": {
+          "offset": 212,
+          "length": 429,
+          "sha256": "a85f5ae039814b1f78277d19b91527fe59d12c9a36d540f52e824b23593c109b"
+        },
+        "native": {
+          "offset": 641,
+          "length": 23590936,
+          "sha256": "cc38624fe21965dd50cbd60766134bd3e45722f772470a910530f98008e80e5d"
+        },
+        "disk": {
+          "offset": 23591577,
+          "length": 295549,
+          "sha256": "85de42e8818d6f7076d94946b9043d8ca65b14a1231345bd5006c99601e036cb"
+        },
+        "input": {
+          "offset": 23887126,
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "output": {
+          "offset": 23887126,
+          "length": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "native_sections": {
+        "1": "32623e9ae1fd638cd91265ddda7301c7b50ccae127c331fcfad51407f79e3d0b",
+        "2": "72be26020a93d8f271c47932c72cb8f909aa8ce0c064771819a62fcaa1e6de3e",
+        "3": "5df9a8c57803d0c840de861c55b8611d8f5ee8bedf86a06e98fddbd75f9817a5",
+        "4": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a",
+        "5": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6",
+        "8": "8a4eeb9717b5af9389582530392b1d7835c2a83f8813356c5bdd6790fe39090d",
+        "6": "811c3f4c6ba30a3dd7f69c4759fdd3e60950813c60b948765cd228dc29f07945",
+        "7": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb",
+        "12": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845",
+        "13": "10023328321869576fef338832714cd73c01b90a65f155eb065b10cc38613c0a",
+        "14": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db",
+        "15": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487",
+        "16": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b",
+        "10": "0c3f1d0ba0cefd84fdba08ebe9e59cc879808b565f380bac4ca61e3d36f1d94e",
+        "11": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98",
+        "9": "c0a7e1f137d0cdcb578af13a5f0991a8c7aa08a1c40131efaf04fb0ae78ecc03"
+      },
+      "ram_sha256": "96511a83c36631ca7a8dc9c55c664ec97b1de6701d8c20d0494ff02c72bcf69d",
+      "ram_bytes": 268435456,
+      "context": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "runtime": "cb49b9110d9344bbe9a426585384fd15d9b702b0cfe687597de51443405c338b",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "ram_bytes": "268435456",
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "position": {
+          "transition": "0",
+          "phase": "before",
+          "ordinal": 0,
+          "sequence": "0",
+          "retired": "0"
+        },
+        "held": {
+          "keyboard": [
+            48
+          ],
+          "tablet": [],
+          "mouse": []
+        }
+      },
+      "input_hex": "",
+      "disk_root_sha256": "8d2a8f3af8f55be56243555ae50f0e702aba8668f425f16326ce7741e694a280",
+      "disk_blocks": 72,
+      "image_size": 536870912,
+      "generation": 0
+    }
+  }
+}

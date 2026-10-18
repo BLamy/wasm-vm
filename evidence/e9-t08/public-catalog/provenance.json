@@ -1,0 +1,75 @@
+{
+  "status": "passed",
+  "source_head": "d001c6246c076f273dc3de922a4732b5e85fdd1d",
+  "deployment": "https://1119ea60.wasm-vm.pages.dev",
+  "production": "https://wasm-vm.pages.dev/",
+  "scope": "Verified task/pip catalog publication; exact unchanged product proof carried from original full local/public recordings authenticated by fresh critic. All original evidence remains untouched.",
+  "files": [
+    {
+      "path": "report.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t08-public-metadata/report.json",
+      "bytes": 24613,
+      "sha256": "9d17054a8a44334ac12fbc009d382ad17f3f90a8d1d7ed503b17f66401af75d5"
+    },
+    {
+      "path": "browser.png",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t08-public-metadata/browser.png",
+      "bytes": 49018,
+      "sha256": "3e9ceb5133eb636f2446d89c13219086e183f0f14bded42619a76c677b78db66"
+    },
+    {
+      "path": "trace.zip",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t08-public-metadata/trace.zip",
+      "bytes": 8663275,
+      "sha256": "7aab69d3b76ed72fd423395089110655a6b983ed75ec32ae505ff6ddfddc117f"
+    },
+    {
+      "path": "deployment.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t08-catalog-deploy/report.json",
+      "bytes": 122001,
+      "sha256": "db7094b56e1d7baea507bf2abc0a8eecb665433a45699a3d95c1e782a7b19da3"
+    },
+    {
+      "path": "baseline-receipt.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t08-full-deploy/receipt.json",
+      "bytes": 157996,
+      "sha256": "a307898a9edc4a2727abfec2f6b55f72d2e606b4377393436131ab299da9c4dc"
+    },
+    {
+      "path": "baseline-authentication.json",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t08-verifier/deploy-authentication.json",
+      "bytes": 5500,
+      "sha256": "7524b07c934aa3a187e4ce050693512db187976642e7a76b9a159006256f9964"
+    },
+    {
+      "path": "publish-catalog.py",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-publish-verified-catalog.py",
+      "bytes": 5713,
+      "sha256": "3ce7a6848b6009058e1d52b3086c32ccc60e3ba6623ccf11de329b4d762ac6e5"
+    },
+    {
+      "path": "public-metadata.mjs",
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t08-public-metadata.mjs",
+      "bytes": 4354,
+      "sha256": "9fe24673a2aa370d2344a75ed447cea9cc3e087b57c71add697bf19c5afc76d0"
+    },
+    {
+      "path": "build.log",
+      "original": "/tmp/e9-t08-catalog-build.log",
+      "bytes": 6035,
+      "sha256": "1a477b00d6fcf5f3c87a00c567c1f71099778f9094a9542c4e63e000a0664979"
+    },
+    {
+      "path": "deployment.log",
+      "original": "/tmp/e9-t08-catalog-deploy.log",
+      "bytes": 365,
+      "sha256": "2c6a31279b18aac6337a8be32c88536906eeddb03759764ed970df65d1f37cc7"
+    },
+    {
+      "path": "browser.log",
+      "original": "/tmp/e9-t08-public-metadata.log",
+      "bytes": 78,
+      "sha256": "4dfb50d52ca4e7c3b2d6800122589110c804ea44802a5f1b79f95909a1537340"
+    }
+  ]
+}
