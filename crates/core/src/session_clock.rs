@@ -15,6 +15,7 @@ const MAGIC: &[u8; 8] = b"WVCLK001";
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SessionError {
     Inactive,
+    DeviceCompletion(crate::session_devices::DeviceError),
     AlreadyActive,
     UnsupportedScheduling,
     PositionPast,
@@ -620,6 +621,11 @@ impl crate::Machine {
         if let Some(error) = self.session_sources.borrow().error() {
             return Err(error);
         }
+        if let Some(hub) = &self.session_devices
+            && let Some(error) = hub.borrow().error
+        {
+            return Err(SessionError::DeviceCompletion(error));
+        }
         if self.session_sources_need_flush() {
             return Ok(Preparation::Fence);
         }
@@ -668,6 +674,14 @@ impl crate::Machine {
                 .rtc
                 .as_ref()
                 .is_some_and(|(rtc, _)| rtc.borrow().alarm_armed())
+        {
+            budget = budget.min(1);
+        }
+        // Active PCM queues use a frozen guest-derived clock, never a worklet clock.
+        if self
+            .session_devices
+            .as_ref()
+            .is_some_and(|hub| hub.borrow().capture)
         {
             budget = budget.min(1);
         }

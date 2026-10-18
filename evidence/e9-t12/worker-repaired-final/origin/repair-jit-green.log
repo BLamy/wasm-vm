@@ -1,0 +1,23 @@
+   Compiling wasm-vm-core v0.0.1 (/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/crates/jit-translate)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.13s
+     Running tests/e9_device_completions.rs (target/debug/deps/e9_device_completions-9c530d1a124dee80)
+
+running 1 test
+target=5000 quantum=31 compiled_blocks=125 position=SessionPosition { transition: 5000, retired: 5000, phase: Before, ordinal: 0, sequence: 3 }
+target=5000 quantum=1 compiled_blocks=0 position=SessionPosition { transition: 5000, retired: 5000, phase: Before, ordinal: 0, sequence: 3 }
+target=5000 quantum=8 compiled_blocks=74 position=SessionPosition { transition: 5000, retired: 5000, phase: Before, ordinal: 0, sequence: 3 }
+target=5000 quantum=4096 compiled_blocks=139 position=SessionPosition { transition: 5000, retired: 5000, phase: Before, ordinal: 0, sequence: 3 }
+target=5001 quantum=31 compiled_blocks=126 position=SessionPosition { transition: 5001, retired: 5001, phase: Before, ordinal: 0, sequence: 3 }
+target=5001 quantum=1 compiled_blocks=0 position=SessionPosition { transition: 5001, retired: 5001, phase: Before, ordinal: 0, sequence: 3 }
+target=5001 quantum=8 compiled_blocks=74 position=SessionPosition { transition: 5001, retired: 5001, phase: Before, ordinal: 0, sequence: 3 }
+target=5001 quantum=4096 compiled_blocks=140 position=SessionPosition { transition: 5001, retired: 5001, phase: Before, ordinal: 0, sequence: 3 }
+target=5002 quantum=31 compiled_blocks=126 position=SessionPosition { transition: 5002, retired: 5002, phase: Before, ordinal: 0, sequence: 3 }
+target=5002 quantum=1 compiled_blocks=0 position=SessionPosition { transition: 5002, retired: 5002, phase: Before, ordinal: 0, sequence: 3 }
+target=5002 quantum=8 compiled_blocks=74 position=SessionPosition { transition: 5002, retired: 5002, phase: Before, ordinal: 0, sequence: 3 }
+target=5002 quantum=4096 compiled_blocks=140 position=SessionPosition { transition: 5002, retired: 5002, phase: Before, ordinal: 0, sequence: 3 }
+test inactive_capture_has_identical_checkpoints_across_real_jit_batch_edges ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+

@@ -51,6 +51,7 @@ pub mod ram;
 pub mod resume;
 pub mod sbi;
 pub mod session_clock;
+pub mod session_devices;
 pub mod snapshot;
 pub mod softfloat;
 pub mod time;
@@ -282,6 +283,7 @@ pub struct Machine {
     session_sources: alloc::rc::Rc<core::cell::RefCell<session_clock::sources::ObservationHub>>,
     /// Transient execution fence, never part of a quiescent saved machine.
     session_fence: Option<u64>,
+    session_devices: Option<alloc::rc::Rc<core::cell::RefCell<session_devices::DeviceHub>>>,
     htif: Option<Htif>,
     /// Last observed `tohost` value — the watch fires only on CHANGE, giving
     /// exactly-once semantics for command writes ("logged once", E0-T11).
@@ -959,6 +961,7 @@ impl Machine {
             bus: SystemBus::new(Ram::new(ram_bytes)?),
             session_clock: None,
             session_sources: Default::default(),
+            session_devices: None,
             session_fence: None,
             htif: None,
             last_tohost: 0,
@@ -3297,7 +3300,9 @@ impl Machine {
                 return Err(error);
             }
         }
-        self.quiesce()?;
+        if !(exact_inputs && self.session_devices.is_some()) {
+            self.quiesce()?;
+        }
         use crate::resume::{ComponentSnapshot, SnapshotWriter, section};
         let mut w = SnapshotWriter::new(
             &self.coherence.core_hash,
@@ -3322,6 +3327,13 @@ impl Machine {
         }
         if let Some((rtc, _)) = &self.rtc {
             w.section(section::RTC, &rtc.borrow().to_snapshot());
+        }
+        if let Some(payload) = self.session_devices_snapshot().map_err(|_| {
+            crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_DEVICES,
+            }
+        })? {
+            w.section(section::SESSION_DEVICES, &payload);
         }
         // E3-T12c1: virtio-blk transport lifecycle + device ring position + FLUSH-forward count. The
         // disk bytes are the overlay (bound by generation, E3-T12c3), not serialized here; the parked
@@ -3479,7 +3491,12 @@ impl Machine {
             v.extend_from_slice(&SND_RESUME_LAYOUT_VERSION.to_le_bytes());
             let payload = state
                 .borrow()
-                .to_resume_snapshot(exact_inputs)
+                .to_resume_snapshot(
+                    exact_inputs,
+                    self.session_devices
+                        .as_ref()
+                        .is_some_and(|hub| hub.borrow().capture),
+                )
                 .map_err(|_| crate::resume::SnapshotError::BadComponentState {
                     tag: section::VIRTIO_SND,
                 })?;
@@ -3701,6 +3718,30 @@ impl Machine {
         } else {
             None
         };
+        let device_sections: alloc::vec::Vec<_> = sections
+            .iter()
+            .filter(|s| s.tag == section::SESSION_DEVICES)
+            .collect();
+        let device_bad = || crate::resume::SnapshotError::BadComponentState {
+            tag: section::SESSION_DEVICES,
+        };
+        if device_sections.len() != usize::from(self.session_devices.is_some()) {
+            return Err(device_bad());
+        }
+        let staged_devices = device_sections
+            .first()
+            .map(|sec| {
+                self.check_session_devices_snapshot(
+                    sec.payload,
+                    staged_session_clock
+                        .as_ref()
+                        .ok_or_else(device_bad)?
+                        .position
+                        .sequence,
+                )
+                .map_err(|_| device_bad())
+            })
+            .transpose()?;
         let strict_topology = exact_inputs;
         #[cfg(feature = "virgl-renderer")]
         let strict_topology = strict_topology || gpu_witness.is_some();
@@ -3713,6 +3754,9 @@ impl Machine {
             }
             if staged_source_cursor.is_some() {
                 expected.push(section::SESSION_SOURCES);
+            }
+            if staged_devices.is_some() {
+                expected.push(section::SESSION_DEVICES);
             }
             for (tag, present) in [
                 (section::CLINT, self.clint.is_some()),
@@ -3891,10 +3935,32 @@ impl Machine {
                     device
                         .state_handle()
                         .borrow_mut()
-                        .restore_resume_snapshot(payload, exact_inputs)
+                        .restore_resume_snapshot(
+                            payload,
+                            exact_inputs,
+                            self.session_devices
+                                .as_ref()
+                                .is_some_and(|hub| hub.borrow().capture),
+                        )
                         .map_err(|_| crate::resume::SnapshotError::BadComponentState {
                             tag: sec.tag,
                         })?;
+                    if !device
+                        .state_handle()
+                        .borrow()
+                        .capture_addresses_valid(self.bus.ram().base(), self.bus.ram().len())
+                    {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    }
+                    if staged_devices.as_ref().is_some_and(|restore| {
+                        !restore.sound_matches(&device.state_handle().borrow())
+                    }) {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    }
                 }
                 section::VIRTIO_CONSOLE => {
                     let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 6)?;
@@ -4010,7 +4076,13 @@ impl Machine {
                     let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
                     state
                         .borrow_mut()
-                        .restore_resume_snapshot(payload, exact_inputs)
+                        .restore_resume_snapshot(
+                            payload,
+                            exact_inputs,
+                            self.session_devices
+                                .as_ref()
+                                .is_some_and(|hub| hub.borrow().capture),
+                        )
                         .map_err(|_| crate::resume::SnapshotError::BadComponentState {
                             tag: sec.tag,
                         })?;
@@ -4079,7 +4151,7 @@ impl Machine {
                     self.clock_div = clock_div;
                     self.sbi_state.stimecmp = stimecmp;
                 }
-                section::SESSION_CLOCK | section::SESSION_SOURCES => {} // validated above; commit only after every component
+                section::SESSION_CLOCK | section::SESSION_SOURCES | section::SESSION_DEVICES => {} // validated above; commit only after every component
                 section::VIRTIO_BLK => {
                     let slot = self
                         .virtio
@@ -4203,6 +4275,9 @@ impl Machine {
                     return Err(crate::resume::SnapshotError::UnsupportedSection { tag: other });
                 }
             }
+        }
+        if let Some(restore) = staged_devices {
+            self.restore_session_devices(restore);
         }
         self.session_clock = staged_session_clock;
         if let Some(cursor) = staged_source_cursor {
@@ -5933,6 +6008,7 @@ impl Machine {
     #[cfg(not(feature = "zicsr-stub"))]
     #[inline(never)]
     fn boundary_sync_full(&mut self) {
+        self.sync_session_devices();
         let mut idle = true;
         // E5-T04: host-owned virtio devices may have requested a config change through a
         // retained state handle (for example a GPU canvas resize).  Latch those requests
@@ -6093,6 +6169,8 @@ impl Machine {
         // does NOT touch this — the device sync above is still per-retire.)
         self.drain_code_writes();
         self.boundary_jit_pump();
+        // Finalize derived lifecycle cancellation after queue service, before any paused callback.
+        self.sync_session_devices();
         // Idle devices stay idle until a fabric MMIO access (epoch bump) or a new run call.
         self.fabric_idle_epoch = idle.then(|| self.fabric_epoch.get());
     }
@@ -6372,6 +6450,14 @@ impl Machine {
             #[cfg(not(feature = "zicsr-stub"))]
             if sample_boundary {
                 self.boundary_sync();
+            }
+            #[cfg(not(feature = "zicsr-stub"))]
+            if let Some(hub) = &self.session_devices
+                && let Some(error) = hub.borrow().error
+            {
+                return RunOutcome::SessionStopped(session_clock::SessionError::DeviceCompletion(
+                    error,
+                ));
             }
             #[cfg(not(feature = "zicsr-stub"))]
             if source_capture && let Err(error) = self.commit_source_scope() {

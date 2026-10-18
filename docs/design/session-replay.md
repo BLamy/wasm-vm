@@ -414,3 +414,44 @@ stop control before releasing the session writer. These sessions remain incomple
 are T12–T14. The separate public **Time and entropy check** runs an actual bounded RV64
 RTC/RNG/WFI guest and proves source adapter replay under hostile providers; it does not
 admit an arbitrary saved Linux session as executable replay.
+
+
+### Owned device completions (E9-T12)
+
+The qualified adapters are installed before execution through
+Machine::enable_session_devices or the ordinary WasmMachine installDeviceSession API.
+The immutable-base block backend owns local sector COW state; a missing frozen base
+chunk creates a request. Posted named-console application receive buffers and due
+48 kHz mono/stereo S16 capture buffers create requests from guest state as well.
+Each request has one non-wrapping ID and one accepted supplied, failed or cancelled
+completion. Request intent and immutable bytes have identities independent of callback
+delivery time. Accepted delivery uses the common before-phase sequence and cursor.
+The journal stores immutable base payload bytes in separate content-addressed objects
+and puts delivery metadata in the event intent.
+
+The host receives a private callback lease. Restore replaces its allocation identity,
+so a reply from before restore cannot mutate the rewound machine even when a request
+number repeats. Replay refuses all live leases, applies owned envelopes at exact guest
+positions and never consults a host cache. Guest DMA, used-ring publication and IRQs
+remain in the original device services. An awaiting capture result parks the existing
+transfer without substituting silence or acknowledging its descriptor.
+
+Section 20 preserves pending requests, request/completion cursors, immutable cache,
+local COW sectors, capture results and parked block chains. The qualified sound codec
+retains actual pending capture segments and deadlines. Guest STOP/reset derives
+cancellation before paused callbacks can run. Complete prevalidation, including capture
+request/descriptor consistency, precedes destination mutation and lease revocation.
+A failed restore leaves the original live leases and machine intact.
+
+The v1 bounds are 256 pending requests, individual payloads no larger than 1 MiB minus
+256 bytes, a 16 MiB immutable cache, and 256 MiB of local COW sectors. Completion-order
+eviction cannot evict data pinned by pending reads. The microphone clock derives from
+frozen guest ICount time. Live worklet playback, legacy shared microphone rings,
+persistent host writeback and already installed unrecorded transports refuse this
+admission. The initial live-microphone and GPU-result gates remain in force.
+
+The new demo check drives real block, application-console and sound queues and retains
+an explicitly incomplete capture prefix. Existing Linux provider assembly remains
+outside complete replay until T13/T14 compose network and executable replay ownership.
+The source matrix retains its planned overall runtime status; these source/hash updates
+identify the new owned boundary and the still gated legacy paths, not capstone completion.

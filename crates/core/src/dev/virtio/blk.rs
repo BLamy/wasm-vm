@@ -91,6 +91,37 @@ pub enum ParkReason {
 }
 
 impl BlkState {
+    pub(crate) fn session_pending(&self) -> alloc::vec::Vec<u8> {
+        let mut out = alloc::vec![self.kicked as u8, self.reset_pending as u8];
+        out.extend_from_slice(&(self.parked.len() as u32).to_le_bytes());
+        for (chain, reason) in &self.parked {
+            out.extend_from_slice(&chain.head.to_le_bytes());
+            match reason {
+                ParkReason::Chunk(chunk) => {
+                    out.push(0);
+                    out.extend_from_slice(&(*chunk as u64).to_le_bytes());
+                }
+                // Qualified local COW writes/flushes are synchronous; admitting these would lose
+                // an unrecorded persistence barrier.
+                ParkReason::Flush | ParkReason::Write => {
+                    out.push(255);
+                    out.extend_from_slice(&0u64.to_le_bytes());
+                }
+            }
+            out.extend_from_slice(&(chain.segments.len() as u32).to_le_bytes());
+            for segment in &chain.segments {
+                out.extend_from_slice(&segment.addr.to_le_bytes());
+                out.extend_from_slice(&segment.len.to_le_bytes());
+                out.push(segment.writable as u8);
+            }
+        }
+        out
+    }
+    pub(crate) fn restore_session_pending(&mut self, pending: SessionPending) {
+        self.kicked = pending.kicked;
+        self.reset_pending = pending.reset_pending;
+        self.parked = pending.parked;
+    }
     /// E3-T02: the distinct chunks that parked reads are waiting on — what the async fetch layer
     /// must load next (in park order, deduplicated). Empty unless a lazy backend has parked reads.
     pub fn pending_chunks(&self) -> alloc::vec::Vec<usize> {
@@ -150,6 +181,74 @@ impl BlkState {
             .as_mut()
             .map(core::mem::take)
             .unwrap_or_default()
+    }
+}
+
+pub(crate) struct SessionPending {
+    kicked: bool,
+    reset_pending: bool,
+    parked: alloc::vec::Vec<(DescriptorChain, ParkReason)>,
+}
+impl SessionPending {
+    pub(crate) fn decode(
+        bytes: &[u8],
+        base: u64,
+        ram_len: usize,
+    ) -> Result<Self, crate::session_devices::DeviceError> {
+        use crate::session_devices::{Decoder, DeviceError};
+        let mut r = Decoder::new(bytes);
+        let kicked = r.bool()?;
+        let reset_pending = r.bool()?;
+        let mut parked = alloc::vec::Vec::new();
+        for _ in 0..r.count(256)? {
+            let head = r.u16()?;
+            if head >= 256
+                || parked
+                    .iter()
+                    .any(|(chain, _): &(DescriptorChain, ParkReason)| chain.head == head)
+            {
+                return Err(DeviceError::Snapshot);
+            }
+            if r.u8()? != 0 {
+                return Err(DeviceError::Unsupported);
+            }
+            let chunk = usize::try_from(r.u64()?).map_err(|_| DeviceError::Snapshot)?;
+            let mut segments = alloc::vec::Vec::new();
+            let mut writable = false;
+            for _ in 0..r.count(256)? {
+                let addr = r.u64()?;
+                let len = r.u32()?;
+                let write = r.bool()?;
+                if len == 0
+                    || addr < base
+                    || addr
+                        .checked_add(u64::from(len))
+                        .is_none_or(|end| end > base + ram_len as u64)
+                    || (writable && !write)
+                {
+                    return Err(DeviceError::Snapshot);
+                }
+                writable |= write;
+                segments.push(super::queue::Segment {
+                    addr,
+                    len,
+                    writable: write,
+                });
+            }
+            if segments.is_empty() || !writable {
+                return Err(DeviceError::Snapshot);
+            }
+            parked.push((DescriptorChain { head, segments }, ParkReason::Chunk(chunk)));
+        }
+        if reset_pending && !parked.is_empty() {
+            return Err(DeviceError::Snapshot);
+        }
+        r.finish()?;
+        Ok(Self {
+            kicked,
+            reset_pending,
+            parked,
+        })
     }
 }
 
@@ -339,7 +438,7 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
             let data_len = status_pos; // all writable bytes except the status byte
             if data_len == 0
                 || !data_len.is_multiple_of(SECTOR_SIZE as u64)
-                || data_len > u32::MAX as u64
+                || data_len > state.backend.max_transfer_bytes() as u64
             {
                 (S_IOERR, 0)
             } else {
@@ -365,7 +464,7 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
         T_OUT => {
             if out_len == 0
                 || !out_len.is_multiple_of(SECTOR_SIZE as u64)
-                || out_len > u32::MAX as u64
+                || out_len > state.backend.max_transfer_bytes() as u64
             {
                 (S_IOERR, 0)
             } else {

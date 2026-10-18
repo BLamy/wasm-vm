@@ -1161,3 +1161,6 @@ mod tests {
         assert_eq!(PcmControl::Info.index(), 0);
     }
 }
+
+#[path = "session_capture_snapshot.rs"]
+pub(crate) mod owned_capture;

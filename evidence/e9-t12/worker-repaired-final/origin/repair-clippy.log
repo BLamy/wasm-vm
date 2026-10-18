@@ -1,0 +1,16 @@
+    Checking wasm-vm-core v0.0.1 (/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/crates/core)
+    Checking wasm-bindgen-futures v0.4.76
+    Checking web-sys v0.3.103
+    Checking cranelift-codegen v0.122.0
+    Checking wasm-bindgen-test v0.3.76
+    Checking console_log v1.0.0
+    Checking wasm-vm-jit-translate v0.0.1 (/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/crates/jit-translate)
+    Checking wasm-vm-slirp v0.0.0 (/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/crates/slirp)
+    Checking wasm-vm-wasm v0.0.1 (/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/crates/wasm)
+    Checking cranelift-native v0.122.0
+    Checking cranelift-frontend v0.122.0
+    Checking wasmtime-internal-unwinder v35.0.0
+    Checking wasmtime-internal-cranelift v35.0.0
+    Checking wasmtime v35.0.0
+    Checking wasm-vm-jit-runtime v0.0.1 (/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/crates/jit-runtime)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.06s

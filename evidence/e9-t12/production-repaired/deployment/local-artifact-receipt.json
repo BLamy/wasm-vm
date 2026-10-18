@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "files": [
+    {
+      "path": "releases/rootfs/alpine-rootfs.ext4",
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/releases/rootfs/alpine-rootfs.ext4",
+      "bytes": 536870912,
+      "sha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8"
+    },
+    {
+      "path": "releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair",
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair",
+      "bytes": 204057731,
+      "sha256": "3583ea9927d142e33c9b1de5963d89bd1f0b1022df7047c8a8b02d7f734a01bd"
+    },
+    {
+      "path": "releases/boot-snapshot/omarchy-apps-ready-98235fbe8cc4.snap.gz",
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/releases/boot-snapshot/omarchy-apps-ready-98235fbe8cc4.snap.gz",
+      "bytes": 210695930,
+      "sha256": "98235fbe8cc4baefefdaab086c700d40c5f5c60d9bf3b26f7642903802214b22"
+    }
+  ]
+}

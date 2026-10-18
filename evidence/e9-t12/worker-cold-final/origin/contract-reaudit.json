@@ -1,0 +1,54 @@
+{
+  "head": "76b56b01f048306ca2bcbaa90d522bb6a08543cc",
+  "scope": "Re-audited changed source boundaries: qualified channel19 owns block/agent/PCM completion bytes; unrecorded legacy transports and playback remain gated. Runtime code and runtime assets unchanged.",
+  "changed": {
+    "crates/core/src/dev/virtio/blk.rs": {
+      "before": "71f70f6640c04dba993a35ae3a2397d26b7ef5a17fa932cd5aa8916c2842afdb",
+      "after": "615ae3f73ecaaad2adb36fedd25a36ca7b9b861dada50fc44a4db8d10a2a9713"
+    },
+    "crates/core/src/dev/virtio/snd/mod.rs": {
+      "before": "21294eb1046b260ee4efeaa6ac205513c3006243dd11a05ca2d2f2ea0cbf5eb6",
+      "after": "ddd178109e87d255694ec859b45f71620a2abea36781047c92d1e3e85f8db2e7"
+    },
+    "crates/core/src/dev/virtio/snd/session_capture_snapshot.rs": {
+      "before": null,
+      "after": "e929c49d9c0e684a95a590b54d11ebdaf08aa3e2c5411a388c51b7625e4d3d27"
+    },
+    "crates/core/src/dev/virtio/snd/snapshot.rs": {
+      "before": "20ba49acaff6cd0336a900dac65e05793a26e28a4e438c8a1a1894b0124603e7",
+      "after": "e89880eb65014d09b25cd5696bb7152beba189a25bb2d814850fbd2dc7c9e24b"
+    },
+    "crates/core/src/lib.rs": {
+      "before": "8628c234f1d59ceccd35bc8c514ada7fd7e137b5d3b0b14e390d490b63e16fca",
+      "after": "7b82a4bb6d41974a20338877c73cf8b1d758ec78127acab55040852ee9433035"
+    },
+    "crates/core/src/session_clock.rs": {
+      "before": "195b47fe94718f0c0e7ba05b96e7a0e976cdb5e9a1569046878c1400ca655a6b",
+      "after": "2ad8431ab4882e7463f0798a6397bd5ada5029c2da70798c75291a70c037f3c6"
+    },
+    "crates/core/src/session_devices.rs": {
+      "before": null,
+      "after": "6d56de3168dc0d6d879d09a4e07dccb536053c82559efce7ab2e589cc5d1b103"
+    },
+    "crates/core/src/session_devices/block.rs": {
+      "before": null,
+      "after": "5645aad08b4670de4fe5ecde140cdbd55e11c4c7e57a5db85b238b71508edfec"
+    },
+    "crates/core/src/session_devices/codec.rs": {
+      "before": null,
+      "after": "49fd435727efb6ec5bb6ec172c1cb0d002a4989c13abc3d7b73f62631c57ac97"
+    },
+    "crates/wasm/src/lib.rs": {
+      "before": "045e275e876b66bdf496508c206e723334a108684a89b530c2148528f4efcff2",
+      "after": "1f99585fa9bbf1f1bd8af6c8b6ac1d078f71829a3fc0912f1faf09a433867caa"
+    },
+    "crates/wasm/src/session_devices.rs": {
+      "before": null,
+      "after": "b8c9640978fb1441c1ee3408b72588c11e4cff19a9a95ea5f05f7eea667fb9a7"
+    },
+    "web/session-inputs.js": {
+      "before": "2d5c6bc4f39b9f044c41b66d0a6c02c57f8dc44a8f7ff305d9faf2d67445f2fa",
+      "after": "369d88f57c8f14bf7d253a534aeeef0e9dbb82f915f12ffcc83012aa47dd5d6a"
+    }
+  }
+}

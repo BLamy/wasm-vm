@@ -1,0 +1,10 @@
+{
+  "scope": "Complete the interrupted metadata checkout in this worker-owned scratch clone after authenticating every changed file against committed target bytes. No source, user changes or evidence discarded.",
+  "head": "0d04ce9d6f0aa80aeaefefff37351861f2b7088f",
+  "paths": [
+    "docs/design/session-replay-contract.json",
+    "docs/design/session-replay.md"
+  ],
+  "output": "Previous HEAD position was 76b56b01f feat(session): own asynchronous device completions across checkpoint restore\nHEAD is now at 0d04ce9d6 docs(session): audit qualified device completion recording boundaries\n",
+  "created": 1792334892.419633
+}

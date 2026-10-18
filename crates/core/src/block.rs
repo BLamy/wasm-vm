@@ -56,6 +56,10 @@ pub enum BlockError {
 /// Object-safe storage backend, sector-addressed in 512-byte units.
 pub trait BlockBackend {
     fn capacity_sectors(&self) -> u64;
+    /// Bound guest DMA allocation before a qualified asynchronous adapter owns the request.
+    fn max_transfer_bytes(&self) -> usize {
+        u32::MAX as usize
+    }
     fn read(&mut self, sector: u64, buf: &mut [u8]) -> Result<(), BlockError>;
     fn write(&mut self, sector: u64, buf: &[u8]) -> Result<(), BlockError>;
     fn flush(&mut self) -> Result<(), BlockError>;

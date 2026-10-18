@@ -1,0 +1,75 @@
+{
+  "status": "passed",
+  "head": "98260ff67d814311b3c2cf175a57476f3d3c64ab",
+  "deployment": "https://c5aa196d.wasm-vm.pages.dev",
+  "production": "https://wasm-vm.pages.dev/",
+  "files": [
+    {
+      "source": "/Volumes/e9-final-proof-ram/e9-t12-repaired-full-deploy-v2.log",
+      "path": "deployment.log",
+      "bytes": 5195,
+      "sha256": "fb7392ce4dc24359572575a0a1544c62d44647badec45f08738ecfd131169743"
+    },
+    {
+      "source": "/Volumes/e9-final-proof-ram/e9-t12-repaired-full-deploy-v2-receipt.json",
+      "path": "deployment-receipt.json",
+      "bytes": 488,
+      "sha256": "08e6bf7826c32c512ff0612bdac3988c2d8e0a2c9a59451af792df36c92efcef"
+    },
+    {
+      "source": "/Volumes/e9-final-proof-ram/e9-t12-repaired-full-deploy-v2/receipt.json",
+      "path": "payload-inventory.json",
+      "bytes": 160006,
+      "sha256": "e7e73d12ab4aaa2a45d65a6d59794fe5c529f7d1389024fe17a563f3b9387d04"
+    },
+    {
+      "source": "/Volumes/e9-final-proof-ram/e9-t12-repaired-full-deploy-v2.py",
+      "path": "deployment-producer.py",
+      "bytes": 1992,
+      "sha256": "efc6082c3f704838fb59a49baf6402309cc9e41ad0544e68163a763df480c20a"
+    },
+    {
+      "source": "/Volumes/e9-final-proof-ram/publish-verified-catalog.py",
+      "path": "snapshot-producer.py",
+      "bytes": 5680,
+      "sha256": "9cca99c500c25cea2bbd911d5ba7eb7bc25d1df27d1562e47e2c9e359b20a3ce"
+    },
+    {
+      "source": "/Volumes/e9-final-proof-ram/deploy-large-local-artifact-receipt.json",
+      "path": "local-artifact-receipt.json",
+      "bytes": 1024,
+      "sha256": "0734061a0d15a7405bdb4c0bb3b8cc5d2ee3fb016d0481d91985434266a9b308"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-rootfs-ranges/receipt.json",
+      "path": "rootfs-public-read-receipt.json",
+      "bytes": 45125,
+      "sha256": "bf9f28838336b89fac58cbf76747f3307787d8e8df3b2258f34ca501eb692672"
+    },
+    {
+      "source": "/Volumes/e9-final-proof-ram/e9-t12-repaired-range-deploy-curl.jsonl",
+      "path": "rootfs-public-read-delivery.jsonl",
+      "bytes": 795,
+      "sha256": "2b8ef02c609b34c5f0b26c4690f4045ac80c15586f9eccfe240fa1fb6d2c0567"
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t12-fetch-rootfs-ranges.py",
+      "path": "rootfs-public-read-producer.py",
+      "bytes": 2771,
+      "sha256": "4221dbf2275a95a6ecf2e27a02467635d7661db9a4141f62aaee7689f42c78bd"
+    },
+    {
+      "source": "/Volumes/e9-final-proof-ram/deploy-bin/curl",
+      "path": "rootfs-public-copy-producer.py",
+      "bytes": 1421,
+      "sha256": "4141fb6555d86bc531fbe6b151d78489f91641d9c48a5d0369fe08468303bea0"
+    },
+    {
+      "source": "/Volumes/e9-final-proof-ram/e9-t12-repaired-public-oracle.log",
+      "path": "public-oracle.log",
+      "bytes": 1309,
+      "sha256": "0788bcc1f1e8e9644a818cbf68a4b7ff755efe869d489bfb5f0b84b2f3e05d9c"
+    }
+  ],
+  "scope": "Stock Cloudflare deployment validates all local assets and seven immutable public R2 objects before publication. Rootfs public whole object reassembled from strict HTTP206 requests and reauthenticated; others freshly read by stock curl. No credentials/logging-debug artifacts included."
+}
