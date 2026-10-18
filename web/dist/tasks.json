@@ -34756,21 +34756,24 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-10-18 — worker — begin\n\nE9-T12 is the top eligible queue task after independently verified and published\nE9-T11. Risk is high: completion ordering, guest DMA/interrupts and persisted pending\nrequests cross architectural and asynchronous state boundaries. The slice will bind\naccepted completions to exact guest positions and request identities, keep immutable\nbase payload references separate, and restore pending state/cursors while revoking\nstale callback generations. Supported block, console/file-agent and audio-input\nadapters must record their actual results; unsupported adapters remain gated. GPU\nresults stay in T18. The final command will exercise delayed/reordered callbacks,\ncancellation and restore with guest memory/ring/IRQ witnesses. No implementation\nor verification claim is made by this activation entry.",
+      "verificationLog": "### 2026-10-18 — worker — begin\n\nE9-T12 is the top eligible queue task after independently verified and published\nE9-T11. Risk is high: completion ordering, guest DMA/interrupts and persisted pending\nrequests cross architectural and asynchronous state boundaries. The slice will bind\naccepted completions to exact guest positions and request identities, keep immutable\nbase payload references separate, and restore pending state/cursors while revoking\nstale callback generations. Supported block, console/file-agent and audio-input\nadapters must record their actual results; unsupported adapters remain gated. GPU\nresults stay in T18. The final command will exercise delayed/reordered callbacks,\ncancellation and restore with guest memory/ring/IRQ witnesses. No implementation\nor verification claim is made by this activation entry.\n\n### 2026-10-18 — worker — respond to fresh checkpoint refutation\n\nThe fresh critic reproduced an accepted malformed checkpoint at runtime 76b56b01:\nerasing capture_pending while retaining capture request 4 revoked live leases and\nissued duplicate request 5 at the next transition. Its independently rechecked point\nis /Volumes/e9-t11-cold-scratch/e9-t12-verifier/recheck.log:6–8, mutant SHA-256\nbb64f5b8a82261207e0cae4a36acfebce483c9a357f64f14ec5d627f1064473b.\nThe task remains in-progress. The initial cold/browser recordings and successful\npublication 48988385 remain historical evidence; no verified claim is made for them.\n\nThe worker repair validates reciprocal ownership between the broker pending map,\ncapture owner/result and actual due sound descriptor before any restore commit or\nlease revocation. A missing owner cannot leave a pending capture behind, and removing\nboth owner and request cannot erase the obligation of a real due descriptor. Future\nand stopped capture descriptors retain their proper scheduling behavior. The original\nregression fails before the fix; all eight then-existing adapter tests and the new\nfuture-descriptor round trip pass afterward. Exact red/green logs and raw frames are\nretained losslessly in evidence/e9-t12/repair-precheck/receipt.json. These are worker\nprechecks. The frozen repaired head must earn a new high-risk submission and fresh\ncritic verdict before this task can become verified.",
       "adversarial": "Reorder and delay host callbacks, cancel an in-flight request at a checkpoint and inject an old completion after restore. Compare guest memory and queue/interrupt witnesses.",
       "file": "tasks/epic-9-session-time-travel/E9-T12-device-completion-recording.md",
       "activity": [
         {
           "date": "2026-10-18",
-          "commits": 1,
+          "commits": 4,
           "labels": [
-            "task(session): begin asynchronous device completion recording"
+            "Reject orphaned capture state before restoring device checkpoints",
+            "feat(session): own asynchronous device completions across checkpoint restore",
+            "task(session): begin asynchronous device completion recording",
+            "Record E9-T12 cold device and browser evidence"
           ]
         }
       ],
       "firstActivity": "2026-10-18",
       "lastActivity": "2026-10-18",
-      "commitCount": 1
+      "commitCount": 4
     },
     {
       "id": "E9-T13",
