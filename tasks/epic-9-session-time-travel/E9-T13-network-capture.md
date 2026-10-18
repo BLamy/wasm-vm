@@ -3,7 +3,8 @@ id: E9-T13
 epic: 9
 title: Capture network sessions and replay them with zero live egress
 priority: 524.913
-status: implemented
+status: blocked
+blocked_on: Cloudflare account authorization for public proof; permitted independent G9 execution after automatic security review stopped the prior run
 depends_on: [E9-T09, E9-T03]
 estimate: S
 risk: high
@@ -595,3 +596,67 @@ The previously stopped independent execution/sensitivity/suite charter is
 unfinished and was not retried or replaced by another model/session.
 Cloudflare human authorization and required public deployment/browser proof
 also remain pending. No T13 runtime is published and no dependent is cleared.
+
+### 2026-10-18 — worker — preserve independent WFI assessment; external gates remain
+
+The existing separate critic completed its bounded read-only follow-up over
+19 changed files and39 textual hunks at frozen runtime
+2f2aa7aba484f6954ca04358385828093e561b83. Its saved WFI predictions hold
+in all four native and four built-browser cases. The additional worker
+recordings answer G1–G8 with the critic's explicit scope and dominance
+waivers; no new contradiction or further narrow worker recording was requested.
+
+The critic authenticated923 primary entries,199 preserved red entries,
+37 frozen source hashes,180 matching supplementary artifacts and32 unchanged
+prior HELD artifacts. Its assessment is preserved losslessly without editing
+the authored conclusions:
+- evidence/e9-t13/independent-wfi-read-only-review/provenance.json
+  SHA256 9599d7898e316ed1a83e9911f50c1faa2110fcb6db4a509fa0a69e968241c0aa;
+  27 originals,1247849 compressed bytes.
+- Authored assessment SHA256
+  e177f23d227d4c895718d737fcd1cda3d4cd39fc2d2597f1846d418710606f0a.
+- Authored detailed ledger SHA256
+  47505f97f6207ff6b167fcdfd017f177ace26a0c76deafb2a8ea75926d2d6c65.
+- Authored provenance SHA256
+  8ed07112038ca59d96d4284dd3d857e5ab46f33c589a8f7a9c5a2223555f0873.
+
+This is a partial independent source/record assessment, not a full task
+verification verdict. No VM/test/producer execution, sensitivity run, shared
+implementation/status write or substitute model/session occurred in that
+follow-up. The prior executed refutation and unchanged HELD observations remain
+recorded; the review does not relabel them as new execution.
+
+Acceptance is externally blocked on G9 and P13:
+
+1. G9 — Automatic security review stopped the earlier independent capacity/
+   adversarial execution for possible cybersecurity risk. Exact original service
+   report: /Volumes/e9-final-proof-ram/e9-t13-independent-service-block.json,
+   retained in evidence/e9-t13/wfi-external-proof-blockers/. The authored
+   assessment's G9 entry explicitly leaves independent execution/sensitivity/
+   suite disposition unfinished. The stopped command is historical in that
+   report and earlier logs, not an instruction to retry it. Completing that
+   charter requires a permitted execution environment/service state; this
+   worker cannot waive it or award itself verified status.
+2. P13 — Official read-only account repro:
+   node /Volumes/e9-t11-cold-scratch/e9-t12-npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js whoami
+   exited1, reported unauthenticated, and found no configured API token.
+   Metadata-only receipt:
+   /Volumes/e9-final-proof-ram/e9-t13-wfi-auth-result.json.
+   Prior device authorization expired without completion; a fresh five-minute
+   code awaits human readiness. No new login request or publication occurred.
+   The only eligible prepared payload remains frozen2f2aa7,750 files and
+   84317110 bytes. After official account authorization, the ordinary deploy
+   and authenticated public-browser commands are retained in
+   /Volumes/e9-final-proof-ram/e9-t13-wfi-external-accounting.json.
+   T12 live evidence does not establish T13 publication.
+
+Lossless nonsecret external receipts:
+evidence/e9-t13/wfi-external-proof-blockers/provenance.json,
+SHA256 ad95291b498a6988b20392ad10fc7a40be37f669ad9f1ab9a3c2bda6dc88673a.
+Credential contents and private authentication/debug logs are excluded.
+
+Status is blocked under AGENTS.md's external-dependency rule, not verified.
+The final worker submission at d454fc78f0b32baa59c175541e73fc660fb23cfb
+and its all25 local pass remain valid; only task/evidence/queue metadata changes
+here. No runtime was changed after frozen2f2aa7. E9-T01–T12 remain verified;
+E9-T14–T24 remain pending with no eligible independent Epic9 slice. No PR merges.
