@@ -1,0 +1,24 @@
+{
+  "task": "E9-T07",
+  "scope": "Verified pip/catalog publication only; runtime/native/cold/public behavior held by 14e34465 fresh verifier",
+  "head": "2c951bb5a4a4cc7fe10b8b327b7225796bccb57c",
+  "status": "passed",
+  "deployment": "https://ff121d62.wasm-vm.pages.dev",
+  "files": [
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-public-metadata/browser.png",
+      "bytes": 49018,
+      "sha256": "3e9ceb5133eb636f2446d89c13219086e183f0f14bded42619a76c677b78db66"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-public-metadata/report.json",
+      "bytes": 23858,
+      "sha256": "13c4c6483e878f82598bc332361b9740a29df6b491e9e33b434cb93f65c871b8"
+    },
+    {
+      "original": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-public-metadata/trace.zip",
+      "bytes": 8370628,
+      "sha256": "848aa5d3c81d4e5a1c602aca9321b693abce6369a73edb4e52e088687cfb97ec"
+    }
+  ]
+}
