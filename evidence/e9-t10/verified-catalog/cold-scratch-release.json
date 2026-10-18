@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "scope": "Release completed task-owned pristine source checkout and disposable independent compiler target after verifier P0 audit. Persistent independent Git metadata and every original recorded evidence path remain. Shared RAM volume and worker caches remain mounted and untouched.",
+  "head": "fafa1d63b5fa584df445e0c967ea52af966de5f8",
+  "audit": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/cold-source-audit.json",
+  "audit_sha256": "a1c70958d954ff315d59680d0551c69587681cbb9f23dbc8e2e99912631625d7",
+  "paths": [
+    "/Volumes/e9-build-scratch/cold-source-e9-t10",
+    "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-cold-oq2h378p/repo",
+    "/Volumes/e9-build-scratch/cold-target-dc5fab60d1b0-retry2"
+  ],
+  "retained_metadata": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t10-cold-oq2h378p/repo.git-metadata",
+  "started": 1792323563.360501,
+  "finished": 1792323565.90506
+}

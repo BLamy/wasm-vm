@@ -248,3 +248,22 @@ Commands: independent `audit_state.py`, source/packet/public hash audits,
 `witness-fault-critic.mjs`, `promoted_sabotage.py`; `node --test` for the six affected
 input/worker protocol files; `git diff --check HEAD^ HEAD -- tasks web/tests` (raw
 recorded evidence logs retain their original bytes); task policy before queue regeneration.
+
+### 2026-10-18 — worker — verified catalog published
+
+After verifier commit `d8cfeae5ddcb952dcac97231397fbbef1c9f2b77`,
+`make web-dist` preserved the exact runtime build/Wasm and changed only the generated
+task catalog, roadmap pip and service-worker stamp. At metadata head `28453118399c7dff3a50db5e6431c147af32528f`,
+`target/e9-publish-verified-catalog.py publish --snapshot target/e9-t10-full-deploy`
+published that bounded delta to Cloudflare (preview
+`https://a5d25264.wasm-vm.pages.dev`), carrying the authenticated full deployment's
+unchanged release assets and R2 bindings.
+
+`node target/e9-t10-public-metadata.mjs https://a5d25264.wasm-vm.pages.dev`
+then matched **25** actual production asset hashes, passed **127 / 0** with no
+unexpected console errors, and asserted both the delivered-input capability pip
+and E9-T10 task catalog are `verified`. Report SHA-256:
+`d1ad2ef1d0b6d6029921e0f3baa796ded311981abe24f390024823be1adfb2b1`.
+Packet: `evidence/e9-t10/verified-catalog/`. Disposable pristine-source/compiler
+scratch was released only after its independent verifier audit; all recorded
+evidence and independent Git metadata remain. PR #585 stays open.
