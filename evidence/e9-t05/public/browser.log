@@ -1,0 +1,4 @@
+Booting actual guest: live
+Guest shell ready: live
+Booting actual guest: restored
+Software checkpoint: exact tuple, atomic failure, page reload, guest RAM/UART/file and independent ext4 witness passed.

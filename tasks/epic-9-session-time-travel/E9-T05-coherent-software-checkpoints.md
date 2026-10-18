@@ -234,3 +234,31 @@ The original worktree's publication preparation changes task catalog/service-wor
 metadata only, after the isolated source freeze. Runtime, tests and dependencies
 remain frozen. Independent receipt interrogation and Cloudflare/public proof remain
 pending; status stays `evidence-needed`.
+
+
+### 2026-10-18 — worker — public deployment and sealed recording
+
+Published the committed deployable build at `3508ad16ca0de135f06e6f7cc8d2fb4b3a879332`
+with `bash tools/deploy-cloudflare.sh`: deployment
+<https://6545bb6f.wasm-vm.pages.dev>, production <https://wasm-vm.pages.dev/>.
+The deployment-only rewrites of the five artifact URL manifests were restored to their
+committed bytes before recording; the source tree was clean before and after the run.
+Runtime remains `c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc`.
+
+Command: `node tools/verify/e9-software-checkpoints-browser.mjs --url https://wasm-vm.pages.dev/ --output target/evidence/e9-t05-public-final`.
+The recording passed from 04:42:52 to 04:51:30 UTC. All **16** checked production assets
+match the frozen deployable bytes. The actual guest checkpoint reload preserves the
+complete frame byte for byte, RAM, queued UART and held input; the guest file and
+independent ext4 witnesses agree. Original-I/O, publication-failure, direct-loader and
+both repaired producer-buffer schedules pass. The demo reports **127 passed, 0 failed**,
+zero console errors and the checkpoint roadmap pip is verified. The retained factory
+GPU is qualified, neither lost nor poisoned, and physically draws in its fresh epoch
+after **2,499,808** retired guest instructions.
+
+Original report: `target/evidence/e9-t05-public-final/report.json`, SHA-256
+`6b31a2af91a67ab9f6eac8bec336bc96d9e543fb18ffbddbb18b2be83cf03217`.
+`evidence/e9-t05/public/` contains **34** compact files plus provenance authenticating
+**781** original files, including the retained full browser trace/profile, raw tuples
+and ext4 images outside Git. The packet records the exact command, deployment log,
+source hashes, screenshots and lossless tuple aliases. Status remains `evidence-needed`
+until the fresh reviewer interrogates the cold and public receipts and records a verdict.

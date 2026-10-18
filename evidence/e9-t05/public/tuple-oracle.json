@@ -1,0 +1,411 @@
+{
+  "status": "passed",
+  "base": {
+    "status": "passed",
+    "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/releases/rootfs/alpine-rootfs.ext4",
+    "bytes": 536870912,
+    "sha256": "ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8",
+    "manifest_sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+    "chunks": 4096,
+    "unique_chunks": 227
+  },
+  "docker_image": "sha256:0d1ead8c1106a838e478676dff113f21cdd91eb9456232ff9f6c24679a87d0eb",
+  "checkpoints": {
+    "before": {
+      "context": {
+        "offset": 212,
+        "bytes": 429,
+        "sha256": "86df6ff31ce7e193738558994207b6bc459778077542fb6e9c26c2c4729a01be"
+      },
+      "native": {
+        "offset": 641,
+        "bytes": 23610715,
+        "sha256": "14b852809d7d949ad4db496b5bfa7034362a81c944bfdf77e3cc1f9ed296bf7b"
+      },
+      "disk": {
+        "offset": 23611356,
+        "bytes": 225781,
+        "sha256": "1909637cdcf23b648a8a27717f1d9dee44b67ece113570fb02e39e8da4bf53e9"
+      },
+      "input": {
+        "offset": 23837137,
+        "bytes": 23,
+        "sha256": "c24b7fcc60ca6d28baa385a795fdc7b4979b537d7c79c467b513adbf7a1c2d19"
+      },
+      "output": {
+        "offset": 23837160,
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ram": {
+        "bytes": 268435456,
+        "sha256": "f35c5e9fa9816e41178bb968e510e0d35c06c5482d73e9b27119216e019fa514"
+      },
+      "sections": {
+        "1": {
+          "bytes": 1309,
+          "sha256": "54f9ee13b69f5bb21ae1bc0182992a9bbb2b09df19e007ecc21379e38caa6901"
+        },
+        "2": {
+          "bytes": 23605417,
+          "sha256": "d97ec66e98e3e10ff77e94c91636edc5d1131622caf97a625377a81f491d2b05"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "623782c93d67961d6d9301ab10bcc27f5efa912baa6226adda38028c38823c45"
+        },
+        "4": {
+          "bytes": 156,
+          "sha256": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a"
+        },
+        "5": {
+          "bytes": 22,
+          "sha256": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6"
+        },
+        "8": {
+          "bytes": 27,
+          "sha256": "afa5117cc3b391e97a763c737f835820491578323d917d2e907f5ac1c5f69b62"
+        },
+        "6": {
+          "bytes": 290,
+          "sha256": "e8e840d60fb6e91b7173ca333072648e34d297fa160a6855fe11a2c7bebe423b"
+        },
+        "7": {
+          "bytes": 311,
+          "sha256": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb"
+        },
+        "12": {
+          "bytes": 552,
+          "sha256": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845"
+        },
+        "13": {
+          "bytes": 403,
+          "sha256": "d564589e21c3246263e288895b7c901bb7b6d7461bc677793ae23e6d20240e33"
+        },
+        "14": {
+          "bytes": 375,
+          "sha256": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db"
+        },
+        "15": {
+          "bytes": 375,
+          "sha256": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487"
+        },
+        "16": {
+          "bytes": 485,
+          "sha256": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b"
+        },
+        "10": {
+          "bytes": 292,
+          "sha256": "070be9e7c9b5cbc1c4c849c2a145d841330c12fceae85d7092251f94120c90b8"
+        },
+        "11": {
+          "bytes": 448,
+          "sha256": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a99fec80b18b9aa608e23d8d8dd72e22988209bc762908674621f6cfded9b9de"
+        }
+      },
+      "file": {
+        "hex": "65393a6265666f72650a",
+        "sha256": "9db352766463465c7af691d4bed9133f2d8c01d968b62a90c946a44b4666e0c6",
+        "recovery_command": [
+          "docker",
+          "run",
+          "--rm",
+          "--network",
+          "none",
+          "-v",
+          "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-public-final:/evidence:rw",
+          "--entrypoint",
+          "/sbin/e2fsck",
+          "sha256:0d1ead8c1106a838e478676dff113f21cdd91eb9456232ff9f6c24679a87d0eb",
+          "-fy",
+          "/evidence/before.ext4"
+        ],
+        "read_command": [
+          "docker",
+          "run",
+          "--rm",
+          "--network",
+          "none",
+          "-v",
+          "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-public-final:/evidence:ro",
+          "--entrypoint",
+          "/usr/sbin/debugfs",
+          "sha256:0d1ead8c1106a838e478676dff113f21cdd91eb9456232ff9f6c24679a87d0eb",
+          "-R",
+          "cat /root/e9-session/state",
+          "/evidence/before.ext4"
+        ]
+      },
+      "frame_sha256": "95ec5bad55a328fa55bf97e8543e84089d955450db4616d496a00cbd52807e4b",
+      "generation": "0"
+    },
+    "after": {
+      "context": {
+        "offset": 212,
+        "bytes": 429,
+        "sha256": "86df6ff31ce7e193738558994207b6bc459778077542fb6e9c26c2c4729a01be"
+      },
+      "native": {
+        "offset": 641,
+        "bytes": 23607398,
+        "sha256": "9fb01ebb6784165c960232fdee9fdf21ec375653bb15f92200479e483e3d3434"
+      },
+      "disk": {
+        "offset": 23608039,
+        "bytes": 258613,
+        "sha256": "27fef4b297423ce6b4912fc38ed86718f004a08f58818f7546b576587b826b14"
+      },
+      "input": {
+        "offset": 23866652,
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "output": {
+        "offset": 23866652,
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ram": {
+        "bytes": 268435456,
+        "sha256": "bc170e653e1c17f988db745f6b2b8b2e0e8e4b62cbaf550d7286233c80988cef"
+      },
+      "sections": {
+        "1": {
+          "bytes": 1309,
+          "sha256": "f65acba83e89ac77a1b6619a62bd31758da0f37d42589d7d9acf195a63de9680"
+        },
+        "2": {
+          "bytes": 23602126,
+          "sha256": "db71637c6373b4d06f8a6216829206928e42d9b8cd50811b78728d3a7ccf6ece"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "a2560ef599eea28ceee483dbea399401a02458cf2d329508b923fa7f01258d30"
+        },
+        "4": {
+          "bytes": 156,
+          "sha256": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a"
+        },
+        "5": {
+          "bytes": 22,
+          "sha256": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6"
+        },
+        "8": {
+          "bytes": 27,
+          "sha256": "afa5117cc3b391e97a763c737f835820491578323d917d2e907f5ac1c5f69b62"
+        },
+        "6": {
+          "bytes": 290,
+          "sha256": "e7d69f61bc13f616f9c351aa70a01278c7355f6410de7a800b2b7dfbd770ecf9"
+        },
+        "7": {
+          "bytes": 311,
+          "sha256": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb"
+        },
+        "12": {
+          "bytes": 552,
+          "sha256": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845"
+        },
+        "13": {
+          "bytes": 377,
+          "sha256": "7d12acde355f307b13a8ad46684acb2041f113b5b40947292162074b88752c62"
+        },
+        "14": {
+          "bytes": 375,
+          "sha256": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db"
+        },
+        "15": {
+          "bytes": 375,
+          "sha256": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487"
+        },
+        "16": {
+          "bytes": 485,
+          "sha256": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b"
+        },
+        "10": {
+          "bytes": 292,
+          "sha256": "070be9e7c9b5cbc1c4c849c2a145d841330c12fceae85d7092251f94120c90b8"
+        },
+        "11": {
+          "bytes": 448,
+          "sha256": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "58b75db02345a199f0ca891dca43122e93b1c96c23145b8b7a5b5c10e123411d"
+        }
+      },
+      "file": {
+        "hex": "65393a61667465720a",
+        "sha256": "c93da81a8be3355a13ad4d69801280303b5a5fa53699e91863f76f5c073b7ae6",
+        "recovery_command": [
+          "docker",
+          "run",
+          "--rm",
+          "--network",
+          "none",
+          "-v",
+          "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-public-final:/evidence:rw",
+          "--entrypoint",
+          "/sbin/e2fsck",
+          "sha256:0d1ead8c1106a838e478676dff113f21cdd91eb9456232ff9f6c24679a87d0eb",
+          "-fy",
+          "/evidence/after.ext4"
+        ],
+        "read_command": [
+          "docker",
+          "run",
+          "--rm",
+          "--network",
+          "none",
+          "-v",
+          "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-public-final:/evidence:ro",
+          "--entrypoint",
+          "/usr/sbin/debugfs",
+          "sha256:0d1ead8c1106a838e478676dff113f21cdd91eb9456232ff9f6c24679a87d0eb",
+          "-R",
+          "cat /root/e9-session/state",
+          "/evidence/after.ext4"
+        ]
+      },
+      "frame_sha256": "51a06f82091bdf04b6bc6a691c31905f4314d3e7aa932a39fd14041b13d9a590",
+      "generation": "0"
+    },
+    "restored": {
+      "context": {
+        "offset": 212,
+        "bytes": 429,
+        "sha256": "86df6ff31ce7e193738558994207b6bc459778077542fb6e9c26c2c4729a01be"
+      },
+      "native": {
+        "offset": 641,
+        "bytes": 23610715,
+        "sha256": "14b852809d7d949ad4db496b5bfa7034362a81c944bfdf77e3cc1f9ed296bf7b"
+      },
+      "disk": {
+        "offset": 23611356,
+        "bytes": 225781,
+        "sha256": "1909637cdcf23b648a8a27717f1d9dee44b67ece113570fb02e39e8da4bf53e9"
+      },
+      "input": {
+        "offset": 23837137,
+        "bytes": 23,
+        "sha256": "c24b7fcc60ca6d28baa385a795fdc7b4979b537d7c79c467b513adbf7a1c2d19"
+      },
+      "output": {
+        "offset": 23837160,
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ram": {
+        "bytes": 268435456,
+        "sha256": "f35c5e9fa9816e41178bb968e510e0d35c06c5482d73e9b27119216e019fa514"
+      },
+      "sections": {
+        "1": {
+          "bytes": 1309,
+          "sha256": "54f9ee13b69f5bb21ae1bc0182992a9bbb2b09df19e007ecc21379e38caa6901"
+        },
+        "2": {
+          "bytes": 23605417,
+          "sha256": "d97ec66e98e3e10ff77e94c91636edc5d1131622caf97a625377a81f491d2b05"
+        },
+        "3": {
+          "bytes": 17,
+          "sha256": "623782c93d67961d6d9301ab10bcc27f5efa912baa6226adda38028c38823c45"
+        },
+        "4": {
+          "bytes": 156,
+          "sha256": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a"
+        },
+        "5": {
+          "bytes": 22,
+          "sha256": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6"
+        },
+        "8": {
+          "bytes": 27,
+          "sha256": "afa5117cc3b391e97a763c737f835820491578323d917d2e907f5ac1c5f69b62"
+        },
+        "6": {
+          "bytes": 290,
+          "sha256": "e8e840d60fb6e91b7173ca333072648e34d297fa160a6855fe11a2c7bebe423b"
+        },
+        "7": {
+          "bytes": 311,
+          "sha256": "f5598b6d158f5d6febf32ca9678afa9e45c2fe03955a550238663a01eefa3afb"
+        },
+        "12": {
+          "bytes": 552,
+          "sha256": "4632ff767b2433ef1d023fe4a2ffd8c9c114cd30546301414f06c9d397898845"
+        },
+        "13": {
+          "bytes": 403,
+          "sha256": "d564589e21c3246263e288895b7c901bb7b6d7461bc677793ae23e6d20240e33"
+        },
+        "14": {
+          "bytes": 375,
+          "sha256": "63fb8cc65ec9ad93372b72a763936729f2c42b4c76bc2338a1291625d9a063db"
+        },
+        "15": {
+          "bytes": 375,
+          "sha256": "6d3df870706ee70fc5ba34f76fea9b991d76cd913950fe49455bb32a61b38487"
+        },
+        "16": {
+          "bytes": 485,
+          "sha256": "4b851cfde363d692e527b753d52f94772079f984290944107728aa9f04d4882b"
+        },
+        "10": {
+          "bytes": 292,
+          "sha256": "070be9e7c9b5cbc1c4c849c2a145d841330c12fceae85d7092251f94120c90b8"
+        },
+        "11": {
+          "bytes": 448,
+          "sha256": "2ff535dc9cf61a52bc25b4f96bc0fd821ea4f8d25a4aa7f39a7993a377a95c98"
+        },
+        "9": {
+          "bytes": 24,
+          "sha256": "a99fec80b18b9aa608e23d8d8dd72e22988209bc762908674621f6cfded9b9de"
+        }
+      },
+      "file": {
+        "hex": "65393a6265666f72650a",
+        "sha256": "9db352766463465c7af691d4bed9133f2d8c01d968b62a90c946a44b4666e0c6",
+        "recovery_command": [
+          "docker",
+          "run",
+          "--rm",
+          "--network",
+          "none",
+          "-v",
+          "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-public-final:/evidence:rw",
+          "--entrypoint",
+          "/sbin/e2fsck",
+          "sha256:0d1ead8c1106a838e478676dff113f21cdd91eb9456232ff9f6c24679a87d0eb",
+          "-fy",
+          "/evidence/restored.ext4"
+        ],
+        "read_command": [
+          "docker",
+          "run",
+          "--rm",
+          "--network",
+          "none",
+          "-v",
+          "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-public-final:/evidence:ro",
+          "--entrypoint",
+          "/usr/sbin/debugfs",
+          "sha256:0d1ead8c1106a838e478676dff113f21cdd91eb9456232ff9f6c24679a87d0eb",
+          "-R",
+          "cat /root/e9-session/state",
+          "/evidence/restored.ext4"
+        ]
+      },
+      "frame_sha256": "95ec5bad55a328fa55bf97e8543e84089d955450db4616d496a00cbd52807e4b",
+      "generation": "0"
+    }
+  }
+}
