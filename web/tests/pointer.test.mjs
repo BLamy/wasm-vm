@@ -330,3 +330,76 @@ test("Wasm pointer adapter requires the complete four-method transport surface",
     ["mouse-sync"],
   ]);
 });
+
+// E9-T10 verifier promotion: the real-guest critic observed these exact release/mode
+// boundaries on direct and delayed transports, including duplicate absolute positions.
+for (const serialized of [false, true]) {
+  for (const seed of [0x9e3779b9, 0xa409a563]) {
+    test(`capture records releases before mode changes (${serialized ? "serialized" : "direct"}, ${seed})`, async () => {
+      const calls = [];
+      let finish;
+      const complete = new Promise(resolve => { finish = resolve; });
+      const controller = Object.fromEntries([
+        "sendTabletEvent", "syncTablet", "sendMouseEvent", "syncMouse", "setInputPointerMode",
+      ].map(name => [name, (...args) => {
+        const apply = () => {
+          calls.push([name, ...args]);
+          if (name === "setInputPointerMode" && args[0] === false) finish();
+        };
+        return serialized ? Promise.resolve().then(apply) : apply();
+      }]));
+      const bridge = createPointerBridge(createWasmPointerAdapter(controller), {
+        getRect: () => ({ left: 0, top: 0, width: 100, height: 100 }),
+        documentTarget: null,
+        serializeTransport: serialized,
+      });
+      const x = seed % 97 + 1, y = (seed >>> 8) % 97 + 1;
+      const dx = -(seed % 13 + 1), dy = (seed >>> 12) % 11 + 1;
+      bridge.handlePointerMove({ clientX: x, clientY: y });
+      bridge.handlePointerMove({ clientX: x, clientY: y });
+      bridge.handlePointerDown({ button: 0, pointerId: 1 });
+      bridge.setMode(POINTER_MODES.RELATIVE, { requestLock: false });
+      bridge.handlePointerMove({ movementX: dx, movementY: dy });
+      bridge.handlePointerDown({ button: 0, pointerId: 1 });
+      bridge.setMode(POINTER_MODES.ABSOLUTE, { requestLock: false });
+      await complete;
+      const absolute = [
+        ["sendTabletEvent", EV_ABS, ABS_X, Math.round(x * 32767 / 100)],
+        ["sendTabletEvent", EV_ABS, ABS_Y, Math.round(y * 32767 / 100)],
+        ["syncTablet"],
+      ];
+      assert.deepEqual(calls, [
+        ...absolute, ...absolute,
+        ["sendTabletEvent", EV_KEY, BTN_LEFT, 1], ["syncTablet"],
+        ["sendTabletEvent", EV_KEY, BTN_LEFT, 0], ["syncTablet"],
+        ["setInputPointerMode", true],
+        ["sendMouseEvent", EV_REL, REL_X, dx],
+        ["sendMouseEvent", EV_REL, REL_Y, dy], ["syncMouse"],
+        ["sendMouseEvent", EV_KEY, BTN_LEFT, 1], ["syncMouse"],
+        ["sendMouseEvent", EV_KEY, BTN_LEFT, 0], ["syncMouse"],
+        ["setInputPointerMode", false],
+      ]);
+      assert.deepEqual(bridge.heldButtons(), []);
+    });
+  }
+}
+
+test("serialized capture reports a refused pointer mode without a guest frame", async () => {
+  const calls = [];
+  let reject;
+  const rejected = new Promise(resolve => { reject = resolve; });
+  const io = recorder();
+  const bridge = createPointerBridge({
+    ...io,
+    setInputPointerMode: () => {
+      calls.push("mode-refused");
+      throw new Error("live input is forbidden during replay");
+    },
+  }, { documentTarget: null, serializeTransport: true, onDiagnostic: reject });
+  bridge.setMode(POINTER_MODES.RELATIVE, { requestLock: false });
+  const diagnostic = await rejected;
+  assert.equal(diagnostic.reason, "pointer-mode-error");
+  assert.match(diagnostic.error, /live input is forbidden during replay/);
+  assert.deepEqual(calls, ["mode-refused"]);
+  assert.deepEqual(io.calls, []);
+});

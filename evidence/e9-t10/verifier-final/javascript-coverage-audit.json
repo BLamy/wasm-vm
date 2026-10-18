@@ -1,0 +1,2296 @@
+{
+  "web/loader.js": {
+    "evidence_entries": 15,
+    "evidence": [
+      "target/evidence/e9-t10-cold-final-incremental/acceptance/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-public-final/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/loader-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/pointer-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/witness-fault-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-worker-final-incremental/browser/javascript-coverage.json.gz"
+    ],
+    "covered": [
+      {
+        "line": 1022,
+        "source": "let inputActive=false,inputStopped=false,inputJournal=null,inputStore=null,inputWriter=null,inputFlush=null;",
+        "max_count": 3
+      },
+      {
+        "line": 1023,
+        "source": "const flushInputRecording=()=>{",
+        "max_count": 3
+      },
+      {
+        "line": 1024,
+        "source": "if(!inputJournal)return Promise.resolve(null);",
+        "max_count": 2053
+      },
+      {
+        "line": 1025,
+        "source": "// A caller owns a drain after every earlier save. Sharing an older promise would lose",
+        "max_count": 2052
+      },
+      {
+        "line": 1026,
+        "source": "// receipts arriving after its drain, notably a stop while immutable objects are written.",
+        "max_count": 2052
+      },
+      {
+        "line": 1027,
+        "source": "const previous=inputFlush;",
+        "max_count": 2052
+      },
+      {
+        "line": 1028,
+        "source": "const current=(previous?previous.catch(()=>{}):Promise.resolve()).then(async()=>{",
+        "max_count": 2052
+      },
+      {
+        "line": 1029,
+        "source": "await inputJournal.flush();",
+        "max_count": 2052
+      },
+      {
+        "line": 1030,
+        "source": "inputJournal.stage(machine.takeInputDeliveries());",
+        "max_count": 2052
+      },
+      {
+        "line": 1031,
+        "source": "return inputJournal.flush();",
+        "max_count": 2052
+      },
+      {
+        "line": 1032,
+        "source": "}).catch(error=>{paused=true;try{if(!inputStopped&&!machine.inputPosition().paused)machine.inputLifecycle(0);}catch{}throw error;})",
+        "max_count": 2052
+      },
+      {
+        "line": 1033,
+        "source": ".finally(()=>{if(inputFlush===current)inputFlush=null;});",
+        "max_count": 2053
+      },
+      {
+        "line": 1034,
+        "source": "inputFlush=current;return current;",
+        "max_count": 2053
+      },
+      {
+        "line": 1035,
+        "source": "};",
+        "max_count": 2053
+      },
+      {
+        "line": 1036,
+        "source": "const startInputCapture=async(replay=false)=>{",
+        "max_count": 3
+      },
+      {
+        "line": 1037,
+        "source": "if(!paused||stopped||gpuCaptureBusy||inputActive||productionGpu||virgl||enableMic||audioRequested||captureRequested",
+        "max_count": 1
+      },
+      {
+        "line": 1038,
+        "source": "||guestClock!=='icount'||interactiveClock!==undefined)throw Error('pause a software ICount guest before input capture');",
+        "max_count": 1
+      },
+      {
+        "line": 1039,
+        "source": "await taskQuiescence.waitForIdle();",
+        "max_count": 1
+      },
+      {
+        "line": 1040,
+        "source": "if(stopped||!paused)throw Error('input capture owner changed');",
+        "max_count": 1
+      },
+      {
+        "line": 1041,
+        "source": "machine.startInputCapture(replay);inputActive=true;inputStopped=false;",
+        "max_count": 1
+      },
+      {
+        "line": 1042,
+        "source": "};",
+        "max_count": 1
+      },
+      {
+        "line": 1043,
+        "source": "const stopInputCapture=async()=>{",
+        "max_count": 3
+      },
+      {
+        "line": 1044,
+        "source": "if(!inputActive)return;",
+        "max_count": 7
+      },
+      {
+        "line": 1045,
+        "source": "paused=true;",
+        "max_count": 6
+      },
+      {
+        "line": 1046,
+        "source": "if(!inputStopped){machine.inputLifecycle(2);inputStopped=true;}",
+        "max_count": 6
+      },
+      {
+        "line": 1047,
+        "source": "await taskQuiescence.waitForIdle();await flushInputRecording();",
+        "max_count": 6
+      },
+      {
+        "line": 1048,
+        "source": "if(inputWriter){await inputWriter.release();inputWriter=null;}",
+        "max_count": 6
+      },
+      {
+        "line": 1049,
+        "source": "if(inputStore){await inputStore.close();inputStore=null;}",
+        "max_count": 6
+      },
+      {
+        "line": 1050,
+        "source": "};",
+        "max_count": 7
+      },
+      {
+        "line": 1169,
+        "source": "if(inputActive){",
+        "max_count": 5579
+      },
+      {
+        "line": 1170,
+        "source": "try{await flushInputRecording();}catch(error){onError(error);tickScheduled=false;return;}",
+        "max_count": 2044
+      },
+      {
+        "line": 1171,
+        "source": "if(stopped||paused||quotaPaused){tickScheduled=false;return;}",
+        "max_count": 2044
+      },
+      {
+        "line": 1172,
+        "source": "}",
+        "max_count": 2044
+      },
+      {
+        "line": 1436,
+        "source": "if(eventType===1){if(value===1)heldKeyboard.add(code);else if(value===0)heldKeyboard.delete(code);}",
+        "max_count": 4
+      },
+      {
+        "line": 1449,
+        "source": "if(eventType===1){if(value===1)heldTablet.add(code);else if(value===0)heldTablet.delete(code);}",
+        "max_count": 2
+      },
+      {
+        "line": 1460,
+        "source": "if(eventType===1){if(value===1)heldMouse.add(code);else if(value===0)heldMouse.delete(code);}",
+        "max_count": 2
+      },
+      {
+        "line": 1477,
+        "source": "await stopInputCapture();",
+        "max_count": 5
+      },
+      {
+        "line": 1487,
+        "source": "pause: () => { if(inputActive&&!inputStopped)machine.inputLifecycle(0);paused=true;return flushInputRecording(); },",
+        "max_count": 3
+      },
+      {
+        "line": 1491,
+        "source": "if(inputActive){if(inputStopped)throw Error('input prefix stopped; start a fresh guest');machine.inputLifecycle(1);}",
+        "max_count": 1
+      },
+      {
+        "line": 1533,
+        "source": "startInputCapture,",
+        "max_count": 3
+      },
+      {
+        "line": 1534,
+        "source": "stopInputCapture,",
+        "max_count": 3
+      },
+      {
+        "line": 1535,
+        "source": "inputPosition:()=>inputActive?machine.inputPosition():null,",
+        "max_count": 3
+      },
+      {
+        "line": 1536,
+        "source": "takeInputDeliveries:()=>{if(inputJournal)throw Error('durable input recording owns its receipts');return machine.takeInputDeliveries();},",
+        "max_count": 3
+      },
+      {
+        "line": 1537,
+        "source": "applyRecordedInput:(...args)=>machine.applyRecordedInput(...args),",
+        "max_count": 3
+      },
+      {
+        "line": 1538,
+        "source": "setInputPointerMode:(relative)=>{if(inputActive&&!stopped)machine.setInputPointerMode(relative);},",
+        "max_count": 3
+      },
+      {
+        "line": 1539,
+        "source": "flushInputRecording,",
+        "max_count": 3
+      },
+      {
+        "line": 1540,
+        "source": "startInputRecording:async({database,id})=>{",
+        "max_count": 3
+      },
+      {
+        "line": 1541,
+        "source": "if(inputActive||!paused||stopped||gpuCaptureBusy||productionGpu||virgl||extraDiskBytes||!isChunked||enableMic",
+        "max_count": 2
+      },
+      {
+        "line": 1542,
+        "source": "||audioRequested||captureRequested||ramMib>256||usePersist||guestClock!=='icount'||interactiveClock!==undefined",
+        "max_count": 2
+      },
+      {
+        "line": 1543,
+        "source": "||network.provider!=='offline')throw Error('pause a fresh software ICount guest without live media or outbound connections first');",
+        "max_count": 2
+      },
+      {
+        "line": 1544,
+        "source": "gpuCaptureBusy=true;let store,writer;",
+        "max_count": 2
+      },
+      {
+        "line": 1545,
+        "source": "try{",
+        "max_count": 2
+      },
+      {
+        "line": 1546,
+        "source": "await taskQuiescence.waitForIdle();",
+        "max_count": 2
+      },
+      {
+        "line": 1547,
+        "source": "if(stopped||!paused)throw Error('input recording owner changed');",
+        "max_count": 2
+      },
+      {
+        "line": 1548,
+        "source": "const [{SessionStore},{SessionInputJournal}]=await Promise.all([import('./session-store.js'),import('./session-inputs.js')]);",
+        "max_count": 2
+      },
+      {
+        "line": 1549,
+        "source": "let witness;",
+        "max_count": 2
+      },
+      {
+        "line": 1550,
+        "source": "for(let attempt=0;attempt<64;attempt++){",
+        "max_count": 2
+      },
+      {
+        "line": 1551,
+        "source": "try{witness=machine.captureInputWitness();break;}catch(error){",
+        "max_count": 3
+      },
+      {
+        "line": 1552,
+        "source": "if(!/NotQuiesced|WouldBlock|CacheMiss/.test(String(error)))throw error;",
+        "max_count": 2
+      },
+      {
+        "line": 1553,
+        "source": "await machine.fetchPending();",
+        "max_count": 1
+      },
+      {
+        "line": 1554,
+        "source": "}",
+        "max_count": 1
+      },
+      {
+        "line": 1555,
+        "source": "}",
+        "max_count": 3
+      },
+      {
+        "line": 1556,
+        "source": "if(!witness)throw Error('input witness did not quiesce within its budget');",
+        "max_count": 1
+      },
+      {
+        "line": 1557,
+        "source": "const state=guestClockLifecycle.state();",
+        "max_count": 1
+      },
+      {
+        "line": 1558,
+        "source": "const configuration={version:1,inputPrefixWitness:1,providersComplete:false,runtime:GPU_CHECKPOINT_BUILD_ID,",
+        "max_count": 1
+      },
+      {
+        "line": 1559,
+        "source": "ramMib,bootargs,clock:{mode:'icount',divider:state.clockDiv,timebase_hz:String(state.timebaseHz),interactive:null},",
+        "max_count": 1
+      },
+      {
+        "line": 1560,
+        "source": "kernel:{url:new URL(km.url,globalThis.location.href).href,sha256:km.sha256,length:String(kernel.length)},",
+        "max_count": 1
+      },
+      {
+        "line": 1561,
+        "source": "wasm:{url:new URL('./pkg/wasm_vm_wasm_bg.wasm',import.meta.url).href,sha256:SOFTWARE_CHECKPOINT_WASM_SHA256,length:String(SOFTWARE_CHECKPOINT_WASM_BYTES)},",
+        "max_count": 1
+      },
+      {
+        "line": 1562,
+        "source": "devices:JSON.parse(machine.softwareCheckpointTopology()),imageManifest:imageManifestText,baseUrl,",
+        "max_count": 1
+      },
+      {
+        "line": 1563,
+        "source": "initialHostInput:{keyboard:[...heldKeyboard],tablet:[...heldTablet],mouse:[...heldMouse]},",
+        "max_count": 1
+      },
+      {
+        "line": 1564,
+        "source": "fileTransfer:opts.slirpNet?JSON.parse(machine.fileTransferStatus()):null};",
+        "max_count": 1
+      },
+      {
+        "line": 1565,
+        "source": "store=await SessionStore.open(database);writer=await store.writer(id);",
+        "max_count": 2
+      },
+      {
+        "line": 1566,
+        "source": "const journal=await SessionInputJournal.createWitness(store,writer,configuration,witness.native,witness.disk,witness.pending,witness.output);",
+        "max_count": 1
+      },
+      {
+        "line": 1567,
+        "source": "if(stopped||!paused)throw Error('input recording owner changed');",
+        "max_count": 1
+      },
+      {
+        "line": 1568,
+        "source": "machine.startInputCapture(false);inputActive=true;inputStopped=false;",
+        "max_count": 1
+      },
+      {
+        "line": 1569,
+        "source": "inputJournal=journal;inputStore=store;inputWriter=writer;return {id,end:journal.end};",
+        "max_count": 1
+      },
+      {
+        "line": 1570,
+        "source": "}catch(error){if(writer)await writer.release();if(store)await store.close();throw error;}",
+        "max_count": 1
+      },
+      {
+        "line": 1571,
+        "source": "finally{gpuCaptureBusy=false;}",
+        "max_count": 2
+      },
+      {
+        "line": 1572,
+        "source": "},",
+        "max_count": 2
+      },
+      {
+        "line": 1741,
+        "source": "'stop','pause','inputPosition','takeInputDeliveries','flushInputRecording','stopInputCapture','captureDiskDelta','captureSoftwareCheckpoint','saveGpuCheckpoint']);",
+        "max_count": 3
+      },
+      {
+        "line": 1749,
+        "source": "const inputAllowed=new Set(['setDisplay','sendInput','sendAgentInput','sendKeyboardEvent','syncKeyboard',",
+        "max_count": 3
+      },
+      {
+        "line": 1750,
+        "source": "'sendTabletEvent','syncTablet','sendMouseEvent','syncMouse','setInputPointerMode','confirmAgentHello',",
+        "max_count": 3
+      },
+      {
+        "line": 1751,
+        "source": "'beginFileUpload','pushFileUpload','cancelFileUpload','stop','pause','resume','stopInputCapture',",
+        "max_count": 3
+      },
+      {
+        "line": 1752,
+        "source": "'inputPosition','takeInputDeliveries','applyRecordedInput','flushInputRecording','isPaused','stateDigest',",
+        "max_count": 3
+      },
+      {
+        "line": 1753,
+        "source": "'displayStats','gpuStats','keyboardLedState','inputDeviceStats','guestClockState','icountDividerSelection',",
+        "max_count": 3
+      },
+      {
+        "line": 1754,
+        "source": "'fileTransferReady','fileTransferStatus','dhcpStats','schedulerStats','jitStats','profileStats','fetchStats',",
+        "max_count": 3
+      },
+      {
+        "line": 1755,
+        "source": "'persistStats','readOnly','hasUnpersisted','storageEstimate','restoredFromBootSnapshot','storedSnapshotRestoreEvidence',",
+        "max_count": 3
+      },
+      {
+        "line": 1756,
+        "source": "'overlaySeedIdentity','audioOutputReady','audioCaptureReady','captureState','snapshotGeneration','takeAgentOutput']);",
+        "max_count": 3
+      },
+      {
+        "line": 1757,
+        "source": "for(const [name,method]of Object.entries(controller)){",
+        "max_count": 3
+      },
+      {
+        "line": 1758,
+        "source": "if(typeof method!=='function'||inputAllowed.has(name))continue;",
+        "max_count": 240
+      },
+      {
+        "line": 1759,
+        "source": "controller[name]=(...args)=>{",
+        "max_count": 90
+      },
+      {
+        "line": 1760,
+        "source": "if(inputActive&&!inputStopped)throw Error('input prefix: unsupported host control '+name);",
+        "max_count": 4
+      },
+      {
+        "line": 1761,
+        "source": "return method(...args);",
+        "max_count": 3
+      },
+      {
+        "line": 1762,
+        "source": "};",
+        "max_count": 4
+      },
+      {
+        "line": 1763,
+        "source": "}",
+        "max_count": 90
+      },
+      {
+        "line": 1764,
+        "source": "const inputIngress=new Set(['setDisplay','sendInput','sendAgentInput','sendKeyboardEvent','syncKeyboard',",
+        "max_count": 3
+      },
+      {
+        "line": 1765,
+        "source": "'sendTabletEvent','syncTablet','sendMouseEvent','syncMouse','setInputPointerMode','confirmAgentHello',",
+        "max_count": 3
+      },
+      {
+        "line": 1766,
+        "source": "'beginFileUpload','pushFileUpload','cancelFileUpload']);",
+        "max_count": 3
+      },
+      {
+        "line": 1767,
+        "source": "for(const name of inputIngress){const method=controller[name];controller[name]=(...args)=>{",
+        "max_count": 3
+      },
+      {
+        "line": 1768,
+        "source": "try{return method(...args);}catch(error){if(inputActive){paused=true;try{if(!inputStopped&&!machine.inputPosition().paused)machine.inputLifecycle(0);}catch{}}throw error;}",
+        "max_count": 18
+      },
+      {
+        "line": 1769,
+        "source": "};}",
+        "max_count": 18
+      }
+    ],
+    "uncovered": []
+  },
+  "web/session-inputs.js": {
+    "evidence_entries": 15,
+    "evidence": [
+      "target/evidence/e9-t10-cold-final-incremental/acceptance/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-public-final/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/loader-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/pointer-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/witness-fault-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-worker-final-incremental/browser/javascript-coverage.json.gz"
+    ],
+    "covered": [
+      {
+        "line": 1,
+        "source": "// E9-T10: durable input-only prefixes. These are inspectable recordings; full replay is gated.",
+        "max_count": 1
+      },
+      {
+        "line": 2,
+        "source": "import init, {sessionValidateManifest,sessionIndexEventChunk} from './session-pkg/wasm_vm_session.js';",
+        "max_count": 1
+      },
+      {
+        "line": 3,
+        "source": "import {SessionStoreError} from './session-store.js';",
+        "max_count": 1
+      },
+      {
+        "line": 4,
+        "source": "import {SessionDiskRoots} from './session-disk-roots.js';",
+        "max_count": 1
+      },
+      {
+        "line": 5,
+        "source": "import {checkpointReference,checkpointChunks,readCheckpointObject,fetchCheckpointAsset,checkpointZeroPosition} from './session-checkpoints.js';",
+        "max_count": 1
+      },
+      {
+        "line": 6,
+        "source": "await init();",
+        "max_count": 1
+      },
+      {
+        "line": 7,
+        "source": "const encoder=new TextEncoder(),decoder=new TextDecoder('utf-8',{fatal:true});",
+        "max_count": 1
+      },
+      {
+        "line": 8,
+        "source": "const need=(condition,message)=>{if(!condition)throw new SessionStoreError('InputPrefix',message);};",
+        "max_count": 1
+      },
+      {
+        "line": 9,
+        "source": "const kinds=['','uart','uart','keyboard','keyboard','tablet','tablet','mouse','mouse','display','agent','agent','file-transfer','file-transfer','file-transfer','mouse','lifecycle'];",
+        "max_count": 1
+      },
+      {
+        "line": 10,
+        "source": "const devices=['','uart16550','uart16550','keyboard','keyboard','tablet','tablet','mouse','mouse','display','agent','agent','file-transfer','file-transfer','file-transfer','pointer-mode','lifecycle'];",
+        "max_count": 1
+      },
+      {
+        "line": 11,
+        "source": "const inputs=['uart','keyboard','pointer','display','agent','clipboard','file-transfer','lifecycle'];",
+        "max_count": 1
+      },
+      {
+        "line": 12,
+        "source": "const statuses=['applied','failed','partial','rejected','drop-policy'];",
+        "max_count": 1
+      },
+      {
+        "line": 13,
+        "source": "const recordStatus=(channel,outcome)=>outcome[0]==='0'&&[3,5,7].includes(channel)?'staged':outcome[0]==='0'&&[4,6,8].includes(channel)?'published':statuses[Number(outcome[0])];",
+        "max_count": 1
+      },
+      {
+        "line": 14,
+        "source": "const position=value=>({transition:value.transition,phase:value.phase,ordinal:value.ordinal,sequence:value.sequence,retired:value.retired});",
+        "max_count": 1
+      },
+      {
+        "line": 15,
+        "source": "const exact=value=>typeof value==='string'&&/^(0|[1-9][0-9]{0,19})$/.test(value)&&BigInt(value)<=0xffffffffffffffffn;",
+        "max_count": 1
+      },
+      {
+        "line": 16,
+        "source": "function own(receipt,previous){",
+        "max_count": 264
+      },
+      {
+        "line": 17,
+        "source": "need(receipt&&Number.isInteger(receipt.channel)&&receipt.channel>=1&&receipt.channel<=16,'unsupported input channel');",
+        "max_count": 264
+      },
+      {
+        "line": 18,
+        "source": "need(['transition','retired','sequence'].every(key=>exact(receipt[key]))&&receipt.phase==='before'",
+        "max_count": 264
+      },
+      {
+        "line": 19,
+        "source": "&&Number.isInteger(receipt.ordinal)&&receipt.ordinal>0&&receipt.ordinal<=0xffffffff,'exact input position required');",
+        "max_count": 264
+      },
+      {
+        "line": 20,
+        "source": "need(BigInt(receipt.sequence)===BigInt(previous.sequence)+1n&&BigInt(receipt.transition)>=BigInt(previous.transition)",
+        "max_count": 264
+      },
+      {
+        "line": 21,
+        "source": "&&BigInt(receipt.retired)>=BigInt(previous.retired)&&BigInt(receipt.retired)<=BigInt(receipt.transition)",
+        "max_count": 264
+      },
+      {
+        "line": 22,
+        "source": "&&(receipt.transition===previous.transition?receipt.ordinal===previous.ordinal+1:receipt.ordinal===1),'input prefix order');",
+        "max_count": 264
+      },
+      {
+        "line": 23,
+        "source": "need(Array.isArray(receipt.outcome)&&receipt.outcome.length===4&&receipt.outcome.every(exact)",
+        "max_count": 264
+      },
+      {
+        "line": 24,
+        "source": "&&BigInt(receipt.outcome[0])<=4n,'input outcome');",
+        "max_count": 264
+      },
+      {
+        "line": 25,
+        "source": "need(receipt.bytes instanceof Uint8Array&&receipt.bytes.buffer instanceof ArrayBuffer&&receipt.bytes.length<=1048576,'owned input bytes');",
+        "max_count": 264
+      },
+      {
+        "line": 26,
+        "source": "return {...position(receipt),channel:receipt.channel,outcome:[...receipt.outcome],bytes:receipt.bytes.slice()};",
+        "max_count": 264
+      },
+      {
+        "line": 27,
+        "source": "}",
+        "max_count": 264
+      },
+      {
+        "line": 28,
+        "source": "export class SessionInputJournal{",
+        "max_count": 1
+      },
+      {
+        "line": 29,
+        "source": "#writer;#manifest;#pending=[];#inflight=null;",
+        "max_count": 4
+      },
+      {
+        "line": 30,
+        "source": "constructor(writer,manifest){this.#writer=writer;this.#manifest=manifest;}",
+        "max_count": 4
+      },
+      {
+        "line": 31,
+        "source": "// A partial-provider recording retains an exact native/input/disk witness. It is explicitly",
+        "max_count": 1
+      },
+      {
+        "line": 32,
+        "source": "// ineligible for executable restore: SLIRP/time/provider state is owned by subsequent slices.",
+        "max_count": 1
+      },
+      {
+        "line": 33,
+        "source": "static async createWitness(store,writer,configuration,native,disk,pending,output){",
+        "max_count": 1
+      },
+      {
+        "line": 34,
+        "source": "need(configuration?.inputPrefixWitness===1&&configuration.providersComplete===false,'input witness scope');",
+        "max_count": 4
+      },
+      {
+        "line": 35,
+        "source": "need(native instanceof Uint8Array&&native.buffer instanceof ArrayBuffer&&native.length>=84&&native.length<=300*1048576",
+        "max_count": 4
+      },
+      {
+        "line": 36,
+        "source": "&&disk instanceof Uint8Array&&disk.buffer instanceof ArrayBuffer&&disk.length>=61&&disk.length<=61+65536*4104,'initial witness bounds');",
+        "max_count": 4
+      },
+      {
+        "line": 37,
+        "source": "need(pending instanceof Uint8Array&&pending.buffer instanceof ArrayBuffer&&pending.length<=1048576",
+        "max_count": 4
+      },
+      {
+        "line": 38,
+        "source": "&&output instanceof Uint8Array&&output.buffer instanceof ArrayBuffer&&output.length<=1048576,'initial host queue bounds');",
+        "max_count": 4
+      },
+      {
+        "line": 39,
+        "source": "native=native.slice();disk=disk.slice();pending=pending.slice();output=output.slice();",
+        "max_count": 4
+      },
+      {
+        "line": 40,
+        "source": "const witness=new Uint8Array(28+native.length+pending.length+output.length),header=new DataView(witness.buffer);",
+        "max_count": 4
+      },
+      {
+        "line": 41,
+        "source": "witness.set(encoder.encode('WVINPUT1'));header.setUint32(8,1,true);header.setBigUint64(12,BigInt(native.length),true);",
+        "max_count": 4
+      },
+      {
+        "line": 42,
+        "source": "header.setUint32(20,pending.length,true);header.setUint32(24,output.length,true);",
+        "max_count": 4
+      },
+      {
+        "line": 43,
+        "source": "witness.set(native,28);witness.set(pending,28+native.length);witness.set(output,28+native.length+pending.length);",
+        "max_count": 4
+      },
+      {
+        "line": 44,
+        "source": "const configBytes=encoder.encode(JSON.stringify(configuration)),config=JSON.parse(decoder.decode(configBytes));",
+        "max_count": 4
+      },
+      {
+        "line": 45,
+        "source": "need(config.ramMib<=256&&config.clock.mode==='icount'&&config.clock.interactive===null,'input witness profile');",
+        "max_count": 4
+      },
+      {
+        "line": 46,
+        "source": "const vm=checkpointReference(configBytes),machine=checkpointReference(witness);",
+        "max_count": 4
+      },
+      {
+        "line": 47,
+        "source": "const hex=bytes=>[...bytes].map(b=>b.toString(16).padStart(2,'0')).join('');",
+        "max_count": 4
+      },
+      {
+        "line": 48,
+        "source": "const nv=new DataView(native.buffer),dv=new DataView(disk.buffer);",
+        "max_count": 4
+      },
+      {
+        "line": 49,
+        "source": "need(hex(native.subarray(44,76))===hex(disk.subarray(17,49))&&nv.getBigUint64(76,true)===dv.getBigUint64(49,true),'input witness disk binding');",
+        "max_count": 4
+      },
+      {
+        "line": 50,
+        "source": "const {sessionCanonicalImage}=await import('./session-pkg/wasm_vm_session.js');",
+        "max_count": 4
+      },
+      {
+        "line": 51,
+        "source": "const baseBytes=sessionCanonicalImage(config.imageManifest),base=checkpointReference(baseBytes);",
+        "max_count": 4
+      },
+      {
+        "line": 52,
+        "source": "need(base.sha256===hex(disk.subarray(17,49)),'input witness base');",
+        "max_count": 4
+      },
+      {
+        "line": 53,
+        "source": "const root=await new SessionDiskRoots(store).capture(writer,disk,config.imageManifest);",
+        "max_count": 4
+      },
+      {
+        "line": 54,
+        "source": "const zero=checkpointZeroPosition();",
+        "max_count": 4
+      },
+      {
+        "line": 55,
+        "source": "const manifest={version:{major:1,minor:0},id:writer.id,",
+        "max_count": 4
+      },
+      {
+        "line": 56,
+        "source": "machine:{vm_build:vm.sha256,wasm_build:config.wasm.sha256,base_image:base.sha256,kernel:config.kernel.sha256,",
+        "max_count": 4
+      },
+      {
+        "line": 57,
+        "source": "initramfs:null,ram_bytes:String(config.ramMib*1048576),harts:1,devices:config.devices,gpu:null},",
+        "max_count": 4
+      },
+      {
+        "line": 58,
+        "source": "policy:{mode:'capture-prefix',profile:'rv64-linux-software-v1',event_version:{major:1,minor:0},",
+        "max_count": 4
+      },
+      {
+        "line": 59,
+        "source": "checkpoint_version:{major:1,minor:0},boundary_version:1,clock:config.clock,required_inputs:inputs},",
+        "max_count": 4
+      },
+      {
+        "line": 60,
+        "source": "assets:[{role:'vm',content:vm},{role:'wasm',content:{sha256:config.wasm.sha256,length:config.wasm.length}},",
+        "max_count": 4
+      },
+      {
+        "line": 61,
+        "source": "{role:'kernel',content:{sha256:config.kernel.sha256,length:config.kernel.length}},{role:'base',content:base}],",
+        "max_count": 4
+      },
+      {
+        "line": 62,
+        "source": "begin:zero,end:zero,events:[],checkpoints:[{id:'input-witness',position:zero,next_sequence:'1',machine,disk_root:root.content.sha256,gpu:null}],extensions:[]};",
+        "max_count": 4
+      },
+      {
+        "line": 63,
+        "source": "const canonical=sessionValidateManifest(encoder.encode(JSON.stringify(manifest)));",
+        "max_count": 4
+      },
+      {
+        "line": 64,
+        "source": "for(const [ref,bytes] of [[vm,configBytes],[base,baseBytes],[machine,witness]])await writer.put(ref,checkpointChunks(bytes));",
+        "max_count": 4
+      },
+      {
+        "line": 65,
+        "source": "for(const role of ['kernel','wasm']){const ref=manifest.assets.find(a=>a.role===role).content;",
+        "max_count": 4
+      },
+      {
+        "line": 66,
+        "source": "const bytes=await fetchCheckpointAsset(config[role].url,ref.sha256,64*1048576);",
+        "max_count": 8
+      },
+      {
+        "line": 67,
+        "source": "need(String(bytes.length)===ref.length,'input witness asset length');await writer.put(ref,checkpointChunks(bytes));}",
+        "max_count": 8
+      },
+      {
+        "line": 68,
+        "source": "await writer.publish(canonical);return new SessionInputJournal(writer,manifest);",
+        "max_count": 4
+      },
+      {
+        "line": 69,
+        "source": "}",
+        "max_count": 4
+      },
+      {
+        "line": 70,
+        "source": "get end(){return {...this.#manifest.end};}",
+        "max_count": 4104
+      },
+      {
+        "line": 71,
+        "source": "get pending(){return this.#pending.length;}",
+        "max_count": 4
+      },
+      {
+        "line": 72,
+        "source": "stage(receipts){",
+        "max_count": 2052
+      },
+      {
+        "line": 73,
+        "source": "need(Array.isArray(receipts)&&this.#pending.length+receipts.length<=256,'input receipt bound');",
+        "max_count": 2052
+      },
+      {
+        "line": 74,
+        "source": "let previous=this.#pending.at(-1)??this.#manifest.end,bytes=this.#pending.reduce((n,r)=>n+r.bytes.length,0);",
+        "max_count": 2052
+      },
+      {
+        "line": 75,
+        "source": "const owned=[];",
+        "max_count": 2052
+      },
+      {
+        "line": 76,
+        "source": "for(const receipt of receipts){const value=own(receipt,previous);bytes+=value.bytes.length;",
+        "max_count": 2052
+      },
+      {
+        "line": 77,
+        "source": "need(bytes<=4*1048576,'input payload budget');owned.push(value);previous=value;}",
+        "max_count": 104
+      },
+      {
+        "line": 78,
+        "source": "this.#pending.push(...owned);",
+        "max_count": 2052
+      },
+      {
+        "line": 79,
+        "source": "}",
+        "max_count": 2052
+      },
+      {
+        "line": 80,
+        "source": "flush(){",
+        "max_count": 4104
+      },
+      {
+        "line": 81,
+        "source": "if(this.#inflight)return this.#inflight;",
+        "max_count": 4104
+      },
+      {
+        "line": 82,
+        "source": "this.#inflight=this.#flush().finally(()=>{this.#inflight=null;});return this.#inflight;",
+        "max_count": 4104
+      },
+      {
+        "line": 83,
+        "source": "}",
+        "max_count": 4104
+      },
+      {
+        "line": 84,
+        "source": "async #flush(){",
+        "max_count": 4104
+      },
+      {
+        "line": 85,
+        "source": "const batch=this.#pending.slice();if(!batch.length)return this.end;",
+        "max_count": 4104
+      },
+      {
+        "line": 86,
+        "source": "const manifest=structuredClone(this.#manifest),objects=[],encoded=[];",
+        "max_count": 20
+      },
+      {
+        "line": 87,
+        "source": "for(const receipt of batch){",
+        "max_count": 20
+      },
+      {
+        "line": 88,
+        "source": "let payload;",
+        "max_count": 96
+      },
+      {
+        "line": 89,
+        "source": "if(receipt.bytes.length>65536){const ref=checkpointReference(receipt.bytes);payload={storage:'blob',content:ref};objects.push([ref,receipt.bytes]);}",
+        "max_count": 96
+      },
+      {
+        "line": 90,
+        "source": "else payload={storage:'inline',bytes:[...receipt.bytes]};",
+        "max_count": 96
+      },
+      {
+        "line": 91,
+        "source": "const record={version:{major:1,minor:0},kind:kinds[receipt.channel],required:true,...position(receipt),",
+        "max_count": 96
+      },
+      {
+        "line": 92,
+        "source": "device:devices[receipt.channel],intent:[...encoder.encode(JSON.stringify({version:1,channel:receipt.channel,outcome:receipt.outcome}))],",
+        "max_count": 96
+      },
+      {
+        "line": 93,
+        "source": "status:recordStatus(receipt.channel,receipt.outcome),payload};",
+        "max_count": 96
+      },
+      {
+        "line": 94,
+        "source": "encoded.push(JSON.stringify(record));manifest.end=position(receipt);",
+        "max_count": 96
+      },
+      {
+        "line": 95,
+        "source": "}",
+        "max_count": 96
+      },
+      {
+        "line": 96,
+        "source": "let group=[],length=2;",
+        "max_count": 20
+      },
+      {
+        "line": 97,
+        "source": "const seal=()=>{if(!group.length)return;const bytes=encoder.encode('['+group.join(',')+']');",
+        "max_count": 20
+      },
+      {
+        "line": 98,
+        "source": "const index=JSON.parse(decoder.decode(sessionIndexEventChunk(bytes)));manifest.events.push(index);objects.push([index.content,bytes]);group=[];length=2;};",
+        "max_count": 20
+      },
+      {
+        "line": 99,
+        "source": "for(const text of encoded){const size=encoder.encode(text).length;if(length+size+Number(group.length>0)>4194304)seal();group.push(text);length+=size+Number(group.length>1);}seal();",
+        "max_count": 20
+      },
+      {
+        "line": 100,
+        "source": "const canonical=sessionValidateManifest(encoder.encode(JSON.stringify(manifest)));",
+        "max_count": 20
+      },
+      {
+        "line": 101,
+        "source": "for(const[ref,bytes]of objects)await this.#writer.put(ref,checkpointChunks(bytes));",
+        "max_count": 20
+      },
+      {
+        "line": 102,
+        "source": "await this.#writer.publish(canonical);this.#manifest=manifest;this.#pending.splice(0,batch.length);return this.end;",
+        "max_count": 19
+      },
+      {
+        "line": 103,
+        "source": "}",
+        "max_count": 4104
+      },
+      {
+        "line": 104,
+        "source": "static async read(store,id){",
+        "max_count": 1
+      },
+      {
+        "line": 105,
+        "source": "const opened=await store.openSession(id);need(opened,'input prefix unavailable');",
+        "max_count": 4
+      },
+      {
+        "line": 106,
+        "source": "const manifest=JSON.parse(decoder.decode(opened.manifest));need(manifest.policy.mode==='capture-prefix','input-only prefix required');",
+        "max_count": 4
+      },
+      {
+        "line": 107,
+        "source": "const receipts=[];let previous=manifest.begin,total=0;",
+        "max_count": 4
+      },
+      {
+        "line": 108,
+        "source": "for(const index of manifest.events){",
+        "max_count": 4
+      },
+      {
+        "line": 109,
+        "source": "const records=JSON.parse(decoder.decode(await readCheckpointObject(store,index.content,4194304)));",
+        "max_count": 34
+      },
+      {
+        "line": 110,
+        "source": "for(const record of records){",
+        "max_count": 34
+      },
+      {
+        "line": 111,
+        "source": "const intent=JSON.parse(decoder.decode(Uint8Array.from(record.intent)));",
+        "max_count": 176
+      },
+      {
+        "line": 112,
+        "source": "need(intent.version===1&&Object.keys(intent).sort().join(',')==='channel,outcome,version','input adapter version');",
+        "max_count": 176
+      },
+      {
+        "line": 113,
+        "source": "const bytes=record.payload.storage==='inline'?Uint8Array.from(record.payload.bytes)",
+        "max_count": 176
+      },
+      {
+        "line": 114,
+        "source": ":await readCheckpointObject(store,record.payload.content,1048576);",
+        "max_count": 2
+      },
+      {
+        "line": 115,
+        "source": "const receipt=own({...position(record),channel:intent.channel,outcome:intent.outcome,bytes},previous);",
+        "max_count": 2
+      },
+      {
+        "line": 116,
+        "source": "need(record.kind===kinds[receipt.channel]&&record.device===devices[receipt.channel]&&record.status===recordStatus(receipt.channel,receipt.outcome),'input adapter identity');",
+        "max_count": 2
+      },
+      {
+        "line": 117,
+        "source": "total+=receipt.bytes.length;need(total<=4*1048576&&receipts.length<4096,'input inspection bound; use bounded chunks for larger histories');",
+        "max_count": 176
+      },
+      {
+        "line": 118,
+        "source": "receipts.push(receipt);previous=receipt;",
+        "max_count": 176
+      },
+      {
+        "line": 119,
+        "source": "}",
+        "max_count": 176
+      },
+      {
+        "line": 120,
+        "source": "}",
+        "max_count": 34
+      },
+      {
+        "line": 121,
+        "source": "return {manifest,receipts};",
+        "max_count": 4
+      },
+      {
+        "line": 122,
+        "source": "}",
+        "max_count": 4
+      },
+      {
+        "line": 123,
+        "source": "}",
+        "max_count": 1
+      }
+    ],
+    "uncovered": []
+  },
+  "web/session-library.js": {
+    "evidence_entries": 15,
+    "evidence": [
+      "target/evidence/e9-t10-cold-final-incremental/acceptance/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-public-final/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/loader-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/pointer-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/witness-fault-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-worker-final-incremental/browser/javascript-coverage.json.gz"
+    ],
+    "covered": [
+      {
+        "line": 26,
+        "source": "this.generation = 0; this.refreshGeneration = 0; this.busy = false; this.active = null; this.recording = null; this.pausedRecording = null; this.inputRecording = null;",
+        "max_count": 1
+      },
+      {
+        "line": 32,
+        "source": "['input-start', () => this.startInputs(), 'capturing'], ['input-save', () => this.saveInputs(), 'saving'],",
+        "max_count": 1
+      },
+      {
+        "line": 33,
+        "source": "['input-stop', () => this.stopInputs(), 'saving'],",
+        "max_count": 1
+      },
+      {
+        "line": 137,
+        "source": "this.state(compatible || manifest.policy.mode === 'capture-prefix' ? 'ready' : 'incompatible', manifest.policy.mode === 'capture-prefix' ? 'Input prefix preview. Delivered inputs are saved; full replay is unavailable until all device adapters are installed.' : compatible",
+        "max_count": 6
+      },
+      {
+        "line": 146,
+        "source": "const inputBusy=Boolean(this.inputRecording),inputStopped=Boolean(this.active?.inputStopped);",
+        "max_count": 44
+      },
+      {
+        "line": 147,
+        "source": "c['input-start'].disabled=!ready||busy||!qualified||Boolean(this.recording||this.pausedRecording)||inputBusy||inputStopped;",
+        "max_count": 44
+      },
+      {
+        "line": 148,
+        "source": "c['input-save'].disabled=c['input-stop'].disabled=busy||!inputBusy||owner?.controller!==this.inputRecording?.controller;",
+        "max_count": 44
+      },
+      {
+        "line": 149,
+        "source": "c.new.disabled = !ready || busy || Boolean(this.recording || this.pausedRecording) || inputBusy;",
+        "max_count": 44
+      },
+      {
+        "line": 150,
+        "source": "c.start.disabled = !ready || busy || !qualified || Boolean(this.recording || this.pausedRecording) || inputBusy || inputStopped;",
+        "max_count": 44
+      },
+      {
+        "line": 159,
+        "source": "c.refresh.disabled = !ready || busy; c.resume.disabled = busy || !qualified || inputStopped;",
+        "max_count": 44
+      },
+      {
+        "line": 162,
+        "source": "c.active.textContent = this.active && (this.inputRecording || this.active.inputStopped)",
+        "max_count": 44
+      },
+      {
+        "line": 163,
+        "source": "? `Active: ${this.metadata.get(this.active.id)?.name || this.active.id} \u00b7 ${this.active.inputStopped ? 'input recording stopped; guest paused' : this.active.running ? 'recording delivered input; guest running' : 'recording delivered input; guest paused'}`",
+        "max_count": 17
+      },
+      {
+        "line": 164,
+        "source": ": this.active",
+        "max_count": 27
+      },
+      {
+        "line": 172,
+        "source": "preview.manifest.policy.mode === 'capture-prefix'",
+        "max_count": 30
+      },
+      {
+        "line": 173,
+        "source": "? `${preview.manifest.events.reduce((n,e)=>n+e.count,0)} input events \u00b7 ${bytesLabel(preview.bytes)} initial witness and runtime data`",
+        "max_count": 15
+      },
+      {
+        "line": 174,
+        "source": ": `${preview.manifest.checkpoints.length} exact restore points \u00b7 ${bytesLabel(preview.bytes)} referenced data (shared data may be counted by other sessions)`,",
+        "max_count": 15
+      },
+      {
+        "line": 177,
+        "source": "preview.manifest.policy.mode === 'capture-prefix' ? `${preview.manifest.events.reduce((n,e)=>n+e.count,0)} input events saved. Incomplete capture: full replay is unavailable until all device adapters are installed.` : 'Checkpoints only. No event replay or history from before recording was enabled.',",
+        "max_count": 30
+      },
+      {
+        "line": 190,
+        "source": "if(this.inputRecording&&this.inputRecording.controller!==controller){",
+        "max_count": 4
+      },
+      {
+        "line": 195,
+        "source": "async startInputs(){",
+        "max_count": 1
+      },
+      {
+        "line": 196,
+        "source": "const owner=this.adapter.current();",
+        "max_count": 1
+      },
+      {
+        "line": 197,
+        "source": "if(!owner?.profile||!owner.ready||this.recording||this.pausedRecording||this.inputRecording)throw Error('Start a ready offline software guest first');",
+        "max_count": 1
+      },
+      {
+        "line": 198,
+        "source": "const controller=owner.controller,id=uid('inputs-'),now=Date.now();await controller.pause();",
+        "max_count": 1
+      },
+      {
+        "line": 199,
+        "source": "await controller.startInputRecording({id});",
+        "max_count": 1
+      },
+      {
+        "line": 200,
+        "source": "this.inputRecording={id,controller};this.active={id,point:'input-witness',controller,running:false};",
+        "max_count": 1
+      },
+      {
+        "line": 201,
+        "source": "const next=new Map(this.metadata);next.set(id,{id,name:`Inputs ${new Date(now).toLocaleString()}`,started:now,updated:now,points:[]});this.persistMetadata(next);",
+        "max_count": 1
+      },
+      {
+        "line": 202,
+        "source": "await this.refresh(id);this.state('ready','Input recording started. Resume the guest to continue; Save input prefix commits queued inputs.');",
+        "max_count": 1
+      },
+      {
+        "line": 203,
+        "source": "}",
+        "max_count": 1
+      },
+      {
+        "line": 204,
+        "source": "async saveInputs(){",
+        "max_count": 1
+      },
+      {
+        "line": 205,
+        "source": "const recording=this.inputRecording;if(!recording||this.adapter.current()?.controller!==recording.controller)throw Error('Input recording guest changed');",
+        "max_count": 1
+      },
+      {
+        "line": 206,
+        "source": "const end=await recording.controller.flushInputRecording();await this.refresh(recording.id);",
+        "max_count": 1
+      },
+      {
+        "line": 207,
+        "source": "this.state('ready',`Input prefix committed through event ${end.sequence}. Full replay remains unavailable.`);",
+        "max_count": 1
+      },
+      {
+        "line": 208,
+        "source": "}",
+        "max_count": 1
+      },
+      {
+        "line": 209,
+        "source": "async stopInputs(){",
+        "max_count": 1
+      },
+      {
+        "line": 210,
+        "source": "const recording=this.inputRecording;if(!recording)throw Error('No input recording is active');",
+        "max_count": 1
+      },
+      {
+        "line": 211,
+        "source": "await recording.controller.stopInputCapture();this.inputRecording=null;",
+        "max_count": 1
+      },
+      {
+        "line": 212,
+        "source": "this.active={...this.active,running:false,inputStopped:true};await this.refresh(recording.id);",
+        "max_count": 1
+      },
+      {
+        "line": 213,
+        "source": "this.state('ready','Input recording stopped at its committed prefix. The guest is paused; start a new guest to continue.');",
+        "max_count": 1
+      },
+      {
+        "line": 214,
+        "source": "}",
+        "max_count": 1
+      }
+    ],
+    "uncovered": [
+      {
+        "line": 191,
+        "source": "this.inputRecording=null;this.state('ready','Input recording ended with its guest. Its last committed prefix remains saved.');",
+        "max_count": 0
+      },
+      {
+        "line": 192,
+        "source": "}",
+        "max_count": 0
+      }
+    ]
+  },
+  "web/session-checkpoints.js": {
+    "evidence_entries": 15,
+    "evidence": [
+      "target/evidence/e9-t10-cold-final-incremental/acceptance/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-public-final/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/loader-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/pointer-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/witness-fault-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-worker-final-incremental/browser/javascript-coverage.json.gz"
+    ],
+    "covered": [
+      {
+        "line": 141,
+        "source": "",
+        "max_count": 1
+      },
+      {
+        "line": 142,
+        "source": "export {fetchObject as fetchCheckpointAsset};",
+        "max_count": 1
+      }
+    ],
+    "uncovered": []
+  },
+  "web/linux-worker-protocol.js": {
+    "evidence_entries": 15,
+    "evidence": [
+      "target/evidence/e9-t10-cold-final-incremental/acceptance/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-public-final/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/loader-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/pointer-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/witness-fault-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-worker-final-incremental/browser/javascript-coverage.json.gz"
+    ],
+    "covered": [
+      {
+        "line": 23,
+        "source": "startInputRecording: 240_000,",
+        "max_count": 1
+      },
+      {
+        "line": 57,
+        "source": "\"startInputCapture\",",
+        "max_count": 1
+      },
+      {
+        "line": 58,
+        "source": "\"stopInputCapture\",",
+        "max_count": 1
+      },
+      {
+        "line": 59,
+        "source": "\"inputPosition\",",
+        "max_count": 1
+      },
+      {
+        "line": 60,
+        "source": "\"takeInputDeliveries\",",
+        "max_count": 1
+      },
+      {
+        "line": 61,
+        "source": "\"applyRecordedInput\",",
+        "max_count": 1
+      },
+      {
+        "line": 62,
+        "source": "\"setInputPointerMode\",",
+        "max_count": 1
+      },
+      {
+        "line": 63,
+        "source": "\"startInputRecording\",",
+        "max_count": 1
+      },
+      {
+        "line": 64,
+        "source": "\"flushInputRecording\",",
+        "max_count": 1
+      },
+      {
+        "line": 120,
+        "source": "applyRecordedInput: 5,",
+        "max_count": 1
+      }
+    ],
+    "uncovered": []
+  },
+  "web/main.js": {
+    "evidence_entries": 18,
+    "evidence": [
+      "target/evidence/e9-t10-cold-final-incremental/acceptance/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-public-final/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/loader-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/pointer-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/witness-fault-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-worker-final-incremental/browser/javascript-coverage.json.gz"
+    ],
+    "covered": [
+      {
+        "line": 14,
+        "source": "import { runInputRecordingProbe } from \"./input-recording-probe.js\";",
+        "max_count": 1
+      },
+      {
+        "line": 2644,
+        "source": "let inputRecordingRunning=false,inputRecordingResult=null;",
+        "max_count": 1
+      },
+      {
+        "line": 2645,
+        "source": "const inputRecordingRun=document.getElementById('input-recording-run'),inputRecordingStatus=document.getElementById('input-recording-status');",
+        "max_count": 1
+      },
+      {
+        "line": 2955,
+        "source": "const inputCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==='input-recording');",
+        "max_count": 513
+      },
+      {
+        "line": 2956,
+        "source": "document.getElementById('input-recording-pip').className=`cap-pip ${inputRecordingResult?.status==='passed'?'live':inputRecordingResult?.status==='failed'?'regressed':inputCap.status}`;",
+        "max_count": 513
+      },
+      {
+        "line": 2958,
+        "source": "if(rc.probe==='input-recording'){",
+        "max_count": 68096
+      },
+      {
+        "line": 2959,
+        "source": "const state=inputRecordingResult?.status;rc.pip.className=`cap-pip ${state==='passed'?'live':state==='failed'?'regressed':rc.base.status}`;",
+        "max_count": 512
+      },
+      {
+        "line": 2960,
+        "source": "if(rc.evEl)rc.evEl.textContent=state==='passed'?'Guest UART/evdev delivery, durable reopen and live-input refusal \u00b7 live in browser':state==='failed'?'Input recording check failed in this browser':rc.base.evidence;",
+        "max_count": 512
+      },
+      {
+        "line": 2961,
+        "source": "continue;",
+        "max_count": 512
+      },
+      {
+        "line": 2962,
+        "source": "}",
+        "max_count": 512
+      },
+      {
+        "line": 3002,
+        "source": "const busy = running || suiteRunning || eventClockRunning || inputRecordingRunning;",
+        "max_count": 8
+      },
+      {
+        "line": 3003,
+        "source": "inputRecordingRun.disabled=busy||!wasmReady;",
+        "max_count": 8
+      },
+      {
+        "line": 3254,
+        "source": "inputRecordingRun.addEventListener('click',async()=>{",
+        "max_count": 1
+      },
+      {
+        "line": 3255,
+        "source": "if(running||suiteRunning||eventClockRunning||inputRecordingRunning||!wasmReady)return;",
+        "max_count": 1
+      },
+      {
+        "line": 3256,
+        "source": "inputRecordingRunning=true;inputRecordingResult=null;inputRecordingStatus.textContent='Checking delivered inputs and reopening the saved prefix\u2026';setInteractiveState();refreshRoadmapLive();",
+        "max_count": 1
+      },
+      {
+        "line": 3257,
+        "source": "try{inputRecordingResult=await runInputRecordingProbe();inputRecordingStatus.textContent='Passed \u00b7 guest bytes, saved input order and replay input refusal agree.';}",
+        "max_count": 1
+      },
+      {
+        "line": 3259,
+        "source": "finally{if(_startupQuery.has('testHooks'))globalThis.__inputRecordingReport=inputRecordingResult;",
+        "max_count": 1
+      },
+      {
+        "line": 3260,
+        "source": "inputRecordingStatus.dataset.status=inputRecordingResult.status;inputRecordingRunning=false;refreshRoadmapLive();setInteractiveState();}",
+        "max_count": 1
+      },
+      {
+        "line": 3261,
+        "source": "});",
+        "max_count": 1
+      }
+    ],
+    "uncovered": [
+      {
+        "line": 3258,
+        "source": "catch(error){inputRecordingResult={status:'failed',failure:String(error)};inputRecordingStatus.textContent='Failed \u00b7 '+error.message;}",
+        "max_count": 0
+      }
+    ]
+  },
+  "web/input-recording-probe.js": {
+    "evidence_entries": 15,
+    "evidence": [
+      "target/evidence/e9-t10-cold-final-incremental/acceptance/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-public-final/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/loader-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/pointer-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/witness-fault-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-worker-final-incremental/browser/javascript-coverage.json.gz"
+    ],
+    "covered": [
+      {
+        "line": 1,
+        "source": "// Live guest reads actual UART and virtio-input DMA bytes, then the immutable store is reopened.",
+        "max_count": 1
+      },
+      {
+        "line": 2,
+        "source": "import {WasmLinux,setSlirpNet} from './pkg/wasm_vm_wasm.js';",
+        "max_count": 1
+      },
+      {
+        "line": 3,
+        "source": "import {GPU_CHECKPOINT_BUILD_ID,SOFTWARE_CHECKPOINT_WASM_SHA256,SOFTWARE_CHECKPOINT_WASM_BYTES} from './gpu-checkpoint-build.js';",
+        "max_count": 1
+      },
+      {
+        "line": 4,
+        "source": "import {createKeyboardBridge,createWasmKeyboardAdapter} from './src/input/keyboard.js';",
+        "max_count": 1
+      },
+      {
+        "line": 5,
+        "source": "import {attachHeldKeyLifecycle} from './src/input/held-keys.js';",
+        "max_count": 1
+      },
+      {
+        "line": 6,
+        "source": "const need=(ok,why)=>{if(!ok)throw Error('input recording: '+why);};",
+        "max_count": 1
+      },
+      {
+        "line": 7,
+        "source": "const word=(type,code,value)=>{const b=new Uint8Array(8),v=new DataView(b.buffer);v.setUint16(0,type,true);v.setUint16(2,code,true);v.setInt32(4,value,true);return [...b];};",
+        "max_count": 1
+      },
+      {
+        "line": 8,
+        "source": "export const INPUT_PROBE_DATABASE='wasm-vm-sessions-v1-input-probe';",
+        "max_count": 1
+      },
+      {
+        "line": 9,
+        "source": "const slotMemory=slot=>0x80400000+(slot-3)*0x10000;",
+        "max_count": 1
+      },
+      {
+        "line": 10,
+        "source": "export function inputGuestKernel(){",
+        "max_count": 1
+      },
+      {
+        "line": 11,
+        "source": "const words=[],labels=new Map(),patches=[];",
+        "max_count": 1
+      },
+      {
+        "line": 12,
+        "source": "const emit=value=>words.push(value>>>0);",
+        "max_count": 1
+      },
+      {
+        "line": 13,
+        "source": "const addi=(rd,rs,n)=>emit((n<<20)|(rs<<15)|(rd<<7)|0x13);",
+        "max_count": 1
+      },
+      {
+        "line": 14,
+        "source": "const li=(rd,n)=>{const high=((n+0x800)>>>12)&0xfffff,low=(n-(high<<12))<<20>>20;",
+        "max_count": 1
+      },
+      {
+        "line": 15,
+        "source": "emit((high<<12)|(rd<<7)|0x37);addi(rd,rd,low);emit((32<<20)|(rd<<15)|(1<<12)|(rd<<7)|0x13);emit((32<<20)|(rd<<15)|(5<<12)|(rd<<7)|0x13);};",
+        "max_count": 99
+      },
+      {
+        "line": 16,
+        "source": "const store=(rs,base,offset,width=2)=>emit(((offset>>>5)<<25)|(rs<<20)|(base<<15)|(width<<12)|((offset&31)<<7)|0x23);",
+        "max_count": 1
+      },
+      {
+        "line": 17,
+        "source": "const load=(rd,base,offset)=>emit((offset<<20)|(base<<15)|(4<<12)|(rd<<7)|3);",
+        "max_count": 1
+      },
+      {
+        "line": 18,
+        "source": "const branch=(rs1,rs2,label)=>{patches.push({at:words.length,rs1,rs2,label});emit(0);};",
+        "max_count": 1
+      },
+      {
+        "line": 19,
+        "source": "const jump=label=>{patches.push({at:words.length,label,jump:true});emit(0);};",
+        "max_count": 1
+      },
+      {
+        "line": 20,
+        "source": "li(13,8);li(14,2);",
+        "max_count": 1
+      },
+      {
+        "line": 21,
+        "source": "for(const slot of [3,4,5]){",
+        "max_count": 1
+      },
+      {
+        "line": 22,
+        "source": "const memory=slotMemory(slot);li(7,memory);li(8,memory+0x2000);li(9,memory+0x3000);li(10,memory+0x4000);",
+        "max_count": 3
+      },
+      {
+        "line": 23,
+        "source": "for(let i=0;i<16;i++){store(10,7,16*i);store(0,7,16*i+4);store(13,7,16*i+8);store(14,7,16*i+12);li(5,i);store(5,8,4+2*i,1);addi(10,10,8);}",
+        "max_count": 3
+      },
+      {
+        "line": 24,
+        "source": "li(5,16);store(5,8,2,1);li(6,0x10001000+slot*0x1000);",
+        "max_count": 3
+      },
+      {
+        "line": 25,
+        "source": "for(const[offset,value]of [[0x30,0],[0x38,32],[0x80,memory],[0x90,memory+0x2000],[0xa0,memory+0x3000],[0x44,1],[0x50,0]]){li(5,value);store(5,6,offset);}",
+        "max_count": 3
+      },
+      {
+        "line": 26,
+        "source": "}",
+        "max_count": 3
+      },
+      {
+        "line": 27,
+        "source": "li(1,0x10000000);li(5,82);store(5,1,0,0);labels.set('wait',words.length);",
+        "max_count": 1
+      },
+      {
+        "line": 28,
+        "source": "load(5,1,5);emit((1<<20)|(5<<15)|(7<<12)|(5<<7)|0x13);branch(5,0,'wait');load(5,1,0);li(6,33);branch(5,6,'dump');store(5,1,0,0);jump('wait');",
+        "max_count": 1
+      },
+      {
+        "line": 29,
+        "source": "labels.set('dump',words.length);",
+        "max_count": 1
+      },
+      {
+        "line": 30,
+        "source": "for(const[slot,count]of [[3,8],[4,4],[5,3]]){li(7,slotMemory(slot)+0x3000);load(5,7,2);store(5,1,0,0);li(7,slotMemory(slot)+0x4000);",
+        "max_count": 1
+      },
+      {
+        "line": 31,
+        "source": "for(let i=0;i<count*8;i++){load(5,7,i);store(5,1,0,0);}}",
+        "max_count": 3
+      },
+      {
+        "line": 32,
+        "source": "li(5,68);store(5,1,0,0);labels.set('done',words.length);jump('done');",
+        "max_count": 1
+      },
+      {
+        "line": 33,
+        "source": "for(const p of patches){const offset=(labels.get(p.label)-p.at)*4;",
+        "max_count": 1
+      },
+      {
+        "line": 34,
+        "source": "words[p.at]=p.jump?(((offset>>>20)&1)<<31|((offset>>>1)&0x3ff)<<21|((offset>>>11)&1)<<20|((offset>>>12)&0xff)<<12|0x6f)>>>0",
+        "max_count": 4
+      },
+      {
+        "line": 35,
+        "source": ":(((offset>>>12)&1)<<31|((offset>>>5)&0x3f)<<25|(p.rs2<<20)|(p.rs1<<15)|((offset>>>1)&0xf)<<8|((offset>>>11)&1)<<7|0x63)>>>0;",
+        "max_count": 2
+      },
+      {
+        "line": 36,
+        "source": "}",
+        "max_count": 4
+      },
+      {
+        "line": 37,
+        "source": "const bytes=new Uint8Array(words.length*4),view=new DataView(bytes.buffer);words.forEach((w,i)=>view.setUint32(i*4,w,true));return bytes;",
+        "max_count": 1
+      },
+      {
+        "line": 38,
+        "source": "}",
+        "max_count": 1
+      },
+      {
+        "line": 39,
+        "source": "export async function runInputRecordingProbe(){",
+        "max_count": 1
+      },
+      {
+        "line": 40,
+        "source": "const [{SessionStore},{SessionInputJournal},{checkpointHash}]=await Promise.all([import('./session-store.js'),import('./session-inputs.js'),import('./session-checkpoints.js')]);",
+        "max_count": 1
+      },
+      {
+        "line": 41,
+        "source": "const report={status:'running',refusals:[]},kernel=inputGuestKernel(),kernelUrl=URL.createObjectURL(new Blob([kernel]));",
+        "max_count": 1
+      },
+      {
+        "line": 42,
+        "source": "const zeros=checkpointHash(new Uint8Array(4096)),image=JSON.stringify({version:1,image_len:8192,chunk_size:4096,layout:'split',chunks:[zeros,zeros]});",
+        "max_count": 1
+      },
+      {
+        "line": 43,
+        "source": "const output=[],fresh=()=>WasmLinux.newChunkedDisk(16,kernel,image,new URL('./',location.href).href,1,new Uint32Array(),'console=ttyS0',bytes=>output.push(...bytes),false);",
+        "max_count": 1
+      },
+      {
+        "line": 44,
+        "source": "let vm,replay,bulk,store,writer,detach;",
+        "max_count": 1
+      },
+      {
+        "line": 45,
+        "source": "const refuse=(name,fn)=>{let error;try{fn();}catch(e){error=e;}need(error,name+' must refuse');report.refusals.push({name,message:String(error)});};",
+        "max_count": 1
+      },
+      {
+        "line": 46,
+        "source": "try{",
+        "max_count": 1
+      },
+      {
+        "line": 47,
+        "source": "setSlirpNet(false);vm=fresh();vm.runChunk(4096);need(output.length===1&&output[0]===82,'guest initialized its real event queues');",
+        "max_count": 1
+      },
+      {
+        "line": 48,
+        "source": "const initial=vm.captureInputWitness(),clock=vm.guestClockState();",
+        "max_count": 1
+      },
+      {
+        "line": 49,
+        "source": "store=await SessionStore.open(INPUT_PROBE_DATABASE);for(const id of ['input-probe','input-bulk'])if(await store.openSession(id))await store.deleteSession(id);writer=await store.writer('input-probe');",
+        "max_count": 1
+      },
+      {
+        "line": 50,
+        "source": "const config={version:1,inputPrefixWitness:1,providersComplete:false,runtime:GPU_CHECKPOINT_BUILD_ID,ramMib:16,bootargs:'console=ttyS0',",
+        "max_count": 1
+      },
+      {
+        "line": 51,
+        "source": "clock:{mode:'icount',divider:clock.clockDiv,timebase_hz:String(clock.timebaseHz),interactive:null},",
+        "max_count": 1
+      },
+      {
+        "line": 52,
+        "source": "kernel:{url:kernelUrl,sha256:checkpointHash(kernel),length:String(kernel.length)},",
+        "max_count": 1
+      },
+      {
+        "line": 53,
+        "source": "wasm:{url:new URL('./pkg/wasm_vm_wasm_bg.wasm',import.meta.url).href,sha256:SOFTWARE_CHECKPOINT_WASM_SHA256,length:String(SOFTWARE_CHECKPOINT_WASM_BYTES)},",
+        "max_count": 1
+      },
+      {
+        "line": 54,
+        "source": "devices:JSON.parse(vm.softwareCheckpointTopology()),imageManifest:image,baseUrl:new URL('./',location.href).href};",
+        "max_count": 1
+      },
+      {
+        "line": 55,
+        "source": "const journal=await SessionInputJournal.createWitness(store,writer,config,initial.native,initial.disk,initial.pending,initial.output);",
+        "max_count": 1
+      },
+      {
+        "line": 56,
+        "source": "vm.startInputCapture(false);vm.inputLifecycle(0);",
+        "max_count": 1
+      },
+      {
+        "line": 57,
+        "source": "const keyboard=createKeyboardBridge(createWasmKeyboardAdapter(vm)),lifecycle=new EventTarget();",
+        "max_count": 1
+      },
+      {
+        "line": 58,
+        "source": "detach=attachHeldKeyLifecycle({windowTarget:lifecycle,documentTarget:null,viewTarget:lifecycle,releaseAll:()=>keyboard.releaseAll()});",
+        "max_count": 1
+      },
+      {
+        "line": 59,
+        "source": "keyboard.handleKeyEvent({type:'keydown',code:'ShiftLeft'});keyboard.handleKeyEvent({type:'keydown',code:'KeyA'});",
+        "max_count": 1
+      },
+      {
+        "line": 60,
+        "source": "for(let i=0;i<100;i++)keyboard.handleKeyEvent({type:'keydown',code:'KeyA',repeat:true});",
+        "max_count": 1
+      },
+      {
+        "line": 61,
+        "source": "lifecycle.dispatchEvent(new Event('blur'));need(keyboard.heldCodes().length===0,'focus loss releases both held keys');",
+        "max_count": 1
+      },
+      {
+        "line": 62,
+        "source": "vm.sendTabletEvent(3,0,125);vm.syncTablet();vm.sendTabletEvent(3,0,125);vm.syncTablet();",
+        "max_count": 1
+      },
+      {
+        "line": 63,
+        "source": "vm.setInputPointerMode(true);vm.sendMouseEvent(2,0,-7);vm.sendMouseEvent(2,1,3);vm.syncMouse();",
+        "max_count": 1
+      },
+      {
+        "line": 64,
+        "source": "need(vm.setDisplay(1367,901),'resize accepted');need(vm.displayStats().advertisedWidth===1367,'actual display device changed');",
+        "max_count": 1
+      },
+      {
+        "line": 65,
+        "source": "const paste=new TextEncoder().encode('clip:\u03bb\\r!');vm.sendInput(paste);paste.fill(255);",
+        "max_count": 1
+      },
+      {
+        "line": 66,
+        "source": "const offered=Uint8Array.from({length:131072},(_,i)=>(i*17+43)&255),offeredHash=checkpointHash(offered);",
+        "max_count": 1
+      },
+      {
+        "line": 67,
+        "source": "refuse('unsupported upload recorded as failure',()=>vm.pushFileUpload(7,offered,false));offered.fill(0);",
+        "max_count": 1
+      },
+      {
+        "line": 68,
+        "source": "vm.inputLifecycle(1);vm.runChunk(10000);vm.inputLifecycle(0);vm.inputLifecycle(2);",
+        "max_count": 1
+      },
+      {
+        "line": 69,
+        "source": "const expected=[82,...new TextEncoder().encode('clip:\u03bb\\r'),8,",
+        "max_count": 1
+      },
+      {
+        "line": 70,
+        "source": "...word(1,42,1),...word(0,0,0),...word(1,30,1),...word(0,0,0),...word(1,30,0),...word(0,0,0),...word(1,42,0),...word(0,0,0),4,",
+        "max_count": 1
+      },
+      {
+        "line": 71,
+        "source": "...word(3,0,125),...word(0,0,0),...word(3,0,125),...word(0,0,0),3,...word(2,0,-7),...word(2,1,3),...word(0,0,0),68];",
+        "max_count": 1
+      },
+      {
+        "line": 72,
+        "source": "need(JSON.stringify(output)===JSON.stringify(expected),'RV64 guest observed exact UART and DMA bytes');",
+        "max_count": 1
+      },
+      {
+        "line": 73,
+        "source": "const receipts=vm.takeInputDeliveries(),expectedReceipts=receipts.map(r=>({...r,bytes:r.bytes.slice()}));",
+        "max_count": 1
+      },
+      {
+        "line": 74,
+        "source": "journal.stage(receipts);need(journal.pending===receipts.length,'owned pending batch');for(const r of receipts)r.bytes.fill(255);await journal.flush();need(journal.pending===0,'committed batch drained');",
+        "max_count": 1
+      },
+      {
+        "line": 75,
+        "source": "report.position=vm.inputPosition();report.guestBytes=Uint8Array.from(output);report.guestSha256=checkpointHash(report.guestBytes);report.initial=initial;",
+        "max_count": 1
+      },
+      {
+        "line": 76,
+        "source": "report.largeOffer={bytes:131072,sha256:offeredHash};report.database=INPUT_PROBE_DATABASE;report.id='input-probe';",
+        "max_count": 1
+      },
+      {
+        "line": 77,
+        "source": "await writer.release();writer=null;await store.close();store=await SessionStore.open(INPUT_PROBE_DATABASE);",
+        "max_count": 1
+      },
+      {
+        "line": 78,
+        "source": "const saved=await SessionInputJournal.read(store,'input-probe');need(saved.receipts.length===expectedReceipts.length,'store/reopen event count');",
+        "max_count": 1
+      },
+      {
+        "line": 79,
+        "source": "const canonical=r=>[r.transition,r.phase,r.ordinal,r.sequence,r.retired,r.channel,r.outcome,[...r.bytes]];",
+        "max_count": 1
+      },
+      {
+        "line": 80,
+        "source": "for(let i=0;i<saved.receipts.length;i++)need(JSON.stringify(canonical(saved.receipts[i]))===JSON.stringify(canonical(expectedReceipts[i])),'store/reopen exact receipt '+i);",
+        "max_count": 1
+      },
+      {
+        "line": 81,
+        "source": "report.receipts=saved.receipts;report.manifest=saved.manifest;",
+        "max_count": 1
+      },
+      {
+        "line": 82,
+        "source": "output.length=0;replay=fresh();replay.runChunk(4096);replay.startInputCapture(true);",
+        "max_count": 1
+      },
+      {
+        "line": 83,
+        "source": "for(const r of saved.receipts){if(r.transition!=='0')break;replay.applyRecordedInput(r.channel,r.transition,r.sequence,r.ordinal,r.retired,r.bytes,r.outcome);}",
+        "max_count": 1
+      },
+      {
+        "line": 84,
+        "source": "const cursor=r=>[r.transition,r.phase,r.ordinal,r.sequence,r.retired];",
+        "max_count": 1
+      },
+      {
+        "line": 85,
+        "source": "const before=JSON.stringify(cursor(replay.inputPosition()));",
+        "max_count": 1
+      },
+      {
+        "line": 86,
+        "source": "for(const[name,fn]of [['UART',()=>replay.sendInput(new Uint8Array([1]))],['keyboard',()=>replay.sendKeyboardEvent(1,30,1)],",
+        "max_count": 1
+      },
+      {
+        "line": 87,
+        "source": "['tablet',()=>replay.sendTabletEvent(3,0,1)],['mouse',()=>replay.sendMouseEvent(2,0,1)],['resize',()=>replay.setDisplay(640,480)],",
+        "max_count": 1
+      },
+      {
+        "line": 88,
+        "source": "['agent',()=>replay.sendAgentInput(new Uint8Array([1]))],['upload',()=>replay.pushFileUpload(7,new Uint8Array([1]),false)],",
+        "max_count": 1
+      },
+      {
+        "line": 89,
+        "source": "['lifecycle',()=>replay.inputLifecycle(1)],['general execution',()=>replay.runChunk(1)]])refuse('replay rejects live '+name,fn);",
+        "max_count": 1
+      },
+      {
+        "line": 90,
+        "source": "report.gatedMutations=[];",
+        "max_count": 1
+      },
+      {
+        "line": 91,
+        "source": "const gated=async(name,fn)=>{let error;try{await fn();}catch(e){error=e;}need(error&&/forbidden during replay|input prefix: unsupported mutation/.test(String(error)),name+' reaches the input guard');report.gatedMutations.push({name,message:String(error)});};",
+        "max_count": 1
+      },
+      {
+        "line": 92,
+        "source": "const ring=new SharedArrayBuffer(104),header=new Int32Array(ring,0,10);header[3]=8;header[6]=0x41555247;header[7]=1;header[8]=2;",
+        "max_count": 1
+      },
+      {
+        "line": 93,
+        "source": "for(const[name,fn]of [",
+        "max_count": 1
+      },
+      {
+        "line": 94,
+        "source": "['keyboard sync',()=>replay.syncKeyboard()],['tablet sync',()=>replay.syncTablet()],['mouse sync',()=>replay.syncMouse()],",
+        "max_count": 1
+      },
+      {
+        "line": 95,
+        "source": "['agent HELLO',()=>replay.confirmAgentHello()],['upload begin',()=>replay.beginFileUpload(0,'blocked.bin',1,'0'.repeat(64))],",
+        "max_count": 1
+      },
+      {
+        "line": 96,
+        "source": "['upload cancel',()=>replay.cancelFileUpload(0)],['pointer mode',()=>replay.setInputPointerMode(false)],",
+        "max_count": 1
+      },
+      {
+        "line": 97,
+        "source": "['download readiness',()=>replay.setFileDownloadReady(true)],['upload dismissal',()=>replay.dismissFileUpload(0)],",
+        "max_count": 1
+      },
+      {
+        "line": 98,
+        "source": "['download cancellation',()=>replay.cancelFileDownload(0)],['download completion',()=>replay.finishFileDownload(0,true)],",
+        "max_count": 1
+      },
+      {
+        "line": 99,
+        "source": "['download payload',()=>replay.takeFileDownloadChunk(0)],['download dismissal',()=>replay.dismissFileDownload(0)],",
+        "max_count": 1
+      },
+      {
+        "line": 100,
+        "source": "['clock mode',()=>replay.setGuestClock('icount')],['clock divider',()=>replay.setICountDivider(10)],",
+        "max_count": 1
+      },
+      {
+        "line": 101,
+        "source": "['desktop save',()=>replay.saveDesktopSnapshot()],['desktop restore',()=>replay.restoreDesktopSnapshot(new Uint8Array(),640,480)],",
+        "max_count": 1
+      },
+      {
+        "line": 102,
+        "source": "['ordinary save',()=>replay.saveSnapshot()],['ordinary restore',()=>replay.loadSnapshotBlob(new Uint8Array())],",
+        "max_count": 1
+      },
+      {
+        "line": 103,
+        "source": "['input witness',()=>replay.captureInputWitness()],['audio output',()=>replay.attachAudioOutput(ring,new SharedArrayBuffer(4),8,48000)],",
+        "max_count": 1
+      },
+      {
+        "line": 104,
+        "source": "['audio capture',()=>replay.attachAudioCapture(ring,8,48000)],['software checkpoint',()=>replay.captureSoftwareCheckpoint(new Uint8Array())],",
+        "max_count": 1
+      },
+      {
+        "line": 105,
+        "source": "['stored restore',()=>replay.restoreStoredSnapshot()]])await gated(name,fn);",
+        "max_count": 1
+      },
+      {
+        "line": 106,
+        "source": "need(JSON.stringify(cursor(replay.inputPosition()))===before,'live replay refusals preserve cursor');",
+        "max_count": 1
+      },
+      {
+        "line": 107,
+        "source": "report.replayedBeforeBoundary=replay.inputPosition();",
+        "max_count": 1
+      },
+      {
+        "line": 108,
+        "source": "for(const[name,fn]of [['fractional channel',()=>replay.applyRecordedInput(1.5,'0','23',23,'0',new Uint8Array(),['0','0','0','0'])],",
+        "max_count": 1
+      },
+      {
+        "line": 109,
+        "source": "['noncanonical cursor',()=>replay.applyRecordedInput(16,'00','23',23,'0',new Uint8Array([0]),['0','0','0','0'])],",
+        "max_count": 1
+      },
+      {
+        "line": 110,
+        "source": "['wrong sequence',()=>replay.applyRecordedInput(16,'0','25',23,'0',new Uint8Array([0]),['0','0','0','0'])],",
+        "max_count": 1
+      },
+      {
+        "line": 111,
+        "source": "['outcome shape',()=>replay.applyRecordedInput(16,'0','23',23,'0',new Uint8Array([0]),['0'])]])refuse(name,fn);",
+        "max_count": 1
+      },
+      {
+        "line": 112,
+        "source": "need(JSON.stringify(cursor(replay.inputPosition()))===before,'malformed replay input reserves nothing');",
+        "max_count": 1
+      },
+      {
+        "line": 113,
+        "source": "refuse('outcome divergence stops candidate',()=>replay.applyRecordedInput(16,'0','23',23,'0',new Uint8Array([0]),['1','0','0','0']));",
+        "max_count": 1
+      },
+      {
+        "line": 114,
+        "source": "need(replay.inputPosition().stopped,'divergent candidate stopped');report.divergence=replay.inputPosition();",
+        "max_count": 1
+      },
+      {
+        "line": 115,
+        "source": "output.length=0;bulk=fresh();bulk.runChunk(4096);const bulkInitial=bulk.captureInputWitness();",
+        "max_count": 1
+      },
+      {
+        "line": 116,
+        "source": "writer=await store.writer('input-bulk');const bulkJournal=await SessionInputJournal.createWitness(store,writer,config,bulkInitial.native,bulkInitial.disk,bulkInitial.pending,bulkInitial.output);",
+        "max_count": 1
+      },
+      {
+        "line": 117,
+        "source": "bulk.startInputCapture(false);",
+        "max_count": 1
+      },
+      {
+        "line": 118,
+        "source": "for(let i=0;i<64;i++){const bytes=new Uint8Array(65536).fill(i);bulk.sendInput(bytes);bytes.fill(255);}",
+        "max_count": 1
+      },
+      {
+        "line": 119,
+        "source": "const bulkReceipts=bulk.takeInputDeliveries();need(bulkReceipts.length===64,'bounded same-position bulk offers');",
+        "max_count": 1
+      },
+      {
+        "line": 120,
+        "source": "bulkJournal.stage(bulkReceipts);await bulkJournal.flush();await writer.release();writer=null;",
+        "max_count": 1
+      },
+      {
+        "line": 121,
+        "source": "const bulkSaved=await SessionInputJournal.read(store,'input-bulk');need(bulkSaved.manifest.events.length>1,'record batch splits at chunk byte budget');",
+        "max_count": 1
+      },
+      {
+        "line": 122,
+        "source": "for(let i=0;i<64;i++)need(bulkSaved.receipts[i].bytes.length===65536&&bulkSaved.receipts[i].bytes.every(v=>v===i)",
+        "max_count": 1
+      },
+      {
+        "line": 123,
+        "source": "&&bulkSaved.receipts[i].sequence===String(i+1)&&bulkSaved.receipts[i].ordinal===i+1&&bulkSaved.receipts[i].transition==='0'",
+        "max_count": 64
+      },
+      {
+        "line": 124,
+        "source": "&&bulkSaved.receipts[i].outcome[0]===(i<16?'0':'1'),'bulk order, ownership and actual queue refusal '+i);",
+        "max_count": 64
+      },
+      {
+        "line": 125,
+        "source": "report.bulk={id:'input-bulk',events:64,bytes:4194304,chunks:bulkSaved.manifest.events.length,end:bulkSaved.manifest.end};",
+        "max_count": 64
+      },
+      {
+        "line": 126,
+        "source": "report.status='passed';return report;",
+        "max_count": 64
+      },
+      {
+        "line": 127,
+        "source": "}finally{detach?.();if(writer)await writer.release();if(store)await store.close();bulk?.free();replay?.free();vm?.free();URL.revokeObjectURL(kernelUrl);}",
+        "max_count": 64
+      },
+      {
+        "line": 128,
+        "source": "}",
+        "max_count": 1
+      }
+    ],
+    "uncovered": []
+  },
+  "web/src/input/pointer.js": {
+    "evidence_entries": 18,
+    "evidence": [
+      "target/evidence/e9-t10-cold-final-incremental/acceptance/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-public-final/browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/loader-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/pointer-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-verifier/witness-fault-browser/javascript-coverage.json.gz",
+      "target/evidence/e9-t10-worker-final-incremental/browser/javascript-coverage.json.gz"
+    ],
+    "covered": [
+      {
+        "line": 113,
+        "source": "setInputPointerMode: relative => controller.setInputPointerMode?.(relative),",
+        "max_count": 9
+      },
+      {
+        "line": 276,
+        "source": "function publishMode(relative) {",
+        "max_count": 12
+      },
+      {
+        "line": 277,
+        "source": "if (!ready() || typeof adapter.setInputPointerMode !== \"function\") return;",
+        "max_count": 12
+      },
+      {
+        "line": 278,
+        "source": "const transmit = () => adapter.setInputPointerMode(relative);",
+        "max_count": 12
+      },
+      {
+        "line": 279,
+        "source": "if (serializeTransport) transportTail = transportTail.then(transmit, transmit).catch(error => {",
+        "max_count": 12
+      },
+      {
+        "line": 280,
+        "source": "diagnostic(\"pointer-mode-error\", {error: error?.message || String(error)});",
+        "max_count": 2
+      },
+      {
+        "line": 281,
+        "source": "});",
+        "max_count": 2
+      },
+      {
+        "line": 282,
+        "source": "else transmit();",
+        "max_count": 6
+      },
+      {
+        "line": 283,
+        "source": "}",
+        "max_count": 12
+      },
+      {
+        "line": 284,
+        "source": "",
+        "max_count": 9
+      },
+      {
+        "line": 290,
+        "source": "if (changed) { modeChanges += 1; publishMode(false); }",
+        "max_count": 8
+      },
+      {
+        "line": 339,
+        "source": "publishMode(true);",
+        "max_count": 8
+      }
+    ],
+    "uncovered": []
+  }
+}

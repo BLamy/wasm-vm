@@ -1,0 +1,14 @@
+{
+  "status": "HELD",
+  "attack": "Move relative-mode publication before releasing the held tablet button in an isolated copy; keep JS/TS byte-identical",
+  "command": [
+    "node",
+    "--test",
+    "--test-name-pattern=capture records releases before",
+    "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-verifier/pointer-order-sabotage-4lllzndc/web/tests/pointer.test.mjs"
+  ],
+  "exit_code": 1,
+  "new_tests_failed": 4,
+  "test_sha256": "33590aeb53dba87cf87ccdcaeee583b2600c1646e36596ec79dad95854bdadac",
+  "log_sha256": "68b4e4f5db1254233968514dd7e13aafd34d1c1be8b0254a8ab75cb28f8ac8ab"
+}

@@ -1,0 +1,26 @@
+✔ TypeScript source and no-bundler pointer projection stay byte-identical (0.541542ms)
+✔ absolute coordinates use the current CSS rect and clamp independently of DPR/backing pixels (0.4055ms)
+✔ browser button numbers map to the documented evdev codes (0.090042ms)
+✔ absolute moves target the tablet while relative moves target only the mouse (0.402125ms)
+✔ mode changes release old-device buttons before routing the next button pair (0.201458ms)
+✔ an absolute desktop can keep tablet motion and route buttons through the mouse seat (0.111292ms)
+✔ pixel and line wheel detents use signed per-axis accumulators (0.527ms)
+✔ 1000 small pixel wheel deltas stay bounded and never change emitted sign (0.733292ms)
+✔ wheel accumulators cancel across direction changes and reject invalid modes (0.200667ms)
+✔ Pointer Lock success is accepted and denial/loss returns to neutral absolute mode (2.299208ms)
+✔ legacy Pointer Lock retries without options and explicit errors fail closed (0.124583ms)
+✔ attached surface captures buttons and suppresses the browser context menu (0.345208ms)
+✔ Wasm pointer adapter requires the complete four-method transport surface (0.200666ms)
+✔ capture records releases before mode changes (direct, 2654435769) (0.179917ms)
+✔ capture records releases before mode changes (direct, 2752095587) (0.064542ms)
+✔ capture records releases before mode changes (serialized, 2654435769) (0.107458ms)
+✔ capture records releases before mode changes (serialized, 2752095587) (0.076959ms)
+✔ serialized capture reports a refused pointer mode without a guest frame (0.09825ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 46.065209

@@ -3,7 +3,7 @@ id: E9-T10
 epic: 9
 title: Record user and host-control inputs at delivery
 priority: 524.910
-status: implemented
+status: verified
 depends_on: [E9-T09]
 estimate: S
 risk: high
@@ -20,9 +20,9 @@ UART, keyboard, absolute/relative pointer, resize and offered clipboard/file-tra
 
 ## Acceptance criteria
 
-- [ ] Record exact delivered bytes/events, including releases, modifiers, pointer mode changes and a file upload, with event clock keys rather than DOM timestamps alone.
-- [ ] Repeated input and same-position sequences retain their original order and payload identity across store/reload.
-- [ ] Pause/resume/stop boundaries and failed or cancelled transfers produce a documented, replayable prefix; no hidden live input may enter replay.
+- [x] Record exact delivered bytes/events, including releases, modifiers, pointer mode changes and a file upload, with event clock keys rather than DOM timestamps alone.
+- [x] Repeated input and same-position sequences retain their original order and payload identity across store/reload.
+- [x] Pause/resume/stop boundaries and failed or cancelled transfers produce a documented, replayable prefix; no hidden live input may enter replay.
 
 ## Deterministic acceptance
 
@@ -142,3 +142,109 @@ Authenticated compact packet: `evidence/e9-t10/public-final/`, including the ori
 public driver, screenshots, browser traces and oracle logs. The full recordings
 and profiles remain at their original paths. Independent adversarial verification
 remains pending; this publication entry does not set `verified`.
+
+
+### 2026-10-18 — fresh verifier — VERDICT: verified
+
+The verifier did not implement this task. Predictions P0–P13 were written before their
+corresponding evidence was inspected. Runtime freeze `dc5fab60d1b0e4c6c92bc78169232c9d3622825e`,
+proof repair `fafa1d63b5fa584df445e0c967ea52af966de5f8`, and production capture
+`6528fcce222cb2f276e751dda7ef4ddbf10cd50b` were independently authenticated. No runtime
+source changed after that freeze; this verifier adds only promoted tests, evidence and
+metadata. `CapturePrefix` remains explicitly incomplete; T11–T14 replay requirements
+were not imported into this input-adapter claim.
+
+- **P0 / P7 source, isolation and proof repair — HELD.** Both original worker/pristine
+  inventories, all source Git blobs, every compact packet entry/alias and the production
+  inventory match their hashes. The cold source was clean at `fafa1d63`, with independent
+  persistent Git metadata, no alternates, 38 exact source hashes and an originally empty
+  compiler target. Audit `evidence/e9-t10/verifier-final/cold-source-audit.json` SHA-256
+  `a1c70958d954ff315d59680d0551c69587681cbb9f23dbc8e2e99912631625d7` was preserved before
+  authorizing disposable source release. The narrowly allowed proof delta changes no
+  runtime/dependency boundary. The corrected oracle compares the **entire** initial
+  UART queue against FIFO deliveries; marker containment permits legitimate following
+  RPC bytes without weakening that byte comparison. Four frozen-harness forgery cases
+  and an additional external-symlink escape reject before creating output.
+- **P1 / P2 guest delivery, reservation and rapid input — HELD.** Independent decoding
+  of 17 native frames and 20 instruction traces per original reproduces exact UART,
+  evdev and clipboard-port bytes, six rapid make/break bursts and 768 ordered receipts.
+  The source/replay keyboard/tablet/mouse/drop frames are byte-identical. In
+  `target/evidence/e9-t10-worker-final-incremental/native/keyboard-focus-release.trace`,
+  lines **74–75** and **106–107** load/store the zero-valued A and Shift releases
+  (trace SHA-256 `bd1467ff375c92b592f7685f03d0e770d84254afd9ebae2e15727701d84440f9`).
+  Duplicate tablet positions and signed mouse deltas remain in guest RAM/trace. The
+  opaque mailbox snapshot independently retains channel 3 / bytes `07 08 09` at
+  transition/retirement 7, sequence 0 (`host-mailbox-pending.resume`, SHA-256
+  `d3bd6c3b03e512504ade4e32f40d5ca10b4e1719f917dc782630c51ff5ada7d1`).
+  Malformed/oversized input, exhausted reservation and undrained receipts refuse before
+  device/cursor mutation; a whole-frame drop leaves the guest used ring at zero.
+- **P3 / P4 exact durable input and actual Linux transfer — HELD.** All seven prefix
+  sets were independently decoded for worker, cold and production, including object
+  hashes, decimal clock keys, publication frames, exact initial FIFO prefix and caller
+  ownership. The 64 tied offers preserve all 4 MiB over three bounded chunks and retain
+  the first-16/remaining-48 acceptance/refusal outcomes across reload. The actual guest
+  file is **131129 bytes**, SHA-256
+  `d76854eeea54b02d6ec86d9dc9acaffd3f9734a3077b792ff014c135075975e9`;
+  the retained cancelled private prefix is **65528 bytes**, SHA-256
+  `ccd8ab7bb8cc5df3e2aede25c96a9147ed71becf5165e061e0d964131a3b72d7`.
+  Production `browser/browser-trace.zip!/trace.trace:1290`, `:1318`, `:1338` retain the
+  actual guest readback and closed-handle/absent-final-basename commands; their decoded
+  UART results equal the recovered files. A late push is receipt **66**, failure code 12.
+- **P5 lifecycle, failure and concurrent publication — HELD.** Production retention
+  refusal leaves manifest SHA-256
+  `d16c1a88dcc9d9789d65fd4ad3614c9aaaa100ad983e93f23010b2d8e196ff99` unchanged and pauses
+  execution. Retry retains event identity. Concurrent drain/release/stop retains key-up
+  **75**, its publication **76**, and final stop **77**; the fresh-tab object is identical
+  and its end equals the stopped machine: transition `204400000`, retired `204379225`,
+  sequence `77`, ordinal `12`. Actual objects and state points are in
+  `evidence/e9-t10/verifier-final/state-audit.json`.
+- **P6 firewall and validation — HELD.** Actual browser live ingress and 24 mutation
+  guards preserve replay cursor sequence/ordinal 22; malformed replay keys reserve
+  nothing. Deliberate outcome divergence consumes only the checked next event and stops
+  the candidate at sequence/ordinal 23. Native manifest admission refuses incomplete
+  capture prefixes. The authenticated Unicode-SHA trace calls the 64-byte non-ASCII
+  guard at `input-validation/browser-trace.zip!/trace.trace:32`; `HashMismatch` preserves
+  both cursor and native digest `d02925fa3b9545b2986fb958414c917ee41c3a9ea928a0b501729d384d58b35d`.
+- **P8 / P11 / P12 / P13 bounded attacks and coverage — HELD.** The original count-zero
+  DOM pointer-mode path was closed with an independently recorded real 16-MiB guest:
+  two new seeds (`0x9e3779b9`, `0xa409a563`), each direct and promise-serialized, preserve
+  duplicate positions and all ten tablet/seven mouse DMA events. Each old-device
+  release/SYN precedes its mode receipt, all 24 receipts survive caller mutation and
+  durable reopen, malformed second-receipt staging is atomic, and replay rejects mode
+  ingress without consuming a coordinate. A separate actual loader recording retains
+  initial held-tablet/mouse ledgers `[272]`, then exact release receipts and raw paused
+  capture/unsupported-control refusal. Scoped witness-boundary fault injection exercises
+  the retry/error plumbing: one transient refusal, one real fetch call, attempt two
+  delegates to the actual native exporter; an unsupported error starts no adapter and
+  publishes no manifest. This injection is not claimed as a genuine cache-miss witness.
+  All changed loader/journal/pointer lines execute; specific declaration/generated/UI
+  status-message waivers are recorded in `verifier-final/coverage.md`.
+- **P8 / P9 SUITE — HELD.** Five pointer regressions are promoted into the existing
+  `web/tests/pointer.test.mjs` gate. The focused pointer suite passes **18/18** and the
+  affected input/worker protocol gate passes **81/81**. In an isolated byte-identical
+  JS/TS copy, moving mode publication ahead of the held-button release makes all four
+  new order checks fail. Separately changing the native A-release byte makes the
+  independent guest oracle fail. The frozen submission's **682 native tests**, affected
+  wasm builds and full prescribed local gate results were authenticated and interrogated;
+  runtime semantics did not change, so unrelated workspace/cold-clone gates were not
+  restarted for test/evidence-only promotion.
+- **P10 published proof — HELD.** Production report SHA-256
+  `245f7588ae4346845cca2c182f8e391eadef2fbbe0b9d9039feceaebf5c28b1c` authenticates 1414
+  original files and all 38 source identities. Built suite **127/0**, zero unexpected
+  console errors, live input pips, desktop/mobile captures and actual Linux file/prefix
+  checks hold. A fresh independent Chromium request context re-fetched and hashed all
+  **18** shipped assets. The unchanged retained GPU's **58** asset identities hold;
+  its public guest retired **2499808** instructions and physically drew in fresh epoch 4.
+
+Verifier packet: `evidence/e9-t10/verifier-final/` (42 independently hashed files),
+provenance SHA-256 `9c53b382385bed91c3f8ba5bcc42b3f9d837f53cde8ad3d11db00c16d9687ffd`.
+Original verifier recordings and setup diagnostics remain at
+`target/evidence/e9-t10-verifier/`; no worker, cold or public original was edited.
+No semantic refutation or missing accepted-path proof remains. rr/ssh dev is waived;
+no GitHub Actions, merge or external messaging was used.
+
+Commands: independent `audit_state.py`, source/packet/public hash audits,
+`proof_attacks.py`, `pointer-critic.mjs`, `loader-critic.mjs`,
+`witness-fault-critic.mjs`, `promoted_sabotage.py`; `node --test` for the six affected
+input/worker protocol files; `git diff --check HEAD^ HEAD -- tasks web/tests` (raw
+recorded evidence logs retain their original bytes); task policy before queue regeneration.
