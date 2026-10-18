@@ -320,6 +320,21 @@
       "sha256": "c09c791dc82d2be52a01c40edb2aff8e40101da24e4e10ffbe42e5b5647ac7b0"
     },
     {
+      "path": "publication-audit.md",
+      "bytes": 4291,
+      "sha256": "44dd218841b4092b8c2345604e1f42fc038324911f95d766274c190f796ecd60"
+    },
+    {
+      "path": "publication-effects.json",
+      "bytes": 1570,
+      "sha256": "cdf8a8979bb470feaa71e5630be43068c73c9648723774777491c6314d4a3980"
+    },
+    {
+      "path": "publication-http.json",
+      "bytes": 6708,
+      "sha256": "891b35c03c3c5a610146dece036090cd193c3419fc2761496eb246c1d48f00be"
+    },
+    {
       "path": "run-browser-critic.mjs",
       "bytes": 2803,
       "sha256": "9352b12e343909f4b4ff789a8310d549293931225a86587980abc6aa76cef68e"
@@ -341,5 +356,7 @@
     }
   ],
   "final_proof_head": "0db63b02fc3cdef4ed188a53d03fddfc340b454f",
-  "cold_composition": "15 authenticated cold native/build gates at 25e65f56 plus full final browser acceptance after scoped harness correction at 0db63b02; original failures preserved"
+  "cold_composition": "15 authenticated cold native/build gates at 25e65f56 plus full final browser acceptance after scoped harness correction at 0db63b02; original failures preserved",
+  "publication_report_sha256": "5bca44684fdbf167c44c29bab5ec95d4b443f80ce1b5b81e76577c716d7a66b6",
+  "publication_proof_head": "2bb4c9531e94914d92b13b575087d41d1b26500d"
 }

@@ -183,3 +183,26 @@ and physically drew in fresh epoch 4 without loss or poisoning. Report SHA-256
 Compact raw deltas, roots, oracle witnesses, screenshots, logs, coverage and all
 original-file digests are in `evidence/e9-t04/public/`; the full browser trace/profile
 and reconstructed images remain at the recorded external evidence path.
+
+### 2026-10-17 — fresh verifier — publication addendum — VERDICT: verified
+
+All prior P0–P9 remain **HELD**. The publication-only H1–H5 predictions held:
+751 originals, 37 compact files and all 30 unchanged source hashes authenticate.
+Independent fresh HTTP reads of all 15 recorded assets plus the service worker on
+both immutable preview and production yield 32 HTTP-200 exact-byte matches. Both
+catalogs show E9-T04 verified, 3/3 criteria and 516 verified tasks. Only catalog
+metadata and the cache stamp changed after the held runtime/cold proof.
+
+The real public run remains 127/0 with zero demo errors, verified pip, and every
+owner/I/O/refusal attack. Independent canonical-root decoding and read-only ext4
+reads/inode maps confirm all four exact file contents at block 33281, stable old
+roots and identical 8471-byte durable live rows. The surviving parent's 37 references
+remain inside the 60-reference union. Public retained GPU compatibility again
+qualifies, retires 2,499,808 instructions and physically draws in fresh epoch 4.
+
+Details and direct HTTP/effect receipts are in
+`evidence/e9-t04/verifier/publication-audit.md`, `publication-http.json` and
+`publication-effects.json`. Public report SHA-256:
+`5bca44684fdbf167c44c29bab5ec95d4b443f80ce1b5b81e76577c716d7a66b6`.
+No runtime/harness edit or unrelated gate rerun was needed. Status remains verified;
+T05/T07 boundaries remain unchanged and PR #579 remains open/draft.
