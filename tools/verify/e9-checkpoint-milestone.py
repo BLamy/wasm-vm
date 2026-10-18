@@ -23,6 +23,7 @@ sources = ['web/session-library.js','web/session-library.css','web/main.js','web
            'web/gpu-checkpoint-build.js','web/docs-source/guides/storage.md',
            'tools/verify/e9-checkpoint-milestone.py','tools/verify/e9-checkpoint-milestone-browser.mjs',
            'tools/verify/e9-checkpoint-milestone-files.py','tools/verify/e9-disk-roots-files.py',
+           'tools/verify/e9-checkpoint-metadata-critic.mjs',
            'Makefile','web/package.json','web/package-lock.json','tools/build-web-dist.sh']
 
 
@@ -54,6 +55,7 @@ try:
         assert (ROOT / 'web' / name).read_bytes() == (ROOT / 'web/dist' / name).read_bytes(), 'stale dist: ' + name
     run('policy', ['python3', 'tools/check_task_policy.py'])
     run('driver-syntax', ['node','--check','tools/verify/e9-checkpoint-milestone-browser.mjs'])
+    run('critic-syntax', ['node','--check','tools/verify/e9-checkpoint-metadata-critic.mjs'])
     run('oracle-syntax', ['python3','-B','-c',"from pathlib import Path; compile(Path('tools/verify/e9-checkpoint-milestone-files.py').read_bytes(),'milestone-files','exec')"])
     run('worker-protocol', ['node','--test','web/tests/e4-t32-worker-protocol.test.mjs'])
     run('browser-build', ['make','web-build'])
@@ -65,6 +67,12 @@ try:
     assert browser['head']==report['head'] and browser['status']=='passed' and not browser['development'] and browser['errors']==[]
     assert browser['checks']['suite']=={'passed':127,'failed':0}
     assert json.loads((output/'browser/milestone-oracle.json').read_text())['status']=='passed'
+    run('metadata-critic', ['node','tools/verify/e9-checkpoint-metadata-critic.mjs',
+                          '--evidence',str(output/'browser'),'--output',str(output/'metadata-critic')])
+    critic=json.loads((output/'metadata-critic/report.json').read_text())
+    assert critic['status']=='passed' and critic['errors']==[] and critic['head']==report['head']
+    assert critic['original_report_sha256']==sha(output/'browser/report.json')
+    assert critic['expectedHash']==browser['checks']['beta']['frameHash']
     clean()
     report['status'] = 'passed'
 except BaseException as error:

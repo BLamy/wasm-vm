@@ -1,0 +1,302 @@
+{
+  "task": "E9-T08",
+  "prediction": "N1",
+  "status": "passed",
+  "head": "1b3c68c0def3fb98c8803ed6f95089f90ed7dfe7",
+  "evidence_head": "1b3c68c0def3fb98c8803ed6f95089f90ed7dfe7",
+  "original_report_sha256": "80f77ee25c7c9e5773009c4f47a5aad44701ce54929f8b8d6d5b49409fc0a325",
+  "witness_sha256": "259ef0518842bc27513896baf8b224989b54bdbb859c2c2d3165d22bcc8d566a",
+  "source_sha256": "ec4931212669222b1b9db5bb1a02669a1cd4d496a8a1192eea224f3da85649a9",
+  "origin": "http://127.0.0.1:61475",
+  "beta": "session-c1462a26-4f40-4c4a-8f07-d62fbdc3a4f6",
+  "point": "point-1ff9046a-4522-4aa0-b233-3c26865923f2",
+  "expectedHash": "a7368525958f378a505077777dd46f4ee995b6ca5af313124d4d373cb59d80e0",
+  "checks": [
+    {
+      "check": "rehydrated-original-alpha",
+      "before": "7b8d3d522a7041d796265d4793a23f73e3fa6edcbd21f678cee80eec4514aea1",
+      "after": "7b8d3d522a7041d796265d4793a23f73e3fa6edcbd21f678cee80eec4514aea1",
+      "disk_root": "79c6d4548f1ad7da1625e296081b86492c2346c72a66ff4bb46b0b1216e5213d",
+      "shared_configuration": "cb49b9110d9344bbe9a426585384fd15d9b702b0cfe687597de51443405c338b"
+    },
+    {
+      "check": "independent-alpha-first",
+      "hash": "7b8d3d522a7041d796265d4793a23f73e3fa6edcbd21f678cee80eec4514aea1",
+      "bytes": 23863250,
+      "paused": true,
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 0,
+        "totalSliceMs": 0,
+        "averageSliceMs": 0,
+        "maxSliceMs": 0,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 0
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 0,
+        "requestedInstructions": 0,
+        "retiredInstructions": 0,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 0,
+        "outputBytes": 0,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "id": "session-0a5df67d-e7b5-4800-a4b9-ca5d2b313e93",
+      "point": "point-05c69372-90f0-40c4-9b7f-50f745db4552"
+    },
+    {
+      "check": "guest-alpha",
+      "file": {
+        "stdout": "YWxwaGEtZmlsZQo=\n\n",
+        "exit": 0
+      },
+      "memory": {
+        "stdout": "alpha-memory/queued-alpha\n",
+        "exit": 0
+      }
+    },
+    {
+      "check": "before-rename",
+      "hash": "a7368525958f378a505077777dd46f4ee995b6ca5af313124d4d373cb59d80e0",
+      "bytes": 23862970,
+      "paused": true,
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 0,
+        "totalSliceMs": 0,
+        "averageSliceMs": 0,
+        "maxSliceMs": 0,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 0
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 0,
+        "requestedInstructions": 0,
+        "retiredInstructions": 0,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 0,
+        "outputBytes": 0,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "id": "session-c1462a26-4f40-4c4a-8f07-d62fbdc3a4f6",
+      "point": "point-1ff9046a-4522-4aa0-b233-3c26865923f2"
+    },
+    {
+      "check": "guest-beta",
+      "file": {
+        "stdout": "YmV0YS1maWxlCg==\n\n",
+        "exit": 0
+      },
+      "memory": {
+        "stdout": "beta-memory/queued-beta\n",
+        "exit": 0
+      }
+    },
+    {
+      "check": "renamed-literal",
+      "name": "Beta <b id=\"e9-novel-marker\">Ω & \"quoted\"</b>",
+      "visibleOption": "Beta <b id=\"e9-novel-marker\">Ω & \"quoted\"</b>"
+    },
+    {
+      "check": "reload-literal",
+      "name": "Beta <b id=\"e9-novel-marker\">Ω & \"quoted\"</b>",
+      "active": ""
+    },
+    {
+      "check": "fresh-tab-after-rename",
+      "hash": "a7368525958f378a505077777dd46f4ee995b6ca5af313124d4d373cb59d80e0",
+      "bytes": 23862970,
+      "paused": true,
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 0,
+        "totalSliceMs": 0,
+        "averageSliceMs": 0,
+        "maxSliceMs": 0,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 0
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 0,
+        "requestedInstructions": 0,
+        "retiredInstructions": 0,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 0,
+        "outputBytes": 0,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "id": "session-c1462a26-4f40-4c4a-8f07-d62fbdc3a4f6",
+      "point": "point-1ff9046a-4522-4aa0-b233-3c26865923f2"
+    }
+  ],
+  "errors": [],
+  "files": [
+    {
+      "path": "independent-alpha-first.checkpoint.gz",
+      "bytes": 10201756,
+      "sha256": "37f65063b50c9027e0b713d76a82185bd6f55fc67818be49da7e52277f59d613"
+    },
+    {
+      "path": "before-rename.checkpoint.gz",
+      "bytes": 10201621,
+      "sha256": "38d2aa65ab6af42911a9481da86b2cf2bbc735671e88386726db411ba991aa64"
+    },
+    {
+      "path": "fresh-tab-after-rename.checkpoint.gz",
+      "bytes": 10201621,
+      "sha256": "38d2aa65ab6af42911a9481da86b2cf2bbc735671e88386726db411ba991aa64"
+    },
+    {
+      "path": "browser-trace.zip",
+      "bytes": 34938271,
+      "sha256": "e9a785ad40e56323c4d522d6bddd41ef09222476d97015b8cea6646e73885fe3"
+    },
+    {
+      "path": "literal-name-exact-restore.png",
+      "bytes": 137629,
+      "sha256": "e25caf57a8b4fd2d920578cd0862065d98ec8caf4aa47af60affb695d6ff3333"
+    }
+  ]
+}

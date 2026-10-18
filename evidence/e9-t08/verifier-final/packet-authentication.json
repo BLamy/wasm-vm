@@ -1,0 +1,18 @@
+[
+  {
+    "packet": "evidence/e9-t08/worker",
+    "status": "passed",
+    "provenance_sha256": "a970ae79e45daab17699f89a545ab05eda9f94860cdc1f8ce789045a6cbe264a",
+    "originals": 474,
+    "packet_payloads": 37,
+    "aliases": 5
+  },
+  {
+    "packet": "evidence/e9-t08/public",
+    "status": "passed",
+    "provenance_sha256": "f38a4c78ebad250403fa85d5b972110d4406c745333fb045cb39de8d8a4aac37",
+    "originals": 681,
+    "packet_payloads": 28,
+    "aliases": 5
+  }
+]
