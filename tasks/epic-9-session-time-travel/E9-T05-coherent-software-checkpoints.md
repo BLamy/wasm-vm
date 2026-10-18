@@ -3,7 +3,7 @@ id: E9-T05
 epic: 9
 title: Capture and restore coherent software session checkpoints
 priority: 524.905
-status: implemented
+status: in-progress
 depends_on: [E9-T03, E9-T04]
 estimate: S
 risk: high
@@ -74,3 +74,50 @@ disks, microphones, host audio bridges or active PCM streams. Its event cursor i
 in checkpoints-only mode; event replay/UI/retention/runtime bundles remain their successor tasks.
 Fresh adversarial verification, its promoted tests, the one final pristine clone and live
 Cloudflare publication are pending; this entry makes no verifier or public-deployment claim.
+
+### 2026-10-17 — fresh verifier — VERDICT: refuted
+
+- **P6a coherent publication — FAILED.** Predicted that a disk-leaf producer-buffer ABA
+  either refuses atomically or publishes the original coherent frame/root tuple. In two
+  independent built-Wasm schedules, mutating a COW leaf after `openSession` and restoring
+  the original frame immediately before its final object `put` successfully commits
+  revision **1→2**, yet admission rejects `Checkpoint: historical disk mismatch`.
+  Schedule 0 restores frame hash
+  `fdcac301127ea9d1798a4de52db19e1fcc08054a3dabb32244fc1a2d912d5858`, but its frame/root
+  leaf bytes are **67/99**; schedule 1 is **68/101**. `web/session-checkpoints.js:75`
+  pins a hash over aliased bytes, `:83` yields, `:95` derives a later root from those
+  aliases, and `:108` checks the restored original bytes. Demand: own or equivalently
+  authenticate one immutable complete tuple before the first await, then re-record the
+  selected high-risk gates. Reproducer/results: `evidence/e9-t05/verifier/aba-browser.json`
+  (both schedules, exact component/root hashes), with trace
+  `target/evidence/e9-t05-aba-critic-trace.zip`, SHA-256
+  `43be7fa960e03858567f029e709caa2fe6b496f3b6a7e50c8661a4398455ee85`.
+- **P0–P5 / unrelated P6 / P7 checks — HELD.** The original report digest, all **540**
+  original files, **51** compact copies/gzip aliases and **39** source hashes authenticate.
+  Independent raw decoding finds all 16 sections and identical before/restored tuples.
+  Independent COW reconstruction and read-only e2fsprogs recover exact before/restored
+  `e9:before\n` and advanced `e9:after\n` files. The authenticated guest memory/UART
+  witness, held input, original read/write drain, 16-pass timeout/recovery, corrupt
+  components, same-generation disk rejection, owner fences, 127/0 demo and unchanged
+  retained GPU compatibility all hold. New native tests pass **65** all-component
+  admission refusals and **32** mixed delivered/pending/staged-input continuation schedules.
+  Fresh built-Wasm rehashed corruption of each of 16 components, ordinary mutation and
+  detachment refusal, configuration pinning, successful append and competing append
+  ownership also hold. These findings carry forward when their runtime/dependency
+  boundaries and evidence digests remain unchanged.
+- **P9 sabotage — HELD.** In an isolated deliberately incomplete crate copy, routing
+  exact capture through the legacy physical-input codec makes the new pre-capture
+  ledger oracle fail (exit **101**). The production source remains byte-identical.
+  Details: `evidence/e9-t05/verifier/sabotage.json` and `sabotage.log`.
+- **SUITE / remaining proof.** Promoted native and built-browser attacks are wired into
+  `make verify-E9-T05`, including the two ABA schedules. They permit either an atomic
+  refusal or publication/admission of the coherent original snapshot; ordinary producer
+  mutation/detachment also permits that valid immutable-snapshot behavior. The full
+  coverage verdict, final pristine-clone proof and public deployment proof remain
+  pending. No cold clone or deployment was run during this audit.
+
+Predictions were written before evidence in `evidence/e9-t05/verifier/predictions.md`;
+authentication and independent filesystem receipts are `worker-interrogation.json` and
+`files-interrogation.json`. Native test/lint/format commands and results are in
+`native-gates.json`; browser results are in `browser-critic.json`. This verdict changes
+tests, evidence and task metadata only; the worker must repair the runtime boundary.

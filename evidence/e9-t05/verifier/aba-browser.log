@@ -1,0 +1,2 @@
+AssertionError [ERR_ASSERTION]: a successful checkpoint publication must retain one coherent frame/root tuple
+    at file:///Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/evidence/e9-t05/verifier/run-aba-browser.mjs:30:10

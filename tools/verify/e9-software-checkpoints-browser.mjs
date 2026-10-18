@@ -8,6 +8,8 @@ import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {checkSoftwareCheckpointIo} from './e9-software-checkpoints-io.mjs';
+import {checkSoftwareCheckpointCritic} from './e9-software-checkpoints-critic.mjs';
+import {observeSoftwareCheckpointAba,assertSoftwareCheckpointAba} from './e9-software-checkpoints-aba-critic.mjs';
 import {chromium} from '../../web/node_modules/playwright/index.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -250,6 +252,9 @@ try {
   report.checks.restoredFile=await file('restored','e9:before\n');
   await page.evaluate(()=>guests.restored.controller.stop());
   report.checks.io=await checkSoftwareCheckpointIo(page,fixture);
+  report.checks.critic=await checkSoftwareCheckpointCritic(page,fixture);
+  report.checks.aba=await observeSoftwareCheckpointAba(page,fixture);
+  assertSoftwareCheckpointAba(report.checks.aba);
   report.checks.oracle=execFileSync('python3',['tools/verify/e9-software-checkpoints-files.py','--output',output],{cwd:root,encoding:'utf8'}).trim();
   await page.screenshot({path:path.join(output,'restored.png')});
   await page.unroute('**/__e9-proof/*');

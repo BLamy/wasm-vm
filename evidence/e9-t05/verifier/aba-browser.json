@@ -1,0 +1,82 @@
+{
+  "status": "failed",
+  "checks": [
+    {
+      "schedule": 0,
+      "changed": true,
+      "restored": true,
+      "frameHash": "fdcac301127ea9d1798a4de52db19e1fcc08054a3dabb32244fc1a2d912d5858",
+      "finalFrameHash": "fdcac301127ea9d1798a4de52db19e1fcc08054a3dabb32244fc1a2d912d5858",
+      "publication": {
+        "accepted": true,
+        "value": {
+          "id": "aba-0",
+          "revision": "2",
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          }
+        }
+      },
+      "admission": "Checkpoint: historical disk mismatch",
+      "previousRevision": "1",
+      "newRevision": "2",
+      "previousManifestHash": "0131b215104a541f25247d68ff63254451bff522f3c09158a27d0daac8aaca4f",
+      "newManifestHash": "4781c89a2ac17d9158f8d00b2cd865be31be4373b93d173d3eaac80fcca60432",
+      "previousRoot": "8feea47d0834e9d407489f94b1add9ffc8ae0dd008d33874fb27c5db0d376231",
+      "publishedRoot": "bb6b588d6fef79653e40a53a4974ece3dbb06562443cbb44187f14c1e533cc84",
+      "frameDiskHash": "ec1fb2b7657792d645d6f45765f481e72ac35701cfc1d47d31d9280000c8298d",
+      "rootDiskHash": "2df2ca7f044bf238b0338b85e98e82a5ee36d66d5e68f99bc73692dedc977817",
+      "frameLeafByte": 67,
+      "rootLeafByte": 99
+    },
+    {
+      "schedule": 1,
+      "changed": true,
+      "restored": true,
+      "frameHash": "bad56ad932a7eeb43e2ce935b9fefb165117f6dec36abe576250f1a5aec4e669",
+      "finalFrameHash": "bad56ad932a7eeb43e2ce935b9fefb165117f6dec36abe576250f1a5aec4e669",
+      "publication": {
+        "accepted": true,
+        "value": {
+          "id": "aba-1",
+          "revision": "2",
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          }
+        }
+      },
+      "admission": "Checkpoint: historical disk mismatch",
+      "previousRevision": "1",
+      "newRevision": "2",
+      "previousManifestHash": "e71d1f1b8fbec4d62b869772bcfe42461b1e48e88d3d6918f49f7dbfc5d40a61",
+      "newManifestHash": "9a532f7e781020a21fa1b3ddb3bfeea4692badaf3e57d6d3c9ce06deeb2f0e5e",
+      "previousRoot": "5a4861e6b1951a85f2440e3b7b7e306a6346938ae3fccd2cd410346234e77879",
+      "publishedRoot": "bb9b630d0dc3904fcd4835bcafbaf979ff772b7df03137d999548f6a52402c88",
+      "frameDiskHash": "844586549f1b81e8e1d24ea8aa4cf39fdb788057fc5b434e575180aa7b35e05c",
+      "rootDiskHash": "0b299dcc710479cd434dcdb0b93a0009bd403d11fcb6ec2ae5da996297d9698d",
+      "frameLeafByte": 68,
+      "rootLeafByte": 101
+    }
+  ],
+  "errors": [],
+  "error": {
+    "message": "a successful checkpoint publication must retain one coherent frame/root tuple",
+    "stack": "AssertionError [ERR_ASSERTION]: a successful checkpoint publication must retain one coherent frame/root tuple\n    at file:///Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/evidence/e9-t05/verifier/run-aba-browser.mjs:30:10"
+  },
+  "trace": {
+    "path": "target/evidence/e9-t05-aba-critic-trace.zip",
+    "sha256": "43be7fa960e03858567f029e709caa2fe6b496f3b6a7e50c8661a4398455ee85"
+  },
+  "coverage": {
+    "path": "target/evidence/e9-t05-aba-critic-coverage.json",
+    "sha256": "847d9098750a26d3fe56c1b03d54d16461efeb72952dad6f6d4e6cbde92e9d09"
+  }
+}

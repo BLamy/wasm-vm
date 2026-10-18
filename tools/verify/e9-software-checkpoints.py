@@ -56,7 +56,7 @@ try:
     run("boundary-clippy", ["cargo", "clippy", "-p", "wasm-vm-wasm", "--all-targets", "--", "-D", "warnings"])
     run("core-native", ["cargo", "test", "-p", "wasm-vm-core", "--lib", "--features", "virgl-renderer,trace", "--", "--nocapture"])
     run("checkpoint-native", ["cargo", "test", "-p", "wasm-vm-core", "--features", "virgl-renderer,trace",
-        "--test", "e9_session_checkpoint", "--test", "cpu_resume", "--test", "snapshot_coherence",
+        "--test", "e9_session_checkpoint", "--test", "e9_session_checkpoint_verifier", "--test", "cpu_resume", "--test", "snapshot_coherence",
         "--test", "desktop_machine_resume", "--test", "desktop_machine_resume_verifier",
         "--test", "desktop_machine_audio_resume", "--test", "virtio_blk_quiesce",
         "--test", "production_gpu_checkpoint_critic", "--", "--nocapture"])
@@ -89,6 +89,9 @@ except BaseException as error:
     raise
 finally:
     sources = ['crates/core/src/lib.rs', 'crates/core/src/dev/virtio/input/mod.rs', 'crates/core/src/dev/virtio/input/snapshot.rs', 'crates/core/src/dev/virtio/snd/mod.rs', 'crates/core/src/dev/virtio/snd/snapshot.rs', 'crates/core/src/dev/virtio/console.rs', 'crates/core/src/dev/virtio/console/session_snapshot.rs', 'crates/core/tests/e9_session_checkpoint.rs', 'crates/storage/src/checkpoint.rs', 'crates/storage/tests/checkpoint_context.rs', 'crates/storage/tests/checkpoint_context/cases.rs', 'crates/wasm/src/lib.rs', 'crates/wasm/src/software_checkpoint.rs', 'crates/wasm/src/session_checkpoint.rs', 'crates/wasm/tests/software_checkpoint.rs', 'crates/session-web/src/lib.rs', 'web/session-checkpoints.js', 'web/session-disk-roots.js', 'web/session-store.js', 'web/loader.js', 'web/linux-worker-protocol.js', 'web/linux-worker-host.js', 'web/tests/e4-t32-worker-protocol.test.mjs', 'web/roadmap.js', 'web/session-alpine-image.json', 'web/session-software-fixture.json', 'tools/gen-gpu-checkpoint-build.py', 'tools/verify/e9-software-checkpoints.py', 'tools/verify/e9-software-checkpoints-browser.mjs', 'tools/verify/e9-software-checkpoints-io.mjs', 'tools/verify/e9-software-checkpoints-files.py', 'tools/verify/session-wasm/tests/checkpoint_context.rs', 'tools/verify/session-wasm/Cargo.toml', 'tools/verify/session-wasm/Cargo.lock', 'docs/design/session-replay-contract.json', 'docs/design/session-replay.md', 'Cargo.lock', 'rust-toolchain.toml', 'Makefile']
+    sources.extend(['crates/core/tests/e9_session_checkpoint_verifier.rs',
+                    'tools/verify/e9-software-checkpoints-critic.mjs',
+                    'tools/verify/e9-software-checkpoints-aba-critic.mjs'])
     report["source_sha256"] = {name: file_sha(ROOT / name) for name in sources}
     report["finished"] = time.time()
     report["files"] = [{"path": str(file.relative_to(output)), "bytes": file.stat().st_size,

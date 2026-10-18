@@ -1,0 +1,25 @@
+{
+  "status": "HELD",
+  "experiment": "intentionally incomplete isolated crate; not pristine-clone proof",
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-critic-sabotage/Cargo.toml",
+    "-p",
+    "wasm-vm-core",
+    "--features",
+    "virgl-renderer,trace",
+    "--test",
+    "e9_session_checkpoint_verifier",
+    "mixed_delivered_pending_staged_input_survives_32_boundary_schedules",
+    "--",
+    "--nocapture"
+  ],
+  "exit_code": 101,
+  "mutation": "save_session_resume routes to legacy physical-input release codec",
+  "original_sha256": "e2f98415f38526c2f3e1e5e2972cd2bd6d4dd1bf4ed31ca65123dc46d2033e59",
+  "sabotaged_sha256": "6ebf28a152b4c4024ba8c48aecf2318f623b00cb6456c8d8967d26b1d57e37ed",
+  "product_source_unchanged": true,
+  "expected_failure": "capture changed a delivered/pending/staged input ledger"
+}

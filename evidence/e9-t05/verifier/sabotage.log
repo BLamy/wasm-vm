@@ -1,0 +1,97 @@
+   Compiling libc v0.2.186
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling cfg-if v1.0.4
+   Compiling zerocopy v0.8.52
+   Compiling version_check v0.9.5
+   Compiling serde_core v1.0.228
+   Compiling getrandom v0.3.4
+   Compiling typenum v1.20.1
+   Compiling bitflags v2.13.0
+   Compiling crossbeam-utils v0.8.21
+   Compiling serde v1.0.228
+   Compiling zmij v1.0.21
+   Compiling rustix v1.1.4
+   Compiling getrandom v0.4.3
+   Compiling autocfg v1.5.1
+   Compiling serde_json v1.0.150
+   Compiling regex-syntax v0.8.11
+   Compiling generic-array v0.14.7
+   Compiling once_cell v1.21.4
+   Compiling num-traits v0.2.19
+   Compiling either v1.16.0
+   Compiling itoa v1.0.18
+   Compiling clap_lex v1.1.0
+   Compiling memchr v2.8.2
+   Compiling ciborium-io v0.2.2
+   Compiling anstyle v1.0.14
+   Compiling rayon-core v1.13.0
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling fastrand v2.4.1
+   Compiling clap_builder v4.6.0
+   Compiling itertools v0.10.5
+   Compiling crossbeam-epoch v0.9.18
+   Compiling syn v2.0.118
+   Compiling regex-automata v0.4.14
+   Compiling crossbeam-deque v0.8.6
+   Compiling cast v0.3.0
+   Compiling bit-vec v0.8.0
+   Compiling fnv v1.0.7
+   Compiling smallvec v1.15.2
+   Compiling same-file v1.0.6
+   Compiling quick-error v1.2.3
+   Compiling walkdir v2.5.0
+   Compiling bit-set v0.8.0
+   Compiling criterion-plot v0.5.0
+   Compiling clap v4.6.1
+   Compiling unarray v0.1.4
+   Compiling oorandom v11.1.5
+   Compiling log v0.4.33
+   Compiling anes v0.1.6
+   Compiling errno v0.3.14
+   Compiling cpufeatures v0.2.17
+   Compiling wait-timeout v0.2.1
+   Compiling rand_core v0.9.5
+   Compiling is-terminal v0.4.17
+   Compiling rand v0.9.4
+   Compiling rand_xorshift v0.4.0
+   Compiling regex v1.12.4
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling tempfile v3.27.0
+   Compiling zerocopy-derive v0.8.52
+   Compiling serde_derive v1.0.228
+   Compiling rusty-fork v0.3.1
+   Compiling rayon v1.12.0
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-critic-sabotage/crates/core)
+   Compiling tinytemplate v1.2.1
+   Compiling half v2.7.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.9.0
+   Compiling ciborium-ll v0.2.2
+   Compiling proptest v1.11.0
+   Compiling ciborium v0.2.2
+   Compiling criterion v0.5.1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.98s
+     Running tests/e9_session_checkpoint_verifier.rs (target/debug/deps/e9_session_checkpoint_verifier-fbc1fe2a118822a4)
+
+running 1 test
+
+thread 'mixed_delivered_pending_staged_input_survives_32_boundary_schedules' (1372104) panicked at crates/core/tests/e9_session_checkpoint_verifier.rs:211:13:
+assertion `left == right` failed: capture changed a delivered/pending/staged input ledger
+  left: [87, 86, 73, 78, 69, 88, 48, 49, 132, 0, 0, 0, 87, 86, 73, 78, 80, 48, 48, 49, 1, 0, 0, 0, 2, 0, 0, 0, 4, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 34, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+ right: [87, 86, 73, 78, 69, 88, 48, 49, 104, 0, 0, 0, 87, 86, 73, 78, 80, 48, 48, 49, 1, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 34, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 33, 0, 0, 0, 0, 0]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test mixed_delivered_pending_staged_input_survives_32_boundary_schedules ... FAILED
+
+failures:
+
+failures:
+    mixed_delivered_pending_staged_input_survives_32_boundary_schedules
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.23s
+
+error: test failed, to rerun pass `-p wasm-vm-core --test e9_session_checkpoint_verifier`
