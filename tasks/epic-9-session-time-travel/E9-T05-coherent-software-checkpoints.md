@@ -3,7 +3,7 @@ id: E9-T05
 epic: 9
 title: Capture and restore coherent software session checkpoints
 priority: 524.905
-status: evidence-needed
+status: verified
 depends_on: [E9-T03, E9-T04]
 estimate: S
 risk: high
@@ -20,9 +20,9 @@ Coordinate CPU/RAM/device state, clock policy, input queues, log cursor and hist
 
 ## Acceptance criteria
 
-- [ ] Record and restore exact CPU/device/disk witnesses from the same boundary, including pending I/O and held keyboard state.
-- [ ] A failed capture or rejected restore leaves the previous committed checkpoint and current machine usable; never publish half a tuple.
-- [ ] Use real native and built-browser fixtures; restore guest-visible memory and files rather than accepting a screenshot as state proof.
+- [x] Record and restore exact CPU/device/disk witnesses from the same boundary, including pending I/O and held keyboard state.
+- [x] A failed capture or rejected restore leaves the previous committed checkpoint and current machine usable; never publish half a tuple.
+- [x] Use real native and built-browser fixtures; restore guest-visible memory and files rather than accepting a screenshot as state proof.
 
 ## Deterministic acceptance
 
@@ -262,3 +262,48 @@ Original report: `target/evidence/e9-t05-public-final/report.json`, SHA-256
 and ext4 images outside Git. The packet records the exact command, deployment log,
 source hashes, screenshots and lossless tuple aliases. Status remains `evidence-needed`
 until the fresh reviewer interrogates the cold and public receipts and records a verdict.
+
+
+### 2026-10-18 — fresh final receipt verifier — VERDICT: verified
+
+- **F0–F4 provenance/source/isolation — HELD.** Authenticated the prior fresh verifier's
+  44 files, four external proofs and frozen test hashes; carry its unchanged correctness,
+  94-hunk coverage, regression, bounded novel-check and sabotage results forward. The one
+  final pristine run is at promoted-test head `7ac83e660cc316440a9e42cf961224f0c24a314a`:
+  20 commands match the frozen harness and exit zero. All 42 source hashes agree with
+  frozen Git blobs, the clean retained checkout and current/public sources. All 541
+  acceptance originals, 542 outer-listed payloads, 51 compact copies, restored alias
+  and three outer copies authenticate. Exact cold receipt/acceptance hashes remain
+  `6d4f5d414489eff824e17da6a74b1a0dd03b9ac66525d542be4fb50592d7316d` /
+  `0241e2c0d9704ec478594e61e324dfa2f3df845b20ff8c267b721e9173d106f2`.
+  Independent hashing reproduces the runtime and Wasm identities above. Environment
+  scrub, no inherited build outputs/alternates, exact detached head and final clean
+  checkout hold. The two logged register panics are passing should-panic cases.
+- **F5–F6 recorded checkpoint state and regressions — HELD.** Independently decoded
+  five components, all 16 native sections and sparse-RAM digests from cold/public raw
+  tuples. Cold before/restored: **23,815,994 bytes**, SHA-256
+  `0995665f26a010e24a725433ae23d83de5317346fbd187c9a9467c0b77b558d3`;
+  public: **23,837,160 bytes**, SHA-256
+  `95ec5bad55a328fa55bf97e8543e84089d955450db4616d496a00cbd52807e4b`.
+  Each is byte-identical across reload, paused with zero instructions, pending UART
+  and held key [30], actual saved-memory continuation and exact saved/restored/advanced
+  file bytes. Recorded I/O, bounded timeout/recovery, component refusal, direct-loader,
+  source preservation and both coherent ABA schedules hold. Both demos show **127/0**,
+  errors [], verified pip; retained GPU physically draws in fresh epoch 4 after
+  **2,499,808** retired instructions.
+- **F7 public proof — HELD.** Report
+  `6b31a2af91a67ab9f6eac8bec336bc96d9e543fb18ffbddbb18b2be83cf03217`
+  and sealed provenance
+  `013d218a591da579c65e78611069d7072ec736a445c6fecf7b6deb58014e669a`
+  authenticate **781** originals, **34** compact files and a restored alias. All 16
+  recorded public assets and 16 fresh read-only HTTP checks match frozen dist bytes.
+  Deployment `https://6545bb6f.wasm-vm.pages.dev`, production `https://wasm-vm.pages.dev/`.
+- **SUITE / no remaining gap.** Preserve the already-frozen promoted native/browser
+  tests and make target; no new scenario or program test was executed in this receipt
+  review, and no runtime or test code changed. The pristine checkout may be cleaned up;
+  keep original full evidence. No merge is performed by this verdict.
+
+Predictions were written before receipt inspection. Exact commands, source boundaries,
+report line citations, full authentication counts, raw frame/RAM/file hashes, trace and
+screenshot digests are in `evidence/e9-t05/verifier-final/audit.md`, its four observation
+JSON files and `receipt.json`. This final audit changes verification/task metadata only.

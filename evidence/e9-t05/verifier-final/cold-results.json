@@ -1,0 +1,152 @@
+{
+  "scope": "Recorded bytes/results only; no program test execution",
+  "browser_report_sha256": "a6877e50369ffa3b2ceabd0c73481b42e1d66ed33453b0e01e0c8d7b10bff4b1",
+  "oracle_sha256": "6caf3f9870271d42084bfec09a78964ad84e9ad658c34781a900aa0b7952cc95",
+  "tuples": {
+    "before": {
+      "bytes": 23815994,
+      "sha256": "0995665f26a010e24a725433ae23d83de5317346fbd187c9a9467c0b77b558d3",
+      "components": 5,
+      "native_sections": 16,
+      "ram_sha256": "f9edd7cb7c8afbdb0a81ccffd6a429a7b1c0d5d578a67196c694ebc7bfd3f146",
+      "file_hex": "65393a6265666f72650a",
+      "file_sha256": "9db352766463465c7af691d4bed9133f2d8c01d968b62a90c946a44b4666e0c6"
+    },
+    "after": {
+      "bytes": 23858281,
+      "sha256": "854bbd1dc431c9e0fed6aee4a6f79a708012f15b1ad7a577221fa7ee3ef6d698",
+      "components": 5,
+      "native_sections": 16,
+      "ram_sha256": "d1a961ee5bc608a83b81e8148e92d5cc80746d1a0e620f4bfc6876a787acd412",
+      "file_hex": "65393a61667465720a",
+      "file_sha256": "c93da81a8be3355a13ad4d69801280303b5a5fa53699e91863f76f5c073b7ae6"
+    },
+    "restored": {
+      "bytes": 23815994,
+      "sha256": "0995665f26a010e24a725433ae23d83de5317346fbd187c9a9467c0b77b558d3",
+      "components": 5,
+      "native_sections": 16,
+      "ram_sha256": "f9edd7cb7c8afbdb0a81ccffd6a429a7b1c0d5d578a67196c694ebc7bfd3f146",
+      "file_hex": "65393a6265666f72650a",
+      "file_sha256": "9db352766463465c7af691d4bed9133f2d8c01d968b62a90c946a44b4666e0c6"
+    }
+  },
+  "status": "passed",
+  "suite": {
+    "passed": 127,
+    "failed": 0
+  },
+  "errors": [],
+  "roadmap": "cap-pip verified",
+  "exact_restore": {
+    "paused": true,
+    "retired": 0,
+    "pending_uart": "e9_queue=queued-before\n",
+    "held": {
+      "keyboard": [
+        30
+      ],
+      "tablet": [],
+      "mouse": []
+    },
+    "ram_uart_witness": {
+      "stdout": "memory-before/queued-before\n",
+      "exit": 0
+    },
+    "live_after_rejected_restore": {
+      "stdout": "memory-after/queue-after\n",
+      "exit": 0
+    }
+  },
+  "io": {
+    "original_read_drained": true,
+    "original_write_bytes": 4096,
+    "bounded_error_count": 16,
+    "recovered_retired": 49997
+  },
+  "critics": {
+    "native_component_refusals": 16,
+    "producer_buffers": [
+      {
+        "case": "mutated",
+        "error": "accepted",
+        "coherent": true,
+        "unchanged": false
+      },
+      {
+        "case": "detached",
+        "error": "accepted",
+        "coherent": true,
+        "unchanged": false
+      }
+    ],
+    "direct_loader": {
+      "paused": true,
+      "restored": true,
+      "retired": 0,
+      "exact": true
+    },
+    "original_source_unchanged": true,
+    "race": [
+      "committed",
+      "WriterBusy"
+    ],
+    "aba_leaf_pairs": [
+      [
+        67,
+        67
+      ],
+      [
+        68,
+        68
+      ]
+    ]
+  },
+  "gpu": {
+    "qualified": true,
+    "epoch": "0000000000000004",
+    "retired": 2499808,
+    "draws": [
+      {
+        "epoch": "0000000000000004",
+        "sequence": null,
+        "bindingGeneration": "0000000000000329",
+        "resource": {
+          "generation": "0000000000000010",
+          "id": 13
+        },
+        "status": "drawn",
+        "presentation": {
+          "backend": "canvas2d",
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        }
+      }
+    ]
+  },
+  "trace": {
+    "sha256": "126c6cba825fe66dd9fafcf299fe1c0972ffc7d33a81d20c39708988a2e48d65",
+    "entries": 872,
+    "trace_files": [
+      "trace.trace"
+    ]
+  },
+  "screenshots": {
+    "browser.png": "9ef8ebb77df420dbc1840622bd10dff274325f067d4ba6cf653d14a05a871186",
+    "restored.png": "1a25a00a43d84f0e0e8023c4039a87430982aa36c70b37bd63d8b4b560237d66",
+    "gpu-factory-ready.png": "8ba92a303ce17c3b20a982eb8ff2d0d06219509a5313594743322f9603c94a30"
+  },
+  "citations": {
+    "suite": 10,
+    "before": 20,
+    "failures": 330,
+    "rejectedRestore": 337,
+    "restored": 342,
+    "restoredMemory": 431,
+    "restoredFile": 435,
+    "io": 440,
+    "critic": 639,
+    "aba": 783,
+    "gpu": 853
+  }
+}

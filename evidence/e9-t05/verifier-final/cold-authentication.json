@@ -1,0 +1,144 @@
+{
+  "scope": "Read-only evidence interrogation; no program tests executed",
+  "predictions_sha256": "909bcbf14fbe09a3afc846ed02edcb0630db29b5ca5e23f27834774e637e04bc",
+  "receipt_sha256": "6d4f5d414489eff824e17da6a74b1a0dd03b9ac66525d542be4fb50592d7316d",
+  "acceptance_sha256": "0241e2c0d9704ec478594e61e324dfa2f3df845b20ff8c267b721e9173d106f2",
+  "originals": {
+    "acceptance": {
+      "count": 540,
+      "bytes": 2731401536
+    },
+    "outer": {
+      "count": 542,
+      "bytes": 2731521629
+    }
+  },
+  "source": {
+    "count": 42,
+    "frozen_head": "7ac83e660cc316440a9e42cf961224f0c24a314a",
+    "runtime_head": "4ce36a932feaf171c09cd8b25e90d3fc9ff376ac",
+    "current_head": "3508ad16ca0de135f06e6f7cc8d2fb4b3a879332",
+    "clone_clean": true,
+    "alternates": false,
+    "runtime_to_tests_nonmetadata": [
+      "tools/verify/e9-software-checkpoints-critic.mjs"
+    ],
+    "post_freeze_nonmetadata": [
+      "web/dist/sw.js",
+      "web/dist/tasks.json",
+      "web/tasks.json"
+    ]
+  },
+  "prior": {
+    "authenticated_files": 44,
+    "authenticated_external_proofs": 4,
+    "source_count": 5,
+    "verdict_carried": "needs-evidence",
+    "audit_sha256": "7077ac57cb73657e127f1430cd2046c1081996b4e62a8b05c96aed60d6dfcb29"
+  },
+  "compact": {
+    "copies": 51,
+    "aliases": 1,
+    "outer_copies": 3,
+    "acceptance_originals": 541,
+    "provenance_sha256": "c7f28eee157d8b10313f8bea67822ccc5297a4db1c10fba0e06c5ef1033929e7"
+  },
+  "commands": {
+    "names": [
+      "policy",
+      "format",
+      "core-clippy",
+      "storage-clippy",
+      "boundary-clippy",
+      "core-native",
+      "checkpoint-native",
+      "frame-native",
+      "storage-native",
+      "boundary-native",
+      "adapter-native",
+      "no-std-wasm",
+      "boundary-wasm-clippy",
+      "adapter-wasm-clippy",
+      "browser-build",
+      "shared-node-wasm",
+      "worker-protocol",
+      "contract",
+      "retained-gpu",
+      "browser"
+    ],
+    "count": 20,
+    "all_exit_zero": true,
+    "frozen_harness_matches": true,
+    "wrapper_command_count": 5
+  },
+  "expected_panics": {
+    "core-native": [
+      "hart::regs::tests::out_of_range_read_panics",
+      "hart::regs::tests::out_of_range_write_panics"
+    ],
+    "citation": "core-native.log:410-418, both should panic ... ok; 399/0 at :559"
+  },
+  "native_recorded_results": {
+    "core-native": [
+      "test result: ok. 399 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.31s"
+    ],
+    "checkpoint-native": [
+      "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s",
+      "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.55s",
+      "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.21s",
+      "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.39s",
+      "test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 27.98s",
+      "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 16.16s",
+      "test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.30s",
+      "test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+      "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s"
+    ],
+    "frame-native": [
+      "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.37s"
+    ],
+    "storage-native": [
+      "test result: ok. 106 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.25s",
+      "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s",
+      "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.91s",
+      "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.43s",
+      "test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s",
+      "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.75s",
+      "test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    ],
+    "boundary-native": [
+      "test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s"
+    ],
+    "adapter-native": [
+      "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    ],
+    "shared-node-wasm": [
+      "test result: ok. 2 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.04s",
+      "test result: ok. 8 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.86s",
+      "test result: ok. 9 passed; 0 failed; 0 ignored; 0 filtered out; finished in 0.28s",
+      "test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    ]
+  },
+  "builds": {
+    "current": {
+      "runtime": "c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc",
+      "files": 51,
+      "wasm_sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+      "wasm_bytes": 1864397
+    },
+    "dist": {
+      "runtime": "c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc",
+      "files": 51,
+      "wasm_sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+      "wasm_bytes": 1864397
+    },
+    "cold": {
+      "runtime": "c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc",
+      "files": 51,
+      "wasm_sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+      "wasm_bytes": 1864397
+    }
+  },
+  "status": "passed"
+}
