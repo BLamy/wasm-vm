@@ -3,7 +3,7 @@ id: E9-T11
 epic: 9
 title: Record guest-visible time and entropy observations
 priority: 524.911
-status: in-progress
+status: implemented
 depends_on: [E9-T09]
 estimate: S
 risk: high
@@ -155,3 +155,40 @@ matrix and byte-budget test are part of the already-selected acceptance binaries
 the JIT test source joins the final source-digest inventory. A new frozen worker,
 pristine-clone and public submission will replace the runtime claim; prior evidence
 and the verifier's failed recording remain retained. Status stays `in-progress`.
+
+
+### 2026-10-18 — worker — corrected frozen submission
+
+Runtime and selected harness: `e14e4312b9ee8df73b93646c944bf64a2f0db875`. The actual-JIT
+refutation is corrected: an armed RTC is polled before every guest transition, while
+disarmed pure compiled execution remains available. The promoted budget 1/6 matrix
+records exactly 36 polls at transitions 384–419 and compares every receipt and full
+frame with zero replay provider calls. The disarmed read matrix and 3 MiB byte-budget
+regression also execute in the selected gate. Historical failed evidence remains retained.
+
+`E9_SOURCE_EVIDENCE_DIR=target/evidence/e9-t11-worker-corrected-final make verify-E9-T11`
+passed all 29 gates: 696 native tests, 81 Node tests, native/wasm lint/build checks,
+127 passed/0 failed in the built browser with zero console errors, independent native
+RTC/entropy/ICount/frame and durable-object oracles, and real retained-GPU factory
+retirement plus physical draw. Worker report SHA-256 `3d005ff45b6687f8c9c4455c70003c9b3ba7d68adfe91c6008be7c3f80c4c777`.
+
+`python3 target/e9-t11-cold-corrected-wrapper.py` ran the same acceptance from an
+independent clean clone with scrubbed environment, separate Git metadata/no alternates
+and initially empty compiler output. Cold receipt `2c4ee1f8404ddea949d1fed308139fe06352a41ba0b8b66fae65cf0aa772c931`;
+acceptance report `c7e87c0bc206e838564e03087b3b38dace1a6e73012a7b0eff8f64305b50f7fe`.
+
+The unchanged stock `bash tools/deploy-cloudflare.sh` succeeded with read-only curl
+retries and task-owned RAM temporary storage. Exact successful payload and R2 bindings
+are preserved in `target/e9-t11-full-corrected-deploy/`; deployment
+`https://abfbb985.wasm-vm.pages.dev`, production `https://wasm-vm.pages.dev/`.
+`python3 target/e9-t11-public-corrected-wrapper.py` then verified production asset hashes,
+127/0 and zero errors, actual frozen/active source replay, direct and whole-worker durable
+413-event terminal journals, independent byte/state oracles, and retained factory
+retirement/draw. Public report SHA-256 `694d9225a41b360ccdb26580065a7e5bee147059de99b1ae444c7d4e554b8e49`.
+
+Original recordings remain in the corresponding `target/evidence/e9-t11-*-corrected-final/`
+directories. Authenticated compact copies, raw guest frames/tapes/traces and producer
+sources are in `evidence/e9-t11/worker-corrected-final/`, `cold-corrected-final/` and
+`public-corrected-final/`. This claim covers time/entropy adapter capture and replay;
+full software session replay remains gated by T12–T14. Status is `implemented` for the
+fresh critic's final incremental verdict. No verification or merge is asserted here.
