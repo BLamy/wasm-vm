@@ -70,8 +70,11 @@ export class SessionCheckpoints {
   constructor(store){need(store instanceof SessionStore,'store');this.#store=store;}
 
   async save(writer, checkpointId, frame, configuration) {
-    // Pin all caller-owned inputs synchronously. Store put() checks these exact hashes while
-    // consuming them, including mutation/detachment during an earlier durable await.
+    // Own the tuple before any await: its disk leaves and machine object must describe the
+    // same instant even if the producer mutates, detaches, or reuses its original buffer.
+    need(frame instanceof Uint8Array && frame.buffer instanceof ArrayBuffer
+      && frame.length>=212 && frame.length<=CHECKPOINT_MAX_BYTES,'frame bound');
+    frame=new Uint8Array(frame);
     const machineRef=checkpointReference(frame), parts=decodeSoftwareCheckpoint(frame);
     const configBytes=encoder.encode(JSON.stringify(configuration)),vmRef=checkpointReference(configBytes);
     const config=JSON.parse(decoder.decode(configBytes));

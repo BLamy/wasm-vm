@@ -683,7 +683,7 @@
     "web/renderer/virgl-command/checkpoint.mjs": "ba463beecf7d0b1fd141a607a82dd17b37ef407582a23f46d00c6bef85d911af",
     "web/renderer/virgl-command/control-bridge.mjs": "27aecae3704b053d6c01d6d933e6592bcea334ca243047d3fe14536b365a3c5a",
     "web/renderer/virgl-command/queries.mjs": "8a7dd9c146ff437691108f0749c89a2d4ac8573ec35690c02e39cbdbbaca8860",
-    "web/session-checkpoints.js": "8e8ce81b64e063d8459a4fe9ae18aea8981189a6bf55858c90b1504d7d231b75",
+    "web/session-checkpoints.js": "a6fa93d426c3823cb23c797666b69a49226417a43aacb3ac1b0729d74a095803",
     "web/session-disk-roots.js": "7dfd8784ab0086de26f042e3eb9cb63857250ea1a6b58cb0174b6f312bcf97bb",
     "web/src/audio/microphone.js": "db52dd5c778109e14cf2b758b54482a845aa3fc244b95af5723d70375c2cc0ee",
     "web/src/input/reconciliation.js": "6ff57347fd7818531e17ca1b00456192258d76532299ba642422f057582fe36d"
