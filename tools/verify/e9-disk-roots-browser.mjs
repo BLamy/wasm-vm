@@ -391,9 +391,13 @@ try {
   await page.evaluate(async()=>{const {stopLinuxController}=await import('./linux-worker-host.js');await stopLinuxController(guests.live.controller);await lease.release();await store.close();});
   assert.deepEqual(report.errors,[]);
   await page.screenshot({path:path.join(output,'roots-complete.png')});
+  // All exports are complete. Playwright interception breaks the retained worker's cross-origin
+  // release redirect in a cold checkout; let the unchanged boot fetch its authenticated asset.
+  await page.unroute('**/__e9-proof/*');
   // The changed page host must still pair the published factory with its archived v2 client.
   await page.locator('#desktop-graphics').selectOption('gpu');
-  assert.equal((await page.evaluate(()=>window.wvmDemo.bootOmarchy())).ok,true);
+  report.checks.gpuBoot=await page.evaluate(()=>window.wvmDemo.bootOmarchy());
+  assert.equal(report.checks.gpuBoot.ok,true,JSON.stringify(report.checks.gpuBoot));
   await page.waitForFunction(()=>window.wvmDemo?.isGuestReady?.()&&window.__linux?.restoredFromBootSnapshot?.(),null,{timeout:600000});
   report.checks.gpu=await page.evaluate(async()=>({gpu:await __linuxCtl.gpuStats(),scheduler:await __linuxCtl.schedulerStats()}));
   assert.ok(report.checks.gpu.gpu.qualified&&!report.checks.gpu.gpu.lost&&!report.checks.gpu.gpu.poisoned);

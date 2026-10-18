@@ -114,3 +114,18 @@ plus read-only Python/Docker receipt/root/filesystem interrogation. The critic h
 is now called by `make verify-E9-T04`; the native test joins storage tests. Task remains
 `implemented` until the one final pristine source-clone proof and receipt interrogation.
 T03's unchanged findings carry forward; T05/T07 keep their declared boundaries.
+
+### 2026-10-17 — worker — cold-browser harness correction
+
+The pristine `25e65f56` run passed the first 15 gates, promoted I/O/owner attacks,
+127/0 browser suite, all private-root Linux boots and independent filesystem oracles.
+Only the retained GPU compatibility boot failed: the missing local release redirects
+to the authenticated R2 object, and Playwright interception rejected that worker fetch.
+An unchanged full-browser repeat reproduced it. A controlled fresh-profile run then
+failed with the export route installed and succeeded after removing only that route:
+2,499,808 retired instructions and a qualified physical draw in fresh epoch 4.
+`evidence/e9-t04/harness/route-toggle.json` authenticates both failures, the causal trace
+and its complete source. The driver now removes its unused export route before GPU
+boot and records the full boot result. Runtime, native code and deployed bytes are
+unchanged. Prior HELD findings carry forward; the final scoped cold browser proof
+and fresh verifier verdict remain pending.
