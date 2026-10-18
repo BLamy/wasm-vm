@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "readyTransition": "1605",
+  "reportAddress": "2147745792",
+  "reportBytes": 1132,
+  "loopInstructions": 2237,
+  "bytes": 15368,
+  "sha256": "7a1a40c2c4ed19b83e4b0d2a85b71a394dceb674f1c691125cddd2d67ef25092",
+  "scope": "Guest configures and posts two virtio-blk reads, named file-agent receive and running mono S16 audio capture; report observes actual DMA/used/IRQ state."
+}

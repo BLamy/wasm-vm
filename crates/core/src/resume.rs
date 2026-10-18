@@ -64,6 +64,8 @@ pub mod section {
     pub const SESSION_CLOCK: u32 = 18;
     /// E9-T11: frozen source policy and consumed immutable observation-log cursor.
     pub const SESSION_SOURCES: u32 = 19;
+    /// E9-T12: owned device requests, completed immutable payloads and revocable callback state.
+    pub const SESSION_DEVICES: u32 = 20;
 }
 
 /// Is `tag` a section number this format family reserves (the whole reserved universe, whether or
@@ -90,6 +92,7 @@ pub fn is_known_section(tag: u32) -> bool {
             | section::RESERVED_FUTURE
             | section::SESSION_CLOCK
             | section::SESSION_SOURCES
+            | section::SESSION_DEVICES
     )
 }
 
@@ -120,6 +123,7 @@ pub fn is_supported_section(tag: u32) -> bool {
             | section::VIRTIO_SND
             | section::SESSION_CLOCK
             | section::SESSION_SOURCES
+            | section::SESSION_DEVICES
     )
 }
 

@@ -24,6 +24,38 @@ Record external completion delivery and any guest-visible bytes/DMA writes for s
 - [ ] Replay payload bytes, completion sequence and interrupt effects under deliberately different host callback schedules.
 - [ ] Include pending adapter state and event cursors in checkpoints; cancellations and stale-generation replies cannot mutate a restored guest.
 
+## Qualified adapter contract
+
+The core adapters are installed with Machine::enable_session_devices and the ordinary
+bare-metal browser machine's installDeviceSession API before execution. The block
+adapter uses a frozen immutable manifest and sector-aligned local COW state. Existing
+unrecorded block/audio/console transports are rejected at installation; persistent host
+writeback, live worklet playback, GPU results and the existing Linux provider assembly
+are not implicitly admitted. T14 composes executable Linux replay after T13 supplies
+the network boundary. The demo retains an explicitly incomplete capture prefix.
+
+Each missing immutable base chunk, posted named-agent receive buffer and due capture
+quantum creates a non-wrapping request ID. A private allocation identity revokes callback
+leases on restore even when saved request IDs rewind. An accepted owned completion is
+a common before-transition event (channel 19), with request intent and result distinct
+from its guest position. The durable journal puts base payload bytes in their own
+content-addressed object; delivery metadata references those bytes without incorporating
+callback timing into the immutable identity. Replay accepts recorded envelopes at exact
+positions and refuses live leases.
+
+The frozen v1 profile bounds individual payloads to 1 MiB minus 256 bytes, pending
+requests to 256, immutable cache bytes to 16 MiB and local COW sectors to 256 MiB.
+Eviction follows accepted completion order and preserves chunks pinned by pending reads.
+Capture uses guest ICount time and S16 mono/stereo at 48 kHz; unavailable or short
+quantums retain their real status/XRUN behavior. An awaiting owned capture result leaves
+DMA, status and the used ring untouched. Active playback refuses this profile.
+
+Native section 20 preserves pending requests, complete cache/COW state, request/event
+cursors, capture result state and parked block descriptors. The qualified sound codec
+preserves capture descriptors and deadlines; ordinary legacy audio snapshots keep their
+existing host-ring repair policy. Restore validates the whole envelope before mutation
+and replaces the callback incarnation only after a successful commit.
+
 ## Deterministic acceptance
 
 `make verify-E9-T12`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.

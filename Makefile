@@ -2748,3 +2748,7 @@ verify-E5.5-T05d:
 .PHONY: verify-E9-T07
 verify-E9-T07:
 	python3 -B tools/verify/e9-session-retention.py --output "$${E9_RETENTION_EVIDENCE_DIR:-target/evidence/e9-session-retention-final}"
+
+.PHONY: verify-E9-T12
+verify-E9-T12:
+	python3 -B tools/verify/e9-device-completions.py --output "$${E9_DEVICE_EVIDENCE_DIR:-target/evidence/e9-device-completions-final}"

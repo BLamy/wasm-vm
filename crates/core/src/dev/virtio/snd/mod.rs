@@ -204,6 +204,8 @@ pub trait AudioSink {
 /// Errors collapsed by the host-independent capture-source boundary.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AudioCaptureError {
+    /// An owned completion has not reached its logged delivery boundary. No DMA/status/used write.
+    Pending,
     /// The source could not provide the requested capture quantum.
     Failed,
 }
@@ -1197,8 +1199,14 @@ impl SndState {
         snapshot::encode(self)
     }
 
-    pub(crate) fn to_resume_snapshot(&self, exact: bool) -> Result<Vec<u8>, SndSnapshotError> {
-        if exact {
+    pub(crate) fn to_resume_snapshot(
+        &self,
+        exact: bool,
+        owned_capture: bool,
+    ) -> Result<Vec<u8>, SndSnapshotError> {
+        if exact && owned_capture {
+            snapshot::owned_capture::encode(self)
+        } else if exact {
             snapshot::encode_session(self)
         } else {
             self.to_snapshot()
@@ -1208,12 +1216,39 @@ impl SndState {
         &mut self,
         payload: &[u8],
         exact: bool,
+        owned_capture: bool,
     ) -> Result<(), SndSnapshotError> {
-        if exact {
+        if exact && owned_capture {
+            snapshot::owned_capture::restore(self, payload)
+        } else if exact {
             snapshot::restore_session(self, payload)
         } else {
             self.restore_snapshot(payload).map(|_| ())
         }
+    }
+
+    pub(crate) fn capture_addresses_valid(&self, base: u64, length: usize) -> bool {
+        self.capture.pending.iter().all(|p| {
+            p.data_segments
+                .iter()
+                .chain(p.status_segments.iter())
+                .all(|s| {
+                    s.addr >= base
+                        && s.addr
+                            .checked_add(u64::from(s.len))
+                            .is_some_and(|end| end <= base + length as u64)
+                })
+        })
+    }
+
+    pub(crate) fn session_capture_request_shape(&self) -> Option<(u32, u32, u8)> {
+        self.capture.pending.front().map(|pending| {
+            (
+                (pending.frame_count * usize::from(pending.channels)) as u32,
+                pending.sample_rate_hz,
+                pending.channels,
+            )
+        })
     }
 
     /// Restore stream configuration while dropping host audio buffers and scheduling XRUN repair.
@@ -1812,6 +1847,10 @@ impl SndState {
                 match source.pull(&mut frames, transfer.sample_rate_hz, transfer.channels) {
                     Ok(count) if count <= transfer.frame_count => {
                         (SndStatus::Ok, count, count != transfer.frame_count)
+                    }
+                    Err(AudioCaptureError::Pending) => {
+                        self.capture.pending.push_front(transfer);
+                        break;
                     }
                     Ok(_) | Err(AudioCaptureError::Failed) => (SndStatus::IoErr, 0, true),
                 };

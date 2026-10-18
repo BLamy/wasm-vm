@@ -111,3 +111,6 @@ bench/guest/gcc-MANIFEST.new
 .env
 .env.*
 !.env.example
+
+# Pinned bare-metal completion guest loaded by the demo and cold-clone proof.
+!web/assets/e9-device-completions.elf

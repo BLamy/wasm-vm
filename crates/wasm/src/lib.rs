@@ -40,6 +40,7 @@ use wasm_bindgen::prelude::*;
 // E4-T29 Phase 2: the in-wasm (browser) compiled-block executor.
 mod event_clock;
 mod jit_browser;
+mod session_devices;
 #[cfg(any(test, all(target_arch = "wasm32", not(feature = "zicsr-stub"))))]
 mod session_input;
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
