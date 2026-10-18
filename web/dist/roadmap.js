@@ -229,7 +229,7 @@ export const ROADMAP = [
       { name: "Exact event clock and bounded execution", status: "verified", probe: "event-clock", evidence: "E9-T09: independently verified exact stops, ordered effects, WFI/timers and restore on interpreter/JIT" },
       { name: "Delivered user input recording", status: "verified", probe: "input-recording", evidence: "E9-T10: guest input adapters, durable prefixes and replay ingress firewall" },
       { name: "Guest time and entropy recording", status: "verified", probe: "time-entropy", evidence: "E9-T11: independently verified RTC/entropy replay, stable JIT polling and zero live providers" },
-      { name: "Owned device completion recording", status: "in-progress", probe: "device-completions", evidence: "E9-T12: authenticated base payloads, real block/agent/audio DMA and revocable callback leases" },
+      { name: "Owned device completion recording", status: "verified", probe: "device-completions", evidence: "E9-T12: authenticated base payloads, real block/agent/audio DMA and revocable callback leases" },
       { name: "Exact replay, seeking and reverse-step", status: "pending", evidence: "E9-T09–T18" },
       { name: "Session timeline and branches", status: "pending", evidence: "E9-T19–T20" },
     ],
