@@ -745,3 +745,60 @@ G9 independent execution/sensitivity/suite charter after automatic security
 review stopped the earlier execution. That execution was not retried or
 replaced by another model/session. No full verified verdict is claimed,
 no T14 dependency is cleared, and no PR is merged.
+
+### 2026-10-18 — worker — preserve separate P13 publication assessment
+
+The separate critic /root/verify_e9_t12 completed the bounded saved-data
+publication assessment at metadata6d21bdbc54815738304acece4f7388fae1844881,
+frozen runtime2f2aa7aba484f6954ca04358385828093e561b83.
+P13-A–F and the scoped root-render prediction HELD. P13 is supported;
+no precise publication evidence gap remains. This is a partial independent
+assessment, not a full-task verification verdict.
+
+The critic authenticated189 public originals,13 earlier-account snapshots,
+106 browser inventory files and750 staged files. Actual trace-loaded Wasm
+and six script sources match frozen runtime bytes; all18 critical assets on
+both origins match the prepared payload. Six full replay frames/trace suffixes,
+four WFI cases, the complete9216-instruction pinned guest trace and13 CAS
+objects authenticate. Public JIT scope is12 budget cases: nine positive
+translated executions and three q1 scalar controls. The local state-changing
+counter/unavailable-server proof carries unchanged; the public run uses one
+safe provider GET. Zero replay egress applies to the witnessed synchronous
+replay calls, not the page's asset or proof-export requests.
+
+The critic accepts the explicit qualifications:34 byte-identical carried
+asset responses plus two fresh same-origin308→200 HTML chains; five inherited
+URL-only boot manifest staging rewrites; the public HTTP3 empty reason and
+its one-assertion supplementary decoder; and separately retained failed,
+mis-keyed and corrected account-query records. No source or recorded bytes
+were changed to obtain those results.
+
+Normal Chrome also renders https://wasm-vm.pages.dev/ and its committed
+./app.html#ide link. The separate auxiliary Python3.9 default-header root
+request returned403 before body/headers were captured; its cause is
+unestablished. No guest boot or all-client compatibility is inferred from
+that root observation. All four saved root records are in this packet.
+
+- Authored assessment:
+  /Volumes/e9-final-proof-ram/t13-critic-main/public-read-only-followup/assessment.md,
+  SHA256 17fdc47411aa5c3e82ce9a0ab2abb229172982b5126331fe5bc5b8b419a05676.
+- Authored provenance:
+  /Volumes/e9-final-proof-ram/t13-critic-main/public-read-only-followup/provenance.json,
+  SHA256 b911027358ecf7b4f1e584ff124e82c0a61cc509c2f6fd300eb84000431e8319.
+- Durable lossless packet:
+  evidence/e9-t13/independent-public-read-only-review/provenance.json,
+  SHA256 48c33f20a04c4a19a60ba7cac3068a934dcc448500a426ba1d2f51c385747f4c;
+  31 originals,16377736 compressed bytes. The worker authenticated every
+  authored input/output hash before packaging and checked gzip round trips.
+  Archive helper: /Volumes/e9-final-proof-ram/e9-t13-preserve-public-read-only-review.py,
+  invoked with Python runpy after checking the returned authored assessment
+  and provenance hashes.
+
+No VM, test, browser, acceptance producer, sensitivity run or stopped harness
+was launched by the critic. No alternate model/session or shared writes
+occurred. Prior25 local gates, G1–G8 and32 unchanged HELD artifacts carry.
+G9 independent execution/sensitivity/suite disposition remains unfinished
+after automatic security review stopped the earlier independent execution
+for possible cybersecurity risk. The stopped execution was not retried or
+replaced. Status remains blocked solely on that external execution gate;
+T14–T24 remain pending, and no PR merge is authorized.
