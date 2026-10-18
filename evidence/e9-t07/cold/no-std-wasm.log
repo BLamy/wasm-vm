@@ -1,0 +1,21 @@
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.106
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.46
+   Compiling serde_core v1.0.228
+   Compiling zmij v1.0.21
+   Compiling serde_json v1.0.150
+   Compiling serde v1.0.228
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.4
+   Compiling memchr v2.8.2
+   Compiling generic-array v0.14.7
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling syn v2.0.118
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.228
+   Compiling wasm-vm-storage v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t07-cold-sju3yw7c/repo/crates/storage)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.16s
