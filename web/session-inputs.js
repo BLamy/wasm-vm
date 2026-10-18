@@ -6,23 +6,27 @@ import {checkpointReference,checkpointChunks,readCheckpointObject,fetchCheckpoin
 await init();
 const encoder=new TextEncoder(),decoder=new TextDecoder('utf-8',{fatal:true});
 const need=(condition,message)=>{if(!condition)throw new SessionStoreError('InputPrefix',message);};
-const kinds=['','uart','uart','keyboard','keyboard','tablet','tablet','mouse','mouse','display','agent','agent','file-transfer','file-transfer','file-transfer','mouse','lifecycle'];
-const devices=['','uart16550','uart16550','keyboard','keyboard','tablet','tablet','mouse','mouse','display','agent','agent','file-transfer','file-transfer','file-transfer','pointer-mode','lifecycle'];
+const kinds=['','uart','uart','keyboard','keyboard','tablet','tablet','mouse','mouse','display','agent','agent','file-transfer','file-transfer','file-transfer','mouse','lifecycle','rtc','entropy'];
+const devices=['','uart16550','uart16550','keyboard','keyboard','tablet','tablet','mouse','mouse','display','agent','agent','file-transfer','file-transfer','file-transfer','pointer-mode','lifecycle','goldfish-rtc','virtio-rng'];
 const inputs=['uart','keyboard','pointer','display','agent','clipboard','file-transfer','lifecycle'];
 const statuses=['applied','failed','partial','rejected','drop-policy'];
 const recordStatus=(channel,outcome)=>outcome[0]==='0'&&[3,5,7].includes(channel)?'staged':outcome[0]==='0'&&[4,6,8].includes(channel)?'published':statuses[Number(outcome[0])];
 const position=value=>({transition:value.transition,phase:value.phase,ordinal:value.ordinal,sequence:value.sequence,retired:value.retired});
 const exact=value=>typeof value==='string'&&/^(0|[1-9][0-9]{0,19})$/.test(value)&&BigInt(value)<=0xffffffffffffffffn;
 function own(receipt,previous){
-  need(receipt&&Number.isInteger(receipt.channel)&&receipt.channel>=1&&receipt.channel<=16,'unsupported input channel');
-  need(['transition','retired','sequence'].every(key=>exact(receipt[key]))&&receipt.phase==='before'
+  need(receipt&&Number.isInteger(receipt.channel)&&receipt.channel>=1&&receipt.channel<=18,'unsupported input channel');
+  need(['transition','retired','sequence'].every(key=>exact(receipt[key]))&&receipt.phase===(receipt.channel>=17?'observe':'before')
     &&Number.isInteger(receipt.ordinal)&&receipt.ordinal>0&&receipt.ordinal<=0xffffffff,'exact input position required');
   need(BigInt(receipt.sequence)===BigInt(previous.sequence)+1n&&BigInt(receipt.transition)>=BigInt(previous.transition)
     &&BigInt(receipt.retired)>=BigInt(previous.retired)&&BigInt(receipt.retired)<=BigInt(receipt.transition)
-    &&(receipt.transition===previous.transition?receipt.ordinal===previous.ordinal+1:receipt.ordinal===1),'input prefix order');
+    &&(receipt.transition===previous.transition?(receipt.phase===previous.phase?receipt.ordinal===previous.ordinal+1:previous.phase==='before'&&receipt.phase==='observe'&&receipt.ordinal===1):receipt.ordinal===1),'input prefix order');
   need(Array.isArray(receipt.outcome)&&receipt.outcome.length===4&&receipt.outcome.every(exact)
     &&BigInt(receipt.outcome[0])<=4n,'input outcome');
   need(receipt.bytes instanceof Uint8Array&&receipt.bytes.buffer instanceof ArrayBuffer&&receipt.bytes.length<=1048576,'owned input bytes');
+  if(receipt.channel>=17)need(BigInt(receipt.outcome[0])<=1n&&receipt.outcome[3]==='0'
+    &&(receipt.channel===17?BigInt(receipt.outcome[1])>=1n&&BigInt(receipt.outcome[1])<=5n&&receipt.outcome[2]==='8'
+      :receipt.outcome[1]==='6'&&BigInt(receipt.outcome[2])>=1n&&BigInt(receipt.outcome[2])<=1048576n)
+    &&receipt.bytes.length===(receipt.outcome[0]==='0'?Number(receipt.outcome[2]):0),'source observation intent/result');
   return {...position(receipt),channel:receipt.channel,outcome:[...receipt.outcome],bytes:receipt.bytes.slice()};
 }
 export class SessionInputJournal{
@@ -43,6 +47,10 @@ export class SessionInputJournal{
     witness.set(native,28);witness.set(pending,28+native.length);witness.set(output,28+native.length+pending.length);
     const configBytes=encoder.encode(JSON.stringify(configuration)),config=JSON.parse(decoder.decode(configBytes));
     need(config.ramMib<=256&&config.clock.mode==='icount'&&config.clock.interactive===null,'input witness profile');
+
+    if(config.timeEntropyPolicy!==undefined){const policy=config.timeEntropyPolicy;
+      need(policy?.version===1&&policy.divider===config.clock.divider&&policy.timebase_hz===config.clock.timebase_hz
+        &&policy.rtc==='external-nanoseconds-v1'&&policy.entropy==='exact-fill-bytes-v1','frozen time/entropy policy');}
     const vm=checkpointReference(configBytes),machine=checkpointReference(witness);
     const hex=bytes=>[...bytes].map(b=>b.toString(16).padStart(2,'0')).join('');
     const nv=new DataView(native.buffer),dv=new DataView(disk.buffer);
@@ -56,7 +64,7 @@ export class SessionInputJournal{
       machine:{vm_build:vm.sha256,wasm_build:config.wasm.sha256,base_image:base.sha256,kernel:config.kernel.sha256,
         initramfs:null,ram_bytes:String(config.ramMib*1048576),harts:1,devices:config.devices,gpu:null},
       policy:{mode:'capture-prefix',profile:'rv64-linux-software-v1',event_version:{major:1,minor:0},
-        checkpoint_version:{major:1,minor:0},boundary_version:1,clock:config.clock,required_inputs:inputs},
+        checkpoint_version:{major:1,minor:0},boundary_version:1,clock:config.clock,required_inputs:config.timeEntropyPolicy?[...inputs,'mtime','rtc','entropy','timers']:inputs},
       assets:[{role:'vm',content:vm},{role:'wasm',content:{sha256:config.wasm.sha256,length:config.wasm.length}},
         {role:'kernel',content:{sha256:config.kernel.sha256,length:config.kernel.length}},{role:'base',content:base}],
       begin:zero,end:zero,events:[],checkpoints:[{id:'input-witness',position:zero,next_sequence:'1',machine,disk_root:root.content.sha256,gpu:null}],extensions:[]};
@@ -73,7 +81,9 @@ export class SessionInputJournal{
     need(Array.isArray(receipts)&&this.#pending.length+receipts.length<=256,'input receipt bound');
     let previous=this.#pending.at(-1)??this.#manifest.end,bytes=this.#pending.reduce((n,r)=>n+r.bytes.length,0);
     const owned=[];
-    for(const receipt of receipts){const value=own(receipt,previous);bytes+=value.bytes.length;
+    for(const receipt of receipts){const value=own(receipt,previous);
+      need(value.channel<17||this.#manifest.policy.required_inputs.includes(kinds[value.channel]),'source adapter is absent from this prefix');
+      bytes+=value.bytes.length;
       need(bytes<=4*1048576,'input payload budget');owned.push(value);previous=value;}
     this.#pending.push(...owned);
   }
@@ -113,6 +123,7 @@ export class SessionInputJournal{
         const bytes=record.payload.storage==='inline'?Uint8Array.from(record.payload.bytes)
           :await readCheckpointObject(store,record.payload.content,1048576);
         const receipt=own({...position(record),channel:intent.channel,outcome:intent.outcome,bytes},previous);
+        need(receipt.channel<17||manifest.policy.required_inputs.includes(kinds[receipt.channel]),'source adapter is absent from this prefix');
         need(record.kind===kinds[receipt.channel]&&record.device===devices[receipt.channel]&&record.status===recordStatus(receipt.channel,receipt.outcome),'input adapter identity');
         total+=receipt.bytes.length;need(total<=4*1048576&&receipts.length<4096,'input inspection bound; use bounded chunks for larger histories');
         receipts.push(receipt);previous=receipt;

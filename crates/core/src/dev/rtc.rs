@@ -39,10 +39,24 @@ const CLEAR_INTERRUPT: u64 = 0x1c;
 /// Injected host wall clock: nanoseconds since the Unix epoch. Kept a trait so `crates/core`
 /// never names a host time API (the determinism guard). Implementations: a `SystemTime` clock
 /// in the CLI, a `Date.now()` shim in wasm, a mock in tests.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ClockSample {
+    Read,
+    SetLow,
+    SetHigh,
+    Arm,
+    Poll,
+}
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ClockUnavailable;
 pub trait WallClock {
     /// Nanoseconds since 1970-01-01 UTC. Monotonicity is NOT required (the RTC tolerates a
     /// host clock stepping backwards; it just reads back the stepped value).
     fn now_ns(&self) -> u64;
+    /// Distinguishes every external observation, including alarm-only samples.
+    fn sample_ns(&self, _intent: ClockSample) -> Result<u64, ClockUnavailable> {
+        Ok(self.now_ns())
+    }
 }
 
 /// A clock frozen at a fixed instant — the deterministic source for tests and any run that
@@ -145,17 +159,26 @@ impl GoldfishRtc {
     }
 
     /// Guest-visible time: host clock + guest offset (wrapping).
-    fn now(&self) -> u64 {
-        self.clock.now_ns().wrapping_add(self.offset)
+    fn now(&self, intent: ClockSample) -> Result<u64, BusFault> {
+        self.clock
+            .sample_ns(intent)
+            .map(|now| now.wrapping_add(self.offset))
+            .map_err(|_| BusFault::Access)
     }
 
     /// Advance the alarm state machine: fire (latch `alarm_fired`) once `now` reaches an armed
     /// deadline. Called every run-loop boundary by the machine; idempotent. Returns the
     /// current interrupt level (`alarm_fired && irq_enabled`).
     pub fn poll(&mut self) -> bool {
-        if self.alarm_armed && self.now() >= self.alarm {
-            self.alarm_armed = false; // one-shot
-            self.alarm_fired = true;
+        if self.alarm_armed {
+            // Failure leaves the alarm untouched; Machine reports the latched source divergence
+            // before it can deliver an interrupt or retire another guest instruction.
+            if let Ok(now) = self.now(ClockSample::Poll)
+                && now >= self.alarm
+            {
+                self.alarm_armed = false;
+                self.alarm_fired = true;
+            }
         }
         self.irq_level()
     }
@@ -176,7 +199,7 @@ impl MmioDevice for GoldfishRtc {
     fn read(&mut self, offset: u64, _width: Width) -> Result<u64, BusFault> {
         let val: u32 = match offset {
             TIME_LOW => {
-                let now = self.now();
+                let now = self.now(ClockSample::Read)?;
                 self.time_high_latch = (now >> 32) as u32;
                 now as u32
             }
@@ -199,21 +222,22 @@ impl MmioDevice for GoldfishRtc {
             // commit scheme keyed on one register would drop the other half under the driver's
             // order — writing back only ~4 s of resolution.
             TIME_LOW => {
-                let now = self.now();
+                let now = self.now(ClockSample::SetLow)?;
                 let new = (now & 0xffff_ffff_0000_0000) | u64::from(v);
                 self.offset = self.offset.wrapping_add(new.wrapping_sub(now));
             }
             TIME_HIGH => {
-                let now = self.now();
+                let now = self.now(ClockSample::SetHigh)?;
                 let new = (now & 0x0000_0000_ffff_ffff) | (u64::from(v) << 32);
                 self.offset = self.offset.wrapping_add(new.wrapping_sub(now));
             }
             // Alarm: HIGH stashes, LOW arms at (high<<32|low) — driver writes HIGH then LOW.
             ALARM_HIGH => self.alarm_high_write = v,
             ALARM_LOW => {
+                let now = self.now(ClockSample::Arm)?;
                 self.alarm = (u64::from(self.alarm_high_write) << 32) | u64::from(v);
-                self.alarm_armed = true;
-                self.poll(); // an already-past deadline fires immediately
+                self.alarm_armed = now < self.alarm;
+                self.alarm_fired |= !self.alarm_armed;
             }
             IRQ_ENABLED => self.irq_enabled = v != 0,
             CLEAR_ALARM => self.alarm_armed = false, // disarm; keep the value for readback

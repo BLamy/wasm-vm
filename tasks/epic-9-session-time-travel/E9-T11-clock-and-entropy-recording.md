@@ -26,7 +26,7 @@ Clock/RTC updates, lifecycle rebases, idle/timer decisions and supplied entropy,
 
 ## Deterministic acceptance
 
-`make verify-E9-T11`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.
+`make verify-E9-T11` records the risk-tier native/wasm, independent guest-state oracle and built-page assertions from a clean frozen head. Override `E9_SOURCE_EVIDENCE_DIR` to select a fresh output directory. A final pristine clone runs the same command. The worker submission and fresh verifier verdict below determine its proven status.
 
 ## Adversarial verification
 

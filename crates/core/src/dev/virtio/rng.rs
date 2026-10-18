@@ -28,8 +28,21 @@ use crate::mmio::SystemBus;
 /// A source of random bytes for the guest's virtio-rng device. The host supplies a real CSPRNG:
 /// `getrandom(2)` natively, `crypto.getRandomValues` in the browser. Tests use a deterministic
 /// stub. `fill` must populate the whole slice (a CSPRNG never short-reads).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct EntropyUnavailable;
 pub trait EntropySource {
     fn fill(&mut self, out: &mut [u8]);
+    /// Capture adapters stage a bounded chain before DMA; ordinary devices keep streaming.
+    fn transactional(&self) -> bool {
+        false
+    }
+    fn validate_len(&self, _length: usize) -> Result<(), EntropyUnavailable> {
+        Ok(())
+    }
+    fn try_fill(&mut self, out: &mut [u8]) -> Result<(), EntropyUnavailable> {
+        self.fill(out);
+        Ok(())
+    }
 }
 
 /// Shared rng state: the entropy source + the deferred kick flag + a serviced-bytes counter for
@@ -159,26 +172,46 @@ fn service_kicked(
     let q = vq.as_mut().expect("just constructed");
     let mut delivered_work = false;
     loop {
+        let indices = q.ring_indices();
         match q.pop(bus) {
             Ok(Some(chain)) => {
                 // Fill every device-writable byte of the chain with fresh entropy. A conforming
                 // rng driver posts write-only buffers; any readable segment is simply ignored
                 // (the queue engine already rejects readable-after-writable ordering).
+                let transactional = state.borrow().source.transactional();
+                let mut prepared = alloc::vec::Vec::new();
                 let mut written = 0u32;
                 for seg in chain.writable() {
+                    if state
+                        .borrow()
+                        .source
+                        .validate_len(seg.len as usize)
+                        .is_err()
+                    {
+                        q.set_ring_indices(indices.0, indices.1);
+                        state.borrow_mut().kicked = true;
+                        return;
+                    }
                     let mut buf = alloc::vec![0u8; seg.len as usize];
-                    state.borrow_mut().source.fill(&mut buf);
-                    let mut ok = true;
-                    for (i, &byte) in buf.iter().enumerate() {
-                        if bus.store8(seg.addr + i as u64, byte).is_err() {
-                            ok = false;
+                    if state.borrow_mut().source.try_fill(&mut buf).is_err() {
+                        q.set_ring_indices(indices.0, indices.1);
+                        state.borrow_mut().kicked = true;
+                        return;
+                    }
+                    if transactional {
+                        prepared.push((seg.addr, buf));
+                    } else {
+                        if !write_entropy(bus, seg.addr, &buf) {
                             break;
                         }
+                        written += seg.len;
                     }
-                    if !ok {
+                }
+                for (address, buf) in prepared {
+                    if !write_entropy(bus, address, &buf) {
                         break;
                     }
-                    written += seg.len;
+                    written += buf.len() as u32;
                 }
                 state.borrow_mut().bytes_served += u64::from(written);
                 if q.push_used(bus, chain.head, written).is_err() {
@@ -199,6 +232,15 @@ fn service_kicked(
     if delivered_work && vq.as_ref().is_some_and(|q| q.interrupt_needed(bus)) {
         slot.borrow_mut().raise_used_irq();
     }
+}
+
+fn write_entropy(bus: &mut SystemBus, address: u64, bytes: &[u8]) -> bool {
+    for (i, &byte) in bytes.iter().enumerate() {
+        if bus.store8(address + i as u64, byte).is_err() {
+            return false;
+        }
+    }
+    true
 }
 
 #[cfg(test)]

@@ -19,7 +19,7 @@ pub(crate) fn position_object(position: SessionPosition) -> js_sys::Object {
     for (key, value) in [
         ("transition", position.transition.to_string()),
         ("retired", position.retired.to_string()),
-        ("phase", "before".into()),
+        ("phase", position.phase.label().into()),
         ("sequence", position.sequence.to_string()),
     ] {
         let _ = js_sys::Reflect::set(&object, &key.into(), &value.into());
@@ -171,6 +171,9 @@ impl WasmMachine {
                 }
                 SessionEffect::HostInput { channel, bytes } => {
                     ("host-input", u64::from(channel), bytes)
+                }
+                SessionEffect::Observation(value) => {
+                    ("observation", value.kind as u64, value.bytes)
                 }
             };
             let _ = js_sys::Reflect::set(&object, &"kind".into(), &kind.into());
