@@ -1,0 +1,11 @@
+HELD fire-rq1-pq1: polls384,385,386; raw123,124,125; final468/468; alarm_fired=true; compiled_after_disarm=0; replay_calls=0
+HELD fire-rq1-pq6: polls384,385,386; raw123,124,125; final468/468; alarm_fired=true; compiled_after_disarm=0; replay_calls=0
+HELD fire-rq1-pq7: polls384,385,386; raw123,124,125; final468/468; alarm_fired=true; compiled_after_disarm=0; replay_calls=0
+HELD fire-rq6-pq1: polls384,385,386; raw123,124,125; final468/468; alarm_fired=true; compiled_after_disarm=13; replay_calls=0
+HELD fire-rq6-pq6: polls384,385,386; raw123,124,125; final468/468; alarm_fired=true; compiled_after_disarm=13; replay_calls=0
+HELD fire-rq6-pq7: polls384,385,386; raw123,124,125; final468/468; alarm_fired=true; compiled_after_disarm=13; replay_calls=0
+HELD fire-rq7-pq1: polls384,385,386; raw123,124,125; final468/468; alarm_fired=true; compiled_after_disarm=3; replay_calls=0
+HELD fire-rq7-pq6: polls384,385,386; raw123,124,125; final468/468; alarm_fired=true; compiled_after_disarm=3; replay_calls=0
+HELD fire-rq7-pq7: polls384,385,386; raw123,124,125; final468/468; alarm_fired=true; compiled_after_disarm=3; replay_calls=0
+HELD disarmed_read: reads390,398,406,414; compiled_record_delta=4; replay_calls=0
+HELD ordinary_uncaptured:6polls,6compiled blocks; source_active=false

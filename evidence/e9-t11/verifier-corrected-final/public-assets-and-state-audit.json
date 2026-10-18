@@ -1,0 +1,85 @@
+{
+  "status": "passed",
+  "head": "e14e4312b9ee8df73b93646c944bf64a2f0db875",
+  "assets": [
+    {
+      "report": "browser/report.json",
+      "assets": 18,
+      "assets_frozen_sha256": "21bb35ad0c5928645d256b4c935de710d26331177e90fd3fbbf3109aea6d062e"
+    },
+    {
+      "report": "retained-gpu-browser/report.json",
+      "assets": 58,
+      "assets_frozen_sha256": "4fb840688316d877d8461792f327a5c463a2657630a6874cec86840e33c16a1e"
+    }
+  ],
+  "suite": {
+    "passed": 127,
+    "failed": 0
+  },
+  "errors": [],
+  "lifecycle": [
+    {
+      "state": "frozen/active",
+      "milliseconds": 224
+    }
+  ],
+  "pause_ms": 261.66499999910593,
+  "refusals": [
+    "ClockPolicyMismatch",
+    "MissingRecord",
+    "MalformedObservation",
+    "Length",
+    "Kind",
+    "Position",
+    "ExtraRecords"
+  ],
+  "durable_backends": [
+    {
+      "backend": "main-thread",
+      "events": 413,
+      "end": {
+        "transition": "527",
+        "phase": "before",
+        "ordinal": 1,
+        "sequence": "413",
+        "retired": "526"
+      }
+    },
+    {
+      "backend": "whole-machine-worker",
+      "events": 413,
+      "end": {
+        "transition": "527",
+        "phase": "before",
+        "ordinal": 1,
+        "sequence": "413",
+        "retired": "526"
+      }
+    }
+  ],
+  "gpu": {
+    "qualified": true,
+    "lost": false,
+    "poisoned": false,
+    "epoch": "0000000000000004",
+    "retired": 2499808,
+    "drawn": [
+      {
+        "epoch": "0000000000000004",
+        "sequence": null,
+        "bindingGeneration": "0000000000000329",
+        "resource": {
+          "generation": "0000000000000010",
+          "id": 13
+        },
+        "status": "drawn",
+        "presentation": {
+          "backend": "canvas2d",
+          "resourceWidth": 1280,
+          "resourceHeight": 800
+        }
+      }
+    ]
+  }
+}

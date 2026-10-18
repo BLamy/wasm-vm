@@ -1,0 +1,10 @@
+{
+  "report": "target/evidence/e9-t11-cold-corrected-final/acceptance/report.json",
+  "sha256": "c7e87c0bc206e838564e03087b3b38dace1a6e73012a7b0eff8f64305b50f7fe",
+  "status": "passed",
+  "head": "e14e4312b9ee8df73b93646c944bf64a2f0db875",
+  "files_authenticated": 909,
+  "bytes_authenticated": 407910412,
+  "sources_authenticated": 51,
+  "gates": 29
+}

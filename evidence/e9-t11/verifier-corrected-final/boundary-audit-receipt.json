@@ -1,0 +1,25 @@
+{
+  "status": "HELD",
+  "runtime_head": "e14e4312b9ee8df73b93646c944bf64a2f0db875",
+  "oracle_sha256": "d3f4fb310c2993127bcb68e1717bc34827b9fe64f935f2dc6b1484f9cc65e42c",
+  "audit_sha256": "3acaf7b101738209f1bd4e35013dc797a665ab7f7ca7ef070b6477a58fd8a144",
+  "tape_sha256": "1474ed96f23150d5774705d8af541796abe61c6913a989c7fa8248d97f68874c",
+  "initial_sha256": "04806cf703c5a63b4ab9b0a6a2140205fc1b23e240e9e6b59e8292a2263d9b6e",
+  "final_sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+  "cases": 9,
+  "positions": [
+    384,
+    385,
+    386
+  ],
+  "raw_ns": [
+    123,
+    124,
+    125
+  ],
+  "final_transition": 468,
+  "final_cursor": 3,
+  "rtc_armed": false,
+  "rtc_fired": true,
+  "note": "Independent struct decoder asserts CPU register arithmetic, CLINT phase, native sections 18/19 and RTC state. The original codec is not imported. First oracle draft assumed policy divider 1; corrected to board clock divider 5 before the passing run. Predictions and product results are unchanged."
+}

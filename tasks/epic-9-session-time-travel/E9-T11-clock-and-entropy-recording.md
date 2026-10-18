@@ -3,7 +3,7 @@ id: E9-T11
 epic: 9
 title: Record guest-visible time and entropy observations
 priority: 524.911
-status: implemented
+status: verified
 depends_on: [E9-T09]
 estimate: S
 risk: high
@@ -20,9 +20,9 @@ Clock/RTC updates, lifecycle rebases, idle/timer decisions and supplied entropy,
 
 ## Acceptance criteria
 
-- [ ] A workload reading time and RNG around sleeps, pause/resume and tab lifecycle changes replays identical observations.
-- [ ] Replay consumes recorded values without reading the current host clock or CSPRNG for guest-visible results.
-- [ ] Malformed entropy lengths, clock-policy mismatches and exhausted records stop with a typed divergence error.
+- [x] A workload reading time and RNG around sleeps, pause/resume and tab lifecycle changes replays identical observations.
+- [x] Replay consumes recorded values without reading the current host clock or CSPRNG for guest-visible results.
+- [x] Malformed entropy lengths, clock-policy mismatches and exhausted records stop with a typed divergence error.
 
 ## Deterministic acceptance
 
@@ -192,3 +192,79 @@ sources are in `evidence/e9-t11/worker-corrected-final/`, `cold-corrected-final/
 `public-corrected-final/`. This claim covers time/entropy adapter capture and replay;
 full software session replay remains gated by T12–T14. Status is `implemented` for the
 fresh critic's final incremental verdict. No verification or merge is asserted here.
+
+
+### 2026-10-18 — verifier — VERDICT: verified
+
+- **C1/C2 corrected actual-JIT cadence — HELD.** Predictions were written after
+  orienting the repair diff and before inspecting corrected results. At runtime
+  `e14e4312b9ee8df73b93646c944bf64a2f0db875`, all four armed record/replay budget
+  1/6 pairs in both worker and independent cold recordings contain exactly 36 polls
+  at transitions 384–419. The second observation is now **385/385**, observe ordinal
+  1, sequence 2, as predicted: `evidence/e9-t11/verifier-corrected-final/armed.observations.jsonl:2`
+  (binary offset 78; tape SHA-256
+  `a7bc8890064f0f33aff0b68b91c1398720fc0fe3494784a32cc103e916046dae`).
+  Initial/final native frames and tapes match across every pair and both origins;
+  native end is 420/420, source cursor 36, and replay RTC calls are zero. The disarmed
+  guest-read matrix has exactly four reads at 390, 398, 406 and 414, native end 416/416,
+  cursor 4, matching frames and zero replay calls (tape
+  `f171dbc3561b2bb1575401e81ab93e3fbc87f958dbf8f29fd5ce1475c02f0346`).
+  An independent Python struct decoder checks CPU arithmetic, CLINT phase, RTC flags
+  and native sections 18/19 without importing the emulator codec. Selected real-
+  Wasmtime results are at `evidence/e9-t11/worker-corrected-final/jit-native.log:62`
+  and `evidence/e9-t11/cold-corrected-final/jit-native.log:121`.
+
+- **C3/C4 bounded firing-edge attack — HELD.** Predicted and observed RTC samples
+  are 123, 124 and 125 at transitions 384, 385 and 386 with alarm 125. All nine
+  record/replay budget pairs from 1/6/7 converge on the same tape and native frame,
+  final 468/468, cursor 3, RTC disarmed/fired, and zero live replay calls. Compiled
+  execution resumes after firing: quantum 6 executes 13 compiled blocks and quantum 7
+  executes 3. Points: `evidence/e9-t11/verifier-corrected-final/boundary-cadence.log:4`
+  and `:7`; raw matrices are retained in its `boundary-cadence/` directory. Tape
+  SHA-256 `1474ed96f23150d5774705d8af541796abe61c6913a989c7fa8248d97f68874c`;
+  final frame `525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476`.
+  The disarmed captured-read control still executes four compiled blocks (log line 10),
+  and ordinary uncaptured armed execution retains six polls and six compiled blocks
+  (line 11). These observations cover both edges of the source/armed dispatch guard.
+
+- **C5/C7 coverage, carried evidence and suite — HELD.** P1–P9 retain their prior
+  scopes and evidence digests; the exact carried ledger SHA-256 is
+  `cb0ce9a29a651d535a05f69152690ab0e4c3508d39c50604db59253a42f6da29`.
+  The historical P10 failure and receipt remain unchanged. The sole new runtime hunk,
+  `crates/core/src/session_clock.rs:663`, is exercised with armed/disarmed RTC,
+  inactive source capture and active capture without an RTC (the selected byte-budget
+  regression). Declarative/generated deltas authenticate against frozen source/assets;
+  the earlier 224-hunk coverage classification and explicit invariant waivers carry
+  forward. The two promoted JIT tests and 3 MiB byte-budget test execute permanently
+  through `make verify-E9-T11`; worker and cold each pass all 696 native tests and
+  81 Node tests. The retained red JIT recording detects the missing guard. Fresh
+  independent RTC/UART reconstruction also rejects one-bit corruption of the first
+  durable RTC sample in corrected worker, cold and public journals. No runtime code
+  was changed by this verifier.
+
+- **C6 exact-head, browser and origin — HELD.** Authenticated every indexed file:
+  907 worker, 909 cold acceptance/911 cold outer, and 1,142 public, plus all 51 source
+  digests in each submission. Report/receipt hashes match the corrected worker claim
+  above. Public source and GPU proofs authenticate all 18 and 58 runtime assets against
+  frozen dist, respectively; the suite is 127/0 with zero console errors. Read-only
+  independent source, 28-frame clock and durable-object oracles pass, including the
+  direct/whole-worker 413-event poweroff journals and zero-provider failure replay.
+  Actual retained-GPU retirement and physical draw pass. The full deployment snapshot
+  authenticates 739 files and all 734 frozen tracked files. Both old and corrected
+  cold clones have clean exact-head source, matching 50/51 source digests, recorded
+  initially empty targets and scrubbed environment. Their independent persistent Git
+  metadata has no alternates and passes connectivity fsck. The exact RAM source and
+  compiler directories named in `cold-origin-final-audit.json` may be released after
+  this verdict; retain Git metadata, all original recordings and proof capsules.
+
+Evidence: `evidence/e9-t11/verifier-corrected-final/receipt.json` SHA-256
+`4455f027caa3a412ab7f64440b9ec0d274ba85738e560859fc2db37388b26816`
+indexes 92 files, including predictions, independent decoders, raw firing-edge frames
+and tapes, unchanged HELD ledger, identity/origin audits and oracle outputs. Commands:
+read-only artifact/source authentication; independent `jit-frame-critic.py` on worker,
+cold and firing-edge data; source/clock oracle reruns with only output paths redirected;
+`production-rtc-critic.py --sabotage`; cold Git connectivity fsck; then task policy and
+queue generation. Worker submission `9abe576db62c7a8f691cc2224fb507df4a384b58`
+changes only task/queue/evidence from runtime e14. All three acceptance criteria are
+verified for the time/entropy adapter boundary. Full software/Linux replay remains
+gated by T12–T14.
