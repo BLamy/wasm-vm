@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "capsules": [
+    {
+      "capsule": "evidence/e9-t11/worker-corrected-final",
+      "provenance_sha256": "4619ae2eb0d3251d5db2af1e444604232913291b9c4c311466c25359046ded52",
+      "packet_files_authenticated": 215,
+      "aliases_authenticated": 12,
+      "original_index_files": 907,
+      "report_sha256": "3d005ff45b6687f8c9c4455c70003c9b3ba7d68adfe91c6008be7c3f80c4c777"
+    },
+    {
+      "capsule": "evidence/e9-t11/cold-corrected-final",
+      "provenance_sha256": "8effeca32a20a51e75cd9e87213184b6b27b3e43182f945c839ebe30b264ed49",
+      "packet_files_authenticated": 217,
+      "aliases_authenticated": 12,
+      "original_index_files": 909,
+      "report_sha256": "c7e87c0bc206e838564e03087b3b38dace1a6e73012a7b0eff8f64305b50f7fe"
+    },
+    {
+      "capsule": "evidence/e9-t11/public-corrected-final",
+      "provenance_sha256": "4c3c4dc4080b3926ee5f41c54998dc4d3d48c15e954aa0d7e237d34b1a37282c",
+      "packet_files_authenticated": 114,
+      "aliases_authenticated": 12,
+      "original_index_files": 1142,
+      "report_sha256": "694d9225a41b360ccdb26580065a7e5bee147059de99b1ae444c7d4e554b8e49"
+    }
+  ],
+  "unchanged_refutation_receipt_sha256": "db98fba97e7d3eeb21050db282510d3132c7e856884ef573b211cf2ded9fad6e",
+  "current_head": "9abe576db62c7a8f691cc2224fb507df4a384b58",
+  "runtime_delta_since_e14": "none; only task/queue/evidence paths",
+  "changed_metadata_files": 551
+}

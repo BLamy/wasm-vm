@@ -1,0 +1,205 @@
+{
+  "status": "passed",
+  "scope": "Independent WVOBLOG1/TLV/RAM/RTC/ICount oracle; no emulator codec is imported.",
+  "workloads": [
+    {
+      "label": "browser",
+      "frame": {
+        "file": "record.resume",
+        "sha256": "379588e513478eb4d9afacbaa20f5518fe4e49dcd5ed915275353680702e97df",
+        "bytes": 4447,
+        "transition": 523,
+        "retired": 522,
+        "sequence": 24,
+        "ordinal": 2,
+        "source_cursor": 19,
+        "mtime": 1102,
+        "deadline": 1035,
+        "residue": 2,
+        "pc": 2147485736
+      },
+      "paused": {
+        "file": "paused.resume",
+        "sha256": "71375838ec9ecd0002d4c886ce87918755b1527c7ec915db3da8fd3d640574ec",
+        "bytes": 4211,
+        "transition": 133,
+        "retired": 133,
+        "sequence": 15,
+        "ordinal": 1,
+        "source_cursor": 13,
+        "mtime": 26,
+        "deadline": 18446744073709551615,
+        "residue": 3,
+        "pc": 2147484180
+      },
+      "observations": 19,
+      "entropy_sha256": [
+        "b0b706c954df577415ba11f917ef12a88b392394a49b8260c1a38740214b443e",
+        "2ca70ec86d5e21e21c77822be5e4de36ee854bff367d6d0cf55e2bf3fca112a2"
+      ],
+      "rtc_samples": [
+        {
+          "sequence": "2",
+          "kind": 1,
+          "raw_ns": "1792327469188000000",
+          "guest_ns": "1792327469188000000",
+          "trace_line": 25
+        },
+        {
+          "sequence": "4",
+          "kind": 4,
+          "raw_ns": "1792327469188999936",
+          "guest_ns": "1792327469188999936",
+          "trace_line": 124
+        },
+        {
+          "sequence": "5",
+          "kind": 5,
+          "raw_ns": "1792327469188999936",
+          "guest_ns": "1792327469188999936",
+          "trace_line": 125
+        },
+        {
+          "sequence": "6",
+          "kind": 5,
+          "raw_ns": "1792327469188999936",
+          "guest_ns": "1792327469188999936",
+          "trace_line": 126
+        },
+        {
+          "sequence": "7",
+          "kind": 5,
+          "raw_ns": "1792327469188999936",
+          "guest_ns": "1792327469188999936",
+          "trace_line": 127
+        },
+        {
+          "sequence": "8",
+          "kind": 5,
+          "raw_ns": "1792327469188999936",
+          "guest_ns": "1792327469188999936",
+          "trace_line": 128
+        },
+        {
+          "sequence": "9",
+          "kind": 5,
+          "raw_ns": "1792327469188999936",
+          "guest_ns": "1792327469188999936",
+          "trace_line": 129
+        },
+        {
+          "sequence": "10",
+          "kind": 5,
+          "raw_ns": "1792327469188999936",
+          "guest_ns": "1792327469188999936",
+          "trace_line": 130
+        },
+        {
+          "sequence": "11",
+          "kind": 1,
+          "raw_ns": "1792327469188999936",
+          "guest_ns": "1792327469188999936",
+          "trace_line": 130
+        },
+        {
+          "sequence": "12",
+          "kind": 5,
+          "raw_ns": "1792327469188999936",
+          "guest_ns": "1792327469188999936",
+          "trace_line": 131
+        },
+        {
+          "sequence": "13",
+          "kind": 5,
+          "raw_ns": "1792327469188999936",
+          "guest_ns": "1792327469188999936",
+          "trace_line": 132
+        },
+        {
+          "sequence": "14",
+          "kind": 5,
+          "raw_ns": "1792327469188999936",
+          "guest_ns": "1792327469188999936",
+          "trace_line": 133
+        },
+        {
+          "sequence": "17",
+          "kind": 5,
+          "raw_ns": "1792327469451000064",
+          "guest_ns": "1792327469451000064",
+          "trace_line": 134
+        },
+        {
+          "sequence": "18",
+          "kind": 1,
+          "raw_ns": "1792327469451000064",
+          "guest_ns": "1792327469451000064",
+          "trace_line": 135
+        },
+        {
+          "sequence": "20",
+          "kind": 3,
+          "raw_ns": "1792327469451000064",
+          "guest_ns": "1792327469451000064",
+          "trace_line": 168
+        },
+        {
+          "sequence": "21",
+          "kind": 2,
+          "raw_ns": "1792327469451000064",
+          "guest_ns": "1311768466374342912",
+          "trace_line": 173
+        },
+        {
+          "sequence": "22",
+          "kind": 1,
+          "raw_ns": "1792327469451000064",
+          "guest_ns": "1311768467463790320",
+          "trace_line": 174
+        }
+      ],
+      "trace": {
+        "lines": 522,
+        "sha256": "299d12b4bcd9ffdc10b37d66f9de1e8e7ce872f1ce3848f1c657db54ba722af8"
+      },
+      "uart_sha256": "564a0f6e93a0e0100df4155bbdf1d936efb0cf90b5dca87847f76e06871dcbd0",
+      "icount": {
+        "read_values": [
+          5,
+          35,
+          1035
+        ],
+        "idle_after_retired": 186,
+        "deadline": 1035
+      }
+    }
+  ],
+  "prefixes": [
+    {
+      "label": "direct-prefix",
+      "events": 413,
+      "end": {
+        "transition": "527",
+        "phase": "before",
+        "ordinal": 1,
+        "sequence": "413",
+        "retired": "526"
+      },
+      "objects": 5,
+      "output_sha256": "8ea625e0c8ed6f65a018f37633c41742f189a6d3d1c853a881862995c95605a3"
+    },
+    {
+      "label": "worker-prefix",
+      "events": 413,
+      "end": {
+        "transition": "527",
+        "phase": "before",
+        "ordinal": 1,
+        "sequence": "413",
+        "retired": "526"
+      },
+      "objects": 5,
+      "output_sha256": "dad0c54bd6639393fed3e6aa826a84c3ee50c221fde334a5c3bbfb9d3191de62"
+    }
+  ]
+}

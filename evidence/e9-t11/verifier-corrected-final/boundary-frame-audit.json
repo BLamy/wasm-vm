@@ -1,0 +1,1176 @@
+{
+  "status": "passed",
+  "oracle": "independent Python struct/SHA256, no emulator codec",
+  "cases": [
+    {
+      "case": "fire-rq1-pq1",
+      "tape": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq1-pq1.observations",
+        "sha256": "1474ed96f23150d5774705d8af541796abe61c6913a989c7fa8248d97f68874c",
+        "bytes": 170,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 384,
+            "retired": 384,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 385,
+            "retired": 385,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 124
+          },
+          {
+            "offset": 124,
+            "transition": 386,
+            "retired": 386,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 125
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq1-pq1.initial.resume",
+        "sha256": "04806cf703c5a63b4ab9b0a6a2140205fc1b23e240e9e6b59e8292a2263d9b6e",
+        "bytes": 1695,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          64,
+          192,
+          320,
+          448,
+          704
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 125,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq1-pq1.record.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq1-pq1.replay.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "fire-rq1-pq6",
+      "tape": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq1-pq6.observations",
+        "sha256": "1474ed96f23150d5774705d8af541796abe61c6913a989c7fa8248d97f68874c",
+        "bytes": 170,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 384,
+            "retired": 384,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 385,
+            "retired": 385,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 124
+          },
+          {
+            "offset": 124,
+            "transition": 386,
+            "retired": 386,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 125
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq1-pq6.initial.resume",
+        "sha256": "04806cf703c5a63b4ab9b0a6a2140205fc1b23e240e9e6b59e8292a2263d9b6e",
+        "bytes": 1695,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          64,
+          192,
+          320,
+          448,
+          704
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 125,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq1-pq6.record.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq1-pq6.replay.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "fire-rq1-pq7",
+      "tape": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq1-pq7.observations",
+        "sha256": "1474ed96f23150d5774705d8af541796abe61c6913a989c7fa8248d97f68874c",
+        "bytes": 170,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 384,
+            "retired": 384,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 385,
+            "retired": 385,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 124
+          },
+          {
+            "offset": 124,
+            "transition": 386,
+            "retired": 386,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 125
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq1-pq7.initial.resume",
+        "sha256": "04806cf703c5a63b4ab9b0a6a2140205fc1b23e240e9e6b59e8292a2263d9b6e",
+        "bytes": 1695,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          64,
+          192,
+          320,
+          448,
+          704
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 125,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq1-pq7.record.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq1-pq7.replay.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "fire-rq6-pq1",
+      "tape": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq6-pq1.observations",
+        "sha256": "1474ed96f23150d5774705d8af541796abe61c6913a989c7fa8248d97f68874c",
+        "bytes": 170,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 384,
+            "retired": 384,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 385,
+            "retired": 385,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 124
+          },
+          {
+            "offset": 124,
+            "transition": 386,
+            "retired": 386,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 125
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq6-pq1.initial.resume",
+        "sha256": "04806cf703c5a63b4ab9b0a6a2140205fc1b23e240e9e6b59e8292a2263d9b6e",
+        "bytes": 1695,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          64,
+          192,
+          320,
+          448,
+          704
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 125,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq6-pq1.record.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq6-pq1.replay.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "fire-rq6-pq6",
+      "tape": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq6-pq6.observations",
+        "sha256": "1474ed96f23150d5774705d8af541796abe61c6913a989c7fa8248d97f68874c",
+        "bytes": 170,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 384,
+            "retired": 384,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 385,
+            "retired": 385,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 124
+          },
+          {
+            "offset": 124,
+            "transition": 386,
+            "retired": 386,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 125
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq6-pq6.initial.resume",
+        "sha256": "04806cf703c5a63b4ab9b0a6a2140205fc1b23e240e9e6b59e8292a2263d9b6e",
+        "bytes": 1695,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          64,
+          192,
+          320,
+          448,
+          704
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 125,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq6-pq6.record.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq6-pq6.replay.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "fire-rq6-pq7",
+      "tape": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq6-pq7.observations",
+        "sha256": "1474ed96f23150d5774705d8af541796abe61c6913a989c7fa8248d97f68874c",
+        "bytes": 170,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 384,
+            "retired": 384,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 385,
+            "retired": 385,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 124
+          },
+          {
+            "offset": 124,
+            "transition": 386,
+            "retired": 386,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 125
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq6-pq7.initial.resume",
+        "sha256": "04806cf703c5a63b4ab9b0a6a2140205fc1b23e240e9e6b59e8292a2263d9b6e",
+        "bytes": 1695,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          64,
+          192,
+          320,
+          448,
+          704
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 125,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq6-pq7.record.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq6-pq7.replay.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "fire-rq7-pq1",
+      "tape": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq7-pq1.observations",
+        "sha256": "1474ed96f23150d5774705d8af541796abe61c6913a989c7fa8248d97f68874c",
+        "bytes": 170,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 384,
+            "retired": 384,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 385,
+            "retired": 385,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 124
+          },
+          {
+            "offset": 124,
+            "transition": 386,
+            "retired": 386,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 125
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq7-pq1.initial.resume",
+        "sha256": "04806cf703c5a63b4ab9b0a6a2140205fc1b23e240e9e6b59e8292a2263d9b6e",
+        "bytes": 1695,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          64,
+          192,
+          320,
+          448,
+          704
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 125,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq7-pq1.record.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq7-pq1.replay.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "fire-rq7-pq6",
+      "tape": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq7-pq6.observations",
+        "sha256": "1474ed96f23150d5774705d8af541796abe61c6913a989c7fa8248d97f68874c",
+        "bytes": 170,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 384,
+            "retired": 384,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 385,
+            "retired": 385,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 124
+          },
+          {
+            "offset": 124,
+            "transition": 386,
+            "retired": 386,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 125
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq7-pq6.initial.resume",
+        "sha256": "04806cf703c5a63b4ab9b0a6a2140205fc1b23e240e9e6b59e8292a2263d9b6e",
+        "bytes": 1695,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          64,
+          192,
+          320,
+          448,
+          704
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 125,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq7-pq6.record.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq7-pq6.replay.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "fire-rq7-pq7",
+      "tape": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq7-pq7.observations",
+        "sha256": "1474ed96f23150d5774705d8af541796abe61c6913a989c7fa8248d97f68874c",
+        "bytes": 170,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 384,
+            "retired": 384,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 385,
+            "retired": 385,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 124
+          },
+          {
+            "offset": 124,
+            "transition": 386,
+            "retired": 386,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 125
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq7-pq7.initial.resume",
+        "sha256": "04806cf703c5a63b4ab9b0a6a2140205fc1b23e240e9e6b59e8292a2263d9b6e",
+        "bytes": 1695,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          64,
+          192,
+          320,
+          448,
+          704
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 125,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq7-pq7.record.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-verifier/corrected/boundary-cadence/fire-rq7-pq7.replay.resume",
+        "sha256": "525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476",
+        "bytes": 1695,
+        "transition": 468,
+        "retired": 468,
+        "source_cursor": 3,
+        "pc": "0x80000000",
+        "x1_x5": [
+          78,
+          234,
+          390,
+          546,
+          858
+        ],
+        "clint_mtime": 93,
+        "clock_residue": 3,
+        "rtc_alarm": 125,
+        "rtc_armed": false,
+        "rtc_fired": true,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    }
+  ]
+}

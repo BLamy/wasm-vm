@@ -1,0 +1,2270 @@
+{
+  "status": "passed",
+  "oracle": "independent Python struct/SHA256, no emulator codec",
+  "cases": [
+    {
+      "case": "jit-source-read-false-alarm-true-rq1-pq1",
+      "tape": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq1-pq1.observations",
+        "sha256": "a7bc8890064f0f33aff0b68b91c1398720fc0fe3494784a32cc103e916046dae",
+        "bytes": 1688,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 384,
+            "retired": 384,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 385,
+            "retired": 385,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 124,
+            "transition": 386,
+            "retired": 386,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 170,
+            "transition": 387,
+            "retired": 387,
+            "sequence": 4,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 216,
+            "transition": 388,
+            "retired": 388,
+            "sequence": 5,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 262,
+            "transition": 389,
+            "retired": 389,
+            "sequence": 6,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 308,
+            "transition": 390,
+            "retired": 390,
+            "sequence": 7,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 354,
+            "transition": 391,
+            "retired": 391,
+            "sequence": 8,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 400,
+            "transition": 392,
+            "retired": 392,
+            "sequence": 9,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 446,
+            "transition": 393,
+            "retired": 393,
+            "sequence": 10,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 492,
+            "transition": 394,
+            "retired": 394,
+            "sequence": 11,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 538,
+            "transition": 395,
+            "retired": 395,
+            "sequence": 12,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 584,
+            "transition": 396,
+            "retired": 396,
+            "sequence": 13,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 630,
+            "transition": 397,
+            "retired": 397,
+            "sequence": 14,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 676,
+            "transition": 398,
+            "retired": 398,
+            "sequence": 15,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 722,
+            "transition": 399,
+            "retired": 399,
+            "sequence": 16,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 768,
+            "transition": 400,
+            "retired": 400,
+            "sequence": 17,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 814,
+            "transition": 401,
+            "retired": 401,
+            "sequence": 18,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 860,
+            "transition": 402,
+            "retired": 402,
+            "sequence": 19,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 906,
+            "transition": 403,
+            "retired": 403,
+            "sequence": 20,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 952,
+            "transition": 404,
+            "retired": 404,
+            "sequence": 21,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 998,
+            "transition": 405,
+            "retired": 405,
+            "sequence": 22,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1044,
+            "transition": 406,
+            "retired": 406,
+            "sequence": 23,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1090,
+            "transition": 407,
+            "retired": 407,
+            "sequence": 24,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1136,
+            "transition": 408,
+            "retired": 408,
+            "sequence": 25,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1182,
+            "transition": 409,
+            "retired": 409,
+            "sequence": 26,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1228,
+            "transition": 410,
+            "retired": 410,
+            "sequence": 27,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1274,
+            "transition": 411,
+            "retired": 411,
+            "sequence": 28,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1320,
+            "transition": 412,
+            "retired": 412,
+            "sequence": 29,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1366,
+            "transition": 413,
+            "retired": 413,
+            "sequence": 30,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1412,
+            "transition": 414,
+            "retired": 414,
+            "sequence": 31,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1458,
+            "transition": 415,
+            "retired": 415,
+            "sequence": 32,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1504,
+            "transition": 416,
+            "retired": 416,
+            "sequence": 33,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1550,
+            "transition": 417,
+            "retired": 417,
+            "sequence": 34,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1596,
+            "transition": 418,
+            "retired": 418,
+            "sequence": 35,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1642,
+            "transition": 419,
+            "retired": 419,
+            "sequence": 36,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq1-pq1-initial.resume",
+        "sha256": "544a38b81ac79a389ce5b5509ab70a1fd0fc587db3869da52dced2381af710be",
+        "bytes": 1695,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          64,
+          192,
+          320,
+          448,
+          704
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 9223372036854775807,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq1-pq1-record.resume",
+        "sha256": "2d3ce618ce9602694be719232cba1489ea30840ca55b75e67d78a6a64c861b0b",
+        "bytes": 1695,
+        "transition": 420,
+        "retired": 420,
+        "source_cursor": 36,
+        "pc": "0x80000000",
+        "x1_x5": [
+          70,
+          210,
+          350,
+          490,
+          770
+        ],
+        "clint_mtime": 84,
+        "clock_residue": 0,
+        "rtc_alarm": 9223372036854775807,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq1-pq1-replay.resume",
+        "sha256": "2d3ce618ce9602694be719232cba1489ea30840ca55b75e67d78a6a64c861b0b",
+        "bytes": 1695,
+        "transition": 420,
+        "retired": 420,
+        "source_cursor": 36,
+        "pc": "0x80000000",
+        "x1_x5": [
+          70,
+          210,
+          350,
+          490,
+          770
+        ],
+        "clint_mtime": 84,
+        "clock_residue": 0,
+        "rtc_alarm": 9223372036854775807,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "jit-source-read-false-alarm-true-rq1-pq6",
+      "tape": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq1-pq6.observations",
+        "sha256": "a7bc8890064f0f33aff0b68b91c1398720fc0fe3494784a32cc103e916046dae",
+        "bytes": 1688,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 384,
+            "retired": 384,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 385,
+            "retired": 385,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 124,
+            "transition": 386,
+            "retired": 386,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 170,
+            "transition": 387,
+            "retired": 387,
+            "sequence": 4,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 216,
+            "transition": 388,
+            "retired": 388,
+            "sequence": 5,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 262,
+            "transition": 389,
+            "retired": 389,
+            "sequence": 6,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 308,
+            "transition": 390,
+            "retired": 390,
+            "sequence": 7,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 354,
+            "transition": 391,
+            "retired": 391,
+            "sequence": 8,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 400,
+            "transition": 392,
+            "retired": 392,
+            "sequence": 9,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 446,
+            "transition": 393,
+            "retired": 393,
+            "sequence": 10,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 492,
+            "transition": 394,
+            "retired": 394,
+            "sequence": 11,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 538,
+            "transition": 395,
+            "retired": 395,
+            "sequence": 12,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 584,
+            "transition": 396,
+            "retired": 396,
+            "sequence": 13,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 630,
+            "transition": 397,
+            "retired": 397,
+            "sequence": 14,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 676,
+            "transition": 398,
+            "retired": 398,
+            "sequence": 15,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 722,
+            "transition": 399,
+            "retired": 399,
+            "sequence": 16,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 768,
+            "transition": 400,
+            "retired": 400,
+            "sequence": 17,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 814,
+            "transition": 401,
+            "retired": 401,
+            "sequence": 18,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 860,
+            "transition": 402,
+            "retired": 402,
+            "sequence": 19,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 906,
+            "transition": 403,
+            "retired": 403,
+            "sequence": 20,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 952,
+            "transition": 404,
+            "retired": 404,
+            "sequence": 21,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 998,
+            "transition": 405,
+            "retired": 405,
+            "sequence": 22,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1044,
+            "transition": 406,
+            "retired": 406,
+            "sequence": 23,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1090,
+            "transition": 407,
+            "retired": 407,
+            "sequence": 24,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1136,
+            "transition": 408,
+            "retired": 408,
+            "sequence": 25,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1182,
+            "transition": 409,
+            "retired": 409,
+            "sequence": 26,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1228,
+            "transition": 410,
+            "retired": 410,
+            "sequence": 27,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1274,
+            "transition": 411,
+            "retired": 411,
+            "sequence": 28,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1320,
+            "transition": 412,
+            "retired": 412,
+            "sequence": 29,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1366,
+            "transition": 413,
+            "retired": 413,
+            "sequence": 30,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1412,
+            "transition": 414,
+            "retired": 414,
+            "sequence": 31,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1458,
+            "transition": 415,
+            "retired": 415,
+            "sequence": 32,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1504,
+            "transition": 416,
+            "retired": 416,
+            "sequence": 33,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1550,
+            "transition": 417,
+            "retired": 417,
+            "sequence": 34,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1596,
+            "transition": 418,
+            "retired": 418,
+            "sequence": 35,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1642,
+            "transition": 419,
+            "retired": 419,
+            "sequence": 36,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq1-pq6-initial.resume",
+        "sha256": "544a38b81ac79a389ce5b5509ab70a1fd0fc587db3869da52dced2381af710be",
+        "bytes": 1695,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          64,
+          192,
+          320,
+          448,
+          704
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 9223372036854775807,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq1-pq6-record.resume",
+        "sha256": "2d3ce618ce9602694be719232cba1489ea30840ca55b75e67d78a6a64c861b0b",
+        "bytes": 1695,
+        "transition": 420,
+        "retired": 420,
+        "source_cursor": 36,
+        "pc": "0x80000000",
+        "x1_x5": [
+          70,
+          210,
+          350,
+          490,
+          770
+        ],
+        "clint_mtime": 84,
+        "clock_residue": 0,
+        "rtc_alarm": 9223372036854775807,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq1-pq6-replay.resume",
+        "sha256": "2d3ce618ce9602694be719232cba1489ea30840ca55b75e67d78a6a64c861b0b",
+        "bytes": 1695,
+        "transition": 420,
+        "retired": 420,
+        "source_cursor": 36,
+        "pc": "0x80000000",
+        "x1_x5": [
+          70,
+          210,
+          350,
+          490,
+          770
+        ],
+        "clint_mtime": 84,
+        "clock_residue": 0,
+        "rtc_alarm": 9223372036854775807,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "jit-source-read-false-alarm-true-rq6-pq1",
+      "tape": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq6-pq1.observations",
+        "sha256": "a7bc8890064f0f33aff0b68b91c1398720fc0fe3494784a32cc103e916046dae",
+        "bytes": 1688,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 384,
+            "retired": 384,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 385,
+            "retired": 385,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 124,
+            "transition": 386,
+            "retired": 386,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 170,
+            "transition": 387,
+            "retired": 387,
+            "sequence": 4,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 216,
+            "transition": 388,
+            "retired": 388,
+            "sequence": 5,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 262,
+            "transition": 389,
+            "retired": 389,
+            "sequence": 6,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 308,
+            "transition": 390,
+            "retired": 390,
+            "sequence": 7,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 354,
+            "transition": 391,
+            "retired": 391,
+            "sequence": 8,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 400,
+            "transition": 392,
+            "retired": 392,
+            "sequence": 9,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 446,
+            "transition": 393,
+            "retired": 393,
+            "sequence": 10,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 492,
+            "transition": 394,
+            "retired": 394,
+            "sequence": 11,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 538,
+            "transition": 395,
+            "retired": 395,
+            "sequence": 12,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 584,
+            "transition": 396,
+            "retired": 396,
+            "sequence": 13,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 630,
+            "transition": 397,
+            "retired": 397,
+            "sequence": 14,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 676,
+            "transition": 398,
+            "retired": 398,
+            "sequence": 15,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 722,
+            "transition": 399,
+            "retired": 399,
+            "sequence": 16,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 768,
+            "transition": 400,
+            "retired": 400,
+            "sequence": 17,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 814,
+            "transition": 401,
+            "retired": 401,
+            "sequence": 18,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 860,
+            "transition": 402,
+            "retired": 402,
+            "sequence": 19,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 906,
+            "transition": 403,
+            "retired": 403,
+            "sequence": 20,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 952,
+            "transition": 404,
+            "retired": 404,
+            "sequence": 21,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 998,
+            "transition": 405,
+            "retired": 405,
+            "sequence": 22,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1044,
+            "transition": 406,
+            "retired": 406,
+            "sequence": 23,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1090,
+            "transition": 407,
+            "retired": 407,
+            "sequence": 24,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1136,
+            "transition": 408,
+            "retired": 408,
+            "sequence": 25,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1182,
+            "transition": 409,
+            "retired": 409,
+            "sequence": 26,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1228,
+            "transition": 410,
+            "retired": 410,
+            "sequence": 27,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1274,
+            "transition": 411,
+            "retired": 411,
+            "sequence": 28,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1320,
+            "transition": 412,
+            "retired": 412,
+            "sequence": 29,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1366,
+            "transition": 413,
+            "retired": 413,
+            "sequence": 30,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1412,
+            "transition": 414,
+            "retired": 414,
+            "sequence": 31,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1458,
+            "transition": 415,
+            "retired": 415,
+            "sequence": 32,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1504,
+            "transition": 416,
+            "retired": 416,
+            "sequence": 33,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1550,
+            "transition": 417,
+            "retired": 417,
+            "sequence": 34,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1596,
+            "transition": 418,
+            "retired": 418,
+            "sequence": 35,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1642,
+            "transition": 419,
+            "retired": 419,
+            "sequence": 36,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq6-pq1-initial.resume",
+        "sha256": "544a38b81ac79a389ce5b5509ab70a1fd0fc587db3869da52dced2381af710be",
+        "bytes": 1695,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          64,
+          192,
+          320,
+          448,
+          704
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 9223372036854775807,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq6-pq1-record.resume",
+        "sha256": "2d3ce618ce9602694be719232cba1489ea30840ca55b75e67d78a6a64c861b0b",
+        "bytes": 1695,
+        "transition": 420,
+        "retired": 420,
+        "source_cursor": 36,
+        "pc": "0x80000000",
+        "x1_x5": [
+          70,
+          210,
+          350,
+          490,
+          770
+        ],
+        "clint_mtime": 84,
+        "clock_residue": 0,
+        "rtc_alarm": 9223372036854775807,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq6-pq1-replay.resume",
+        "sha256": "2d3ce618ce9602694be719232cba1489ea30840ca55b75e67d78a6a64c861b0b",
+        "bytes": 1695,
+        "transition": 420,
+        "retired": 420,
+        "source_cursor": 36,
+        "pc": "0x80000000",
+        "x1_x5": [
+          70,
+          210,
+          350,
+          490,
+          770
+        ],
+        "clint_mtime": 84,
+        "clock_residue": 0,
+        "rtc_alarm": 9223372036854775807,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "jit-source-read-false-alarm-true-rq6-pq6",
+      "tape": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq6-pq6.observations",
+        "sha256": "a7bc8890064f0f33aff0b68b91c1398720fc0fe3494784a32cc103e916046dae",
+        "bytes": 1688,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 384,
+            "retired": 384,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 385,
+            "retired": 385,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 124,
+            "transition": 386,
+            "retired": 386,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 170,
+            "transition": 387,
+            "retired": 387,
+            "sequence": 4,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 216,
+            "transition": 388,
+            "retired": 388,
+            "sequence": 5,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 262,
+            "transition": 389,
+            "retired": 389,
+            "sequence": 6,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 308,
+            "transition": 390,
+            "retired": 390,
+            "sequence": 7,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 354,
+            "transition": 391,
+            "retired": 391,
+            "sequence": 8,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 400,
+            "transition": 392,
+            "retired": 392,
+            "sequence": 9,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 446,
+            "transition": 393,
+            "retired": 393,
+            "sequence": 10,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 492,
+            "transition": 394,
+            "retired": 394,
+            "sequence": 11,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 538,
+            "transition": 395,
+            "retired": 395,
+            "sequence": 12,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 584,
+            "transition": 396,
+            "retired": 396,
+            "sequence": 13,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 630,
+            "transition": 397,
+            "retired": 397,
+            "sequence": 14,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 676,
+            "transition": 398,
+            "retired": 398,
+            "sequence": 15,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 722,
+            "transition": 399,
+            "retired": 399,
+            "sequence": 16,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 768,
+            "transition": 400,
+            "retired": 400,
+            "sequence": 17,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 814,
+            "transition": 401,
+            "retired": 401,
+            "sequence": 18,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 860,
+            "transition": 402,
+            "retired": 402,
+            "sequence": 19,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 906,
+            "transition": 403,
+            "retired": 403,
+            "sequence": 20,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 952,
+            "transition": 404,
+            "retired": 404,
+            "sequence": 21,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 998,
+            "transition": 405,
+            "retired": 405,
+            "sequence": 22,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1044,
+            "transition": 406,
+            "retired": 406,
+            "sequence": 23,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1090,
+            "transition": 407,
+            "retired": 407,
+            "sequence": 24,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1136,
+            "transition": 408,
+            "retired": 408,
+            "sequence": 25,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1182,
+            "transition": 409,
+            "retired": 409,
+            "sequence": 26,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1228,
+            "transition": 410,
+            "retired": 410,
+            "sequence": 27,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1274,
+            "transition": 411,
+            "retired": 411,
+            "sequence": 28,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1320,
+            "transition": 412,
+            "retired": 412,
+            "sequence": 29,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1366,
+            "transition": 413,
+            "retired": 413,
+            "sequence": 30,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1412,
+            "transition": 414,
+            "retired": 414,
+            "sequence": 31,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1458,
+            "transition": 415,
+            "retired": 415,
+            "sequence": 32,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1504,
+            "transition": 416,
+            "retired": 416,
+            "sequence": 33,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1550,
+            "transition": 417,
+            "retired": 417,
+            "sequence": 34,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1596,
+            "transition": 418,
+            "retired": 418,
+            "sequence": 35,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          },
+          {
+            "offset": 1642,
+            "transition": 419,
+            "retired": 419,
+            "sequence": 36,
+            "ordinal": 1,
+            "kind": 5,
+            "host_ns": 123
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq6-pq6-initial.resume",
+        "sha256": "544a38b81ac79a389ce5b5509ab70a1fd0fc587db3869da52dced2381af710be",
+        "bytes": 1695,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          64,
+          192,
+          320,
+          448,
+          704
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 9223372036854775807,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq6-pq6-record.resume",
+        "sha256": "2d3ce618ce9602694be719232cba1489ea30840ca55b75e67d78a6a64c861b0b",
+        "bytes": 1695,
+        "transition": 420,
+        "retired": 420,
+        "source_cursor": 36,
+        "pc": "0x80000000",
+        "x1_x5": [
+          70,
+          210,
+          350,
+          490,
+          770
+        ],
+        "clint_mtime": 84,
+        "clock_residue": 0,
+        "rtc_alarm": 9223372036854775807,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq6-pq6-replay.resume",
+        "sha256": "2d3ce618ce9602694be719232cba1489ea30840ca55b75e67d78a6a64c861b0b",
+        "bytes": 1695,
+        "transition": 420,
+        "retired": 420,
+        "source_cursor": 36,
+        "pc": "0x80000000",
+        "x1_x5": [
+          70,
+          210,
+          350,
+          490,
+          770
+        ],
+        "clint_mtime": 84,
+        "clock_residue": 0,
+        "rtc_alarm": 9223372036854775807,
+        "rtc_armed": true,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "jit-source-read-true-alarm-false-rq1-pq1",
+      "tape": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq1-pq1.observations",
+        "sha256": "f171dbc3561b2bb1575401e81ab93e3fbc87f958dbf8f29fd5ce1475c02f0346",
+        "bytes": 216,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 390,
+            "retired": 390,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 398,
+            "retired": 398,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          },
+          {
+            "offset": 124,
+            "transition": 406,
+            "retired": 406,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          },
+          {
+            "offset": 170,
+            "transition": 414,
+            "retired": 414,
+            "sequence": 4,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq1-pq1-initial.resume",
+        "sha256": "9c08c4f40c062c90808277cbb13ac654e933b0c347527bb1b1a4021b5cfbe4f0",
+        "bytes": 1711,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          48,
+          144,
+          240,
+          336,
+          528
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 0,
+        "rtc_armed": false,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq1-pq1-record.resume",
+        "sha256": "e4f94aba7cd9fdc0ae8e5c55db84188f90569fca89255315065f491c54126d74",
+        "bytes": 1711,
+        "transition": 416,
+        "retired": 416,
+        "source_cursor": 4,
+        "pc": "0x80000000",
+        "x1_x5": [
+          52,
+          156,
+          260,
+          364,
+          572
+        ],
+        "clint_mtime": 83,
+        "clock_residue": 1,
+        "rtc_alarm": 0,
+        "rtc_armed": false,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq1-pq1-replay.resume",
+        "sha256": "e4f94aba7cd9fdc0ae8e5c55db84188f90569fca89255315065f491c54126d74",
+        "bytes": 1711,
+        "transition": 416,
+        "retired": 416,
+        "source_cursor": 4,
+        "pc": "0x80000000",
+        "x1_x5": [
+          52,
+          156,
+          260,
+          364,
+          572
+        ],
+        "clint_mtime": 83,
+        "clock_residue": 1,
+        "rtc_alarm": 0,
+        "rtc_armed": false,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "jit-source-read-true-alarm-false-rq1-pq8",
+      "tape": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq1-pq8.observations",
+        "sha256": "f171dbc3561b2bb1575401e81ab93e3fbc87f958dbf8f29fd5ce1475c02f0346",
+        "bytes": 216,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 390,
+            "retired": 390,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 398,
+            "retired": 398,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          },
+          {
+            "offset": 124,
+            "transition": 406,
+            "retired": 406,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          },
+          {
+            "offset": 170,
+            "transition": 414,
+            "retired": 414,
+            "sequence": 4,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq1-pq8-initial.resume",
+        "sha256": "9c08c4f40c062c90808277cbb13ac654e933b0c347527bb1b1a4021b5cfbe4f0",
+        "bytes": 1711,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          48,
+          144,
+          240,
+          336,
+          528
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 0,
+        "rtc_armed": false,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq1-pq8-record.resume",
+        "sha256": "e4f94aba7cd9fdc0ae8e5c55db84188f90569fca89255315065f491c54126d74",
+        "bytes": 1711,
+        "transition": 416,
+        "retired": 416,
+        "source_cursor": 4,
+        "pc": "0x80000000",
+        "x1_x5": [
+          52,
+          156,
+          260,
+          364,
+          572
+        ],
+        "clint_mtime": 83,
+        "clock_residue": 1,
+        "rtc_alarm": 0,
+        "rtc_armed": false,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq1-pq8-replay.resume",
+        "sha256": "e4f94aba7cd9fdc0ae8e5c55db84188f90569fca89255315065f491c54126d74",
+        "bytes": 1711,
+        "transition": 416,
+        "retired": 416,
+        "source_cursor": 4,
+        "pc": "0x80000000",
+        "x1_x5": [
+          52,
+          156,
+          260,
+          364,
+          572
+        ],
+        "clint_mtime": 83,
+        "clock_residue": 1,
+        "rtc_alarm": 0,
+        "rtc_armed": false,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "jit-source-read-true-alarm-false-rq8-pq1",
+      "tape": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq8-pq1.observations",
+        "sha256": "f171dbc3561b2bb1575401e81ab93e3fbc87f958dbf8f29fd5ce1475c02f0346",
+        "bytes": 216,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 390,
+            "retired": 390,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 398,
+            "retired": 398,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          },
+          {
+            "offset": 124,
+            "transition": 406,
+            "retired": 406,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          },
+          {
+            "offset": 170,
+            "transition": 414,
+            "retired": 414,
+            "sequence": 4,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq8-pq1-initial.resume",
+        "sha256": "9c08c4f40c062c90808277cbb13ac654e933b0c347527bb1b1a4021b5cfbe4f0",
+        "bytes": 1711,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          48,
+          144,
+          240,
+          336,
+          528
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 0,
+        "rtc_armed": false,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq8-pq1-record.resume",
+        "sha256": "e4f94aba7cd9fdc0ae8e5c55db84188f90569fca89255315065f491c54126d74",
+        "bytes": 1711,
+        "transition": 416,
+        "retired": 416,
+        "source_cursor": 4,
+        "pc": "0x80000000",
+        "x1_x5": [
+          52,
+          156,
+          260,
+          364,
+          572
+        ],
+        "clint_mtime": 83,
+        "clock_residue": 1,
+        "rtc_alarm": 0,
+        "rtc_armed": false,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq8-pq1-replay.resume",
+        "sha256": "e4f94aba7cd9fdc0ae8e5c55db84188f90569fca89255315065f491c54126d74",
+        "bytes": 1711,
+        "transition": 416,
+        "retired": 416,
+        "source_cursor": 4,
+        "pc": "0x80000000",
+        "x1_x5": [
+          52,
+          156,
+          260,
+          364,
+          572
+        ],
+        "clint_mtime": 83,
+        "clock_residue": 1,
+        "rtc_alarm": 0,
+        "rtc_armed": false,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    },
+    {
+      "case": "jit-source-read-true-alarm-false-rq8-pq8",
+      "tape": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq8-pq8.observations",
+        "sha256": "f171dbc3561b2bb1575401e81ab93e3fbc87f958dbf8f29fd5ce1475c02f0346",
+        "bytes": 216,
+        "records": [
+          {
+            "offset": 32,
+            "transition": 390,
+            "retired": 390,
+            "sequence": 1,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          },
+          {
+            "offset": 78,
+            "transition": 398,
+            "retired": 398,
+            "sequence": 2,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          },
+          {
+            "offset": 124,
+            "transition": 406,
+            "retired": 406,
+            "sequence": 3,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          },
+          {
+            "offset": 170,
+            "transition": 414,
+            "retired": 414,
+            "sequence": 4,
+            "ordinal": 1,
+            "kind": 1,
+            "host_ns": 123
+          }
+        ]
+      },
+      "initial": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq8-pq8-initial.resume",
+        "sha256": "9c08c4f40c062c90808277cbb13ac654e933b0c347527bb1b1a4021b5cfbe4f0",
+        "bytes": 1711,
+        "transition": 384,
+        "retired": 384,
+        "source_cursor": 0,
+        "pc": "0x80000000",
+        "x1_x5": [
+          48,
+          144,
+          240,
+          336,
+          528
+        ],
+        "clint_mtime": 76,
+        "clock_residue": 4,
+        "rtc_alarm": 0,
+        "rtc_armed": false,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "record": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq8-pq8-record.resume",
+        "sha256": "e4f94aba7cd9fdc0ae8e5c55db84188f90569fca89255315065f491c54126d74",
+        "bytes": 1711,
+        "transition": 416,
+        "retired": 416,
+        "source_cursor": 4,
+        "pc": "0x80000000",
+        "x1_x5": [
+          52,
+          156,
+          260,
+          364,
+          572
+        ],
+        "clint_mtime": 83,
+        "clock_residue": 1,
+        "rtc_alarm": 0,
+        "rtc_armed": false,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      },
+      "replay": {
+        "path": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq8-pq8-replay.resume",
+        "sha256": "e4f94aba7cd9fdc0ae8e5c55db84188f90569fca89255315065f491c54126d74",
+        "bytes": 1711,
+        "transition": 416,
+        "retired": 416,
+        "source_cursor": 4,
+        "pc": "0x80000000",
+        "x1_x5": [
+          52,
+          156,
+          260,
+          364,
+          572
+        ],
+        "clint_mtime": 83,
+        "clock_residue": 1,
+        "rtc_alarm": 0,
+        "rtc_armed": false,
+        "rtc_fired": false,
+        "sections": [
+          1,
+          2,
+          3,
+          4,
+          8,
+          9,
+          18,
+          19
+        ]
+      }
+    }
+  ]
+}

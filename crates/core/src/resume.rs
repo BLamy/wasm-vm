@@ -62,6 +62,8 @@ pub mod section {
     pub const RESERVED_FUTURE: u32 = 17;
     /// E9-T09: non-wrapping session position and owned pending before-boundary effects.
     pub const SESSION_CLOCK: u32 = 18;
+    /// E9-T11: frozen source policy and consumed immutable observation-log cursor.
+    pub const SESSION_SOURCES: u32 = 19;
 }
 
 /// Is `tag` a section number this format family reserves (the whole reserved universe, whether or
@@ -87,6 +89,7 @@ pub fn is_known_section(tag: u32) -> bool {
             | section::VIRTIO_SND
             | section::RESERVED_FUTURE
             | section::SESSION_CLOCK
+            | section::SESSION_SOURCES
     )
 }
 
@@ -116,6 +119,7 @@ pub fn is_supported_section(tag: u32) -> bool {
             | section::VIRTIO_MOUSE
             | section::VIRTIO_SND
             | section::SESSION_CLOCK
+            | section::SESSION_SOURCES
     )
 }
 

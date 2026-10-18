@@ -1,8 +1,52 @@
 use super::*;
 use crate::{LinuxInner, WasmLinux, event_clock, reentrant};
 use wasm_bindgen::prelude::*;
+use wasm_vm_core::session_clock::SessionError;
 
 impl LinuxInner {
+    pub(crate) fn begin_input_capture(
+        &mut self,
+        replay: bool,
+        with_sources: bool,
+    ) -> Result<(), JsError> {
+        #[cfg(feature = "virgl-renderer")]
+        let accelerated = self.machine.control3d_proof_installed();
+        #[cfg(not(feature = "virgl-renderer"))]
+        let accelerated = false;
+        if self.input_capture.is_some()
+            || self.finished.is_some()
+            || self.pending.len() > MAX_UART_PENDING
+            || self.session_has_mic
+            || self.audio_attached
+            || self.capture_attached
+            || accelerated
+            || self
+                .file_transfers
+                .as_ref()
+                .is_some_and(|t| !t.input_prefix_ready())
+        {
+            return Err(JsError::new(
+                "input capture requires fresh, quiescent software ICount input adapters",
+            ));
+        }
+        if with_sources {
+            if replay {
+                return Err(crate::session_sources::error(
+                    SessionError::ObservationOrder,
+                ));
+            }
+            let policy = self.machine.source_policy();
+            self.machine
+                .start_session_clock_with_sources(policy, None)
+                .map_err(crate::session_sources::error)?;
+        } else {
+            self.machine
+                .start_session_clock(1)
+                .map_err(|e| JsError::new(&format!("input clock: {e:?}")))?;
+        }
+        self.input_capture = Some(InputCapture::new(replay));
+        Ok(())
+    }
     pub(crate) fn capture_input(
         &mut self,
         channel: u16,
@@ -59,33 +103,10 @@ impl WasmLinux {
     /// is deliberately not asserted here. Replay mode installs an ingress firewall, not a runner.
     #[wasm_bindgen(js_name=startInputCapture)]
     pub fn start_input_capture(&self, replay: bool) -> Result<(), JsError> {
-        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        #[cfg(feature = "virgl-renderer")]
-        let accelerated = inner.machine.control3d_proof_installed();
-        #[cfg(not(feature = "virgl-renderer"))]
-        let accelerated = false;
-        if inner.input_capture.is_some()
-            || inner.finished.is_some()
-            || inner.pending.len() > MAX_UART_PENDING
-            || inner.session_has_mic
-            || inner.audio_attached
-            || inner.capture_attached
-            || accelerated
-            || inner
-                .file_transfers
-                .as_ref()
-                .is_some_and(|t| !t.input_prefix_ready())
-        {
-            return Err(JsError::new(
-                "input capture requires fresh, quiescent software ICount input adapters",
-            ));
-        }
-        inner
-            .machine
-            .start_session_clock(1)
-            .map_err(|e| JsError::new(&format!("input clock: {e:?}")))?;
-        inner.input_capture = Some(InputCapture::new(replay));
-        Ok(())
+        self.inner
+            .try_borrow_mut()
+            .map_err(|_| reentrant())?
+            .begin_input_capture(replay, false)
     }
     /// Native witness only, deliberately not an admitted full provider checkpoint.
     #[wasm_bindgen(js_name=captureInputWitness)]
@@ -189,22 +210,7 @@ impl WasmLinux {
             .map_err(|e| JsError::new(&format!("input receipts: {e:?}")))?;
         let out = js_sys::Array::new();
         for delivery in deliveries {
-            let SessionEffect::HostInput { channel, bytes } = delivery.effect else {
-                return Err(JsError::new("mixed diagnostic mailbox in input capture"));
-            };
-            let object = event_clock::position_object(delivery.position);
-            let _ = js_sys::Reflect::set(&object, &"channel".into(), &channel.into());
-            let _ = js_sys::Reflect::set(
-                &object,
-                &"bytes".into(),
-                &js_sys::Uint8Array::from(bytes.as_slice()),
-            );
-            let values = js_sys::Array::new();
-            for v in delivery.host_result.unwrap() {
-                values.push(&v.to_string().into());
-            }
-            let _ = js_sys::Reflect::set(&object, &"outcome".into(), &values);
-            out.push(&object);
+            out.push(&crate::session_sources::receipt_object(delivery)?.into());
         }
         Ok(out.into())
     }

@@ -109,7 +109,7 @@
         font: 12px ui-monospace, monospace;
         margin-top: 4px;
       }
-      #event-clock-pip, #input-recording-pip {
+      #event-clock-pip, #input-recording-pip, #time-entropy-pip {
         display: inline-block;
         width: 8px;
         height: 8px;
@@ -981,6 +981,12 @@
         <div class="session-actions"><button id="event-clock-run" type="button" disabled>Check boundaries</button></div>
         <p id="event-clock-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
       </details>
+      <details id="time-entropy-panel" class="session-library">
+        <summary><span id="time-entropy-pip" class="cap-pip in-progress" aria-hidden="true"></span> Time and random input check</summary>
+        <p class="session-note">Record a guest reading time and random bytes, pause it, then replay with the host providers unavailable.</p>
+        <div class="session-actions"><button id="time-entropy-run" type="button" disabled>Check time and randomness</button></div>
+        <p id="time-entropy-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
       <details id="input-recording-panel" class="session-library">
         <summary><span id="input-recording-pip" class="cap-pip in-progress" aria-hidden="true"></span> Input recording check</summary>
         <p class="session-note">Run a small guest to check delivered serial, keyboard and pointer bytes, saved event order, and rejection of live input during replay.</p>
@@ -991,6 +997,7 @@
         <summary>Local saved sessions</summary>
         <p class="session-note">Save exact points in an offline software guest. Input recording also saves delivered input in order; full replay comes later. A new guest or Open replaces the current guest.</p>
         <div class="session-actions">
+          <label><input type="checkbox" data-session="time-entropy" disabled> Include time and random inputs</label>
           <button type="button" data-session="input-start" disabled>Start input recording</button>
           <button type="button" data-session="input-save" disabled>Save input prefix</button>
           <button type="button" data-session="input-stop" disabled>Stop input recording</button>

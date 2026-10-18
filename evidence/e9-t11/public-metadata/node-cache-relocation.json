@@ -1,0 +1,14 @@
+{
+  "scope": "Relocate generated npm dependency cache only; no source or recordings changed",
+  "source": "web/node_modules",
+  "destination": "/Volumes/e9-t11-cold-scratch/worker-dependencies/node_modules",
+  "entries": 26819,
+  "bytes": 293015177,
+  "manifest_sha256": "335b20e5704a29f8492ee8a1a6ca17f34dd7544469b68d7c80bef6f3a051e470",
+  "content_and_modes_preserved": true,
+  "mtime": "Task RAM filesystem rounds mtimes to seconds; this is a rebuildable dependency cache, not evidence.",
+  "rebuildable_from": "web/package-lock.json",
+  "layout": "Actual ignored web/node_modules directory, with each top-level package/cache entry symlinked to authenticated task RAM dependencies.",
+  "top_level_entries": 113,
+  "node_resolution": "Dependency cache retains the literal node_modules basename for sibling package resolution."
+}

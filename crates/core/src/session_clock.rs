@@ -5,6 +5,7 @@
 //! subsequent slices. Raw `hart_mut`/`bus_mut` and pure `step` are embedding/debug escape hatches,
 //! not session execution APIs. Session execution uses `Machine::run` / `run_session_until`.
 use alloc::{collections::VecDeque, vec::Vec};
+pub mod sources;
 
 pub const MAX_EVENTS: usize = 256;
 pub const MAX_PAYLOAD: usize = 1 << 20;
@@ -27,6 +28,25 @@ pub enum SessionError {
     PendingUndrained,
     MalformedSnapshot,
     HostInputPending,
+    ClockPolicyMismatch,
+    MalformedObservation,
+    ObservationOrder,
+    SourceDivergence(sources::SourceDivergence),
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub enum SessionPhase {
+    #[default]
+    Before,
+    Observe,
+}
+impl SessionPhase {
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Before => "before",
+            Self::Observe => "observe",
+        }
+    }
 }
 
 /// Quiescent position before the next transition. `sequence` is the last delivered event;
@@ -36,6 +56,7 @@ pub enum SessionError {
 pub struct SessionPosition {
     pub transition: u64,
     pub retired: u64,
+    pub phase: SessionPhase,
     pub ordinal: u32,
     pub sequence: u64,
 }
@@ -44,6 +65,8 @@ pub struct SessionPosition {
 /// RAM delivery uses the bus's tracked DMA-write path, including code invalidation.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SessionEffect {
+    /// Only source adapters may originate observations; callers cannot enqueue one.
+    Observation(sources::ObservationValue),
     WriteRam {
         address: u64,
         bytes: Vec<u8>,
@@ -62,6 +85,7 @@ impl SessionEffect {
         match self {
             Self::WriteRam { bytes, .. } | Self::HostInput { bytes, .. } => bytes.len(),
             Self::ExternalPending(_) => 1,
+            Self::Observation(value) => value.bytes.len(),
         }
     }
 }
@@ -219,6 +243,7 @@ impl SessionClock {
             .checked_add(retired)
             .expect("reserved retire span");
         self.position.ordinal = 0;
+        self.position.phase = SessionPhase::Before;
     }
 
     pub fn validate_addresses(&self, base: u64, length: usize) -> Result<(), SessionError> {
@@ -231,7 +256,7 @@ impl SessionClock {
     pub fn encode(&self) -> Result<Vec<u8>, SessionError> {
         // The embedding must publish/drain receipts before capture; silently dropping them would
         // admit an applied effect absent from the event log. Pending effects are serialized.
-        if !self.delivered.is_empty() {
+        if !self.delivered.is_empty() || self.position.phase != SessionPhase::Before {
             return Err(SessionError::PendingUndrained);
         }
         let mut out = Vec::new();
@@ -252,6 +277,7 @@ impl SessionClock {
             out.extend_from_slice(&q.transition.to_le_bytes());
             out.extend_from_slice(&q.ticket.to_le_bytes());
             match &q.effect {
+                SessionEffect::Observation(_) => return Err(SessionError::ObservationOrder),
                 SessionEffect::WriteRam { address, bytes } => {
                     out.push(0);
                     out.extend_from_slice(&address.to_le_bytes());
@@ -282,6 +308,7 @@ impl SessionClock {
             return Err(bad);
         }
         let position = SessionPosition {
+            phase: SessionPhase::Before,
             transition: r.u64()?,
             retired: r.u64()?,
             ordinal: r.u64()?.try_into().map_err(|_| bad)?,
@@ -377,6 +404,9 @@ pub(crate) fn validate_effect(
     base: u64,
     length: usize,
 ) -> Result<(), SessionError> {
+    if matches!(effect, SessionEffect::Observation(_)) {
+        return Err(SessionError::ObservationOrder);
+    }
     if matches!(effect, SessionEffect::HostInput { channel: 0, .. }) {
         return Err(SessionError::MalformedSnapshot);
     }
@@ -467,11 +497,15 @@ impl crate::Machine {
         transition: u64,
         effect: SessionEffect,
     ) -> Result<u64, SessionError> {
+        if let Some(error) = self.session_sources.borrow().error() {
+            return Err(error);
+        }
         validate_effect(&effect, self.bus.ram().base(), self.bus.ram().len())?;
-        self.session_clock
-            .as_mut()
-            .ok_or(SessionError::Inactive)?
-            .enqueue(transition, effect)
+        let clock = self.session_clock.as_mut().ok_or(SessionError::Inactive)?;
+        if clock.position.phase != SessionPhase::Before {
+            return Err(SessionError::ObservationOrder);
+        }
+        clock.enqueue(transition, effect)
     }
 
     pub fn take_session_deliveries(&mut self) -> Result<Vec<SessionDelivery>, SessionError> {
@@ -504,6 +538,9 @@ impl crate::Machine {
         allow_host: bool,
         mut apply: impl FnMut(&mut Self, u16, &[u8]) -> [u64; 4],
     ) -> Result<(), SessionError> {
+        if let Some(error) = self.session_sources.borrow().error() {
+            return Err(error);
+        }
         self.session_clock.as_ref().ok_or(SessionError::Inactive)?;
         if self.guest_clock_mode() != crate::time::TimeMode::ICount {
             return Err(SessionError::UnsupportedScheduling);
@@ -516,6 +553,7 @@ impl crate::Machine {
                 break;
             };
             match &delivery.effect {
+                SessionEffect::Observation(_) => return Err(SessionError::ObservationOrder),
                 SessionEffect::WriteRam { address, bytes } => self
                     .bus
                     .write_ram_slice(*address, bytes)
@@ -579,6 +617,12 @@ impl crate::Machine {
         let Some(clock) = self.session_clock.as_ref() else {
             return Ok(Preparation::Ready);
         };
+        if let Some(error) = self.session_sources.borrow().error() {
+            return Err(error);
+        }
+        if self.session_sources_need_flush() {
+            return Ok(Preparation::Fence);
+        }
         if self.guest_clock_mode() != crate::time::TimeMode::ICount {
             return Err(SessionError::UnsupportedScheduling);
         }
@@ -616,6 +660,17 @@ impl crate::Machine {
         {
             budget = budget.min(target - clock.position.transition);
         }
+        // An armed RTC samples its external provider at every transition. A compiled span
+        // would skip those observation positions and make replay depend on the host quantum.
+        // MMIO blocks already fall back through jit_safe, so a disarmed RTC needs no extra fence.
+        if self.session_sources_active()
+            && self
+                .rtc
+                .as_ref()
+                .is_some_and(|(rtc, _)| rtc.borrow().alarm_armed())
+        {
+            budget = budget.min(1);
+        }
         // Pure compiled work cannot cross the retirement where a derived timer becomes due.
         if let Some(clint) = &self.clint {
             let state = clint.borrow();
@@ -635,6 +690,7 @@ impl crate::Machine {
     pub(crate) fn advance_session(&mut self, transitions: u64, retired: u64) {
         if let Some(clock) = &mut self.session_clock {
             clock.advance(transitions, retired);
+            self.session_sources.borrow_mut().end();
             // Quiescent stops include the preceding transition's derived timer bookkeeping.
             // Otherwise a compiled span leaves CSR TIME/MTIP sampled at block entry while the
             // interpreter leaves them sampled at its last instruction: equal RAM/regs, stale CPU.

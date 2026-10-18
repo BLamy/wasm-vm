@@ -279,6 +279,7 @@ pub struct Machine {
     bus: SystemBus,
     /// Opt-in exact scheduling; ordinary machines retain their established run semantics.
     session_clock: Option<session_clock::SessionClock>,
+    session_sources: alloc::rc::Rc<core::cell::RefCell<session_clock::sources::ObservationHub>>,
     /// Transient execution fence, never part of a quiescent saved machine.
     session_fence: Option<u64>,
     htif: Option<Htif>,
@@ -957,6 +958,7 @@ impl Machine {
             hart: Hart::new(),
             bus: SystemBus::new(Ram::new(ram_bytes)?),
             session_clock: None,
+            session_sources: Default::default(),
             session_fence: None,
             htif: None,
             last_tohost: 0,
@@ -2135,6 +2137,10 @@ impl Machine {
             self.virtio.len() > 2,
             "enable_virtio_slots/enable_virtio_blk before enable_virtio_rng"
         );
+        let source = alloc::boxed::Box::new(session_clock::sources::ObservedEntropy {
+            source,
+            hub: alloc::rc::Rc::clone(&self.session_sources),
+        });
         let (devhalf, state) = dev::virtio::rng::new(source);
         assert!(
             self.virtio[2]
@@ -2740,6 +2746,10 @@ impl Machine {
     ) -> alloc::rc::Rc<core::cell::RefCell<dev::rtc::GoldfishRtc>> {
         let plic = self.plic.as_ref().expect("enable_plic before enable_rtc");
         let line = dev::plic::Plic::irq_line(plic, platform::virt::RTC_IRQ as usize);
+        let clock = alloc::boxed::Box::new(session_clock::sources::ObservedRtc {
+            source: clock,
+            hub: alloc::rc::Rc::clone(&self.session_sources),
+        });
         let cell = alloc::rc::Rc::new(core::cell::RefCell::new(dev::rtc::GoldfishRtc::new(clock)));
         self.bus
             .attach(
@@ -3532,6 +3542,23 @@ impl Machine {
                     })?;
             w.section(section::SESSION_CLOCK, &payload);
         }
+        if self
+            .session_sources
+            .borrow()
+            .policy()
+            .is_some_and(|policy| policy != self.source_policy())
+        {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_SOURCES,
+            });
+        }
+        if let Some(payload) = self.session_sources.borrow().checkpoint().map_err(|_| {
+            crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_SOURCES,
+            }
+        })? {
+            w.section(section::SESSION_SOURCES, &payload);
+        }
         Ok(w.finish())
     }
 
@@ -3643,6 +3670,37 @@ impl Machine {
         } else {
             None
         };
+        let source_sections: alloc::vec::Vec<_> = sections
+            .iter()
+            .filter(|s| s.tag == section::SESSION_SOURCES)
+            .collect();
+        let source_bad = || crate::resume::SnapshotError::BadComponentState {
+            tag: section::SESSION_SOURCES,
+        };
+        if source_sections.len() != usize::from(self.session_sources_active()) {
+            return Err(source_bad());
+        }
+        let staged_source_cursor = if let Some(sec) = source_sections.first() {
+            let clock = staged_session_clock.as_ref().ok_or_else(source_bad)?;
+            let cursor = self
+                .session_sources
+                .borrow()
+                .check_checkpoint(sec.payload, clock.position.sequence)
+                .map_err(|_| source_bad())?;
+            let native = sections
+                .iter()
+                .find(|s| s.tag == section::CLOCK)
+                .ok_or_else(source_bad)?;
+            if native.payload.len() != 24
+                || u64::from_le_bytes(native.payload[8..16].try_into().unwrap())
+                    != u64::from(self.session_sources.borrow().policy().unwrap().divider)
+            {
+                return Err(source_bad());
+            }
+            Some(cursor)
+        } else {
+            None
+        };
         let strict_topology = exact_inputs;
         #[cfg(feature = "virgl-renderer")]
         let strict_topology = strict_topology || gpu_witness.is_some();
@@ -3652,6 +3710,9 @@ impl Machine {
             let mut expected = alloc::vec![section::CPU, section::RAM, section::CLOCK];
             if staged_session_clock.is_some() {
                 expected.push(section::SESSION_CLOCK);
+            }
+            if staged_source_cursor.is_some() {
+                expected.push(section::SESSION_SOURCES);
             }
             for (tag, present) in [
                 (section::CLINT, self.clint.is_some()),
@@ -4018,7 +4079,7 @@ impl Machine {
                     self.clock_div = clock_div;
                     self.sbi_state.stimecmp = stimecmp;
                 }
-                section::SESSION_CLOCK => {} // validated above; commit only after every component
+                section::SESSION_CLOCK | section::SESSION_SOURCES => {} // validated above; commit only after every component
                 section::VIRTIO_BLK => {
                     let slot = self
                         .virtio
@@ -4144,6 +4205,9 @@ impl Machine {
             }
         }
         self.session_clock = staged_session_clock;
+        if let Some(cursor) = staged_source_cursor {
+            self.session_sources.borrow_mut().restore_cursor(cursor);
+        }
         self.session_fence = None;
         // Agent TX still in guest RAM belongs to the saved application session, including any
         // pending HELLO. Complete it without forwarding bytes into the new host Channel. Do this
@@ -6258,6 +6322,8 @@ impl Machine {
         #[cfg(all(test, not(feature = "zicsr-stub")))]
         let tail_ok = tail_ok && !self.replay_tail_off;
 
+        #[cfg(not(feature = "zicsr-stub"))]
+        let source_capture = self.session_sources_active();
         let mut remaining_work = max_instrs;
         while remaining_work != 0 {
             #[cfg(not(feature = "zicsr-stub"))]
@@ -6275,6 +6341,10 @@ impl Machine {
             #[cfg(not(feature = "zicsr-stub"))]
             if let Some(reason) = self.syscon.as_ref().and_then(|c| *c.borrow()) {
                 return RunOutcome::Reset(reason);
+            }
+            #[cfg(not(feature = "zicsr-stub"))]
+            if source_capture && let Err(error) = self.begin_source_scope() {
+                return RunOutcome::SessionStopped(error);
             }
             // E4-T05 Phase C: when interrupt batching is on, the device-fabric re-sync + the
             // `next_interrupt` sampling below run ONLY at a block boundary (once per DecodedBlock,
@@ -6302,6 +6372,10 @@ impl Machine {
             #[cfg(not(feature = "zicsr-stub"))]
             if sample_boundary {
                 self.boundary_sync();
+            }
+            #[cfg(not(feature = "zicsr-stub"))]
+            if source_capture && let Err(error) = self.commit_source_scope() {
+                return RunOutcome::SessionStopped(error);
             }
             // E1-T11: sample interrupts at the instruction boundary (precise). Deliver the
             // highest-priority pending&enabled interrupt through mtvec/stvec BEFORE fetching the
@@ -6358,6 +6432,10 @@ impl Machine {
             };
             #[cfg(feature = "zicsr-stub")]
             let (step_result, work_used) = (capture.step(self, false), 1u64);
+            #[cfg(not(feature = "zicsr-stub"))]
+            if source_capture && let Err(error) = self.commit_source_scope() {
+                return RunOutcome::SessionStopped(error);
+            }
             debug_assert!(work_used > 0 && work_used <= remaining_work);
             remaining_work -= work_used;
             // E1-T12: an instruction retired iff the step succeeded — advance the deterministic

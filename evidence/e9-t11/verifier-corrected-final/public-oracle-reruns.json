@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "change": "Only output location redirected; sealed evidence read-only.",
+  "runs": [
+    {
+      "label": "public-source",
+      "frozen_source_sha256": "f3e7b826b825d5ca29995fd7071e58cd93459c3c50365157f72335378012d760",
+      "command": [
+        "python3",
+        "-B",
+        "target/evidence/e9-t11-verifier/corrected/public-source-oracle.py",
+        "--directory",
+        "target/evidence/e9-t11-public-corrected-final/browser",
+        "--browser"
+      ],
+      "exit_code": 0,
+      "script_sha256": "b398ebc4548a5a7e0dc7fa01949e59d5c8c69f9f0ad3d7308f0575163ec80bfe",
+      "output_sha256": "4608179dccfc281a5f847451eecc1c686abcb4c509110b0a49d95cebcc5ab247",
+      "stdout": "{\"status\": \"passed\", \"workloads\": 1, \"prefixes\": 2}\n"
+    },
+    {
+      "label": "public-clock",
+      "frozen_source_sha256": "670f85026e5631797a8f4321e6d375993903ac03b97a1bf2880a59ee776b8a95",
+      "command": [
+        "python3",
+        "-B",
+        "target/evidence/e9-t11-verifier/corrected/public-clock-oracle.py",
+        "--directory",
+        "target/evidence/e9-t11-public-corrected-final/browser/event-clock-regression"
+      ],
+      "exit_code": 0,
+      "script_sha256": "47776c3f28aa8a91dadceca0b299bcf11e919a8744b75c7f603811cd00ebeed6",
+      "output_sha256": "a11c86ea723fa9dfb32b020606f2e28b1d4e09142b962a532086428038845929",
+      "stdout": "Independent clock/CPU/RAM witnesses passed for 28 native frames.\n"
+    }
+  ]
+}

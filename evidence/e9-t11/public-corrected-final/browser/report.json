@@ -1,0 +1,3849 @@
+{
+  "task": "E9-T11",
+  "status": "passed",
+  "development": false,
+  "head": "e14e4312b9ee8df73b93646c944bf64a2f0db875",
+  "started": "2026-10-18T13:22:10.546Z",
+  "checks": {
+    "suite": {
+      "passed": 127,
+      "failed": 0
+    },
+    "probe": {
+      "status": "passed",
+      "scope": "RTC/entropy source adapter replay on the fixed real guest. Full Linux provider replay remains gated by completion/network adapters.",
+      "program": {
+        "version": 1,
+        "base": "2147483648",
+        "rtc": "1052672",
+        "reportAddress": "2147504128",
+        "reportBytes": 113,
+        "pauseTransition": "133",
+        "endTransition": "523",
+        "bytes": 2092,
+        "sha256": "ac4f71313366a8325627a5203744ca17d7cc8fdac7ccd5fccd2e191ed0b8aa87",
+        "entropyLengths": [
+          16,
+          33
+        ],
+        "rtcAlarmDeltaNs": "100000000",
+        "scope": "RTC read/latch, alarm arm and background poll, time-set halves, exact RNG DMA and deterministic CLINT/WFI idle advance; all external source observations are recorded."
+      },
+      "refusals": [
+        {
+          "name": "clock policy mismatch",
+          "tape": {
+            "file": "probe/refusal-0.observations",
+            "bytes": 939,
+            "sha256": "aec44c6fab77af869941243904311cdee1f80d416858c05b1e66f4350c49dd8a"
+          },
+          "code": "ClockPolicyMismatch",
+          "message": "session_sources: ClockPolicyMismatch",
+          "point": null,
+          "position": null,
+          "receipts": []
+        },
+        {
+          "name": "exhausted source log",
+          "tape": {
+            "file": "probe/refusal-1.observations",
+            "bytes": 32,
+            "sha256": "0862c77b3accf5db9fa65f535ebee1f66818a920566a50be234c62e541b644a8"
+          },
+          "code": "MissingRecord",
+          "message": "session_sources: SourceDivergence(SourceDivergence { reason: MissingRecord, position: SessionPosition { transition: 24, retired: 24, phase: Observe, ordinal: 1, sequence: 2 }, expected: 0, observed: 1 })",
+          "point": {
+            "transition": "24",
+            "retired": "24",
+            "phase": "observe",
+            "sequence": "2",
+            "ordinal": 1
+          },
+          "position": {
+            "transition": "24",
+            "retired": "24",
+            "phase": "before",
+            "sequence": "1",
+            "ordinal": 0,
+            "mtime": "4",
+            "paused": false,
+            "stopped": true,
+            "replay": true
+          },
+          "hostReads": {
+            "rtc": 0,
+            "entropy": 0
+          },
+          "receipts": [
+            {
+              "transition": "0",
+              "retired": "0",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "malformed entropy length",
+          "tape": {
+            "file": "probe/refusal-2.observations",
+            "bytes": 939,
+            "sha256": "0904d6ae7608b1561b9964bf5187f3f306a8de25fde1a08bc9bb950aa242ed6d"
+          },
+          "code": "MalformedObservation",
+          "message": "session_sources: MalformedObservation",
+          "point": null,
+          "position": null,
+          "receipts": []
+        },
+        {
+          "name": "different requested entropy length",
+          "tape": {
+            "file": "probe/refusal-3.observations",
+            "bytes": 938,
+            "sha256": "541e2b669e7524282fa9172557fd235c7755eee8c71695f50b633ecc0cef0a5e"
+          },
+          "code": "Length",
+          "message": "session_sources: SourceDivergence(SourceDivergence { reason: Length, position: SessionPosition { transition: 115, retired: 115, phase: Observe, ordinal: 1, sequence: 3 }, expected: 15, observed: 16 })",
+          "point": {
+            "transition": "115",
+            "retired": "115",
+            "phase": "observe",
+            "sequence": "3",
+            "ordinal": 1
+          },
+          "position": {
+            "transition": "115",
+            "retired": "115",
+            "phase": "before",
+            "sequence": "2",
+            "ordinal": 0,
+            "mtime": "23",
+            "paused": false,
+            "stopped": true,
+            "replay": true
+          },
+          "hostReads": {
+            "rtc": 0,
+            "entropy": 0
+          },
+          "receipts": [
+            {
+              "transition": "0",
+              "retired": "0",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "24",
+              "retired": "24",
+              "phase": "observe",
+              "sequence": "2",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                225,
+                108,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "misordered RTC call intent",
+          "tape": {
+            "file": "probe/refusal-4.observations",
+            "bytes": 939,
+            "sha256": "f365ffed685e1cf4c3a728be46c29aff5e5c62c44bb94f64133caff3ec5c8dfd"
+          },
+          "code": "Kind",
+          "message": "session_sources: SourceDivergence(SourceDivergence { reason: Kind, position: SessionPosition { transition: 24, retired: 24, phase: Observe, ordinal: 1, sequence: 2 }, expected: 5, observed: 1 })",
+          "point": {
+            "transition": "24",
+            "retired": "24",
+            "phase": "observe",
+            "sequence": "2",
+            "ordinal": 1
+          },
+          "position": {
+            "transition": "24",
+            "retired": "24",
+            "phase": "before",
+            "sequence": "1",
+            "ordinal": 0,
+            "mtime": "4",
+            "paused": false,
+            "stopped": true,
+            "replay": true
+          },
+          "hostReads": {
+            "rtc": 0,
+            "entropy": 0
+          },
+          "receipts": [
+            {
+              "transition": "0",
+              "retired": "0",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "wrong observation transition",
+          "tape": {
+            "file": "probe/refusal-5.observations",
+            "bytes": 939,
+            "sha256": "1e55fdda0d10b4ac0e0e55f97b8630fc616bd9f02a6f0a455896a0553d6db02b"
+          },
+          "code": "Position",
+          "message": "session_sources: SourceDivergence(SourceDivergence { reason: Position, position: SessionPosition { transition: 24, retired: 24, phase: Observe, ordinal: 1, sequence: 2 }, expected: 2, observed: 2 })",
+          "point": {
+            "transition": "24",
+            "retired": "24",
+            "phase": "observe",
+            "sequence": "2",
+            "ordinal": 1
+          },
+          "position": {
+            "transition": "24",
+            "retired": "24",
+            "phase": "before",
+            "sequence": "1",
+            "ordinal": 0,
+            "mtime": "4",
+            "paused": false,
+            "stopped": true,
+            "replay": true
+          },
+          "hostReads": {
+            "rtc": 0,
+            "entropy": 0
+          },
+          "receipts": [
+            {
+              "transition": "0",
+              "retired": "0",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "unconsumed source log tail",
+          "tape": {
+            "file": "probe/refusal-6.observations",
+            "bytes": 985,
+            "sha256": "b750b886a7203ffd82c9ea0b9e91dcbe480f7602362f785e2b0967c769bd1695"
+          },
+          "code": "ExtraRecords",
+          "message": "session_sources: SourceDivergence(SourceDivergence { reason: ExtraRecords, position: SessionPosition { transition: 523, retired: 522, phase: Before, ordinal: 2, sequence: 24 }, expected: 25, observed: 24 })",
+          "point": {
+            "transition": "523",
+            "retired": "522",
+            "phase": "before",
+            "sequence": "24",
+            "ordinal": 2
+          },
+          "position": {
+            "transition": "523",
+            "retired": "522",
+            "phase": "before",
+            "sequence": "24",
+            "ordinal": 2,
+            "mtime": "1102",
+            "paused": true,
+            "stopped": true,
+            "replay": true
+          },
+          "hostReads": {
+            "rtc": 0,
+            "entropy": 0
+          },
+          "receipts": [
+            {
+              "transition": "0",
+              "retired": "0",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "24",
+              "retired": "24",
+              "phase": "observe",
+              "sequence": "2",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                225,
+                108,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "115",
+              "retired": "115",
+              "phase": "observe",
+              "sequence": "3",
+              "ordinal": 1,
+              "channel": 18,
+              "bytes": [
+                70,
+                242,
+                97,
+                17,
+                164,
+                40,
+                208,
+                90,
+                78,
+                127,
+                154,
+                139,
+                117,
+                249,
+                139,
+                11
+              ],
+              "outcome": [
+                "0",
+                "6",
+                "16",
+                "0"
+              ]
+            },
+            {
+              "transition": "123",
+              "retired": "123",
+              "phase": "observe",
+              "sequence": "4",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "4",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "124",
+              "retired": "124",
+              "phase": "observe",
+              "sequence": "5",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "125",
+              "retired": "125",
+              "phase": "observe",
+              "sequence": "6",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "126",
+              "retired": "126",
+              "phase": "observe",
+              "sequence": "7",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "127",
+              "retired": "127",
+              "phase": "observe",
+              "sequence": "8",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "128",
+              "retired": "128",
+              "phase": "observe",
+              "sequence": "9",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "129",
+              "retired": "129",
+              "phase": "observe",
+              "sequence": "10",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "129",
+              "retired": "129",
+              "phase": "observe",
+              "sequence": "11",
+              "ordinal": 2,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "130",
+              "retired": "130",
+              "phase": "observe",
+              "sequence": "12",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "131",
+              "retired": "131",
+              "phase": "observe",
+              "sequence": "13",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "132",
+              "retired": "132",
+              "phase": "observe",
+              "sequence": "14",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "133",
+              "retired": "133",
+              "phase": "before",
+              "sequence": "15",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                0
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "133",
+              "retired": "133",
+              "phase": "before",
+              "sequence": "16",
+              "ordinal": 2,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "133",
+              "retired": "133",
+              "phase": "observe",
+              "sequence": "17",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "134",
+              "retired": "134",
+              "phase": "observe",
+              "sequence": "18",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "163",
+              "retired": "163",
+              "phase": "observe",
+              "sequence": "19",
+              "ordinal": 1,
+              "channel": 18,
+              "bytes": [
+                73,
+                79,
+                175,
+                214,
+                183,
+                52,
+                16,
+                70,
+                240,
+                6,
+                89,
+                215,
+                252,
+                96,
+                124,
+                128,
+                110,
+                231,
+                233,
+                98,
+                229,
+                87,
+                90,
+                223,
+                72,
+                109,
+                218,
+                233,
+                149,
+                164,
+                156,
+                81,
+                170
+              ],
+              "outcome": [
+                "0",
+                "6",
+                "33",
+                "0"
+              ]
+            },
+            {
+              "transition": "167",
+              "retired": "167",
+              "phase": "observe",
+              "sequence": "20",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "3",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "172",
+              "retired": "172",
+              "phase": "observe",
+              "sequence": "21",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "2",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "173",
+              "retired": "173",
+              "phase": "observe",
+              "sequence": "22",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "523",
+              "retired": "522",
+              "phase": "before",
+              "sequence": "23",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                0
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "523",
+              "retired": "522",
+              "phase": "before",
+              "sequence": "24",
+              "ordinal": 2,
+              "channel": 16,
+              "bytes": [
+                2
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            }
+          ]
+        }
+      ],
+      "replays": [
+        {
+          "quantum": 1,
+          "frame": {
+            "file": "probe/replay-q1.resume",
+            "bytes": 4447,
+            "sha256": "1982ac6e9a3431d164060de761d1e8600d205483d3aa0f5a6bd5776f2902e857"
+          },
+          "guestBytes": {
+            "file": "probe/replay-q1.uart.bin",
+            "bytes": 113,
+            "sha256": "fc1d7a447f665fff67f09552c9833311180e91acd9278f9667f69a4bb3db71dd"
+          },
+          "trace": {
+            "file": "probe/replay-q1.trace",
+            "bytes": 37748,
+            "sha256": "cba3cc4d112be5e10cc3a9d5924f0592825ad5b69fc75a729a4deacbb4c834bd"
+          },
+          "hostReads": {
+            "rtc": 0,
+            "entropy": 0
+          },
+          "position": {
+            "transition": "523",
+            "retired": "522",
+            "phase": "before",
+            "sequence": "24",
+            "ordinal": 2,
+            "mtime": "1102",
+            "paused": true,
+            "stopped": true,
+            "replay": true
+          },
+          "receipts": [
+            {
+              "transition": "0",
+              "retired": "0",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "24",
+              "retired": "24",
+              "phase": "observe",
+              "sequence": "2",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                225,
+                108,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "115",
+              "retired": "115",
+              "phase": "observe",
+              "sequence": "3",
+              "ordinal": 1,
+              "channel": 18,
+              "bytes": [
+                70,
+                242,
+                97,
+                17,
+                164,
+                40,
+                208,
+                90,
+                78,
+                127,
+                154,
+                139,
+                117,
+                249,
+                139,
+                11
+              ],
+              "outcome": [
+                "0",
+                "6",
+                "16",
+                "0"
+              ]
+            },
+            {
+              "transition": "123",
+              "retired": "123",
+              "phase": "observe",
+              "sequence": "4",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "4",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "124",
+              "retired": "124",
+              "phase": "observe",
+              "sequence": "5",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "125",
+              "retired": "125",
+              "phase": "observe",
+              "sequence": "6",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "126",
+              "retired": "126",
+              "phase": "observe",
+              "sequence": "7",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "127",
+              "retired": "127",
+              "phase": "observe",
+              "sequence": "8",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "128",
+              "retired": "128",
+              "phase": "observe",
+              "sequence": "9",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "129",
+              "retired": "129",
+              "phase": "observe",
+              "sequence": "10",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "129",
+              "retired": "129",
+              "phase": "observe",
+              "sequence": "11",
+              "ordinal": 2,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "130",
+              "retired": "130",
+              "phase": "observe",
+              "sequence": "12",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "131",
+              "retired": "131",
+              "phase": "observe",
+              "sequence": "13",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "132",
+              "retired": "132",
+              "phase": "observe",
+              "sequence": "14",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "133",
+              "retired": "133",
+              "phase": "before",
+              "sequence": "15",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                0
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "133",
+              "retired": "133",
+              "phase": "before",
+              "sequence": "16",
+              "ordinal": 2,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "133",
+              "retired": "133",
+              "phase": "observe",
+              "sequence": "17",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "134",
+              "retired": "134",
+              "phase": "observe",
+              "sequence": "18",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "163",
+              "retired": "163",
+              "phase": "observe",
+              "sequence": "19",
+              "ordinal": 1,
+              "channel": 18,
+              "bytes": [
+                73,
+                79,
+                175,
+                214,
+                183,
+                52,
+                16,
+                70,
+                240,
+                6,
+                89,
+                215,
+                252,
+                96,
+                124,
+                128,
+                110,
+                231,
+                233,
+                98,
+                229,
+                87,
+                90,
+                223,
+                72,
+                109,
+                218,
+                233,
+                149,
+                164,
+                156,
+                81,
+                170
+              ],
+              "outcome": [
+                "0",
+                "6",
+                "33",
+                "0"
+              ]
+            },
+            {
+              "transition": "167",
+              "retired": "167",
+              "phase": "observe",
+              "sequence": "20",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "3",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "172",
+              "retired": "172",
+              "phase": "observe",
+              "sequence": "21",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "2",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "173",
+              "retired": "173",
+              "phase": "observe",
+              "sequence": "22",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "523",
+              "retired": "522",
+              "phase": "before",
+              "sequence": "23",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                0
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "523",
+              "retired": "522",
+              "phase": "before",
+              "sequence": "24",
+              "ordinal": 2,
+              "channel": 16,
+              "bytes": [
+                2
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            }
+          ]
+        },
+        {
+          "quantum": 7,
+          "frame": {
+            "file": "probe/replay-q7.resume",
+            "bytes": 4447,
+            "sha256": "1982ac6e9a3431d164060de761d1e8600d205483d3aa0f5a6bd5776f2902e857"
+          },
+          "guestBytes": {
+            "file": "probe/replay-q7.uart.bin",
+            "bytes": 113,
+            "sha256": "fc1d7a447f665fff67f09552c9833311180e91acd9278f9667f69a4bb3db71dd"
+          },
+          "trace": {
+            "file": "probe/replay-q7.trace",
+            "bytes": 37748,
+            "sha256": "cba3cc4d112be5e10cc3a9d5924f0592825ad5b69fc75a729a4deacbb4c834bd"
+          },
+          "hostReads": {
+            "rtc": 0,
+            "entropy": 0
+          },
+          "position": {
+            "transition": "523",
+            "retired": "522",
+            "phase": "before",
+            "sequence": "24",
+            "ordinal": 2,
+            "mtime": "1102",
+            "paused": true,
+            "stopped": true,
+            "replay": true
+          },
+          "receipts": [
+            {
+              "transition": "0",
+              "retired": "0",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "24",
+              "retired": "24",
+              "phase": "observe",
+              "sequence": "2",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                225,
+                108,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "115",
+              "retired": "115",
+              "phase": "observe",
+              "sequence": "3",
+              "ordinal": 1,
+              "channel": 18,
+              "bytes": [
+                70,
+                242,
+                97,
+                17,
+                164,
+                40,
+                208,
+                90,
+                78,
+                127,
+                154,
+                139,
+                117,
+                249,
+                139,
+                11
+              ],
+              "outcome": [
+                "0",
+                "6",
+                "16",
+                "0"
+              ]
+            },
+            {
+              "transition": "123",
+              "retired": "123",
+              "phase": "observe",
+              "sequence": "4",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "4",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "124",
+              "retired": "124",
+              "phase": "observe",
+              "sequence": "5",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "125",
+              "retired": "125",
+              "phase": "observe",
+              "sequence": "6",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "126",
+              "retired": "126",
+              "phase": "observe",
+              "sequence": "7",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "127",
+              "retired": "127",
+              "phase": "observe",
+              "sequence": "8",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "128",
+              "retired": "128",
+              "phase": "observe",
+              "sequence": "9",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "129",
+              "retired": "129",
+              "phase": "observe",
+              "sequence": "10",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "129",
+              "retired": "129",
+              "phase": "observe",
+              "sequence": "11",
+              "ordinal": 2,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "130",
+              "retired": "130",
+              "phase": "observe",
+              "sequence": "12",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "131",
+              "retired": "131",
+              "phase": "observe",
+              "sequence": "13",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "132",
+              "retired": "132",
+              "phase": "observe",
+              "sequence": "14",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "133",
+              "retired": "133",
+              "phase": "before",
+              "sequence": "15",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                0
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "133",
+              "retired": "133",
+              "phase": "before",
+              "sequence": "16",
+              "ordinal": 2,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "133",
+              "retired": "133",
+              "phase": "observe",
+              "sequence": "17",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "134",
+              "retired": "134",
+              "phase": "observe",
+              "sequence": "18",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "163",
+              "retired": "163",
+              "phase": "observe",
+              "sequence": "19",
+              "ordinal": 1,
+              "channel": 18,
+              "bytes": [
+                73,
+                79,
+                175,
+                214,
+                183,
+                52,
+                16,
+                70,
+                240,
+                6,
+                89,
+                215,
+                252,
+                96,
+                124,
+                128,
+                110,
+                231,
+                233,
+                98,
+                229,
+                87,
+                90,
+                223,
+                72,
+                109,
+                218,
+                233,
+                149,
+                164,
+                156,
+                81,
+                170
+              ],
+              "outcome": [
+                "0",
+                "6",
+                "33",
+                "0"
+              ]
+            },
+            {
+              "transition": "167",
+              "retired": "167",
+              "phase": "observe",
+              "sequence": "20",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "3",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "172",
+              "retired": "172",
+              "phase": "observe",
+              "sequence": "21",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "2",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "173",
+              "retired": "173",
+              "phase": "observe",
+              "sequence": "22",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "523",
+              "retired": "522",
+              "phase": "before",
+              "sequence": "23",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                0
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "523",
+              "retired": "522",
+              "phase": "before",
+              "sequence": "24",
+              "ordinal": 2,
+              "channel": 16,
+              "bytes": [
+                2
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            }
+          ]
+        },
+        {
+          "quantum": 64,
+          "frame": {
+            "file": "probe/replay-q64.resume",
+            "bytes": 4447,
+            "sha256": "1982ac6e9a3431d164060de761d1e8600d205483d3aa0f5a6bd5776f2902e857"
+          },
+          "guestBytes": {
+            "file": "probe/replay-q64.uart.bin",
+            "bytes": 113,
+            "sha256": "fc1d7a447f665fff67f09552c9833311180e91acd9278f9667f69a4bb3db71dd"
+          },
+          "trace": {
+            "file": "probe/replay-q64.trace",
+            "bytes": 37748,
+            "sha256": "cba3cc4d112be5e10cc3a9d5924f0592825ad5b69fc75a729a4deacbb4c834bd"
+          },
+          "hostReads": {
+            "rtc": 0,
+            "entropy": 0
+          },
+          "position": {
+            "transition": "523",
+            "retired": "522",
+            "phase": "before",
+            "sequence": "24",
+            "ordinal": 2,
+            "mtime": "1102",
+            "paused": true,
+            "stopped": true,
+            "replay": true
+          },
+          "receipts": [
+            {
+              "transition": "0",
+              "retired": "0",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "24",
+              "retired": "24",
+              "phase": "observe",
+              "sequence": "2",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                225,
+                108,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "115",
+              "retired": "115",
+              "phase": "observe",
+              "sequence": "3",
+              "ordinal": 1,
+              "channel": 18,
+              "bytes": [
+                70,
+                242,
+                97,
+                17,
+                164,
+                40,
+                208,
+                90,
+                78,
+                127,
+                154,
+                139,
+                117,
+                249,
+                139,
+                11
+              ],
+              "outcome": [
+                "0",
+                "6",
+                "16",
+                "0"
+              ]
+            },
+            {
+              "transition": "123",
+              "retired": "123",
+              "phase": "observe",
+              "sequence": "4",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "4",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "124",
+              "retired": "124",
+              "phase": "observe",
+              "sequence": "5",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "125",
+              "retired": "125",
+              "phase": "observe",
+              "sequence": "6",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "126",
+              "retired": "126",
+              "phase": "observe",
+              "sequence": "7",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "127",
+              "retired": "127",
+              "phase": "observe",
+              "sequence": "8",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "128",
+              "retired": "128",
+              "phase": "observe",
+              "sequence": "9",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "129",
+              "retired": "129",
+              "phase": "observe",
+              "sequence": "10",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "129",
+              "retired": "129",
+              "phase": "observe",
+              "sequence": "11",
+              "ordinal": 2,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "130",
+              "retired": "130",
+              "phase": "observe",
+              "sequence": "12",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "131",
+              "retired": "131",
+              "phase": "observe",
+              "sequence": "13",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "132",
+              "retired": "132",
+              "phase": "observe",
+              "sequence": "14",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                35,
+                124,
+                112,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "133",
+              "retired": "133",
+              "phase": "before",
+              "sequence": "15",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                0
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "133",
+              "retired": "133",
+              "phase": "before",
+              "sequence": "16",
+              "ordinal": 2,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "133",
+              "retired": "133",
+              "phase": "observe",
+              "sequence": "17",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "5",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "134",
+              "retired": "134",
+              "phase": "observe",
+              "sequence": "18",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "163",
+              "retired": "163",
+              "phase": "observe",
+              "sequence": "19",
+              "ordinal": 1,
+              "channel": 18,
+              "bytes": [
+                73,
+                79,
+                175,
+                214,
+                183,
+                52,
+                16,
+                70,
+                240,
+                6,
+                89,
+                215,
+                252,
+                96,
+                124,
+                128,
+                110,
+                231,
+                233,
+                98,
+                229,
+                87,
+                90,
+                223,
+                72,
+                109,
+                218,
+                233,
+                149,
+                164,
+                156,
+                81,
+                170
+              ],
+              "outcome": [
+                "0",
+                "6",
+                "33",
+                "0"
+              ]
+            },
+            {
+              "transition": "167",
+              "retired": "167",
+              "phase": "observe",
+              "sequence": "20",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "3",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "172",
+              "retired": "172",
+              "phase": "observe",
+              "sequence": "21",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "2",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "173",
+              "retired": "173",
+              "phase": "observe",
+              "sequence": "22",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                30,
+                75,
+                129,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "523",
+              "retired": "522",
+              "phase": "before",
+              "sequence": "23",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                0
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "523",
+              "retired": "522",
+              "phase": "before",
+              "sequence": "24",
+              "ordinal": 2,
+              "channel": 16,
+              "bytes": [
+                2
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            }
+          ]
+        }
+      ],
+      "policy": {
+        "version": 1,
+        "divider": 5,
+        "timebase_hz": "10000000",
+        "rtc": "external-nanoseconds-v1",
+        "entropy": "exact-fill-bytes-v1"
+      },
+      "initialFrame": {
+        "file": "probe/initial.resume",
+        "bytes": 4080,
+        "sha256": "d45fa749a58e1199b939e8b6b452cf0b02d97e7c85c7d8837c02656ab1eeb3ee"
+      },
+      "pausedFrame": {
+        "file": "probe/paused.resume",
+        "bytes": 4211,
+        "sha256": "7c32adfe860b954fc0753bc5aaf852be3343480d3bf37eba6b1b68dc85eb0441"
+      },
+      "pause": {
+        "milliseconds": 261.66499999910593,
+        "hostReads": {
+          "rtc": 12,
+          "entropy": 1
+        },
+        "position": {
+          "transition": "133",
+          "retired": "133",
+          "phase": "before",
+          "sequence": "15",
+          "ordinal": 1,
+          "mtime": "26",
+          "paused": true,
+          "stopped": false,
+          "replay": false
+        }
+      },
+      "finalFrame": {
+        "file": "probe/record.resume",
+        "bytes": 4447,
+        "sha256": "1982ac6e9a3431d164060de761d1e8600d205483d3aa0f5a6bd5776f2902e857"
+      },
+      "tape": {
+        "file": "probe/record.observations",
+        "bytes": 939,
+        "sha256": "aec44c6fab77af869941243904311cdee1f80d416858c05b1e66f4350c49dd8a"
+      },
+      "guestBytes": {
+        "file": "probe/record.uart.bin",
+        "bytes": 113,
+        "sha256": "fc1d7a447f665fff67f09552c9833311180e91acd9278f9667f69a4bb3db71dd"
+      },
+      "trace": {
+        "file": "probe/record.trace",
+        "bytes": 37748,
+        "sha256": "cba3cc4d112be5e10cc3a9d5924f0592825ad5b69fc75a729a4deacbb4c834bd"
+      },
+      "receipts": [
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "1",
+          "ordinal": 1,
+          "channel": 16,
+          "bytes": [
+            1
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "24",
+          "retired": "24",
+          "phase": "observe",
+          "sequence": "2",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            225,
+            108,
+            112,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "115",
+          "retired": "115",
+          "phase": "observe",
+          "sequence": "3",
+          "ordinal": 1,
+          "channel": 18,
+          "bytes": [
+            70,
+            242,
+            97,
+            17,
+            164,
+            40,
+            208,
+            90,
+            78,
+            127,
+            154,
+            139,
+            117,
+            249,
+            139,
+            11
+          ],
+          "outcome": [
+            "0",
+            "6",
+            "16",
+            "0"
+          ]
+        },
+        {
+          "transition": "123",
+          "retired": "123",
+          "phase": "observe",
+          "sequence": "4",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            35,
+            124,
+            112,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "4",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "124",
+          "retired": "124",
+          "phase": "observe",
+          "sequence": "5",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            35,
+            124,
+            112,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "125",
+          "retired": "125",
+          "phase": "observe",
+          "sequence": "6",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            35,
+            124,
+            112,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "126",
+          "retired": "126",
+          "phase": "observe",
+          "sequence": "7",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            35,
+            124,
+            112,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "127",
+          "retired": "127",
+          "phase": "observe",
+          "sequence": "8",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            35,
+            124,
+            112,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "128",
+          "retired": "128",
+          "phase": "observe",
+          "sequence": "9",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            35,
+            124,
+            112,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "129",
+          "retired": "129",
+          "phase": "observe",
+          "sequence": "10",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            35,
+            124,
+            112,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "129",
+          "retired": "129",
+          "phase": "observe",
+          "sequence": "11",
+          "ordinal": 2,
+          "channel": 17,
+          "bytes": [
+            0,
+            35,
+            124,
+            112,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "130",
+          "retired": "130",
+          "phase": "observe",
+          "sequence": "12",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            35,
+            124,
+            112,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "131",
+          "retired": "131",
+          "phase": "observe",
+          "sequence": "13",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            35,
+            124,
+            112,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "132",
+          "retired": "132",
+          "phase": "observe",
+          "sequence": "14",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            35,
+            124,
+            112,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "133",
+          "retired": "133",
+          "phase": "before",
+          "sequence": "15",
+          "ordinal": 1,
+          "channel": 16,
+          "bytes": [
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "133",
+          "retired": "133",
+          "phase": "before",
+          "sequence": "16",
+          "ordinal": 2,
+          "channel": 16,
+          "bytes": [
+            1
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "133",
+          "retired": "133",
+          "phase": "observe",
+          "sequence": "17",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            30,
+            75,
+            129,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "5",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "134",
+          "retired": "134",
+          "phase": "observe",
+          "sequence": "18",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            30,
+            75,
+            129,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "163",
+          "retired": "163",
+          "phase": "observe",
+          "sequence": "19",
+          "ordinal": 1,
+          "channel": 18,
+          "bytes": [
+            73,
+            79,
+            175,
+            214,
+            183,
+            52,
+            16,
+            70,
+            240,
+            6,
+            89,
+            215,
+            252,
+            96,
+            124,
+            128,
+            110,
+            231,
+            233,
+            98,
+            229,
+            87,
+            90,
+            223,
+            72,
+            109,
+            218,
+            233,
+            149,
+            164,
+            156,
+            81,
+            170
+          ],
+          "outcome": [
+            "0",
+            "6",
+            "33",
+            "0"
+          ]
+        },
+        {
+          "transition": "167",
+          "retired": "167",
+          "phase": "observe",
+          "sequence": "20",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            30,
+            75,
+            129,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "3",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "172",
+          "retired": "172",
+          "phase": "observe",
+          "sequence": "21",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            30,
+            75,
+            129,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "2",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "173",
+          "retired": "173",
+          "phase": "observe",
+          "sequence": "22",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            30,
+            75,
+            129,
+            111,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "523",
+          "retired": "522",
+          "phase": "before",
+          "sequence": "23",
+          "ordinal": 1,
+          "channel": 16,
+          "bytes": [
+            0
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "523",
+          "retired": "522",
+          "phase": "before",
+          "sequence": "24",
+          "ordinal": 2,
+          "channel": 16,
+          "bytes": [
+            2
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "position": {
+        "transition": "523",
+        "retired": "522",
+        "phase": "before",
+        "sequence": "24",
+        "ordinal": 2,
+        "mtime": "1102",
+        "paused": true,
+        "stopped": true,
+        "replay": false
+      },
+      "hostReads": {
+        "rtc": 17,
+        "entropy": 2
+      },
+      "unavailable": [
+        {
+          "hostMode": 1,
+          "tape": {
+            "file": "probe/unavailable-1.observations",
+            "bytes": 70,
+            "sha256": "a51c3efe9bd380fc8c09a9ef17bd49e59e6cb57f09b71537556b1da2eccafd95"
+          },
+          "receipts": [
+            {
+              "transition": "0",
+              "retired": "0",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "24",
+              "retired": "24",
+              "phase": "observe",
+              "sequence": "2",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [],
+              "outcome": [
+                "1",
+                "1",
+                "8",
+                "0"
+              ]
+            }
+          ],
+          "hostReads": {
+            "rtc": 1,
+            "entropy": 0
+          },
+          "replayHostReads": {
+            "rtc": 0,
+            "entropy": 0
+          },
+          "point": {
+            "transition": "24",
+            "retired": "24",
+            "phase": "observe",
+            "sequence": "2",
+            "ordinal": 1
+          },
+          "replayPoint": {
+            "transition": "24",
+            "retired": "24",
+            "phase": "observe",
+            "sequence": "2",
+            "ordinal": 1
+          }
+        },
+        {
+          "hostMode": 2,
+          "tape": {
+            "file": "probe/unavailable-2.observations",
+            "bytes": 116,
+            "sha256": "b033cf75cd00a6247dfce0ea279d361c411e6a07803c743f912d108d10da3273"
+          },
+          "receipts": [
+            {
+              "transition": "0",
+              "retired": "0",
+              "phase": "before",
+              "sequence": "1",
+              "ordinal": 1,
+              "channel": 16,
+              "bytes": [
+                1
+              ],
+              "outcome": [
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "transition": "24",
+              "retired": "24",
+              "phase": "observe",
+              "sequence": "2",
+              "ordinal": 1,
+              "channel": 17,
+              "bytes": [
+                0,
+                70,
+                58,
+                142,
+                111,
+                162,
+                223,
+                24
+              ],
+              "outcome": [
+                "0",
+                "1",
+                "8",
+                "0"
+              ]
+            },
+            {
+              "transition": "115",
+              "retired": "115",
+              "phase": "observe",
+              "sequence": "3",
+              "ordinal": 1,
+              "channel": 18,
+              "bytes": [],
+              "outcome": [
+                "1",
+                "6",
+                "16",
+                "0"
+              ]
+            }
+          ],
+          "hostReads": {
+            "rtc": 1,
+            "entropy": 1
+          },
+          "replayHostReads": {
+            "rtc": 0,
+            "entropy": 0
+          },
+          "point": {
+            "transition": "115",
+            "retired": "115",
+            "phase": "observe",
+            "sequence": "3",
+            "ordinal": 1
+          },
+          "replayPoint": {
+            "transition": "115",
+            "retired": "115",
+            "phase": "observe",
+            "sequence": "3",
+            "ordinal": 1
+          }
+        }
+      ]
+    },
+    "mobile": {
+      "width": 388,
+      "scroll": 388
+    },
+    "eventClock": {
+      "cases": 16,
+      "refusals": 10
+    },
+    "input": {
+      "receipts": 24,
+      "refusals": 15,
+      "gatedMutations": 24
+    },
+    "cryptoFailure": {
+      "code": "ProviderUnavailable",
+      "point": {
+        "transition": "115",
+        "retired": "115",
+        "phase": "observe",
+        "sequence": "3",
+        "ordinal": 1
+      },
+      "replayCode": "ProviderUnavailable",
+      "replayPoint": {
+        "transition": "115",
+        "retired": "115",
+        "phase": "observe",
+        "sequence": "3",
+        "ordinal": 1
+      },
+      "recordHostReads": {
+        "rtc": 1,
+        "entropy": 1
+      },
+      "replayHostReads": {
+        "rtc": 0,
+        "entropy": 0
+      },
+      "tape": {
+        "file": "crypto-unavailable.observations",
+        "bytes": 116,
+        "sha256": "e4aec285e45f9ee0f8c425798e1035dcd9c2e0256d46d8b16d342e2851d66a3e"
+      },
+      "receipts": [
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "1",
+          "ordinal": 1,
+          "channel": 16,
+          "bytes": [
+            1
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "24",
+          "retired": "24",
+          "phase": "observe",
+          "sequence": "2",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            178,
+            243,
+            156,
+            112,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "115",
+          "retired": "115",
+          "phase": "observe",
+          "sequence": "3",
+          "ordinal": 1,
+          "channel": 18,
+          "bytes": [],
+          "outcome": [
+            "1",
+            "6",
+            "16",
+            "0"
+          ]
+        }
+      ],
+      "replayed": [
+        {
+          "transition": "0",
+          "retired": "0",
+          "phase": "before",
+          "sequence": "1",
+          "ordinal": 1,
+          "channel": 16,
+          "bytes": [
+            1
+          ],
+          "outcome": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "transition": "24",
+          "retired": "24",
+          "phase": "observe",
+          "sequence": "2",
+          "ordinal": 1,
+          "channel": 17,
+          "bytes": [
+            0,
+            178,
+            243,
+            156,
+            112,
+            162,
+            223,
+            24
+          ],
+          "outcome": [
+            "0",
+            "1",
+            "8",
+            "0"
+          ]
+        },
+        {
+          "transition": "115",
+          "retired": "115",
+          "phase": "observe",
+          "sequence": "3",
+          "ordinal": 1,
+          "channel": 18,
+          "bytes": [],
+          "outcome": [
+            "1",
+            "6",
+            "16",
+            "0"
+          ]
+        }
+      ]
+    },
+    "persisted": [
+      {
+        "worker": false,
+        "backend": "main-thread",
+        "kernelSha256": "ae2a321f30d6a18d41e100236c2b90c15f35cb3c232a2bc92ab3fd665c191a82",
+        "errors": [],
+        "output": {
+          "bytes": 194,
+          "sha256": "43eff9d13000613946e015e8e518af5190ef6ac27cc9a7d1fb9dc755b7601d6d"
+        },
+        "kernel": {
+          "bytes": 2104,
+          "sha256": "ae2a321f30d6a18d41e100236c2b90c15f35cb3c232a2bc92ab3fd665c191a82"
+        },
+        "id": "inputs-83114a54-b998-4432-bfc2-1ec6f6c013b8",
+        "done": "poweroff",
+        "position": {
+          "transition": "527",
+          "retired": "526",
+          "phase": "before",
+          "sequence": "413",
+          "ordinal": 1,
+          "replay": false,
+          "paused": true,
+          "stopped": true
+        },
+        "receipts": 413,
+        "end": {
+          "transition": "527",
+          "phase": "before",
+          "ordinal": 1,
+          "sequence": "413",
+          "retired": "526"
+        }
+      },
+      {
+        "worker": true,
+        "backend": "whole-machine-worker",
+        "kernelSha256": "ae2a321f30d6a18d41e100236c2b90c15f35cb3c232a2bc92ab3fd665c191a82",
+        "errors": [],
+        "output": {
+          "bytes": 194,
+          "sha256": "8aa04c1322b5e72a7f318e726c18e3d192925a87ea5f6d84b2f4516d5915bde9"
+        },
+        "kernel": {
+          "bytes": 2104,
+          "sha256": "ae2a321f30d6a18d41e100236c2b90c15f35cb3c232a2bc92ab3fd665c191a82"
+        },
+        "id": "inputs-98f3c29d-d48e-464e-8464-16758be8d158",
+        "done": "poweroff",
+        "position": null,
+        "receipts": 413,
+        "end": {
+          "transition": "527",
+          "phase": "before",
+          "ordinal": 1,
+          "sequence": "413",
+          "retired": "526"
+        }
+      }
+    ]
+  },
+  "errors": [],
+  "lifecycle": [
+    {
+      "state": "frozen/active",
+      "milliseconds": 224
+    }
+  ],
+  "url": "https://wasm-vm.pages.dev/app.html?noAutoBoot&testHooks=1",
+  "assets": [
+    {
+      "name": "app.html",
+      "bytes": 54455,
+      "sha256": "69ae6cb1bf4867df51de55a1f99983ed7c1c26f64f86b7687fcbb1851e495e02"
+    },
+    {
+      "name": "main.js",
+      "bytes": 164340,
+      "sha256": "43e62947a1f9eb0211c5ea5951b9d61188098ddf72e586f2a31879d58d0b48e8"
+    },
+    {
+      "name": "time-entropy-probe.js",
+      "bytes": 8954,
+      "sha256": "6990f937de4e079f42c9cfcb2a69f05edaf6a4669071005b50a80b9b11d109fd"
+    },
+    {
+      "name": "session-inputs.js",
+      "bytes": 11917,
+      "sha256": "2d5c6bc4f39b9f044c41b66d0a6c02c57f8dc44a8f7ff305d9faf2d67445f2fa"
+    },
+    {
+      "name": "session-library.js",
+      "bytes": 26975,
+      "sha256": "9625b8c808926f7876fd45649fb810a011d8e776f122dbf840301bf8c4e9a735"
+    },
+    {
+      "name": "session-store.js",
+      "bytes": 28114,
+      "sha256": "ac74f75aed9f650fd3242b8b40f4b3d930cd75c64ae524cd5f2ef575656d68df"
+    },
+    {
+      "name": "session-checkpoints.js",
+      "bytes": 10016,
+      "sha256": "2c6feb7e2fa37493374968efad295e6d2087e17f219f7a7ff02aa273878a68cc"
+    },
+    {
+      "name": "loader.js",
+      "bytes": 106947,
+      "sha256": "6f667ed925ed696637ea244275b839d93e644f537cb1c2cec4ee55148486c78b"
+    },
+    {
+      "name": "linux-worker-protocol.js",
+      "bytes": 32678,
+      "sha256": "7efccb20075006550a1b039659dc1e73b21c68298a029a98b8f7ec6391112b79"
+    },
+    {
+      "name": "roadmap.js",
+      "bytes": 59563,
+      "sha256": "01531fdc87d748fb6779110353f1a55ccd67f30db87a01c25d2851244bd78db0"
+    },
+    {
+      "name": "gpu-checkpoint-build.js",
+      "bytes": 340,
+      "sha256": "31afe1021ce2dcbe48feaa551ca78ddd1036013e3bac7c419fa557184db25c1b"
+    },
+    {
+      "name": "tasks.json",
+      "bytes": 7224362,
+      "sha256": "0dd5d00713fc76f09b5d6137f46bb0a9004973518128f44d6b677a7cb34fde7f"
+    },
+    {
+      "name": "assets/e9-time-entropy.bin",
+      "bytes": 2092,
+      "sha256": "ac4f71313366a8325627a5203744ca17d7cc8fdac7ccd5fccd2e191ed0b8aa87"
+    },
+    {
+      "name": "assets/e9-time-entropy.json",
+      "bytes": 526,
+      "sha256": "76778891e33256ade8fe110aed031bb1dd5c9277ffcc85d763338cfb1543f155"
+    },
+    {
+      "name": "pkg/wasm_vm_wasm.js",
+      "bytes": 145422,
+      "sha256": "094ac85db473681b973484ef3ef40c4d5eb2412a1181097a03197641b01a7c9d"
+    },
+    {
+      "name": "pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 2005021,
+      "sha256": "4066cc6336c24f3354f9ece07aa8c30ad1ff596b66185d9afcd72d17bb92632a"
+    },
+    {
+      "name": "session-pkg/wasm_vm_session.js",
+      "bytes": 13995,
+      "sha256": "3fd1b264aca219a71908e13855b42286fe42b01369b0cbebda84ac23e45d22f6"
+    },
+    {
+      "name": "session-pkg/wasm_vm_session_bg.wasm",
+      "bytes": 434267,
+      "sha256": "abc034c6106d36f64252d2024a8b03e467a6188752d4c0812141b2d3eca438d7"
+    }
+  ],
+  "finished": "2026-10-18T13:23:05.915Z"
+}

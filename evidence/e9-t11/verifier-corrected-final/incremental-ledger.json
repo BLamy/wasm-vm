@@ -1,0 +1,85 @@
+{
+  "runtime_head": "e14e4312b9ee8df73b93646c944bf64a2f0db875",
+  "status": "All incremental predictions HELD; final verdict verified at corrected runtime H1.",
+  "carried_held": {
+    "file": "evidence/e9-t11/verifier-refutation/held-ledger.json",
+    "sha256": "cb0ce9a29a651d535a05f69152690ab0e4c3508d39c50604db59253a42f6da29",
+    "criteria": "P1\u2013P9 remain HELD within their original scopes; P10 remains a retained historical failure at 7d52129, corrected runtime reviewed separately."
+  },
+  "C1": {
+    "status": "HELD",
+    "evidence": [
+      "worker-jit-frame-audit.json",
+      "cold-jit-frame-audit.json",
+      "jit-cross-origin-audit.json",
+      "matrix-points-receipt.json"
+    ],
+    "observed": "All eight worker and eight cold record/replay matrix cases match expected native frames, source tapes, section 18/19 position and cursor. Armed 36 polls at 384\u2013419; zero replay calls asserted by selected real-Wasmtime tests."
+  },
+  "C2": {
+    "status": "HELD",
+    "evidence": [
+      "boundary-cadence.log",
+      "worker-jit-frame-audit.json",
+      "cold-jit-frame-audit.json"
+    ],
+    "observed": "Disarmed four reads at 390/398/406/414; four compiled blocks execute during independent capture; replay q1/q8 exact with zero host calls."
+  },
+  "C3": {
+    "status": "HELD",
+    "evidence": [
+      "boundary-cadence-receipt.json",
+      "boundary-frame-audit.json",
+      "boundary-audit-receipt.json"
+    ],
+    "observed": "All nine q1/6/7 arm\u2192fire cases match; samples 384/385/386 with 123/124/125; final 468/468 cursor 3, RTC fired, compilation resumes after disarm."
+  },
+  "C4": {
+    "status": "HELD",
+    "evidence": [
+      "boundary-cadence.log"
+    ],
+    "observed": "Uncaptured armed q6 control retains six polls and six compiled blocks over 36 transitions."
+  },
+  "C5": {
+    "status": "HELD",
+    "evidence": [
+      "incremental-coverage-ledger.md",
+      "gates-audit.json",
+      "capsule-and-head-audit.json"
+    ],
+    "observed": "One executable repair hunk covered on armed, disarmed, source-inactive paths; selected byte-budget test covers source active with no RTC. Declarative/generated deltas authenticated."
+  },
+  "C6-worker-cold": {
+    "status": "HELD",
+    "evidence": [
+      "worker-identity.json",
+      "cold-outer-identity.json",
+      "cold-acceptance-identity.json",
+      "cold-origin-audit.json",
+      "cold-origin-final-audit.json"
+    ],
+    "observed": "Exact H1; 907 worker, 909 cold acceptance and 911 outer files; 51 source digests; clean independent source and initially empty target."
+  },
+  "C6-public": {
+    "status": "HELD",
+    "evidence": [
+      "public-identity.json",
+      "public-assets-and-state-audit.json",
+      "public-oracle-reruns.json",
+      "production-rtc-public.json",
+      "capsule-and-head-audit.json",
+      "full-deployment-audit.json"
+    ],
+    "observed": "Exact H1 public report and source inventory; all 1,142 indexed files authenticate; all 18 source and 58 GPU asset digests match frozen dist; source/28-frame clock/durable-object oracles and real retained-GPU draw pass. Current worker claim changes only task/queue/evidence."
+  },
+  "C7": {
+    "status": "HELD",
+    "evidence": [
+      "boundary-frame-audit.json",
+      "worker-jit-frame-audit.json",
+      "cold-jit-frame-audit.json"
+    ],
+    "observed": "Independent Python struct/SHA parser imports no emulator codec, checks CPU arithmetic, RTC flags, CLINT phase, source cursor/sequence and raw cross-origin frame/tape equality."
+  }
+}

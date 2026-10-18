@@ -1,0 +1,271 @@
+{
+  "task": "E9-T11",
+  "scope": "Publication of verified task catalog and service-worker metadata only; full exact runtime proof carried from public-corrected-final recording. Assertions use the production alias; the immutable preview URL is retained as a CLI deployment receipt.",
+  "head": "d2caaea0efe57501756d56bb1f174a5e4f231fde",
+  "status": "passed",
+  "deployment": "https://1d15bba2.wasm-vm.pages.dev",
+  "production": "https://wasm-vm.pages.dev/",
+  "errors": [],
+  "assets": [
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "docs-content/storage.md",
+      "status": 200,
+      "bytes": 9616,
+      "sha256": "85840522014012e325a4919e4a5b0a4bd93b3f417fe2837dc85623d5accbebd9"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "docs-bundle/reader.js",
+      "status": 200,
+      "bytes": 667461,
+      "sha256": "7f72751794198ba5ed90817ca03064b95d482a8e840cfb29f65dcbe668b32117"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "docs.html",
+      "status": 200,
+      "bytes": 1112,
+      "sha256": "20230070a6353fc76760e2f2b9f89cae4b69bc801e4d3521c5ab1d58b35ae282"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "session-library.js",
+      "status": 200,
+      "bytes": 26975,
+      "sha256": "9625b8c808926f7876fd45649fb810a011d8e776f122dbf840301bf8c4e9a735"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "session-library.css",
+      "status": 200,
+      "bytes": 1692,
+      "sha256": "b16213437edf880242a10f57ca1cf9ca56e36396319b51547f9bc48c7a03bb1f"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "session-checkpoints.js",
+      "status": 200,
+      "bytes": 10016,
+      "sha256": "2c6feb7e2fa37493374968efad295e6d2087e17f219f7a7ff02aa273878a68cc"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "session-disk-roots.js",
+      "status": 200,
+      "bytes": 7349,
+      "sha256": "7dfd8784ab0086de26f042e3eb9cb63857250ea1a6b58cb0174b6f312bcf97bb"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "session-store.js",
+      "status": 200,
+      "bytes": 28114,
+      "sha256": "ac74f75aed9f650fd3242b8b40f4b3d930cd75c64ae524cd5f2ef575656d68df"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "session-alpine-image.json",
+      "status": 200,
+      "bytes": 274515,
+      "sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "session-software-fixture.json",
+      "status": 200,
+      "bytes": 539,
+      "sha256": "58649de67da288681450b226d20b4f373bfc6db2583f3d061e6cebda3fa479b8"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "loader.js",
+      "status": 200,
+      "bytes": 106947,
+      "sha256": "6f667ed925ed696637ea244275b839d93e644f537cb1c2cec4ee55148486c78b"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "session-inputs.js",
+      "status": 200,
+      "bytes": 11917,
+      "sha256": "2d5c6bc4f39b9f044c41b66d0a6c02c57f8dc44a8f7ff305d9faf2d67445f2fa"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "input-recording-probe.js",
+      "status": 200,
+      "bytes": 13512,
+      "sha256": "9f20dee7f86d241e0e95c4656cea42f98eaaa309861feff21aae2165671893fa"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "time-entropy-probe.js",
+      "status": 200,
+      "bytes": 8954,
+      "sha256": "6990f937de4e079f42c9cfcb2a69f05edaf6a4669071005b50a80b9b11d109fd"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "assets/e9-time-entropy.bin",
+      "status": 200,
+      "bytes": 2092,
+      "sha256": "ac4f71313366a8325627a5203744ca17d7cc8fdac7ccd5fccd2e191ed0b8aa87"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "assets/e9-time-entropy.json",
+      "status": 200,
+      "bytes": 526,
+      "sha256": "76778891e33256ade8fe110aed031bb1dd5c9277ffcc85d763338cfb1543f155"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "event-clock-probe.js",
+      "status": 200,
+      "bytes": 10763,
+      "sha256": "32c8de7405fd5bf24ed54a1bd978086d59909cfa0f52c56609d04c8f728d6c8a"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "linux-worker-protocol.js",
+      "status": 200,
+      "bytes": 32678,
+      "sha256": "7efccb20075006550a1b039659dc1e73b21c68298a029a98b8f7ec6391112b79"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "linux-worker-host.js",
+      "status": 200,
+      "bytes": 4051,
+      "sha256": "65ea5ed32b5642a9e102803e0f6b09b4a02ce891ff72b7e480859fa8c7f0247d"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "gpu-runtime-worker.js",
+      "status": 200,
+      "bytes": 290,
+      "sha256": "f067214e0b57ca21285761130a6c85aa74d92585c3b5a139b17ba7d48b6813e3"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "gpu-checkpoint-build.js",
+      "status": 200,
+      "bytes": 340,
+      "sha256": "31afe1021ce2dcbe48feaa551ca78ddd1036013e3bac7c419fa557184db25c1b"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "roadmap.js",
+      "status": 200,
+      "bytes": 59574,
+      "sha256": "ee1092165380c91ed34a93bfa136e71a6adb2c17302e376cd64080884988e052"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "tasks.json",
+      "status": 200,
+      "bytes": 7232607,
+      "sha256": "6ddcb08e5021671ef85b15229aeb13733c3120d179d4b7a587a2c8f2ed8cd310"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "pkg/wasm_vm_wasm.js",
+      "status": 200,
+      "bytes": 145422,
+      "sha256": "094ac85db473681b973484ef3ef40c4d5eb2412a1181097a03197641b01a7c9d"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "pkg/wasm_vm_wasm_bg.wasm",
+      "status": 200,
+      "bytes": 2005021,
+      "sha256": "4066cc6336c24f3354f9ece07aa8c30ad1ff596b66185d9afcd72d17bb92632a"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "session-pkg/wasm_vm_session.js",
+      "status": 200,
+      "bytes": 13995,
+      "sha256": "3fd1b264aca219a71908e13855b42286fe42b01369b0cbebda84ac23e45d22f6"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "session-pkg/wasm_vm_session_bg.wasm",
+      "status": 200,
+      "bytes": 434267,
+      "sha256": "abc034c6106d36f64252d2024a8b03e467a6188752d4c0812141b2d3eca438d7"
+    },
+    {
+      "origin": "https://wasm-vm.pages.dev/",
+      "name": "sw.js",
+      "status": 200,
+      "bytes": 5053,
+      "sha256": "6707728fe7c93a679e8fdad29d7412d29b0a6e3e31acb4b4d20e76fb01c59dac"
+    }
+  ],
+  "started": "2026-10-18T13:41:21.079Z",
+  "suite": {
+    "passed": 127,
+    "failed": 0
+  },
+  "pip": "cap-pip verified",
+  "catalog": {
+    "task": {
+      "id": "E9-T11",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Record guest-visible time and entropy observations",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E9-T09"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Make host time and random inputs reproducible at their original guest positions.",
+      "boundary": "## Boundary\n\nClock/RTC updates, lifecycle rebases, idle/timer decisions and supplied entropy, using the contract inventory. Deterministically derived values need a frozen policy; externally supplied values need recorded bytes.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T11` records the risk-tier native/wasm, independent guest-state oracle and built-page assertions from a clean frozen head. Override `E9_SOURCE_EVIDENCE_DIR` to select a fresh output directory. A final pristine clone runs the same command. The worker submission and fresh verifier verdict below determine its proven status.\n\n",
+      "criteria": [
+        {
+          "text": "A workload reading time and RNG around sleeps, pause/resume and tab lifecycle changes replays identical observations.",
+          "checked": true
+        },
+        {
+          "text": "Replay consumes recorded values without reading the current host clock or CSPRNG for guest-visible results.",
+          "checked": true
+        },
+        {
+          "text": "Malformed entropy lengths, clock-policy mismatches and exhausted records stop with a typed divergence error.",
+          "checked": true
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-10-18 — worker — begin\n\nE9-T11 is the first eligible task after independently verified E9-T10. Risk is high\nbecause external clock samples and random bytes affect guest architectural state.\nThe slice will freeze the admitted ICount policy, intercept actual RTC observations\n(including alarm polling) and entropy fills at ordered observation positions, and\nprove the same workload consumes recorded values under different host providers.\nComplete provider replay remains gated by T12–T14. No implementation or verification\nclaim is made by this activation entry.\n\n\n### 2026-10-18 — worker — frozen local and pristine submission\n\nRuntime and acceptance harness: `7d52129e9277468cb2d8e8cfc83571d9d7fb8334`.\n`E9_SOURCE_EVIDENCE_DIR=target/evidence/e9-t11-worker-final make verify-E9-T11`\npassed all selected gates: 693 native tests, 81 Node protocol/input tests, no-std/default\nwasm builds and clippy, built browser suite 127 passed/0 failed, zero console errors,\nindependent native RAM/RTC/ICount/trace and durable-object oracles, and actual retained\nGPU factory instruction retirement plus a fresh physical draw. Worker report SHA-256:\n`19e13fd2989eaa6d30ba7c6a8485f221f9e914ce86fabc2966f048245ba80e19`.\n\n`python3 target/e9-t11-cold-wrapper.py` ran the same acceptance command from an\nindependent detached clone with scrubbed environment and initially empty compiler target.\nCold receipt SHA-256 `703c325f8e60e033ef9b2c65cfdf8952baa8f8d5422a5e8c8f5e84e5163f4043`;\nacceptance report `323a57add267b0516bdb51f24169650c4904b79d9fe769be387f6ba57be97e5b`.\nOriginal recordings remain in `target/evidence/e9-t11-worker-final/` and\n`target/evidence/e9-t11-cold-final/`; authenticated compact copies are in\n`evidence/e9-t11/worker-final/` and `evidence/e9-t11/cold-final/` (with wrapper source).\n\nClaim: the real RV64 RTC/RNG/WFI workload retains identical frames, guest UART bytes,\nretirement traces and source receipts across replay quanta 1/7/64 with hostile providers\nand zero replay host reads. Two native seeds, policy/length/order/exhaustion refusals,\nrecorded provider failures, restored source cursors, safe receipt yielding, and transactional\nDMA quota failure execute in the recordings. The browser actually freezes/resumes the\npage while the guest is paused, injects a real Web Crypto outage, and reopens direct and\nwhole-worker production journals after guest poweroff. Each natural-terminal journal has\n413 receipts ending at transition527/retired526; the original fixed workload ends at\ntransition523/retired522. Full Linux replay remains gated by T12–T14.\n\n`bash tools/deploy-cloudflare.sh` initially hit a transient rootfs download stall and\nWrangler's upload-size fallback limit. The unchanged script succeeded on retry with\nread-only curl retries and RAM temporary storage; every remote artifact was byte-verified.\nDeployment: `https://d269e881.wasm-vm.pages.dev`, production `https://wasm-vm.pages.dev/`.\nLogs: `/tmp/e9-t11-deploy.log` (failed attempt), `/tmp/e9-t11-deploy-retry.log` (success).\nThe new runtime is published; public-site proof and fresh verifier verdict follow this\nentry. No runtime code changes are included in this artifact/log commit.\n\n\n### 2026-10-18 — verifier — VERDICT: refuted\n\n- **P10 admitted compiled dispatch — FAILED.** Before the run I predicted that the\n  same warmed actual Wasmtime machine and source tape would replay identical ordered\n  RTC samples under host budgets 6 and 1. At runtime\n  `7d52129e9277468cb2d8e8cfc83571d9d7fb8334`, recording budget 6 samples the armed\n  RTC at transitions 384, 390, 396, 402, 408 and 414. Replay budget 1 consumes 384,\n  then requests its second sample at transition/retired **385/385**, observe ordinal 1,\n  sequence 2; the second recorded sample is **390/390**. Replay stops with typed\n  `SourceDivergence(Position)` and zero host RTC calls. The same-budget-6 control\n  matches initial/final frames and every receipt with zero host calls. Reproduced twice\n  with the real executor, 59 compiled blocks executed by recording end. Exact points:\n  `evidence/e9-t11/verifier-refutation/record.observations.jsonl:2` (binary offset 78;\n  tape SHA-256 `9c9233e69029e267875485471bfbc020c4cb36587f314b985996c771b61f01c1`)\n  and `evidence/e9-t11/verifier-refutation/recheck.log:3` (SHA-256\n  `e60e4c0d6a3dd5d0fea169b4667652123b8e98da6a6fd8da9732aaba36e01d2b`).\n  Source admission at `crates/core/src/session_clock/sources.rs:662` accepts the\n  installed executor, while the pure compiled span allowed at `crates/core/src/lib.rs:5699`\n  changes the external polling cadence. **Demand:** make admitted source sampling\n  independent of compiled host budgets, then record the corrected actual-JIT matrix and\n  the risk-tier final head. This is a source-adapter failure before the full-Linux-replay gate.\n\n- **P1–P9 existing evidence — HELD, scoped.** Preserve the fixed real RTC/RNG/WFI\n  guest's native and browser frames, exact DMA/UART bytes, RTC offset/latch model,\n  deterministic WFI, frozen/active pause, zero-provider replay, typed malformed/policy/\n  exhausted/order/failure stops, cursor rollback and durable direct/whole-worker terminal\n  journals. Worker report remains\n  `19e13fd2989eaa6d30ba7c6a8485f221f9e914ce86fabc2966f048245ba80e19`;\n  cold receipt `703c325f8e60e033ef9b2c65cfdf8952baa8f8d5422a5e8c8f5e84e5163f4043`;\n  cold acceptance `323a57add267b0516bdb51f24169650c4904b79d9fe769be387f6ba57be97e5b`;\n  public aggregate `af659af806c15c76445b95ee0bfebbc15f07e227bc028b381169e11b95cdf376`.\n  Authenticated all worker/cold/public artifact indexes and 18 public runtime assets;\n  public HEAD `0fcd33c8d1539bcddffab8656a4153e29a3d8623` differs only in task/evidence\n  files. Fresh independent production RTC reconstruction and payload-bit sabotage checks\n  passed against final worker, cold and public objects. A real direct-production CSPRNG\n  outage separately proves the typed stop at 115/115/observe/sequence 3, failed entropy\n  publication, no guest output and writer release. These scoped HELD results do not\n  qualify the newly refuted compiled polling cadence and need not be re-litigated when\n  their code, boundary and evidence digest remain unchanged.\n\n- **COVERAGE and SUITE.** The 224 frozen diff hunks are classified in the ignored\n  verifier ledger. Fresh instrumented native runs execute 733/757 changed counted lines;\n  24 required trait shims/private invariant defenses have explicit waivers. All 148 changed\n  counted browser JavaScript lines execute. The new source/JIT combination was missing\n  from the worker's correctness proof and is now a permanent regression in the existing\n  selected `e9_event_clock_critic` binary. Its armed case fails as predicted; the bounded\n  **unarmed guest RTC read after compiled compute** matrix passes all budget 1/8 pairs\n  with identical frames/receipts and zero replay calls. The separate 3 MiB byte-budget\n  regression is appended to the selected `e9_time_entropy` binary and passes. JIT matrix\n  runs emit initial/record/replay frames and source tapes under `E9_SOURCE_EVIDENCE`,\n  keyed by guest-read/alarm/record/replay budgets. Runtime code was not edited.\n\nCommands: `cargo fmt --all --check`; affected core/JIT integration-target clippy with\n`-D warnings` (passed); `cargo test -p wasm-vm-core --features trace,virgl-renderer\n--test e9_time_entropy critic_byte_budget -- --nocapture` (1 passed);\n`cargo test -p wasm-vm-jit-runtime --test e9_event_clock_critic time_entropy --\n--nocapture` (**1 passed, 1 failed**, expected exit 101 for the promoted refutation).\nEvidence: `evidence/e9-t11/verifier-refutation/receipt.json` SHA-256 `db98fba97e7d3eeb21050db282510d3132c7e856884ef573b211cf2ded9fad6e`;\nfull fresh notes/profiles/oracles remain in `target/evidence/e9-t11-verifier/`.\nStatus remains `in-progress` for semantic repair, never `verified`.\n\n\n### 2026-10-18 — worker — semantic rework after compiled RTC refutation\n\nThe fresh verifier's actual-JIT recording refuted the dispatch-dependent armed RTC\npolling cadence. Session dispatch now caps a span at one transition while source\ncapture/replay is active and the RTC alarm remains armed. This preserves every poll\nposition regardless of host quantum. Disarmed pure compiled work remains available;\nexisting exact MMIO fallback handles guest RTC reads. The promoted armed/disarmed JIT\nmatrix and byte-budget test are part of the already-selected acceptance binaries, and\nthe JIT test source joins the final source-digest inventory. A new frozen worker,\npristine-clone and public submission will replace the runtime claim; prior evidence\nand the verifier's failed recording remain retained. Status stays `in-progress`.\n\n\n### 2026-10-18 — worker — corrected frozen submission\n\nRuntime and selected harness: `e14e4312b9ee8df73b93646c944bf64a2f0db875`. The actual-JIT\nrefutation is corrected: an armed RTC is polled before every guest transition, while\ndisarmed pure compiled execution remains available. The promoted budget 1/6 matrix\nrecords exactly 36 polls at transitions 384–419 and compares every receipt and full\nframe with zero replay provider calls. The disarmed read matrix and 3 MiB byte-budget\nregression also execute in the selected gate. Historical failed evidence remains retained.\n\n`E9_SOURCE_EVIDENCE_DIR=target/evidence/e9-t11-worker-corrected-final make verify-E9-T11`\npassed all 29 gates: 696 native tests, 81 Node tests, native/wasm lint/build checks,\n127 passed/0 failed in the built browser with zero console errors, independent native\nRTC/entropy/ICount/frame and durable-object oracles, and real retained-GPU factory\nretirement plus physical draw. Worker report SHA-256 `3d005ff45b6687f8c9c4455c70003c9b3ba7d68adfe91c6008be7c3f80c4c777`.\n\n`python3 target/e9-t11-cold-corrected-wrapper.py` ran the same acceptance from an\nindependent clean clone with scrubbed environment, separate Git metadata/no alternates\nand initially empty compiler output. Cold receipt `2c4ee1f8404ddea949d1fed308139fe06352a41ba0b8b66fae65cf0aa772c931`;\nacceptance report `c7e87c0bc206e838564e03087b3b38dace1a6e73012a7b0eff8f64305b50f7fe`.\n\nThe unchanged stock `bash tools/deploy-cloudflare.sh` succeeded with read-only curl\nretries and task-owned RAM temporary storage. Exact successful payload and R2 bindings\nare preserved in `target/e9-t11-full-corrected-deploy/`; deployment\n`https://abfbb985.wasm-vm.pages.dev`, production `https://wasm-vm.pages.dev/`.\n`python3 target/e9-t11-public-corrected-wrapper.py` then verified production asset hashes,\n127/0 and zero errors, actual frozen/active source replay, direct and whole-worker durable\n413-event terminal journals, independent byte/state oracles, and retained factory\nretirement/draw. Public report SHA-256 `694d9225a41b360ccdb26580065a7e5bee147059de99b1ae444c7d4e554b8e49`.\n\nOriginal recordings remain in the corresponding `target/evidence/e9-t11-*-corrected-final/`\ndirectories. Authenticated compact copies, raw guest frames/tapes/traces and producer\nsources are in `evidence/e9-t11/worker-corrected-final/`, `cold-corrected-final/` and\n`public-corrected-final/`. This claim covers time/entropy adapter capture and replay;\nfull software session replay remains gated by T12–T14. Status is `implemented` for the\nfresh critic's final incremental verdict. No verification or merge is asserted here.\n\n\n### 2026-10-18 — verifier — VERDICT: verified\n\n- **C1/C2 corrected actual-JIT cadence — HELD.** Predictions were written after\n  orienting the repair diff and before inspecting corrected results. At runtime\n  `e14e4312b9ee8df73b93646c944bf64a2f0db875`, all four armed record/replay budget\n  1/6 pairs in both worker and independent cold recordings contain exactly 36 polls\n  at transitions 384–419. The second observation is now **385/385**, observe ordinal\n  1, sequence 2, as predicted: `evidence/e9-t11/verifier-corrected-final/armed.observations.jsonl:2`\n  (binary offset 78; tape SHA-256\n  `a7bc8890064f0f33aff0b68b91c1398720fc0fe3494784a32cc103e916046dae`).\n  Initial/final native frames and tapes match across every pair and both origins;\n  native end is 420/420, source cursor 36, and replay RTC calls are zero. The disarmed\n  guest-read matrix has exactly four reads at 390, 398, 406 and 414, native end 416/416,\n  cursor 4, matching frames and zero replay calls (tape\n  `f171dbc3561b2bb1575401e81ab93e3fbc87f958dbf8f29fd5ce1475c02f0346`).\n  An independent Python struct decoder checks CPU arithmetic, CLINT phase, RTC flags\n  and native sections 18/19 without importing the emulator codec. Selected real-\n  Wasmtime results are at `evidence/e9-t11/worker-corrected-final/jit-native.log:62`\n  and `evidence/e9-t11/cold-corrected-final/jit-native.log:121`.\n\n- **C3/C4 bounded firing-edge attack — HELD.** Predicted and observed RTC samples\n  are 123, 124 and 125 at transitions 384, 385 and 386 with alarm 125. All nine\n  record/replay budget pairs from 1/6/7 converge on the same tape and native frame,\n  final 468/468, cursor 3, RTC disarmed/fired, and zero live replay calls. Compiled\n  execution resumes after firing: quantum 6 executes 13 compiled blocks and quantum 7\n  executes 3. Points: `evidence/e9-t11/verifier-corrected-final/boundary-cadence.log:4`\n  and `:7`; raw matrices are retained in its `boundary-cadence/` directory. Tape\n  SHA-256 `1474ed96f23150d5774705d8af541796abe61c6913a989c7fa8248d97f68874c`;\n  final frame `525d65ccf3f3fc5ff9690f3dc32472c82d8303c4d2b4a2953a5cfc003d339476`.\n  The disarmed captured-read control still executes four compiled blocks (log line 10),\n  and ordinary uncaptured armed execution retains six polls and six compiled blocks\n  (line 11). These observations cover both edges of the source/armed dispatch guard.\n\n- **C5/C7 coverage, carried evidence and suite — HELD.** P1–P9 retain their prior\n  scopes and evidence digests; the exact carried ledger SHA-256 is\n  `cb0ce9a29a651d535a05f69152690ab0e4c3508d39c50604db59253a42f6da29`.\n  The historical P10 failure and receipt remain unchanged. The sole new runtime hunk,\n  `crates/core/src/session_clock.rs:663`, is exercised with armed/disarmed RTC,\n  inactive source capture and active capture without an RTC (the selected byte-budget\n  regression). Declarative/generated deltas authenticate against frozen source/assets;\n  the earlier 224-hunk coverage classification and explicit invariant waivers carry\n  forward. The two promoted JIT tests and 3 MiB byte-budget test execute permanently\n  through `make verify-E9-T11`; worker and cold each pass all 696 native tests and\n  81 Node tests. The retained red JIT recording detects the missing guard. Fresh\n  independent RTC/UART reconstruction also rejects one-bit corruption of the first\n  durable RTC sample in corrected worker, cold and public journals. No runtime code\n  was changed by this verifier.\n\n- **C6 exact-head, browser and origin — HELD.** Authenticated every indexed file:\n  907 worker, 909 cold acceptance/911 cold outer, and 1,142 public, plus all 51 source\n  digests in each submission. Report/receipt hashes match the corrected worker claim\n  above. Public source and GPU proofs authenticate all 18 and 58 runtime assets against\n  frozen dist, respectively; the suite is 127/0 with zero console errors. Read-only\n  independent source, 28-frame clock and durable-object oracles pass, including the\n  direct/whole-worker 413-event poweroff journals and zero-provider failure replay.\n  Actual retained-GPU retirement and physical draw pass. The full deployment snapshot\n  authenticates 739 files and all 734 frozen tracked files. Both old and corrected\n  cold clones have clean exact-head source, matching 50/51 source digests, recorded\n  initially empty targets and scrubbed environment. Their independent persistent Git\n  metadata has no alternates and passes connectivity fsck. The exact RAM source and\n  compiler directories named in `cold-origin-final-audit.json` may be released after\n  this verdict; retain Git metadata, all original recordings and proof capsules.\n\nEvidence: `evidence/e9-t11/verifier-corrected-final/receipt.json` SHA-256\n`4455f027caa3a412ab7f64440b9ec0d274ba85738e560859fc2db37388b26816`\nindexes 92 files, including predictions, independent decoders, raw firing-edge frames\nand tapes, unchanged HELD ledger, identity/origin audits and oracle outputs. Commands:\nread-only artifact/source authentication; independent `jit-frame-critic.py` on worker,\ncold and firing-edge data; source/clock oracle reruns with only output paths redirected;\n`production-rtc-critic.py --sabotage`; cold Git connectivity fsck; then task policy and\nqueue generation. Worker submission `9abe576db62c7a8f691cc2224fb507df4a384b58`\nchanges only task/queue/evidence from runtime e14. All three acceptance criteria are\nverified for the time/entropy adapter boundary. Full software/Linux replay remains\ngated by T12–T14.",
+      "adversarial": "Replay under a different wall clock and entropy provider, including background/resume transitions. Any influence from the replay host refutes the boundary.",
+      "file": "tasks/epic-9-session-time-travel/E9-T11-clock-and-entropy-recording.md",
+      "activity": [
+        {
+          "date": "2026-10-18",
+          "commits": 7,
+          "labels": [
+            "test(e9): verify corrected time and entropy source cadence",
+            "test(session): submit corrected RTC cadence recording evidence",
+            "fix(session): poll armed RTC at every guest transition",
+            "test(e9): refute RTC sampling across compiled dispatch budgets"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-18",
+      "lastActivity": "2026-10-18",
+      "commitCount": 7
+    },
+    "headline": {
+      "verified": 523,
+      "total": 729
+    }
+  },
+  "finished": "2026-10-18T13:41:40.614Z"
+}

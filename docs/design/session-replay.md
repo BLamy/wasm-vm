@@ -369,3 +369,48 @@ engine exists; native architectural counters and clock phase are retained in the
 snapshot. T09 onward owns transition positions and exact replay, T06 owns the visible saved
 session library, T07 owns transitive retention, and T21 owns portable runtime bundles. An
 unavailable runtime is refused instead of being silently resumed by a newer build.
+
+
+### Time and entropy observations (E9-T11)
+
+The admitted source policy is version 1, ICount with a frozen divider from 1 through
+1024 and a 10 MHz timebase. Retired instructions, divider residue and WFI advancement
+remain deterministic machine state. Host elapsed time cannot rebase this profile.
+Wall and paced clocks remain outside this admission boundary.
+
+The real Goldfish RTC provider records each low-word read, time-set half, alarm arm
+and armed alarm poll. Its high-word latch, offset and alarm state stay in the native
+snapshot. While an alarm remains armed, session dispatch permits at most one guest
+transition before polling again, independent of the interpreter/JIT host budget. A disarmed
+RTC leaves pure compiled blocks available; its MMIO accesses use exact interpreter fallback.
+The real virtio-rng provider records each requested fill, exact supplied bytes
+and provider failure. A captured descriptor chain stages every fill before publishing
+DMA or the used ring. Failure or a recording quota cannot publish a partial chain.
+Ordinary unrecorded RNG retains its streaming allocation policy.
+
+Both adapters assign an `observe` key before applying an external value. Before-phase
+input and lifecycle deliveries share their global sequence and ticket allocator.
+An observation uses that transition's retired count and its own within-phase ordinal;
+RTC polling and a guest read can share a transition. Replay authenticates the frozen
+policy, call intent, requested length and complete position before consuming owned bytes.
+No replay path calls the live RTC or entropy provider, including failure replay.
+Missing, extra, reordered and malformed observations produce typed `SessionDivergence`
+errors and fence execution. An outbox approaching its bounded capacity yields between
+complete transitions so the caller can publish receipts without repeating a device poll.
+
+The bounded `WVOBLOG1` source tape has a 32-byte policy/count header and at most 256
+records. Each record has a 38-byte position/intent/length header and owned payload,
+with at most 1 MiB per observation and 4 MiB total. Native section 19, `WVOBS001`,
+contains the policy and consumed observation count. Immutable prefetched log bytes stay
+outside the machine frame; a fresh replay owner restores the cursor with an empty prefetch
+queue and reloads the authenticated suffix. Policy, cursor and topology validation precede
+all destination mutation.
+
+The library's optional **Include time and random inputs** control admits these adapters
+on the existing offline software ICount recording. Its saved VM configuration and required
+input inventory bind the policy. A terminal guest slice publishes its source receipts and
+stop control before releasing the session writer. These sessions remain incomplete
+`capture-prefix` histories: device completion and network adapters, then full Linux replay,
+are T12–T14. The separate public **Time and entropy check** runs an actual bounded RV64
+RTC/RNG/WFI guest and proves source adapter replay under hostile providers; it does not
+admit an arbitrary saved Linux session as executable replay.

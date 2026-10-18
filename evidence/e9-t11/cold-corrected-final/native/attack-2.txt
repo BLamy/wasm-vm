@@ -1,0 +1,1 @@
+SourceDivergence(SourceDivergence { reason: MissingRecord, position: SessionPosition { transition: 24, retired: 24, phase: Observe, ordinal: 1, sequence: 2 }, expected: 0, observed: 1 })

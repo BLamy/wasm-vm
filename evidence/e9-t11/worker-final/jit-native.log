@@ -1,0 +1,189 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/core)
+   Compiling wasm-vm-jit-translate v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/jit-translate)
+   Compiling wasm-vm-jit-runtime v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/jit-runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.70s
+     Running tests/batching.rs (target/debug/deps/batching-50a8e4408193eae9)
+
+running 3 tests
+test batch_execution_is_verdict_identical ... ok
+test registry_accounting_is_accurate_at_k1 ... ok
+recompiled state: [true, true, true, true, true, true, true, false], registry=(2, 132074)
+test partial_batch_invalidation_retires_whole_batch ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests/chaining.rs (target/debug/deps/chaining-f12841d853c99373)
+
+running 6 tests
+test chain_successor_that_does_not_fit_preserves_prior_progress ... ok
+test store_to_non_code_page_cuts_no_links ... ok
+test two_block_chain_links_then_unlink_is_complete ... ok
+test chain_depth_budget_forces_dispatch_return ... ok
+test interrupt_fires_inside_chained_loop ... ok
+test device_completion_fires_inside_chained_loop ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+     Running tests/e9_event_clock.rs (target/debug/deps/e9_event_clock-a16b9a576e4c4323)
+
+running 4 tests
+timer q=1 exact_irq_transition=592 retired=591 real_jit_retired=318
+timer q=7 exact_irq_transition=592 retired=591 real_jit_retired=372
+timer q=31 exact_irq_transition=592 retired=591 real_jit_retired=492
+target=600 quantum=1 real_compiled_blocks=0 position=SessionPosition { transition: 604, retired: 604, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+timer q=1024 exact_irq_transition=592 retired=591 real_jit_retired=522
+test timer_deadline_inside_compiled_block_has_the_same_nonretiring_interrupt_position ... ok
+test pending_event_itself_fences_jit_even_without_an_explicit_seek_stop ... ok
+target=600 quantum=5 real_compiled_blocks=0 position=SessionPosition { transition: 604, retired: 604, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+test wfi_in_a_previously_compiled_loop_stops_before_idle_then_before_interrupt ... ok
+target=600 quantum=6 real_compiled_blocks=36 position=SessionPosition { transition: 604, retired: 604, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=600 quantum=7 real_compiled_blocks=11 position=SessionPosition { transition: 604, retired: 604, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=600 quantum=31 real_compiled_blocks=31 position=SessionPosition { transition: 604, retired: 604, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=600 quantum=512 real_compiled_blocks=36 position=SessionPosition { transition: 604, retired: 604, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=601 quantum=1 real_compiled_blocks=0 position=SessionPosition { transition: 605, retired: 605, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=601 quantum=5 real_compiled_blocks=0 position=SessionPosition { transition: 605, retired: 605, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=601 quantum=6 real_compiled_blocks=36 position=SessionPosition { transition: 605, retired: 605, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=601 quantum=7 real_compiled_blocks=11 position=SessionPosition { transition: 605, retired: 605, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=601 quantum=31 real_compiled_blocks=31 position=SessionPosition { transition: 605, retired: 605, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=601 quantum=512 real_compiled_blocks=36 position=SessionPosition { transition: 605, retired: 605, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=605 quantum=1 real_compiled_blocks=0 position=SessionPosition { transition: 609, retired: 609, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=605 quantum=5 real_compiled_blocks=0 position=SessionPosition { transition: 609, retired: 609, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=605 quantum=6 real_compiled_blocks=36 position=SessionPosition { transition: 609, retired: 609, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=605 quantum=7 real_compiled_blocks=11 position=SessionPosition { transition: 609, retired: 609, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=605 quantum=31 real_compiled_blocks=31 position=SessionPosition { transition: 609, retired: 609, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+target=605 quantum=512 real_compiled_blocks=36 position=SessionPosition { transition: 609, retired: 609, phase: Before, ordinal: 0, sequence: 3 } state=0d283775bac558d000c1df3c89b83891c4c2f5e7d5cb7db266e312b33d5d8e40
+test actual_compiled_blocks_stop_at_edges_and_inside_blocks_without_shifted_delivery ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.23s
+
+     Running tests/e9_event_clock_critic.rs (target/debug/deps/e9_event_clock_critic-02014cf76bc9d5b0)
+
+running 1 test
+seed=2 length=10 smc_at=517 final=654 real_compiled_blocks=55
+seed=7 length=3 smc_at=515 final=652 real_compiled_blocks=193
+seed=29 length=5 smc_at=529 final=666 real_compiled_blocks=117
+seed=73 length=5 smc_at=515 final=652 real_compiled_blocks=113
+seed=65537 length=5 smc_at=526 final=663 real_compiled_blocks=116
+seed=3735928559 length=5 smc_at=528 final=665 real_compiled_blocks=115
+seeded scalar/JIT/pending-restore attacks passed; executed_blocks=709
+test seeded_owned_writes_match_independent_arithmetic_and_pending_restore ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.76s
+
+     Running tests/jit_execution.rs (target/debug/deps/jit_execution-a9c81ca5242eeaed)
+
+running 20 tests
+no-waivers gate: 128 ELFs, matrix corpus == Epic 1 baseline
+test jit_config_matrix::no_waivers_vs_epic1_baseline ... ok
+test pending_interrupt_consumes_only_budget_slot_before_compiled_entry ... ok
+test compiled_builtin_sbi_ecall_consumes_exact_work_before_resume ... ok
+test compiled_first_op_fault_consumes_one_work_and_retires_zero ... ok
+test branch_to_uncompiled_falls_back ... ok
+hot mul loop: 2 blocks compiled, 237 JIT-executed
+test riscv_tests_gate::hot_m_loop_executes_in_jit ... ok
+test smc_invalidates_compiled_block ... ok
+hot loop: 437 blocks JIT-executed, 1311 instrs retired via JIT (of ~1510)
+test hot_loop_actually_jit_executes ... ok
+test trap_midblock_leaves_precise_state ... ok
+test two_jit_runs_are_deterministic ... ok
+test jit_on_matches_interp_on_programs ... ok
+rv64um-p-divu: 19 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amoadd_d: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+test six_op_loop_respects_exact_budget_tail_counters_clock_and_trace_gate ... ok
+rv64ua-p-amoadd_w: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64um-p-remuw: 19 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amominu_w: 16 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64um-p-mulh: 64 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amoswap_w: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amoswap_d: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64uc-p-rvc: 44 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amominu_d: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64um-p-remw: 20 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amoand_d: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amomin_d: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amoand_w: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amomin_w: 16 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64um-p-rem: 19 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amoxor_d: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64um-p-mulhu: 64 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64um-p-divw: 20 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amoxor_w: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64um-p-mulhsu: 64 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64um-p-mulw: 64 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64um-p-mul: 64 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amomax_d: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amomaxu_d: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64um-p-divuw: 19 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amomax_w: 16 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amomaxu_w: 16 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64um-p-div: 20 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-amoor_d: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64ua-p-lrsc: 24 blocks compiled, 2010 JIT-executed, 6030 instrs retired via JIT
+rv64ua-p-amoor_w: 14 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64um-p-remu: 19 blocks compiled, 0 JIT-executed, 0 instrs retired via JIT
+rv64um/rv64uc: 33 ELFs, 2010 total JIT-executed blocks
+test riscv_tests_gate::m_and_c_suites_execute_in_jit_tier ... ok
+FP suites verdict-identical under JIT: 11 rv64uf + 12 rv64ud ELFs Pass
+test riscv_tests_gate::fp_suites_verdict_identical_under_jit ... ok
+test jit_config_matrix::matrix_jit_churn has been running for over 60 seconds
+test jit_config_matrix::matrix_jit_default has been running for over 60 seconds
+test jit_config_matrix::matrix_jit_nochain has been running for over 60 seconds
+test jit_config_matrix::matrix_jit_threshold0 has been running for over 60 seconds
+test riscv_tests_gate::riscv_tests_verdict_identical_with_jit has been running for over 60 seconds
+test riscv_tests_gate::riscv_tests_verdict_identical_with_max_batches_2 has been running for over 60 seconds
+[jit-default] verdict-identical across 128 riscv-tests ELFs (threshold=64, cache_capacity=None, max_batches=None, chaining=true) — 2 blocks compiled, 0 batch evictions
+test jit_config_matrix::matrix_jit_default ... ok
+JIT verdict-identical at max_batches=2 across 128 riscv-tests ELFs
+test riscv_tests_gate::riscv_tests_verdict_identical_with_max_batches_2 ... ok
+[jit-churn] verdict-identical across 128 riscv-tests ELFs (threshold=1, cache_capacity=Some(1), max_batches=Some(2), chaining=true) — 207 blocks compiled, 4 batch evictions
+test jit_config_matrix::matrix_jit_churn ... ok
+JIT verdict-identical across 128 riscv-tests ELFs (54 rv64ui)
+test riscv_tests_gate::riscv_tests_verdict_identical_with_jit ... ok
+[jit-threshold0] verdict-identical across 128 riscv-tests ELFs (threshold=1, cache_capacity=None, max_batches=None, chaining=true) — 4979 blocks compiled, 0 batch evictions
+test jit_config_matrix::matrix_jit_threshold0 ... ok
+[jit-nochain] verdict-identical across 128 riscv-tests ELFs (threshold=1, cache_capacity=None, max_batches=None, chaining=false) — 4979 blocks compiled, 0 batch evictions
+test jit_config_matrix::matrix_jit_nochain ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 84.13s
+
+     Running tests/partial_blocks.rs (target/debug/deps/partial_blocks-77cfba2a5b38342f)
+
+running 5 tests
+test device_access_ends_the_native_chain_like_a_block_boundary ... ok
+partial fp prefix loop: partial_exits=27600 jit_retired=138000
+test fp_loop_with_system_csr_prefix_blocks ... ok
+fp fcsr loop: partial_exits=0 jit_retired=313620
+test fp_loop_with_fcsr_and_double_ops_matches_the_batched_interpreter ... ok
+cap=4 lead=0 thrash=1: rebuilds=0 jit=183624
+partial CSR loop: partial_exits=138660 jit_retired=277290
+test partial_blocks_sample_interrupts_exactly_like_the_batched_interpreter ... ok
+cap=4 lead=2 thrash=3: rebuilds=0 jit=201075
+cap=8 lead=1 thrash=5: rebuilds=0 jit=236376
+test partial_block_after_decoded_eviction_matches_the_batched_interpreter ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 14.63s
+
+     Running tests/precise_traps.rs (target/debug/deps/precise_traps-97f1f18b4149f203)
+
+running 5 tests
+test execute_miss_preserves_public_guard_and_guest_state ... ok
+test bulk_handoff_preserves_all_registers_and_virtual_pc_on_precise_fault ... ok
+test overwritten_base_register_fault ... ok
+test mmio_store_then_fault_commits_once ... ok
+test mem_fault_precise_matches_interpreter ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/timekeeping.rs (target/debug/deps/timekeeping-9566e3e30f531541)
+
+running 3 tests
+E4-T25 integration: ICount lockstep WITH timer interrupts byte-identical — retired=9009, mtime=9009, timer_ints=1, jit_blocks_exec=2937
+test icount_lockstep_with_timer_interrupts_byte_identical ... ok
+AC5: two ICount JIT runs byte-identical — 325 trace samples, timer fired at retired=Some(4032), final mtime=9009
+test icount_two_runs_identical_mtime_trace ... ok
+test clock_monotonic_never_decreases_under_churn has been running for over 60 seconds
+AC3: mtime monotone across 52800 samples of JIT/interp/eviction churn (evictions=24598, final mtime=52800)
+test clock_monotonic_never_decreases_under_churn ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 116.72s
+

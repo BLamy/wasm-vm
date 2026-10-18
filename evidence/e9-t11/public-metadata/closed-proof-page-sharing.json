@@ -1,0 +1,438 @@
+{
+  "created": 1792330401.1629481,
+  "scope": "Share identical artifact-cache pages with CoW; every original logical byte remains authenticated.",
+  "reports": [
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/report.json",
+      "sha256": "63983b74f3018128ea0d649fc7baeaa24c2163865eadc111100bb11af95bea1d"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t04-worker-final/report.json",
+      "sha256": "1e2577042ba20e4ed3bd63fe0eb77efbd41371be85255689112ce40c39366efd"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-worker-final/report.json",
+      "sha256": "d06225f249d7c1ce6b5d3b3826d92e7cdd713649a9fe3c7ea2367ea3f5e5ef92"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-worker-repaired/report.json",
+      "sha256": "f503e646a19c05ed7a1c33ecd64cae767eaedc33cf06f8acfd01021a2d1aed37"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-css-worker-final/report.json",
+      "sha256": "deb146471aff0602b1db395d9c6359b761df63ad2e17d6fe446effb9fb0e9f3d"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-public-css-fixed/report.json",
+      "sha256": "d5bd94a4d5f204f58c5da68723289e9a7a8a9e7114e63b2caef4490fd13d80e7"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-worker-final/report.json",
+      "sha256": "7fffff71f600b025104b7969092b417cb96a9453c3ab760d0a7f63c14359f07d"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-public-gpu-retry/report.json",
+      "sha256": "508cb4029ba568193836b68f7b962b61669613eaaf14c40a28e3c52f4d47097c"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-worker-final/report.json",
+      "sha256": "f0a9b8544b110bd2918a781adcc98830c3be2f1bc0fecb9b719e1d5202f9351b"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t08-browser-inner-2/report.json",
+      "sha256": "e67d0acd5d0782cdb54c4786b6b8695d9759db14973aed71206b9fd77e5860e7"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t08-public-final/report.json",
+      "sha256": "8beb9711992dca26e0c741787951e218e4609d04dbbd1e7b4a78d2f4b240dc79"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t08-worker-final/report.json",
+      "sha256": "172eb74455cc91151d7d55d5112a97af6daeed45e543e6a897fe186cd418b2f4"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-public-final/report.json",
+      "sha256": "07d6410e1d7652be28246870dea0a4210758c7de5bd06439e887e294cdd53ef0"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-worker-final/report.json",
+      "sha256": "403cf05f7a082ca0c74c9d58e8a9d2a98ec765bc3bf893f2a72fb4bc7d5db021"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-public-final/report.json",
+      "sha256": "245f7588ae4346845cca2c182f8e391eadef2fbbe0b9d9039feceaebf5c28b1c"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-worker-final-incremental/report.json",
+      "sha256": "ba9cdf443d8f07059ce87d16aa7b0a7479b4d14ad3b2ec7e4667ebec5a99ad64"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-public-corrected-final/report.json",
+      "sha256": "694d9225a41b360ccdb26580065a7e5bee147059de99b1ae444c7d4e554b8e49"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-public-final/report.json",
+      "sha256": "af659af806c15c76445b95ee0bfebbc15f07e227bc028b381169e11b95cdf376"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-worker-corrected-final/report.json",
+      "sha256": "3d005ff45b6687f8c9c4455c70003c9b3ba7d68adfe91c6008be7c3f80c4c777"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-worker-final/report.json",
+      "sha256": "19e13fd2989eaa6d30ba7c6a8485f221f9e914ce86fabc2966f048245ba80e19"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/report.json",
+      "sha256": "c04bb9c95bca209d663fb6789891cafe56323c9622e5608a7f9026e3cfa99acf"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-cold-final/acceptance/report.json",
+      "sha256": "0241e2c0d9704ec478594e61e324dfa2f3df845b20ff8c267b721e9173d106f2"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-cold-final/acceptance/report.json",
+      "sha256": "2cfc7894e4b8d269b33e370280d94b6b6c583db003d785b98998625f6b6e1ddd"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-cold-final-3/acceptance/report.json",
+      "sha256": "b9454ecaf1b508645f0c7a1f17fcbbffaa406ca5e36a465b48675ed4d74d33ee"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-cold-final-incremental/acceptance/report.json",
+      "sha256": "8cfe898e145bd5d5c73035430cb1ffbd226f15475788d80dc51a29b7dce9a188"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-cold-corrected-final/acceptance/report.json",
+      "sha256": "c7e87c0bc206e838564e03087b3b38dace1a6e73012a7b0eff8f64305b50f7fe"
+    },
+    {
+      "path": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-cold-final/acceptance/report.json",
+      "sha256": "323a57add267b0516bdb51f24169650c4904b79d9fe769be387f6ba57be97e5b"
+    }
+  ],
+  "files": [
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t04-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/4ed90e937deb8d064513c9c8a583634fd2913512/8ebc007a-508a-4bef-82a9-aa1276c26ae5/b87d498410fafc2c_0",
+      "destination_sha256": "79c92cbc23be7801a99828471e1cce937a0faded1f73f53587c51f7393c98d39",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792281589176705342,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/2fe1d8cb77dc757ae22a8e7573ae891ed7598c4f/ec51da23-f73a-409b-9a15-30c510d7058f/c9e7fc6813744910_0",
+      "destination_sha256": "e7f11d0734e0b1f2adee40f126d4a8ec9fe1146826162233e0f63f99f5745377",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792295144117239880,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-worker-repaired/browser/chromium-profile/Default/Service Worker/CacheStorage/d8b49779febae745ef62b8c7f587222e19a83d19/376e5bca-1e63-4ef9-bb0d-31967cd47069/4977bed94115052f_0",
+      "destination_sha256": "7a5b628ec48e7168a92d0495675100b70bf91b6aa6db58e15bb4db0a06eb1937",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792296437217444151,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-css-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/a771c438007f6a62d94f1f4f0aacbbf10df7d4d9/49382358-1f30-4752-b5d1-10b0647b6fb6/e771eba6cf2981d9_0",
+      "destination_sha256": "1435d30e839e01d8d02b8d17cebfe929e20636071a0db4d8b37795f8df022f6f",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792302369544259863,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-css-worker-final/missing-object-and-cleanup/chromium-profile/Default/Service Worker/CacheStorage/a771c438007f6a62d94f1f4f0aacbbf10df7d4d9/49382358-1f30-4752-b5d1-10b0647b6fb6/e771eba6cf2981d9_0",
+      "destination_sha256": "1435d30e839e01d8d02b8d17cebfe929e20636071a0db4d8b37795f8df022f6f",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792302442278966866,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/4d2c9f0709fd7cddbdae43d832f3df997d40cb22/b632ce2c-30d8-4398-94e4-bf6d0dd29084/1d5d346d5c722ee6_0",
+      "destination_sha256": "a8762fdaf2f4447b81ed2c94397b9443cfcd78bcc6a63209ed77a3f6f1e5a6e7",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792300675261028811,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/1f1042009b3c7fa158cfbc9ce22a6715689e8e5e/b99fd93f-aa0b-4821-94ff-29b950453a71/d648bb6ed00a1099_0",
+      "destination_sha256": "a85ab724b906270c828ca5dc520da7b3d981840131c29914c76faf2931339179",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792305066813187712,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-worker-final/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/3e75fca951bb500595310ff019c576cec8fb7194/d392ff9e-ff68-41ef-979a-a4e2bf231c2c/03bbeda7418c1e16_0",
+      "destination_sha256": "021f95f4a00ceb2357ddaf04924697def1f1be26ee41484228d50866a94a9de3",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792312748007351729,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-worker-final-incremental/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/f461344e3906210e6ff01c732957b7e9f951176c/48786ca3-848c-404d-8be8-3d441ce17943/3213838118e4b2fa_0",
+      "destination_sha256": "b9c1cc78bda3f8df3198605f8c1b41782ea18807d2ad4b69a448f1052f9829d1",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792321653233655925,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-worker-corrected-final/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/d3a35cceaa847961141d07259b661d8666065c25/ed7f04eb-121b-48b4-882a-11aaaa03a9b6/30273f33a0332c0b_0",
+      "destination_sha256": "79a44b7c8613f5b987650ac5ab65d03d71b168404fd3bace8ce91a46ddb72fba",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792329405448155116,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-worker-final/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/5f9876ce0602d0c9ab203ed83d402a3e636c0c2b/b2f68025-7b72-4397-a4f1-d353ae9d4178/e43e45a1bb0445bd_0",
+      "destination_sha256": "f19cb13c4bac2a9aefccef5b3351fc12f6b5650fe47b65abd210530341e4a9cc",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792327310542763282,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-cold-final/acceptance/browser/chromium-profile/Default/Service Worker/CacheStorage/1f481f766d2f13516c5493d67047756f2baf6e7c/5f2635bd-aa24-424b-ba18-c654edd1cb52/0b9e39165773341c_0",
+      "destination_sha256": "25007fe5d059c84a19b5de9f6b635b4ebd8361f69bd6a2ea14bc9c6eaad4726e",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792276101537902690,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t05-cold-final/acceptance/browser/chromium-profile/Default/Service Worker/CacheStorage/59448634b7fcfcff6e8d283fb711e45ede82f7d0/8c7a00e0-fe11-4d7e-b8f0-617e6071b99d/a0bde833f316ddcb_0",
+      "destination_sha256": "2b9177323221be56401dc112e1b1e50d3272596111fc007a531f67cbb4961949",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792297860816962967,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-cold-final/acceptance/browser/chromium-profile/Default/Service Worker/CacheStorage/78f9f11bf07ed712331b9481df2c958057466f31/0be6967f-c963-43c3-8361-c36563fa13e6/fb8c432a623df807_0",
+      "destination_sha256": "ff0d814f592fefcfa87e12eb52b7138310331cce34c79bcce47436555680b284",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792305412730319506,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-cold-final-3/acceptance/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/1c10304686920e379293f64fadda2a1c6270bbe6/a9326b24-ed1c-4938-9ca2-d421d37ac497/012dedde94ecd698_0",
+      "destination_sha256": "f6c808dcf91aede604958958d109e7d423c0b8b70f69aabfa4319762194381d2",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792313834057089228,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-cold-final-incremental/acceptance/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/d96627edb9d10f2177e01c73214ab554cb85fab6/051ea01d-4e30-46cd-8a3e-24e3cd606851/b3152f18109fc0c9_0",
+      "destination_sha256": "1c27b600407a5c071d8a189cc1ff906e41d19190d6b7a336ecef4e1db9761a6d",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792321901093164186,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-cold-corrected-final/acceptance/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/1f04c375a6f81a3070c5feba63860580af44d69c/7eb9f293-f0e0-4b8e-aa8a-5af1f8a26892/6a4b79b256b6f578_0",
+      "destination_sha256": "38d252691d5879fa0b64d6c90b61b9caca59e4fb9995ac2b0cea659447cb0797",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792329595988791928,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t03-worker-final/browser/chromium-profile/Default/Service Worker/CacheStorage/0eb4acb136cc7738455f81554aff535dd79c96d5/85616197-874c-4543-9a88-84f83cb494e6/a238699843b3b08b_0",
+      "source_sha256": "3b06e7ad272a1158f675cb90fb66258809b915c31c75d5839895cbcc1419a22c",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-cold-final/acceptance/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/b8e62c70723219ee3e40b397bb0b7a58862e73c2/acfc8cd4-0e49-48c4-9e60-6624be794178/310809ea4536b12c_0",
+      "destination_sha256": "dde96457ce78dcd659039b52f7dbfe407c76877a20659b2363e1f6c3f7a60e09",
+      "bytes": 204058006,
+      "differing_pages": 2,
+      "patched_bytes": 7574,
+      "mode": 384,
+      "mtime_ns": 1792327512170885337,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-public-css-fixed/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/2a2348cc-f125-4131-9e60-e8374fd676da/c12d0fcc74099bcf_0",
+      "source_sha256": "7e125140033ee317881e23895276280d27e775a96773ddcaa4783703a9b4c77d",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t07-public-gpu-retry/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/82648bcb-95ec-4854-8136-81ef960a8938/c12d0fcc74099bcf_0",
+      "destination_sha256": "f2ce274632738f923a0bb2282d2296ec93f999ae4ec897d0cfb4027a5a5a01aa",
+      "bytes": 204058009,
+      "differing_pages": 1,
+      "patched_bytes": 3481,
+      "mode": 384,
+      "mtime_ns": 1792306313828867004,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-public-css-fixed/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/2a2348cc-f125-4131-9e60-e8374fd676da/c12d0fcc74099bcf_0",
+      "source_sha256": "7e125140033ee317881e23895276280d27e775a96773ddcaa4783703a9b4c77d",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-public-final/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/6961035b-c544-4306-a200-18d71894f590/c12d0fcc74099bcf_0",
+      "destination_sha256": "ad90e5079caad000084866f45fd9d1b5700784ef36cb8b9399056b27329bc6c4",
+      "bytes": 204058009,
+      "differing_pages": 1,
+      "patched_bytes": 3481,
+      "mode": 384,
+      "mtime_ns": 1792313405310100624,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-public-css-fixed/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/2a2348cc-f125-4131-9e60-e8374fd676da/c12d0fcc74099bcf_0",
+      "source_sha256": "7e125140033ee317881e23895276280d27e775a96773ddcaa4783703a9b4c77d",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t10-public-final/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/2f3ecaff-12d6-455c-bcb2-dec40bd2242b/c12d0fcc74099bcf_0",
+      "destination_sha256": "3732fa6acb72d1fb27f7f3dff6998b9593168ba23ec6febfa28a62334376587d",
+      "bytes": 204058009,
+      "differing_pages": 1,
+      "patched_bytes": 3481,
+      "mode": 384,
+      "mtime_ns": 1792322815036133967,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-public-css-fixed/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/2a2348cc-f125-4131-9e60-e8374fd676da/c12d0fcc74099bcf_0",
+      "source_sha256": "7e125140033ee317881e23895276280d27e775a96773ddcaa4783703a9b4c77d",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-public-corrected-final/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/bd5f502b-63e5-40ec-93c6-02eca501fdae/c12d0fcc74099bcf_0",
+      "destination_sha256": "2b9b13293c1ec84e43f1bad2b9d8a2ee57e33ba7112896158eed26758b3e8167",
+      "bytes": 204058009,
+      "differing_pages": 1,
+      "patched_bytes": 3481,
+      "mode": 384,
+      "mtime_ns": 1792329852109504755,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    },
+    {
+      "source": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t06-public-css-fixed/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/2a2348cc-f125-4131-9e60-e8374fd676da/c12d0fcc74099bcf_0",
+      "source_sha256": "7e125140033ee317881e23895276280d27e775a96773ddcaa4783703a9b4c77d",
+      "destination": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-public-final/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/fc8afaf4-7639-4048-95e7-ea1ccbf4d09e/c12d0fcc74099bcf_0",
+      "destination_sha256": "8ef1e13f74a1c370500eab9b8f9873c6da0c748ce6361710d7dc9787dfd22d5a",
+      "bytes": 204058009,
+      "differing_pages": 1,
+      "patched_bytes": 3481,
+      "mode": 384,
+      "mtime_ns": 1792328140830003012,
+      "independent_inode": true,
+      "logical_bytes_preserved": true,
+      "mechanism": "APFS cp -c then restore every differing4096-byte page, authenticate full bytes, atomic replace. No hard links; future writes remain isolated."
+    }
+  ]
+}

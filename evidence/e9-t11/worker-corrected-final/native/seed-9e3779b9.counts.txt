@@ -1,0 +1,4 @@
+time_calls=17
+rng_calls=2
+pause=133
+end=523

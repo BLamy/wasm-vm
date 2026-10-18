@@ -1,0 +1,4 @@
+position=SessionPosition { transition: 1, retired: 1, phase: Before, ordinal: 0, sequence: 0 }
+rng_calls=0
+used_idx=0
+error=PayloadTooLarge

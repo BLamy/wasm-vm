@@ -81,7 +81,7 @@ its final boundary and leaves that guest paused. Start a fresh guest to return t
 
 These rows are labelled incomplete input captures. They preserve exact bytes, frame order
 and accepted/failed/cancelled upload controls, but full provider replay and Open are disabled.
-Clock/entropy, asynchronous device completions and network replay are later Epic 9 adapters.
+Choose **Include time and random inputs** before starting to also save RTC samples, exact random bytes and their frozen instruction-clock policy. Asynchronous device completions and network replay are later Epic 9 adapters.
 Guest file-transfer capture is available through the same controller on a local SLIRP software
 guest; live outbound connections, audio/microphone and accelerated guests are gated.
 
@@ -91,7 +91,9 @@ rejects live ingress. It does not run or qualify whole-machine replay.
 
 A failed input-prefix save pauses execution and preserves the committed prefix and pending
 owned batch. Free space or raise the data limit, then choose **Save input prefix** to retry.
-The recording cannot recover execution from before capture started.
+The recording cannot recover execution from before capture started. A guest that powers off publishes its final observations before the recording writer closes.
+
+The **Time and entropy check** runs a separate RV64 guest with RTC reads, random fills and a timer sleep. It compares recorded and replayed machine frames, traces and guest bytes with replay providers disabled. Full Linux replay remains unavailable until the remaining provider adapters are installed.
 
 ### Limits, quota and deletion
 

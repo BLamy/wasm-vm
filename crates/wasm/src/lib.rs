@@ -42,7 +42,11 @@ mod event_clock;
 mod jit_browser;
 #[cfg(any(test, all(target_arch = "wasm32", not(feature = "zicsr-stub"))))]
 mod session_input;
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod session_sources;
 pub use jit_browser::{BROWSER_MAX_BATCHES, BrowserExecutor};
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+pub use session_sources::SessionSourceProbe;
 use wasm_vm_core::bus::mmap::{UART0_BASE, UART0_LEN};
 use wasm_vm_core::dev::console::{ConsoleSink, Uart0Stub};
 use wasm_vm_core::jit::CompiledBlockExecutor;
@@ -3760,6 +3764,7 @@ impl WasmLinux {
                 return Err(JsError::new("input prefix is paused or stopped"));
             }
         }
+        let mut session_error = None;
         let retired_before = inner.machine.irq_stats().retired;
         if inner.finished.is_none() {
             // Interleave RX refills with execution. The 16550 RX FIFO is 16 bytes; feeding it only
@@ -3821,7 +3826,11 @@ impl WasmLinux {
                                         >= limit as usize
                                 })
                         }));
-                if remaining == 0 || persistence_due || !matches!(oc, RunOutcome::MaxInstrs) {
+                if remaining == 0
+                    || persistence_due
+                    || inner.machine.session_sources_need_flush()
+                    || !matches!(oc, RunOutcome::MaxInstrs)
+                {
                     break oc;
                 }
             };
@@ -3836,7 +3845,10 @@ impl WasmLinux {
                 RunOutcome::Exited(code) => Some(format!("exited:{code}")),
                 RunOutcome::Trapped(t) => Some(format!("trap:{:?}", t.cause)),
                 RunOutcome::MaxInstrs => None, // keep going
-                RunOutcome::SessionStopped(error) => Some(format!("session_clock:{error:?}")),
+                RunOutcome::SessionStopped(error) => {
+                    session_error = Some(error);
+                    Some(format!("session_clock:{error:?}"))
+                }
             };
         }
         // Flush accumulated console output to JS as one chunk.
@@ -3846,6 +3858,13 @@ impl WasmLinux {
             let _ = inner.output.call1(&JsValue::NULL, &arr);
         }
         let obj = js_sys::Object::new();
+        if let Some(error) = session_error {
+            let _ = js_sys::Reflect::set(
+                &obj,
+                &"divergence".into(),
+                &crate::session_sources::diagnostic(error),
+            );
+        }
         let _ = js_sys::Reflect::set(
             &obj,
             &"done".into(),

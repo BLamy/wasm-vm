@@ -1,0 +1,3 @@
+{"transition":"0","retired":"0","phase":"before","ordinal":1,"sequence":"1","ticket":"0","kind":16,"status":0,"requested":1,"hex":"01"}
+{"transition":"24","retired":"24","phase":"observe","ordinal":1,"sequence":"2","ticket":"1","kind":1,"status":0,"requested":8,"hex":"15cd853dfe9c9717"}
+{"transition":"115","retired":"115","phase":"observe","ordinal":1,"sequence":"3","ticket":"2","kind":6,"status":1,"requested":16,"hex":""}

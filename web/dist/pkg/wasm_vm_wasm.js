@@ -1,5 +1,5 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
-import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
+import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js';
 import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
 import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
 
@@ -59,6 +59,162 @@ export class FileSha256 {
     }
 }
 if (Symbol.dispose) FileSha256.prototype[Symbol.dispose] = FileSha256.prototype.free;
+
+/**
+ * Bounded, fixed real RV64 workload used by the public time/entropy check. This proof board
+ * cannot load a Linux session, acquire network/media adapters, or execute past its declared end.
+ */
+export class SessionSourceProbe {
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        SessionSourceProbeFinalization.unregister(this);
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_sessionsourceprobe_free(ptr, 0);
+    }
+    /**
+     * @param {any} code
+     * @param {string} transition
+     * @param {string} sequence
+     * @param {any} ordinal
+     * @param {string} retired
+     */
+    applyRecordedLifecycle(code, transition, sequence, ordinal, retired) {
+        const ptr0 = passStringToWasm0(transition, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(sequence, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(retired, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.sessionsourceprobe_applyRecordedLifecycle(this.__wbg_ptr, code, ptr0, len0, ptr1, len1, ordinal, ptr2, len2);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {any} code
+     */
+    control(code) {
+        const ret = wasm.sessionsourceprobe_control(this.__wbg_ptr, code);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    finishReplay() {
+        const ret = wasm.sessionsourceprobe_finishReplay(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @returns {Uint8Array}
+     */
+    frame() {
+        const ret = wasm.sessionsourceprobe_frame(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {Uint8Array}
+     */
+    guestBytes() {
+        const ret = wasm.sessionsourceprobe_guestBytes(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @returns {any}
+     */
+    hostReads() {
+        const ret = wasm.sessionsourceprobe_hostReads(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @param {any} divider
+     * @param {Uint8Array | null | undefined} tape
+     * @param {any} host_mode
+     */
+    constructor(divider, tape, host_mode) {
+        const ret = wasm.sessionsourceprobe_new(divider, isLikeNone(tape) ? 0 : addToExternrefTable0(tape), host_mode);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        this.__wbg_ptr = ret[0];
+        SessionSourceProbeFinalization.register(this, this.__wbg_ptr, this);
+        return this;
+    }
+    /**
+     * @returns {Uint8Array}
+     */
+    observationTape() {
+        const ret = wasm.sessionsourceprobe_observationTape(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    policy() {
+        const ret = wasm.sessionsourceprobe_policy(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+     * @returns {any}
+     */
+    position() {
+        const ret = wasm.sessionsourceprobe_position(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {string} target
+     * @param {any} quantum
+     * @returns {any}
+     */
+    runUntil(target, quantum) {
+        const ptr0 = passStringToWasm0(target, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.sessionsourceprobe_runUntil(this.__wbg_ptr, ptr0, len0, quantum);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    takeDeliveries() {
+        const ret = wasm.sessionsourceprobe_takeDeliveries(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {string}
+     */
+    traceText() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.sessionsourceprobe_traceText(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+}
+if (Symbol.dispose) SessionSourceProbe.prototype[Symbol.dispose] = SessionSourceProbe.prototype.free;
 
 /**
  * E2-T21: a browser-side unmodified-Linux boot. Unlike [`WasmMachine`] (bare-metal ELF + a
@@ -1365,6 +1521,16 @@ export class WasmLinux {
         }
     }
     /**
+     * @returns {any}
+     */
+    sessionSourcePolicy() {
+        const ret = wasm.wasmlinux_sessionSourcePolicy(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * Arm after restore, before execution; not exposed as a general Worker mutation RPC.
      * @param {boolean} enabled
      * @returns {boolean}
@@ -1558,6 +1724,12 @@ export class WasmLinux {
      */
     startInputCapture(replay) {
         const ret = wasm.wasmlinux_startInputCapture(this.__wbg_ptr, replay);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    startInputSourceCapture() {
+        const ret = wasm.wasmlinux_startInputSourceCapture(this.__wbg_ptr);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
@@ -2602,6 +2774,10 @@ function __wbg_get_imports() {
             const ret = invokeJitBlock(arg0, arg1 >>> 0, arg2 >>> 0);
             return ret;
         },
+        __wbg_keys_58421f8f96795607: function(arg0) {
+            const ret = Object.keys(arg0);
+            return ret;
+        },
         __wbg_length_1f0964f4a5e2c6d8: function(arg0) {
             const ret = arg0.length;
             return ret;
@@ -2983,27 +3159,27 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000001: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 30, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 29, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56);
             return ret;
         },
         __wbindgen_cast_0000000000000002: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 79, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 78, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270);
             return ret;
         },
         __wbindgen_cast_0000000000000003: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 79, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 78, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_2);
             return ret;
         },
         __wbindgen_cast_0000000000000004: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 79, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 78, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_3);
             return ret;
         },
         __wbindgen_cast_0000000000000005: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 79, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 78, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_4);
             return ret;
         },
@@ -3089,6 +3265,9 @@ const __wbindgen_enum_WorkerType = ["classic", "module"];
 const FileSha256Finalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_filesha256_free(ptr, 1));
+const SessionSourceProbeFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_sessionsourceprobe_free(ptr, 1));
 const WasmLinuxFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_wasmlinux_free(ptr, 1));

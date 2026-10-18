@@ -1,0 +1,10 @@
+{
+  "report": "target/evidence/e9-t11-worker-corrected-final/report.json",
+  "sha256": "3d005ff45b6687f8c9c4455c70003c9b3ba7d68adfe91c6008be7c3f80c4c777",
+  "status": "passed",
+  "head": "e14e4312b9ee8df73b93646c944bf64a2f0db875",
+  "files_authenticated": 907,
+  "bytes_authenticated": 403649115,
+  "sources_authenticated": 51,
+  "gates": 29
+}

@@ -1,0 +1,54 @@
+{
+  "status": "refutation-reproduced",
+  "runtime_head": "7d52129e9277468cb2d8e8cfc83571d9d7fb8334",
+  "exit_code": 101,
+  "build_command": [
+    "rustc",
+    "--edition=2024",
+    "target/evidence/e9-t11-verifier/jit-source-poll.rs",
+    "--extern",
+    "jit_runtime=target/debug/deps/libjit_runtime-fac461ca468788e3.rlib",
+    "--extern",
+    "wasm_vm_core=target/debug/deps/libwasm_vm_core-df332594bb6c2770.rlib",
+    "-L",
+    "dependency=target/debug/deps",
+    "-o",
+    "/Volumes/e9-t11-cold-scratch/e9-t11-verifier-scratch/jit-source-poll",
+    "-L",
+    "native=target/debug/build/ring-09b613c3c63df6d7/out",
+    "-L",
+    "native=target/debug/build/wasmtime-5b3d08b0f12b56f7/out",
+    "-L",
+    "native=target/debug/build/wasmtime-72837277f3d704f8/out",
+    "-L",
+    "native=target/debug/build/zstd-sys-aec1ba3be9f534b9/out"
+  ],
+  "source_sha256": "ea8c399949cb551060e7d2bfe3886a08e80308a392304d28e89603204a2a2a94",
+  "evidence": [
+    {
+      "file": "target/evidence/e9-t11-verifier/jit-source-poll-recheck.log",
+      "bytes": 852,
+      "sha256": "e60e4c0d6a3dd5d0fea169b4667652123b8e98da6a6fd8da9732aaba36e01d2b"
+    },
+    {
+      "file": "target/evidence/e9-t11-verifier/jit-poll-refutation/initial.resume",
+      "bytes": 1695,
+      "sha256": "70e95a7635024b7f102f11cec52c48d8e2655b5765ecdc0d064eaed028cb23d6"
+    },
+    {
+      "file": "target/evidence/e9-t11-verifier/jit-poll-refutation/replay-position.txt",
+      "bytes": 415,
+      "sha256": "ea05bd41de5a2b7f02a020ac2758468ff01ab6b4e314addcc8d081b2f9da15e9"
+    },
+    {
+      "file": "target/evidence/e9-t11-verifier/jit-poll-refutation/record.observations",
+      "bytes": 308,
+      "sha256": "9c9233e69029e267875485471bfbc020c4cb36587f314b985996c771b61f01c1"
+    },
+    {
+      "file": "target/evidence/e9-t11-verifier/jit-poll-refutation/record.resume",
+      "bytes": 1695,
+      "sha256": "3f73f126104c0702a50b56510f6f5a1d5395704c454a78ed6083edce0dfc1112"
+    }
+  ]
+}

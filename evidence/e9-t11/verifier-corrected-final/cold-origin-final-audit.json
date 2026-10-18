@@ -1,0 +1,76 @@
+{
+  "status": "passed",
+  "scope": "Both old and corrected cold-clone provenance complete. These exact source/compiler directories are disposable after final verdict; this audit does not remove them. Git metadata and original recordings must remain.",
+  "origins": [
+    {
+      "receipt": "target/evidence/e9-t11-cold-final/receipt.json",
+      "receipt_sha256": "703c325f8e60e033ef9b2c65cfdf8952baa8f8d5422a5e8c8f5e84e5163f4043",
+      "head": "7d52129e9277468cb2d8e8cfc83571d9d7fb8334",
+      "source": "/Volumes/e9-t11-cold-scratch/cold-source-e9-t11-7d52129e9277",
+      "compiler_target": "/Volumes/e9-t11-cold-scratch/cold-target-e9-t11-7d52129e9277",
+      "persistent_git_metadata": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t11-cold-7d52129e9277.git",
+      "git_objects_readable_without_worktree": true,
+      "alternates": false,
+      "clean_clone": true,
+      "source_digests_verified": 50,
+      "initial_target_entries": [],
+      "disposable_after_verdict": [
+        "source",
+        "compiler_target"
+      ],
+      "retain": [
+        "persistent_git_metadata",
+        "all original recordings and receipts",
+        "committed proof capsules"
+      ],
+      "persistent_git_fsck": {
+        "command": [
+          "git",
+          "--git-dir=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t11-cold-7d52129e9277.git",
+          "fsck",
+          "--connectivity-only",
+          "--no-dangling",
+          "--no-reflogs"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    },
+    {
+      "receipt": "target/evidence/e9-t11-cold-corrected-final/receipt.json",
+      "receipt_sha256": "2c4ee1f8404ddea949d1fed308139fe06352a41ba0b8b66fae65cf0aa772c931",
+      "head": "e14e4312b9ee8df73b93646c944bf64a2f0db875",
+      "source": "/Volumes/e9-t11-cold-scratch/cold-source-e9-t11-e14e4312b9ee",
+      "compiler_target": "/Volumes/e9-t11-cold-scratch/cold-target-e9-t11-e14e4312b9ee",
+      "persistent_git_metadata": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t11-cold-e14e4312b9ee.git",
+      "git_objects_readable_without_worktree": true,
+      "alternates": false,
+      "clean_clone": true,
+      "source_digests_verified": 51,
+      "initial_target_entries": [],
+      "disposable_after_verdict": [
+        "source",
+        "compiler_target"
+      ],
+      "retain": [
+        "persistent_git_metadata",
+        "all original recordings and receipts",
+        "committed proof capsules"
+      ],
+      "persistent_git_fsck": {
+        "command": [
+          "git",
+          "--git-dir=/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t11-cold-e14e4312b9ee.git",
+          "fsck",
+          "--connectivity-only",
+          "--no-dangling",
+          "--no-reflogs"
+        ],
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": ""
+      }
+    }
+  ]
+}

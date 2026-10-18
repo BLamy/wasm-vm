@@ -1227,6 +1227,18 @@ export async function startLinuxBoot(opts = {}) {
         return;
       }
       if (res.done) {
+        // Guest-produced observations from the terminal slice have no next tick to publish them.
+        // Finish ownership here without awaiting this tick's own quiescence barrier.
+        if(inputActive){
+          paused=true;
+          if(!inputStopped){try{machine.inputLifecycle(2);}catch{/* a fatal source divergence already fenced the candidate */}inputStopped=true;}
+          try{
+            await flushInputRecording();
+            if(inputWriter){await inputWriter.release();inputWriter=null;}
+            if(inputStore){await inputStore.close();inputStore=null;}
+          }catch(error){onState('error');onError(error);finish('error');return;}
+        }
+        if(res.divergence){const error=Object.assign(new Error(res.divergence.message),res.divergence);onState('error');onError(error);finish(res.state);return;}
         // Compact guest-layer evidence for long Linux runs: surface the same architectural state
         // SHA-256 contract as native boot evidence. It is printed into the terminal so the browser
         // screenshot/transcript carries a reopenable, stale-run-detecting fingerprint.
@@ -1537,7 +1549,8 @@ export async function startLinuxBoot(opts = {}) {
       applyRecordedInput:(...args)=>machine.applyRecordedInput(...args),
       setInputPointerMode:(relative)=>{if(inputActive&&!stopped)machine.setInputPointerMode(relative);},
       flushInputRecording,
-      startInputRecording:async({database,id})=>{
+      startInputRecording:async({database,id,includeTimeEntropy=false})=>{
+        if(typeof includeTimeEntropy!=='boolean')throw Error('includeTimeEntropy must be a boolean');
         if(inputActive||!paused||stopped||gpuCaptureBusy||productionGpu||virgl||extraDiskBytes||!isChunked||enableMic
           ||audioRequested||captureRequested||ramMib>256||usePersist||guestClock!=='icount'||interactiveClock!==undefined
           ||network.provider!=='offline')throw Error('pause a fresh software ICount guest without live media or outbound connections first');
@@ -1562,11 +1575,13 @@ export async function startLinuxBoot(opts = {}) {
             devices:JSON.parse(machine.softwareCheckpointTopology()),imageManifest:imageManifestText,baseUrl,
             initialHostInput:{keyboard:[...heldKeyboard],tablet:[...heldTablet],mouse:[...heldMouse]},
             fileTransfer:opts.slirpNet?JSON.parse(machine.fileTransferStatus()):null};
+          if(includeTimeEntropy)configuration.timeEntropyPolicy=machine.sessionSourcePolicy();
           store=await SessionStore.open(database);writer=await store.writer(id);
           const journal=await SessionInputJournal.createWitness(store,writer,configuration,witness.native,witness.disk,witness.pending,witness.output);
           if(stopped||!paused)throw Error('input recording owner changed');
-          machine.startInputCapture(false);inputActive=true;inputStopped=false;
-          inputJournal=journal;inputStore=store;inputWriter=writer;return {id,end:journal.end};
+          if(includeTimeEntropy)machine.startInputSourceCapture();else machine.startInputCapture(false);
+          inputActive=true;inputStopped=false;
+          inputJournal=journal;inputStore=store;inputWriter=writer;return {id,end:journal.end,sourcePolicy:includeTimeEntropy?configuration.timeEntropyPolicy:null};
         }catch(error){if(writer)await writer.release();if(store)await store.close();throw error;}
         finally{gpuCaptureBusy=false;}
       },

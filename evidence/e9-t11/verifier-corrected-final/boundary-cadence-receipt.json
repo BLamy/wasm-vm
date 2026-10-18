@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "runtime_head": "e14e4312b9ee8df73b93646c944bf64a2f0db875",
+  "build_command": [
+    "rustc",
+    "--edition=2024",
+    "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-verifier/corrected/boundary-cadence.rs",
+    "--extern",
+    "jit_runtime=target/debug/deps/libjit_runtime-fac461ca468788e3.rlib",
+    "--extern",
+    "wasm_vm_core=target/debug/deps/libwasm_vm_core-df332594bb6c2770.rlib",
+    "-L",
+    "dependency=target/debug/deps",
+    "-o",
+    "/Volumes/e9-t11-cold-scratch/e9-t11-verifier-scratch/boundary-cadence-corrected",
+    "-L",
+    "native=target/debug/build/ring-09b613c3c63df6d7/out",
+    "-L",
+    "native=target/debug/build/wasmtime-0a12dd1894f08055/out",
+    "-L",
+    "native=target/debug/build/wasmtime-49f1a8204a5185f0/out",
+    "-L",
+    "native=target/debug/build/wasmtime-5b3d08b0f12b56f7/out",
+    "-L",
+    "native=target/debug/build/wasmtime-72837277f3d704f8/out",
+    "-L",
+    "native=target/debug/build/zstd-sys-aec1ba3be9f534b9/out"
+  ],
+  "run_command": [
+    "/Volumes/e9-t11-cold-scratch/e9-t11-verifier-scratch/boundary-cadence-corrected"
+  ],
+  "exit_code": 0,
+  "source_sha256": "303055d818ee704bc2614197906d6756c3b80db0366a858b70f279dbd334ce5e",
+  "core_rlib_sha256": "142de2b236d780e9d6bb5f7852d2a874543ede4e4c646eb8754b1bde52cc25ae",
+  "jit_rlib_sha256": "6609545bb3d434e85b43cfbc4a6744ac8ecf958626dce860e272413f3b39392d"
+}

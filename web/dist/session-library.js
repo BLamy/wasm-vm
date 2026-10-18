@@ -144,6 +144,7 @@ class SessionLibrary {
     const owner = this.adapter.current(), ready = Boolean(this.store), busy = this.busy;
     const qualified = owner?.profile && owner.ready;
     const inputBusy=Boolean(this.inputRecording),inputStopped=Boolean(this.active?.inputStopped);
+    c['time-entropy'].disabled=busy||inputBusy||inputStopped||!qualified;
     c['input-start'].disabled=!ready||busy||!qualified||Boolean(this.recording||this.pausedRecording)||inputBusy||inputStopped;
     c['input-save'].disabled=c['input-stop'].disabled=busy||!inputBusy||owner?.controller!==this.inputRecording?.controller;
     c.new.disabled = !ready || busy || Boolean(this.recording || this.pausedRecording) || inputBusy;
@@ -195,11 +196,12 @@ class SessionLibrary {
   async startInputs(){
     const owner=this.adapter.current();
     if(!owner?.profile||!owner.ready||this.recording||this.pausedRecording||this.inputRecording)throw Error('Start a ready offline software guest first');
-    const controller=owner.controller,id=uid('inputs-'),now=Date.now();await controller.pause();
-    await controller.startInputRecording({id});
+    const controller=owner.controller,id=uid('inputs-'),now=Date.now(),includeTimeEntropy=this.controls['time-entropy'].checked;await controller.pause();
+    const started=await controller.startInputRecording({id,includeTimeEntropy});
+    if(includeTimeEntropy&&started.sourcePolicy?.version!==1){await controller.stopInputCapture();throw Error('This guest runtime cannot record time and random inputs; start a fresh guest');}
     this.inputRecording={id,controller};this.active={id,point:'input-witness',controller,running:false};
     const next=new Map(this.metadata);next.set(id,{id,name:`Inputs ${new Date(now).toLocaleString()}`,started:now,updated:now,points:[]});this.persistMetadata(next);
-    await this.refresh(id);this.state('ready','Input recording started. Resume the guest to continue; Save input prefix commits queued inputs.');
+    await this.refresh(id);this.state('ready','Input recording started. Resume the guest to continue; Save input prefix commits queued observations.');
   }
   async saveInputs(){
     const recording=this.inputRecording;if(!recording||this.adapter.current()?.controller!==recording.controller)throw Error('Input recording guest changed');

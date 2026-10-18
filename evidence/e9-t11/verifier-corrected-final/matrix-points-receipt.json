@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "points": [
+    {
+      "label": "armed",
+      "source": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-false-alarm-true-rq1-pq1.observations",
+      "source_sha256": "a7bc8890064f0f33aff0b68b91c1398720fc0fe3494784a32cc103e916046dae",
+      "decoded_rows": "target/evidence/e9-t11-verifier/corrected/armed.observations.jsonl",
+      "rows_sha256": "c1d5c48c03851dfad4dea142231858667b195f05274cdb82adb1aa52b0e1459c",
+      "records": 36,
+      "initial_sha256": "544a38b81ac79a389ce5b5509ab70a1fd0fc587db3869da52dced2381af710be",
+      "final_sha256": "2d3ce618ce9602694be719232cba1489ea30840ca55b75e67d78a6a64c861b0b",
+      "cursor": 36
+    },
+    {
+      "label": "disarmed-read",
+      "source": "target/evidence/e9-t11-worker-corrected-final/native/jit-source-read-true-alarm-false-rq1-pq1.observations",
+      "source_sha256": "f171dbc3561b2bb1575401e81ab93e3fbc87f958dbf8f29fd5ce1475c02f0346",
+      "decoded_rows": "target/evidence/e9-t11-verifier/corrected/disarmed-read.observations.jsonl",
+      "rows_sha256": "db93e85f158f6fed7f2de8c6a1866a9b10dc0a8c264c2a9bb8b6ce6fd915c409",
+      "records": 4,
+      "initial_sha256": "9c08c4f40c062c90808277cbb13ac654e933b0c347527bb1b1a4021b5cfbe4f0",
+      "final_sha256": "e4f94aba7cd9fdc0ae8e5c55db84188f90569fca89255315065f491c54126d74",
+      "cursor": 4
+    }
+  ]
+}
