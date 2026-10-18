@@ -182,7 +182,7 @@ pub(crate) struct InputContext<'a> {
     pub uart: &'a Rc<RefCell<Uart16550>>,
     pub transfers: Option<&'a mut BrowserFileTransfers>,
 }
-fn apply(
+pub(crate) fn apply(
     machine: &mut Machine,
     pending: &mut VecDeque<u8>,
     uart: &Rc<RefCell<Uart16550>>,

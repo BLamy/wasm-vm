@@ -224,6 +224,12 @@ impl Uart16550 {
         core::mem::take(&mut self.out)
     }
 
+    /// Inspect bytes awaiting the host's recorded output-drain boundary. The guest-visible
+    /// UART snapshot includes this buffer, so replay must drain it at the same transition.
+    pub fn pending_output(&self) -> &[u8] {
+        &self.out
+    }
+
     /// Advance the character-timeout clock one step (the run loop calls this per retired
     /// instruction). Latches the timeout condition when the FIFO is non-empty below the
     /// trigger level and idle long enough.

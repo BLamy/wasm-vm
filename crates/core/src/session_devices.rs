@@ -339,6 +339,25 @@ impl crate::Machine {
         capture: bool,
         replay: bool,
     ) -> Result<(), DeviceError> {
+        self.enable_session_devices_at(
+            base,
+            agent,
+            capture,
+            replay,
+            crate::dev::virtio::console::VIRTIO_CONSOLE_SLOT,
+        )
+    }
+
+    /// The browser Linux topology reserves the ninth MMIO window for the named agent. Validate
+    /// its slot before installing any adapter so an unsupported profile cannot partially boot.
+    pub fn enable_session_devices_at(
+        &mut self,
+        base: Option<BaseDisk>,
+        agent: bool,
+        capture: bool,
+        replay: bool,
+        agent_slot: usize,
+    ) -> Result<(), DeviceError> {
         if self.session_devices.is_some()
             || self.session_position() != Some(Default::default())
             || !self.virtio.is_empty()
@@ -346,6 +365,7 @@ impl crate::Machine {
             || !self.extra_blk.is_empty()
             || self.snd.is_some()
             || (agent && self.console.is_some())
+            || (agent && agent_slot >= crate::platform::virt::VIRTIO_COUNT as usize)
         {
             return Err(DeviceError::Unsupported);
         }
@@ -378,7 +398,7 @@ impl crate::Machine {
             self.enable_virtio_slots(None);
         }
         if agent {
-            self.enable_virtio_console();
+            self.enable_virtio_console_at(agent_slot);
         }
         if capture {
             self.enable_virtio_snd_with_audio_and_capture(
@@ -416,6 +436,14 @@ impl crate::Machine {
             .borrow()
             .guest
             .cursor)
+    }
+    pub fn session_device_replay(&self) -> Result<bool, DeviceError> {
+        Ok(self
+            .session_devices
+            .as_ref()
+            .ok_or(DeviceError::Inactive)?
+            .borrow()
+            .replay)
     }
     pub fn lease_session_device(&self, id: u64) -> Result<CompletionLease, DeviceError> {
         let hub = self

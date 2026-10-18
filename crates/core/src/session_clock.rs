@@ -638,7 +638,11 @@ impl crate::Machine {
         if self.guest_clock_mode() != crate::time::TimeMode::ICount {
             return Err(SessionError::UnsupportedScheduling);
         }
-        if self.session_fence == Some(clock.position.transition) {
+        if self.session_fence == Some(clock.position.transition)
+            || self
+                .session_replay_limit
+                .is_some_and(|end| clock.position.transition >= end)
+        {
             return Ok(Preparation::Fence);
         }
         clock.reserve_transition()?;
@@ -668,9 +672,13 @@ impl crate::Machine {
         let mut budget = remaining
             .min(u64::MAX - clock.position.transition)
             .min(u64::MAX - clock.position.retired);
-        for target in [clock.next_transition(), self.session_fence]
-            .into_iter()
-            .flatten()
+        for target in [
+            clock.next_transition(),
+            self.session_fence,
+            self.session_replay_limit,
+        ]
+        .into_iter()
+        .flatten()
         {
             budget = budget.min(target - clock.position.transition);
         }

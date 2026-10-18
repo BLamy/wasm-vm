@@ -2334,6 +2334,7 @@ dependencies = [
  "rustc_apfloat",
  "sha2",
  "syn 2.0.118",
+ "wasm-vm-storage",
 ]
 
 [[package]]

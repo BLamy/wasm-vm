@@ -15,6 +15,7 @@ import { runInputRecordingProbe } from "./input-recording-probe.js";
 import { runTimeEntropyProbe } from "./time-entropy-probe.js";
 import { runDeviceCompletionsProbe } from "./device-completions-probe.js";
 import {runNetworkCaptureProbe} from "./network-capture-probe.js";
+import {runSessionReplayProbe} from "./session-replay-probe.js";
 
 // E4-T32: the complete machine runs in a worker by default. This path needs no SAB/COOP headers;
 // `?worker=0` and the older `?singlethread=1` spelling are explicit main-thread
@@ -2648,6 +2649,8 @@ let inputRecordingRunning=false,inputRecordingResult=null;
 const inputRecordingRun=document.getElementById('input-recording-run'),inputRecordingStatus=document.getElementById('input-recording-status');
 let networkCaptureRunning=false,networkCaptureResult=null;
 const networkCaptureRun=document.getElementById("network-capture-run"),networkCaptureStatus=document.getElementById("network-capture-status");
+let sessionReplayRunning=false,sessionReplayResult=null;
+const sessionReplayRun=document.getElementById("session-replay-run"),sessionReplayStatus=document.getElementById("session-replay-status");
 let deviceCompletionsRunning=false,deviceCompletionsResult=null;
 const deviceCompletionsRun=document.getElementById("device-completions-run"),deviceCompletionsStatus=document.getElementById("device-completions-status");
 let timeEntropyRunning=false,timeEntropyResult=null;
@@ -2959,6 +2962,8 @@ function renderRoadmap() {
 }
 
 function refreshRoadmapLive() {
+  const replayCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="session-replay");
+  document.getElementById("session-replay-pip").className="cap-pip "+(sessionReplayResult?.status==="passed"?"live":sessionReplayResult?.status==="failed"?"regressed":replayCap.status);
   const networkCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="network-capture");
   document.getElementById("network-capture-pip").className="cap-pip "+(networkCaptureResult?.status==="passed"?"live":networkCaptureResult?.status==="failed"?"regressed":networkCap.status);
   const deviceCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="device-completions");
@@ -2970,6 +2975,7 @@ function refreshRoadmapLive() {
   const inputCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==='input-recording');
   document.getElementById('input-recording-pip').className=`cap-pip ${inputRecordingResult?.status==='passed'?'live':inputRecordingResult?.status==='failed'?'regressed':inputCap.status}`;
   for (const rc of roadmapCaps) {
+    if(rc.probe==="session-replay"){const state=sessionReplayResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Pinned Linux, saved tape and exact interpreter/JIT state · live in browser":rc.base.evidence;continue;}
     if(rc.probe==="network-capture"){const state=networkCaptureResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Guest network bytes, offline replay and transport suppression · live in browser":rc.base.evidence;continue;}
     if(rc.probe==="device-completions"){const state=deviceCompletionsResult?.status;rc.pip.className=`cap-pip ${state==="passed"?"live":state==="failed"?"regressed":rc.base.status}`;if(rc.evEl)rc.evEl.textContent=state==="passed"?"Guest block, file-agent and audio DMA, pending restore and durable completion order · live in browser":rc.base.evidence;continue;}
     if(rc.probe==='time-entropy'){
@@ -3021,7 +3027,8 @@ function refreshRoadmapLive() {
 }
 
 function setInteractiveState() {
-  const busy = running || suiteRunning || eventClockRunning || inputRecordingRunning || timeEntropyRunning || deviceCompletionsRunning || networkCaptureRunning;
+  const busy = running || suiteRunning || eventClockRunning || inputRecordingRunning || timeEntropyRunning || deviceCompletionsRunning || networkCaptureRunning || sessionReplayRunning;
+  sessionReplayRun.disabled=busy||!wasmReady;
   inputRecordingRun.disabled=busy||!wasmReady;
   timeEntropyRun.disabled=busy||!wasmReady;
   deviceCompletionsRun.disabled=busy||!wasmReady;
@@ -3276,6 +3283,13 @@ runBtn.addEventListener("click", run);
 resetBtn.addEventListener("click", reset);
 benchBtn.addEventListener("click", runBench);
 suiteRunBtn.addEventListener("click", runSuite);
+sessionReplayRun.addEventListener('click',async()=>{
+ if(running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||!wasmReady)return;
+ sessionReplayRunning=true;sessionReplayResult=null;sessionReplayStatus.textContent='Preparing the pinned Linux recording…';setInteractiveState();refreshRoadmapLive();
+ try{sessionReplayResult=await runSessionReplayProbe({onProgress:message=>{sessionReplayStatus.textContent=message;}});sessionReplayStatus.textContent='Passed · saved Alpine session matches interpreter and JIT replay, including disk DMA.';}
+ catch(error){sessionReplayResult={status:'failed',failure:String(error)};sessionReplayStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__sessionReplayReport=sessionReplayResult;sessionReplayStatus.dataset.status=sessionReplayResult.status;sessionReplayRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
 networkCaptureRun.addEventListener('click',async()=>{
  if(running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||!wasmReady)return;
  networkCaptureRunning=true;networkCaptureResult=null;networkCaptureStatus.textContent='Recording one safe request, then replaying offline…';setInteractiveState();refreshRoadmapLive();

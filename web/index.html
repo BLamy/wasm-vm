@@ -987,6 +987,12 @@
         <div class="session-actions"><button id="network-capture-run" type="button" disabled>Check offline network replay</button></div>
         <p id="network-capture-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
       </details>
+      <details id="session-replay-panel" class="session-library">
+        <summary><span id="session-replay-pip" class="cap-pip in-progress" aria-hidden="true"></span> Full Linux replay check</summary>
+        <p class="session-note">Record the pinned Alpine guest through a real disk read, reopen its saved event tape, and compare interpreter and JIT replay. This check takes a few minutes.</p>
+        <div class="session-actions"><button id="session-replay-run" type="button" disabled>Check saved-session replay</button></div>
+        <p id="session-replay-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
       <details id="device-completions-panel" class="session-library">
         <summary><span id="device-completions-pip" class="cap-pip in-progress" aria-hidden="true"></span> Device delivery check</summary>
         <p class="session-note">Replay disk, file and audio results after delayed deliveries, then check that old callbacks cannot change a restored machine.</p>

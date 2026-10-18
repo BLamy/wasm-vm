@@ -1,5 +1,7 @@
 //! Browser ABI for the core owned-completion adapters. Complete Linux replay is admitted by T14;
 //! this API also supports independently loaded bare-metal guests without test-only core behavior.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+use super::WasmLinux;
 use super::{WasmMachine, event_clock, reentrant};
 use serde::Deserialize;
 use wasm_bindgen::JsCast;
@@ -97,6 +99,85 @@ fn exact(value: JsValue, max: u32) -> Result<u32, JsError> {
 #[wasm_bindgen]
 pub struct SessionDeviceLease {
     lease: CompletionLease,
+}
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen]
+impl WasmLinux {
+    #[wasm_bindgen(js_name = exactDeviceRequests)]
+    pub fn exact_device_requests(&self) -> Result<JsValue, JsError> {
+        use wasm_vm_core::session_devices::DeviceIntent;
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        if inner.exact_session != Some(false) {
+            return Err(error(DeviceError::ReplayIngress));
+        }
+        let out = js_sys::Array::new();
+        for request in inner.machine.session_device_requests().map_err(error)? {
+            let intent = match request.intent {
+                DeviceIntent::BaseBlock { chunk, content } => {
+                    serde_json::json!({"kind":"block","chunk":chunk,"content":{"sha256":content.sha256.iter().map(|b|format!("{b:02x}")).collect::<String>(),"length":content.length}})
+                }
+                DeviceIntent::Agent {
+                    generation,
+                    maximum,
+                } => {
+                    serde_json::json!({"kind":"agent","generation":generation.to_string(),"maximum":maximum})
+                }
+                DeviceIntent::Capture {
+                    samples,
+                    rate,
+                    channels,
+                } => {
+                    serde_json::json!({"kind":"capture","samples":samples,"rate":rate,"channels":channels})
+                }
+            };
+            out.push(
+                &js_sys::JSON::parse(
+                    &serde_json::json!({"id":request.id.to_string(),"intent":intent}).to_string(),
+                )
+                .map_err(|_| error(DeviceError::Payload))?,
+            );
+        }
+        Ok(out.into())
+    }
+    #[wasm_bindgen(js_name = exactLeaseDeviceRequest)]
+    pub fn exact_lease_device_request(&self, id: &str) -> Result<SessionDeviceLease, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        if inner.exact_session != Some(false) {
+            return Err(error(DeviceError::ReplayIngress));
+        }
+        let id = event_clock::exact_u64(id).map_err(JsError::new)?;
+        Ok(SessionDeviceLease {
+            lease: inner.machine.lease_session_device(id).map_err(error)?,
+        })
+    }
+    #[wasm_bindgen(js_name = exactCompleteDeviceRequest)]
+    pub fn exact_complete_device_request(
+        &self,
+        lease: &SessionDeviceLease,
+        status: JsValue,
+        frames: JsValue,
+        bytes: js_sys::Uint8Array,
+    ) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.exact_session != Some(false) {
+            return Err(error(DeviceError::ReplayIngress));
+        }
+        let status = match exact(status, 2)? {
+            0 => CompletionStatus::Supplied,
+            1 => CompletionStatus::Failed,
+            _ => CompletionStatus::Cancelled,
+        };
+        let frames = exact(frames, u32::MAX)?;
+        if bytes.length() as usize > MAX_RESULT
+            || !bytes.buffer().is_instance_of::<js_sys::ArrayBuffer>()
+        {
+            return Err(error(DeviceError::Payload));
+        }
+        inner
+            .machine
+            .complete_session_device(&lease.lease, status, frames, bytes.to_vec())
+            .map_err(error)
+    }
 }
 #[wasm_bindgen]
 impl WasmMachine {

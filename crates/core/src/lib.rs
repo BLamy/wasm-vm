@@ -53,6 +53,8 @@ pub mod sbi;
 pub mod session_clock;
 pub mod session_devices;
 pub mod session_network;
+pub mod session_profile;
+pub mod session_replay;
 pub mod snapshot;
 pub mod softfloat;
 pub mod time;
@@ -284,6 +286,9 @@ pub struct Machine {
     session_sources: alloc::rc::Rc<core::cell::RefCell<session_clock::sources::ObservationHub>>,
     /// Transient execution fence, never part of a quiescent saved machine.
     session_fence: Option<u64>,
+    /// A replay's declared end. Unlike a per-run fence this survives between calls and is never
+    /// serialized into a guest checkpoint; a finished replay cannot silently become live.
+    session_replay_limit: Option<u64>,
     session_devices: Option<alloc::rc::Rc<core::cell::RefCell<session_devices::DeviceHub>>>,
     session_network: Option<alloc::rc::Rc<core::cell::RefCell<session_network::NetworkHub>>>,
     htif: Option<Htif>,
@@ -966,6 +971,7 @@ impl Machine {
             session_devices: None,
             session_network: None,
             session_fence: None,
+            session_replay_limit: None,
             htif: None,
             last_tohost: 0,
             htif_commands: 0,
