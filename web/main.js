@@ -14,6 +14,7 @@ import { runEventClockProbe } from "./event-clock-probe.js";
 import { runInputRecordingProbe } from "./input-recording-probe.js";
 import { runTimeEntropyProbe } from "./time-entropy-probe.js";
 import { runDeviceCompletionsProbe } from "./device-completions-probe.js";
+import {runNetworkCaptureProbe} from "./network-capture-probe.js";
 
 // E4-T32: the complete machine runs in a worker by default. This path needs no SAB/COOP headers;
 // `?worker=0` and the older `?singlethread=1` spelling are explicit main-thread
@@ -2645,6 +2646,8 @@ let eventClockRunning = false;
 let eventClockResult = null;
 let inputRecordingRunning=false,inputRecordingResult=null;
 const inputRecordingRun=document.getElementById('input-recording-run'),inputRecordingStatus=document.getElementById('input-recording-status');
+let networkCaptureRunning=false,networkCaptureResult=null;
+const networkCaptureRun=document.getElementById("network-capture-run"),networkCaptureStatus=document.getElementById("network-capture-status");
 let deviceCompletionsRunning=false,deviceCompletionsResult=null;
 const deviceCompletionsRun=document.getElementById("device-completions-run"),deviceCompletionsStatus=document.getElementById("device-completions-status");
 let timeEntropyRunning=false,timeEntropyResult=null;
@@ -2956,6 +2959,8 @@ function renderRoadmap() {
 }
 
 function refreshRoadmapLive() {
+  const networkCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="network-capture");
+  document.getElementById("network-capture-pip").className="cap-pip "+(networkCaptureResult?.status==="passed"?"live":networkCaptureResult?.status==="failed"?"regressed":networkCap.status);
   const deviceCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="device-completions");
   document.getElementById("device-completions-pip").className=`cap-pip ${deviceCompletionsResult?.status==="passed"?"live":deviceCompletionsResult?.status==="failed"?"regressed":deviceCap.status}`;
   const clockCap = ROADMAP.flatMap(epic => epic.caps).find(cap => cap.probe === "event-clock");
@@ -2965,6 +2970,7 @@ function refreshRoadmapLive() {
   const inputCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==='input-recording');
   document.getElementById('input-recording-pip').className=`cap-pip ${inputRecordingResult?.status==='passed'?'live':inputRecordingResult?.status==='failed'?'regressed':inputCap.status}`;
   for (const rc of roadmapCaps) {
+    if(rc.probe==="network-capture"){const state=networkCaptureResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Guest network bytes, offline replay and transport suppression · live in browser":rc.base.evidence;continue;}
     if(rc.probe==="device-completions"){const state=deviceCompletionsResult?.status;rc.pip.className=`cap-pip ${state==="passed"?"live":state==="failed"?"regressed":rc.base.status}`;if(rc.evEl)rc.evEl.textContent=state==="passed"?"Guest block, file-agent and audio DMA, pending restore and durable completion order · live in browser":rc.base.evidence;continue;}
     if(rc.probe==='time-entropy'){
       const state=timeEntropyResult?.status;rc.pip.className=`cap-pip ${state==='passed'?'live':state==='failed'?'regressed':rc.base.status}`;
@@ -3015,10 +3021,11 @@ function refreshRoadmapLive() {
 }
 
 function setInteractiveState() {
-  const busy = running || suiteRunning || eventClockRunning || inputRecordingRunning || timeEntropyRunning || deviceCompletionsRunning;
+  const busy = running || suiteRunning || eventClockRunning || inputRecordingRunning || timeEntropyRunning || deviceCompletionsRunning || networkCaptureRunning;
   inputRecordingRun.disabled=busy||!wasmReady;
   timeEntropyRun.disabled=busy||!wasmReady;
   deviceCompletionsRun.disabled=busy||!wasmReady;
+  networkCaptureRun.disabled=busy||!wasmReady;
   eventClockRun.disabled = busy || !wasmReady;
   runBtn.disabled = busy || !wasmReady;
   resetBtn.disabled = busy || !wasmReady;
@@ -3269,15 +3276,22 @@ runBtn.addEventListener("click", run);
 resetBtn.addEventListener("click", reset);
 benchBtn.addEventListener("click", runBench);
 suiteRunBtn.addEventListener("click", runSuite);
+networkCaptureRun.addEventListener('click',async()=>{
+ if(running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||!wasmReady)return;
+ networkCaptureRunning=true;networkCaptureResult=null;networkCaptureStatus.textContent='Recording one safe request, then replaying offline…';setInteractiveState();refreshRoadmapLive();
+ try{networkCaptureResult=await runNetworkCaptureProbe();networkCaptureStatus.textContent='Passed · offline replays and timer order agree; one network request.';}
+ catch(error){networkCaptureResult={status:'failed',failure:String(error)};networkCaptureStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__networkCaptureReport=networkCaptureResult;networkCaptureStatus.dataset.status=networkCaptureResult.status;networkCaptureRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
 deviceCompletionsRun.addEventListener('click',async()=>{
-  if(running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||!wasmReady)return;
+  if(running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||!wasmReady)return;
   deviceCompletionsRunning=true;deviceCompletionsResult=null;deviceCompletionsStatus.textContent='Recording and replaying device deliveries…';setInteractiveState();refreshRoadmapLive();
   try{deviceCompletionsResult=await runDeviceCompletionsProbe();deviceCompletionsStatus.textContent='Passed · disk, file and audio bytes agree after replay and restore.';}
   catch(error){deviceCompletionsResult={status:'failed',failure:String(error)};deviceCompletionsStatus.textContent='Failed · '+error.message;}
   finally{if(_startupQuery.has('testHooks'))globalThis.__deviceCompletionsReport=deviceCompletionsResult;deviceCompletionsStatus.dataset.status=deviceCompletionsResult.status;deviceCompletionsRunning=false;refreshRoadmapLive();setInteractiveState();}
 });
 timeEntropyRun.addEventListener('click',async()=>{
-  if(running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||!wasmReady)return;
+  if(running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||!wasmReady)return;
   timeEntropyRunning=true;timeEntropyResult=null;timeEntropyStatus.textContent='Recording and replaying guest time and random bytes…';setInteractiveState();refreshRoadmapLive();
   try{timeEntropyResult=await runTimeEntropyProbe({onPaused:_startupQuery.has('testHooks')?globalThis.__timeEntropyPausedHook:undefined});timeEntropyStatus.textContent='Passed · guest time and bytes agree; replay made zero live provider calls.';}
   catch(error){timeEntropyResult={status:'failed',failure:String(error)};timeEntropyStatus.textContent='Failed · '+error.message;}
@@ -3285,7 +3299,7 @@ timeEntropyRun.addEventListener('click',async()=>{
     timeEntropyStatus.dataset.status=timeEntropyResult.status;timeEntropyRunning=false;refreshRoadmapLive();setInteractiveState();}
 });
 inputRecordingRun.addEventListener('click',async()=>{
-  if(running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||!wasmReady)return;
+  if(running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||!wasmReady)return;
   inputRecordingRunning=true;inputRecordingResult=null;inputRecordingStatus.textContent='Checking delivered inputs and reopening the saved prefix…';setInteractiveState();refreshRoadmapLive();
   try{inputRecordingResult=await runInputRecordingProbe();inputRecordingStatus.textContent='Passed · guest bytes, saved input order and replay input refusal agree.';}
   catch(error){inputRecordingResult={status:'failed',failure:String(error)};inputRecordingStatus.textContent='Failed · '+error.message;}

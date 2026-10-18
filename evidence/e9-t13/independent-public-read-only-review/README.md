@@ -1,0 +1,7 @@
+# Partial independent production-publication assessment
+
+The separate critic supports P13 from saved production evidence at frozen runtime 2f2aa7. The release is at https://wasm-vm.pages.dev/; https://cb3b19fb.wasm-vm.pages.dev is the permanent URL for that same production release. **This is not a full task verification verdict. G9 independent execution, sensitivity and suite disposition remain unfinished.**
+
+Read assessment/assessment.md.gz with the detailed JSON and authored provenance. Six publication predictions and the supplementary root-render prediction hold with explicit qualifications: 34 carried asset responses and two fresh canonical HTML chains; inherited URL-only boot manifest staging; the recorded HTTP3 empty reason; and separate failed/corrected account-query records. The normal Chrome root render is distinct from the auxiliary Python403 observation, whose cause is unestablished.
+
+The critic authenticated 189 public originals, 13 earlier-account snapshots, 106 browser inventory entries and 750 staged files, then decoded guest frames/traces/CAS and actual trace-loaded source bytes. Prior local gates and unchanged HELD results carry without relabelling. No VM/test/browser/acceptance producer or stopped harness was executed, no sensitivity run occurred, and no alternate model/session was used. The worker only authenticated and compressed the named saved files. Each original path, digest and compressed digest is retained losslessly.

@@ -455,3 +455,53 @@ an explicitly incomplete capture prefix. Existing Linux provider assembly remain
 outside complete replay until T13/T14 compose network and executable replay ownership.
 The source matrix retains its planned overall runtime status; these source/hash updates
 identify the new owned boundary and the still gated legacy paths, not capstone completion.
+
+### Owned network boundary (E9-T13)
+
+The qualified network assembly installs an owned Ethernet broker before the first
+session transition. The machine retains guest TX intent bytes, queued RX bytes,
+connection/error and external-pending observations, cursor and virtqueue kick/reset
+state. Host transports remain outside the machine. Recording obtains a private
+incarnation-bound lease before constructing a provider; replay refuses that
+construction and every live callback. Restore and virtio reset revoke old leases.
+Replacing the qualified backend with a live adapter is refused.
+Checkpoint decoding also bounds the jointly represented send acknowledgements,
+queued receives, current link outcome and external-pending flag by the accepted
+network cursor, using checked arithmetic. Impossible results refuse before any
+state or callback incarnation changes.
+
+Exact capture omits service-ring views already invalidated by a pending transport
+reset. The reset flag remains recorded; capture neither polls the backend nor
+advances the guest. Restoring before the next service roundtrips that canonical
+state and resumes with the same instruction trace.
+
+Outstanding guest sends and recorded external-pending work suppress WFI idle
+fast-forward under the common session clock. Record and Replay consult the same
+owned state before deciding whether to jump to the next timer deadline. The live
+network check exercises both pending sources and the idle controls with matching
+complete checkpoints and instruction traces across execution budgets.
+
+Channel 20 envelopes bind each outgoing intent acknowledgement, incoming frame,
+connection outcome or external-work change to the common before-boundary coordinate.
+Frames are bounded to 65,535 bytes, each queue to 256 entries and combined owned
+payloads to 4 MiB. Persistent event chunks keep the envelope metadata separate from
+hash-addressed frame payloads. Missing/corrupt objects fail the ordinary durable
+read. Replay checks exact positions and outgoing bytes, stops on trace exhaustion,
+and retains a stopped divergence state; it has no transport factory or retry path.
+
+The public **Offline network check** executes pinned RV64 instructions which
+negotiate virtio-net, post descriptors and copy actual used-ring/IRQ/DMA state into
+a guest report. Its experimental Ethernet type carries a fixed HTTP request through
+a bounded proof bridge. The native bridge forwards the exact HTTP request to a
+local state-changing counter server and records its response and EOF. The browser
+bridge maps that pinned request to one safe same-origin GET, records the observed
+HTTP response and completed-body close, then performs six offline replays from
+initial and pending checkpoints. The acceptance server independently counts the
+original side effect and transport attempts, and removes the original listener
+before replay; no replay factory is called.
+
+This qualifies the network transport boundary, not a guest TCP stack or complete
+Linux replay. Existing SLIRP, WebSocket, DNS, Tailscale and file-socket providers
+remain outside this assembly. T14 composes the software VM and replay driver;
+provider timing is represented by recorded frame/outcome/pending deliveries rather
+than live provider timers during replay.

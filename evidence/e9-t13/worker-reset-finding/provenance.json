@@ -1,0 +1,565 @@
+{
+  "task": "E9-T13",
+  "status": "existing-saved-failure-observed-by-worker",
+  "runtime": "e91c7af9bd8ec64c200c7d5a6687d9e4e124db12",
+  "worker_submission": "dce370278d014cea71e92d48c8226a530f890c08",
+  "scope": "Read-only preservation of files the independent session saved before automatic security review stopped that session. No stopped test was retried. This packet is not a verifier verdict. Two normal reset roundtrip failures are preserved, alongside their original test/source/receipts and already produced ordinary schedule/capacity artifacts.",
+  "frame_sha256": [
+    "cb3066ac4b8a8d1c9c323ebbec8581db6dde6cc51cfa93e15fb14c25eb4fa806",
+    "850164c283134047ea402cc71370ef1e74db28620cfb9a2ddeb62ddcf35c7a7b"
+  ],
+  "frame_differences": {
+    "7": {
+      "payload_offset": 11674,
+      "lengths": [
+        311,
+        311
+      ],
+      "changed_bytes": [
+        [
+          277,
+          1,
+          0
+        ],
+        [
+          282,
+          1,
+          0
+        ],
+        [
+          283,
+          1,
+          0
+        ],
+        [
+          285,
+          1,
+          0
+        ]
+      ]
+    }
+  },
+  "files": [
+    {
+      "path": "normal-reset-receipt.json",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/normal-reset-receipt.json",
+      "bytes": 722,
+      "sha256": "9471854e95ab75261495bf627718ea5bced744cea309ce01297c954ad7d8a24b",
+      "gzip": "normal-reset-receipt.json.gz",
+      "gzip_sha256": "d83e491472e46892b7fbe47baae3462afbf0c4ad0c8bfc3021f47666925f6553"
+    },
+    {
+      "path": "normal-reset-first.log",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/normal-reset-first.log",
+      "bytes": 895,
+      "sha256": "6380fb02c117283080313b5098990dbf28c0b1d0980965c5b6becd3ff96d16d1",
+      "gzip": "normal-reset-first.log.gz",
+      "gzip_sha256": "fc313109ea9ffacc65ab3bbab233ffdb09d885363caedb43776077ecf71b16c0"
+    },
+    {
+      "path": "normal-reset-recheck.log",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/normal-reset-recheck.log",
+      "bytes": 807,
+      "sha256": "67d8f9fbcc7fe2cf88aa30dce19bd863d1a3c7c15aac1803786735bf530fc9f1",
+      "gzip": "normal-reset-recheck.log.gz",
+      "gzip_sha256": "6cb595029814efca3a2c34e65fd78a0ba0d0121d5d18f924ba891e45e543870d"
+    },
+    {
+      "path": "normal-coverage-receipt.json",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/normal-coverage-receipt.json",
+      "bytes": 12179,
+      "sha256": "31c85dd2ea883265627f13c588dc53928bd6695683b1c87b91ac5c116b690ac7",
+      "gzip": "normal-coverage-receipt.json.gz",
+      "gzip_sha256": "7c0d9c22ea5b281b394e0428ef6f197b8142d0de8b6136e7754301435ec21393"
+    },
+    {
+      "path": "normal-native.log",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/normal-native.log",
+      "bytes": 98482,
+      "sha256": "b502741d1ddca7943501d0affc421ada51ead18add21c17fae551e5602f997fe",
+      "gzip": "normal-native.log.gz",
+      "gzip_sha256": "2e25d6b3acae92b3acd408e34da0e1cdcb0273a585342091e547ba59ebbec767"
+    },
+    {
+      "path": "coverage-preparation.json",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/coverage-preparation.json",
+      "bytes": 11609,
+      "sha256": "5e060f2f98bbdfe2f9fc55afaeb8d07291e92ab59b737f1462958024a57f1ca8",
+      "gzip": "coverage-preparation.json.gz",
+      "gzip_sha256": "3161cb00157301e9bb1e896e3386776ec5e5e1808de589086aea69e0b5ed848b"
+    },
+    {
+      "path": "coverage-setup-attempts.md",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/coverage-setup-attempts.md",
+      "bytes": 437,
+      "sha256": "3f493547aea2364812e105593e8b851382ffc873d02eafc6d96de57087840f1d",
+      "gzip": "coverage-setup-attempts.md.gz",
+      "gzip_sha256": "7f368906751795234fecbc13b5fb287405860843d439fb7f677615cd019c345d"
+    },
+    {
+      "path": "repaired-predictions.md",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/repaired-predictions.md",
+      "bytes": 3485,
+      "sha256": "af679951a06c0be0cbff8a6482adf4f4f14d56a4931ddb3204ed6888f74d223d",
+      "gzip": "repaired-predictions.md.gz",
+      "gzip_sha256": "954d3f5746f8aadd9dff1eaa376821232c4a8545bf333bca9f49eb8ae94836bd"
+    },
+    {
+      "path": "ledger.md",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/ledger.md",
+      "bytes": 5910,
+      "sha256": "d1dfe599286aeeef526fe8d001a4e5772de5389e99b683d31e4ecd9875506f7d",
+      "gzip": "ledger.md.gz",
+      "gzip_sha256": "0e994576528d09f9674cde4062b1cea3616fa82dfa3c34fbc189a9834d600f01"
+    },
+    {
+      "path": "normal_format_tests.rs",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/normal_format_tests.rs",
+      "bytes": 6231,
+      "sha256": "dcd4aeb1a4bdf4f257f4a08d5e410a886cf2f55ceb51ff0bb1562b297eb5b365",
+      "gzip": "normal_format_tests.rs.gz",
+      "gzip_sha256": "bda3a89fda57a95895fcc71743f3e1ee4d8fc1699ce110cc0968d269c91dd45b"
+    },
+    {
+      "path": "prepare_coverage.py",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/prepare_coverage.py",
+      "bytes": 2604,
+      "sha256": "82fe6fd4b2bbbfca255b6d28967a7f72bc6ac20a055e5c5b2fbd6174b624f0a2",
+      "gzip": "prepare_coverage.py.gz",
+      "gzip_sha256": "9326c6f95fc07ce7ec8945418d165a82ac20b210eeb828af057c330402cecc0d"
+    },
+    {
+      "path": "run_coverage.py",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/run_coverage.py",
+      "bytes": 2763,
+      "sha256": "c11de2bae43fc3bcdbc36ca7c18b1427886158620612440758f2a0e4dc90ae7d",
+      "gzip": "run_coverage.py.gz",
+      "gzip_sha256": "95766bf73960959090770c0acbbb0f7315de2095e3fcd04cadb0f6f556978c0c"
+    },
+    {
+      "path": "recheck_normal_reset.py",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recheck_normal_reset.py",
+      "bytes": 2186,
+      "sha256": "26a34b470a03d068791234dd369c306e586ec5d49ded298fdd157c9e94367e5f",
+      "gzip": "recheck_normal_reset.py.gz",
+      "gzip_sha256": "37a5523564c2a6f838ae936515e771ad03a96d052963d2a555ce2c76a5744624"
+    },
+    {
+      "path": "harness/tests/critic.rs",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/harness/tests/critic.rs",
+      "bytes": 36749,
+      "sha256": "2123ba667438dd8fb69e052d6c46ae41504e105f89402275b459228ede2e7b21",
+      "gzip": "harness/tests/critic.rs.gz",
+      "gzip_sha256": "6d45c013b2cb3f095bdd7203e8115f46fda7f02cd048d6973fec32ef9fcc2193"
+    },
+    {
+      "path": "harness/Cargo.toml",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/harness/Cargo.toml",
+      "bytes": 221,
+      "sha256": "2806f6103b7ae35f1292b21be78f2e299a2cae1d91216182988121319cda744b",
+      "gzip": "harness/Cargo.toml.gz",
+      "gzip_sha256": "76f372961f965e8977f10a3367f8e7ded57a753ed751ffd0388a6ae4fde2a93c"
+    },
+    {
+      "path": "harness/Cargo.lock",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/harness/Cargo.lock",
+      "bytes": 3345,
+      "sha256": "3bcc14f6fc4bd56170dd1eda740ba9689d9deed5c699b38224d9c2d88c13d738",
+      "gzip": "harness/Cargo.lock.gz",
+      "gzip_sha256": "eeae1a3d6c7b4092cd988efc2c23d133352895994ab8c1ee599a951a71ba72be"
+    },
+    {
+      "path": "recorded-reset-first/critic-owned-full-after-ack.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-reset-first/critic-owned-full-after-ack.resume",
+      "bytes": 4206647,
+      "sha256": "40a0f03d69b9da26462ce880f77a24c955d53ec0924e7e3992b8975dc69737bb",
+      "gzip": "recorded-reset-first/critic-owned-full-after-ack.resume.gz",
+      "gzip_sha256": "fde3bf8ba8411cbf968e77daf1e73c2071de636b2ecfbf53b22d479a75800769"
+    },
+    {
+      "path": "recorded-reset-first/critic-owned-full-before-ack.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-reset-first/critic-owned-full-before-ack.resume",
+      "bytes": 4206655,
+      "sha256": "400cd60b6a6598a31c249d4e45ebdac78a8501fd6cfecbb25b7c103e92bce942",
+      "gzip": "recorded-reset-first/critic-owned-full-before-ack.resume.gz",
+      "gzip_sha256": "b574eabed57bacea0ccd15f62aabff53fd1d7cf008f65e85b4420db4450631cf"
+    },
+    {
+      "path": "recorded-reset-first/critic-owned-reset-restored.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-reset-first/critic-owned-reset-restored.resume",
+      "bytes": 12083,
+      "sha256": "850164c283134047ea402cc71370ef1e74db28620cfb9a2ddeb62ddcf35c7a7b",
+      "gzip": "recorded-reset-first/critic-owned-reset-restored.resume.gz",
+      "gzip_sha256": "c34d3b8100f86be91777d680025a645c5dd4d625cbcffc9b3d93645d8416e9a0"
+    },
+    {
+      "path": "recorded-reset-first/critic-owned-reset.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-reset-first/critic-owned-reset.resume",
+      "bytes": 12083,
+      "sha256": "cb3066ac4b8a8d1c9c323ebbec8581db6dde6cc51cfa93e15fb14c25eb4fa806",
+      "gzip": "recorded-reset-first/critic-owned-reset.resume.gz",
+      "gzip_sha256": "64df975a0be217414bd6bcab681e2d36a1abad21a200e205f6f601111c5dc669"
+    },
+    {
+      "path": "recorded-reset-recheck/critic-owned-full-after-ack.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-reset-recheck/critic-owned-full-after-ack.resume",
+      "bytes": 4206647,
+      "sha256": "40a0f03d69b9da26462ce880f77a24c955d53ec0924e7e3992b8975dc69737bb",
+      "gzip": "recorded-reset-recheck/critic-owned-full-after-ack.resume.gz",
+      "gzip_sha256": "fde3bf8ba8411cbf968e77daf1e73c2071de636b2ecfbf53b22d479a75800769"
+    },
+    {
+      "path": "recorded-reset-recheck/critic-owned-full-before-ack.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-reset-recheck/critic-owned-full-before-ack.resume",
+      "bytes": 4206655,
+      "sha256": "400cd60b6a6598a31c249d4e45ebdac78a8501fd6cfecbb25b7c103e92bce942",
+      "gzip": "recorded-reset-recheck/critic-owned-full-before-ack.resume.gz",
+      "gzip_sha256": "b574eabed57bacea0ccd15f62aabff53fd1d7cf008f65e85b4420db4450631cf"
+    },
+    {
+      "path": "recorded-reset-recheck/critic-owned-reset-restored.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-reset-recheck/critic-owned-reset-restored.resume",
+      "bytes": 12083,
+      "sha256": "850164c283134047ea402cc71370ef1e74db28620cfb9a2ddeb62ddcf35c7a7b",
+      "gzip": "recorded-reset-recheck/critic-owned-reset-restored.resume.gz",
+      "gzip_sha256": "c34d3b8100f86be91777d680025a645c5dd4d625cbcffc9b3d93645d8416e9a0"
+    },
+    {
+      "path": "recorded-reset-recheck/critic-owned-reset.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-reset-recheck/critic-owned-reset.resume",
+      "bytes": 12083,
+      "sha256": "cb3066ac4b8a8d1c9c323ebbec8581db6dde6cc51cfa93e15fb14c25eb4fa806",
+      "gzip": "recorded-reset-recheck/critic-owned-reset.resume.gz",
+      "gzip_sha256": "64df975a0be217414bd6bcab681e2d36a1abad21a200e205f6f601111c5dc669"
+    },
+    {
+      "path": "recorded-normal/changed-guest-intent.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/changed-guest-intent.resume",
+      "bytes": 12194,
+      "sha256": "6dfa11ef8bbc43aa5f919692b72bf75dce2759be7306f01a330e4501939270e9",
+      "gzip": "recorded-normal/changed-guest-intent.resume.gz",
+      "gzip_sha256": "d9be633e271816a798a09475cbbc95ddc44d60005b2aaddae85f32da7778e131"
+    },
+    {
+      "path": "recorded-normal/conservation-invalid-0.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/conservation-invalid-0.resume",
+      "bytes": 12090,
+      "sha256": "e3412357af0cbbb62d137bea487fa4159e82faebd8795bf6bee5e6a6d0606a82",
+      "gzip": "recorded-normal/conservation-invalid-0.resume.gz",
+      "gzip_sha256": "a5157f0654dbac3d0ceb2683b893e1f3503abc7714aa67e17360404ec69a6baa"
+    },
+    {
+      "path": "recorded-normal/conservation-invalid-1.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/conservation-invalid-1.resume",
+      "bytes": 11869,
+      "sha256": "62a20b522f1955a3ffb8b14035166ff542bba047ae5e78a8cea5525f2b4ed895",
+      "gzip": "recorded-normal/conservation-invalid-1.resume.gz",
+      "gzip_sha256": "788b356307ce0c9e5aa11251ecbf27534fd2424260425e882e86c90f9994e47b"
+    },
+    {
+      "path": "recorded-normal/conservation-invalid-2.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/conservation-invalid-2.resume",
+      "bytes": 11869,
+      "sha256": "b7ca477e6af8d06970a85ef09af921e986e1720e301015f2141dee9964bd86a9",
+      "gzip": "recorded-normal/conservation-invalid-2.resume.gz",
+      "gzip_sha256": "f1ab231da1a5e991dd3d2a32300e069cf33c66963861716b671ee85f429418cd"
+    },
+    {
+      "path": "recorded-normal/conservation-invalid-3.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/conservation-invalid-3.resume",
+      "bytes": 11869,
+      "sha256": "68f04445325026ab0b904e0c3ab0cc1244a515c55b583e8a644e04e5a6d0d75d",
+      "gzip": "recorded-normal/conservation-invalid-3.resume.gz",
+      "gzip_sha256": "fdb1dc1c281c98161c05f2219720ef07985dfdc7f39a74f3911f0629d025354f"
+    },
+    {
+      "path": "recorded-normal/conservation-unchanged-0.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/conservation-unchanged-0.resume",
+      "bytes": 12083,
+      "sha256": "f9b6b8cebe76c5d04b2135c9735f98934915e0c15b65d017455d7740d91c87a5",
+      "gzip": "recorded-normal/conservation-unchanged-0.resume.gz",
+      "gzip_sha256": "ae70650648aa2a7253d0d892d323e6fd29369ec4486287d7bfd7f9bfd49d3e36"
+    },
+    {
+      "path": "recorded-normal/conservation-unchanged-1.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/conservation-unchanged-1.resume",
+      "bytes": 11869,
+      "sha256": "3d3a91218bedfb2272558dd384ab32799766dec8249ce97ada9a596eb1af76c0",
+      "gzip": "recorded-normal/conservation-unchanged-1.resume.gz",
+      "gzip_sha256": "795bcaf1c908ff2206d85702b83aba42021ef2b7e160b2ff9ce2cc8173509ebe"
+    },
+    {
+      "path": "recorded-normal/conservation-unchanged-2.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/conservation-unchanged-2.resume",
+      "bytes": 11869,
+      "sha256": "3d3a91218bedfb2272558dd384ab32799766dec8249ce97ada9a596eb1af76c0",
+      "gzip": "recorded-normal/conservation-unchanged-2.resume.gz",
+      "gzip_sha256": "795bcaf1c908ff2206d85702b83aba42021ef2b7e160b2ff9ce2cc8173509ebe"
+    },
+    {
+      "path": "recorded-normal/conservation-unchanged-3.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/conservation-unchanged-3.resume",
+      "bytes": 11869,
+      "sha256": "f82eac6787603f52ea94001435f7aa04852ce60ce24956fb9d6b2995bd573b3f",
+      "gzip": "recorded-normal/conservation-unchanged-3.resume.gz",
+      "gzip_sha256": "ebcf641c5ea48c62c480247909cbbc20ac801e930dd06b9d0a15a407be7ca309"
+    },
+    {
+      "path": "recorded-normal/conservation-valid-all-terms.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/conservation-valid-all-terms.resume",
+      "bytes": 12090,
+      "sha256": "676221961d1716b894591639f242bb504d85be5af27455cc14d5512cbd1a0f90",
+      "gzip": "recorded-normal/conservation-valid-all-terms.resume.gz",
+      "gzip_sha256": "319c40cf3eb2e01d75e93b90e877b8c3e980bad803b62aa89ed20a917ae1b37a"
+    },
+    {
+      "path": "recorded-normal/critic-same-boundary-4c613a9.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/critic-same-boundary-4c613a9.resume",
+      "bytes": 12133,
+      "sha256": "cfd503d65df99e92839713b980250189d890bc0f33c7a4ef544abad95f1800ec",
+      "gzip": "recorded-normal/critic-same-boundary-4c613a9.resume.gz",
+      "gzip_sha256": "c4e9a3c28a70f30ce435a9a73c669ff803b799cd4fc489802d64a8b4a446b5b5"
+    },
+    {
+      "path": "recorded-normal/critic-same-boundary-4c613a9.trace",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/critic-same-boundary-4c613a9.trace",
+      "bytes": 624982,
+      "sha256": "59243677d8fc7226d7332a53ccedbf52dee1fbf34845219906ec54c85f569597",
+      "gzip": "recorded-normal/critic-same-boundary-4c613a9.trace.gz",
+      "gzip_sha256": "1ed90054b6d85a3e7fd07f1c44a0a56d9e906d465017e04723c6d9450f44013c"
+    },
+    {
+      "path": "recorded-normal/critic-same-boundary-6a85f903.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/critic-same-boundary-6a85f903.resume",
+      "bytes": 12133,
+      "sha256": "971eb9ca0cbf732dc5b6f9045f2acd0f76d86178d55b90fe5065f7808dec1af7",
+      "gzip": "recorded-normal/critic-same-boundary-6a85f903.resume.gz",
+      "gzip_sha256": "79ebb264138e88acb8fd1fc80cd5df30303b53958e4b772babd88fd4f790a0b5"
+    },
+    {
+      "path": "recorded-normal/critic-same-boundary-6a85f903.trace",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/critic-same-boundary-6a85f903.trace",
+      "bytes": 624982,
+      "sha256": "1f935d0e9624512a0d78ef0f11686ab23d29a2209625acbeb4d9da4ff0d13c09",
+      "gzip": "recorded-normal/critic-same-boundary-6a85f903.trace.gz",
+      "gzip_sha256": "e14094270f8e058b8d4b4fb267379b0e111a8cd8c0493fad9f1414686473bdff"
+    },
+    {
+      "path": "recorded-normal/critic-same-boundary-731c48e5.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/critic-same-boundary-731c48e5.resume",
+      "bytes": 12133,
+      "sha256": "3a141b027e2e56db869f4d705553717d0de5c3e98a4827990a0771d2d4a1826f",
+      "gzip": "recorded-normal/critic-same-boundary-731c48e5.resume.gz",
+      "gzip_sha256": "7d155c3d52bc76e2c237f238dd424ff601c33cd924dd219e0fe34e8d4dc0f087"
+    },
+    {
+      "path": "recorded-normal/critic-same-boundary-731c48e5.trace",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/critic-same-boundary-731c48e5.trace",
+      "bytes": 624982,
+      "sha256": "de3dccb1820a3b058c6e0a43037bc4c21c7e1e2b87b1405b66eec6e1186bba1d",
+      "gzip": "recorded-normal/critic-same-boundary-731c48e5.trace.gz",
+      "gzip_sha256": "0f5a3cc1ab58e8f20eb5d33dad904f991909f3c8ffc116855ec5c3fba2052ea8"
+    },
+    {
+      "path": "recorded-normal/critic-same-boundary-9ff7201d.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/critic-same-boundary-9ff7201d.resume",
+      "bytes": 12133,
+      "sha256": "1c4b3ed492fe1aa59dcf5d441eac096220f194fc458672e602a0d609c8662d0e",
+      "gzip": "recorded-normal/critic-same-boundary-9ff7201d.resume.gz",
+      "gzip_sha256": "2c99783917d714da57b3399b82c3905089c6ae2beae0e73efde5c705229c6b6d"
+    },
+    {
+      "path": "recorded-normal/critic-same-boundary-9ff7201d.trace",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/critic-same-boundary-9ff7201d.trace",
+      "bytes": 624982,
+      "sha256": "87ce0ad71670a7c0a4f44fc8ac3029edece5a60a87fbb94a996e2b9d5c2cf426",
+      "gzip": "recorded-normal/critic-same-boundary-9ff7201d.trace.gz",
+      "gzip_sha256": "81147588894d3dcb3728ab7485269ed41f51dc7a01ab88781307209c5d63fa65"
+    },
+    {
+      "path": "recorded-normal/critic-same-boundary-c102d7b3.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/critic-same-boundary-c102d7b3.resume",
+      "bytes": 12133,
+      "sha256": "e38cb88bc0aa4fa3f9ae410e0f9b1165676fa9d586c88e5c05ca2e67b315c002",
+      "gzip": "recorded-normal/critic-same-boundary-c102d7b3.resume.gz",
+      "gzip_sha256": "0bee9d1fce2db4416b02c8cf144f943809b2f9851c1dc7caac558cf7f4468318"
+    },
+    {
+      "path": "recorded-normal/critic-same-boundary-c102d7b3.trace",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/critic-same-boundary-c102d7b3.trace",
+      "bytes": 624982,
+      "sha256": "a6196dd27ddc1682996f8770dcf72775e45fc29b5a3c63ede2fd29ba8f825c52",
+      "gzip": "recorded-normal/critic-same-boundary-c102d7b3.trace.gz",
+      "gzip_sha256": "4c1f311e37c2ec166ab9b102221fc1d539b2e38b77ab237bb40d9b945042e016"
+    },
+    {
+      "path": "recorded-normal/critic-same-boundary-f387412b.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/critic-same-boundary-f387412b.resume",
+      "bytes": 12135,
+      "sha256": "d49dc4cdfabaed4cf0c3e4a1f7831c81d390231650bd601e73c8cb26951b5cfd",
+      "gzip": "recorded-normal/critic-same-boundary-f387412b.resume.gz",
+      "gzip_sha256": "d84b6d8e17220a263288315129f12148d0e28025eb6e8959226f3a99a9f51d2c"
+    },
+    {
+      "path": "recorded-normal/critic-same-boundary-f387412b.trace",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/critic-same-boundary-f387412b.trace",
+      "bytes": 624982,
+      "sha256": "2d1cd9b4630d26667aae958f79fafb0c790445c3fce0a83f8fdb271faacdaaeb",
+      "gzip": "recorded-normal/critic-same-boundary-f387412b.trace.gz",
+      "gzip_sha256": "f41fd6cd4138d25f7af6cbf40a25422a7e53f4bc352caa84bc67d26272a04f3b"
+    },
+    {
+      "path": "recorded-normal/invalid-network-checkpoint-0.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/invalid-network-checkpoint-0.resume",
+      "bytes": 12194,
+      "sha256": "e13b4e14b4d36071e9f0fd6b6a03c51c2c3442919069feda26f0aba414685d32",
+      "gzip": "recorded-normal/invalid-network-checkpoint-0.resume.gz",
+      "gzip_sha256": "21d7770f730f740808ef4f059a78d42f2a8ae93c2210c33cf60e5438f8e723e3"
+    },
+    {
+      "path": "recorded-normal/invalid-network-checkpoint-1.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/invalid-network-checkpoint-1.resume",
+      "bytes": 12194,
+      "sha256": "3827322f616a01893a3a56de126dcad0d5739418b9832bbfde23c71d7e488727",
+      "gzip": "recorded-normal/invalid-network-checkpoint-1.resume.gz",
+      "gzip_sha256": "56487def4bec8e6db2de31ba2eac2b1bd233e8a078dd5c7f7c804a5027e9113a"
+    },
+    {
+      "path": "recorded-normal/invalid-network-checkpoint-10.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/invalid-network-checkpoint-10.resume",
+      "bytes": 12194,
+      "sha256": "7ed7b01cf340297deed96b5d7bae980fdba9027023eadf11a2702e2821458af4",
+      "gzip": "recorded-normal/invalid-network-checkpoint-10.resume.gz",
+      "gzip_sha256": "18bdba1bf7348415965f5e3c980efe25e5d51a5613e95085bf99dc3094a26f81"
+    },
+    {
+      "path": "recorded-normal/invalid-network-checkpoint-11.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/invalid-network-checkpoint-11.resume",
+      "bytes": 12194,
+      "sha256": "04470f2d80166cfdccbc2b3aa6672349a2d6dcc9698e1414d627fbd998a0c96d",
+      "gzip": "recorded-normal/invalid-network-checkpoint-11.resume.gz",
+      "gzip_sha256": "a29cda101c732c2e1b00838d6da57a3ff549639ae947d893703ebd3e6ee6eb9f"
+    },
+    {
+      "path": "recorded-normal/invalid-network-checkpoint-12.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/invalid-network-checkpoint-12.resume",
+      "bytes": 12195,
+      "sha256": "c91edddd06bb9097f2c9434c1ed256f04e1b5f9dfe5e5b239b4d539df06ac4e4",
+      "gzip": "recorded-normal/invalid-network-checkpoint-12.resume.gz",
+      "gzip_sha256": "c332e94f38f8ce21800e4454fb0d9087cf6c7ee338d78cb724a1a798a99d93b7"
+    },
+    {
+      "path": "recorded-normal/invalid-network-checkpoint-2.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/invalid-network-checkpoint-2.resume",
+      "bytes": 12194,
+      "sha256": "c7f1c29024f3406fcdf62c97d546ce70f6c08e2ebdeeaeeeebfb7644a763cc48",
+      "gzip": "recorded-normal/invalid-network-checkpoint-2.resume.gz",
+      "gzip_sha256": "5124ce7c4db0d03e7730510414ff3e3c73779ac972923dacd0f97cd30e945475"
+    },
+    {
+      "path": "recorded-normal/invalid-network-checkpoint-3.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/invalid-network-checkpoint-3.resume",
+      "bytes": 12194,
+      "sha256": "86181bd9169efd5517c8a24ccf28951f39e4bdfaaefaf149816c7b4574a4805c",
+      "gzip": "recorded-normal/invalid-network-checkpoint-3.resume.gz",
+      "gzip_sha256": "004938fa1145be2a83c611837a4cabe7acb1f947b916214a48fedfb7f68b7ba7"
+    },
+    {
+      "path": "recorded-normal/invalid-network-checkpoint-4.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/invalid-network-checkpoint-4.resume",
+      "bytes": 12194,
+      "sha256": "636838a6b5bb0e7c1a10cbde3f7498a17679655c737b339ef83a1c3764f1f97d",
+      "gzip": "recorded-normal/invalid-network-checkpoint-4.resume.gz",
+      "gzip_sha256": "483685fd4915392539518bc0bc70bb914f9228d328253f2eeb69eecea800c372"
+    },
+    {
+      "path": "recorded-normal/invalid-network-checkpoint-5.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/invalid-network-checkpoint-5.resume",
+      "bytes": 12194,
+      "sha256": "eff24af27a85c0e29732c9e288fe8558a0958728d11bbda8f787a287e6db6dbc",
+      "gzip": "recorded-normal/invalid-network-checkpoint-5.resume.gz",
+      "gzip_sha256": "032b2e3375b1f2a5783061a2792601f8ac1c528f49fe9f526c711b9ed7166a0e"
+    },
+    {
+      "path": "recorded-normal/invalid-network-checkpoint-6.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/invalid-network-checkpoint-6.resume",
+      "bytes": 12194,
+      "sha256": "5226a59bc7e81432ed2819d536eb3afc257c0330c62426a4fd2646fc459d743a",
+      "gzip": "recorded-normal/invalid-network-checkpoint-6.resume.gz",
+      "gzip_sha256": "1aa856751338ddf168b56afd814641d48e7cf31559196acc3d7fca60521b5e02"
+    },
+    {
+      "path": "recorded-normal/invalid-network-checkpoint-7.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/invalid-network-checkpoint-7.resume",
+      "bytes": 12194,
+      "sha256": "80b444d55045685508e247033c559d8ae0fa2ca765cccd6fe2218eb34b985ab0",
+      "gzip": "recorded-normal/invalid-network-checkpoint-7.resume.gz",
+      "gzip_sha256": "ce5af81a537c8e056d56a993ec34846c9c7e593e62b5ca525155bc0c59099ea2"
+    },
+    {
+      "path": "recorded-normal/invalid-network-checkpoint-8.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/invalid-network-checkpoint-8.resume",
+      "bytes": 12194,
+      "sha256": "134e6ef6fa5d1e152dc83d72f4bd41ada66849bf5d0255e5f45c96282bc8c2bc",
+      "gzip": "recorded-normal/invalid-network-checkpoint-8.resume.gz",
+      "gzip_sha256": "5813835a926fdc908336c0f30a2ab920c6bc7d0838eacfec6caf11ef29354fd5"
+    },
+    {
+      "path": "recorded-normal/invalid-network-checkpoint-9.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/invalid-network-checkpoint-9.resume",
+      "bytes": 12194,
+      "sha256": "4bfbadc55b732e63a155f5eff79b0e2674898fa66a6b099ee943654a1059c04c",
+      "gzip": "recorded-normal/invalid-network-checkpoint-9.resume.gz",
+      "gzip_sha256": "2c902f4fc115bcf122474c1849bf7e513864781c62a5deecc8c4269f672b83c5"
+    },
+    {
+      "path": "recorded-normal/oversized-descriptor.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/oversized-descriptor.resume",
+      "bytes": 12085,
+      "sha256": "b177b19b422a694ae0985f5684df2973d7ae0b7dab515484faaabbd60603908b",
+      "gzip": "recorded-normal/oversized-descriptor.resume.gz",
+      "gzip_sha256": "481b4a68eefd2f40ef3826285399747ad053f9ed45971a2610b6925f3ae58f87"
+    },
+    {
+      "path": "recorded-normal/oversized-descriptor.trace",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/oversized-descriptor.trace",
+      "bytes": 73119,
+      "sha256": "2868e6c4183232fcc67641c51366d90c0217c9066e7de11d89785d2187b4e274",
+      "gzip": "recorded-normal/oversized-descriptor.trace.gz",
+      "gzip_sha256": "5497a2de93a4215ded48f2407ba3f6ef7f1a6b987a073f2e1283fc263c96cb9b"
+    },
+    {
+      "path": "recorded-normal/queued-receive.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/queued-receive.resume",
+      "bytes": 12090,
+      "sha256": "2ee7d708d88253f20af79e5189d1105bc24db9f4165f5a985cc8d683ad125f7c",
+      "gzip": "recorded-normal/queued-receive.resume.gz",
+      "gzip_sha256": "d78dab03562a2537a28cda53f37683b2d383bac3bef5d2e31bdd64efba90121a"
+    },
+    {
+      "path": "recorded-normal/refusal-pending.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/refusal-pending.resume",
+      "bytes": 12194,
+      "sha256": "7f2f0db4a80555e27c4e56b44d07a1bffba407a6c6a0ab96b855b1d7e7ab413e",
+      "gzip": "recorded-normal/refusal-pending.resume.gz",
+      "gzip_sha256": "83245b4c71b0e19767a3878625648dfc474db68faad08b5df912c7a3f8a1da61"
+    },
+    {
+      "path": "recorded-normal/refusal-send.event",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/refusal-send.event",
+      "bytes": 121,
+      "sha256": "0fa456296cea3196a8694f6964e0339185f16af20b8ceac7f81b1468c5093f14",
+      "gzip": "recorded-normal/refusal-send.event.gz",
+      "gzip_sha256": "690c2a16d5b96f86687c83848319b641d86f1ffe0efae0716e6d7d4e7d7ddfb4"
+    },
+    {
+      "path": "recorded-normal/reset.resume",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-critic-main/recorded-normal/reset.resume",
+      "bytes": 12083,
+      "sha256": "e7122115d3581988a9cb1b8b064e709a7fc807e7b7627fb0012df4d184952375",
+      "gzip": "recorded-normal/reset.resume.gz",
+      "gzip_sha256": "d2ec19c5323622ab7d9bd82ea3f69bb47d4563e3a1acf89655e1e85f1338afcb"
+    }
+  ],
+  "created": 1792344079.000106
+}

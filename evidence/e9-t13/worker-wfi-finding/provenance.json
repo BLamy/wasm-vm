@@ -1,0 +1,1603 @@
+{
+  "kind": "Worker ordinary WFI/owned-network semantic counterexample; no independent verdict",
+  "created": 1792346633.121908,
+  "runtime": "04f628dd02a0bf57331682e05607829e25a0ca46",
+  "prediction": "At transition2 with owned Pending(true), WFI and ADDI should both retire and mtime should be2; pending work must suppress idle fast-forward.",
+  "observed": "Corrected ordinary worker regression exits101: transition2/retired1/mtime1000000/x1=0 for owned Pending(true). The no-pending control matches the idle advance and Record/Replay frames.",
+  "first_attempt_disclosure": "The first new harness attempt compared a budget1 call before reaching its target; this harness-only failure is preserved and is not claimed as the semantic finding. v2 loops to the declared target and records the independently predicted pending-work failure.",
+  "baseline_disclosure": "All9 existing worker tests pass under instrumentation. The first combined-oracle attempt lacks separate JIT files and remains failed; an additive explicitly disclosed oracle view carries the unchanged04f JIT frames and passes without claiming a fresh JIT execution.",
+  "entries": [
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/compile-worker-regressions.log",
+      "artifact": "ordinary-baseline/compile-worker-regressions.log.gz",
+      "size": 88522,
+      "sha256": "826c9731eb7645434b35c433afc2b47b582e66ef13a6005e0d2f2fb536b3db15",
+      "gzip_size": 7035,
+      "gzip_sha256": "5785699242945f97feaeb4e084fc1d277e12cc8bd799b6c4a2dac08d12e03593"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/changed-guest-intent.resume",
+      "artifact": "ordinary-baseline/native/changed-guest-intent.resume.gz",
+      "size": 12194,
+      "sha256": "6dfa11ef8bbc43aa5f919692b72bf75dce2759be7306f01a330e4501939270e9",
+      "gzip_size": 4442,
+      "gzip_sha256": "d9be633e271816a798a09475cbbc95ddc44d60005b2aaddae85f32da7778e131"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/conservation-invalid-0.resume",
+      "artifact": "ordinary-baseline/native/conservation-invalid-0.resume.gz",
+      "size": 12090,
+      "sha256": "e3412357af0cbbb62d137bea487fa4159e82faebd8795bf6bee5e6a6d0606a82",
+      "gzip_size": 4446,
+      "gzip_sha256": "a5157f0654dbac3d0ceb2683b893e1f3503abc7714aa67e17360404ec69a6baa"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/conservation-invalid-1.resume",
+      "artifact": "ordinary-baseline/native/conservation-invalid-1.resume.gz",
+      "size": 11869,
+      "sha256": "62a20b522f1955a3ffb8b14035166ff542bba047ae5e78a8cea5525f2b4ed895",
+      "gzip_size": 4191,
+      "gzip_sha256": "788b356307ce0c9e5aa11251ecbf27534fd2424260425e882e86c90f9994e47b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/conservation-invalid-2.resume",
+      "artifact": "ordinary-baseline/native/conservation-invalid-2.resume.gz",
+      "size": 11869,
+      "sha256": "b7ca477e6af8d06970a85ef09af921e986e1720e301015f2141dee9964bd86a9",
+      "gzip_size": 4191,
+      "gzip_sha256": "f1ab231da1a5e991dd3d2a32300e069cf33c66963861716b671ee85f429418cd"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/conservation-invalid-3.resume",
+      "artifact": "ordinary-baseline/native/conservation-invalid-3.resume.gz",
+      "size": 11869,
+      "sha256": "68f04445325026ab0b904e0c3ab0cc1244a515c55b583e8a644e04e5a6d0d75d",
+      "gzip_size": 4198,
+      "gzip_sha256": "fdb1dc1c281c98161c05f2219720ef07985dfdc7f39a74f3911f0629d025354f"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/conservation-unchanged-0.resume",
+      "artifact": "ordinary-baseline/native/conservation-unchanged-0.resume.gz",
+      "size": 12083,
+      "sha256": "f9b6b8cebe76c5d04b2135c9735f98934915e0c15b65d017455d7740d91c87a5",
+      "gzip_size": 4437,
+      "gzip_sha256": "ae70650648aa2a7253d0d892d323e6fd29369ec4486287d7bfd7f9bfd49d3e36"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/conservation-unchanged-1.resume",
+      "artifact": "ordinary-baseline/native/conservation-unchanged-1.resume.gz",
+      "size": 11869,
+      "sha256": "3d3a91218bedfb2272558dd384ab32799766dec8249ce97ada9a596eb1af76c0",
+      "gzip_size": 4190,
+      "gzip_sha256": "795bcaf1c908ff2206d85702b83aba42021ef2b7e160b2ff9ce2cc8173509ebe"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/conservation-unchanged-2.resume",
+      "artifact": "ordinary-baseline/native/conservation-unchanged-2.resume.gz",
+      "size": 11869,
+      "sha256": "3d3a91218bedfb2272558dd384ab32799766dec8249ce97ada9a596eb1af76c0",
+      "gzip_size": 4190,
+      "gzip_sha256": "795bcaf1c908ff2206d85702b83aba42021ef2b7e160b2ff9ce2cc8173509ebe"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/conservation-unchanged-3.resume",
+      "artifact": "ordinary-baseline/native/conservation-unchanged-3.resume.gz",
+      "size": 11869,
+      "sha256": "f82eac6787603f52ea94001435f7aa04852ce60ce24956fb9d6b2995bd573b3f",
+      "gzip_size": 4200,
+      "gzip_sha256": "ebcf641c5ea48c62c480247909cbbc20ac801e930dd06b9d0a15a407be7ca309"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/conservation-valid-all-terms.resume",
+      "artifact": "ordinary-baseline/native/conservation-valid-all-terms.resume.gz",
+      "size": 12090,
+      "sha256": "676221961d1716b894591639f242bb504d85be5af27455cc14d5512cbd1a0f90",
+      "gzip_size": 4450,
+      "gzip_sha256": "319c40cf3eb2e01d75e93b90e877b8c3e980bad803b62aa89ed20a917ae1b37a"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/final.resume",
+      "artifact": "ordinary-baseline/native/final.resume.gz",
+      "size": 12417,
+      "sha256": "d11b4fafd10957d01d2e7c0614a81f91a1054780c99d0a4e5d1657f7e4964e0a",
+      "gzip_size": 4570,
+      "gzip_sha256": "6dca44c3aab6006ca663bb4e6d27784f3a6e61592c7d5167128c2ced535292b4"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/guest-report.bin",
+      "artifact": "ordinary-baseline/native/guest-report.bin.gz",
+      "size": 1056,
+      "sha256": "a42797c3d911e04e7c657eaa7908c4477628944fed74bd764dab3ed02bf0a000",
+      "gzip_size": 162,
+      "gzip_sha256": "e511ba00031e5f9b4b62baf3513d24fac55a84c4bc89e01beeff7f8116969579"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/http-request.bin",
+      "artifact": "ordinary-baseline/native/http-request.bin.gz",
+      "size": 85,
+      "sha256": "c0a51b70838daac6898ae2a8339cab4703859d45ebe4427d2695796cf31f5dd3",
+      "gzip_size": 98,
+      "gzip_sha256": "cb5c07c5f286ee94fca16d10bba15ebda7f0c249f05f09504850e52ee9ecf1d8"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/http-response.bin",
+      "artifact": "ordinary-baseline/native/http-response.bin.gz",
+      "size": 130,
+      "sha256": "827bbdd290a3954ab861709e65000c2f44be9491ad4be45bebbc990d280ce0b3",
+      "gzip_size": 132,
+      "gzip_sha256": "87f7877161909010949c35fae8bfb7613c1484c563ed506fff16744b18ede486"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/initial.resume",
+      "artifact": "ordinary-baseline/native/initial.resume.gz",
+      "size": 11869,
+      "sha256": "3d3a91218bedfb2272558dd384ab32799766dec8249ce97ada9a596eb1af76c0",
+      "gzip_size": 4190,
+      "gzip_sha256": "795bcaf1c908ff2206d85702b83aba42021ef2b7e160b2ff9ce2cc8173509ebe"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/invalid-network-checkpoint-0.resume",
+      "artifact": "ordinary-baseline/native/invalid-network-checkpoint-0.resume.gz",
+      "size": 12194,
+      "sha256": "e13b4e14b4d36071e9f0fd6b6a03c51c2c3442919069feda26f0aba414685d32",
+      "gzip_size": 4443,
+      "gzip_sha256": "21d7770f730f740808ef4f059a78d42f2a8ae93c2210c33cf60e5438f8e723e3"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/invalid-network-checkpoint-1.resume",
+      "artifact": "ordinary-baseline/native/invalid-network-checkpoint-1.resume.gz",
+      "size": 12194,
+      "sha256": "3827322f616a01893a3a56de126dcad0d5739418b9832bbfde23c71d7e488727",
+      "gzip_size": 4443,
+      "gzip_sha256": "56487def4bec8e6db2de31ba2eac2b1bd233e8a078dd5c7f7c804a5027e9113a"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/invalid-network-checkpoint-10.resume",
+      "artifact": "ordinary-baseline/native/invalid-network-checkpoint-10.resume.gz",
+      "size": 12194,
+      "sha256": "7ed7b01cf340297deed96b5d7bae980fdba9027023eadf11a2702e2821458af4",
+      "gzip_size": 4439,
+      "gzip_sha256": "18bdba1bf7348415965f5e3c980efe25e5d51a5613e95085bf99dc3094a26f81"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/invalid-network-checkpoint-11.resume",
+      "artifact": "ordinary-baseline/native/invalid-network-checkpoint-11.resume.gz",
+      "size": 12194,
+      "sha256": "04470f2d80166cfdccbc2b3aa6672349a2d6dcc9698e1414d627fbd998a0c96d",
+      "gzip_size": 4443,
+      "gzip_sha256": "a29cda101c732c2e1b00838d6da57a3ff549639ae947d893703ebd3e6ee6eb9f"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/invalid-network-checkpoint-12.resume",
+      "artifact": "ordinary-baseline/native/invalid-network-checkpoint-12.resume.gz",
+      "size": 12195,
+      "sha256": "c91edddd06bb9097f2c9434c1ed256f04e1b5f9dfe5e5b239b4d539df06ac4e4",
+      "gzip_size": 4441,
+      "gzip_sha256": "c332e94f38f8ce21800e4454fb0d9087cf6c7ee338d78cb724a1a798a99d93b7"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/invalid-network-checkpoint-2.resume",
+      "artifact": "ordinary-baseline/native/invalid-network-checkpoint-2.resume.gz",
+      "size": 12194,
+      "sha256": "c7f1c29024f3406fcdf62c97d546ce70f6c08e2ebdeeaeeeebfb7644a763cc48",
+      "gzip_size": 4444,
+      "gzip_sha256": "5124ce7c4db0d03e7730510414ff3e3c73779ac972923dacd0f97cd30e945475"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/invalid-network-checkpoint-3.resume",
+      "artifact": "ordinary-baseline/native/invalid-network-checkpoint-3.resume.gz",
+      "size": 12194,
+      "sha256": "86181bd9169efd5517c8a24ccf28951f39e4bdfaaefaf149816c7b4574a4805c",
+      "gzip_size": 4440,
+      "gzip_sha256": "004938fa1145be2a83c611837a4cabe7acb1f947b916214a48fedfb7f68b7ba7"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/invalid-network-checkpoint-4.resume",
+      "artifact": "ordinary-baseline/native/invalid-network-checkpoint-4.resume.gz",
+      "size": 12194,
+      "sha256": "636838a6b5bb0e7c1a10cbde3f7498a17679655c737b339ef83a1c3764f1f97d",
+      "gzip_size": 4444,
+      "gzip_sha256": "483685fd4915392539518bc0bc70bb914f9228d328253f2eeb69eecea800c372"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/invalid-network-checkpoint-5.resume",
+      "artifact": "ordinary-baseline/native/invalid-network-checkpoint-5.resume.gz",
+      "size": 12194,
+      "sha256": "eff24af27a85c0e29732c9e288fe8558a0958728d11bbda8f787a287e6db6dbc",
+      "gzip_size": 4445,
+      "gzip_sha256": "032b2e3375b1f2a5783061a2792601f8ac1c528f49fe9f526c711b9ed7166a0e"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/invalid-network-checkpoint-6.resume",
+      "artifact": "ordinary-baseline/native/invalid-network-checkpoint-6.resume.gz",
+      "size": 12194,
+      "sha256": "5226a59bc7e81432ed2819d536eb3afc257c0330c62426a4fd2646fc459d743a",
+      "gzip_size": 4445,
+      "gzip_sha256": "1aa856751338ddf168b56afd814641d48e7cf31559196acc3d7fca60521b5e02"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/invalid-network-checkpoint-7.resume",
+      "artifact": "ordinary-baseline/native/invalid-network-checkpoint-7.resume.gz",
+      "size": 12194,
+      "sha256": "80b444d55045685508e247033c559d8ae0fa2ca765cccd6fe2218eb34b985ab0",
+      "gzip_size": 4445,
+      "gzip_sha256": "ce5af81a537c8e056d56a993ec34846c9c7e593e62b5ca525155bc0c59099ea2"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/invalid-network-checkpoint-8.resume",
+      "artifact": "ordinary-baseline/native/invalid-network-checkpoint-8.resume.gz",
+      "size": 12194,
+      "sha256": "134e6ef6fa5d1e152dc83d72f4bd41ada66849bf5d0255e5f45c96282bc8c2bc",
+      "gzip_size": 4440,
+      "gzip_sha256": "5813835a926fdc908336c0f30a2ab920c6bc7d0838eacfec6caf11ef29354fd5"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/invalid-network-checkpoint-9.resume",
+      "artifact": "ordinary-baseline/native/invalid-network-checkpoint-9.resume.gz",
+      "size": 12194,
+      "sha256": "4bfbadc55b732e63a155f5eff79b0e2674898fa66a6b099ee943654a1059c04c",
+      "gzip_size": 4443,
+      "gzip_sha256": "2c902f4fc115bcf122474c1849bf7e513864781c62a5deecc8c4269f672b83c5"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/network-envelopes.bin",
+      "artifact": "ordinary-baseline/native/network-envelopes.bin.gz",
+      "size": 336,
+      "sha256": "601ebc46a3222aefb918b9f2cd1ca3c70a22606627563f73f7d11113dab81aa4",
+      "gzip_size": 244,
+      "gzip_sha256": "3263c1c7409c811e338b8d056ae9a6ef5fadf1fc13d6468bad13fc1df43a540f"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/network-positions.tsv",
+      "artifact": "ordinary-baseline/native/network-positions.tsv.gz",
+      "size": 64,
+      "sha256": "25e35220f9cf5b90964e915632718d27e3a3d89bc96defce0820ab706c4d6846",
+      "gzip_size": 60,
+      "gzip_sha256": "21fc10348dbda68dfcde8a4ea0b7515ae37c994801c195bbd9471f55d9836881"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-final.resume",
+      "artifact": "ordinary-baseline/native/normal-reset-final.resume.gz",
+      "size": 12072,
+      "sha256": "446ff4e9c7d452fa1b9052268ad051ac58f40334c097e3f158a48639112007d0",
+      "gzip_size": 4392,
+      "gzip_sha256": "9f325e0747c48484d4cfd7ba6fc70125ad25a63dc9e35c0de7af4dfb3ba22973"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-mode-false-q1.resume",
+      "artifact": "ordinary-baseline/native/normal-reset-mode-false-q1.resume.gz",
+      "size": 12072,
+      "sha256": "446ff4e9c7d452fa1b9052268ad051ac58f40334c097e3f158a48639112007d0",
+      "gzip_size": 4392,
+      "gzip_sha256": "9f325e0747c48484d4cfd7ba6fc70125ad25a63dc9e35c0de7af4dfb3ba22973"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-mode-false-q1.trace",
+      "artifact": "ordinary-baseline/native/normal-reset-mode-false-q1.trace.gz",
+      "size": 624982,
+      "sha256": "b277f17a4541496aeba08092dabf01059e788bcf491595368733ef87a63f8592",
+      "gzip_size": 61025,
+      "gzip_sha256": "0a83c0309dd6774115d1b7e2daa61c447d21fef5c8c274b2632a01cb2d522c1b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-mode-false-q4096.resume",
+      "artifact": "ordinary-baseline/native/normal-reset-mode-false-q4096.resume.gz",
+      "size": 12072,
+      "sha256": "446ff4e9c7d452fa1b9052268ad051ac58f40334c097e3f158a48639112007d0",
+      "gzip_size": 4392,
+      "gzip_sha256": "9f325e0747c48484d4cfd7ba6fc70125ad25a63dc9e35c0de7af4dfb3ba22973"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-mode-false-q4096.trace",
+      "artifact": "ordinary-baseline/native/normal-reset-mode-false-q4096.trace.gz",
+      "size": 624982,
+      "sha256": "b277f17a4541496aeba08092dabf01059e788bcf491595368733ef87a63f8592",
+      "gzip_size": 61025,
+      "gzip_sha256": "0a83c0309dd6774115d1b7e2daa61c447d21fef5c8c274b2632a01cb2d522c1b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-mode-false-q7.resume",
+      "artifact": "ordinary-baseline/native/normal-reset-mode-false-q7.resume.gz",
+      "size": 12072,
+      "sha256": "446ff4e9c7d452fa1b9052268ad051ac58f40334c097e3f158a48639112007d0",
+      "gzip_size": 4392,
+      "gzip_sha256": "9f325e0747c48484d4cfd7ba6fc70125ad25a63dc9e35c0de7af4dfb3ba22973"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-mode-false-q7.trace",
+      "artifact": "ordinary-baseline/native/normal-reset-mode-false-q7.trace.gz",
+      "size": 624982,
+      "sha256": "b277f17a4541496aeba08092dabf01059e788bcf491595368733ef87a63f8592",
+      "gzip_size": 61025,
+      "gzip_sha256": "0a83c0309dd6774115d1b7e2daa61c447d21fef5c8c274b2632a01cb2d522c1b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-mode-true-q1.resume",
+      "artifact": "ordinary-baseline/native/normal-reset-mode-true-q1.resume.gz",
+      "size": 12072,
+      "sha256": "446ff4e9c7d452fa1b9052268ad051ac58f40334c097e3f158a48639112007d0",
+      "gzip_size": 4392,
+      "gzip_sha256": "9f325e0747c48484d4cfd7ba6fc70125ad25a63dc9e35c0de7af4dfb3ba22973"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-mode-true-q1.trace",
+      "artifact": "ordinary-baseline/native/normal-reset-mode-true-q1.trace.gz",
+      "size": 624982,
+      "sha256": "b277f17a4541496aeba08092dabf01059e788bcf491595368733ef87a63f8592",
+      "gzip_size": 61025,
+      "gzip_sha256": "0a83c0309dd6774115d1b7e2daa61c447d21fef5c8c274b2632a01cb2d522c1b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-mode-true-q4096.resume",
+      "artifact": "ordinary-baseline/native/normal-reset-mode-true-q4096.resume.gz",
+      "size": 12072,
+      "sha256": "446ff4e9c7d452fa1b9052268ad051ac58f40334c097e3f158a48639112007d0",
+      "gzip_size": 4392,
+      "gzip_sha256": "9f325e0747c48484d4cfd7ba6fc70125ad25a63dc9e35c0de7af4dfb3ba22973"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-mode-true-q4096.trace",
+      "artifact": "ordinary-baseline/native/normal-reset-mode-true-q4096.trace.gz",
+      "size": 624982,
+      "sha256": "b277f17a4541496aeba08092dabf01059e788bcf491595368733ef87a63f8592",
+      "gzip_size": 61025,
+      "gzip_sha256": "0a83c0309dd6774115d1b7e2daa61c447d21fef5c8c274b2632a01cb2d522c1b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-mode-true-q7.resume",
+      "artifact": "ordinary-baseline/native/normal-reset-mode-true-q7.resume.gz",
+      "size": 12072,
+      "sha256": "446ff4e9c7d452fa1b9052268ad051ac58f40334c097e3f158a48639112007d0",
+      "gzip_size": 4392,
+      "gzip_sha256": "9f325e0747c48484d4cfd7ba6fc70125ad25a63dc9e35c0de7af4dfb3ba22973"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-mode-true-q7.trace",
+      "artifact": "ordinary-baseline/native/normal-reset-mode-true-q7.trace.gz",
+      "size": 624982,
+      "sha256": "b277f17a4541496aeba08092dabf01059e788bcf491595368733ef87a63f8592",
+      "gzip_size": 61025,
+      "gzip_sha256": "0a83c0309dd6774115d1b7e2daa61c447d21fef5c8c274b2632a01cb2d522c1b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-original.trace",
+      "artifact": "ordinary-baseline/native/normal-reset-original.trace.gz",
+      "size": 624982,
+      "sha256": "b277f17a4541496aeba08092dabf01059e788bcf491595368733ef87a63f8592",
+      "gzip_size": 61025,
+      "gzip_sha256": "0a83c0309dd6774115d1b7e2daa61c447d21fef5c8c274b2632a01cb2d522c1b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/normal-reset-paused.resume",
+      "artifact": "ordinary-baseline/native/normal-reset-paused.resume.gz",
+      "size": 12083,
+      "sha256": "28e6b071904333fb5581e8f1cf41f9afe25f1329cab9d6263ddc6087751db736",
+      "gzip_size": 4401,
+      "gzip_sha256": "d3ea4d3daa38280287945ad4d25ae794db6cc1ecf0977ea9b6dc94cdd91b9bbd"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/original.trace",
+      "artifact": "ordinary-baseline/native/original.trace.gz",
+      "size": 698101,
+      "sha256": "7e19b2c7b33dbef690b880aaf4aaccbd9dc2326cfb843f444f5162d355e1f622",
+      "gzip_size": 70868,
+      "gzip_sha256": "9cc33f2c7a1016445589424b8d329e0e75fae50ee6295a209a7a74dc337cbaf2"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/oversized-descriptor.resume",
+      "artifact": "ordinary-baseline/native/oversized-descriptor.resume.gz",
+      "size": 12085,
+      "sha256": "b177b19b422a694ae0985f5684df2973d7ae0b7dab515484faaabbd60603908b",
+      "gzip_size": 4435,
+      "gzip_sha256": "481b4a68eefd2f40ef3826285399747ad053f9ed45971a2610b6925f3ae58f87"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/oversized-descriptor.trace",
+      "artifact": "ordinary-baseline/native/oversized-descriptor.trace.gz",
+      "size": 73119,
+      "sha256": "2868e6c4183232fcc67641c51366d90c0217c9066e7de11d89785d2187b4e274",
+      "gzip_size": 7594,
+      "gzip_sha256": "5497a2de93a4215ded48f2407ba3f6ef7f1a6b987a073f2e1283fc263c96cb9b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/pending.resume",
+      "artifact": "ordinary-baseline/native/pending.resume.gz",
+      "size": 12194,
+      "sha256": "c646d95dcc12666db5f49a48c887f5a2b66f5e8e85121cb2d1a6c8c93822dbee",
+      "gzip_size": 4447,
+      "gzip_sha256": "b4e018845fe9862bc3c220397149320b066f639000503b22a1fbd9bd2312cc5d"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/queued-receive.resume",
+      "artifact": "ordinary-baseline/native/queued-receive.resume.gz",
+      "size": 12090,
+      "sha256": "2ee7d708d88253f20af79e5189d1105bc24db9f4165f5a985cc8d683ad125f7c",
+      "gzip_size": 4450,
+      "gzip_sha256": "d78dab03562a2537a28cda53f37683b2d383bac3bef5d2e31bdd64efba90121a"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/real-connect-error.resume",
+      "artifact": "ordinary-baseline/native/real-connect-error.resume.gz",
+      "size": 11869,
+      "sha256": "f93b76534d5a2b03d2d3b1c935a8cadda455f172249e515c1130e4dedc2d3293",
+      "gzip_size": 4202,
+      "gzip_sha256": "1a661d255ed31535f8b9c289a34aff61461caa4c142f3ff6ae122a85f969f750"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/receive-frame.bin",
+      "artifact": "ordinary-baseline/native/receive-frame.bin.gz",
+      "size": 144,
+      "sha256": "50270a974d7809167724c4b000f0ec12354e87458b9b9cd64dbebe01934c8fd6",
+      "gzip_size": 146,
+      "gzip_sha256": "0415496a13a52f26c69f80b8031f1888ea63c237c74883799ade450021bf5699"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/refusal-pending.resume",
+      "artifact": "ordinary-baseline/native/refusal-pending.resume.gz",
+      "size": 12194,
+      "sha256": "7f2f0db4a80555e27c4e56b44d07a1bffba407a6c6a0ab96b855b1d7e7ab413e",
+      "gzip_size": 4441,
+      "gzip_sha256": "83245b4c71b0e19767a3878625648dfc474db68faad08b5df912c7a3f8a1da61"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/refusal-send.event",
+      "artifact": "ordinary-baseline/native/refusal-send.event.gz",
+      "size": 121,
+      "sha256": "0fa456296cea3196a8694f6964e0339185f16af20b8ceac7f81b1468c5093f14",
+      "gzip_size": 126,
+      "gzip_sha256": "690c2a16d5b96f86687c83848319b641d86f1ffe0efae0716e6d7d4e7d7ddfb4"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/replay-1-pending-false.trace",
+      "artifact": "ordinary-baseline/native/replay-1-pending-false.trace.gz",
+      "size": 698101,
+      "sha256": "7e19b2c7b33dbef690b880aaf4aaccbd9dc2326cfb843f444f5162d355e1f622",
+      "gzip_size": 70868,
+      "gzip_sha256": "9cc33f2c7a1016445589424b8d329e0e75fae50ee6295a209a7a74dc337cbaf2"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/replay-1-pending-true.trace",
+      "artifact": "ordinary-baseline/native/replay-1-pending-true.trace.gz",
+      "size": 624982,
+      "sha256": "cb47f28fac9a356cac3e8d5f9e4cfc1cab263fafcf9e42f0b41a3d6f7c45f0ce",
+      "gzip_size": 63231,
+      "gzip_sha256": "d743c69c9ee2f208aaffa637eabb8727d7186fc204a20c4e4133bef51bad9098"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/replay-4096-pending-false.trace",
+      "artifact": "ordinary-baseline/native/replay-4096-pending-false.trace.gz",
+      "size": 698101,
+      "sha256": "7e19b2c7b33dbef690b880aaf4aaccbd9dc2326cfb843f444f5162d355e1f622",
+      "gzip_size": 70868,
+      "gzip_sha256": "9cc33f2c7a1016445589424b8d329e0e75fae50ee6295a209a7a74dc337cbaf2"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/replay-4096-pending-true.trace",
+      "artifact": "ordinary-baseline/native/replay-4096-pending-true.trace.gz",
+      "size": 624982,
+      "sha256": "cb47f28fac9a356cac3e8d5f9e4cfc1cab263fafcf9e42f0b41a3d6f7c45f0ce",
+      "gzip_size": 63231,
+      "gzip_sha256": "d743c69c9ee2f208aaffa637eabb8727d7186fc204a20c4e4133bef51bad9098"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/replay-7-pending-false.trace",
+      "artifact": "ordinary-baseline/native/replay-7-pending-false.trace.gz",
+      "size": 698101,
+      "sha256": "7e19b2c7b33dbef690b880aaf4aaccbd9dc2326cfb843f444f5162d355e1f622",
+      "gzip_size": 70868,
+      "gzip_sha256": "9cc33f2c7a1016445589424b8d329e0e75fae50ee6295a209a7a74dc337cbaf2"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/replay-7-pending-true.trace",
+      "artifact": "ordinary-baseline/native/replay-7-pending-true.trace.gz",
+      "size": 624982,
+      "sha256": "cb47f28fac9a356cac3e8d5f9e4cfc1cab263fafcf9e42f0b41a3d6f7c45f0ce",
+      "gzip_size": 63231,
+      "gzip_sha256": "d743c69c9ee2f208aaffa637eabb8727d7186fc204a20c4e4133bef51bad9098"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/reset.resume",
+      "artifact": "ordinary-baseline/native/reset.resume.gz",
+      "size": 12083,
+      "sha256": "e963b8c5cd680f269a4048ba91fb3dabe06d2af6afffaf8c8f93ae3a3d6587cc",
+      "gzip_size": 4403,
+      "gzip_sha256": "6b74408875cb43de450ac40077d666ee0f5a4de08a17b32f5a3f669fbd139681"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-0.resume",
+      "artifact": "ordinary-baseline/native/schedule-0.resume.gz",
+      "size": 12133,
+      "sha256": "ffc14012128dbd310c500b6fe3a5bb02f7e4f94449597252889b890060a34ec7",
+      "gzip_size": 4472,
+      "gzip_sha256": "41bce67fcf4ec950b6f176c6d93f409119a8fc4e5184a61858a066e7ebb412d8"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-0.trace",
+      "artifact": "ordinary-baseline/native/schedule-0.trace.gz",
+      "size": 305147,
+      "sha256": "2384e9b420ff78afea91fdc329e41a8ef5e3c79bcd2e221c998a50507ccf4783",
+      "gzip_size": 29890,
+      "gzip_sha256": "0d1c1358321fdedad76c0ff7c5db2970cc39c021b068db21db68ed700a7643e5"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-1.resume",
+      "artifact": "ordinary-baseline/native/schedule-1.resume.gz",
+      "size": 12133,
+      "sha256": "3923e96ee88da7ad0f52f02c5a9515a2215b3dc842e20f77f97e8838af58a982",
+      "gzip_size": 4468,
+      "gzip_sha256": "cbe27a3c2dff0263539bcd24c9fdb93109dc8736a693f837d292d720a1b0a761"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-1.trace",
+      "artifact": "ordinary-baseline/native/schedule-1.trace.gz",
+      "size": 305147,
+      "sha256": "5f9bdfeabc93f20e535ea7b84371bfa070d8c33dd284a9df0b169a9597474547",
+      "gzip_size": 29891,
+      "gzip_sha256": "6491a9445a444690d5c9744762911e47147e8bf3b134f6ab74c562e6a6a07bbd"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-10.resume",
+      "artifact": "ordinary-baseline/native/schedule-10.resume.gz",
+      "size": 12133,
+      "sha256": "991b3ca893cf4def1ba63e17e1444b079f4322cb17f1a4717aa7a9ee3d17a140",
+      "gzip_size": 4470,
+      "gzip_sha256": "706aa07dfb6a5c1e5265ba3b3422fd04a6d0aa61b4fa18e78cd406efa4974d3a"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-10.trace",
+      "artifact": "ordinary-baseline/native/schedule-10.trace.gz",
+      "size": 305147,
+      "sha256": "9910ae84582fb65ef425cb415dc6693fcb9affc28a1e7f8e298cf58f4e46d239",
+      "gzip_size": 29903,
+      "gzip_sha256": "b9837d60a48d5b9bef6a8c172fce5b63412a0496b5ed54c526cdbf3aa69a7023"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-11.resume",
+      "artifact": "ordinary-baseline/native/schedule-11.resume.gz",
+      "size": 12133,
+      "sha256": "63282852d6e803644d30dc6202ff3a8bc954399bfdd593bb35ff6a2bfaab0a3b",
+      "gzip_size": 4469,
+      "gzip_sha256": "642b1418103e7e0795c4d253bdb5823ca0f0faba3747845aa379a376f996e51b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-11.trace",
+      "artifact": "ordinary-baseline/native/schedule-11.trace.gz",
+      "size": 305147,
+      "sha256": "f9a2c0971012e2b34ff621732d347090570d6860f21883e354c4a4fd1dc6f941",
+      "gzip_size": 29905,
+      "gzip_sha256": "b4197d0663255107ef6def48cff322b776d67edc11e32607999d4e2515282b6c"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-12.resume",
+      "artifact": "ordinary-baseline/native/schedule-12.resume.gz",
+      "size": 12133,
+      "sha256": "1300829d34a702c878635269450bbfb8b745fc7a082886f5e9bd9114aa4dadce",
+      "gzip_size": 4472,
+      "gzip_sha256": "ecd5f6455c621729b75ce6bcd8a712bb859968ccc9b24a3f0ed6f188f70467fb"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-12.trace",
+      "artifact": "ordinary-baseline/native/schedule-12.trace.gz",
+      "size": 305147,
+      "sha256": "520ead23a70c75a1f33c9c59be2a3601e273efb016dbe6924478c2604816232c",
+      "gzip_size": 29902,
+      "gzip_sha256": "74f1c118fb3a5d3c8240a17c84f71e0a8b5f67f53139500d5e24eff3a296b5d5"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-13.resume",
+      "artifact": "ordinary-baseline/native/schedule-13.resume.gz",
+      "size": 12133,
+      "sha256": "68c7454cd04ad89eb7b087d59492dd4b007918788fcd48c6236487c18968bb6a",
+      "gzip_size": 4469,
+      "gzip_sha256": "9eddf791df563b73dc4ca5e2c224261d1c53b9f35119798a856f8c2789712960"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-13.trace",
+      "artifact": "ordinary-baseline/native/schedule-13.trace.gz",
+      "size": 305147,
+      "sha256": "affe18a657911a02d7f81bca922625d7ed9219fc44b7055f29ca4a0eac14d116",
+      "gzip_size": 29902,
+      "gzip_sha256": "d41b835a90586ab0dd94b6bd183883f9ab65c0d04a0e28cdf94ad9f39352e8a2"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-14.resume",
+      "artifact": "ordinary-baseline/native/schedule-14.resume.gz",
+      "size": 12133,
+      "sha256": "9fd2d3e9e3de48f44727b8a16bfb080e2d6df4830a707a8a04aed73474b0f128",
+      "gzip_size": 4469,
+      "gzip_sha256": "af5f3ccdbce968c5e41574a1174a7fdda2da5ec05d60237be1cb09a4163e8356"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-14.trace",
+      "artifact": "ordinary-baseline/native/schedule-14.trace.gz",
+      "size": 305147,
+      "sha256": "cef38d469060f4bc74b73a80969537ed6a006a43dd9dd260a90345cd3258d662",
+      "gzip_size": 29904,
+      "gzip_sha256": "4e15a76ff96d0d1fc36c85382516b14ec966feb4a7c87aeec56c6ac0047923da"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-15.resume",
+      "artifact": "ordinary-baseline/native/schedule-15.resume.gz",
+      "size": 12133,
+      "sha256": "47b47d6f898669288cb28e800eb0749f7db4b1048505247e8cdfdad25415e15c",
+      "gzip_size": 4472,
+      "gzip_sha256": "5a706bf5f06182d4946de5ad44b5ee3c7f79dd3dadbb5d1df063f80cd7429ac5"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-15.trace",
+      "artifact": "ordinary-baseline/native/schedule-15.trace.gz",
+      "size": 305147,
+      "sha256": "1b2facbe175c0a65acb179315833fa44ad75acaeb63f342f9bbb25df6d8e145f",
+      "gzip_size": 29904,
+      "gzip_sha256": "de415723e2537d94ac057aea09a00fec5e1f0fd26cf4da671009ca47a55f91ac"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-16.resume",
+      "artifact": "ordinary-baseline/native/schedule-16.resume.gz",
+      "size": 12133,
+      "sha256": "8ea86767c3d0cf2942509223fd9c5a857f591946429b7b4f0fc67307d4763983",
+      "gzip_size": 4469,
+      "gzip_sha256": "ce60415048bf3547c1d87ac01d44d5743ef324080e1f3902069b29e0b22bfcf1"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-16.trace",
+      "artifact": "ordinary-baseline/native/schedule-16.trace.gz",
+      "size": 305147,
+      "sha256": "3a2c6071df010ca370f49863ddbe850dcd0b092b90d5637438c0f51cdf98d84a",
+      "gzip_size": 29902,
+      "gzip_sha256": "8f3e93ac45abf644a2d7a975ca709f9093e32adc5465ee91756ab1a5456a7cc7"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-17.resume",
+      "artifact": "ordinary-baseline/native/schedule-17.resume.gz",
+      "size": 12133,
+      "sha256": "0eb24172d9d73acb136d9ba8a22f00d577f173bb878d810f753abd0f89156984",
+      "gzip_size": 4469,
+      "gzip_sha256": "c6f36ffb052151d3774a8b2c4ca580337854970f395f545185e5867f5e105007"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-17.trace",
+      "artifact": "ordinary-baseline/native/schedule-17.trace.gz",
+      "size": 305147,
+      "sha256": "871583aca8cd7496729d8a3c8672a3bca287003f23f2811a74c259dfef2e0659",
+      "gzip_size": 29901,
+      "gzip_sha256": "2ade34f4ac43c378e2e1d8f0143765bbbbe9f742e063fa2476bbcc05af7f2a79"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-18.resume",
+      "artifact": "ordinary-baseline/native/schedule-18.resume.gz",
+      "size": 12133,
+      "sha256": "71758c32a8da2bd85538281a7da0db821781efc15ad11dc3b8ee101b5ed634f0",
+      "gzip_size": 4472,
+      "gzip_sha256": "5c387ec465b6409966f1cb788a8bbd31c073b6aa81b65b6e9dd7f5f1ae738eb3"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-18.trace",
+      "artifact": "ordinary-baseline/native/schedule-18.trace.gz",
+      "size": 305147,
+      "sha256": "624ce3d7dc16a0e9e89e48c3593bcd81bfa5b5508768ff77f5a9ff8409db3787",
+      "gzip_size": 29907,
+      "gzip_sha256": "c2ed5293a94423346cf0e81042e4b014636d3caa9ab106c6be11672a65b75307"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-19.resume",
+      "artifact": "ordinary-baseline/native/schedule-19.resume.gz",
+      "size": 12133,
+      "sha256": "0dfec8d5f22b810f6328a0e881bf184fbe158acef674a83f89a7ed7be7539b5b",
+      "gzip_size": 4469,
+      "gzip_sha256": "cf5d004f5604b68eb2b3478725c0d1e183912c8d2314553136f06712f135f0a4"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-19.trace",
+      "artifact": "ordinary-baseline/native/schedule-19.trace.gz",
+      "size": 305147,
+      "sha256": "2b3ea214ca614050d9adf8bd63f8809e1ae92b803df1aa0440beed381678b2d5",
+      "gzip_size": 29907,
+      "gzip_sha256": "2ec4f74e3edd96c1335856cc141e230aef88cce1b8cba500857c78498e6fbb94"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-2.resume",
+      "artifact": "ordinary-baseline/native/schedule-2.resume.gz",
+      "size": 12133,
+      "sha256": "426c8ca03589a4695357b21f2f1ac4892842ac6ede4c8f781ffc1dc336c81c8c",
+      "gzip_size": 4469,
+      "gzip_sha256": "3f065e1e27b9041edbdcb9d1ea75dc55411591353638072ffe4c1494a48ff793"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-2.trace",
+      "artifact": "ordinary-baseline/native/schedule-2.trace.gz",
+      "size": 305147,
+      "sha256": "82e42d437eeec072b6608862e348c91496cebbbadb1f26cf74fd5736d9ae677b",
+      "gzip_size": 29905,
+      "gzip_sha256": "eea1fcd6a535b64fa4fea228522eb0fed0c4786100b837efe8ffac43f7f85a4b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-20.resume",
+      "artifact": "ordinary-baseline/native/schedule-20.resume.gz",
+      "size": 12133,
+      "sha256": "8914969d8140d2825b0c165f4c73db5af4872107203d54e08df5934205f86a50",
+      "gzip_size": 4469,
+      "gzip_sha256": "a719e694d8906fba7741510a603aae4026290ef4e754384798c47247aeb6c467"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-20.trace",
+      "artifact": "ordinary-baseline/native/schedule-20.trace.gz",
+      "size": 305147,
+      "sha256": "00a9cca439c73f47a836c6ce3ed8379eb0ec9de1705e21a0f5f07b951060e176",
+      "gzip_size": 29906,
+      "gzip_sha256": "1b507e19cff6293e7dba02fdded34361dc7154480b4a0274d713141b58ce6efb"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-21.resume",
+      "artifact": "ordinary-baseline/native/schedule-21.resume.gz",
+      "size": 12133,
+      "sha256": "f338e2fa22615ceeecc10d42e3653080fb0143adecec51e65c2fa7d62d3a246c",
+      "gzip_size": 4472,
+      "gzip_sha256": "522f4986d7dd745253e36f31e5e695a099283e9886c779a4e017b096c3fddbd5"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-21.trace",
+      "artifact": "ordinary-baseline/native/schedule-21.trace.gz",
+      "size": 305147,
+      "sha256": "0856905109337f2b2e4b909e61a00486ceed4a7e150047ec8132dfd7ec8a09f2",
+      "gzip_size": 29906,
+      "gzip_sha256": "66ffcc77b28cdc36f3293f93b154a7727080ed8d58399c44e38d10139c427e3c"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-22.resume",
+      "artifact": "ordinary-baseline/native/schedule-22.resume.gz",
+      "size": 12133,
+      "sha256": "dc78d02209574ecef7970b421b15436211abc0b4e0908a9895baf2bd68f03fd1",
+      "gzip_size": 4469,
+      "gzip_sha256": "b0dbde8b7539ba62561171fa88882785d3ff6cf57aac1b6f46c5fbceb60433b6"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-22.trace",
+      "artifact": "ordinary-baseline/native/schedule-22.trace.gz",
+      "size": 305147,
+      "sha256": "56e21c9d70099e31bdf003fccb66f11ac47350132e4f773c816ac0516847002d",
+      "gzip_size": 29906,
+      "gzip_sha256": "a79f65e1d2cb5e1d53a4950bcf23c555464dfab0023341855c09638f15e90c48"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-23.resume",
+      "artifact": "ordinary-baseline/native/schedule-23.resume.gz",
+      "size": 12133,
+      "sha256": "05ad37aae69ce09ef399b011762be5600a1639ebf61b19258cfaa3cf9eff53ee",
+      "gzip_size": 4469,
+      "gzip_sha256": "56292245ca40c775d2747d765b8768da90c7666b1e4007fd59de4c1e2508e3c0"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-23.trace",
+      "artifact": "ordinary-baseline/native/schedule-23.trace.gz",
+      "size": 305147,
+      "sha256": "ead1d4d114fdcd4751c08d56426cb08d21027a8afd329b39de4c4f5f6a29d6eb",
+      "gzip_size": 29897,
+      "gzip_sha256": "7b6116ce35da4fa074b97791b4ef14f3e93fa9cf9e8f63e6cc429f4cf8329a61"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-24.resume",
+      "artifact": "ordinary-baseline/native/schedule-24.resume.gz",
+      "size": 12133,
+      "sha256": "b347c209b3c501aa3d3dce096b5a4b5551fe49684d86a6a368550f3f747581a1",
+      "gzip_size": 4472,
+      "gzip_sha256": "83e3382b063a84aaab3c71d8e58c208c5e3582d93a7145fd006750714713c95d"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-24.trace",
+      "artifact": "ordinary-baseline/native/schedule-24.trace.gz",
+      "size": 305147,
+      "sha256": "e7e937353bd79a4b77072cf6f27bd3a90919b256213ef9811699c6862868515c",
+      "gzip_size": 29907,
+      "gzip_sha256": "7f4f17538ec20e0928a3461da0d4e15a3b1733fc3a342b46eb3c5b3db66f96a0"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-25.resume",
+      "artifact": "ordinary-baseline/native/schedule-25.resume.gz",
+      "size": 12133,
+      "sha256": "bd6c707935b909a0fc430627268117bf3da7be46ca563fb463644e8abd595bab",
+      "gzip_size": 4469,
+      "gzip_sha256": "854d4cefb7e7dd06cc6aa079e9b47529a316946f1d65f10e9a0fd7845483c397"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-25.trace",
+      "artifact": "ordinary-baseline/native/schedule-25.trace.gz",
+      "size": 305147,
+      "sha256": "2d2f7f5dd8b13f7dac0c76362cb3396e4f7f2aced5b34c945a31faec46adbae7",
+      "gzip_size": 29907,
+      "gzip_sha256": "ce3a772b9c14e427ffd928ab42a6938961f5990d877efc76e5e27ba46c66e968"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-26.resume",
+      "artifact": "ordinary-baseline/native/schedule-26.resume.gz",
+      "size": 12133,
+      "sha256": "12f5a95f548a09b3029b20031ea13e332a3d7538af6d3744685fb58e72eb29a8",
+      "gzip_size": 4469,
+      "gzip_sha256": "01d6fe2310829fe8e1b65249a08dddac847ee18840613caca06a1353ef62682c"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-26.trace",
+      "artifact": "ordinary-baseline/native/schedule-26.trace.gz",
+      "size": 305147,
+      "sha256": "6e28b0399d7fa918f04da153b82f13b79ed6c2e720dd938d7857d4e11bde0194",
+      "gzip_size": 29906,
+      "gzip_sha256": "017d8a223310bfd9badc3c044b4a3e80abcd4f2f861be256b3d35f49fc1dc283"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-27.resume",
+      "artifact": "ordinary-baseline/native/schedule-27.resume.gz",
+      "size": 12133,
+      "sha256": "150d15aadfd2132473d5bf4eb64c94539199fbb5eb12ac8996aa4f67bedd44a7",
+      "gzip_size": 4472,
+      "gzip_sha256": "af9db7d1f6d4b527109b6e276ea0102f72ae4c32314d825f337977e2b31d6460"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-27.trace",
+      "artifact": "ordinary-baseline/native/schedule-27.trace.gz",
+      "size": 305147,
+      "sha256": "40bb1301ca8480711aabb970dfa13ffb54a505595e692736d83a8dc27d4e892a",
+      "gzip_size": 29907,
+      "gzip_sha256": "e176d2e765dc7a1f824f9b0645f9a6a0093eb59db0d94f99b65b2a15feee986e"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-28.resume",
+      "artifact": "ordinary-baseline/native/schedule-28.resume.gz",
+      "size": 12133,
+      "sha256": "97345982c6d9ecafad9c3fdb9cdb63cdadab949ba74a46dbf1215d8ab1f3b2ea",
+      "gzip_size": 4469,
+      "gzip_sha256": "8dbc5ab0dd63f07c3483a8a4db097abe98c34138c29b9a6f21ec2478f9c4c674"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-28.trace",
+      "artifact": "ordinary-baseline/native/schedule-28.trace.gz",
+      "size": 305147,
+      "sha256": "53eb1b1eb5ab1040e7945ccde8995a7caad23d69f629a5adff5ad4638535ef1b",
+      "gzip_size": 29905,
+      "gzip_sha256": "24c7c1b14f019f135507a21219404e9b92af19d1d9392870fa8a12a9e4b9aad3"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-29.resume",
+      "artifact": "ordinary-baseline/native/schedule-29.resume.gz",
+      "size": 12133,
+      "sha256": "4842f906b2c0667574349befc74fcd8fc126232bed6fe1d14de3a2a25cffa336",
+      "gzip_size": 4469,
+      "gzip_sha256": "bf2bcedd391207b9cfff9976c097c66d81a5137305cbed4a854b5182ead142d8"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-29.trace",
+      "artifact": "ordinary-baseline/native/schedule-29.trace.gz",
+      "size": 305147,
+      "sha256": "3ead7b9555beba009d2bcdf3b32320ceda923f03d5ce48084c7c39657c96e2ea",
+      "gzip_size": 29905,
+      "gzip_sha256": "5448700edcdfe4cf7d8db877d5e09ef69dc630c61d9084a8733677d0d66de161"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-3.resume",
+      "artifact": "ordinary-baseline/native/schedule-3.resume.gz",
+      "size": 12133,
+      "sha256": "e5ed441c665e4a251e7d5e79c0166b68fd6f8ed5dcb76cf4cea37e6c33aa3bfa",
+      "gzip_size": 4472,
+      "gzip_sha256": "01db1da7e1e6da124c4cfca7cfb5145c4c0dbdfd52e7e8328d7edc5f0f1c8ec8"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-3.trace",
+      "artifact": "ordinary-baseline/native/schedule-3.trace.gz",
+      "size": 305147,
+      "sha256": "3e5b6fb9e1db19408ec667a1bc329c4f274275076a94a6709c58a27083a64ae2",
+      "gzip_size": 29905,
+      "gzip_sha256": "ef4c9983a1e50e999a6e2923b475cd63e0c7443ec328133f37b0294d46eb45dc"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-30.resume",
+      "artifact": "ordinary-baseline/native/schedule-30.resume.gz",
+      "size": 12133,
+      "sha256": "f3ff3c0e84cc452332291091b6a79b30574ad536d01eb285a4c71a0131a5b980",
+      "gzip_size": 4472,
+      "gzip_sha256": "c7cadc0540e9a521deaaf028787d47927d994966c310605e970130e48925b733"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-30.trace",
+      "artifact": "ordinary-baseline/native/schedule-30.trace.gz",
+      "size": 305147,
+      "sha256": "4bc4e2777a8ce9997846efd92d7a776ab26b76b2ed3f8a400fb90b4788eb14a2",
+      "gzip_size": 29906,
+      "gzip_sha256": "21f30f486444b70f78dfffc969e7f215895a3e0a683de8f433734995a635efa9"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-31.resume",
+      "artifact": "ordinary-baseline/native/schedule-31.resume.gz",
+      "size": 12133,
+      "sha256": "e4ee49f44226e051ff20d652584ef518a408c984e432966d1e5262a9c7a042eb",
+      "gzip_size": 4469,
+      "gzip_sha256": "394d6ae9bf2a36943852856a544b478a059437e9b801538c04467ed141438e27"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-31.trace",
+      "artifact": "ordinary-baseline/native/schedule-31.trace.gz",
+      "size": 305147,
+      "sha256": "75af1263a242e542a89ee248c3d171205fd1fce92e337fdc42a181c286ca2d13",
+      "gzip_size": 29906,
+      "gzip_sha256": "70123deddcb4758534da9e19810ae2b2c4d972b665a282aedaf187e812ce9a23"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-4.resume",
+      "artifact": "ordinary-baseline/native/schedule-4.resume.gz",
+      "size": 12133,
+      "sha256": "40e35d0a2ca46872d329a9e70391aaca32aa873034710762922efcaf603ae03b",
+      "gzip_size": 4469,
+      "gzip_sha256": "47098a7bfe30db94b6e1f6f84f671fc5dc0822d1e436a6fdf295f24ea9bbcb94"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-4.trace",
+      "artifact": "ordinary-baseline/native/schedule-4.trace.gz",
+      "size": 305147,
+      "sha256": "38bbe39c17ef5a49c9582c9b39f34a86aa452f15c2ec01de08cc944219e9697d",
+      "gzip_size": 29904,
+      "gzip_sha256": "204d05ef0ccabcf2f24a4ccf4a20ddd714b1ad0f0241ea8eadabaef4145b86ab"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-5.resume",
+      "artifact": "ordinary-baseline/native/schedule-5.resume.gz",
+      "size": 12133,
+      "sha256": "d8f2fd478d4d44fca82a13af3686651af6307623956421ed6cdb330334b96d82",
+      "gzip_size": 4469,
+      "gzip_sha256": "cf33651c80ee00bb647658e68da40085548e4b7db64ef44b55642f3ca5c9236a"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-5.trace",
+      "artifact": "ordinary-baseline/native/schedule-5.trace.gz",
+      "size": 305147,
+      "sha256": "a8b03b96de89aa9d97c8a0c28c08a1d0727d71b7fce1c717c74918b74f8c9d33",
+      "gzip_size": 29904,
+      "gzip_sha256": "ee5587c4a0e138df57cda296d05c288a37c4342957592dc95a2a997d07987af2"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-6.resume",
+      "artifact": "ordinary-baseline/native/schedule-6.resume.gz",
+      "size": 12133,
+      "sha256": "8c430abfb906c96f52dfec7f4299f2c2f918a2035308d0528e081956c423dfdb",
+      "gzip_size": 4472,
+      "gzip_sha256": "b462aeb9c2efa3ff1012b38e3c83a0179d1db09cfea2a396a36d52c7b5d23208"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-6.trace",
+      "artifact": "ordinary-baseline/native/schedule-6.trace.gz",
+      "size": 305147,
+      "sha256": "36b89d12ab76b349d55fbdc98f05766ac9604298c74225532d24642a5b3c6796",
+      "gzip_size": 29904,
+      "gzip_sha256": "75a71ea258419247a44e7cb0f11ad2442189a2b8716c508b6fa688b783887488"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-7.resume",
+      "artifact": "ordinary-baseline/native/schedule-7.resume.gz",
+      "size": 12133,
+      "sha256": "955720a7fec4f35b322571a0377d854000639adc2b2532a645b2253b7443e894",
+      "gzip_size": 4469,
+      "gzip_sha256": "6b4cb1c0f59e0ba305cf59ecb633ecd4ab7a3779e31ad22d16972f34d1101c21"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-7.trace",
+      "artifact": "ordinary-baseline/native/schedule-7.trace.gz",
+      "size": 305147,
+      "sha256": "e34c28dbd9e1752f979e6999fabaa86c467c61c7c53b03707652463d1513e5e0",
+      "gzip_size": 29894,
+      "gzip_sha256": "0b437e4eeeebe91a24e0a58c0b0afd5498b721e78b7abffd4f9b8e5145e7a8f7"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-8.resume",
+      "artifact": "ordinary-baseline/native/schedule-8.resume.gz",
+      "size": 12133,
+      "sha256": "fe27acfb3e4f241c8113043790a5e17565b79a06873e5ad5a4e8754a20049805",
+      "gzip_size": 4469,
+      "gzip_sha256": "251e1873c755ede36acf4495093f10895bee397a667bdfc7b86e6542f19ce708"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-8.trace",
+      "artifact": "ordinary-baseline/native/schedule-8.trace.gz",
+      "size": 305147,
+      "sha256": "0fea6d4e8aa41d71074f2de229fdbd59551dd6a36d844ea90ba4fe5f883c5624",
+      "gzip_size": 29905,
+      "gzip_sha256": "8ce228860f21e3e6d148d3c0488b1b5e0bceb44828887e8150e83ec0eeb6c680"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-9.resume",
+      "artifact": "ordinary-baseline/native/schedule-9.resume.gz",
+      "size": 12133,
+      "sha256": "0ba8ff4a1c8da1cf6fe4155f68a32678af6d27a52f14ca2340a94ec5cd84eedd",
+      "gzip_size": 4472,
+      "gzip_sha256": "20b64280287387bb679f74ee8e36afe6c06c59959fd31c05038ae78b1a539f3d"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-9.trace",
+      "artifact": "ordinary-baseline/native/schedule-9.trace.gz",
+      "size": 305147,
+      "sha256": "c1f1022e089a1ab6b25374beaaa44697b8bbdacd9243c2a5ab93703b0a2d9b79",
+      "gzip_size": 29905,
+      "gzip_sha256": "8a4f850af02b776cd058513b1e1b81b703d481d3aa3824bed3c97cb19c7dce71"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/schedule-witness.txt",
+      "artifact": "ordinary-baseline/native/schedule-witness.txt.gz",
+      "size": 1807,
+      "sha256": "a62084c7f9684c6c0dc05b2a097deb1095831f05fa951c9eacb47e52388de657",
+      "gzip_size": 248,
+      "gzip_sha256": "e349b331aaa77f2c5a97149d719514f1344f61f0c8119b418de347237aaf2084"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/native/transport-witness.json",
+      "artifact": "ordinary-baseline/native/transport-witness.json.gz",
+      "size": 129,
+      "sha256": "a4a812734aaa2956f5dd88f48223c39e0c0cd770d8dd1a245f75444931dc09e0",
+      "gzip_size": 116,
+      "gzip_sha256": "886e723244628c90024367b4c4d0c87fe879bcc783e81a0dcf9137ac43b31203"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/prediction.json",
+      "artifact": "ordinary-baseline/prediction.json.gz",
+      "size": 301,
+      "sha256": "17ddf98464107abafc81e290ed7041a5b4d310a2ebe11af4e063c0b77ce9e78c",
+      "gzip_size": 237,
+      "gzip_sha256": "c4672dde9ab56640603e8d190ed65d948ee24c3e9cd1729e7ccadbc5191555ba"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18393-9110190887261791990_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18393-9110190887261791990_0.profraw.gz",
+      "size": 416,
+      "sha256": "dc820bf8a14b0610e92c9b741662f0f164b3a6da468844e9e31d7e6310523514",
+      "gzip_size": 191,
+      "gzip_sha256": "2e1d53da9d46790d820e2f784dade7c11ed88eb466c3c93effec11cc2dff6c40"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18394-6915303982207519508_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18394-6915303982207519508_0.profraw.gz",
+      "size": 560,
+      "sha256": "4cb6a77abc83d0314a80b650476eaba75c5bbe20487b3b4ba0845fc12f06fc85",
+      "gzip_size": 194,
+      "gzip_sha256": "079ff14f4eb8c2e0b64a72b43c90a9172ce7381509cc8c53d6a885c88e98b3fc"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18395-10707920698130377121_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18395-10707920698130377121_0.profraw.gz",
+      "size": 1240,
+      "sha256": "975da50a13d266fcf16568848afbc7c0cff716f8d12b5175d5baa60437834e45",
+      "gzip_size": 423,
+      "gzip_sha256": "e240abb5c8fa359cfa0187fd0aa4d1966da1f9ad438167721738d8cd0cb0c0b8"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18396-1354248203470084542_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18396-1354248203470084542_0.profraw.gz",
+      "size": 424,
+      "sha256": "bd194beac0794ee516006a538d839245ea6d8092e5e307c733ff20ec71e7bd2f",
+      "gzip_size": 193,
+      "gzip_sha256": "430db699d11d6e6744a40af5e8b658d74d0a3b0f91746a9cf8abdd0eea4b0290"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18397-12664323225826967791_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18397-12664323225826967791_0.profraw.gz",
+      "size": 392,
+      "sha256": "cbefd7639d295b0d2abb73087f69e65b895f13c9601404a8bab500dfc111efcc",
+      "gzip_size": 198,
+      "gzip_sha256": "e266e6dda9d549cb23386238a1e7e567eb8465e1d4c118c5ea3a0924fa2bcadb"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18398-11730094380441916487_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18398-11730094380441916487_0.profraw.gz",
+      "size": 568,
+      "sha256": "7524c3d9e8d69218faedad5d3e1ec1af08ead9a64904554cb6f38aeb7bb4f0db",
+      "gzip_size": 258,
+      "gzip_sha256": "ab7c3fd6dc06739930114db6364e963adbdc52e14bfa93a62903a40302b58fb3"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18400-11798297433124307420_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18400-11798297433124307420_0.profraw.gz",
+      "size": 264,
+      "sha256": "fc052de57e6388f5a5c8771e7afe23dcf0435aa0351b6165fc81e3cadce59a38",
+      "gzip_size": 135,
+      "gzip_sha256": "62105efff0f897e6daa7d67b1beaa5d302855195955e7c3ace0ab734e22630ba"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18401-8585996070172454923_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18401-8585996070172454923_0.profraw.gz",
+      "size": 672,
+      "sha256": "d1f8f0c0824558e9146ac988836799a604a9274d33e3682bce07ed4c1a244370",
+      "gzip_size": 256,
+      "gzip_sha256": "8acfa104761961115b79d1721cd3efee62ba9aaae7e4b0b1516d9de4df6f4a4b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18402-75665524794432063_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18402-75665524794432063_0.profraw.gz",
+      "size": 1800,
+      "sha256": "f8b2c542f07cd209375a01e14992621376fa07bf372dbde07dbcba3048f1817d",
+      "gzip_size": 542,
+      "gzip_sha256": "95219c3222e300239aea4e34331ff2ef1d9bdbfc2215ab60d9dfa511a5d8de93"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18403-17726196653433930728_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18403-17726196653433930728_0.profraw.gz",
+      "size": 688,
+      "sha256": "87ab5352211170cd9ed77efac2c2e8090c24f1bb7ac61a4c881eb1d6f16e7fa6",
+      "gzip_size": 297,
+      "gzip_sha256": "34d940734a23b69aae775bff966aa69b787de767c14ad2b931400756436f96de"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18405-13211091467951509430_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18405-13211091467951509430_0.profraw.gz",
+      "size": 1896,
+      "sha256": "1a90d8e87ee31d3783f216608c11b833df4d761f796623829ec6cfea90adbb39",
+      "gzip_size": 554,
+      "gzip_sha256": "82cb88dbfbaa2125206ea15fbb1c260e220f5e6ed0a5343f604e11cc05a7fc4b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18406-4681458585577667569_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18406-4681458585577667569_0.profraw.gz",
+      "size": 2400,
+      "sha256": "594e08155307b392bd7a3d5e249be6cb4bf722815d9141b3603680cb35c12643",
+      "gzip_size": 1285,
+      "gzip_sha256": "f075714020922e738aa01a2d3b76226c2b066f5148702516dcd06f11c82f50fc"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18415-17006973212261229018_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18415-17006973212261229018_0.profraw.gz",
+      "size": 3928,
+      "sha256": "257d238de72b10dabcf1681443e839ba5607a7e8125b17462070d78975900e87",
+      "gzip_size": 1642,
+      "gzip_sha256": "7de250f99f10bef0e72533660dbdd7a8d52681e771d61c32c3141e222503b84b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18416-17248797801970146927_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18416-17248797801970146927_0.profraw.gz",
+      "size": 320,
+      "sha256": "cd9e9bf25b6b2f3d7e692e24a4da8525a560c53d5b3351afd9cd4b850e66ecb9",
+      "gzip_size": 139,
+      "gzip_sha256": "9c690dae623dd3ab6aa23cf8f9a4bb453a4cfa322bbe2cc0760c53b7455872e9"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18436-10130721545701063882_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18436-10130721545701063882_0.profraw.gz",
+      "size": 696,
+      "sha256": "2203f6c2d5e98d98f83da54f112c485ae5e0b480f02d748d75942c7e7b5ebc9a",
+      "gzip_size": 260,
+      "gzip_sha256": "cbc03119f820676249a48d3b33ee697f9e8413712649b2568ff6f9f08e475d0f"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18449-11135191154847411149_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18449-11135191154847411149_0.profraw.gz",
+      "size": 416,
+      "sha256": "b2d2a677f69d0693a6f4aaede021f9bb03c81ece5dbd1ac8f9223aa344667c94",
+      "gzip_size": 191,
+      "gzip_sha256": "07ba64403d8de9b5625810581f070a96c35ea7ac22c9998271e242c122f6f811"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18450-16628539257617630785_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18450-16628539257617630785_0.profraw.gz",
+      "size": 256,
+      "sha256": "69b6830e8f99b05b8f6b069869cc8f23ba73c4e7edb530fd6453a1a0a5efd2b8",
+      "gzip_size": 131,
+      "gzip_sha256": "9cdfdf0b164399034de736cc607f9487d1c0339bbd33350c8dde381c42404fd0"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18532-12237280106463088253_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18532-12237280106463088253_0.profraw.gz",
+      "size": 297104,
+      "sha256": "859ffa1f7e565b8bdbe1cdce20d7219a0ac37e9e5ac81109f37bd2024ecea58a",
+      "gzip_size": 101465,
+      "gzip_sha256": "9fa8d95b428c424ee82b7f85d6c44e9596104b5d39a75a067d467c9dbead4601"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18537-16303875450564594445_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18537-16303875450564594445_0.profraw.gz",
+      "size": 336384,
+      "sha256": "329d57c511a5166d1f50fbe188231870610b383e44779ba35184f3255e83e583",
+      "gzip_size": 107512,
+      "gzip_sha256": "060010612a0e8f53944cd9ae2218201ff921cb1c9e94f2aa38c7b7675bfcdda8"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18538-16303875450564594445_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18538-16303875450564594445_0.profraw.gz",
+      "size": 336384,
+      "sha256": "0410a704f010abe3710da71c1f8c4d1fd0ecf5f15ff0108b269b7854c5abf61c",
+      "gzip_size": 107511,
+      "gzip_sha256": "c675331943b3152e37dcd0085513f364708a19cdec4e4aae3c84a8ceb33ed83c"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18550-12237280106463088253_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18550-12237280106463088253_0.profraw.gz",
+      "size": 297104,
+      "sha256": "a472bc69134036af77d841d2ef446a41846814280aca811de0f09880ac0fbb8d",
+      "gzip_size": 97948,
+      "gzip_sha256": "56056e0a3ef6263932c29923f5dfbe099e6d644b49dd37ec6a5273701263f17b"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18551-12237280106463088253_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18551-12237280106463088253_0.profraw.gz",
+      "size": 297104,
+      "sha256": "ef3be81d4e7b79e239a79a3e6eca81cead2bea63947f7a76a4efc1ad337011fc",
+      "gzip_size": 100574,
+      "gzip_sha256": "d827c30bfee4cdf1611680d190bb17193c55f12cd84c017bb0b63827d2aeda87"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18552-12237280106463088253_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18552-12237280106463088253_0.profraw.gz",
+      "size": 297104,
+      "sha256": "200b96c0215fc44939a1d52c97b462496bd662d7f2071fa8e3de57cb05a1069b",
+      "gzip_size": 97948,
+      "gzip_sha256": "23e7d44d415c10ec634942ab459eb9772c6b9a60000ffbc1eaaef5929507be50"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18553-12237280106463088253_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18553-12237280106463088253_0.profraw.gz",
+      "size": 297104,
+      "sha256": "c8611f0a0ecd16561f284b462b8887c769522fe6e1ff4d5b36510db7fcd035f9",
+      "gzip_size": 97948,
+      "gzip_sha256": "f6741026578d1976ae3f96126e5982d5dfb862d0698dace0a8adfa46ec96a21f"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18554-12237280106463088253_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18554-12237280106463088253_0.profraw.gz",
+      "size": 297104,
+      "sha256": "4253c88839b388c3ef2cc063bc4af8b718cd389acda4c7358ae63e7ded99c64b",
+      "gzip_size": 97948,
+      "gzip_sha256": "126e5684d8070af7191c41753e601dd21e198f29e68a94f8f5903fd84640c631"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18555-12237280106463088253_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18555-12237280106463088253_0.profraw.gz",
+      "size": 297104,
+      "sha256": "25ff8d1d8979fb77c4a8113108b1b2a2d7fa6e298c8e3e8bb99106be10d10c79",
+      "gzip_size": 97948,
+      "gzip_sha256": "2ac880676106ebc18416e7cfbd7cdf75ff4e88c15b95032c74341f5a69b3fd0d"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18555-16303875450564594445_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18555-16303875450564594445_0.profraw.gz",
+      "size": 336384,
+      "sha256": "404587b09ae9b59fe6504dc6b6016ef04a328fecffe1fde4f50379b18c8fe932",
+      "gzip_size": 110285,
+      "gzip_sha256": "4fcdf6140437111f09c3fe8fc1c359988567c872c49aa1acb196d42dfb816232"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18556-12237280106463088253_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18556-12237280106463088253_0.profraw.gz",
+      "size": 297104,
+      "sha256": "3855993a55b58ee8bea6585993b70de7bd85fec7f584806c78f6dd4c30bbb83d",
+      "gzip_size": 97948,
+      "gzip_sha256": "6f1c29ec0fbbed4c9bef64a1422a51a64107b9db62c6002f2e9f15b8f4285326"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18556-16303875450564594445_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18556-16303875450564594445_0.profraw.gz",
+      "size": 336384,
+      "sha256": "5059b7910e6962be8ece2dd7c09ced689df8ee2cdf02cae31d558216776fdfcd",
+      "gzip_size": 110910,
+      "gzip_sha256": "14defff0164dccfe477898c6d03b48af9e768ae0e4e69477f8f5ea3aa55ee0bb"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/profiles/worker-18560-11516559211669741444_0.profraw",
+      "artifact": "ordinary-baseline/profiles/worker-18560-11516559211669741444_0.profraw.gz",
+      "size": 259256,
+      "sha256": "8e16581f107b062fb0c4177fc8bdf94f07a2f8006762b3c9d8dd332a26145a7a",
+      "gzip_size": 93938,
+      "gzip_sha256": "e298820a4ac5ade38aba720cf8505295407ea1344fc12ac965d5207419377df8"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/report.json",
+      "artifact": "ordinary-baseline/report.json.gz",
+      "size": 40270,
+      "sha256": "8f935903683a69c9d4fcdfa0cc0ad05a232c7f60378eaa6f667e012878a56deb",
+      "gzip_size": 12894,
+      "gzip_sha256": "c8df80f4531240202890ae6482cadd1e113ef8ac6b58f37992f676e1439969ee"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/worker-guest-oracle.log",
+      "artifact": "ordinary-baseline/worker-guest-oracle.log.gz",
+      "size": 1347,
+      "sha256": "08dbedb20cf239fa273d045461da8c7377c8a918b00f76c45fa27432964e2a3c",
+      "gzip_size": 541,
+      "gzip_sha256": "1dc9bb6c7e7c7701d0872a06262c50f13f5b974c1baa6a74904042816116a6da"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline/worker-regressions.log",
+      "artifact": "ordinary-baseline/worker-regressions.log.gz",
+      "size": 841,
+      "sha256": "df3e1284a1bbdf5df8a7e9f6e2bc122e0ba50e99a0672a760257614e73498276",
+      "gzip_size": 432,
+      "gzip_sha256": "3cbc641b33916384aceb30d0b0096c65340d27eab84a827549267b14852f7555"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline-completion/coverage.log",
+      "artifact": "baseline-completion/coverage.log.gz",
+      "size": 1472499,
+      "sha256": "ae7a32ebe2f2cb519fbcca93dd118965cdeeccea1c27df38b7474b2e307fea4b",
+      "gzip_size": 163530,
+      "gzip_sha256": "4fd35a7ca5afdfd5c4be3c2b95575e62f658ddfae169bdd965fc55b96b7d1791"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline-completion/guest-oracle-with-disclosed-held-jit.log",
+      "artifact": "baseline-completion/guest-oracle-with-disclosed-held-jit.log.gz",
+      "size": 1339,
+      "sha256": "e0d3e3ba08677c065b51923cc0f8c816e1fa881b1b72f52fa437415f7a180e2d",
+      "gzip_size": 586,
+      "gzip_sha256": "4719257327ef43d6dd18959b32bc4dc34567b59197eae151f503f2993e346d13"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline-completion/merge.log",
+      "artifact": "baseline-completion/merge.log.gz",
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gzip_size": 20,
+      "gzip_sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline-completion/oracle-view/network-oracle.json",
+      "artifact": "baseline-completion/oracle-view/network-oracle.json.gz",
+      "size": 1655,
+      "sha256": "a66a7e354b90e44a9adaa1f91ad06c9f46d60dbaec32cfd6b1a08f1649bcc4b1",
+      "gzip_size": 616,
+      "gzip_sha256": "0ef5ba1efeaae127b090bf3cd3dafb7e3b075799e6369cfd492434f4c5fd0fd8"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline-completion/profile-object",
+      "artifact": "baseline-completion/profile-object.gz",
+      "size": 8587808,
+      "sha256": "7ab296510307c011f2a937c39a38ad5f612a47f4d2e2e85d263f9d365e6718d4",
+      "gzip_size": 2468423,
+      "gzip_sha256": "a19728b940e1cb4296240c4b90a38d44d5bccb09802ec1fbac11705fdc8482e1"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline-completion/report.json",
+      "artifact": "baseline-completion/report.json.gz",
+      "size": 65138,
+      "sha256": "6708697105bf301bef737f62a4c4ff9e1991b5603058c70b2a83bfbeb0a1efbe",
+      "gzip_size": 13735,
+      "gzip_sha256": "fd4a9c55bf8c291ca56669ed288a1df1dcfbf6727c6582382c7daf76ca60e875"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline-completion/worker.profdata",
+      "artifact": "baseline-completion/worker.profdata.gz",
+      "size": 428384,
+      "sha256": "b80621ab98ab37ed6569bfaebe1a2dd672624febb620f3f0e94af010e59ae0e7",
+      "gzip_size": 102132,
+      "gzip_sha256": "99f967b9d5d728e090b77110f60810a69747aa680627b95f492e7801c1daccee"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red/native/components/wfi-summary.txt",
+      "artifact": "first-harness-attempt/native/components/wfi-summary.txt.gz",
+      "size": 224,
+      "sha256": "69278d14ab1d774fbb8e93a1c28449263f690083bb9976f970fe214b5b8862e7",
+      "gzip_size": 145,
+      "gzip_sha256": "4002fea4a014e92aad881e9229d36226085e4f101b3ca9769de625518390ced3"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red/native/components/wfi-txfalse-pendingfalse-after.resume",
+      "artifact": "first-harness-attempt/native/components/wfi-txfalse-pendingfalse-after.resume.gz",
+      "size": 11896,
+      "sha256": "f560d5decfee86cc44b3d0528a890544b0a3a153c71004052a1364dcaf7f9c86",
+      "gzip_size": 4236,
+      "gzip_sha256": "23263107f9b957bb03fac930ab0b236458f8c4dbd3bed6c50d0e056d6e4aa6d0"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red/native/components/wfi-txfalse-pendingfalse-before.resume",
+      "artifact": "first-harness-attempt/native/components/wfi-txfalse-pendingfalse-before.resume.gz",
+      "size": 11886,
+      "sha256": "f5918e47332ee19ac49646dce2349d3e6f23117b3761d715b92e12e5bf6fc8f4",
+      "gzip_size": 4220,
+      "gzip_sha256": "261b7813f87da41eff74be09311c57438aa21142674f6f82cf528e09494ea0f2"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red/native/components/wfi-txfalse-pendingfalse.trace",
+      "artifact": "first-harness-attempt/native/components/wfi-txfalse-pendingfalse.trace.gz",
+      "size": 40,
+      "sha256": "191bc787c07d102613e354ab7a1ed05fb58e8c5f8bae8be4ced9e5e2daf4bf6c",
+      "gzip_size": 51,
+      "gzip_sha256": "14d735459278c4512b6bfcc2e6c9886554f1eeae31ccaa4563d1599978824792"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red/old-runtime-test-object",
+      "artifact": "first-harness-attempt/old-runtime-test-object.gz",
+      "size": 8494472,
+      "sha256": "011a91ab9bf5c677f3c36d77290b4bcb719f0c44455b23c28e01fbad51729a7e",
+      "gzip_size": 2444594,
+      "gzip_sha256": "50625115efbba890f90beb4100dbb522b56a34cfc7e392a0443723453b9cc3ea"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red/prediction.json",
+      "artifact": "first-harness-attempt/prediction.json.gz",
+      "size": 431,
+      "sha256": "989930cbf4c4e59940b366fbf8a4e0e4e01a164c2516f808a815310dbbbdcf31",
+      "gzip_size": 311,
+      "gzip_sha256": "614938161ad3de6df6164e0500db60a841698d20c433a6b5eab421a44ba53d75"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red/record-observed.resume",
+      "artifact": "first-harness-attempt/record-observed.resume.gz",
+      "size": 11896,
+      "sha256": "f560d5decfee86cc44b3d0528a890544b0a3a153c71004052a1364dcaf7f9c86",
+      "gzip_size": 4236,
+      "gzip_sha256": "23263107f9b957bb03fac930ab0b236458f8c4dbd3bed6c50d0e056d6e4aa6d0"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red/red.log",
+      "artifact": "first-harness-attempt/red.log.gz",
+      "size": 96369,
+      "sha256": "42d1071262974cd18b736636824fb9bd6e15326750898ba5e050eded3eb01e44",
+      "gzip_size": 12240,
+      "gzip_sha256": "cd902314cb0e622b58524c520ab9d185724ae6968e6f48856d15866a8d41fd13"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red/regression.rs",
+      "artifact": "first-harness-attempt/regression.rs.gz",
+      "size": 4946,
+      "sha256": "e37b85eb60e198c6f9289193a50fdf3aa508d411785974d93d3009b8f35eba2b",
+      "gzip_size": 1693,
+      "gzip_sha256": "4714bf2f1db6cac7f27ccee08a6abab52b4cf71429aeb3e1bc338aa750fa6365"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red/replay-observed.resume",
+      "artifact": "first-harness-attempt/replay-observed.resume.gz",
+      "size": 11896,
+      "sha256": "1e997b533d6c0982314f3a614c06a82f67fc88afb4950b3369180a662912860f",
+      "gzip_size": 4229,
+      "gzip_sha256": "898e87e7c4209f8276a817626d93a1c7f30d2e1d8257a6b418f0c7824c1a18a3"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red/report.json",
+      "artifact": "first-harness-attempt/report.json.gz",
+      "size": 11967,
+      "sha256": "5879e05f5f232be28a1613328fddc5569d5e9b32ed146fb3111eaf37c67040d6",
+      "gzip_size": 5324,
+      "gzip_sha256": "23ca5b96de7755ff13fd1d2e892d1c271da83da45b6ccd3bc4b014e1bb537c96"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red/wfi-red-18800-2868243468165587529_0.profraw",
+      "artifact": "first-harness-attempt/wfi-red-18800-2868243468165587529_0.profraw.gz",
+      "size": 260160,
+      "sha256": "0130dd0156798385251292d40d46ed9af00c53998abde984061842607a1fa0f2",
+      "gzip_size": 91571,
+      "gzip_sha256": "6ae98d0b7fa956380ecacd156a8ad826236de664e20348e19582e0490bbea468"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/native/components/wfi-summary.txt",
+      "artifact": "wfi-red/native/components/wfi-summary.txt.gz",
+      "size": 447,
+      "sha256": "10e075ba7e4b009a0ae962ce97b6448bb5e3be487380db2141eb17909b4d982d",
+      "gzip_size": 154,
+      "gzip_sha256": "7fee05be06df1dab314932938717083e8810f8e525c5e6a8efe2284f017e40eb"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/native/components/wfi-txfalse-pendingfalse-after.resume",
+      "artifact": "wfi-red/native/components/wfi-txfalse-pendingfalse-after.resume.gz",
+      "size": 11896,
+      "sha256": "f560d5decfee86cc44b3d0528a890544b0a3a153c71004052a1364dcaf7f9c86",
+      "gzip_size": 4236,
+      "gzip_sha256": "23263107f9b957bb03fac930ab0b236458f8c4dbd3bed6c50d0e056d6e4aa6d0"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/native/components/wfi-txfalse-pendingfalse-before.resume",
+      "artifact": "wfi-red/native/components/wfi-txfalse-pendingfalse-before.resume.gz",
+      "size": 11886,
+      "sha256": "f5918e47332ee19ac49646dce2349d3e6f23117b3761d715b92e12e5bf6fc8f4",
+      "gzip_size": 4220,
+      "gzip_sha256": "261b7813f87da41eff74be09311c57438aa21142674f6f82cf528e09494ea0f2"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/native/components/wfi-txfalse-pendingfalse-replayed.resume",
+      "artifact": "wfi-red/native/components/wfi-txfalse-pendingfalse-replayed.resume.gz",
+      "size": 11896,
+      "sha256": "f560d5decfee86cc44b3d0528a890544b0a3a153c71004052a1364dcaf7f9c86",
+      "gzip_size": 4236,
+      "gzip_sha256": "23263107f9b957bb03fac930ab0b236458f8c4dbd3bed6c50d0e056d6e4aa6d0"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/native/components/wfi-txfalse-pendingfalse.trace",
+      "artifact": "wfi-red/native/components/wfi-txfalse-pendingfalse.trace.gz",
+      "size": 40,
+      "sha256": "191bc787c07d102613e354ab7a1ed05fb58e8c5f8bae8be4ced9e5e2daf4bf6c",
+      "gzip_size": 51,
+      "gzip_sha256": "14d735459278c4512b6bfcc2e6c9886554f1eeae31ccaa4563d1599978824792"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/native/components/wfi-txfalse-pendingtrue-after.resume",
+      "artifact": "wfi-red/native/components/wfi-txfalse-pendingtrue-after.resume.gz",
+      "size": 11896,
+      "sha256": "b599fcbe8b7af9d2b864244d97b5696bcc17e32b02591f43bd3b59c753cfe16e",
+      "gzip_size": 4234,
+      "gzip_sha256": "25fb5950a0326a67ce9a8d8ca951a5c5fd322d6a6ac364f651454a112a772486"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/native/components/wfi-txfalse-pendingtrue-before.resume",
+      "artifact": "wfi-red/native/components/wfi-txfalse-pendingtrue-before.resume.gz",
+      "size": 11886,
+      "sha256": "3a3d626fcde643173e29eaaa78907c7f102037e45c7dc44360f247fa99464158",
+      "gzip_size": 4221,
+      "gzip_sha256": "e5b3c010bc38db33abfefd1a08f0094a152bfd8f6d55e45befb4deb1380dd00d"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/native/components/wfi-txfalse-pendingtrue.trace",
+      "artifact": "wfi-red/native/components/wfi-txfalse-pendingtrue.trace.gz",
+      "size": 40,
+      "sha256": "191bc787c07d102613e354ab7a1ed05fb58e8c5f8bae8be4ced9e5e2daf4bf6c",
+      "gzip_size": 51,
+      "gzip_sha256": "14d735459278c4512b6bfcc2e6c9886554f1eeae31ccaa4563d1599978824792"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/old-runtime-test-object",
+      "artifact": "wfi-red/old-runtime-test-object.gz",
+      "size": 8494120,
+      "sha256": "9ddb81971a20411bcdb5fdd8d4fb35c587a84b6dd50dcce50b2bb58bb8b2a25c",
+      "gzip_size": 2444545,
+      "gzip_sha256": "f78e4d209f6c139c45b297b7d180538d7cf6556bc766415685066f2f7e6a6364"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/prediction.json",
+      "artifact": "wfi-red/prediction.json.gz",
+      "size": 431,
+      "sha256": "d25d69f2356d5804af76081924cf81897142583932acfe37196ae843d578ab95",
+      "gzip_size": 311,
+      "gzip_sha256": "7d335f207475867c076f8d62b83ef9400a11ef00c5d208e9ab7a1343581a88ac"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/red.log",
+      "artifact": "wfi-red/red.log.gz",
+      "size": 1462,
+      "sha256": "a06cb153829aba18a0d01e1e7014a11e0bfd8f72c9d892facc4105f4a3290edf",
+      "gzip_size": 724,
+      "gzip_sha256": "76d0ff44da31b7a94136faeff330f76cb773f60fcef59a67941715597fb76b51"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/regression.rs",
+      "artifact": "wfi-red/regression.rs.gz",
+      "size": 5242,
+      "sha256": "096b3594dc2f794cc1f2fb67b61ad68cba0bab47718fb15d7c037e04bc4e05e0",
+      "gzip_size": 1783,
+      "gzip_sha256": "d7970d3e3d3a5361fd652f9d7989a256bcb4debafc0ecad6c606b6c6bca4550e"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/report.json",
+      "artifact": "wfi-red/report.json.gz",
+      "size": 11967,
+      "sha256": "027e389867bdf5c957dcacf5017075fb39504651beabdc34f589a31641cfeb7c",
+      "gzip_size": 5325,
+      "gzip_sha256": "cb8d960e69c96e2f42f9d1ab2dde52e788d35ede36b9b0a5dc37800d4ec265b1"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2/wfi-red-18852-2868139015635739209_0.profraw",
+      "artifact": "wfi-red/wfi-red-18852-2868139015635739209_0.profraw.gz",
+      "size": 260136,
+      "sha256": "09249473175d6a22b26dc10dd03d83b21e7ace9a384e4c6a45acc2736ca654db",
+      "gzip_size": 91550,
+      "gzip_sha256": "36d6955fe5f02d772b3840155e2bc9e2f71849513988062db9afb4eb0a89b2a0"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-coverage-baseline.py",
+      "artifact": "producers/e9-t13-worker-coverage-baseline.py.gz",
+      "size": 4602,
+      "sha256": "c82126343e3781efab2bd5a19a214b5a56ce9dfbdfda4dffaba19b31284c4ed0",
+      "gzip_size": 2054,
+      "gzip_sha256": "46656edb9391a3b0fbb38d6098672590bddfe0a78340975639c27c9a375602d5"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-baseline-completion.py",
+      "artifact": "producers/e9-t13-worker-baseline-completion.py.gz",
+      "size": 3187,
+      "sha256": "f980caf8fb5aa70eaf9a1b26634004b8f6a72f082679a95d061cb13f39281f05",
+      "gzip_size": 1475,
+      "gzip_sha256": "384449b45f0a9be21898e2d08a2e59fae58e667303a101125ef1d70a38f8af28"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red.py",
+      "artifact": "producers/e9-t13-worker-wfi-red.py.gz",
+      "size": 2851,
+      "sha256": "c355dd76d386ede6928df2cf223b0dd13e6da20a3fc2200804bc4c34f5ab3689",
+      "gzip_size": 1479,
+      "gzip_sha256": "2df4ca77df4c167991112ca3a445f84eee06c981cae224e02df5d701ae323fd3"
+    },
+    {
+      "original": "/Volumes/e9-final-proof-ram/e9-t13-worker-wfi-red-v2.py",
+      "artifact": "producers/e9-t13-worker-wfi-red-v2.py.gz",
+      "size": 2854,
+      "sha256": "fe9f76691eb4121d399f692ec62c40fde134a8d5befea0888291a64fcc6c5980",
+      "gzip_size": 1483,
+      "gzip_sha256": "02df3a4c0a7532b045a5e5eaffa71d6b6e29dfc83c3b907b7bc9621588eebf64"
+    }
+  ]
+}

@@ -66,6 +66,8 @@ pub mod section {
     pub const SESSION_SOURCES: u32 = 19;
     /// E9-T12: owned device requests, completed immutable payloads and revocable callback state.
     pub const SESSION_DEVICES: u32 = 20;
+    /// E9-T13: owned network intent, pending frames and recorded transport outcomes.
+    pub const SESSION_NETWORK: u32 = 21;
 }
 
 /// Is `tag` a section number this format family reserves (the whole reserved universe, whether or
@@ -93,6 +95,7 @@ pub fn is_known_section(tag: u32) -> bool {
             | section::SESSION_CLOCK
             | section::SESSION_SOURCES
             | section::SESSION_DEVICES
+            | section::SESSION_NETWORK
     )
 }
 
@@ -124,6 +127,7 @@ pub fn is_supported_section(tag: u32) -> bool {
             | section::SESSION_CLOCK
             | section::SESSION_SOURCES
             | section::SESSION_DEVICES
+            | section::SESSION_NETWORK
     )
 }
 

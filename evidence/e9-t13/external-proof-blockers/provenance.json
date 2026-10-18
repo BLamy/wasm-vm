@@ -1,0 +1,134 @@
+{
+  "task": "E9-T13",
+  "status": "external-proof-blockers",
+  "runtime": "04f628dd02a0bf57331682e05607829e25a0ca46",
+  "worker_submission": "7f5af6e4ad3e566542412a73668fc1f73eb5b8a9",
+  "files": [
+    {
+      "path": "independent-service-block.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-independent-service-block.json",
+      "bytes": 1887,
+      "sha256": "3e3f4c45a5fde5ede8987752a3fa17bcfa24056df5e550ec205e2125f4111fd4"
+    },
+    {
+      "path": "prepare-publication.py",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-prepare-reset-publication.py",
+      "bytes": 3573,
+      "sha256": "8ab7cb4185835a02788434e403c3fd633785725eeb8bd5eb64ec51890351fc95"
+    },
+    {
+      "path": "publication-candidate-receipt.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-reset-publication-prepared/receipt.json",
+      "bytes": 246039,
+      "sha256": "8a6341d9ee6a8cdf0bd1bef583c8ffd81b016256c0fa1f375ce6b523de4f3796"
+    },
+    {
+      "path": "publication-manifests/artifacts.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-reset-publication-source/web/dist/artifacts.json",
+      "bytes": 905,
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404"
+    },
+    {
+      "path": "publication-manifests/artifacts-alpine.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-reset-publication-source/web/dist/artifacts-alpine.json",
+      "bytes": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+    },
+    {
+      "path": "publication-manifests/artifacts-node-alpine.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-reset-publication-source/web/dist/artifacts-node-alpine.json",
+      "bytes": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+    },
+    {
+      "path": "publication-manifests/artifacts-omarchy.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-reset-publication-source/web/dist/artifacts-omarchy.json",
+      "bytes": 1229,
+      "sha256": "39500e220a6ec642c5dc5f8d417bdb5147416c0d8bcde191d6c640dde391e3cf"
+    },
+    {
+      "path": "publication-manifests/artifacts-omarchy-virgl.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-reset-publication-source/web/dist/artifacts-omarchy-virgl.json",
+      "bytes": 1062,
+      "sha256": "78e227e08f0032bddc1e9dc0df77df8274c78f7340c4df9d9dd72630cd4e91ff"
+    },
+    {
+      "path": "device-login-result.json",
+      "original_path": "/Volumes/e9-final-proof-ram/t13-device-login-v2-result.json",
+      "bytes": 297,
+      "sha256": "15a07528472ad4f99545cd3313181deed035b191adc1f9d94bd9ba5f753d1ace"
+    },
+    {
+      "path": "critic-dispatch.json",
+      "bytes": 2118,
+      "sha256": "5cb2f5846a719afb66a0a8f3b4c36d584e2edbe07925b1d2da1e504c718e0f63"
+    }
+  ],
+  "publication_candidate_sha256": "8a6341d9ee6a8cdf0bd1bef583c8ffd81b016256c0fa1f375ce6b523de4f3796",
+  "withdrawn_never_published_candidates": [
+    "43031d92822be59b8ddd15a599428194dc1470aa",
+    "e91c7af9bd8ec64c200c7d5a6687d9e4e124db12"
+  ],
+  "auth_repro": {
+    "command": [
+      "node",
+      "/Volumes/e9-t11-cold-scratch/e9-t12-npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+      "login",
+      "--device",
+      "--scopes",
+      "user:read",
+      "account:read",
+      "workers:write",
+      "workers_kv:write",
+      "workers_routes:write",
+      "workers_scripts:write",
+      "workers_tail:read",
+      "d1:write",
+      "pages:write",
+      "zone:read",
+      "ssl_certs:write",
+      "ai:write",
+      "ai-search:write",
+      "ai-search:run",
+      "agent-memory:write",
+      "queues:write",
+      "pipelines:write",
+      "secrets_store:write",
+      "artifacts:write",
+      "flagship:write",
+      "containers:write",
+      "cloudchamber:write",
+      "connectivity:admin",
+      "email_routing:write",
+      "email_sending:write",
+      "browser:write"
+    ],
+    "required_local_adaptation": "NODE_OPTIONS=--require=/Volumes/e9-final-proof-ram/wrangler-existing-auth-write.cjs while the persistent disk remains full; only the standard existing auth file is updated by official Wrangler. The adapter is not application code.",
+    "observed": "Device authorization timed out after5minutes without human approval. The expired user code and private auth/debug logs are excluded. A fresh official login is needed when the human is ready.",
+    "scope_change": "Existing supported permissions only; obsolete CLI-rejected websearch.run omitted, offline_access added automatically by Wrangler. No new permission requested."
+  },
+  "publication_next_command": [
+    "node",
+    "/Volumes/e9-t11-cold-scratch/e9-t12-npm-cache/_npx/32026684e21afda6/node_modules/wrangler/bin/wrangler.js",
+    "pages",
+    "deploy",
+    "web/dist",
+    "--project-name",
+    "wasm-vm",
+    "--branch",
+    "main",
+    "--commit-dirty=true"
+  ],
+  "publication_cwd": "/Volumes/e9-final-proof-ram/e9-t13-reset-publication-source",
+  "public_browser_next_command": [
+    "node",
+    "tools/verify/e9-network-capture-browser.mjs",
+    "--url",
+    "https://wasm-vm.pages.dev/",
+    "--output",
+    "/Volumes/e9-final-proof-ram/e9-t13-reset-public-browser"
+  ],
+  "public_browser_cwd": "/Volumes/e9-final-proof-ram/cold-source-e9-t13-04f628dd02a0",
+  "scope": "Worker accounting only. Local24-command recording passes. Required public deployment/browser proof and completed fresh independent verification remain missing. No T13 code has been published, no PR merged, no verified verdict issued. Credentials and private authentication logs were not copied. Prepared manifests are public boot bindings with exact prior baseline hashes, not authentication material.",
+  "time": 1792345002.3728719
+}

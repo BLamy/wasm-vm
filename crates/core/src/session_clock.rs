@@ -16,6 +16,7 @@ const MAGIC: &[u8; 8] = b"WVCLK001";
 pub enum SessionError {
     Inactive,
     DeviceCompletion(crate::session_devices::DeviceError),
+    Network(crate::session_network::NetworkError),
     AlreadyActive,
     UnsupportedScheduling,
     PositionPast,
@@ -621,6 +622,11 @@ impl crate::Machine {
         if let Some(error) = self.session_sources.borrow().error() {
             return Err(error);
         }
+        if let Some(hub) = &self.session_network
+            && let Some(error) = hub.borrow().error
+        {
+            return Err(SessionError::Network(error));
+        }
         if let Some(hub) = &self.session_devices
             && let Some(error) = hub.borrow().error
         {
@@ -639,7 +645,9 @@ impl crate::Machine {
         self.deliver_session_boundary()?;
         let clock = self.session_clock.as_mut().unwrap();
         let idle = core::mem::take(&mut clock.idle_pending);
-        if idle && !clock.external_pending {
+        // Owned network work is guest-derived or explicitly recorded. It must
+        // suppress the same idle jump as generic pending controls in both modes.
+        if idle && !clock.external_pending && !self.external_net_io_pending() {
             self.sync_clint();
             self.sync_sbi_timer();
             let before = self.clint_mtime();

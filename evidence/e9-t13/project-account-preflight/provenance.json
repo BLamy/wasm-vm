@@ -1,0 +1,114 @@
+{
+  "kind": "Authenticated account mismatch and failed ordinary publication; no deployment or verification verdict",
+  "task": "E9-T13",
+  "created": 1792354273.053302,
+  "frozen_runtime": "2f2aa7aba484f6954ca04358385828093e561b83",
+  "repository_head": "ec8ee8ea33bd58591653a4887eb207f5341614c5",
+  "privacy": "Credential material, private authentication/debug logs and account labels/identifiers excluded. Account identifiers are represented only by SHA256 digests in the public diagnosis.",
+  "entries": [
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-authorized-publication-auth-result.json",
+      "artifact": "receipts/login-authenticated.json.gz",
+      "size": 728,
+      "sha256": "1654ae0e29e9afb4b2ba605f17b28fce359e94617e192aabac14a88bbc1b83d4",
+      "gzip_size": 412,
+      "gzip_sha256": "1e8defd1ee435d42cf604bacb129d1a998669ce0c517d655a0f240f831fd8eff"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-authorized-publication-auth.py",
+      "artifact": "producers/auth-status.py.gz",
+      "size": 2018,
+      "sha256": "4bae07a9c127e816aeccec7769c7dae29864ad1743ae2f1c7682dbabd621ffb4",
+      "gzip_size": 1054,
+      "gzip_sha256": "71292057d126d338f95f7d91dd9aba9c144cdfe3028ed2d395be9cb8fe8bfbb4"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-wfi-publication-prepared/receipt.json",
+      "artifact": "receipts/prepared-payload.json.gz",
+      "size": 246032,
+      "sha256": "9f5ec1661f7d1895c59b332750dab1a803b8477358c86a0da62f75e2a1714163",
+      "gzip_size": 77922,
+      "gzip_sha256": "abbf1bb810f5d75f0ab9a7537b25227979652f246517cce0c599ee7ad2559cd2"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-wfi-prepublication-inventory.json",
+      "artifact": "receipts/prepublication-inventory-original.json.gz",
+      "size": 716,
+      "sha256": "953973c0e821a1bed820a3995fb544489908236fc367d4084d08790d12860241",
+      "gzip_size": 433,
+      "gzip_sha256": "7305b5d80bb77df28a1e349c448769986a0800a96daca2c6764ca2361c944bd4"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-wfi-prepublication-inventory-v2.json",
+      "artifact": "receipts/prepublication-inventory-corrected.json.gz",
+      "size": 1136,
+      "sha256": "7f7a2eda4d8916c99920b6a35aa0bd2581ebb8e9a4d827c9dfcc96b904ca661d",
+      "gzip_size": 608,
+      "gzip_sha256": "179e79458aefb93f537ff1e0ba259ec84e26218fe5549cf9e3ba906851809e42"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-publish-frozen-wfi.py",
+      "artifact": "producers/publish-frozen.py.gz",
+      "size": 4255,
+      "sha256": "fac9a0f82dcc755eedfa1c7e5a6654b10bb9e54fb70d390d070966a91aa6e5b3",
+      "gzip_size": 1962,
+      "gzip_sha256": "cecdbe9090241131217b8a8a5c4212db3d8d7b028e6743102088386e5c123336"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-publication/receipt.json",
+      "artifact": "receipts/publication-refusal.json.gz",
+      "size": 1705,
+      "sha256": "b5851b90c572efab98e3ce75bdb6557c3e82f537147c4ce7c5a3b2ca565c56da",
+      "gzip_size": 861,
+      "gzip_sha256": "b9f5ba81321a1ebd5446175c50a878b596dc1a71afab34d3d854efed97afa832"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-publication/deployment-failure-public.log",
+      "artifact": "receipts/deployment-failure-public.log.gz",
+      "size": 317,
+      "sha256": "ce5ff887f22839af514f47dd865e8760b5b0a4350da3ae659b26adc42dea6137",
+      "gzip_size": 232,
+      "gzip_sha256": "e1bd7346f6a0016f4e64e12a85e089d1b08bd08edf5f9304610660f83d0d196a"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-publication/project-availability.json",
+      "artifact": "receipts/current-project-availability.json.gz",
+      "size": 463,
+      "sha256": "a396f2e4300063d580ba1ed4787096d6cb9cc28e4612c0390a91da532fdca5fc",
+      "gzip_size": 309,
+      "gzip_sha256": "148536e371868bba37a4ce8d1f1b0d7302757d695852b4716dac5d75319bc189"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-publication/target-account-availability-public.json",
+      "artifact": "receipts/target-account-availability-public.json.gz",
+      "size": 961,
+      "sha256": "57840d710593b2e53fd5e53da173c00fa209ee954b52271e58d7c2bc08b25493",
+      "gzip_size": 563,
+      "gzip_sha256": "ae41f07e250bda17133a0628481d1bc0567b7002a5b333579276e8b5ff1324ac"
+    },
+    {
+      "original_path": "/Volumes/e9-t13-wfi-cold/e9-t13-wfi-publication/account-diagnosis-public.json",
+      "artifact": "receipts/account-diagnosis-public.json.gz",
+      "size": 1322,
+      "sha256": "4fa6b9f5afe6013762c1ae59db0c2d3fe7d9b89f566677cd4568cc3db9d06c57",
+      "gzip_size": 716,
+      "gzip_sha256": "d1ebac3e7f8da90a55b77a33e7b1af8896810233affe83f67c16839d6eed61eb"
+    },
+    {
+      "original_path": "/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/tasks/epic-9-session-time-travel/E9-T13-network-capture.md",
+      "artifact": "boundary/task-before-account-log.md.gz",
+      "size": 40527,
+      "sha256": "2c613f5f0c85c7609c1a1854ec86b331ebed9fd7f8053d20fa7b08f37e752696",
+      "gzip_size": 15291,
+      "gzip_sha256": "3f5d9495a8708256e7c959dce6b065499f8aac0fba5ae50c882219045c361f76"
+    },
+    {
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-preserve-account-preflight.py",
+      "artifact": "archive-producer.py.gz",
+      "size": 7421,
+      "sha256": "35e479380acae0bcad3250ed4bca6a610c4f118b684a947cb69a3d537325182d",
+      "gzip_size": 2794,
+      "gzip_sha256": "11ded1dac9c09da75a19adb7d2c5fdc32b6254f0fe76ed0dc4dc5b62ae0a1bd9"
+    }
+  ]
+}

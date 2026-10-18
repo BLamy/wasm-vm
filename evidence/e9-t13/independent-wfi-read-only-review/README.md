@@ -1,0 +1,5 @@
+# Partial independent WFI read-only assessment
+
+This packet preserves the separate critic authored follow-up over 19 changed files and 39 textual hunks at frozen runtime 2f2aa7. It is **not a verification verdict**. Saved WFI predictions hold; the additional worker recordings answer narrow G1–G8 requests with explicit scope and dominance waivers. G9 independent execution/sensitivity/suite disposition and P13 live publication/public-browser evidence remain unfinished.
+
+Read assessment/assessment.md.gz and its detailed JSON alongside the original assessment provenance. The critic authenticated 923 primary entries, 199 red entries, 37 source hashes, 180 matching supplementary artifacts and 32 unchanged prior HELD artifacts. No VM, test or producer execution occurred in this follow-up. No stopped execution was retried and no alternate model/session was used. The worker only authenticated and compressed these existing files. All originals are retained losslessly; each source path, digest and compressed digest is inventoried.

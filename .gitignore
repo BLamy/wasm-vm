@@ -114,3 +114,5 @@ bench/guest/gcc-MANIFEST.new
 
 # Pinned bare-metal completion guest loaded by the demo and cold-clone proof.
 !web/assets/e9-device-completions.elf
+
+!web/assets/e9-network-capture.elf

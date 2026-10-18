@@ -1,0 +1,108 @@
+{
+  "task": "E9-T13",
+  "kind": "External publication/full-independent-charter proof gaps; worker blocker accounting, no verifier verdict",
+  "created": 1792348882.605431,
+  "runtime": "2f2aa7aba484f6954ca04358385828093e561b83",
+  "entries": [
+    {
+      "path": "observed-blockers.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-wfi-external-accounting.json",
+      "original_bytes": 2966,
+      "original_sha256": "2dfe83d355c4cd9df0ecef157e11463c3961c5b4e904b2459ded2fe198d31021",
+      "gzip": "observed-blockers.json.gz",
+      "gzip_bytes": 1342,
+      "gzip_sha256": "b5ca54aaffaeab28eea669835694e74447c3092e6a4eb84f2d290d2914f4062c"
+    },
+    {
+      "path": "official-whoami-result.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-wfi-auth-result.json",
+      "original_bytes": 926,
+      "original_sha256": "ea9cbed02312ebba4137ba90001ee3ef402ab640829a45db2853b01f1791a46e",
+      "gzip": "official-whoami-result.json.gz",
+      "gzip_bytes": 463,
+      "gzip_sha256": "30384b7bfba8f26ba8f9fc5aadf5fce5bf80ce7716131a2173465b28ad4d7704"
+    },
+    {
+      "path": "prepared-publication-receipt.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-wfi-publication-prepared/receipt.json",
+      "original_bytes": 246032,
+      "original_sha256": "9f5ec1661f7d1895c59b332750dab1a803b8477358c86a0da62f75e2a1714163",
+      "gzip": "prepared-publication-receipt.json.gz",
+      "gzip_bytes": 77922,
+      "gzip_sha256": "abbf1bb810f5d75f0ab9a7537b25227979652f246517cce0c599ee7ad2559cd2"
+    },
+    {
+      "path": "preparation-producer.py",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-prepare-wfi-publication.py",
+      "original_bytes": 3592,
+      "original_sha256": "bbdf5d7de13c003ba467d7b8f8bff0b8f63d96699b067e45b4d2df2c3aa07a4c",
+      "gzip": "preparation-producer.py.gz",
+      "gzip_bytes": 1589,
+      "gzip_sha256": "913a960c4b76dd2e36def73afd0b65188a6eea3d89a1e664f37045d0224a9e30"
+    },
+    {
+      "path": "independent-service-block.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-independent-service-block.json",
+      "original_bytes": 1887,
+      "original_sha256": "3e3f4c45a5fde5ede8987752a3fa17bcfa24056df5e550ec205e2125f4111fd4",
+      "gzip": "independent-service-block.json.gz",
+      "gzip_bytes": 1058,
+      "gzip_sha256": "5beee443d51deb5a67ced1c3762230a06c563e75df8d4bcf6df375e2d66b69eb"
+    },
+    {
+      "path": "existing-auth-file-write-adaptation.cjs",
+      "original_path": "/Volumes/e9-final-proof-ram/wrangler-existing-auth-write.cjs",
+      "original_bytes": 1207,
+      "original_sha256": "68085caf0400a05bb28334a1767081ffe201a812015545214f240c226fa7cdde",
+      "gzip": "existing-auth-file-write-adaptation.cjs.gz",
+      "gzip_bytes": 670,
+      "gzip_sha256": "72c3c8ea4d2be8dc3ad3d6a7bfd99c53b7858528792872fca551911bbb4e8213"
+    },
+    {
+      "path": "prepared-manifests/artifacts.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-wfi-publication-source/web/dist/artifacts.json",
+      "original_bytes": 905,
+      "original_sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404",
+      "gzip": "prepared-manifests/artifacts.json.gz",
+      "gzip_bytes": 418,
+      "gzip_sha256": "af24aa41e284841f393c706e14213cafb6acb8efa3fd0d98aaba635e4220b83c"
+    },
+    {
+      "path": "prepared-manifests/artifacts-alpine.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-wfi-publication-source/web/dist/artifacts-alpine.json",
+      "original_bytes": 1110,
+      "original_sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c",
+      "gzip": "prepared-manifests/artifacts-alpine.json.gz",
+      "gzip_bytes": 505,
+      "gzip_sha256": "6a6342d97b6ce592b71aaade100e0acca909836db9d5bad5aa43c1396d802b83"
+    },
+    {
+      "path": "prepared-manifests/artifacts-node-alpine.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-wfi-publication-source/web/dist/artifacts-node-alpine.json",
+      "original_bytes": 1255,
+      "original_sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf",
+      "gzip": "prepared-manifests/artifacts-node-alpine.json.gz",
+      "gzip_bytes": 518,
+      "gzip_sha256": "c7bff604a9dbda2806afd1e41c6f69827c29eb18bffb06c72f6d2de00017349c"
+    },
+    {
+      "path": "prepared-manifests/artifacts-omarchy.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-wfi-publication-source/web/dist/artifacts-omarchy.json",
+      "original_bytes": 1229,
+      "original_sha256": "39500e220a6ec642c5dc5f8d417bdb5147416c0d8bcde191d6c640dde391e3cf",
+      "gzip": "prepared-manifests/artifacts-omarchy.json.gz",
+      "gzip_bytes": 545,
+      "gzip_sha256": "e11bff08a1f86c3e69e2700ee66f2fd05a60ae356290dd0578d4a2c5598d34ac"
+    },
+    {
+      "path": "prepared-manifests/artifacts-omarchy-virgl.json",
+      "original_path": "/Volumes/e9-final-proof-ram/e9-t13-wfi-publication-source/web/dist/artifacts-omarchy-virgl.json",
+      "original_bytes": 1062,
+      "original_sha256": "78e227e08f0032bddc1e9dc0df77df8274c78f7340c4df9d9dd72630cd4e91ff",
+      "gzip": "prepared-manifests/artifacts-omarchy-virgl.json.gz",
+      "gzip_bytes": 520,
+      "gzip_sha256": "8867498ad6d0a7dc7a1475abc4176eab89c1a8ab4ef828d8cfba2b780503f5af"
+    }
+  ],
+  "scope": "Prepared deploy payload, exact ordinary next commands and nonsecret observed auth/service state. No credential contents or private authentication/debug logs included. No publication, verified verdict or dependency clearance."
+}

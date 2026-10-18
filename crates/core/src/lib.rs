@@ -52,6 +52,7 @@ pub mod resume;
 pub mod sbi;
 pub mod session_clock;
 pub mod session_devices;
+pub mod session_network;
 pub mod snapshot;
 pub mod softfloat;
 pub mod time;
@@ -284,6 +285,7 @@ pub struct Machine {
     /// Transient execution fence, never part of a quiescent saved machine.
     session_fence: Option<u64>,
     session_devices: Option<alloc::rc::Rc<core::cell::RefCell<session_devices::DeviceHub>>>,
+    session_network: Option<alloc::rc::Rc<core::cell::RefCell<session_network::NetworkHub>>>,
     htif: Option<Htif>,
     /// Last observed `tohost` value — the watch fires only on CHANGE, giving
     /// exactly-once semantics for command writes ("logged once", E0-T11).
@@ -962,6 +964,7 @@ impl Machine {
             session_clock: None,
             session_sources: Default::default(),
             session_devices: None,
+            session_network: None,
             session_fence: None,
             htif: None,
             last_tohost: 0,
@@ -2115,6 +2118,9 @@ impl Machine {
         &mut self,
         backend: alloc::boxed::Box<dyn dev::virtio::net::NetBackend>,
     ) -> Result<(), &'static str> {
+        if self.session_network.is_some() {
+            return Err("qualified session network cannot install a live backend");
+        }
         let Some(control) = &self.net_backend else {
             return Err("virtio-net is not enabled");
         };
@@ -3300,7 +3306,7 @@ impl Machine {
                 return Err(error);
             }
         }
-        if !(exact_inputs && self.session_devices.is_some()) {
+        if !(exact_inputs && (self.session_devices.is_some() || self.session_network.is_some())) {
             self.quiesce()?;
         }
         use crate::resume::{ComponentSnapshot, SnapshotWriter, section};
@@ -3335,6 +3341,13 @@ impl Machine {
         })? {
             w.section(section::SESSION_DEVICES, &payload);
         }
+        if let Some(payload) = self.session_network_snapshot().map_err(|_| {
+            crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_NETWORK,
+            }
+        })? {
+            w.section(section::SESSION_NETWORK, &payload);
+        }
         // E3-T12c1: virtio-blk transport lifecycle + device ring position + FLUSH-forward count. The
         // disk bytes are the overlay (bound by generation, E3-T12c3), not serialized here; the parked
         // in-flight set is drained/refused by the quiesce (E3-T12c2) so it is empty at this boundary.
@@ -3362,8 +3375,12 @@ impl Machine {
         if let (Some((state, rx_vq, tx_vq)), Some((slot, _))) = (&self.net, self.virtio.get(1)) {
             let mut v = alloc::vec::Vec::new();
             slot.borrow().snapshot_transport(&mut v);
+            let st = state.borrow();
+            let [_, reset_pending] = st.session_flags();
+            // The next service drops reset-invalidated ring views before using them.
+            // Encode their canonical absence without polling or delivering owned RX.
             for q in [rx_vq, tx_vq] {
-                match q {
+                match q.as_ref().filter(|_| !reset_pending) {
                     Some(vq) => {
                         v.push(1);
                         let (la, ui) = vq.ring_indices();
@@ -3376,7 +3393,6 @@ impl Machine {
                     }
                 }
             }
-            let st = state.borrow();
             v.extend_from_slice(&st.rx_dropped.to_le_bytes());
             v.extend_from_slice(&st.tx_count.to_le_bytes());
             v.extend_from_slice(&st.rx_count.to_le_bytes());
@@ -3742,7 +3758,31 @@ impl Machine {
                 .map_err(|_| device_bad())
             })
             .transpose()?;
-        let strict_topology = exact_inputs;
+        let network_sections: alloc::vec::Vec<_> = sections
+            .iter()
+            .filter(|s| s.tag == section::SESSION_NETWORK)
+            .collect();
+        let network_bad = || crate::resume::SnapshotError::BadComponentState {
+            tag: section::SESSION_NETWORK,
+        };
+        if network_sections.len() != usize::from(self.session_network.is_some()) {
+            return Err(network_bad());
+        }
+        let staged_network = network_sections
+            .first()
+            .map(|sec| {
+                self.check_session_network_snapshot(
+                    sec.payload,
+                    staged_session_clock
+                        .as_ref()
+                        .ok_or_else(network_bad)?
+                        .position
+                        .sequence,
+                )
+                .map_err(|_| network_bad())
+            })
+            .transpose()?;
+        let strict_topology = exact_inputs || self.session_network.is_some();
         #[cfg(feature = "virgl-renderer")]
         let strict_topology = strict_topology || gpu_witness.is_some();
         if strict_topology {
@@ -3757,6 +3797,9 @@ impl Machine {
             }
             if staged_devices.is_some() {
                 expected.push(section::SESSION_DEVICES);
+            }
+            if staged_network.is_some() {
+                expected.push(section::SESSION_NETWORK);
             }
             for (tag, present) in [
                 (section::CLINT, self.clint.is_some()),
@@ -4151,7 +4194,10 @@ impl Machine {
                     self.clock_div = clock_div;
                     self.sbi_state.stimecmp = stimecmp;
                 }
-                section::SESSION_CLOCK | section::SESSION_SOURCES | section::SESSION_DEVICES => {} // validated above; commit only after every component
+                section::SESSION_CLOCK
+                | section::SESSION_SOURCES
+                | section::SESSION_DEVICES
+                | section::SESSION_NETWORK => {} // validated above; commit only after every component
                 section::VIRTIO_BLK => {
                     let slot = self
                         .virtio
@@ -4278,6 +4324,9 @@ impl Machine {
         }
         if let Some(restore) = staged_devices {
             self.restore_session_devices(restore);
+        }
+        if let Some(restore) = staged_network {
+            self.restore_session_network(restore);
         }
         self.session_clock = staged_session_clock;
         if let Some(cursor) = staged_source_cursor {
@@ -6450,6 +6499,12 @@ impl Machine {
             #[cfg(not(feature = "zicsr-stub"))]
             if sample_boundary {
                 self.boundary_sync();
+            }
+            #[cfg(not(feature = "zicsr-stub"))]
+            if let Some(hub) = &self.session_network
+                && let Some(error) = hub.borrow().error
+            {
+                return RunOutcome::SessionStopped(session_clock::SessionError::Network(error));
             }
             #[cfg(not(feature = "zicsr-stub"))]
             if let Some(hub) = &self.session_devices
