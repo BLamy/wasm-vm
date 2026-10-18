@@ -174,3 +174,35 @@ proofs; no broad native/workspace rerun or automatic cold clone. Commands: indep
 SHA-256/provenance/frame/trace/coverage audits; `node --check` on the promoted regression.
 The initial N1 source/failed report/screenshot and original digests are retained in
 `evidence/e9-t06/verifier-initial/`; `coverage-audit.json.gz` and `coverage.md` hold the hunk inventory.
+
+### 2026-10-18 — worker — mobile repair and completed cleanup evidence
+
+Frozen repair head: `1afabe81e5545eb54da63faddc8214d81e474dc4`.
+The product repair is one CSS declaration wrapping long status text. Native code, runtime
+JavaScript, storage semantics, the software runtime identity and Wasm bytes are unchanged.
+The promoted missing-object/cleanup regression is now automatically run by the acceptance target.
+Touched harness syntax passed; `make web-dist` rebuilt the committed page.
+
+Ran `GIT_OPTIONAL_LOCKS=0 E9_LIBRARY_EVIDENCE_DIR=target/evidence/e9-t06-css-worker-final make verify-E9-T06`.
+All **nine** medium-risk gates passed at the frozen head, including the original full built-browser
+flow and the new actual missing-point/cleanup tail. Acceptance receipt SHA-256:
+`deb146471aff0602b1db395d9c6359b761df63ad2e17d6fe446effb9fb0e9f3d`.
+The 17 source hashes and all 1,123 original files (including the receipt) are bound by
+`evidence/e9-t06/worker-repaired/provenance.json`; it retains 20 compact copies and five aliases.
+
+The bounded report SHA-256 is `4b83676473c08680b2435dcb930f986f09153bb79ace65dddbff092dc82fd5ce`;
+`evidence/e9-t06/repair-local/` retains seven compact copies and two aliases, authenticating
+563 original payloads without changing the original browser profile. At 390px, the real
+missing-object error has scroll/client width **388/388** and stays inside the panel; the
+full active Alpha tuple remains `28f85384b08433a7f9bcc36a1d2eaee40a976c14699e560a795ffef9200790a6`.
+One deliberately failed initial save leaves a draft, no durable session and no writer lease;
+immediate same-ID acquisition succeeds. A later successful Start is retired through the
+ordinary ownership protocol. The browser acknowledges its writer lock is absent before
+reacquisition, and its committed revision-1 manifest remains byte-identical at
+`0ca2c5291d899c06a9978412cd14b922a496eb068e5794194b0c9fbba11e56f2`.
+The full browser run again has 127/0, no unexpected errors, four sealed coverage segments,
+exact actual guest file/RAM restores and a fresh physically drawn retained-GPU frame.
+
+The new mobile screenshot was visually inspected. The status remains in-progress until
+the repaired CSS is deployed and the same bounded production proof is recorded. Previously
+HELD results carry forward; only the fresh critic can resolve the refutation.
