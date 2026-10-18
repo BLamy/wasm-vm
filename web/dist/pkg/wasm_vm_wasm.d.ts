@@ -84,6 +84,12 @@ export class WasmLinux {
      */
     captureGpuDiskDelta(): Uint8Array;
     /**
+     * The loader fences all host mutations and execution until this bounded Promise settles.
+     * Pending block fetches/durability drain without CPU execution; final serialization has no
+     * await, callback or borrow release between architectural state, COW map and UART queues.
+     */
+    captureSoftwareCheckpoint(context_bytes: Uint8Array): Promise<Uint8Array>;
+    /**
      * E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
      * can proceed instead of blocking on our open handle. Call before wiping; the machine must
      * not persist afterward. No-op off the persistent path.
@@ -331,6 +337,12 @@ export class WasmLinux {
      */
     restoreDesktopSnapshot(blob: Uint8Array, host_width: number, host_height: number): any;
     /**
+     * Only a private seeded candidate is admitted by the loader. Native callers additionally get
+     * a complete byte comparison of its COW map, not merely a generation comparison (siblings may
+     * share generations). All fallible checks precede the first CPU/device/host-queue mutation.
+     */
+    restoreSoftwareCheckpoint(bytes: Uint8Array, expected_context: Uint8Array): void;
+    /**
      * Load and, only when coherent, apply the persisted snapshot directly inside wasm. The stored
      * blob is held by one Rust allocation while the coherence header is checked and the machine is
      * restored; unlike `readStoredSnapshot` this path does not create a JS `Uint8Array` boundary copy.
@@ -445,6 +457,10 @@ export class WasmLinux {
      * timing (~0 overhead). Returns `false` if no `performance` object is available to arm it.
      */
     setProfiling(on: boolean): boolean;
+    /**
+     * Device map of the standard Linux constructor, using the authoritative platform constants.
+     */
+    softwareCheckpointTopology(): string;
     /**
      * E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
      * shipped, build-time boot snapshot can be restored on the initramfs path (which otherwise has no
@@ -826,6 +842,22 @@ export interface InitOutput {
     readonly __jit_lr: (a: bigint, b: number) => bigint;
     readonly __jit_sc: (a: bigint, b: bigint, c: number) => bigint;
     readonly __jit_store: (a: bigint, b: bigint, c: number) => void;
+    readonly wasmlinux_attachVirgl: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number];
+    readonly wasmlinux_captureGpuDiskDelta: (a: number) => [number, number, number];
+    readonly wasmlinux_captureSoftwareCheckpoint: (a: number, b: number, c: number) => any;
+    readonly wasmlinux_complete: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => [number, number];
+    readonly wasmlinux_drainGpuCheckpointBoundary: (a: number) => [number, number, number];
+    readonly wasmlinux_enableGpuCommandTrace: (a: number) => [number, number];
+    readonly wasmlinux_gatherInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number) => [number, number, number];
+    readonly wasmlinux_gatherLayeredInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number, number];
+    readonly wasmlinux_gpuCommandTrace: (a: number) => [number, number, number, number];
+    readonly wasmlinux_invalidateVirgl: (a: number) => [number, number];
+    readonly wasmlinux_loadAcceleratedSnapshotBlob: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
+    readonly wasmlinux_restoreSoftwareCheckpoint: (a: number, b: number, c: number, d: number, e: number) => [number, number];
+    readonly wasmlinux_saveAcceleratedSnapshot: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmlinux_scatterLayeredOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number, t: number, u: number) => [number, number];
+    readonly wasmlinux_scatterOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number];
+    readonly wasmlinux_softwareCheckpointTopology: (a: number) => [number, number];
     readonly setSlirpDhcpLeaseSeconds: (a: number) => void;
     readonly setSlirpDohEndpoint: (a: number, b: number) => void;
     readonly setSlirpMtu: (a: number) => void;
@@ -835,20 +867,7 @@ export interface InitOutput {
     readonly setSlirpTailscaleWorker: (a: number, b: number, c: any) => void;
     readonly slirpDhcpStats: () => [number, number];
     readonly slirpTailscaleCommand: (a: number, b: number) => number;
-    readonly wasmlinux_attachVirgl: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number];
     readonly wasmlinux_captureDiskDelta: (a: number) => any;
-    readonly wasmlinux_captureGpuDiskDelta: (a: number) => [number, number, number];
-    readonly wasmlinux_complete: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => [number, number];
-    readonly wasmlinux_drainGpuCheckpointBoundary: (a: number) => [number, number, number];
-    readonly wasmlinux_enableGpuCommandTrace: (a: number) => [number, number];
-    readonly wasmlinux_gatherInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number) => [number, number, number];
-    readonly wasmlinux_gatherLayeredInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number, number];
-    readonly wasmlinux_gpuCommandTrace: (a: number) => [number, number, number, number];
-    readonly wasmlinux_invalidateVirgl: (a: number) => [number, number];
-    readonly wasmlinux_loadAcceleratedSnapshotBlob: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
-    readonly wasmlinux_saveAcceleratedSnapshot: (a: number, b: number, c: number) => [number, number, number];
-    readonly wasmlinux_scatterLayeredOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number, t: number, u: number) => [number, number];
-    readonly wasmlinux_scatterOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56: (a: number, b: number, c: any) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h0b706747458e1fca: (a: number, b: number, c: any, d: any) => void;
     readonly wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270: (a: number, b: number, c: any) => void;

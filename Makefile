@@ -456,6 +456,10 @@ verify-E9-T03:
 verify-E9-T04:
 	python3 -B tools/verify/e9-disk-roots.py --output "$${E9_DISK_EVIDENCE_DIR:-target/evidence/e9-disk-roots-final}"
 
+.PHONY: verify-E9-T05
+verify-E9-T05:
+	python3 -B tools/verify/e9-software-checkpoints.py --output "$${E9_CHECKPOINT_EVIDENCE_DIR:-target/evidence/e9-software-checkpoints-final}"
+
 # E1-T20: RISCOF architectural compliance (DUT=wasm-vm vs Spike). Needs `bash compliance/provision.sh`
 # first (riscof venv + arch-test) + the Docker toolchain image (Spike). Enforces compliance/EXCLUSIONS.md.
 riscof:

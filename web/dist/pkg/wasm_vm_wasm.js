@@ -270,6 +270,19 @@ export class WasmLinux {
         return takeFromExternrefTable0(ret[0]);
     }
     /**
+     * The loader fences all host mutations and execution until this bounded Promise settles.
+     * Pending block fetches/durability drain without CPU execution; final serialization has no
+     * await, callback or borrow release between architectural state, COW map and UART queues.
+     * @param {Uint8Array} context_bytes
+     * @returns {Promise<Uint8Array>}
+     */
+    captureSoftwareCheckpoint(context_bytes) {
+        const ptr0 = passArray8ToWasm0(context_bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_captureSoftwareCheckpoint(this.__wbg_ptr, ptr0, len0);
+        return ret;
+    }
+    /**
      * E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
      * can proceed instead of blocking on our open handle. Call before wiping; the machine must
      * not persist afterward. No-op off the persistent path.
@@ -1074,6 +1087,23 @@ export class WasmLinux {
         return takeFromExternrefTable0(ret[0]);
     }
     /**
+     * Only a private seeded candidate is admitted by the loader. Native callers additionally get
+     * a complete byte comparison of its COW map, not merely a generation comparison (siblings may
+     * share generations). All fallible checks precede the first CPU/device/host-queue mutation.
+     * @param {Uint8Array} bytes
+     * @param {Uint8Array} expected_context
+     */
+    restoreSoftwareCheckpoint(bytes, expected_context) {
+        const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passArray8ToWasm0(expected_context, wasm.__wbindgen_malloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_restoreSoftwareCheckpoint(this.__wbg_ptr, ptr0, len0, ptr1, len1);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * Load and, only when coherent, apply the persisted snapshot directly inside wasm. The stored
      * blob is held by one Rust allocation while the coherence header is checked and the machine is
      * restored; unlike `readStoredSnapshot` this path does not create a JS `Uint8Array` boundary copy.
@@ -1420,6 +1450,22 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return ret[0] !== 0;
+    }
+    /**
+     * Device map of the standard Linux constructor, using the authoritative platform constants.
+     * @returns {string}
+     */
+    softwareCheckpointTopology() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.wasmlinux_softwareCheckpointTopology(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
     }
     /**
      * E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
@@ -2723,32 +2769,32 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000001: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 31, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [Externref], shim_idx: 30, ret: Result(Unit), inner_ret: Some(Result(Unit)) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56);
             return ret;
         },
         __wbindgen_cast_0000000000000002: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 72, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 75, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270);
             return ret;
         },
         __wbindgen_cast_0000000000000003: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 72, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 75, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_2);
             return ret;
         },
         __wbindgen_cast_0000000000000004: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 72, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 75, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_3);
             return ret;
         },
         __wbindgen_cast_0000000000000005: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 72, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 75, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h14f61cc30d442270_4);
             return ret;
         },
         __wbindgen_cast_0000000000000006: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 90, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 95, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__had759ba7c4081673);
             return ret;
         },

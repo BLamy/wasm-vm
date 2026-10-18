@@ -14,6 +14,8 @@ export class SessionSha256 {
 
 export function sessionAdmitDiskRoot(bytes: Uint8Array, image: string, generation: string): Uint8Array;
 
+export function sessionCanonicalImage(text: string): Uint8Array;
+
 export function sessionCheckAppend(previous: Uint8Array, candidate: Uint8Array): void;
 
 export function sessionDiskRootReferences(bytes: Uint8Array): Uint8Array;
@@ -21,6 +23,8 @@ export function sessionDiskRootReferences(bytes: Uint8Array): Uint8Array;
 export function sessionEventReferences(manifest: Uint8Array, chunk: Uint8Array): Uint8Array;
 
 export function sessionManifestReferences(bytes: Uint8Array): Uint8Array;
+
+export function sessionValidateCheckpointContext(bytes: Uint8Array): Uint8Array;
 
 export function sessionValidateDiskRoot(bytes: Uint8Array): Uint8Array;
 
@@ -32,10 +36,12 @@ export interface InitOutput {
     readonly memory: WebAssembly.Memory;
     readonly __wbg_sessionsha256_free: (a: number, b: number) => void;
     readonly sessionAdmitDiskRoot: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number, number, number];
+    readonly sessionCanonicalImage: (a: number, b: number) => [number, number, number, number];
     readonly sessionCheckAppend: (a: number, b: number, c: number, d: number) => [number, number];
     readonly sessionDiskRootReferences: (a: number, b: number) => [number, number, number, number];
     readonly sessionEventReferences: (a: number, b: number, c: number, d: number) => [number, number, number, number];
     readonly sessionManifestReferences: (a: number, b: number) => [number, number, number, number];
+    readonly sessionValidateCheckpointContext: (a: number, b: number) => [number, number, number, number];
     readonly sessionValidateDiskRoot: (a: number, b: number) => [number, number, number, number];
     readonly sessionValidateManifest: (a: number, b: number) => [number, number, number, number];
     readonly sessionsha256_finish: (a: number) => [number, number, number, number];

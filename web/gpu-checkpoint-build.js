@@ -1,2 +1,4 @@
 // Generated from actual worker/Wasm runtime bytes; never hand edit.
-export const GPU_CHECKPOINT_BUILD_ID="8947b88d248365ce6991d01dc22ec74170ed99f7d7444620793a4dd21ae7744c";
+export const GPU_CHECKPOINT_BUILD_ID="f1ec340a2d4e1bb7fa29cb747ec78c629d8b6ddc67f098cdde7fa8f4f5792ca6";
+export const SOFTWARE_CHECKPOINT_WASM_SHA256="71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027";
+export const SOFTWARE_CHECKPOINT_WASM_BYTES=1864397;

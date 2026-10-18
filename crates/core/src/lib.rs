@@ -3192,7 +3192,20 @@ impl Machine {
     /// [`crate::resume::SnapshotError::NotQuiesced`], no blob emitted) rather than serialize a torn
     /// boundary — a parked descriptor chain must never be captured half-processed.
     pub fn save_resume(&mut self) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
-        self.save_resume_inner(None)
+        self.save_resume_inner(None, false)
+    }
+
+    /// Coherent software history boundary, retaining logical input ledgers and queue frames.
+    /// Extra disks and host-driven clocks require separate recording adapters.
+    pub fn save_session_resume(
+        &mut self,
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        if !self.extra_blk.is_empty() || self.guest_clock_mode() != time::TimeMode::ICount {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::CLOCK,
+            });
+        }
+        self.save_resume_inner(None, true)
     }
 
     /// Service only original GPU queue work and completion mailboxes while the guest is paused.
@@ -3229,7 +3242,7 @@ impl Machine {
         &mut self,
         renderer_digest: &[u8; 32],
     ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
-        let bytes = self.save_resume_inner(Some(renderer_digest))?;
+        let bytes = self.save_resume_inner(Some(renderer_digest), false)?;
         dev::virtio::gpu::checkpoint::seal_resume(bytes, renderer_digest).map_err(|_| {
             crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
@@ -3240,6 +3253,7 @@ impl Machine {
     fn save_resume_inner(
         &mut self,
         gpu_witness: Option<&[u8; 32]>,
+        exact_inputs: bool,
     ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
         #[cfg(not(feature = "virgl-renderer"))]
         let _ = gpu_witness;
@@ -3369,9 +3383,10 @@ impl Machine {
             w.section(section::VIRTIO_GPU, &v);
         }
         if let Some((state, eventq, statusq)) = &self.keyboard {
-            // A physical key/button belongs to the old host session. Turn it into a protected
-            // release frame before encoding so a fresh target cannot inherit a stuck key.
-            state.borrow_mut().release_all();
+            // Desktop reconnects release physical keys; session history retains exact ledgers.
+            if !exact_inputs {
+                state.borrow_mut().release_all();
+            }
             let mut v = alloc::vec::Vec::new();
             self.virtio[dev::virtio::input::keyboard::KEYBOARD_VIRTIO_SLOT]
                 .0
@@ -3379,16 +3394,19 @@ impl Machine {
                 .snapshot_transport(&mut v);
             append_resume_queue(&mut v, eventq);
             append_resume_queue(&mut v, statusq);
-            let payload = state.borrow().to_snapshot().map_err(|_| {
-                crate::resume::SnapshotError::BadComponentState {
+            let payload = state
+                .borrow()
+                .to_resume_snapshot(exact_inputs)
+                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
                     tag: section::VIRTIO_KEYBOARD,
-                }
-            })?;
+                })?;
             v.extend_from_slice(&payload);
             w.section(section::VIRTIO_KEYBOARD, &v);
         }
         if let Some((state, eventq, statusq)) = &self.tablet {
-            state.borrow_mut().release_all();
+            if !exact_inputs {
+                state.borrow_mut().release_all();
+            }
             let mut v = alloc::vec::Vec::new();
             self.virtio[dev::virtio::input::pointer::TABLET_VIRTIO_SLOT]
                 .0
@@ -3396,16 +3414,19 @@ impl Machine {
                 .snapshot_transport(&mut v);
             append_resume_queue(&mut v, eventq);
             append_resume_queue(&mut v, statusq);
-            let payload = state.borrow().to_snapshot().map_err(|_| {
-                crate::resume::SnapshotError::BadComponentState {
+            let payload = state
+                .borrow()
+                .to_resume_snapshot(exact_inputs)
+                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
                     tag: section::VIRTIO_TABLET,
-                }
-            })?;
+                })?;
             v.extend_from_slice(&payload);
             w.section(section::VIRTIO_TABLET, &v);
         }
         if let Some((state, eventq, statusq)) = &self.mouse {
-            state.borrow_mut().release_all();
+            if !exact_inputs {
+                state.borrow_mut().release_all();
+            }
             let mut v = alloc::vec::Vec::new();
             self.virtio[dev::virtio::input::pointer::MOUSE_VIRTIO_SLOT]
                 .0
@@ -3413,11 +3434,12 @@ impl Machine {
                 .snapshot_transport(&mut v);
             append_resume_queue(&mut v, eventq);
             append_resume_queue(&mut v, statusq);
-            let payload = state.borrow().to_snapshot().map_err(|_| {
-                crate::resume::SnapshotError::BadComponentState {
+            let payload = state
+                .borrow()
+                .to_resume_snapshot(exact_inputs)
+                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
                     tag: section::VIRTIO_MOUSE,
-                }
-            })?;
+                })?;
             v.extend_from_slice(&payload);
             w.section(section::VIRTIO_MOUSE, &v);
         }
@@ -3433,11 +3455,12 @@ impl Machine {
                 append_resume_queue(&mut v, queue);
             }
             v.extend_from_slice(&SND_RESUME_LAYOUT_VERSION.to_le_bytes());
-            let payload = state.borrow().to_snapshot().map_err(|_| {
-                crate::resume::SnapshotError::BadComponentState {
+            let payload = state
+                .borrow()
+                .to_resume_snapshot(exact_inputs)
+                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
                     tag: section::VIRTIO_SND,
-                }
-            })?;
+                })?;
             v.extend_from_slice(&payload);
             w.section(section::VIRTIO_SND, &v);
         }
@@ -3466,7 +3489,10 @@ impl Machine {
             ] {
                 append_resume_queue(&mut v, q);
             }
-            console.state.borrow().snapshot_resume(&mut v);
+            console
+                .state
+                .borrow()
+                .snapshot_session_or_resume(&mut v, exact_inputs)?;
             w.section(section::VIRTIO_CONSOLE, &v);
         }
         // Deterministic-clock phase (E3-T12b): the sub-`clock_div` remainder + `clock_div` itself, so
@@ -3494,7 +3520,18 @@ impl Machine {
     /// [`crate::resume::SnapshotError::OverlayGenerationMismatch`]) with the target machine left
     /// byte-identical to its pre-restore state — a resumed CPU/RAM never lands on a diverged disk.
     pub fn load_resume(&mut self, blob: &[u8]) -> Result<(), crate::resume::SnapshotError> {
-        self.load_resume_inner(blob, None).map(|_| ())
+        self.load_resume_inner(blob, None, false).map(|_| ())
+    }
+
+    /// Validate every component and the complete topology before exact software restore.
+    /// This creates no physical-input release, guest instruction or host clock rebase.
+    pub fn load_session_resume(&mut self, blob: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        if !self.extra_blk.is_empty() || self.guest_clock_mode() != time::TimeMode::ICount {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::CLOCK,
+            });
+        }
+        self.load_resume_inner(blob, None, true).map(|_| ())
     }
 
     /// Restore only the native half of a matching, independently reconstructed GPU checkpoint.
@@ -3512,7 +3549,7 @@ impl Machine {
                     tag: crate::resume::section::VIRTIO_GPU,
                 }
             })?;
-        self.load_resume_inner(payload, Some(renderer_digest))?
+        self.load_resume_inner(payload, Some(renderer_digest), false)?
             .ok_or(crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
             })
@@ -3522,6 +3559,7 @@ impl Machine {
         &mut self,
         blob: &[u8],
         gpu_witness: Option<&[u8; 32]>,
+        exact_inputs: bool,
     ) -> Result<Option<(u64, u64)>, crate::resume::SnapshotError> {
         #[cfg(not(feature = "virgl-renderer"))]
         let _ = gpu_witness;
@@ -3551,9 +3589,11 @@ impl Machine {
         for sec in reader {
             sections.push(sec?);
         }
+        let strict_topology = exact_inputs;
         #[cfg(feature = "virgl-renderer")]
-        if gpu_witness.is_some() {
-            // The accelerated envelope is an exact machine boundary. Missing, duplicate or
+        let strict_topology = strict_topology || gpu_witness.is_some();
+        if strict_topology {
+            // An exact envelope requires every component once. Missing, duplicate or
             // unknown sections must not leave destination CPU/RAM/device state mixed with it.
             let mut expected = alloc::vec![section::CPU, section::RAM, section::CLOCK];
             for (tag, present) in [
@@ -3580,7 +3620,11 @@ impl Machine {
             actual.sort_unstable();
             if actual != expected {
                 return Err(crate::resume::SnapshotError::BadComponentState {
-                    tag: section::VIRTIO_GPU,
+                    tag: if exact_inputs {
+                        section::CPU
+                    } else {
+                        section::VIRTIO_GPU
+                    },
                 });
             }
         }
@@ -3620,10 +3664,15 @@ impl Machine {
                 }
                 section::CLOCK => {
                     let mut reader = crate::resume::Reader::new(sec.payload, sec.tag);
-                    reader.u64()?;
-                    reader.u64()?;
+                    let phase = reader.u64()?;
+                    let divider = reader.u64()?;
                     reader.u64()?;
                     reader.finish()?;
+                    if exact_inputs && (!(1..=1024).contains(&divider) || phase >= divider) {
+                        return Err(crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        });
+                    }
                 }
                 section::VIRTIO_BLK | section::VIRTIO_NET => {
                     let (slot_index, queue_count, counter_count) = if sec.tag == section::VIRTIO_BLK
@@ -3685,40 +3734,53 @@ impl Machine {
                     let (_, state) = dev::virtio::input::VirtioInput::new_with_state(
                         dev::virtio::input::keyboard::keyboard_spec(),
                     );
-                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
-                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
-                    })?;
+                    state
+                        .borrow_mut()
+                        .restore_resume_snapshot(payload, exact_inputs)
+                        .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        })?;
                 }
                 section::VIRTIO_TABLET => {
                     let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
                     let (_, state) = dev::virtio::input::VirtioInput::new_with_state(
                         dev::virtio::input::pointer::tablet_spec(),
                     );
-                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
-                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
-                    })?;
+                    state
+                        .borrow_mut()
+                        .restore_resume_snapshot(payload, exact_inputs)
+                        .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        })?;
                 }
                 section::VIRTIO_MOUSE => {
                     let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 2)?;
                     let (_, state) = dev::virtio::input::VirtioInput::new_with_state(
                         dev::virtio::input::pointer::mouse_spec(),
                     );
-                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
-                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
-                    })?;
+                    state
+                        .borrow_mut()
+                        .restore_resume_snapshot(payload, exact_inputs)
+                        .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        })?;
                 }
                 section::VIRTIO_SND => {
                     let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 4)?;
-                    let mut device = dev::virtio::snd::VirtioSnd::new();
-                    device.restore_snapshot(payload).map_err(|_| {
-                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
-                    })?;
+                    let device = dev::virtio::snd::VirtioSnd::new();
+                    device
+                        .state_handle()
+                        .borrow_mut()
+                        .restore_resume_snapshot(payload, exact_inputs)
+                        .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        })?;
                 }
                 section::VIRTIO_CONSOLE => {
                     let (_, _, payload) = parse_resume_device_prefix(sec.payload, sec.tag, 6)?;
                     let mut state = dev::virtio::console::ConsoleState::new();
                     let mut reader = crate::resume::Reader::new(payload, sec.tag);
-                    state.restore_resume(&mut reader)?;
+                    state.restore_session_or_resume(&mut reader, exact_inputs)?;
                     reader.finish()?;
                 }
                 section::VIRTIO_RNG => {
@@ -3799,9 +3861,12 @@ impl Machine {
                         reader.u16()?;
                     }
                     let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
-                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
-                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
-                    })?;
+                    state
+                        .borrow_mut()
+                        .restore_resume_snapshot(payload, exact_inputs)
+                        .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        })?;
                     *eventq = queues.remove(0);
                     *statusq = queues.remove(0);
                 }
@@ -3823,9 +3888,12 @@ impl Machine {
                         reader.u16()?;
                     }
                     let mut queues = restore_resume_queues(&slot, &rings, sec.tag)?;
-                    state.borrow_mut().restore_snapshot(payload).map_err(|_| {
-                        crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
-                    })?;
+                    state
+                        .borrow_mut()
+                        .restore_resume_snapshot(payload, exact_inputs)
+                        .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                            tag: sec.tag,
+                        })?;
                     *controlq = queues.remove(0);
                     *eventq = queues.remove(0);
                     *txq = queues.remove(0);
@@ -3992,7 +4060,7 @@ impl Machine {
                     console
                         .state
                         .borrow_mut()
-                        .restore_resume(&mut state_reader)?;
+                        .restore_session_or_resume(&mut state_reader, exact_inputs)?;
                     state_reader.finish()?;
                     console.port0_receiveq = restored_queues.remove(0);
                     console.port0_transmitq = restored_queues.remove(0);
@@ -4019,7 +4087,9 @@ impl Machine {
         // pending HELLO. Complete it without forwarding bytes into the new host Channel. Do this
         // after every section (RAM need not precede console in the container), before any guest
         // execution can post fresh descriptors or observe completions and reuse old ones.
-        if let Some(console) = &mut self.console {
+        if let Some(console) = &mut self.console
+            && !exact_inputs
+        {
             let slot = alloc::rc::Rc::clone(&self.virtio[console.slot_index].0);
             dev::virtio::console::discard_resume_agent_tx(
                 &slot,

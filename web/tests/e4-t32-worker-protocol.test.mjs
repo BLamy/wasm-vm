@@ -89,6 +89,8 @@ function fakeController(events, done) {
     confirmAgentHello: () => { events.push("agent-hello"); return true; },
     saveGpuCheckpoint: async () => Uint8Array.of(71,80,85),
     captureDiskDelta: async () => Uint8Array.of(0,87,86).subarray(1),
+    captureSoftwareCheckpoint: async () => Uint8Array.of(0,83,87).subarray(1),
+    softwareCheckpointConfiguration: () => ({version:1}),
     saveDesktopSnapshot: () => Uint8Array.of(11, 12),
     sendAgentInput: (bytes) => bytes.byteLength,
     takeAgentOutput: () => Uint8Array.of(13, 14),
@@ -147,7 +149,7 @@ test("published factory worker selects its retained protocol client before start
   const controller = await startLinuxBootWorker({gpuRuntime:'published-factory-v1', virgl:true, WorkerCtor:PublishedWorker});
   try {
     assert.equal(PUBLISHED_PROTOCOL_VERSION, 2);
-    assert.equal(LINUX_WORKER_PROTOCOL_VERSION, 3);
+    assert.equal(LINUX_WORKER_PROTOCOL_VERSION, 4);
     assert.ok(workerUrl.pathname.endsWith('/gpu-runtime-worker.js'));
     assert.equal(await controller.stateDigest(), 'digest');
     assert.equal(controller.captureDiskDelta, undefined, 'new disk APIs cannot leak into the retained factory');
@@ -377,6 +379,8 @@ test("every explicit controller method crosses the runtime and no-provider Tails
     assert.deepEqual([...results.get("snapshotRead")], [1, 2]);
     assert.deepEqual([...results.get("snapshotExport")], [3, 4]);
     assert.deepEqual([...results.get("captureDiskDelta")], [87, 86]);
+    assert.deepEqual([...results.get("captureSoftwareCheckpoint")], [83, 87]);
+    assert.deepEqual(results.get("softwareCheckpointConfiguration"), {version:1});
     assert.equal(await controller.isPaused(), false, "controller remains live after false Tailscale result");
   } finally {
     resolveDone("stopped");
@@ -894,6 +898,7 @@ test("every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat 
       const inner = fakeController([], done);
       inner.stateDigest = async () => { await delay(); return "slow-digest"; };
       inner.captureDiskDelta = async () => { await delay(); return Uint8Array.of(87, 86); };
+      inner.captureSoftwareCheckpoint = async () => { await delay(); return Uint8Array.of(83, 87); };
       inner.snapshotSave = async () => { await delay(); return true; };
       inner.snapshotRead = async () => { await delay(); return Uint8Array.of(1, 2); };
       inner.snapshotDecision = async () => { await delay(); return "resume"; };
@@ -905,6 +910,7 @@ test("every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat 
   const methods = [
     "stateDigest",
     "captureDiskDelta",
+    "captureSoftwareCheckpoint",
     "snapshotSave",
     "snapshotRead",
     "snapshotDecision",
@@ -919,6 +925,7 @@ test("every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat 
   const controller = await client.boot({});
   assert.equal(await controller.stateDigest(), "slow-digest");
   assert.deepEqual(await controller.captureDiskDelta(), Uint8Array.of(87, 86));
+  assert.deepEqual(await controller.captureSoftwareCheckpoint(), Uint8Array.of(83, 87));
   assert.equal(await controller.snapshotSave(), true);
   assert.deepEqual(await controller.snapshotRead(), Uint8Array.of(1, 2));
   assert.equal(await controller.snapshotDecision(), "resume");

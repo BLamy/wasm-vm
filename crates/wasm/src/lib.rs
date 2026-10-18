@@ -30,6 +30,8 @@ mod virgl_host;
 ))]
 mod virgl_linux;
 
+pub mod software_checkpoint;
+
 use core::cell::RefCell;
 use core::fmt::Write as _;
 use core::sync::atomic::{AtomicBool, Ordering};
@@ -249,6 +251,8 @@ use slirp_net::{
 mod chunked;
 #[cfg(all(test, not(feature = "zicsr-stub")))]
 mod critic_flush_reset;
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod session_checkpoint;
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod session_disk;
 // E3-T10 storage-error classification — pure string logic, native-tested.
@@ -2210,6 +2214,9 @@ fn build_core_hash() -> [u8; 32] {
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 struct LinuxInner {
     machine: Machine,
+    session_kernel: [u8; 32],
+    session_has_initrd: bool,
+    session_has_mic: bool,
     audio_attached: bool,
     capture_attached: bool,
     display_attached: bool,
@@ -2907,6 +2914,9 @@ impl WasmLinux {
                 budget,
                 profile,
             } => {
+                let base_binding = manifest.base_hash();
+                machine.set_snapshot_identity_with_generation(build_core_hash(), base_binding, 0);
+                resume_base = Some(base_binding);
                 let store =
                     std::rc::Rc::new(RefCell::new(wasm_vm_storage::BlockCache::new(budget)));
                 let backend = chunked::CheckpointDisk::new(chunked::ChunkedBackend::new(
@@ -3145,6 +3155,9 @@ impl WasmLinux {
             gpu_mailbox: RefCell::new(None),
             inner: RefCell::new(LinuxInner {
                 machine,
+                session_kernel: Sha256::digest(kernel).into(),
+                session_has_initrd: initrd.is_some(),
+                session_has_mic: enable_mic,
                 audio_attached: false,
                 capture_attached: false,
                 display_attached: false,

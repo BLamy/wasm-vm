@@ -5,6 +5,20 @@ use wasm_vm_storage::disk_root;
 use wasm_vm_storage::session::{SessionError, SessionManifest};
 use wasm_vm_storage::session_publication;
 
+#[wasm_bindgen(js_name = sessionValidateCheckpointContext)]
+pub fn validate_checkpoint_context(bytes: &[u8]) -> Result<Vec<u8>, JsError> {
+    wasm_vm_storage::checkpoint::CheckpointContext::from_bytes(bytes)
+        .and_then(|context| context.to_bytes())
+        .map_err(js_error)
+}
+
+#[wasm_bindgen(js_name = sessionCanonicalImage)]
+pub fn canonical_image(text: &str) -> Result<Vec<u8>, JsError> {
+    wasm_vm_storage::ImageManifest::from_json(text)
+        .map(|image| image.to_json().into_bytes())
+        .map_err(|error| JsError::new(&format!("session image: {error:?}")))
+}
+
 #[wasm_bindgen(js_name = sessionValidateDiskRoot)]
 pub fn validate_disk_root(bytes: &[u8]) -> Result<Vec<u8>, JsError> {
     disk_root::DiskRoot::from_bytes(bytes)

@@ -78,6 +78,22 @@ export function sessionAdmitDiskRoot(bytes, image, generation) {
 }
 
 /**
+ * @param {string} text
+ * @returns {Uint8Array}
+ */
+export function sessionCanonicalImage(text) {
+    const ptr0 = passStringToWasm0(text, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.sessionCanonicalImage(ptr0, len0);
+    if (ret[3]) {
+        throw takeFromExternrefTable0(ret[2]);
+    }
+    var v2 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
+    wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+    return v2;
+}
+
+/**
  * @param {Uint8Array} previous
  * @param {Uint8Array} candidate
  */
@@ -135,6 +151,22 @@ export function sessionManifestReferences(bytes) {
     const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
     const len0 = WASM_VECTOR_LEN;
     const ret = wasm.sessionManifestReferences(ptr0, len0);
+    if (ret[3]) {
+        throw takeFromExternrefTable0(ret[2]);
+    }
+    var v2 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
+    wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+    return v2;
+}
+
+/**
+ * @param {Uint8Array} bytes
+ * @returns {Uint8Array}
+ */
+export function sessionValidateCheckpointContext(bytes) {
+    const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.sessionValidateCheckpointContext(ptr0, len0);
     if (ret[3]) {
         throw takeFromExternrefTable0(ret[2]);
     }
