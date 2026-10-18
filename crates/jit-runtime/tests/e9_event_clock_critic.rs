@@ -83,7 +83,7 @@ fn check_model(m: &Machine, n: u64, program: &[u32], changes: &[(u64, usize, u32
     let (registers, pc) = expected(n, program, changes);
     assert_eq!(m.hart().regs.pc, pc, "pc at {n}");
     for (i, expected) in registers.iter().enumerate() {
-        assert_eq!(m.hart().regs.read(i as u32), *expected, "x{i} at {n}");
+        assert_eq!(m.hart().regs.read(i as u8), *expected, "x{i} at {n}");
     }
     let pos = m.session_position().unwrap();
     assert_eq!((pos.transition, pos.retired), (n, n));
