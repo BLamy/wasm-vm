@@ -40,7 +40,7 @@ def run(name,command,timeout=3600):
 
 try:
     clean()
-    for name in ['main.js','event-clock-probe.js','roadmap.js','gpu-checkpoint-build.js','docs-content/storage.md']:
+    for name in ['main.js','event-clock-probe.js','roadmap.js','gpu-checkpoint-build.js']:
         assert (ROOT/'web'/name).read_bytes()==(ROOT/'web/dist'/name).read_bytes(),'stale dist: '+name
     run('policy',['python3','tools/check_task_policy.py'])
     run('format',['cargo','fmt','--all','--check'])
@@ -53,6 +53,7 @@ try:
     run('core-no-std-wasm',['cargo','build','-p','wasm-vm-core','--no-default-features','--target','wasm32-unknown-unknown'])
     run('boundary-wasm-clippy',['cargo','clippy','-p','wasm-vm-wasm','--target','wasm32-unknown-unknown','--features','virgl-renderer','--lib','--','-D','warnings'])
     run('browser-build',['make','web-build'])
+    assert (ROOT/'web/docs-content/storage.md').read_bytes()==(ROOT/'web/dist/docs-content/storage.md').read_bytes(),'stale generated documentation in dist'
     for folder,names in [('pkg',['wasm_vm_wasm.js','wasm_vm_wasm_bg.wasm']),('session-pkg',['wasm_vm_session.js','wasm_vm_session_bg.wasm'])]:
         for name in names:assert (ROOT/'web'/folder/name).read_bytes()==(ROOT/'web/dist'/folder/name).read_bytes(),'stale compiled browser: '+name
     run('browser-syntax',['node','--check','web/event-clock-probe.js'])

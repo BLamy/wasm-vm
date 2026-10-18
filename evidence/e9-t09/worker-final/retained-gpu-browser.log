@@ -1,0 +1,3 @@
+All58 current/archive assets match; booting actual retained GPU factory
+Retired guest instructions and fresh physical GPU draw passed.
+{"status":"passed","errors":[],"gpu":{"qualified":true,"lost":false,"poisoned":false,"epoch":"0000000000000004","retired":2999712,"drawn":[{"epoch":"0000000000000004","sequence":null,"bindingGeneration":"0000000000000329","resource":{"generation":"0000000000000010","id":13},"status":"drawn","presentation":{"backend":"canvas2d","resourceWidth":1280,"resourceHeight":800}}]}}
