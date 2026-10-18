@@ -3,7 +3,7 @@ id: E9-T09
 epic: 9
 title: Place recorded events at exact guest execution boundaries
 priority: 524.909
-status: implemented
+status: verified
 depends_on: [E9-T01, E9-T02]
 estimate: S
 risk: high
@@ -20,9 +20,9 @@ The single-hart event clock, ordered queue and bounded run-to-event fence across
 
 ## Acceptance criteria
 
-- [ ] Equal-position events preserve a monotonic tie-break sequence, including timer delivery and WFI/idle advancement.
-- [ ] A JIT block cannot run past a pending event boundary; interpreter/JIT and varied run quanta reach identical state at that boundary.
-- [ ] Counters survive snapshot/restore and values above 2^53; sequence exhaustion or an unsupported scheduling mode fails explicitly.
+- [x] Equal-position events preserve a monotonic tie-break sequence, including timer delivery and WFI/idle advancement.
+- [x] A JIT block cannot run past a pending event boundary; interpreter/JIT and varied run quanta reach identical state at that boundary.
+- [x] Counters survive snapshot/restore and values above 2^53; sequence exhaustion or an unsupported scheduling mode fails explicitly.
 
 ## Deterministic acceptance
 
@@ -113,3 +113,77 @@ factory is unchanged; original/pristine/production boots retire real guest instr
 and draw in fresh epoch 4, qualified with no loss/poison. The fresh critic's permanent
 six-seed scalar/JIT/pending-restore test executes **709** actual compiled blocks. Its
 adversarial verdict remains independent and pending; acceptance boxes are unchanged.
+
+### 2026-10-18 — fresh verifier — VERDICT: verified
+
+Read the task, replay contract and full `2dafe690..b75afc6c` diff before inspecting
+evidence. Wrote falsifiable predictions first; the retained prediction history, independent
+raw-state decoder, hunk audit, attacks and authenticated receipts are in
+`evidence/e9-t09/verifier-final/` (`verdict.json`, `coverage.md`, `manifest.json`).
+Carried HELD results forward only after confirming unchanged runtime/dependency boundaries
+and artifact digests through `be521e3e` and the metadata-only `e44ed547` submission.
+
+- **P1/P14 identity and pristine proof — HELD.** Independently hashed all 963 worker,
+  964 cold acceptance and 522 production artifacts, and matched all source identities to
+  their declared Git objects. Cold receipt `d430cff9a6fc68119d20e4bc62d04e3923e98ad9747c4607e1229c078ceff4d0`
+  and acceptance report `b9454ecaf1b508645f0c7a1f17fcbbffaa406ca5e36a465b48675ed4d74d33ee`
+  bind a clean detached `be521e3e` checkout, no alternates/inherited target or node_modules,
+  scrubbed environment and a proven empty compiler target. All 21 gates passed, including
+  the corrected permanent critic. All 119 bare-guest frames/traces are byte-identical to
+  the original held evidence. Earlier documentation-preflight and test-cast failures are
+  retained; their final complete rerun passed.
+- **P2/P3 exact compiled fences and owned order — HELD.** Independently decoded all
+  48 native/28 browser frames and checked all 31 native/12 browser traces against arithmetic
+  and PC predictions. Real Wasmtime/browser blocks execute, stop before targets 600/601/605,
+  and deliver equal-position immutable bytes once in admission order despite differing
+  callback/run quanta. The mailbox-only code mutation executes at
+  `worker-final/native/jit-mailbox-q1024.trace:218` (relative to `evidence/e9-t09/`, SHA-256
+  `d2721d3eb2d6c3138b03e6ecea9eefbb160dba117019a6d09a1b3e88d5a77126`);
+  its native frame ends at transition/retired 1000 with x2=1573, marker `later` and sequence2.
+- **P4/P5/P12 timer, WFI and restore — HELD.** The timer oracle predicts and observes
+  transition592/retired591, mtime197 and handler PC `0x80002000`;
+  `worker-final/native/jit-timer-q31.trace:207`, SHA-256
+  `cc830071629fbe612fa39bd6b4785581bfe0dca2f94eac1667dcc0d46863029e`,
+  ends at the preceding retirement. WFI record
+  `worker-final/native/jit-wfi-q7.trace:217`, SHA-256
+  `03a78b741422c50136a627c6f6a331be175d19639d8882fd6f10eef023321587`,
+  is followed by separate idle/interrupt positions 602/603 while retirement stays601.
+  Restored pending idle state agrees. Twelve additional seeded divider/deadline/reversed
+  pending-control cases prove both inhibited retirement and nonretiring idle/IRQ behavior.
+- **P6/P11/P13/P15 precision and refusal — HELD.** Independently checked
+  9007199254740993→9007199254740996 positions, exact receipt sequence9007199254740994,
+  MAX transition/sequence/ordinal limits, paused controls and 23 malformed/inactive/step
+  refusals without destination mutation. Checked 256-event and 4MiB owned-byte limits
+  before/after delivery, exact outbox backpressure and capacity release on drain. A warmed
+  compiled CSR-observation loop matches independently counted pre-retirement values at five
+  stops, exercising bounded interpretation of observable blocks. Unsupported scheduling
+  and an unbound event clock in the checkpoint-only Linux envelope refuse explicitly.
+- **P8/P9a independent attack and sabotage — HELD.** Six independent seeds, variable
+  block lengths, nonmonotonic target admission, self-modifying writes, independent scalar
+  PC/register arithmetic and pending-queue restore matched at every stop/receipt; 709 real
+  compiled blocks ran. In an ignored core copy, disabling only the seek fence makes the
+  unchanged new test fail at `crates/core/tests/e9_event_clock.rs:171`: transition1000,
+  expected10, exit101 (`seek-fence-sabotage.patch`, `sabotage.log`). P9a replaced the larger
+  planned JIT-specific mutation before execution; that abandoned mutation is not claimed.
+- **P7/P10 browser, regressions and coverage — HELD.** Built/pristine/production runs
+  show 127/0, 16 boundary cases, 10 explicit refusals, live pips, keyboard activation, no
+  mobile overflow and errors[]. The two-guest ext4/file/RAM/input/quota/deletion regression
+  passes. Authenticated all 734 deploy payloads and 11 actual production responses; public
+  capture `07d6410e1d7652be28246870dea0a4210758c7de5bd06439e887e294cdd53ef0` binds
+  9 current and 58 current/archive GPU assets. The pinned47 factory remains unchanged and
+  public guest retirement/current-epoch draw is qualified, not lost or poisoned. Every
+  changed runtime hunk has executing evidence; `coverage.md` gives the narrow declarative,
+  diagnostic and unavailable-admission waivers. No ignored test/debug-disable addition or
+  unproven runtime hunk remains.
+- **SUITE.** Promoted `crates/jit-runtime/tests/e9_event_clock_critic.rs` (SHA-256
+  `8216a282f29db856f37848df1aa1023d5614ece23b4e8c9df6b690ada270a02d`) into
+  `make verify-E9-T09`; final cold clippy and execution pass. Retained original traces,
+  frames, browser profiles and all failed/passing receipts. After audit, released only
+  reconstructible checkouts and the task-owned RAM compiler volume; cleanup receipts are
+  retained. No runtime implementation changed during verification.
+
+Commands: the recorded `make verify-E9-T09` gauntlets and production drivers above; independent
+`inspect_frames.py` raw-frame/trace checks; the retained standalone six-seed native attack;
+`node target/e9-t09-verifier/wasm-{negative,wfi-attack,observe-attack,mailbox-bounds}.mjs`;
+unchanged core fence test against the isolated sabotage. Linux provider capture/continuous
+replay and accelerated replay admission remain gated to their successor tasks. No merge.

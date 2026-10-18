@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "refusals": [
+    "retired beyond transition",
+    "ordinal wider than u32",
+    "ordinal beyond delivered sequence",
+    "sequence beyond admitted tickets",
+    "past queued target",
+    "out of order targets",
+    "duplicate ticket",
+    "unknown effect kind",
+    "outside-RAM destination",
+    "invalid idle boolean",
+    "invalid pending boolean",
+    "overlarge payload",
+    "overlarge event count",
+    "duplicate clock section",
+    "missing clock section",
+    "inactive position",
+    "inactive deliver",
+    "inactive drain",
+    "inactive save",
+    "inactive restore",
+    "inactive run",
+    "inactive stage",
+    "step exhaustion"
+  ],
+  "original_sha256": "1b91bdbb1b747e2697513febdca157ff43eb649333117f24e712918ac47a7035",
+  "wasm_sha256": "b07d03ffc0176ced185137f2d6982819765d0bba23b306e62da93a795d309932"
+}

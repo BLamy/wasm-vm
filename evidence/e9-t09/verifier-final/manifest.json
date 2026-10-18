@@ -1,0 +1,138 @@
+{
+  "task": "E9-T09",
+  "status": "passed",
+  "files": {
+    "README.md": {
+      "bytes": 1721,
+      "sha256": "7393e690c7752efc35f4f42d989605328934db70c02f4abb9e9b5f72c89732bd"
+    },
+    "browser-independent.json": {
+      "bytes": 32876,
+      "sha256": "207a36f7974d8060567d0c6e466ea9d8cf75ba1f86506228706bc4129fd27944"
+    },
+    "cold-integrity.json": {
+      "bytes": 928,
+      "sha256": "5ab951b513fba8651c5c3adf2256be8ff86eddfffec79ade1beaf780e435f241"
+    },
+    "coverage.md": {
+      "bytes": 11236,
+      "sha256": "bc2c947cbbec00c0aaf7886ca8cab9d4b9708df0fdb29892f0490d3c5f0ebf23"
+    },
+    "deployment-integrity.json": {
+      "bytes": 2308,
+      "sha256": "d35f7c00f08e352bba238f81691ad8473c74a78b990f907329a281da461387e4"
+    },
+    "failed-checkout-cleanup.json": {
+      "bytes": 1709,
+      "sha256": "bcc6754ea89872eff486c7c726e1323ba907c11bcf5c0776dc60050674c0d31a"
+    },
+    "final-cleanup.json": {
+      "bytes": 1149,
+      "sha256": "c4bf43f04c46629cb0bc65996a0bc8cc2f27423e38561628cd05a75d7996332f"
+    },
+    "generated-audit.json": {
+      "bytes": 1146,
+      "sha256": "d2ece84f0b5c4497bda03723265469a050e60dcee811a4d3bbf71ffc5f1dc9a2"
+    },
+    "inspect_frames.py": {
+      "bytes": 6929,
+      "sha256": "4b660e68eea55c4d77484e7cbdf2ac7a21659b4605b41c4a71938ef6d7a7d332"
+    },
+    "native-independent.json": {
+      "bytes": 53343,
+      "sha256": "5c866c889ec1f8b8d3ad28b4410c35a420856fbca5d94f4f68d66afdfc6ec0a7"
+    },
+    "predictions-at-promotion.md": {
+      "bytes": 5044,
+      "sha256": "9b9cb295475f4dbbf83914a1b620f319b223405d1795e65c3a9d349187e32db2"
+    },
+    "predictions.md": {
+      "bytes": 8070,
+      "sha256": "22c941e159f5448661d2bfd15bc8d7a00e6c16e5b359e3d44a81db60dbf63fc0"
+    },
+    "promotion-correction.json": {
+      "bytes": 690,
+      "sha256": "f4afe2fda07135cc4178d1f5453f74f872c0d9526b1638b74980be8f1f1600e7"
+    },
+    "promotion-provenance.json": {
+      "bytes": 1781,
+      "sha256": "665779d09e99b92d6b71777143d94924fb3e353dd3475de401da73b4d8838e7c"
+    },
+    "public-integrity.json": {
+      "bytes": 2020,
+      "sha256": "5013efe885ccb0c61b6f41374f9541b48c992e94e03678a17c7cf0ccea2cd3cc"
+    },
+    "sabotage.log": {
+      "bytes": 554,
+      "sha256": "68862b761f049f776e50158d9af984a45e742e72141d25da115a62c1d490f684"
+    },
+    "seeded-attack.log": {
+      "bytes": 964,
+      "sha256": "638bf1e192acc6ef72edec4f9b57652241c54356708ab52b4bb1c33972b6c623"
+    },
+    "seeded-attack.source.rs": {
+      "bytes": 7849,
+      "sha256": "3c7ff40739fba01f651689dee39a45cfb673cb69b7bcf6d698ea41ce83e99f16"
+    },
+    "seek-fence-sabotage.patch": {
+      "bytes": 348,
+      "sha256": "8a5a8136eda39f6fa639ec64ca86c1770dad30f552f0faf904b07eee51f733fa"
+    },
+    "verdict.json": {
+      "bytes": 1979,
+      "sha256": "59982f06bbbb58b2fa95e7f1485a26aa80338a5fade51372d662e8da1b1cc607"
+    },
+    "wasm-mailbox-bounds.json": {
+      "bytes": 537,
+      "sha256": "58140f6cc1ffc754338d83807e18bc2b7533c68e127c5f7d11131d41768a3ffd"
+    },
+    "wasm-mailbox-bounds.log": {
+      "bytes": 74,
+      "sha256": "415864c8a558590697c15f59c9baa0040bf30c591178251087c73743c3cd3558"
+    },
+    "wasm-mailbox-bounds.mjs": {
+      "bytes": 3195,
+      "sha256": "33763bfa5bb2507c16801cff03d93b5b19387fa4355c4107a02082e3ffdfa49b"
+    },
+    "wasm-negative.json": {
+      "bytes": 853,
+      "sha256": "0049d8216117f40a06e0fdb733f8b983b8510ec83fddfa0f9b74a58d9fa67f7e"
+    },
+    "wasm-negative.log": {
+      "bytes": 58,
+      "sha256": "2f4262c653f858fe10eac6b6de63ded8dbce4f1bc5fe4ceb1e2ecd3281eaf96e"
+    },
+    "wasm-negative.mjs": {
+      "bytes": 3988,
+      "sha256": "81023c8027338ad3d218676dd53b41fdbbd58394bc02cf3465b9df1b305fdde2"
+    },
+    "wasm-observe-attack.json": {
+      "bytes": 14146,
+      "sha256": "003847bcc5be5bd18ce6ac3c6d5139de2cc87090ed1fe100d02a22dd9ba8913b"
+    },
+    "wasm-observe-attack.log": {
+      "bytes": 68,
+      "sha256": "d0bede7b0eac61cf98f79a141496fd2f10083f29946bf0fb20b72aedaca08d4a"
+    },
+    "wasm-observe-attack.mjs": {
+      "bytes": 1880,
+      "sha256": "75efa8f4c08497f61e908ddf1189947ca786620a4c0f3890a469a1e160712e4c"
+    },
+    "wasm-wfi-attack.json": {
+      "bytes": 3611,
+      "sha256": "e54199ab8f5b5758e2f3deba5b5526c4a42f87b602c27ec644d08131353c23d2"
+    },
+    "wasm-wfi-attack.log": {
+      "bytes": 74,
+      "sha256": "7f8ab151ad2441199a2fea14605e58bd3c090bb99a18f0e3b757a2c4af547723"
+    },
+    "wasm-wfi-attack.mjs": {
+      "bytes": 2818,
+      "sha256": "4c60b7aeaf809369dbbed66b7859b1546c3964f8483cc854f4c3da294337f585"
+    },
+    "worker-integrity.json": {
+      "bytes": 231,
+      "sha256": "2d286bb914243623313583fbc893ab7488b4339e0cf6a7d0b5b03054c2634bbe"
+    }
+  }
+}

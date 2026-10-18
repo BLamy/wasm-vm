@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "source_head": "be521e3ebca19089471c3b5a22c924916e953187",
+  "clone_removed": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t09-cold-t9kkjsar/repo",
+  "source_clean_before_removal": true,
+  "proof_receipt": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-cold-final-3/receipt.json",
+  "proof_receipt_sha256": "d430cff9a6fc68119d20e4bc62d04e3923e98ad9747c4607e1229c078ceff4d0",
+  "preserved_original_evidence": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-cold-final-3",
+  "ram_device": "/dev/disk4",
+  "ram_volume_uuid": "058A4519-ACBA-3081-83AE-9BDC1AC42BC4",
+  "released_compiler_directories": [
+    "target-29a590bb2ee8",
+    "target-6b5a5f27041a",
+    "target-be521e3ebca1"
+  ],
+  "detach_exit_code": 0,
+  "detach_output": "\"disk4\" ejected.\n",
+  "scope": "Only reconstructible pristine checkout and task-owned compiler RAM volume released after the independent exact-source/evidence audit; every original recording/profile/frame and all receipts/wrappers remain on persistent storage.",
+  "finished": 1792314224.0829701
+}

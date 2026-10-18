@@ -1,0 +1,62 @@
+[
+  {
+    "path": "web/dist/docs-bundle/reader.js",
+    "revision_only": true
+  },
+  {
+    "path": "web/docs-containers.html",
+    "revision_only": true
+  },
+  {
+    "path": "web/docs-embedding.html",
+    "revision_only": true
+  },
+  {
+    "path": "web/docs-explainers.html",
+    "revision_only": true
+  },
+  {
+    "path": "web/docs-guest.html",
+    "revision_only": true
+  },
+  {
+    "path": "web/docs-verification.html",
+    "revision_only": true
+  },
+  {
+    "path": "web/docs.html",
+    "revision_only": true
+  },
+  {
+    "path": "web/dist/docs-containers.html",
+    "revision_only": true
+  },
+  {
+    "path": "web/dist/docs-embedding.html",
+    "revision_only": true
+  },
+  {
+    "path": "web/dist/docs-explainers.html",
+    "revision_only": true
+  },
+  {
+    "path": "web/dist/docs-guest.html",
+    "revision_only": true
+  },
+  {
+    "path": "web/dist/docs-verification.html",
+    "revision_only": true
+  },
+  {
+    "path": "web/dist/docs.html",
+    "revision_only": true
+  },
+  {
+    "path": "web/dist/docs-content/catalog.json",
+    "fields": [
+      "/pages/4/sha256",
+      "/pages/4/search"
+    ],
+    "only_storage_guide": true
+  }
+]

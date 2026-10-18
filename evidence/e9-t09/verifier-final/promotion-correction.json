@@ -1,0 +1,9 @@
+{
+  "original_source": "e9_event_clock_critic.rs",
+  "original_sha256": "c0e4c7f78ab9c4ab93cbe52cf67f4caf6dc679680f650bd4f5e176de80febbf9",
+  "corrected_source": "e9_event_clock_critic.corrected.rs",
+  "corrected_sha256": "8216a282f29db856f37848df1aa1023d5614ece23b4e8c9df6b690ada270a02d",
+  "correction": "RegFile::read parameter cast u32\u2192u8; enumeration is bounded to exactly 32 registers.",
+  "runtime_change": false,
+  "evidence": "The original compiled standalone seeded attack used a 0..32 loop inferred u8 by read(); cast correction restores the exact tested argument type. Parent preserves failed cold2 logs and verifies the promoted projection before final pristine proof."
+}
