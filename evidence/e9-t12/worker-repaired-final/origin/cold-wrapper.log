@@ -1,0 +1,7 @@
+run ['git', 'clone', '--shared', '--no-checkout', '--single-branch', '--branch', 'codex/e9-device-completions', '--separate-git-dir', '/Volumes/e9-final-proof-ram/cold-git-e9-t12-98260ff67d81', '/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed', '/Volumes/e9-final-proof-ram/cold-source-e9-t12-98260ff67d81']
+run ['git', 'sparse-checkout', 'init', '--cone']
+run ['git', 'sparse-checkout', 'set', '.cargo', '.github', 'bench', 'compliance', 'configs', 'crates', 'deploy', 'design', 'docs', 'fuzz', 'guest', 'releases', 'renderer', 'tasks', 'tests', 'third_party', 'tools', 'web', 'evidence/e5-t26p', 'evidence/e5-t11c', 'evidence/e9-t05', 'evidence/e9-t06', 'evidence/e9-t07', 'evidence/e9-t08', 'evidence/e9-t09']
+run ['git', 'checkout', '--detach', '98260ff67d814311b3c2cf175a57476f3d3c64ab']
+run ['make', 'verify-E9-T12']
+run ['git', 'fsck', '--connectivity-only', '--no-reflogs']
+passed /Volumes/e9-final-proof-ram/cold-worker-e9-t12-98260ff67d81

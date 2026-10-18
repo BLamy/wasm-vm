@@ -1,0 +1,18 @@
+   Compiling wasm-vm-core v0.0.1 (/Volumes/e9-t11-cold-scratch/cold-source-e9-t12-986c38e6b7ed/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.88s
+     Running tests/e9_device_completions.rs (target/debug/deps/e9_device_completions-a21241deef24965b)
+
+running 10 tests
+test orphaned_capture_checkpoint_is_rejected_before_state_or_leases_change ... ok
+test unrecorded_transport_and_playback_admission_refuse_before_guest_execution ... ok
+test derived_cow_writes_flushes_and_base_reads_restore_without_host_completions ... ok
+test duplicate_cancelled_and_corrupt_results_cannot_publish_dma_or_advance_cursor ... ok
+test malformed_pending_device_and_audio_frames_are_transactional_and_keep_live_leases ... ok
+test future_capture_descriptor_restores_without_creating_a_request_early ... ok
+test every_initial_device_profile_roundtrips_before_the_first_transition ... ok
+test short_failed_capture_and_guest_stop_never_consume_an_obsolete_quantum ... ok
+test real_guest_dma_replays_reordered_delayed_callbacks_with_pending_checkpoints ... ok
+test varied_callback_schedules_replay_exactly_for_32_independent_seeds ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.43s
+

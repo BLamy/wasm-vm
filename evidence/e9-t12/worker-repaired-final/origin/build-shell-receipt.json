@@ -1,0 +1,8 @@
+{
+  "source": "https://ftp.gnu.org/gnu/bash/bash-5.2.37.tar.gz",
+  "archive_sha256": "9599b22ecd1d5787ad7d3b7bf0c59f312b3396d1e281175dd1f8a4014da621ff",
+  "binary_sha256": "17bf522ef1bd8787234b67e68b907a8ba9af44a7ea0944c9121ec389a7e48b3c",
+  "configure_log": "/Volumes/e9-t11-cold-scratch/bash-configure-v2.log",
+  "build_log": "/Volumes/e9-t11-cold-scratch/bash-build.log",
+  "reason": "GNU Bash 5.2 uses memory-backed small here documents and honors the task RAM temporary path; system Bash 3.2 here-doc creation hits persistent ENOSPC."
+}

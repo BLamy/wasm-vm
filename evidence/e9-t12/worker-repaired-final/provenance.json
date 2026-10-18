@@ -1,0 +1,3418 @@
+{
+  "task": "E9-T12",
+  "status": "passed",
+  "head": "98260ff67d814311b3c2cf175a57476f3d3c64ab",
+  "original_receipt": "/Volumes/e9-final-proof-ram/cold-proof-e9-t12-98260ff67d81/report.json",
+  "original_receipt_sha256": "fbd9e07628abb1ac2f1b4628e1c6b8071e527452441472d4dae74c709d9abde4",
+  "original_receipt_copy": "original-receipt.json",
+  "scope": "Lossless primary evidence for the frozen repaired head. All native and browser complete frames/traces, DMA/device/cursor witnesses, durable session object graph, Playwright recordings/captures/logs and source/command inventories retained. Derived GPU-regression Chromium profiles are inventoried and preserved in the original raw recording/full gzip archive; exported proof and runtime hashes are the evidence of record. No claim depends on an unexported IndexedDB database.",
+  "original_recordings_preserved": true,
+  "compression": "gzip with empty name and mtime0; every decompressed byte count/SHA independently checked after writing",
+  "files": [
+    {
+      "original_path": "boundary-native.log",
+      "original_bytes": 7062,
+      "original_sha256": "c72d17192fed352d44e7bf368e9b0cf9f19500b7c5f19dcfc2f9b7039ada629a",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338096000000000,
+      "gzip": "files/boundary-native.log.gz",
+      "gzip_bytes": 2365,
+      "gzip_sha256": "4bf3bc8018ef60e92710203b2ab374445834a7d0aea501b53b612dcc114c0fbc"
+    },
+    {
+      "original_path": "boundary-wasm-clippy.log",
+      "original_bytes": 2384,
+      "original_sha256": "3be827cbc79a91744e84072798ae8eb0d04569cfbc72163a72dfdde468af6ad4",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338124000000000,
+      "gzip": "files/boundary-wasm-clippy.log.gz",
+      "gzip_bytes": 770,
+      "gzip_sha256": "125f7fa75a81413f955ff0d44241f8571e785ca7fe92fdaa96ef228eb41034ab"
+    },
+    {
+      "original_path": "browser/browser-trace.zip",
+      "original_bytes": 14127947,
+      "original_sha256": "ac7fcbc7214f23bd7905f40d58c5d4f04aa6bc5c9c24aec4fff371eab7d40fd5",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338229000000000,
+      "gzip": "files/browser/browser-trace.zip.gz",
+      "gzip_bytes": 13979786,
+      "gzip_sha256": "d5748abc68a8a870bd9c16cef29aa901440156acb3ec7e6877a49d79254bf391"
+    },
+    {
+      "original_path": "browser/completion-0.bin",
+      "original_bytes": 578,
+      "original_sha256": "e4c1748d8acb36c93d38746cead3f61bb0b9a9af151b50f18c571ca0e6f0d769",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/completion-0.bin.gz",
+      "gzip_bytes": 342,
+      "gzip_sha256": "2e0d527765535a7eb102b7599ec8253364c8c5f050c9c162a8b4b9f20467e757"
+    },
+    {
+      "original_path": "browser/completion-1.bin",
+      "original_bytes": 61,
+      "original_sha256": "4162b947923ad28debaaed6cf0d0fadd46c172f752d746b6b318b48e12caab6e",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/completion-1.bin.gz",
+      "gzip_bytes": 63,
+      "gzip_sha256": "3d13b22d16198de69f1931aeaa94c27f75cf470a2766226ea19c0ea268005478"
+    },
+    {
+      "original_path": "browser/completion-2.bin",
+      "original_bytes": 39,
+      "original_sha256": "5cab27c34408d599690add0233be4833ffcc8b0a7744ddec8ee20c7c8578782f",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/completion-2.bin.gz",
+      "gzip_bytes": 49,
+      "gzip_sha256": "4592c1fd74361c2047361b0e61cc7de76c25a8a4864f4f8c16379388f48efbc8"
+    },
+    {
+      "original_path": "browser/completion-3.bin",
+      "original_bytes": 578,
+      "original_sha256": "8ace915d6565136c63e28852ee5b41e4f54ea45d7d5b300f368ca9c8ee4d64dc",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/completion-3.bin.gz",
+      "gzip_bytes": 341,
+      "gzip_sha256": "077c9b0e3605cb5e7bb9e77177b6f3be2fbfa8986d3f86545456e3da38474c58"
+    },
+    {
+      "original_path": "browser/desktop.png",
+      "original_bytes": 19464,
+      "original_sha256": "78fd2caf1d0625f6e34088232fb9a7c50d1e368299fabeaefc3771c96e93144c",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/desktop.png.gz",
+      "gzip_bytes": 18533,
+      "gzip_sha256": "e0fec6b67950ef455965e6330cf7c3746a091beb3bfa042cff541050ac2bc7b4"
+    },
+    {
+      "original_path": "browser/device-oracle.json",
+      "original_bytes": 1599,
+      "original_sha256": "3a72032759973a399a4a9dcc68250ed593d183a5ed5a151c1b8ed8079e055103",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338229000000000,
+      "gzip": "files/browser/device-oracle.json.gz",
+      "gzip_bytes": 638,
+      "gzip_sha256": "4f1e6bfe93322dc63959c78a8d11bdb4d1125819146f451e3ad4cbf58de091eb"
+    },
+    {
+      "original_path": "browser/final.resume",
+      "original_bytes": 22582,
+      "original_sha256": "6150d1dacd3c0fe6837cb941ad7c53ccb54aa7c2348a06483b9e578b05ad1f97",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/final.resume.gz",
+      "gzip_bytes": 5857,
+      "gzip_sha256": "5f39a03c6b83d135ca840b25f6856669d2a247a24acd63299da75ea79a71e46d"
+    },
+    {
+      "original_path": "browser/guest.bin",
+      "original_bytes": 1132,
+      "original_sha256": "246795235fd253e517ae9584c5c8cb16aed5c28bb0952b3af4e7177d53e65401",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/guest.bin.gz",
+      "gzip_bytes": 339,
+      "gzip_sha256": "029b0b19aea1a1b9bb3a568a546bfa37ec4466a744b47d6ab1e7259923e901c9"
+    },
+    {
+      "original_path": "browser/initial.resume",
+      "original_bytes": 18435,
+      "original_sha256": "4147e906c125e178661d4055ff4a4861e3caf9f332c29f48fc0810b7f68b18e1",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/initial.resume.gz",
+      "gzip_bytes": 4842,
+      "gzip_sha256": "a91b7314eb939c5d2d1a099ae8ff3803c311b99a7055d698555ae5ee7826f5d0"
+    },
+    {
+      "original_path": "browser/javascript-coverage.json",
+      "original_bytes": 2519448,
+      "original_sha256": "eb6c5b9928f4f1f1ab37fa67da6cb3806d32c6b06bdce7b4fcdc68caddbb51f2",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338229000000000,
+      "gzip": "files/browser/javascript-coverage.json.gz",
+      "gzip_bytes": 464553,
+      "gzip_sha256": "ff5b92b9d0c5e6c6ab416f4fd11929df6d0d95a9d8c07b3176ac32b95bb32566"
+    },
+    {
+      "original_path": "browser/manifest.json",
+      "original_bytes": 3578,
+      "original_sha256": "fdeabee5f2b8bdb22ef7e4c062dbbaf5e4915fee7be7766955964421347dcf6d",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/manifest.json.gz",
+      "gzip_bytes": 1217,
+      "gzip_sha256": "20e35493a2937e51ae38d611fd620b7cef577953362092f288482960b814aefd"
+    },
+    {
+      "original_path": "browser/mobile.png",
+      "original_bytes": 17820,
+      "original_sha256": "e80dde40cda8ff96b989e54b0a6a2205c6fc3b10c319352e0dedec97d194488b",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/mobile.png.gz",
+      "gzip_bytes": 17522,
+      "gzip_sha256": "d51e1cab4a6f24ea3578b49b3355b17ac6d80bc43e2ab73e5d49a0f68f50449a"
+    },
+    {
+      "original_path": "browser/objects/2196d24a989fee982488070afd64307bbcc2b64ff5c7aecffc3850657e9eefe0",
+      "original_bytes": 4,
+      "original_sha256": "2196d24a989fee982488070afd64307bbcc2b64ff5c7aecffc3850657e9eefe0",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/2196d24a989fee982488070afd64307bbcc2b64ff5c7aecffc3850657e9eefe0.gz",
+      "gzip_bytes": 24,
+      "gzip_sha256": "b545ec80832dbd79e063c71125e6a85e2d79165b43ccf11de37253555fde0473"
+    },
+    {
+      "original_path": "browser/objects/3c47a1dc51ee801f9fe08d0adbb120913ea4d1e1aafc00803c61de8c86d44c44",
+      "original_bytes": 2140719,
+      "original_sha256": "3c47a1dc51ee801f9fe08d0adbb120913ea4d1e1aafc00803c61de8c86d44c44",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/3c47a1dc51ee801f9fe08d0adbb120913ea4d1e1aafc00803c61de8c86d44c44.gz",
+      "gzip_bytes": 781684,
+      "gzip_sha256": "97bfa45a147b1d2ee79fdf097733ac7efb393d74a22332f1f5e4c2491279df11"
+    },
+    {
+      "original_path": "browser/objects/4898adc6587132ff3b5244014645a8fb36c0217b770bbcd61efeb5f35e1312f2",
+      "original_bytes": 18463,
+      "original_sha256": "4898adc6587132ff3b5244014645a8fb36c0217b770bbcd61efeb5f35e1312f2",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/4898adc6587132ff3b5244014645a8fb36c0217b770bbcd61efeb5f35e1312f2.gz",
+      "gzip_bytes": 4860,
+      "gzip_sha256": "34052a73b34cfd81e194461bf8773a73b7b472bcb4dabf1b1dc5afc1b2b6f159"
+    },
+    {
+      "original_path": "browser/objects/6131fa25517a7fc4204e176ef4e601339c04d130d1ab7951070a43a7eac94f2f",
+      "original_bytes": 512,
+      "original_sha256": "6131fa25517a7fc4204e176ef4e601339c04d130d1ab7951070a43a7eac94f2f",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/6131fa25517a7fc4204e176ef4e601339c04d130d1ab7951070a43a7eac94f2f.gz",
+      "gzip_bytes": 289,
+      "gzip_sha256": "b1c1f1dcdb30b3071566aca9968eb5c64b02ba8fa7d5d00679540f9a7c1bc4c3"
+    },
+    {
+      "original_path": "browser/objects/6d84760c593b562a5923391216f50935b6bce55b4fa558aabe64cf9340e96eb5",
+      "original_bytes": 512,
+      "original_sha256": "6d84760c593b562a5923391216f50935b6bce55b4fa558aabe64cf9340e96eb5",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/6d84760c593b562a5923391216f50935b6bce55b4fa558aabe64cf9340e96eb5.gz",
+      "gzip_bytes": 290,
+      "gzip_sha256": "262f7a4c59c34a385b3aa01e7778df862af67b650ff392ec21ed41ee0f3476db"
+    },
+    {
+      "original_path": "browser/objects/7bd7112647b6f08d09c80e4f6889dfefed8822d1205497d811993916dea0d918",
+      "original_bytes": 1109,
+      "original_sha256": "7bd7112647b6f08d09c80e4f6889dfefed8822d1205497d811993916dea0d918",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/7bd7112647b6f08d09c80e4f6889dfefed8822d1205497d811993916dea0d918.gz",
+      "gzip_bytes": 465,
+      "gzip_sha256": "40abf8adfb57cd4919b38e990ea8068144a8a7a5a5255e5fc1269324bf577a24"
+    },
+    {
+      "original_path": "browser/objects/bc150c3ca59dcb2a080528d2cdc8fbc7055398c69056b940d803746e88ec4a42",
+      "original_bytes": 15488,
+      "original_sha256": "bc150c3ca59dcb2a080528d2cdc8fbc7055398c69056b940d803746e88ec4a42",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/bc150c3ca59dcb2a080528d2cdc8fbc7055398c69056b940d803746e88ec4a42.gz",
+      "gzip_bytes": 4502,
+      "gzip_sha256": "8cfaa0c55a182580e842dd62f4cff9a796fb3f56409ec96b63ecb9e136348bd3"
+    },
+    {
+      "original_path": "browser/objects/c56226e4c885fb7c717b9211219392fd7dade1a2e581722a7d6bc83c265c054a",
+      "original_bytes": 1433,
+      "original_sha256": "c56226e4c885fb7c717b9211219392fd7dade1a2e581722a7d6bc83c265c054a",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/c56226e4c885fb7c717b9211219392fd7dade1a2e581722a7d6bc83c265c054a.gz",
+      "gzip_bytes": 716,
+      "gzip_sha256": "7966266c5f35258c73781064d64da210c220adf3521705865e009924b2322268"
+    },
+    {
+      "original_path": "browser/objects/c7bea3ac6985a882b713750fdca73b31b139051641eb59e24e4cbe038f9e78c5",
+      "original_bytes": 1118,
+      "original_sha256": "c7bea3ac6985a882b713750fdca73b31b139051641eb59e24e4cbe038f9e78c5",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/c7bea3ac6985a882b713750fdca73b31b139051641eb59e24e4cbe038f9e78c5.gz",
+      "gzip_bytes": 466,
+      "gzip_sha256": "831adc52c73a288de33a81763d1fc1718fd23c2e88785490e155209f1437d3ca"
+    },
+    {
+      "original_path": "browser/objects/c937c6a8c3a0db1d0daab4f7816bbfab7bf1d1b9615e012f1f07a361849d728c",
+      "original_bytes": 822,
+      "original_sha256": "c937c6a8c3a0db1d0daab4f7816bbfab7bf1d1b9615e012f1f07a361849d728c",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/c937c6a8c3a0db1d0daab4f7816bbfab7bf1d1b9615e012f1f07a361849d728c.gz",
+      "gzip_bytes": 386,
+      "gzip_sha256": "5bc813e4e8af7502ec2d9191997d852eb2d6c5fa2b963279d3654f156c3c68da"
+    },
+    {
+      "original_path": "browser/objects/d08a3557fff8655eeb4c1a84df500dda01e42736c3f871ec5cca11f30bdf9a86",
+      "original_bytes": 803,
+      "original_sha256": "d08a3557fff8655eeb4c1a84df500dda01e42736c3f871ec5cca11f30bdf9a86",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/d08a3557fff8655eeb4c1a84df500dda01e42736c3f871ec5cca11f30bdf9a86.gz",
+      "gzip_bytes": 389,
+      "gzip_sha256": "ec570d2a4ce3de7a4e4fb2462ee1bd8ae57159210c0d5088c6dba2ae8b9ec99d"
+    },
+    {
+      "original_path": "browser/objects/e8641f1c8013ca97944c57c8262407e90ed4d4a7f53d663ec8cfa8a260b8806a",
+      "original_bytes": 23,
+      "original_sha256": "e8641f1c8013ca97944c57c8262407e90ed4d4a7f53d663ec8cfa8a260b8806a",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/e8641f1c8013ca97944c57c8262407e90ed4d4a7f53d663ec8cfa8a260b8806a.gz",
+      "gzip_bytes": 43,
+      "gzip_sha256": "613025352c36d2231cb820c50fbb4c3e65afe92cadeeef31432037992068344a"
+    },
+    {
+      "original_path": "browser/objects/e9e9ad60fd7093a419c58b003d1ba0216e96a18ffe202075a24e061c09b5f072",
+      "original_bytes": 209,
+      "original_sha256": "e9e9ad60fd7093a419c58b003d1ba0216e96a18ffe202075a24e061c09b5f072",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/e9e9ad60fd7093a419c58b003d1ba0216e96a18ffe202075a24e061c09b5f072.gz",
+      "gzip_bytes": 178,
+      "gzip_sha256": "80f60ff664c6a59d7738d1371459629ba5162abdfd48c4aed7738d76097a612d"
+    },
+    {
+      "original_path": "browser/objects/fb2754b3da751287678f923f6df411d70e08484ed8a73e8e7cbe5556da0949e0",
+      "original_bytes": 155,
+      "original_sha256": "fb2754b3da751287678f923f6df411d70e08484ed8a73e8e7cbe5556da0949e0",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/objects/fb2754b3da751287678f923f6df411d70e08484ed8a73e8e7cbe5556da0949e0.gz",
+      "gzip_bytes": 146,
+      "gzip_sha256": "1c35adb08873be4cef9d11665048f380a7d305d82119b6f70a84c473ba6ded97"
+    },
+    {
+      "original_path": "browser/original.trace",
+      "original_bytes": 671522,
+      "original_sha256": "a3eb3bc289a3ee9c06f981508fb02c636de22ea86937e8e30555a9467c0547db",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/original.trace.gz",
+      "gzip_bytes": 82495,
+      "gzip_sha256": "82bc2f01d1612529328d15687fb62c53b2a1f63d8e744a1a8a665f0eb88fd7be"
+    },
+    {
+      "original_path": "browser/pending.resume",
+      "original_bytes": 19610,
+      "original_sha256": "93f696d71282ec9dd9eb3026b266670ce11f6f0c4d2a5151bced9d512bd42fc6",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/pending.resume.gz",
+      "gzip_bytes": 5468,
+      "gzip_sha256": "c55c0c0167adaf90d09f9d48e8f33d6139b76abda13bcd45f9ca55ff06dfb0a2"
+    },
+    {
+      "original_path": "browser/probe-raw-result.json",
+      "original_bytes": 25,
+      "original_sha256": "62a2ec7ea23aed9b55d5588aa911617482704992eeb912b0d6c9a87ea7f781a1",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/probe-raw-result.json.gz",
+      "gzip_bytes": 45,
+      "gzip_sha256": "ced42f2d9d3e89c41a09fa4c70ecf559a8f82e28caab881e002ada3000d53e31"
+    },
+    {
+      "original_path": "browser/probe.json",
+      "original_bytes": 10803,
+      "original_sha256": "d56f9a307b6ff0c84f2ca2db427cc3d54a16afc5b6d2e13520ec0a578b2b8676",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/probe.json.gz",
+      "gzip_bytes": 2404,
+      "gzip_sha256": "4a8af6b8dddfb7b491522617145b5660cfff7a61051077a2f72596a7d3a4c468"
+    },
+    {
+      "original_path": "browser/replay-1.resume",
+      "original_bytes": 22582,
+      "original_sha256": "6150d1dacd3c0fe6837cb941ad7c53ccb54aa7c2348a06483b9e578b05ad1f97",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/replay-1.resume.gz",
+      "gzip_bytes": 5857,
+      "gzip_sha256": "5f39a03c6b83d135ca840b25f6856669d2a247a24acd63299da75ea79a71e46d"
+    },
+    {
+      "original_path": "browser/replay-1.trace",
+      "original_bytes": 380219,
+      "original_sha256": "b7577fe84b72dcf1d5635188e5ea55d06ae4dafeeb6939902d42d78b1816afae",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/replay-1.trace.gz",
+      "gzip_bytes": 52731,
+      "gzip_sha256": "a97252bf9d1376bf8d138a2c47b3680b6027e9cc5d38787a88ce06e68c6e09e2"
+    },
+    {
+      "original_path": "browser/replay-4096.resume",
+      "original_bytes": 22582,
+      "original_sha256": "6150d1dacd3c0fe6837cb941ad7c53ccb54aa7c2348a06483b9e578b05ad1f97",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/replay-4096.resume.gz",
+      "gzip_bytes": 5857,
+      "gzip_sha256": "5f39a03c6b83d135ca840b25f6856669d2a247a24acd63299da75ea79a71e46d"
+    },
+    {
+      "original_path": "browser/replay-4096.trace",
+      "original_bytes": 380219,
+      "original_sha256": "b7577fe84b72dcf1d5635188e5ea55d06ae4dafeeb6939902d42d78b1816afae",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/replay-4096.trace.gz",
+      "gzip_bytes": 52731,
+      "gzip_sha256": "a97252bf9d1376bf8d138a2c47b3680b6027e9cc5d38787a88ce06e68c6e09e2"
+    },
+    {
+      "original_path": "browser/replay-7.resume",
+      "original_bytes": 22582,
+      "original_sha256": "6150d1dacd3c0fe6837cb941ad7c53ccb54aa7c2348a06483b9e578b05ad1f97",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/replay-7.resume.gz",
+      "gzip_bytes": 5857,
+      "gzip_sha256": "5f39a03c6b83d135ca840b25f6856669d2a247a24acd63299da75ea79a71e46d"
+    },
+    {
+      "original_path": "browser/replay-7.trace",
+      "original_bytes": 380219,
+      "original_sha256": "b7577fe84b72dcf1d5635188e5ea55d06ae4dafeeb6939902d42d78b1816afae",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338224000000000,
+      "gzip": "files/browser/replay-7.trace.gz",
+      "gzip_bytes": 52731,
+      "gzip_sha256": "a97252bf9d1376bf8d138a2c47b3680b6027e9cc5d38787a88ce06e68c6e09e2"
+    },
+    {
+      "original_path": "browser/report.json",
+      "original_bytes": 9736,
+      "original_sha256": "3146db8e8cb1800b5315b783f5af13f18514278f22d01ca7bf14fa982fdd3bbb",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338229000000000,
+      "gzip": "files/browser/report.json.gz",
+      "gzip_bytes": 3009,
+      "gzip_sha256": "c266d5609b3588bffccbe032cee145f397f49e143ef9c2e550d27e178e9972c5"
+    },
+    {
+      "original_path": "browser-build.log",
+      "original_bytes": 8349,
+      "original_sha256": "ddb2f1b4852a094165e19f7fd4ee3dc5480cc5ed1e9b95ac7de89962b92f7cbc",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338182000000000,
+      "gzip": "files/browser-build.log.gz",
+      "gzip_bytes": 2999,
+      "gzip_sha256": "c7bd68e5ab3f2a5e5a8b0fd57a64756aade565f28eed99d00e44389ba116a50d"
+    },
+    {
+      "original_path": "browser-guest-and-object-oracle.log",
+      "original_bytes": 1309,
+      "original_sha256": "0788bcc1f1e8e9644a818cbf68a4b7ff755efe869d489bfb5f0b84b2f3e05d9c",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338229000000000,
+      "gzip": "files/browser-guest-and-object-oracle.log.gz",
+      "gzip_bytes": 606,
+      "gzip_sha256": "ce5642f8964aa7e60826e3c80d7785146a468bcdfbafb598ed6176a0d4882991"
+    },
+    {
+      "original_path": "browser.log",
+      "original_bytes": 133,
+      "original_sha256": "3746253dfc3dfc11564627800ecb86b73b553b0349d1941ffded617d6988ea27",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338229000000000,
+      "gzip": "files/browser.log.gz",
+      "gzip_bytes": 130,
+      "gzip_sha256": "b9cab0c656631b3aad1bb02c66186622a4f4bb87e471fd249d65d4bfdcf39a7f"
+    },
+    {
+      "original_path": "contract.log",
+      "original_bytes": 24456,
+      "original_sha256": "b3f912f956d39fbf7d2b3c4fb71cc665659badefdac591b581a5406f12683fac",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338183000000000,
+      "gzip": "files/contract.log.gz",
+      "gzip_bytes": 5885,
+      "gzip_sha256": "1f35b2325eabb490bdff984e5bb42eb40092fb3e745d48a6fa4ad8a68fcc400e"
+    },
+    {
+      "original_path": "core-native.log",
+      "original_bytes": 57551,
+      "original_sha256": "a74b1dfba1ce6de1daa61b9f15777e55c7c8578ec51e88d1b586f41e269444d2",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337940000000000,
+      "gzip": "files/core-native.log.gz",
+      "gzip_bytes": 12315,
+      "gzip_sha256": "f8f0dc03b0072d90f84608c196972332f25759a735ca1f16b5a36b99df5d739d"
+    },
+    {
+      "original_path": "core-no-std-wasm.log",
+      "original_bytes": 563,
+      "original_sha256": "13c0304d55dafd8720a77b95ffde6fe3fdf43879d2cd1d1cbabf383b38a51719",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338111000000000,
+      "gzip": "files/core-no-std-wasm.log.gz",
+      "gzip_bytes": 324,
+      "gzip_sha256": "f19340bda19540dc84cfa8fa20690390970e82870281a0d1967003743aca9059"
+    },
+    {
+      "original_path": "device-and-session-native.log",
+      "original_bytes": 13061,
+      "original_sha256": "22ba83d619c628005da28cffb62c174f35686ced4a8423b20ef14201dfeb0706",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337954000000000,
+      "gzip": "files/device-and-session-native.log.gz",
+      "gzip_bytes": 4030,
+      "gzip_sha256": "406a6147a4fa7f7123278fb22b49794a5bae79ad07863b9d294a576323fb2b14"
+    },
+    {
+      "original_path": "documentation.log",
+      "original_bytes": 223,
+      "original_sha256": "c7c16a0b2c52bde2fbd7cd140fea683af789a7c8b9b48d94aba3a5e1a1e610cd",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338183000000000,
+      "gzip": "files/documentation.log.gz",
+      "gzip_bytes": 190,
+      "gzip_sha256": "57dc052eb8e1352445adaab5cb9ded05468e4894bb4ad3b5ab9d343f8ebac9bf"
+    },
+    {
+      "original_path": "format.log",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337902000000000,
+      "gzip": "files/format.log.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "guest-fixture.log",
+      "original_bytes": 379,
+      "original_sha256": "956024d50251aabf05a87889a9c2dc601b7ebcee3b9148ac5ad7df14516645f1",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337903000000000,
+      "gzip": "files/guest-fixture.log.gz",
+      "gzip_bytes": 290,
+      "gzip_sha256": "fdf0a4682bca1a3f716e18328023c6a7214a09e3f93d8ccfe0ff90c47130f4ec"
+    },
+    {
+      "original_path": "jit-native.log",
+      "original_bytes": 12256,
+      "original_sha256": "5d4b96fd4b531c4877c769620694c96c4f59b2cb20d531e87017948025b52c6b",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338085000000000,
+      "gzip": "files/jit-native.log.gz",
+      "gzip_bytes": 2414,
+      "gzip_sha256": "78623be46eaa8f36857ff2e5c1838bbc76df95d73e6953edfe4ec1e068489949"
+    },
+    {
+      "original_path": "native/cache-evicted.resume",
+      "original_bytes": 16781021,
+      "original_sha256": "827e2696d390f298a8c1d9318434cf804c792fd2eeaf46cc74d2446f72795f38",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337937000000000,
+      "gzip": "files/native/cache-evicted.resume.gz",
+      "gzip_bytes": 18144,
+      "gzip_sha256": "59150e2f9f0563fd865b3ecc82434576df33721d46b126773100cec4135073f1"
+    },
+    {
+      "original_path": "native/cache-pinned.resume",
+      "original_bytes": 16781661,
+      "original_sha256": "d52908cfbba21b1658162c8b2e240cb100412b792135f13bc20f4ea52415154b",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337937000000000,
+      "gzip": "files/native/cache-pinned.resume.gz",
+      "gzip_bytes": 18320,
+      "gzip_sha256": "d3bfe1068aa0bce5c22c20b409a9c49a697779a370303f63cbfc31a224084f05"
+    },
+    {
+      "original_path": "native/cancel-before.resume",
+      "original_bytes": 19610,
+      "original_sha256": "6aaf7c89c27265810deb091b831babd72c346972f206cff8456105a10a60ac76",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/cancel-before.resume.gz",
+      "gzip_bytes": 5428,
+      "gzip_sha256": "9e3acbd94b83032321f5f6ba7c810d8885599aa66007a4d1a419d4f51dbc5656"
+    },
+    {
+      "original_path": "native/cancelled.completion",
+      "original_bytes": 66,
+      "original_sha256": "dec688383876ef959cad98e103c5841dd0aed3ff2ba77d9907dbd74442fdca64",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/cancelled.completion.gz",
+      "gzip_bytes": 72,
+      "gzip_sha256": "5b5ef7223c587323ea6736ca5ca4f54ab2f2dedff42289d37357355403b9ffd7"
+    },
+    {
+      "original_path": "native/cancelled.resume",
+      "original_bytes": 19566,
+      "original_sha256": "5c7ff0c3a273a11c60521597d993be5fece01ee7cedaf6d016c45fa1de9e4a8d",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/cancelled.resume.gz",
+      "gzip_bytes": 5424,
+      "gzip_sha256": "1e1e2ea57253ef5e171da46956e6b5f7f48374ee895d952466c741d3e5c2f0f4"
+    },
+    {
+      "original_path": "native/capture-failed-final.resume",
+      "original_bytes": 19564,
+      "original_sha256": "1cec18a9d5d35e5d49474f1ca48263524561a73c396a515ebba58af4f9210330",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/capture-failed-final.resume.gz",
+      "gzip_bytes": 5404,
+      "gzip_sha256": "9b3bf9a1d4bbabcd2a9080bc296bcf0a93f6d677fc970d4c7fe6a1f650d32733"
+    },
+    {
+      "original_path": "native/capture-failed-ready.resume",
+      "original_bytes": 19631,
+      "original_sha256": "d675829d4c7f8f038daa2d87d2e6638e140c72b4f2473ae33cb918d832140e62",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/capture-failed-ready.resume.gz",
+      "gzip_bytes": 5436,
+      "gzip_sha256": "0005a99cfb1eab45f22f43f99f82cf76c75c2667b8f058d3bf6ff7b515525548"
+    },
+    {
+      "original_path": "native/capture-failed.completion",
+      "original_bytes": 35,
+      "original_sha256": "99b80f727ac511b766719b05644c7e37f5a1680563b2e68f7ced37858b3d471a",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/capture-failed.completion.gz",
+      "gzip_bytes": 44,
+      "gzip_sha256": "b5086627249a3b71d9eb7c0e094daba3e466d0fb906f720cdcc3abacaae18e1b"
+    },
+    {
+      "original_path": "native/capture-failed.trace",
+      "original_bytes": 291456,
+      "original_sha256": "0c9b9871d37561b50fabf9e62518168c2e84d66ec8f8ed412abfa32cde59c4af",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/capture-failed.trace.gz",
+      "gzip_bytes": 29779,
+      "gzip_sha256": "78c2dc3aaee654163e4a0b5b1cbdd786e1e5541dca32c5bfa12b02d1865183f7"
+    },
+    {
+      "original_path": "native/capture-future.resume",
+      "original_bytes": 19573,
+      "original_sha256": "e2031b7017c513d1a0efcb91c35aebe8a190272729af94af85898a6b25fa2c4d",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/capture-future.resume.gz",
+      "gzip_bytes": 5401,
+      "gzip_sha256": "161b9d3b68442d1370f4b6b371161ad2f8b53999ca9e157e63b20c893b90e9eb"
+    },
+    {
+      "original_path": "native/capture-future.trace",
+      "original_bytes": 291303,
+      "original_sha256": "421764e599022c894d0ff33c1f6bda7811254f8352f6dc1cec937ab6d2398acf",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/capture-future.trace.gz",
+      "gzip_bytes": 29762,
+      "gzip_sha256": "0d789ecb5dbbfb92dfb50eae0e1c8d024eb46ea9bdc43322086814febaf67119"
+    },
+    {
+      "original_path": "native/capture-short-final.resume",
+      "original_bytes": 19575,
+      "original_sha256": "32df0e7a0645b8b9c91e7eef08319f6d67b5f087f582e56fd666d44db7fb56c4",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/capture-short-final.resume.gz",
+      "gzip_bytes": 5408,
+      "gzip_sha256": "cf8fe7d28093ddd903e7d5bac64ab3df791c27b594428fda86cbfe87c50177b3"
+    },
+    {
+      "original_path": "native/capture-short-ready.resume",
+      "original_bytes": 19633,
+      "original_sha256": "4eb032b9f11e9fd2ad3763d2f800d7badfc28e0d422c4b334511c95e5dcf55b3",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/capture-short-ready.resume.gz",
+      "gzip_bytes": 5442,
+      "gzip_sha256": "e92c7d1c493af5cd8ea163a74459f5de553bba5daaf90c99b260db8fd871bb3b"
+    },
+    {
+      "original_path": "native/capture-short.completion",
+      "original_bytes": 37,
+      "original_sha256": "e1e0631ecd7ae585f8373e09776ca2658ace5afe2cc69095db5a75cb864e96dc",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/capture-short.completion.gz",
+      "gzip_bytes": 47,
+      "gzip_sha256": "1a61cd91ab47d414069e6ccfbc06b2ef83b02bf45efc25b91f239e3403976e1f"
+    },
+    {
+      "original_path": "native/capture-short.trace",
+      "original_bytes": 291456,
+      "original_sha256": "0c9b9871d37561b50fabf9e62518168c2e84d66ec8f8ed412abfa32cde59c4af",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/capture-short.trace.gz",
+      "gzip_bytes": 29779,
+      "gzip_sha256": "78c2dc3aaee654163e4a0b5b1cbdd786e1e5541dca32c5bfa12b02d1865183f7"
+    },
+    {
+      "original_path": "native/capture-stopped.resume",
+      "original_bytes": 19660,
+      "original_sha256": "637cbe48815f307b365a0fbc96b18cfc7440892478ff223428deabf7ecd16bbb",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/capture-stopped.resume.gz",
+      "gzip_bytes": 5433,
+      "gzip_sha256": "116212196fc6268510d4d102df3c86c773d853afd557941b5d3f7ab6ebd04011"
+    },
+    {
+      "original_path": "native/capture-stopped.trace",
+      "original_bytes": 291388,
+      "original_sha256": "937918e24f5d87a9eb013ee764a88f51662ab1ca1903c60f1c70de68a50ba7f5",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/capture-stopped.trace.gz",
+      "gzip_bytes": 29773,
+      "gzip_sha256": "2cbd148545c2a76e2d97130f6ce3aeeac234ad808d3c747ff08d347b53ced76b"
+    },
+    {
+      "original_path": "native/completion-envelopes.bin",
+      "original_bytes": 1272,
+      "original_sha256": "ac336bd406c8bc7c4951472424ab77b0a6ee699ce50e032bbefd7f6d973e6a68",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/completion-envelopes.bin.gz",
+      "gzip_bytes": 453,
+      "gzip_sha256": "0d8eb05113bb894f07377be2c08d301b5a82a9eb1d54b2e1fefad54a76027551"
+    },
+    {
+      "original_path": "native/completion-positions.tsv",
+      "original_bytes": 56,
+      "original_sha256": "575092ef660fa72bc3f9f61ea613d18b46a4696a8bbf17d80c9d60422571bc37",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/completion-positions.tsv.gz",
+      "gzip_bytes": 58,
+      "gzip_sha256": "d569283faa652b1800982d8d1865927da09a60b0e950ad4df2c92e73c81128e9"
+    },
+    {
+      "original_path": "native/cow.resume",
+      "original_bytes": 22058,
+      "original_sha256": "59f5895cbf9fc7d1e352484011d15ad26ce8ac9501ce2027bc7aaf30a65935ca",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/cow.resume.gz",
+      "gzip_bytes": 5807,
+      "gzip_sha256": "60bef49fcb870d554ad95ea7b7e3d034e85c87715f4bda04afa5ab8b090a5c16"
+    },
+    {
+      "original_path": "native/cow.trace",
+      "original_bytes": 291915,
+      "original_sha256": "f69971ee669d4501c1cc9d1e48deda6c6039ca341464f5898e2fd5c0005d9a2e",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/cow.trace.gz",
+      "gzip_bytes": 29845,
+      "gzip_sha256": "c041d06ff47230572769931336459576f1d82bed17da94c97f8af8060aeea658"
+    },
+    {
+      "original_path": "native/device-oracle.json",
+      "original_bytes": 1599,
+      "original_sha256": "9ebbec8770dd547d3964ad110ab72cf63486671b2533faa50314022e9b07457d",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337954000000000,
+      "gzip": "files/native/device-oracle.json.gz",
+      "gzip_bytes": 638,
+      "gzip_sha256": "e9842659b09c4ca52bef2336a7a0628cad55bb64d8c7cd1cb4c59b4d17538c7f"
+    },
+    {
+      "original_path": "native/disabled-capture-invalid-field2.resume",
+      "original_bytes": 2129,
+      "original_sha256": "27af1e7aa20e8510b78a73d5f440db5c66dbb67ec77a167ca2d5455e20fa8d71",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/disabled-capture-invalid-field2.resume.gz",
+      "gzip_bytes": 159,
+      "gzip_sha256": "87880592ddd4f0019358c24dc034301b13196ad0c9d9f71c7d6660bfa9156f58"
+    },
+    {
+      "original_path": "native/disabled-capture-invalid-field3.resume",
+      "original_bytes": 2129,
+      "original_sha256": "7e69801037167bf1b1bb7ff5c212519c7778d6dc4e7c47353551c04b79bd4602",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/disabled-capture-invalid-field3.resume.gz",
+      "gzip_bytes": 159,
+      "gzip_sha256": "87505b8a4340b6d2dcf8109ad030a5a04bce7f3f67c9b5c9de906fd8c3374d13"
+    },
+    {
+      "original_path": "native/final.resume",
+      "original_bytes": 22582,
+      "original_sha256": "e91b70afc94e7031df2d903479d34a25f54640ee4dadf3a2bc8fcc5fd40663de",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/final.resume.gz",
+      "gzip_bytes": 5819,
+      "gzip_sha256": "4739854a4e9b4b2c2b1e535b8c77514896ac8dbbb8c9a3b4e95d20ea6bd90a4b"
+    },
+    {
+      "original_path": "native/initial-basefalse-agentfalse-capturefalse.resume",
+      "original_bytes": 1673,
+      "original_sha256": "78a7d4c77200a6f088cac5a01d929aaaa407f8efa4aa6c02dc9b178e74e806d2",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/initial-basefalse-agentfalse-capturefalse.resume.gz",
+      "gzip_bytes": 126,
+      "gzip_sha256": "944b53d7bffaba98d88f7a2fb376fcafcb7b16df1b6c075bcad74552704154b0"
+    },
+    {
+      "original_path": "native/initial-basefalse-agentfalse-capturetrue.resume",
+      "original_bytes": 2182,
+      "original_sha256": "7d61bc5816e7501565ba308a9b1c91a234b1883bde31ed7c4658e8be666c062c",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/initial-basefalse-agentfalse-capturetrue.resume.gz",
+      "gzip_bytes": 167,
+      "gzip_sha256": "550283181ee6bf371c67f8d6db1763eb2bd6c0db015fea56ad8973c55ceca8ba"
+    },
+    {
+      "original_path": "native/initial-basefalse-agenttrue-capturefalse.resume",
+      "original_bytes": 2129,
+      "original_sha256": "769de80bba42e15c4022ce6b7458234048e5a2244f1d49a28b31879f08396729",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/initial-basefalse-agenttrue-capturefalse.resume.gz",
+      "gzip_bytes": 156,
+      "gzip_sha256": "589471b1ee0714f9339db2e4ed1b80c4fa22db7a872d150d4cedf9fb1e6a3419"
+    },
+    {
+      "original_path": "native/initial-basefalse-agenttrue-capturetrue.resume",
+      "original_bytes": 2638,
+      "original_sha256": "88a7e3b7e6407b9b08d13b368addbc58631d87f09abfa13ed030c12e8eb94494",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/initial-basefalse-agenttrue-capturetrue.resume.gz",
+      "gzip_bytes": 191,
+      "gzip_sha256": "feea6f7b15d0d9526e7ebab7e130d4d62a485125d4936d1909eafe737fdd1922"
+    },
+    {
+      "original_path": "native/initial-basetrue-agentfalse-capturefalse.resume",
+      "original_bytes": 2097,
+      "original_sha256": "0a29058a177f73dff259741ad02ec3011b4fa056b7d20f5561f09c6b5b29eede",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/initial-basetrue-agentfalse-capturefalse.resume.gz",
+      "gzip_bytes": 228,
+      "gzip_sha256": "f44ed89c5d6043e797eec93ee021e83ae5ea4d4c70e63243b58a0303a974038b"
+    },
+    {
+      "original_path": "native/initial-basetrue-agentfalse-capturetrue.resume",
+      "original_bytes": 2606,
+      "original_sha256": "a2a9d2177bc8c4f6619a49197c4fe243687d194c3c0a88a9ec57aa8211262141",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/initial-basetrue-agentfalse-capturetrue.resume.gz",
+      "gzip_bytes": 263,
+      "gzip_sha256": "ee2e057c54b4fffe9d23856e879a2a807bbc4caeeea488245de889444094388d"
+    },
+    {
+      "original_path": "native/initial-basetrue-agenttrue-capturefalse.resume",
+      "original_bytes": 2553,
+      "original_sha256": "af95451a81f9898b7ef137db36c3ed71c82f5ffd07e68a22522497f0e3a67242",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/initial-basetrue-agenttrue-capturefalse.resume.gz",
+      "gzip_bytes": 255,
+      "gzip_sha256": "9b8feacef1283fb7ade8d7a7aaa9004b22d13bdeeb7d2bbdd52d08f5597f5f8f"
+    },
+    {
+      "original_path": "native/initial-basetrue-agenttrue-capturetrue.resume",
+      "original_bytes": 3062,
+      "original_sha256": "b67d4f5e61710dce777b73a4ce1d562c79e834b3206204f553137c2f7afc4fc7",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/initial-basetrue-agenttrue-capturetrue.resume.gz",
+      "gzip_bytes": 289,
+      "gzip_sha256": "7e1ab0e6e3bfd7d12f59044f68049ce6dfb057b308ed7a536badd73ee6c01632"
+    },
+    {
+      "original_path": "native/jit-inactive-capture-pending.resume",
+      "original_bytes": 19909,
+      "original_sha256": "c131ffdee7b5282f0132ac1a6d30b6e6648f298b1bbf2a993b97be0fa7d990d2",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337970000000000,
+      "gzip": "files/native/jit-inactive-capture-pending.resume.gz",
+      "gzip_bytes": 5671,
+      "gzip_sha256": "bc7e7379c8d2a9a8cee96397935153d35694dda5cb5aef1f89026668551743c8"
+    },
+    {
+      "original_path": "native/jit-inactive-capture-target5000-q1.resume",
+      "original_bytes": 20842,
+      "original_sha256": "d4ccae5eb95872e39f93fbfc4b6165cc3ff3ba75c380ac0d77794aa794e77d5b",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337970000000000,
+      "gzip": "files/native/jit-inactive-capture-target5000-q1.resume.gz",
+      "gzip_bytes": 5670,
+      "gzip_sha256": "f84ddd509bea3a1c7506e979f91dc5f2ccec2118c0bb6044b4be56e3daf5db64"
+    },
+    {
+      "original_path": "native/jit-inactive-capture-target5000-q31.resume",
+      "original_bytes": 20842,
+      "original_sha256": "d4ccae5eb95872e39f93fbfc4b6165cc3ff3ba75c380ac0d77794aa794e77d5b",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337970000000000,
+      "gzip": "files/native/jit-inactive-capture-target5000-q31.resume.gz",
+      "gzip_bytes": 5670,
+      "gzip_sha256": "f84ddd509bea3a1c7506e979f91dc5f2ccec2118c0bb6044b4be56e3daf5db64"
+    },
+    {
+      "original_path": "native/jit-inactive-capture-target5000-q4096.resume",
+      "original_bytes": 20842,
+      "original_sha256": "d4ccae5eb95872e39f93fbfc4b6165cc3ff3ba75c380ac0d77794aa794e77d5b",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337970000000000,
+      "gzip": "files/native/jit-inactive-capture-target5000-q4096.resume.gz",
+      "gzip_bytes": 5670,
+      "gzip_sha256": "f84ddd509bea3a1c7506e979f91dc5f2ccec2118c0bb6044b4be56e3daf5db64"
+    },
+    {
+      "original_path": "native/jit-inactive-capture-target5000-q8.resume",
+      "original_bytes": 20842,
+      "original_sha256": "d4ccae5eb95872e39f93fbfc4b6165cc3ff3ba75c380ac0d77794aa794e77d5b",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337970000000000,
+      "gzip": "files/native/jit-inactive-capture-target5000-q8.resume.gz",
+      "gzip_bytes": 5670,
+      "gzip_sha256": "f84ddd509bea3a1c7506e979f91dc5f2ccec2118c0bb6044b4be56e3daf5db64"
+    },
+    {
+      "original_path": "native/jit-inactive-capture-target5001-q1.resume",
+      "original_bytes": 20842,
+      "original_sha256": "49d7d7f1f9f0da0f1c87574bebb47838e082ef243ae367785334413a9f8759fe",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337970000000000,
+      "gzip": "files/native/jit-inactive-capture-target5001-q1.resume.gz",
+      "gzip_bytes": 5670,
+      "gzip_sha256": "bf5394d67a61029079497c8cb9af019fc6b18af100895f2b3329e8c51b2916eb"
+    },
+    {
+      "original_path": "native/jit-inactive-capture-target5001-q31.resume",
+      "original_bytes": 20842,
+      "original_sha256": "49d7d7f1f9f0da0f1c87574bebb47838e082ef243ae367785334413a9f8759fe",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337970000000000,
+      "gzip": "files/native/jit-inactive-capture-target5001-q31.resume.gz",
+      "gzip_bytes": 5670,
+      "gzip_sha256": "bf5394d67a61029079497c8cb9af019fc6b18af100895f2b3329e8c51b2916eb"
+    },
+    {
+      "original_path": "native/jit-inactive-capture-target5001-q4096.resume",
+      "original_bytes": 20842,
+      "original_sha256": "49d7d7f1f9f0da0f1c87574bebb47838e082ef243ae367785334413a9f8759fe",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337970000000000,
+      "gzip": "files/native/jit-inactive-capture-target5001-q4096.resume.gz",
+      "gzip_bytes": 5670,
+      "gzip_sha256": "bf5394d67a61029079497c8cb9af019fc6b18af100895f2b3329e8c51b2916eb"
+    },
+    {
+      "original_path": "native/jit-inactive-capture-target5001-q8.resume",
+      "original_bytes": 20842,
+      "original_sha256": "49d7d7f1f9f0da0f1c87574bebb47838e082ef243ae367785334413a9f8759fe",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337970000000000,
+      "gzip": "files/native/jit-inactive-capture-target5001-q8.resume.gz",
+      "gzip_bytes": 5670,
+      "gzip_sha256": "bf5394d67a61029079497c8cb9af019fc6b18af100895f2b3329e8c51b2916eb"
+    },
+    {
+      "original_path": "native/jit-inactive-capture-target5002-q1.resume",
+      "original_bytes": 20842,
+      "original_sha256": "b1d0c03d17ff6caeca4fe6bae3097605b6dda5b9d7cff1b7e46bcbb1c1a250b1",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337970000000000,
+      "gzip": "files/native/jit-inactive-capture-target5002-q1.resume.gz",
+      "gzip_bytes": 5670,
+      "gzip_sha256": "eaac72da6467fbab71519dee9fdd76905500665756a2bad73518e897a01dc555"
+    },
+    {
+      "original_path": "native/jit-inactive-capture-target5002-q31.resume",
+      "original_bytes": 20842,
+      "original_sha256": "b1d0c03d17ff6caeca4fe6bae3097605b6dda5b9d7cff1b7e46bcbb1c1a250b1",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337970000000000,
+      "gzip": "files/native/jit-inactive-capture-target5002-q31.resume.gz",
+      "gzip_bytes": 5670,
+      "gzip_sha256": "eaac72da6467fbab71519dee9fdd76905500665756a2bad73518e897a01dc555"
+    },
+    {
+      "original_path": "native/jit-inactive-capture-target5002-q4096.resume",
+      "original_bytes": 20842,
+      "original_sha256": "b1d0c03d17ff6caeca4fe6bae3097605b6dda5b9d7cff1b7e46bcbb1c1a250b1",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337970000000000,
+      "gzip": "files/native/jit-inactive-capture-target5002-q4096.resume.gz",
+      "gzip_bytes": 5670,
+      "gzip_sha256": "eaac72da6467fbab71519dee9fdd76905500665756a2bad73518e897a01dc555"
+    },
+    {
+      "original_path": "native/jit-inactive-capture-target5002-q8.resume",
+      "original_bytes": 20842,
+      "original_sha256": "b1d0c03d17ff6caeca4fe6bae3097605b6dda5b9d7cff1b7e46bcbb1c1a250b1",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337970000000000,
+      "gzip": "files/native/jit-inactive-capture-target5002-q8.resume.gz",
+      "gzip_bytes": 5670,
+      "gzip_sha256": "eaac72da6467fbab71519dee9fdd76905500665756a2bad73518e897a01dc555"
+    },
+    {
+      "original_path": "native/malformed-source.resume",
+      "original_bytes": 19610,
+      "original_sha256": "6aaf7c89c27265810deb091b831babd72c346972f206cff8456105a10a60ac76",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/malformed-source.resume.gz",
+      "gzip_bytes": 5428,
+      "gzip_sha256": "9e3acbd94b83032321f5f6ba7c810d8885599aa66007a4d1a419d4f51dbc5656"
+    },
+    {
+      "original_path": "native/original.trace",
+      "original_bytes": 671522,
+      "original_sha256": "a3eb3bc289a3ee9c06f981508fb02c636de22ea86937e8e30555a9467c0547db",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/original.trace.gz",
+      "gzip_bytes": 82495,
+      "gzip_sha256": "82bc2f01d1612529328d15687fb62c53b2a1f63d8e744a1a8a665f0eb88fd7be"
+    },
+    {
+      "original_path": "native/orphaned-capture-false.resume",
+      "original_bytes": 19610,
+      "original_sha256": "bb64f5b8a82261207e0cae4a36acfebce483c9a357f64f14ec5d627f1064473b",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/orphaned-capture-false.resume.gz",
+      "gzip_bytes": 5427,
+      "gzip_sha256": "6aec2c3a45a43e048a4865801b1d0dfa52d1a4a5659b28165506036cfe204a63"
+    },
+    {
+      "original_path": "native/orphaned-capture-source.resume",
+      "original_bytes": 19610,
+      "original_sha256": "6aaf7c89c27265810deb091b831babd72c346972f206cff8456105a10a60ac76",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/orphaned-capture-source.resume.gz",
+      "gzip_bytes": 5428,
+      "gzip_sha256": "9e3acbd94b83032321f5f6ba7c810d8885599aa66007a4d1a419d4f51dbc5656"
+    },
+    {
+      "original_path": "native/orphaned-capture-true.resume",
+      "original_bytes": 19592,
+      "original_sha256": "0d25fdfd79a412912cb431ab1746dce9b47e6e9e38587dc603e6b561f7aebfd6",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/orphaned-capture-true.resume.gz",
+      "gzip_bytes": 5420,
+      "gzip_sha256": "632edc726f9dc500be09717f01f92ba9f6d063a6c4a267ef2c8187974f562c2e"
+    },
+    {
+      "original_path": "native/pending.resume",
+      "original_bytes": 19610,
+      "original_sha256": "6aaf7c89c27265810deb091b831babd72c346972f206cff8456105a10a60ac76",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/pending.resume.gz",
+      "gzip_bytes": 5428,
+      "gzip_sha256": "9e3acbd94b83032321f5f6ba7c810d8885599aa66007a4d1a419d4f51dbc5656"
+    },
+    {
+      "original_path": "native/replay-1.trace",
+      "original_bytes": 380219,
+      "original_sha256": "b7577fe84b72dcf1d5635188e5ea55d06ae4dafeeb6939902d42d78b1816afae",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/replay-1.trace.gz",
+      "gzip_bytes": 52731,
+      "gzip_sha256": "a97252bf9d1376bf8d138a2c47b3680b6027e9cc5d38787a88ce06e68c6e09e2"
+    },
+    {
+      "original_path": "native/replay-4096.trace",
+      "original_bytes": 380219,
+      "original_sha256": "b7577fe84b72dcf1d5635188e5ea55d06ae4dafeeb6939902d42d78b1816afae",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/replay-4096.trace.gz",
+      "gzip_bytes": 52731,
+      "gzip_sha256": "a97252bf9d1376bf8d138a2c47b3680b6027e9cc5d38787a88ce06e68c6e09e2"
+    },
+    {
+      "original_path": "native/replay-7.trace",
+      "original_bytes": 380219,
+      "original_sha256": "b7577fe84b72dcf1d5635188e5ea55d06ae4dafeeb6939902d42d78b1816afae",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/replay-7.trace.gz",
+      "gzip_bytes": 52731,
+      "gzip_sha256": "a97252bf9d1376bf8d138a2c47b3680b6027e9cc5d38787a88ce06e68c6e09e2"
+    },
+    {
+      "original_path": "native/stress-seed-1.resume",
+      "original_bytes": 21593,
+      "original_sha256": "dcf5813c690c47791e9667c15c229bd50c391ade963bb87914d15dea4e42b7fb",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/stress-seed-1.resume.gz",
+      "gzip_bytes": 5769,
+      "gzip_sha256": "316e8c25e03ec4977baf1830fd69f2880bd8e20c1438aa76515f67178e2b1ba1"
+    },
+    {
+      "original_path": "native/stress-seed-10.resume",
+      "original_bytes": 21595,
+      "original_sha256": "ad225fd60aefdd9bc968016f9889362591e5f7822cbf8c94262ea11c714816a0",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-10.resume.gz",
+      "gzip_bytes": 5778,
+      "gzip_sha256": "7583dd090b597b2b9bfd1b7e9206312a6d8d80b85c2ba829854603f4033e043b"
+    },
+    {
+      "original_path": "native/stress-seed-11.resume",
+      "original_bytes": 21598,
+      "original_sha256": "b1349884753c82349aae1c25763e64f7b3e51f8a8ac3e1de5c9351865a3da896",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-11.resume.gz",
+      "gzip_bytes": 5777,
+      "gzip_sha256": "432a62ca0ee8930b0531cfe234d420e15af13289a71e785d410f75d79a57eced"
+    },
+    {
+      "original_path": "native/stress-seed-12.resume",
+      "original_bytes": 21607,
+      "original_sha256": "89bb1ed3c5d824e49a89121d46904c503440cdb0d7c7e9909dfc87933988cd6f",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-12.resume.gz",
+      "gzip_bytes": 5774,
+      "gzip_sha256": "eb271b9517b80f0c2a4aca0ab449555877882df01302694ad0911da64420fffa"
+    },
+    {
+      "original_path": "native/stress-seed-13.resume",
+      "original_bytes": 21603,
+      "original_sha256": "1fb7db3173570b2f0e3e3ff4b2f4d866580a17f9fdfe25281b5b109be1c9676c",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-13.resume.gz",
+      "gzip_bytes": 5778,
+      "gzip_sha256": "3791a1b9d877156b0ffb5dcceed42acd62ff2dddbdab1985bb444dcca28592b1"
+    },
+    {
+      "original_path": "native/stress-seed-14.resume",
+      "original_bytes": 21598,
+      "original_sha256": "dff50960fab7bce396f034a6dc409761497cb8a54c37ba26799ff649ec4dac1e",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-14.resume.gz",
+      "gzip_bytes": 5780,
+      "gzip_sha256": "07ddb2c4177df0a108301789e07832c86f191e629cae4cd5f21b965fb1a7a379"
+    },
+    {
+      "original_path": "native/stress-seed-15.resume",
+      "original_bytes": 21600,
+      "original_sha256": "bc7a3154df3024597ad25bfabecedd358d9734d44436c73f7c2aec9d2ebda1e6",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-15.resume.gz",
+      "gzip_bytes": 5767,
+      "gzip_sha256": "6c977fbb0ef3eb7094c571e4ea7dfcd6f2d889b92d281aa940ad703d6de64192"
+    },
+    {
+      "original_path": "native/stress-seed-16.resume",
+      "original_bytes": 21607,
+      "original_sha256": "404b49aa2c62bcfa44bf6f18e7bc94382c1b224bba6cd53c58b97eb446b3ffd0",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-16.resume.gz",
+      "gzip_bytes": 5777,
+      "gzip_sha256": "6f8e665823f19239b00b0bb00f7708059a7df769e31f1b9b9db4f0bfde9b1586"
+    },
+    {
+      "original_path": "native/stress-seed-17.resume",
+      "original_bytes": 21601,
+      "original_sha256": "0917edf9558c7fe469286116ee7c1fd530732d897c2760d2596b06379b3af67f",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-17.resume.gz",
+      "gzip_bytes": 5773,
+      "gzip_sha256": "297147ab467d02f2c27a4f425e29bf4159ed9e72427851b86a4d557ba638c69a"
+    },
+    {
+      "original_path": "native/stress-seed-18.resume",
+      "original_bytes": 21592,
+      "original_sha256": "b01c95da25b63e027d4199c37a85acebb66ff5236b3e20775752c4b3d3028713",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-18.resume.gz",
+      "gzip_bytes": 5781,
+      "gzip_sha256": "8695f0bc96beb88baf2ed4b8c60aff9bc4d64378ebf3a819195ea5f5959e82ee"
+    },
+    {
+      "original_path": "native/stress-seed-19.resume",
+      "original_bytes": 21592,
+      "original_sha256": "c4404b7303216e87ba0d6d9f9846b01fcf8ef3d8545766d6ee1fff58d7a7b699",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-19.resume.gz",
+      "gzip_bytes": 5780,
+      "gzip_sha256": "ac9f99413476649dcdf97329eee2a83b24721fa24f53c2316ffef4a9357f572c"
+    },
+    {
+      "original_path": "native/stress-seed-2.resume",
+      "original_bytes": 21608,
+      "original_sha256": "464105df7546d66d658bb3c86150b291c3c23cabc0bbf9aa4d2f864a10d6a04b",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-2.resume.gz",
+      "gzip_bytes": 5769,
+      "gzip_sha256": "c4d9f28c33142d1afc35d6c0310771fa98ce024592e1a8f08325b8701c2bbfc2"
+    },
+    {
+      "original_path": "native/stress-seed-20.resume",
+      "original_bytes": 21597,
+      "original_sha256": "5460fcfefb8949552f33bea2f70097e9221a3ec16e2f833256307fb1e5cc99d9",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-20.resume.gz",
+      "gzip_bytes": 5777,
+      "gzip_sha256": "d77c740724479f08201bb19abe027f263574c712d314689b321c23048a433b9e"
+    },
+    {
+      "original_path": "native/stress-seed-21.resume",
+      "original_bytes": 21601,
+      "original_sha256": "def5723560e87ac3ee5db5bddab6d463a47b1caec20b5847415d99807fb2bd24",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-21.resume.gz",
+      "gzip_bytes": 5774,
+      "gzip_sha256": "8179d74cfa885d915f307ef4d1842d6de96e6bff699ca98ec24e71a9d71df827"
+    },
+    {
+      "original_path": "native/stress-seed-22.resume",
+      "original_bytes": 21601,
+      "original_sha256": "fb13c6d4c33b6b12d65f3d58b2b7228ce1900134916b6b446391c69d6b51636a",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337947000000000,
+      "gzip": "files/native/stress-seed-22.resume.gz",
+      "gzip_bytes": 5768,
+      "gzip_sha256": "987c523cce31a97c40ed13cbbdd0eee213b770940a182bd1f8966c356be23368"
+    },
+    {
+      "original_path": "native/stress-seed-23.resume",
+      "original_bytes": 21595,
+      "original_sha256": "92afd87ccf447b3b7cfb24501ab23f7baf6775c54059e7f1c676b8dc8de23154",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337947000000000,
+      "gzip": "files/native/stress-seed-23.resume.gz",
+      "gzip_bytes": 5780,
+      "gzip_sha256": "ce6e8d63e1ade09a9df84d50d4e5efd30655fb977492a770fe382cd093f319e7"
+    },
+    {
+      "original_path": "native/stress-seed-24.resume",
+      "original_bytes": 21602,
+      "original_sha256": "c04ffb93bcaa39633794139e22f4282af70e9b41c73fc454e7173de7c417b372",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337947000000000,
+      "gzip": "files/native/stress-seed-24.resume.gz",
+      "gzip_bytes": 5775,
+      "gzip_sha256": "18574c0fa3fe7282b1f63f61c03382dd9d9fb90147dfc41f731cf27c2f80b0b2"
+    },
+    {
+      "original_path": "native/stress-seed-25.resume",
+      "original_bytes": 21608,
+      "original_sha256": "fd401d9ae6e7f9168819f9de84e355c792735a2c269cf6ed1ada53a0f5fbc527",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337947000000000,
+      "gzip": "files/native/stress-seed-25.resume.gz",
+      "gzip_bytes": 5771,
+      "gzip_sha256": "16842b727b3c189d2493df588faa1b599d029a3fec888307d7e8ad986e8426cb"
+    },
+    {
+      "original_path": "native/stress-seed-26.resume",
+      "original_bytes": 21599,
+      "original_sha256": "b802b77b70a2bec8a2f43dec9e8d30e9236102130c60c30f91c14a980a3030e6",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337947000000000,
+      "gzip": "files/native/stress-seed-26.resume.gz",
+      "gzip_bytes": 5777,
+      "gzip_sha256": "6bf0097de9080b4c90871ee7605472dedf870403c1b4ef646b08da0cb72a8e14"
+    },
+    {
+      "original_path": "native/stress-seed-27.resume",
+      "original_bytes": 21605,
+      "original_sha256": "8cdfaf7e7f1f3bb74ade301c9c8578ac6d1ad12f38dd3a0f03d010678754a8b6",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337947000000000,
+      "gzip": "files/native/stress-seed-27.resume.gz",
+      "gzip_bytes": 5771,
+      "gzip_sha256": "aae8c115f9c3625e54df1a978b965725600cee0cd13c2d1fc4fde229c3cb03a5"
+    },
+    {
+      "original_path": "native/stress-seed-28.resume",
+      "original_bytes": 21598,
+      "original_sha256": "de764f50e036b66e272c74dae7124e86f7552929aa0a798ade16d2464c36f070",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337947000000000,
+      "gzip": "files/native/stress-seed-28.resume.gz",
+      "gzip_bytes": 5774,
+      "gzip_sha256": "5e574e637fc4907ee2dd948bfcb00069eff693dc16c5ea427d8ead8fdb139bc0"
+    },
+    {
+      "original_path": "native/stress-seed-29.resume",
+      "original_bytes": 21602,
+      "original_sha256": "8f77c4d166a1ddb6b108f9af430789f1b70f12b23dc63d30c54cf1aea4a73513",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337947000000000,
+      "gzip": "files/native/stress-seed-29.resume.gz",
+      "gzip_bytes": 5766,
+      "gzip_sha256": "2982ea826100ef1c5d7c1074c2fce413ef62b856238e35bdec346aa5dba35ede"
+    },
+    {
+      "original_path": "native/stress-seed-3.resume",
+      "original_bytes": 21607,
+      "original_sha256": "9862978c740b89e475c5660cbd613bd92d5a40bc7ede27f9f6a8f60efd54fae0",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-3.resume.gz",
+      "gzip_bytes": 5772,
+      "gzip_sha256": "b8d42e5ec5aee88436d7fba39754de1cf265752d75257fb5cfab1caa060872fc"
+    },
+    {
+      "original_path": "native/stress-seed-30.resume",
+      "original_bytes": 21606,
+      "original_sha256": "14927e0b3bcb4acacf44041babcc90d5c6ea259a694f7a54e50531f73cceb759",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337947000000000,
+      "gzip": "files/native/stress-seed-30.resume.gz",
+      "gzip_bytes": 5770,
+      "gzip_sha256": "556c7a8c3aad7b0cae4a0432998cd40ea2a0491b222e937c4e5dddfc99b59f8c"
+    },
+    {
+      "original_path": "native/stress-seed-31.resume",
+      "original_bytes": 21607,
+      "original_sha256": "db3722945593339b71eb0fae4aa9f28c9dd135ed746f54febad26217fe8a38f2",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337947000000000,
+      "gzip": "files/native/stress-seed-31.resume.gz",
+      "gzip_bytes": 5778,
+      "gzip_sha256": "f6b14e1e265f0e3b10ca9eba64cd8f59284eb329bfa8722648129a67e93c175f"
+    },
+    {
+      "original_path": "native/stress-seed-32.resume",
+      "original_bytes": 21609,
+      "original_sha256": "1d02524d98960887f717088f459ecfcd32ab13833639957584577dd4bd9be901",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337947000000000,
+      "gzip": "files/native/stress-seed-32.resume.gz",
+      "gzip_bytes": 5771,
+      "gzip_sha256": "654cfffe6f6ea96de526847bf964576f46f72c3aae6821a7b277146cd5bc363f"
+    },
+    {
+      "original_path": "native/stress-seed-4.resume",
+      "original_bytes": 21599,
+      "original_sha256": "f8200f8ce3dbd1fc6aabd8010232d74222fee4781451df913d6b3b484e5273f2",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-4.resume.gz",
+      "gzip_bytes": 5778,
+      "gzip_sha256": "dd9c91279d3c29cc58116635f6418b4ff2bf71a99ca60e1fde073d0a7e393532"
+    },
+    {
+      "original_path": "native/stress-seed-5.resume",
+      "original_bytes": 21599,
+      "original_sha256": "f609a32a022ffbebbecbd62495ffc07d013a56efc245b1d4716f18e4f1476e35",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-5.resume.gz",
+      "gzip_bytes": 5772,
+      "gzip_sha256": "ebb4b4a55d9f843022c1f7644e299a21d9823df404e930ded589f9f0fbeb8a10"
+    },
+    {
+      "original_path": "native/stress-seed-6.resume",
+      "original_bytes": 21600,
+      "original_sha256": "b9eb5209beb5022c6744144d4fa2dc20da5a2a9bdc106995cb843c41e12a74cf",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-6.resume.gz",
+      "gzip_bytes": 5779,
+      "gzip_sha256": "ab5a8d620cc0636e24f50ca570c3c81c440aef8a88c81689cc0c9a0b8d5ac94a"
+    },
+    {
+      "original_path": "native/stress-seed-7.resume",
+      "original_bytes": 21604,
+      "original_sha256": "06a2e08459019e3ddfa750c538fd4c6e4db529e637b99d5e14f5484766dee170",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-7.resume.gz",
+      "gzip_bytes": 5769,
+      "gzip_sha256": "d26aa25d90612e078dd66219be8ed1c97c08e7c516e96b75cd1083a4249acbf5"
+    },
+    {
+      "original_path": "native/stress-seed-8.resume",
+      "original_bytes": 21605,
+      "original_sha256": "ab44c34b6b1163151241b328d7e126993a16ea31437a9021e3af87d37211e7d4",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-8.resume.gz",
+      "gzip_bytes": 5768,
+      "gzip_sha256": "7179a98bb63957798974161ad4a42cbc8217750b86ed1c007ed63aa35007bb57"
+    },
+    {
+      "original_path": "native/stress-seed-9.resume",
+      "original_bytes": 21595,
+      "original_sha256": "5ab012e40b0a68c940e3b2cdf30e3bfed194433f47f712921d9b7e113054e12b",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337946000000000,
+      "gzip": "files/native/stress-seed-9.resume.gz",
+      "gzip_bytes": 5774,
+      "gzip_sha256": "5d2e6399a8a3962faf1e2b4424ebcb9a4721649bb766f0c6c3cf84faf9f9e69f"
+    },
+    {
+      "original_path": "native/stress.tsv",
+      "original_bytes": 2807,
+      "original_sha256": "b7c96fe8c9646b510e65044bcb51eff2ad427755d130c09e0aff0e9604e8acf5",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337947000000000,
+      "gzip": "files/native/stress.tsv.gz",
+      "gzip_bytes": 1505,
+      "gzip_sha256": "fcfceb218269aa3205087178c000cdf975dd9684ccc00c80c7b90fbc7a334bdd"
+    },
+    {
+      "original_path": "native/unsupported-playback.trace",
+      "original_bytes": 291303,
+      "original_sha256": "421764e599022c894d0ff33c1f6bda7811254f8352f6dc1cec937ab6d2398acf",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/unsupported-playback.trace.gz",
+      "gzip_bytes": 29762,
+      "gzip_sha256": "0d789ecb5dbbfb92dfb50eae0e1c8d024eb46ea9bdc43322086814febaf67119"
+    },
+    {
+      "original_path": "native/unsupported-playback.txt",
+      "original_bytes": 174,
+      "original_sha256": "f78b9be66f508f22af3a5a75386c450e5724073f56e7cc5d2d0d7b2f1046cb52",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337945000000000,
+      "gzip": "files/native/unsupported-playback.txt.gz",
+      "gzip_bytes": 151,
+      "gzip_sha256": "fe1b961dc19fe855a6fb61ddeab4dbbf5e55f95c15635689374febace3f78f05"
+    },
+    {
+      "original_path": "native-clippy.log",
+      "original_bytes": 6266,
+      "original_sha256": "c950419b1cbf96b2381e1f96af9ebcb4ab2ec2450e97aab318e37eaaac8f5de9",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337919000000000,
+      "gzip": "files/native-clippy.log.gz",
+      "gzip_bytes": 1775,
+      "gzip_sha256": "4d9a0f83ee5b20a76bc1478a911b370fdad0938cbad280d6630c2170de4d89e0"
+    },
+    {
+      "original_path": "native-guest-oracle.log",
+      "original_bytes": 1309,
+      "original_sha256": "3deae50dcd3fd251f210410545e904176ff6ad9cd39feaa4c261bf588bd03cd8",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337954000000000,
+      "gzip": "files/native-guest-oracle.log.gz",
+      "gzip_bytes": 607,
+      "gzip_sha256": "e079187af5c03ce7ff12108e48277ea73fa5d150f0af3f11609fe68c0b584fca"
+    },
+    {
+      "original_path": "policy.log",
+      "original_bytes": 32,
+      "original_sha256": "2bfb4184b5eff50fe25d9a439063a2e9140da231ac22c96a423e4d566a55a1c0",
+      "original_mode": 420,
+      "original_mtime_ns": 1792337902000000000,
+      "gzip": "files/policy.log.gz",
+      "gzip_bytes": 52,
+      "gzip_sha256": "cdf54a50a162d5102923108a5e74a6b55dd77638a5242670fa705d6a925e8188"
+    },
+    {
+      "original_path": "retained-gpu-browser/browser-trace.zip",
+      "original_bytes": 4279699,
+      "original_sha256": "4e0d813d5736909c3ce1a4a796564eca562318379ae33c3ce03ae042c669774a",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338374000000000,
+      "gzip": "files/retained-gpu-browser/browser-trace.zip.gz",
+      "gzip_bytes": 4262913,
+      "gzip_sha256": "2ebea905e12b1044ef9741198ec4f7577f8bc0c2bbcc6c1eb89ee001434a3d7f"
+    },
+    {
+      "original_path": "retained-gpu-browser/gpu-factory-ready.png",
+      "original_bytes": 115006,
+      "original_sha256": "9b2d2a79d429c972dc5a74e6ecc92784dd3b21d90c0f156d62b780ebee80e16c",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338374000000000,
+      "gzip": "files/retained-gpu-browser/gpu-factory-ready.png.gz",
+      "gzip_bytes": 106207,
+      "gzip_sha256": "8ff8ffcbc220c3663b5d832c31ec7174ebfdea21918682c3cb3ac19a614f47de"
+    },
+    {
+      "original_path": "retained-gpu-browser/javascript-coverage.json",
+      "original_bytes": 2058276,
+      "original_sha256": "d63ed5c81b6dd01727e89ea488336e8ba22c685f7009263c26da19c2b7753523",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338374000000000,
+      "gzip": "files/retained-gpu-browser/javascript-coverage.json.gz",
+      "gzip_bytes": 460909,
+      "gzip_sha256": "b6aff8b1ebbc40b177525073def4028b0def2aaec30fe48949a0d37da54dbbdf"
+    },
+    {
+      "original_path": "retained-gpu-browser/report.json",
+      "original_bytes": 14340,
+      "original_sha256": "bbd665c2dea7fb74464b50f901004a21d95880fb1a654efbe7a6f4b1755f94b6",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338375000000000,
+      "gzip": "files/retained-gpu-browser/report.json.gz",
+      "gzip_bytes": 3903,
+      "gzip_sha256": "f03eb183e2e3f584934c008c46c8e484a4f29ca24517c8e7968357f5e0b2275e"
+    },
+    {
+      "original_path": "retained-gpu-browser.log",
+      "original_bytes": 511,
+      "original_sha256": "0e5827b498fd653edc2c0b6bfd12efcebac39cabc80b218630eec3df9afe0205",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338375000000000,
+      "gzip": "files/retained-gpu-browser.log.gz",
+      "gzip_bytes": 319,
+      "gzip_sha256": "e50cf42cb2cdb6e8829e7e904b9d051328403ac28d80498e074360263baed598"
+    },
+    {
+      "original_path": "retained-gpu-integrity.log",
+      "original_bytes": 215,
+      "original_sha256": "9996dda3ba4ca26c66f93220894d5e40ceaadb740f08103ada86daaf6cee1077",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338183000000000,
+      "gzip": "files/retained-gpu-integrity.log.gz",
+      "gzip_bytes": 179,
+      "gzip_sha256": "5608c5da7e276300a16106d2be64338f67dfd9ec07ea9da760748906dd1a41c0"
+    },
+    {
+      "original_path": "storage-native.log",
+      "original_bytes": 13141,
+      "original_sha256": "fb1ba46547754e57f0f9d9bd9773d33c633cd79ae71f778df0abf6428f22e06c",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338108000000000,
+      "gzip": "files/storage-native.log.gz",
+      "gzip_bytes": 3963,
+      "gzip_sha256": "3cd26576ca4eef8d744d7bc4e34a93f4569ccd7ac2db073687e0440c44c849e4"
+    },
+    {
+      "original_path": "syntax-device-completions-probe.log",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338182000000000,
+      "gzip": "files/syntax-device-completions-probe.log.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "syntax-e9-device-completions-browser.log",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338182000000000,
+      "gzip": "files/syntax-e9-device-completions-browser.log.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "syntax-main.log",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338182000000000,
+      "gzip": "files/syntax-main.log.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "syntax-session-devices.log",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338182000000000,
+      "gzip": "files/syntax-session-devices.log.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "syntax-session-inputs.log",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338182000000000,
+      "gzip": "files/syntax-session-inputs.log.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    }
+  ],
+  "original_bytes": 308401865,
+  "compressed_bytes": 233964977,
+  "producer_sha256": "6cd25f6b838e80905afd795f83281b616518fce8da127a81be66e0243c5f122c",
+  "finished": 1792338402.0687768,
+  "deferred_derived_profiles": [
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/adb593effcf8aa80_0",
+      "original_bytes": 531,
+      "original_sha256": "db298ddb6300c718e8a622b5d9b41857829d53a1f1f63e953d87f0a7a99a69c8",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338231000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/adb593effcf8aa80_0.gz",
+      "gzip_bytes": 414,
+      "gzip_sha256": "268c1611c669049bdfb22adb31f8961989773b12aa0b93676d384f5316d1daf3"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/ce0925cae1754ce3_0",
+      "original_bytes": 3542660,
+      "original_sha256": "1e2eea868b0548b3b1403b84425c12bc89052d277ba16a2d1df7c3be457af395",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338231000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/ce0925cae1754ce3_0.gz",
+      "gzip_bytes": 1346320,
+      "gzip_sha256": "91f7adec280da69538092926af50505fb3b0e90112f077e6aa37762c09986e01"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/index",
+      "original_bytes": 24,
+      "original_sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/index.gz",
+      "gzip_bytes": 32,
+      "gzip_sha256": "30bd8e652679cce307f38a349da318130d2ab954e571000ed2f976e601845a41"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/index-dir/the-real-index",
+      "original_bytes": 96,
+      "original_sha256": "5db11d642e0bc78bd252bbe23c64c2f6f1f960071923851ae0e3b17f94c2cf14",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338325000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/index-dir/the-real-index.gz",
+      "gzip_bytes": 89,
+      "gzip_sha256": "bd1182714b3d2993e938c549c78b00dc168152a57ebe0be343e753e0bf2aa4f9"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Cache/No_Vary_Search/journal.baj",
+      "original_bytes": 4,
+      "original_sha256": "9c169428d852e25bd59b27652ed533d2a1f09f96e4c329fa5e06f47e16731543",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338231000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Cache/No_Vary_Search/journal.baj.gz",
+      "gzip_bytes": 24,
+      "gzip_sha256": "3dd82280d951648e71be05640ac3547ed8a2214211074cc3ff699118c3a299a9"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Cache/No_Vary_Search/snapshot.baf",
+      "original_bytes": 20,
+      "original_sha256": "0c2dd377ed0cc66161e9db8f89f7d8bcb3ad8c06c4a054bdcba214ab05f58c9a",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Cache/No_Vary_Search/snapshot.baf.gz",
+      "gzip_bytes": 31,
+      "gzip_sha256": "be1123b8b68b01d69ee8e54246f17573884dae26965089a24dc9229bbf62a52c"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/000781a132fe45a7_0",
+      "original_bytes": 186,
+      "original_sha256": "cdc08591e6d268fe12d92eb0dc8efdc40f89af93bd2b75120d619fedbac00144",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/000781a132fe45a7_0.gz",
+      "gzip_bytes": 169,
+      "gzip_sha256": "8a2dfd165ddf7280acdd7b76af3caa84f23d9b5eb10d6b8be5a26c09f95f4fb8"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/01739887d41c9e24_0",
+      "original_bytes": 198,
+      "original_sha256": "5af8e0a32fd39b122eafcd59138c23faf57b883a03f9ae3f4e97b8887c0e5c7e",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/01739887d41c9e24_0.gz",
+      "gzip_bytes": 180,
+      "gzip_sha256": "5b4c9fb8dea6f070a09f3dc7f32019053a177062139f9683b4a5861491bf48dc"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/028b99540d913954_0",
+      "original_bytes": 193,
+      "original_sha256": "aa9207db684f5ce9883b7680402eb64d006579ba48cdd618b712d2393a819889",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/028b99540d913954_0.gz",
+      "gzip_bytes": 174,
+      "gzip_sha256": "73a4b54ea7b806c175f1388d8fe2058477a01b08f6872b65fc24bce4da9a06e1"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/09e096604a8390af_0",
+      "original_bytes": 285,
+      "original_sha256": "b8b5ff5a09db83a753ac173c3beb7304f78371c668f7b3c1e8d8dd3ba1cb7272",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/09e096604a8390af_0.gz",
+      "gzip_bytes": 268,
+      "gzip_sha256": "55203042d43d509968aedc998b06b6cfa585c93f263b6d86ea321378d1c319e8"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/0a874038c0ae707f_0",
+      "original_bytes": 183,
+      "original_sha256": "76fe3ff7c86deca27add24e4919f5a708fc4de1bc4cbb58c5789931c7765f353",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/0a874038c0ae707f_0.gz",
+      "gzip_bytes": 166,
+      "gzip_sha256": "9781541d76ddfa3d401af6f7d8c534160a0956de157f0330c6fb51f3b0662fac"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/19303cb08f82b18a_0",
+      "original_bytes": 189,
+      "original_sha256": "1d1b9358e98ba97193461cffa538177cbbccfb291a34ecdd1bd646093fa9f25a",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/19303cb08f82b18a_0.gz",
+      "gzip_bytes": 171,
+      "gzip_sha256": "2ac43e31bb3d460a7f0ffb9ef1b6668155bcb0547bea76ac8a5084b91efc57d5"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/1a66fa2a624990b5_0",
+      "original_bytes": 284,
+      "original_sha256": "7f67254ed77ef66b6f41a8c69320cef083157142f45727f17c8a9be42d6ee0c3",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/1a66fa2a624990b5_0.gz",
+      "gzip_bytes": 268,
+      "gzip_sha256": "dff9784bbbd662cb9371f64f936261c160a453aae0661fbde11f85fe02241ce6"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/1cac34b5f71b0954_0",
+      "original_bytes": 197,
+      "original_sha256": "2bbb53bbdeaa370d3067d949d95987d66e560d1e4f2ec25bd314e9127ebda2be",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/1cac34b5f71b0954_0.gz",
+      "gzip_bytes": 180,
+      "gzip_sha256": "323284874feb5f49e8fe85c833f4f57879328637fc76969f690ae2293c47ff57"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/1ce66ba2c05f8891_0",
+      "original_bytes": 188,
+      "original_sha256": "888917c3c06186f39fd99455882ed405e026bb733a9da1cc3fe86f13aa187b38",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/1ce66ba2c05f8891_0.gz",
+      "gzip_bytes": 171,
+      "gzip_sha256": "96ce4c721022e6e8e5d0304e010153e796322a546495a41a047b93c577c7cdaf"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/1dcf39309026149b_0",
+      "original_bytes": 193,
+      "original_sha256": "493a3700fcee84ce2eb7893c6b0dccc491a36e522a24e525b18668cabbc08a54",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/1dcf39309026149b_0.gz",
+      "gzip_bytes": 176,
+      "gzip_sha256": "a691ec280a08bf89171f9f0969230f3d08b3ba1727a8af8cd35d30615df10f1c"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/2314eea50c35d191_0",
+      "original_bytes": 189,
+      "original_sha256": "42e2d7f1328111e492626799cf0a51af68482667c098c9b3aa09e1c1e47fe0dc",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/2314eea50c35d191_0.gz",
+      "gzip_bytes": 172,
+      "gzip_sha256": "dd6de4d802ef2f60483830f987e916c8497aed1e1d3c61d2e65278e8da512860"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/25d293b7c2044e3a_0",
+      "original_bytes": 212,
+      "original_sha256": "fdf71a0e0d880e0b771588b68748d4e0a07d423c87ab29daea1b2cd0ef894be5",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/25d293b7c2044e3a_0.gz",
+      "gzip_bytes": 194,
+      "gzip_sha256": "155dfd288739a65cb47dca0d165cbe1bd7a2b418178ac668dda24d5395341f59"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/299c57007dd21ce1_0",
+      "original_bytes": 278,
+      "original_sha256": "205ab47ebb140a9f8ca82427cb5f65a3a9be8f8165900d80d45d80d6c3b71497",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/299c57007dd21ce1_0.gz",
+      "gzip_bytes": 261,
+      "gzip_sha256": "a0517271bdb666c3023b9f38b75cf8ab7d724294a1831dc3b78e45bf2deb35df"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/2ce5ed28d15678ba_0",
+      "original_bytes": 186,
+      "original_sha256": "35c4c5f9d1e49c61bf88629411aaa9cef81cfba2e5dc0973738908313c3e4d1c",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/2ce5ed28d15678ba_0.gz",
+      "gzip_bytes": 169,
+      "gzip_sha256": "6fb278dddf5751a54fd5ba84f4eaa5e8bcd14037c7847303c0f309b29f62850a"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/2d0c6db692f61050_0",
+      "original_bytes": 192,
+      "original_sha256": "f98f74b89eca146c1e5aefc7a967c690bdc87893cf47cad6c53d9b1ccccccfb5",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/2d0c6db692f61050_0.gz",
+      "gzip_bytes": 175,
+      "gzip_sha256": "c31b413a1358c3997c7236c59a9cdca31bf9c040383720315e561be2d0daab27"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/2eeab86c6efa26b8_0",
+      "original_bytes": 186,
+      "original_sha256": "b0d8cee0ce438b1b56b96fec1818a7f8800bf2cbde619b94556dae7dbfab57f5",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/2eeab86c6efa26b8_0.gz",
+      "gzip_bytes": 169,
+      "gzip_sha256": "f912c4d91ddb765cb4d6973404c74582f32b4be8c9d15a9bd8c31442dd6036d2"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/31261719b701503f_0",
+      "original_bytes": 196,
+      "original_sha256": "9f0f19c3454b3ab160cff19da91d9a8d709e7dea58ce8af3ec9291b0c8ed9b4d",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/31261719b701503f_0.gz",
+      "gzip_bytes": 178,
+      "gzip_sha256": "18c9e839633779ab9c0373b817fe186c8eac70b5beb77049ebbc801052f4de54"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/383dd41626d90a98_0",
+      "original_bytes": 185,
+      "original_sha256": "25de7b3d7b40693decb16def6c4b79df80b012ede045a038d27bb88291a3cc61",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/383dd41626d90a98_0.gz",
+      "gzip_bytes": 167,
+      "gzip_sha256": "ecb8d9c2593413a14585605ca1d8035517813b4bdb934a7d903505081e29e764"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/39e5182829c3d5b4_0",
+      "original_bytes": 187,
+      "original_sha256": "8e8086bbc18c20133e4fba8f615a9429652faffc9304c79fa7ad81ea0491d284",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/39e5182829c3d5b4_0.gz",
+      "gzip_bytes": 170,
+      "gzip_sha256": "59f5f5ccb3e9f05569fce977f2881726cd6c0cb8725948cf42f623799581e06e"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/3a58032a24eeae71_0",
+      "original_bytes": 280,
+      "original_sha256": "c9a97d97a8b77769cc8dcd63b14e74364cf272f59c9278a9b466c52e6ebf2fbc",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/3a58032a24eeae71_0.gz",
+      "gzip_bytes": 262,
+      "gzip_sha256": "1299ffb5218c1d2a470b6b7c4f701cbbd165855c88998afb21501a354adb93be"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/3b935c1ca7eba659_0",
+      "original_bytes": 264,
+      "original_sha256": "6dcb1c3b873051f7cc8337592bc5e5fb54865b90a7229bbdbdb8c747a7f5e891",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/3b935c1ca7eba659_0.gz",
+      "gzip_bytes": 245,
+      "gzip_sha256": "cf7023e446f9ec068b576e6c5270b6898c3463c7ecd86295a0a8a57a74f52a2e"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/40006a7097189a0e_0",
+      "original_bytes": 191,
+      "original_sha256": "26985964fbd29275bddba4d93203480078f94239fc802c3e0f8d02d57db67f1b",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/40006a7097189a0e_0.gz",
+      "gzip_bytes": 174,
+      "gzip_sha256": "f520da8db04383af8a3c1b52bd7e87e9ab029b990ac6a8be44964f351ca6251d"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/443e589d72f14a7b_0",
+      "original_bytes": 185,
+      "original_sha256": "cfba06894a84b13396f1f320099b73d59e7306ead3564ddb5ac1907ea02460dc",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/443e589d72f14a7b_0.gz",
+      "gzip_bytes": 169,
+      "gzip_sha256": "28f1293b37ed6c3cc26c3d62baf72eb3e56180b03067a53ac46d651161f3dbd6"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/45d8c0bd8f6bd8ef_0",
+      "original_bytes": 287,
+      "original_sha256": "1a4bc9ebd008ccc1226fe62845cb221fdb37e1a557e125d5696f91e0f05dc2ce",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/45d8c0bd8f6bd8ef_0.gz",
+      "gzip_bytes": 269,
+      "gzip_sha256": "0b8fd990ac76b7e3f75c289e419e0078ee57ad6cea76033ee432a23de9470b89"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/4b56668fd7f56ef6_0",
+      "original_bytes": 292,
+      "original_sha256": "be804c278eae47c9db0282a873cf968ae9ee5a42a37bee635350716b821fe2e2",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/4b56668fd7f56ef6_0.gz",
+      "gzip_bytes": 275,
+      "gzip_sha256": "d8cf6bc81cba851525bf6f3f1ce3aa408b3ad7aaae89859ed179e30eb1c83929"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/4bbe03e7f11dc6a2_0",
+      "original_bytes": 196,
+      "original_sha256": "ef0d4948e30969fb8d9735ef3883d14de4b3e64941ba02f6ff3381c9ccfec1d7",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/4bbe03e7f11dc6a2_0.gz",
+      "gzip_bytes": 179,
+      "gzip_sha256": "f9694c62b880857d59e86f1f7d803c7d37a63fbd8ca552294565ebc1a42289e4"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/4d7b8caf8c95fe22_0",
+      "original_bytes": 190,
+      "original_sha256": "19f4edb8b6a77e9fb29d614c0425e27a45b778e35d9aa4ad30bb894024c1c444",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/4d7b8caf8c95fe22_0.gz",
+      "gzip_bytes": 173,
+      "gzip_sha256": "e4d9201c2bb4dc3ed121be73f00656f4dbfa7b0849133e5c289931f89d4b4c00"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/4e6b932d628cc75e_0",
+      "original_bytes": 190,
+      "original_sha256": "b47204a8759a3fd535478f18b45193fa32db8fb1c339bebf0140b2de9d1173d4",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/4e6b932d628cc75e_0.gz",
+      "gzip_bytes": 171,
+      "gzip_sha256": "753b06f4c271d79e720ae27929c4be5b86ab0a580997491dd2f16b0608406c68"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/4e9a4ff6cd4b9f5f_0",
+      "original_bytes": 189,
+      "original_sha256": "a1bf10a223327808a5e213458184bceaa8bba2adebd59b0ab72fcd2fdab6672f",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/4e9a4ff6cd4b9f5f_0.gz",
+      "gzip_bytes": 172,
+      "gzip_sha256": "6371ae7785b22315c7512debce52f9961268ef4e22157d75f841b8e1e71276db"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/5645de4022095c25_0",
+      "original_bytes": 190,
+      "original_sha256": "0b5a63fe40de879c1de060e674b63f743ad3c2e724b1b86195b090930b7a8a20",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/5645de4022095c25_0.gz",
+      "gzip_bytes": 172,
+      "gzip_sha256": "739d4a6c691459a04d09549d60a4ff7ab8de05e97189628156f80bc020bde05f"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/571d5298a57f63ca_0",
+      "original_bytes": 278,
+      "original_sha256": "1a5800d2bf95fa49db52a33d34fa0589b952f8b8cefdc5017d1aa7256f5b9dbf",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/571d5298a57f63ca_0.gz",
+      "gzip_bytes": 261,
+      "gzip_sha256": "1c60a1852a939b1a352d340e37a181b1e901e93ee9e4deee4fdb99f9a6e9ea53"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/58c470c280c10504_0",
+      "original_bytes": 277,
+      "original_sha256": "df848b1a6385c88f00e20e1ad7899c77410c0fc3e10ce9a8ad12a700cea053cd",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/58c470c280c10504_0.gz",
+      "gzip_bytes": 257,
+      "gzip_sha256": "4412e3a7deb3d3833c31e2a87e19a50b85a1a26808e033cbcf6980e7415c8e5b"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/5c4a000c4ca58207_0",
+      "original_bytes": 187,
+      "original_sha256": "ccd13268aa6289d7c36818be1680531d319ca32487702977eba57495c6558665",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/5c4a000c4ca58207_0.gz",
+      "gzip_bytes": 170,
+      "gzip_sha256": "d4f16f5b3d5e153cf77950deda3ce608250d56dcbe8d397b1592553cca8a4546"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/677321b0f1d29ad9_0",
+      "original_bytes": 198,
+      "original_sha256": "230eeab24313e4f9dec19256478355f5c186bb1ad4a6f67d45b9272d3ab26580",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/677321b0f1d29ad9_0.gz",
+      "gzip_bytes": 181,
+      "gzip_sha256": "4049c98fc09ab10ad1dc548baf0ab6ce6357f1c36894c36a28fbf15a1be15248"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/68b658b598515184_0",
+      "original_bytes": 196,
+      "original_sha256": "41d169fea6f8150214162d8ea1c42689d3961165ebdeb70ed8ceab30ddf87999",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/68b658b598515184_0.gz",
+      "gzip_bytes": 179,
+      "gzip_sha256": "0e39ef0542c2713bb59769f8d81b414e3e81aadeb168d9cdc9f2e6fcd6b98ea2"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/6a9dc49e7ed98aab_0",
+      "original_bytes": 291,
+      "original_sha256": "e9b64243a494b13a5bed8019834278a56d810395283055b04e41a6590a9aa245",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/6a9dc49e7ed98aab_0.gz",
+      "gzip_bytes": 275,
+      "gzip_sha256": "39f7bdd6dcc0b37164c5df2c50bfd06951c62fc33168e37fb7d5169784caeab8"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/6c564d57bb175f60_0",
+      "original_bytes": 210,
+      "original_sha256": "59d2eb3310af4ed3cfcd4397ab701195a31d8894b7233c5b252b1e8285f5773e",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338235000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/6c564d57bb175f60_0.gz",
+      "gzip_bytes": 189,
+      "gzip_sha256": "22b1622c6bf003d2d9ff0a562f5bb5cf00774ccd9bc07008692dbfba0b6a7b5a"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/6cbad36c47809193_0",
+      "original_bytes": 185,
+      "original_sha256": "58df7b4c91b8a060c705124d3c4539e46e54c2e1c169cef233da4bf0ee9a49c3",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/6cbad36c47809193_0.gz",
+      "gzip_bytes": 168,
+      "gzip_sha256": "a5975cfab2fa198c9eb7db22e0ad602b09d719ad5daeb3c9b26cd602ec7429cc"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/706ebeba921b7866_0",
+      "original_bytes": 193,
+      "original_sha256": "8a62d99a1ee931e7fe7cf7140b91f147fd2c0670330dc0ece5afd001f12cfbf3",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/706ebeba921b7866_0.gz",
+      "gzip_bytes": 176,
+      "gzip_sha256": "588d6c14e1146aab806c24a50597b52a1209e797054a9eff2af24d91f6798d9e"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/716181120aaf805d_0",
+      "original_bytes": 186,
+      "original_sha256": "cf6af7ee4fb4f942da384e70910a576c42588a946e8e950890a4e60bff359ec6",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/716181120aaf805d_0.gz",
+      "gzip_bytes": 168,
+      "gzip_sha256": "7e799be935da8f73a3a2ce3503153ce5a433a31d0feff3e4a2f02b05e7f913cb"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/71b973ef00f553c6_0",
+      "original_bytes": 201,
+      "original_sha256": "b27253baedd5b7aba5385e39513b926893adb973422de250750e2ff7fcb0c4ab",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/71b973ef00f553c6_0.gz",
+      "gzip_bytes": 184,
+      "gzip_sha256": "6a7e4ea0ec766757e9b8971739496ffc680e85ede2152409e44ae81ac462f886"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/77d2b26a418d7fd1_0",
+      "original_bytes": 289,
+      "original_sha256": "de5f110f91a5adca1e7353cc05a180b2c50d3a85f2a6c22b54f9b7e0a3ec1ba9",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/77d2b26a418d7fd1_0.gz",
+      "gzip_bytes": 270,
+      "gzip_sha256": "5e8a78275b364202d23415466597ce329f3a322b6109446f3d119efb7ee4e05b"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/78181834eec4d38f_0",
+      "original_bytes": 188,
+      "original_sha256": "c67bcca1079a07d186f0eaa30360264e256a577920313d43b0eeb9f19c4639f7",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/78181834eec4d38f_0.gz",
+      "gzip_bytes": 168,
+      "gzip_sha256": "b75111a69b6a29080dd89eae9fff5d8668c3f7ae23abe8f4faa9b9961c27e0e0"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/7c10acb9937c99ca_0",
+      "original_bytes": 283,
+      "original_sha256": "a06cdfea9736d01b9a1dae88e64b0a5fd0a34a2f8d206cf96f86ea21500cdec0",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/7c10acb9937c99ca_0.gz",
+      "gzip_bytes": 266,
+      "gzip_sha256": "e0b0a92b7df134b183208ffb926aa3b446c9cb67d5f70364942b1958caf7dc51"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/7f0c2275ff54f1a2_0",
+      "original_bytes": 177,
+      "original_sha256": "bcc339076971980711e414ddfae527346938f60df06296212b6e2391c6657bda",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/7f0c2275ff54f1a2_0.gz",
+      "gzip_bytes": 159,
+      "gzip_sha256": "8caaa8dff9baebcce21c20e330c08e84a45eb05f22220e87eabd5b9ba6839de9"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/81e5a56eee2b80b7_0",
+      "original_bytes": 186,
+      "original_sha256": "207332088eb8e23c13116fce6543e2bca5d824956b36f1cfdef6fc6cc3e707f5",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/81e5a56eee2b80b7_0.gz",
+      "gzip_bytes": 169,
+      "gzip_sha256": "3816e967729e100a928c6b740dc053b9453fa267936506e7b1ea2a10336f7856"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/83e2ab4560b2a6df_0",
+      "original_bytes": 287,
+      "original_sha256": "8d53bef154cbee9504c95aac6aee9c53d9ef979b32bfb8b19de0db599449645b",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/83e2ab4560b2a6df_0.gz",
+      "gzip_bytes": 269,
+      "gzip_sha256": "a5d9f7e4b9d0c7fd6e23fa9eadbe7fc06e22670885735e9b7687b19ef653e822"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/862083a6772955ee_0",
+      "original_bytes": 190,
+      "original_sha256": "c1208ef59770056fa2bef6b5e929b4856f366e6b556f99cbbd1581aa2d9a87e5",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/862083a6772955ee_0.gz",
+      "gzip_bytes": 173,
+      "gzip_sha256": "5c07515b49acee33c5824d97ebc68d05b2a8878cb889ddabd36a7e78aa038a05"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/878eb473159e8bff_0",
+      "original_bytes": 189,
+      "original_sha256": "ee988c250794ef6bcd5c28a584afa28c0a53d4872727d01e649e7548c2fca316",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/878eb473159e8bff_0.gz",
+      "gzip_bytes": 170,
+      "gzip_sha256": "a9f44cf60c94c7862a0df636741920d8642e192eecaedce08acfbc7d002124fa"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/87b3bdffd1c4eb16_0",
+      "original_bytes": 270,
+      "original_sha256": "04199a362342d4a13455b36f6563f081b7799ce7f56c7dfad308f4404c0e5fe7",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/87b3bdffd1c4eb16_0.gz",
+      "gzip_bytes": 252,
+      "gzip_sha256": "6b68514a9390a7d663ea7e8c98fcb5fdede4efdb46107b59ccdfd06d8d1dbfbf"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/88b4512d2ba977af_0",
+      "original_bytes": 192,
+      "original_sha256": "e386662050029bdfda06f23a31957e6aa3bf1a8b8db0d242ef722064a0f3ecdf",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/88b4512d2ba977af_0.gz",
+      "gzip_bytes": 174,
+      "gzip_sha256": "0b20060f5fb310dd0153a8181a91a8bf2188c2d205fe9df43d3e8909147ecd31"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/8bda9a7a30d84641_0",
+      "original_bytes": 193,
+      "original_sha256": "5ea409579d586865e9aedd43496e654266a12113f590872e2c0b350dca234e86",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/8bda9a7a30d84641_0.gz",
+      "gzip_bytes": 175,
+      "gzip_sha256": "6ea2fb695670449733435cc5caebf377177ed0a75217c2c9ca8ddd88d676c026"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/8c0153967be4a720_0",
+      "original_bytes": 191,
+      "original_sha256": "86a8854ea594440df91686cbb2119b5fd0cac8a76414a134545c2754f8705911",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/8c0153967be4a720_0.gz",
+      "gzip_bytes": 173,
+      "gzip_sha256": "315d70cb103f94c200d3512261b13852d8ff02e9dd8dabb213703460a52d15a5"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/8cc6c3d4816a5d7d_0",
+      "original_bytes": 262,
+      "original_sha256": "44b7303d3f7ef848313e6511bb180f2052bbaec286fb7ada77a7f69beabe062e",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/8cc6c3d4816a5d7d_0.gz",
+      "gzip_bytes": 245,
+      "gzip_sha256": "e0a8f545c680a885544942c2a7421d66d8b7c5d2dc51e96dec4c7748e96e8129"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/96c9ea1d03acfb5c_0",
+      "original_bytes": 187,
+      "original_sha256": "eb2e71ef5e4284aeec29908be6dea6d6be5e0d2b7c64f5f4bbbd0058b0a51050",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/96c9ea1d03acfb5c_0.gz",
+      "gzip_bytes": 170,
+      "gzip_sha256": "b0bad92813f4cbbb644d6be7f047869f735fcfc7eb04d2f74b84b505bb2a76e7"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/98943c7c84ff2d80_0",
+      "original_bytes": 288,
+      "original_sha256": "fa6daada547c63e79bde90d1d0993ff95f07f16f660e60566fb59e6f6d0ec567",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/98943c7c84ff2d80_0.gz",
+      "gzip_bytes": 271,
+      "gzip_sha256": "cf551c11b4d69b916603f009762f46e4bb5771b891bd8975b564796544d13897"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/998fd754efe232df_0",
+      "original_bytes": 258,
+      "original_sha256": "4ceabb6588192171041ac0fc1febbf6dd2e69750d272018f8b0528aa25f9548a",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/998fd754efe232df_0.gz",
+      "gzip_bytes": 241,
+      "gzip_sha256": "153e2378bb0a4160de955208d41563a1e4498a9139118d9856127fedb66c8675"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/9a8be93932a6d5ab_0",
+      "original_bytes": 194,
+      "original_sha256": "fab32c6dd326e27933ae66df001e4135f2d527fb5398f5edbeed7ccc6473f5e3",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/9a8be93932a6d5ab_0.gz",
+      "gzip_bytes": 176,
+      "gzip_sha256": "882985bbf9a485c1914f94c72504d4a04629479d37643cbc070004d153ee432d"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/9c9c783f3dab464a_0",
+      "original_bytes": 280,
+      "original_sha256": "03da902250de1f005acbd7a3fe16b9a10bcdc1e7c43d5936bf21f4a7797f26e9",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/9c9c783f3dab464a_0.gz",
+      "gzip_bytes": 263,
+      "gzip_sha256": "0a2ce4b7f12a058a43586f61df1209e28d4e9177d386ff0560a9ab2826869ebd"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/9e0c96d1769a26fd_0",
+      "original_bytes": 181,
+      "original_sha256": "c767adbc5ab2be10b9a7ac489fda7a6babcb0e08e92559af9eb06df9b724172b",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/9e0c96d1769a26fd_0.gz",
+      "gzip_bytes": 164,
+      "gzip_sha256": "33e8fb098b05f6eb808d53768d1f6d83b75ab4e1e81ecc760e19ca04c869507b"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/9f8622fe4f7ffa93_0",
+      "original_bytes": 260,
+      "original_sha256": "b494844ff36cac0e306ad38520099c10a881664121324fe1412228e75ae7bfd5",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/9f8622fe4f7ffa93_0.gz",
+      "gzip_bytes": 242,
+      "gzip_sha256": "c455b2dcb67c5897a6b79c2369205d275221a889b27d296075297d917d95160f"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/a0c2b65b1dcd9f88_0",
+      "original_bytes": 185,
+      "original_sha256": "2505fcb2cb79157d278163fe335a134298fc02245632af8b46cc75e8670623d8",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/a0c2b65b1dcd9f88_0.gz",
+      "gzip_bytes": 168,
+      "gzip_sha256": "c40b783c59f3b008d5888268105da69f79e4fbdab8ca766ee1c5492b9d6d8a75"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/a2bbc29b092f69e6_0",
+      "original_bytes": 292,
+      "original_sha256": "4166ad04856b42c599626ec2536e2a46f903859686f3fa8fc9fcaa670db32f4a",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/a2bbc29b092f69e6_0.gz",
+      "gzip_bytes": 276,
+      "gzip_sha256": "0d97b32161aa1caa86b7089f496deb7173b4d06716530c6524d540ad80923349"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/a49d23b0a77323bc_0",
+      "original_bytes": 2186,
+      "original_sha256": "9a96d1407585235dca5463f011d352f1d1eca53159b48110e44fbec728c6a91c",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338235000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/a49d23b0a77323bc_0.gz",
+      "gzip_bytes": 1523,
+      "gzip_sha256": "a7e1969978688885e1c4045a92d365aa8c46129f9bbae6f895a3d36ad6021a51"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/a84f835ffeac4618_0",
+      "original_bytes": 176,
+      "original_sha256": "3589fae272a070f819b1de148b3b41ee1acd5b41ad34cf11533ac6691f25de72",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/a84f835ffeac4618_0.gz",
+      "gzip_bytes": 159,
+      "gzip_sha256": "69c888c15caa5bacd75e632f76769f102dcca85aaaeb8b5e04d9126d98f5bb7b"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/b0c06ae7244f548d_0",
+      "original_bytes": 295,
+      "original_sha256": "9264bc0b07dc56bd6b8cbcec1ab277b35677905f12bcb06f67a43f307dd23de7",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/b0c06ae7244f548d_0.gz",
+      "gzip_bytes": 265,
+      "gzip_sha256": "c9a7016488ca747914fe6e52d9513aab8b0f4f34f7f86c9a4300766f825b55e7"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/b4e946e0e249b17e_0",
+      "original_bytes": 282,
+      "original_sha256": "e380de2386a7a2d83770e6c4d5cb1ac030682b25cb397ecadd4616901f520608",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/b4e946e0e249b17e_0.gz",
+      "gzip_bytes": 264,
+      "gzip_sha256": "e9a09d7adf7764f5615ed970d51a0c922f43838d28f76eaa5ae099236c093d48"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/b562700a1998474f_0",
+      "original_bytes": 265,
+      "original_sha256": "e593ea6ab3e906af519438e563ca2d0e185e4b2081102e1e757d888b1cf79541",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/b562700a1998474f_0.gz",
+      "gzip_bytes": 245,
+      "gzip_sha256": "66053dd3569c19ddf39c5e24b90c25f144e0f02272df1330146d146f58d63c3b"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/b6f46ee8fa10140b_0",
+      "original_bytes": 180,
+      "original_sha256": "d1175d7651aa6db059065f16527f53eee340f2f391b04a7d23113fb4320d1f88",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/b6f46ee8fa10140b_0.gz",
+      "gzip_bytes": 163,
+      "gzip_sha256": "beb0f2ff6fd4cf92ca11e28fbb10d347fb00ead260f41b054dd58e9272a0a289"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/b7e3b2278ea2b324_0",
+      "original_bytes": 287,
+      "original_sha256": "7c9cf61fb521f6ae242fa91feeb39e637f434c19844143461ab49755bd68a9b1",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/b7e3b2278ea2b324_0.gz",
+      "gzip_bytes": 270,
+      "gzip_sha256": "95559a3a6a153f52bc2253449646d9750693a5713315387af08c9dc1cc9cb498"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/b9a40958bf851703_0",
+      "original_bytes": 199,
+      "original_sha256": "8790eb861f1c9035c3ade08b85fb06fd733a7a68a3e315479c89c71d2f31385c",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/b9a40958bf851703_0.gz",
+      "gzip_bytes": 177,
+      "gzip_sha256": "20628a3ab4cd133412f9d712d6db5543f8e41250709fdd27d2be3ec4c0ac61e5"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/c012fecfa0f47ceb_0",
+      "original_bytes": 280,
+      "original_sha256": "006aba13640390d189375255c3c265abc3193b61e8675aa2109e2df70ff4be0e",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/c012fecfa0f47ceb_0.gz",
+      "gzip_bytes": 264,
+      "gzip_sha256": "d8df3e3f035fc3966d9e480f5e660433924f01008195f91b0e4c54ca57468a4c"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/c09312a51ab51c34_0",
+      "original_bytes": 299,
+      "original_sha256": "63a44d014c329c99cd41d91c026bc127b0ddb39ef86b3e04e90e5233626679f4",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/c09312a51ab51c34_0.gz",
+      "gzip_bytes": 278,
+      "gzip_sha256": "a682d1166cb6e39b237373fce7d54124bcaacf89073ac7bc142ce60dac71798d"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/c0d951cfb2a7553e_0",
+      "original_bytes": 189,
+      "original_sha256": "6fbf0652fd04d7e9c98c9c8892c7f4dd2c18d33877acadd7f9d0722560d74b54",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/c0d951cfb2a7553e_0.gz",
+      "gzip_bytes": 172,
+      "gzip_sha256": "305cd3462939510dca16177858572e1e343867ba06869567792bae14950b911e"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/c136281b8eebfbcc_0",
+      "original_bytes": 196,
+      "original_sha256": "a59b0e309dad070e062a0248a7c5b97259b208c5f1663aa3548d39b2357e2cae",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/c136281b8eebfbcc_0.gz",
+      "gzip_bytes": 178,
+      "gzip_sha256": "04e6e21a3116f7d18a72ae6e6556221efca6f35ae5c14de1504ef171b6928832"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/c3178754b70388da_0",
+      "original_bytes": 189,
+      "original_sha256": "c31f47518d95d8556c68d7da1af4e7232ba8faa9d1d0043a74fe77c9863a6af3",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/c3178754b70388da_0.gz",
+      "gzip_bytes": 172,
+      "gzip_sha256": "5528b610d64f1e46619e616db4faffc123f82abebdcfb9131fe1828ba681e7b2"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/c71eec38b5aee0b2_0",
+      "original_bytes": 179,
+      "original_sha256": "3d1df634e6292ea7be557796538561093572c27f162b9c0ecaef5ba89b8d4dd4",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/c71eec38b5aee0b2_0.gz",
+      "gzip_bytes": 162,
+      "gzip_sha256": "763b62b9da6a0bf99d169fac59d85396f259256a498796e6f7e38fd9a2066e44"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/cac931eccfeaeb66_0",
+      "original_bytes": 178,
+      "original_sha256": "b35ccb9f2441acc6079801a2fa6acffb9b1020898eeee28bea9b78cc92b227f1",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/cac931eccfeaeb66_0.gz",
+      "gzip_bytes": 161,
+      "gzip_sha256": "abbfb39f2185baf772687bfffe5315a2e5d775a681e733ec1dc92e81c7afebcf"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/cb7e31838bb76a75_0",
+      "original_bytes": 193,
+      "original_sha256": "4163fb246505042597174b5f5a27e9016a3b955e93f85c72932e3daa76e10feb",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/cb7e31838bb76a75_0.gz",
+      "gzip_bytes": 176,
+      "gzip_sha256": "f8de62efc66ed05bf144d916e01bb60722e0d749d970a174761c807893dc2d83"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/cba1365302d06c10_0",
+      "original_bytes": 222,
+      "original_sha256": "1184d57a4e6902df718d46f3d9efbd34b241558069776573c9bca6e5a6994b26",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/cba1365302d06c10_0.gz",
+      "gzip_bytes": 202,
+      "gzip_sha256": "3778a31331e1577b2a6c66d7f1a290912bbaf9003ceec28dcc8c880ede1d74ee"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/cd4090fb430ec595_0",
+      "original_bytes": 255,
+      "original_sha256": "01c33c9f0d9eee81c4d290b70f1054bb072bea8dcbbe1d381bf9a093b2ddf1a1",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/cd4090fb430ec595_0.gz",
+      "gzip_bytes": 237,
+      "gzip_sha256": "65dd45e575ae84b4a66006ad23b62cef09d8e79dde6c20bf15ac247ca15ac362"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/ce49044946789b31_0",
+      "original_bytes": 180,
+      "original_sha256": "389e55cdb8a71f4bec0bf74aaad037617a24cfd645956ca1b5c5db431ea9e05e",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/ce49044946789b31_0.gz",
+      "gzip_bytes": 163,
+      "gzip_sha256": "21eda041343755ce0e4c9e44781cdc371dc983ed0e258158d9cefa74d7232796"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/d29273858dc3f13f_0",
+      "original_bytes": 175,
+      "original_sha256": "1ed4d5720b5c0d7c8925b527eefb3b6314796ea3446377696978b2d1d4dba832",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/d29273858dc3f13f_0.gz",
+      "gzip_bytes": 158,
+      "gzip_sha256": "fd94ded49214058dc036e386f62b194729b62cc4d45f307dc97b0372e7632f3e"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/d4e333a5dc32bb75_0",
+      "original_bytes": 263,
+      "original_sha256": "479ef76e426beb66bea25607b00a1010db6ebd1cec2168f51dbf09172ae03df9",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/d4e333a5dc32bb75_0.gz",
+      "gzip_bytes": 242,
+      "gzip_sha256": "119a3b36739ab2ec25517fb92da22f1137ec31a5730d0ba82ff64ca4e6db9e79"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/d7bc2db9e28e7950_0",
+      "original_bytes": 185,
+      "original_sha256": "54c1c2cbd5f5c5c48ac4fd344c40d35db2698b234b6e20c7c16e84cf2709737d",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/d7bc2db9e28e7950_0.gz",
+      "gzip_bytes": 168,
+      "gzip_sha256": "e32aab8c5dd70a97ce9dfb1165259fa9d57bac2de797e1d62b28eb4234dc1652"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/d9b3bed3d5980f2d_0",
+      "original_bytes": 283,
+      "original_sha256": "96ba62c472a52b1022792bd4b8d684edc65aa0ca1394f383ce2dbff691c7873b",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/d9b3bed3d5980f2d_0.gz",
+      "gzip_bytes": 267,
+      "gzip_sha256": "c56de1b00b37a60ea314f63ff23054e0762389d258cf2435af6c882415fed87c"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/d9e33a5cef7766eb_0",
+      "original_bytes": 297,
+      "original_sha256": "47b79cdf58201a02b102c95c05b04c9de6480955feda615fa64565cc081fdaaa",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/d9e33a5cef7766eb_0.gz",
+      "gzip_bytes": 279,
+      "gzip_sha256": "d575df77e9f9b0a9ba52962cfd1deb6092f784bddc9458b847968e32401ec40f"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/df42077aca38ad7d_0",
+      "original_bytes": 187,
+      "original_sha256": "4f5f1a557e1744e8c84d13b5a7ada9916162cedbc6b977f4b53074dc42b92b2b",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/df42077aca38ad7d_0.gz",
+      "gzip_bytes": 170,
+      "gzip_sha256": "3ea7e5d356c7f55554fb5587df73704b4bdd8ca9f2b833a145c79a0b3ac1cd9c"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e0abe522ecf4be78_0",
+      "original_bytes": 189,
+      "original_sha256": "93c90a8c05a9642ac238e742d6d9c01737c96ab8c257d54d972f6452cd1bd6c5",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/e0abe522ecf4be78_0.gz",
+      "gzip_bytes": 172,
+      "gzip_sha256": "5b2f708a767ce1b51b493f288b6ed482515ace4e66a0d66c676e87616816be13"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e28e427d2676e6f0_0",
+      "original_bytes": 197,
+      "original_sha256": "80e78effcb5ba0b3f881c0b72d38b2643c4d6fe0a064190c05f5562e7f1d3726",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/e28e427d2676e6f0_0.gz",
+      "gzip_bytes": 179,
+      "gzip_sha256": "a0b5c55f249c1b849cd09094675d4157af647ce325e97096c5d989336451ef14"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e5142d215e56b641_0",
+      "original_bytes": 181,
+      "original_sha256": "4d511c3747dfb9a206c13bfbb12e7a675695932602509c8da56ef5832865e618",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/e5142d215e56b641_0.gz",
+      "gzip_bytes": 165,
+      "gzip_sha256": "e7592c38514d1dec4b3083f5c17bdbe1ffb4e6c0af23b1a0380717d791a8c699"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e51e9866544e9a5f_0",
+      "original_bytes": 188,
+      "original_sha256": "018182cadf17362d990ded3181d4af9e5d51692e8d2acb44ab63faf30ca26809",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/e51e9866544e9a5f_0.gz",
+      "gzip_bytes": 169,
+      "gzip_sha256": "625cfa1fb4ed4aff39ba8bc5520d7b03a27b5b4bbf826a7e06945917553747e3"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e5540481569fb914_0",
+      "original_bytes": 271,
+      "original_sha256": "cffba0b7db4adf9b765da7e75ae597e7c349d3d038fd2fa8de27f08c262550b0",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/e5540481569fb914_0.gz",
+      "gzip_bytes": 252,
+      "gzip_sha256": "f29014696ca05e837c0c80a4bb45831b393d2287524ec5859dd4545b219ea8ed"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e67de9ceffd502cc_0",
+      "original_bytes": 291,
+      "original_sha256": "5b425ae52723f2a2c03097798fdbdaf54580eeffa14ccdeed1ec9892e461a4fe",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/e67de9ceffd502cc_0.gz",
+      "gzip_bytes": 272,
+      "gzip_sha256": "77799461246ee4549a6739dee6506093dda95735f43e1747a059a1d52521045e"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e7915a6b97513420_0",
+      "original_bytes": 261,
+      "original_sha256": "8bafa28e8d238332a2d5c4714ea9d85364c04f97ebb60ddd9297d06c4bf56ad1",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/e7915a6b97513420_0.gz",
+      "gzip_bytes": 244,
+      "gzip_sha256": "b9159cca9100f549d609366f8bf82aabb86a6bbbb45d1b0e2ae9e34bde8eb547"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e986a05026a04058_0",
+      "original_bytes": 183,
+      "original_sha256": "c9560b50d8ac220beed43f26388649e653e51a7a80e884a73692bd59dda38524",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/e986a05026a04058_0.gz",
+      "gzip_bytes": 166,
+      "gzip_sha256": "3ed65936b787e7cb7bbd4564ea85a4e0b330dae172497705d43ec895176c82ba"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/ea059ac2f3566f2c_0",
+      "original_bytes": 291,
+      "original_sha256": "38f522d55683041fef7342b35f6b87313e0f9cb9efb3953dcc7003d73df56fda",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/ea059ac2f3566f2c_0.gz",
+      "gzip_bytes": 274,
+      "gzip_sha256": "42725684b451cb054a52743d50fe9d9f3e85a4f5ed76aab63a1899a3c8aaac53"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/eb62645bcc9e47cb_0",
+      "original_bytes": 265,
+      "original_sha256": "d3eb03b12849fb6d08c5007d04b3603d555404fd7dcca66d5a8137b625260d61",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/eb62645bcc9e47cb_0.gz",
+      "gzip_bytes": 248,
+      "gzip_sha256": "75d047cc1f47632eea3c214fa705b6162313a8d2226807ee4a5506a9ac1d89fd"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f122e977817ada14_0",
+      "original_bytes": 185,
+      "original_sha256": "3b93325592a55ff01fd06ea6473e4eec698c27f71025e19869a5a37838565681",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/f122e977817ada14_0.gz",
+      "gzip_bytes": 168,
+      "gzip_sha256": "1f133c48b1130e6c323d4e2963b29b459f20a92506c2e478f84bdb3221e720d4"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f5a3dd9cf16290e1_0",
+      "original_bytes": 187,
+      "original_sha256": "eb11416d8620d2d8975785c35efc45445b8d68740e8997954bea654defd82dfc",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/f5a3dd9cf16290e1_0.gz",
+      "gzip_bytes": 169,
+      "gzip_sha256": "00ba1452871f8b76e69adf00a40a00ab83becd8db4e19deb6a00458258486fdc"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f60e391c5a91f2ec_0",
+      "original_bytes": 285,
+      "original_sha256": "5f0ceab7349877c1f88e111de7d8f403b447a4ed70e0a70d98f1f84461d68f35",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/f60e391c5a91f2ec_0.gz",
+      "gzip_bytes": 269,
+      "gzip_sha256": "e5239b10e9d6b043e3028e9161243a337943977bba7a3e20e77cf585fd93ee93"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f844e8eb035ffceb_0",
+      "original_bytes": 280,
+      "original_sha256": "8854db8a9fa8b66bf1afee65e242b886aee7745b4c255ef23398529387c9b547",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/f844e8eb035ffceb_0.gz",
+      "gzip_bytes": 262,
+      "gzip_sha256": "f7072c8f1bad0ffe5abea08b1e6e66494c31e00964fb1140df9d66c8caed3564"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f85f462d2b63efe6_0",
+      "original_bytes": 297,
+      "original_sha256": "79e247d1130c97bafcacdd9dbefeec89c37e761b36605015e63bb4ad2293e781",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338305000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/f85f462d2b63efe6_0.gz",
+      "gzip_bytes": 278,
+      "gzip_sha256": "1919bcf9bbac94aef49aef78fed020877a3f013547924963936c065cee1e7ea0"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f8790a8e0e63088f_0",
+      "original_bytes": 177,
+      "original_sha256": "69fe7376864d58dd73b5b11b30c7110f01c3c91f207da69852b5fb6532e03571",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/f8790a8e0e63088f_0.gz",
+      "gzip_bytes": 160,
+      "gzip_sha256": "91c86e8656226e32f2deb4b780f4054621081a2d75dd1ec9d49367fc1aa00799"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f8d4c4e3066c7273_0",
+      "original_bytes": 194,
+      "original_sha256": "52f663fae51ee6772072927d76ce922c24e4c52571f828947ee4b3f74326e8fb",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/f8d4c4e3066c7273_0.gz",
+      "gzip_bytes": 177,
+      "gzip_sha256": "b8edadcd2cfb76d6fd5ac266fd2edb616de921d8b4228a5203c6819737b80e90"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/index",
+      "original_bytes": 24,
+      "original_sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/index.gz",
+      "gzip_bytes": 32,
+      "gzip_sha256": "30bd8e652679cce307f38a349da318130d2ab954e571000ed2f976e601845a41"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/index-dir/the-real-index",
+      "original_bytes": 2568,
+      "original_sha256": "b55b3d0343c63e432cc97bce042224d7580d751ea620ef103f50ca36ccf7366e",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338325000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/js/index-dir/the-real-index.gz",
+      "gzip_bytes": 1151,
+      "gzip_sha256": "bc3c2ea79d01c21ba98890102a39b660a146823e5050cc1920fcf05b5344c1c3"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/wasm/index",
+      "original_bytes": 24,
+      "original_sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/wasm/index.gz",
+      "gzip_bytes": 32,
+      "gzip_sha256": "30bd8e652679cce307f38a349da318130d2ab954e571000ed2f976e601845a41"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Code Cache/wasm/index-dir/the-real-index",
+      "original_bytes": 48,
+      "original_sha256": "a537e446cd647f9b17f4701b88ecb4d9e201b06f688dcdc26e887fb9cac43832",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Code Cache/wasm/index-dir/the-real-index.gz",
+      "gzip_bytes": 50,
+      "gzip_sha256": "33221943fe722a1cc72f12dc9faf12c26ea30fbc4ad0f07bb5828eb94cff49d3"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Cookies",
+      "original_bytes": 20480,
+      "original_sha256": "40cfaef080aad157b7f8e0fade5b8a83ca8eb2a84fcea586458803c1e4d32e5b",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Cookies.gz",
+      "gzip_bytes": 681,
+      "gzip_sha256": "45d55ade62d18e58481a2a4fae6906ea6e722c41d0daaf58d41773f6a77943a0"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Cookies-journal",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Cookies-journal.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/DIPS",
+      "original_bytes": 36864,
+      "original_sha256": "a5c83cfd048e68e36915afca3774727dde3a6ab6d209353ebeaa42a73c4eb263",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338375000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/DIPS.gz",
+      "gzip_bytes": 840,
+      "gzip_sha256": "588e8f30fde0694db5c30af8f6e8360fe0dceeb310cd6535d472f837bc0d3712"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/data_0",
+      "original_bytes": 8192,
+      "original_sha256": "d6a5fe39cd672781b256e0e3102f7022635f1d4bb7cfcc90a80fffe4d0f3877e",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/data_0.gz",
+      "gzip_bytes": 56,
+      "gzip_sha256": "d5adc06f9c6b3a285b0573fa187a6240e2df189511de0a454023a56888c6df9d"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/data_1",
+      "original_bytes": 270336,
+      "original_sha256": "5fc253dd2ab91be52fc2b8ac11a8cd5332d76acd330235457361e25c3cceb734",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338374000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/data_1.gz",
+      "gzip_bytes": 363,
+      "gzip_sha256": "78bf307349acc2134705b607db85976d6d1e85fbea8792bd30643d2d9b3848bd"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/data_2",
+      "original_bytes": 8192,
+      "original_sha256": "ec1702806f4cc7c42a82fc2b38e89835fde7c64bb32060e0823c9077ca92efb7",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/data_2.gz",
+      "gzip_bytes": 54,
+      "gzip_sha256": "685d2e57353c1eb24988a045ce517855de235696f0da4a5076b36b9d399a83ad"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/data_3",
+      "original_bytes": 8192,
+      "original_sha256": "e09f42c398d688dce168570291f1f92d079987deda3099a34adb9e8c0522b30c",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/data_3.gz",
+      "gzip_bytes": 56,
+      "gzip_sha256": "2de87af1b9e5e2a683e56b913f50d8e32fce067edb6bb39ba6bc9b2fa94a24eb"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/index",
+      "original_bytes": 262512,
+      "original_sha256": "7acd4acbafa6d24e7583b538e4cf2cd845a35cb0b7fab769aeb970b2b725dada",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/index.gz",
+      "gzip_bytes": 323,
+      "gzip_sha256": "c3c1f09abb49f73f7f9bccce338d7b26ffebb122ab3bb8c6de4ae7eb05ccf501"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/data_0",
+      "original_bytes": 8192,
+      "original_sha256": "d6a5fe39cd672781b256e0e3102f7022635f1d4bb7cfcc90a80fffe4d0f3877e",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/data_0.gz",
+      "gzip_bytes": 56,
+      "gzip_sha256": "d5adc06f9c6b3a285b0573fa187a6240e2df189511de0a454023a56888c6df9d"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/data_1",
+      "original_bytes": 270336,
+      "original_sha256": "b1971eefc1500165f73b9a3ff96ab911383f48dc20b674d98decc9c050a15fc5",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338374000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/data_1.gz",
+      "gzip_bytes": 362,
+      "gzip_sha256": "55356f10ab29a425aecad0b6ce2840ccc19b27dd3a5bd5d1fde0e86b0bd8495d"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/data_2",
+      "original_bytes": 8192,
+      "original_sha256": "ec1702806f4cc7c42a82fc2b38e89835fde7c64bb32060e0823c9077ca92efb7",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/data_2.gz",
+      "gzip_bytes": 54,
+      "gzip_sha256": "685d2e57353c1eb24988a045ce517855de235696f0da4a5076b36b9d399a83ad"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/data_3",
+      "original_bytes": 8192,
+      "original_sha256": "e09f42c398d688dce168570291f1f92d079987deda3099a34adb9e8c0522b30c",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/data_3.gz",
+      "gzip_bytes": 56,
+      "gzip_sha256": "2de87af1b9e5e2a683e56b913f50d8e32fce067edb6bb39ba6bc9b2fa94a24eb"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/index",
+      "original_bytes": 262512,
+      "original_sha256": "8a7dde1438d017c21c50714231783d315d2259edcae1188dff31b103b0998b49",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/index.gz",
+      "gzip_bytes": 321,
+      "gzip_sha256": "3e0e670167cc4c6f509d8f9933917629167ab34cf516a49daa75e4cd428cdf3b"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/GPUCache/data_0",
+      "original_bytes": 45056,
+      "original_sha256": "7a74537207facf70074ac863eb30acde5aa17a5ba2334842a69835a09ff2764a",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338374000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/GPUCache/data_0.gz",
+      "gzip_bytes": 761,
+      "gzip_sha256": "22c989288aa533c7ac653648c9e595992edff9afd39c1ba460729a7b9a5431d3"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/GPUCache/data_1",
+      "original_bytes": 270336,
+      "original_sha256": "8f92da718050e07ecea765e96f66f47f222a87bb8c42862e7c8e75519c6db93c",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338374000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/GPUCache/data_1.gz",
+      "gzip_bytes": 2536,
+      "gzip_sha256": "d3eac7be46cba8dd74e416eee1d79b94c8bdb6d576c681e45ea188651c8b1324"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/GPUCache/data_2",
+      "original_bytes": 1056768,
+      "original_sha256": "2030136aa6421e2a6e47d524ea340b8844fd7cbfdf70cfc1221fc8ce9e457b0e",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338374000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/GPUCache/data_2.gz",
+      "gzip_bytes": 50028,
+      "gzip_sha256": "81e2819b8c81006a50faa719c61441aef651ec31eacd66e4781a887319ddc218"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/GPUCache/data_3",
+      "original_bytes": 4202496,
+      "original_sha256": "5d5e659eacb5583f6c6d567fa20bf7367190909db3679b66e7aaf8219b5df33e",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338374000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/GPUCache/data_3.gz",
+      "gzip_bytes": 76742,
+      "gzip_sha256": "df63447cc266ad9fc49b26de8e6097c291ccb199bd8922db2ead94d963d320da"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/GPUCache/f_000001",
+      "original_bytes": 20352,
+      "original_sha256": "d05842a682f23a45d4a6997f92da54511718800c1062f1494695c673308d27d5",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338319000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/GPUCache/f_000001.gz",
+      "gzip_bytes": 15357,
+      "gzip_sha256": "03a25f1b7418abd730da5e4eeec61c92db371fdba77eae3fb15de37e0f394559"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/GPUCache/index",
+      "original_bytes": 262512,
+      "original_sha256": "833830397e599312a8c7797435ed89bd33be249b2949e9ef3fb7643924ead404",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/GPUCache/index.gz",
+      "gzip_bytes": 503,
+      "gzip_sha256": "f51fb485137feff574c073cf1f32ffc2af248313cb060721cbe792a14545052f"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/IndexedDB/http_127.0.0.1_51337.indexeddb.leveldb/000003.log",
+      "original_bytes": 3608,
+      "original_sha256": "f4134776615522319e6f34d869f5924439bc33ec0c89f5c98c81318f0a03206d",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/IndexedDB/http_127.0.0.1_51337.indexeddb.leveldb/000003.log.gz",
+      "gzip_bytes": 1003,
+      "gzip_sha256": "6de585593f6a084864fed3409a934e4560e8891f10664d8b073e78b750c631ca"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/IndexedDB/http_127.0.0.1_51337.indexeddb.leveldb/CURRENT",
+      "original_bytes": 16,
+      "original_sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/IndexedDB/http_127.0.0.1_51337.indexeddb.leveldb/CURRENT.gz",
+      "gzip_bytes": 33,
+      "gzip_sha256": "9cd21120ac2b309c3c6081dd45c3d3d39db8ebd989fa8d7a09ac83d8bbe05740"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/IndexedDB/http_127.0.0.1_51337.indexeddb.leveldb/LOCK",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/IndexedDB/http_127.0.0.1_51337.indexeddb.leveldb/LOCK.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/IndexedDB/http_127.0.0.1_51337.indexeddb.leveldb/LOG",
+      "original_bytes": 437,
+      "original_sha256": "9954df77fa3c5fe956a68794e02257ac06f63a8fbb1857408aa12f9845a95373",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/IndexedDB/http_127.0.0.1_51337.indexeddb.leveldb/LOG.gz",
+      "gzip_bytes": 232,
+      "gzip_sha256": "fc7164cf0fee464b91a841a245842963b52d5e5668fc594546ec7329a7a259e8"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/IndexedDB/http_127.0.0.1_51337.indexeddb.leveldb/MANIFEST-000001",
+      "original_bytes": 23,
+      "original_sha256": "720a78803b84cbcc8eb204d5cf8ea6ee2f693be0ab2124ddf2b81455de02a3ed",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/IndexedDB/http_127.0.0.1_51337.indexeddb.leveldb/MANIFEST-000001.gz",
+      "gzip_bytes": 43,
+      "gzip_sha256": "d94df4f9050542099b564aa5ab2729ea3217550fbf5c07bee40f53794a3c7cf7"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/000003.log",
+      "original_bytes": 49,
+      "original_sha256": "af47b5d07d2f1aa55711e00774a429289267a82e604602df8fdd2c5047626159",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338302000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/000003.log.gz",
+      "gzip_bytes": 54,
+      "gzip_sha256": "0e0183b55dbf1b6aca5f578d04b10a115f338cd79956718072291099f25e6936"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/CURRENT",
+      "original_bytes": 16,
+      "original_sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/CURRENT.gz",
+      "gzip_bytes": 33,
+      "gzip_sha256": "9cd21120ac2b309c3c6081dd45c3d3d39db8ebd989fa8d7a09ac83d8bbe05740"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/LOCK",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/LOCK.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/LOG",
+      "original_bytes": 383,
+      "original_sha256": "4dd791a80081dd7c43ad3fae36f15bf9747619339531d39cf036ee2071752500",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/LOG.gz",
+      "gzip_bytes": 213,
+      "gzip_sha256": "cb66694a4d69ca2c6a9d994c97fe873b26990c93e8fd28c1d4a1554cc6157c23"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/MANIFEST-000001",
+      "original_bytes": 41,
+      "original_sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/MANIFEST-000001.gz",
+      "gzip_bytes": 61,
+      "gzip_sha256": "81debb32328a394f43cf23cbb53e7268771b0161fbcd43dedb5c9fa482648057"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/PersistentOriginTrials/LOCK",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/PersistentOriginTrials/LOCK.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/PersistentOriginTrials/LOG",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/PersistentOriginTrials/LOG.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/c73d47d565a76660c9e3ae898315fa6ed41f967c/9ca14c36-c7ac-418f-8921-43039ec1dfbe/258e61b00e002c8d_0",
+      "original_bytes": 24209171,
+      "original_sha256": "ad589da5d4d8c81b437ac54f07ed68297835ca19a466eeaa2ccdb13a00527db5",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338231000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/c73d47d565a76660c9e3ae898315fa6ed41f967c/9ca14c36-c7ac-418f-8921-43039ec1dfbe/258e61b00e002c8d_0.gz",
+      "gzip_bytes": 8128209,
+      "gzip_sha256": "5ac6023f4ee56df773dc330e75e9916e29d366d571bbbf9130b2fe732569c4df"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/c73d47d565a76660c9e3ae898315fa6ed41f967c/9ca14c36-c7ac-418f-8921-43039ec1dfbe/3727a579c48ce82d_0",
+      "original_bytes": 3539329,
+      "original_sha256": "638214ac6f1b9587f228306736310df2b9369c98bb45bef23143cf62809fb413",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338231000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/c73d47d565a76660c9e3ae898315fa6ed41f967c/9ca14c36-c7ac-418f-8921-43039ec1dfbe/3727a579c48ce82d_0.gz",
+      "gzip_bytes": 1343817,
+      "gzip_sha256": "cb875595521f707ed1671a84f7c0b99b8914fdbdaeb9179436a04d7d2eeaa905"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/c73d47d565a76660c9e3ae898315fa6ed41f967c/9ca14c36-c7ac-418f-8921-43039ec1dfbe/8077fa69d748a6c4_0",
+      "original_bytes": 204058006,
+      "original_sha256": "9117f027efd0abe8fda8516b43ff0290e5acbc1ed447b9c2464a440a88afeaa2",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338302000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/c73d47d565a76660c9e3ae898315fa6ed41f967c/9ca14c36-c7ac-418f-8921-43039ec1dfbe/8077fa69d748a6c4_0.gz",
+      "gzip_bytes": 201734387,
+      "gzip_sha256": "62c7e212342660ae4780fb957fa865af0febc0b339a122b4095444bccf9097d6"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/c73d47d565a76660c9e3ae898315fa6ed41f967c/9ca14c36-c7ac-418f-8921-43039ec1dfbe/index",
+      "original_bytes": 24,
+      "original_sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/c73d47d565a76660c9e3ae898315fa6ed41f967c/9ca14c36-c7ac-418f-8921-43039ec1dfbe/index.gz",
+      "gzip_bytes": 32,
+      "gzip_sha256": "30bd8e652679cce307f38a349da318130d2ab954e571000ed2f976e601845a41"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/c73d47d565a76660c9e3ae898315fa6ed41f967c/9ca14c36-c7ac-418f-8921-43039ec1dfbe/index-dir/the-real-index",
+      "original_bytes": 120,
+      "original_sha256": "4bc7f41e2509f9883e93c19b69d8ccb48e390833f06fe2e7690194fee79d787c",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338322000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/c73d47d565a76660c9e3ae898315fa6ed41f967c/9ca14c36-c7ac-418f-8921-43039ec1dfbe/index-dir/the-real-index.gz",
+      "gzip_bytes": 102,
+      "gzip_sha256": "6d195348bc582b0521f555b4ef0bb25174ecd9861c64a0fd647ca908d90c39de"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/c73d47d565a76660c9e3ae898315fa6ed41f967c/index.txt",
+      "original_bytes": 173,
+      "original_sha256": "ef3fa80e25770cb90679bb047df4c06439806109f72511ef66eb6cab34d0f643",
+      "original_mode": 420,
+      "original_mtime_ns": 1792338322000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/c73d47d565a76660c9e3ae898315fa6ed41f967c/index.txt.gz",
+      "gzip_bytes": 154,
+      "gzip_sha256": "71458e02f0b0ec2a9eeb6f0d0d25214bfec22a76015b6a559e479244165666bb"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Session Storage/000003.log",
+      "original_bytes": 49,
+      "original_sha256": "ffd700cf04be6fe8d51e2ffb8a2e37bc3fa95a6679a4102fa35e8494c2350eae",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338374000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Session Storage/000003.log.gz",
+      "gzip_bytes": 54,
+      "gzip_sha256": "124a3091152079858eaed7dab3f81d211d1759977dc8491fb2ea20f5e5f92504"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Session Storage/CURRENT",
+      "original_bytes": 16,
+      "original_sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Session Storage/CURRENT.gz",
+      "gzip_bytes": 33,
+      "gzip_sha256": "9cd21120ac2b309c3c6081dd45c3d3d39db8ebd989fa8d7a09ac83d8bbe05740"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Session Storage/LOCK",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Session Storage/LOCK.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Session Storage/LOG",
+      "original_bytes": 371,
+      "original_sha256": "6bc05dd6c26867051ad532c3bbd4fc588b57a9e9e4e88aaeb5b6862c04bcd76c",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Session Storage/LOG.gz",
+      "gzip_bytes": 207,
+      "gzip_sha256": "dc72cc099d7ce02fdd97409d1a35d8ef31bb061eae5e89c50bb3959c87e3ecd0"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Session Storage/MANIFEST-000001",
+      "original_bytes": 41,
+      "original_sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Session Storage/MANIFEST-000001.gz",
+      "gzip_bytes": 61,
+      "gzip_sha256": "81debb32328a394f43cf23cbb53e7268771b0161fbcd43dedb5c9fa482648057"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Shared Dictionary/cache/index",
+      "original_bytes": 24,
+      "original_sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Shared Dictionary/cache/index.gz",
+      "gzip_bytes": 32,
+      "gzip_sha256": "30bd8e652679cce307f38a349da318130d2ab954e571000ed2f976e601845a41"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Shared Dictionary/cache/index-dir/the-real-index",
+      "original_bytes": 48,
+      "original_sha256": "a537e446cd647f9b17f4701b88ecb4d9e201b06f688dcdc26e887fb9cac43832",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Shared Dictionary/cache/index-dir/the-real-index.gz",
+      "gzip_bytes": 50,
+      "gzip_sha256": "33221943fe722a1cc72f12dc9faf12c26ea30fbc4ad0f07bb5828eb94cff49d3"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Shared Dictionary/db",
+      "original_bytes": 45056,
+      "original_sha256": "fbb86c665b2fed35c372ce8996eb1c4e31082aedd6ad5fc6086cfac889c3471b",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Shared Dictionary/db.gz",
+      "gzip_bytes": 904,
+      "gzip_sha256": "6323b9e75e8ca0a0256f56b5b346de898685f519aedf0b7ad04c37cddd36d455"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/Shared Dictionary/db-journal",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/Shared Dictionary/db-journal.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/SharedStorage",
+      "original_bytes": 4096,
+      "original_sha256": "0ab48b25cba617ed3a4acca0161813b314c095ef63544bb4af60769eb1012977",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338350000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/SharedStorage.gz",
+      "gzip_bytes": 89,
+      "gzip_sha256": "84f66521364b35a2b361544594b7449d7238e3afac24799ac74a6ccd766a38f6"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/WebStorage/QuotaManager",
+      "original_bytes": 40960,
+      "original_sha256": "fa81f187846c6bd8c677d014e1bf60a2fe4f1bb5f943774dc824c2edd71c9f19",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338374000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/WebStorage/QuotaManager.gz",
+      "gzip_bytes": 992,
+      "gzip_sha256": "5102fef4575fba04a211afebcd2b0a5322c4a6e16b4f2c04fef923e46773dc94"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/WebStorage/QuotaManager-journal",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338374000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/WebStorage/QuotaManager-journal.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/declarative_performance_observer.db",
+      "original_bytes": 32768,
+      "original_sha256": "610da3f204433431c7c0626b7488888cc40e732ebe759f6399a8ac348eb4ca25",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/declarative_performance_observer.db.gz",
+      "gzip_bytes": 694,
+      "gzip_sha256": "a79701ffa692efdeb28d1c258b8ee3e9711ea986d9a8dbdf73d86aeb378f7d7a"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/declarative_performance_observer.db-journal",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/declarative_performance_observer.db-journal.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/000003.log",
+      "original_bytes": 95,
+      "original_sha256": "5b149d68659ebeab90f1116b8704a32dc240fbf85171bd4a4f70d57a3d8d4bb8",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338361000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/shared_proto_db/000003.log.gz",
+      "gzip_bytes": 34,
+      "gzip_sha256": "a78c36d2c4bbb42ec098a336b3f54aea577927891c6c3af6eb96ac6e80bf1878"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/CURRENT",
+      "original_bytes": 16,
+      "original_sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/shared_proto_db/CURRENT.gz",
+      "gzip_bytes": 33,
+      "gzip_sha256": "9cd21120ac2b309c3c6081dd45c3d3d39db8ebd989fa8d7a09ac83d8bbe05740"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/LOCK",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/shared_proto_db/LOCK.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/LOG",
+      "original_bytes": 371,
+      "original_sha256": "0add7736e88f2fa5e2d11284b790981886a211d39dee755d74d0434234aac447",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/shared_proto_db/LOG.gz",
+      "gzip_bytes": 208,
+      "gzip_sha256": "018f538179eea936fa080e23f6765b01da22d70400d2bc51406d1c333137904b"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/MANIFEST-000001",
+      "original_bytes": 41,
+      "original_sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/shared_proto_db/MANIFEST-000001.gz",
+      "gzip_bytes": 61,
+      "gzip_sha256": "81debb32328a394f43cf23cbb53e7268771b0161fbcd43dedb5c9fa482648057"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/000003.log",
+      "original_bytes": 126,
+      "original_sha256": "cfa97270b061bd792976f9ab56a12b51a67e22ce45a13153544ef97543552212",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/000003.log.gz",
+      "gzip_bytes": 85,
+      "gzip_sha256": "8b81d37973cae3c13f7b4c1434b96efdc7757ff3b1b4ed8bd562d9d245206c36"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/CURRENT",
+      "original_bytes": 16,
+      "original_sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/CURRENT.gz",
+      "gzip_bytes": 33,
+      "gzip_sha256": "9cd21120ac2b309c3c6081dd45c3d3d39db8ebd989fa8d7a09ac83d8bbe05740"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/LOCK",
+      "original_bytes": 0,
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/LOCK.gz",
+      "gzip_bytes": 20,
+      "gzip_sha256": "ac73670af3abed54ac6fb4695131f4099be9fbe39d6076c5d0264a6bbdae9d83"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/LOG",
+      "original_bytes": 389,
+      "original_sha256": "0592baf87a265267e5115e77be2cc585b54cf6a9766e0dc445e0cce1c61dcf9b",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/LOG.gz",
+      "gzip_bytes": 215,
+      "gzip_sha256": "57e384a330da24d530865d5174aab834cc2627959387c682a45b82588c7ff693"
+    },
+    {
+      "original_path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/MANIFEST-000001",
+      "original_bytes": 41,
+      "original_sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4",
+      "original_mode": 384,
+      "original_mtime_ns": 1792338230000000000,
+      "gzip": "files/retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/MANIFEST-000001.gz",
+      "gzip_bytes": 61,
+      "gzip_sha256": "81debb32328a394f43cf23cbb53e7268771b0161fbcd43dedb5c9fa482648057"
+    }
+  ],
+  "full_archive": "/Volumes/e9-final-proof-ram/e9-t12-final-full-archive",
+  "full_archive_provenance_sha256": "0acbdd1e34a56ad89a3a55510c0d1f93f11ec6a059c5ea37af30f5801828c063",
+  "origins": [
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-final-frozen-cold-wrapper.py",
+      "path": "origin/cold-wrapper.py",
+      "bytes": 5691,
+      "sha256": "e98f08171db0c8fb3f9310b4b60b79a500bc499cdfd3008128e62d2de38528a8"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-final-frozen-cold-wrapper.log",
+      "path": "origin/cold-wrapper.log",
+      "bytes": 962,
+      "sha256": "09e7dca085f0568cd99c010f9d6be238c75a62637f97a5a4192738e0fbecd5a9"
+    },
+    {
+      "source": "/Volumes/e9-final-proof-ram/cold-worker-e9-t12-98260ff67d81/receipt.json",
+      "path": "origin/cold-wrapper-receipt.json",
+      "bytes": 75655,
+      "sha256": "4ccd407ecaa20a26a8beb1814499dd3083d128bb36dd1292cb80b189d70ae62a"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-second-repair-web-dist.log",
+      "path": "origin/source-freeze-build.log",
+      "bytes": 13400,
+      "sha256": "940dcbd8207e84cef7fd780ebea0aed1bc3043e42535bd54f0146eb22b5d4c01"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-initial-worker-red.log",
+      "path": "origin/repair-initial-red.log",
+      "bytes": 3221,
+      "sha256": "beedec4a637a3eb7f3db3c753998579123af2053ee19ac70ec7e1e0a07abcea7"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-jit-worker-red.log",
+      "path": "origin/repair-jit-red.log",
+      "bytes": 169425,
+      "sha256": "8a9a900c564fa0af052d9257eaead3a3efa48c07fb227bc89c7ec105c0ecb077"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-core-worker-green.log",
+      "path": "origin/repair-initial-green.log",
+      "bytes": 1244,
+      "sha256": "e906544ac3ecc0c634d14a11938243c9376cf99fb4df7f2169c41b76cc65cdc1"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-jit-worker-green.log",
+      "path": "origin/repair-jit-green.log",
+      "bytes": 2446,
+      "sha256": "9d6791931f004c863eda53c46a04343a133c22809e4cedc4edeec36cb039c736"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-second-repair-clippy.log",
+      "path": "origin/repair-clippy.log",
+      "bytes": 1036,
+      "sha256": "aceaece8d20faf9fc3056b7566e2deef77a62a1168cde33c468896c62e5835bd"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/bash-tools/receipt.json",
+      "path": "origin/build-shell-receipt.json",
+      "bytes": 542,
+      "sha256": "1f9740271b5ec64d4b1ce598ab93d424815949b1966b324db858f7ee4f248991"
+    },
+    {
+      "source": "/Volumes/e9-t11-cold-scratch/e9-t12-emsdk-ram-copy.json",
+      "path": "origin/emsdk-copy-receipt.json",
+      "bytes": 5080188,
+      "sha256": "6631d953872a3310ddfa04b3ac308878dbc64a9a2c0c5bcfb8e7f482feb811ac"
+    },
+    {
+      "source": "/Volumes/e9-final-proof-ram/persist-proof-primary.py",
+      "path": "origin/persistence-producer.py",
+      "bytes": 2373,
+      "sha256": "3a69f3588d0684c008ca52db505a4bf1f743f60b182c01486916ffb401a2034b"
+    }
+  ],
+  "primary_original_bytes": 65864907,
+  "primary_compressed_bytes": 21232394,
+  "preserved_original_files": 332
+}

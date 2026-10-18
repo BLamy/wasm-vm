@@ -3,7 +3,7 @@ id: E9-T12
 epic: 9
 title: Record asynchronous device payloads and completion order
 priority: 524.912
-status: in-progress
+status: implemented
 depends_on: [E9-T09]
 estimate: S
 risk: high
@@ -58,7 +58,7 @@ and replaces the callback incarnation only after a successful commit.
 
 ## Deterministic acceptance
 
-`make verify-E9-T12`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.
+`make verify-E9-T12`. This target records the qualified adapter assertions and high-risk native, Wasm, built-browser, independent guest/object-oracle and retained GPU regression gates. Set E9_DEVICE_EVIDENCE_DIR to a new absolute recording directory.
 
 ## Adversarial verification
 
@@ -123,3 +123,73 @@ queue completion and cursor values. All eight optional adapter profiles roundtri
 before their first guest instruction. Red logs and frames are retained on the task RAM
 volume for inclusion in the final evidence packet. This remains worker implementation,
 not a verifier verdict.
+
+### 2026-10-18 — worker — implemented claim, frozen repaired submission
+
+Frozen source and deployable bundle: 98260ff67d814311b3c2cf175a57476f3d3c64ab.
+The task diff starts after independently verified E9-T11,
+8e57ceada7752057de307027bf2d371c14ca0f78. The orphaned capture, initial epoch
+and inactive-clock refutations above are repaired; earlier failed recordings remain
+preserved. No superseded runtime passing result substitutes for this submission.
+
+Command: python3 /Volumes/e9-t11-cold-scratch/e9-t12-final-frozen-cold-wrapper.py.
+It creates a clean exact-head independent Git checkout and initially empty compiler
+target, scrubs CARGO_*/GIT_* flags and Rust flags/wrappers/logging, then runs make
+verify-E9-T12. Source, refs/index, compiler output, fresh Node installation and
+temporary files reside on task RAM because the persistent disk refuses new writes.
+Immutable Git objects are shared read-only through disclosed alternates; the wrapper
+receipt names the exact parent store and empty target. Official GNU Bash 5.2.37
+and a byte-authenticated pinned emsdk 4.0.22 copy keep build temporaries on RAM;
+receipts are retained. No compiler or node_modules from an earlier proof is reused.
+
+All 24 recorded commands passed: policy, format, fixture reproduction, native clippy,
+core/device/session/JIT/Wasm/storage tests, no-std Wasm build, Wasm clippy, reproducible
+browser build, JavaScript syntax, documentation/contract audits, independent native
+and browser guest/object oracles, retained GPU integrity and actual factory boot.
+The core library passes 400 tests. All 11 final adapter regressions and 32 varied
+callback schedules pass. Real Wasmtime six-instruction blocks execute at checkpoint
+edges 5000/5001/5002 under budgets 31/1/8/4096. Both built and production browser
+suites report 127 passed, 0 failed and zero errors; live device/roadmap pips, mobile
+capture and reload pass. The unchanged retained GPU factory retires 2,999,712 guest
+instructions and presents fresh resource 13 at epoch 4 without loss/poisoning.
+
+Cold primary evidence: evidence/e9-t12/worker-repaired-final/provenance.json,
+SHA256 1c61ebeb7ae04b692b452ebe9ab50f58efdf659614fc10988594d71887b2ccf3.
+It losslessly retains 156 primary files: full guest frames/traces, logs, durable CAS
+objects, screenshots, Playwright recordings, source hashes, exact commands and cold
+wrapper provenance. Acceptance report SHA256
+fbd9e07628abb1ac2f1b4628e1c6b8071e527452441472d4dae74c709d9abde4.
+All 332 raw files and the authenticated complete gzip archive remain at
+/Volumes/e9-final-proof-ram/cold-proof-e9-t12-98260ff67d81 and
+/Volumes/e9-final-proof-ram/e9-t12-final-full-archive. The 176 derived GPU-regression
+Chromium profile/cache files are explicitly inventoried there; exported proof is the
+evidence of record. The fresh critic confirmed the owned object graph is complete.
+
+Stock Cloudflare deployment completed at https://c5aa196d.wasm-vm.pages.dev,
+production https://wasm-vm.pages.dev/. It validated local manifest-bound images,
+all seven immutable public R2 objects and the 25 MiB Pages limit. The complete public
+512 MiB rootfs was reconstructed from recorded strict HTTP206 ranges and its SHA256
+reauthenticated for the deployment read; other public objects were freshly checked
+by stock curl. Missing ignored large boot images in the isolated checkout were copied
+only after declared size/SHA validation. The initial missing-file failure remains
+preserved separately. Exact publication logs, payload inventory, range/local-image
+receipts and producers: evidence/e9-t12/production-repaired/deployment/.
+Public browser evidence: evidence/e9-t12/production-repaired/provenance.json,
+SHA256 694c80594da2b419748998edd17c54bf3e938dc4c1c2af82d4c003c4b7dec3a1.
+Command: node tools/verify/e9-device-completions-browser.mjs --url
+https://wasm-vm.pages.dev/ --output
+/Volumes/e9-final-proof-ram/e9-t12-repaired-public-browser, then python3 -B
+tools/verify/e9-device-completions-files.py --directory that-output --browser.
+Built ordinary Wasm SHA256:
+3c47a1dc51ee801f9fe08d0adbb120913ea4d1e1aafc00803c61de8c86d44c44.
+
+Claim: qualified immutable-base/local-COW block, named-console file-agent receive and
+guest-clocked S16 capture adapters bind accepted payloads to exact before-phase
+positions and request identities. Reordered/delayed callbacks replay identical
+complete CPU/RAM/device/COW/cursor frames, DMA, used-ring and IRQ witnesses.
+Pending checkpoints resume without duplicating capture; initial profiles roundtrip
+before the first transition; restored incarnations reject stale leases without
+mutation. Immutable payload identity remains separate from delivery position in the
+durable object graph. Unsupported adapters refuse admission. GPU result replay and
+full Linux assembly remain later tasks. This is the worker claim awaiting a fresh
+verifier verdict.

@@ -455,7 +455,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.909` [E9-T09](epic-9-session-time-travel/E9-T09-event-clock.md) — Place recorded events at exact guest execution boundaries *(deps: E9-T01, E9-T02)*
 - [x] `524.91` [E9-T10](epic-9-session-time-travel/E9-T10-user-input-recording.md) — Record user and host-control inputs at delivery *(deps: E9-T09)*
 - [x] `524.911` [E9-T11](epic-9-session-time-travel/E9-T11-clock-and-entropy-recording.md) — Record guest-visible time and entropy observations *(deps: E9-T09)*
-- [~] `524.912` [E9-T12](epic-9-session-time-travel/E9-T12-device-completion-recording.md) — Record asynchronous device payloads and completion order *(deps: E9-T09)*
+- [?] `524.912` [E9-T12](epic-9-session-time-travel/E9-T12-device-completion-recording.md) — Record asynchronous device payloads and completion order *(deps: E9-T09)*
 - [ ] `524.913` [E9-T13](epic-9-session-time-travel/E9-T13-network-capture.md) — Capture network sessions and replay them with zero live egress *(deps: E9-T09, E9-T03)*
 - [ ] `524.914` [E9-T14](epic-9-session-time-travel/E9-T14-deterministic-replay.md) — Replay recorded sessions and detect the first divergence *(deps: E9-T05, E9-T10, E9-T11, E9-T12, E9-T13)*
 - [ ] `524.915` [E9-T15](epic-9-session-time-travel/E9-T15-incremental-checkpoints.md) — Add incremental RAM keyframes with bounded storage work *(deps: E9-T05, E9-T14)*
