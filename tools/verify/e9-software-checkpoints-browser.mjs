@@ -124,7 +124,8 @@ try {
   await page.route('**/__e9-proof/*',async route=>{
     const name=new URL(route.request().url()).pathname.split('/').at(-1);
     assert.ok(allowedExports.test(name));assert.equal(route.request().method(),'POST');
-    await fs.writeFile(path.join(output,name),route.request().postDataBuffer());
+    // Playwright represents a legitimate zero-byte POST body as null (pending output can be empty).
+    await fs.writeFile(path.join(output,name),route.request().postDataBuffer() ?? Buffer.alloc(0));
     await route.fulfill({status:204,body:''});
   });
   page.on('console',message=>{if(message.type()==='error'){
