@@ -1,0 +1,1347 @@
+{
+  "publicBytes": [
+    {
+      "name": "app.html",
+      "bytes": 51702,
+      "sha256": "8acdfacb543ac619a229cd34c776b4a9406b2fcce23044ad137ac05e1886c230"
+    },
+    {
+      "name": "main.js",
+      "bytes": 158292,
+      "sha256": "713efe5bc7ff73f489713bd971e8bda9bbed44f355af15c1e1b852d45e9c0746"
+    },
+    {
+      "name": "session-library.js",
+      "bytes": 23212,
+      "sha256": "bfaaafdfa66efeb31f3eefbbcc8e53da291b9da8418a81df4f45172730b9e2da"
+    },
+    {
+      "name": "session-library.css",
+      "bytes": 1692,
+      "sha256": "b16213437edf880242a10f57ca1cf9ca56e36396319b51547f9bc48c7a03bb1f"
+    },
+    {
+      "name": "session-checkpoints.js",
+      "bytes": 9969,
+      "sha256": "a6fa93d426c3823cb23c797666b69a49226417a43aacb3ac1b0729d74a095803"
+    },
+    {
+      "name": "session-store.js",
+      "bytes": 28114,
+      "sha256": "ac74f75aed9f650fd3242b8b40f4b3d930cd75c64ae524cd5f2ef575656d68df"
+    },
+    {
+      "name": "session-disk-roots.js",
+      "bytes": 7349,
+      "sha256": "7dfd8784ab0086de26f042e3eb9cb63857250ea1a6b58cb0174b6f312bcf97bb"
+    },
+    {
+      "name": "loader.js",
+      "bytes": 98558,
+      "sha256": "b8fc2ef44212c1789d4b1f5a05884523e360b58321b9d822b89efefdd8cc8f5d"
+    },
+    {
+      "name": "roadmap.js",
+      "bytes": 58936,
+      "sha256": "041f7b51115fdd24b8cde4ff44e2206c283bed9ca4970c3ee367579dce25c016"
+    },
+    {
+      "name": "tasks.json",
+      "bytes": 7175171,
+      "sha256": "a12787c45f1b4dd0a074b36d7afb11d5d51450e683eb0d4032857d472ec15534"
+    },
+    {
+      "name": "gpu-checkpoint-build.js",
+      "bytes": 340,
+      "sha256": "e94e48f7bf99e5d4db95b6fee18c669a85373734cafb6ae7b2110f6d27c4e7bd"
+    },
+    {
+      "name": "session-software-fixture.json",
+      "bytes": 539,
+      "sha256": "58649de67da288681450b226d20b4f373bfc6db2583f3d061e6cebda3fa479b8"
+    },
+    {
+      "name": "session-alpine-image.json",
+      "bytes": 274515,
+      "sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46"
+    },
+    {
+      "name": "pkg/wasm_vm_wasm.js",
+      "bytes": 132062,
+      "sha256": "932c829007f02bfba5e12e5abc8628631f9b2c2228a6e139343318b87c65e79a"
+    },
+    {
+      "name": "pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1864397,
+      "sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027"
+    },
+    {
+      "name": "session-pkg/wasm_vm_session.js",
+      "bytes": 13440,
+      "sha256": "960fe8947a66cc5da863c72dd98272443381c81ad7fc53d0c4886c644834ed81"
+    },
+    {
+      "name": "session-pkg/wasm_vm_session_bg.wasm",
+      "bytes": 386124,
+      "sha256": "55f61b58a41413e37769d05cd0de6949df181c8b1931c17beab5410caaeb25df"
+    },
+    {
+      "name": "docs-content/storage.md",
+      "bytes": 7351,
+      "sha256": "303d2ed6ff12ef3968fd1660e6becebdb40bdd5ecdbb32bb1775f96cd375b910"
+    }
+  ],
+  "suite": {
+    "passed": 127,
+    "failed": 0
+  },
+  "pip": "cap-pip in-progress",
+  "alpha": {
+    "id": "session-9b06d28f-1579-436c-ba96-6b78dfdb35e4",
+    "revision": "1",
+    "manifest": {
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "id": "session-9b06d28f-1579-436c-ba96-6b78dfdb35e4",
+      "machine": {
+        "vm_build": "4a75daa95a28d44d5b96d04cd27b368bd7873d0ed4c2e9217cf4dcf606785c1a",
+        "wasm_build": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+        "base_image": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "initramfs": null,
+        "ram_bytes": "268435456",
+        "harts": 1,
+        "devices": [
+          {
+            "id": "uart0",
+            "kind": "uart16550",
+            "mmio_base": "268435456",
+            "mmio_length": 256,
+            "irq": 10,
+            "state_version": 1
+          },
+          {
+            "id": "clint",
+            "kind": "clint",
+            "mmio_base": "33554432",
+            "mmio_length": 65536,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "plic",
+            "kind": "plic",
+            "mmio_base": "201326592",
+            "mmio_length": 6291456,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "rtc",
+            "kind": "goldfish-rtc",
+            "mmio_base": "1052672",
+            "mmio_length": 4096,
+            "irq": 11,
+            "state_version": 1
+          },
+          {
+            "id": "slot0",
+            "kind": "virtio-blk",
+            "mmio_base": "268439552",
+            "mmio_length": 4096,
+            "irq": 1,
+            "state_version": 1
+          },
+          {
+            "id": "slot1",
+            "kind": "virtio-net",
+            "mmio_base": "268443648",
+            "mmio_length": 4096,
+            "irq": 2,
+            "state_version": 1
+          },
+          {
+            "id": "slot2",
+            "kind": "virtio-rng",
+            "mmio_base": "268447744",
+            "mmio_length": 4096,
+            "irq": 3,
+            "state_version": 1
+          },
+          {
+            "id": "slot3",
+            "kind": "virtio-keyboard",
+            "mmio_base": "268451840",
+            "mmio_length": 4096,
+            "irq": 4,
+            "state_version": 1
+          },
+          {
+            "id": "slot4",
+            "kind": "virtio-tablet",
+            "mmio_base": "268455936",
+            "mmio_length": 4096,
+            "irq": 5,
+            "state_version": 1
+          },
+          {
+            "id": "slot5",
+            "kind": "virtio-mouse",
+            "mmio_base": "268460032",
+            "mmio_length": 4096,
+            "irq": 6,
+            "state_version": 1
+          },
+          {
+            "id": "slot6",
+            "kind": "virtio-snd",
+            "mmio_base": "268464128",
+            "mmio_length": 4096,
+            "irq": 7,
+            "state_version": 1
+          },
+          {
+            "id": "slot7",
+            "kind": "virtio-gpu2d",
+            "mmio_base": "268468224",
+            "mmio_length": 4096,
+            "irq": 8,
+            "state_version": 1
+          },
+          {
+            "id": "slot8",
+            "kind": "virtio-console",
+            "mmio_base": "268472320",
+            "mmio_length": 4096,
+            "irq": 9,
+            "state_version": 1
+          }
+        ],
+        "gpu": null
+      },
+      "policy": {
+        "mode": "checkpoints-only",
+        "profile": "rv64-linux-software-v1",
+        "event_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "checkpoint_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "boundary_version": 1,
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "required_inputs": []
+      },
+      "assets": [
+        {
+          "role": "vm",
+          "content": {
+            "sha256": "4a75daa95a28d44d5b96d04cd27b368bd7873d0ed4c2e9217cf4dcf606785c1a",
+            "length": "284880"
+          }
+        },
+        {
+          "role": "wasm",
+          "content": {
+            "sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+            "length": "1864397"
+          }
+        },
+        {
+          "role": "kernel",
+          "content": {
+            "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+            "length": "24208896"
+          }
+        },
+        {
+          "role": "base",
+          "content": {
+            "sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+            "length": "274515"
+          }
+        }
+      ],
+      "begin": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "end": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "events": [],
+      "checkpoints": [
+        {
+          "id": "point-9360b0a0-708b-4b50-a5c4-27b33fded945",
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          },
+          "next_sequence": "1",
+          "machine": {
+            "sha256": "df780f05a35317c48dced9fefd6354686a03ccb915d630bc20f270abb2f0cc2e",
+            "length": "23863318"
+          },
+          "disk_root": "916d4a657cd474a664cdfbd66ecc704ab5f19888f2d41e36e34fc4abe0f2fc57",
+          "gpu": null
+        }
+      ],
+      "extensions": []
+    },
+    "point": "point-9360b0a0-708b-4b50-a5c4-27b33fded945",
+    "frameHash": "df780f05a35317c48dced9fefd6354686a03ccb915d630bc20f270abb2f0cc2e",
+    "bytes": 23863318,
+    "evidence": "alpha-original.checkpoint.gz",
+    "held": {
+      "keyboard": [
+        30
+      ],
+      "tablet": [],
+      "mouse": []
+    },
+    "input": "e9_queue=queued-alpha\n"
+  },
+  "beta": {
+    "id": "session-28b7de79-0c44-4b54-95b4-e399deec8ee3",
+    "revision": "1",
+    "manifest": {
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "id": "session-28b7de79-0c44-4b54-95b4-e399deec8ee3",
+      "machine": {
+        "vm_build": "4a75daa95a28d44d5b96d04cd27b368bd7873d0ed4c2e9217cf4dcf606785c1a",
+        "wasm_build": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+        "base_image": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "initramfs": null,
+        "ram_bytes": "268435456",
+        "harts": 1,
+        "devices": [
+          {
+            "id": "uart0",
+            "kind": "uart16550",
+            "mmio_base": "268435456",
+            "mmio_length": 256,
+            "irq": 10,
+            "state_version": 1
+          },
+          {
+            "id": "clint",
+            "kind": "clint",
+            "mmio_base": "33554432",
+            "mmio_length": 65536,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "plic",
+            "kind": "plic",
+            "mmio_base": "201326592",
+            "mmio_length": 6291456,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "rtc",
+            "kind": "goldfish-rtc",
+            "mmio_base": "1052672",
+            "mmio_length": 4096,
+            "irq": 11,
+            "state_version": 1
+          },
+          {
+            "id": "slot0",
+            "kind": "virtio-blk",
+            "mmio_base": "268439552",
+            "mmio_length": 4096,
+            "irq": 1,
+            "state_version": 1
+          },
+          {
+            "id": "slot1",
+            "kind": "virtio-net",
+            "mmio_base": "268443648",
+            "mmio_length": 4096,
+            "irq": 2,
+            "state_version": 1
+          },
+          {
+            "id": "slot2",
+            "kind": "virtio-rng",
+            "mmio_base": "268447744",
+            "mmio_length": 4096,
+            "irq": 3,
+            "state_version": 1
+          },
+          {
+            "id": "slot3",
+            "kind": "virtio-keyboard",
+            "mmio_base": "268451840",
+            "mmio_length": 4096,
+            "irq": 4,
+            "state_version": 1
+          },
+          {
+            "id": "slot4",
+            "kind": "virtio-tablet",
+            "mmio_base": "268455936",
+            "mmio_length": 4096,
+            "irq": 5,
+            "state_version": 1
+          },
+          {
+            "id": "slot5",
+            "kind": "virtio-mouse",
+            "mmio_base": "268460032",
+            "mmio_length": 4096,
+            "irq": 6,
+            "state_version": 1
+          },
+          {
+            "id": "slot6",
+            "kind": "virtio-snd",
+            "mmio_base": "268464128",
+            "mmio_length": 4096,
+            "irq": 7,
+            "state_version": 1
+          },
+          {
+            "id": "slot7",
+            "kind": "virtio-gpu2d",
+            "mmio_base": "268468224",
+            "mmio_length": 4096,
+            "irq": 8,
+            "state_version": 1
+          },
+          {
+            "id": "slot8",
+            "kind": "virtio-console",
+            "mmio_base": "268472320",
+            "mmio_length": 4096,
+            "irq": 9,
+            "state_version": 1
+          }
+        ],
+        "gpu": null
+      },
+      "policy": {
+        "mode": "checkpoints-only",
+        "profile": "rv64-linux-software-v1",
+        "event_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "checkpoint_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "boundary_version": 1,
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "required_inputs": []
+      },
+      "assets": [
+        {
+          "role": "vm",
+          "content": {
+            "sha256": "4a75daa95a28d44d5b96d04cd27b368bd7873d0ed4c2e9217cf4dcf606785c1a",
+            "length": "284880"
+          }
+        },
+        {
+          "role": "wasm",
+          "content": {
+            "sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+            "length": "1864397"
+          }
+        },
+        {
+          "role": "kernel",
+          "content": {
+            "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+            "length": "24208896"
+          }
+        },
+        {
+          "role": "base",
+          "content": {
+            "sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+            "length": "274515"
+          }
+        }
+      ],
+      "begin": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "end": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "events": [],
+      "checkpoints": [
+        {
+          "id": "point-d65d48b2-f591-4bd3-b2f4-d9745ce35332",
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          },
+          "next_sequence": "1",
+          "machine": {
+            "sha256": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+            "length": "23859822"
+          },
+          "disk_root": "52b17563457c4c959f0771d35fdca4787a81502abc5372cc42d875f64f9b504f",
+          "gpu": null
+        }
+      ],
+      "extensions": []
+    },
+    "point": "point-d65d48b2-f591-4bd3-b2f4-d9745ce35332",
+    "frameHash": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+    "bytes": 23859822,
+    "evidence": "beta-original.checkpoint.gz",
+    "held": {
+      "keyboard": [
+        48
+      ],
+      "tablet": [],
+      "mouse": []
+    },
+    "input": "e9_queue=queued-beta\n"
+  },
+  "quota": {
+    "state": "storage-error",
+    "message": "RetentionLimit: restore point budget. Recording paused; the guest is paused and its current state may be unsaved. The committed prefix is preserved. Free space or raise limits, then Retry recording; Stop recording ends at the committed prefix.",
+    "paused": true,
+    "retry": true
+  },
+  "betaPrefix": {
+    "id": "session-28b7de79-0c44-4b54-95b4-e399deec8ee3",
+    "revision": "1",
+    "manifest": {
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "id": "session-28b7de79-0c44-4b54-95b4-e399deec8ee3",
+      "machine": {
+        "vm_build": "4a75daa95a28d44d5b96d04cd27b368bd7873d0ed4c2e9217cf4dcf606785c1a",
+        "wasm_build": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+        "base_image": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "initramfs": null,
+        "ram_bytes": "268435456",
+        "harts": 1,
+        "devices": [
+          {
+            "id": "uart0",
+            "kind": "uart16550",
+            "mmio_base": "268435456",
+            "mmio_length": 256,
+            "irq": 10,
+            "state_version": 1
+          },
+          {
+            "id": "clint",
+            "kind": "clint",
+            "mmio_base": "33554432",
+            "mmio_length": 65536,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "plic",
+            "kind": "plic",
+            "mmio_base": "201326592",
+            "mmio_length": 6291456,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "rtc",
+            "kind": "goldfish-rtc",
+            "mmio_base": "1052672",
+            "mmio_length": 4096,
+            "irq": 11,
+            "state_version": 1
+          },
+          {
+            "id": "slot0",
+            "kind": "virtio-blk",
+            "mmio_base": "268439552",
+            "mmio_length": 4096,
+            "irq": 1,
+            "state_version": 1
+          },
+          {
+            "id": "slot1",
+            "kind": "virtio-net",
+            "mmio_base": "268443648",
+            "mmio_length": 4096,
+            "irq": 2,
+            "state_version": 1
+          },
+          {
+            "id": "slot2",
+            "kind": "virtio-rng",
+            "mmio_base": "268447744",
+            "mmio_length": 4096,
+            "irq": 3,
+            "state_version": 1
+          },
+          {
+            "id": "slot3",
+            "kind": "virtio-keyboard",
+            "mmio_base": "268451840",
+            "mmio_length": 4096,
+            "irq": 4,
+            "state_version": 1
+          },
+          {
+            "id": "slot4",
+            "kind": "virtio-tablet",
+            "mmio_base": "268455936",
+            "mmio_length": 4096,
+            "irq": 5,
+            "state_version": 1
+          },
+          {
+            "id": "slot5",
+            "kind": "virtio-mouse",
+            "mmio_base": "268460032",
+            "mmio_length": 4096,
+            "irq": 6,
+            "state_version": 1
+          },
+          {
+            "id": "slot6",
+            "kind": "virtio-snd",
+            "mmio_base": "268464128",
+            "mmio_length": 4096,
+            "irq": 7,
+            "state_version": 1
+          },
+          {
+            "id": "slot7",
+            "kind": "virtio-gpu2d",
+            "mmio_base": "268468224",
+            "mmio_length": 4096,
+            "irq": 8,
+            "state_version": 1
+          },
+          {
+            "id": "slot8",
+            "kind": "virtio-console",
+            "mmio_base": "268472320",
+            "mmio_length": 4096,
+            "irq": 9,
+            "state_version": 1
+          }
+        ],
+        "gpu": null
+      },
+      "policy": {
+        "mode": "checkpoints-only",
+        "profile": "rv64-linux-software-v1",
+        "event_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "checkpoint_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "boundary_version": 1,
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "required_inputs": []
+      },
+      "assets": [
+        {
+          "role": "vm",
+          "content": {
+            "sha256": "4a75daa95a28d44d5b96d04cd27b368bd7873d0ed4c2e9217cf4dcf606785c1a",
+            "length": "284880"
+          }
+        },
+        {
+          "role": "wasm",
+          "content": {
+            "sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+            "length": "1864397"
+          }
+        },
+        {
+          "role": "kernel",
+          "content": {
+            "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+            "length": "24208896"
+          }
+        },
+        {
+          "role": "base",
+          "content": {
+            "sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+            "length": "274515"
+          }
+        }
+      ],
+      "begin": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "end": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "events": [],
+      "checkpoints": [
+        {
+          "id": "point-d65d48b2-f591-4bd3-b2f4-d9745ce35332",
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          },
+          "next_sequence": "1",
+          "machine": {
+            "sha256": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+            "length": "23859822"
+          },
+          "disk_root": "52b17563457c4c959f0771d35fdca4787a81502abc5372cc42d875f64f9b504f",
+          "gpu": null
+        }
+      ],
+      "extensions": []
+    },
+    "point": "point-d65d48b2-f591-4bd3-b2f4-d9745ce35332",
+    "frameHash": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+    "bytes": 23859822,
+    "evidence": "beta-after-quota.checkpoint.gz",
+    "held": {
+      "keyboard": [
+        48
+      ],
+      "tablet": [],
+      "mouse": []
+    },
+    "input": "e9_queue=queued-beta\n"
+  },
+  "betaUnsaved": {
+    "hash": "8d8d27470bb3d83ba56159c20725993973304b515eb03cb8776092d298cdba0a",
+    "bytes": 23887126,
+    "held": {
+      "keyboard": [
+        48
+      ],
+      "tablet": [],
+      "mouse": []
+    },
+    "input": "",
+    "paused": true,
+    "scheduler": {
+      "quantum": 500000,
+      "maxQuantum": 500000,
+      "slices": 686,
+      "totalSliceMs": 10543.790000028908,
+      "averageSliceMs": 15.369956268263715,
+      "maxSliceMs": 566.125,
+      "sliceHistogram": [
+        {
+          "leMs": 4,
+          "count": 302
+        },
+        {
+          "leMs": 8,
+          "count": 57
+        },
+        {
+          "leMs": 16,
+          "count": 42
+        },
+        {
+          "leMs": 32,
+          "count": 261
+        },
+        {
+          "leMs": 64,
+          "count": 8
+        },
+        {
+          "leMs": 128,
+          "count": 11
+        },
+        {
+          "leMs": 256,
+          "count": 2
+        },
+        {
+          "leMs": 512,
+          "count": 1
+        },
+        {
+          "leMs": 1000,
+          "count": 2
+        },
+        {
+          "leMs": null,
+          "count": 0
+        }
+      ],
+      "maxStretchGapMs": 16725.929999999702,
+      "requestedInstructions": 343000000,
+      "retiredInstructions": 342983558,
+      "fetchWaits": 20,
+      "fetchRequestedChunks": 23,
+      "fetchWaitTotalMs": 2700.3749999925494,
+      "fetchWaitMaxMs": 822.8399999961257,
+      "outputCalls": 87,
+      "outputBytes": 13384,
+      "inputCalls": 6,
+      "inputBytes": 626,
+      "yieldMode": "scheduler.postTask",
+      "schedulerYields": 688,
+      "timerYields": 0,
+      "mainThreadYields": 0
+    },
+    "active": "session-28b7de79-0c44-4b54-95b4-e399deec8ee3",
+    "point": ""
+  },
+  "freshBoots": [
+    "fresh-alpha\n",
+    "fresh-beta\n"
+  ],
+  "betaRestored": {
+    "state": {
+      "hash": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+      "bytes": 23859822,
+      "held": {
+        "keyboard": [
+          48
+        ],
+        "tablet": [],
+        "mouse": []
+      },
+      "input": "e9_queue=queued-beta\n",
+      "paused": true,
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 0,
+        "totalSliceMs": 0,
+        "averageSliceMs": 0,
+        "maxSliceMs": 0,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 0
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 0,
+        "requestedInstructions": 0,
+        "retiredInstructions": 0,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 0,
+        "outputBytes": 0,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "active": "session-28b7de79-0c44-4b54-95b4-e399deec8ee3",
+      "point": "point-d65d48b2-f591-4bd3-b2f4-d9745ce35332"
+    },
+    "file": "beta-file\n",
+    "memory": "beta-memory/queued-beta"
+  },
+  "alphaRestored": {
+    "state": {
+      "hash": "df780f05a35317c48dced9fefd6354686a03ccb915d630bc20f270abb2f0cc2e",
+      "bytes": 23863318,
+      "held": {
+        "keyboard": [
+          30
+        ],
+        "tablet": [],
+        "mouse": []
+      },
+      "input": "e9_queue=queued-alpha\n",
+      "paused": true,
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 0,
+        "totalSliceMs": 0,
+        "averageSliceMs": 0,
+        "maxSliceMs": 0,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 0
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 0,
+        "requestedInstructions": 0,
+        "retiredInstructions": 0,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 0,
+        "outputBytes": 0,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "active": "session-9b06d28f-1579-436c-ba96-6b78dfdb35e4",
+      "point": "point-9360b0a0-708b-4b50-a5c4-27b33fded945"
+    },
+    "file": "alpha-file\n",
+    "memory": "alpha-memory/queued-alpha"
+  },
+  "betaAfterDelete": {
+    "id": "session-28b7de79-0c44-4b54-95b4-e399deec8ee3",
+    "revision": "1",
+    "manifest": {
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "id": "session-28b7de79-0c44-4b54-95b4-e399deec8ee3",
+      "machine": {
+        "vm_build": "4a75daa95a28d44d5b96d04cd27b368bd7873d0ed4c2e9217cf4dcf606785c1a",
+        "wasm_build": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+        "base_image": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+        "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        "initramfs": null,
+        "ram_bytes": "268435456",
+        "harts": 1,
+        "devices": [
+          {
+            "id": "uart0",
+            "kind": "uart16550",
+            "mmio_base": "268435456",
+            "mmio_length": 256,
+            "irq": 10,
+            "state_version": 1
+          },
+          {
+            "id": "clint",
+            "kind": "clint",
+            "mmio_base": "33554432",
+            "mmio_length": 65536,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "plic",
+            "kind": "plic",
+            "mmio_base": "201326592",
+            "mmio_length": 6291456,
+            "irq": 0,
+            "state_version": 1
+          },
+          {
+            "id": "rtc",
+            "kind": "goldfish-rtc",
+            "mmio_base": "1052672",
+            "mmio_length": 4096,
+            "irq": 11,
+            "state_version": 1
+          },
+          {
+            "id": "slot0",
+            "kind": "virtio-blk",
+            "mmio_base": "268439552",
+            "mmio_length": 4096,
+            "irq": 1,
+            "state_version": 1
+          },
+          {
+            "id": "slot1",
+            "kind": "virtio-net",
+            "mmio_base": "268443648",
+            "mmio_length": 4096,
+            "irq": 2,
+            "state_version": 1
+          },
+          {
+            "id": "slot2",
+            "kind": "virtio-rng",
+            "mmio_base": "268447744",
+            "mmio_length": 4096,
+            "irq": 3,
+            "state_version": 1
+          },
+          {
+            "id": "slot3",
+            "kind": "virtio-keyboard",
+            "mmio_base": "268451840",
+            "mmio_length": 4096,
+            "irq": 4,
+            "state_version": 1
+          },
+          {
+            "id": "slot4",
+            "kind": "virtio-tablet",
+            "mmio_base": "268455936",
+            "mmio_length": 4096,
+            "irq": 5,
+            "state_version": 1
+          },
+          {
+            "id": "slot5",
+            "kind": "virtio-mouse",
+            "mmio_base": "268460032",
+            "mmio_length": 4096,
+            "irq": 6,
+            "state_version": 1
+          },
+          {
+            "id": "slot6",
+            "kind": "virtio-snd",
+            "mmio_base": "268464128",
+            "mmio_length": 4096,
+            "irq": 7,
+            "state_version": 1
+          },
+          {
+            "id": "slot7",
+            "kind": "virtio-gpu2d",
+            "mmio_base": "268468224",
+            "mmio_length": 4096,
+            "irq": 8,
+            "state_version": 1
+          },
+          {
+            "id": "slot8",
+            "kind": "virtio-console",
+            "mmio_base": "268472320",
+            "mmio_length": 4096,
+            "irq": 9,
+            "state_version": 1
+          }
+        ],
+        "gpu": null
+      },
+      "policy": {
+        "mode": "checkpoints-only",
+        "profile": "rv64-linux-software-v1",
+        "event_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "checkpoint_version": {
+          "major": 1,
+          "minor": 0
+        },
+        "boundary_version": 1,
+        "clock": {
+          "mode": "icount",
+          "divider": 10,
+          "timebase_hz": "10000000",
+          "interactive": null
+        },
+        "required_inputs": []
+      },
+      "assets": [
+        {
+          "role": "vm",
+          "content": {
+            "sha256": "4a75daa95a28d44d5b96d04cd27b368bd7873d0ed4c2e9217cf4dcf606785c1a",
+            "length": "284880"
+          }
+        },
+        {
+          "role": "wasm",
+          "content": {
+            "sha256": "71ab136a773611c06e409a7b998c65a477af64b5a42cb056f7b60bd2c165d027",
+            "length": "1864397"
+          }
+        },
+        {
+          "role": "kernel",
+          "content": {
+            "sha256": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+            "length": "24208896"
+          }
+        },
+        {
+          "role": "base",
+          "content": {
+            "sha256": "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+            "length": "274515"
+          }
+        }
+      ],
+      "begin": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "end": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "events": [],
+      "checkpoints": [
+        {
+          "id": "point-d65d48b2-f591-4bd3-b2f4-d9745ce35332",
+          "position": {
+            "transition": "0",
+            "phase": "before",
+            "ordinal": 0,
+            "sequence": "0",
+            "retired": "0"
+          },
+          "next_sequence": "1",
+          "machine": {
+            "sha256": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+            "length": "23859822"
+          },
+          "disk_root": "52b17563457c4c959f0771d35fdca4787a81502abc5372cc42d875f64f9b504f",
+          "gpu": null
+        }
+      ],
+      "extensions": []
+    },
+    "point": "point-d65d48b2-f591-4bd3-b2f4-d9745ce35332",
+    "frameHash": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+    "bytes": 23859822,
+    "evidence": "beta-after-delete.checkpoint.gz",
+    "held": {
+      "keyboard": [
+        48
+      ],
+      "tablet": [],
+      "mouse": []
+    },
+    "input": "e9_queue=queued-beta\n"
+  },
+  "betaReopened": {
+    "state": {
+      "hash": "ffc5918032ed197f67c3bc0679bec8d047ce80b712074e60fefabbfe58b19808",
+      "bytes": 23859822,
+      "held": {
+        "keyboard": [
+          48
+        ],
+        "tablet": [],
+        "mouse": []
+      },
+      "input": "e9_queue=queued-beta\n",
+      "paused": true,
+      "scheduler": {
+        "quantum": 500000,
+        "maxQuantum": 500000,
+        "slices": 0,
+        "totalSliceMs": 0,
+        "averageSliceMs": 0,
+        "maxSliceMs": 0,
+        "sliceHistogram": [
+          {
+            "leMs": 4,
+            "count": 0
+          },
+          {
+            "leMs": 8,
+            "count": 0
+          },
+          {
+            "leMs": 16,
+            "count": 0
+          },
+          {
+            "leMs": 32,
+            "count": 0
+          },
+          {
+            "leMs": 64,
+            "count": 0
+          },
+          {
+            "leMs": 128,
+            "count": 0
+          },
+          {
+            "leMs": 256,
+            "count": 0
+          },
+          {
+            "leMs": 512,
+            "count": 0
+          },
+          {
+            "leMs": 1000,
+            "count": 0
+          },
+          {
+            "leMs": null,
+            "count": 0
+          }
+        ],
+        "maxStretchGapMs": 0,
+        "requestedInstructions": 0,
+        "retiredInstructions": 0,
+        "fetchWaits": 0,
+        "fetchRequestedChunks": 0,
+        "fetchWaitTotalMs": 0,
+        "fetchWaitMaxMs": 0,
+        "outputCalls": 0,
+        "outputBytes": 0,
+        "inputCalls": 0,
+        "inputBytes": 0,
+        "yieldMode": "scheduler.postTask",
+        "schedulerYields": 0,
+        "timerYields": 0,
+        "mainThreadYields": 0
+      },
+      "active": "session-28b7de79-0c44-4b54-95b4-e399deec8ee3",
+      "point": "point-d65d48b2-f591-4bd3-b2f4-d9745ce35332"
+    },
+    "file": "beta-file\n",
+    "memory": "beta-memory/queued-beta"
+  },
+  "keyboardFocus": "rename",
+  "mobile": {
+    "width": 388,
+    "scroll": 388
+  },
+  "documentation": {
+    "url": "https://wasm-vm.pages.dev/docs?page=storage",
+    "checkpointOnly": true,
+    "retention": true
+  }
+}
