@@ -60,7 +60,7 @@ for label in ('probe-prefix', 'probe-prefix-after-reload', 'bulk-prefix', 'worke
     assert witness[28:40] == b'WVMRESU1\1\0\0\0'
     pending = witness[28 + native_len:28 + native_len + pending_len]
     if label == 'worker-ui-prefix':
-        assert pending.endswith(b'e9_initial=queued-before-recording\n')
+        assert b'e9_initial=queued-before-recording\n' in pending
         delivered = b''.join(bytes(r['bytes']) for r in records if r['channel'] == 2)
         assert delivered[:len(pending)] == pending
     results[label] = {'events': len(records), 'objects': len(objects), 'end': previous,

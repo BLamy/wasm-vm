@@ -455,7 +455,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.907` [E9-T07](epic-9-session-time-travel/E9-T07-retention-and-quota.md) — Manage session quotas retention and shared-data deletion *(deps: E9-T03, E9-T04, E9-T06)*
 - [x] `524.908` [E9-T08](epic-9-session-time-travel/E9-T08-checkpoint-milestone.md) — Prove the saved-checkpoint experience across reload *(deps: E9-T06, E9-T07)*
 - [x] `524.909` [E9-T09](epic-9-session-time-travel/E9-T09-event-clock.md) — Place recorded events at exact guest execution boundaries *(deps: E9-T01, E9-T02)*
-- [~] `524.91` [E9-T10](epic-9-session-time-travel/E9-T10-user-input-recording.md) — Record user and host-control inputs at delivery *(deps: E9-T09)*
+- [?] `524.91` [E9-T10](epic-9-session-time-travel/E9-T10-user-input-recording.md) — Record user and host-control inputs at delivery *(deps: E9-T09)*
 - [ ] `524.911` [E9-T11](epic-9-session-time-travel/E9-T11-clock-and-entropy-recording.md) — Record guest-visible time and entropy observations *(deps: E9-T09)*
 - [ ] `524.912` [E9-T12](epic-9-session-time-travel/E9-T12-device-completion-recording.md) — Record asynchronous device payloads and completion order *(deps: E9-T09)*
 - [ ] `524.913` [E9-T13](epic-9-session-time-travel/E9-T13-network-capture.md) — Capture network sessions and replay them with zero live egress *(deps: E9-T09, E9-T03)*
