@@ -1,0 +1,101 @@
+[
+  {
+    "file": "before-admission",
+    "sha256": "8184b6a40902d645e3d3829e6e1398856306a58e924b4fc6c1095432f19a7a2b",
+    "bytes": 23857173,
+    "input_hex": "65395f71756575653d616c7068612d7175657565640a",
+    "context": {
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "runtime": "c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc",
+      "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "ram_bytes": "268435456",
+      "clock": {
+        "mode": "icount",
+        "divider": 10,
+        "timebase_hz": "10000000",
+        "interactive": null
+      },
+      "position": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "held": {
+        "keyboard": [],
+        "tablet": [],
+        "mouse": []
+      }
+    }
+  },
+  {
+    "file": "after-admission",
+    "sha256": "8184b6a40902d645e3d3829e6e1398856306a58e924b4fc6c1095432f19a7a2b",
+    "bytes": 23857173,
+    "input_hex": "65395f71756575653d616c7068612d7175657565640a",
+    "context": {
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "runtime": "c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc",
+      "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "ram_bytes": "268435456",
+      "clock": {
+        "mode": "icount",
+        "divider": 10,
+        "timebase_hz": "10000000",
+        "interactive": null
+      },
+      "position": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "held": {
+        "keyboard": [],
+        "tablet": [],
+        "mouse": []
+      }
+    }
+  },
+  {
+    "file": "after-initial-failure",
+    "sha256": "8184b6a40902d645e3d3829e6e1398856306a58e924b4fc6c1095432f19a7a2b",
+    "bytes": 23857173,
+    "input_hex": "65395f71756575653d616c7068612d7175657565640a",
+    "context": {
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "runtime": "c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc",
+      "kernel": "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+      "ram_bytes": "268435456",
+      "clock": {
+        "mode": "icount",
+        "divider": 10,
+        "timebase_hz": "10000000",
+        "interactive": null
+      },
+      "position": {
+        "transition": "0",
+        "phase": "before",
+        "ordinal": 0,
+        "sequence": "0",
+        "retired": "0"
+      },
+      "held": {
+        "keyboard": [],
+        "tablet": [],
+        "mouse": []
+      }
+    }
+  }
+]

@@ -1,0 +1,73 @@
+{
+  "task": "E9-T06",
+  "verdict": "verified",
+  "product_head": "1afabe81e5545eb54da63faddc8214d81e474dc4",
+  "publication_head": "41f8978c4156ffeb70e2f3a45ed97bd17d542bb8",
+  "reviewed_before_status_head": "4f043872",
+  "worker_receipt_sha256": "deb146471aff0602b1db395d9c6359b761df63ad2e17d6fe446effb9fb0e9f3d",
+  "local_receipt_sha256": "4b83676473c08680b2435dcb930f986f09153bb79ace65dddbff092dc82fd5ce",
+  "public_receipt_sha256": "d5bd94a4d5f204f58c5da68723289e9a7a8a9e7114e63b2caef4490fd13d80e7",
+  "source_driver_sha256": "7511c8c6e7358cd2e3a419231d7712f05629371b6f441c1b3469d52708700e47",
+  "files": [
+    {
+      "path": "coverage-audit.json.gz",
+      "bytes": 13324,
+      "sha256": "003b47dbe33e690a54fe01b58eac735f8b142befc2ea8d41abfe61bd5a942b11"
+    },
+    {
+      "path": "coverage.md",
+      "bytes": 2496,
+      "sha256": "f65303be56eac8f93e2c2ab0db1d1bb420a83b274e73378b7f84da70e81fecb3"
+    },
+    {
+      "path": "predictions.json",
+      "bytes": 2950,
+      "sha256": "601816e2ca6711ca2aac6960c4a8fe79fa66fc5a79a396ab846bd63225d14e7a"
+    },
+    {
+      "path": "repair-local-frame-authentication.json",
+      "bytes": 3663,
+      "sha256": "7921142ec0094d26370e950f7a0590a7f3dcb577d81818abe3d0967eeb06a419"
+    },
+    {
+      "path": "repair-local-trace-points.json",
+      "bytes": 6629,
+      "sha256": "a8e330c9bf6b2d1eeba5187860dda8f45a851742ab8a92d5c396a65db680eac8"
+    },
+    {
+      "path": "repair-packet-authentication.json",
+      "bytes": 724,
+      "sha256": "1733198fd8cbd6051d9414d011c02af7c3aabf9251053802e6f4482c7d8c4d57"
+    },
+    {
+      "path": "repair-predictions-before-evidence.md",
+      "bytes": 2848,
+      "sha256": "55e37825e6de49ac4a5244ded80a7c6d8f67188872d745931343d343896cba63"
+    },
+    {
+      "path": "repair-public-authentication.json",
+      "bytes": 769,
+      "sha256": "4115aa3348f9cca534c5b605568b16f90fb0a8658b3768483129f8fd53faec63"
+    },
+    {
+      "path": "repair-public-raw-authentication.json",
+      "bytes": 2656,
+      "sha256": "274cc17d24736a798dea13ad5f3e1b54fbf2cd93f43b43fe17bd7ad4e62341fb"
+    },
+    {
+      "path": "repair-public-trace-points.json",
+      "bytes": 7159,
+      "sha256": "b369796b3ccaffd97e69bcf43d7196baad08da68323555ece8231f1ab6f1cbbe"
+    },
+    {
+      "path": "repair-worker-authentication.json",
+      "bytes": 4282,
+      "sha256": "d5f5ad6f9ba834df1e5bccbbdcaa2cceff2c17ef0b7d08101f0e872a9a4d6fb9"
+    },
+    {
+      "path": "verdict.md",
+      "bytes": 2339,
+      "sha256": "0026d8f11467d4beb7696271a93f60baef463aac5f156cb03a91e5481d6a74b7"
+    }
+  ]
+}

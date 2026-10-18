@@ -3,7 +3,7 @@ id: E9-T06
 epic: 9
 title: Add the local saved-session library and checkpoint controls
 priority: 524.906
-status: implemented
+status: verified
 depends_on: [E9-T05]
 estimate: S
 risk: medium
@@ -20,9 +20,9 @@ The session library UI over the actual store: list, rename, start recording, che
 
 ## Acceptance criteria
 
-- [ ] Two saved sessions remain visible after reload; renaming and opening one selects its actual stored checkpoint and matching guest state.
-- [ ] Show capturing, restoring, incomplete, incompatible and storage-error states, with keyboard-accessible controls and responsive layouts.
-- [ ] Existing sessions with no event log offer checkpoint restoration only; recording does not fabricate history from before it was enabled.
+- [x] Two saved sessions remain visible after reload; renaming and opening one selects its actual stored checkpoint and matching guest state.
+- [x] Show capturing, restoring, incomplete, incompatible and storage-error states, with keyboard-accessible controls and responsive layouts.
+- [x] Existing sessions with no event log offer checkpoint restoration only; recording does not fabricate history from before it was enabled.
 
 ## Deterministic acceptance
 
@@ -232,3 +232,56 @@ The original public profile is unchanged. The prior full public 19-asset/127-tes
 and the repaired local nine-gate run remain held with identical runtime JavaScript/native
 boundaries. This bounded run closes only the changed mobile CSS/publication and requested
 cleanup proofs. Status is implemented; the fresh verifier owns the final verdict.
+
+### 2026-10-18 — verifier — VERDICT: verified
+
+- **P8/R2/R6 responsive error and publication — HELD.** The existing 23-part target
+  descriptor is actually removed before keyboard Open. The full digest error wraps inside
+  the 390px library locally and on production: scroll/client **388/388**, right/viewport 390/390.
+  Rechecked both repaired screenshots. Public citation:
+  `evidence/e9-t06/repair-public/report.json:626` and `after-error.png`;
+  receipt SHA-256 `d5bd94a4d5f204f58c5da68723289e9a7a8a9e7114e63b2caef4490fd13d80e7`.
+  The single status overflow-wrap rule resolves the original 586/388 counterexample.
+- **N1 exact-owner safety — HELD.** Admission returns incomplete before replacement;
+  sameOwner=true, paused=true, retiredInstructions=0. Independent decoding of production
+  before/after admission and after failed Start authenticates every component and the exact
+  stored Alpha tuple SHA-256
+  `8184b6a40902d645e3d3829e6e1398856306a58e924b4fc6c1095432f19a7a2b`, including 22 queued
+  UART bytes. Original and copied tuples are byte-identical. Public trace line 809/call@221.
+- **C2/R3 failed initial capture — HELD.** Local trace 427/call@183 and public
+  trace 860/call@247 show exactly one injected save failure through the actual Start button:
+  storage-error, draft=true/points=[], no committed row, recording=false, immediate same-ID
+  writer reacquisition, and unchanged active Alpha tuple. `repair-public/report.json:632`.
+- **C2/R4 owner-loss cleanup — HELD.** Public trace 893,897,902,906 / calls@257,@259,@261,@263
+  records the committed prefix, ordinary retirement, actual LockManager acknowledgement
+  that its lease is absent, then successful writer reacquisition. Active/recording clear,
+  checkpoint/stop disable, and revision 1/manifest SHA-256
+  `7499018e7314be7878bb403efe7076e48ff90c103673d97de512da909010a011`
+  and all point references remain identical/open. `repair-public/report.json:721,736`.
+- **P0/R1/R5 provenance and coverage — HELD.** Independently authenticated the repaired
+  worker's 17 Git-bound sources and all 1,122 payloads plus receipt, all nine gate exits 0,
+  both repaired compact packets, and the final production 822 originals / 8 copies / 2 aliases.
+  All 16 critical public asset hashes equal frozen product `1afabe81`; repaired CSS SHA-256
+  `b16213437edf880242a10f57ca1cf9ca56e36396319b51547f9bc48c7a03bb1f`.
+  The old 808 public originals, including 787 original-profile files, remain unchanged.
+  Every added product line in `main.js`/`session-library.js` executes in the authenticated
+  UTF-16 V8 union; earlier missing lines 162-164/180 are fully covered. Four full-browser
+  segments 70/82/82/78 concatenate exactly to 312 entries. Prior bounded waivers carry forward.
+- **Prior P1-P7/P9/P10 — HELD.** Actual two-session reload/rename/exact paused points,
+  file/RAM witnesses, stale-preview fencing, required UI states, keyboard Tab/focus/Enter,
+  checkpoints-only/no fabricated history, full 127/0 suite, empty unexpected errors and
+  physically drawn qualified retained GPU remain held over unchanged runtime JS/native,
+  store, dependency and deployment-tooling boundaries. Software runtime `c404e41c...`
+  and Wasm `71ab136a...` are unchanged; later commits contain evidence/status metadata only.
+- **SUITE:** the promoted missing-object/cleanup regression is invoked automatically by
+  `make verify-E9-T06`. Nine repaired gates and both local/production bounded recordings
+  pass. No further unrelated native/workspace or pristine-clone run is required for this
+  S/medium frontend claim.
+
+Local trace: `target/evidence/e9-t06-verifier/repair-local-trace.ndjson`; ZIP SHA-256
+`4f8b8b1e4c2c8996d5435f172eb6ed0ad533a92a7a1bc83011a0aac682c7523c`.
+Public trace: `target/evidence/e9-t06-verifier/repair-public-trace.ndjson`; ZIP SHA-256
+`72b16d6227a14e89a3faff9d99cf1a836215b06ec1419281f56e0ee1897b8c25`.
+Final critic packet: `evidence/e9-t06/verifier-final/` contains the pre-evidence predictions,
+independent source/payload/profile/raw-frame authentications, exact trace-point results,
+coverage audit and final hunk verdict. No remaining acceptance or coverage finding.
