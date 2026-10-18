@@ -89,3 +89,33 @@ missing coverage; no product code, native semantics, dependencies or immutable
 runtime bytes changed, so the existing successful gates/state proofs carry forward.
 The independent reviewer continues its copied-profile disappearance case. Public
 proof and final verdict remain pending; this entry does not claim the gap is closed.
+
+### 2026-10-18 — worker — sealed public full run before mobile-error repair
+
+At clean source `7e5d5d1fcd83fe2f2dbce1656108f57db30f9581`, ran
+`node tools/verify/e9-session-library-browser.mjs --url https://wasm-vm.pages.dev/ --output target/evidence/e9-t06-public-final`.
+Deployment `https://7c5c2fe5.wasm-vm.pages.dev` serves the unchanged product bundle
+prepared at `f09eb4c9`; the later head changes the navigation recorder and log only.
+The successful deployment log and the earlier transfer-timeout/rejected fallback-upload
+attempt are retained separately in `evidence/e9-t06/public/`. No artifact hashes changed.
+
+The public report SHA-256 is
+`2d441f7fa17fcebeef82d4db2273a120fbe497a1d56b9c9a59378d434cb232a8`.
+All 19 public assets match the committed build, the live suite is **127 passed, 0 failed**,
+and unexpected browser errors are empty. Four individually sealed document coverage
+segments contain 70/82/82/78 entries; their aggregate preserves the earlier action methods.
+The original trace/profile and all 808 original payloads are authenticated by
+`evidence/e9-t06/public/provenance.json`; 12 compact copies and five identical-frame aliases
+are committed. The report and screenshots cover real persistent Alpha/Beta sessions,
+exact paused reopen, stale preview fencing, incompatible/missing-data and label-storage
+errors, label recovery, and distinct guest file/RAM witnesses. Alpha's exact raw tuple is
+`8184b6a40902d645e3d3829e6e1398856306a58e924b4fc6c1095432f19a7a2b`;
+Beta's is `aa7208c55c3b80e0870c1d7f91d0abd368ebbb7a0f39000c0f81b2be9b8179f4`.
+The retained GPU factory is qualified, neither lost nor poisoned, with a physically drawn
+epoch-4 frame after 2,499,808 retired instructions. The 47-file archived GPU identity and
+software runtime `c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc`
+remain unchanged.
+
+This carries the previously held behavioral results forward; it is not a verification
+verdict. The fresh critic separately found that a missing-point digest error overflows at
+390px and requested two focused cleanup-path recordings. Those remain to be repaired/proven.
