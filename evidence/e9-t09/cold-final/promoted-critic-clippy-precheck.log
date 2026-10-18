@@ -1,0 +1,40 @@
+   Compiling proc-macro2 v1.0.106
+   Compiling serde v1.0.228
+   Compiling crc32fast v1.5.0
+    Checking crypto-common v0.1.7
+   Compiling cc v1.2.65
+   Compiling rustix v1.1.4
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+   Compiling quote v1.0.46
+   Compiling syn v2.0.118
+   Compiling serde_derive v1.0.228
+   Compiling pulley-macros v35.0.0
+   Compiling thiserror-impl v2.0.18
+   Compiling wasmtime-internal-versioned-export-macros v35.0.0
+   Compiling pulley-interpreter v35.0.0
+   Compiling wasmtime v35.0.0
+    Checking thiserror v2.0.18
+    Checking cobs v0.3.0
+   Compiling cranelift-codegen-meta v0.122.0
+    Checking hashbrown v0.15.5
+    Checking smallvec v1.15.2
+    Checking cranelift-bitset v0.122.0
+    Checking postcard v1.1.3
+    Checking cranelift-entity v0.122.0
+    Checking rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+    Checking cranelift-bforest v0.122.0
+    Checking regalloc2 v0.12.2
+    Checking object v0.36.7
+    Checking wasmparser v0.235.0
+    Checking wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/core)
+   Compiling cranelift-codegen v0.122.0
+    Checking wasmprinter v0.235.0
+    Checking wasm-vm-jit-translate v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/jit-translate)
+    Checking wasmtime-environ v35.0.0
+    Checking cranelift-native v0.122.0
+    Checking cranelift-frontend v0.122.0
+    Checking wasmtime-internal-unwinder v35.0.0
+    Checking wasmtime-internal-cranelift v35.0.0
+    Checking wasm-vm-jit-runtime v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/jit-runtime)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.73s

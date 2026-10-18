@@ -109,6 +109,14 @@
         font: 12px ui-monospace, monospace;
         margin-top: 4px;
       }
+      #event-clock-pip {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 6px;
+        vertical-align: middle;
+      }
       .actions, .controls {
         display: flex;
         gap: 8px;
@@ -967,6 +975,12 @@
           Select a guest to start the shared VM.
         </p>
       </section>
+      <details id="event-clock-panel" class="session-library">
+        <summary><span id="event-clock-pip" class="cap-pip in-progress" aria-hidden="true"></span> Execution boundary check</summary>
+        <p class="session-note">Run a small guest to check exact stops, queued events and restore on the interpreter and JIT.</p>
+        <div class="session-actions"><button id="event-clock-run" type="button" disabled>Check boundaries</button></div>
+        <p id="event-clock-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
       <details id="session-library" class="session-library" open>
         <summary>Local saved sessions</summary>
         <p class="session-note">Save exact points in an offline software guest. Checkpoints only; continuous replay comes later. A new guest or Open replaces the current guest.</p>

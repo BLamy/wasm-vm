@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "removed": [
+    {
+      "clone": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t09-cold-6asgaulm/repo",
+      "head": "29a590bb2ee8f9938f547aacb38351a11db84bfd",
+      "tree": "a8f91997a6ecff901591808193b3d816636d1f10",
+      "source_status_before": "clean",
+      "receipt": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-cold-final/receipt.json",
+      "receipt_sha256": "9bfe9147296b49f5a9dfdd68a2b2ce7eeb7bea2ef3245fd95a381dace33bf061",
+      "preserved_output": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-cold-final",
+      "acceptance_commands_completed": 0,
+      "operation": "remove reconstructible clone only; preserve failed receipt/log/wrapper/source commit and all original recordings",
+      "removed": true
+    },
+    {
+      "clone": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t09-cold-uff5yug2/repo",
+      "head": "6b5a5f27041a64016a9fde270865ed37b5cb55cd",
+      "tree": "78e70d2408e5330a6c298967da5ea10df0424091",
+      "source_status_before": "clean",
+      "receipt": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-cold-final-2/receipt.json",
+      "receipt_sha256": "e3fedec79ba6ccc37f8be035a54851437aca2f29d20f1cc6b60deb894a1adb99",
+      "preserved_output": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-cold-final-2",
+      "acceptance_commands_completed": 3,
+      "operation": "remove reconstructible clone only; preserve failed receipt/log/wrapper/source commit and all original recordings",
+      "removed": true
+    }
+  ],
+  "finished": 1792313655.813066
+}

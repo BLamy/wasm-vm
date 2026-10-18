@@ -1,7 +1,7 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 520,
+    "verified": 521,
     "total": 729
   },
   "epics": [
@@ -34558,7 +34558,7 @@
       "activity": [
         {
           "date": "2026-10-18",
-          "commits": 4,
+          "commits": 6,
           "labels": [
             "Verify checkpoint milestone and promote reversed-order metadata critic",
             "Submit recorded two-guest checkpoint milestone proof",
@@ -34569,7 +34569,7 @@
       ],
       "firstActivity": "2026-10-18",
       "lastActivity": "2026-10-18",
-      "commitCount": 4
+      "commitCount": 6
     },
     {
       "id": "E9-T09",
@@ -34577,7 +34577,7 @@
       "epicKey": "9",
       "title": "Place recorded events at exact guest execution boundaries",
       "priority": null,
-      "status": "pending",
+      "status": "verified",
       "depends_on": [
         "E9-T01",
         "E9-T02"
@@ -34587,30 +34587,40 @@
       "capstone": false,
       "goal": "Give recording and replay one exact instruction position and ordered delivery mechanism.",
       "boundary": "## Boundary\n\nThe single-hart event clock, ordered queue and bounded run-to-event fence across interpreter and JIT. Host callbacks stage data rather than mutate guest state at unrecorded moments.\n\n",
-      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T09`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T09` records the high-risk native, Wasmtime, wasm32 and built-browser gates at a clean source head, including independent raw-state decoding and the existing checkpoint/GPU regressions. `E9_CLOCK_EVIDENCE_DIR` selects a new output directory.\n\n",
       "criteria": [
         {
           "text": "Equal-position events preserve a monotonic tie-break sequence, including timer delivery and WFI/idle advancement.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "A JIT block cannot run past a pending event boundary; interpreter/JIT and varied run quanta reach identical state at that boundary.",
-          "checked": false
+          "checked": true
         },
         {
           "text": "Counters survive snapshot/restore and values above 2^53; sequence exhaustion or an unsupported scheduling mode fails explicitly.",
-          "checked": false
+          "checked": true
         }
       ],
       "criteriaTotal": 3,
-      "criteriaDone": 0,
-      "verificationLog": "(pending; no implementation or verification claim)",
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-10-18 — worker — started\n\nSelected from Next up after E9-T08's independent verified verdict and public catalog\npublication. High risk: this slice changes execution boundaries and snapshot semantics.\nImplement the non-wrapping single-hart clock, owned ordered delivery queue, and exact\ninterpreter/JIT fences; keep later input logging, observation adapters, and replay in their\nown tasks. Record affected native/JIT/wasm gates, deterministic guest-state evidence,\nbuilt-browser proof, the retained GPU regression, and one final pristine-clone proof before\nsubmission to a fresh adversarial verifier. No implementation claim yet.\n\n### 2026-10-18 — worker — implemented claim\n\nRuntime candidate: `b75afc6cf7e5037abbf206b838019d228c60a00a`.\nFinal source/harness head: `be521e3ebca19089471c3b5a22c924916e953187`.\nOnly the fresh critic's promoted test, its register-index correction, proof retention and\nthe generated-documentation preflight ordering changed between those heads. Runtime and\ncommitted browser bytes stayed identical: build\n`2e6885223bffce8b13f3ba0b5a287e380aa3c615f2f32bc34076cc8d17b4b616`,\nWasm SHA-256 `b07d03ffc0176ced185137f2d6982819765d0bba23b306e62da93a795d309932`.\n\nThe common single-hart ICount boundary owns non-wrapping transition/retirement counters,\nordered immutable payloads and delivery receipts. Interpreter and real compiled execution\nstop before a pending effect or explicit target; code writes invalidate stale execution.\nPaused controls, WFI retirement/idle/interrupt transitions, timer fences, native restore,\nvalues above 2^53 and transactional refusal/exhaustion are covered. Delivered receipts\nmust drain before a keyframe. The browser exposes a keyboard-accessible boundary check\nusing actual Wasm/JIT. This completes the common engine and bare-board ABI; Linux input,\nobservation providers and continuous replay admission remain gated on T10–T14.\n\nRecorded commands and originals:\n\n- `GIT_OPTIONAL_LOCKS=0 E9_CLOCK_EVIDENCE_DIR=target/evidence/e9-t09-worker-final make verify-E9-T09`\n  passed all **21** gates at `b75afc6c`: format; clippy for affected crates/all targets;\n  core/execution/JIT/native-Wasm tests; no-std wasm32 build and wasm32 clippy; web build,\n  protocol, documentation, contract and retained-factory checks; actual boundary browser,\n  two-guest checkpoint regression and actual retained GPU boot. Report\n  `target/evidence/e9-t09-worker-final/report.json`, SHA-256\n  `403cf05f7a082ca0c74c9d58e8a9d2a98ec765bc3bf893f2a72fb4bc7d5db021`;\n  **963** original files, compact authenticated copies in `evidence/e9-t09/worker-final/`.\n- `GIT_OPTIONAL_LOCKS=0 python3 -u target/e9-t09-cold-wrapper.py` passed the same **21**\n  gates plus the promoted critic within `jit-native`, at the final `be521e3e` head.\n  Pristine detached source, no Git alternates/inherited target/node_modules, scrubbed\n  `RUSTFLAGS`, `RUSTDOCFLAGS`, `RUST_LOG` and all inherited `CARGO_*`/`GIT_*`; the fresh,\n  empty compiler target lived on a task-owned RAM volume, while every recording remained\n  on persistent storage outside the checkout. Receipt\n  `target/evidence/e9-t09-cold-final-3/receipt.json`, SHA-256\n  `d430cff9a6fc68119d20e4bc62d04e3923e98ad9747c4607e1229c078ceff4d0`;\n  acceptance report SHA-256\n  `b9454ecaf1b508645f0c7a1f17fcbbffaa406ca5e36a465b48675ed4d74d33ee`.\n  The **964** original acceptance files, exact wrapper/RAM-volume receipt, both early\n  failed preflights and corrected critic prechecks are linked from\n  `evidence/e9-t09/cold-final/`. Early failures were a generated-doc check before its\n  build and a promoted-test `u32`/`u8` compile error; neither changed runtime semantics.\n- `GIT_OPTIONAL_LOCKS=0 bash tools/deploy-cloudflare.sh` published the committed dist to\n  production and deployment `https://86bbe4ef.wasm-vm.pages.dev`. A stalled unchanged R2\n  read failed before the first publication; the successful retry authenticated every\n  pinned remote object. Full **734**-file payload: **729** tracked identities, five\n  normalized manifests and five exact release extras. Capture receipt\n  `target/e9-t09-full-deploy/receipt.json`, SHA-256\n  `2b042261bd2d8c2b7b1d8ca0903bfe89276c38595448cb9585ef463337e74ac3`.\n- `GIT_OPTIONAL_LOCKS=0 python3 -u target/e9-t09-public.py` passed the actual production\n  boundary and retained GPU drivers at `be521e3e`. Report\n  `target/evidence/e9-t09-public-final/report.json`, SHA-256\n  `07d6410e1d7652be28246870dea0a4210758c7de5bd06439e887e294cdd53ef0`;\n  **522** originals, compact packet `evidence/e9-t09/public-final/`, including deployment\n  receipt, transport-attempt log and exact helper sources.\n\nThe independent worker decoder checks **48** native frames and **28** browser frames\nagainst CPU/PC arithmetic, timer/WFI state, receipts, memory/code writes and wide counters;\n**31** native and **12** browser guest traces are retained for the critic's separate\nline-by-line interrogation. Built/local, pristine and production browser runs\nreport **127 passed, 0 failed**, no unexpected errors, **16** boundary cases/**10**\nexplicit refusals, live pips, keyboard operation and no mobile overflow. The original\nand pristine checkpoint regressions boot distinct Alpha/Beta guests and independently\nread exact ext4 file bytes after reload/restore/quota/deletion. The pinned 47-file GPU\nfactory is unchanged; original/pristine/production boots retire real guest instructions\nand draw in fresh epoch 4, qualified with no loss/poison. The fresh critic's permanent\nsix-seed scalar/JIT/pending-restore test executes **709** actual compiled blocks. Its\nadversarial verdict remains independent and pending; acceptance boxes are unchanged.\n\n### 2026-10-18 — fresh verifier — VERDICT: verified\n\nRead the task, replay contract and full `2dafe690..b75afc6c` diff before inspecting\nevidence. Wrote falsifiable predictions first; the retained prediction history, independent\nraw-state decoder, hunk audit, attacks and authenticated receipts are in\n`evidence/e9-t09/verifier-final/` (`verdict.json`, `coverage.md`, `manifest.json`).\nCarried HELD results forward only after confirming unchanged runtime/dependency boundaries\nand artifact digests through `be521e3e` and the metadata-only `e44ed547` submission.\n\n- **P1/P14 identity and pristine proof — HELD.** Independently hashed all 963 worker,\n  964 cold acceptance and 522 production artifacts, and matched all source identities to\n  their declared Git objects. Cold receipt `d430cff9a6fc68119d20e4bc62d04e3923e98ad9747c4607e1229c078ceff4d0`\n  and acceptance report `b9454ecaf1b508645f0c7a1f17fcbbffaa406ca5e36a465b48675ed4d74d33ee`\n  bind a clean detached `be521e3e` checkout, no alternates/inherited target or node_modules,\n  scrubbed environment and a proven empty compiler target. All 21 gates passed, including\n  the corrected permanent critic. All 119 bare-guest frames/traces are byte-identical to\n  the original held evidence. Earlier documentation-preflight and test-cast failures are\n  retained; their final complete rerun passed.\n- **P2/P3 exact compiled fences and owned order — HELD.** Independently decoded all\n  48 native/28 browser frames and checked all 31 native/12 browser traces against arithmetic\n  and PC predictions. Real Wasmtime/browser blocks execute, stop before targets 600/601/605,\n  and deliver equal-position immutable bytes once in admission order despite differing\n  callback/run quanta. The mailbox-only code mutation executes at\n  `worker-final/native/jit-mailbox-q1024.trace:218` (relative to `evidence/e9-t09/`, SHA-256\n  `d2721d3eb2d6c3138b03e6ecea9eefbb160dba117019a6d09a1b3e88d5a77126`);\n  its native frame ends at transition/retired 1000 with x2=1573, marker `later` and sequence2.\n- **P4/P5/P12 timer, WFI and restore — HELD.** The timer oracle predicts and observes\n  transition592/retired591, mtime197 and handler PC `0x80002000`;\n  `worker-final/native/jit-timer-q31.trace:207`, SHA-256\n  `cc830071629fbe612fa39bd6b4785581bfe0dca2f94eac1667dcc0d46863029e`,\n  ends at the preceding retirement. WFI record\n  `worker-final/native/jit-wfi-q7.trace:217`, SHA-256\n  `03a78b741422c50136a627c6f6a331be175d19639d8882fd6f10eef023321587`,\n  is followed by separate idle/interrupt positions 602/603 while retirement stays601.\n  Restored pending idle state agrees. Twelve additional seeded divider/deadline/reversed\n  pending-control cases prove both inhibited retirement and nonretiring idle/IRQ behavior.\n- **P6/P11/P13/P15 precision and refusal — HELD.** Independently checked\n  9007199254740993→9007199254740996 positions, exact receipt sequence9007199254740994,\n  MAX transition/sequence/ordinal limits, paused controls and 23 malformed/inactive/step\n  refusals without destination mutation. Checked 256-event and 4MiB owned-byte limits\n  before/after delivery, exact outbox backpressure and capacity release on drain. A warmed\n  compiled CSR-observation loop matches independently counted pre-retirement values at five\n  stops, exercising bounded interpretation of observable blocks. Unsupported scheduling\n  and an unbound event clock in the checkpoint-only Linux envelope refuse explicitly.\n- **P8/P9a independent attack and sabotage — HELD.** Six independent seeds, variable\n  block lengths, nonmonotonic target admission, self-modifying writes, independent scalar\n  PC/register arithmetic and pending-queue restore matched at every stop/receipt; 709 real\n  compiled blocks ran. In an ignored core copy, disabling only the seek fence makes the\n  unchanged new test fail at `crates/core/tests/e9_event_clock.rs:171`: transition1000,\n  expected10, exit101 (`seek-fence-sabotage.patch`, `sabotage.log`). P9a replaced the larger\n  planned JIT-specific mutation before execution; that abandoned mutation is not claimed.\n- **P7/P10 browser, regressions and coverage — HELD.** Built/pristine/production runs\n  show 127/0, 16 boundary cases, 10 explicit refusals, live pips, keyboard activation, no\n  mobile overflow and errors[]. The two-guest ext4/file/RAM/input/quota/deletion regression\n  passes. Authenticated all 734 deploy payloads and 11 actual production responses; public\n  capture `07d6410e1d7652be28246870dea0a4210758c7de5bd06439e887e294cdd53ef0` binds\n  9 current and 58 current/archive GPU assets. The pinned47 factory remains unchanged and\n  public guest retirement/current-epoch draw is qualified, not lost or poisoned. Every\n  changed runtime hunk has executing evidence; `coverage.md` gives the narrow declarative,\n  diagnostic and unavailable-admission waivers. No ignored test/debug-disable addition or\n  unproven runtime hunk remains.\n- **SUITE.** Promoted `crates/jit-runtime/tests/e9_event_clock_critic.rs` (SHA-256\n  `8216a282f29db856f37848df1aa1023d5614ece23b4e8c9df6b690ada270a02d`) into\n  `make verify-E9-T09`; final cold clippy and execution pass. Retained original traces,\n  frames, browser profiles and all failed/passing receipts. After audit, released only\n  reconstructible checkouts and the task-owned RAM compiler volume; cleanup receipts are\n  retained. No runtime implementation changed during verification.\n\nCommands: the recorded `make verify-E9-T09` gauntlets and production drivers above; independent\n`inspect_frames.py` raw-frame/trace checks; the retained standalone six-seed native attack;\n`node target/e9-t09-verifier/wasm-{negative,wfi-attack,observe-attack,mailbox-bounds}.mjs`;\nunchanged core fence test against the isolated sabotage. Linux provider capture/continuous\nreplay and accelerated replay admission remain gated to their successor tasks. No merge.",
       "adversarial": "Deliver events at a block edge, inside a compiled block and across WFI. Vary browser callback order and run quanta; a shifted injection point or duplicated event is a refutation.",
       "file": "tasks/epic-9-session-time-travel/E9-T09-event-clock.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-10-18",
+          "commits": 3,
+          "labels": [
+            "Verify E9-T09 exact event boundaries and retain critic evidence",
+            "test(session): submit exact event clock claim with pristine and production evidence",
+            "Begin E9-T09 exact event clock and delivery boundary"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-18",
+      "lastActivity": "2026-10-18",
+      "commitCount": 3
     },
     {
       "id": "E9-T10",

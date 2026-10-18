@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "head": "be521e3ebca19089471c3b5a22c924916e953187",
+  "receipt_sha256": "d430cff9a6fc68119d20e4bc62d04e3923e98ad9747c4607e1229c078ceff4d0",
+  "report_sha256": "b9454ecaf1b508645f0c7a1f17fcbbffaa406ca5e36a465b48675ed4d74d33ee",
+  "commands": 21,
+  "source_files": 34,
+  "receipt_files": 966,
+  "acceptance_files": 964,
+  "unchanged_raw_frames_and_traces": 119,
+  "source_clean_at_audit": true,
+  "no_alternates": true,
+  "fresh_empty_ram_target": {
+    "mount": "/Volumes/e9-t09-cold-build",
+    "target": "/Volumes/e9-t09-cold-build/target-be521e3ebca1",
+    "initial_entries": [],
+    "purpose": "Fresh, empty compiler outputs on a task-owned RAM disk; no inherited target cache or CARGO_TARGET_DIR. All proof recordings remain on persistent storage outside this checkout."
+  },
+  "wrapper_sha256": "1bacdc7c2920acb72f9e0ec1e569c9f9fff4554bc3599d7da90099ce4309e7a8",
+  "promoted_critic_blocks": 709
+}

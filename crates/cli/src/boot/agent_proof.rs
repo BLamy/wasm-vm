@@ -526,6 +526,7 @@ impl AgentProof {
             RunOutcome::Exited(code) => format!("exited:{code}"),
             RunOutcome::Trapped(trap) => format!("trapped:{:?}", trap.cause),
             RunOutcome::MaxInstrs => "max-instrs".to_string(),
+            RunOutcome::SessionStopped(error) => format!("session-stopped:{error:?}"),
         }
     }
 

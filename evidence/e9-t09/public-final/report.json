@@ -1,0 +1,2685 @@
+{
+  "task": "E9-T09",
+  "status": "passed",
+  "head": "be521e3ebca19089471c3b5a22c924916e953187",
+  "started": 1792313324.700232,
+  "production": "https://wasm-vm.pages.dev/",
+  "commands": [
+    {
+      "name": "browser",
+      "command": [
+        "node",
+        "tools/verify/e9-event-clock-browser.mjs",
+        "--output",
+        "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-public-final/browser",
+        "--url",
+        "https://wasm-vm.pages.dev/"
+      ],
+      "exit_code": 0,
+      "seconds": 45.547839879989624
+    },
+    {
+      "name": "retained-gpu-browser",
+      "command": [
+        "node",
+        "tools/verify/e9-retained-gpu-browser.mjs",
+        "--output",
+        "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t09-public-final/retained-gpu-browser",
+        "--url",
+        "https://wasm-vm.pages.dev/"
+      ],
+      "exit_code": 0,
+      "seconds": 102.74445223808289
+    }
+  ],
+  "scope": "Exact shipped event-clock code/Wasm, real CPU/JIT boundary probe and retained accelerated guest retirement/fresh physical draw; no Linux continuous recording claim.",
+  "source_sha256": {
+    "crates/core/src/lib.rs": "b9428702d8569c03618bd00fed1cdbeb3aa71d996d220f3993e6d0e495ca1c26",
+    "crates/core/src/session_clock.rs": "89732f934db7ccf55812591ff82527d35169ad4cdfc7fa0e6ed275346e09cdd1",
+    "crates/core/src/resume.rs": "0e5cc8804f4641857f0de748c0c87b57ac092fe432bb67e7a14dbecf903d6e60",
+    "crates/core/tests/e9_event_clock.rs": "0c83a5fcec397753ea2c3973ba61cf8933bb43dde0268b2845cccdb1cd19e622",
+    "crates/core/tests/predecode_batching.rs": "0946710d3cbcb405e0bc83dfa8dd9f5ffd954794b57e7cf7db90c2618abfeacc",
+    "crates/core/tests/riscv_tests_suite.rs": "3726a6eea3857d38953690ab11eaaba18496de1474e5d07c591692a3148e64b1",
+    "crates/core/examples/retirement_capture_baseline.rs": "cb1958fdc28bc588bcc77f08b23fcb3ccf17c5022d40dc20e58c3e18904fa3b8",
+    "crates/jit-runtime/tests/e9_event_clock.rs": "b0207f7eb2adf70b83d849e76f38b4ff8cba331be6f1c8e73714eff3fac0013a",
+    "crates/jit-runtime/tests/jit_execution.rs": "e5881d74b50d61eb1fc39d30c68233e2d7eff6348eca8e15dbc73970d4d8e86c",
+    "crates/wasm/src/lib.rs": "bd618addc130bf10cc3fb9fdeb82c834121ead3a734f97a92cc4d12686828d4a",
+    "crates/wasm/src/event_clock.rs": "fee4b76859e66508759350bc36137d74dbea3e629b8c182190b694d5066c0d2f",
+    "crates/wasm/src/software_checkpoint.rs": "0ae5d6b89bb580e06dee93f355e52f0b06647200e4a6285b25b064e969888634",
+    "crates/wasm/tests/software_checkpoint.rs": "11f3ed062984bf6c1b41081fe0b60e464ed299998a7bc8cab2828dffd2ccdd90",
+    "crates/cli/src/main.rs": "8091d76eeb231464566134c4ce7699e0e3197a0563faf15566f39a982348759c",
+    "crates/cli/src/boot.rs": "3a578cbe088f501bacabae30dd358b7978d7d218624f3bb0a165c5a9fbac8f62",
+    "crates/cli/src/boot/agent_proof.rs": "a1a6f7eb4d8b158a6cbed88a2ca9be735135e4d3cea9a893c8a6a45b3a9eaac0",
+    "web/index.html": "90dc32ebbf12bde8c4bf8264dbcc7ac7541e6ba91c7a134659a9cf61b52aff01",
+    "web/main.js": "43dd6609ac4c7d675a2ae5cb808b6cbbf70b214acbc3e98ce9f4c36feb938ea9",
+    "web/event-clock-probe.js": "32c8de7405fd5bf24ed54a1bd978086d59909cfa0f52c56609d04c8f728d6c8a",
+    "web/roadmap.js": "055000794e7c75546b811d785b8e4d7be365f5bdeb0a8a3b46594b2f0ac85257",
+    "web/session-checkpoints.js": "a6fa93d426c3823cb23c797666b69a49226417a43aacb3ac1b0729d74a095803",
+    "web/loader.js": "b8fc2ef44212c1789d4b1f5a05884523e360b58321b9d822b89efefdd8cc8f5d",
+    "web/gpu-checkpoint-build.js": "db99c225724b67dcf1c9026779c040601f238db2c6cc93b75b302a8fbca1db2a",
+    "web/docs-source/guides/storage.md": "1c66f2fea5c6427cf0974d46acebcf08ead65c61cf525d759b6281f761bef9ba",
+    "docs/design/session-replay.md": "8e13de1ef4b336cd0f6aea93db68a753dd4a63a9850ba6bae239a9231290da51",
+    "docs/design/session-replay-contract.json": "b90b23c16c98634a3b16fddbcfc6edc995fe52768b732d33c9858f222830cf5c",
+    "web/package.json": "98f5439bf3e211a021f712625143968e9cd31b043e2b34bc649ad954197ff93d",
+    "web/package-lock.json": "1bd432e67f671eb62296d64c473da133a9e97ab482cc946cacb80127bd760153",
+    "tools/verify/e9-event-clock.py": "959d697d086e69993b26bb839ba5ec88f95e9292b4aef934f448387e8d35546e",
+    "tools/verify/e9-event-clock-browser.mjs": "b7c674cd970926d94a2b37eec8926a7f5306edf0f91bb9932dcf9c759ce97cb5",
+    "tools/verify/e9-event-clock-files.py": "670f85026e5631797a8f4321e6d375993903ac03b97a1bf2880a59ee776b8a95",
+    "tools/verify/e9-retained-gpu-browser.mjs": "7fa66bc4746d34727fd7015a33ae704149abb646c0e3952389d643c452aef778",
+    "Makefile": "a15ec0031dafc8afd09ddbc2d47279e457906e2ba3d87b21d60258a0598a8fde",
+    "crates/jit-runtime/tests/e9_event_clock_critic.rs": "8216a282f29db856f37848df1aa1023d5614ece23b4e8c9df6b690ada270a02d"
+  },
+  "files": [
+    {
+      "path": "browser/browser-trace.zip",
+      "bytes": 13748282,
+      "sha256": "ba1a01770edb7c3b76fa81afb51ec835f3e9f5d917c0ee74fffac535e0a4d84f"
+    },
+    {
+      "path": "browser/clock-oracle.json",
+      "bytes": 60555,
+      "sha256": "a11c86ea723fa9dfb32b020606f2e28b1d4e09142b962a532086428038845929"
+    },
+    {
+      "path": "browser/clock-oracle.log",
+      "bytes": 65,
+      "sha256": "088ef769e1d49a4d216f05e650790510b668be872a7abe11d12459c383eef281"
+    },
+    {
+      "path": "browser/desktop.png",
+      "bytes": 18637,
+      "sha256": "30e75b1db23d9563bd6db04882668b27b4c5d31ceead8f29dd4623785560a23d"
+    },
+    {
+      "path": "browser/javascript-coverage.json",
+      "bytes": 1893081,
+      "sha256": "f477a6d845f5cc5931e48f965fbeb173e6f258c370d965cfa77c7eeb3fbda032"
+    },
+    {
+      "path": "browser/jit-600-q1-after.resume",
+      "bytes": 1483,
+      "sha256": "33a9d90ed0f7ec11dfe113eeff822043e9248de827e10ae3a325bdf003103fbc"
+    },
+    {
+      "path": "browser/jit-600-q1-before.resume",
+      "bytes": 1561,
+      "sha256": "b1d351e38bfc5ab8737f2a29231fbde08af416bccf45680449b207db77688684"
+    },
+    {
+      "path": "browser/jit-600-q1.trace",
+      "bytes": 35248,
+      "sha256": "7e43b21e56fe79fb2e235ee3e53c91fd5066d845034a9e3e41c56ad23edf9c49"
+    },
+    {
+      "path": "browser/jit-600-q64-after.resume",
+      "bytes": 1483,
+      "sha256": "3d57ccda1f7d7fb00e8910cbea6a7a0216f9bf171c9702116456af34d964f562"
+    },
+    {
+      "path": "browser/jit-600-q64-before.resume",
+      "bytes": 1561,
+      "sha256": "de8e515a02da31c065f587e13729b5ce9ce2c3f7efbcaaf5a574aea08c303740"
+    },
+    {
+      "path": "browser/jit-600-q64.trace",
+      "bytes": 35248,
+      "sha256": "7e43b21e56fe79fb2e235ee3e53c91fd5066d845034a9e3e41c56ad23edf9c49"
+    },
+    {
+      "path": "browser/jit-600-q7-after.resume",
+      "bytes": 1483,
+      "sha256": "33a9d90ed0f7ec11dfe113eeff822043e9248de827e10ae3a325bdf003103fbc"
+    },
+    {
+      "path": "browser/jit-600-q7-before.resume",
+      "bytes": 1561,
+      "sha256": "a5d362b32f5da1cb79b3e170b252f43e67461e6ded351da0ffab35e3838f6c23"
+    },
+    {
+      "path": "browser/jit-600-q7.trace",
+      "bytes": 35248,
+      "sha256": "7e43b21e56fe79fb2e235ee3e53c91fd5066d845034a9e3e41c56ad23edf9c49"
+    },
+    {
+      "path": "browser/jit-601-q1-after.resume",
+      "bytes": 1483,
+      "sha256": "99dcf0a6149af3d56e214bcd8404c925e37f9fc7794bf7847fd7f086024c5988"
+    },
+    {
+      "path": "browser/jit-601-q1-before.resume",
+      "bytes": 1561,
+      "sha256": "a54b4800ff90fcb2125cf3044a6fdb0ea6bc83cb8dfa0ca9bc23b2149c0851be"
+    },
+    {
+      "path": "browser/jit-601-q1.trace",
+      "bytes": 35310,
+      "sha256": "eb7fb9a586e1b3a427610af050dc7c97c7f67154baba98e56f37f6c05e4899e2"
+    },
+    {
+      "path": "browser/jit-601-q64-after.resume",
+      "bytes": 1483,
+      "sha256": "21b616fbab24cd9e3e41bfc930bec174aaf55c82221e58d04be870ee02209067"
+    },
+    {
+      "path": "browser/jit-601-q64-before.resume",
+      "bytes": 1561,
+      "sha256": "0f3511fad32bc7b5ba16e6304e023d08282551e3ca5c0b22744dfb8225e44525"
+    },
+    {
+      "path": "browser/jit-601-q64.trace",
+      "bytes": 35310,
+      "sha256": "eb7fb9a586e1b3a427610af050dc7c97c7f67154baba98e56f37f6c05e4899e2"
+    },
+    {
+      "path": "browser/jit-601-q7-after.resume",
+      "bytes": 1483,
+      "sha256": "99dcf0a6149af3d56e214bcd8404c925e37f9fc7794bf7847fd7f086024c5988"
+    },
+    {
+      "path": "browser/jit-601-q7-before.resume",
+      "bytes": 1561,
+      "sha256": "2c02882bb9ac83a9211dc7b95803c150b77754a5a04a7260f51c1207937f6730"
+    },
+    {
+      "path": "browser/jit-601-q7.trace",
+      "bytes": 35310,
+      "sha256": "eb7fb9a586e1b3a427610af050dc7c97c7f67154baba98e56f37f6c05e4899e2"
+    },
+    {
+      "path": "browser/jit-605-q1-after.resume",
+      "bytes": 1483,
+      "sha256": "491b320a815c4457aba85f39755fba6d1e60f4e0cc9bb6583e6c97902f141a0b"
+    },
+    {
+      "path": "browser/jit-605-q1-before.resume",
+      "bytes": 1561,
+      "sha256": "26181f2e56ee44bfaf774e021333762a2166de96f75aa650b8ba0749e51deddf"
+    },
+    {
+      "path": "browser/jit-605-q1.trace",
+      "bytes": 35536,
+      "sha256": "ef9c309b80d8f63e9ed606cf4c085bc79b35fe6bf365365507d9f844e77edf03"
+    },
+    {
+      "path": "browser/jit-605-q64-after.resume",
+      "bytes": 1483,
+      "sha256": "13f4b2dbc0732e0822b911cae50db50c83b1463338e19ce89a9a2fee8f042cdf"
+    },
+    {
+      "path": "browser/jit-605-q64-before.resume",
+      "bytes": 1561,
+      "sha256": "924d7b42998e3089ee3324d9b0caaa003d8370fda3c3524d6e6104a716942ecb"
+    },
+    {
+      "path": "browser/jit-605-q64.trace",
+      "bytes": 35536,
+      "sha256": "ef9c309b80d8f63e9ed606cf4c085bc79b35fe6bf365365507d9f844e77edf03"
+    },
+    {
+      "path": "browser/jit-605-q7-after.resume",
+      "bytes": 1483,
+      "sha256": "491b320a815c4457aba85f39755fba6d1e60f4e0cc9bb6583e6c97902f141a0b"
+    },
+    {
+      "path": "browser/jit-605-q7-before.resume",
+      "bytes": 1561,
+      "sha256": "52ed04211b06de7b6bd5effe4f6d34999df3629180a9317fec3788f86d32210d"
+    },
+    {
+      "path": "browser/jit-605-q7.trace",
+      "bytes": 35536,
+      "sha256": "ef9c309b80d8f63e9ed606cf4c085bc79b35fe6bf365365507d9f844e77edf03"
+    },
+    {
+      "path": "browser/jit-mailbox-q1.resume",
+      "bytes": 1486,
+      "sha256": "ae941602f92d6909ddd11f688e5341356486052aa9ceb6cfc5a65367fdb65e85"
+    },
+    {
+      "path": "browser/jit-mailbox-q1.trace",
+      "bytes": 58348,
+      "sha256": "eeb0a3cbb11ca068f739442b04da7198e83bf9ae9940f5bda0b98c9e838af155"
+    },
+    {
+      "path": "browser/jit-mailbox-q128.resume",
+      "bytes": 1486,
+      "sha256": "ae941602f92d6909ddd11f688e5341356486052aa9ceb6cfc5a65367fdb65e85"
+    },
+    {
+      "path": "browser/jit-mailbox-q128.trace",
+      "bytes": 58348,
+      "sha256": "eeb0a3cbb11ca068f739442b04da7198e83bf9ae9940f5bda0b98c9e838af155"
+    },
+    {
+      "path": "browser/jit-mailbox-q7.resume",
+      "bytes": 1486,
+      "sha256": "ae941602f92d6909ddd11f688e5341356486052aa9ceb6cfc5a65367fdb65e85"
+    },
+    {
+      "path": "browser/jit-mailbox-q7.trace",
+      "bytes": 58348,
+      "sha256": "eeb0a3cbb11ca068f739442b04da7198e83bf9ae9940f5bda0b98c9e838af155"
+    },
+    {
+      "path": "browser/mobile.png",
+      "bytes": 17239,
+      "sha256": "f6e3d073e1349e80124d973d3a690848cd7ee4535ed619eac5370722f1bcdc78"
+    },
+    {
+      "path": "browser/paused-control.resume",
+      "bytes": 1472,
+      "sha256": "2b3165970a3ab7ee9879e3435d7ce22b4c27d2e4dc7f17abec3c20f92810408f"
+    },
+    {
+      "path": "browser/probe.json",
+      "bytes": 553545,
+      "sha256": "ff13a6ccc1940a21deb32f7ac31c87e6a292cbc9094b28a80aaf0c47459ee889"
+    },
+    {
+      "path": "browser/report.json",
+      "bytes": 61607,
+      "sha256": "0cccbdf45541a50b1f29d1a01a416d45a52d0524ba211a22dd3d3c77286fcfe8"
+    },
+    {
+      "path": "browser/wfi-after-idle.resume",
+      "bytes": 1553,
+      "sha256": "28972bc57778b9af5d635b71648f6bc5044b3a6e870262bf7c8990b8ca7a9c0f"
+    },
+    {
+      "path": "browser/wfi-after-interrupt.resume",
+      "bytes": 1544,
+      "sha256": "411a343b8b32e633db55bbeafcfff7001e996efc08d594bef30b1252d078f5ae"
+    },
+    {
+      "path": "browser/wfi-before-idle.resume",
+      "bytes": 1512,
+      "sha256": "1c1426889af785a98ce6d4c3650434f7def54d82d66524350eedd290b69d82c4"
+    },
+    {
+      "path": "browser/wfi-held.resume",
+      "bytes": 1512,
+      "sha256": "297311e3c820175558fb995056ae885f6b935ebe16c104fe90358e68b07093fd"
+    },
+    {
+      "path": "browser/wide-delivered.resume",
+      "bytes": 1482,
+      "sha256": "12ecf1f4c5f204c2322f0e01a23ddf5c722f131e71130159e5249d57db04a2ba"
+    },
+    {
+      "path": "browser/wide-queued.resume",
+      "bytes": 1491,
+      "sha256": "49af072f048f6608fc98e2e6e361b495f7cec7015ed3e76fb6b32354f6bf2d67"
+    },
+    {
+      "path": "browser.log",
+      "bytes": 44,
+      "sha256": "57108fa08ae84c29dd62fa1f616cc284432ef183c8b1716a34679982eb975951"
+    },
+    {
+      "path": "retained-gpu-browser/browser-trace.zip",
+      "bytes": 4322129,
+      "sha256": "03f1fec47689d91f93b2b41a956e491cb5985e4a8a6a68aa5d77558b905f1c38"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/BrowserMetrics-spare.pma",
+      "bytes": 4194304,
+      "sha256": "bb9f8df61474d25e71fa00722318cd387396ca1736605e1248821cc0de3d3af8"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/ChromeFeatureState",
+      "bytes": 603,
+      "sha256": "8ca6af5fcf7b5f790d3d9acb6cead4728862cc65b99370ceb7b16c8f0772d589"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Account Web Data",
+      "bytes": 77824,
+      "sha256": "e57088cd4f5a11347065520691ac0ad5f86cf902c98e6c70539a3673d2b54d8d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Account Web Data-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Affiliation Database",
+      "bytes": 53248,
+      "sha256": "52b369ae1ac4db15be400b8d45b01d9e4c4054299fd3743f811e785a6abcbe3a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Affiliation Database-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/AutofillAiModelCache/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/AutofillAiModelCache/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/AutofillStrikeDatabase/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/AutofillStrikeDatabase/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/BookmarkMergedSurfaceOrdering",
+      "bytes": 4,
+      "sha256": "d914176fd50bd7f565700006a31aa97b79d3ad17cee20c8e5ff2061d5cb74817"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/BudgetDatabase/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/BudgetDatabase/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/04b86b47d44696e0_0",
+      "bytes": 4071,
+      "sha256": "178ef8dffadc310b844539b5c69f673de4a71cb414cd542d6f732f5715ff3761"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/05707729448cff4e_0",
+      "bytes": 28388,
+      "sha256": "381f156a29edd7840af5c6cec3bf4cea65684bbac8f0dac4d731bc662d9c8400"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/0b72519e4004ebae_0",
+      "bytes": 9806,
+      "sha256": "871563e4d8c5b8436aae52f09314f45cb34ae2ee2e8345160f585bce93ce8bbf"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/0bec075270c3a779_0",
+      "bytes": 4814,
+      "sha256": "8ec2d64577e39b34d5ed9e2fd96c8ab3b6cf8484c0c95b0e05aa3897ffd239ab"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/0e97b7e4d51bd94f_0",
+      "bytes": 133789,
+      "sha256": "f9eee150f9e198cbc4b06ef306dcae28b9fcce6c8e0e0dfb36154803d57714a5"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/13c75346ad84a52d_0",
+      "bytes": 3542716,
+      "sha256": "1354ef67b2eb05990f0bdf3fd9368b88b02ea22ebd0a353e61647b88437b4249"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/1425609a0509325c_0",
+      "bytes": 4862,
+      "sha256": "08a3d415151610d3397483f19330ad6c08f5209bbb1db780a21eb807cd384175"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/148a734d125272d0_0",
+      "bytes": 4643,
+      "sha256": "7a3da9807dc21e05a3caad76da8e91e08d458121680ea6baf10f65b17c8bcfd7"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/156ac1915c33c4a1_0",
+      "bytes": 4919,
+      "sha256": "409f884d888a51a888f14795afe0e8b551a92e3670934fbedff67cc7db6eb442"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/157377ae3990341f_0",
+      "bytes": 8128,
+      "sha256": "6a0e7385f531968d444216bfc974f658d3c5ee89b11e4a57f75d0e2b860ced2a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/16706b550a912cd2_0",
+      "bytes": 3472,
+      "sha256": "ae1a0f19217b4344ae5b2c15bb97047ab53b7ddd463eb848a31c45302c09e5a9"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/1843e3dca8d6974d_0",
+      "bytes": 3528,
+      "sha256": "ad45b2a3e164db270959d9f3cb5e665fa1982d8a4ca757d2829cb3217320170a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/1cb03594454d5f48_0",
+      "bytes": 12916,
+      "sha256": "e5edddf03b9e5c362076c7b0ad2721e56e2ebf20b329281a677719a19ca77e56"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/1cfdfb8afc82beb7_0",
+      "bytes": 9339,
+      "sha256": "595b342e126e133162efa989236d2a2c1b89fd13e4701c5300276122f4285532"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/1ec3345f36675f59_0",
+      "bytes": 5272,
+      "sha256": "b9d7ae2630b08a8ff5b9e72962f8b706f58f4ec264efa9ed25a6ed2356a7084a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/1fc0e7d531472b45_0",
+      "bytes": 7804,
+      "sha256": "9b899a7c23a0f21b1b22e1266b913ca3d2648dd27614cffbaeb6960ea4f5318f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/1ff30af366ad4c2f_0",
+      "bytes": 156774,
+      "sha256": "dfc0e5c7b8e91244e108200975ded7f208cc6b3b335a0a73d3d703f1984e5fc6"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/20986cb7ccedb9a3_0",
+      "bytes": 4649,
+      "sha256": "7ee8a8b430062f63ff40d34f58049a01e4bf252fea773c74c79c99a5e36c3872"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/20e21f09bc8eea28_0",
+      "bytes": 24212538,
+      "sha256": "69d243357dc456909ba6a9ee6e7db896fafe73e1c6334a345984bf240037ad3c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/23a8ceaaca73cdbd_0",
+      "bytes": 6128,
+      "sha256": "8ceb3537ba32392daf096f46cae27e7d915fd8b4d096f8d91290f8c5f29b52ce"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/2414cb2580adee5e_0",
+      "bytes": 4330,
+      "sha256": "1b6c22b583696184758c3c30aa16b55e9135e30554e425ca5bdc81533e55f9d4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/27a5a3345c6cd05c_0",
+      "bytes": 12469,
+      "sha256": "952ff420c3a0711c884055276b12cbdd651f016f9a2d17b9ddd2713c0f89c8db"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/285e5f06fd8852b9_0",
+      "bytes": 2954,
+      "sha256": "befdbaf46c44817499ebe4dc6f06544ddad9de85c956439b8e5709d81b3c303c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/286a93a859c7a17d_0",
+      "bytes": 3444,
+      "sha256": "3c8853be905c09faa3e7e7dd32b1ab20c00854bb51add01e5870e0ec7392d977"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/2c0a5a64c4f4bd6c_0",
+      "bytes": 2644,
+      "sha256": "a60dcfab25d957561abcb4fc21d46f096955d8cf53f154bd2f459b7124b2b433"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/2c53a7e7e81d775d_0",
+      "bytes": 3108,
+      "sha256": "2fcc45b10272fd19bf7a39cc4e81aaa4f6f43b9376522a9713a4aedb5e0a5a99"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/2cd1bbbd8a94081f_0",
+      "bytes": 3343,
+      "sha256": "80a095ffe445e7334359935f47ccb0ec3aa371b71b811837e3a7f5a02cac7b3d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/320ba9710826bec1_0",
+      "bytes": 17016,
+      "sha256": "d9d5bb2f93ed0c9d61288a3ccab6c5d68d1c8a456916623f74e57779f9e0185e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/351663caa8abf333_0",
+      "bytes": 3121,
+      "sha256": "6b2bd86ed14e106d3032287bb48e42fce5cfdfd05af9e268bbe44a1106fbdb62"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/3a37da4b35498c91_0",
+      "bytes": 5845,
+      "sha256": "354848235ab92bff4cf0b45c786da2f1452cf9aa5d7be080a93ae3e0df3bba88"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/3e1182810f5165dd_0",
+      "bytes": 3888,
+      "sha256": "d63e38befe05c5608998cfb521bcde2a105e213baa795c4fa657986dc40c2c02"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/3e98d1d5395cd442_0",
+      "bytes": 5121,
+      "sha256": "52ff4b0cdf1dbfd9093c28dd6b2fac22fdb57e74733201e3f74d26548f029847"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/3fcf5258f2c58dbf_0",
+      "bytes": 3470,
+      "sha256": "ab21912720bb99d47bf43307227377e42003351538c297cce772cfacc54542ca"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/3fd6a351a836b69e_0",
+      "bytes": 5806,
+      "sha256": "5775c84fd9b38ee8a21b9dd9afb9b2da0cb4c7496cd63f494111080d9face58e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/419d0e11250bd41f_0",
+      "bytes": 24910,
+      "sha256": "9708bae3ad42c3e3f7df66929cbca3246704d7c318a5e33cc7e4187ae7aeb587"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/43ba767b8e2f1b19_0",
+      "bytes": 6866,
+      "sha256": "56d3abc6759092155917543adbac3e80df9a1d6c16629c546900a7e77d79c2b0"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/4512db5f8dd5a8fa_0",
+      "bytes": 71392,
+      "sha256": "213882af4e577b3fb55f2732e04b0fe751de345480d769868abc773ebecfbc76"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/461d8a5371595721_0",
+      "bytes": 4842,
+      "sha256": "e025e94a441a5d8ee49a88bcfbc756c6806ffe0d227a380c8986d8e2ea637b77"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/4655a918286bd4d3_0",
+      "bytes": 4108,
+      "sha256": "c8972f29369df7a018583dc44e79f61d74f703ceefa83eb34ca6ece582cd6270"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/46b5eee3c0d5cae0_0",
+      "bytes": 2974,
+      "sha256": "7bfd60896bd458e4bb33e8b2cac6492ec64162441bfa67272d39482b50013b2e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/47096acd68238076_0",
+      "bytes": 3028,
+      "sha256": "972f72c9dcd33e44e7bd4ff517ae873afc531e3b0cc6fb5de7f532d910b9511e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/493cddddcbef6911_0",
+      "bytes": 4062,
+      "sha256": "73dfed5977671f4c7eaae44cc2123ff2aee013a819a4bd767cce95a68bdef279"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/4a34c7033c82f2c6_0",
+      "bytes": 36479,
+      "sha256": "d3cfb1d7d3b60c3021a5f80c1535331401805cb4bbdc734c6d2dd5aa37114da7"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/4d1d5f858e16f447_0",
+      "bytes": 4558,
+      "sha256": "e0ad2dcbc04a7c63bc0d3a6faf280a9c99a9b51f5a3445f3a30d6fadb054160b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/4f390d2a61958f37_0",
+      "bytes": 3218,
+      "sha256": "90a4998ed5fac479d6908799f23c8dd9202bea4ce0878bd6e626c58bd6305c99"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/50471667292f2e04_0",
+      "bytes": 54584,
+      "sha256": "f0b48343026899ff26faff3000767055efe18351ceb6519620dd5b6b40d2fc7d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/530cc4e30f20d196_0",
+      "bytes": 7198,
+      "sha256": "c97ca4ab1d815d88e193195e218318132fc0219c216609686b544f17557ff3e3"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/566587d85d67afda_0",
+      "bytes": 5677,
+      "sha256": "59b23d95087dc3cb8570d545573cb72cc3be2ce0c8502a79fe58478731173de1"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/56d9daa93ffc08b0_0",
+      "bytes": 4989,
+      "sha256": "db588d556536787c62f7c58d47d9346ec2cb1431e7ed0d1ab0c9de8f0acb842f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/56ee3475ace91dad_0",
+      "bytes": 33294,
+      "sha256": "ca95b3edcfe0e9c9b08a2b8a69fc3a0283aeae62f5a7a1194bb60de863f1b4ec"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/5760482802656f61_0",
+      "bytes": 11722,
+      "sha256": "96248374842186319d24715b380e07be1a40308e3dbdc41ed8f9eea64380b9ac"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/589dd7a60d3cc971_0",
+      "bytes": 3537,
+      "sha256": "35632d74b0b766120bffa4bd66dd19a60bd4e09c21461c86af590db93ae1d1b1"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/5d0d2ccc8943d1de_0",
+      "bytes": 3593,
+      "sha256": "921a88979bbfb3a5597899716be22137f277ec3965149eab3bf8a833fdd5841f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/646c682eede5625a_0",
+      "bytes": 623259,
+      "sha256": "f46aca32d6854a01b011286bb058333a6a1a3c5329314d51ceb47c91854fc364"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/656d3d405e1670a7_0",
+      "bytes": 3224,
+      "sha256": "6220f5630f56aee1ca1d88c9902c4b01cae9cd1dc7f0b42bbdcbefae8b7e46b1"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/667c2b73e8373214_0",
+      "bytes": 10740,
+      "sha256": "19a54de622623b541d0b33c0110c75c98a7a733eab8d54ccb402e1fa37e184f9"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/6a3b198e6eb4c7a1_0",
+      "bytes": 4486,
+      "sha256": "5ba478ae6c7f272e75f975c7a95cbcca5a405453f1e6277afbb45d147d2efebd"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/6d03216fe4b91acb_0",
+      "bytes": 6209,
+      "sha256": "78161b494d6e092837d37aff10397c1b068bacafef318ccdd1a3b2eb30ca1334"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/6e3a7bb51b64502d_0",
+      "bytes": 3330,
+      "sha256": "d23338f1f29f656aca0bf6c3bfbaca7481a9f51f9357b42851d377eb4a52ef7a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/6e6470bd72b3be91_0",
+      "bytes": 3336,
+      "sha256": "33e85f35d094648d362fdc89624687cfcf95478d8d00d633c76979852d658952"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/6f88d4286286bdc9_0",
+      "bytes": 5197,
+      "sha256": "78efd86cdee1599bbee95ef08c6939e0c3abbd3973448a964ea1dc99029877fb"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/72b0e7c22e14783a_0",
+      "bytes": 49744,
+      "sha256": "cc548e1aa9d8e15b74f6f209b420f7e155ca93d59374e8e7e8713d40489d9f72"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/73fdd52404ecdab5_0",
+      "bytes": 6548,
+      "sha256": "0a40f9af090a2c92b2ba3d626aa0973273a908c83bab579f0a398f2993fc4e79"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/7b0a693c98269d2d_0",
+      "bytes": 3243,
+      "sha256": "7e21cd116103fb6272c73a0606fd1ffc4ab8085b6fb5e24d4f9e8e7f7711f4ff"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/7d9498747c3b4490_0",
+      "bytes": 9301,
+      "sha256": "54942765f5887b4f0ed58da6b53012d1a5c2662d2c2d2bbeb250bb358074facc"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/815bd85dda39dae6_0",
+      "bytes": 4351,
+      "sha256": "48c7f88af31e1fe83b8f72d611d94b2f8c72d945e4d8cdf0965c8abc1d616e67"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/81baf238e2e669cb_0",
+      "bytes": 4259,
+      "sha256": "53b13842b90eb5ca943ea082d4381bd54027f9c8e0fcb2ccc1966c804cb73a31"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/830b9b08d9333dea_0",
+      "bytes": 4203,
+      "sha256": "e074a00055874518bba6ef1c1b09a109c93b3cd28eafd0fb3160a04b56004d4f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/868fb671b1312f7b_0",
+      "bytes": 4404,
+      "sha256": "96f0d06f9d8bef9c5d5c9eb2d734d3553472711410a23a9b8ee112cd7e3abdf9"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/88f50fbf3539b882_0",
+      "bytes": 5762,
+      "sha256": "817104a1046e73b29ac55c6e16c3c336ea683d63f62e1aa4b6ae40b9b2b0b6c9"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/89135168bbd299cb_0",
+      "bytes": 3139,
+      "sha256": "c3401ed4270e4518f129e94a26f7de20c9e1a9b5f86bc4164e7a56a1dab7eb98"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/8d4b182b294dab6b_0",
+      "bytes": 11700,
+      "sha256": "07390f1e1f7c984d16d07a9db50fbfaf73f147ae26007d95a5510cf187bd284c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/8f0701822598f5d0_0",
+      "bytes": 6046,
+      "sha256": "1b8d1907285ae83ede090ef50360365962f59b383fd0b8606a5623ddf4a61e7f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/9159685e6766d11e_0",
+      "bytes": 3599,
+      "sha256": "6c6710336d33eb1ee0aa8f8a3325c98b2340a721d5fb45fafc89db63d6ba82a7"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/918074071c853388_0",
+      "bytes": 660101,
+      "sha256": "749188035f72f55f7771fed3b8470d450e33b97f7029f81a5f226b177334f473"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/921ea26f4342edc3_0",
+      "bytes": 4973,
+      "sha256": "b8bb2b1b4bd9fdee39fb05744e876e5cf809a0cede82aba1b88d773ebb70e91a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/937edb0c3f42f352_0",
+      "bytes": 4001,
+      "sha256": "4169743dc64f615be3f5adbd1458abbf2118f1d820e90530700b53d6ae206deb"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/96e8ab0ad335a791_0",
+      "bytes": 36846,
+      "sha256": "4be3d6be872166cc85c0cf4d98f6aef24ff17374ad55bdd2aad50240ddbe7da6"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/9a548357c499ce4e_0",
+      "bytes": 3948,
+      "sha256": "40ce346150aaf7b802b49fc94be5f32ea3fe3f5a20a0a6cb9bded69d1b9dc254"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/9df66f226c77c7eb_0",
+      "bytes": 4279,
+      "sha256": "ab5c644ad350a03f5273fd5167b59fc008d109480e520a343029c40cc7f451db"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/9e1c7613608b9f5a_0",
+      "bytes": 3226,
+      "sha256": "ccfcac7fcb98a197927c8c60b57e9734fe59afc6cfd470550cc8e0166a02fd40"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/9f7be6e8f8def1a7_0",
+      "bytes": 29397,
+      "sha256": "7ef2ceccbd804ac76e1999b3f5431d0248287446c347895245dff260d5f0879f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/a1e0abaad366f491_0",
+      "bytes": 3292,
+      "sha256": "1b6ce30c192c718cc478014eb031c470fa49ad9c4291a875ee3da8a416d8242e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/a5950e3c78945582_0",
+      "bytes": 3402,
+      "sha256": "caf0d00aee3bcb70423d000b8ed9cdf098312937c61aeae737eb7d55c63490bb"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/a5f1c301649e4c68_0",
+      "bytes": 3575,
+      "sha256": "972d2bebce000b05b5f8d97bb498c43b7a0abc61e945ac9f28d249cf2b16ca7c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/a7b41e151dd95b35_0",
+      "bytes": 3362,
+      "sha256": "0f0dff2ba89ad0267c6ce10120e37d0d192c5625f010074ded6cec9812d67ef8"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/a930db63b815d646_0",
+      "bytes": 3782,
+      "sha256": "503071cd1246f35e352150d2e262cf9797f9d5f25d72b22b8cabe5d8a8793427"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/a9352daa2b5e5939_0",
+      "bytes": 3229,
+      "sha256": "3959f24993c8478e927ec47ecc7d7c3eabc9de1a219bf29cafee2a4151d568ec"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/aec9da7704d84ee1_0",
+      "bytes": 5198,
+      "sha256": "c11d742f3b3071b3aa05be1d713a0b18a6cc7bb773398e42f888a1bc355be180"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/b01299c121cd2323_0",
+      "bytes": 15649,
+      "sha256": "c6bc43c407f1b8e4b9742f88c16e793a2b4d58499d7c0cf154eb6940d0a6012b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/b0d14d5ee9282737_0",
+      "bytes": 3520,
+      "sha256": "b52998933d07a82c5ac6d60ed15918ad5c71ad5d023b39a2f4d6c4a67b02f15b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/b16a37466e2be5b0_0",
+      "bytes": 4473,
+      "sha256": "f76888dd1a2bae514b800a003226f479250c3242396be9fd95bb7e8c4f288c5a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/b1c77c4c3b073306_0",
+      "bytes": 3676,
+      "sha256": "3c10f730bb49fbbf366a1a7e33f4fbe0ef891be57b0f3cbd546e8b401a6f40ab"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/b4928148e38ba396_0",
+      "bytes": 3340,
+      "sha256": "6da946019a1e2045150bc4de7277e351badd1a9082341591de42ea3347fb152f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/b57c37f562ae6f13_0",
+      "bytes": 6123,
+      "sha256": "e341097ba302289cb2473673a88ecc129210311319094cb1cbaedf365f76dd4c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/b64cf87b2942a4ad_0",
+      "bytes": 7521,
+      "sha256": "e4d8c65a6e3fe4d8e75ee6d88b478527124c38549baf95d9b230c2adb5e6576c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/b796ba87eb0f0de5_0",
+      "bytes": 10578,
+      "sha256": "19ed6919f2723b7bfbb0b86e28e0edfa383fde34de1f308da27bf60ad6e001c8"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/b820b9b2721fe27f_0",
+      "bytes": 5773,
+      "sha256": "7c40292b7c6938e150bffabc7d1fde9bf44ff96c6b94c2fd5c4cd2a3bedd8344"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/bb36904c51a1ce78_0",
+      "bytes": 4354,
+      "sha256": "4be0eaaafa970ff7b83b09b85c939fa6ec48b3dc9dc6ad428cf504b2e38d7971"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/bc0e0e850b77488a_0",
+      "bytes": 5618,
+      "sha256": "cea7f57a69008ad224ccdc09fc92f90dbcb92558b2800e9647606a664cb85942"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/bdbb21a8b6094041_0",
+      "bytes": 6802,
+      "sha256": "70fb2a33fc8b7f9345f08d4ee357061f701351a4c76c1de323d667d7555dc559"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/c00809994a30c837_0",
+      "bytes": 3027,
+      "sha256": "7528956ddbd6bdebeca3aae0fd7c71fa31688c89c4689b7827ae97bdea93c48b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/c2600ca2681f453c_0",
+      "bytes": 4237,
+      "sha256": "e592b5b004986877d34bacfe70eeeed60e192507d590ecb6727362634841674e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/c73ce4bc11e6df3d_0",
+      "bytes": 31051,
+      "sha256": "6f8c7daf5516f36337fa287dd0c2299a8a86307103889e9ba17f8f40bac3e646"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/cad3e8512c1aa827_0",
+      "bytes": 4025,
+      "sha256": "93e6995834e4136d05be31907603e25b09009692fec6490d16f7f219a1a00897"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/cba32316320b9ac9_0",
+      "bytes": 3211,
+      "sha256": "f8368b74da2d05f21d81ec0a7952d84d092d0eb2b2e760edf554ea5e2febba83"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/cff991a62c8b9f85_0",
+      "bytes": 3923,
+      "sha256": "1c8694c1b04aae54228bb365ef22b69fe0b5d5bcc6b81c4256e42851641ca4d5"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/d17dab08e31f50e9_0",
+      "bytes": 3371,
+      "sha256": "fcd67a2e46e4035696dda3ef4b9b663fc376a0a3756db2232aa28a39a8d122ea"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/d2369912ceb1abcf_0",
+      "bytes": 6391,
+      "sha256": "a8e53512c157234ad9b42face7d45f5eeb04a9a6e20b8c1cda47b817f16839c2"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/d6cec08c304fd3ac_0",
+      "bytes": 6914,
+      "sha256": "9c6eceaab76dbfc4dc814f31dfbcfb308dc6cd3907536afad5853bea036e882a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/d7138f18bda9c950_0",
+      "bytes": 3444,
+      "sha256": "37cdb466d188c9a32de1013cb99c58984805eb6f3d714e367ea996981c2671b4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/d8579fe45d79f96e_0",
+      "bytes": 4131,
+      "sha256": "0a1c7e1bc0bdf8abc01b3f96e9f86b730a45b2378aa7a483ab3d51be19766db6"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/d97870da317c48b0_0",
+      "bytes": 8274,
+      "sha256": "e9bc0954846ee1f9100b3c3dabb868ed1bc494673f6dfbd22e77dbde111027d9"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/db963ec5bbe7ae0e_0",
+      "bytes": 6983,
+      "sha256": "5cd9b23edfe554462e346f30706f8e1a86b91e951c3986b20f9a0bb38497bb4d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/dc2c3a3ac3466505_0",
+      "bytes": 7100,
+      "sha256": "1b81f5646999c9ddef1b9177c105ac837364c9c1125db5e275a8624111287e4e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/dcafccf50d41ae2d_0",
+      "bytes": 5562,
+      "sha256": "b79268a2e1c9fe6143b285dbe7a63b4e18d3386c1862661103469d31c7ea2625"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/de8dd859c929b17c_0",
+      "bytes": 3957,
+      "sha256": "b44b4e78564da6725b23c5ea4b6c9b2d1186a6e7097654d7a0fd533dbf5579c5"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/e068284c066e7a24_0",
+      "bytes": 2900,
+      "sha256": "50f49d48c2ae884eac8bdef100152256c4cba25799580ebcfb4a2ba72108f6bc"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/e4b0f974cc1b6758_0",
+      "bytes": 5930,
+      "sha256": "bb382cf98cc27e811fffb00e9c571fbdd27a2d50a310cd05b8024103b981da8b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/e4baa0e11ecf504c_0",
+      "bytes": 6862,
+      "sha256": "0e4e8ec7e256c19b1093055dd058e0323547521441cb5b6948e83e0c1f768a66"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/e6c778b73a653de8_0",
+      "bytes": 2983,
+      "sha256": "5e1bae91f6205661ab0ebd5e8e05545de75a2492760f40d77aa0162f709b5023"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/e6e83102b180e8de_0",
+      "bytes": 21802,
+      "sha256": "6af1758531a892250f9043dc1b78a6bcb70090259e8cee72f915ab4c0c36289c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/eb75014c9fc29af5_0",
+      "bytes": 4766,
+      "sha256": "ac621088958e22568425594616c604ea6ed8905e78132a350673cf15c3e3241b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/edd69dcd0000c080_0",
+      "bytes": 5313,
+      "sha256": "ee79507a4e0228a29fefbd92bf2cb3b035cef1e3cc1a907082fd7c68aa24eaf9"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/ef55b2f0fd71f298_0",
+      "bytes": 3273,
+      "sha256": "75eef07e0232cd4f45326e56915dd8ed067be086d8088ab44f8877d9f92e9a29"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/f16062d9d4812825_0",
+      "bytes": 7590,
+      "sha256": "72ff5e0e35c9be42c5909bd09d12726517342b52dc4e9be333c5084091cdc64b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/fbfaa518feaeef4d_0",
+      "bytes": 3420,
+      "sha256": "ffc1b7bb8a9d2d52cf17b709d3d0975c52b9d2e55b5fa8452737f56bf5b491af"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/fc0f668b479af32b_0",
+      "bytes": 3715,
+      "sha256": "54a6ec4898eafcc6c072a3a4cc11bc58e16246a7f970f6925b0eb7b8676d39b0"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/fdb22ba73b557970_0",
+      "bytes": 9048,
+      "sha256": "99fe1d22fb85b7b85e30d15933c1e729b5fd30105ee58770e14b33523566f4c8"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/index",
+      "bytes": 24,
+      "sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/Cache_Data/index-dir/the-real-index",
+      "bytes": 3144,
+      "sha256": "43d6591d328860eb536bd542584f65aef504778fa730bdc13ea71cb7b1496d9e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/No_Vary_Search/journal.baj",
+      "bytes": 4,
+      "sha256": "9c169428d852e25bd59b27652ed533d2a1f09f96e4c329fa5e06f47e16731543"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cache/No_Vary_Search/snapshot.baf",
+      "bytes": 20,
+      "sha256": "0c2dd377ed0cc66161e9db8f89f7d8bcb3ad8c06c4a054bdcba214ab05f58c9a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/ClientCertificates/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/ClientCertificates/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/07aeb8425c0963ca_0",
+      "bytes": 309,
+      "sha256": "f2876901cc2964c3f2aab9991c7dfcdd522daf36a34677cf52f1c61fcac31e0f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/0c2bd1ef20ccdb9e_0",
+      "bytes": 209,
+      "sha256": "a1a4a0fa2b1e8f64ed1edc87b39f1e45a1618ca93c17ac45c81f02cfe3b9d7cf"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/0c85ef342094939a_0",
+      "bytes": 216,
+      "sha256": "b0e875a042adb69eb0ba8754c8317fa4f5c591ee89f8d061722a05c12703cae6"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/0ef2420876e55cd9_0",
+      "bytes": 214,
+      "sha256": "b800b1e2c4ae42cbd9eda7ea2e20d817900a46643fee35e5feff0c09caa75939"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/11521653073caf03_0",
+      "bytes": 216,
+      "sha256": "ad7a1304aaf2b02efa433493a7b8c5977776a852f4c2a9f24cc5b292340f5fa6"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/12a3010b99cd496d_0",
+      "bytes": 251,
+      "sha256": "ecc7b956075676b7d7d3e737b1427f4245d3cde4a2f5f4e5391a17e3ac5e7c58"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/138d653dfa7902a7_0",
+      "bytes": 215,
+      "sha256": "b3e01825c1a15d9850466be7ca409ccade973bf2f3f99616bb7b636789562f96"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/1b2a36323306a677_0",
+      "bytes": 312,
+      "sha256": "6523a595febc0d2707aef088f30989f31e04fd5dd090205ec6f85bb861434e37"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/1b6cf8cc82f9efea_0",
+      "bytes": 326,
+      "sha256": "de7ee4e8a9d05fd39b28a6d7237a7d24586f0c7c51a094edf46500be2605d253"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/1c27313680674df1_0",
+      "bytes": 216,
+      "sha256": "a97dd8980a8d5262f688af9afc13f70554d344363880e980bcf1edfc56efbf19"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/22ed59a7a1d9532b_0",
+      "bytes": 215,
+      "sha256": "4d6eb4a6eb53689fa9ca9e7ea5b4f6ad2f5ba4d3752cbcbb875efa8fe58b8e9a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/2902a7b1778b9d69_0",
+      "bytes": 321,
+      "sha256": "b7b113e0319e714115cf04b441c8d632bd01279d2356d574846e42aba13c5ec2"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/2a201b4009efc31e_0",
+      "bytes": 326,
+      "sha256": "33d897f5d46db2ebcbdaf382d010a0e5ab6f1ee25fed14af39bc69ae29fcae5b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/2cdc5c6cf0dc30b8_0",
+      "bytes": 204,
+      "sha256": "6fe0b35a0c51dbbeb6a5fde8a2b1a2ce41dd702da3bef0477d526955bff074ec"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/2f99cda7cc885beb_0",
+      "bytes": 307,
+      "sha256": "4bb57b0d297fca983e4ed5db98b172f9b2ec1c81ea920b56ec14251aa975be32"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/30f3b50a16edec93_0",
+      "bytes": 217,
+      "sha256": "43a9bf5726acff25cd4573c6ef28b9671178aadad09c55e337440bd1012c54ce"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/34c10f7626b4bca3_0",
+      "bytes": 206,
+      "sha256": "4f5cc090f4c083a41aff3db28094fda0a56e2e470a45b2813b1ecbab6caa1fb5"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/35061f5bee192ed9_0",
+      "bytes": 214,
+      "sha256": "2c945308b2a2061f1e1c18ea2fb0e9852b35319e9c3829b8601a982170a3f261"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/366ef31f61774264_0",
+      "bytes": 300,
+      "sha256": "68202cd8791deba05cca748d9ea4e2080d8d6ad7647dfa7e61dbd9e320952a9d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/3875c440e83f3296_0",
+      "bytes": 223,
+      "sha256": "ff17f61f79e9f547befd230aa22449edd343c483fd3941ac1de6a074431ebb6d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/38affaee0fbe68f6_0",
+      "bytes": 306,
+      "sha256": "62a169a33c1628ff393865885ff162b0a24af8d72946b6d28849ae8b194b48a1"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/397075b74da5dfff_0",
+      "bytes": 309,
+      "sha256": "ed39ce2c228cff598a01c74f9996e21aa0b3b725ec4d3d0d61d1444cdbf7a782"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/3b5f61a14b9e70d5_0",
+      "bytes": 292,
+      "sha256": "654e0bfe332f1a27ca8a95be0fd4edcbcff55b13bf196d43b44dbaac7ee4bf33"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/3cdff97472f35090_0",
+      "bytes": 218,
+      "sha256": "d26c885de0d44679550c902f35bbff51b194ab8bf0bc7bb1bac85e23402b9344"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/411d4816c814c9a9_0",
+      "bytes": 294,
+      "sha256": "820f1cb8b2c6379ec7d995c96bc9171e120a3cb3734cc6e6014d5659968dcdb2"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/413a3e04f3a672f6_0",
+      "bytes": 207,
+      "sha256": "0637a2d4071dc3310830beb5ce372a0ed30dcfbff7e808fb5e5aa056834aba52"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/4258c2119d7dbdb7_0",
+      "bytes": 214,
+      "sha256": "38c6cd6ec64edcbb4676a9e6badfdc60237d424989fd51d2d74df7b8922cf002"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/45f0a3aa8c929244_0",
+      "bytes": 316,
+      "sha256": "821252e740218523373f9b6ed78d9f0738c0de1e1ef96846fc9ce0196376d187"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/483e2b8cbf48d94b_0",
+      "bytes": 293,
+      "sha256": "37a733ca5e326c13caa1eff1787896659e05863f3b4fef7f8b11c0d563fa6f5c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/5187ff4e4019570e_0",
+      "bytes": 290,
+      "sha256": "14f49746b0f18e63a8417cf4ca17e2fa0a168c1fa8ab5a2cd1c165d4e3e960dd"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/5a7215aaea470caf_0",
+      "bytes": 226,
+      "sha256": "ad8c1a583940ec1087d1fd81b06091bcbb872d596af31a715a7f1320e0735da0"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/5dafc0efc83e9c7f_0",
+      "bytes": 215,
+      "sha256": "f6245f8d91c22b9f8af9f338f9d400b4977f6148af7d4c45e4aa918b39832ad5"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/5e5db76f962cf47f_0",
+      "bytes": 220,
+      "sha256": "7cfdd99574ae22fb4af87180ed64f93846e35d1c1463b7ffd8726ed726c2c8ac"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/5ea6e154805c8a1d_0",
+      "bytes": 215,
+      "sha256": "9bf1d6913c1688a97a4e5f2d284a211b6b83f266c20846d1431b27a3973d29d7"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/60a1c50847cfc5c5_0",
+      "bytes": 2059,
+      "sha256": "27fbfdb0c9ee6a5f74d725cf2fae1df2ab6805f9243032856df14b5b8eead6cf"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/61dd904411e287f8_0",
+      "bytes": 317,
+      "sha256": "f2006856710360b01722e287c5771e70b7900db6bdc3798db2bcb75bbddb2e9b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/62657b7afe92d422_0",
+      "bytes": 218,
+      "sha256": "2cf0b523ac75447d7825a36d8e23e2c74092abf17beb9e87467c3c2d53305f62"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/65907b9fcc6d2c3b_0",
+      "bytes": 328,
+      "sha256": "e66d8f438df5f0548d45911a04ffcd8d46e95351c67041334f6c676fcc39695d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/66eeeac4d2533feb_0",
+      "bytes": 219,
+      "sha256": "420ae661a911d6e66b52efc1eef8a52292cad07de95ec05362ec0d4cfe878d7a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/6a27f27073bde020_0",
+      "bytes": 219,
+      "sha256": "63bffe027984f4ee8a322bde2fc6427c2b0cc5fd04ac97feef911510cdca378c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/6b98c8aa7de8919d_0",
+      "bytes": 221,
+      "sha256": "5b7a95e1528ddb99c098999fde42649a50be9d8044d69becc553c758fa230c0b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/6d18b04d3dcc31bb_0",
+      "bytes": 225,
+      "sha256": "6a0519b649a378c126677f2cdc3ab0a76c21ccd6e992bed46a6e7e5d10364c1c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/708e18e6c703cd92_0",
+      "bytes": 214,
+      "sha256": "2d0de4ff593b2b9fb187a7c67e10622bde5d28fc3ef79770de8a9a885a20c4de"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/70c2253f09f26e46_0",
+      "bytes": 217,
+      "sha256": "6104426ce86ccf4591a0d798876f2c5efbc23b3a910f56a8ae9051b2bc9926a0"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/733d248d06e0f31e_0",
+      "bytes": 316,
+      "sha256": "a74797515f7ce150d16e3b0ca858eb019746edc6071224fc3d771a559f5eb0e9"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/7460f4b6c06ba25d_0",
+      "bytes": 212,
+      "sha256": "c973f032b1e898c225b635ed2a74bb0417fee61fce83b8d3f9488a62eac8acc3"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/74d70c1beaab2020_0",
+      "bytes": 214,
+      "sha256": "8b52b0d6824fd59388f7db7b3cfdb311fc1160ff1ee12c14e9ce00ec4c03982c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/7acef77861a5ed20_0",
+      "bytes": 227,
+      "sha256": "c93fe4f6a05c51014112413b677b557bb7f7f0d6149bd64edb30ee09641097ef"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/7fbf54a055480951_0",
+      "bytes": 324,
+      "sha256": "4929202fe417038063c326f2dc2142090798060e6c5f27b0cb0eedc9bff3221d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/837e2b4624089329_0",
+      "bytes": 320,
+      "sha256": "7e4e69d3bfbb2b132a8d6168f51c1a444cc7b02e5fc587efb3efc36f389c967f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/8757d7570ef2fd49_0",
+      "bytes": 222,
+      "sha256": "3003b2d8601dccc64ce709c659dcd69b45bbdf332a27faa1bd2eafce9a7fba92"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/891d042646730555_0",
+      "bytes": 241,
+      "sha256": "d47bc1adcbfb402481baa34f6a1c267c1634cb7d3a75d176ea0197e206b77c69"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/91c677ecd1851d06_0",
+      "bytes": 289,
+      "sha256": "5534078ff7df3ce0f36cd7e35ffdc689f795dd71c877e4347dd989f7e781beec"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/91ffe3eaca2107b9_0",
+      "bytes": 210,
+      "sha256": "efafad1f05274fb578bc36f79b0806e6f30b7ccf1dbf1a3e50be93fc67a4d935"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/925b9110aa767a0e_0",
+      "bytes": 312,
+      "sha256": "824e1f0dbcdb833f2916123f711dc3d3804a4e40bb3e69faf01e7cbf7bd4cc67"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/97f28e8d8d746372_0",
+      "bytes": 307,
+      "sha256": "93cbbec8a3299bd7348409806377d022d3215582e78ece130dde525690e3d0f4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/9a25d275a807c6d4_0",
+      "bytes": 222,
+      "sha256": "3e5ea8473be57bffb26e5026ca42b3474dc17404e5a11ce249186f16c55ed7c1"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/9b2132e54cc037ae_0",
+      "bytes": 210,
+      "sha256": "5d863fd0e9f18c86c418cabdff65cf4ee7192fc6fec65d872caf52f47622475c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/9f3a46f5961fbaed_0",
+      "bytes": 218,
+      "sha256": "fc38fa03374f42c1575f615c7da7b1ca208a1309ccab20c27b32fbb3950a8d56"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/9f8764a0fc1a659d_0",
+      "bytes": 320,
+      "sha256": "1f274a853692b47c7162cf1683d1a080cd569d44c1eb2e29a4f47dc20dc98876"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/a1a16ee34befa5f1_0",
+      "bytes": 217,
+      "sha256": "a390b99aaeca7e3dcb3b12056b1a57778a951470b8682d63cdd428638b11e594"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/a227a9e6640b05b5_0",
+      "bytes": 226,
+      "sha256": "ce7d9598d851b205ccd3d9bba1d40d87481072f48bd42749dac37b0bed9a84b1"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/a83b6c747d0e4369_0",
+      "bytes": 208,
+      "sha256": "ed049205aef6adff0147bb0b3bb736f88e4cc7406f0de749356e4ef712de082a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/a8c88fad0694bbf5_0",
+      "bytes": 216,
+      "sha256": "a61d6d9da5fec2103120478e9fb7a9a2629713896786dff50afb0f4b986dbbfe"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/aff18bb3699f2ea9_0",
+      "bytes": 299,
+      "sha256": "3691990760735db4c14093b1613ca5cf0a624413bc3ee492ad997e9cc46544b9"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/b31f0a6b52eb52b0_0",
+      "bytes": 222,
+      "sha256": "76141471e339fca727ffe7e06ad039b3c27d4ac07e5a7d7e6c256350bae5502d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/b68f7b57d8825202_0",
+      "bytes": 225,
+      "sha256": "06a20473db945a9e305556880d46dcb43001c029403e71cb0d81217cd3f080aa"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/bb197177a1dd27a8_0",
+      "bytes": 206,
+      "sha256": "7ca7ace35cf33d25e23424edaf77a6f6e12b7b924d35d56eabb028feb8a9573e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/bd319ca08442f503_0",
+      "bytes": 309,
+      "sha256": "a678dd7af915b79ee28c517fe7f51096243c54f886d38a538be47420a7e49e03"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/c0268f7b629766d7_0",
+      "bytes": 212,
+      "sha256": "857e4122d02540d22ff9fa3558fda116bff0d664cb736456270513200ab7464b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/c30b3ad785c79031_0",
+      "bytes": 321,
+      "sha256": "52fe1652cf0db4b84bec384455761c5e9944e01cf0c62def4694e25afab3f3a8"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/c97c4f0a245cf651_0",
+      "bytes": 287,
+      "sha256": "55e1f38959491b75cd64fd1da02f232da69a018c42846d91ef63f98de9963d93"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/ce2eea75733a50f5_0",
+      "bytes": 284,
+      "sha256": "da7be9f6bfa72496d9c7d28f2aa1c78c9f1a09128dff907b5849a80f3878c48e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/d12f02e7765a891c_0",
+      "bytes": 222,
+      "sha256": "4321ab0f7c69892575efe13de8ca7ccb9139ef0c917944f48ccc862607632c35"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/d34861d81dea8415_0",
+      "bytes": 294,
+      "sha256": "4336b9a34f2008fd4ec069be00631432f684a09f499b671493b1ef67c62b359f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/d4157c23b184332d_0",
+      "bytes": 227,
+      "sha256": "331e1be52415481ed1199b2c92098c09741ec279f80ed7ed00dabb5488540702"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/d6bfc5753def0f7b_0",
+      "bytes": 311,
+      "sha256": "e0a9bccf966dcaac3fdb59efdc94676e90ffe414d01fcb43cce81a01d001884e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/d6dafbb0a4751fd8_0",
+      "bytes": 218,
+      "sha256": "339f700a6af680ade34b10b694db4ad1e21b04036631b17a9c0e3cea23c5f3da"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/d8d1c823b621e5f4_0",
+      "bytes": 209,
+      "sha256": "89c8511ba16314c4a970d18001a43973cad4eb043bb3ba8f4242f2d1b0a162ba"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/d95aa3483646a7ff_0",
+      "bytes": 220,
+      "sha256": "188cb16385ac2e32ac96493a214df90a99b244d58f41224a4dad526f84278cea"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/d98ba4def0de5cfb_0",
+      "bytes": 314,
+      "sha256": "8c84456dc9658e962a8f02ccc606dfd6f6e95685d0315509a84ad503a9e93fcd"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/dc3f84686f0bcd1e_0",
+      "bytes": 218,
+      "sha256": "9f73bc7296fe06cc1c7e5cb862d26f72c1b709644275d8e79b6c3586cf65b7b6"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e1366c41a508720e_0",
+      "bytes": 320,
+      "sha256": "4461ce54f511dbb1bf6d5e18c171dd376594d8db762ee2a523fe37bd4485b2d9"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e2d80f2e15813d64_0",
+      "bytes": 225,
+      "sha256": "9eb5bf9c4cf27b4018ba8ccca247eb2b62bb60fdddd8be16e185058162d94491"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e37587c5e83c3fd0_0",
+      "bytes": 318,
+      "sha256": "97cf98473afdb3156fa5df99944182f6b2a039339eec8bdea4e902d353f29fa9"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e4a5f6c4b1383cdd_0",
+      "bytes": 223,
+      "sha256": "4af30be225e70ab8882515f650d96bd7a828dcdd317cc8d44c6fb63f7e8aa063"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e4b22bb3ebd30a75_0",
+      "bytes": 214,
+      "sha256": "477da0765677ddd6aac39b74beed4d4afe602ec8056276524a5f3105c89d2e18"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e67f75d9e4412ad2_0",
+      "bytes": 309,
+      "sha256": "d8180fa5358162988e473c3d460934169424a10ba3b1df217b89f8e57f91e73f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e6a5fd090a2e815f_0",
+      "bytes": 313,
+      "sha256": "7ee05b8709e3fcc604b7030a03d3f5eedd42cbf17608fcdb59076bf44377debd"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/e6b06a86d994d59d_0",
+      "bytes": 314,
+      "sha256": "2b52eed8966f738a2f6b7cde3fd3a4b5b18ab437e6b8fa7b4ed7aed78f4d87df"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/eab4bd84b5bba5ec_0",
+      "bytes": 221,
+      "sha256": "9986fc2661a9f32991c507d6266728613047411305b4ba43d7a489f0cac663c4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f1075bba8e8f0f01_0",
+      "bytes": 218,
+      "sha256": "c4106dca887a1838060c7a2dd02810427179adefe83f33123dc9e076dab842dd"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f21f38ab005a1ef0_0",
+      "bytes": 239,
+      "sha256": "b0795d0aa2f49311a52e0334fe7a8b562b3162f2b4391099736fb09ce6579271"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f3ccde86c302cc1f_0",
+      "bytes": 291,
+      "sha256": "0fcb7161808d06817d5e326020c3e1da8cd17da2495ff906f7aa8b8240434134"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f65793c510c5fe77_0",
+      "bytes": 316,
+      "sha256": "8070fef5112a04f4c422d394bb743b0808b7a7997e90e41f25d145846263511b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f6edea5fa1d25859_0",
+      "bytes": 218,
+      "sha256": "626788536bc51a1cd7ae4e6a4e2dcc9fed2c14ea7bd0c16385ecc1e0486c54fd"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f7119fb436b3d5b5_0",
+      "bytes": 230,
+      "sha256": "c7a313609ddee19b54455f579bf05c75028cec8920a9a9bd2736994872f78e6f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f952fbb4da90b5da_0",
+      "bytes": 205,
+      "sha256": "26bb5ff23324caa5f34beb4a106c49b3f7f44a62da01dbea98c97bdd780aabc0"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/f98c008ed478317a_0",
+      "bytes": 228,
+      "sha256": "09514afeb4a8575aa60548742ebdc80a32716d622a4f79fbe9a7e9655d2ee52f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/fc25eeb32f91bef0_0",
+      "bytes": 219,
+      "sha256": "48eb85f4f211e8304c5da32dea0b6a8b5fa4c18c1564bf169bc255f187f0e312"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/index",
+      "bytes": 24,
+      "sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/js/index-dir/the-real-index",
+      "bytes": 2448,
+      "sha256": "142c6517c0ba33d285c381fba806329d542cf1aa61f808ff97e3b5a9ba1921af"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/wasm/index",
+      "bytes": 24,
+      "sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Code Cache/wasm/index-dir/the-real-index",
+      "bytes": 48,
+      "sha256": "ca60d3db13f7078bdd3237570369869d85ea316e8506fd64daea79e1df661a7c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cookies",
+      "bytes": 20480,
+      "sha256": "e63e5ecba16ce902f2c62dda454042ecca66a09d7a33f38fedac458d1a11f81b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Cookies-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/DIPS",
+      "bytes": 36864,
+      "sha256": "fc5e8d70f62c3168e63cd93f99987efcf511d5c5f7c722813647301bcbf135fb"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/data_0",
+      "bytes": 8192,
+      "sha256": "d6a5fe39cd672781b256e0e3102f7022635f1d4bb7cfcc90a80fffe4d0f3877e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/data_1",
+      "bytes": 270336,
+      "sha256": "88cab1589db59ec558f67f3f6683bf5e005aab4b84176139410e40e8ba8df634"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/data_2",
+      "bytes": 8192,
+      "sha256": "ec1702806f4cc7c42a82fc2b38e89835fde7c64bb32060e0823c9077ca92efb7"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/data_3",
+      "bytes": 8192,
+      "sha256": "e09f42c398d688dce168570291f1f92d079987deda3099a34adb9e8c0522b30c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/DawnGraphiteCache/index",
+      "bytes": 262512,
+      "sha256": "cc8b3299792ecca69dc19e132e5bca5603d1cb79f7601bad4b8e0ccf432fafbd"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/data_0",
+      "bytes": 8192,
+      "sha256": "d6a5fe39cd672781b256e0e3102f7022635f1d4bb7cfcc90a80fffe4d0f3877e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/data_1",
+      "bytes": 270336,
+      "sha256": "b801d23e0831c610b4a37e604050dfe2348d7ceb9c708c311bbbb494a72a9cc4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/data_2",
+      "bytes": 8192,
+      "sha256": "ec1702806f4cc7c42a82fc2b38e89835fde7c64bb32060e0823c9077ca92efb7"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/data_3",
+      "bytes": 8192,
+      "sha256": "e09f42c398d688dce168570291f1f92d079987deda3099a34adb9e8c0522b30c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/DawnWebGPUCache/index",
+      "bytes": 262512,
+      "sha256": "1da71c8d6453b2fbd9248af449a2867b77fa97e45d53eb40c5be2880d0b5fc15"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Device Bound Sessions",
+      "bytes": 20480,
+      "sha256": "78a06f4f93849b88f0489d00c0389205bc9d5389608c6918549df4db668d783f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Device Bound Sessions-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Download Service/EntryDB/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Download Service/EntryDB/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension Rules/000003.log",
+      "bytes": 19,
+      "sha256": "ab5c71347d95f319781df230012713c7819ac0d69373e8c9a7302cae3f9a04b7"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension Rules/CURRENT",
+      "bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension Rules/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension Rules/LOG",
+      "bytes": 441,
+      "sha256": "d7b0a13aeac81d46a9fec2491c003615ac83f1ed325640eb638ee69dc6d91f48"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension Rules/MANIFEST-000001",
+      "bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension Scripts/000003.log",
+      "bytes": 19,
+      "sha256": "ab5c71347d95f319781df230012713c7819ac0d69373e8c9a7302cae3f9a04b7"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension Scripts/CURRENT",
+      "bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension Scripts/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension Scripts/LOG",
+      "bytes": 445,
+      "sha256": "1dc299794fbfd99f21a61a91f62526e744d80106e662d82b714967e99adcfdef"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension Scripts/MANIFEST-000001",
+      "bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension State/000003.log",
+      "bytes": 57,
+      "sha256": "99c59cbe7db56d56a286485635e4467004641c6275e708887dd35728eb05109a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension State/CURRENT",
+      "bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension State/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension State/LOG",
+      "bytes": 441,
+      "sha256": "9e90fc46540f7b18a0df38d9d7b2b2ed565271a7e8e218011431cf0b8a969f93"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Extension State/MANIFEST-000001",
+      "bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Favicons",
+      "bytes": 20480,
+      "sha256": "1fbc7ea9722b2154b0d69c9d0ed80b6c0c98c5d389cf31ac1a2b8db030724840"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Favicons-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GCM Store/000003.log",
+      "bytes": 1142,
+      "sha256": "cb23f9b6646b1edaef221c9e9567623505e884545b81c0e328caee065e24924f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GCM Store/CURRENT",
+      "bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GCM Store/Encryption/000003.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GCM Store/Encryption/CURRENT",
+      "bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GCM Store/Encryption/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GCM Store/Encryption/LOG",
+      "bytes": 451,
+      "sha256": "9523ded8015a74815b32f829f7665c6f4a1211b91bc47dae9189e07acf69095b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GCM Store/Encryption/MANIFEST-000001",
+      "bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GCM Store/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GCM Store/LOG",
+      "bytes": 429,
+      "sha256": "b596d03d8b0327c428331e931119fe1ae1a05addab449d43dd6a5e2524c65974"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GCM Store/MANIFEST-000001",
+      "bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GPUCache/data_0",
+      "bytes": 45056,
+      "sha256": "9313b44d94d160072f20385a573e47817ef869e105bccb3ef44bc1586a03a008"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GPUCache/data_1",
+      "bytes": 270336,
+      "sha256": "47276c10c55a6d785120b91bb7af441c75b4c1ee7f1a0621286b3ca9c60a845f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GPUCache/data_2",
+      "bytes": 1056768,
+      "sha256": "de03d0357669047b2f3fffd372371dab8cdd8cd2b50ccf3438c35c9e9c844669"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GPUCache/data_3",
+      "bytes": 4202496,
+      "sha256": "d9a3b65d0e1256eb41c5bb100c61b6fdbc91d1c365eea783b7216c00a2cee1cd"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GPUCache/f_000001",
+      "bytes": 20892,
+      "sha256": "1e2f866b1c7e0c4764b5874bae94a7f873d87d96416f50e4d907bf02487df350"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/GPUCache/index",
+      "bytes": 262512,
+      "sha256": "61453d5fc70e8d2306f7aef896d6bfed4c506ad5562265feb28ef7390779bd92"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/History",
+      "bytes": 204800,
+      "sha256": "5a9122c6ba39e3844c09878abe39e9576d9cb697663952a4edf6a9f7c84cc781"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/History-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/IndexedDB/https_wasm-vm.pages.dev_0.indexeddb.leveldb/000003.log",
+      "bytes": 3618,
+      "sha256": "1007646b2f5666e4cf01e9d857fefc2a16817f09437b64e9c54785c4829d3db0"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/IndexedDB/https_wasm-vm.pages.dev_0.indexeddb.leveldb/CURRENT",
+      "bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/IndexedDB/https_wasm-vm.pages.dev_0.indexeddb.leveldb/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/IndexedDB/https_wasm-vm.pages.dev_0.indexeddb.leveldb/LOG",
+      "bytes": 517,
+      "sha256": "fe540b5f4a791ec187f7bbabb5722137fd66b8ec44b9259f16810597624c8883"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/IndexedDB/https_wasm-vm.pages.dev_0.indexeddb.leveldb/MANIFEST-000001",
+      "bytes": 23,
+      "sha256": "720a78803b84cbcc8eb204d5cf8ea6ee2f693be0ab2124ddf2b81455de02a3ed"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/000003.log",
+      "bytes": 49,
+      "sha256": "af47b5d07d2f1aa55711e00774a429289267a82e604602df8fdd2c5047626159"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/CURRENT",
+      "bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/LOG",
+      "bytes": 453,
+      "sha256": "0a2ca3084b1bae93783b7a4667135300b2820816c5432e565511e47cc17fa36e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Local Storage/leveldb/MANIFEST-000001",
+      "bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Login Data",
+      "bytes": 40960,
+      "sha256": "869676a006de3214994dedee2318ece6fbf55a4afc42b551ce065bb35265f8d1"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Login Data For Account",
+      "bytes": 40960,
+      "sha256": "869676a006de3214994dedee2318ece6fbf55a4afc42b551ce065bb35265f8d1"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Login Data For Account-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Login Data-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Network Action Predictor",
+      "bytes": 53248,
+      "sha256": "78c0f24e5b07037e9eb99ca2344f1b99ccc3a21c2ccecbe4282605e48a2751e7"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Network Action Predictor-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Network Persistent State",
+      "bytes": 2470,
+      "sha256": "ce70890f7c2858ec6d1178d829cd10239279561975d316af69136165eaf7989b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/PersistentOriginTrials/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/PersistentOriginTrials/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Preferences",
+      "bytes": 11664,
+      "sha256": "529c1de371706cbec37ec7ab36a62026ed1eeeec36e607d41ef8823dd59a0f85"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/PreferredApps",
+      "bytes": 33,
+      "sha256": "42b55d126d1e640b1ed7a6bdcb9a46c81df461fa7e131f4f8c7108c2c61c14de"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/README",
+      "bytes": 180,
+      "sha256": "c43668eec4a8d88a5b3a06a84f8846853fe33e54293c2db56899a5a5dfb4d944"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Reporting and NEL",
+      "bytes": 36864,
+      "sha256": "9247a83b54b794638bb3b5a0a3181526ba51177ae8b6e342077c4bcdb9b945d6"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Reporting and NEL-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Secure Preferences",
+      "bytes": 7245,
+      "sha256": "8cf324631ef3dd5a735b7714c74714cd8e643f6c6191211df943bbb40c1b9e43"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Segmentation Platform/SegmentInfoDB/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Segmentation Platform/SegmentInfoDB/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Segmentation Platform/SignalDB/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Segmentation Platform/SignalDB/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Segmentation Platform/SignalStorageConfigDB/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/ServerCertificate",
+      "bytes": 20480,
+      "sha256": "180ffbc2a4f10b5563f5a7bfe62d23909f0aa77572a06e59a9be4c6fca7176f7"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/ServerCertificate-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/6961035b-c544-4306-a200-18d71894f590/453de08215d7af3d_0",
+      "bytes": 3539332,
+      "sha256": "bcd7c0ea5d4f466c3f3ca36b18462480c14ff2928f3f54af0e8cce168ccad56c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/6961035b-c544-4306-a200-18d71894f590/86c0a8e563b21bef_0",
+      "bytes": 24209174,
+      "sha256": "f298263be9b2c2f625b58621ce4c21ff9252e08fe36e415dd61abb14f0aafbae"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/6961035b-c544-4306-a200-18d71894f590/c12d0fcc74099bcf_0",
+      "bytes": 204058009,
+      "sha256": "ad90e5079caad000084866f45fd9d1b5700784ef36cb8b9399056b27329bc6c4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/6961035b-c544-4306-a200-18d71894f590/index",
+      "bytes": 24,
+      "sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/6961035b-c544-4306-a200-18d71894f590/index-dir/the-real-index",
+      "bytes": 120,
+      "sha256": "6a9770d3690b5e6d1afe3a032a8a9b7db98f282eba760a8147050e955dc8a648"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Service Worker/CacheStorage/17cc31ddb2f719648f0e6f9a4d70c89565e43bd8/index.txt",
+      "bytes": 179,
+      "sha256": "54fdd055e8aaad480bb56db34e709d2fc32fc15b94006811da237b23d5b83f94"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Session Storage/000003.log",
+      "bytes": 87,
+      "sha256": "4d7a760b35105bcacd2adef01d3f8080d1cebcf017b27603c32bf4fda6321b47"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Session Storage/CURRENT",
+      "bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Session Storage/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Session Storage/LOG",
+      "bytes": 441,
+      "sha256": "1c1650c2c5e5ba9779114d19f6fbeb1a2ba003debc8307e989801b8c640ea4eb"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Session Storage/MANIFEST-000001",
+      "bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Sessions/Session_13436786973372606",
+      "bytes": 7816,
+      "sha256": "93d1405932d1ff1d6a965944ea7d766e9c86a3455a26f60b0b059303c1af4e17"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Sessions/Tabs_13436787072927496",
+      "bytes": 3855,
+      "sha256": "1bb6c4f12c8a423d7cdf174ccd874d6db65ec3e12610e5435afba315e76f2c84"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Shared Dictionary/cache/index",
+      "bytes": 24,
+      "sha256": "fbcfe23a2ecb82b7100c50811691dde0a33aa3da8d176be9882a9db485dc0f2d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Shared Dictionary/cache/index-dir/the-real-index",
+      "bytes": 48,
+      "sha256": "9b4a526624b6c7b460e29e8a4816210eb4b7493880c0100d1c6308c991cc8f32"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Shared Dictionary/db",
+      "bytes": 45056,
+      "sha256": "0d6287fecedbc44ed9f51ded9de88629ec9f385ecff5da9a34e47e96fd5a9cba"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Shared Dictionary/db-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Shortcuts",
+      "bytes": 20480,
+      "sha256": "4d50f902dd988a05350991f9d575138fa62d7ee143eba5125bf5aac983ecd5de"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Shortcuts-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Site Characteristics Database/000003.log",
+      "bytes": 112,
+      "sha256": "9d794c4522ff3f85f98cdd204aae54434180d4227c2b560ac202f60f440f560f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Site Characteristics Database/CURRENT",
+      "bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Site Characteristics Database/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Site Characteristics Database/LOG",
+      "bytes": 469,
+      "sha256": "2bdbe692e09e12bd6d6cf6a49ab984031500e86455789e4c8b1579fbbf34ef81"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Site Characteristics Database/MANIFEST-000001",
+      "bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Sync Data/LevelDB/000003.log",
+      "bytes": 118,
+      "sha256": "b201e50dd759e0c41786332abd0c141372955e9489cf632cc09100d1f46b3ac7"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Sync Data/LevelDB/CURRENT",
+      "bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Sync Data/LevelDB/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Sync Data/LevelDB/LOG",
+      "bytes": 445,
+      "sha256": "4aedc24ec7d667e0522160ccf02e67e256303f7be72b820d28321283533e6c4f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Sync Data/LevelDB/MANIFEST-000001",
+      "bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Top Sites",
+      "bytes": 20480,
+      "sha256": "e4395aae549728e25261fe377bf2c97f0e7f485a9128bfe94de995420f9e5e15"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Top Sites-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/TransportSecurity",
+      "bytes": 187,
+      "sha256": "4aa165cf0648356fd7054bb5b7e2be791b7265d07171d9fe742e1fc38f1699dd"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Trust Tokens",
+      "bytes": 36864,
+      "sha256": "88bafa2a265212152b2405502209d64438a416ff594a040e666f031ef442a812"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Trust Tokens-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Web Data",
+      "bytes": 159744,
+      "sha256": "5fabb5b8fc5aa40e5563414c8f436f5101801b3839f3b6c1da84cda05023a131"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/Web Data-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/WebStorage/QuotaManager",
+      "bytes": 40960,
+      "sha256": "550912f3b5bc1018ee2c7ed96062d4eeecf209e41f248a68815c90d3da2ea51c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/WebStorage/QuotaManager-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/chrome_cart_db/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/chrome_cart_db/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/commerce_subscription_db/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/commerce_subscription_db/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/declarative_performance_observer.db",
+      "bytes": 32768,
+      "sha256": "eda4c9567974174f08a1dbcd8badf4d6199a7e9a8b78b8826548f49e20e7badf"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/declarative_performance_observer.db-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/discount_infos_db/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/discount_infos_db/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/discounts_db/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/discounts_db/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/heavy_ad_intervention_opt_out.db",
+      "bytes": 16384,
+      "sha256": "2adb7920679589545e8f37e3918b42d962ca404ddbd569930383478f6525b6ee"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/heavy_ad_intervention_opt_out.db-journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/optimization_guide_hint_cache_store/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/optimization_guide_hint_cache_store/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/parcel_tracking_db/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/parcel_tracking_db/LOG",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/000003.log",
+      "bytes": 104356,
+      "sha256": "2d875dc89eb8acddd8b7bff0b4b80adc931c33c3f8817e60e49b56ae138883c8"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/CURRENT",
+      "bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/LOG",
+      "bytes": 441,
+      "sha256": "855dcfed84e1404aee5e7eede055546f89fd5ed208e61431f047e9d27542a2d9"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/MANIFEST-000001",
+      "bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/000003.log",
+      "bytes": 994,
+      "sha256": "ec2f5cf3120894969eb260c56d887751e407d2035a6184ce8c0ecae7d243ae53"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/CURRENT",
+      "bytes": 16,
+      "sha256": "0f1bad70c7bd1e0a69562853ec529355462fcd0423263a3d39d6d0d70b780443"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/LOCK",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/LOG",
+      "bytes": 459,
+      "sha256": "bf5e4b3186895d723d52643e988877090efd49bc7946c1967f928e73f46b3e81"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Default/shared_proto_db/metadata/MANIFEST-000001",
+      "bytes": 41,
+      "sha256": "f9d31b278e215eb0d0e9cd709edfa037e828f36214ab7906f612160fead4b2b4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/GPUPersistentCache/GPUCache/OWS7YX22O2QTPHEZ3T7TDKIBY3P34XEI/cache.db",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/GPUPersistentCache/GPUCache/OWS7YX22O2QTPHEZ3T7TDKIBY3P34XEI/cache.db-wal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/GPUPersistentCache/GPUCache/OWS7YX22O2QTPHEZ3T7TDKIBY3P34XEI/cache.journal",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/GraphiteDawnCache/data_0",
+      "bytes": 45056,
+      "sha256": "cebed4b457c542e5f7692c9611e702a6bd5f8e107a3e12bd26d0eaa79069c56a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/GraphiteDawnCache/data_1",
+      "bytes": 270336,
+      "sha256": "fb6b7897ce67893db307469517783cb54af0456f8741f8d879af7b2793e4ab86"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/GraphiteDawnCache/data_2",
+      "bytes": 1056768,
+      "sha256": "c1a9d8d86a386b40c734d09ae4a287eb492a53a4cc104e44a352b4d674215975"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/GraphiteDawnCache/data_3",
+      "bytes": 4202496,
+      "sha256": "fe874cbd6b4c9d80e39eed211bba22c45b22ad870b47a2160b583eab914a9b71"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/GraphiteDawnCache/f_000001",
+      "bytes": 16870,
+      "sha256": "0bce0feed7aea9dc41c92c463381a9627a948a726ff9d38aa27b94ec30f98e40"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/GraphiteDawnCache/f_000002",
+      "bytes": 17089,
+      "sha256": "075cb9f882ba94bb72389555605a873b7b2944e97e456fa79663880742651d98"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/GraphiteDawnCache/f_000003",
+      "bytes": 18807,
+      "sha256": "3854868cf4193b79797ee82a7d28550222667c9700bd5e86d3ab29b197339e48"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/GraphiteDawnCache/index",
+      "bytes": 262512,
+      "sha256": "b73d337f937adb592609a84569700d2c7a56d21d27c3dea726fca10c6582217a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Last Version",
+      "bytes": 13,
+      "sha256": "05227b32f0a467d131c5ad337dc1f258c46d81448a863d850f4a2946eac8a8a7"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Local State",
+      "bytes": 5714,
+      "sha256": "e4c45dbc6edbaf507b2f999ed098ae4d394fae97757c55e959eeb3cddd063513"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/_metadata/verified_contents.json",
+      "bytes": 4382,
+      "sha256": "912ad826e7f84c3ec4f472b19e860de4e642ee82e7b23281fe0b46a27834a35a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/laya_solution_config.binarypb",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/manifest.binarypb",
+      "bytes": 12147,
+      "sha256": "013f32d399c7069831342b099db03cc04c0d65ea425b474bcc13874eca423ac9"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/manifest.json",
+      "bytes": 84,
+      "sha256": "e5f60f7720a2eb8b1bd23245a614a3c3732a61f3153bc1eac9eaa5dd91961d7d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/prompt_gemma4_12b_solution_config.binarypb",
+      "bytes": 949,
+      "sha256": "0f2c3e9d8ffe29d035fb56f4cab6a10f5c543e270934b667e8394db5d13890a3"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/prompt_gemma4_4b_solution_config.binarypb",
+      "bytes": 949,
+      "sha256": "0f2c3e9d8ffe29d035fb56f4cab6a10f5c543e270934b667e8394db5d13890a3"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/prompt_gemma4_solution_config.binarypb",
+      "bytes": 949,
+      "sha256": "0f2c3e9d8ffe29d035fb56f4cab6a10f5c543e270934b667e8394db5d13890a3"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/prompt_solution_config.binarypb",
+      "bytes": 949,
+      "sha256": "0f2c3e9d8ffe29d035fb56f4cab6a10f5c543e270934b667e8394db5d13890a3"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/proofreader_small_expert_model_solution_config.binarypb",
+      "bytes": 498,
+      "sha256": "4fcf7a99bc9d8ef1e94cedc734fe3ffaac142faeae6526e3ce698b4c9b5841e2"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/scam_detection_solution_config.binarypb",
+      "bytes": 1010,
+      "sha256": "3adff134a5dce3a061cdeee052a4a61b6cbb2e3ec4ea76063fc858f61a6e5b44"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/speech_recognition_small_expert_model_solution_config.binarypb",
+      "bytes": 12,
+      "sha256": "4fa54d5929befd5dcdd3b368a40ec9ff027e6ea2dd2383f39d53b2abce5eef54"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/summarizer_gemma4_12b_solution_config.binarypb",
+      "bytes": 15298,
+      "sha256": "0a2101e272b2e14cbe3704975200f33fbb2a2482929484ab231061e728e48002"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/summarizer_gemma4_4b_solution_config.binarypb",
+      "bytes": 15298,
+      "sha256": "0a2101e272b2e14cbe3704975200f33fbb2a2482929484ab231061e728e48002"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/summarizer_gemma4_solution_config.binarypb",
+      "bytes": 15298,
+      "sha256": "0a2101e272b2e14cbe3704975200f33fbb2a2482929484ab231061e728e48002"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/summarizer_nano_v3_solution_config.binarypb",
+      "bytes": 15294,
+      "sha256": "6fe373c4aa273fc929931216fa8a670342e0d3475b10617d21ccc59c78499308"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/summarizer_small_expert_model_solution_config.binarypb",
+      "bytes": 1415,
+      "sha256": "1d3a9966794769781ef419e21b285536ba7d8f0fc842de7080859608953f759b"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/writing_assistance_gemma4_12b_solution_config.binarypb",
+      "bytes": 11670,
+      "sha256": "814d2ed5e8eaadfaa6471f43ca8a024498ada20e2a6ab04fe2d21f0e0099af8c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/writing_assistance_gemma4_4b_solution_config.binarypb",
+      "bytes": 11670,
+      "sha256": "814d2ed5e8eaadfaa6471f43ca8a024498ada20e2a6ab04fe2d21f0e0099af8c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/writing_assistance_gemma4_solution_config.binarypb",
+      "bytes": 11670,
+      "sha256": "814d2ed5e8eaadfaa6471f43ca8a024498ada20e2a6ab04fe2d21f0e0099af8c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/OptimizationGuideModelsManifest/1.20261011.2/writing_assistance_solution_config.binarypb",
+      "bytes": 11670,
+      "sha256": "814d2ed5e8eaadfaa6471f43ca8a024498ada20e2a6ab04fe2d21f0e0099af8c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/Variations",
+      "bytes": 85,
+      "sha256": "b26da4f8c7e283aa74386da0229d66af14a37986b8ca828e054fc932f68dd557"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/VariationsSafeSeedV2",
+      "bytes": 19,
+      "sha256": "1560b22b2264f7cb6b7f6910164813f76c5e8a06fb1acf85b375e687ee49c1ad"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/VariationsSeedV2",
+      "bytes": 11,
+      "sha256": "b4cc4174735c28360b9081be3c3d0552d8a4b3cdb54431ac00ed0d622bab6296"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/component_crx_cache/metadata.json",
+      "bytes": 2,
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/extensions_crx_cache/metadata.json",
+      "bytes": 13,
+      "sha256": "2771d13c637c267132afff9db67537bef95708534b79ae8d954254c4e64e4e0f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/13/E6DC4029A1E4B4C1/B17749F7E2B9F9CC/model-info.pb",
+      "bytes": 10,
+      "sha256": "d8afb60d9cb1e3147efa0e59a172e0af9daa1771543f316f3221be176d9534af"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/13/E6DC4029A1E4B4C1/B17749F7E2B9F9CC/model.tflite",
+      "bytes": 1219248,
+      "sha256": "3c88fd9805746be38b8d567b81dccee7c790ed17ca58902e69506b1e4c41fd3f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/2/E6DC4029A1E4B4C1/B62A30D3550E0A70/model-info.pb",
+      "bytes": 12,
+      "sha256": "5887dcfba850053c7d4cc3897c84f73a96baf16e48e00b87eb1e6fbd8e5101e6"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/2/E6DC4029A1E4B4C1/B62A30D3550E0A70/model.tflite",
+      "bytes": 392048,
+      "sha256": "a0956386dc64fd9f4883c8741f950cd60a56859616b159c9e4251c9eb0ac5534"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/20/E6DC4029A1E4B4C1/4F47AD1E324D4347/model-info.pb",
+      "bytes": 164,
+      "sha256": "fd9510efa2478b1709fa685f2c51c4517225ec618971819c808d64c8c49f6c9a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/20/E6DC4029A1E4B4C1/4F47AD1E324D4347/model.tflite",
+      "bytes": 31520,
+      "sha256": "e8c55250b30a5999403e9b7ad1031223ca3297e2a79de5bd169581f734691eab"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/24/E6DC4029A1E4B4C1/663AD3F46AD2DD31/enus_denylist_encoded_241007.txt",
+      "bytes": 8000,
+      "sha256": "10c8ff7aa63c4a53d8737ff0d432ca406eea1f02b9c57122e155491498a71bd0"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/24/E6DC4029A1E4B4C1/663AD3F46AD2DD31/model-info.pb",
+      "bytes": 176,
+      "sha256": "6afefce5beb3c49339ceb42d6d01e5a96bfcb62162988ed775eb4e8f6a83a5b4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/24/E6DC4029A1E4B4C1/663AD3F46AD2DD31/model.tflite",
+      "bytes": 4602152,
+      "sha256": "b7de6a063847c456e8ddfa668e4f731861f82cfb95bcad9909e9f604ed62d633"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/24/E6DC4029A1E4B4C1/663AD3F46AD2DD31/vocab_en-us.txt",
+      "bytes": 1008,
+      "sha256": "b00a8ae348e6e4f12c3410ba71ed3547764432d21f737b51f7100e5ae7ff0bd3"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/25/E6DC4029A1E4B4C1/4B27E7299CE1908C/model-info.pb",
+      "bytes": 146,
+      "sha256": "48fb46558b429470e3442dd71df63466f71722c8ff28d8eb2ce0970f9883daba"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/25/E6DC4029A1E4B4C1/4B27E7299CE1908C/model.tflite",
+      "bytes": 180520,
+      "sha256": "498e3205bf85da0a8f8b57e292d4bd12b31d691e04039c04bedcde75d1ea7459"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/25/E6DC4029A1E4B4C1/4B27E7299CE1908C/visual_model_desktop.tflite",
+      "bytes": 3452826,
+      "sha256": "eaea1c7eeb2af4fcb59c7db541df61057c4ccdb8a4d4f70af75776d70aa1850c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/26/E6DC4029A1E4B4C1/31702FDE9ACCC2F4/model-info.pb",
+      "bytes": 416,
+      "sha256": "df5ace9343b9c960993fd8d97a3911d6cdfc2531ecd36d4bba32fef89dd46db3"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/26/E6DC4029A1E4B4C1/31702FDE9ACCC2F4/model.tflite",
+      "bytes": 7112,
+      "sha256": "92e81784c55f74000441d25a29c895b19ca1bd53efe0177ce3c27fbdb7869fa1"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/CAF869DFDAFB5B81/model-info.pb",
+      "bytes": 138,
+      "sha256": "76710ebdc60b1488efd8da877e7597beed852f805a7043697faa92282c65c74d"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/CAF869DFDAFB5B81/model.tflite",
+      "bytes": 36778224,
+      "sha256": "bbc7dc1ae142e321b07749bc824f487c199334f6cfc567166ce8e2e58bd955a4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/43/E6DC4029A1E4B4C1/CAF869DFDAFB5B81/sentencepiece.model",
+      "bytes": 794346,
+      "sha256": "839ffa4b9afae8d77834a88b87781849aa021975d6063dec6085633fcaf7171c"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/45/E6DC4029A1E4B4C1/AED74A8732270727/model-info.pb",
+      "bytes": 7104,
+      "sha256": "fab8e53a41540b352b8d58f37f23dc464ac8e0ecc47f65bd5f4be34df792c2e3"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/45/E6DC4029A1E4B4C1/AED74A8732270727/model.tflite",
+      "bytes": 131736,
+      "sha256": "4c897707a45592774ffc4c65b207589efee2f1667798f96b4e37245047466e3e"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/64/E6DC4029A1E4B4C1/F649BA3A5871C3B7/model-info.pb",
+      "bytes": 114,
+      "sha256": "92a115fc3acb18b3aae3e14bff8c7289e5d8310667d771c93d7ebb01f9e97b7f"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/64/E6DC4029A1E4B4C1/F649BA3A5871C3B7/model.tflite",
+      "bytes": 198904,
+      "sha256": "5c72b0951ab7d9407f81810714a171c3508f72fe72eff14ba20fb37a7efd295a"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/74/E6DC4029A1E4B4C1/D47F728639182A1C/model-info.pb",
+      "bytes": 114,
+      "sha256": "8c9929a6a7b1d7ef0509823ef508a67f4454e3a3adf7f5a7c56879f909290462"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/74/E6DC4029A1E4B4C1/D47F728639182A1C/model.tflite",
+      "bytes": 396056,
+      "sha256": "977a477f81a9de16b62d94ad31cdb20844415540902e6ffdf921476debec22b7"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/9/E6DC4029A1E4B4C1/C21E552825A137CA/model-info.pb",
+      "bytes": 164,
+      "sha256": "804b149ba8918e68e78c25d262ba95118b4088e0cf06bf9c9dd821bfc8815dca"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/optimization_guide_model_store/9/E6DC4029A1E4B4C1/C21E552825A137CA/model.tflite",
+      "bytes": 31520,
+      "sha256": "21ecf18a9eb18a66870208035d857a536d6d714e0eec47a86d316ade56bb90a4"
+    },
+    {
+      "path": "retained-gpu-browser/chromium-profile/segmentation_platform/ukm_db",
+      "bytes": 49152,
+      "sha256": "48c1d7ded466efd71dc35942621be649ea040abee20125c5528530e092792684"
+    },
+    {
+      "path": "retained-gpu-browser/gpu-factory-ready.png",
+      "bytes": 129987,
+      "sha256": "0a87e007f1c73bec5007b796c80ca94e9680317fb80f5dca41ebec57aa43dc08"
+    },
+    {
+      "path": "retained-gpu-browser/javascript-coverage.json",
+      "bytes": 1960837,
+      "sha256": "9b2c10de8987200268620ae3d68fd044d64ba843ccdc7887afb757c61892857d"
+    },
+    {
+      "path": "retained-gpu-browser/report.json",
+      "bytes": 14342,
+      "sha256": "baa82524a4c3fb22e21059d97b5ae3dda4f1c87f39a94e06968567885c48c7a0"
+    },
+    {
+      "path": "retained-gpu-browser.log",
+      "bytes": 511,
+      "sha256": "97c8bc841bc9a726ceaa392e26eb907056b05e5f1bbae6c2b3db3bf9c923bbda"
+    }
+  ],
+  "finished": 1792313473.4207969
+}

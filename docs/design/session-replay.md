@@ -92,6 +92,30 @@ T09 must settle deferred interpreter/JIT counters and cap execution at the next 
 or seek position. Fall back to bounded interpreter work for a block tail if necessary.
 An engine must not run past a target and repair the appearance with a later snapshot.
 
+T09 implements this common boundary in `crates/core/src/session_clock.rs`. Its quiescent
+coordinate is the `before` phase, with checked u64 transition/retirement/sequence counters
+and a checked u32 ordinal matching the manifest codec. A bounded owned mailbox orders
+future deliveries by target transition and admission ticket; sequence numbers are assigned
+in delivery order. Paused controls can be delivered without executing an instruction.
+The native `SESSION_CLOCK` section (18, `WVCLK001` version 1) retains the coordinate,
+pending owned effects, pending WFI idle action and declared external-pending state. Applied
+receipts must be drained before capture; omission, malformed queues or unsupported clock
+policy refuse before restore mutates the destination.
+
+Session execution uses `run` or `run_session_until`, which stops before deliveries at its
+target. Raw `step`, `hart_mut` and `bus_mut` remain trusted architectural/debug primitives;
+an admitted recorder cannot use them to deliver a callback. Pure compute/control blocks
+execute in the actual JIT when they fit the next event, timer and seek fence. Observable
+blocks use bounded interpretation until their observation adapters exist. Both engines
+finish derived timer bookkeeping before exposing a stop. WFI retirement, a genuine idle
+advance and interrupt delivery are separate transitions. Wall/paced policies and multiple
+harts are refused by the common clock.
+
+The demo's **Execution boundary check** runs this mechanism on a small real guest. It does
+not admit the Linux library's providers into continuous recording: T10–T13 own input,
+observation, completion and network adapters. The library remains `checkpoints-only`, and
+the native software-frame decoder refuses an event clock under an unbound old context.
+
 WFI fast-forward and CLINT/SBI interrupt levels are regenerated when purely derived
 from guest state. RTC alarm polling is different: it samples the host wall clock even
 without a TIME_LOW read, so its observation must be recorded. Guest `rdtime` is derived

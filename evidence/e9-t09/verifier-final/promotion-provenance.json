@@ -1,0 +1,37 @@
+{
+  "candidate": "b75afc6cf7e5037abbf206b838019d228c60a00a",
+  "base": "2dafe690",
+  "status": "prepared for promotion, no tracked writes",
+  "test_destination": "crates/jit-runtime/tests/e9_event_clock_critic.rs",
+  "integration": {
+    "file": "tools/verify/e9-event-clock.py",
+    "command": "jit-native",
+    "insert_after": [
+      "--test",
+      "e9_event_clock"
+    ],
+    "insert": [
+      "--test",
+      "e9_event_clock_critic"
+    ]
+  },
+  "tested_ancestor": "attack/src/main.rs, seeded_fences()",
+  "changes_from_tested_ancestor": [
+    "Remove standalone main and already-covered counter-edge attack.",
+    "Convert seeded_fences to one Rust integration test.",
+    "Use iterator enumeration to satisfy clippy; print direct assertions rather than unrelated legacy snapshot digest.",
+    "rustfmt."
+  ],
+  "independent_seed_receipts": "seeded-attack.log lines 1-7; 709 real Wasmtime blocks",
+  "digests": {
+    "e9_event_clock_critic.rs": "c0e4c7f78ab9c4ab93cbe52cf67f4caf6dc679680f650bd4f5e176de80febbf9",
+    "attack/src/main.rs": "3c7ff40739fba01f651689dee39a45cfb673cb69b7bcf6d698ea41ce83e99f16",
+    "seeded-attack.log": "638bf1e192acc6ef72edec4f9b57652241c54356708ab52b4bb1c33972b6c623",
+    "sabotage/src/session_clock.rs": "1b0acf84eb5c54cc4855e0186c02b07f309be59c53240739be6cf78452e91cc9",
+    "sabotage.log": "68862b761f049f776e50158d9af984a45e742e72141d25da115a62c1d490f684",
+    "wasm-negative.mjs": "81023c8027338ad3d218676dd53b41fdbbd58394bc02cf3465b9df1b305fdde2",
+    "wasm-negative.json": "0049d8216117f40a06e0fdb733f8b983b8510ec83fddfa0f9b74a58d9fa67f7e",
+    "native-independent.json": "5c866c889ec1f8b8d3ad28b4410c35a420856fbca5d94f4f68d66afdfc6ec0a7",
+    "predictions.md": "9b9cb295475f4dbbf83914a1b620f319b223405d1795e65c3a9d349187e32db2"
+  }
+}

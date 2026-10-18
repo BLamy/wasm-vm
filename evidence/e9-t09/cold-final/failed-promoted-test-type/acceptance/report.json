@@ -1,0 +1,107 @@
+{
+  "task": "E9-T09",
+  "status": "failed",
+  "head": "6b5a5f27041a64016a9fde270865ed37b5cb55cd",
+  "started": 1792312903.893328,
+  "commands": [
+    {
+      "name": "policy",
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "seconds": 0.08335685729980469,
+      "exit_code": 0
+    },
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "seconds": 1.137969732284546,
+      "exit_code": 0
+    },
+    {
+      "name": "native-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-core",
+        "-p",
+        "wasm-vm-wasm",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "-p",
+        "wasm-vm-cli",
+        "--all-targets",
+        "--features",
+        "trace,virgl-renderer",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "seconds": 19.740708827972412,
+      "exit_code": 101
+    }
+  ],
+  "scope": "Single-hart ICount common clock/mailbox, exact real interpreter/JIT boundaries and native snapshot state. Linux provider recording/replay remains gated in T10-T14.",
+  "failure": "native-clippy failed; see its recorded log",
+  "source_sha256": {
+    "crates/core/src/lib.rs": "b9428702d8569c03618bd00fed1cdbeb3aa71d996d220f3993e6d0e495ca1c26",
+    "crates/core/src/session_clock.rs": "89732f934db7ccf55812591ff82527d35169ad4cdfc7fa0e6ed275346e09cdd1",
+    "crates/core/src/resume.rs": "0e5cc8804f4641857f0de748c0c87b57ac092fe432bb67e7a14dbecf903d6e60",
+    "crates/core/tests/e9_event_clock.rs": "0c83a5fcec397753ea2c3973ba61cf8933bb43dde0268b2845cccdb1cd19e622",
+    "crates/core/tests/predecode_batching.rs": "0946710d3cbcb405e0bc83dfa8dd9f5ffd954794b57e7cf7db90c2618abfeacc",
+    "crates/core/tests/riscv_tests_suite.rs": "3726a6eea3857d38953690ab11eaaba18496de1474e5d07c591692a3148e64b1",
+    "crates/core/examples/retirement_capture_baseline.rs": "cb1958fdc28bc588bcc77f08b23fcb3ccf17c5022d40dc20e58c3e18904fa3b8",
+    "crates/jit-runtime/tests/e9_event_clock.rs": "b0207f7eb2adf70b83d849e76f38b4ff8cba331be6f1c8e73714eff3fac0013a",
+    "crates/jit-runtime/tests/e9_event_clock_critic.rs": "c0e4c7f78ab9c4ab93cbe52cf67f4caf6dc679680f650bd4f5e176de80febbf9",
+    "crates/jit-runtime/tests/jit_execution.rs": "e5881d74b50d61eb1fc39d30c68233e2d7eff6348eca8e15dbc73970d4d8e86c",
+    "crates/wasm/src/lib.rs": "bd618addc130bf10cc3fb9fdeb82c834121ead3a734f97a92cc4d12686828d4a",
+    "crates/wasm/src/event_clock.rs": "fee4b76859e66508759350bc36137d74dbea3e629b8c182190b694d5066c0d2f",
+    "crates/wasm/src/software_checkpoint.rs": "0ae5d6b89bb580e06dee93f355e52f0b06647200e4a6285b25b064e969888634",
+    "crates/wasm/tests/software_checkpoint.rs": "11f3ed062984bf6c1b41081fe0b60e464ed299998a7bc8cab2828dffd2ccdd90",
+    "crates/cli/src/main.rs": "8091d76eeb231464566134c4ce7699e0e3197a0563faf15566f39a982348759c",
+    "crates/cli/src/boot.rs": "3a578cbe088f501bacabae30dd358b7978d7d218624f3bb0a165c5a9fbac8f62",
+    "crates/cli/src/boot/agent_proof.rs": "a1a6f7eb4d8b158a6cbed88a2ca9be735135e4d3cea9a893c8a6a45b3a9eaac0",
+    "web/index.html": "90dc32ebbf12bde8c4bf8264dbcc7ac7541e6ba91c7a134659a9cf61b52aff01",
+    "web/main.js": "43dd6609ac4c7d675a2ae5cb808b6cbbf70b214acbc3e98ce9f4c36feb938ea9",
+    "web/event-clock-probe.js": "32c8de7405fd5bf24ed54a1bd978086d59909cfa0f52c56609d04c8f728d6c8a",
+    "web/roadmap.js": "055000794e7c75546b811d785b8e4d7be365f5bdeb0a8a3b46594b2f0ac85257",
+    "web/session-checkpoints.js": "a6fa93d426c3823cb23c797666b69a49226417a43aacb3ac1b0729d74a095803",
+    "web/loader.js": "b8fc2ef44212c1789d4b1f5a05884523e360b58321b9d822b89efefdd8cc8f5d",
+    "web/gpu-checkpoint-build.js": "db99c225724b67dcf1c9026779c040601f238db2c6cc93b75b302a8fbca1db2a",
+    "web/docs-source/guides/storage.md": "1c66f2fea5c6427cf0974d46acebcf08ead65c61cf525d759b6281f761bef9ba",
+    "docs/design/session-replay.md": "8e13de1ef4b336cd0f6aea93db68a753dd4a63a9850ba6bae239a9231290da51",
+    "docs/design/session-replay-contract.json": "b90b23c16c98634a3b16fddbcfc6edc995fe52768b732d33c9858f222830cf5c",
+    "web/package.json": "98f5439bf3e211a021f712625143968e9cd31b043e2b34bc649ad954197ff93d",
+    "web/package-lock.json": "1bd432e67f671eb62296d64c473da133a9e97ab482cc946cacb80127bd760153",
+    "tools/verify/e9-event-clock.py": "959d697d086e69993b26bb839ba5ec88f95e9292b4aef934f448387e8d35546e",
+    "tools/verify/e9-event-clock-browser.mjs": "b7c674cd970926d94a2b37eec8926a7f5306edf0f91bb9932dcf9c759ce97cb5",
+    "tools/verify/e9-event-clock-files.py": "670f85026e5631797a8f4321e6d375993903ac03b97a1bf2880a59ee776b8a95",
+    "tools/verify/e9-retained-gpu-browser.mjs": "7fa66bc4746d34727fd7015a33ae704149abb646c0e3952389d643c452aef778",
+    "Makefile": "a15ec0031dafc8afd09ddbc2d47279e457906e2ba3d87b21d60258a0598a8fde"
+  },
+  "files": [
+    {
+      "path": "format.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "native-clippy.log",
+      "bytes": 10553,
+      "sha256": "cd9798d6735eeb0c570967be87df174bf381a091783c0790ee27efc47bded7c3"
+    },
+    {
+      "path": "policy.log",
+      "bytes": 32,
+      "sha256": "fa95ce7e0b7b3be23034d0d5d379841613d0e145708d3faa0184c7f3a77ab019"
+    }
+  ],
+  "finished": 1792312925.066037
+}

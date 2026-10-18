@@ -1,0 +1,486 @@
+   Compiling wasm-vm-core v0.0.1 (/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/crates/core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.10s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_core-4476ba0021458569)
+
+running 399 tests
+test compile_queue::tests::admission_probe_compile_membership_is_exact_and_read_only ... ok
+test compile_queue::tests::priority_hotter_compiles_first ... ok
+test block::tests::boundaries_and_errors ... ok
+test compile_queue::tests::cancellation_on_generation_bump_drops_stale ... ok
+test compile_queue::tests::stale_incoming_admission_and_backpressure_are_not_reordered_by_refresh ... ok
+test compile_queue::tests::staged_stale_resident_and_incoming_cancel_before_refresh_of_fresh_same_pc ... ok
+test compile_queue::tests::refresh_empty_is_inert_and_equal_saturated_scores_keep_order ... ok
+test compile_queue::tests::backpressure_drops_and_recounts_never_overflows ... ok
+test csr::tests::set_mip_bit_marks_mip_written_even_when_zero ... ok
+test csr::tests::counter_write_flags_keep_their_two_bool_encoding ... ok
+test compile_queue::tests::refresh_uses_actual_missing_and_recount_reset_hotness_without_changing_discovery ... ok
+test compile_queue::tests::refresh_visits_only_residents_preserving_payload_order_counters_and_recount ... ok
+test clock_advance_tests::clock_extremes_match_verifier_fixed_predictions ... ok
+test csr::tests::snapshot_table_matches_old_list_semantics ... ok
+test block::tests::five_gib_sparse_no_truncation ... ok
+test clock_advance_tests::clock_accounting_is_inert_without_clint_or_in_wall_mode ... ok
+test clock_advance_tests::single_retirements_match_wide_oracle_across_ticks_and_invalid_phases ... ok
+test desktop_restore::desktop_restore_tests::changed_host_window_keeps_guest_scanout_and_selects_letterbox ... ok
+test desktop_restore::desktop_restore_tests::commit_failure_after_publication_is_cold_booted ... ok
+test csr::tests::every_writable_csr_has_a_dense_slot ... ok
+test desktop_restore::desktop_restore_tests::component_refusal_clears_staging_and_cold_boots_without_commit ... ok
+test decoded_cache_capacity_tests::default_and_legacy_pathological_sizes_report_actual_slots ... ok
+K critic pending patch: entries=4096 selection=4096 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+test desktop_restore::desktop_restore_tests::dropped_agent_channel_never_publishes_viewport_or_device_commit ... ok
+test desktop_restore::desktop_restore_tests::invalid_host_dimensions_are_rejected_before_callbacks ... ok
+E5-T26k hostile SMC trace: legacy hash=568b64d33599f3f5 retired=20
+test desktop_restore::desktop_restore_tests::concrete_backend_round_trips_the_t26b_to_d_codecs_and_host_state ... ok
+test desktop_restore::desktop_restore_tests::missing_or_malformed_composite_never_enters_component_staging ... ok
+test decoded_cache_capacity_tests::both_sizes_keep_physical_aliases_and_page_write_cursor_invalidation ... ok
+test decoded_cache_capacity_tests::both_sizes_recheck_revoked_pmp_for_live_cached_interior ... ok
+test desktop_restore::desktop_restore_tests::valid_composite_restore_stages_in_dependency_order_and_repairs ... ok
+test desktop_snapshot::desktop_snapshot_tests::bad_magic_and_forward_envelope_version_are_machine_readable ... ok
+test desktop_restore::desktop_restore_tests::viewport_and_repair_failures_use_the_same_clean_fallback ... ok
+test desktop_restore::desktop_restore_tests::rollback_clears_live_sink_and_uses_power_on_baseline ... ok
+test desktop_snapshot::desktop_snapshot_tests::builder_rejects_duplicate_unknown_and_forward_sections ... ok
+test desktop_snapshot::desktop_snapshot_tests::explicit_abort_is_idempotent_and_invalid_permits_are_rejected ... ok
+test desktop_snapshot::desktop_snapshot_tests::empty_envelope_is_byte_exact_and_stably_digested ... ok
+test desktop_snapshot::desktop_snapshot_tests::in_flight_timeout_is_bounded_aborts_and_leaves_device_usable ... ok
+test desktop_snapshot::desktop_snapshot_tests::quiesce_waits_for_one_boundary_and_releases_cleanly ... ok
+test desktop_snapshot::desktop_snapshot_tests::malformed_sections_fail_closed_before_live_state_mutation ... ok
+test desktop_snapshot::desktop_snapshot_tests::parser_rejects_trailing_table_bytes_and_component_digest_tampering ... ok
+E5-T26k capacity=4096: trace/retirement/snapshot identical to legacy
+test desktop_snapshot::desktop_snapshot_tests::populated_envelope_includes_versions_component_digests_and_stable_digest ... ok
+K critic pending patch: entries=4096 selection=4096 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+test dev::clint::snapshot_tests::clint_restore_rejects_malformed_payloads_without_mutating ... ok
+test dev::clint::snapshot_tests::clint_state_round_trips_completely ... ok
+test clock_advance_tests::clock_spans_match_wide_oracle_including_overflow_and_mtime_wrap ... ok
+test dev::console::tests::other_offset_writes_ignored_and_logged_once ... ok
+test dev::plic::snapshot_tests::plic_behavioural_state_round_trips_and_drops_the_diagnostic_counter ... ok
+test dev::plic::snapshot_tests::plic_restore_rejects_wrong_length_without_mutating ... ok
+test desktop_restore::desktop_restore_tests::concrete_backend_refusals_leave_all_devices_in_the_cold_state ... ok
+test dev::rtc::snapshot_tests::rtc_restore_rejects_malformed_without_mutating ... ok
+test dev::rtc::snapshot_tests::rtc_state_round_trips_completely_and_keeps_the_host_clock ... ok
+test dev::rtc::tests::alarm_fires_raises_irq_and_clears ... ok
+test dev::console::tests::lsr_reads_ready_thr_reads_zero_no_faults ... ok
+test dev::console::tests::low_byte_emitted_at_every_write_width ... ok
+test dev::rtc::tests::alarm_value_readable_after_fire ... ok
+test dev::rtc::tests::guest_set_time_offsets_without_touching_host ... ok
+test dev::rtc::tests::irq_gated_by_enable ... ok
+test dev::rtc::tests::reads_injected_time ... ok
+test dev::rtc::tests::time_set_is_write_order_independent ... ok
+test dev::syscon::tests::first_command_wins ... ok
+test dev::syscon::tests::reads_return_zero ... ok
+test dev::syscon::tests::recognized_commands_decode ... ok
+test dev::syscon::tests::unrecognized_values_are_ignored ... ok
+test decoded_cache_capacity_tests::real_resize_clears_live_cursor_and_discovery_but_preserves_architecture_and_handles ... ok
+K critic pending patch: entries=4096 selection=4096 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+test dev::uart16550::snapshot_tests::uart_restore_rejects_malformed_payloads_without_mutating ... ok
+test dev::uart16550::snapshot_tests::uart_state_round_trips_completely ... ok
+test dev::uart16550::tests::char_timeout_delivers_short_input ... ok
+test dev::uart16550::tests::dlab_banking ... ok
+test dev::uart16550::tests::iir_priority_order ... ok
+E5-T26k capacity=16384: trace/retirement/snapshot identical to legacy
+test dev::uart16550::tests::overrun_caps_fifo_and_preserves_contents ... ok
+K critic pending patch: entries=4096 selection=8192 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+test dev::uart16550::tests::thre_interrupt_dance ... ok
+test decoded_cache_capacity_tests::hostile_guest_store_patches_next_cached_op_with_legacy_trace_parity ... ok
+test clock_advance_tests::clock_spans_match_wide_oracle_across_varied_schedules ... ok
+test compile_queue::tests::never_blocks_execution_thread_under_flood ... ok
+test dev::rtc::tests::low_high_latch_is_coherent_across_2p32_boundary ... ok
+test dev::virtio::console::session_snapshot::tests::exact_console_partial_queues_and_refusals ... ok
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, target: 3, test decoded_cache_capacity_tests::restore_and_existing_cache_reset_hold_host_selection_without_new_snapshot_fields ... ok
+format: test dev::virtio::gpu::control3d::production_multisample_tests::sample_storage_is_bounded_and_cannot_cross_the_old_profile ... ok
+18test dev::virtio::gpu::control3d::production_query_resource_tests::original_custom_query_buffers_are_production_only_and_byte_accounted ... ok
+, bind: 9, width: 5, heighttest dev::uart16550::snapshot_tests::uart_restore_never_panics_on_random_input ... ok: 5, depth: 6, array_size: 1, last_level: 
+2, nr_samples: 0, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, targettest dev::virtio::gpu::damage::tests::clipping_and_empty_input_are_bounded_and_drain_is_empty ... ok
+: 6, format: 18, bind: 9, width: 5, test dev::virtio::gpu::damage::tests::edge_adjacent_rectangles_union_but_corner_only_rectangles_remain_separate ... ok
+height: 5, depth: 1, test decoded_cache_capacity_tests::invalid_and_same_actual_size_preserve_cursor_blocks_discovery_devices_and_snapshot ... array_sizeok
+: 6, last_level: 2, nr_samples: 0, test dev::virtio::gpu::damage::tests::overlapping_rectangles_union_and_contained_rectangles_do_not_expand ... ok
+flags: 0 }
+K critic pending patch: entries=4096 selection=8192 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { test dev::virtio::gpu::damage::tests::seventeenth_disjoint_rectangle_spills_to_one_bounded_box ... resource_id: 100, targetok
+: 4, format: 19, bind: 9, width: 5, height: test dev::virtio::gpu::edid::tests::fixture_and_checksum_are_stable ... 5, depth: 1, ok
+array_size: 6, last_level: 2, nr_samples: 0, flags: 0 }test dev::virtio::gpu::edid::tests::checksum_and_preferred_mode_cover_odd_and_large_sizes ... ok
+
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100test dev::virtio::gpu::edid::tests::out_of_range_inputs_are_bounded ... ok
+, target: test dev::virtio::gpu::resources::tests::gpu_resources_backing_map_replacement_and_detach_are_independent ... ok
+4, format: test dev::virtio::gpu::resources::tests::gpu_resources_create_enforces_aggregate_budget_without_partial_insert ... ok
+67, test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_dimension_and_budget_before_allocation ... ok
+bind: test dev::virtio::gpu::resources::tests::gpu_resources_create_rejects_id_zero_duplicate_and_bad_fields_without_mutation ... ok
+1, width: 5, test dev::virtio::gpu::resources::tests::gpu_resources_create_supported_formats_are_detached_and_accounted ... ok
+height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_unref_returns_accounting_to_baseline ... ok
+0, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, targetK critic pending patch: entries=4096 selection=8192 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+: 4, format: 18, bind: 10, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 262153, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 9, width: 5, height: 5, K critic pending patch: entries=16384 selection=16384 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+depth: 1, array_size: 5, last_level: 2, nr_samples: 0, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 9, width: 6, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 9, width: 5, height: 5, depth: 2, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 9, width: 0, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 9, width: 5, height: 0, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 9, width: 4294967295, height: 4294967295, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 9, width: 5, height: 5, depth: 1, array_size: 6, last_level: 3, nr_samples: 0, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 9, width: 5, height: 5, depth: 1, array_size: 6, last_level: 4294967295, nr_samples: 0, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 9, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 1, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 9, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 1 }
+NATIVE_DIMENSIONAL_DEPTH_REFUSED metadata=Resource3dMetadata { resource_id: 100, target: 7, format: 18, bind: 9, width: 5, height: 5, depth: 1, array_size: 2049, last_level: 2, nr_samples: 0, flags: 0 }
+NATIVE_DIMENSIONAL_DEPTH format=16 bind=1 publicPixel=2 nativePixel=test dev::virtio::gpu::control3d::dimensional_depth_tests::depth_native_budget_neighbors_and_illegal_original_shapes ... ok
+2 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 16, bind: 1, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(360,360) array=Resource3dMetadata { resource_id: 100, target: 7, format: 16, bind: 1, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flagsK critic pending patch: entries=16384 selection=16384 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+: 0 } arrayCosts=(588,588)
+NATIVE_DIMENSIONAL_DEPTH format=16 bind=8 publicPixel=2 nativePixel=2 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 16, bind: 8, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(360,360) array=Resource3dMetadata { resource_id: 100, target: 7, format: 16, bind: 8, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(588,588)
+NATIVE_DIMENSIONAL_DEPTH format=16 bind=9 publicPixel=2 nativePixel=2 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 16, bind: 9, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(360,360) array=Resource3dMetadata { resource_id: 100, target: 7, format: 16, bind: 9, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(588,588)
+NATIVE_STREAM_OUTPUT roles=2048 logical=4096 gpu=4096 historical=refused
+NATIVE_STREAM_OUTPUT roles=2064 logical=4096 gpu=4096 historical=refused
+NATIVE_STREAM_OUTPUT roles=2080 logical=4096 gpu=4096 historical=refused
+NATIVE_STREAM_OUTPUT roles=2112 logical=4096 gpu=4096 historical=refused
+NATIVE_STREAM_OUTPUT roles=2160 logical=4096 gpu=4096 historical=refused
+NATIVE_DIMENSIONAL_DEPTH format=18 bind=1 publicPixel=4 nativePixel=4 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 1, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(720,720) array=Resource3dMetadata { resource_id: 100, target: 7, format: 18, bind: 1, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(1176,1176)
+test dev::virtio::gpu::control3d::stream_output_tests::original_stream_output_role_is_explicit_and_bounded ... ok
+NATIVE_DIMENSIONAL_DEPTH format=18 bind=8 publicPixel=4 nativePixel=4 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 8, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(720,720) array=Resource3dMetadata { resource_id: 100, target: 7, format: 18, bind: 8, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(1176,1176)
+NATIVE_DIMENSIONAL_DEPTH format=18 bind=9 publicPixel=4 nativePixel=4 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 18, bind: 9, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(720,720) array=Resource3dMetadata { resource_id: 100, target: 7, format: 18, bind: 9, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(1176,1176)
+K critic pending patch: entries=16384 selection=16384 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+NATIVE_DIMENSIONAL_DEPTH format=20 bind=1 publicPixel=4 nativePixel=4 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 20, bind: 1, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(720,720) array=Resource3dMetadata { resource_id: 100, target: 7, format: 20, bind: 1, width: 7, height: 5test dev::virtio::gpu::resources::tests::gpu_resources_lifecycle_10k_create_unref_cycles_have_zero_net_growth ... ok
+, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(1176,1176)
+AT literal offset=24 rect=Rect { x: 1, y: 1, width: 3, height: 2 } pixels=[00000000, 00000000, 00000000, 00000000, 00000000, 00000000, a5000006, a5000007, a5000008, 00000000, 00000000, a500000b, a500000c, a500000d, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000]
+NATIVE_DIMENSIONAL_DEPTH format=20 bind=8 publicPixel=4 nativePixel=4 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 20, bind: 8, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(720,720) array=Resource3dMetadata { resource_id: 100, target: 7, format: 20, bind: 8, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(1176,1176)
+NATIVE_DIMENSIONAL_DEPTH format=20 bind=9 publicPixel=4 nativePixel=4 cube=Resource3dMetadata { resource_id: 100, target: 4, formattest block::tests::mem_backend_matches_reference_model ... ok
+: 20, bind: 9, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(720,720) array=Resource3dMetadata { resource_id: 100, target: 7, format: 20, bind: 9, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(1176,1176)
+AT literal offset=4 rect=Rect { x: 2, y: 2, width: 2, height: 2 } pixels=[00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000K critic pending patch: entries=16384 selection=8192 immediate=7 x2=7 trace=ccf9f08b9d663d89 retired=1
+, 00000000, 00000000, 00000000, a5000001, a5000002, 00000000, 00000000, 00000000, a5000006, a5000007, 00000000]
+NATIVE_DIMENSIONAL_DEPTH format=21 bind=1 publicPixel=4 nativePixel=4 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 21, bind: 1, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(720,720) array=Resource3dMetadata { resource_id: 100, target: 7, format: 21, bind: 1, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(1176,1176)
+NATIVE_DIMENSIONAL_DEPTH format=21 bind=8 publicPixel=4 nativePixel=4 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 21, bind: 8, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(720,720) array=Resource3dMetadata { resource_id: 100, target: 7, format: 21, bind: 8, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(1176,1176)
+NATIVE_DIMENSIONAL_DEPTH format=21 bind=9 publicPixel=4 nativePixel=4 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 21, bind: 9, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(720,720) array=Resource3dMetadata { resource_id: 100, target: 7, format: 21, bind: 9, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(1176,1176)
+NATIVE_DIMENSIONAL_DEPTH format=126 bind=1 publicPixel=8 nativePixel=16 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 126, bind: 1, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(1440,2880) array=Resource3dMetadata { resource_id: 100, target: 7, format: 126, bind: 1, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(2352,4704)
+AT literal offset=48 rect=Rect { x: 0, y: 0, width: 3, height: 2 } pixels=[a500000c, a500000d, a500000e, 00000000, 00000000, a5000011, a5000012, a5000013, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000, 00000000]
+K critic pending patch: entries=16384 selection=8192 immediate=127 x2=127 trace=a6814ebb10165a01 retired=1
+NATIVE_DIMENSIONAL_DEPTH format=126 bind=8 publicPixel=8 nativePixel=16 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 126, bind: 8, width: 5, height: 5, depth: 1, array_size: test dev::virtio::gpu::resources::tests::gpu_transfer_literal_source_offsets_cross_sg_pages_and_end_exactly ... 6, last_level: 2, nr_samples: ok0, flags: 0 } cubeCosts=(1440,2880) array=Resource3dMetadata { resource_id: 100, target: 7
+, format: 126, K critic pending patch: entries=16384 selection=8192 immediate=1021 x2=1021 trace=efda15432ec439d3 retired=1
+bind: 8, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(2352,4704)
+test decoded_cache_capacity_tests::verifier_pending_code_patch_survives_same_size_and_rejected_selection ... ok
+NATIVE_DIMENSIONAL_DEPTH format=126 bind=9 publicPixel=8 nativePixel=16 cube=Resource3dMetadata { resource_id: 100, target: 4, format: 126, bind: 9, width: 5, height: 5, depth: 1, array_size: 6, last_level: 2, nr_samples: 0, flags: 0 } cubeCosts=(1440,2880) array=Resource3dMetadata { resource_id: 100, target: 7, format: 126, bind: 9, width: 7, height: 5, depth: 1, array_size: 7, last_level: 2, nr_samples: 0, flags: 0 } arrayCosts=(2352,4704)
+test dev::virtio::gpu::resources::tests::gpu_transfer_one_byte_entries_copy_a_full_frame ... ok
+test dev::virtio::gpu::control3d::dimensional_depth_tests::original_depth_fields_costs_and_npot_layers ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_rejects_detached_bounds_and_offset_without_shadow_mutation ... ok
+test dev::virtio::gpu::snapshot::tests::gpu_snapshot_round_trips_resource_scanout_cursor_damage_and_crc ... ok
+test dev::virtio::gpu::snapshot::tests::malformed_resource_metadata_fails_closed_before_live_map_swap ... ok
+test dev::virtio::gpu::snapshot::tests::malformed_shadow_and_truncation_fail_closed ... ok
+test dev::virtio::gpu::snapshot::tests::missing_scanout_resource_and_bad_format_leave_live_state_unchanged ... ok
+test dev::virtio::gpu::snapshot::tests::shadow_codec_reports_bounded_compression_and_rejects_forged_runs ... ok
+test dev::virtio::gpu::snapshot::tests::valid_restore_presents_one_full_repair_frame ... ok
+NATIVE_DIMENSIONAL_SPANS_ALLOCATION_REFUSED rows=Submit3dRows { offset: 5, row_bytes: 8, row_stride: 11, row_count: 2 } layerStride=27 layers=3 result=Err(OutOfMemory) publishedSpans=0
+test dev::virtio::gpu::submit3d::dimensional_span_tests::dimensional_span_allocation_refusal_is_structured_without_partial_output ... ok
+NATIVE_DIMENSIONAL_MIP_SPANS target=3 level=0 rows=Submit3dRows { offset: 5, row_bytes: 20, row_stride: 27, row_count: 3 } layerStride=92 layers=7 entries=[BackingEntry { addr: 2147614720, length: 7 }, BackingEntry { addr: 2147680256, length: 17 }, BackingEntry { addr: 2147688448, length: 53 }, BackingEntry { addr: 2147696640, length: 101 }, BackingEntry { addr: 2147704832, length: 3918 }] spans=[(2147614725, 2), (2147680256, 17), (2147688448, 1), (2147688456, 20), (2147688483, 18), (2147696640, 2), (2147696660, 20), (2147696687, 20), (2147696714, 20), (2147704843, 20), (2147704870, 20), (2147704897, 20), (2147704935, 20), (2147704962, 20), (2147704989, 20), (2147705027, 20), (2147705054, 20), (2147705081, 20), (2147705119, 20), (2147705146, 20), (2147705173, 20), (2147705211, 20), (2147705238, 20), (2147705265, 20)] bytes=420
+NATIVE_DIMENSIONAL_MIP_SPANS target=3 level=1 rows=Submit3dRows { offset: 5, row_bytes: 8, row_stride: 8, row_count: 1 } layerStride=8 layers=3 entries=[BackingEntry { addr: 2147614720, length: 7 }, BackingEntry { addr: 2147680256, length: 17 }, BackingEntry { addr: 2147688448, length: 53 }, BackingEntry { addr: 2147696640, length: 101 }, BackingEntry { addr: 2147704832, length: 3918 }] spans=[(2147614725, 2), (2147680256, 6), test dev::virtio::gpu::resources::tests::gpu_transfer_short_final_row_rejects_before_any_pixels_or_damage_change ... ok
+(2147680262, 8), (2147680270, test dev::virtio::gpu::resources::tests::gpu_transfer_scatter_gather_copies_partial_odd_x_rows ... ok
+3), (2147688448, 5)] bytes=24
+NATIVE_DIMENSIONAL_MIP_SPANS target=3 level=2 rows=Submit3dRows { offset: 5, row_bytes: 4, row_stride: 11, row_count: 1 } layerStride=test dev::virtio::gpu::tests::display_event_clear_is_write_one_to_clear ... ok
+22 layers=1 entries=[BackingEntry { addr: 2147614720, length: 7 }, BackingEntry { addr: 2147680256, length: 17 }, BackingEntry { addr: 2147688448, length: 53 }, BackingEntry { addr: 2147696640, length: 101 }, BackingEntry { addr: 2147704832, length: 3918 }] spans=[(2147614725, 2), (2147680256, 2)] bytes=4
+NATIVE_DIMENSIONAL_SPANS rows=Submit3dRows { offset: 5, row_bytes: 8, row_stride: 11, row_count: 2 } layerStride=27 layers=3 entries=[BackingEntry { addr: 1000, length: 7 }, BackingEntry { addr: 2000, length: 17 }, BackingEntry { addr: 3000, length: 53 }, BackingEntry { addr: 4000, length: 179 }] spans=[(1005, 2), (2000, 6), (2009, 8), (3008, 8), (3019, 8), (3035, 8), (3046, 7), (4000, 1)] bytes=48
+NATIVE_DIMENSIONAL_MIP_SPANS target=4 level=0 rows=test dev::virtio::gpu::submit3d::dimensional_span_tests::original_padded_layers_split_at_exact_sg_boundaries ... okSubmit3dRows { 
+offset: 5, row_bytes: 20, row_stride: 27, row_count: 5 } layerStride=146 layers=6 entries=[BackingEntry { addr: 2147614720, length: 7 }, BackingEntry { addr: 2147680256, length: 17 }, BackingEntry { addr: 2147688448, length: 53 }, BackingEntry { addr: 2147696640, length: 101 }, BackingEntry { addr: 2147704832, length: 3918 }] spans=[(2147614725, 2), (2147680256, 17), (2147688448, 1), (2147688456, 20), (2147688483, 18), (2147696640, 2), (2147696649, 20), (2147696676, 20), (2147696714, 20), (2147704832, 20), (2147704859, 20), (2147704886, 20), (2147704913, 20), (2147704951, 20), (2147704978, 20), (2147705005, 20), (2147705032, 20), (2147705059, 20), (2147705097, 20), (2147705124, 20), (2147705151, 20), (2147705178, 20), (2147705205, 20), (2147705243, 20), (2147705270, 20), (2147705297, 20), (2147705324, 20), (2147705351, 20), (2147705389, 20), (2147705416, 20), (2147705443, 20), (2147705470, 20), (2147705497, 20)] bytes=600
+NATIVE_DIMENSIONAL_MIP_SPANS target=4 level=1 rows=Submit3dRows { offset: 5, row_bytes: 8, row_stride: 8, row_count: 2 } layerStride=16 layers=6 entries=[BackingEntry { addr: 2147614720, length: 7 }, BackingEntry { addr: 2147680256, length: 17 }, BackingEntry { addr: 2147688448, length: 53 }, BackingEntry { addr: 2147696640, length: 101 }, BackingEntry { addr: 2147704832, length: 3918 }] spans=[(2147614725, 2), (2147680256, 6), (2147680262, 8), (2147680270, 3), (2147688448, 5), (2147688453, 8), (2147688461, 8), (2147688469, 8), (2147688477, 8), (2147688485, 8), (2147688493, 8), (2147696640, 8), (2147696648, 8), (2147696656, 8)] bytes=96
+NATIVE_DIMENSIONAL_MIP_SPANS target=4 level=2 rows=Submit3dRows { offset: 5, row_bytes: 4, row_stride: 11, row_count: 1 } layerStride=22 layers=6 entries=[BackingEntry { addr: 2147614720, length: 7 }, BackingEntry { addr: 2147680256, length: 17 }, BackingEntry { addr: 2147688448, length: 53 }, BackingEntry { addr: 2147696640, length: 101 }, BackingEntry { addr: 2147704832, length: 3918 }] spans=[(2147614725, 2), (2147680256, 2), (2147688451, 4), (2147688473, 4), (2147688495, 4), (2147696656, 4), (2147696678, 4)] bytes=24
+NATIVE_DIMENSIONAL_MIP_SPANS target=7 level=0 rows=Submit3dRows { offset: 5, row_bytes: 20, row_stride: 27, row_count: 3 } layerStride=92test dev::virtio::gpu::resources::tests::gpu_transfer_tracks_changed_pixel_bounds_until_flush ... ok layers=7 entries=[BackingEntry { addr: 2147614720, length: 7 }, BackingEntry { addr: 2147680256, length: 17 }, BackingEntry { addr: 2147688448, length: 53 }, BackingEntry { addr: 2147696640, length: 101 }, BackingEntry { addr: 2147704832, length: 3918 }] spans=[(2147614725, 2), (2147680256, 17), (2147688448, 1), (2147688456, 20), (2147688483, 18), (2147696640, 2), (2147696660, 20), (2147696687, 20), (2147696714, 20), (2147704843, 20), (2147704870, 20), (2147704897, 20), (2147704935, 20), (2147704962, 20), (2147704989, 20), (
+2147705027, 20), (2147705054, 20), (2147705081, 20), (2147705119, 20), (2147705146, 20), (2147705173, 20), (2147705211, 20), (2147705238, 20), (2147705265, 20)] bytes=420
+NATIVE_DIMENSIONAL_MIP_SPANS target=7 level=1 rows=Submit3dRows { offset: 5, row_bytes: 8, row_stride: 8, row_count: 1 } layerStride=test dev::virtio::gpu::resources::tests::gpu_transfer_tiled_and_full_frame_plans_keep_shadow_bytes_identical ... ok
+8 layers=7 entries=[BackingEntry { addr: 2147614720, length: 7 }, BackingEntry { addr: 2147680256, length: 17 }, BackingEntry { addr: 2147688448, length: 53 }, BackingEntry { addr: 2147696640, length: 101 }, BackingEntry { addr: 2147704832, length: 3918 }] spans=[(2147614725, 2), (2147680256, 6), (2147680262, 8), (2147680270, 3), (2147688448, 5), (2147688453, 8), (2147688461, 8), (2147688469, 8), (2147688477, 8)] bytes=56
+NATIVE_DIMENSIONAL_MIP_SPANS target=7 level=2 rows=Submit3dRows { offset: 5, row_bytes: 4, row_stride: 11, row_count: 1 } layerStride=22 layers=7 entries=[BackingEntry { addr: 2147614720, length: 7 }, BackingEntry { addr: 2147680256, length: 17 }, BackingEntry { addr: 2147688448, length: 53 }, BackingEntry { addr: 2147696640, length: 101 }, BackingEntry { addr: 2147704832, length: 3918 }] spans=[(2147614725, 2), (2147680256, 2), (2147688451, 4), (2147688473, 4), (2147688495, 4), (2147696656, 4), (2147696678, 4), (2147696700, 4)] bytes=28
+test dev::virtio::gpu::submit3d::dimensional_span_tests::original_npot_mip_span_records_match_independent_byte_addresses ... ok
+test dev::virtio::gpu::tests::display_reset_preserves_host_monitor_but_clears_guest_state ... ok
+test dev::virtio::gpu::tests::gpu_cursor_protocol_wire_fixtures_are_little_endian_and_bounded ... ok
+test dev::virtio::console::tests::restore_rehandshake_requires_live_agent_and_fences_old_application_bytes ... ok
+test dev::virtio::gpu::tests::get_edid_without_feature_returns_unspec ... ok
+test dev::virtio::console::tests::virtio_console_advertises_multiport_device_id_config_and_six_queue_layout ... ok
+E5-T22e verifier latched=false: double reset retained 1373x907/60/128 EDID bytes; new rings completed 5 control + 2 cursor; stale id rejected then recreated; old rings/responses unchanged; fresh devices isolated
+test dev::virtio::gpu::tests::get_edid_requires_negotiation_and_is_scanout_indexed ... ok
+test dev::virtio::gpu::tests::display_reset_mmio_clears_latched_irqs_and_both_cached_queues ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_read_only_completion_and_reset_clear_cursor_state ... ok
+test dev::virtio::console::tests::virtio_console_split_control_announcement_and_coalesced_data_are_bounded ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_updates_moves_hides_and_rejects_without_mutation ... ok
+test dev::virtio::console::tests::virtio_console_lifecycle_restart_and_reset_drop_stale_agent_state ... ok
+test dev::virtio::gpu::tests::gpu_flush_after_unref_rejects_old_resource_without_sink_event ... ok
+test dev::virtio::gpu::tests::gpu_flush_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_mmio_identity_features_and_config ... ok
+test dev::virtio::gpu::tests::gpu_protocol_wire_fixtures ... ok
+E5-T22e verifier latched=true: double reset retained 1373x907/60/128 EDID bytes; new rings completed 5 control + 2 cursor; stale id rejected then recreated; old rings/responses unchanged; fresh devices isolated
+test dev::virtio::gpu::tests::gpu_flush_default_null_sink_accepts_headless_path ... ok
+test dev::virtio::gpu::tests::display_reset_verifier_reconfigured_rings_reject_stale_resources ... ok
+test dev::virtio::gpu::tests::gpu_flush_after_scanout_disable_forwards_old_resource_without_binding ... ok
+test dev::virtio::gpu::tests::gpu_flush_rejects_unknown_short_and_out_of_bounds_requests_without_sink_event ... ok
+test dev::virtio::gpu::tests::gpu_flush_tracking_sink_publishes_changed_transfer_bounds ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_device_reset_releases_resource_state ... ok
+test dev::virtio::gpu::tests::gpu_flush_controlq_calls_test_sink_with_resource_crc ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_controlq_validates_entries_atomically ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_split_attach_then_detach_controlq ... ok
+test dev::virtio::gpu::tests::gpu_resources_lifecycle_unref_clears_scanout_and_is_idempotently_rejected ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_resources_create_controlq_dispatches_and_returns_spec_errors ... ok
+test dev::virtio::gpu::tests::gpu_resources_backing_rejects_address_overflow_and_truncated_sglists ... ok
+test dev::virtio::gpu::tests::gpu_transfer_wire_fixture_is_little_endian ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_controlq_binds_existing_resource ... ok
+test dev::virtio::gpu::tests::set_display_updates_mode_and_coalesces_config_interrupts ... ok
+test dev::virtio::gpu::tests::unsupported_feature_does_not_mutate_config ... ok
+test dev::virtio::gpu::tests::set_display_stress_preserves_final_mode_and_bounds_config_irqs ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_split_request_is_parsed_across_descriptors ... ok
+test dev::virtio::gpu::tests::gpu_cursorq_repeated_hide_show_keeps_one_bounded_state_per_scanout ... ok
+test dev::virtio::gpu::resources::tests::gpu_transfer_random_rect_model_oracle_10k_cases ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_zero_resource_disables_scanout ... ok
+test dev::virtio::gpu::tiles::tests::flush_intersection_consumes_only_selected_tiles_and_resize_drops_old_state ... ok
+test dev::virtio::gpu::tiles::tests::full_frame_mode_is_a_comparable_bounded_fallback ... ok
+test dev::virtio::gpu::tiles::tests::full_resource_transfer_selects_every_tile_in_row_major_order ... ok
+test dev::virtio::gpu::tiles::tests::one_pixel_transfer_selects_one_full_tile_and_exact_bytes ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_rejects_bad_scanout_and_rect_without_mutation ... ok
+test dev::virtio::gpu::tests::gpu_scanout_binding_short_request_is_bounded ... ok
+test dev::virtio::gpu::tiles::tests::tile_boundaries_and_partial_edges_are_clipped_without_outside_regions ... ok
+test dev::virtio::input::keyboard::tests::keyboard_identity_and_event_bitmap_tail_are_stable ... ok
+test dev::virtio::input::keyboard::tests::keyboard_led_sink_applies_only_canonical_status_events ... ok
+test dev::virtio::input::keyboard::tests::keyboard_led_snapshot_round_trip_rejects_non_boolean_bytes ... ok
+test dev::virtio::input::keyboard::tests::pc105_keyboard_bitmap_is_exact_and_repeat_is_absent ... ok
+test dev::virtio::input::keyboard::tests::verifier_led_bytes_and_fresh_post_restore_status_are_exact ... ok
+test dev::virtio::input::pointer::tests::mouse_map_has_only_relative_axes_and_both_wheels ... ok
+test dev::virtio::input::pointer::tests::pointer_config_selectors_do_not_cross_contaminate ... ok
+test dev::virtio::input::pointer::tests::tablet_absolute_injection_rejects_out_of_range_values ... ok
+test dev::virtio::input::pointer::tests::tablet_map_and_absolute_wire_metadata_are_exact ... ok
+test dev::virtio::input::snapshot::session_tests::session_input_rejects_malformed_payloads_without_changing_target ... ok
+test dev::virtio::input::snapshot::session_tests::session_preserves_delivered_suppressed_partial_and_staged_input ... ok
+test dev::virtio::input::snapshot::tests::direct_release_all_is_protected_from_budget_eviction ... ok
+test dev::virtio::input::snapshot::tests::malformed_ring_lengths_duplicate_events_and_truncation_are_atomic ... ok
+test csr::tests::next_interrupt_matches_per_bit_priority_walk ... ok
+test dev::virtio::input::snapshot::tests::restore_discards_held_key_and_button_state_with_one_protected_release_frame ... ok
+test dev::virtio::input::snapshot::tests::three_input_devices_round_trip_pending_order_and_partial_indices ... ok
+test dev::virtio::input::snapshot::tests::verifier_empty_restore_accepts_fresh_keyboard_tablet_and_mouse_frames ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_contiguous_fenced ... ok
+test dev::virtio::input::snapshot::tests::verifier_multiframe_order_indices_and_staged_work_are_byte_exact ... ok
+test dev::virtio::input::keyboard::tests::keyboard_config_fixture_is_exact_on_native ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_all_precedes_saved_work_and_survives_host_pressure ... ok
+test dev::virtio::input::snapshot::tests::verifier_malformed_headers_preserve_unserialized_delivered_ledger ... ok
+test dev::virtio::gpu::tests::gpu_transfer_controlq_copies_sg_rows_and_echoes_fence ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_guest_address_is_rejected_without_write ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_short_tail_is_bounded ... ok
+test dev::virtio::gpu::tests::virtio_gpu_display_info_split_header_unfenced ... ok
+test dev::virtio::input::tests::input_config_fixture_matches_little_endian_wire_bytes ... ok
+test dev::virtio::input::tests::input_config_selector_writes_are_width_preserving_and_resettable ... ok
+test dev::virtio::input::tests::inject_and_sync_retain_bounded_complete_frames_with_exact_drop_count ... ok
+test dev::virtio::input::tests::input_event_wire_layout_is_fixed_and_little_endian ... ok
+test dev::virtio::input::tests::input_config_unsupported_queries_are_zero_and_do_not_leak_previous_payload ... ok
+test dev::virtio::input::tests::key_transition_drop_removes_both_separate_frames ... ok
+test dev::virtio::gpu::tests::virtio_gpu_malformed_requests_make_progress_and_recover ... ok
+test dev::virtio::input::tests::eventq_writes_one_event_across_split_descriptors_and_exact_used_len ... ok
+test dev::virtio::mmio::tests::critic_advisories_pinned ... ok
+test dev::virtio::mmio::tests::driver_ok_without_features_ok_needs_reset ... ok
+test dev::virtio::mmio::tests::empty_slot_answers_and_tolerates ... ok
+test dev::virtio::mmio::tests::interrupt_ack_is_mask_clear ... ok
+test dev::virtio::mmio::tests::lifecycle_happy_path ... ok
+test dev::virtio::mmio::tests::protocol_violation_degrades_loudly ... ok
+test dev::virtio::input::tests::injected_frames_cross_eventq_without_boundary_loss ... ok
+test dev::virtio::mmio::tests::status_zero_is_full_reset ... ok
+test dev::virtio::mmio::tests::transport_snapshot_round_trips_and_rejects_malformed ... ok
+test dev::virtio::input::tests::statusq_reads_split_event_and_rejects_short_or_wrong_direction ... ok
+test dev::virtio::mmio::tests::unoffered_feature_rejected ... ok
+test dev::virtio::net::idle_tests::idle_tracks_staged_frames_through_adapters ... ok
+test dev::virtio::net::switch_tests::replacing_backend_keeps_adapter_identity_and_drops_old_frames ... ok
+test dev::virtio::snd::snapshot::tests::malformed_restore_is_atomic_and_rejects_bad_params ... ok
+test dev::virtio::snd::snapshot::tests::malformed_retained_configuration_is_rejected_before_any_sound_mutation ... ok
+test dev::virtio::snd::snapshot::tests::pending_period_metadata_is_exact_and_atomic_for_both_streams ... ok
+test dev::virtio::snd::snapshot::tests::released_configuration_round_trip_recovers_both_streams_and_reset_forgets_it ... ok
+test dev::virtio::input::tests::unsupported_queue_shape_is_bounded_and_requests_reset ... ok
+test dev::virtio::snd::snapshot::tests::running_restore_discards_ephemeral_rings_and_repairs_both_streams ... ok
+test dev::virtio::snd::snapshot::tests::session_inactive_metadata_is_exact_and_active_audio_refuses_atomically ... ok
+test dev::virtio::snd::snapshot::tests::snapshot_header_has_stable_size_before_event_records ... ok
+test dev::virtio::snd::snapshot::tests::running_repair_respects_the_event_budget_before_mutation ... ok
+test dev::virtio::snd::snapshot::tests::stopped_stream_round_trip_preserves_configuration_without_xrun ... ok
+test diag::irqstats::tests::hottest_irq_picks_the_max ... ok
+test diag::irqstats::tests::naming_uses_the_window_not_the_lifetime_leader ... ok
+test diag::irqstats::tests::quiet_windows_never_fire_and_reset_the_streak ... ok
+test diag::irqstats::tests::storm_fires_after_consecutive_hot_windows ... ok
+test diag::irqstats::tests::wfi_watchdog_fires_once_then_rearms ... ok
+test diag::irqstats::tests::wfi_watchdog_silent_when_making_progress_or_armed ... ok
+test diag::irqstats::tests::window_stays_open_until_enough_retired ... ok
+test dispatch::tests::admission_probe_default_off_and_decision_parity ... ok
+test dispatch::tests::admission_probe_reasons_and_exact_fifo_membership_not_nominal_queued ... ok
+test dev::virtio::gpu::tests::gpu_flush_golden_five_patterns_match_independent_reference ... ok
+test dispatch::tests::admission_probe_recurring_full_refusal_exact_identity ... ok
+test dispatch::tests::admission_probe_separates_changed_bytes_lengths_and_generation ... ok
+test dispatch::tests::block_cache_page_index_invalidates_only_indexed_live_slots ... ok
+test dispatch::tests::admission_probe_cap_and_invalid_blocks_are_bounded ... ok
+test dispatch::tests::cold_counter_recycling_preserves_decisions_fifo_priority_generation_and_observer ... ok
+test dispatch::tests::cold_counter_recycling_saturating_lifetime_accounting_and_toggle ... ok
+test dispatch::tests::counter_increments_and_fires_exactly_once ... ok
+test dev::virtio::input::tests::short_event_buffer_is_not_partially_written_and_ring_recovers ... ok
+test dev::virtio::gpu::tiles::tests::seeded_random_transfer_flush_resize_sequences_match_reference_tiles ... ok
+test dispatch::tests::counter_map_is_bounded_under_cold_flood ... ok
+test dispatch::tests::dedup_across_distinct_blocks ... ok
+test dispatch::tests::no_nomination_below_threshold ... ok
+test dispatch::tests::requeue_after_invalidation_no_stale_survives ... ok
+test dispatch::tests::reset_clears_state_and_bumps_generation ... ok
+test dispatch::tests::queue_overflow_degrades_gracefully ... ok
+test dispatch::tests::stale_generation_alone_blocks_install_even_if_bytes_match ... ok
+test dispatch::tests::translation_request_shape ... ok
+test dispatch::tests::wfi_and_lone_system_blocks_are_excluded_but_csr_prefix_blocks_are_nominated ... ok
+test fdt::tests::header_is_spec_valid ... ok
+test dispatch::tests::cold_counter_recycling_disabled_parity_including_admission_observer ... ok
+test fdt::tests::initrd_placement_between_kernel_and_dtb ... ok
+test fdt::tests::dtb_tracks_platform_and_args ... ok
+test hart::fregs::tests::f0_is_an_ordinary_register ... ok
+test fdt::tests::placement_top_of_dram_aligned_outside_kernel ... ok
+test hart::fregs::tests::jit_stamps_distinguish_creation_clone_and_same_value_write ... ok
+test hart::fregs::tests::non_boxed_value_reads_as_canonical_nan ... ok
+test fdt::tests::tree_has_every_required_node_and_link ... ok
+test hart::fregs::tests::registers_are_independent ... ok
+test hart::fregs::tests::write_f32_boxes_and_read_f32_unboxes ... ok
+test hart::regs::tests::abi_names_match_psabi ... ok
+test hart::regs::tests::compiled_register_mask_commit_preserves_unmasked_words_and_x0 ... ok
+test hart::regs::tests::default_is_all_zero_including_pc ... ok
+test hart::regs::tests::dump_format_is_byte_stable ... ok
+test hart::regs::tests::jit_version_is_not_architectural_equality ... ok
+
+thread 'hart::regs::tests::out_of_range_read_panics' (1973243) panicked at crates/core/src/hart/regs.rs:48:9:
+register index 32 out of range
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test hart::regs::tests::interleavings_vs_oracle_lcg ... ok
+
+thread 'hart::regs::tests::out_of_range_write_panics' (1973244) panicked at crates/core/src/hart/regs.rs:56:9:
+register index 32 out of range
+test hart::regs::tests::out_of_range_read_panics - should panic ... ok
+test hart::regs::tests::out_of_range_write_panics - should panic ... ok
+test dev::virtio::rng::tests::fills_posted_buffer_with_entropy_and_publishes_used ... ok
+test hart::regs::tests::sparse_mask_stamp_wraps_once_and_empty_masks_do_not_mutate ... ok
+test hart::regs::tests::x0_writes_are_discarded ... ok
+test hart::regs::tests::x1_to_x31_roundtrip_distinct_values ... ok
+test jit::tests::cpu_state_handoff_pins_frozen_layout_endian_and_x0 ... ok
+test jit::tests::fp_handoff_exact_offsets_dirty_mask_and_copy_elision ... ok
+test mmio::tests::attach_rejects_overlap_with_ram_and_devices ... ok
+test mmio::tests::device_hits_counts_every_access_that_lands_in_the_window ... ok
+test mmio::tests::device_faults_propagate ... ok
+test mmio::tests::attach_rejects_zero_length_and_overflow_without_panic ... ok
+test mmio::tests::device_read_results_are_masked_to_width ... ok
+test mmio::tests::multiple_devices_route_independently ... ok
+test mmio::tests::misaligned_in_window_faults_without_invoking_device ... ok
+test mmio::tests::ram_accesses_pass_through_unchanged ... ok
+test mmio::tests::unmapped_hole_faults_access_at_every_width ... ok
+test mmio::tests::fast_path_ram_accessors_keep_every_ram_side_effect ... ok
+test mmio::tests::straddling_window_edge_faults_and_never_invokes_device ... ok
+test mmio::tests::zero_size_ram_bus_still_routes_devices ... ok
+test mmio::tests::width_forwarding_is_exact_never_split ... ok
+PACED_PRIVATE_REFUSAL divider=0 residue=0 new_reads=0 mode=wall mtime=133456 trace=10ed033637365290
+test mmio::tests::window_access_reaches_device_with_offset_width_value ... ok
+PACED_PRIVATE_REFUSAL divider=7 residue=7 new_reads=0 mode=wall mtime=133456 trace=10ed033637365290
+PACED_PRIVATE_REFUSAL divider=7 residue=8 new_reads=0 mode=wall mtime=133456 trace=10ed033637365290
+test paced_idle_clock_tests::paced_selection_refuses_invalid_private_phase_before_sampling_or_replacing_policy ... ok
+test partial_resume_tests::rebuild_matches_the_walk_at_an_undecodable_op_and_the_op_cap ... ok
+test partial_resume_tests::rebuild_matches_the_walk_for_mixed_width_ops_ending_in_a_csr_terminator ... ok
+test platform::tests::default_platform_is_valid ... ok
+test platform::tests::irq_and_virtio_layout ... ok
+test platform::tests::overlap_and_overflow_are_caught ... ok
+test platform::tests::region_boundaries ... ok
+test partial_resume_tests::rebuild_refuses_an_entry_that_does_not_decode ... ok
+test partial_resume_tests::rebuild_matches_the_walk_at_the_page_edge_and_before_a_straddling_op ... ok
+test pmp_audit_tests::m_pmp_audit_still_visits_cached_instructions ... ok
+test pmp_audit_tests::su_pmp_effective_address_change_cannot_take_shortcut ... ok
+test pmp_audit_tests::su_pmp_ignored_locked_tor_writes_keep_revision_and_zero_work ... ok
+test pmp_audit_tests::su_pmp_revision_change_flushes_before_shortcut ... ok
+test prof::pause::tests::buckets_bracket_the_target ... ok
+test desktop_restore::desktop_restore_tests::machine_refuses_restore_without_the_production_agent_channel ... ok
+test prof::pause::tests::work_bound_tracks_max ... ok
+test prof::pause::tests::over_target_and_max_ns ... ok
+test prof::tests::collisions_are_visible_not_silently_merged ... ok
+test prof::tests::add_ns_accumulates_per_subsystem ... ok
+test prof::tests::fixed_timer_reflects_set_and_advance_monotonically ... ok
+test prof::tests::records_land_in_expected_64_byte_regions ... ok
+test prof::tests::report_computes_pct_and_passes_total_through ... ok
+test dev::virtio::console::tests::virtio_console_agent_and_port0_data_queues_keep_frame_bytes_and_backpressure_separate ... ok
+test prof::tests::report_on_empty_profile_does_not_divide_by_zero ... ok
+test prof::tests::report_text_contains_pc_and_subsystem_names ... ok
+test prof::tests::report_json_shape_and_contents ... ok
+test prof::tests::tight_loop_concentrates ... ok
+test prof::tests::weak_incumbent_is_evicted_by_newcomer ... ok
+test prof::tests::top_is_descending_with_low_pc_tie_break ... ok
+test ram::resume_snapshot_tests::a_malformed_payload_is_refused_without_mutating ... ok
+test prof::tests::histogram_memory_is_fixed ... ok
+test ram::resume_snapshot_tests::ram_round_trips_completely ... ok
+test ram::resume_snapshot_tests::restoring_a_wrong_size_snapshot_is_refused_without_mutating ... ok
+test ram::resume_snapshot_tests::sparse_restore_late_refusal_is_atomic_and_valid_zero_runs_replace_old_bytes ... ok
+test ram::tests::default_map_constants ... ok
+test ram::tests::extreme_addresses_fault_without_overflow_panics ... ok
+test ram::tests::fast_path_accessors_match_the_checked_ones_and_still_range_check ... ok
+test ram::tests::faulting_store_leaves_ram_bit_identical ... ok
+test ram::tests::little_endian_byte_order ... ok
+test ram::tests::misaligned_in_range_faults_misaligned_at_every_width ... ok
+test ram::tests::roundtrip_every_width_at_base_and_last_slot ... ok
+test ram::tests::slice_escape_hatch_bounds_and_content ... ok
+test ram::tests::straddling_the_end_is_access_not_panic ... ok
+test ram::tests::zero_and_absurd_sizes_fail_cleanly ... ok
+test resume::resume_tests::a_bad_magic_is_rejected ... ok
+test resume::resume_tests::a_component_round_trips_through_the_container_format ... ok
+test resume::resume_tests::a_huge_zero_run_length_is_rejected_without_allocating ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_ram_snapshot_is_far_under_ram_size ... ok
+test resume::resume_tests::a_partial_trailing_section_header_is_truncated ... ok
+test resume::resume_tests::a_reserved_but_unimplemented_section_is_refused_as_unsupported ... ok
+test resume::resume_tests::a_section_length_past_the_end_is_rejected_not_over_read ... ok
+test resume::resume_tests::a_too_short_blob_is_truncated_not_a_panic ... ok
+test resume::resume_tests::a_version_mismatch_is_rejected ... ok
+test pmp_audit_tests::su_pmp_audit_work_is_zero_for_populated_caches ... ok
+test resume::resume_tests::an_unknown_section_fails_loudly ... ok
+test resume::resume_tests::decode_sparse_rejects_malformed_payloads ... ok
+test resume::resume_tests::header_round_trips_and_sections_read_back_in_order ... ok
+test resume::resume_tests::a_mostly_zero_buffer_compresses_far_under_ram_size ... ok
+test resume::resume_tests::restore_decision_rejects_a_truncated_final_section ... ok
+test resume::resume_tests::short_zero_runs_stay_literal_and_profitable_runs_keep_legacy_framing ... ok
+test resume::resume_tests::decode_sparse_never_panics_on_random_input ... ok
+test resume::resume_tests::the_coherence_guards_refuse_a_mismatch ... ok
+test resume::resume_tests::pointer_shaped_ram_does_not_expand_or_change_restored_bytes ... ok
+test resume::resume_tests::zero_elision_round_trips_for_every_shape ... ok
+test sbi::base::tests::ids_and_unknown_fid ... ok
+test sbi::base::tests::probe_extension_per_plan ... ok
+test sbi::base::tests::spec_version_is_2_0 ... ok
+test sbi::dbcn::tests::read_drains_queue_nonblocking_and_write_byte ... ok
+test sbi::dbcn::tests::write_attack_matrix ... ok
+test sbi::dbcn::tests::write_reads_guest_dram_and_reports_count ... ok
+test sbi::hsm::tests::lifecycle_answers_single_hart ... ok
+test sbi::ipi::tests::self_ipi_sets_ssip_and_masks_validate ... ok
+test sbi::legacy::tests::getchar_empty_is_minus_one_nonblocking ... ok
+test sbi::legacy::tests::putchar_emits_and_returns_zero ... ok
+test sbi::rfence::tests::fences_flush_and_masks_validate ... ok
+test sbi::srst::tests::shutdown_reboot_and_error_paths ... ok
+test resume::resume_tests::sparse_encoding_is_bounded_for_exhaustive_transitions_and_zero_run_edges ... ok
+test sbi::tests::probe_set_matches_plan ... ok
+test dev::virtio::mmio::tests::register_fuzz_1e6 ... ok
+test sbi::tests::unknown_and_pending_eids_not_supported ... ok
+test sbi::time::tests::set_timer_replaces_and_cancels ... ok
+test resume::resume_tests::the_parser_never_panics_on_any_truncation_or_flip ... ok
+test tests::admission_probe_enabled_disabled_trace_state_and_nomination_parity ... ok
+test tests::cold_counter_recycling_smc_stale_generation_and_live_byte_guards ... ok
+test tests::cold_counter_recycling_preserves_compile_queue_cache_and_installed_sentinel ... ok
+test hart::regs::proptests::writes_track_oracle_and_x0_stays_zero ... ok
+test tests::group_batches_coalesces_disconnected_chunks ... ok
+test tests::kernel_footprint_falls_back_to_file_len ... ok
+test tests::kernel_footprint_honours_image_size ... ok
+test tests::machine_allocates_requested_ram ... ok
+test tests::machine_tolerates_zero_ram ... ok
+test dispatch::tests::cold_counter_recycling_finite_real_capacity_flood_then_hot_512 ... ok
+test tests::version_matches_manifest ... ok
+test time::tests::huge_gap_jumps_with_notification ... ok
+test time::tests::icount_is_pure_function_of_retired ... ok
+test time::tests::moderate_gap_slews_at_bounded_rate ... ok
+test time::tests::respects_software_mtime_write_as_floor ... ok
+test time::tests::wallclock_never_steps_backward_under_jittery_host ... ok
+test tlb::probe_tests::consecutive_superpages_use_distinct_sets ... ok
+test dev::virtio::gpu::damage::tests::seeded_random_rectangles_never_drop_reference_damage ... ok
+test sbi::tests::dispatcher_fuzz_1e6 ... ok
+test dev::virtio::input::snapshot::tests::verifier_total_serialized_event_cap_is_atomic_on_encode_and_decode ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_growth_at_serialized_cap_is_atomic ... ok
+test tests::cold_counter_recycling_retired_trace_architecture_parity_varied_schedules ... ok
+1280x800 transfer: 149.108667ms
+test dev::virtio::gpu::resources::tests::gpu_transfer_full_frame_native_budget ... ok
+test dev::virtio::input::snapshot::tests::verifier_fully_consumed_records_still_obey_total_serialized_cap ... ok
+test dev::virtio::input::snapshot::tests::verifier_release_growth_that_exactly_reaches_serialized_cap_succeeds ... ok
+test dispatch::tests::discovery_memo_is_equivalent_to_the_map_path ... ok
+test dev::virtio::gpu::resources::tests::gpu_resources_create_repeated_rejections_do_not_grow_map ... ok
+test pmp::tests::first_entry_fast_path_matches_full_scan ... ok
+test ram::resume_snapshot_tests::a_mostly_zero_256_mib_ram_encodes_under_15_percent_and_restores_byte_identically ... ok
+test tlb::probe_tests::optimized_probe_and_targeted_fence_match_whole_array_reference ... ok
+test tests::deferred_retire_accounting_is_unobservable ... ok
+test tests::fabric_quiescence_fast_path_is_unobservable ... ok
+test tests::replay_block_tail_is_unobservable ... ok
+
+test result: ok. 399 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 11.96s
+

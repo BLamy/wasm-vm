@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "wasm_sha256": "b07d03ffc0176ced185137f2d6982819765d0bba23b306e62da93a795d309932",
+  "queued_flags_sha256": "01b114f70f03fdd845f7ce13f959c540f51a9ed25a0ed5f961a46efc59620336",
+  "full_owned_bytes_sha256": "c4cf465ab6a606670a20dae04b8621cf319c961a4d4807539db900886ccb7266",
+  "terminal_memory_position": {
+    "transition": "0",
+    "retired": "0",
+    "phase": "before",
+    "sequence": "5",
+    "ordinal": 5,
+    "pending": 0,
+    "mtime": "0"
+  },
+  "count_capacity": 256,
+  "owned_bytes_capacity": 4194304
+}

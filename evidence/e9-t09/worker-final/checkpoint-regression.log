@@ -1,0 +1,5 @@
+Built page ready; running 127-test suite
+Booting independent actual guest: alpha
+Booting independent actual guest: beta
+Restoring Beta after reload, Alpha in a fresh tab
+Two fresh guests, exact input/RAM/disk restores, rename, quota and retained sibling passed.

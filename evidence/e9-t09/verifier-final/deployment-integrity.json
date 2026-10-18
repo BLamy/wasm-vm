@@ -1,0 +1,67 @@
+{
+  "status": "passed",
+  "head": "be521e3ebca19089471c3b5a22c924916e953187",
+  "receipt_sha256": "2b042261bd2d8c2b7b1d8ca0903bfe89276c38595448cb9585ef463337e74ac3",
+  "tracked_authenticated": 729,
+  "release_extras_authenticated": 5,
+  "production": "https://wasm-vm.pages.dev/",
+  "remote_checks": [
+    {
+      "name": "artifacts.json",
+      "bytes": 905,
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404"
+    },
+    {
+      "name": "artifacts-alpine.json",
+      "bytes": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+    },
+    {
+      "name": "artifacts-node-alpine.json",
+      "bytes": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+    },
+    {
+      "name": "artifacts-omarchy.json",
+      "bytes": 1229,
+      "sha256": "39500e220a6ec642c5dc5f8d417bdb5147416c0d8bcde191d6c640dde391e3cf"
+    },
+    {
+      "name": "artifacts-omarchy-virgl.json",
+      "bytes": 1062,
+      "sha256": "78e227e08f0032bddc1e9dc0df77df8274c78f7340c4df9d9dd72630cd4e91ff"
+    },
+    {
+      "name": "main.js",
+      "bytes": 160429,
+      "sha256": "43dd6609ac4c7d675a2ae5cb808b6cbbf70b214acbc3e98ce9f4c36feb938ea9"
+    },
+    {
+      "name": "event-clock-probe.js",
+      "bytes": 10763,
+      "sha256": "32c8de7405fd5bf24ed54a1bd978086d59909cfa0f52c56609d04c8f728d6c8a"
+    },
+    {
+      "name": "pkg/wasm_vm_wasm_bg.wasm",
+      "bytes": 1897315,
+      "sha256": "b07d03ffc0176ced185137f2d6982819765d0bba23b306e62da93a795d309932"
+    },
+    {
+      "name": "gpu-checkpoint-build.js",
+      "bytes": 340,
+      "sha256": "db99c225724b67dcf1c9026779c040601f238db2c6cc93b75b302a8fbca1db2a"
+    },
+    {
+      "name": "app.html",
+      "bytes": 52482,
+      "sha256": "3ca53e58c70ac99b306d4b52039f1b23a1d8ac59d6a470ac58af3ddb013b30df"
+    },
+    {
+      "name": "roadmap.js",
+      "bytes": 59187,
+      "sha256": "055000794e7c75546b811d785b8e4d7be365f5bdeb0a8a3b46594b2f0ac85257"
+    }
+  ],
+  "manifest_policy": "Only URL fields differ; every rewrite embeds the unchanged asset SHA-256.",
+  "http_note": "Read-only immutable preview returned403; production app.html canonicalizes to /app with308. Final GETs followed standard redirects and all actual bytes matched the successful deploy payload."
+}
