@@ -187,7 +187,7 @@ try {
   assert.deepEqual(report.checks.before.held.keyboard,[30]);assert.equal(report.checks.before.input,'e9_queue=queued-before\n');
   await page.evaluate(()=>guests.live.controller.resume());
   report.checks.queuedLive=await command('live','printf "%s/%s" "$e9_memory" "$e9_queue"');
-  assert.equal(report.checks.queuedLive.stdout,'memory-before/queued-before');
+  assert.equal(report.checks.queuedLive.stdout,'memory-before/queued-before\n');
   await command('live',"e9_memory=memory-after; e9_queue=queue-after; printf 'e9:after\\n' | dd of=/root/e9-session/state conv=notrunc 2>/dev/null; truncate -s 9 /root/e9-session/state; sync");
   report.checks.afterFile=await file('live','e9:after\n');
   report.checks.failures=await page.evaluate(async()=>{
@@ -225,7 +225,7 @@ try {
   assert.match(report.checks.rejectedRestore,/Corrupt/);
   await page.evaluate(()=>guests.live.controller.resume());
   report.checks.liveSurvives=await command('live','printf "%s/%s" "$e9_memory" "$e9_queue"');
-  assert.equal(report.checks.liveSurvives.stdout,'memory-after/queue-after');
+  assert.equal(report.checks.liveSurvives.stdout,'memory-after/queue-after\n');
   // Release the original owner, reload the built page, and recover through only committed IDs.
   await page.evaluate(async()=>{await guests.live.controller.stop();await lease.release();await store.close();});
   await page.reload({waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.__ready===true);
@@ -246,7 +246,7 @@ try {
   assert.equal(report.checks.restored.hash,report.checks.before.frameHash,'reload changed the exact saved native/device/queue tuple');
   await page.evaluate(async()=>{await guests.restored.controller.sendKeyboardEvent(1,30,0);await guests.restored.controller.syncKeyboard();await guests.restored.controller.resume();});
   report.checks.restoredMemory=await command('restored','printf "%s/%s" "$e9_memory" "$e9_queue"');
-  assert.equal(report.checks.restoredMemory.stdout,'memory-before/queued-before');
+  assert.equal(report.checks.restoredMemory.stdout,'memory-before/queued-before\n');
   report.checks.restoredFile=await file('restored','e9:before\n');
   await page.evaluate(()=>guests.restored.controller.stop());
   report.checks.io=await checkSoftwareCheckpointIo(page,fixture);
