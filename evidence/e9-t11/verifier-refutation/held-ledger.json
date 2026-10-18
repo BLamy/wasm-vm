@@ -1,0 +1,102 @@
+{
+  "P1-fixed-workload": {
+    "status": "HELD",
+    "scope": "Real fixed guest on interpreter/block cache:4 RTC words, exact16/33-byte DMA/UART fills, WFI and CDP pause. Does not qualify the newly refuted actual-JIT polling cadence.",
+    "trace_file": "evidence/e9-t11/worker-final/native/seed-9e3779b9-record.trace",
+    "trace_sha256": "5aec7e2e1ac2cd6a8c11fa39d132bd65bcef7607637f364b88b940be846da646",
+    "points": [
+      25,
+      29,
+      130,
+      135,
+      174,
+      178,
+      186,
+      187
+    ]
+  },
+  "P2-provider-isolation": {
+    "status": "HELD",
+    "scope": "Fixed workload, failure replay and failing actual-JIT replay all make 0 live RTC/CSPRNG calls; owned data/frame/receipt equality holds in recorded fixed-board replay."
+  },
+  "P3-malformed-boundaries": {
+    "status": "HELD",
+    "scope": "Wrong policy, malformed/wrong length, missing/kind/position/extra tapes and provider failure stop typed with no unauthorized DMA/publication."
+  },
+  "P4-native-cursor": {
+    "status": "HELD",
+    "scope": "Policy/cursor/snapshot validation is transactional; restored suffix converges. Supplemental wrong native CLOCK and prefetched-tape loads refuse before mutation."
+  },
+  "P5-production-persistence": {
+    "status": "HELD",
+    "scope": "Direct and whole-worker non-JIT production poweroff journals authenticate/reopen,413 events each;4 RTC words and2 entropy fills independently reconstructed from durable events."
+  },
+  "P6-identity": {
+    "status": "HELD",
+    "worker_report_sha256": "19e13fd2989eaa6d30ba7c6a8485f221f9e914ce86fabc2966f048245ba80e19",
+    "cold_receipt_sha256": "703c325f8e60e033ef9b2c65cfdf8952baa8f8d5422a5e8c8f5e84e5163f4043",
+    "cold_report_sha256": "323a57add267b0516bdb51f24169650c4904b79d9fe769be387f6ba57be97e5b",
+    "public_report_sha256": "af659af806c15c76445b95ee0bfebbc15f07e227bc028b381169e11b95cdf376",
+    "public_source_report_sha256": "604cf80642131935fb8bdd80b205cd67246f59fcaf367c6a9cb72b6392195d7e",
+    "artifacts_authenticated": {
+      "worker": 874,
+      "cold_acceptance": 877,
+      "cold_outer": 879,
+      "public": 1142
+    },
+    "public_assets_authenticated": 18,
+    "runtime_head": "7d52129e9277468cb2d8e8cfc83571d9d7fb8334",
+    "public_head": "0fcd33c8d1539bcddffab8656a4153e29a3d8623",
+    "public_delta": "371task/evidence-only files; runtime/shipped assets unchanged"
+  },
+  "P7-byte-budget": {
+    "status": "HELD",
+    "scope": "Three real 1 MiB fills yield at 2/2 with 3 calls; drain then fourth fill reaches 4/4 with 4 calls; replay frames/receipts match, provider calls 0."
+  },
+  "P8-coverage-and-oracle-sabotage": {
+    "status": "HELD-scoped",
+    "native_changed_counted_lines_executed": 733,
+    "native_changed_counted_lines_total": 757,
+    "native_invariant_waivers": 24,
+    "javascript_changed_counted_lines_executed": 148,
+    "hunks_classified": 224,
+    "sabotage": "Independent production RTC model rejects changed low bit in first RTC payload against unchanged UART, on final worker/cold/public objects. These results do not supersede P10 semantic refutation."
+  },
+  "P9-production-failure": {
+    "status": "HELD",
+    "scope": "Actual direct-loader Web Crypto outage: typed ProviderUnavailable at 115/115 observe sequence 3, durable terminal channel 18, status 1, empty bytes, no guest output, writer reacquired.",
+    "evidence": "target/evidence/e9-t11-verifier/production-failure-v2/report.json"
+  },
+  "P10-actual-JIT-cadence": {
+    "status": "FAILED",
+    "prediction": "Same warmed actual executor and initial frame reproduce ordered RTC samples under budgets 6 and 1.",
+    "observed_record_transitions": [
+      384,
+      390,
+      396,
+      402,
+      408,
+      414
+    ],
+    "same_budget_control": "Identical initial/final frames+receipts, RTC calls 0",
+    "observed_replay_stop": {
+      "transition": 385,
+      "retired": 385,
+      "phase": "observe",
+      "ordinal": 1,
+      "sequence": 2,
+      "typed_error": "Position",
+      "live_RTC_calls": 0
+    },
+    "expected_next_record": {
+      "transition": 390,
+      "retired": 390,
+      "phase": "observe",
+      "ordinal": 1,
+      "sequence": 2
+    },
+    "record_tape_sha256": "9c9233e69029e267875485471bfbc020c4cb36587f314b985996c771b61f01c1",
+    "citation": "record.observations.jsonl:2 / recheck.log:3",
+    "reproductions": 2
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "status": "expected-red-JIT-regression",
+  "commands": [
+    {
+      "name": "promoted-format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "name": "promoted-jit-clippy-final",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "e9_event_clock_critic",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0
+    },
+    {
+      "name": "promoted-jit-regression-final",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "e9_event_clock_critic",
+        "time_entropy",
+        "--",
+        "--nocapture"
+      ],
+      "exit_code": 101,
+      "expected_exit_code": 101
+    }
+  ],
+  "evidence_env": "/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/evidence/e9-t11-verifier/promoted-jit-artifacts"
+}

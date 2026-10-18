@@ -1,0 +1,8 @@
+same-quantum6 control replay HELD: initial+final frames and receipts identical; RTC calls0
+record calls=6 positions=[(384, 1), (390, 2), (396, 3), (402, 4), (408, 5), (414, 6)] jit_executed=59
+replay calls=0 results=[(SessionPosition { transition: 385, retired: 385, phase: Before, ordinal: 0, sequence: 1 }, Ok(MaxInstrs)), (SessionPosition { transition: 385, retired: 385, phase: Before, ordinal: 0, sequence: 1 }, Err(SourceDivergence(SourceDivergence { reason: Position, position: SessionPosition { transition: 385, retired: 385, phase: Observe, ordinal: 1, sequence: 2 }, expected: 2, observed: 2 })))]
+
+
+thread 'main' (2475150) panicked at target/evidence/e9-t11-verifier/jit-source-poll.rs:7:2357:
+source tape diverged under admitted warmed JIT and different quantum
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace

@@ -879,3 +879,143 @@ fn captured_entropy_chain_quota_refuses_all_dma_and_cannot_continue() {
         ),
     );
 }
+
+// Fresh critic: this byte-based quota path is distinct from the receipt-count fence.
+mod critic_byte_budget {
+    use std::{cell::Cell, rc::Rc};
+    use wasm_vm_core::{
+        Machine, RunOutcome,
+        bus::{Bus, mmap::DRAM_BASE as BASE},
+        dev::virtio::rng::EntropySource,
+        session_clock::{
+            SessionDelivery, SessionEffect,
+            sources::{ObservationRecord, ObservationTape},
+        },
+    };
+    const N: usize = 1 << 20;
+    struct Source {
+        calls: Rc<Cell<u32>>,
+        hostile: bool,
+    }
+    impl EntropySource for Source {
+        fn fill(&mut self, out: &mut [u8]) {
+            assert!(!self.hostile, "replay touched host entropy");
+            let n = self.calls.get();
+            self.calls.set(n + 1);
+            for (i, b) in out.iter_mut().enumerate() {
+                *b = (n as u8).wrapping_add((i as u8).wrapping_mul(17));
+            }
+        }
+    }
+    fn machine(hostile: bool) -> (Machine, Rc<Cell<u32>>) {
+        let mut m = Machine::new(16 << 20);
+        m.enable_clint(5);
+        m.enable_plic();
+        m.enable_virtio_slots(None);
+        let calls = Rc::new(Cell::new(0));
+        m.enable_virtio_rng(Box::new(Source {
+            calls: calls.clone(),
+            hostile,
+        }));
+        let b = m.bus_mut();
+        for i in 0..4u64 {
+            let d = BASE + 0x1000 + 16 * i;
+            b.store64(d, BASE + (i + 1) * N as u64).unwrap();
+            b.store32(d + 8, N as u32).unwrap();
+            b.store16(d + 12, 2).unwrap();
+            b.store16(BASE + 0x2004 + 2 * i, i as u16).unwrap();
+        }
+        b.store16(BASE + 0x2002, 3).unwrap();
+        for (o, v) in [
+            (0x30, 0),
+            (0x38, 8),
+            (0x80, (BASE + 0x1000) as u32),
+            (0x90, (BASE + 0x2000) as u32),
+            (0xa0, (BASE + 0x3000) as u32),
+            (0x44, 1),
+        ] {
+            b.store32(0x10003000 + o, v).unwrap();
+        }
+        for (i, w) in [0x0401a823u32, 0x13, 0x0401a823, 0x13, 0x6f]
+            .iter()
+            .enumerate()
+        {
+            b.store32(BASE + 4 * i as u64, *w).unwrap();
+        }
+        m.hart_mut().regs.pc = BASE;
+        m.hart_mut().regs.write(3, 0x10003000);
+        m.start_session_clock(1).unwrap();
+        (m, calls)
+    }
+    fn tape(m: &Machine, rows: &[SessionDelivery]) -> ObservationTape {
+        ObservationTape {
+            policy: m.source_policy(),
+            records: rows
+                .iter()
+                .map(|r| {
+                    let SessionEffect::Observation(v) = &r.effect else {
+                        panic!("non-source receipt")
+                    };
+                    ObservationRecord {
+                        position: r.position,
+                        value: v.clone(),
+                    }
+                })
+                .collect(),
+        }
+    }
+    fn check(m: &mut Machine, descriptors: u32) {
+        let b = m.bus_mut();
+        assert_eq!(b.load16(BASE + 0x3002).unwrap(), descriptors as u16);
+        for j in 0..descriptors {
+            let d = BASE + (j as u64 + 1) * N as u64;
+            for i in [0, 1, 255, N / 2, N - 1] {
+                assert_eq!(
+                    b.load8(d + i as u64).unwrap(),
+                    (j as u8).wrapping_add((i as u8).wrapping_mul(17))
+                );
+            }
+            assert_eq!(b.load32(BASE + 0x3008 + j as u64 * 8).unwrap(), N as u32);
+        }
+    }
+    #[test]
+    fn byte_soft_fence_yields_between_complete_transitions_without_duplicate_entropy() {
+        let (mut m, calls) = machine(false);
+        let p = m.source_policy();
+        m.start_session_sources(p, None).unwrap();
+        assert_eq!(m.run_session_until(4, 64), Ok(RunOutcome::MaxInstrs));
+        let pos = m.session_position().unwrap();
+        assert_eq!((pos.transition, pos.retired, pos.sequence), (2, 2, 3));
+        assert!(m.session_sources_need_flush());
+        assert_eq!(calls.get(), 3);
+        check(&mut m, 3);
+        let first = m.take_session_deliveries().unwrap();
+        assert_eq!(first.len(), 3);
+        assert!(!m.session_sources_need_flush());
+        let frame = m.save_session_resume().unwrap();
+        m.bus_mut().store16(BASE + 0x2002, 4).unwrap();
+        assert_eq!(m.run_session_until(4, 64), Ok(RunOutcome::MaxInstrs));
+        check(&mut m, 4);
+        assert_eq!(calls.get(), 4);
+        let rest = m.take_session_deliveries().unwrap();
+        assert_eq!(rest.len(), 1);
+        let end = m.save_session_resume().unwrap();
+        let (mut r, rc) = machine(true);
+        r.start_session_sources(p, Some(tape(&m, &first))).unwrap();
+        assert_eq!(r.run_session_until(4, 64), Ok(RunOutcome::MaxInstrs));
+        assert_eq!(r.take_session_deliveries().unwrap(), first);
+        assert_eq!(r.save_session_resume().unwrap(), frame);
+        r.append_session_source_replay(tape(&m, &rest)).unwrap();
+        r.bus_mut().store16(BASE + 0x2002, 4).unwrap();
+        while r.session_position().unwrap().transition < 4 {
+            assert_eq!(r.run_session_until(4, 1), Ok(RunOutcome::MaxInstrs));
+        }
+        assert_eq!(r.take_session_deliveries().unwrap(), rest);
+        r.finish_session_source_replay().unwrap();
+        assert_eq!(r.save_session_resume().unwrap(), end);
+        assert_eq!(rc.get(), 0);
+        println!(
+            "HELD byte_soft_fence: first_transition=2 first_retired=2 first_receipts=3 first_bytes=3145728 first_host_calls=3 final_transition=4 final_retired=4 final_receipts=4 final_bytes=4194304 final_host_calls=4 replay_host_calls=0 used_idx=4 first_and_final_frames_equal=true"
+        );
+    }
+}

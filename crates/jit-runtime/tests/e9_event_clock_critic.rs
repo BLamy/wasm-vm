@@ -188,3 +188,184 @@ fn seeded_owned_writes_match_independent_arithmetic_and_pending_restore() {
     assert!(executed > 0);
     println!("seeded scalar/JIT/pending-restore attacks passed; executed_blocks={executed}");
 }
+
+// E9-T11 fresh critic: RTC samples may not follow the host's compiled-dispatch quantum.
+mod time_entropy {
+    use jit_runtime::WasmtimeExecutor;
+    use std::{cell::Cell, rc::Rc};
+    use wasm_vm_core::{
+        Machine, RunOutcome,
+        bus::{Bus, mmap::DRAM_BASE as BASE},
+        dev::rtc::WallClock,
+        session_clock::{
+            SessionDelivery, SessionEffect,
+            sources::{ObservationKind, ObservationRecord, ObservationTape},
+        },
+    };
+
+    const WARM: u64 = 384;
+    struct Clock {
+        calls: Rc<Cell<u32>>,
+        forbid: Rc<Cell<bool>>,
+    }
+    impl WallClock for Clock {
+        fn now_ns(&self) -> u64 {
+            assert!(!self.forbid.get(), "source replay consulted the live RTC");
+            self.calls.set(self.calls.get() + 1);
+            123
+        }
+    }
+    struct Board {
+        machine: Machine,
+        calls: Rc<Cell<u32>>,
+        forbid: Rc<Cell<bool>>,
+    }
+    fn board(guest_read: bool, alarm: bool) -> Board {
+        let mut m = Machine::new(1 << 20);
+        m.enable_clint(5);
+        m.enable_plic();
+        let calls = Rc::new(Cell::new(0));
+        let forbid = Rc::new(Cell::new(false));
+        m.enable_rtc(Box::new(Clock {
+            calls: calls.clone(),
+            forbid: forbid.clone(),
+        }));
+        let mut words = vec![0x00108093, 0x00310113, 0x00518193, 0x00720213, 0x00b28293];
+        if guest_read {
+            // A real compiled pure block jumps to an RTC load that must use interpreter fallback.
+            words.extend([super::jal(12), 0x13, 0x13, 0x00056303, super::jal(-36)]);
+        } else {
+            words.push(super::jal(-20));
+        }
+        for (i, word) in words.into_iter().enumerate() {
+            m.bus_mut().store32(BASE + 4 * i as u64, word).unwrap();
+        }
+        m.hart_mut().regs.pc = BASE;
+        m.hart_mut().regs.write(10, 0x101000);
+        m.set_block_cache(true);
+        m.set_interrupt_batching(true);
+        m.set_executor(Box::new(WasmtimeExecutor::new()));
+        m.set_hotness_threshold(1);
+        m.set_jit(true);
+        m.start_session_clock(1).unwrap();
+        assert_eq!(m.run(WARM), RunOutcome::MaxInstrs);
+        assert_eq!(m.hart().regs.pc, BASE);
+        assert!(m.executor().unwrap().is_compiled(BASE));
+        assert!(
+            m.executor().unwrap().executed_blocks() > 0,
+            "must warm the actual Wasmtime executor"
+        );
+        if alarm {
+            m.bus_mut().store32(0x10100c, 0x7fffffff).unwrap();
+            m.bus_mut().store32(0x101008, 0xffffffff).unwrap();
+        }
+        calls.set(0);
+        Board {
+            machine: m,
+            calls,
+            forbid,
+        }
+    }
+    fn drive(m: &mut Machine, target: u64, quantum: u64) -> Vec<SessionDelivery> {
+        let mut receipts = vec![];
+        while m.session_position().unwrap().transition < target {
+            let outcome = m.run_session_until(target, quantum);
+            assert_eq!(
+                outcome,
+                Ok(RunOutcome::MaxInstrs),
+                "quantum={quantum}, stopped={:?}",
+                m.session_position()
+            );
+            receipts.extend(m.take_session_deliveries().unwrap());
+        }
+        receipts
+    }
+    fn artifact(name: &str, bytes: impl AsRef<[u8]>) {
+        if let Some(dir) = std::env::var_os("E9_SOURCE_EVIDENCE") {
+            let dir = std::path::PathBuf::from(dir);
+            std::fs::create_dir_all(&dir).unwrap();
+            std::fs::write(dir.join(name), bytes).unwrap();
+        }
+    }
+    fn exercise(guest_read: bool, alarm: bool, record_quantum: u64, replay_quantum: u64) {
+        let name = format!(
+            "jit-source-read-{guest_read}-alarm-{alarm}-rq{record_quantum}-pq{replay_quantum}"
+        );
+        let target = WARM + if guest_read { 32 } else { 36 };
+        let mut record = board(guest_read, alarm);
+        let policy = record.machine.source_policy();
+        record.machine.start_session_sources(policy, None).unwrap();
+        let initial = record.machine.save_session_resume().unwrap();
+        artifact(&format!("{name}-initial.resume"), &initial);
+        let receipts = drive(&mut record.machine, target, record_quantum);
+        let tape = ObservationTape {
+            policy,
+            records: receipts
+                .iter()
+                .map(|r| {
+                    let SessionEffect::Observation(value) = &r.effect else {
+                        panic!("unexpected non-source receipt")
+                    };
+                    ObservationRecord {
+                        position: r.position,
+                        value: value.clone(),
+                    }
+                })
+                .collect(),
+        };
+        assert_eq!(record.calls.get() as usize, tape.records.len());
+        artifact(&format!("{name}.observations"), tape.encode().unwrap());
+        let final_frame = record.machine.save_session_resume().unwrap();
+        artifact(&format!("{name}-record.resume"), &final_frame);
+        let mut replay = board(guest_read, alarm);
+        replay.forbid.set(true);
+        replay
+            .machine
+            .start_session_sources(policy, Some(tape))
+            .unwrap();
+        assert_eq!(replay.machine.save_session_resume().unwrap(), initial);
+        let replayed = drive(&mut replay.machine, target, replay_quantum);
+        replay.machine.finish_session_source_replay().unwrap();
+        assert_eq!(
+            replayed, receipts,
+            "record={record_quantum}, replay={replay_quantum}"
+        );
+        let replay_frame = replay.machine.save_session_resume().unwrap();
+        assert_eq!(replay_frame, final_frame);
+        artifact(&format!("{name}-replay.resume"), replay_frame);
+        assert_eq!(replay.calls.get(), 0);
+        let expected_count = if guest_read { 4 } else { 36 };
+        let expected_kind = if guest_read {
+            ObservationKind::RtcRead
+        } else {
+            ObservationKind::RtcPoll
+        };
+        if guest_read || record_quantum == 1 {
+            assert_eq!(receipts.len(), expected_count);
+        }
+        assert!(receipts.iter().all(
+            |r| matches!(&r.effect, SessionEffect::Observation(v) if v.kind == expected_kind)
+        ));
+        println!(
+            "guest_read={guest_read} alarm={alarm} record_quantum={record_quantum} replay_quantum={replay_quantum} observations={} replay_host_calls=0",
+            receipts.len()
+        );
+    }
+
+    #[test]
+    fn armed_rtc_samples_replay_across_actual_compiled_dispatch_budgets() {
+        for record_quantum in [6, 1] {
+            for replay_quantum in [6, 1] {
+                exercise(false, true, record_quantum, replay_quantum);
+            }
+        }
+    }
+    #[test]
+    fn guest_rtc_read_after_compiled_compute_replays_across_budgets() {
+        for record_quantum in [8, 1] {
+            for replay_quantum in [1, 8] {
+                exercise(true, false, record_quantum, replay_quantum);
+            }
+        }
+    }
+}

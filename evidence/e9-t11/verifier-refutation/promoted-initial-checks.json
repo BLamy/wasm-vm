@@ -1,0 +1,77 @@
+{
+  "status": "expected-red-JIT-regression",
+  "commands": [
+    {
+      "name": "promoted-core-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-core",
+        "--features",
+        "trace,virgl-renderer",
+        "--test",
+        "e9_time_entropy",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "seconds": 1.5295500755310059
+    },
+    {
+      "name": "promoted-jit-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "e9_event_clock_critic",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "seconds": 9.19786787033081
+    },
+    {
+      "name": "promoted-byte-budget",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--features",
+        "trace,virgl-renderer",
+        "--test",
+        "e9_time_entropy",
+        "critic_byte_budget",
+        "--",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "seconds": 1.2096569538116455
+    },
+    {
+      "name": "promoted-jit-regression",
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-jit-runtime",
+        "--test",
+        "e9_event_clock_critic",
+        "time_entropy",
+        "--",
+        "--nocapture"
+      ],
+      "exit_code": 101,
+      "expected_exit_code": 101,
+      "seconds": 0.9504592418670654
+    }
+  ]
+}
