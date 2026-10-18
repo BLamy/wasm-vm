@@ -3,7 +3,7 @@ id: E9-T13
 epic: 9
 title: Capture network sessions and replay them with zero live egress
 priority: 524.913
-status: implemented
+status: verified
 depends_on: [E9-T09, E9-T03]
 estimate: S
 risk: high
@@ -818,3 +818,105 @@ its 25 recorded local gates, public release, and prior separate HELD findings
 are unchanged. The verifier must still execute G9's independent attacks,
 sensitivity check and suite disposition before setting verified. No dependency
 is cleared by this status change, and no merge is authorized.
+
+### 2026-10-18 — verifier — VERDICT: verified
+
+- P0/P1 frozen boundary and authentication — HELD. Predictions were frozen
+  before opening packet or fresh G9 state at
+  `/Volumes/e9-daybreak-verifier/e9-t13-verifier/predictions.md`, SHA256
+  `960ccc20d0e53a37e68ce7dfc01756f0e9c8e665a19a2a6848c6cc0fe5963138`.
+  Metadata began at `68d8d47878b5f5e042db2f15945fa6a8b5b954d7`; an exit-0 exact diff proves
+  Cargo/crates/web/tools/docs unchanged from frozen runtime
+  `2f2aa7aba484f6954ca04358385828093e561b83`. Authentication report SHA256
+  `19fd218e365edb0be6c5ace12930536b868916e5cecb48973b46897e7018c9cc`
+  verifies all 1170 entries in the four cited durable packets, gzip round trips,
+  the 25/25 exit-0 cold report SHA
+  `eee0a035d1157b4db78e3ab6bb6a661c2963758876506f171adc9a91c59d2bcb`,
+  and all 37 frozen source hashes. The only current-original mismatches are the
+  expected later task-log snapshots; their preserved bytes authenticate.
+- P2/P3 pinned exchange and saved guest state — HELD. Fresh verifier harness
+  `tests/g9.rs` SHA
+  `0ffad2e4673ad9407c9ed3b7cccee99caec75b50f6eccd1db512d7dd6de302e6`
+  links the current core and its final four-test run exits0 (log SHA
+  `06dd489740bfbe863015500f77230154a33532174d28933ed1efbf73fe829675`).
+  At `run-3/counter/pending.resume` SHA
+  `c646d95dcc12666db5f49a48c887f5a2b66f5e8e85121cb2d1a6c8c93822dbee`,
+  transition/retired=1024, sequence/cursor=1, TX/RX used=[1,0], request ID1
+  holds the exact 99-byte Ethernet+HTTP intent. Exactly one original action
+  changes the loopback JSON counter to1. At final SHA
+  `9d302fd16f2786a3fe3e0e09876b05f4918cdb0febe3a3250be01a60f8acfc4d`,
+  transition/retired=9216, sequence/cursor=5, TX/RX used=[1,1], link Closed,
+  queues empty and guest report=[1,1,1]; RAM contains the exact response.
+  Independent oracle SHA
+  `54199b9a73b39d874e3f8dd571745e2ed9bd21e4898597b529858c5a83edb818`
+  decodes all sections and checks every one of 9216 saved PCs/opcodes against
+  the pinned guest. Concrete points include trace:1
+  `pc=0x80000000/opcode=0x100021b7`, trace:1025
+  `pc=0x80001000/opcode=0x12a54303`, and trace:9216
+  `pc=0x80000d8c/opcode=0x0e658da3`; trace SHA is
+  `009da27dc2430c30ff20246095045b6b18b205d061b0e0f0ced358b4313319d2`.
+- P4/P5/P7/P8 replay, availability and schedule attacks — HELD. Eight verifier
+  seeds with independent budgets `307,776,801,197,669,247,542,731`, each from
+  initial and pending state, produce 16/16 byte-identical final frames. Initial
+  traces equal all 9216 original lines; pending traces equal the 8192-line suffix
+  SHA `8d7d886b3de715784f7d3fed5afa6b175711df42ed5069f07451dda7bd38e941`.
+  Provider factories=0, socket attempts=0, original counter=1, and the live
+  changed-server accepts=0 throughout replay; the closed original endpoint is
+  also refused before its closure runs. The bounded novel post-check makes the
+  same changed listener accept exactly1 connection and return
+  `{"count":999,"source":"changed-dns-target"}`, proving the witness was live.
+  Eight additional schedule seeds cover all Sent/Failed/Cancelled and
+  Closed/Failed forms at varied positions/budgets; each original/replay trace
+  and full state matches at cursor4 with provider calls0.
+- P6/P9 divergence and conservation — HELD. Changed intent=`Intent`, duplicate
+  Send=`UnknownRequest`, truncated payload=`Payload`, premature/unfinished
+  replay=`Exhausted`, and old position=`Position`, each with byte-identical state
+  after refusal. The novel mutant SHA
+  `bc6745c3ffdd606a3314560762b4152595e9e2fc407af8dd8cb17a4e339c0a33`
+  changes only section21, adding one represented RX while cursor stays0; restore
+  refuses atomically, the pre-failure lease remains usable, and the cursor1 valid
+  control SHA
+  `e2dc7a2337a5a2dca0bdadc028c41915d513b9d7986b0dee7630fc7967eaf276`
+  round-trips.
+- P10 WFI owned-work repair — HELD. Four fresh guest-TX/pending cases have exact
+  record/replay frame and trace identity. Pending cases retire WFI+ADDI at
+  `run-3/wfi/*pending-true-original.trace:1-2`, x1=1 and mtime=2/1026; controls
+  retire only WFI at trace:1, x1=0 and mtime=1000000. Two-line trace SHA is
+  `aba6749203441db6a938ffbb767dad9aa7ddfbd307d9cc734afa885e2b4cc8ea`.
+- P11 sabotage sensitivity — HELD. With verifier-only forced egress, command
+  `g9-sabotage-egress` exits101 exactly at the zero-accept assertion (left1,
+  right0), log SHA
+  `8f523fc1e0eb32c5ffce75f9fa310ccf50a75cea8a0429537be01726a8e54f0d`.
+  Witness SHA
+  `274fa01e80f206d3366e0a8bc6f4d5756cb254b317c44f90ce3af61de916d134`
+  records accepts1 while provider factories/socket attempts remain0. The normal
+  witness SHA
+  `f0ddd842d67e9e729575086fe906c6b295c654bb071d8d5183cdba29d60619c8`
+  records accepts0.
+- P12 coverage — HELD. Fresh four-test instrumented run exits0. LCOV SHA
+  `71dab1dd791c85a9ac066bdb111a30c6bf09803b70cb27a8c1f3c928e79cebe9`
+  and analysis SHA
+  `6d101961b8106895912ce35301f7c64852214ce5e022629038220ca295647035`
+  hold all21 semantic points:19 fresh, plus reset/revocation and fatal run-stop
+  carried from authenticated unchanged G1–G8 evidence. Coverage ledger SHA
+  `698c8074c2042e5533762ea35718639c8ddc1d3b3faeb2418111aa583e52f70f`
+  reconciles fresh misses to the unchanged 52-file/156-hunk ledger or its
+  existing narrow representation/dominance waivers. No unexplained hunk remains.
+  G1–G8 assessment SHA
+  `e177f23d227d4c895718d737fcd1cda3d4cd39fc2d2597f1846d418710606f0a`
+  and P13 assessment SHA
+  `17fdc47411aa5c3e82ce9a0ab2abb229172982b5126331fe5bc5b8b419a05676`
+  carry across the authenticated unchanged boundary.
+- P13 suite disposition — HELD. Existing committed native/Wasm/browser tests
+  already retain the stable event, conservation, WFI, replay-refusal and public
+  assertions. The live-listener/eight-seed/sabotage harness is retained as
+  verifier evidence, not promoted; no distinct stable regression was found.
+- Full authored assessment:
+  `/Volumes/e9-daybreak-verifier/e9-t13-verifier/assessment.md`. Stable packet
+  inventory SHA
+  `f481cd13dc1c4e9b0e03a96c61fd834a0b9e09bb035aa3b831e317edd3cec71f`
+  indexes 447 files / 58,890,374 bytes; final report SHA
+  `13ab77d39c330e355cf3704e19f87c682a0037e491d4d8566812bcf468a9b780`.
+  Original formatting, sandbox-bind and trace-helper failed attempts remain
+  preserved. Authorized loopback escalation was allowed; no automatic review
+  denial occurred. No implementation edit, external action or promoted test.
