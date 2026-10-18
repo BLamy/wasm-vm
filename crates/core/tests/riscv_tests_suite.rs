@@ -90,6 +90,9 @@ fn run_elf(path: &Path) -> (Status, u64) {
         RunOutcome::MaxInstrs => Status::Timeout,
         // E2-T17: arch-test ELFs never touch the syscon finisher; a Reset here is a harness error.
         RunOutcome::Reset(r) => Status::Error(format!("unexpected platform reset {r:?}")),
+        RunOutcome::SessionStopped(error) => {
+            Status::Error(format!("unexpected session stop {error:?}"))
+        }
     };
     (status, retired)
 }

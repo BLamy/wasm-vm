@@ -226,6 +226,7 @@ export const ROADMAP = [
       { name: "Local saved-session library", status: "verified", evidence: "E9-T06: real checkpoint controls, durable names and exact paused reopen" },
       { name: "Storage limits and shared-data deletion", status: "verified", evidence: "E9-T07: quota prefix, shared restore, crash recovery and independent verification" },
       { name: "Retention and reload milestone", status: "verified", evidence: "E9-T08: independently verified two-guest reload, file/RAM/input, quota, and deletion proof" },
+      { name: "Exact event clock and bounded execution", status: "in-progress", probe: "event-clock", evidence: "E9-T09: common single-hart boundary and real interpreter/JIT check; Linux provider adapters follow" },
       { name: "Exact replay, seeking and reverse-step", status: "pending", evidence: "E9-T09–T18" },
       { name: "Session timeline and branches", status: "pending", evidence: "E9-T19–T20" },
     ],

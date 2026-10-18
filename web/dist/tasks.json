@@ -34558,7 +34558,7 @@
       "activity": [
         {
           "date": "2026-10-18",
-          "commits": 4,
+          "commits": 6,
           "labels": [
             "Verify checkpoint milestone and promote reversed-order metadata critic",
             "Submit recorded two-guest checkpoint milestone proof",
@@ -34569,7 +34569,7 @@
       ],
       "firstActivity": "2026-10-18",
       "lastActivity": "2026-10-18",
-      "commitCount": 4
+      "commitCount": 6
     },
     {
       "id": "E9-T09",
@@ -34577,7 +34577,7 @@
       "epicKey": "9",
       "title": "Place recorded events at exact guest execution boundaries",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E9-T01",
         "E9-T02"
@@ -34604,13 +34604,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(pending; no implementation or verification claim)",
+      "verificationLog": "### 2026-10-18 — worker — started\n\nSelected from Next up after E9-T08's independent verified verdict and public catalog\npublication. High risk: this slice changes execution boundaries and snapshot semantics.\nImplement the non-wrapping single-hart clock, owned ordered delivery queue, and exact\ninterpreter/JIT fences; keep later input logging, observation adapters, and replay in their\nown tasks. Record affected native/JIT/wasm gates, deterministic guest-state evidence,\nbuilt-browser proof, the retained GPU regression, and one final pristine-clone proof before\nsubmission to a fresh adversarial verifier. No implementation claim yet.",
       "adversarial": "Deliver events at a block edge, inside a compiled block and across WFI. Vary browser callback order and run quanta; a shifted injection point or duplicated event is a refutation.",
       "file": "tasks/epic-9-session-time-travel/E9-T09-event-clock.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-10-18",
+          "commits": 1,
+          "labels": [
+            "Begin E9-T09 exact event clock and delivery boundary"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-18",
+      "lastActivity": "2026-10-18",
+      "commitCount": 1
     },
     {
       "id": "E9-T10",

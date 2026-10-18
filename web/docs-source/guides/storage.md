@@ -64,6 +64,8 @@ The [demo](./app.html) has a **Local saved sessions** library. Choose **New chec
 
 **Checkpoints only.** The current library restores explicit saved points. Continuous input replay, arbitrary-time seeking, reverse-step and accelerated desktop session history are later Epic 9 boundaries. Recording cannot recover execution from before it started. A session requires its exact compatible runtime, Wasm, kernel and image; an update can leave an older named session visibly incompatible without deleting it.
 
+The demo also has an **Execution boundary check**. It runs a small guest and compares exact stops, queued-event order and restored counters on the interpreter and JIT. The check reports its result in the page and runs separately from your active guest. It proves the common event-clock mechanism; the saved-session library continues to offer explicit checkpoints.
+
 ### Limits, quota and deletion
 
 The library reports saved binary bytes, the browser's approximate origin usage/quota and persistent-storage status. **Saved binary data limit** counts unique stored chunks once; browser metadata, caches and other site data consume additional space. **Restore points per session** limits future appends. Lowering either limit preserves existing named history.

@@ -87,6 +87,12 @@ impl<'a> SoftwareCheckpoint<'a> {
         let mut clocks = 0;
         for item in sections {
             let item = item.map_err(CheckpointError::Native)?;
+            // The checkpoint-only library has no event-log cursor binding yet. Never admit an
+            // event clock under its legacy zero-position context. The bare-machine event-clock
+            // API uses the native envelope; provider admission owns the library integration.
+            if item.tag == section::SESSION_CLOCK {
+                return Err(CheckpointError::Malformed);
+            }
             if item.tag == section::CLOCK {
                 clocks += 1;
                 if item.payload.len() != 24 {

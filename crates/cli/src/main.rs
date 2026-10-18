@@ -362,6 +362,10 @@ fn run(a: RunArgs) -> ExitCode {
             RunOutcome::Exited(code) => ExitCode::from((code & 0xFF) as u8),
             RunOutcome::Reset(r) => ExitCode::from(reset_exit_code(r)),
             RunOutcome::Trapped(_) => ExitCode::from(101),
+            RunOutcome::SessionStopped(error) => {
+                eprintln!("wasm-vm: session stopped: {error:?}");
+                ExitCode::from(104)
+            }
             RunOutcome::MaxInstrs if hang_pc.is_some() => ExitCode::from(103), // distinct: hang
             RunOutcome::MaxInstrs => ExitCode::from(102),
         };
@@ -449,6 +453,10 @@ fn run(a: RunArgs) -> ExitCode {
         return ExitCode::from(74);
     }
     match outcome {
+        RunOutcome::SessionStopped(error) => {
+            eprintln!("wasm-vm: session stopped: {error:?}");
+            ExitCode::from(104)
+        }
         RunOutcome::Exited(code) => ExitCode::from((code & 0xff) as u8),
         RunOutcome::Reset(r) => ExitCode::from(reset_exit_code(r)),
         RunOutcome::Trapped(t) => {

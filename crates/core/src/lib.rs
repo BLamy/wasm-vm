@@ -50,6 +50,7 @@ pub mod prof;
 pub mod ram;
 pub mod resume;
 pub mod sbi;
+pub mod session_clock;
 pub mod snapshot;
 pub mod softfloat;
 pub mod time;
@@ -118,6 +119,8 @@ pub enum RunOutcome {
     /// so the host can exit cleanly (poweroff/fail) or re-boot (reboot). NO `process::exit`
     /// happens in the core — the value is surfaced so the CLI and the wasm boundary decide.
     Reset(ExitReason),
+    /// An admitted exact-session run stopped before an effect it cannot represent safely.
+    SessionStopped(session_clock::SessionError),
 }
 
 /// E2-T17: why the guest reset the platform — the typed outcome of a syscon finisher write
@@ -274,6 +277,10 @@ fn restore_resume_queues(
 pub struct Machine {
     hart: Hart,
     bus: SystemBus,
+    /// Opt-in exact scheduling; ordinary machines retain their established run semantics.
+    session_clock: Option<session_clock::SessionClock>,
+    /// Transient execution fence, never part of a quiescent saved machine.
+    session_fence: Option<u64>,
     htif: Option<Htif>,
     /// Last observed `tohost` value — the watch fires only on CHANGE, giving
     /// exactly-once semantics for command writes ("logged once", E0-T11).
@@ -949,6 +956,8 @@ impl Machine {
         let mut m = Self {
             hart: Hart::new(),
             bus: SystemBus::new(Ram::new(ram_bytes)?),
+            session_clock: None,
+            session_fence: None,
             htif: None,
             last_tohost: 0,
             htif_commands: 0,
@@ -3192,6 +3201,9 @@ impl Machine {
     /// [`crate::resume::SnapshotError::NotQuiesced`], no blob emitted) rather than serialize a torn
     /// boundary — a parked descriptor chain must never be captured half-processed.
     pub fn save_resume(&mut self) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        if self.session_clock.is_some() {
+            return self.save_session_resume();
+        }
         self.save_resume_inner(None, false)
     }
 
@@ -3506,6 +3518,20 @@ impl Machine {
         // interrupt lands at a different instruction (E3-T12b timer-placement).
         clock.extend_from_slice(&self.sbi_state.stimecmp.to_le_bytes());
         w.section(section::CLOCK, &clock);
+        if let Some(clock) = &self.session_clock {
+            if self.guest_clock_mode() != time::TimeMode::ICount {
+                return Err(crate::resume::SnapshotError::BadComponentState {
+                    tag: section::SESSION_CLOCK,
+                });
+            }
+            let payload =
+                clock
+                    .encode()
+                    .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                        tag: section::SESSION_CLOCK,
+                    })?;
+            w.section(section::SESSION_CLOCK, &payload);
+        }
         Ok(w.finish())
     }
 
@@ -3520,6 +3546,9 @@ impl Machine {
     /// [`crate::resume::SnapshotError::OverlayGenerationMismatch`]) with the target machine left
     /// byte-identical to its pre-restore state — a resumed CPU/RAM never lands on a diverged disk.
     pub fn load_resume(&mut self, blob: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        if self.session_clock.is_some() {
+            return self.load_session_resume(blob);
+        }
         self.load_resume_inner(blob, None, false).map(|_| ())
     }
 
@@ -3589,6 +3618,31 @@ impl Machine {
         for sec in reader {
             sections.push(sec?);
         }
+        // Admission is transactional: malformed positions, queues or RAM destinations cannot
+        // change CPU/RAM/devices first. Active sessions never accept a clock-less old snapshot.
+        let clock_sections: alloc::vec::Vec<_> = sections
+            .iter()
+            .filter(|s| s.tag == section::SESSION_CLOCK)
+            .collect();
+        let session_bad = || crate::resume::SnapshotError::BadComponentState {
+            tag: section::SESSION_CLOCK,
+        };
+        if clock_sections.len() != usize::from(self.session_clock.is_some()) {
+            return Err(session_bad());
+        }
+        let staged_session_clock = if let Some(sec) = clock_sections.first() {
+            if self.guest_clock_mode() != time::TimeMode::ICount {
+                return Err(session_bad());
+            }
+            let clock =
+                session_clock::SessionClock::decode(sec.payload).map_err(|_| session_bad())?;
+            clock
+                .validate_addresses(self.bus.ram().base(), self.bus.ram().len())
+                .map_err(|_| session_bad())?;
+            Some(clock)
+        } else {
+            None
+        };
         let strict_topology = exact_inputs;
         #[cfg(feature = "virgl-renderer")]
         let strict_topology = strict_topology || gpu_witness.is_some();
@@ -3596,6 +3650,9 @@ impl Machine {
             // An exact envelope requires every component once. Missing, duplicate or
             // unknown sections must not leave destination CPU/RAM/device state mixed with it.
             let mut expected = alloc::vec![section::CPU, section::RAM, section::CLOCK];
+            if staged_session_clock.is_some() {
+                expected.push(section::SESSION_CLOCK);
+            }
             for (tag, present) in [
                 (section::CLINT, self.clint.is_some()),
                 (section::PLIC, self.plic.is_some()),
@@ -3668,7 +3725,9 @@ impl Machine {
                     let divider = reader.u64()?;
                     reader.u64()?;
                     reader.finish()?;
-                    if exact_inputs && (!(1..=1024).contains(&divider) || phase >= divider) {
+                    if (exact_inputs || staged_session_clock.is_some())
+                        && (!(1..=1024).contains(&divider) || phase >= divider)
+                    {
                         return Err(crate::resume::SnapshotError::BadComponentState {
                             tag: sec.tag,
                         });
@@ -3959,6 +4018,7 @@ impl Machine {
                     self.clock_div = clock_div;
                     self.sbi_state.stimecmp = stimecmp;
                 }
+                section::SESSION_CLOCK => {} // validated above; commit only after every component
                 section::VIRTIO_BLK => {
                     let slot = self
                         .virtio
@@ -4083,6 +4143,8 @@ impl Machine {
                 }
             }
         }
+        self.session_clock = staged_session_clock;
+        self.session_fence = None;
         // Agent TX still in guest RAM belongs to the saved application session, including any
         // pending HELLO. Complete it without forwarding bytes into the new host Channel. Do this
         // after every section (RAM need not precede console in the container), before any guest
@@ -5233,6 +5295,7 @@ impl Machine {
         self.hart.csr.retire_span(retired);
         self.advance_clock_by(retired);
         self.irqstats.on_retire_n(retired);
+        self.advance_session(retired, retired);
         if let Some(exec) = self.executor.as_mut() {
             exec.note_jit_retired(retired);
         }
@@ -5335,7 +5398,7 @@ impl Machine {
                             work_used,
                         });
                     }
-                    if !chaining {
+                    if !chaining || self.session_clock.is_some() {
                         break Some(JitProgress {
                             result: Ok(()),
                             work_used,
@@ -5515,7 +5578,7 @@ impl Machine {
     #[cfg(not(feature = "zicsr-stub"))]
     fn direct_chain_budget(&self, remaining_work: u64) -> (u64, bool) {
         let mut budget = remaining_work.clamp(1, JIT_DIRECT_CHAIN_FUEL);
-        if !self.interrupt_batching() || self.wall_time.is_some() {
+        if self.session_clock.is_some() || !self.interrupt_batching() || self.wall_time.is_some() {
             return (remaining_work, false);
         }
 
@@ -5566,6 +5629,12 @@ impl Machine {
         // consume exactly the remaining instruction attempts without overshoot.
         let (nops, terminator) = {
             let b = self.block_cache.get(phys)?;
+            // A compiled observation must not see counters stamped at block entry. Until its
+            // provider adapter exists, observable/MMIO/system work stays in the exact interpreter.
+            // Pure compute/control blocks still execute in the real JIT, bounded before entry.
+            if self.session_clock.is_some() && !session_clock::jit_safe(b) {
+                return None;
+            }
             (b.ops.len() as u64, b.ops.last().map(|o| o.instr))
         };
         if nops == 0 || nops > remaining_work {
@@ -5994,6 +6063,12 @@ impl Machine {
         self.irqstats.on_wfi();
         self.hart.last_was_wfi = false;
         self.wfi_watchdog_check(); // deadlock watchdog (WFI + no wakeup armed)
+        if let Some(clock) = &mut self.session_clock {
+            // Idle advancement is a separate, fenceable transition. Owned pending-state controls
+            // at the new boundary are delivered before deciding whether the timer may advance.
+            clock.idle_pending = true;
+            return;
+        }
         // E2-T23b: no interrupt was pending this boundary (next_interrupt returned None before
         // this block ran), so this WFI is a real idle wait. Skip the idle spin by jumping mtime to
         // the nearest armed timer deadline — deterministic, so native and wasm agree. Turns a ~20×
@@ -6178,12 +6253,23 @@ impl Machine {
         // body: batching (hence the cache) on, no hot-PC profiler, no HTIF mailbox. (Debug
         // triggers are re-checked per block below: a CSR write can arm them.)
         #[cfg(not(feature = "zicsr-stub"))]
-        let tail_ok = batching && !self.profiling && self.htif.is_none();
+        let tail_ok =
+            batching && !self.profiling && self.htif.is_none() && self.session_clock.is_none();
         #[cfg(all(test, not(feature = "zicsr-stub")))]
         let tail_ok = tail_ok && !self.replay_tail_off;
 
         let mut remaining_work = max_instrs;
         while remaining_work != 0 {
+            #[cfg(not(feature = "zicsr-stub"))]
+            match self.prepare_session_transition() {
+                Ok(session_clock::Preparation::Ready) => {}
+                Ok(session_clock::Preparation::Fence) => return RunOutcome::MaxInstrs,
+                Ok(session_clock::Preparation::IdleAdvanced) => {
+                    remaining_work -= 1;
+                    continue;
+                }
+                Err(error) => return RunOutcome::SessionStopped(error),
+            }
             // E2-T17: a syscon finisher write (poweroff/reboot/fail) during the previous
             // instruction ends the run before the next one executes.
             #[cfg(not(feature = "zicsr-stub"))]
@@ -6201,7 +6287,8 @@ impl Machine {
             // batching OFF (incl. cache-on/batching-off, the byte-identical mode) this is `true`
             // every iteration, so the legacy per-op behavior is bit-for-bit preserved.
             #[cfg(not(feature = "zicsr-stub"))]
-            let sample_boundary = !batching || self.at_block_boundary();
+            let sample_boundary =
+                self.session_clock.is_some() || !batching || self.at_block_boundary();
             // CSR writes that change PMP are block terminators. Invalidate decoded/compiled code
             // at that next boundary before the JIT or cursor can reuse permissions from the old
             // configuration. Direct host mutations between run calls are caught by the entry sync.
@@ -6228,6 +6315,7 @@ impl Machine {
                 let epc = self.hart.regs.pc;
                 self.hart.take_interrupt(cause, to_s, epc);
                 self.irqstats.on_interrupt(cause); // E2-T20 storm counter
+                self.advance_session(1, 0);
                 self.storm_check(); // CRITIC #1: an INTERRUPT storm must be detected too
                 // Preserve the established `run(N)` contract: a taken boundary interrupt consumes
                 // one bounded work slot even though it retires no guest instruction.
@@ -6249,7 +6337,7 @@ impl Machine {
             // the block's ops itself (so the per-op accounting below is skipped for a JIT run).
             #[cfg(not(feature = "zicsr-stub"))]
             let jit_attempt = if jit_on && sample_boundary && !capture.wants_records() {
-                self.try_jit_block(remaining_work)
+                self.try_jit_block(self.session_dispatch_budget(remaining_work))
             } else {
                 None
             };
@@ -6280,6 +6368,7 @@ impl Machine {
             if !ran_via_jit && step_result.is_ok() {
                 self.advance_clock();
                 self.irqstats.on_retire(); // E2-T20 progress denominator
+                self.advance_session(1, 1);
                 // E4-T01: hot-PC sampling — only when armed, and only 1-in-~1024 retires (a jittered
                 // stride) so the histogram write is off the per-instruction hot path. We record the
                 // guest VIRTUAL PC: it is what `System.map` symbolizes and the guest-virtual address
@@ -6320,6 +6409,7 @@ impl Machine {
                         fid,
                         &args,
                     );
+                    self.advance_session(1, 0);
                     // E2-T06 SRST: a requested shutdown ends the run NOW — the guest never
                     // executes another instruction (spec: system_reset does not return).
                     if let Some(code) = self.sbi_state.shutdown {
@@ -6369,6 +6459,7 @@ impl Machine {
                     let epc = self.hart.regs.pc;
                     self.hart.take_trap(trap, epc);
                     self.irqstats.on_exception(trap.cause as u64); // E2-T20 storm counter
+                    self.advance_session(1, 0);
                     self.storm_check(); // livelock/storm: a trap just landed — cheap to check
                 }
                 #[cfg(feature = "zicsr-stub")]

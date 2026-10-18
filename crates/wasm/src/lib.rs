@@ -38,6 +38,7 @@ use core::sync::atomic::{AtomicBool, Ordering};
 
 use wasm_bindgen::prelude::*;
 // E4-T29 Phase 2: the in-wasm (browser) compiled-block executor.
+mod event_clock;
 mod jit_browser;
 pub use jit_browser::{BROWSER_MAX_BATCHES, BrowserExecutor};
 use wasm_vm_core::bus::mmap::{UART0_BASE, UART0_LEN};
@@ -1183,6 +1184,9 @@ impl WasmMachine {
     #[wasm_bindgen(js_name = loadElf)]
     pub fn load_elf(&self, bytes: &[u8]) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.machine.session_position().is_some() {
+            return Err(JsError::new("cannot replace an active session's ELF"));
+        }
         inner
             .machine
             .load_elf(bytes)
@@ -1278,6 +1282,9 @@ impl WasmMachine {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         Self::guard_runnable(&inner)?;
         let (outcome, retired) = Self::drive(&mut inner, n as u64);
+        if let RunOutcome::SessionStopped(error) = outcome {
+            return Err(JsError::new(&format!("session_clock: {error:?}")));
+        }
         if let RunOutcome::Exited(_) = outcome {
             inner.exited = true;
         }
@@ -1390,6 +1397,9 @@ impl WasmMachine {
         };
         set("retired", &JsValue::from_f64(retired as f64));
         match outcome {
+            RunOutcome::SessionStopped(error) => {
+                return Err(JsError::new(&format!("session_clock: {error:?}")));
+            }
             RunOutcome::Exited(code) => {
                 inner.exited = true;
                 set("kind", &JsValue::from_str("exited"));
@@ -3781,6 +3791,7 @@ impl WasmLinux {
                 RunOutcome::Exited(code) => Some(format!("exited:{code}")),
                 RunOutcome::Trapped(t) => Some(format!("trap:{:?}", t.cause)),
                 RunOutcome::MaxInstrs => None, // keep going
+                RunOutcome::SessionStopped(error) => Some(format!("session_clock:{error:?}")),
             };
         }
         // Flush accumulated console output to JS as one chunk.

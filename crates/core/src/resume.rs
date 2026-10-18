@@ -60,6 +60,8 @@ pub mod section {
     pub const VIRTIO_SND: u32 = 16;
     /// Format-family reservation for a future device visitor; intentionally unsupported here.
     pub const RESERVED_FUTURE: u32 = 17;
+    /// E9-T09: non-wrapping session position and owned pending before-boundary effects.
+    pub const SESSION_CLOCK: u32 = 18;
 }
 
 /// Is `tag` a section number this format family reserves (the whole reserved universe, whether or
@@ -84,6 +86,7 @@ pub fn is_known_section(tag: u32) -> bool {
             | section::VIRTIO_MOUSE
             | section::VIRTIO_SND
             | section::RESERVED_FUTURE
+            | section::SESSION_CLOCK
     )
 }
 
@@ -112,6 +115,7 @@ pub fn is_supported_section(tag: u32) -> bool {
             | section::VIRTIO_TABLET
             | section::VIRTIO_MOUSE
             | section::VIRTIO_SND
+            | section::SESSION_CLOCK
     )
 }
 

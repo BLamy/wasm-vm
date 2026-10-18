@@ -517,6 +517,7 @@ export class WasmLinux {
 export class WasmMachine {
     free(): void;
     [Symbol.dispose](): void;
+    deliverEventBoundary(): void;
     /**
      * E4-T29 Phase 2: attach the in-wasm (browser) JIT executor to this machine and arm tier-up.
      * Mirrors the native CLI `--jit` wiring (constructs the executor, calls `set_executor`, turns on
@@ -535,6 +536,7 @@ export class WasmMachine {
      * cannot leave a partially initialized machine.
      */
     enableJitWithPolicy(threshold: number, residency_policy: string): void;
+    eventPosition(): any;
     /**
      * E2-T20: the interrupt/trap counters + storm/WFI diagnosis as a JS object
      * `{ retired, wfi, exceptions:[16], interrupts:[16], claims:[32], storm:bool, wfiReport:string|null }`.
@@ -568,11 +570,14 @@ export class WasmMachine {
      * The 33 architectural registers as a `BigUint64Array`: `[pc, x0, x1, …, x31]`.
      */
     registers(): BigUint64Array;
+    restoreEventCheckpoint(bytes: Uint8Array): void;
     /**
      * Run up to `max_instrs` instructions, returning a status object:
      * `{ kind: "exited"|"trapped"|"max", code?, cause?, tval?, retired }`.
      */
     run(max_instrs: number): any;
+    runEventUntil(transition: string, max_work: number): any;
+    saveEventCheckpoint(): Uint8Array;
     /**
      * Explicit boot diagnostic only; does not enable profiling or change JIT policy.
      */
@@ -603,6 +608,17 @@ export class WasmMachine {
      * drain it with `takeTrace`).
      */
     setTrace(on: boolean): void;
+    stageEventPending(transition: string, pending: boolean): string;
+    /**
+     * Own a RAM payload now; apply it only at the named before-transition boundary. This is the
+     * common effect path used by forthcoming provider adapters, not a live browser callback.
+     */
+    stageEventWrite(transition: string, address: string, bytes: Uint8Array): string;
+    /**
+     * Select a single-hart deterministic board and begin a fresh exact coordinate. Validate
+     * host numbers before wasm integer coercion; wide event positions always use strings.
+     */
+    startEventClock(harts: any, divider: any): void;
     /**
      * SHA-256 of guest RAM as 64 lowercase hex chars (matches the CLI `--dump-state`).
      */
@@ -612,6 +628,7 @@ export class WasmMachine {
      * (HTIF is consulted), but the caller reads a plain count instead of a status object.
      */
     step(n: number): number;
+    takeEventDeliveries(): any;
     /**
      * Take and clear the accumulated canonical trace.
      */
@@ -858,6 +875,15 @@ export interface InitOutput {
     readonly wasmlinux_scatterLayeredOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number, t: number, u: number) => [number, number];
     readonly wasmlinux_scatterOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number];
     readonly wasmlinux_softwareCheckpointTopology: (a: number) => [number, number];
+    readonly wasmmachine_deliverEventBoundary: (a: number) => [number, number];
+    readonly wasmmachine_eventPosition: (a: number) => [number, number, number];
+    readonly wasmmachine_restoreEventCheckpoint: (a: number, b: number, c: number) => [number, number];
+    readonly wasmmachine_runEventUntil: (a: number, b: number, c: number, d: number) => [number, number, number];
+    readonly wasmmachine_saveEventCheckpoint: (a: number) => [number, number, number, number];
+    readonly wasmmachine_stageEventPending: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly wasmmachine_stageEventWrite: (a: number, b: number, c: number, d: number, e: number, f: any) => [number, number, number, number];
+    readonly wasmmachine_startEventClock: (a: number, b: any, c: any) => [number, number];
+    readonly wasmmachine_takeEventDeliveries: (a: number) => [number, number, number];
     readonly setSlirpDhcpLeaseSeconds: (a: number) => void;
     readonly setSlirpDohEndpoint: (a: number, b: number) => void;
     readonly setSlirpMtu: (a: number) => void;

@@ -140,6 +140,15 @@ export const wasmlinux_saveAcceleratedSnapshot: (a: number, b: number, c: number
 export const wasmlinux_scatterLayeredOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number, t: number, u: number) => [number, number];
 export const wasmlinux_scatterOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number];
 export const wasmlinux_softwareCheckpointTopology: (a: number) => [number, number];
+export const wasmmachine_deliverEventBoundary: (a: number) => [number, number];
+export const wasmmachine_eventPosition: (a: number) => [number, number, number];
+export const wasmmachine_restoreEventCheckpoint: (a: number, b: number, c: number) => [number, number];
+export const wasmmachine_runEventUntil: (a: number, b: number, c: number, d: number) => [number, number, number];
+export const wasmmachine_saveEventCheckpoint: (a: number) => [number, number, number, number];
+export const wasmmachine_stageEventPending: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+export const wasmmachine_stageEventWrite: (a: number, b: number, c: number, d: number, e: number, f: any) => [number, number, number, number];
+export const wasmmachine_startEventClock: (a: number, b: any, c: any) => [number, number];
+export const wasmmachine_takeEventDeliveries: (a: number) => [number, number, number];
 export const setSlirpDhcpLeaseSeconds: (a: number) => void;
 export const setSlirpDohEndpoint: (a: number, b: number) => void;
 export const setSlirpMtu: (a: number) => void;

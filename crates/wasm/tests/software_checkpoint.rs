@@ -41,6 +41,34 @@ fn fixture() -> (CheckpointContext, Vec<u8>, Vec<u8>) {
     (context, machine.save_session_resume().unwrap(), disk)
 }
 #[test]
+fn checkpoint_only_context_refuses_an_unbound_native_event_clock() {
+    let (context, native, disk) = fixture();
+    let (header, sections) = SectionReader::new(&native).unwrap();
+    let mut writer = SnapshotWriter::new(
+        &header.core_hash,
+        &header.base_image_hash,
+        header.overlay_generation,
+    );
+    for item in sections {
+        let item = item.unwrap();
+        writer.section(item.tag, item.payload);
+    }
+    let mut clocked = Machine::new(4096);
+    clocked.start_session_clock(1).unwrap();
+    let blob = clocked.save_session_resume().unwrap();
+    let (_, sections) = SectionReader::new(&blob).unwrap();
+    let payload = sections
+        .map(Result::unwrap)
+        .find(|s| s.tag == section::SESSION_CLOCK)
+        .unwrap();
+    writer.section(section::SESSION_CLOCK, payload.payload);
+    assert!(matches!(
+        SoftwareCheckpoint::encode(&context, &writer.finish(), &disk, b"", b""),
+        Err(CheckpointError::Malformed)
+    ));
+}
+
+#[test]
 fn tuple_exact_components_and_each_digest() {
     let (context, native, disk) = fixture();
     let bytes = SoftwareCheckpoint::encode(
