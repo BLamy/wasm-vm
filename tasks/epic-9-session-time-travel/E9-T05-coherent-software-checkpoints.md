@@ -200,3 +200,37 @@ The only source change after the worker recording is the bounded promoted browse
 test helper; native/runtime/dependencies are unchanged. This commit freezes tests and
 changes verification evidence/status only otherwise. All unchanged HELD findings carry
 forward into the final cold/public audit.
+
+### 2026-10-18 — worker — one final pristine-source proof
+
+The single final clean-checkout proof at frozen promoted-test head
+`7ac83e660cc316440a9e42cf961224f0c24a314a` passed all **20** gates. Command:
+`python3 -u target/e9-t05-cold-wrapper.py` (exact wrapper retained in the packet),
+which creates `/Users/blamy/.codex/worktrees/e9-session-contract/wasm-vm/target/e9-t05-cold-9sn4z7cr/repo`, detaches the exact commit,
+unsets Rust logging/flag and Cargo/Git environment overrides, and runs
+`make verify-E9-T05` with a fresh target and node_modules. Ordinary locked
+package-download caches/toolchains remain available; no Git alternates or inherited
+source/build output is used. The clean cone includes all source/configuration/release
+directories and required historical compile-time fixtures; unrelated historical binary
+evidence is read from immutable Git blobs by Docstream.
+
+Original receipt: `target/evidence/e9-t05-cold-final/receipt.json`, SHA-256
+`6d4f5d414489eff824e17da6a74b1a0dd03b9ac66525d542be4fb50592d7316d`. Acceptance:
+`target/evidence/e9-t05-cold-final/acceptance/report.json`, SHA-256
+`0241e2c0d9704ec478594e61e324dfa2f3df845b20ff8c267b721e9173d106f2`.
+The packet `evidence/e9-t05/cold/` retains all gate logs, reports, compressed
+full tuples, filesystem witnesses, screenshots, wrapper and original-file provenance.
+The original full trace/profile/images remain outside the checkout in that evidence
+directory; the checkout remains available for the verifier.
+
+The clean build reproduces runtime
+`c404e41c43d7912f5ae2886848724d018b515cc5d1a668a15105ba3f54b232bc`
+and the committed Wasm bytes exactly. Actual before/restored frames match, guest
+memory/pending UART/held input and ext4 files pass, original I/O and all permanent
+refusal/producer-buffer/loader checks pass. Built browser **127/0**, zero errors;
+the retained GPU factory physically draws after **2,499,808** retired instructions.
+
+The original worktree's publication preparation changes task catalog/service-worker
+metadata only, after the isolated source freeze. Runtime, tests and dependencies
+remain frozen. Independent receipt interrogation and Cloudflare/public proof remain
+pending; status stays `evidence-needed`.
