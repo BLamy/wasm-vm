@@ -3,7 +3,7 @@ id: E9-T12
 epic: 9
 title: Record asynchronous device payloads and completion order
 priority: 524.912
-status: implemented
+status: verified
 depends_on: [E9-T09]
 estimate: S
 risk: high
@@ -20,9 +20,9 @@ Record external completion delivery and any guest-visible bytes/DMA writes for s
 
 ## Acceptance criteria
 
-- [ ] Separate immutable base-disk payload references from nondeterministic completion delivery; identify each request and record exactly one accepted completion.
-- [ ] Replay payload bytes, completion sequence and interrupt effects under deliberately different host callback schedules.
-- [ ] Include pending adapter state and event cursors in checkpoints; cancellations and stale-generation replies cannot mutate a restored guest.
+- [x] Separate immutable base-disk payload references from nondeterministic completion delivery; identify each request and record exactly one accepted completion.
+- [x] Replay payload bytes, completion sequence and interrupt effects under deliberately different host callback schedules.
+- [x] Include pending adapter state and event cursors in checkpoints; cancellations and stale-generation replies cannot mutate a restored guest.
 
 ## Qualified adapter contract
 
@@ -193,3 +193,86 @@ mutation. Immutable payload identity remains separate from delivery position in 
 durable object graph. Unsupported adapters refuse admission. GPU result replay and
 full Linux assembly remain later tasks. This is the worker claim awaiting a fresh
 verifier verdict.
+
+### 2026-10-18 — verifier — VERDICT: verified
+
+- P1/P2/P4/P5 — HELD. Independently authenticated all 332 final raw/full-archive
+  files, 156 primary artifacts, 35 submission source hashes, 54 contract boundary
+  hashes and the clean clone's origin/connectivity. Its initially empty compiler,
+  fresh dependencies, scrubbed environment and disclosed read-only Git object
+  alternates match the claim. At native/pending.resume transition 4096 the actual
+  block, named-agent and capture descriptors own requests 1–4 with cursor 0 and
+  untouched DMA/used rings. Native/final.resume at 9096 has used=[2,1,1], heads=[3,0],
+  guest report=[2,1,1,1,1,1], PCM3412cdab and exact independently computed block/agent
+  bytes. Its SHA256 is e91b70afc94e7031df2d903479d34a25f54640ee4dadf3a2bc8fcc5fd40663de.
+  The independent struct/hashlib decoder authenticates the complete durable object
+  graph and separates immutable payload hashes from positioned deliveries. See
+  cold-final-audit.json and public-independent-evidence.json in the verifier packet.
+- P3/P6/P8/P9 — HELD. Recorded deliveries are IDs 2,3,4,1 at before-phase positions
+  4096/4269/4442/4615, ordinal 1, sequence 1–4. Replay budgets 1/7/4096 reproduce
+  complete frames and the original guest trace suffix. Six independent same-boundary
+  schedules additionally exercise ordinals 1–4. Cancellation, block reset, console
+  generation restart, wrong positions, foreign/stale leases and missing section 20
+  refuse without state/cursor mutation. Stereo/short/failed/ready capture, deadline
+  edges, cache pinning/eviction, failed block replay, finite ID/pending/payload/COW
+  bounds and structured malformed checkpoints have concrete recorded assertions.
+  The bounded byte attack produced 2606 atomic refusals and 1688 canonical accepted
+  states from 4294 mutations; six compound and ten descriptor/sound mutations add
+  relations that a single-byte corpus cannot prove. Exact producers, original frames,
+  hashes and observations are indexed by verifier/ledger.md.
+- P7/P11/J5/initial-profile predictions — FAILED on their superseded runtimes;
+  repaired results HELD at 98260ff. The original erased-owner mutant remains
+  preserved with its rechecked duplicate-capture point, as do both compiled-loop
+  inactive-clock disagreements and the eight initial-profile frames. Final reciprocal
+  ownership rejects those mutants before revoking a live lease; all eight initial
+  profiles roundtrip with the real installed epoch. Actual ordinary-browser JIT at
+  transition 5001 executes 464 translated six-instruction blocks/2784 JIT retires
+  with capture disabled, then matches entire frames under replay budgets 1/8/4096
+  with inactive clock 0. Enabled single-instruction and conservative multi-instruction
+  paths also agree. An independent arithmetic oracle verifies all twelve CPU
+  witnesses; the six-instruction loop reaches x20..24=[566,1698,2830,3962,6226] and
+  pc0x80001914. See jit-edge-audit.json, initial-audit.json, final-repair-audit.json,
+  actual-jit-final-edge/report.json and jit-cpu-audit.json in the verifier packet.
+- P10 — HELD. The exact-head cold high-risk report passes all 24 commands, including
+  native/Wasm/reproducible build, built browser 127/0, independent guest/CAS oracles
+  and retained factory GPU retirement 2999712 with fresh resource 13/epoch 4 drawn.
+  Public 127/0 has zero errors, live pips and durable reload. Independently checked
+  all 36 public primary artifacts, 744 deployment payload entries, each strict
+  HTTP206 rootfs range and the complete 512MiB object's expected SHA. Fresh reads
+  from both c5aa196d.wasm-vm.pages.dev and wasm-vm.pages.dev serve exactly the frozen
+  2140719-byte Wasm, SHA3c47a1dc51ee801f9fe08d0adbb120913ea4d1e1aafc00803c61de8c86d44c44.
+  See cold-final-audit.json, public-audit.json and retained original HTTP receipts.
+- P12/P13 — HELD with the explicit changed-line classifications in verifier/ledger.md.
+  LLVM raw profiles, all fourteen executable coverage objects, source copies, lcov
+  and commands are retained; only identical source lines carry hits across revisions.
+  Actual browser JIT/V8 recordings supply the browser-only coverage. Exhaustive enum
+  representations, a dominated decode bound, error forwarding, internal Before-phase
+  assertion and generated/declarative/logging lines have specific waivers. The direct
+  private-trait recording exercises the remaining capture shape/size/issue/ready and
+  block/source-identity guards with an authenticated untouched runtime prefix. Scratch
+  sabotage of Rc incarnation identity makes the stale-restore regression fail; source
+  restoration makes it pass. This unchanged ownership-boundary result carries forward.
+- SUITE — Eleven useful independent regressions are promoted into
+  crates/core/tests/e9_device_completions.rs; the target now passes 22 tests with no
+  ignores. cargo fmt --all --check, narrow core clippy with -D warnings and that
+  adapter integration target all pass on the authoritative checkout. Source hash
+  d89d90374850417337174a81ee371473541ef13005bee4f711a23700a0f306e0 and exact commands
+  are in promotion-checks-receipt.json. No implementation code changed in verification;
+  the frozen runtime gauntlet remains valid under the tests-only incremental policy.
+
+Independent packet: evidence/e9-t12/verifier/provenance.json, SHA256
+1038e06ab1623fd1b2d04e44ccabc6a56b60ff10aa2b062ca89ef4960c91dea7.
+It retains 1283 lossless original-file entries, including every failed prediction,
+recheck, raw mutation, browser recording, trace, profile, coverage object, producer and
+setup-failure receipt. The plain ledger and original pre-inspection predictions sit
+beside the SHA-addressed gzip inventory. Worker/public packet hashes remain those in
+the implemented claim. No original evidence was deleted; derived compiler caches and
+duplicate public extraction are explicitly classified in the inventory.
+
+Verdict is limited to the qualified core and ordinary Wasm block/named-agent/S16
+capture contract above. The existing Linux demo remains an incomplete prefix until
+T13/T14; playback, unrecorded transports and GPU result replay remain refused or gated.
+After this verification commit, the separate final cold source/compiler directories
+may be released while preserving their Git metadata/object stores, all raw recordings,
+complete archives and producer receipts. The authoritative worker checkout/compiler
+remains active. Policy is checked before queue regeneration and this verdict commit.

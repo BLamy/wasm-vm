@@ -801,3 +801,644 @@ fn disabled_capture_rejects_noncanonical_clock_and_epoch_transactionally() {
         );
     }
 }
+
+// Fresh critic regressions: recorded independently before promotion.
+fn critic_rewrite_section(frame: &[u8], tag: u32, change: impl Fn(&mut Vec<u8>)) -> Vec<u8> {
+    use wasm_vm_core::resume::{SectionReader, SnapshotWriter};
+    let (header, sections) = SectionReader::new(frame).unwrap();
+    let mut writer = SnapshotWriter::new(
+        &header.core_hash,
+        &header.base_image_hash,
+        header.overlay_generation,
+    );
+    for section in sections {
+        let section = section.unwrap();
+        let mut bytes = section.payload.to_vec();
+        if section.tag == tag {
+            change(&mut bytes);
+        }
+        writer.section(section.tag, &bytes);
+    }
+    writer.finish()
+}
+
+#[test]
+fn critic_wrong_replay_positions_and_foreign_leases_are_transactional() {
+    let mut machine = fixture(false);
+    until(&mut machine, START, 17, &mut Trace::default());
+    let pending = machine.save_session_resume().unwrap();
+    let request = machine.session_device_requests().unwrap()[0].clone();
+    let foreign = machine.lease_session_device(request.id).unwrap();
+    let receipt = capture(&mut machine, request.id, Status::Supplied, payload(0), 0);
+    let SessionEffect::HostInput { bytes, .. } = &receipt.effect else {
+        unreachable!()
+    };
+    let mut replayed = fixture(true);
+    replayed.load_session_resume(&pending).unwrap();
+    let before = replayed.save_session_resume().unwrap();
+    for field in 0..5 {
+        let mut position = receipt.position;
+        match field {
+            0 => position.transition += 1,
+            1 => position.retired += 1,
+            2 => position.sequence += 1,
+            3 => position.ordinal += 1,
+            _ => position.phase = wasm_vm_core::session_clock::SessionPhase::Observe,
+        }
+        assert_eq!(
+            replayed.replay_session_device(position, DeviceCompletion::decode(bytes).unwrap()),
+            Err(DeviceError::Position)
+        );
+        assert_eq!(replayed.save_session_resume().unwrap(), before);
+    }
+    let mut other = fixture(false);
+    until(&mut other, START, 23, &mut Trace::default());
+    let before = other.save_session_resume().unwrap();
+    assert_eq!(
+        other.complete_session_device(&foreign, Status::Supplied, 0, payload(0)),
+        Err(DeviceError::StaleLease)
+    );
+    assert_eq!(other.save_session_resume().unwrap(), before);
+    replay(&mut replayed, &receipt);
+    assert_eq!(replayed.session_device_cursor(), Ok(1));
+    evidence("critic-position-unchanged.resume", &before);
+}
+
+#[test]
+fn critic_same_boundary_callbacks_replay_for_independent_seeds() {
+    use sha2::{Digest, Sha256};
+    let mut summary = String::new();
+    for seed in [
+        101u64,
+        1009,
+        65537,
+        0x12345678,
+        0x100000001,
+        0x123456789abcdef,
+    ] {
+        let mut rng = seed;
+        let mut next = || {
+            rng ^= rng << 13;
+            rng ^= rng >> 7;
+            rng ^= rng << 17;
+            rng
+        };
+        let mut machine = fixture(false);
+        until(&mut machine, START, 43, &mut Trace::default());
+        let pending = machine.save_session_resume().unwrap();
+        let mut requests = machine.session_device_requests().unwrap();
+        for i in (1..requests.len()).rev() {
+            requests.swap(i, next() as usize % (i + 1));
+        }
+        let mut receipts = Vec::new();
+        for (index, request) in requests.into_iter().enumerate() {
+            let (bytes, frames) = match request.intent {
+                DeviceIntent::BaseBlock { chunk, .. } => (payload(chunk), 0),
+                DeviceIntent::Agent { .. } => (vec![seed as u8; 31], 0),
+                DeviceIntent::Capture { .. } => (vec![17, 34, 51, 68], 2),
+            };
+            let receipt = capture(&mut machine, request.id, Status::Supplied, bytes, frames);
+            assert_eq!(receipt.position.ordinal, index as u32 + 1);
+            assert_eq!(receipt.position.transition, START);
+            receipts.push(receipt);
+        }
+        until(&mut machine, START + 256, 97, &mut Trace::default());
+        let final_frame = machine.save_session_resume().unwrap();
+        for quantum in [1, 8, 257] {
+            let mut re = fixture(true);
+            re.load_session_resume(&pending).unwrap();
+            for receipt in &receipts {
+                replay(&mut re, receipt);
+            }
+            until(&mut re, START + 256, quantum, &mut Trace::default());
+            assert_eq!(re.save_session_resume().unwrap(), final_frame);
+        }
+        summary.push_str(&format!(
+            "{seed}\t{:x}\t{:?}\n",
+            Sha256::digest(&final_frame),
+            receipts
+                .iter()
+                .map(|r| r.position.ordinal)
+                .collect::<Vec<_>>()
+        ));
+    }
+    evidence("critic-independent-schedules.tsv", summary.as_bytes());
+}
+
+#[test]
+fn critic_stereo_capture_pending_ready_short_failure_and_restore() {
+    use wasm_vm_core::dev::virtio::snd;
+    let mut program = PROGRAM.to_vec();
+    let sites: Vec<_> = program
+        .chunks_exact(4)
+        .enumerate()
+        .filter_map(|(i, b)| (u32::from_le_bytes(b.try_into().unwrap()) == 0x00550a23).then_some(i))
+        .collect();
+    assert_eq!(sites.len(), 1);
+    let at = (sites[0] - 3) * 4;
+    assert_eq!(
+        u32::from_le_bytes(program[at..at + 4].try_into().unwrap()),
+        0x00128293
+    );
+    program[at..at + 4].copy_from_slice(&0x00228293u32.to_le_bytes());
+    for (status, frames, bytes, want, pcm_status) in [
+        (
+            Status::Supplied,
+            1,
+            vec![0x34, 0x12, 0xcd, 0xab],
+            0xabcd1234,
+            snd::VIRTIO_SND_S_OK,
+        ),
+        (Status::Supplied, 0, vec![], 0, snd::VIRTIO_SND_S_OK),
+        (Status::Failed, 0, vec![], 0, snd::SndStatus::IoErr as u32),
+        (
+            Status::Cancelled,
+            0,
+            vec![],
+            0,
+            snd::SndStatus::IoErr as u32,
+        ),
+    ] {
+        let mut machine = fixture(false);
+        machine.bus_mut().write_ram_slice(BASE, &program).unwrap();
+        let mut trace = Trace::default();
+        until(&mut machine, START, 5, &mut trace);
+        let pending = machine.save_session_resume().unwrap();
+        let request = machine
+            .session_device_requests()
+            .unwrap()
+            .into_iter()
+            .find(|r| matches!(r.intent, DeviceIntent::Capture { .. }))
+            .unwrap();
+        assert_eq!(
+            request.intent,
+            DeviceIntent::Capture {
+                samples: 2,
+                rate: 48000,
+                channels: 2
+            }
+        );
+        until(&mut machine, START + 37, 29, &mut trace);
+        assert_eq!(machine.bus_mut().load32(BASE + 0x34100), Ok(0));
+        assert_eq!(machine.bus_mut().load32(BASE + 0x34200), Ok(0));
+        assert_eq!(machine.bus_mut().load16(BASE + 0x32302), Ok(0));
+        let receipt = capture(&mut machine, request.id, status, bytes, frames);
+        let ready = machine.save_session_resume().unwrap();
+        until(&mut machine, START + 40, 3, &mut trace);
+        let final_frame = machine.save_session_resume().unwrap();
+        assert_eq!(machine.bus_mut().load32(BASE + 0x34100), Ok(want));
+        assert_eq!(machine.bus_mut().load32(BASE + 0x34200), Ok(pcm_status));
+        assert_eq!(machine.bus_mut().load16(BASE + 0x32302), Ok(1));
+        let mut re = fixture(true);
+        re.bus_mut().write_ram_slice(BASE, &program).unwrap();
+        re.load_session_resume(&pending).unwrap();
+        until(&mut re, START + 37, 4096, &mut Trace::default());
+        replay(&mut re, &receipt);
+        until(&mut re, START + 40, 4096, &mut Trace::default());
+        assert_eq!(re.save_session_resume().unwrap(), final_frame);
+        re.load_session_resume(&ready).unwrap();
+        until(&mut re, START + 40, 7, &mut Trace::default());
+        assert_eq!(re.save_session_resume().unwrap(), final_frame);
+        let label = format!("critic-stereo-{}-{frames}", status as u8);
+        evidence(&format!("{label}.resume"), &final_frame);
+        evidence(&format!("{label}.trace"), trace.0.as_bytes());
+    }
+}
+
+#[test]
+fn critic_capture_deadline_edges_preserve_pending_identity() {
+    use sha2::{Digest, Sha256};
+    let mut control = fixture(false);
+    until(&mut control, START, 11, &mut Trace::default());
+    let wanted = control.save_session_resume().unwrap();
+    let mut summary = String::new();
+    for boundary in [1605u64, 2012, 2013, 2014, 2015, 4096] {
+        for quantum in [1, 7, 257] {
+            let mut machine = fixture(false);
+            until(&mut machine, boundary, quantum, &mut Trace::default());
+            let cap = machine
+                .session_device_requests()
+                .unwrap()
+                .into_iter()
+                .filter(|r| matches!(r.intent, DeviceIntent::Capture { .. }))
+                .count();
+            assert_eq!(
+                cap,
+                usize::from(boundary >= 2014),
+                "boundary={boundary} quantum={quantum}"
+            );
+            let frame = machine.save_session_resume().unwrap();
+            let mut re = fixture(false);
+            re.load_session_resume(&frame).unwrap();
+            assert_eq!(re.save_session_resume().unwrap(), frame);
+            until(&mut re, START, 509, &mut Trace::default());
+            assert_eq!(re.save_session_resume().unwrap(), wanted);
+            summary.push_str(&format!(
+                "{boundary}\t{quantum}\t{cap}\t{:x}\n",
+                Sha256::digest(&frame)
+            ));
+            evidence(
+                &format!("critic-deadline-{boundary}-{quantum}.resume"),
+                &frame,
+            );
+        }
+    }
+    evidence("critic-deadline-edges.tsv", summary.as_bytes());
+}
+
+#[test]
+fn critic_remaining_qualified_guards() {
+    use wasm_vm_core::resume::{SectionReader, SnapshotWriter, section};
+    let mut machine = fixture(false);
+    until(&mut machine, START, 13, &mut Trace::default());
+    let requests = machine.session_device_requests().unwrap();
+    let block = requests
+        .iter()
+        .find(|r| matches!(r.intent, DeviceIntent::BaseBlock { chunk: 0, .. }))
+        .unwrap();
+    let block_lease = machine.lease_session_device(block.id).unwrap();
+    let retained: Vec<_> = requests
+        .into_iter()
+        .filter(|r| !matches!(r.intent, DeviceIntent::BaseBlock { .. }))
+        .collect();
+    machine.bus_mut().store32(0x10001070, 0).unwrap();
+    assert_eq!(machine.session_device_requests().unwrap(), retained);
+    let reset = machine.save_session_resume().unwrap();
+    assert_eq!(
+        machine.complete_session_device(&block_lease, Status::Supplied, 0, payload(0)),
+        Err(DeviceError::UnknownRequest)
+    );
+    assert_eq!(machine.save_session_resume().unwrap(), reset);
+    assert_eq!(machine.session_device_cursor().unwrap(), 0);
+    assert_eq!(machine.bus_mut().load16(BASE + 0x12002), Ok(0));
+    assert_eq!(machine.bus_mut().load8(BASE + 0x14000), Ok(0));
+    evidence("critic-block-reset.resume", &reset);
+    let agent = retained
+        .iter()
+        .find(|r| matches!(r.intent, DeviceIntent::Agent { .. }))
+        .unwrap();
+    let agent_lease = machine.lease_session_device(agent.id).unwrap();
+    machine
+        .virtio_console()
+        .unwrap()
+        .borrow_mut()
+        .restart_agent_port();
+    let restarted = machine.save_session_resume().unwrap();
+    assert_eq!(
+        machine.complete_session_device(
+            &agent_lease,
+            Status::Supplied,
+            0,
+            b"stale generation".to_vec()
+        ),
+        Err(DeviceError::StaleLease)
+    );
+    assert_eq!(machine.save_session_resume().unwrap(), restarted);
+    evidence("critic-agent-restarted.resume", &restarted);
+
+    let mut pending = fixture(false);
+    until(&mut pending, START, 13, &mut Trace::default());
+    let lease = pending.lease_session_device(1).unwrap();
+    pending
+        .stage_session_effect(START + 1, SessionEffect::ExternalPending(false))
+        .unwrap();
+    let before = pending.save_session_resume().unwrap();
+    assert_eq!(
+        pending.complete_session_device(&lease, Status::Supplied, 0, payload(0)),
+        Err(DeviceError::Position)
+    );
+    assert_eq!(pending.save_session_resume().unwrap(), before);
+    evidence("critic-common-event-pending.resume", &before);
+
+    let mut a = fixture(false);
+    until(&mut a, START, 13, &mut Trace::default());
+    let lease = a.lease_session_device(1).unwrap();
+    let frame = a.save_session_resume().unwrap();
+    let (header, sections) = SectionReader::new(&frame).unwrap();
+    let mut writer = SnapshotWriter::new(
+        &header.core_hash,
+        &header.base_image_hash,
+        header.overlay_generation,
+    );
+    for item in sections {
+        let item = item.unwrap();
+        if item.tag != section::SESSION_DEVICES {
+            writer.section(item.tag, item.payload);
+        }
+    }
+    let mutant = writer.finish();
+    assert!(a.load_session_resume(&mutant).is_err());
+    assert_eq!(a.save_session_resume().unwrap(), frame);
+    a.complete_session_device(&lease, Status::Supplied, 0, payload(0))
+        .unwrap();
+    evidence("critic-missing-section20.resume", &mutant);
+
+    let legacy = || {
+        let mut a = Machine::new(1 << 20);
+        a.enable_clint(1);
+        a.enable_plic();
+        a.enable_virtio_slots(None);
+        a.enable_virtio_snd();
+        a.start_session_clock(1).unwrap();
+        a
+    };
+    let mut a = legacy();
+    let frame = a.save_session_resume().unwrap();
+    let mut b = legacy();
+    b.load_session_resume(&frame).unwrap();
+    assert_eq!(b.save_session_resume().unwrap(), frame);
+    evidence("critic-legacy-idle-sound.resume", &frame);
+}
+
+#[test]
+fn critic_malformed_completion_ingress() {
+    let request = wasm_vm_core::session_devices::DeviceRequest {
+        id: 1,
+        intent: DeviceIntent::Agent {
+            generation: 0,
+            maximum: 17,
+        },
+    };
+    let valid = DeviceCompletion {
+        request,
+        status: Status::Supplied,
+        frames: 0,
+        bytes: vec![1, 2, 3],
+    };
+    let envelope = valid.encode().unwrap();
+    for (offset, value) in [(0, 0u8), (8, 0), (16, 255), (29, 255)] {
+        let mut bytes = envelope.clone();
+        bytes[offset] = value;
+        assert!(DeviceCompletion::decode(&bytes).is_err(), "offset={offset}");
+    }
+    let mut fail = valid.clone();
+    fail.status = Status::Failed;
+    assert_eq!(fail.validate(), Err(DeviceError::Payload));
+    let mut machine = fixture(false);
+    let before = machine.save_session_resume().unwrap();
+    assert_eq!(
+        machine.replay_session_device(machine.session_position().unwrap(), valid),
+        Err(DeviceError::ReplayIngress)
+    );
+    assert_eq!(machine.save_session_resume().unwrap(), before);
+}
+
+#[test]
+fn critic_disabled_capture_metadata_refuses_without_revoking_live_lease() {
+    use wasm_vm_core::resume::section;
+    let mut machine = Machine::new(1 << 20);
+    machine.enable_clint(1);
+    machine.start_session_clock(1).unwrap();
+    machine
+        .enable_session_devices(
+            Some(BaseDisk {
+                identity: [37; 32],
+                sectors: 2,
+                chunk_bytes: 512,
+                chunks: (0..2)
+                    .map(|n| PayloadRef::of(&payload(n)).unwrap())
+                    .collect(),
+            }),
+            true,
+            false,
+            false,
+        )
+        .unwrap();
+    machine.bus_mut().write_ram_slice(BASE, PROGRAM).unwrap();
+    machine.hart_mut().regs.pc = BASE;
+    until(&mut machine, START, 13, &mut Trace::default());
+    let frame = machine.save_session_resume().unwrap();
+    evidence("critic-disabled-capture-pending.resume", &frame);
+    for field in [2usize, 3] {
+        machine.load_session_resume(&frame).unwrap();
+        let lease = machine.lease_session_device(1).unwrap();
+        let mutant = critic_rewrite_section(&frame, section::SESSION_DEVICES, |bytes| {
+            let config_length = u32::from_le_bytes(bytes[12..16].try_into().unwrap()) as usize;
+            let at = 16 + config_length + field * 8;
+            assert_eq!(&bytes[at..at + 8], &[0; 8]);
+            bytes[at..at + 8].copy_from_slice(&1u64.to_le_bytes());
+        });
+        assert!(machine.load_session_resume(&mutant).is_err());
+        assert_eq!(machine.save_session_resume().unwrap(), frame);
+        machine
+            .complete_session_device(&lease, Status::Supplied, 0, payload(0))
+            .unwrap();
+        machine.take_session_deliveries().unwrap();
+        evidence(
+            &format!("critic-disabled-capture-field{field}.resume"),
+            &mutant,
+        );
+    }
+}
+
+#[test]
+fn critic_failed_block_result_restores_and_replays_without_payload() {
+    let mut machine = fixture(false);
+    let mut trace = Trace::default();
+    until(&mut machine, START, 19, &mut trace);
+    let pending = machine.save_session_resume().unwrap();
+    let receipt = capture(&mut machine, 1, Status::Failed, vec![], 0);
+    let ready = machine.save_session_resume().unwrap();
+    let mut copy = fixture(true);
+    copy.load_session_resume(&ready).unwrap();
+    assert_eq!(copy.save_session_resume().unwrap(), ready);
+    until(&mut machine, START + 128, 17, &mut trace);
+    let final_frame = machine.save_session_resume().unwrap();
+    assert_eq!(machine.bus_mut().load16(BASE + 0x12002), Ok(1));
+    assert_eq!(machine.bus_mut().load8(BASE + 0x15000), Ok(1));
+    assert_eq!(machine.bus_mut().load32(BASE + 0x14000), Ok(0));
+    for quantum in [1, 7, 4096] {
+        let mut re = fixture(true);
+        re.load_session_resume(&pending).unwrap();
+        replay(&mut re, &receipt);
+        until(&mut re, START + 128, quantum, &mut Trace::default());
+        assert_eq!(re.save_session_resume().unwrap(), final_frame);
+    }
+    evidence("critic-block-failed-ready.resume", &ready);
+    evidence("critic-block-failed-final.resume", &final_frame);
+    evidence("critic-block-failed.trace", trace.0.as_bytes());
+}
+
+#[test]
+fn critic_structured_owned_codec_guards_are_transactional() {
+    use wasm_vm_core::resume::section;
+    let mut machine = fixture(false);
+    until(&mut machine, START, 13, &mut Trace::default());
+    let frame = machine.save_session_resume().unwrap();
+    let empty_legacy = wasm_vm_core::dev::virtio::snd::SndState::new()
+        .to_snapshot()
+        .unwrap();
+    for case in 0..10 {
+        machine.load_session_resume(&frame).unwrap();
+        let lease = machine.lease_session_device(1).unwrap();
+        let tag = if case < 4 {
+            section::SESSION_DEVICES
+        } else {
+            section::VIRTIO_SND
+        };
+        let mutant = critic_rewrite_section(&frame, tag, |bytes| {
+            let u32_at = |b: &[u8], at: usize| {
+                u32::from_le_bytes(b[at..at + 4].try_into().unwrap()) as usize
+            };
+            if case < 4 {
+                let hub_len = u32_at(bytes, 0);
+                let pending = 4 + hub_len + 4;
+                let segments_count = pending + 6 + 2 + 1 + 8;
+                let count = u32_at(bytes, segments_count);
+                let first = segments_count + 4;
+                assert_eq!(count, 3);
+                match case {
+                    0 => {
+                        bytes[segments_count..segments_count + 4]
+                            .copy_from_slice(&0u32.to_le_bytes());
+                        bytes.drain(first..first + count * 13);
+                    }
+                    1 => {
+                        for n in 0..count {
+                            bytes[first + n * 13 + 12] = 0;
+                        }
+                    }
+                    2 => bytes[pending + 1] = 1,
+                    3 => bytes[first + 2 * 13 + 12] = 0,
+                    _ => unreachable!(),
+                }
+                let length = bytes.len() - (4 + hub_len + 4);
+                bytes[4 + hub_len..4 + hub_len + 4].copy_from_slice(&(length as u32).to_le_bytes());
+            } else {
+                let start = bytes.windows(8).position(|b| b == b"WVSNDC01").unwrap();
+                let legacy = u32_at(bytes, start + 8);
+                let count = start + 12 + legacy;
+                let first = count + 4;
+                let data_count = first + 31;
+                let segment = data_count + 4;
+                assert_eq!(u32_at(bytes, count), 1);
+                assert_eq!(u32_at(bytes, data_count), 1);
+                match case {
+                    4 => bytes[segment + 12] = 0,
+                    5 => {
+                        bytes[data_count..data_count + 4].copy_from_slice(&0u32.to_le_bytes());
+                        bytes.drain(segment..segment + 13);
+                    }
+                    6 => bytes[segment..segment + 8].copy_from_slice(&u64::MAX.to_le_bytes()),
+                    7 => {
+                        bytes[count..count + 4].copy_from_slice(&0u32.to_le_bytes());
+                        bytes.truncate(first);
+                    }
+                    8 => bytes.resize(start + (2 << 20) + 1, 0),
+                    9 => {
+                        bytes.splice(start + 12..count, empty_legacy.iter().copied());
+                        bytes[start + 8..start + 12]
+                            .copy_from_slice(&(empty_legacy.len() as u32).to_le_bytes());
+                    }
+                    _ => unreachable!(),
+                }
+            }
+        });
+        assert!(
+            machine.load_session_resume(&mutant).is_err(),
+            "accepted case={case}"
+        );
+        assert_eq!(
+            machine.save_session_resume().unwrap(),
+            frame,
+            "partial case={case}"
+        );
+        machine
+            .complete_session_device(&lease, Status::Supplied, 0, payload(0))
+            .unwrap();
+        machine.take_session_deliveries().unwrap();
+        evidence(&format!("critic-structured-codec-{case}.resume"), &mutant);
+    }
+}
+
+#[test]
+fn critic_active_playback_refuses_checkpoint_and_remains_stopped() {
+    use wasm_vm_core::{dev::virtio::snd, resume::section, session_clock::SessionError};
+    let mut machine = fixture(false);
+    until(&mut machine, START, 13, &mut Trace::default());
+    let before = machine.save_session_resume().unwrap();
+    let state = machine.virtio_snd().unwrap().1;
+    let params = snd::PcmParams {
+        buffer_bytes: 16,
+        period_bytes: 4,
+        ..Default::default()
+    };
+    assert_eq!(
+        &state.borrow_mut().handle_control(&params.to_bytes())[..4],
+        &(snd::VIRTIO_SND_S_OK).to_le_bytes()
+    );
+    for command in [snd::VIRTIO_SND_R_PCM_PREPARE, snd::VIRTIO_SND_R_PCM_START] {
+        let mut bytes = command.to_le_bytes().to_vec();
+        bytes.extend_from_slice(&0u32.to_le_bytes());
+        assert_eq!(
+            &state.borrow_mut().handle_control(&bytes)[..4],
+            &(snd::VIRTIO_SND_S_OK).to_le_bytes()
+        );
+    }
+    assert_eq!(state.borrow().stream.state(), snd::PcmState::Running);
+    let active = state.borrow().to_snapshot().unwrap();
+    assert!(machine.save_session_resume().is_err());
+    let position = machine.session_position();
+    for _ in 0..2 {
+        assert_eq!(
+            machine.run(1),
+            RunOutcome::SessionStopped(SessionError::DeviceCompletion(DeviceError::Unsupported))
+        );
+        assert_eq!(machine.session_position(), position);
+    }
+    let invalid = critic_rewrite_section(&before, section::VIRTIO_SND, |bytes| {
+        let start = bytes.windows(8).position(|b| b == b"WVSNDC01").unwrap();
+        let count = u32::from_le_bytes(bytes[start + 8..start + 12].try_into().unwrap()) as usize;
+        bytes.splice(start + 12..start + 12 + count, active.iter().copied());
+        bytes[start + 8..start + 12].copy_from_slice(&(active.len() as u32).to_le_bytes());
+    });
+    let mut check = fixture(false);
+    check.load_session_resume(&before).unwrap();
+    let lease = check.lease_session_device(1).unwrap();
+    assert!(check.load_session_resume(&invalid).is_err());
+    assert_eq!(check.save_session_resume().unwrap(), before);
+    check
+        .complete_session_device(&lease, Status::Supplied, 0, payload(0))
+        .unwrap();
+    evidence("critic-active-playback-owned-invalid.resume", &invalid);
+    evidence("critic-active-playback-legacy.bin", &active);
+}
+
+#[test]
+fn critic_invalid_base_geometry_refuses_before_installation_mutates_state() {
+    let valid = BaseDisk {
+        identity: [37; 32],
+        sectors: 2,
+        chunk_bytes: 512,
+        chunks: (0..2)
+            .map(|n| PayloadRef::of(&payload(n)).unwrap())
+            .collect(),
+    };
+    for case in 0..7 {
+        let mut base = valid.clone();
+        match case {
+            0 => base.identity = [0; 32],
+            1 => base.sectors = 0,
+            2 => base.chunk_bytes = 0,
+            3 => base.chunk_bytes = 513,
+            4 => base.chunks.clear(),
+            5 => base.chunks[0].length = 511,
+            6 => base.sectors = u64::MAX,
+            _ => unreachable!(),
+        };
+        let mut machine = Machine::new(1 << 20);
+        machine.enable_clint(1);
+        machine.start_session_clock(1).unwrap();
+        let before = machine.save_session_resume().unwrap();
+        assert!(
+            machine
+                .enable_session_devices(Some(base), true, true, false)
+                .is_err()
+        );
+        assert_eq!(
+            machine.save_session_resume().unwrap(),
+            before,
+            "case={case}"
+        );
+    }
+}
