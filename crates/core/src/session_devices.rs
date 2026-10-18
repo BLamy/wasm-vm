@@ -268,7 +268,13 @@ impl crate::Machine {
             return;
         };
         let mut hub = hub.borrow_mut();
-        hub.guest.clock_ns = self.clint_mtime().saturating_mul(100);
+        // Capture is the only adapter that consumes this clock. Keeping its unused value
+        // at zero prevents the last device-poll boundary from leaking JIT batch sizes.
+        hub.guest.clock_ns = if hub.capture {
+            self.clint_mtime().saturating_mul(100)
+        } else {
+            0
+        };
         if let Some((_, state, ..)) = &self.snd {
             let state = state.borrow();
             if state.stream.state() == crate::dev::virtio::snd::PcmState::Running {
@@ -381,6 +387,15 @@ impl crate::Machine {
                 true,
             );
             self.snd.as_mut().unwrap().8 = alloc::boxed::Box::new(CompletionCapture(hub.clone()));
+            // A transition-zero checkpoint must already agree with the installed stream;
+            // waiting for the first device poll leaves the broker one lifecycle behind.
+            hub.borrow_mut().guest.capture_epoch = self
+                .snd
+                .as_ref()
+                .unwrap()
+                .1
+                .borrow()
+                .capture_lifecycle_epoch();
         }
         self.session_devices = Some(hub);
         Ok(())

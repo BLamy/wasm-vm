@@ -721,3 +721,83 @@ fn unrecorded_transport_and_playback_admission_refuse_before_guest_execution() {
     evidence("unsupported-playback.trace", trace.0.as_bytes());
     evidence("unsupported-playback.txt",format!("position={position:?}\nUnsupported before the next retirement; no unrecorded playback admitted.\n").as_bytes());
 }
+
+#[test]
+fn every_initial_device_profile_roundtrips_before_the_first_transition() {
+    for has_base in [false, true] {
+        for agent in [false, true] {
+            for capture in [false, true] {
+                let make = |replay| {
+                    let mut machine = Machine::new(1 << 20);
+                    machine.enable_clint(1);
+                    machine.start_session_clock(1).unwrap();
+                    let base = has_base.then(|| BaseDisk {
+                        identity: [37; 32],
+                        sectors: 2,
+                        chunk_bytes: 512,
+                        chunks: (0..2)
+                            .map(|n| PayloadRef::of(&payload(n)).unwrap())
+                            .collect(),
+                    });
+                    machine
+                        .enable_session_devices(base, agent, capture, replay)
+                        .unwrap();
+                    machine
+                };
+                let mut machine = make(false);
+                let initial = machine.save_session_resume().unwrap();
+                assert_eq!(machine.session_position().unwrap().transition, 0);
+                assert!(machine.session_device_requests().unwrap().is_empty());
+                let mut restored = make(true);
+                restored.load_session_resume(&initial).unwrap();
+                assert_eq!(
+                    restored.save_session_resume().unwrap(),
+                    initial,
+                    "base={has_base} agent={agent} capture={capture}"
+                );
+                evidence(
+                    &format!("initial-base{has_base}-agent{agent}-capture{capture}.resume"),
+                    &initial,
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn disabled_capture_rejects_noncanonical_clock_and_epoch_transactionally() {
+    use wasm_vm_core::resume::{SectionReader, SnapshotWriter, section};
+    let mut machine = Machine::new(1 << 20);
+    machine.enable_clint(1);
+    machine.start_session_clock(1).unwrap();
+    machine
+        .enable_session_devices(None, true, false, false)
+        .unwrap();
+    let before = machine.save_session_resume().unwrap();
+    for field in [2, 3] {
+        let (header, sections) = SectionReader::new(&before).unwrap();
+        let mut writer = SnapshotWriter::new(
+            &header.core_hash,
+            &header.base_image_hash,
+            header.overlay_generation,
+        );
+        for section in sections {
+            let section = section.unwrap();
+            let mut bytes = section.payload.to_vec();
+            if section.tag == section::SESSION_DEVICES {
+                let config_length = u32::from_le_bytes(bytes[12..16].try_into().unwrap()) as usize;
+                let at = 16 + config_length + field * 8;
+                assert_eq!(&bytes[at..at + 8], &[0; 8]);
+                bytes[at..at + 8].copy_from_slice(&1u64.to_le_bytes());
+            }
+            writer.section(section.tag, &bytes);
+        }
+        let invalid = writer.finish();
+        assert!(machine.load_session_resume(&invalid).is_err());
+        assert_eq!(machine.save_session_resume().unwrap(), before);
+        evidence(
+            &format!("disabled-capture-invalid-field{field}.resume"),
+            &invalid,
+        );
+    }
+}

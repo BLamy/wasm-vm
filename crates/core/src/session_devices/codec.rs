@@ -236,7 +236,10 @@ impl DeviceHub {
             capture_epoch: r.u64()?,
             ..GuestState::default()
         };
-        if g.cursor > sequence || g.cursor > g.next_id {
+        if g.cursor > sequence
+            || g.cursor > g.next_id
+            || (!self.capture && (g.clock_ns != 0 || g.capture_epoch != 0))
+        {
             return Err(DeviceError::Snapshot);
         }
         let mut keys = Vec::new();

@@ -99,3 +99,27 @@ future-descriptor round trip pass afterward. Exact red/green logs and raw frames
 retained losslessly in evidence/e9-t12/repair-precheck/receipt.json. These are worker
 prechecks. The frozen repaired head must earn a new high-risk submission and fresh
 critic verdict before this task can become verified.
+
+### 2026-10-18 — worker — restore initialization and inactive capture canonicality
+
+The fresh critic independently reproduced two further edge failures. With capture
+disabled, a real translated six-instruction loop stopped at transition 5001 saved
+different unused broker clock values under different execution budgets. Its repeated
+raw browser packets are actual-jit-edge and actual-jit-edge-recheck beneath
+/Volumes/e9-t11-cold-scratch/e9-t12-verifier; jit-edge-audit.json identifies section 20
+as the sole difference. Separately, every capture-enabled initial profile saved a
+transition-zero frame that restore rejected: broker epoch 0 disagreed with the
+installed sound stream epoch 1. The critic's eight-profile packet is recorded-initial
+in that same directory. Both findings are accepted; no earlier passing runtime proof
+is substituted for a new submission.
+
+The worker added independent regressions, observed both fail before the repair, then
+initialized the broker from the actual installed capture epoch and canonicalized the
+unused capture clock to zero. Disabled capture profiles reject nonzero persisted clock
+or epoch before mutation. The native Wasmtime regression executes real translated
+six-instruction blocks, compares complete device/CPU/RAM checkpoints at transitions
+5000, 5001 and 5002 under budgets 31, 1, 8 and 4096, and checks actual block/agent DMA
+queue completion and cursor values. All eight optional adapter profiles roundtrip
+before their first guest instruction. Red logs and frames are retained on the task RAM
+volume for inclusion in the final evidence packet. This remains worker implementation,
+not a verifier verdict.
