@@ -18,11 +18,14 @@ output.mkdir(parents=True, exist_ok=False)
 environment = {key: value for key, value in os.environ.items()
                if key not in ('RUSTFLAGS', 'RUSTDOCFLAGS', 'RUST_LOG') and not key.startswith('CARGO_')}
 environment['CARGO_TERM_COLOR'] = 'never'
+environment['CARGO_INCREMENTAL'] = '0'
+environment['CARGO_BUILD_JOBS'] = '8'
 environment['GIT_OPTIONAL_LOCKS'] = '0'
 head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
 tree = subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], cwd=ROOT, text=True).strip()
 report = {'task': 'E9-T14', 'status': 'running', 'head': head, 'tree': tree,
           'started': time.time(), 'commands': [],
+          'build_environment': {'CARGO_INCREMENTAL': '0', 'CARGO_BUILD_JOBS': '8'},
           'claim': 'Pinned full Linux recording, durable event tape, exact interpreter/JIT replay, first divergence and stopped end fence.'}
 
 
