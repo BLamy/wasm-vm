@@ -3,7 +3,7 @@ id: E9-T14
 epic: 9
 title: Replay recorded sessions and detect the first divergence
 priority: 524.914
-status: in-progress
+status: implemented
 depends_on: [E9-T05, E9-T10, E9-T11, E9-T12, E9-T13]
 estimate: S
 risk: high
@@ -90,3 +90,62 @@ VERDICT: refuted
   were not opened or used.
 
 Commands: `CARGO_TARGET_DIR=/Volumes/e9-daybreak-verifier/e9-t14-refutation/target cargo test --offline --manifest-path /Volumes/e9-daybreak-verifier/e9-t14-refutation/harness/Cargo.toml completed_replay_refuses_unbranched_ram_delivery -- --nocapture` (exit 101 from the assertion). Prediction, exact command, source/evidence digests, and assessment: `/Volumes/e9-daybreak-verifier/e9-t14-refutation/assessment.md` (SHA-256 `1abce89156a77bec4773883fca5d5ccebce642a8c45a430387f395bc2d2ef81f`).
+
+### 2026-10-18 — worker — repaired implementation, awaiting fresh verifier
+
+VERDICT CLAIM: the prior refutation is repaired. Frozen product/browser source is
+`d646bf8c9aa80be604ff4f80572600c40676651a`. Public session effect staging,
+boundary delivery, source-tape append, and low-level device/network replay ingress
+now refuse unbranched mutation throughout a full replay, including after `Completed`;
+the driver alone uses authenticated recorded-only ingress. Native tests exercise
+post-completion RAM writes, callbacks, observation append, device/network injection,
+and unchanged complete resume frames. The Linux browser ABI refuses live input and
+device/network provider leases after completion. Both interpreter and JIT replay the
+47-event Alpine recording to the declared end with matching complete-state witnesses;
+changed input and omitted DMA report their first exact divergent positions.
+
+Evidence submitted for independent review:
+
+- Full native and wasm workspace gates passed from pristine runtime head
+  `727ed33ebe614a7bf3184d63bb7d58b3e4eb653c` in
+  `/Volumes/e9-build-scratch/e9-t14-final-cold-727ed33/report.json`. That run stopped
+  later on the T01 source-hash contract, which was then re-audited and updated for
+  four replay-boundary files; no runtime code changed afterward.
+- Final fresh sparse checkout at `d646bf8` with `RUSTFLAGS`, `RUSTDOCFLAGS`,
+  `RUST_LOG`, and inherited `CARGO_*` scrubbed: `E9_REPLAY_CARRY_NATIVE=/Volumes/e9-build-scratch/e9-t14-final-cold-727ed33 E9_REPLAY_CARRY_WASM=/Volumes/e9-build-scratch/e9-t14-final-cold-727ed33/report.json E9_REPLAY_EVIDENCE_DIR=/Volumes/e9-build-scratch/e9-t14-final-cold-d646bf8 make verify-E9-T14`. Receipt
+  `/Volumes/e9-build-scratch/e9-t14-final-cold-d646bf8/report.json`, SHA-256
+  `3d3be05c698e55ceccad0d03b013c9c38c7de6ee88b293f3d310c9dfd5ee679b`,
+  `status: passed`. Its carry guard authenticates the prior full-suite log digests and
+  permits only the contract, proof script, browser probe, staged probe, and service
+  worker stamp as differences. It reran RISC-V, replay attacks, performance,
+  cross-target, wasm Clippy, syntax, documentation, contract and built-browser gates.
+  Browser report SHA-256 `d03fc073127a284f44b716c4a7084b415ad89acc4bf1068552f6b8893e49f069`: `127/0`, zero console errors, 47 events, four witnesses, both divergence
+  attacks, provider ingress refused after completion, and interpreter/JIT digest
+  `fc3336c6ab7839a012cbaaef1745406ee3c043dfa4d5ca1075220e8287d9a6e4`.
+  Trace ZIP SHA-256 `df256f5d830f64251b01ab609f53c4bafe4aee9da3aef21646699744e91d9bc5`.
+- `make ci` still stops at the five pre-existing `zicsr-stub` dead-code Clippy
+  diagnostics reproduced on untouched parent `c52ab64`; the receipt records
+  that baseline exception and the separately passing remaining gates.
+- Production main project published with `npx --yes wrangler pages deploy web/dist
+  --project-name wasm-vm --branch main --commit-dirty=true` after the standard
+  deploy script's public R2 GET timed out and its Wrangler fallback refused the
+  unchanged 512 MiB object (Wrangler's 300 MiB limit). Prior deploy log
+  `/Volumes/e9-build-scratch/e9-t14-deploy.log` had already verified all seven
+  immutable content-addressed R2 objects byte-for-byte; this deploy rechecked
+  each current local artifact against those exact keys and validated the staged
+  Pages tree. Publish log SHA-256
+  `6767e4dce524e58cbbaccc0cdaad03be60878b580319e3af784851c49febae7e`.
+  Seven public app/JS/wasm assets match the staged build in
+  `/Volumes/e9-build-scratch/e9-t14-final-public-assets.json` (SHA-256
+  `e33ad7947aa50f8f60a71968af2388d29bfe4f75e2d0d413f95b3b7750675ed4`).
+  Public browser report `/Volumes/e9-build-scratch/e9-t14-final-public-browser/report.json`
+  (SHA-256 `6e23061981c9806af58ecf6f4c25e92dbeb95ed9f9d69ce3acb642c96009886a`)
+  records `127/0`, 47 events, four witnesses, matching interpreter/JIT digest
+  `fcd073c351563acac0dd156d96c30e8402036a314b7144a639bba299246b046e`,
+  both attacks, provider refusal, durable reopen, zero console errors except
+  the permitted `/favicon.ico` 404. Public trace ZIP SHA-256
+  `37ae9cab51ce0cbc81741d4485eb4d07b6f863871d14bff95e62f50529087a08`.
+
+The prior verifier's guest-instruction fence result remains HELD for its unchanged
+fixture. A new, separate verifier must attack the repaired ingress boundaries and
+interrogate the exact-head evidence before changing this task to `verified`.
