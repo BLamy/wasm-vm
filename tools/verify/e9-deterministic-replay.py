@@ -269,6 +269,17 @@ try:
     run('native-riscv-regression', ['make', 'riscv-tests-suite'], 3600)
     run('replay-native-trace-and-attacks', ['cargo', 'test', '-p', 'wasm-vm-core',
         '--features', 'trace,virgl-renderer', '--test', 'e9_deterministic_replay', '--', '--nocapture'])
+    environment['E9_T14_GUEST_TRACE_DIR'] = str(output / 'guest-trace')
+    try:
+        run('real-jit-complete-frame-and-guest-trace', ['cargo', 'test', '-p',
+            'wasm-vm-jit-runtime', '--test', 'e9_deterministic_replay', '--', '--nocapture'], 1800)
+    finally:
+        environment.pop('E9_T14_GUEST_TRACE_DIR', None)
+    guest_trace = output / 'guest-trace' / 'guest-instructions.trace'
+    assert guest_trace.is_file() and sum(1 for _ in guest_trace.open('rb')) == 4096, \
+        'real-JIT regression did not retain its original guest instruction trace'
+    assert (output / 'guest-trace' / 'complete-resume.sha256').stat().st_size == 32, \
+        'real-JIT complete frame digest absent'
     prune_generated_build_cache(Path('debug'))
     run('native-performance-smoke', ['make', 'perf-smoke'], 3600)
     carried_wasm = os.environ.get('E9_REPLAY_CARRY_WASM')
@@ -288,10 +299,14 @@ try:
         assert (ROOT / 'web' / name).read_bytes() == (ROOT / 'web/dist' / name).read_bytes(), \
             'stale deploy bundle: ' + name
     for name in ['web/main.js', 'web/session-replay-probe.js', 'web/session-inputs.js',
-                 'tools/verify/e9-replay-browser.mjs']:
+                 'tools/verify/e9-replay-browser.mjs',
+                 'tools/verify/e9-replay-journal-bounds.mjs']:
         run('syntax-' + Path(name).stem, ['node', '--check', name])
     run('documentation', ['node', 'tools/check-docs.mjs'])
     run('session-contract', ['python3', 'tools/verify/e9-session-contract.py'])
+    run('journal-bounds-browser', ['node', 'tools/verify/e9-replay-journal-bounds.mjs',
+                                   '--output', str(output / 'journal-bounds')], 300)
+    assert json.loads((output / 'journal-bounds' / 'report.json').read_text())['status'] == 'passed'
     run('built-browser', ['node', 'tools/verify/e9-replay-browser.mjs',
                            '--output', str(output / 'browser')], 1800)
     browser = json.loads((output / 'browser' / 'report.json').read_text())

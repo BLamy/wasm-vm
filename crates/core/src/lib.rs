@@ -5588,6 +5588,20 @@ impl Machine {
                 });
             };
             ran_any = true;
+            // A compiled span sees one device boundary at entry; account for the boundaries
+            // it skipped before returning. A trapping instruction also has a boundary, even
+            // though it does not retire, so its span needs one additional tick.
+            if self.session_clock.is_some()
+                && let Some((uart, _)) = &self.uart
+            {
+                let skipped = match &step {
+                    BlockStep::Committed { retired, .. } | BlockStep::Budget { retired } => {
+                        retired.saturating_sub(1)
+                    }
+                    BlockStep::Trapped { retired, .. } => *retired,
+                };
+                uart.borrow_mut().tick_by(skipped);
+            }
             match step {
                 BlockStep::Budget { retired } => {
                     debug_assert!(retired > 0 && retired <= block_budget);

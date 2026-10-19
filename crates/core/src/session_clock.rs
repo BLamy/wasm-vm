@@ -753,6 +753,14 @@ impl crate::Machine {
         {
             budget = budget.min(1);
         }
+        // The first UART timeout tick was sampled at this dispatch's boundary. Stop a
+        // compiled span before the next tick that would latch a character timeout: that
+        // boundary may assert an interrupt, and must run before its guest instruction.
+        if let Some((uart, _)) = &self.uart
+            && let Some(until_timeout) = uart.borrow().ticks_until_timeout()
+        {
+            budget = budget.min(until_timeout);
+        }
         // Pure compiled work cannot cross the retirement where a derived timer becomes due.
         if let Some(clint) = &self.clint {
             let state = clint.borrow();

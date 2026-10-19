@@ -10,6 +10,16 @@ import {sessionCanonicalImage} from './session-pkg/wasm_vm_session.js';
 const need=(value,message)=>{if(!value)throw Error('exact replay: '+message);};
 const hex=bytes=>Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+const uartTimeout=frame=>{
+ const view=new DataView(frame.buffer,frame.byteOffset,frame.byteLength);
+ for(let at=84;at+8<=frame.length;){
+  const tag=view.getUint32(at,true),length=view.getUint32(at+4,true);
+  need(at+8+length<=frame.length,'UART witness section length');
+  if(tag===5){const p=at+8;return {latched:!!frame[p+9],idleTicks:view.getUint32(p+10,true),rxLength:view.getUint32(p+14,true)};}
+  at+=8+length;
+ }
+ throw Error('exact replay: UART witness absent');
+};
 const bootargs='root=/dev/vda rw console=ttyS0 earlycon=sbi init=/bin/sh -- +i';
 export const REPLAY_PROBE_DATABASE='wasm-vm-sessions-v1-exact-replay-proof';
 export const REPLAY_PROBE_ID='alpine-exact';
@@ -34,7 +44,17 @@ export async function runSessionReplayProbe({onProgress}={}){
   rows.push(...original.takeExactSessionDeliveries());
   const first=original.runChunk(64);need(!first.done,'original ended at first boundary');
   rows.push(...original.takeExactSessionDeliveries());witnesses.push(original.exactSessionWitness(false));
-  const second=original.runChunk(999936);need(!second.done,'original ended before declared end');
+  const beforeTimeout=original.runChunk(256);need(!beforeTimeout.done,'original ended before pending UART witness');
+  rows.push(...original.takeExactSessionDeliveries());
+  const pending=original.exactSessionWitness(true),pendingUart=uartTimeout(pending.resume);
+  need(pendingUart.rxLength>0&&!pendingUart.latched&&pendingUart.idleTicks===320,'pending UART remains below timeout at 320 retirements');
+  delete pending.resume;witnesses.push(pending);
+  const throughTimeout=original.runChunk(800);need(!throughTimeout.done,'original ended before UART timeout witness');
+  rows.push(...original.takeExactSessionDeliveries());
+  const timed=original.exactSessionWitness(true),timedUart=uartTimeout(timed.resume);
+  need(timedUart.rxLength>0&&timedUart.latched&&timedUart.idleTicks===1024,'UART timeout latches at 1024 retirements');
+  delete timed.resume;witnesses.push(timed);
+  const second=original.runChunk(998880);need(!second.done,'original ended before declared end');
   rows.push(...original.takeExactSessionDeliveries());witnesses.push(original.exactSessionWitness(false));
   let blockCompletions=0,networkCompletions=0;const progress=[];
   for(let pass=0;pass<300&&blockCompletions===0;pass++){
@@ -104,6 +124,7 @@ export async function runSessionReplayProbe({onProgress}={}){
   }finally{if(writer)await writer.release();if(store)await store.close();}
   output={begin:{transition:initial.transition,sequence:initial.sequence},end:{transition:final.transition,sequence:final.sequence},
    digest:hex(final.digest),events:rows.length,eventKinds:rows.map(r=>r.kind),
+   uartTimeout:{pending:pendingUart,latched:timedUart},
    blockCompletions,networkCompletions,durable:{database:REPLAY_PROBE_DATABASE,id:REPLAY_PROBE_ID},replays:[]};
   onProgress?.('Replaying the saved session on the interpreter and JIT');
   const liveFetch=globalThis.fetch;

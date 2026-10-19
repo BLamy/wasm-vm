@@ -852,3 +852,144 @@ impl ReplayDriver {
         }
     }
 }
+
+#[cfg(test)]
+mod admission_tests {
+    use super::*;
+    use crate::session_clock::sources::{ObservationKind, ObservationValue, SourcePolicy};
+
+    fn policy() -> SourcePolicy {
+        SourcePolicy {
+            version: SourcePolicy::VERSION,
+            divider: 1,
+            timebase_hz: 10_000_000,
+        }
+    }
+
+    fn observations(count: usize, same_transition: bool, payload: usize) -> ReplayPlan {
+        let begin = SessionPosition::default();
+        let end = SessionPosition {
+            transition: if same_transition { 1 } else { count as u64 + 2 },
+            retired: if same_transition { 1 } else { count as u64 + 2 },
+            sequence: count as u64,
+            ..begin
+        };
+        let events = (0..count)
+            .map(|index| SessionDelivery {
+                position: SessionPosition {
+                    transition: if same_transition { 0 } else { index as u64 + 1 },
+                    retired: if same_transition { 0 } else { index as u64 + 1 },
+                    phase: SessionPhase::Observe,
+                    ordinal: if same_transition { index as u32 + 1 } else { 1 },
+                    sequence: index as u64 + 1,
+                },
+                ticket: index as u64 + 1,
+                effect: SessionEffect::Observation(ObservationValue {
+                    kind: ObservationKind::Entropy,
+                    requested: payload as u32,
+                    status: 0,
+                    bytes: vec![7; payload],
+                }),
+                host_result: None,
+            })
+            .collect();
+        ReplayPlan {
+            begin,
+            end,
+            initial_resume: vec![1],
+            events,
+            witnesses: vec![
+                StateWitness {
+                    position: begin,
+                    resume_sha256: [0; 32],
+                },
+                StateWitness {
+                    position: end,
+                    resume_sha256: [0; 32],
+                },
+            ],
+        }
+    }
+
+    #[test]
+    fn source_windows_split_only_between_transitions_and_refuse_oversize_groups() {
+        let split = observations(MAX_EVENTS + 1, false, 8);
+        split.validate().unwrap();
+        let windows = ReplayDriver::source_tapes(&split, policy()).unwrap();
+        assert_eq!(windows.len(), 2);
+        assert_eq!(windows[0].records.len(), MAX_EVENTS);
+        assert_eq!(windows[1].records.len(), 1);
+
+        let too_many = observations(MAX_EVENTS + 1, true, 8);
+        too_many.validate().unwrap();
+        let error = ReplayDriver::source_tapes(&too_many, policy()).unwrap_err();
+        assert_eq!(error.reason, ReplayReason::InvalidPlan);
+        assert_eq!(error.position, too_many.events[0].position);
+        assert_eq!(error.detail, "one transition exceeds observation window");
+
+        let too_large = observations(5, true, 1 << 20);
+        too_large.validate().unwrap();
+        let error = ReplayDriver::source_tapes(&too_large, policy()).unwrap_err();
+        assert_eq!(error.reason, ReplayReason::InvalidPlan);
+        assert_eq!(error.detail, "one transition exceeds observation window");
+
+        let mut malformed = observations(1, true, 8);
+        if let SessionEffect::Observation(value) = &mut malformed.events[0].effect {
+            value.requested = 0;
+        }
+        malformed.validate().unwrap();
+        let error = ReplayDriver::source_tapes(&malformed, policy()).unwrap_err();
+        assert_eq!(error.reason, ReplayReason::InvalidPlan);
+        assert!(
+            error
+                .detail
+                .contains("observation chunk: MalformedObservation")
+        );
+    }
+
+    #[test]
+    fn source_window_advance_preserves_the_first_missing_receipt_or_append_error() {
+        let plan = observations(MAX_EVENTS + 1, false, 8);
+        let chunks = ReplayDriver::source_tapes(&plan, policy()).unwrap();
+        let mut machine = Machine::new(1 << 20);
+        machine.enable_clint(1);
+        let base = crate::bus::mmap::DRAM_BASE;
+        let program = [0x13, 0, 0, 0].repeat(300);
+        machine.bus_mut().write_ram_slice(base, &program).unwrap();
+        machine.hart_mut().regs.pc = base;
+        machine.start_session_clock(1).unwrap();
+        let fence = chunks[0].records.last().unwrap().position.transition + 1;
+        assert_eq!(
+            machine.run_session_until(fence, fence).unwrap(),
+            RunOutcome::MaxInstrs
+        );
+
+        let driver = |cursor| ReplayDriver {
+            plan: plan.clone(),
+            event_cursor: cursor,
+            witness_cursor: 0,
+            status: ReplayStatus::Ready,
+            first_failure: None,
+            expected_device_cursor: None,
+            expected_network_cursor: None,
+            source_chunks: chunks.clone(),
+            source_chunk_index: 0,
+            source_loaded: MAX_EVENTS,
+        };
+        let mut missing = driver(1);
+        let failure = missing.append_source_window(&mut machine).unwrap_err();
+        assert_eq!(failure.reason, ReplayReason::MissingEvent);
+        assert_eq!(failure.position, plan.events[1].position);
+        assert_eq!(failure.event_index, 1);
+        assert_eq!(missing.first_failure(), Some(&failure));
+        assert_eq!(missing.source_chunk_index, 0);
+
+        let mut refused = driver(MAX_EVENTS);
+        let failure = refused.append_source_window(&mut machine).unwrap_err();
+        assert_eq!(failure.reason, ReplayReason::Runtime);
+        assert!(failure.detail.contains("observation window append"));
+        assert_eq!(failure.event_index, MAX_EVENTS);
+        assert_eq!(refused.first_failure(), Some(&failure));
+        assert_eq!(refused.source_chunk_index, 0);
+    }
+}

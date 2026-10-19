@@ -264,13 +264,32 @@ impl Uart16550 {
     /// loop's cue that the UART cannot change its interrupt level on its own.
     pub fn tick(&mut self) -> bool {
         if !self.rx.is_empty() && !self.timeout_latched {
-            self.idle_ticks = self.idle_ticks.saturating_add(1);
-            if self.idle_ticks >= CHAR_TIMEOUT_TICKS {
-                self.timeout_latched = true;
-            }
+            self.tick_by(1);
             return true;
         }
         false
+    }
+
+    /// Additional instruction boundaries retired inside a compiled block. The first boundary
+    /// was already counted by the run loop before entering the block.
+    pub(crate) fn tick_by(&mut self, boundaries: u64) {
+        if boundaries == 0 || self.rx.is_empty() || self.timeout_latched {
+            return;
+        }
+        self.idle_ticks = self
+            .idle_ticks
+            .saturating_add(u32::try_from(boundaries).unwrap_or(u32::MAX));
+        if self.idle_ticks >= CHAR_TIMEOUT_TICKS {
+            self.timeout_latched = true;
+        }
+    }
+
+    /// Number of further retired instructions allowed before the timeout boundary must be
+    /// sampled. A compiled span stops there so an enabled UART interrupt is taken precisely.
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub(crate) fn ticks_until_timeout(&self) -> Option<u64> {
+        (!self.rx.is_empty() && !self.timeout_latched)
+            .then(|| u64::from(CHAR_TIMEOUT_TICKS.saturating_sub(self.idle_ticks)))
     }
 
     /// FCR trigger level in bytes (FCR bits 7:6) — 1/4/8/14.
