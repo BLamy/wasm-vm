@@ -3,7 +3,7 @@ id: E9-T14
 epic: 9
 title: Replay recorded sessions and detect the first divergence
 priority: 524.914
-status: implemented
+status: in-progress
 depends_on: [E9-T05, E9-T10, E9-T11, E9-T12, E9-T13]
 estimate: S
 risk: high
@@ -60,3 +60,33 @@ Evidence of record:
 
 The independent verifier must interrogate these receipts against the implementation
 diff and the task's adversarial criteria before changing the status to `verified`.
+
+### 2026-10-18 — independent verifier — post-completion boundary
+
+VERDICT: refuted
+
+- P1 post-completion host effect — FAILED. Predicted that, without a separate branch
+  action, boundary delivery could not change guest state after `Completed`. A fresh
+  standalone Rust check completed four real guest transitions at the declared end,
+  then staged `WriteRam` at that same transition. Staging returned `Ok(0)` and RAM
+  remained zero; `deliver_session_boundary` returned `Ok(())`, changed RAM to
+  `0x12345678`, advanced the event sequence from 0 to 1, and changed the complete
+  resume digest. The invariant fails at
+  `/Volumes/e9-daybreak-verifier/e9-t14-refutation/harness/src/lib.rs:89`; observed
+  returns and state are in `independent-check.log:6-14` (SHA-256
+  `d171bf8ad71206c848c14770c64366c2d0e9a0ec7c13afec5a26cffaae89b051`).
+  `ReplayDriver` installs the limit at `crates/core/src/session_replay.rs:437` and
+  reports `Completed` at `:708`, but the changed limit fences only instruction
+  dispatch (`crates/core/src/session_clock.rs:641-646,675-684`); delivery applies
+  RAM writes at `:538-574` without an end check. Require a refusal of unbranched
+  host effect delivery, or an enforced explicit branch action, and re-record.
+- P2 guest-instruction fence — HELD for this fixture. Direct
+  `run_session_until(5, 8)` before and after the effect kept transition and retired
+  count at 4; a second driver run returned `Exhausted`
+  (`independent-check.log:7,9`). This finding is guest-state mutation through
+  delivery, not instruction execution past the end.
+- SUITE: no promoted test while refuted. This narrow confirmation did not run the
+  remaining high-risk charter. The interrupted review's saved harness and output
+  were not opened or used.
+
+Commands: `CARGO_TARGET_DIR=/Volumes/e9-daybreak-verifier/e9-t14-refutation/target cargo test --offline --manifest-path /Volumes/e9-daybreak-verifier/e9-t14-refutation/harness/Cargo.toml completed_replay_refuses_unbranched_ram_delivery -- --nocapture` (exit 101 from the assertion). Prediction, exact command, source/evidence digests, and assessment: `/Volumes/e9-daybreak-verifier/e9-t14-refutation/assessment.md` (SHA-256 `1abce89156a77bec4773883fca5d5ccebce642a8c45a430387f395bc2d2ef81f`).
