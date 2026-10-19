@@ -498,6 +498,28 @@ impl crate::Machine {
         position: crate::session_clock::SessionPosition,
         completion: DeviceCompletion,
     ) -> Result<(), DeviceError> {
+        if self.session_replay_limit.is_some() {
+            return Err(DeviceError::ReplayIngress);
+        }
+        self.replay_session_device_owned(position, completion)
+    }
+
+    pub(crate) fn replay_recorded_session_device(
+        &mut self,
+        position: crate::session_clock::SessionPosition,
+        completion: DeviceCompletion,
+    ) -> Result<(), DeviceError> {
+        if self.session_replay_limit.is_none() {
+            return Err(DeviceError::ReplayIngress);
+        }
+        self.replay_session_device_owned(position, completion)
+    }
+
+    fn replay_session_device_owned(
+        &mut self,
+        position: crate::session_clock::SessionPosition,
+        completion: DeviceCompletion,
+    ) -> Result<(), DeviceError> {
         if !self
             .session_devices
             .as_ref()
@@ -544,16 +566,19 @@ impl crate::Machine {
         }
         let position = self.session_position().ok_or(DeviceError::Inactive)?;
         let encoded = completion.encode()?;
-        self.stage_session_effect(
-            position.transition,
-            crate::session_clock::SessionEffect::HostInput {
-                channel: CHANNEL,
-                bytes: encoded,
-            },
-        )
-        .map_err(|_| DeviceError::Position)?;
+        let effect = crate::session_clock::SessionEffect::HostInput {
+            channel: CHANNEL,
+            bytes: encoded,
+        };
+        let full_replay = self.session_replay_limit.is_some();
+        let staged = if full_replay {
+            self.stage_recorded_session_effect(position.transition, effect)
+        } else {
+            self.stage_session_effect(position.transition, effect)
+        };
+        staged.map_err(|_| DeviceError::Position)?;
         let mut completion = Some(completion);
-        self.deliver_session_host_boundary(|machine, channel, _| {
+        let apply = |machine: &mut Self, channel, _: &[u8]| {
             assert_eq!(channel, CHANNEL);
             let completion = completion.take().expect("one exclusive completion");
             let mut accepted = completion.bytes.len() as u64;
@@ -576,7 +601,12 @@ impl crate::Machine {
             ];
             hub.borrow_mut().accept(completion);
             result
-        })
+        };
+        if full_replay {
+            self.deliver_recorded_session_host_boundary(apply)
+        } else {
+            self.deliver_session_host_boundary(apply)
+        }
         .map_err(|_| DeviceError::Position)
     }
 }

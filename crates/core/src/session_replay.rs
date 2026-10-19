@@ -569,18 +569,18 @@ impl ReplayDriver {
         let expected = self.plan.events[self.event_cursor].clone();
         let result = match expected.effect {
             SessionEffect::WriteRam { address, bytes } => machine
-                .stage_session_effect(
+                .stage_recorded_session_effect(
                     expected.position.transition,
                     SessionEffect::WriteRam { address, bytes },
                 )
-                .and_then(|_| machine.deliver_session_boundary())
+                .and_then(|_| machine.deliver_recorded_session_boundary())
                 .map_err(|e| alloc::format!("RAM delivery: {e:?}")),
             SessionEffect::ExternalPending(value) => machine
-                .stage_session_effect(
+                .stage_recorded_session_effect(
                     expected.position.transition,
                     SessionEffect::ExternalPending(value),
                 )
-                .and_then(|_| machine.deliver_session_boundary())
+                .and_then(|_| machine.deliver_recorded_session_boundary())
                 .map_err(|e| alloc::format!("pending delivery: {e:?}")),
             SessionEffect::HostInput {
                 channel: crate::session_devices::CHANNEL,
@@ -589,7 +589,7 @@ impl ReplayDriver {
                 .map_err(|e| alloc::format!("device envelope: {e:?}"))
                 .and_then(|event| {
                     machine
-                        .replay_session_device(expected.position, event)
+                        .replay_recorded_session_device(expected.position, event)
                         .map_err(|e| alloc::format!("device intent: {e:?}"))
                 }),
             SessionEffect::HostInput {
@@ -599,20 +599,21 @@ impl ReplayDriver {
                 .map_err(|e| alloc::format!("network envelope: {e:?}"))
                 .and_then(|event| {
                     machine
-                        .replay_session_network(expected.position, event)
+                        .replay_recorded_session_network(expected.position, event)
                         .map_err(|e| alloc::format!("network intent: {e:?}"))
                 }),
             SessionEffect::HostInput { channel, bytes }
                 if (1..=16).contains(&channel) || channel == OUTPUT_DRAIN_CHANNEL =>
             {
                 machine
-                    .stage_session_effect(
+                    .stage_recorded_session_effect(
                         expected.position.transition,
                         SessionEffect::HostInput { channel, bytes },
                     )
                     .and_then(|_| {
-                        machine
-                            .deliver_session_host_boundary(|m, ch, data| apply_input(m, ch, data))
+                        machine.deliver_recorded_session_host_boundary(|m, ch, data| {
+                            apply_input(m, ch, data)
+                        })
                     })
                     .map_err(|e| alloc::format!("input delivery: {e:?}"))
             }

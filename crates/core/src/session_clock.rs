@@ -15,6 +15,7 @@ const MAGIC: &[u8; 8] = b"WVCLK001";
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SessionError {
     Inactive,
+    ReplayActive,
     DeviceCompletion(crate::session_devices::DeviceError),
     Network(crate::session_network::NetworkError),
     AlreadyActive,
@@ -499,6 +500,30 @@ impl crate::Machine {
         transition: u64,
         effect: SessionEffect,
     ) -> Result<u64, SessionError> {
+        if self.session_replay_limit.is_some() {
+            return Err(SessionError::ReplayActive);
+        }
+        self.stage_owned_session_effect(transition, effect)
+    }
+
+    /// The replay driver alone may stage an effect from the authenticated tape. The ordinary
+    /// embedding ingress above stays closed for the entire replay, including after its end.
+    pub(crate) fn stage_recorded_session_effect(
+        &mut self,
+        transition: u64,
+        effect: SessionEffect,
+    ) -> Result<u64, SessionError> {
+        if self.session_replay_limit.is_none() {
+            return Err(SessionError::Inactive);
+        }
+        self.stage_owned_session_effect(transition, effect)
+    }
+
+    fn stage_owned_session_effect(
+        &mut self,
+        transition: u64,
+        effect: SessionEffect,
+    ) -> Result<u64, SessionError> {
         if let Some(error) = self.session_sources.borrow().error() {
             return Err(error);
         }
@@ -522,6 +547,16 @@ impl crate::Machine {
     /// or advancing guest time. This is also the paused-control path; receipts remain ordered
     /// across repeated calls and a snapshot at the same transition.
     pub fn deliver_session_boundary(&mut self) -> Result<(), SessionError> {
+        if self.session_replay_limit.is_some() {
+            return Err(SessionError::ReplayActive);
+        }
+        self.deliver_boundary(false, |_, _, _| unreachable!("host input is fenced"))
+    }
+
+    pub(crate) fn deliver_recorded_session_boundary(&mut self) -> Result<(), SessionError> {
+        if self.session_replay_limit.is_none() {
+            return Err(SessionError::Inactive);
+        }
         self.deliver_boundary(false, |_, _, _| unreachable!("host input is fenced"))
     }
 
@@ -532,6 +567,19 @@ impl crate::Machine {
         &mut self,
         apply: impl FnMut(&mut Self, u16, &[u8]) -> [u64; 4],
     ) -> Result<(), SessionError> {
+        if self.session_replay_limit.is_some() {
+            return Err(SessionError::ReplayActive);
+        }
+        self.deliver_boundary(true, apply)
+    }
+
+    pub(crate) fn deliver_recorded_session_host_boundary(
+        &mut self,
+        apply: impl FnMut(&mut Self, u16, &[u8]) -> [u64; 4],
+    ) -> Result<(), SessionError> {
+        if self.session_replay_limit.is_none() {
+            return Err(SessionError::Inactive);
+        }
         self.deliver_boundary(true, apply)
     }
 
@@ -646,7 +694,9 @@ impl crate::Machine {
             return Ok(Preparation::Fence);
         }
         clock.reserve_transition()?;
-        self.deliver_session_boundary()?;
+        // Internal transition preparation may drain only effects already admitted by the
+        // recording path or the replay driver; public delivery remains closed in replay mode.
+        self.deliver_boundary(false, |_, _, _| unreachable!("host input is fenced"))?;
         let clock = self.session_clock.as_mut().unwrap();
         let idle = core::mem::take(&mut clock.idle_pending);
         // Owned network work is guest-derived or explicitly recorded. It must

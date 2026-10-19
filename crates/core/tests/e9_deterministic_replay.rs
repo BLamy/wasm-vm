@@ -8,8 +8,10 @@ use wasm_vm_core::{
         rtc::WallClock,
         virtio::rng::{EntropySource, EntropyUnavailable},
     },
-    session_clock::{SessionDelivery, SessionEffect, SessionPosition},
-    session_devices::{BaseDisk, CompletionStatus, DeviceIntent, PayloadRef},
+    session_clock::{SessionDelivery, SessionEffect, SessionError, SessionPosition},
+    session_devices::{
+        BaseDisk, CompletionStatus, DeviceCompletion, DeviceError, DeviceIntent, PayloadRef,
+    },
     session_network::{LinkStatus, NetworkError, NetworkEvent, SendResult},
     session_replay::{ReplayDriver, ReplayPlan, ReplayReason, ReplayStatus, StateWitness},
 };
@@ -363,6 +365,22 @@ fn exact_replay_stops_at_declared_end_under_varied_quanta() {
         machine.set_block_cache(quantum > 3);
         machine.set_interrupt_batching(quantum > 3);
         let mut driver = ReplayDriver::start(&mut machine, plan.clone()).unwrap();
+        let initial_frame = machine.save_session_resume().unwrap();
+        assert_eq!(
+            machine.stage_session_effect(
+                plan.begin.transition,
+                SessionEffect::WriteRam {
+                    address: REPORT + 8,
+                    bytes: vec![0xaa, 0xbb, 0xcc, 0xdd],
+                },
+            ),
+            Err(SessionError::ReplayActive)
+        );
+        assert_eq!(
+            machine.deliver_session_boundary(),
+            Err(SessionError::ReplayActive)
+        );
+        assert_eq!(machine.save_session_resume().unwrap(), initial_frame);
         driver
             .run_to_end(&mut machine, quantum, |_, channel, bytes| {
                 assert_eq!((channel, bytes), (16, &[1][..]));
@@ -374,6 +392,27 @@ fn exact_replay_stops_at_declared_end_under_varied_quanta() {
         assert_eq!(machine.save_session_resume().unwrap(), final_resume);
         assert_eq!(machine.bus_mut().load32(REPORT).unwrap(), 0x5453_5251);
         let stopped = machine.session_position().unwrap();
+        assert_eq!(
+            machine.stage_session_effect(
+                stopped.transition,
+                SessionEffect::WriteRam {
+                    address: REPORT + 8,
+                    bytes: vec![0x12, 0x34, 0x56, 0x78],
+                },
+            ),
+            Err(SessionError::ReplayActive)
+        );
+        assert_eq!(
+            machine.deliver_session_boundary(),
+            Err(SessionError::ReplayActive)
+        );
+        assert_eq!(
+            machine.deliver_session_host_boundary(|_, _, _| panic!("live callback after replay")),
+            Err(SessionError::ReplayActive)
+        );
+        assert_eq!(machine.session_pending_events(), 0);
+        assert_eq!(machine.bus_mut().load32(REPORT + 8).unwrap(), 0);
+        assert_eq!(machine.save_session_resume().unwrap(), final_resume);
         assert_eq!(machine.run(128), RunOutcome::MaxInstrs);
         assert_eq!(machine.session_position().unwrap(), stopped);
         assert_eq!(
@@ -528,6 +567,16 @@ fn reordered_device_completions_replay_with_cpu_ram_and_disk_digest() {
         replay.set_block_cache(quantum > 7);
         replay.set_interrupt_batching(quantum > 7);
         let mut driver = ReplayDriver::start(&mut replay, plan.clone()).unwrap();
+        let SessionEffect::HostInput { bytes, .. } = &plan.events[0].effect else {
+            panic!()
+        };
+        assert_eq!(
+            replay.replay_session_device(
+                plan.events[0].position,
+                DeviceCompletion::decode(bytes).unwrap(),
+            ),
+            Err(DeviceError::ReplayIngress)
+        );
         driver
             .run_to_end(&mut replay, quantum, |_, _, _| unreachable!())
             .unwrap();
@@ -616,6 +665,16 @@ fn network_events_replay_offline_with_exact_guest_frame() {
         replay.set_block_cache(quantum > 7);
         replay.set_interrupt_batching(quantum > 7);
         let mut driver = ReplayDriver::start(&mut replay, plan.clone()).unwrap();
+        let SessionEffect::HostInput { bytes, .. } = &plan.events[0].effect else {
+            panic!()
+        };
+        assert_eq!(
+            replay.replay_session_network(
+                plan.events[0].position,
+                NetworkEvent::decode(bytes).unwrap(),
+            ),
+            Err(NetworkError::ReplayIngress)
+        );
         assert!(matches!(
             replay.open_session_network_provider(|| panic!("live network factory")),
             Err(NetworkError::ReplayIngress)
