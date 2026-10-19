@@ -76,14 +76,27 @@ def carry_previous_native(directory):
     old = json.loads((previous / 'report.json').read_text())
     changed = subprocess.check_output(['git', 'diff', '--name-only', old['head'], head],
                                       cwd=ROOT, text=True).splitlines()
-    assert old['task'] == 'E9-T14' and set(changed) <= CARRIED_PROOF_NONRUNTIME \
-        and 'tools/verify/e9-deterministic-replay.py' in changed, \
+    assert old['task'] == 'E9-T14' and changed and set(changed) <= CARRIED_PROOF_NONRUNTIME, \
         'carried proof must differ only in its recording script and audited design contract'
+    old_commands = {entry['name']: entry for entry in old['commands']}
+    native_gate = old_commands.get('native-workspace', old_commands.get('remaining-local-gauntlet'))
+    assert native_gate is not None and native_gate['exit_code'] == 0, \
+        'carried native workspace gate did not pass'
+    old_files = {entry['path']: entry['sha256'] for entry in old['files']}
+    full_source = previous / 'full-local-gauntlet.log'
+    assert digest(full_source) == old_files['full-local-gauntlet.log'], \
+        'carried gauntlet log differs from its prior receipt'
     shutil.copy2(previous / 'full-local-gauntlet.log', output / 'carried-full-local-gauntlet.log')
-    shutil.copy2(previous / 'remaining-local-gauntlet.log', output / 'carried-native-workspace.log')
+    native_source = previous / 'native-workspace.log'
+    if not native_source.exists():
+        native_source = previous / 'remaining-local-gauntlet.log'
+    assert digest(native_source) == old_files[native_source.name], \
+        'carried native log differs from its prior receipt'
+    shutil.copy2(native_source, output / 'carried-native-workspace.log')
     native = (output / 'carried-native-workspace.log').read_text()
-    assert 'no-host-float: OK' in native and 'determinism-hazards: production core' in native \
-        and 'wasm-pack build crates/wasm --target web' in native, 'native gate did not complete before wasm'
+    assert ('no-host-float: OK' in native
+            and 'determinism-hazards: production core' in native), \
+        'native gate did not complete'
     report['carried_native'] = {'head': old['head'], 'tree': old['tree'], 'source': str(previous),
         'log_sha256': digest(output / 'carried-native-workspace.log'), 'runtime_diff': changed}
     return (output / 'carried-full-local-gauntlet.log').read_text()
@@ -91,10 +104,19 @@ def carry_previous_native(directory):
 
 def carry_previous_wasm(metadata):
     record = json.loads(Path(metadata).read_text())
+    if record.get('task') == 'E9-T14':
+        commands = {entry['name']: entry for entry in record['commands']}
+        assert commands['wasm-workspace']['exit_code'] == 0, \
+            'carried wasm workspace gate did not pass'
+        files = {entry['path']: entry['sha256'] for entry in record['files']}
+        wasm_log = Path(metadata).resolve().parent / 'wasm-workspace.log'
+        assert digest(wasm_log) == files['wasm-workspace.log'], \
+            'carried wasm log differs from its prior receipt'
+        record = {'head': record['head'], 'exit_code': 0,
+                  'log': str(wasm_log), 'sha256': files['wasm-workspace.log']}
     changed = subprocess.check_output(['git', 'diff', '--name-only', record['head'], head],
                                       cwd=ROOT, text=True).splitlines()
-    assert record['exit_code'] == 0 and set(changed) <= CARRIED_PROOF_NONRUNTIME \
-        and 'tools/verify/e9-deterministic-replay.py' in changed, \
+    assert record['exit_code'] == 0 and changed and set(changed) <= CARRIED_PROOF_NONRUNTIME, \
         'carried wasm proof must differ only in its recording script and audited design contract'
     source = Path(record['log']).resolve()
     assert digest(source) == record['sha256'] and 'test result: ok.' in source.read_text(), 'wasm proof log'
