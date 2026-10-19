@@ -3,7 +3,7 @@ id: E9-T14
 epic: 9
 title: Replay recorded sessions and detect the first divergence
 priority: 524.914
-status: in-progress
+status: implemented
 depends_on: [E9-T05, E9-T10, E9-T11, E9-T12, E9-T13]
 estimate: S
 risk: high
@@ -223,3 +223,63 @@ Reproduction: `python3 /Volumes/e9-daybreak-verifier/e9-t14-final-standard/run-n
 records six passing controls and two exact-coordinate failures (exit 101), plus
 separate sensitivity control/sabotage. Browser commands are the adjacent
 `browser.mjs` and `browser-device.mjs` (both final exits 0).
+
+### 2026-10-19 — worker — repaired first-divergence diagnostics, awaiting fresh verifier
+
+VERDICT CLAIM: the two independently refuted coordinates now name the first
+failing event, independent of the execution quantum. The product repair at
+`20706793a96de1f34158f6991f5aed3d92c14dee` reports a changed RTC receipt
+at its recorded `Observe` position, identifies a missing tail/source-window
+event rather than the initial checkpoint, and reports a valid but wrong source
+kind at that same first observation. Native replay tests include the invalid
+agent slot, missing source window, 600-observation window, changed input and
+omitted DMA; all nine passed, including the pinned Alpine software profile.
+The later frozen head `13e02f8c04414575c7ab2a5b12bbf6d27633966a` changes
+only the recording script and a CLI WebSocket test fixture that keeps relay
+stdout drained until child exit.
+
+Exact-head evidence: from a fresh detached checkout at `13e02f8c0`, with
+`RUSTFLAGS`, `RUSTDOCFLAGS` and `RUST_LOG` scrubbed, ran
+`E9_REPLAY_CARRY_PARTIAL_NATIVE=/Volumes/e9-build-scratch/e9-t14-source-divergence-pristine-20706793a E9_REPLAY_EVIDENCE_DIR=/Volumes/e9-build-scratch/e9-t14-incremental-pristine-13e02f8c0 make verify-E9-T14`.
+The receipt `/Volumes/e9-build-scratch/e9-t14-incremental-pristine-13e02f8c0/report.json`
+is SHA-256 `714b5d76297fc974000ae1ae524dd3b3921638d1ce2070ed65900835f5a7c410`,
+`status: passed`; all 24 listed gates exited zero, and all 29 inventoried
+evidence files rehashed exactly. It authenticates the prior partial native
+workspace log at runtime-identical `20706793a`, reruns the touched relay
+fixture and missing native tail, then passes full wasm workspace, RISC-V,
+cross-target, replay attacks, performance smoke, wasm Clippy, browser build,
+syntax, documentation and session-contract gates. Its built-page browser
+report `/Volumes/e9-build-scratch/e9-t14-incremental-pristine-13e02f8c0/browser/report.json`
+is SHA-256 `a0b7fe684306d224f81c5f41972c56061cfd2aa163eb07bd4b20603f40b8ee40`:
+127 passed/0 failed, zero console errors, 47 saved events, four witnesses,
+four precise divergence attacks, durable reopen, and matching interpreter/JIT
+complete-state digest `da8696495e6867a13e7b0fcb20af98d1ff44e3631db5d0eb854bdbf4aaad4a84`.
+The browser trace ZIP SHA-256 is
+`200f319313f6b876533f70a0d1038498bf21b88bd99b6634af1dd2353f85305d`.
+
+`bash tools/deploy-cloudflare.sh` published production deployment `2dd07507`
+to <https://wasm-vm.pages.dev/> after byte-for-byte verification of all seven
+immutable R2 boot artifacts. Deploy log SHA-256 is
+`f9b05231f16c6c231bfd45d45f2c3f76852f2c3d7190978c167d629ec3102`.
+All seven public app/JS/wasm files match the tested staged build in
+`/Volumes/e9-build-scratch/e9-t14-source-divergence-public-assets.json`
+(SHA-256 `cabdd586445c79fef914a65e38346c3c02ca5a9f53e37462bc6b2bb92d00edce`).
+The public Playwright report
+`/Volumes/e9-build-scratch/e9-t14-source-divergence-public-browser/report.json`
+(SHA-256 `07b374c53582a260ace9f7e5b5b564c7c42ae132395cb25fdb65f7bb1a9b3929`)
+again records 127/0, zero console errors, 47 events, four attacks, durable
+reopen, live roadmap pips and interpreter/JIT digest
+`dba636ee90655c0f46c682845c7261ded9b2ba3949405f20cd201a08a116214b`.
+Public trace ZIP SHA-256 is
+`9b7a1ca9411b7d417ecd9d80b2b3c204f5a750fe641e53ba06da2bcf63edc689`.
+
+Baseline exceptions are explicit in the receipt: `make ci` still stops at the
+same five `zicsr-stub` dead-code Clippy diagnostics reproduced on untouched
+parent `c52ab64`; all later prescribed gates ran separately. An unchanged
+10 ms wall-clock emitter benchmark fluctuated across 12 isolated attempts
+(five under 10 ms), so correctness tests and a performance smoke with its
+stated budget ran separately. Neither exception is represented as a passing
+`make ci`. The previous verifier's HELD findings should carry where the code,
+dependency boundary and evidence digest are unchanged; the fresh verifier
+must retest the exact-coordinate repairs and close the remaining scoped hunk
+coverage before setting `verified`.
