@@ -15,6 +15,9 @@ CARRIED_PROOF_NONRUNTIME = {
     'tools/verify/e9-deterministic-replay.py',
     'docs/design/session-replay-contract.json',
     'docs/design/session-replay.md',
+    'web/session-replay-probe.js',
+    'web/dist/session-replay-probe.js',
+    'web/dist/sw.js',
 }
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--output', type=Path, required=True)
@@ -183,6 +186,8 @@ try:
     assert browser['status'] == 'passed' and browser['head'] == head and not browser['development']
     assert browser['checks']['suite'] == {'passed': 127, 'failed': 0}
     assert not browser['errors'] and len(browser['probe']['attacks']) == 2
+    assert all(replay.get('adapterIngressBlocked') is True
+               for replay in browser['probe']['replays']), 'browser replay provider fence'
     clean()
     report['status'] = 'passed'
 except BaseException as error:

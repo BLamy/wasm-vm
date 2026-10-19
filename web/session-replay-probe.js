@@ -133,12 +133,12 @@ export async function runSessionReplayProbe({onProgress}={}){
     need(exhausted,'replay cannot continue past end '+label);
     let liveBlocked=false;try{replay.sendInput(new Uint8Array([121]));}catch(e){liveBlocked=/forbidden|replay/.test(String(e));}
     need(liveBlocked,'replay live ingress blocked '+label);
-    let directWriteBlocked=false;try{replay.stageEventWrite(result.transition,'2147483648',new Uint8Array([0x5a]));}
-    catch(e){directWriteBlocked=/ReplayActive/.test(String(e));}
-    let directDeliveryBlocked=false;try{replay.deliverEventBoundary();}catch(e){directDeliveryBlocked=/ReplayActive/.test(String(e));}
-    need(directWriteBlocked&&directDeliveryBlocked,'unbranched core host effect blocked after replay '+label);
-    need(hex(replay.exactSessionWitness(false).digest)===hex(observed.digest),'replay end state unchanged after refused host effect '+label);
-    output.replays[output.replays.length-1].directIngressBlocked=true;
+    let deviceIngressBlocked=false,networkIngressBlocked=false;
+    try{replay.exactLeaseDeviceRequest('1');}catch(e){deviceIngressBlocked=/ReplayIngress/.test(String(e));}
+    try{replay.exactLeaseNetworkRequest('');}catch(e){networkIngressBlocked=/ReplayIngress/.test(String(e));}
+    need(deviceIngressBlocked&&networkIngressBlocked,'unbranched device and network providers blocked after replay '+label);
+    need(hex(replay.exactSessionWitness(false).digest)===hex(observed.digest),'replay end state unchanged after refused provider ingress '+label);
+    output.replays[output.replays.length-1].adapterIngressBlocked=true;
    }finally{replay.free();}
   }}finally{globalThis.fetch=liveFetch;}
   need(same(output.replays.map(r=>r.digest),[output.digest,output.digest]),'cross-tier state');
