@@ -683,6 +683,24 @@ impl crate::Machine {
         &mut self,
         tape: ObservationTape,
     ) -> Result<(), SessionError> {
+        if self.session_replay_limit.is_some() {
+            return Err(SessionError::ReplayActive);
+        }
+        self.append_owned_session_source_replay(tape)
+    }
+
+    /// Only the exact replay driver may extend its authenticated observation window.
+    pub(crate) fn append_recorded_session_source_replay(
+        &mut self,
+        tape: ObservationTape,
+    ) -> Result<(), SessionError> {
+        self.append_owned_session_source_replay(tape)
+    }
+
+    fn append_owned_session_source_replay(
+        &mut self,
+        tape: ObservationTape,
+    ) -> Result<(), SessionError> {
         let position = self.session_position().ok_or(SessionError::Inactive)?;
         self.session_sources.borrow_mut().append(tape, position)
     }

@@ -279,7 +279,7 @@ impl ReplayDriver {
         }
         let next = self.source_chunk_index + 1;
         machine
-            .append_session_source_replay(self.source_chunks[next].clone())
+            .append_recorded_session_source_replay(self.source_chunks[next].clone())
             .map_err(|e| {
                 self.failure(
                     machine,
@@ -352,7 +352,7 @@ impl ReplayDriver {
             ));
         }
         machine
-            .append_session_source_replay(driver.source_chunks[0].clone())
+            .append_recorded_session_source_replay(driver.source_chunks[0].clone())
             .map_err(|e| {
                 driver.failure(
                     machine,

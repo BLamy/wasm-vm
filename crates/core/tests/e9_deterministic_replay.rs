@@ -8,7 +8,10 @@ use wasm_vm_core::{
         rtc::WallClock,
         virtio::rng::{EntropySource, EntropyUnavailable},
     },
-    session_clock::{SessionDelivery, SessionEffect, SessionError, SessionPosition},
+    session_clock::{
+        SessionDelivery, SessionEffect, SessionError, SessionPhase, SessionPosition,
+        sources::{ObservationKind, ObservationRecord, ObservationTape, ObservationValue},
+    },
     session_devices::{
         BaseDisk, CompletionStatus, DeviceCompletion, DeviceError, DeviceIntent, PayloadRef,
     },
@@ -408,6 +411,28 @@ fn exact_replay_stops_at_declared_end_under_varied_quanta() {
         );
         assert_eq!(
             machine.deliver_session_host_boundary(|_, _, _| panic!("live callback after replay")),
+            Err(SessionError::ReplayActive)
+        );
+        let extra_observation = ObservationTape {
+            policy: machine.source_policy(),
+            records: vec![ObservationRecord {
+                position: SessionPosition {
+                    transition: stopped.transition + 1,
+                    retired: stopped.retired,
+                    phase: SessionPhase::Observe,
+                    ordinal: 1,
+                    sequence: stopped.sequence + 1,
+                },
+                value: ObservationValue {
+                    kind: ObservationKind::RtcPoll,
+                    requested: 8,
+                    status: 0,
+                    bytes: vec![0; 8],
+                },
+            }],
+        };
+        assert_eq!(
+            machine.append_session_source_replay(extra_observation),
             Err(SessionError::ReplayActive)
         );
         assert_eq!(machine.session_pending_events(), 0);
