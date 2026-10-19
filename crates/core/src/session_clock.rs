@@ -500,7 +500,7 @@ impl crate::Machine {
         transition: u64,
         effect: SessionEffect,
     ) -> Result<u64, SessionError> {
-        if self.session_replay_limit.is_some() {
+        if self.session_replay_limit.is_some() || !self.host_ingress_gate.allows_host() {
             return Err(SessionError::ReplayActive);
         }
         self.stage_owned_session_effect(transition, effect)
@@ -547,7 +547,7 @@ impl crate::Machine {
     /// or advancing guest time. This is also the paused-control path; receipts remain ordered
     /// across repeated calls and a snapshot at the same transition.
     pub fn deliver_session_boundary(&mut self) -> Result<(), SessionError> {
-        if self.session_replay_limit.is_some() {
+        if self.session_replay_limit.is_some() || !self.host_ingress_gate.allows_host() {
             return Err(SessionError::ReplayActive);
         }
         self.deliver_boundary(false, |_, _, _| unreachable!("host input is fenced"))
@@ -567,7 +567,7 @@ impl crate::Machine {
         &mut self,
         apply: impl FnMut(&mut Self, u16, &[u8]) -> [u64; 4],
     ) -> Result<(), SessionError> {
-        if self.session_replay_limit.is_some() {
+        if self.session_replay_limit.is_some() || !self.host_ingress_gate.allows_host() {
             return Err(SessionError::ReplayActive);
         }
         self.deliver_boundary(true, apply)
@@ -580,6 +580,8 @@ impl crate::Machine {
         if self.session_replay_limit.is_none() {
             return Err(SessionError::Inactive);
         }
+        let gate = alloc::rc::Rc::clone(&self.host_ingress_gate);
+        let _recorded = gate.recorded_scope();
         self.deliver_boundary(true, apply)
     }
 

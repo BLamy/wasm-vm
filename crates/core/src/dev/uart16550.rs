@@ -20,10 +20,12 @@
 //! clock via [`Uart16550::tick`] (deterministic — retire-driven, native == wasm).
 
 use alloc::collections::VecDeque;
+use alloc::rc::Rc;
 use alloc::vec::Vec;
 
 use crate::bus::BusFault;
 use crate::mmio::{MmioDevice, Width};
+use crate::session_ingress::SessionIngressGate;
 
 /// RX FIFO depth (16550).
 const FIFO_DEPTH: usize = 16;
@@ -75,6 +77,8 @@ pub struct Uart16550 {
     timeout_latched: bool,
     /// Output bytes since the last drain.
     out: Vec<u8>,
+    /// Not serialized: a retained host handle cannot bypass a replay's input fence.
+    host_ingress_gate: Option<Rc<SessionIngressGate>>,
 }
 
 impl Default for Uart16550 {
@@ -118,6 +122,9 @@ impl crate::resume::ComponentSnapshot for Uart16550 {
     }
 
     fn restore(&mut self, p: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        if !self.host_ingress_allowed() {
+            return Err(crate::resume::SnapshotError::ReplayActive);
+        }
         let err = || crate::resume::SnapshotError::BadComponentState { tag: Self::SECTION };
         // Fixed prefix: 7 regs + 3 bool latches + u32 idle_ticks = 14 bytes, then the rx length word.
         if p.len() < 14 + 4 {
@@ -174,6 +181,7 @@ impl crate::resume::ComponentSnapshot for Uart16550 {
             idle_ticks,
             timeout_latched,
             out,
+            host_ingress_gate: self.host_ingress_gate.clone(),
         };
         Ok(())
     }
@@ -195,12 +203,26 @@ impl Uart16550 {
             idle_ticks: 0,
             timeout_latched: false,
             out: Vec::new(),
+            host_ingress_gate: None,
         }
+    }
+
+    pub(crate) fn bind_host_ingress_gate(&mut self, gate: Rc<SessionIngressGate>) {
+        self.host_ingress_gate = Some(gate);
+    }
+
+    fn host_ingress_allowed(&self) -> bool {
+        self.host_ingress_gate
+            .as_ref()
+            .is_none_or(|gate| gate.allows_host())
     }
 
     /// Host input: append to the RX FIFO. Bytes beyond 16 are DROPPED with LSR.OE set
     /// (16550 overrun semantics — the FIFO contents stay intact, new data is lost).
     pub fn push_input(&mut self, bytes: &[u8]) {
+        if !self.host_ingress_allowed() {
+            return;
+        }
         for &b in bytes {
             if self.rx.len() >= FIFO_DEPTH {
                 self.overrun = true;
@@ -221,6 +243,9 @@ impl Uart16550 {
 
     /// Drain everything the guest transmitted since the last call.
     pub fn take_output(&mut self) -> Vec<u8> {
+        if !self.host_ingress_allowed() {
+            return Vec::new();
+        }
         core::mem::take(&mut self.out)
     }
 

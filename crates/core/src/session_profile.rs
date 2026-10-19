@@ -69,6 +69,9 @@ impl Machine {
             return Err(ProfileError::Unsupported);
         }
         self.enable_builtin_sbi();
+        if replay {
+            self.host_ingress_gate.begin_replay();
+        }
         Ok(uart)
     }
 }

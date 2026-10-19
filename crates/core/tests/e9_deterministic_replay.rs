@@ -304,6 +304,10 @@ fn pinned_linux_full_software_profile_replays_exact_cpu_ram_device_disk_digest()
     plan.validate().unwrap();
     for cache in [false, true] {
         let (mut replay, uart, time_calls, entropy_calls) = alpine_machine(true, &kernel, cache);
+        let rx_free = uart.borrow().rx_free();
+        assert!(rx_free > 0);
+        uart.borrow_mut().push_input(b"unrecorded");
+        assert_eq!(uart.borrow().rx_free(), rx_free);
         let mut driver = ReplayDriver::start(&mut replay, plan.clone()).unwrap();
         driver
             .run_to_end(
@@ -473,6 +477,240 @@ fn exact_replay_stops_at_declared_end_under_varied_quanta() {
             ReplayReason::Exhausted
         );
     }
+}
+
+fn ordinary_input_fixture() -> (
+    Machine,
+    Rc<std::cell::RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
+) {
+    let mut machine = Machine::new(1 << 20);
+    machine.enable_clint(1);
+    machine.enable_plic();
+    let uart = machine.enable_uart16550();
+    machine.enable_virtio_slots(None);
+    machine.enable_virtio_keyboard();
+    machine.enable_virtio_pointer();
+    machine.enable_builtin_sbi();
+    // A pending TX byte makes a forbidden output drain observable, too.
+    machine
+        .bus_mut()
+        .store8(wasm_vm_core::bus::mmap::UART0_BASE, b'X')
+        .unwrap();
+    let program: Vec<u8> = (0..16).flat_map(|_| 0x0012_0213u32.to_le_bytes()).collect();
+    machine.bus_mut().write_ram_slice(BASE, &program).unwrap();
+    machine.hart_mut().regs.pc = BASE;
+    machine.start_session_clock(1).unwrap();
+    (machine, uart)
+}
+
+fn assert_ordinary_input_blocked(
+    machine: &mut Machine,
+    uart: &Rc<std::cell::RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
+) {
+    use wasm_vm_core::dev::virtio::input::{EV_ABS, EV_KEY, EV_REL, InputEvent, keyboard, pointer};
+    use wasm_vm_core::resume::{ComponentSnapshot, SnapshotError};
+
+    let position = machine.session_position();
+    let before = machine.save_session_resume().unwrap();
+    assert_eq!(
+        machine.load_session_resume(&before),
+        Err(SnapshotError::ReplayActive)
+    );
+    assert_eq!(
+        machine.load_resume(&before),
+        Err(SnapshotError::ReplayActive)
+    );
+    assert_eq!(
+        machine.restore_desktop_snapshot(
+            &before,
+            wasm_vm_core::desktop_restore::DisplaySize::new(640, 480),
+        ),
+        Err(
+            wasm_vm_core::desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "replay_active",
+            }
+        )
+    );
+    #[cfg(feature = "virgl-renderer")]
+    assert_eq!(
+        machine.load_accelerated_resume(&before, &[0; 32]),
+        Err(SnapshotError::ReplayActive)
+    );
+    let uart_snapshot = uart.borrow().to_snapshot();
+    assert_eq!(
+        uart.borrow_mut().restore(&uart_snapshot),
+        Err(SnapshotError::ReplayActive)
+    );
+    uart.borrow_mut().push_input(b"Q");
+    assert!(uart.borrow_mut().take_output().is_empty());
+    let keyboard = machine.keyboard_input().unwrap();
+    let mut keyboard = keyboard.borrow_mut();
+    let exact_snapshot = keyboard.to_session_snapshot().unwrap();
+    let desktop_snapshot = keyboard.to_snapshot().unwrap();
+    assert_eq!(
+        keyboard.restore_session_snapshot(&exact_snapshot),
+        Err(wasm_vm_core::dev::virtio::input::InputSnapshotError::ReplayIngress)
+    );
+    assert!(matches!(
+        keyboard.restore_snapshot(&desktop_snapshot),
+        Err(wasm_vm_core::dev::virtio::input::InputSnapshotError::ReplayIngress)
+    ));
+    assert!(!keyboard.inject_event(EV_KEY, keyboard::KEY_A, 1));
+    keyboard.sync();
+    keyboard.enqueue_event(InputEvent::new(EV_KEY, keyboard::KEY_A, 1));
+    assert!(!keyboard.release_all().host_held_set_discarded);
+    let budget = keyboard.pending_event_budget();
+    keyboard.set_pending_event_budget(0);
+    assert_eq!(keyboard.pending_event_budget(), budget);
+    drop(keyboard);
+    let tablet = machine.tablet_input().unwrap();
+    assert!(
+        !tablet
+            .borrow_mut()
+            .inject_event(EV_ABS, pointer::ABS_X, 123)
+    );
+    tablet.borrow_mut().sync();
+    let mouse = machine.mouse_input().unwrap();
+    assert!(!mouse.borrow_mut().inject_event(EV_REL, pointer::REL_X, 3));
+    mouse.borrow_mut().sync();
+    machine.sbi_push_input(b"R");
+    assert_eq!(machine.session_position(), position);
+    assert_eq!(machine.save_session_resume().unwrap(), before);
+}
+
+#[test]
+fn ordinary_host_handles_cannot_mutate_ready_or_completed_replay() {
+    let (mut original, original_uart) = ordinary_input_fixture();
+    original
+        .start_session_sources(original.source_policy(), None)
+        .unwrap();
+    let begin = original.session_position().unwrap();
+    let initial_resume = original.save_session_resume().unwrap();
+    let first = witness(&mut original);
+    run_to(&mut original, 4, 4);
+    let end = original.session_position().unwrap();
+    let events = original.take_session_deliveries().unwrap();
+    let final_resume = original.save_session_resume().unwrap();
+    let plan = ReplayPlan {
+        begin,
+        end,
+        initial_resume,
+        events,
+        witnesses: vec![first, witness(&mut original)],
+    };
+    plan.validate().unwrap();
+
+    // These really are live host controls outside replay; the guard is not an inert test.
+    original_uart.borrow_mut().push_input(b"Q");
+    assert_ne!(original.save_session_resume().unwrap(), final_resume);
+
+    let (mut replay, uart) = ordinary_input_fixture();
+    let mut driver = ReplayDriver::start(&mut replay, plan).unwrap();
+    assert_ordinary_input_blocked(&mut replay, &uart);
+    driver
+        .run_to_end(&mut replay, 3, |_, _, _| unreachable!())
+        .unwrap();
+    assert_eq!(driver.status(), ReplayStatus::Completed);
+    assert_eq!(replay.save_session_resume().unwrap(), final_resume);
+    assert_ordinary_input_blocked(&mut replay, &uart);
+}
+
+fn apply_recorded_ordinary_input(
+    machine: &mut Machine,
+    uart: &Rc<std::cell::RefCell<wasm_vm_core::dev::uart16550::Uart16550>>,
+    channel: u16,
+    bytes: &[u8],
+) -> [u64; 4] {
+    use wasm_vm_core::dev::virtio::input::{EV_ABS, EV_KEY, EV_REL, keyboard, pointer};
+
+    match channel {
+        2 => {
+            assert_eq!(bytes, b"Q");
+            uart.borrow_mut().push_input(bytes);
+        }
+        3 => {
+            assert_eq!(bytes, b"K");
+            let state = machine.keyboard_input().unwrap();
+            assert!(state.borrow_mut().inject_event(EV_KEY, keyboard::KEY_A, 1));
+            state.borrow_mut().sync();
+        }
+        4 => {
+            assert_eq!(bytes, b"T");
+            let state = machine.tablet_input().unwrap();
+            assert!(state.borrow_mut().inject_event(EV_ABS, pointer::ABS_X, 123));
+            state.borrow_mut().sync();
+        }
+        5 => {
+            assert_eq!(bytes, b"M");
+            let state = machine.mouse_input().unwrap();
+            assert!(state.borrow_mut().inject_event(EV_REL, pointer::REL_X, 3));
+            state.borrow_mut().sync();
+        }
+        wasm_vm_core::session_replay::OUTPUT_DRAIN_CHANNEL => {
+            assert_eq!(bytes, b"X");
+            assert_eq!(uart.borrow_mut().take_output(), bytes);
+        }
+        _ => panic!("unexpected host channel"),
+    }
+    [0, bytes.len() as u64, 0, 0]
+}
+
+#[test]
+fn recorded_host_callbacks_can_reach_uart_keyboard_and_pointer_during_replay() {
+    use wasm_vm_core::session_replay::OUTPUT_DRAIN_CHANNEL;
+
+    let (mut original, original_uart) = ordinary_input_fixture();
+    original
+        .start_session_sources(original.source_policy(), None)
+        .unwrap();
+    let begin = original.session_position().unwrap();
+    let initial_resume = original.save_session_resume().unwrap();
+    let first = witness(&mut original);
+    run_to(&mut original, 4, 4);
+    for (channel, bytes) in [
+        (2, &b"Q"[..]),
+        (3, &b"K"[..]),
+        (4, &b"T"[..]),
+        (5, &b"M"[..]),
+        (OUTPUT_DRAIN_CHANNEL, &b"X"[..]),
+    ] {
+        original
+            .stage_session_effect(
+                4,
+                SessionEffect::HostInput {
+                    channel,
+                    bytes: bytes.to_vec(),
+                },
+            )
+            .unwrap();
+        original
+            .deliver_session_host_boundary(|machine, channel, bytes| {
+                apply_recorded_ordinary_input(machine, &original_uart, channel, bytes)
+            })
+            .unwrap();
+    }
+    let events = original.take_session_deliveries().unwrap();
+    let final_resume = original.save_session_resume().unwrap();
+    let plan = ReplayPlan {
+        begin,
+        end: original.session_position().unwrap(),
+        initial_resume,
+        events,
+        witnesses: vec![first, witness(&mut original)],
+    };
+    plan.validate().unwrap();
+
+    let (mut replay, uart) = ordinary_input_fixture();
+    let mut driver = ReplayDriver::start(&mut replay, plan.clone()).unwrap();
+    driver
+        .run_to_end(&mut replay, 3, |machine, channel, bytes| {
+            apply_recorded_ordinary_input(machine, &uart, channel, bytes)
+        })
+        .unwrap();
+    assert_eq!(driver.event_cursor(), plan.events.len());
+    assert_eq!(driver.status(), ReplayStatus::Completed);
+    assert_eq!(replay.save_session_resume().unwrap(), final_resume);
+    assert_ordinary_input_blocked(&mut replay, &uart);
 }
 
 #[test]

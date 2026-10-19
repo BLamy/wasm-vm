@@ -446,6 +446,9 @@ impl crate::Machine {
             .replay)
     }
     pub fn lease_session_device(&self, id: u64) -> Result<CompletionLease, DeviceError> {
+        if !self.host_ingress_gate.allows_host() {
+            return Err(DeviceError::ReplayIngress);
+        }
         let hub = self
             .session_devices
             .as_ref()
@@ -472,6 +475,9 @@ impl crate::Machine {
         frames: u32,
         bytes: Vec<u8>,
     ) -> Result<(), DeviceError> {
+        if !self.host_ingress_gate.allows_host() {
+            return Err(DeviceError::ReplayIngress);
+        }
         {
             let hub = self
                 .session_devices
@@ -498,7 +504,7 @@ impl crate::Machine {
         position: crate::session_clock::SessionPosition,
         completion: DeviceCompletion,
     ) -> Result<(), DeviceError> {
-        if self.session_replay_limit.is_some() {
+        if self.session_replay_limit.is_some() || !self.host_ingress_gate.allows_host() {
             return Err(DeviceError::ReplayIngress);
         }
         self.replay_session_device_owned(position, completion)

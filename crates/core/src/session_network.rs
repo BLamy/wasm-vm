@@ -319,6 +319,9 @@ impl crate::Machine {
         Ok(hub.guest.pending.values().cloned().collect())
     }
     pub fn lease_session_network(&self, id: Option<u64>) -> Result<NetworkLease, NetworkError> {
+        if !self.host_ingress_gate.allows_host() {
+            return Err(NetworkError::ReplayIngress);
+        }
         let hub = self
             .session_network
             .as_ref()
@@ -349,6 +352,9 @@ impl crate::Machine {
         lease: &NetworkLease,
         event: NetworkEvent,
     ) -> Result<(), NetworkError> {
+        if !self.host_ingress_gate.allows_host() {
+            return Err(NetworkError::ReplayIngress);
+        }
         {
             let hub = self
                 .session_network
@@ -377,7 +383,7 @@ impl crate::Machine {
         position: SessionPosition,
         event: NetworkEvent,
     ) -> Result<(), NetworkError> {
-        if self.session_replay_limit.is_some() {
+        if self.session_replay_limit.is_some() || !self.host_ingress_gate.allows_host() {
             return Err(NetworkError::ReplayIngress);
         }
         self.replay_session_network_owned(position, event)

@@ -299,7 +299,8 @@ try:
     assert browser['checks']['suite'] == {'passed': 127, 'failed': 0}
     assert not browser['errors'] and len(browser['probe']['attacks']) == 4
     assert all(replay.get('adapterIngressBlocked') is True
-               for replay in browser['probe']['replays']), 'browser replay provider fence'
+               and replay.get('ordinaryIngressBlocked') is True
+               for replay in browser['probe']['replays']), 'browser replay host/provider fence'
     clean()
     report['status'] = 'passed'
 except BaseException as error:

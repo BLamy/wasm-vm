@@ -131,13 +131,25 @@ export async function runSessionReplayProbe({onProgress}={}){
       retiredViaJit:stats?.retiredViaJit??0});
     let exhausted=false;try{replay.runExactReplayToEnd(1)}catch(e){exhausted=/Exhausted|stopped/.test(String(e));}
     need(exhausted,'replay cannot continue past end '+label);
-    let liveBlocked=false;try{replay.sendInput(new Uint8Array([121]));}catch(e){liveBlocked=/forbidden|replay/.test(String(e));}
-    need(liveBlocked,'replay live ingress blocked '+label);
+    const liveIngress=[
+      ['UART',()=>replay.sendInput(new Uint8Array([121]))],
+      ['keyboard',()=>replay.sendKeyboardEvent(1,30,1)],
+      ['keyboard sync',()=>replay.syncKeyboard()],
+      ['tablet',()=>replay.sendTabletEvent(3,0,123)],
+      ['tablet sync',()=>replay.syncTablet()],
+      ['mouse',()=>replay.sendMouseEvent(2,0,3)],
+      ['mouse sync',()=>replay.syncMouse()],
+    ];
+    for(const [name,inject] of liveIngress){
+      let blocked=false;try{inject();}catch(e){blocked=/forbidden|replay|stopped/.test(String(e));}
+      need(blocked,'unbranched '+name+' ingress blocked after replay '+label);
+    }
+    output.replays[output.replays.length-1].ordinaryIngressBlocked=true;
     let deviceIngressBlocked=false,networkIngressBlocked=false;
     try{replay.exactLeaseDeviceRequest('1');}catch(e){deviceIngressBlocked=/ReplayIngress/.test(String(e));}
     try{replay.exactLeaseNetworkRequest('');}catch(e){networkIngressBlocked=/ReplayIngress/.test(String(e));}
     need(deviceIngressBlocked&&networkIngressBlocked,'unbranched device and network providers blocked after replay '+label);
-    need(hex(replay.exactSessionWitness(false).digest)===hex(observed.digest),'replay end state unchanged after refused provider ingress '+label);
+    need(hex(replay.exactSessionWitness(false).digest)===hex(observed.digest),'replay end state unchanged after refused host and provider ingress '+label);
     output.replays[output.replays.length-1].adapterIngressBlocked=true;
    }finally{replay.free();}
   }}finally{globalThis.fetch=liveFetch;}

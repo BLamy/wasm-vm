@@ -385,15 +385,19 @@ impl ReplayDriver {
                     alloc::format!("source admission: {e:?}"),
                 )
             })?;
-        machine
-            .load_session_resume(&driver.plan.initial_resume)
-            .map_err(|e| {
-                driver.failure(
-                    machine,
-                    ReplayReason::InitialCheckpoint,
-                    alloc::format!("initial restore: {e:?}"),
-                )
-            })?;
+        machine.host_ingress_gate.begin_replay();
+        let ingress_gate = alloc::rc::Rc::clone(&machine.host_ingress_gate);
+        let initial_restore = {
+            let _recorded = ingress_gate.recorded_scope();
+            machine.load_session_resume(&driver.plan.initial_resume)
+        };
+        initial_restore.map_err(|e| {
+            driver.failure(
+                machine,
+                ReplayReason::InitialCheckpoint,
+                alloc::format!("initial restore: {e:?}"),
+            )
+        })?;
         if machine.session_position() != Some(driver.plan.begin) {
             return Err(driver.failure(
                 machine,

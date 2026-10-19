@@ -2975,7 +2975,7 @@ function refreshRoadmapLive() {
   const inputCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==='input-recording');
   document.getElementById('input-recording-pip').className=`cap-pip ${inputRecordingResult?.status==='passed'?'live':inputRecordingResult?.status==='failed'?'regressed':inputCap.status}`;
   for (const rc of roadmapCaps) {
-    if(rc.probe==="session-replay"){const state=sessionReplayResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Pinned Linux, saved tape and exact interpreter/JIT state · live in browser":rc.base.evidence;continue;}
+    if(rc.probe==="session-replay"){const state=sessionReplayResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Pinned Linux, exact interpreter/JIT state and rejected unbranched input · live in browser":rc.base.evidence;continue;}
     if(rc.probe==="network-capture"){const state=networkCaptureResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Guest network bytes, offline replay and transport suppression · live in browser":rc.base.evidence;continue;}
     if(rc.probe==="device-completions"){const state=deviceCompletionsResult?.status;rc.pip.className=`cap-pip ${state==="passed"?"live":state==="failed"?"regressed":rc.base.status}`;if(rc.evEl)rc.evEl.textContent=state==="passed"?"Guest block, file-agent and audio DMA, pending restore and durable completion order · live in browser":rc.base.evidence;continue;}
     if(rc.probe==='time-entropy'){
@@ -3286,7 +3286,7 @@ suiteRunBtn.addEventListener("click", runSuite);
 sessionReplayRun.addEventListener('click',async()=>{
  if(running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||!wasmReady)return;
  sessionReplayRunning=true;sessionReplayResult=null;sessionReplayStatus.textContent='Preparing the pinned Linux recording…';setInteractiveState();refreshRoadmapLive();
- try{sessionReplayResult=await runSessionReplayProbe({onProgress:message=>{sessionReplayStatus.textContent=message;}});sessionReplayStatus.textContent='Passed · saved Alpine session matches interpreter and JIT replay, including disk DMA.';}
+ try{sessionReplayResult=await runSessionReplayProbe({onProgress:message=>{sessionReplayStatus.textContent=message;}});sessionReplayStatus.textContent='Passed · saved Alpine session matches interpreter and JIT replay, including disk DMA, and refuses unbranched input.';}
  catch(error){sessionReplayResult={status:'failed',failure:String(error)};sessionReplayStatus.textContent='Failed · '+error.message;}
  finally{if(_startupQuery.has('testHooks'))globalThis.__sessionReplayReport=sessionReplayResult;sessionReplayStatus.dataset.status=sessionReplayResult.status;sessionReplayRunning=false;refreshRoadmapLive();setInteractiveState();}
 });

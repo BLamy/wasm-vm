@@ -683,7 +683,7 @@ impl crate::Machine {
         &mut self,
         tape: ObservationTape,
     ) -> Result<(), SessionError> {
-        if self.session_replay_limit.is_some() {
+        if self.session_replay_limit.is_some() || !self.host_ingress_gate.allows_host() {
             return Err(SessionError::ReplayActive);
         }
         self.append_owned_session_source_replay(tape)
