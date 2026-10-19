@@ -152,6 +152,24 @@ export async function runSessionReplayProbe({onProgress}={}){
     &&message.includes(`ordinal: ${rows[1].ordinal}`)&&/event_index: 1\b/.test(message),'first changed input reports exact first event divergence; observed '+message);
    output.attacks.push({kind:'changed-input',position:rows[1].transition,ordinal:rows[1].ordinal,message});
   }finally{corrupted.free();}
+  const observationIndex=rows.findIndex(row=>row.kind==='observation');
+  need(observationIndex>=0,'recorded observation available');
+  const wrongTicket=rows.map(row=>({...row,bytes:row.bytes.slice()}));
+  wrongTicket[observationIndex].ticket=String(BigInt(wrongTicket[observationIndex].ticket)+1n);
+  const observed=make(true);try{
+   observed.beginExactReplay(initial.resume,wrongTicket,witnesses,final);
+   let message;try{observed.runExactReplayToEnd(4096);}catch(error){message=String(error);}
+   const position=rows[observationIndex];
+   need(message&&/EventPayload/.test(message)
+    &&message.includes(`transition: ${position.transition}`)
+    &&message.includes(`retired: ${position.retired}`)
+    &&message.includes('phase: Observe')
+    &&message.includes(`ordinal: ${position.ordinal}`)
+    &&message.includes(`sequence: ${position.sequence}`)
+    &&message.includes(`event_index: ${observationIndex}`),
+    'changed observation ticket reports exact first receipt coordinate; observed '+message);
+   output.attacks.push({kind:'changed-observation-ticket',position:position.transition,ordinal:position.ordinal,message});
+  }finally{observed.free();}
   const dmaIndex=rows.findIndex(row=>row.channel===19);
   need(dmaIndex>=0,'real DMA delivery available');
   const withoutDma=rows.map(row=>({...row,bytes:row.bytes.slice()}));withoutDma[dmaIndex].bytes=withoutDma[dmaIndex].bytes.subarray(0,10);

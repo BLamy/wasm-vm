@@ -72,6 +72,7 @@ impl ReplayPlan {
         if self.begin.phase != SessionPhase::Before
             || self.end.phase != SessionPhase::Before
             || self.begin.transition > self.end.transition
+            || self.begin.sequence > self.end.sequence
             || self.begin.retired > self.begin.transition
             || self.end.retired > self.end.transition
             || self.initial_resume.is_empty()
@@ -126,11 +127,21 @@ impl ReplayPlan {
                     | SessionEffect::WriteRam { bytes, .. } => bytes.len(),
                     SessionEffect::ExternalPending(_) => 1,
                 })
-                .ok_or_else(|| fail("byte overflow"))?;
+                .ok_or_else(|| ReplayDivergence {
+                    reason: ReplayReason::InvalidPlan,
+                    position: p,
+                    event_index: index,
+                    detail: "event byte overflow".into(),
+                })?;
+            if bytes > MAX_REPLAY_BYTES {
+                return Err(ReplayDivergence {
+                    reason: ReplayReason::InvalidPlan,
+                    position: p,
+                    event_index: index,
+                    detail: "event byte bound exceeded".into(),
+                });
+            }
             previous = p;
-        }
-        if bytes > MAX_REPLAY_BYTES || self.end.sequence != previous.sequence {
-            return Err(fail("byte bound or unconsumed sequence"));
         }
         let mut previous_witness = None;
         for witness in &self.witnesses {
@@ -149,6 +160,41 @@ impl ReplayPlan {
             || self.witnesses.last().unwrap().position != self.end
         {
             return Err(fail("initial and final witnesses required"));
+        }
+        if self.end.sequence > previous.sequence {
+            let missing = previous.sequence + 1;
+            let position = self
+                .witnesses
+                .iter()
+                .find(|witness| witness.position.sequence == missing)
+                .map_or(self.end, |witness| witness.position);
+            return Err(ReplayDivergence {
+                reason: ReplayReason::MissingEvent,
+                position,
+                event_index: self.events.len(),
+                detail: alloc::format!(
+                    "missing event sequence {missing} after {:?}; declared end is {:?}; reported position is the earliest retained witness for that sequence, or the declared end boundary",
+                    previous,
+                    self.end
+                ),
+            });
+        }
+        if self.end.sequence < previous.sequence {
+            let index = self
+                .events
+                .iter()
+                .position(|event| event.position.sequence > self.end.sequence)
+                .unwrap_or(self.events.len() - 1);
+            return Err(ReplayDivergence {
+                reason: ReplayReason::ExtraEvent,
+                position: self.events[index].position,
+                event_index: index,
+                detail: alloc::format!(
+                    "event sequence {} exceeds declared end sequence {}",
+                    self.events[index].position.sequence,
+                    self.end.sequence
+                ),
+            });
         }
         Ok(())
     }
@@ -512,8 +558,8 @@ impl ReplayDriver {
                 || (actual_position.transition == expected.position.transition
                     && actual_position.sequence > expected.position.sequence)
             {
-                return Err(self.failure(
-                    machine,
+                return Err(self.failure_at(
+                    expected.position,
                     ReplayReason::StateDigest,
                     "missed exact state witness".into(),
                 ));
@@ -534,8 +580,8 @@ impl ReplayDriver {
         })?;
         for actual in delivered {
             let Some(expected) = self.plan.events.get(self.event_cursor) else {
-                return Err(self.failure(
-                    machine,
+                return Err(self.failure_at(
+                    actual.position,
                     ReplayReason::ExtraEvent,
                     alloc::format!("extra delivery at {:?}", actual.position),
                 ));
@@ -546,8 +592,14 @@ impl ReplayDriver {
                 } else {
                     ReplayReason::EventPayload
                 };
-                return Err(self.failure(
-                    machine,
+                let first_position = if coordinate(actual.position) < coordinate(expected.position)
+                {
+                    actual.position
+                } else {
+                    expected.position
+                };
+                return Err(self.failure_at(
+                    first_position,
                     reason,
                     alloc::format!(
                         "receipt differs: expected {:?}, observed {:?}",

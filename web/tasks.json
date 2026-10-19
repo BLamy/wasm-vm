@@ -34869,18 +34869,18 @@
       "activity": [
         {
           "date": "2026-10-18",
-          "commits": 4,
+          "commits": 5,
           "labels": [
+            "Record independent E9-T14 exact-coordinate refutation",
             "Submit repaired deterministic replay for independent verification",
             "Record E9-T14 replay boundary refutation",
-            "Record E9-T14 worker evidence and hand off for verification",
-            "start E9-T14 deterministic replay"
+            "Record E9-T14 worker evidence and hand off for verification"
           ]
         }
       ],
       "firstActivity": "2026-10-18",
       "lastActivity": "2026-10-18",
-      "commitCount": 4
+      "commitCount": 5
     },
     {
       "id": "E9-T15",

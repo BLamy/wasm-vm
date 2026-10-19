@@ -185,7 +185,7 @@ try:
     browser = json.loads((output / 'browser' / 'report.json').read_text())
     assert browser['status'] == 'passed' and browser['head'] == head and not browser['development']
     assert browser['checks']['suite'] == {'passed': 127, 'failed': 0}
-    assert not browser['errors'] and len(browser['probe']['attacks']) == 2
+    assert not browser['errors'] and len(browser['probe']['attacks']) == 3
     assert all(replay.get('adapterIngressBlocked') is True
                for replay in browser['probe']['replays']), 'browser replay provider fence'
     clean()

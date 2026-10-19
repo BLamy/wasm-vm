@@ -85,6 +85,31 @@ fn device_fixture(replay: bool) -> Machine {
     machine.hart_mut().regs.pc = BASE;
     machine
 }
+
+#[test]
+fn invalid_agent_slot_is_rejected_before_device_installation() {
+    let mut machine = Machine::new(1 << 20);
+    machine.start_session_clock(1).unwrap();
+    assert_eq!(
+        machine.enable_session_devices_at(
+            None,
+            true,
+            false,
+            true,
+            wasm_vm_core::platform::virt::VIRTIO_COUNT as usize,
+        ),
+        Err(DeviceError::Unsupported)
+    );
+    machine
+        .enable_session_devices_at(
+            None,
+            true,
+            false,
+            true,
+            wasm_vm_core::dev::virtio::console::VIRTIO_CONSOLE_SLOT,
+        )
+        .unwrap();
+}
 fn run_to(machine: &mut Machine, transition: u64, quantum: u64) {
     while machine.session_position().unwrap().transition < transition {
         assert_eq!(
@@ -486,11 +511,28 @@ fn malformed_order_and_exhaustion_are_rejected_before_guest_run() {
     assert_eq!(failure.reason, ReplayReason::InvalidPlan);
     assert_eq!(failure.event_index, 0);
     let (mut plan, _) = record();
+    let missing_position = plan.events.last().unwrap().position;
     plan.events.pop();
-    assert_eq!(
-        plan.validate().unwrap_err().reason,
-        ReplayReason::InvalidPlan
-    );
+    let failure = plan.validate().unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::MissingEvent);
+    assert_eq!(failure.position, missing_position);
+    assert_eq!(failure.event_index, 1);
+    assert!(failure.detail.contains("missing event sequence 2"));
+
+    let mut without_exact_witness = plan.clone();
+    without_exact_witness.witnesses.remove(2);
+    let failure = without_exact_witness.validate().unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::MissingEvent);
+    assert_eq!(failure.position, without_exact_witness.end);
+    assert!(failure.detail.contains("declared end boundary"));
+
+    let (mut extra, _) = record();
+    extra.end.sequence -= 1;
+    extra.witnesses.last_mut().unwrap().position = extra.end;
+    let failure = extra.validate().unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::ExtraEvent);
+    assert_eq!(failure.position, missing_position);
+    assert_eq!(failure.event_index, 1);
 }
 
 #[test]
@@ -531,6 +573,28 @@ fn guest_rtc_entropy_observations_are_consumed_without_host_calls() {
             .run_to_end(&mut replay, quantum, |_, _, _| unreachable!())
             .unwrap();
         assert_eq!(replay.save_session_resume().unwrap(), final_resume);
+        assert_eq!((time_calls.get(), entropy_calls.get()), (0, 0));
+    }
+
+    let mut wrong_ticket = plan.clone();
+    let event_index = wrong_ticket
+        .events
+        .iter()
+        .position(|event| matches!(event.effect, SessionEffect::Observation(_)))
+        .unwrap();
+    let first_observation = wrong_ticket.events[event_index].position;
+    wrong_ticket.events[event_index].ticket ^= 1;
+    wrong_ticket.validate().unwrap();
+    for quantum in [1, 3, 19] {
+        let (mut replay, time_calls, entropy_calls) = observed_fixture(true, quantum > 1);
+        let mut driver = ReplayDriver::start(&mut replay, wrong_ticket.clone()).unwrap();
+        let failure = driver
+            .run_to_end(&mut replay, quantum, |_, _, _| unreachable!())
+            .unwrap_err();
+        assert_eq!(failure.reason, ReplayReason::EventPayload);
+        assert_eq!(failure.position, first_observation);
+        assert_eq!(failure.event_index, event_index);
+        assert_eq!(driver.first_failure(), Some(&failure));
         assert_eq!((time_calls.get(), entropy_calls.get()), (0, 0));
     }
 }
