@@ -3,7 +3,7 @@ id: E9-T14
 epic: 9
 title: Replay recorded sessions and detect the first divergence
 priority: 524.914
-status: in-progress
+status: implemented
 depends_on: [E9-T05, E9-T10, E9-T11, E9-T12, E9-T13]
 estimate: S
 risk: high
@@ -360,3 +360,68 @@ Commands: independent offline Rust harness cases for the two prior
 refutations, wrong-source-kind, missing-source-window and ordinary ingress;
 scratch sabotage inversion; exact-head receipt/public artifact authentication.
 The expensive unchanged full wasm/cross-target/browser proof was not repeated.
+
+
+### 2026-10-19 — worker — sealed ordinary replay ingress, awaiting fresh verifier
+
+Frozen product and built-page source is commit
+`9d4b3905bacd689b71c1cc9cf91cd4042adc64d5` (tree
+`3e89eb3be8ba19b13caf0006f4ea7b8724e2cd7d`). A shared transient
+replay-ingress gate now follows retained UART, keyboard, tablet, and pointer
+handles and refuses ordinary input and public snapshot restoration before and
+after `Completed`. Only the replay driver's synchronous recorded callback may
+open the gate. The native tests assert unchanged complete resume frames for
+ordinary ingress, and the recorded UART/keyboard/pointer callback still applies
+its authenticated event. The 47-event pinned Linux recording replays through
+both interpreter and JIT to the declared end, with matching complete-state
+witnesses; four sabotage attacks report first divergence rather than silently
+branching or loading a later checkpoint.
+
+Evidence of record, all stored on persistent local disk:
+
+- From a fresh independent clone with an empty target and inherited
+  `RUSTFLAGS`, `RUSTDOCFLAGS`, `RUST_LOG`, and `CARGO_*` overrides scrubbed:
+  `E9_REPLAY_EVIDENCE_DIR=/Users/blamy/Documents/Codex/e9-t14-proof-cold-9d4b3905 make verify-E9-T14`.
+  Receipt [report.json](/Users/blamy/Documents/Codex/e9-t14-proof-cold-9d4b3905/report.json),
+  SHA-256 `f84de76ccacd78b66d328f8724f2404c3361351e46767cf1e3621720d507f49d`,
+  `status: passed` at the frozen head. All 19 other listed gates exited zero,
+  including the full native workspace, full wasm workspace, separate native
+  RISC-V and 11/11 replay tests with `trace,virgl-renderer`, performance,
+  cross-target, wasm Clippy, contract, built browser, and syntax/docs. `make ci`
+  alone exits 2 on the same five pre-existing `zicsr-stub` dead-code Clippy
+  diagnostics reproduced on untouched parent `c52ab64`; the runner verifies
+  that exact exception and records every remaining gate separately. The
+  unchanged 10 ms emitter benchmark passed all 12 isolated samples in this run.
+- Built-page Playwright [report](/Users/blamy/Documents/Codex/e9-t14-proof-cold-9d4b3905/browser/report.json),
+  SHA-256 `217e315d260bbc6bba407bdd1f5f2036a562ce49aa0ae789bce2dbb2de9f5384`:
+  `127 passed, 0 failed`, zero console errors, 47 events, four witnesses,
+  four divergence attacks, durable reopen, both ingress fences true, and
+  interpreter/JIT digest
+  `ebb13099eb725c3fa51e15a874b8d10883d7feb04533fc529cb01d79ca4f5cb0`.
+  Its trace ZIP SHA-256 is
+  `c026ca36c8ab25417720cd84251b7d160f35dedad1ade8a96c1825affcaa44f5`.
+- The main Cloudflare Pages production listing
+  [cloudflare-deployments.json](/Users/blamy/Documents/Codex/e9-t14-proof-cold-9d4b3905/cloudflare-deployments.json),
+  SHA-256 `3940d0edc010bc32d8a68d56cc76b50bc057657f08cceadcc9bdb74ac470f32b`,
+  identifies deployment `16775d81-d898-406d-8217-8e78347fc63c` on branch
+  `main` from source `9d4b390`, serving <https://wasm-vm.pages.dev/>. Seven
+  fetched public app/JS/wasm assets are byte-identical to staged `web/dist` in
+  [public-assets.json](/Users/blamy/Documents/Codex/e9-t14-proof-cold-9d4b3905/public-assets.json),
+  SHA-256 `044408131f2e41ba77dd88298ebed27477ff6a315b08a27b0c6e6f1df0113690`.
+  Public Playwright [report](/Users/blamy/Documents/Codex/e9-t14-proof-cold-9d4b3905/public-browser/report.json),
+  SHA-256 `072199f33d18601ae060ae570e270c600407c213e9b3d601bff2aedee78b600c`:
+  `127/0`, 47 events, four witnesses, four attacks, durable reopen, zero
+  console errors except the specifically filtered `/favicon.ico` 404, both
+  ingress fences true, and matching interpreter/JIT digest
+  `b81af919c7fe33625c2158ae0a179fbfc834d70801ae3f0b80bd2cbf2e3ea0aa`.
+  Public trace ZIP SHA-256 is
+  `172e4bb0a9d1b3032aeb77997be62b81c36e8842c70fc2fb0c5a23db4646d516`.
+  Public command: `node /Users/blamy/Documents/Codex/e9-t14-proof-cold-9d4b3905/public-browser.mjs`.
+
+A previous scratch RAM volume detached during an otherwise progressing cold
+run; that incomplete run is not evidence. A redundant deploy attempt from the
+sparse proof clone was rejected before publish because the clone omits a large
+rootfs artifact. The production deployment above remains live and was
+independently checked from Cloudflare's listing and the public site. A new
+adversarial verifier must challenge the repaired ordinary ingress and audit
+the diff against these recordings before setting `verified`.
