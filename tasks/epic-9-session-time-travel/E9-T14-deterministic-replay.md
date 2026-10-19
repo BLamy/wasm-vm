@@ -3,7 +3,7 @@ id: E9-T14
 epic: 9
 title: Replay recorded sessions and detect the first divergence
 priority: 524.914
-status: implemented
+status: in-progress
 depends_on: [E9-T05, E9-T10, E9-T11, E9-T12, E9-T13]
 estimate: S
 risk: high
@@ -425,3 +425,106 @@ rootfs artifact. The production deployment above remains live and was
 independently checked from Cloudflare's listing and the public site. A new
 adversarial verifier must challenge the repaired ordinary ingress and audit
 the diff against these recordings before setting `verified`.
+
+### 2026-10-19 — independent verifier — real native JIT device-state quantum divergence
+
+VERDICT: refuted
+
+- P1 / AC1 complete native interpreter/JIT state — FAILED. Predicted that a
+  recorded full software topology with UART input at transition 64 would reach
+  the same complete resume frame at selected witness
+  `(4096,4096,Before,ordinal=0,sequence=1)` under real native Wasmtime JIT for
+  varied quanta. Interpreter quantum 7 produced SHA-256
+  `7d3baa054f978ddb541a6263d950c50c501bfeaf8488d5fcad683d0783c97814`.
+  Real JIT quantum 7 retired 1,164 compiled instructions and matched, but
+  quantum 173 retired 3,912 compiled instructions and stopped with
+  `StateDigest`, frame
+  `b4f0a538ea19cb4c5feb86708f4328c3f942ba2b59f297842d6e9dc09a4ea9d6`;
+  quantum 4096 retired 4,026 compiled instructions and stopped at the same
+  witness with frame
+  `cfc02c27f89498e543ff336b4e4ec903a27d0c395d781a1c2c3b8f6faae9040c`.
+  Only UART section 5 differs: interpreter timeout latch/idle ticks are
+  `(true,1024)`, versus `(false,772)` and `(false,677)`; exact offsets are
+  1539–1541. Citation:
+  `/Users/blamy/Documents/Codex/e9-t14-proof-cold-9d4b3905/verifier/native-real-jit-complete-frame.log:5-14`
+  (SHA-256
+  `cbb245e109a3452ba7044ad8838f09e55c3fadfebf66f8f2ad8c32f9f7a19149`)
+  and `resume-diff.json:2-100` (SHA-256
+  `cc095757e5ce76f9631e613ee93a29d7e46b287eb32b2ea6738cfda52661e264`).
+  The UART timeout is serialized at `crates/core/src/dev/uart16550.rs:107-120`
+  and ticked at `crates/core/src/lib.rs:6115-6120`; a compiled block executes
+  after one pre-entry boundary sync at `crates/core/src/lib.rs:6528-6543,6591-6597`.
+  Make device progression independent of host quantum/block entry, then add a
+  permanent real-Wasmtime multi-quantum complete-frame test requiring
+  `retired_via_jit > 0` and an equivalent built-browser witness.
+- P1 fixture hunt — FAILED. The submitted native “JIT” loop only enables block
+  cache and interrupt batching at
+  `crates/core/tests/e9_deterministic_replay.rs:252-261,305-326`; it never
+  installs an executor or asserts compiled retirements. The long browser
+  fixture uses a real JIT and passes after the UART state has converged, so it
+  does not falsify the shorter pending-character boundary. Demand: replace the
+  cache-only native claim with actual executor/counter evidence.
+- P2 / AC2 repaired ingress and end fence — HELD for attacked surfaces.
+  Retained UART/keyboard/tablet/mouse handles, input sync, output drain, public
+  snapshot restores, SBI input/console, effects/source append, valid retained
+  device/network leases and live provider factories preserve complete frames
+  before and after `Completed`; callback unwind closes the recorded-only scope.
+  An extra byte smuggled inside an authenticated callback is detected as
+  `StateDigest`, not concealed. Citations:
+  `verifier/independent-attacks-serial.log:4-26` (SHA-256
+  `9954b5d619ed1641f8c5c3d35fbc8cee0eb3f1c290e461260c882eb4219d5d8d`),
+  parallel schedule SHA-256
+  `488e2f4c24f98c4d0add61e797878dfdc623b278dec33450bdf3470462c52441`,
+  and `verifier/provider-leases.log:7-11` (SHA-256
+  `2185306e5a44275fbcd47abb8a27c58fa0665d2e0f32c620ba15de3619014d81`).
+  Demand: none for this unchanged repaired boundary.
+- P3 / AC3 coordinates — HELD. Changed observation ticket/kind at quanta
+  1/3/19 report `(24,24,Observe,1,1)`, event index 0; missing source reports
+  that same first coordinate and missing tail reports index 4 at
+  `(4,4,Before,5,5)`. The independently rerun product suite passed all 11
+  changed-input, omitted-DMA, reordering and exhaustion cases. Citation:
+  `verifier/independent-attacks-serial.log:7-15` and
+  `verifier/product-e9-t14-tests.log` (SHA-256
+  `dcde52b36d0bcb11ca469553d6d3a3cbedceacf70fa01f9655bef14294e07677`).
+  Demand: none for these unchanged coordinate branches.
+- AUTHENTICITY/BROWSER/PUBLIC — HELD. The receipt, all 23 inventoried files,
+  built/public reports and traces, public-assets receipt, ZIP CRCs and
+  Cloudflare listing authenticate. Both browser reports record 127/0, 47
+  events, four witnesses, four attacks and real JIT retirements. Production
+  deployment `16775d81-d898-406d-8217-8e78347fc63c` identifies source
+  `9d4b390`; a fresh fetch re-matched all seven staged assets. Citation:
+  `verifier/authentication.json` and `verifier/public-assets-live-recheck.log`
+  (SHA-256
+  `9b72941373f183540505f73f07060324b12c5fa51d05f8384b6ed06a0169cd99`).
+  Demand: none; the failed redundant sparse-clone deploy did not publish.
+- COVERAGE — NEEDS EVIDENCE in addition to the refutation. The exhaustive
+  baseline→product ledger classifies all 243 textual/binary Git hunks: 64
+  executed behavior, 16 executed harness, 37 declarative waivers, 86 generated
+  waivers and 40 composed hunks carrying 18 precise branch-level demands. The
+  authenticated packet contains no line-addressable guest instruction trace;
+  `replay-native-trace-and-attacks.log` is test stdout. Citation:
+  `verifier/hunk-ledger.md` / `hunk-ledger.json` (SHA-256
+  `bc11bd878be921b52c6d8e0aac6bf37db3eb21b04978f9c2f1e14287453da3c1`).
+  After correcting P1, satisfy ledger gaps G01–G17 (or record specific waivers)
+  and attach exact-head guest-trace/digest evidence; resolve fallback G18 for
+  any remaining hunk.
+- SENSITIVITY — HELD. Normal unchanged-frame assertion exits 0; changing only
+  the scratch demand to require a mismatch exits 101. Citation:
+  `verifier/sensitivity-control.log` SHA-256
+  `d2f41112ab837d3162f66c9f6a501b2e533baa485ac7236f197010279af1a6fe`
+  and `sensitivity-sabotage.log` SHA-256
+  `dcd1042d1679de117d62457e43930fc9b3f260b286e0b5e71900b6745afb7846`.
+  Demand: none.
+- SUITE: no repository test promoted while correctness is refuted. Host rr is
+  waived. Predictions SHA-256
+  `98d9191c3f472d66fe86b14f55681bfb406e46c36da55afda1ffa1ed34ccf14f`;
+  full assessment SHA-256
+  `1b39cff61b8a6135eb1959213890b4f841b02f5edf2945e62a5d6daf0a31c63b`;
+  verifier manifest SHA-256
+  `58bacb3fa105542410054fc569fca9715b47e24b3c507e0a176f06dcdab33e85`.
+
+Commands: independent offline Rust harness under serial/four-thread schedules;
+real native Wasmtime quanta 1/7/173/4096; retained device/network lease attacks;
+11/11 exact-head product replay tests with `trace,virgl-renderer`; assertion
+sabotage; receipt/ZIP/public-asset authentication. Complete artifacts:
+`/Users/blamy/Documents/Codex/e9-t14-proof-cold-9d4b3905/verifier/`.
