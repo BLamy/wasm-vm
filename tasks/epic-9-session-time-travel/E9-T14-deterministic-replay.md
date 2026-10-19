@@ -3,7 +3,7 @@ id: E9-T14
 epic: 9
 title: Replay recorded sessions and detect the first divergence
 priority: 524.914
-status: implemented
+status: in-progress
 depends_on: [E9-T05, E9-T10, E9-T11, E9-T12, E9-T13]
 estimate: S
 risk: high
@@ -283,3 +283,80 @@ stated budget ran separately. Neither exception is represented as a passing
 dependency boundary and evidence digest are unchanged; the fresh verifier
 must retest the exact-coordinate repairs and close the remaining scoped hunk
 coverage before setting `verified`.
+
+### 2026-10-19 — independent verifier — ordinary ingress after completion
+
+VERDICT: refuted
+
+- P9 / AC2 post-completion ordinary ingress — FAILED and independently
+  repeated. Predicted that without an explicit branch action, ordinary
+  host/device ingress would be refused or preserve the complete frame after
+  `Completed`. A four-instruction replay completed at
+  `(transition=4, retired=4, Before, ordinal=0, sequence=0)`. Direct UART
+  `push_input("Q")` kept that coordinate but changed complete resume SHA-256
+  `9906f218cceb6f860de861440feacad912c13882a07c943c4d858aebda60f3fd`
+  to `e9e85e4619805dd30fd3e7c404a2963674636d0f4d0a5f304ccfc558ed0a694b`;
+  direct keyboard `KEY_A` injection plus `sync()` likewise kept the coordinate
+  but changed it to
+  `8734209c640886132cfbdfb0442cb172539168b2d4697b4cbb6f6dbf094f8986`.
+  SBI input was byte-identical in this fixture and is not a finding. Exact
+  observations: `/Volumes/e9-daybreak-verifier/e9-t14-repair-final-646e840a8/ordinary-ingress-final.log:5-10`
+  (SHA-256 `b3230354eee1167b55e088c0fa7175acc7e7350b6f23bb8af91e7583d4e47ab1`),
+  independently repeated in `ordinary-ingress-recheck.log:5-10`; attack at
+  `harness/src/lib.rs:692-738`. The new profile returns the ordinary UART
+  handle and installs keyboard input at `crates/core/src/session_profile.rs:50-58,72`;
+  the direct host surfaces remain at `crates/core/src/lib.rs:1594-1601,2222-2233`,
+  outside replay-owned guards. Require one enforced replay/branch-generation
+  gate shared by ordinary UART/keyboard/pointer/provider ingress and complete-
+  frame regressions before and after completion.
+- P5/P6 repaired exact coordinates — HELD. Varied quanta 1/3/19 now report the
+  changed RTC ticket at recorded Observe `(1,1,Observe,1,1)`, event index 0,
+  even though stopped-machine positions vary. Missing tail sequence 2 reports
+  `MissingEvent` at `(8,8,Before,1,2)`, event index 1. Citation:
+  `/Volumes/e9-daybreak-verifier/e9-t14-repair-final-646e840a8/prior-refutations-recheck.log:5-20`
+  (SHA-256 `49fa27918c499856c0d40c1ae869d73bd45efc0f023a4960953d78828fafcc3f`).
+- P7/P8 wrong kind and missing window — HELD. RTC kind changes at quanta
+  1/3/19 report `EventPayload` at the exact Observe coordinate/index with zero
+  live calls. A guest performing 255 of 600 recorded reads reports
+  `MissingEvent` at recorded event index 255 / transition 256 while the machine
+  stops at 257. Citation:
+  `/Volumes/e9-daybreak-verifier/e9-t14-repair-final-646e840a8/coordinate-recheck.log:5-13`
+  (SHA-256 `a95bd1cc68f56341922c640ba230d96d2f95b7ea484be55bb16199550cec6c5b`).
+- P1/P2/P3/P4/P10 — HELD incrementally where source/dependency/evidence
+  digests are unchanged: selected native/browser full-state replay, instruction
+  end fence, session-owned effect/source/device/network/provider refusal,
+  source-window happy paths, host schedules, durable reopen and first-failure
+  retention. P3 is limited to session-owned entry points; P9 is the ordinary
+  host/UI path it did not cover.
+- P11 authenticity — FAILED narrowly on one citation, while the artifacts
+  otherwise authenticate. Receipt SHA/head/tree match; all 29 inventoried files
+  and all 24 listed zero exits match; built/public browser reports record 127/0,
+  zero console errors, 47 events and four attacks; all seven public assets are
+  exact. The worker log cites deploy-log SHA
+  `f9b05231f16c6c231bfd45d45f2c3f76852f2c3d7190978c167d629ec3102`,
+  but the actual SHA-256 is
+  `f9b05231f16c6c231bfd45d45f2d97c3f76852f2c3d7190978c167d629ec3102`.
+  Correct the citation next submission. The log itself confirms deployment
+  `2dd07507`; public asset/browser evidence remains independently authenticated.
+- P13 coverage — NEEDS EVIDENCE. The prior 130-hunk ledger is carried. Two
+  invalid-agent-slot gaps and repaired coordinate branches are now exercised,
+  but 28 prior composed gaps remain; repair branches for begin-sequence and
+  byte bounds, missed-witness traversal, runtime extra delivery, and four
+  source-divergence variants remain unproven. Exact classifications:
+  `/Volumes/e9-daybreak-verifier/e9-t14-repair-final-646e840a8/coverage-audit.md`
+  (SHA-256 `1cf87b4aefba900ec6e5b87ad88cbde40f66e8fcf6ea671aecb4524745556789`).
+- P14 sensitivity — HELD. The normal ordinary-ingress assertion exits 101;
+  changing only the scratch demand with `SABOTAGE_ASSERTION=1` exits 0 on the
+  same mutations (`ordinary-ingress-sabotage.log`, SHA-256
+  `f729043d6bd5c02b092b24817d705c82cc9ebca5aee22c73fe09d60b7c08da3a`).
+- SUITE: no repository test promoted while correctness is refuted. Host rr is
+  waived by the 2026-09-01 policy. Full assessment, predictions, commands and
+  authentication are under
+  `/Volumes/e9-daybreak-verifier/e9-t14-repair-final-646e840a8/`;
+  `assessment.md` SHA-256
+  `b23f5743c839f4b8f6b16fbf1cd6f90b313623efbe271155e7ab01f05885b5ef`.
+
+Commands: independent offline Rust harness cases for the two prior
+refutations, wrong-source-kind, missing-source-window and ordinary ingress;
+scratch sabotage inversion; exact-head receipt/public artifact authentication.
+The expensive unchanged full wasm/cross-target/browser proof was not repeated.

@@ -456,7 +456,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.911` [E9-T11](epic-9-session-time-travel/E9-T11-clock-and-entropy-recording.md) — Record guest-visible time and entropy observations *(deps: E9-T09)*
 - [x] `524.912` [E9-T12](epic-9-session-time-travel/E9-T12-device-completion-recording.md) — Record asynchronous device payloads and completion order *(deps: E9-T09)*
 - [x] `524.913` [E9-T13](epic-9-session-time-travel/E9-T13-network-capture.md) — Capture network sessions and replay them with zero live egress *(deps: E9-T09, E9-T03)*
-- [?] `524.914` [E9-T14](epic-9-session-time-travel/E9-T14-deterministic-replay.md) — Replay recorded sessions and detect the first divergence *(deps: E9-T05, E9-T10, E9-T11, E9-T12, E9-T13)*
+- [~] `524.914` [E9-T14](epic-9-session-time-travel/E9-T14-deterministic-replay.md) — Replay recorded sessions and detect the first divergence *(deps: E9-T05, E9-T10, E9-T11, E9-T12, E9-T13)*
 - [ ] `524.915` [E9-T15](epic-9-session-time-travel/E9-T15-incremental-checkpoints.md) — Add incremental RAM keyframes with bounded storage work *(deps: E9-T05, E9-T14)*
 - [ ] `524.916` [E9-T16](epic-9-session-time-travel/E9-T16-seek-controller.md) — Seek and reverse-step with cancellable replay-forward *(deps: E9-T14, E9-T15)*
 - [ ] `524.917` [E9-T17](epic-9-session-time-travel/E9-T17-gpu-session-checkpoints.md) — Restore historical accelerated desktop checkpoint pairs *(deps: E9-T05, E9-T16, E6-T11d74c, E6-T11d74d)*
