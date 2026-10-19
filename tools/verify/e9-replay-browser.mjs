@@ -60,7 +60,7 @@ try{
  assert.equal(data.status,'passed');
  assert.equal(data.replays.length,2);
  assert.equal(data.events,47);assert.equal(data.blockCompletions,1);
- assert.equal(data.attacks.length,3);
+ assert.equal(data.attacks.length,4);
  assert.ok(data.replays[1].retiredViaJit>1000000);
  assert.match(await page.locator('#session-replay-pip').getAttribute('class'),/\blive\b/);
  assert.match(await page.locator('.cap',{hasText:'Saved full Linux replay'}).locator('.cap-pip').getAttribute('class'),/\blive\b/);

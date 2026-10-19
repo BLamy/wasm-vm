@@ -4,8 +4,9 @@ use alloc::{string::String, vec, vec::Vec};
 use sha2::{Digest, Sha256};
 
 use crate::session_clock::{
-    MAX_EVENTS, MAX_OWNED_BYTES, SessionDelivery, SessionEffect, SessionPhase, SessionPosition,
-    sources::{ObservationRecord, ObservationTape},
+    MAX_EVENTS, MAX_OWNED_BYTES, SessionDelivery, SessionEffect, SessionError, SessionPhase,
+    SessionPosition,
+    sources::{DivergenceReason, ObservationRecord, ObservationTape},
 };
 use crate::{Machine, RunOutcome};
 
@@ -317,10 +318,13 @@ impl ReplayDriver {
             .filter(|e| matches!(e.effect, SessionEffect::Observation(_)))
             .count();
         if consumed != self.source_loaded {
-            return Err(self.failure(
-                machine,
+            let expected = self.plan.events[self.event_cursor].position;
+            return Err(self.failure_at(
+                expected,
                 ReplayReason::MissingEvent,
-                "observation window ended before its last recorded event".into(),
+                alloc::format!(
+                    "observation window reached transition {fence} before recorded event at {expected:?}"
+                ),
             ));
         }
         let next = self.source_chunk_index + 1;
@@ -786,13 +790,42 @@ impl ReplayDriver {
             let before = position;
             let before_cursor = self.event_cursor;
             let before_witness = self.witness_cursor;
-            let outcome = machine.run_session_until(target, quantum).map_err(|e| {
-                self.failure(
-                    machine,
-                    ReplayReason::Runtime,
-                    alloc::format!("guest run: {e:?}"),
-                )
-            })?;
+            let outcome = match machine.run_session_until(target, quantum) {
+                Ok(outcome) => outcome,
+                Err(SessionError::SourceDivergence(source)) => {
+                    // Earlier receipts from this work quantum may still be buffered. Compare
+                    // those first so the reported index belongs to the first failing event.
+                    self.compare_deliveries(machine)?;
+                    let reason = match source.reason {
+                        DivergenceReason::MissingRecord => ReplayReason::MissingEvent,
+                        DivergenceReason::ExtraRecords => ReplayReason::ExtraEvent,
+                        DivergenceReason::Position => ReplayReason::MisorderedEvent,
+                        DivergenceReason::Kind
+                        | DivergenceReason::Length
+                        | DivergenceReason::ProviderUnavailable => ReplayReason::EventPayload,
+                        DivergenceReason::OutsideRun => ReplayReason::Runtime,
+                    };
+                    let position = self
+                        .plan
+                        .events
+                        .get(self.event_cursor)
+                        .map(|event| event.position)
+                        .filter(|expected| coordinate(*expected) < coordinate(source.position))
+                        .unwrap_or(source.position);
+                    return Err(self.failure_at(
+                        position,
+                        reason,
+                        alloc::format!("source observation differs: {source:?}"),
+                    ));
+                }
+                Err(error) => {
+                    return Err(self.failure(
+                        machine,
+                        ReplayReason::Runtime,
+                        alloc::format!("guest run: {error:?}"),
+                    ));
+                }
+            };
             self.compare_deliveries(machine)?;
             self.check_witnesses(machine)?;
             if outcome != RunOutcome::MaxInstrs {

@@ -597,6 +597,161 @@ fn guest_rtc_entropy_observations_are_consumed_without_host_calls() {
         assert_eq!(driver.first_failure(), Some(&failure));
         assert_eq!((time_calls.get(), entropy_calls.get()), (0, 0));
     }
+
+    let mut wrong_kind = plan.clone();
+    let SessionEffect::Observation(value) = &mut wrong_kind.events[event_index].effect else {
+        unreachable!()
+    };
+    value.kind = ObservationKind::Entropy;
+    wrong_kind.validate().unwrap();
+    for quantum in [1, 3, 19] {
+        let (mut replay, time_calls, entropy_calls) = observed_fixture(true, quantum > 1);
+        let mut driver = ReplayDriver::start(&mut replay, wrong_kind.clone()).unwrap();
+        let failure = driver
+            .run_to_end(&mut replay, quantum, |_, _, _| unreachable!())
+            .unwrap_err();
+        assert_eq!(failure.reason, ReplayReason::EventPayload);
+        assert_eq!(failure.position, first_observation);
+        assert_eq!(failure.event_index, event_index);
+        assert_eq!((time_calls.get(), entropy_calls.get()), (0, 0));
+    }
+
+    let second_index = plan
+        .events
+        .iter()
+        .enumerate()
+        .filter(|(_, event)| {
+            matches!(&event.effect, SessionEffect::Observation(value) if value.requested == 8)
+        })
+        .nth(1)
+        .map(|(index, _)| index)
+        .expect("fixture records multiple guest observations");
+    let mut later_kind = plan.clone();
+    let SessionEffect::Observation(value) = &mut later_kind.events[second_index].effect else {
+        unreachable!()
+    };
+    value.kind = if value.kind == ObservationKind::RtcRead {
+        ObservationKind::RtcPoll
+    } else {
+        ObservationKind::RtcRead
+    };
+    later_kind.validate().unwrap();
+    let (mut replay, _, _) = observed_fixture(true, true);
+    let mut driver = ReplayDriver::start(&mut replay, later_kind).unwrap();
+    let failure = driver
+        .run_to_end(&mut replay, 128, |_, _, _| unreachable!())
+        .unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::EventPayload);
+    assert_eq!(failure.position, plan.events[second_index].position);
+    assert_eq!(failure.event_index, second_index);
+
+    let mut wrong_position = plan.clone();
+    let misordered_index = wrong_position
+        .events
+        .iter()
+        .enumerate()
+        .position(|(index, event)| {
+            matches!(event.effect, SessionEffect::Observation(_))
+                && event.position.ordinal == 1
+                && event.position.transition + 1 < wrong_position.end.transition
+                && (index == 0
+                    || wrong_position.events[index - 1].position.transition
+                        < event.position.transition)
+                && wrong_position
+                    .events
+                    .get(index + 1)
+                    .is_none_or(|next| next.position.transition > event.position.transition + 1)
+        })
+        .expect("fixture has an isolated observation before its declared end");
+    let actual_position = wrong_position.events[misordered_index].position;
+    wrong_position.events[misordered_index].position.transition += 1;
+    wrong_position.validate().unwrap();
+    let (mut replay, _, _) = observed_fixture(true, false);
+    let mut driver = ReplayDriver::start(&mut replay, wrong_position).unwrap();
+    let failure = driver
+        .run_to_end(&mut replay, 19, |_, _, _| unreachable!())
+        .unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::MisorderedEvent);
+    assert_eq!(failure.position, actual_position);
+    assert_eq!(failure.event_index, misordered_index);
+
+    let mut missing_source = plan.clone();
+    missing_source.events.clear();
+    missing_source.end.sequence = missing_source.begin.sequence;
+    missing_source.witnesses.last_mut().unwrap().position = missing_source.end;
+    missing_source.validate().unwrap();
+    let (mut replay, _, _) = observed_fixture(true, false);
+    let mut driver = ReplayDriver::start(&mut replay, missing_source).unwrap();
+    let failure = driver
+        .run_to_end(&mut replay, 19, |_, _, _| unreachable!())
+        .unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::MissingEvent);
+    assert_eq!(failure.position, first_observation);
+    assert_eq!(failure.event_index, 0);
+}
+
+#[test]
+fn missing_observation_before_source_window_fence_reports_its_recorded_position() {
+    const READS: usize = 600;
+    const KEPT_READS: usize = 255;
+    let program = |kept: usize| {
+        std::iter::once(0x0010_1137u32)
+            .chain(std::iter::repeat_n(0x0001_2183, kept))
+            .chain(std::iter::repeat_n(0x0000_0013, READS - kept))
+            .chain(std::iter::once(0x0000_0013))
+            .flat_map(u32::to_le_bytes)
+            .collect::<Vec<u8>>()
+    };
+    let (mut original, time_calls, _) = observed_fixture(false, false);
+    original
+        .bus_mut()
+        .write_ram_slice(BASE, &program(READS))
+        .unwrap();
+    original
+        .start_session_sources(original.source_policy(), None)
+        .unwrap();
+    let initial_resume = original.save_session_resume().unwrap();
+    let initial_witness = witness(&mut original);
+    let mut events = Vec::new();
+    for transition in 1..=READS as u64 + 2 {
+        original.run_session_until(transition, 1).unwrap();
+        events.extend(original.take_session_deliveries().unwrap());
+    }
+    assert_eq!(events.len(), READS);
+    assert_eq!(time_calls.get(), READS as u32);
+    let plan = ReplayPlan {
+        begin: SessionPosition::default(),
+        end: original.session_position().unwrap(),
+        initial_resume,
+        events,
+        witnesses: vec![initial_witness, witness(&mut original)],
+    };
+    plan.validate().unwrap();
+
+    let (mut altered, _, _) = observed_fixture(false, false);
+    altered
+        .bus_mut()
+        .write_ram_slice(BASE, &program(KEPT_READS))
+        .unwrap();
+    altered
+        .start_session_sources(altered.source_policy(), None)
+        .unwrap();
+    let mut missing = plan.clone();
+    missing.initial_resume = altered.save_session_resume().unwrap();
+    missing.witnesses[0] = witness(&mut altered);
+    let expected = missing.events[KEPT_READS].position;
+    missing.validate().unwrap();
+
+    let (mut replay, replay_time_calls, _) = observed_fixture(true, false);
+    let mut driver = ReplayDriver::start(&mut replay, missing).unwrap();
+    let failure = driver
+        .run_to_end(&mut replay, 4096, |_, _, _| unreachable!())
+        .unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::MissingEvent);
+    assert_eq!(failure.position, expected);
+    assert_eq!(failure.event_index, KEPT_READS);
+    assert!(replay.session_position().unwrap().transition > expected.transition);
+    assert_eq!(replay_time_calls.get(), 0);
 }
 
 #[test]

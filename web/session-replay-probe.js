@@ -170,6 +170,30 @@ export async function runSessionReplayProbe({onProgress}={}){
     'changed observation ticket reports exact first receipt coordinate; observed '+message);
    output.attacks.push({kind:'changed-observation-ticket',position:position.transition,ordinal:position.ordinal,message});
   }finally{observed.free();}
+  const wrongKind=rows.map(row=>({...row,bytes:row.bytes.slice()}));
+  const changedObservation=wrongKind[observationIndex];
+  if(changedObservation.sourceKind===6){
+   changedObservation.sourceKind=1;
+   changedObservation.requested=8;
+   if(changedObservation.status===0){
+    const bytes=new Uint8Array(8);bytes.set(changedObservation.bytes.slice(0,8));
+    changedObservation.bytes=bytes;
+   }
+  }else changedObservation.sourceKind=changedObservation.sourceKind===1?5:1;
+  const changedSource=make(true);try{
+   changedSource.beginExactReplay(initial.resume,wrongKind,witnesses,final);
+   let message;try{changedSource.runExactReplayToEnd(4096);}catch(error){message=String(error);}
+   const position=rows[observationIndex];
+   need(message&&/EventPayload/.test(message)
+    &&message.includes(`transition: ${position.transition}`)
+    &&message.includes(`retired: ${position.retired}`)
+    &&message.includes('phase: Observe')
+    &&message.includes(`ordinal: ${position.ordinal}`)
+    &&message.includes(`sequence: ${position.sequence}`)
+    &&message.includes(`event_index: ${observationIndex}`),
+    'changed observation kind reports its guest coordinate; observed '+message);
+   output.attacks.push({kind:'changed-observation-kind',position:position.transition,ordinal:position.ordinal,message});
+  }finally{changedSource.free();}
   const dmaIndex=rows.findIndex(row=>row.channel===19);
   need(dmaIndex>=0,'real DMA delivery available');
   const withoutDma=rows.map(row=>({...row,bytes:row.bytes.slice()}));withoutDma[dmaIndex].bytes=withoutDma[dmaIndex].bytes.subarray(0,10);
