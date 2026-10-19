@@ -3,7 +3,7 @@ id: E9-T14
 epic: 9
 title: Replay recorded sessions and detect the first divergence
 priority: 524.914
-status: implemented
+status: in-progress
 depends_on: [E9-T05, E9-T10, E9-T11, E9-T12, E9-T13]
 estimate: S
 risk: high
@@ -149,3 +149,77 @@ Evidence submitted for independent review:
 The prior verifier's guest-instruction fence result remains HELD for its unchanged
 fixture. A new, separate verifier must attack the repaired ingress boundaries and
 interrogate the exact-head evidence before changing this task to `verified`.
+
+
+### 2026-10-18 — independent verifier — exact first-divergence coordinates
+
+VERDICT: refuted
+
+- P6 / AC3 Observe receipt coordinate — FAILED, independently repeated. A fresh
+  real guest records its RTC read at `(transition=1, retired=1, Observe,
+  ordinal=1, sequence=1)`. Changing only that receipt's ticket passes plan
+  admission. Quanta 1, 3 and 19 all detect EventPayload at event_index 0, but
+  the structured divergence position reports respectively transitions 2, 3 and
+  12, all Before/ordinal 0. The detail text correctly names the Observe receipt;
+  the top-level position instead names the later guest stop and varies with
+  scheduling. Exact points: `/Volumes/e9-daybreak-verifier/e9-t14-final-standard/final-native.log:91-98`
+  (SHA-256 `e0456c5e40ba01c1b6b292d1f5fe3dc51003f5e8df92457230df6cd7b6d34862`),
+  assertion `harness/src/lib.rs:53`, guest trace `independent.trace:2`, and
+  complete stopped frames `ticket-q1.resume`, `ticket-q3.resume`,
+  `ticket-q19.resume`. `crates/core/src/session_replay.rs:549-557` calls
+  `failure(machine)`, which uses the current machine position at `:455-465`.
+  Require an unambiguous failing-event coordinate in the structured result,
+  independent of quantum; distinguish the stopped-machine coordinate if kept.
+- P4 / AC3 missing tail — FAILED, independently repeated. Removing the second
+  event, recorded at `(8,8,Before,1,2)`, while retaining its positional state
+  witness and declared end, reports InvalidPlan at `(0,0,Before,0,0)`, index 0,
+  with only `byte bound or unconsumed sequence`. Exact points:
+  `final-native.log:83-90` and separate `missing-tail.log:6-11`; assertion
+  `harness/src/lib.rs:93`. The generic failure at
+  `crates/core/src/session_replay.rs:143-144` loses the missing sequence/index.
+  Require a precise missing-event/gap report rather than naming the valid
+  initial checkpoint. These are corrupted-recording diagnostic failures, not
+  invalid provider calls being mistaken for guest mutation.
+- P2/P3 end and repaired ingress — HELD. Carry the prior unchanged instruction
+  fence result. Fresh native controls at `final-native.log:71-81,99-102` refuse
+  public effect staging/delivery, callbacks, observation append, device/network
+  injection, valid typed completion leases and live provider factories before
+  and after Completed, with byte-identical complete frames and zero live calls.
+  Browser reports `browser/report.json` and `browser-device/report.json` pass
+  valid recording controls and replay provider refusal before/Completed, live
+  input/lifecycle and ordinary-run refusal, with unchanged complete digests.
+  No separate branch action was invoked; live branching remains T20.
+- P1/P5 native/browser state and source windows — HELD for exercised boundaries.
+  The independent built-browser run retains 47 actual events, four selected
+  positions, complete initial/final resume frames, eight 20-section summaries,
+  and matching interpreter/JIT final digest
+  `3aa6d9ffdbc2c76ada2e680a8a99fd32168b69469261eb647187092cda411d70`;
+  JIT retired 12,880,740 instructions. All five captured final section lists
+  match individually. An additional replay uses quantum 173. Native 600-source
+  windows pass at quanta 1/17/263/4096, and four independent host schedules,
+  duplicate/swap and exact digest-witness attacks pass their assertions.
+- P7/P8 authenticity and sensitivity — HELD. Both cold report inventories and
+  actual gate exits authenticate; 727ed33 native/wasm exits are 0, make ci is 2
+  on the exact five parent zicsr-stub diagnostics, and the later contract repair
+  changes only proof/contract assets. All seven local immutable R2 artifacts
+  match the prior authenticated keys; tested/public bundle receipts match.
+  Scratch sensitivity control exits 0; changing only its demanded provider
+  count to 1 exits 101 with actual 0 at `harness/src/lib.rs:65`. No deployment,
+  push, PR, merge, implementation fix or T15 work was performed.
+- COVERAGE/SUITE: all 130 hunks are classified in `coverage-hunks.json`:
+  28 executed, 72 waived (with reasons), 30 needs-evidence composed hunks or
+  branches. This is not complete per-line runtime coverage. Correctness failed
+  before coverage closure; no test is promoted until the repair and remaining
+  scoped proof hold. Stable failing tests/frames remain in the scratch packet.
+
+Predictions were written before evidence/probes in
+`/Volumes/e9-daybreak-verifier/e9-t14-final-standard/predictions.md`
+(SHA-256 `988d7a0c320267e56a05cefa3e46aadd31973c4b1a0bc1628c9861896ba5fe5a`).
+Complete assessment, commands, authenticated report hashes, exact observed state,
+harness-only failed attempts and hunk ledger:
+`/Volumes/e9-daybreak-verifier/e9-t14-final-standard/assessment.md`
+(SHA-256 `00cfd555425247c41a1b674274f89f6c2d990f14091c787381bcbdc9e575b77a`).
+Reproduction: `python3 /Volumes/e9-daybreak-verifier/e9-t14-final-standard/run-native.py`
+records six passing controls and two exact-coordinate failures (exit 101), plus
+separate sensitivity control/sabotage. Browser commands are the adjacent
+`browser.mjs` and `browser-device.mjs` (both final exits 0).
