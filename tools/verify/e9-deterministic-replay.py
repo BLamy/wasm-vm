@@ -119,6 +119,42 @@ def carry_previous_native(directory):
     return (output / 'carried-full-local-gauntlet.log').read_text()
 
 
+def carry_partial_native(directory):
+    # A prior pristine run reached the emitter's unrelated timing assertion after
+    # every preceding workspace test passed. Only this proof harness and the relay
+    # stdout-drain fixture changed; recheck the missing tail and touched fixture.
+    previous = Path(directory).resolve()
+    old = json.loads((previous / 'report.json').read_text())
+    changed = subprocess.check_output(['git', 'diff', '--name-only', old['head'], head],
+                                      cwd=ROOT, text=True).splitlines()
+    assert old['task'] == 'E9-T14' and old['status'] == 'failed' and set(changed) == {
+        'tools/verify/e9-deterministic-replay.py',
+        'crates/cli/tests/ws_connector_over_real_ws.rs',
+    }, 'partial native carry must be source-identical outside the proof harness'
+    commands = {entry['name']: entry for entry in old['commands']}
+    assert commands['full-local-gauntlet']['exit_code'] == 2 \
+        and commands['native-workspace']['exit_code'] == 2, 'unexpected prior gate exits'
+    files = {entry['path']: entry['sha256'] for entry in old['files']}
+    for name in ['full-local-gauntlet.log', 'native-workspace.log']:
+        source = previous / name
+        assert digest(source) == files[name], 'partial native log digest changed: ' + name
+        shutil.copy2(source, output / ('carried-' + name))
+    native = (output / 'carried-native-workspace.log').read_text()
+    assert native.count('test emit_200_functions_under_10ms ... FAILED') == 1 \
+        and len(re.findall(r'test [^\n]+ \.\.\. FAILED', native)) == 1 \
+        and 'test pinned_linux_full_software_profile_replays_exact_cpu_ram_device_disk_digest ... ok' in native \
+        and 'test missing_observation_before_source_window_fence_reports_its_recorded_position ... ok' in native \
+        and 'test ws_connector_refused_backend_fails_over_a_real_websocket ... ok' in native \
+        and 'error: test failed, to rerun pass `-p wasm-vm-wasm-emit --test speed`' in native, \
+        'partial native failure was not solely the unchanged emitter timing assertion'
+    report['carried_partial_native'] = {'head': old['head'], 'tree': old['tree'],
+        'source': str(previous), 'changed': changed,
+        'log_sha256': digest(output / 'carried-native-workspace.log'),
+        'missing_tail': 'emitter validate, wasm-web native, workspace doc tests',
+        'touched_fixture': 'ws_connector_over_real_ws'}
+    return (output / 'carried-full-local-gauntlet.log').read_text()
+
+
 def carry_previous_wasm(metadata):
     record = json.loads(Path(metadata).read_text())
     if record.get('task') == 'E9-T14':
@@ -186,9 +222,14 @@ try:
     prune_generated_build_cache(Path('wasm32-unknown-unknown/debug'))
     run('policy', ['python3', 'tools/check_task_policy.py'])
     carried_native = os.environ.get('E9_REPLAY_CARRY_NATIVE')
+    carried_partial_native = os.environ.get('E9_REPLAY_CARRY_PARTIAL_NATIVE')
+    assert not (carried_native and carried_partial_native), 'choose one native carry'
     if carried_native:
         result = 1
         log = carry_previous_native(carried_native)
+    elif carried_partial_native:
+        result = 1
+        log = carry_partial_native(carried_partial_native)
     else:
         result = run('full-local-gauntlet', ['make', 'ci'], 7200, allow_failure=True)
         log = (output / 'full-local-gauntlet.log').read_text() if result else ''
@@ -203,7 +244,22 @@ try:
         report['baseline_exception'] = {'gate': 'zicsr-stub clippy dead_code',
             'parent': BASELINE_HEAD,
             'finding': 'The same five dead-code diagnostics reproduce on the untouched parent; no T14 code appears in them.'}
-        if not carried_native:
+        if carried_partial_native:
+            run('relay-fixture-clippy', ['cargo', 'clippy', '-p', 'wasm-vm-cli',
+                '--test', 'ws_connector_over_real_ws', '--', '-D', 'warnings'])
+            run('relay-fixture-tests', ['cargo', 'test', '-p', 'wasm-vm-cli',
+                '--test', 'ws_connector_over_real_ws'], 1800)
+            run('emitter-validate-tail', ['cargo', 'test', '-p', 'wasm-vm-wasm-emit',
+                '--test', 'validate'])
+            run('wasm-web-native-tail', ['cargo', 'test', '-p', 'wasm-vm-wasm-web', '--lib'])
+            run('workspace-doc-tail', ['cargo', 'test', '--workspace', '--exclude',
+                'wasm-vm-wvseccomp', '--doc'], 3600)
+            run('no-host-float', ['bash', 'tools/ci/no-host-float.sh'])
+            run('determinism-hazards', ['bash', 'tools/ci/determinism-hazards.sh'])
+            run('emitter-speed-build', ['cargo', 'test', '-p', 'wasm-vm-wasm-emit',
+                '--test', 'speed', '--no-run'])
+            verify_emitter_speed_baseline()
+        elif not carried_native:
             run('native-workspace-except-flaky-speed', ['cargo', 'test', '--workspace',
                 '--exclude', 'wasm-vm-wvseccomp', '--', '--skip',
                 'emit_200_functions_under_10ms'], 7200)
