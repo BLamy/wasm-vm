@@ -3,7 +3,7 @@ id: E9-T14
 epic: 9
 title: Replay recorded sessions and detect the first divergence
 priority: 524.914
-status: implemented
+status: evidence-needed
 depends_on: [E9-T05, E9-T10, E9-T11, E9-T12, E9-T13]
 estimate: S
 risk: high
@@ -553,3 +553,62 @@ Evidence of record:
 - [Guest instruction trace](/Users/blamy/Documents/Codex/e9-t14-proof-cold-f216b07-retry/guest-trace/guest-instructions.trace) SHA-256 `f1b4ecb90f66224ef2e61dd73d8367f11f0080b5acd8c3e1fce5d37bc19d4a81`, 4,096 lines; [complete resume digest](/Users/blamy/Documents/Codex/e9-t14-proof-cold-f216b07-retry/guest-trace/complete-resume.sha256) contains the raw 32-byte value above. [Built-browser report](/Users/blamy/Documents/Codex/e9-t14-proof-cold-f216b07-retry/browser/report.json) SHA-256 `2decc8ac793259edd95bc1145a1357f2fca4704b03fced687db8ad5a70a4926c`, zero console errors, six witnesses, JIT `12,881,132` retired, within-run digest `f0f6fb429a51da667820b8cc81d657a14bbf6d51a5589f764469c26fc4d9bba5`. [Journal bounds](/Users/blamy/Documents/Codex/e9-t14-proof-cold-f216b07-retry/journal-bounds/report.json) SHA-256 `318616270fce1f40634abe4f6ab6138a4738e567636bad354298df4602b14522`, 43 checks passed.
 - Production `https://wasm-vm.pages.dev/` serves Cloudflare Pages deployment `ee3d35d6` built from this source. `bash tools/deploy-cloudflare.sh` staged the full tree and verified local manifests, but its public R2 rootfs probe hit the script's 30-second speed timeout; Wrangler's 300 MiB limit then prevented its fallback upload. The [standard deploy log](/Users/blamy/Documents/Codex/e9-t14-deploy-f216b07.log) preserves that failure. After independently stream-hashing the largest R2 rootfs and other core objects against their manifests, `npx --yes wrangler pages deploy web/dist --project-name wasm-vm --branch main --commit-dirty=true` published the already-staged tree ([publish log](/Users/blamy/Documents/Codex/e9-t14-pages-publish-f216b07.log), SHA-256 `cb149db049e05ca47d62cd78a5d2f5e2263464a16827a05c2ed4b0ede42fa0ee`). The complete R2-routed object receipt below was collected after publication. [Public asset receipt](/Users/blamy/Documents/Codex/e9-t14-public-assets-f216b07.json) SHA-256 `1d9a3cb90a3948e144ad747446d7de41b0a9ca6fcc398f89ac73f88e5c524f9c` matches seven published app/JS/wasm assets byte-for-byte to the tested build. [Public Playwright report](/Users/blamy/Documents/Codex/e9-t14-public-browser-f216b07-final/report.json) SHA-256 `c08980a4342b932ddfdca14c5aecec94c36baab33a3ad48b6d747204ab380183`, `127/0`, 47 events, six witnesses, JIT `12,879,847` retired, matching interpreter/JIT digest `e1f5d8862a82ff8316c72e3dc7f82cf8a7b031b4ca9f2add93903c193d2b1811`, zero errors except the explicitly allowed `/favicon.ico` 404. Its screenshot and Playwright trace are alongside the report; the first strict-console failure remains archived for inspection.
 - [R2 public object receipt](/Users/blamy/Documents/Codex/e9-t14-deploy-proof-f216b07/r2-public-exact.json) SHA-256 `97f7e6e7b07851a40db51159b35496eb0ddc9cea32edce67d97831781ef34240`, `status: passed`, independently streamed 1,056,405,181 bytes across all seven R2-routed content-addressed release objects and matched every byte count and manifest SHA-256.
+
+### 2026-10-20 — independent verifier — repaired semantics, incomplete diff coverage
+
+VERDICT: needs-evidence
+
+- P1 / AC1 real native JIT UART boundary — HELD. The product test reports
+  quanta 1/7/173/4096 with real Wasmtime retirements 0/1158/3906/4020 and
+  complete-frame digest
+  `7d3baa054f978ddb541a6263d950c50c501bfeaf8488d5fcad683d0783c97814`.
+  A verifier-owned bounded attack added complete witnesses immediately before,
+  at, and after the timeout: transitions 1087/1088/1089 held UART
+  `(latched,idle_ticks,rx_len)` values `(false,1023,1)`, `(true,1024,1)`, and
+  `(true,1024,1)`. JIT quanta 7/173/1023/1024/1025/4096 retired
+  306/996/1020/1020/1020/1020 compiled instructions and matched frame SHA-256
+  `67d204dab057138d092f902d11eeb6854a7ff27785b31994114565b3bbc3b0fb`.
+  The normal test exited 0; changing only the equality demand exited 101.
+  Reproduction patch SHA-256
+  `0ae31a265ee0df4923be2d4ad15e20c68d7586274c4f9f072a103947303571c9`.
+- P2/P3 / AC2-AC3 — HELD incrementally. The prior ingress/end-fence and exact
+  coordinate code is unchanged, so its authenticated HELD results carry. Fresh
+  15/15 product tests pass malformed device/network/unsupported adapters,
+  expected-earlier observation, skipped witness, early guest termination,
+  zero-quantum poisoned reentry, changed input, omitted DMA, reordering, offline
+  network and declared-end exhaustion. Browser attacks retain their first
+  recorded coordinates rather than seeking forward.
+- AUTHENTICITY/GUEST/BROWSER/PUBLIC — HELD. Cold receipt SHA-256
+  `ec8a797646197f0e2567cc94831f457ab80697dab230c3f44873b7ec6c0c397d`
+  authenticates head `f216b07`, tree `9ddcc4c1`, all 29 files, command exits,
+  scrubbed environment and a still-clean checkout. The 4,096-line canonical
+  guest trace hashes to
+  `f1b4ecb90f66224ef2e61dd73d8367f11f0080b5acd8c3e1fce5d37bc19d4a81`.
+  Built/public reports record 127/0, 47 events, six witnesses, UART 320/1024,
+  durable reopen, four attacks, zero errors except the allowed public favicon,
+  and 12.8M+ real JIT retirements; both trace ZIPs pass CRC. Cloudflare's live
+  production/main listing names deployment `ee3d35d6-51ba-4ede-9252-508b09571bfb`
+  from `f216b07`; fresh fetches of all seven Pages assets equal the frozen tree.
+  R2 receipt SHA-256
+  `97f7e6e7b07851a40db51159b35496eb0ddc9cea32edce67d97831781ef34240`
+  matches all seven objects and 1,056,405,181 bytes. The standard deploy really
+  failed its R2 speed/size path; the separately published production bytes are
+  what was authenticated.
+- COVERAGE — NEEDS EVIDENCE. New tests close G01, G03-G05 and portions of the
+  remaining prior ledger, but G02, G06-G13, G15-G18 still contain unexecuted,
+  task-relevant branches: start/restore/adapter-cursor failures, snapshot error,
+  runtime extra/order directions, RAM/pending/decoded-intent failures, terminal
+  exhaustion mismatches, four source-divergence reasons, stalled execution,
+  remaining Wasm parser/lease paths, real durable corruption, and the compiled
+  trapped-span UART accounting arm. The 43-check journal test uses a store mock
+  for corruptions; it is not proof of real IndexedDB durability. Execute each
+  exact demand or give a branch-specific invariant waiver; do not rerun unrelated
+  gates when only tests/evidence change.
+- SUITE: no repository test promoted while coverage is incomplete. Host rr is
+  waived. Full predictions SHA-256
+  `098424200d10f8f09c498b2de29fde34f37f5e1d6c86802d9c1640db85948f3b`;
+  coverage audit SHA-256
+  `52f7cbf7c1871bfd5170793296b43257c0512e4ae92476c9939f9d56725654ef`;
+  assessment SHA-256
+  `6f35abdf5b1a834a22e276014645aafd117fe1eece790d97e027b27e3fc53cbf`.
+  Artifacts: `/Users/blamy/Documents/Codex/e9-t14-proof-cold-f216b07/verifier/`.
