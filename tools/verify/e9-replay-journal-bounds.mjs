@@ -38,6 +38,7 @@ try{
  await page.waitForFunction(()=>window.__ready===true,null,{timeout:60000});
  report.checks=await page.evaluate(async()=>{
   const {SessionInputJournal}=await import('./session-inputs.js');
+  const {openNetworkProvider}=await import('./session-network.js');
   const begin={transition:'0',retired:'0',phase:'before',ordinal:0,sequence:'0'};
   const manifest={end:begin,policy:{mode:'exact-replay',required_inputs:['uart']}};
   const journal=()=>new SessionInputJournal({},structuredClone(manifest));
@@ -59,6 +60,12 @@ try{
    ['source-not-owned',r=>{r.channel=17;r.phase='observe';r.outcome=['0','1','8','0'];r.bytes=new Uint8Array(8);},'source adapter is absent from this prefix'],
   ];
   const checks=[];
+  let released=0,providerError='';
+  try{openNetworkProvider({networkSessionReplay:()=>false,
+   leaseNetworkRequest:()=>({free:()=>{released++;}})},()=>{throw Error('provider failed');});}
+  catch(error){providerError=String(error);}
+  if(!providerError.includes('provider failed')||released!==1)throw Error('provider factory did not release its lease');
+  checks.push({name:'network-provider-factory',error:providerError,released});
   const accepted=journal();accepted.stage([receipt()]);
   if(accepted.pending!==1)throw Error('valid exact receipt did not stage');
   checks.push({name:'valid-exact-receipt',pending:1});
@@ -120,6 +127,26 @@ try{
    if(!error.includes(expected))throw Error(`journal ${name}: ${error}`);
    checks.push({name:'journal-'+name,error});
   }
+  const exactWitness={...begin,digest:Array(32).fill(0)};
+  const frameStore=frame=>{
+   const saved={...structuredClone(manifest),begin,end:begin,events:[],
+    checkpoints:[{machine:{sha256:'0'.repeat(64),length:String(frame.length)}}],
+    extensions:[{kind:'e9-exact-state-witnesses-v1',required:false,
+     bytes:[...encoder.encode(JSON.stringify([exactWitness,exactWitness]))]}]};
+   return {openSession:async()=>({manifest:encoder.encode(JSON.stringify(saved))}),
+    stream:async function*(){yield frame;}};
+  };
+  const frame=new Uint8Array(112),view=new DataView(frame.buffer);
+  frame.set(encoder.encode('WVEXACT1'));view.setUint32(8,1,true);view.setBigUint64(12,84n,true);
+  for(const [name,bytes,expected] of [
+   ['checkpoint-magic',new Uint8Array(frame.length),'exact checkpoint magic'],
+   ['checkpoint-bounds',(()=>{const value=frame.slice();new DataView(value.buffer).setUint32(20,1,true);return value;})(),'exact checkpoint bounds']
+  ]){
+   let error='';try{await SessionInputJournal.readExact(frameStore(bytes),'recorded');}
+   catch(value){error=String(value);}
+   if(!error.includes(expected))throw Error(`${name}: ${error}`);
+   checks.push({name,error});
+  }
   const {WasmLinux}=await import('./pkg/wasm_vm_wasm.js');
   const artifacts=await (await fetch('./artifacts.json')).json();
   const kernel=new Uint8Array(await (await fetch(artifacts.artifacts.kernel.url)).arrayBuffer());
@@ -145,6 +172,16 @@ try{
     ['ram-address',r=>{r.kind='ram';r.address='01';},'decimal'],
     ['pending-type',r=>{r.kind='pending';r.pending='true';},'exact replay pending'],
     ['observation-kind',r=>{r.kind='observation';r.sourceKind=0;},'exact replay source kind'],
+    ['missing-kind',r=>delete r.kind,'exact replay kind'],
+    ['missing-channel',r=>delete r.channel,'exact replay integer'],
+    ['missing-outcome',r=>delete r.outcome,'exact replay outcome'],
+    ['outcome-value',r=>r.outcome[2]=2,'exact replay outcome'],
+    ['ram-bytes',r=>{r.kind='ram';r.address='0';delete r.bytes;},'exact replay owned bytes'],
+    ['pending-missing',r=>{r.kind='pending';delete r.pending;},'exact replay pending'],
+    ['observation-requested',r=>{r.kind='observation';r.phase='observe';r.sourceKind=1;delete r.requested;},'exact replay integer'],
+    ['observation-status',r=>{r.kind='observation';r.phase='observe';r.sourceKind=1;r.requested=8;delete r.status;},'exact replay integer'],
+    ['observation-bytes',r=>{r.kind='observation';r.phase='observe';r.sourceKind=1;r.requested=8;r.status=0;r.bytes=[1];},'exact replay owned bytes'],
+    ['outcome-overflow',r=>r.outcome[0]='18446744073709551616','unsigned counter exceeds u64'],
    ];
    for(const [name,mutate,expected] of malformed){
     const candidate=row();mutate(candidate);let error='';
@@ -154,6 +191,11 @@ try{
     if(after!==before)throw Error(`ABI ${name} mutated the guest before admission`);
     checks.push({name:'abi-'+name,error});
    }
+   const trapped=new Proxy(row(),{get(target,key){if(key==='phase')throw Error('trap');return Reflect.get(target,key);}});
+   let trappedError='';try{admission([trapped]);}catch(value){trappedError=String(value);}
+   if(!trappedError.includes('exact replay field')||[...replay.exactSessionWitness(false).digest].join(',')!==before)
+    throw Error('ABI Reflect refusal failed: '+trappedError);
+   checks.push({name:'abi-reflect-get',error:trappedError});
    for(const [name,events,witnesses,end,expected] of [
     ['event-count',new Array(4097).fill(row()),[initial],initial,'exact replay plan limit'],
     ['witness-count',[],[],initial,'exact replay plan limit'],
@@ -181,7 +223,7 @@ try{
   }finally{original.free();replay.free();}
   return checks;
  });
- assert.equal(report.checks.length,43);
+ assert.equal(report.checks.length,57);
  assert.deepEqual(report.errors,[]);
  report.status='passed';
 }catch(error){report.status='failed';report.failure={message:error.message,stack:error.stack};process.exitCode=1;}

@@ -1,5 +1,6 @@
 //! Admission rejects malformed replay coordinates before any machine is constructed.
 #![cfg(not(feature = "zicsr-stub"))]
+use wasm_vm_core::session_clock::sources::{ObservationKind, ObservationValue};
 use wasm_vm_core::session_clock::{SessionDelivery, SessionEffect, SessionPhase, SessionPosition};
 use wasm_vm_core::session_replay::{
     MAX_INITIAL_BYTES, MAX_REPLAY_BYTES, MAX_REPLAY_EVENTS, ReplayPlan, ReplayReason, StateWitness,
@@ -153,6 +154,64 @@ fn event_coordinates_report_the_first_bad_index() {
         ReplayReason::InvalidPlan,
         "event byte bound exceeded",
         0,
+    );
+}
+
+#[test]
+fn remaining_event_order_predicates_reject_the_first_bad_coordinate() {
+    let mut at_end = with_event();
+    at_end.events[0].position = SessionPosition {
+        phase: SessionPhase::Observe,
+        ..at(1, 1, 1, 1)
+    };
+    at_end.events[0].effect = SessionEffect::Observation(ObservationValue {
+        kind: ObservationKind::RtcRead,
+        requested: 8,
+        status: 0,
+        bytes: vec![0; 8],
+    });
+    rejected(
+        &at_end,
+        ReplayReason::InvalidPlan,
+        "event order or coordinate",
+        0,
+    );
+
+    let mut before_begin = with_event();
+    before_begin.begin = at(5, 5, 0, 0);
+    before_begin.end = at(6, 6, 0, 1);
+    before_begin.events[0].position = at(4, 4, 1, 1);
+    before_begin.witnesses[0].position = before_begin.begin;
+    before_begin.witnesses[1].position = before_begin.end;
+    rejected(
+        &before_begin,
+        ReplayReason::InvalidPlan,
+        "event order or coordinate",
+        0,
+    );
+
+    let mut ordinal_gap = with_event();
+    ordinal_gap.events[0].position.ordinal = 2;
+    rejected(
+        &ordinal_gap,
+        ReplayReason::InvalidPlan,
+        "event order or coordinate",
+        0,
+    );
+
+    let mut retired_regression = with_event();
+    retired_regression.events[0].position = at(1, 1, 1, 1);
+    retired_regression.events.push(SessionDelivery {
+        position: at(2, 0, 1, 2),
+        ..retired_regression.events[0].clone()
+    });
+    retired_regression.end = at(3, 3, 0, 2);
+    retired_regression.witnesses[1].position = retired_regression.end;
+    rejected(
+        &retired_regression,
+        ReplayReason::InvalidPlan,
+        "event order or coordinate",
+        1,
     );
 }
 

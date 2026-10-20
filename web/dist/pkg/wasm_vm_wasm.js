@@ -3163,6 +3163,10 @@ function __wbg_get_imports() {
             const ret = invokeJitBlock(arg0, arg1 >>> 0, arg2 >>> 0);
             return ret;
         },
+        __wbg_isArray_0677c962b281d01a: function(arg0) {
+            const ret = Array.isArray(arg0);
+            return ret;
+        },
         __wbg_keys_58421f8f96795607: function(arg0) {
             const ret = Object.keys(arg0);
             return ret;

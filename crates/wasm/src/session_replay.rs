@@ -97,7 +97,11 @@ fn event(value: JsValue) -> Result<SessionDelivery, JsError> {
         _ => return Err(JsError::new("exact replay event kind")),
     };
     let host_result = if matches!(effect, SessionEffect::HostInput { .. }) {
-        let values = js_sys::Array::from(&get(&value, "outcome")?);
+        let outcome = get(&value, "outcome")?;
+        if !js_sys::Array::is_array(&outcome) {
+            return Err(JsError::new("exact replay outcome"));
+        }
+        let values: js_sys::Array = outcome.unchecked_into();
         if values.length() != 4 {
             return Err(JsError::new("exact replay outcome"));
         }
@@ -247,16 +251,6 @@ impl WasmLinux {
         witnesses: js_sys::Array,
         end: JsValue,
     ) -> Result<(), JsError> {
-        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        if inner.exact_session != Some(true)
-            || inner.exact_driver.is_some()
-            || !inner.pending.is_empty()
-            || !inner.out.borrow().is_empty()
-        {
-            return Err(JsError::new(
-                "exact replay requires fresh, empty host queues",
-            ));
-        }
         if events.length() > wasm_vm_core::session_replay::MAX_REPLAY_EVENTS as u32
             || witnesses.length() == 0
             || witnesses.length() > wasm_vm_core::session_replay::MAX_REPLAY_EVENTS as u32
@@ -279,6 +273,19 @@ impl WasmLinux {
             events: rows,
             witnesses: states,
         };
+        // Receipts are untrusted JS values. Their getters (and malformed Array fields) can
+        // throw while the parser runs, so do not hold the Machine's mutable borrow until all
+        // of them have been copied into owned Rust values.
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.exact_session != Some(true)
+            || inner.exact_driver.is_some()
+            || !inner.pending.is_empty()
+            || !inner.out.borrow().is_empty()
+        {
+            return Err(JsError::new(
+                "exact replay requires fresh, empty host queues",
+            ));
+        }
         let driver = ReplayDriver::start(&mut inner.machine, plan)
             .map_err(|e| JsError::new(&format!("exact replay admission: {e:?}")))?;
         inner.exact_driver = Some(driver);

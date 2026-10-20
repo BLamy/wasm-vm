@@ -61,6 +61,11 @@ try{
  assert.equal(data.replays.length,2);
  assert.equal(data.events,47);assert.equal(data.blockCompletions,1);
  assert.equal(data.attacks.length,4);
+ assert.deepEqual(data.abiChecks.map(check=>check.name),[
+  'provider-profile','network-unknown-lease','network-malformed-completion','network-foreign-lease',
+  'device-unknown-lease','device-dropped-lease','device-invalid-status','device-invalid-frames',
+  'device-foreign-lease','device-duplicate-completion','immutable-witness-commitment'
+ ]);
  assert.deepEqual(data.uartTimeout,{
   pending:{latched:false,idleTicks:320,rxLength:1},
   latched:{latched:true,idleTicks:1024,rxLength:1}
@@ -74,6 +79,36 @@ try{
   await reloaded.goto(report.url,{waitUntil:'domcontentloaded'});await reloaded.waitForFunction(()=>window.__ready===true,null,{timeout:60000});
   report.checks.reopen=await reloaded.evaluate(async()=>{const {SessionStore}=await import('./session-store.js');const {SessionInputJournal}=await import('./session-inputs.js');const {REPLAY_PROBE_DATABASE,REPLAY_PROBE_ID}=await import('./session-replay-probe.js');const store=await SessionStore.open(REPLAY_PROBE_DATABASE);try{const recording=await SessionInputJournal.readExact(store,REPLAY_PROBE_ID);return {events:recording.receipts.length,witnesses:recording.witnesses.length,end:recording.manifest.end.transition};}finally{await store.close();}});
   assert.equal(report.checks.reopen.events,data.events);assert.equal(report.checks.reopen.end,data.end.transition);
+  report.checks.durableTamper=await reloaded.evaluate(async()=>{
+   const {SessionStore}=await import('./session-store.js');
+   const {SessionInputJournal}=await import('./session-inputs.js');
+   const {REPLAY_PROBE_DATABASE:database,REPLAY_PROBE_ID:id}=await import('./session-replay-probe.js');
+   const db=await new Promise((resolve,reject)=>{const request=indexedDB.open(database);request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+   const get=(table,key)=>new Promise((resolve,reject)=>{const tx=db.transaction(table,'readonly'),request=tx.objectStore(table).get(key);request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+   const change=(table,operation,key,value)=>new Promise((resolve,reject)=>{const tx=db.transaction(table,'readwrite');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);if(operation==='delete')tx.objectStore(table).delete(key);else tx.objectStore(table).put(value,key);});
+   const read=async()=>{const store=await SessionStore.open(database);try{const result=await SessionInputJournal.readExact(store,id);return {accepted:true,events:result.receipts.length};}catch(error){return {accepted:false,code:error.code??null,message:error.message};}finally{await store.close();}};
+   try{
+    const session=await get('sessions',id),manifest=JSON.parse(new TextDecoder().decode(session.manifest));
+    const object=await get('objects',manifest.events[0].content.sha256),chunkKey=object.parts[0].sha256;
+    const originalChunk=await get('chunks',chunkKey);
+    await change('chunks','delete',chunkKey);
+    const missingChunk=await read();
+    await change('chunks','put',chunkKey,originalChunk);
+    const bytes=new Uint8Array(await originalChunk.arrayBuffer());bytes[0]^=1;
+    await change('chunks','put',chunkKey,new Blob([bytes]));
+    const changedDigest=await read();
+    await change('chunks','put',chunkKey,originalChunk);
+    await change('sessions','put',id,{...session,revision:'0'});
+    const changedRevision=await read();
+    await change('sessions','put',id,session);
+    const abortedTransaction=await new Promise(resolve=>{const tx=db.transaction('sessions','readwrite');tx.onabort=()=>resolve('aborted');tx.onerror=event=>event.preventDefault();tx.objectStore('sessions').put({...session,revision:'0'},id);tx.abort();});
+    const restored=await read();
+    return {missingChunk,changedDigest,changedRevision,abortedTransaction,restored};
+   }finally{db.close();}
+  });
+  for(const name of ['missingChunk','changedDigest','changedRevision'])assert.equal(report.checks.durableTamper[name].accepted,false,name);
+  assert.equal(report.checks.durableTamper.abortedTransaction,'aborted');
+  assert.deepEqual(report.checks.durableTamper.restored,{accepted:true,events:data.events});
  }finally{await reloaded.close();}
  report.status='passed';
 }catch(error){report.status='failed';report.failure={message:error.message,stack:error.stack};process.exitCode=1;}

@@ -37,9 +37,33 @@ export async function runSessionReplayProbe({onProgress}={}){
  const fixture=await (await fetch(new URL('./session-software-fixture.json',import.meta.url))).json();
  const make=replay=>WasmLinux.newExactSession(kernel,manifest,bootargs,()=>{},replay);
  const original=make(false);let rows=[], witnesses=[];
+ const abiChecks=[];
+ const refuse=(name,instance,call,pattern)=>{
+  const before=hex(instance.exactSessionWitness(false).digest);
+  let message='';try{call();}catch(error){message=String(error);}
+  need(pattern.test(message),`${name} refusal: ${message}`);
+  need(hex(instance.exactSessionWitness(false).digest)===before,`${name} changed the complete frame`);
+  abiChecks.push({name,message});
+ };
  let initial, final, output;
  try{
   initial=original.exactSessionWitness(true);witnesses.push(initial);
+  refuse('provider-profile',original,()=>WasmLinux.newExactSession(kernel,manifest,bootargs+' invalid',()=>{},true),/software profile mismatch/);
+  refuse('network-unknown-lease',original,()=>original.exactLeaseNetworkRequest('1'),/UnknownRequest/);
+  const emptyNetworkLease=original.exactLeaseNetworkRequest('');
+  try{
+   refuse('network-malformed-completion',original,()=>original.exactCompleteNetworkEvent(emptyNetworkLease,new Uint8Array([255])),/Payload/);
+   const foreign=make(false);
+   try{
+    const before=hex(original.exactSessionWitness(false).digest);
+    let message='';try{foreign.exactCompleteNetworkEvent(emptyNetworkLease,encodeNetworkEvent(3,{id:'1'}));}
+    catch(error){message=String(error);}
+    need(/StaleLease/.test(message)&&hex(original.exactSessionWitness(false).digest)===before,
+     'network-foreign-lease refusal: '+message);
+    abiChecks.push({name:'network-foreign-lease',message});
+   }finally{foreign.free();}
+  }
+  finally{emptyNetworkLease.free();}
   original.sendInput(new Uint8Array([120]));
   rows.push(...original.takeExactSessionDeliveries());
   const first=original.runChunk(64);need(!first.done,'original ended at first boundary');
@@ -74,12 +98,41 @@ export async function runSessionReplayProbe({onProgress}={}){
     const url=new URL(`chunks/${request.intent.content.sha256}.bin`,fixture.base_url).href;
     const response=await fetch(url);need(response.ok,'pinned base chunk fetch');
     const bytes=new Uint8Array(await response.arrayBuffer());
-    need(bytes.length===request.intent.content.length,'pinned base chunk length');
-    const digest=hex(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)));
-    need(digest===request.intent.content.sha256,'pinned base chunk hash');
-    const lease=original.exactLeaseDeviceRequest(request.id);
-    try{original.exactCompleteDeviceRequest(lease,0,0,bytes);}finally{lease.free();}
-    blockCompletions++;rows.push(...original.takeExactSessionDeliveries());
+   need(bytes.length===request.intent.content.length,'pinned base chunk length');
+   const digest=hex(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)));
+   need(digest===request.intent.content.sha256,'pinned base chunk hash');
+   // A pending block request is deliberately not a quiescent snapshot point. Compare the
+   // exact position, pending request inventory and delivered receipts here instead.
+   const boundary=()=>JSON.stringify({position:original.inputPosition(),requests:original.exactDeviceRequests()});
+   const refuseAtRequest=(name,call,pattern)=>{
+    const before=boundary();let message='';try{call();}catch(error){message=String(error);}
+    need(pattern.test(message)&&boundary()===before,`${name} refusal: ${message}`);
+    abiChecks.push({name,message});
+   };
+   refuseAtRequest('device-unknown-lease',()=>original.exactLeaseDeviceRequest(String(BigInt(request.id)+1n)),/UnknownRequest/);
+   const dropped=original.exactLeaseDeviceRequest(request.id),beforeDropped=boundary();
+   dropped.free();
+   need(boundary()===beforeDropped,'dropping a device lease changed its pending request');
+   abiChecks.push({name:'device-dropped-lease',message:'pending request unchanged'});
+   const lease=original.exactLeaseDeviceRequest(request.id);
+   try{
+    refuseAtRequest('device-invalid-status',()=>original.exactCompleteDeviceRequest(lease,3,0,bytes),/Payload/);
+    refuseAtRequest('device-invalid-frames',()=>original.exactCompleteDeviceRequest(lease,0,-1,bytes),/Payload/);
+    const foreign=make(false);
+    try{
+     const before=boundary();
+     let message='';try{foreign.exactCompleteDeviceRequest(lease,0,0,bytes);}catch(error){message=String(error);}
+     need(/StaleLease/.test(message)&&boundary()===before,
+      'device-foreign-lease refusal: '+message);
+     abiChecks.push({name:'device-foreign-lease',message});
+    }
+    finally{foreign.free();}
+    original.exactCompleteDeviceRequest(lease,0,0,bytes);
+    refuseAtRequest('device-duplicate-completion',()=>original.exactCompleteDeviceRequest(lease,0,0,bytes),/UnknownRequest|StaleLease/);
+   }finally{lease.free();}
+   const completed=original.takeExactSessionDeliveries();
+   need(completed.length===1,'one and only one block completion receipt');
+   blockCompletions++;rows.push(...completed);
    }
   }
   need(blockCompletions===1,'real Linux base-block completion reached '+JSON.stringify(progress));
@@ -109,7 +162,14 @@ export async function runSessionReplayProbe({onProgress}={}){
    if(await store.openSession(REPLAY_PROBE_ID))await store.deleteSession(REPLAY_PROBE_ID);
    writer=await store.writer(REPLAY_PROBE_ID);
    const journal=await SessionInputJournal.createExact(store,writer,configuration,initial.resume,disk,witnesses);
-   journal.stage(rows);await journal.flush();await journal.completeExact(final,witnesses);
+   journal.stage(rows);await journal.flush();
+   const beforeCommit=journal.end,altered=witnesses.map(w=>({...w,digest:w.digest.slice()}));
+   altered.at(-1).digest[0]^=1;
+   let changedWitness='';try{await journal.completeExact(final,altered);}catch(error){changedWitness=String(error);}
+   need(/exact immutable witness commitment/.test(changedWitness)&&same(journal.end,beforeCommit),
+    'altered witness refused before publication');
+   abiChecks.push({name:'immutable-witness-commitment',message:changedWitness});
+   await journal.completeExact(final,witnesses);
    await writer.release();writer=null;await store.close();store=null;
    store=await SessionStore.open(REPLAY_PROBE_DATABASE);
    const opened=await SessionInputJournal.readExact(store,REPLAY_PROBE_ID,{configuration});
@@ -125,7 +185,7 @@ export async function runSessionReplayProbe({onProgress}={}){
   output={begin:{transition:initial.transition,sequence:initial.sequence},end:{transition:final.transition,sequence:final.sequence},
    digest:hex(final.digest),events:rows.length,eventKinds:rows.map(r=>r.kind),
    uartTimeout:{pending:pendingUart,latched:timedUart},
-   blockCompletions,networkCompletions,durable:{database:REPLAY_PROBE_DATABASE,id:REPLAY_PROBE_ID},replays:[]};
+   blockCompletions,networkCompletions,abiChecks,durable:{database:REPLAY_PROBE_DATABASE,id:REPLAY_PROBE_ID},replays:[]};
   onProgress?.('Replaying the saved session on the interpreter and JIT');
   const liveFetch=globalThis.fetch;
   globalThis.fetch=()=>{throw Error('exact replay attempted live fetch');};

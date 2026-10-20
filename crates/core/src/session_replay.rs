@@ -857,6 +857,7 @@ impl ReplayDriver {
 mod admission_tests {
     use super::*;
     use crate::session_clock::sources::{ObservationKind, ObservationValue, SourcePolicy};
+    use sha2::{Digest, Sha256};
 
     fn policy() -> SourcePolicy {
         SourcePolicy {
@@ -991,5 +992,101 @@ mod admission_tests {
         assert_eq!(failure.event_index, MAX_EVENTS);
         assert_eq!(refused.first_failure(), Some(&failure));
         assert_eq!(refused.source_chunk_index, 0);
+    }
+
+    #[test]
+    fn actual_extra_and_both_misordered_receipts_name_the_first_coordinate() {
+        let fixture = || {
+            let mut machine = Machine::new(1 << 20);
+            machine.enable_clint(1);
+            let base = crate::bus::mmap::DRAM_BASE;
+            machine
+                .bus_mut()
+                .write_ram_slice(base, &[0x93, 0x80, 0x10, 0x00, 0x93, 0x80, 0x10, 0x00])
+                .unwrap();
+            machine.hart_mut().regs.pc = base;
+            machine.start_session_clock(1).unwrap();
+            machine
+        };
+        let position = |transition, retired, ordinal, sequence| SessionPosition {
+            transition,
+            retired,
+            phase: SessionPhase::Before,
+            ordinal,
+            sequence,
+        };
+        for (label, expected_at, actual_at) in [
+            ("extra", None, 0),
+            ("actual-earlier", Some(1), 0),
+            ("expected-earlier", Some(0), 1),
+        ] {
+            let mut original = fixture();
+            original
+                .start_session_sources(original.source_policy(), None)
+                .unwrap();
+            let begin = position(0, 0, 0, 0);
+            let initial_resume = original.save_session_resume().unwrap();
+            let first = StateWitness {
+                position: begin,
+                resume_sha256: Sha256::digest(&initial_resume).into(),
+            };
+            let end = if expected_at.is_some() {
+                position(2, 2, 0, 1)
+            } else {
+                begin
+            };
+            let events = expected_at.map_or_else(Vec::new, |at| {
+                vec![SessionDelivery {
+                    position: position(at, at, 1, 1),
+                    ticket: 0,
+                    effect: SessionEffect::ExternalPending(false),
+                    host_result: None,
+                }]
+            });
+            let witnesses = if end == begin {
+                vec![first]
+            } else {
+                vec![
+                    first,
+                    StateWitness {
+                        position: end,
+                        resume_sha256: [0; 32],
+                    },
+                ]
+            };
+            let plan = ReplayPlan {
+                begin,
+                end,
+                initial_resume,
+                events,
+                witnesses,
+            };
+            plan.validate().unwrap();
+            let mut machine = fixture();
+            let mut driver = ReplayDriver::start(&mut machine, plan).unwrap();
+            if actual_at == 1 {
+                assert_eq!(
+                    machine.run_session_until(1, 1).unwrap(),
+                    RunOutcome::MaxInstrs
+                );
+            }
+            machine
+                .stage_recorded_session_effect(actual_at, SessionEffect::ExternalPending(false))
+                .unwrap();
+            machine.deliver_recorded_session_boundary().unwrap();
+            let error = driver.compare_deliveries(&mut machine).unwrap_err();
+            assert_eq!(
+                error.reason,
+                if expected_at.is_some() {
+                    ReplayReason::MisorderedEvent
+                } else {
+                    ReplayReason::ExtraEvent
+                },
+                "{label}"
+            );
+            assert_eq!(error.position, position(0, 0, 1, 1), "{label}");
+            assert_eq!(error.event_index, 0, "{label}");
+            assert_eq!(driver.first_failure(), Some(&error), "{label}");
+        }
     }
 }

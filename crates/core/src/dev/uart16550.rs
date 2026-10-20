@@ -552,6 +552,22 @@ mod tests {
         assert!(!u.irq_level(), "FIFO empty → line low");
     }
 
+    #[test]
+    fn oversized_compiled_span_saturates_timeout_counter() {
+        let mut u = Uart16550::new();
+        fifo_on(&mut u, 2);
+        u.write_reg(1, IER_ERBFI);
+        u.push_input(b"x");
+        u.tick_by(u64::MAX);
+        assert_eq!(u.idle_ticks, u32::MAX);
+        assert!(u.timeout_latched);
+        assert_eq!(u.read_reg(2) & 0x0f, IIR_CHAR_TIMEOUT);
+        u.tick_by(1);
+        assert_eq!(u.idle_ticks, u32::MAX);
+        assert_eq!(u.read_reg(0), b'x');
+        assert_eq!(u.idle_ticks, 0);
+    }
+
     /// Overrun: 16-byte cap, new bytes dropped, FIFO contents intact, OE cleared by LSR read.
     #[test]
     fn overrun_caps_fifo_and_preserves_contents() {

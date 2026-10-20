@@ -3,6 +3,7 @@ use sha2::{Digest, Sha256};
 use std::{cell::Cell, rc::Rc};
 use wasm_vm_core::{
     Machine, RunOutcome,
+    block::MemBackend,
     bus::{Bus, mmap::DRAM_BASE as BASE},
     dev::{
         rtc::WallClock,
@@ -13,9 +14,10 @@ use wasm_vm_core::{
         sources::{ObservationKind, ObservationRecord, ObservationTape, ObservationValue},
     },
     session_devices::{
-        BaseDisk, CompletionStatus, DeviceCompletion, DeviceError, DeviceIntent, PayloadRef,
+        BaseDisk, CompletionStatus, DeviceCompletion, DeviceError, DeviceIntent, DeviceRequest,
+        PayloadRef,
     },
-    session_network::{LinkStatus, NetworkError, NetworkEvent, SendResult},
+    session_network::{LinkStatus, NetworkError, NetworkEvent, NetworkRequest, SendResult},
     session_replay::{ReplayDriver, ReplayPlan, ReplayReason, ReplayStatus, StateWitness},
 };
 use wasm_vm_storage::ImageManifest;
@@ -193,6 +195,98 @@ fn witness(machine: &mut Machine) -> StateWitness {
         position: machine.session_position().unwrap(),
         resume_sha256: Sha256::digest(machine.save_session_resume().unwrap()).into(),
     }
+}
+
+#[test]
+fn recorded_external_pending_is_applied_once_at_its_boundary() {
+    let mut original = fixture();
+    original
+        .start_session_sources(original.source_policy(), None)
+        .unwrap();
+    let begin = original.session_position().unwrap();
+    let initial_resume = original.save_session_resume().unwrap();
+    let first = witness(&mut original);
+    original
+        .stage_session_effect(0, SessionEffect::ExternalPending(true))
+        .unwrap();
+    original.deliver_session_boundary().unwrap();
+    let events = original.take_session_deliveries().unwrap();
+    assert_eq!(events.len(), 1);
+    let end = original.session_position().unwrap();
+    let final_resume = original.save_session_resume().unwrap();
+    let plan = ReplayPlan {
+        begin,
+        end,
+        initial_resume,
+        events,
+        witnesses: vec![first, witness(&mut original)],
+    };
+    plan.validate().unwrap();
+    let mut replay = fixture();
+    let mut driver = ReplayDriver::start(&mut replay, plan).unwrap();
+    driver
+        .run_to_end(&mut replay, 1, |_, _, _| unreachable!())
+        .unwrap();
+    assert_eq!(driver.status(), ReplayStatus::Completed);
+    assert_eq!(driver.event_cursor(), 1);
+    assert_eq!(replay.save_session_resume().unwrap(), final_resume);
+}
+
+#[test]
+fn externally_skipped_receipt_cannot_be_hidden_at_the_declared_end() {
+    let mut original = fixture();
+    original
+        .start_session_sources(original.source_policy(), None)
+        .unwrap();
+    let begin = original.session_position().unwrap();
+    let initial_resume = original.save_session_resume().unwrap();
+    let first = witness(&mut original);
+    let expected = SessionPosition {
+        ordinal: 1,
+        sequence: 1,
+        ..begin
+    };
+    let end = SessionPosition {
+        transition: 1,
+        retired: 1,
+        ordinal: 0,
+        sequence: 1,
+        ..begin
+    };
+    let plan = ReplayPlan {
+        begin,
+        end,
+        initial_resume,
+        events: vec![SessionDelivery {
+            position: expected,
+            ticket: 0,
+            effect: SessionEffect::ExternalPending(false),
+            host_result: None,
+        }],
+        witnesses: vec![
+            first,
+            StateWitness {
+                position: end,
+                resume_sha256: [0; 32],
+            },
+        ],
+    };
+    plan.validate().unwrap();
+    let mut replay = fixture();
+    let mut driver = ReplayDriver::start(&mut replay, plan).unwrap();
+    // Bypass the driver using a public guest runner. The replay limit still fences
+    // instruction execution, but the missing sequence must stop completion.
+    assert_eq!(
+        replay.run_session_until(1, 1).unwrap(),
+        RunOutcome::MaxInstrs
+    );
+    let failure = driver
+        .run_to_end(&mut replay, 1, |_, _, _| unreachable!())
+        .unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::Exhausted);
+    assert_eq!(failure.position.transition, 1);
+    assert_eq!(failure.event_index, 0);
+    assert_eq!(failure.detail, "end coordinate differs");
 }
 
 fn alpine_base() -> BaseDisk {
@@ -506,6 +600,111 @@ fn replay_refuses_live_or_malformed_adapter_events_at_the_recorded_coordinate() 
 }
 
 #[test]
+fn decoded_adapter_intent_and_ram_failures_leave_the_first_frame_unchanged() {
+    let (mut ram_plan, _) = record();
+    ram_plan.events[0].effect = SessionEffect::WriteRam {
+        address: BASE + (1 << 20),
+        bytes: vec![0x5a],
+    };
+    ram_plan.validate().unwrap();
+    let mut ram_replay = fixture();
+    let mut ram_driver = ReplayDriver::start(&mut ram_replay, ram_plan).unwrap();
+    let before = ram_replay.save_session_resume().unwrap();
+    let error = ram_driver
+        .run_to_end(&mut ram_replay, 7, |_, _, _| unreachable!())
+        .unwrap_err();
+    assert_eq!(
+        (error.reason, error.event_index),
+        (ReplayReason::Adapter, 0)
+    );
+    assert!(error.detail.starts_with("RAM delivery:"));
+    assert_eq!(ram_replay.save_session_resume().unwrap(), before);
+
+    let no_request_device = DeviceCompletion {
+        request: DeviceRequest {
+            id: 1,
+            intent: DeviceIntent::Agent {
+                generation: 1,
+                maximum: 1,
+            },
+        },
+        status: CompletionStatus::Failed,
+        frames: 0,
+        bytes: vec![],
+    };
+    let no_request_network = NetworkEvent::Send {
+        request: NetworkRequest {
+            id: 1,
+            frame: NETWORK_HEADER.to_vec(),
+        },
+        result: SendResult::Failed,
+    };
+    for (mut original, mut replay, channel, bytes, detail) in [
+        (
+            device_fixture(true),
+            device_fixture(true),
+            wasm_vm_core::session_devices::CHANNEL,
+            no_request_device.encode().unwrap(),
+            "device intent:",
+        ),
+        (
+            network_fixture(true),
+            network_fixture(true),
+            wasm_vm_core::session_network::CHANNEL,
+            no_request_network.encode().unwrap(),
+            "network intent:",
+        ),
+    ] {
+        original
+            .start_session_sources(original.source_policy(), None)
+            .unwrap();
+        let initial_resume = original.save_session_resume().unwrap();
+        let first = witness(&mut original);
+        let end = SessionPosition {
+            transition: 1,
+            retired: 1,
+            sequence: 1,
+            ..SessionPosition::default()
+        };
+        let plan = ReplayPlan {
+            begin: first.position,
+            end,
+            initial_resume,
+            events: vec![SessionDelivery {
+                position: SessionPosition {
+                    ordinal: 1,
+                    sequence: 1,
+                    ..first.position
+                },
+                ticket: 1,
+                effect: SessionEffect::HostInput { channel, bytes },
+                host_result: None,
+            }],
+            witnesses: vec![
+                first,
+                StateWitness {
+                    position: end,
+                    resume_sha256: [0; 32],
+                },
+            ],
+        };
+        plan.validate().unwrap();
+        let mut driver = ReplayDriver::start(&mut replay, plan).unwrap();
+        let before = replay.save_session_resume().unwrap();
+        let error = driver
+            .run_to_end(&mut replay, 7, |_, _, _| unreachable!())
+            .unwrap_err();
+        assert_eq!(
+            (error.reason, error.event_index),
+            (ReplayReason::Adapter, 0)
+        );
+        assert!(error.detail.starts_with(detail), "{error:?}");
+        assert_eq!(replay.save_session_resume().unwrap(), before);
+        assert_eq!(driver.first_failure(), Some(&error));
+    }
+}
+
+#[test]
 fn zero_quantum_and_nonfresh_start_fail_without_guest_progress() {
     let (plan, _) = record();
     let mut nonfresh = fixture();
@@ -533,6 +732,84 @@ fn zero_quantum_and_nonfresh_start_fail_without_guest_progress() {
             .unwrap_err(),
         failure
     );
+}
+
+#[test]
+fn start_refuses_active_sources_bad_restore_wrong_coordinate_and_live_adapters() {
+    let (recorded, _) = record();
+    let mut active_sources = fixture();
+    active_sources
+        .start_session_sources(active_sources.source_policy(), None)
+        .unwrap();
+    let error = ReplayDriver::start(&mut active_sources, recorded.clone())
+        .err()
+        .unwrap();
+    assert_eq!(error.reason, ReplayReason::InitialCheckpoint);
+    assert_eq!(error.detail, "replay machine is not fresh");
+    assert_eq!(active_sources.session_position().unwrap().transition, 0);
+
+    let mut malformed = recorded.clone();
+    malformed.initial_resume = vec![1];
+    let mut replay = fixture();
+    let error = ReplayDriver::start(&mut replay, malformed).err().unwrap();
+    assert_eq!(error.reason, ReplayReason::InitialCheckpoint);
+    assert!(error.detail.contains("initial restore:"));
+    assert_eq!(replay.session_position().unwrap().transition, 0);
+
+    let begin = SessionPosition {
+        transition: 1,
+        retired: 1,
+        ..SessionPosition::default()
+    };
+    let wrong_coordinate = ReplayPlan {
+        begin,
+        end: begin,
+        initial_resume: recorded.initial_resume,
+        events: vec![],
+        witnesses: vec![StateWitness {
+            position: begin,
+            resume_sha256: [0; 32],
+        }],
+    };
+    wrong_coordinate.validate().unwrap();
+    let mut replay = fixture();
+    let error = ReplayDriver::start(&mut replay, wrong_coordinate)
+        .err()
+        .unwrap();
+    assert_eq!(error.reason, ReplayReason::InitialCheckpoint);
+    assert_eq!(error.detail, "initial coordinate differs");
+    assert_eq!(replay.session_position().unwrap().transition, 0);
+
+    for (mut original, mut replay, expected) in [
+        (
+            device_fixture(false),
+            device_fixture(false),
+            "device adapter is live",
+        ),
+        (
+            network_fixture(false),
+            network_fixture(false),
+            "network adapter is live",
+        ),
+    ] {
+        original
+            .start_session_sources(original.source_policy(), None)
+            .unwrap();
+        let initial_resume = original.save_session_resume().unwrap();
+        let start = witness(&mut original);
+        let plan = ReplayPlan {
+            begin: start.position,
+            end: start.position,
+            initial_resume,
+            events: vec![],
+            witnesses: vec![start],
+        };
+        plan.validate().unwrap();
+        let error = ReplayDriver::start(&mut replay, plan).err().unwrap();
+        assert_eq!(error.reason, ReplayReason::InitialCheckpoint);
+        assert_eq!(error.detail, expected);
+        assert_eq!(replay.session_position().unwrap().transition, 0);
+    }
 }
 
 #[test]
@@ -874,6 +1151,54 @@ fn skipped_state_witness_reports_the_witness_coordinate_and_stays_poisoned() {
 }
 
 #[test]
+fn component_snapshot_failure_is_reported_at_the_exact_witness() {
+    let machine = || {
+        let mut machine = Machine::new(1 << 20);
+        machine.enable_clint(1);
+        machine.enable_plic();
+        machine.enable_virtio_slots(None);
+        machine.bus_mut().store32(BASE, 0x0010_8093).unwrap();
+        machine.hart_mut().regs.pc = BASE;
+        machine.start_session_clock(1).unwrap();
+        machine
+    };
+    let mut original = machine();
+    original
+        .start_session_sources(original.source_policy(), None)
+        .unwrap();
+    let initial_resume = original.save_session_resume().unwrap();
+    let first = witness(&mut original);
+    run_to(&mut original, 1, 1);
+    let last = witness(&mut original);
+    let plan = ReplayPlan {
+        begin: first.position,
+        end: last.position,
+        initial_resume,
+        events: vec![],
+        witnesses: vec![first, last],
+    };
+    plan.validate().unwrap();
+
+    let mut replay = machine();
+    let mut driver = ReplayDriver::start(&mut replay, plan).unwrap();
+    // An extra drive cannot be represented by the exact session resume format. Injecting
+    // it after admission makes the next witness serialization fail deterministically.
+    replay.enable_virtio_blk_at(1, Box::new(MemBackend::new_read_only(vec![0; 512 * 4])));
+    let failure = driver
+        .run_to_end(&mut replay, 1, |_, _, _| unreachable!())
+        .unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::Runtime);
+    assert_eq!(failure.position, last.position);
+    assert_eq!(failure.event_index, 0);
+    assert!(
+        failure
+            .detail
+            .contains("witness snapshot: BadComponentState")
+    );
+    assert_eq!(driver.first_failure(), Some(&failure));
+}
+
+#[test]
 fn malformed_order_and_exhaustion_are_rejected_before_guest_run() {
     let (mut plan, _) = record();
     plan.events.swap(0, 1);
@@ -985,6 +1310,51 @@ fn guest_rtc_entropy_observations_are_consumed_without_host_calls() {
         assert_eq!(failure.event_index, event_index);
         assert_eq!((time_calls.get(), entropy_calls.get()), (0, 0));
     }
+
+    let entropy_index = plan
+        .events
+        .iter()
+        .position(|event| {
+            matches!(&event.effect, SessionEffect::Observation(value)
+                if value.kind == ObservationKind::Entropy && value.status == 0)
+        })
+        .expect("fixture records a supplied entropy request");
+    let mut wrong_length = plan.clone();
+    let SessionEffect::Observation(value) = &mut wrong_length.events[entropy_index].effect else {
+        unreachable!()
+    };
+    value.requested += 1;
+    value.bytes.push(0);
+    wrong_length.validate().unwrap();
+    let (mut replay, _, _) = observed_fixture(true, false);
+    let mut driver = ReplayDriver::start(&mut replay, wrong_length).unwrap();
+    let failure = driver
+        .run_to_end(&mut replay, 19, |_, _, _| unreachable!())
+        .unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::EventPayload);
+    assert_eq!(failure.position, plan.events[entropy_index].position);
+    assert_eq!(failure.event_index, entropy_index);
+    assert!(failure.detail.contains("reason: Length"));
+
+    let mut unavailable = plan.clone();
+    let SessionEffect::Observation(value) = &mut unavailable.events[event_index].effect else {
+        unreachable!()
+    };
+    value.status = 1;
+    value.bytes.clear();
+    unavailable.validate().unwrap();
+    let (mut replay, time_calls, entropy_calls) = observed_fixture(true, false);
+    let mut driver = ReplayDriver::start(&mut replay, unavailable).unwrap();
+    let failure = driver
+        .run_to_end(&mut replay, 19, |_, _, _| unreachable!())
+        .unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::EventPayload);
+    assert_eq!(failure.position, first_observation);
+    // The unavailable observation itself is committed as a matching receipt; the
+    // terminal provider failure therefore names the next expected event index.
+    assert_eq!(failure.event_index, event_index + 1);
+    assert!(failure.detail.contains("reason: ProviderUnavailable"));
+    assert_eq!((time_calls.get(), entropy_calls.get()), (0, 0));
 
     let second_index = plan
         .events
