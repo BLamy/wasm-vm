@@ -3,7 +3,7 @@ id: E9-T14
 epic: 9
 title: Replay recorded sessions and detect the first divergence
 priority: 524.914
-status: evidence-needed
+status: in-progress
 depends_on: [E9-T05, E9-T10, E9-T11, E9-T12, E9-T13]
 estimate: S
 risk: high
@@ -612,3 +612,14 @@ VERDICT: needs-evidence
   assessment SHA-256
   `6f35abdf5b1a834a22e276014645aafd117fe1eece790d97e027b27e3fc53cbf`.
   Artifacts: `/Users/blamy/Documents/Codex/e9-t14-proof-cold-f216b07/verifier/`.
+
+### 2026-10-20 — worker — malformed browser receipt requires semantic repair
+
+While filling G13, a missing `outcome` property in the built Wasm replay ABI
+escaped as a JavaScript `TypeError: undefined is not iterable` from
+`js_sys::Array::from`. The exception crossed the active Rust borrow; freeing the
+machine then failed with `attempted to take ownership of Rust value while it was
+borrowed`. This is a runtime defect, so T14 returns to `in-progress` for a
+parser repair and a new high-risk exact-head proof. The failing browser harness
+receipt is `/Users/blamy/Documents/Codex/e9-t14-coverage-journal/report.json`,
+SHA-256 `24a81ed11885eab2a33115fe2a6144eda8661c774865f31d093b9baaf1636ead`.
