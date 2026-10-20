@@ -3,7 +3,7 @@ id: E9-T14
 epic: 9
 title: Replay recorded sessions and detect the first divergence
 priority: 524.914
-status: in-progress
+status: implemented
 depends_on: [E9-T05, E9-T10, E9-T11, E9-T12, E9-T13]
 estimate: S
 risk: high
@@ -528,3 +528,28 @@ real native Wasmtime quanta 1/7/173/4096; retained device/network lease attacks;
 11/11 exact-head product replay tests with `trace,virgl-renderer`; assertion
 sabotage; receipt/ZIP/public-asset authentication. Complete artifacts:
 `/Users/blamy/Documents/Codex/e9-t14-proof-cold-9d4b3905/verifier/`.
+
+### 2026-10-20 — worker — repaired native and browser replay, awaiting independent verifier
+
+VERDICT CLAIM: frozen product source `f216b07bb2ee5419b462e5821594fe991d14785a`
+repairs the prior real-Wasmtime quantum-dependent UART timeout divergence.
+At the pending-byte witness, the UART has one byte, `idleTicks=320`, and no
+timeout latch; at the later witness, it has one byte, `idleTicks=1024`, and a
+latched timeout. The real native JIT complete-resume-frame test exercises
+quanta 1, 7, 173, and 4096 with compiled retirements; its guest trace has
+4,096 instructions and the matching complete-frame digest
+`7d3baa054f978ddb541a6263d950c50c501bfeaf8488d5fcad683d0783c97814`.
+The built and production browser each show `127 passed, 0 failed`, 47 recorded
+events, six selected witnesses, durable reopen, matching interpreter/JIT
+complete-session digests within the run, actual JIT execution exceeding 12.8
+million retired instructions, and precise changed-input, observation-ticket,
+observation-kind, and omitted-DMA divergences. A fresh adversarial verifier
+must inspect the source diff, authenticate these receipts, challenge the claim,
+and resolve the prior G01–G18 coverage ledger before setting `verified`.
+
+Evidence of record:
+
+- Exact-head cold acceptance: `E9_REPLAY_EVIDENCE_DIR=/Users/blamy/Documents/Codex/e9-t14-proof-cold-f216b07-retry make verify-E9-T14` from fresh scrubbed checkout `/Users/blamy/Documents/Codex/e9-t14-cold-f216b07`. [Receipt](/Users/blamy/Documents/Codex/e9-t14-proof-cold-f216b07-retry/report.json) SHA-256 `ec8a797646197f0e2567cc94831f457ab80697dab230c3f44873b7ec6c0c397d`, `status: passed`, source tree `9ddcc4c1d46500092a786e360cfb8a5a8f05fb44`; all 29 inventoried files match their digests and the checkout ended clean. `make ci` alone exits 2 on the same five pre-existing `zicsr-stub` dead-code diagnostics reproduced on untouched parent `c52ab64`; the runner verifies this exact baseline exception, then runs the native workspace, wasm workspace, RISC-V suite, determinism/hazard and float gates, real-JIT replay, performance, cross-target, wasm Clippy, web build, documentation/contract, browser journal bounds, and built browser separately with exit 0. The isolated baseline emitter benchmark passed all 12 samples.
+- [Guest instruction trace](/Users/blamy/Documents/Codex/e9-t14-proof-cold-f216b07-retry/guest-trace/guest-instructions.trace) SHA-256 `f1b4ecb90f66224ef2e61dd73d8367f11f0080b5acd8c3e1fce5d37bc19d4a81`, 4,096 lines; [complete resume digest](/Users/blamy/Documents/Codex/e9-t14-proof-cold-f216b07-retry/guest-trace/complete-resume.sha256) contains the raw 32-byte value above. [Built-browser report](/Users/blamy/Documents/Codex/e9-t14-proof-cold-f216b07-retry/browser/report.json) SHA-256 `2decc8ac793259edd95bc1145a1357f2fca4704b03fced687db8ad5a70a4926c`, zero console errors, six witnesses, JIT `12,881,132` retired, within-run digest `f0f6fb429a51da667820b8cc81d657a14bbf6d51a5589f764469c26fc4d9bba5`. [Journal bounds](/Users/blamy/Documents/Codex/e9-t14-proof-cold-f216b07-retry/journal-bounds/report.json) SHA-256 `318616270fce1f40634abe4f6ab6138a4738e567636bad354298df4602b14522`, 43 checks passed.
+- Production `https://wasm-vm.pages.dev/` serves Cloudflare Pages deployment `ee3d35d6` built from this source. `bash tools/deploy-cloudflare.sh` staged the full tree and verified local manifests, but its public R2 rootfs probe hit the script's 30-second speed timeout; Wrangler's 300 MiB limit then prevented its fallback upload. The [standard deploy log](/Users/blamy/Documents/Codex/e9-t14-deploy-f216b07.log) preserves that failure. After independently stream-hashing the largest R2 rootfs and other core objects against their manifests, `npx --yes wrangler pages deploy web/dist --project-name wasm-vm --branch main --commit-dirty=true` published the already-staged tree ([publish log](/Users/blamy/Documents/Codex/e9-t14-pages-publish-f216b07.log), SHA-256 `cb149db049e05ca47d62cd78a5d2f5e2263464a16827a05c2ed4b0ede42fa0ee`). The complete R2-routed object receipt below was collected after publication. [Public asset receipt](/Users/blamy/Documents/Codex/e9-t14-public-assets-f216b07.json) SHA-256 `1d9a3cb90a3948e144ad747446d7de41b0a9ca6fcc398f89ac73f88e5c524f9c` matches seven published app/JS/wasm assets byte-for-byte to the tested build. [Public Playwright report](/Users/blamy/Documents/Codex/e9-t14-public-browser-f216b07-final/report.json) SHA-256 `c08980a4342b932ddfdca14c5aecec94c36baab33a3ad48b6d747204ab380183`, `127/0`, 47 events, six witnesses, JIT `12,879,847` retired, matching interpreter/JIT digest `e1f5d8862a82ff8316c72e3dc7f82cf8a7b031b4ca9f2add93903c193d2b1811`, zero errors except the explicitly allowed `/favicon.ico` 404. Its screenshot and Playwright trace are alongside the report; the first strict-console failure remains archived for inspection.
+- [R2 public object receipt](/Users/blamy/Documents/Codex/e9-t14-deploy-proof-f216b07/r2-public-exact.json) SHA-256 `97f7e6e7b07851a40db51159b35496eb0ddc9cea32edce67d97831781ef34240`, `status: passed`, independently streamed 1,056,405,181 bytes across all seven R2-routed content-addressed release objects and matched every byte count and manifest SHA-256.
