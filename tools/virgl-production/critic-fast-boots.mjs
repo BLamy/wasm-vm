@@ -9,6 +9,7 @@ import {expectedPublishedSource} from './published-source.mjs';
 import {attachIsolatedInput} from './isolated-input.mjs';
 import {verifyGpuSessionDesktop} from './e9-gpu-session-desktop.mjs';
 import {fetchPinnedChunk} from './pinned-chunk.mjs';
+import {createSessionEvidenceArchive} from './e9-gpu-session-evidence.mjs';
 import fs from 'node:fs/promises';
 import {createReadStream,appendFileSync} from 'node:fs';
 import path from 'node:path';
@@ -87,6 +88,8 @@ if(gpuTrace)await fs.writeFile(path.join(output,'gpu.ndjson'),'');
 const report = {status:'running', scope:factoryGuardOnly?'read-only native factory process/client exclusion; no application interaction or repeat-latency claim':restoredApplications?'native application launches after a fresh factory restoration; repeat timing is verified separately':swapCheckpoint?'separate swapped-page checkpoint fixture, not factory or publication timing':'actual production UI fast boots and repeat launches',
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
   webRoot:web, releaseCache, publicAssetOrigin:publicAssetOrigin.href, saveOnRepeat, gpuTrace, gpuTimingOnly, remoteUrl, warmGpu, applicationContinuation, restoredApplications, omarchyPersist, swapCheckpointMode:swapCheckpoint, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
+const sessionArchive=sessionHistory?await createSessionEvidenceArchive(output,report.head):null;
+let sessionTraceStopped=false;
 if(applicationComponent)report.applicationComponent={name:applicationComponent,scope:'Only missing native Writer/Node/npm/wallpaper and final desktop proof; not Chromium/SVG or publication timing.'};
 for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs','critic-canvas-observation.mjs','isolated-input.mjs','isolated-input-worker.mjs','pinned-chunk.mjs']){
   const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
@@ -152,6 +155,7 @@ if(sessionHistory){
   report.harnessHashes[filename]=hash(bytes);await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
 }
 let browser, server, activePage, activeInputDriver, phase = 'inventory';
+if(sessionHistory){const filename='e9-gpu-session-evidence.mjs',bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));report.harnessHashes[filename]=hash(bytes);await fs.writeFile(path.join(output,'executed-harness',filename),bytes);}
 const sourcePaths = ['index.html','main.js','loader.js','linux-worker.js','linux-worker-protocol.js',
   'linux-worker-host.js','pkg/wasm_vm_wasm.js','pkg/wasm_vm_wasm_bg.wasm','src/sink/presentation.js',
   'artifacts.json','artifacts-alpine.json','artifacts-node-alpine.json','artifacts-omarchy.json'];
@@ -288,6 +292,7 @@ if (!remoteUrl) server=createServer(async (request,response)=>{
   const pathname=decodeURIComponent(new URL(request.url,'http://localhost').pathname);
   const record={phase,method:request.method,pathname,time:Date.now()}; report.requests.push(record);
   try {
+    if(sessionArchive&&await sessionArchive.handle(request,response,record,pathname))return;
     if(pathname==='/favicon.ico'){response.writeHead(204).end();record.status=204;return;}
     if(applicationProofAssets.has(pathname)){
       const bytes=applicationProofAssets.get(pathname);Object.assign(record,{status:200,source:'frozen-application-proof',bytes:bytes.length,sha256:hash(bytes)});
@@ -595,6 +600,7 @@ try{
     // this local dynamic-artifact fixture excludes that cache layer. The real
     // published first/repeat checks continue to allow the production SW.
     const context=await browser.newContext({viewport:{width:1280,height:850},serviceWorkers:swapCheckpoint?'block':'allow'});
+    if(sessionHistory)await context.tracing.start({screenshots:true,snapshots:true,sources:true});
     await context.addInitScript(observeOriginalWorker);
     const page=activePage=await context.newPage();
     if(guest==='omarchy'&&isolatedInput){
@@ -744,7 +750,7 @@ try{
       assert.deepEqual(state.workerErrors,[]);
       assert.deepEqual(pageErrors,[],phase+' browser errors');
       if(sessionHistory){
-        report.sessionHistory=await verifyGpuSessionDesktop(page,guestCommand,output);
+        report.sessionHistory=await verifyGpuSessionDesktop(page,guestCommand,output,sessionArchive);
         assert.equal(report.sessionHistory.status,'passed');
         assert.deepEqual(pageErrors,[],phase+' browser errors after historical restore');
         report.phases.push({phase,guest,round,url,restoredMs,result,state,sessionHistory:report.sessionHistory});
@@ -958,6 +964,7 @@ try{
       report.inputDrivers.at(-1).closed=state;
       assert.deepEqual(state,{heldKeys:[],heldButtons:[]},'isolated input driver finishes without held input');
     }
+    if(sessionHistory){await context.tracing.stop({path:path.join(output,'browser-trace.zip')});sessionTraceStopped=true;report.playwrightTrace='browser-trace.zip';}
     await context.close();activePage=null;
     (report.browserErrors??=[]).push({guest,errors:[...pageErrors]});
     assert.deepEqual(pageErrors,[],guest+' complete-context page/console errors');
@@ -980,7 +987,9 @@ try{
     try{report.inputDrivers.at(-1).failureCleanup=await activeInputDriver.dispose();}
     catch(error){report.errors.push('input driver cleanup: '+String(error));report.status='failed';process.exitCode=1;}
   }
+  if(sessionHistory&&!sessionTraceStopped&&activePage){try{await activePage.context().tracing.stop({path:path.join(output,'browser-trace.zip')});report.playwrightTrace='browser-trace.zip';}catch(error){report.traceFailure=String(error);}}
   await browser?.close();
+  await sessionArchive?.close();
   await factoryUpload?.file?.close();
   await gpuRecording;
   if(gpuTrace){

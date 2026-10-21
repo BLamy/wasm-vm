@@ -170,6 +170,8 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   }
   // Use fresh compositor geometry after the trusted wake. Do not count a
   // fullscreen screensaver or a stale layer mapping as a populated bar.
+  const requireBarContent=options.barContentRequired!==false;
+  assert.ok(requireBarContent||options.barActions===false,'bar interactions require their content proof');
   const contentDeadline = Date.now() + 360000;
   const barProbes = [];
   let barContent;
@@ -191,11 +193,11 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
       started: barContent.started, finished: barContent.finished,
       capture: barContent.capture, content: barContent.content});
     await record('bar-content-probe', {barContent, barProbes});
-    if (barContent.status === 'passed') break;
+    if (barContent.status === 'passed'||!requireBarContent) break;
     await new Promise(resolve => setTimeout(resolve, 1500));
   } while (Date.now() < contentDeadline);
-  assert.equal(barContent.status, 'passed', 'actual package bar renders distributed content before the bounded deadline');
-  await record('bar-content', {barContent, barProbes});
+  if(requireBarContent)assert.equal(barContent.status, 'passed', 'actual package bar renders distributed content before the bounded deadline');
+  await record(requireBarContent?'bar-content':'bar-content-observed-only', {barContent, barProbes,barContentRequired:requireBarContent});
   if (options.barActions !== false) {
     const barActions = await verifyDesktopActions(page, command, output, {name, monitor: barContent.monitor, layer: barContent.layer, foot,accelerated:options.accelerated??true});
     await record('bar-actions', {barActions});

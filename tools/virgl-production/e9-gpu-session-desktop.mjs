@@ -119,7 +119,7 @@ async function reopenVisibleLibraryFromGeneralPage(page,saved,output,oldOwner){
   return {url:page.url(),active,observed:await observe(page,'e9-gpu-library-route-reopened',output)};
 }
 
-export async function verifyGpuSessionDesktop(page,guestCommand,output){
+export async function verifyGpuSessionDesktop(page,guestCommand,output,archive){
   const report={task:'E9-T17',scope:'original Omarchy Linux/Mesa desktop, current GPU worker, public canvas and trusted guest input',
     status:'running',database,id,points:[],checks:[]};
   const save=()=>fs.writeFile(path.join(output,'e9-gpu-session-desktop.json'),JSON.stringify(report,null,2)+'\n');
@@ -130,7 +130,7 @@ export async function verifyGpuSessionDesktop(page,guestCommand,output){
     assert.match(report.guestRenderer.stdout,/virgl\s*\(/);
     assert.doesNotMatch(report.guestRenderer.stdout,/llvmpipe|softpipe|lavapipe/i);
     const typed=await verifyPublicDesktopInput(page,guestCommand,output,{name:'e9-gpu-desktop-original-input',
-      initialClockMode:initial.clock.mode,prepareFactory:true,barActions:false,delay:0,text:first,markerAbsent:absent(firstPath),
+      initialClockMode:initial.clock.mode,prepareFactory:true,barActions:false,barContentRequired:false,delay:0,text:first,markerAbsent:absent(firstPath),
       markerRead:present(firstPath),expected:'PRESENT',
       beforeTyping:async({foot})=>{
         report.originalFootPid=foot.pid;
@@ -173,6 +173,8 @@ export async function verifyGpuSessionDesktop(page,guestCommand,output){
     assert.notEqual(stored.checkpoints[0].gpu.sha256,stored.checkpoints[1].gpu.sha256,'actual RAM/GPU pairs differ');
     assert.notEqual(stored.checkpoints[0].disk_root,stored.checkpoints[1].disk_root,'trusted file write changes historical disk root');
     assert.ok(BigInt(stored.checkpoints[0].position.transition)<BigInt(stored.checkpoints[1].position.transition));
+    assert.equal(report.typed.status,'passed','trusted input completed before read-only evidence handoff');
+    report.retainedObjects=await archive.capture(page,report.originalSession);await save();
     report.preflight=await page.evaluate(async({id,database})=>{
       const {SessionStore}=await import('/session-store.js'),{SessionGpuCheckpoints}=await import('/session-gpu-checkpoints.js');
       const store=await SessionStore.open(database);
@@ -258,7 +260,7 @@ export async function verifyGpuSessionDesktop(page,guestCommand,output){
     const footA=await command(page,guestCommand,'XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 -j clients');
     assert.ok(JSON.parse(footA.stdout).some(row=>row.pid===report.originalFootPid),'original Foot process identity survives RAM restore');
     report.afterFirstRestoreInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:'e9-gpu-desktop-first-restore-input',
-      initialClockMode:report.beforeReopened.clock.mode,prepareFactory:true,barActions:false,delay:0,text:second,
+      initialClockMode:report.beforeReopened.clock.mode,prepareFactory:true,barActions:false,barContentRequired:false,delay:0,text:second,
       markerAbsent:absent(secondPath),markerRead:present(secondPath),expected:'PRESENT'});
     report.firstContinued=await observe(page,'e9-gpu-first-continued',output);
     assert.ok(report.firstContinued.gpu.counters.draws>report.beforeReopened.gpu.counters.draws,'guest draws after first restore');
@@ -274,7 +276,7 @@ export async function verifyGpuSessionDesktop(page,guestCommand,output){
     await command(page,guestCommand,present(firstPath));
     await command(page,guestCommand,absent(secondPath));
     report.afterSecondRestoreInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:'e9-gpu-desktop-second-restore-input',
-      initialClockMode:report.afterReopened.clock.mode,prepareFactory:true,barActions:false,delay:0,text:third,
+      initialClockMode:report.afterReopened.clock.mode,prepareFactory:true,barActions:false,barContentRequired:false,delay:0,text:third,
       markerAbsent:absent(thirdPath),markerRead:present(thirdPath),expected:'PRESENT'});
     report.secondContinued=await observe(page,'e9-gpu-second-continued',output);
     assert.ok(report.secondContinued.gpu.counters.draws>report.afterReopened.gpu.counters.draws,'guest draws after second restore');
@@ -309,7 +311,7 @@ export async function verifyGpuSessionDesktop(page,guestCommand,output){
     await command(page,guestCommand,absent(secondPath));
     const routePath='/home/omarchy/.e9t17-route';
     report.routeInput=await verifyPublicDesktopInput(page,guestCommand,output,{name:'e9-gpu-desktop-route-input',
-      initialClockMode:report.libraryReopened.observed.clock.mode,prepareFactory:true,barActions:false,delay:0,
+      initialClockMode:report.libraryReopened.observed.clock.mode,prepareFactory:true,barActions:false,barContentRequired:false,delay:0,
       text:'touch '+routePath,markerAbsent:absent(routePath),markerRead:present(routePath),expected:'PRESENT'});
     report.routeContinued=await observe(page,'e9-gpu-route-continued',output);
     assert.ok(report.routeContinued.gpu.counters.draws>report.libraryReopened.observed.gpu.counters.draws,

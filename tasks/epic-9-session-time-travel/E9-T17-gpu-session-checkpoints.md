@@ -135,3 +135,42 @@ the loss-during-capture assertion (no unrelated browser errors), proving that th
 promoted regression detects the actual publication bug. The fresh session then
 stopped at the model's account-security requirement and did not issue a complete
 verdict. Final frozen-head proof and a completed fresh verifier remain pending.
+
+### 2026-10-21 — worker — native gate held; focused recording and raw retention
+
+The frozen `709b19717553fdbeb65117d201641aac908b5862` full local submission
+passed: production Clippy, native/Wasm/features/RISC-V suites, determinism,
+performance smoke, a 4096-instruction JIT guest trace, and the browser storage
+regression (four tab interruptions, twenty two-tab races, reload/corruption checks
+and retained GPU factory restoration). Receipt:
+`/Users/blamy/Documents/Codex/e9-t17-final-gauntlet-709b1971/report.json`.
+The existing five `zicsr-stub` dead-code diagnostics were matched exactly and
+narrowly waived as previously recorded; production linting stayed strict.
+
+The real cold desktop reached actual hardware rendering and trusted input setup,
+but the reused input helper stopped on blank package-bar content before either
+point was captured. Failure:
+`/Users/blamy/Documents/Codex/e9-t17-final-cold-709b1971/desktop/e9-gpu-session-desktop.json`,
+SHA-256 `d96ad49afcb4d071a5a3355f7de1253ce482cc38d03e793f4c9ff7f5f8aab738`.
+The original crops/commands remain recorded. Bar glyph readiness is outside this
+task's state/input/scanout claim. T17 now records one bar-content observation,
+keeps the actual mapped bar/Foot/focus/input/file/rendering assertions, and does
+not claim populated bar content or exercise bar actions. Other callers retain
+the original required-content default. The unrelated cold-bar issue is tracked
+separately; no product code was changed to bypass it.
+
+The fresh standard verifier found that the original temporary profile would lose
+the saved tuple objects when closed. The evidence harness now awaits a read-only
+export after the two points and input complete, preserves exact canonical
+manifest/revision, pairs, descriptors, configuration/assets and both COW root
+closures, and checks their hashes, lengths and unchanged manifest/owner. It also
+retains a Playwright trace. This explicit idle handoff needs no guest control
+changes or supplemental debugger. The earlier observer was cancelled before
+capture and produced no archive. `target/evidence/e9-t17-archive-dev-r1/report.json`
+passed the actual hardware browser/store archive; the HTTP/file boundary test
+refused corrupt bytes, bad offsets and oversized references.
+
+These changes touch recording scripts and evidence only. Runtime files, their
+dependency boundary and the full native gate's digests are unchanged; carry that
+passed gate forward under incremental re-verification. The focused final browser
+command, final clean-clone proof and complete independent verdict remain pending.

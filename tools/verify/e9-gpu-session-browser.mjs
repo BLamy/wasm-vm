@@ -2,6 +2,7 @@
 // Original supervisor-MMIO GPU guest: two local session keyframes, fresh workers and physical input.
 // The real Omarchy desktop is proved by the separate T17 desktop acceptance run.
 import assert from 'node:assert/strict';
+import {createSessionEvidenceArchive} from '../virgl-production/e9-gpu-session-evidence.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
@@ -27,7 +28,9 @@ const chunk=Buffer.alloc(262144),chunkHash=sha(chunk);
 const image=Buffer.from(JSON.stringify({version:1,image_len:chunk.length,chunk_size:chunk.length,layout:'split',chunks:[chunkHash]}));
 const html=Buffer.from('<!doctype html><meta charset="utf-8"><title>GPU session history</title><style>body{background:#10151c;color:#eee;font:14px monospace}canvas{width:384px;height:384px;image-rendering:pixelated;border:1px solid #789}</style><h1>GPU session history</h1><canvas id="display" width="64" height="64" tabindex="0"></canvas><pre id="serial"></pre>');
 const report={task:'E9-T17',scope:'original supervisor-MMIO guest, not Linux/Mesa',head:execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),status:'running',sources:[...sources.values()].map(s=>({path:s.name,sha256:sha(s.bytes),bytes:s.bytes.length})),kernelSha256:sha(kernel),imageSha256:sha(image),errors,served,states:[],captures:[]};
+const archive=await createSessionEvidenceArchive(output,report.head);
 const server=createServer(async(req,res)=>{try{
+  if(await archive.handle(req,res,{},new URL(req.url,'http://localhost').pathname))return;
   res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');res.setHeader('Cache-Control','no-store');
   const name=new URL(req.url,'http://localhost').pathname;let bytes,type='application/octet-stream';
   if(name==='/favicon.ico'){res.writeHead(204).end();return;}
@@ -135,6 +138,7 @@ try{
   assert.deepEqual(report.manifest.checkpoints.map(c=>c.id),['green','red']);
   assert.notEqual(report.manifest.checkpoints[0].gpu.sha256,report.manifest.checkpoints[1].gpu.sha256);
   report.fingerprintBeforeAttacks=await page.evaluate(()=>__gpuSessionFingerprint());
+  report.retainedObjects=await archive.capture(page,report.fingerprintBeforeAttacks,{database:'wasm-vm-sessions-v1-e9-gpu-probe',id:'accelerated-positions',checkpointIds:['green','red']});
   report.attacks=await page.evaluate(async()=>{
     const {SessionStore}=await import('/session-store.js');
     const {SessionGpuCheckpoints}=await import('/session-gpu-checkpoints.js');
@@ -286,5 +290,5 @@ try{
   report.served=served;report.finishedAt=new Date().toISOString();
   await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');
   if(page)await page.context().tracing.stop({path:path.join(output,'browser-trace.zip')}).catch(()=>{});
-  await browser?.close();server.closeAllConnections();await new Promise(resolve=>server.close(resolve));
+  await browser?.close();await archive.close();server.closeAllConnections();await new Promise(resolve=>server.close(resolve));
 }

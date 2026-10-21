@@ -2778,7 +2778,7 @@ verify-E9-T16:
 
 .PHONY: verify-E9-T17
 verify-E9-T17:
-	node --test tools/virgl-production/pinned-chunk.test.mjs
+	node --test tools/virgl-production/pinned-chunk.test.mjs tools/virgl-production/e9-gpu-session-evidence.test.mjs
 	$(MAKE) web-dist
 	node tools/verify/e9-gpu-session-demo.mjs "$${E9_GPU_DEMO_EVIDENCE_DIR:-target/evidence/e9-gpu-demo-final}"
 	node tools/verify/e9-gpu-session-browser.mjs "$${E9_GPU_SESSION_EVIDENCE_DIR:-target/evidence/e9-gpu-session-final}"
