@@ -95,3 +95,19 @@ Scope: the admitted 1 GiB pure ICount/64 profile only. This original MMIO fixtur
 - **SUITE.** Keep the committed Native pending/error/cache/owned1GiB and GPU metadata tests, real layered fixture/method/legacy/byte oracle, keyframe abort/depth rollover, completion overlap/abort/retry, and portable genuine GPU timeline controls in worker/cold verify targets. Retain expensive profiles and one-off probes as sealed evidence; no implementation fix or additional unrelated test is needed.
 
 Formal report: `target/evidence/e9-t18c-verifier/formal-verdict-383588509/report.md`, SHA256 `c3186c6520247f6f66e48991b4d72b1a04c476818a6cb56cd32384b1c41b6da8`; machine report `97051363374f4ff50558bbf7422073a8a858971ec4a8a0a2e5fd57ee3cad254e`; full evidence catalogue `e250825acc3c018324e812c065a784b6e86d0b7968e4ab94753a093a041af06e`. Predictions F1–F5 and prior J1–J8 are HELD. No open refutation or evidence gap remains for the admitted1GiB pure ICount/64 result boundary. This verdict does not qualify Linux/Mesa, full desktop performance, instant seek or cross-GPU pixel identity; T17 paced histories remain checkpoints-only and T22/T24 retain their work.
+
+### 2026-10-21 — worker — verified build published to the main URL
+
+Fresh verifier commit `c7106fca348195a051dfaba6ab7b76f9e1bfd2a7` marks this task verified. Publication metadata `49266afe3a7ddb58017084078d9736d078226c4e` updates the three GPU roadmap descriptions and removes the old blanket checkpoint-only statement; it changes no admitted runtime bytes. The ordinary pre-commit hook rebuilt and staged `web/dist`. Runtime67 stays `44020aa34d9df5e7124dde3b9fffea1ee33dc71050b3215be8667550ceb0ff88`, Wasm stays `56dfcb65a52146cee1e0e8030e57591bbc7c0100921d08522e6172f8c764956c`.
+
+`node tools/verify/e9-gpu-results-browser.mjs --output target/evidence/e9-t18c-publication-built --pending-status verified` passed127/0 with no unexpected console/HTTP errors and verified capability indicators. `bash tools/deploy-cloudflare.sh` completed production deployment `72de0392` to **https://wasm-vm.pages.dev/**; the retained log is `target/evidence/e9-t18c-publication-deploy.log`. The same browser command with `--url https://wasm-vm.pages.dev/ --output target/evidence/e9-t18c-publication-main` passed127/0 again and matched all11 sampled asset bytes. The independent all-runtime fetch at `target/evidence/e9-t18c-publication-assets-3/report.json` matched78 served files, including all67 admitted runtime files, the build identity, task/roadmap and existing case studies. Its first two attempts preserved the local Python3.9 client's inability to follow Cloudflare's ordinary308 HTML redirects; the retained corrected checker follows those redirects without weakening byte equality.
+
+Report SHA256:
+
+- `target/evidence/e9-t18c-publication-built/report.json`: `402a41170ef6ed52bc9fb7fce99cbd99253919fc004380c195517551b73450a4`.
+
+- `target/evidence/e9-t18c-publication-main/report.json`: `2d291f3c89082b7ee66210a52d0abbb639ef051d0d4237391b7245f6868f738c`.
+
+- `target/evidence/e9-t18c-publication-assets-3/report.json`: `057af6164b073998bd5548ad06933dbd0b411ea9e15fcc23680f17b48339857f`.
+
+PR599 and all22 stack PRs remain open and unmerged. This publication retains the verifier's 1GiB pure ICount/64 boundary and T17/T22/T24 qualifications.
