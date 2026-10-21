@@ -261,3 +261,43 @@ All acceptance predictions hold for the native B boundary. External disk
 reconstruction remains explicit; physical GPU rendering and durable Wasm replay
 remain T18c. No deployment, production pip change, budget change, PR merge, push,
 CI/GHA, rr/ssh dev, model change or account-gate bypass was performed.
+
+### 2026-10-21 — worker — publish verified native keyframes on the main URL
+
+After independent verdict `17d45b8d6`, publication commit
+`592a639a16f90602bd1b5f5d45d55638f4ce33b0` rebuilt the bundle and marked the native pending-GPU
+capability verified. Production Wasm remains exactly2400211 bytes, SHA-256
+`fca09f12b9969e54cfdbbc0e17b584d128249048cbe7ef19429d6dfe652af766`, GPUbuild
+`abe65b7af35437a31d88c17de9272a7ac4809200ae4a996013e218e68cecb204`.
+The new permanent tests are cfg(test)/integration-only. Root independently
+rehashed969 verifier/response/coverage files (56651103 bytes), including the final
+receipt SHA `4b0a695dfa4dbbe548887369476cfbb8c525f8eb23b9a0e5b4eeb86954fd4cde`
+(`target/evidence/e9-t18b-final-critic-audit-17d45b8d.json`).
+
+The evergreen acceptance runner now expects the published verified pip by default.
+Its explicit `--pending-status in-progress` option / `E9_PENDING_GPU_STATUS` Make
+override preserve worker-submission checks. Actual argparse default/override
+checks, Python syntax/help and Make expansion were checked; no native proving
+logic changed (`target/evidence/e9-t18b-publication-status-selector.json`).
+The affected T19 built-browser path was recorded once on the published B binary:
+127/0, zero console/HTTP/MIME errors,14 independent actual Linux state/console
+oracles, cancellation/control/admission/early-finish assertions. Report:
+`target/evidence/e9-t18b-timeline-release/report.json`, SHA-256
+`c8925af2b8e19122807cb759528e441e5943e17a75a07d7582fa10d34ae49962`.
+
+`bash tools/deploy-cloudflare.sh` published Cloudflare `c50b963d` to
+**https://wasm-vm.pages.dev/**. The actual main URL served14 checked assets exactly,
+including Case Studies and the timeline, passed127/0 with no console/HTTP errors,
+and restored a fresh real Linux recording to transition3000000/digest
+`c1b1ac22df2fb67e3d2d0b2cf8914d15007b554d8f2d990ec2e484380e4b99ce` with genuine kernel text.
+The native pending-GPU and timeline pips are verified; physical/browser GPU replay
+remains gated for T18c. This production browser check proves served bytes and
+software compatibility; the native pending-fence proof is the independent verdict
+above, and no physical replay claim is added.
+
+Production receipt: `target/evidence/e9-t18b-production-release/receipt.json`; main
+report SHA-256 `4042122bb6432c36580af8989aa54a6c6a2cd40c6050f3f388e72310c1574ced`; trace SHA-256
+`d9de66ce8563a71e87b88064bb75d2530e21f34b520589628d98c084a8406652`. Deployed/original manifest pairs, executed checker, screenshot
+and deploy log are preserved beside it. Only the five rewritten manifests were
+restored to their committed originals. Native stack598 retained21 open/unqueued
+PRs; no merge or GitHub Actions operation was performed.
