@@ -72,6 +72,9 @@ The public product pages are static and dependency-free:
 - [`case-study-ai-sandboxing.html`](./case-study-ai-sandboxing.html) — proposed hosted
   isolation stack: the agent in wasm-vm, a sandboxed browser, and Firecracker around
   the entire browser. Separates the current demo from the containment evidence still needed.
+- [`case-study-deterministic-simulation.html`](./case-study-deterministic-simulation.html) —
+  a proposed debugging workflow inspired by celld's deterministic simulation article;
+  separates recorded investigation from simulation search and a still-unproven celld integration.
 - [`work-market.html`](./work-market.html) — frozen tickets, builder submissions, critic quorum,
   challenge windows, and settlement economics.
 - [`security.html`](./security.html) — passkey-owned volumes, key hierarchy, shard verification,
