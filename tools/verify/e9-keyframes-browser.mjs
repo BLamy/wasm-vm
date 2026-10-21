@@ -19,6 +19,17 @@ try{
   try{let name=decodeURIComponent(new URL(request.url,'http://localhost').pathname);
    if(name==='/favicon.ico'){response.writeHead(204).end();return;}
    if(development&&name==='/app.html')name='/index.html';
+   // Pages ships the kernel through the rewritten artifact manifest, not the local
+   // /releases/kernel path. Route it elsewhere here so the probe cannot pass by
+   // relying on a release file that production deliberately omits.
+   if(name==='/artifacts.json'){
+    const artifacts=JSON.parse(await fs.readFile(path.join(web,'artifacts.json'),'utf8'));
+    artifacts.artifacts.kernel.url='/__r2_kernel';
+    response.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'}).end(JSON.stringify(artifacts));
+    return;
+   }
+   if(name.startsWith('/releases/kernel/')){response.writeHead(404).end();return;}
+   if(name==='/__r2_kernel')name='/releases/kernel/6.6.63/Image';
    const release=name.startsWith('/releases/');
    const file=release?path.resolve(root,'.'+name):path.resolve(web,'.'+name);
    if(release?!file.startsWith(path.join(root,'releases')+path.sep):!file.startsWith(web+path.sep))throw Error('path');

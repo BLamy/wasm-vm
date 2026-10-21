@@ -17,12 +17,17 @@ const witness=(label,value)=>({label,position:{transition:value.transition,phase
 
 export async function runSessionKeyframeProbe({onProgress=()=>{}}={}){
  await init();
- const kernelUrl=new URL('./releases/kernel/6.6.63/Image',import.meta.url);
+ const artifactsResponse=await fetch(new URL('./artifacts.json',import.meta.url));
+ need(artifactsResponse.ok,'pinned assets unavailable');
+ const artifacts=await artifactsResponse.json();
+ const kernelUrl=new URL(artifacts.artifacts.kernel.url,import.meta.url);
  const [kernelResponse,manifestResponse,fixtureResponse]=await Promise.all([
   fetch(kernelUrl),fetch(new URL('./session-alpine-image.json',import.meta.url)),
   fetch(new URL('./session-software-fixture.json',import.meta.url))]);
  need(kernelResponse.ok&&manifestResponse.ok&&fixtureResponse.ok,'pinned assets unavailable');
  const kernel=new Uint8Array(await kernelResponse.arrayBuffer()),manifest=await manifestResponse.text();
+ need(String(kernel.length)===String(artifacts.artifacts.kernel.size)
+  &&checkpointHash(kernel)===artifacts.artifacts.kernel.sha256,'pinned kernel mismatch');
  const fixture=await fixtureResponse.json(),imageManifest=manifest;
  const bootargs='root=/dev/vda rw console=ttyS0 earlycon=sbi init=/bin/sh -- +i';
  const make=replay=>WasmLinux.newExactSession(kernel,manifest,bootargs,()=>{},replay);
