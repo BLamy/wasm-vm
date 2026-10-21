@@ -3,7 +3,7 @@ id: E9-T21
 epic: 9
 title: Export and import complete bounded local session bundles
 priority: 524.921
-status: pending
+status: in-progress
 depends_on: [E9-T07, E9-T16, E9-T18c]
 estimate: S
 risk: high
@@ -34,4 +34,24 @@ Import truncated, foreign-build, path-traversal, duplicate and decompression-bom
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-21 — worker — begin complete local bundles
+
+Selected the next eligible task after Daybreak verified E9-T20 and its actual
+main-site publication (runtime verdict `ea24a76b6`, release `292d7488f`,
+publication verdict `c72ebf38a`, deployment `6f9b8388`). Native PR602 remains
+open and unmerged; its source was pushed before this new stack layer.
+
+Risk is high because import accepts untrusted persisted data. This S slice owns
+one boundary: an explicit bounded local archive, complete transitive referenced
+content, strict version/digest/size/duplicate/compatibility validation before
+publication, and visible local export/import/delete/privacy controls. The
+portability policy must specify the matching app/runtime requirements, and a
+fresh profile must not depend on the exporter's caches. Compression and path
+extraction are not needed for a complete bounded archive. Existing machine,
+network and replay semantics remain the accepted boundaries; no claim of new
+desktop qualification follows from an archive transfer.
+
+Implementation and final deterministic acceptance, exact-head high-risk and
+pristine-clone proofs, adversarial import attacks and a fresh Daybreak verdict
+remain required. No implementation or verification result is claimed at
+activation.
