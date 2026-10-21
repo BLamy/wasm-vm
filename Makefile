@@ -2775,3 +2775,11 @@ verify-E9-T16:
 	cargo test -p wasm-vm-core --test e9_deterministic_replay
 	$(MAKE) web-dist
 	node tools/verify/e9-seek-browser.mjs --output "$${E9_SEEK_EVIDENCE_DIR:-target/evidence/e9-seek-final}"
+
+.PHONY: verify-E9-T17
+verify-E9-T17:
+	node --test tools/virgl-production/pinned-chunk.test.mjs tools/virgl-production/e9-gpu-session-evidence.test.mjs
+	$(MAKE) web-dist
+	node tools/verify/e9-gpu-session-demo.mjs "$${E9_GPU_DEMO_EVIDENCE_DIR:-target/evidence/e9-gpu-demo-final}"
+	node tools/verify/e9-gpu-session-browser.mjs "$${E9_GPU_SESSION_EVIDENCE_DIR:-target/evidence/e9-gpu-session-final}"
+	CRITIC_FAST_BOOT_WEB_ROOT=web/dist CRITIC_FAST_BOOT_GPU=1 CRITIC_FAST_BOOT_GUESTS=omarchy CRITIC_FAST_BOOT_GPU_TRACE=1 CRITIC_FAST_BOOT_SESSION_HISTORY=1 CRITIC_FAST_BOOT_PERSISTENCE=0 CRITIC_FAST_BOOT_COLD_READY_MS=2700000 CRITIC_FAST_BOOT_HOLD_FAILURE_MS=60000 node tools/virgl-production/critic-fast-boots.mjs "$${E9_GPU_DESKTOP_EVIDENCE_DIR:-target/evidence/e9-gpu-desktop-final}"

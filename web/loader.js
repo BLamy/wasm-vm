@@ -180,6 +180,33 @@ export async function resetDisk(
 
 export async function startLinuxBoot(opts = {}) {
   let sessionAdmission = null;
+  let gpuSessionAdmission = null;
+  let gpuSessionBaseline = 0n;
+  if (opts.sessionGpuCheckpoint != null) {
+    const descriptor = opts.sessionGpuCheckpoint;
+    if (typeof descriptor !== 'object' || Array.isArray(descriptor)
+      || Object.keys(descriptor).some(key => !['database','id','checkpoint'].includes(key))
+      || typeof descriptor.id !== 'string' || typeof descriptor.checkpoint !== 'string'
+      || opts.virgl !== true || opts.sessionCheckpoint || opts.sessionDiskRoot
+      || opts.persist || opts.freshDesktop || opts.extraDiskUrl || opts.enableMic
+      || opts.audioSharedBuffer || opts.captureSharedBuffer
+      || opts.slirpNet || opts.slirpDoh || resolveSlirpProvider(opts).provider !== 'offline'
+      || (opts.mode !== undefined && opts.mode !== 'chunked')) throw Error('invalid accelerated session restore profile');
+    const {SessionStore} = await import('./session-store.js');
+    const {SessionGpuCheckpoints} = await import('./session-gpu-checkpoints.js');
+    const store = await SessionStore.open(descriptor.database);
+    try { gpuSessionAdmission = await store.withReadLease(() => new SessionGpuCheckpoints(store).admit(
+      descriptor.id, descriptor.checkpoint, GPU_CHECKPOINT_BUILD_ID, SOFTWARE_CHECKPOINT_WASM_SHA256)); }
+    finally { await store.close(); }
+    gpuSessionBaseline = BigInt(gpuSessionAdmission.checkpoint.position.transition);
+    const config = gpuSessionAdmission.configuration;
+    opts = {...opts, mode:'chunked', virgl:true, persist:false, bootSnapshot:false,
+      freshDesktop:false, bootProfileUrl:null, requestImageManifestBaseUrl:null,
+      ramMib:config.ramMib, bootargs:config.bootargs, baseUrl:config.baseUrl,
+      guestClock:config.identity.guestClock??undefined,
+      icountDivider:config.identity.icountDivider??undefined,
+      interactiveClock:config.identity.interactiveClock??undefined, startPaused:false};
+  }
   if (opts.sessionCheckpoint != null) {
     const descriptor = opts.sessionCheckpoint;
     if (typeof descriptor !== 'object' || Array.isArray(descriptor)
@@ -390,9 +417,10 @@ export async function startLinuxBoot(opts = {}) {
       || typeof sessionDiskRoot.sha256 !== 'string' || typeof sessionDiskRoot.generation !== 'string')) {
       throw new Error("invalid historical disk root descriptor");
     }
-    const manifest = sessionAdmission
-      ? {artifacts:{kernel:{url:sessionAdmission.configuration.kernel.url,
-          sha256:sessionAdmission.configuration.kernel.sha256,size:sessionAdmission.kernel.length}}}
+    const admitted = sessionAdmission ?? gpuSessionAdmission;
+    const manifest = admitted
+      ? {artifacts:{kernel:{url:admitted.configuration.kernel.url,
+          sha256:admitted.configuration.kernel.sha256,size:admitted.kernel.length}}}
       : await fetchJsonAsset(manifestUrl, "boot manifest");
     const omarchyImage = requestImageManifestBaseUrl != null
       ? resolveOmarchyChunkedImage(manifest, requestImageManifestBaseUrl)
@@ -438,7 +466,7 @@ export async function startLinuxBoot(opts = {}) {
     // The kernel is always fetched whole (small). The rootfs is fetched whole for disk/initramfs
     // modes; in chunked mode it is NOT — only the image manifest is fetched now, and its chunks are
     // pulled lazily during boot by WasmLinux.fetchPending.
-    const kernel = sessionAdmission?.kernel ?? await readBootAsset("kernel", km);
+    const kernel = admitted?.kernel ?? await readBootAsset("kernel", km);
     let secondaryBytes = null;
     let imageManifestText = null;
     let bootProfile = new Uint32Array(0);
@@ -459,7 +487,7 @@ export async function startLinuxBoot(opts = {}) {
           throw new Error("Omarchy chunked image manifest is not valid UTF-8");
         }
       } else {
-        imageManifestText = sessionAdmission?.configuration.imageManifest
+        imageManifestText = admitted?.configuration.imageManifest
           ?? await fetchAsset(resolvedImageManifestUrl, "chunked image manifest");
       }
       // E3-T03: an optional boot-profile.json (ordered chunk indices) prefetched up front. Best-
@@ -541,7 +569,14 @@ export async function startLinuxBoot(opts = {}) {
     // initramfs → the image as the initrd.
     const gpuIdentity = virgl ? {buildId:GPU_CHECKPOINT_BUILD_ID,kernelSha256:km.sha256,imageManifestSha256:await sha256hex(new TextEncoder().encode(imageManifestText)),ramMib,bootargs:bootargs??'',guestClock:guestClock??null,icountDivider:icountDivider??null,interactiveClock:interactiveClock??null} : null;
     let gpuWarmData = null;
-    if(virgl && opts.bootSnapshot !== false) {
+    if (gpuSessionAdmission) {
+      const keys=['buildId','kernelSha256','imageManifestSha256','ramMib','bootargs',
+        'guestClock','icountDivider','interactiveClock'];
+      if(keys.some(key=>gpuSessionAdmission.pair.identity[key]!==gpuIdentity[key]))
+        throw Error('gpu_checkpoint: historical session identity differs');
+      gpuWarmData=gpuSessionAdmission.pair;
+      gpuWarmData.witnessBytes=gpuCheckpointDigestBytes(gpuWarmData.witness);
+    } else if(virgl && opts.bootSnapshot !== false) {
       const entry=manifest.artifacts?.gpuCheckpoint;
       if(!entry)throw Error('gpu_checkpoint: accelerated warm artifact is not published; explicit cold boot is available');
       onState('restoring');const bytes=await readBootAsset('gpuCheckpoint',entry);
@@ -1004,6 +1039,7 @@ export async function startLinuxBoot(opts = {}) {
       } catch (error) { machine.closeStorage?.(); machine.free(); throw error; }
       sessionAdmission = null;
     }
+    gpuSessionAdmission = null;
     let guestClockLifecycle;
     try {
       guestClockLifecycle = createGuestClockLifecycle(machine, guestClock, icountDivider, interactiveClock, restoredSessionClock ?? gpuWarmData?.clockState);
@@ -1313,6 +1349,34 @@ export async function startLinuxBoot(opts = {}) {
     const tick = () => taskQuiescence.run(runTick);
     schedule();
 
+    const gpuSessionConfiguration = () => {
+      if(!productionGpu || !gpuIdentity || stopped || gpuCaptureBusy || usePersist
+        || extraDiskBytes || !isChunked || network.provider !== 'offline'
+        || opts.slirpNet || slirpDoh || enableMic)throw Error('gpu_checkpoint: unsupported session capture profile');
+      const owner=productionGpu.inspect();
+      if(!owner.qualified || owner.lost || owner.disposed || owner.poisoned)
+        throw Error('gpu_checkpoint: renderer owner is unavailable');
+      const devices=JSON.parse(machine.softwareCheckpointTopology());
+      const graphics=devices.filter(device=>device.kind==='virtio-gpu2d');
+      if(graphics.length!==1)throw Error('gpu_checkpoint: unsupported GPU topology');
+      graphics[0].kind='virtio-gpu3d';
+      const clock=guestClockLifecycle.state();
+      return {version:1,runtime:GPU_CHECKPOINT_BUILD_ID,identity:{...gpuIdentity},
+        profile:productionGpu.checkpointProfile(),ramMib,bootargs:bootargs??'',
+        clock:{mode:guestClock??'icount',divider:clock.clockDiv,
+          timebase_hz:String(clock.timebaseHz),interactive:interactiveClock??null},
+        kernel:{url:new URL(km.url,globalThis.location.href).href,sha256:km.sha256,length:String(kernel.length)},
+        wasm:{url:new URL('./pkg/wasm_vm_wasm_bg.wasm',import.meta.url).href,
+          sha256:SOFTWARE_CHECKPOINT_WASM_SHA256,length:String(SOFTWARE_CHECKPOINT_WASM_BYTES)},
+        devices,imageManifest:imageManifestText,baseUrl};
+    };
+    const gpuSessionPosition = () => {
+      if(!productionGpu || stopped || !Number.isSafeInteger(retiredInstructions)
+        || retiredInstructions < 0)throw Error('gpu_checkpoint: historical position unavailable');
+      const position=gpuSessionBaseline+BigInt(retiredInstructions);
+      if(position>0xffffffffffffffffn)throw Error('gpu_checkpoint: historical position overflow');
+      return position.toString();
+    };
     const saveGpuCheckpoint = async () => {
       if(!productionGpu || !gpuIdentity || usePersist || extraDiskBytes || stopped || gpuCaptureBusy)throw Error('gpu_checkpoint: capture is unavailable or busy');
       gpuCaptureBusy=true;const wasPaused=paused;paused=true;
@@ -1539,6 +1603,8 @@ export async function startLinuxBoot(opts = {}) {
       // E5-T26f: serialize the live composite desktop envelope through the same controller
       // surface used by the page in both direct and whole-machine-worker boot modes.
       saveGpuCheckpoint,
+      gpuSessionConfiguration,
+      gpuSessionPosition,
       captureDiskDelta,
       captureSoftwareCheckpoint,
       softwareCheckpointConfiguration,
@@ -1751,6 +1817,7 @@ export async function startLinuxBoot(opts = {}) {
       'captureState','stateDigest','dhcpStats','fileTransferReady','fileTransferStatus','fetchStats',
       'persistStats','readOnly','hasUnpersisted','snapshotGeneration','storageEstimate','jitStats',
       'profileStats','schedulerStats','softwareCheckpointConfiguration','acknowledgeGpuFrame',
+      'gpuSessionConfiguration','gpuSessionPosition',
       'setDisplay','sendInput','sendAgentInput','sendKeyboardEvent','syncKeyboard',
       'sendTabletEvent','syncTablet','sendMouseEvent','syncMouse',
       'stop','pause','inputPosition','takeInputDeliveries','flushInputRecording','stopInputCapture','captureDiskDelta','captureSoftwareCheckpoint','saveGpuCheckpoint']);

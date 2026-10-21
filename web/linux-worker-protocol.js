@@ -51,6 +51,8 @@ export const LINUX_CONTROLLER_METHODS = Object.freeze([
   "isPaused",
   "stateDigest",
   "saveGpuCheckpoint",
+  "gpuSessionConfiguration",
+  "gpuSessionPosition",
   "captureDiskDelta",
   "captureSoftwareCheckpoint",
   "softwareCheckpointConfiguration",

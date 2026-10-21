@@ -163,7 +163,7 @@ export class SessionStore {
         return owned.release().finally(() => maintenance.release());
       }, {
         part: bytes => this.#putPart(bytes, id), object: object => this.#putObject(object, id),
-        publish: (bytes, active) => this.#publish(id, active, bytes),
+        publish: (bytes, active, beforeCommit) => this.#publish(id, active, bytes, beforeCommit),
       });
       this.#writers.add(writer); return writer;
     } catch (error) { if (owned) await owned.release(); await maintenance.release(); throw wrap(error); }
@@ -357,8 +357,9 @@ export class SessionStore {
     for (const id of await this.#sessionKeys()) {
       const found = await this.#session(id); need(found, 'Corrupt', 'surviving session disappeared');
       const decoded = found.decoded;
-      need(decoded.value.machine.gpu === null && decoded.value.checkpoints.every(point => point.gpu === null)
-        && decoded.value.extensions.length === 0, 'UnsupportedRetention', 'unknown GPU/extension references');
+      // GPU keyframes name their complete pair directly in checkpoint.gpu; #references
+      // authenticates that blob before this mark pass, while roots cover its historical disk.
+      need(decoded.value.extensions.length === 0, 'UnsupportedRetention', 'unknown extension references');
       for (const object of await this.#references(decoded)) add(object);
       const roots = parsed(() => sessionManifestReferences(decoded.bytes)).roots;
       for (const hash of roots) {
@@ -462,7 +463,7 @@ export class SessionStore {
     }
     probe('object-durable', id, object.sha256);
   }
-  async #publish(id, active, bytes) {
+  async #publish(id, active, bytes, beforeCommit) {
     const decoded = manifest(bytes);
     need(decoded.value.id === id, 'SessionId');
     const previous = await read(this.#db, 'sessions', id);
@@ -477,6 +478,9 @@ export class SessionStore {
     const objects = await this.#references(decoded);
     active();
     probe('before-commit', id);
+    // The caller may revalidate a device owner after all asynchronous object checks.
+    if (beforeCommit) await beforeCommit();
+    active();
     await transaction(this.#db, ['sessions', 'objects', 'chunks', 'metadata'], 'readwrite', (tx, done, abort) => {
       let pending = 2 + objects.length;
       const checked = () => {
@@ -563,7 +567,10 @@ function createWriter(id, unlock, storage) {
         } finally { hash.free(); }
       });
     },
-    async publish(bytes) { return run(() => storage.publish(bytes, active)); },
+    async publish(bytes, beforeCommit = null) {
+      need(beforeCommit === null || typeof beforeCommit === 'function', 'PublicationGuard');
+      return run(() => storage.publish(bytes, active, beforeCommit));
+    },
     release() {
       if (!releasing) { closed = true; releasing = Promise.allSettled([...pending]).then(unlock); }
       return releasing;

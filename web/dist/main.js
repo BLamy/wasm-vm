@@ -10,6 +10,7 @@ import { startLinuxBoot, resetDisk, tailscaleCommand } from "./loader.js";
 import { startLinuxBootWorker, stopLinuxController } from "./linux-worker-host.js";
 import { resolveOverlayResetSeedIdentity } from "./overlay-reset-target.js";
 import { mountSessionLibrary } from "./session-library.js";
+import {GPU_CHECKPOINT_BUILD_ID, SOFTWARE_CHECKPOINT_WASM_SHA256} from "./gpu-checkpoint-build.js";
 import { runEventClockProbe } from "./event-clock-probe.js";
 import { runInputRecordingProbe } from "./input-recording-probe.js";
 import { runTimeEntropyProbe } from "./time-entropy-probe.js";
@@ -1245,7 +1246,7 @@ async function runLinuxBootOwned(opts, banner, request) {
   // connected successfully or been explicitly downgraded to the context-only fallback.
   const softwareSession = opts.sessionSoftware === true;
   if (!softwareSession) await audioReady;
-  const audioBootEnabled = !softwareSession && audioPipelineReady && audioSink !== null;
+  const audioBootEnabled = !softwareSession && !opts.sessionGpuCheckpoint && audioPipelineReady && audioSink !== null;
   if (_workerRequested && !_workerAvailable) {
     term.writeln("\x1b[33m[whole-machine Worker unavailable; using explicit main-thread fallback]\x1b[0m");
   }
@@ -1395,10 +1396,10 @@ async function runLinuxBootOwned(opts, banner, request) {
       audioClockBuffer: audioBootEnabled ? audioSink.clockBuffer : null,
       audioCapacityFrames: audioBootEnabled ? audioSink.ring.capacityFrames : 0,
       audioSampleRateHz: audioBootEnabled ? audioSink.sampleRateHz : 0,
-      captureSharedBuffer: softwareSession ? null : microphoneRing?.sharedBuffer ?? null,
-      captureCapacityFrames: softwareSession ? 0 : microphoneRing?.capacityFrames ?? 0,
-      captureSampleRateHz: !softwareSession && microphoneRing ? microphoneSampleRateHz : 0,
-      enableMic: !softwareSession && (opts.enableMic ?? micEnabled),
+      captureSharedBuffer: softwareSession || opts.sessionGpuCheckpoint ? null : microphoneRing?.sharedBuffer ?? null,
+      captureCapacityFrames: softwareSession || opts.sessionGpuCheckpoint ? 0 : microphoneRing?.capacityFrames ?? 0,
+      captureSampleRateHz: !softwareSession && !opts.sessionGpuCheckpoint && microphoneRing ? microphoneSampleRateHz : 0,
+      enableMic: !softwareSession && !opts.sessionGpuCheckpoint && (opts.enableMic ?? micEnabled),
       onCaptureStart: (info) => {
         void microphoneCapture.onPcmStart(info);
       },
@@ -2034,6 +2035,7 @@ function showGpuStatus(stats) {
 // Guest readiness: flips true when the booted guest reaches a usable shell prompt. The Docker/IDE tabs
 // gate on this; a `wvm:guest-ready` window event fires once per boot. Reset when a new boot starts.
 let guestReady = false;
+let desktopReady = false;
 let promptTail = "";
 let desktopReadinessGeneration = 0;
 let desktopReadinessTimer = null;
@@ -2049,6 +2051,7 @@ function watchOmarchyDesktop() {
       if (generation !== desktopReadinessGeneration || !guestReady) return;
       if (result.exit === 0 && hasOmarchyShellBar(JSON.parse(result.stdout))
         && presentation?.snapshot().successfulPresents > 0 && hasDesktopPixels(presentation.readPixels())) {
+        desktopReady = true;
         emitGuestLifecycleEvent("wvm:desktop-ready");
         return;
       }
@@ -2067,6 +2070,7 @@ function resetGuestReady() {
   desktopReadinessGeneration++;
   clearTimeout(desktopReadinessTimer);
   guestReady = false;
+  desktopReady = false;
   promptTail = "";
   try { window.dispatchEvent(new Event("wvm:guest-booting")); } catch {}
 }
@@ -2190,12 +2194,73 @@ async function bootOmarchy() {
     : { ok: false, error: lastBootError || "boot failed" };
 }
 
+async function preflightGpuSessionCandidate(id, checkpoint, database) {
+  const {SessionStore} = await import('./session-store.js');
+  const {SessionGpuCheckpoints} = await import('./session-gpu-checkpoints.js');
+  const store = await SessionStore.open(database);
+  let savedProfile;
+  try { savedProfile = (await store.withReadLease(() => new SessionGpuCheckpoints(store).admit(
+    id, checkpoint, GPU_CHECKPOINT_BUILD_ID, SOFTWARE_CHECKPOINT_WASM_SHA256))).pair.profile; }
+  finally { await store.close(); }
+  // The candidate is signed, but its saved limits must also fit this physical browser GPU.
+  const [{qualifyVirglHost}, {selectCheckpointProfile}] = await Promise.all([
+    import('./renderer/virgl-command/production.mjs'),
+    import('./renderer/virgl-command/checkpoint-profile.mjs'),
+  ]);
+  const probe = new OffscreenCanvas(1, 1);
+  const gl = probe.getContext('webgl2', {antialias:false,alpha:true,depth:true,stencil:true,
+    failIfMajorPerformanceCaveat:true});
+  try { selectCheckpointProfile(await qualifyVirglHost(gl), savedProfile); }
+  finally { gl?.getExtension('WEBGL_lose_context')?.loseContext(); }
+}
+
 window.wvmDemo = {
   guestSession,
   isGuestUp: () => !!linuxCtl,
   async setDisplay(width, height) { return await linuxCtl?.setDisplay?.(width, height) ?? false; },
   async displayStats() { return await linuxCtl?.displayStats?.() ?? null; },
   async gpuStats() { return await linuxCtl?.gpuStats?.() ?? null; },
+  async captureGpuSession(id, checkpoint, database = 'wasm-vm-sessions-v1') {
+    const controller = linuxCtl;
+    if (!controller?.gpuSessionConfiguration || !desktopReady) throw Error('A ready accelerated desktop is required');
+    const {SessionStore} = await import('./session-store.js');
+    const {SessionGpuCheckpoints} = await import('./session-gpu-checkpoints.js');
+    const store = await SessionStore.open(database);
+    try {
+      if (linuxCtl !== controller) throw Error('Accelerated guest changed before capture');
+      const result = await new SessionGpuCheckpoints(store).captureController(id, checkpoint, controller);
+      if (linuxCtl !== controller) throw Error('Accelerated guest changed during capture');
+      return result;
+    } finally { await store.close(); }
+  },
+  async preflightGpuSession(id, checkpoint, database = 'wasm-vm-sessions-v1') {
+    if (linuxBootPromise) throw Error('Another guest is booting');
+    const incumbent = linuxCtl;
+    await preflightGpuSessionCandidate(id, checkpoint, database);
+    if (linuxBootPromise || linuxCtl !== incumbent) throw Error('Original guest changed during GPU admission');
+    return {admitted:true};
+  },
+  async restoreGpuSession(id, checkpoint, database = 'wasm-vm-sessions-v1') {
+    if (linuxBootPromise) throw Error('Another guest is booting');
+    const query = new URLSearchParams(location.search);
+    const incumbent = linuxCtl;
+    // Reject a foreign, incomplete or unsupported pair before retiring the live owner.
+    await preflightGpuSessionCandidate(id, checkpoint, database);
+    if (linuxBootPromise || linuxCtl !== incumbent) throw Error('Original guest changed during GPU admission');
+    if (incumbent) await retireLinuxController(incumbent);
+    if (linuxCtl || linuxBootPromise) throw Error('Another guest owns the page');
+    const key = 'gpu-session-' + crypto.randomUUID();
+    const boot = await runLinuxBoot({manifestUrl:'./artifacts-omarchy-virgl.json',
+      sessionGpuCheckpoint:{database,id,checkpoint},virgl:true,mode:'chunked',
+      bootSnapshot:false,persist:false,slirpNet:false,slirpProvider:'offline',enableMic:false,
+      gpuTrace:query.has('testHooks')&&query.has('gpuTrace'),
+      fileTransfer:false,ramMib:1024,guestClock:'icount',icountDivider:64,
+      interactiveClock:'paced-on-keyboard',jit:true,quantum:500_000,imageLen:4*1024*1024*1024},
+    'restoring an accelerated session checkpoint',
+    {requestKey:key,onClaim:()=>{lastBootError=null;setGuestChip('omarchy');}});
+    if (boot.winner !== key || !linuxCtl) throw Error(lastBootError || 'Accelerated checkpoint did not restore');
+    return {restored:await linuxCtl.restoredFromBootSnapshot(),epoch:(await linuxCtl.gpuStats()).epoch};
+  },
   async loseGpuContext(when="now") { return await linuxCtl?.loseGpuContext?.(when) ?? false; },
   // E5-T20d/T20e: inspect the real context/ring pair without exposing a second unlock path.
   audioAutoplay: () => audioAutoplayPolicy,
@@ -2527,7 +2592,25 @@ window.wvmDemo = {
 // E9-T06: library actions share the ordinary page's one-controller ownership protocol.
 // Restore admission and actual-topology construction finish privately before the old guest retires.
 void mountSessionLibrary(document.getElementById("session-library"), {
-  current: () => linuxCtl ? {controller: linuxCtl, profile: Boolean(linuxActiveRequest?.sessionSoftware), ready: guestReady} : null,
+  current: () => linuxCtl ? {controller: linuxCtl, profile: Boolean(linuxActiveRequest?.sessionSoftware),
+    accelerated: Boolean(linuxCtl.gpuSessionConfiguration
+      && linuxActiveRequest?.manifestUrl === './artifacts-omarchy-virgl.json'),
+    ready: linuxActiveRequest?.manifestUrl === './artifacts-omarchy-virgl.json' ? desktopReady : guestReady} : null,
+  captureGpu: (id, checkpoint) => window.wvmDemo.captureGpuSession(id, checkpoint),
+  async replaceGpu({id, checkpoint}) {
+    if (!_omarchyDesktopMode) {
+      await window.wvmDemo.preflightGpuSession(id, checkpoint);
+      const destination = new URL(location.pathname, location.href);
+      for (const [key, value] of [['guest', 'omarchy'], ['gpu', '1'], ['desktop', '1'],
+        ['noAutoBoot', '1'], ['gpuSessionId', id], ['gpuSessionPoint', checkpoint]])
+        destination.searchParams.set(key, value);
+      destination.hash = 'ide';
+      location.assign(destination.href);
+      return {navigating:true};
+    }
+    await window.wvmDemo.restoreGpuSession(id, checkpoint);
+    return linuxCtl;
+  },
   async replace(checkpoint) {
     const response = await fetch("./session-software-fixture.json");
     if (!response.ok) throw Error("Checkpoint guest configuration unavailable");
@@ -3531,7 +3614,24 @@ setInteractiveState();
       return retireLinuxController(controller);
     };
   }
-  if (_guest && !linuxCtl && !_bootQ.has("noAutoBoot")) {
+  const gpuSessionId = _bootQ.get('gpuSessionId');
+  const gpuSessionPoint = _bootQ.get('gpuSessionPoint');
+  if (gpuSessionId !== null || gpuSessionPoint !== null) {
+    if (!_omarchyDesktopMode || _guest !== 'omarchy' || !_bootQ.has('noAutoBoot')
+      || !/^[A-Za-z0-9_.:/-]{1,64}$/.test(gpuSessionId ?? '')
+      || !/^[A-Za-z0-9_.:/-]{1,64}$/.test(gpuSessionPoint ?? '')) {
+      lastBootError = 'Invalid accelerated session route';
+      emitGuestLifecycleEvent('wvm:guest-error', {message:lastBootError});
+    } else {
+      setTimeout(() => {
+        void window.wvmDemo.restoreGpuSession(gpuSessionId, gpuSessionPoint).catch(error => {
+          lastBootError = error?.message || String(error);
+          emitGuestLifecycleEvent('wvm:guest-error', {message:lastBootError});
+          setStatus(`GPU checkpoint could not open: ${lastBootError}`);
+        });
+      }, 400);
+    }
+  } else if (_guest && !linuxCtl && !_bootQ.has("noAutoBoot")) {
     setTimeout(() => {
       try {
         // Invoke the production callback synchronously so its single-flight ownership is claimed
