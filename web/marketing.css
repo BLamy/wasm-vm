@@ -8,3 +8,44 @@
 
 .model-selected-label{position:absolute;top:20px;left:0;font:10px var(--mono);color:#b8e8e3;letter-spacing:.025em;pointer-events:none}.model-motion{min-height:44px;min-width:100px;padding:8px 12px}.model-axis{max-width:calc(100% - 112px);line-height:1.8}
 [hidden]{display:none!important}
+
+/* Case studies use the current editorial system, with a compact prompt/chat layer. */
+.nav-links a[aria-current="page"]{color:var(--cyan)}
+.case-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.case-card{border:1px solid var(--line);padding:27px;min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+.case-card h3{font-size:26px;margin:20px 0 15px;overflow-wrap:anywhere}
+.case-card p{font-size:14px;line-height:1.8;flex:1}
+.case-card a{font-size:12px;margin-top:12px}
+.case-status{font:10px/1.6 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--cyan)}
+.case-prompt{margin:28px 0;padding:26px;border-left:2px solid var(--cyan);background:var(--surface);font-size:19px;line-height:1.6;overflow-wrap:anywhere}
+.case-prompt span{display:block;margin-bottom:11px;font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--cyan)}
+.case-disclosure{font:11px/1.7 var(--mono)!important;color:var(--dim)!important}
+.case-chat{display:grid;gap:8px;margin:23px 0}
+.case-message{display:grid;grid-template-columns:64px minmax(0,1fr);gap:18px;border:1px solid var(--line);padding:15px 18px}
+.case-message.user{border-color:#4e7277;background:rgba(139,220,225,.05)}
+.case-message span{font:10px/1.8 var(--mono);text-transform:uppercase;letter-spacing:.07em;color:var(--cyan)}
+.case-message p{font-size:13px;margin:0;line-height:1.7}
+.case-steps{list-style:decimal-leading-zero;padding-left:27px;margin:26px 0;color:var(--cyan);font:12px/1.7 var(--mono)}
+.case-steps li{padding:16px 0 16px 10px;border-top:1px solid var(--line);color:var(--muted);font:14px/1.7 var(--font)}
+.case-steps li::marker{color:var(--cyan);font:11px var(--mono)}
+.case-steps strong{color:var(--ink);font-weight:600}
+.case-table-wrap{max-width:100%;margin:32px 0;overflow-x:auto}
+.case-table{border-collapse:collapse;width:100%;table-layout:fixed;font-size:12px;line-height:1.65}
+.case-table caption{text-align:left;font:11px var(--mono);color:var(--cyan);padding-bottom:12px}
+.case-table th,.case-table td{border-top:1px solid var(--line);padding:13px 12px;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+.case-table thead th{color:var(--dim);font:10px var(--mono);text-transform:uppercase}
+.case-table tbody th{width:20%;font-weight:600}
+@media(max-width:600px){
+  .nav-links .nav-roadmap{display:none}
+  .case-cards{grid-template-columns:1fr}
+  .case-card{padding:22px}
+  .case-card h3{font-size:23px}
+  .case-prompt{font-size:16px;padding:20px}
+  .case-message{grid-template-columns:1fr;gap:4px}
+  .case-table thead{display:none}
+  .case-table tbody tr{display:block;border-top:1px solid var(--line);padding:10px 0}
+  .case-table tbody th,.case-table tbody td{display:block;border:0;padding:4px 0}
+  .case-table tbody td::before{display:block;color:var(--dim);font:10px var(--mono);text-transform:uppercase;margin-top:7px}
+  .case-table tbody td:first-of-type::before{content:"Typical dev-board path"}
+  .case-table tbody td:last-of-type::before{content:"Planned browser path"}
+}

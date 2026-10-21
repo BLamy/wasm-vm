@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RV-Phone: planning a RISC-V phone OS in the browser — wasm-vm</title>
+  <meta name="description" content="An in-progress plan to build an Alpine riscv64 phone OS in wasm-vm, then verify its boot and input before moving to hardware.">
+  <meta name="theme-color" content="#080d10"><link rel="icon" href="data:,"><link rel="stylesheet" href="./marketing.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap nav">
+  <a class="brand" href="./landing.html" aria-label="wasm-vm home">wasm<span>—</span>vm<i>/</i></a>
+  <nav class="nav-links" aria-label="Primary navigation"><a href="./landing.html#machine">The machine</a><a href="./case-studies.html" aria-current="page">Case studies</a><a class="nav-roadmap" href="./roadmap.html">Roadmap</a><a href="./docs.html">Docs</a><a href="https://github.com/BLamy/wasm-vm">Source ↗</a><a class="nav-cta" href="./index.html#ide">Open demo ↗</a></nav>
+</div></header>
+<main id="main">
+  <section class="inner-hero wrap">
+    <span class="proposal-label">RV-Phone / Phase 0 in progress / phone image not yet booted</span>
+    <h1>Prompt a phone OS.<br>Boot it in a tab.</h1>
+    <p class="lede">RV-Phone plans a Linux phone around the StarFive JH7110. Before the hardware exists, the project can build a riscv64 userland and test its first boots in wasm-vm. This is the workflow and its current boundary, not a claim that the phone OS already runs.</p>
+    <a class="text-link" href="#status">See the current status →</a>
+  </section>
+
+  <section class="editorial-section wrap" aria-labelledby="prompt-title">
+    <h2 id="prompt-title">The prompt</h2>
+    <div class="editorial-body">
+      <p>Start with a specification in plain language, then ask an agent to build the image, boot it, inspect the result, and change one thing at a time.</p>
+      <blockquote class="case-prompt"><span>Example Phase 0 prompt</span>Build me a RISC-V phone OS: Alpine riscv64 with the Sxmo shell, a 720 × 1440 portrait display, touch and sound. Simulate a Quectel EG25-G LTE modem over virtio-console so I can test calls and SMS before the hardware arrives. Boot it in wasm-vm.</blockquote>
+      <p class="case-disclosure">The exchange below illustrates the planned workflow. It is not a transcript of a completed RV-Phone build or a recorded VM run.</p>
+      <div class="case-chat" aria-label="Illustrative agent conversation">
+        <div class="case-message"><span>Agent</span><p>Build an Alpine riscv64 root filesystem, add the available Sxmo packages, and configure a phone user.</p></div>
+        <div class="case-message"><span>Agent</span><p>Boot the image in wasm-vm. Connect the portrait display, pointer and keys, and guest audio to the browser.</p></div>
+        <div class="case-message"><span>Agent</span><p>Implement a fake EG25-G answering AT commands on a guest console port, then check what ModemManager and the dialer observe.</p></div>
+        <div class="case-message user"><span>You</span><p>Make the launcher bigger and add a dialer shortcut.</p></div>
+        <div class="case-message"><span>Agent</span><p>Rebuild, reboot, inspect the changed screen, and keep the boot and modem traces as evidence.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="editorial-section wrap" id="loop" aria-labelledby="loop-title">
+    <h2 id="loop-title">The loop</h2>
+    <div class="editorial-body">
+      <p>The bolt.new-style loop for an OS is prompt → build → boot → look → repeat. Each turn should end in a real guest run, rather than a picture of a proposed UI.</p>
+      <ol class="case-steps">
+        <li><strong>Describe the system.</strong> Name the distro, shell, screen, inputs, and hardware that needs a stand-in.</li>
+        <li><strong>Build the image.</strong> Assemble the riscv64 root filesystem and configuration in a reproducible build.</li>
+        <li><strong>Boot it in the tab.</strong> Run the image on wasm-vm's RISC-V machine and observe the actual guest display, console, input, and sound.</li>
+        <li><strong>Change and verify.</strong> Try the UI or fake call, inspect logs, revise the image, and retain the next run.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="editorial-section wrap" aria-labelledby="real-title">
+    <h2 id="real-title">Why it can be real</h2>
+    <div class="editorial-body">
+      <p>wasm-vm emulates a RISC-V machine rather than substituting host Linux APIs. That makes it a plausible place to start the phone's riscv64 userland. Moving to the JH7110 will still require hardware-specific kernel and device work, and the transfer has not been proven yet.</p>
+      <div class="editorial-rows">
+        <article><h3>CPU</h3><p>The Level 1 RISCOF architectural run reports <strong>395 passed, 0 failed</strong> against Sail, with no exclusions. <a href="./docs.html?page=reference-docs-level1-report">Read the pinned report →</a></p></article>
+        <article><h3>Linux</h3><p>An unmodified Alpine riscv64 guest already boots to a shell in the browser. The proposed phone image will be a separate build. <a href="./index.html#ide">Open the machine →</a></p></article>
+        <article><h3>Devices</h3><p>The existing VM has browser scanout, guest keyboard and pointer input, and audio. Portrait UI and a simulated modem remain Phase 0 work.</p></article>
+      </div>
+      <div class="case-table-wrap"><table class="case-table">
+        <caption>Starting an early OS iteration</caption>
+        <thead><tr><th scope="col">Step</th><th scope="col">Typical dev-board path</th><th scope="col">Planned browser path</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">First boot</th><td>Prepare a board, flash storage, and connect a serial console.</td><td>Open the built image in a tab.</td></tr>
+          <tr><th scope="row">Build tools</th><td>Use a cross-toolchain or riscv64 build host.</td><td>Build riscv64 packages inside a riscv64 guest.</td></tr>
+          <tr><th scope="row">Modem test</th><td>Connect a modem, SIM, and carrier service.</td><td>Start with a fake AT-command modem.</td></tr>
+          <tr><th scope="row">Review</th><td>Share an image and a set of flashing steps.</td><td>Share the image and its recorded boot evidence.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <section class="editorial-section wrap" aria-labelledby="proof-title">
+    <h2 id="proof-title">Verification</h2>
+    <div class="editorial-body">
+      <p>wasm-vm's rule is that an implementer's satisfaction is a claim; a deterministic recording is evidence. RV-Phone can use the same rule: the phone UI and fake modem count as working only after a recorded guest boot shows their output and input.</p>
+      <p class="editorial-callout">The next concrete proof is a Phase 0 image that boots in the browser, responds to touch or pointer input, and exchanges AT commands with the simulated modem. Real screenshots, commands, and numbers belong here after that run.</p>
+    </div>
+  </section>
+
+  <section class="editorial-section wrap" id="status" aria-labelledby="status-title">
+    <h2 id="status-title">Current status</h2>
+    <div class="editorial-body">
+      <div class="editorial-rows">
+        <article><h3>Planned</h3><p>JH7110 compute platform, EG25-G modem, and foldable-screen hardware design.</p></article>
+        <article><h3>Phase 0 · now</h3><p>Build Alpine riscv64 with Sxmo, a portrait UI, and the simulated modem. <strong>No completed in-browser phone boot is claimed yet.</strong> This page will be updated with the first result.</p></article>
+        <article><h3>After Phase 0</h3><p>Try the userland on a VisionFive 2 with a real modem, then adapt the kernel and devices for the phone's carrier board.</p></article>
+      </div>
+      <p><a href="./case-studies.html">Back to case studies →</a> · <a href="./index.html#ide">Try wasm-vm →</a></p>
+    </div>
+  </section>
+</main>
+<footer class="wrap footer-inner"><div><a class="brand" href="./landing.html">wasm<span>—</span>vm<i>/</i></a><p>A RISC-V computer in a browser.</p></div><nav aria-label="Footer"><a href="./landing.html">Home</a><a href="./case-studies.html">Case studies</a><a href="./docs.html">Docs</a><a href="./index.html#ide">Demo</a><a href="https://github.com/BLamy/wasm-vm">Source ↗</a></nav></footer>
+</body>
+</html>
