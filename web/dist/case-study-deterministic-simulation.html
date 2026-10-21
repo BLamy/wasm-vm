@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Deterministic simulation + time travel debugging — wasm-vm</title>
+  <meta name="description" content="A proposed workflow inspired by celld: discover rare failures with deterministic simulation, then use a recorded machine to investigate the execution and preserve a regression.">
+  <meta name="theme-color" content="#080d10"><link rel="icon" href="data:,"><link rel="stylesheet" href="./marketing.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap nav">
+  <a class="brand" href="./" aria-label="wasm-vm home">wasm<span>—</span>vm<i>/</i></a>
+  <nav class="nav-links" aria-label="Primary navigation"><a href="./#machine">The machine</a><a href="./case-studies.html" aria-current="page">Case studies</a><a class="nav-roadmap" href="./roadmap.html">Roadmap</a><a href="./docs.html">Docs</a><a href="https://github.com/BLamy/wasm-vm">Source ↗</a><a class="nav-cta" href="./app.html#ide">Open demo ↗</a></nav>
+</div></header>
+<main id="main">
+  <section class="inner-hero wrap">
+    <span class="proposal-label">Deterministic simulation / workflow study / integration proposed</span>
+    <h1>Find a rare failure.<br>Keep the execution.</h1>
+    <p class="lede">Let a simulator explore difficult execution orders. When an invariant fails, keep a recorded machine so a developer or an AI agent can return to the states that explain it.</p>
+    <a class="text-link" href="#workflow">From a failing seed to a regression →</a>
+  </section>
+
+  <section class="editorial-section wrap" aria-labelledby="inspiration-title">
+    <h2 id="inspiration-title">Inspired by celld</h2>
+    <div class="editorial-body">
+      <p><a href="https://celld.dev/docs/engineering/deterministic-simulation-testing/">celld's engineering article</a> describes a simulator that runs production event handlers while controlling scheduling, time and object-storage responses. Repeating the same code, settings and seed reproduces a run. Invariant checks expose failures along the way.</p>
+      <p>That gives us a compelling use case for time travel debugging: preserve a failing execution, then navigate its history to investigate causality. This is our proposed application of wasm-vm, not a celld integration or endorsement.</p>
+    </div>
+  </section>
+
+  <section class="editorial-section wrap" aria-labelledby="race-title">
+    <h2 id="race-title">A small race, a lost alarm</h2>
+    <div class="editorial-body">
+      <p>The article reports an alarm race with this critical order:</p>
+      <ol class="case-steps">
+        <li>Delete a 10:00 alarm; leave its wake-entry cleanup pending.</li>
+        <li>Set a 10:05 alarm that reuses the old wake entry.</li>
+        <li>Run the delayed cleanup; it deletes the entry the new alarm needs.</li>
+        <li>The invariant fails: an acknowledged alarm has no usable wake entry.</li>
+      </ol>
+      <p>celld's fix gives each new alarm setting its own entry. Its regression checks the invariant during execution, so a temporary violation cannot hide behind a correct final state. <a href="https://celld.dev/docs/engineering/deterministic-simulation-testing/">Read the original investigation and fix ↗</a></p>
+    </div>
+  </section>
+
+  <section class="editorial-section wrap" aria-labelledby="inspect-title">
+    <h2 id="inspect-title">Turn reproduction into inspection</h2>
+    <div class="editorial-body">
+      <p>A repeatable failure gives the investigator a stable target. A recorded machine would add a way to compare the moments around that failure without repeatedly driving the entire scenario by hand.</p>
+      <div class="editorial-rows">
+        <article><h3>Find the first broken state</h3><p>Associate each invariant check with a recording position. Move between the last passing check and the first failing check, then inspect the intervening guest instructions and state.</p></article>
+        <article><h3>Follow the cause backwards</h3><p>Inspect earlier positions to find when a value changed and which pending operation produced it. Connect the simulator's action IDs to application logs and guest traces. Source-level watchpoints and reverse-continue would need debugger integration; a timeline alone does not provide them.</p></article>
+        <article><h3>Give a critic the same run</h3><p>An AI agent can propose an explanation with exact positions and evidence. A separate reviewer can inspect those positions and challenge the explanation against the recorded state.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="editorial-section wrap" id="workflow" aria-labelledby="workflow-title">
+    <h2 id="workflow-title">From seed to regression</h2>
+    <div class="editorial-body">
+      <ol class="case-steps">
+        <li><strong>Explore.</strong> Run a compatible simulation harness with varied seeds and explicit invariants. Keep its code revision, configuration and failing seed.</li>
+        <li><strong>Record the failure.</strong> Reproduce the selected case inside a pinned wasm-vm guest, recording the external inputs required to replay it. Match the failing invariant and action sequence to the discovered case before treating it as the same bug.</li>
+        <li><strong>Anchor the checks.</strong> Emit the simulator action ID and invariant result at known recording positions. Preserve enough checkpoints to reach the relevant interval efficiently.</li>
+        <li><strong>Inspect.</strong> Restore an earlier checkpoint and replay recorded inputs to the selected position. Compare application state, guest memory, storage changes and the action log. Keep replay disconnected from live services.</li>
+        <li><strong>Test the repair.</strong> Build the changed program and run the same scenario in a new recording. Preserve or explicitly script the relevant action order: changing code can change the choices a seed produces. A patched binary needs its own execution; the old recording remains evidence of the original bug.</li>
+        <li><strong>Keep the regression.</strong> Commit the deterministic test and its invariant assertions. Retain the original and repaired evidence with their code and artifact identities, subject to an explicit storage and privacy policy.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="editorial-section wrap" aria-labelledby="boundary-title">
+    <h2 id="boundary-title">Control every input that matters</h2>
+    <div class="editorial-body">
+      <p>The simulator owns the search: its scheduling choices, fault model and invariants determine what it can discover. The recorded VM would preserve an individual execution for investigation. Running a program in an emulator does not automatically explore distributed failures or make uncontrolled host inputs deterministic.</p>
+      <div class="editorial-rows">
+        <article><h3>Simulation identity</h3><p>Pin code, settings, seed, random-number generator and test data. Keep action IDs and check results. A seed alone cannot identify a run across arbitrary changes to the program or harness.</p></article>
+        <article><h3>Machine and I/O identity</h3><p>Pin the guest image and emulator build. Capture or deterministically model clock and entropy reads, scheduler decisions and storage/network outcomes at the boundary that owns them. Multi-node simulations need a recorded or simulated boundary for every participating node and service.</p></article>
+        <article><h3>Replay evidence</h3><p>Check state digests at known positions and validate coverage of the disputed behavior. Bound recording size and recovery time. Redact or restrict access to recordings that contain credentials, request bodies or database contents.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="editorial-section wrap" id="status" aria-labelledby="status-title">
+    <h2 id="status-title">Current status</h2>
+    <div class="editorial-body">
+      <div class="editorial-rows">
+        <article><h3>Existing foundation</h3><p>wasm-vm runs RISC-V Linux in the browser and has a local timeline for completed software recordings and admitted exact GPU histories. Those are bounded recording paths; they do not establish that this simulation workload runs.</p></article>
+        <article><h3>Proposed integration</h3><p>A compatible simulation guest, action-to-recording markers and invariant inspection. celld says its simulator is still private. We have not run celld or that simulator inside wasm-vm, and this page presents no measured integration results. <a href="https://celld.dev/docs/engineering/deterministic-simulation-testing/">celld's simulator status ↗</a></p></article>
+        <article><h3>The next proof</h3><p>Record a real failing simulation, replay its action sequence and guest-state digests offline, locate the first invariant violation, then independently verify the repair in a separate recording. Measure the workload's recording and seek costs before promising interactive debugging at scale.</p></article>
+      </div>
+      <p><a href="./docs-verification.html">How wasm-vm uses evidence →</a> · <a href="./case-studies.html">More case studies →</a> · <a href="./app.html#ide">Try the browser VM →</a></p>
+    </div>
+  </section>
+</main>
+<footer class="wrap footer-inner"><div><a class="brand" href="./">wasm<span>—</span>vm<i>/</i></a><p>A RISC-V computer in a browser.</p></div><nav aria-label="Footer"><a href="./">Home</a><a href="./case-studies.html">Case studies</a><a href="./docs.html">Docs</a><a href="./app.html#ide">Demo</a><a href="https://github.com/BLamy/wasm-vm">Source ↗</a></nav></footer>
+</body>
+</html>
