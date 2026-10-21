@@ -35,7 +35,7 @@ def run(name,command,timeout=1800):
 try:
  clean()
  run('policy',['python3','tools/check_task_policy.py'])
- run('local-gauntlet',['make','ci'],7200)
+ run('local-gauntlet',['python3','-B','tools/verify/e9-local-gauntlet.py','--task','E9-T18c','--output',str(out/'gauntlet')],10800)
  run('gpu-clippy',['cargo','clippy','-p','wasm-vm-core','--tests','--features',features,'--','-D','warnings'])
  run('gpu-lib',['cargo','test','-p','wasm-vm-core','--features',features,'--lib','--','--nocapture'])
  run('rv64-results',['cargo','test','-p','wasm-vm-core','--features',features,'--test','session_gpu_results','--','--nocapture','--test-threads=1'])
