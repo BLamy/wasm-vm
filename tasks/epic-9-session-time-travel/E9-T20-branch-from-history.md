@@ -254,3 +254,84 @@ Commands: read-only diff/source/report/catalogue inspection; catalogue rehash;
 `python3 -B tools/verify/e9-branch.py --help`; the promoted test against
 `target/evidence/e9-t20-frozen-3/gpu` and `target/evidence/e9-t20-cold-final/gpu`.
 No broad wall or cold clone was repeated.
+
+### 2026-10-21 — Daybreak publication verifier
+
+VERDICT: verified
+
+- P1 release boundary — **HELD**. Source HEAD
+  `292d7488f4c01bfd4153d7a6310b833904cf65b5` is the single-parent child of
+  verification commit `ea24a76b61636acf09a5442b93b66136e716d926` and the
+  checkout was clean before evidence output. The complete range changes only
+  `web/roadmap.js`, `web/tasks.json`, their two dist mirrors and the dist
+  service-worker stamp; source/dist mirrors are exact and no runtime, test,
+  fixture, article or workflow hunk changed.
+- P2 carried runtime boundary — **HELD (carried)**. The prior actual-Daybreak
+  report rehashes to
+  `d759774bc098df054d4359ebb8af8b1dc8caa360969a689891f4dada8b8e6074`.
+  Its unchanged boundary remains runtime head
+  `5ee35fb4da5d39b22891004c816568757b771194`, Wasm
+  `d2bb362758e060f40351e57c7e52fa42b917a64017cdc2615d7f20d60a06bc2d`
+  and 73-file GPU graph
+  `fcf596828ffe68ed1930e34413573627cad563f084c5ebd35eb5e870f727005d`.
+  No high wall, cold clone, native suite, performance run or guest boot was
+  repeated under the repository's incremental policy.
+- P3 direct release results — **HELD**. Local-demo, public-assets and
+  public-browser reports rehash respectively to
+  `0c42d14cd31f0c23ffded1eb6e8e5e37509f069f626dcb1a389ab1dc44570e10`,
+  `3d7f0e63a7cffc44bc9e5bcea45540a7ced9be6a1cc75ba2006bc65f7d6adc0f`
+  and `03f925ca0dcc486d3a0e2a93dea625c09294e2a6707a9e64e5d61520a31d4aab`.
+  All 11 local assets, all 96 public comparisons (including all 73 runtime
+  sources) and all 11 browser assets rehash against the release tree. The saved
+  browser harness hashes to
+  `471c35e14d3d04de08c3f75eacb2bdbb760b31f0e4802b2367b91035f5f5f8ae`;
+  its public recording has 127 passed / 0 failed, empty console/page/HTTP error
+  lists and a visually confirmed verified branch pip. Public trace SHA-256 is
+  `117b82d3aee12c7c6ab5aeb6c34c5e94b84228d2e0f78493fddcf4237355175e`;
+  screenshot SHA-256 is
+  `65541ade541d7c2691f6e871e3991c64ee4b7af07cc5b91619836da180c2ab5a`.
+- P4 deployment identity — **HELD**. Receipt SHA-256 is
+  `89c235f15dab65606327442684523fb75af67e3a0f06273301c457b1d31014d6`;
+  deploy-log SHA-256 is
+  `e62d7e8db73e0ad7dad868bc6527c533a835c290726a82a34ae392efee2cf4a0`.
+  They bind release head `292d7488...`, production branch `main`, deployment
+  `6f9b8388`, and the actual main URL `https://wasm-vm.pages.dev/`; the deploy
+  source invokes `wrangler pages deploy` for project `wasm-vm` with
+  `--branch main`. The preview hostname alone was not accepted.
+- P5 manifests and public bytes — **HELD**. All five committed and deployed
+  sidecars rehash to the receipt, with only exact staged URL rewrites and seven
+  unique `sha256/<digest>/...` R2 references. Fresh HEAD and GET requests to the
+  actual main URL returned 200 and exact expected bytes for `/`, app, runtime
+  graph stamp, Wasm, roadmap, tasks, service worker, all five deployed manifests
+  and all three case pages. Fresh HEAD requests to every one of the seven exact
+  R2 URLs returned 200 and the declared content length, including the 512 MiB
+  Alpine rootfs; no credential or mutation endpoint was used.
+- P6 status and claim boundary — **HELD**. Live roadmap/tasks mark E9-T20 and
+  all three criteria verified while Epic 9 remains `in-progress`. The only new
+  roadmap claim is the bounded saved-history continuation result; it adds no
+  full-desktop, performance or Epic-9-completion claim. RV-Phone remains
+  explicitly not-yet-booted, AI Sandboxing remains a proposed hosted deployment,
+  and deterministic simulation remains a proposed integration; all three live
+  pages match committed release bytes.
+- P7 release hygiene — **HELD within the authorized boundary**. The release
+  commit is not a merge, and neither workflow files nor implementation changed
+  in the range. A pre-existing August `perf-regression.yml` remains in the tree;
+  remote Actions enablement and PR stack topology were not queried because the
+  verifier's network authorization is limited to the main Pages site and exact
+  receipt-derived R2 URLs. No remote mutation, push, merge or deployment was
+  performed.
+- COVERAGE — **SUFFICIENT**. Both roadmap mirrors, both generated task mirrors
+  and the service-worker stamp were checked locally and against deployed bytes.
+  There is no unexecuted runtime hunk because this publication slice has none.
+- SUITE — **EVIDENCE ONLY**. The low-risk publication verifier and deterministic
+  result are retained at
+  `target/evidence/e9-t20-daybreak-publication/verify_publication.py` (SHA-256
+  `ed12571ddf953214e88c76069e32bf6b4841a128db4172f1fa0b148747bb40f4`)
+  and `target/evidence/e9-t20-daybreak-publication/report.json` (SHA-256
+  `b4d207a222f70259e99321004ad2adb0a19149b73a284714ef81cb1ec781a743`).
+
+Commands: read-only policy/task/full-range diff inspection; local SHA-256 and
+JSON/source/dist catalogue checks; `python3 -B
+target/evidence/e9-t20-daybreak-publication/verify_publication.py`; visual
+inspection of the retained public screenshot. No broad suite or browser rerun
+was needed.
