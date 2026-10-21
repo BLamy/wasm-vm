@@ -22,7 +22,8 @@ report = {'task': 'E9-T19', 'risk': 'medium', 'status': 'running', 'started': ti
 sources = ['web/session-timeline.js', 'web/session-timeline-runtime.js', 'web/index.html', 'web/main.js',
            'web/session-library.css', 'web/roadmap.js', 'web/README.md', 'web/session-seek.js',
            'web/session-inputs.js', 'web/session-checkpoints.js', 'web/gpu-checkpoint-build.js',
-           'tools/verify/e9-timeline-browser.mjs', 'tools/verify/e9-timeline.py', 'Makefile']
+           'tools/verify/e9-timeline-browser.mjs', 'tools/verify/e9-timeline-console.test.mjs',
+           'tools/verify/e9-timeline.py', 'Makefile']
 
 
 def digest(file):
@@ -57,6 +58,7 @@ try:
         run('syntax-' + Path(name).stem, ['node', '--check', name])
     run('seek-regression', ['cargo', 'test', '-p', 'wasm-vm-core', '--test', 'e9_seek', '--test', 'e9_deterministic_replay'])
     run('target-build', ['make', 'web-build'])
+    run('console-controls-regression', ['node', '--test', 'tools/verify/e9-timeline-console.test.mjs'])
     for folder, names in [('pkg', ['wasm_vm_wasm.js', 'wasm_vm_wasm_bg.wasm']),
                           ('session-pkg', ['wasm_vm_session.js', 'wasm_vm_session_bg.wasm'])]:
         for name in names:

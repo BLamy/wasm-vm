@@ -229,3 +229,21 @@ Trace indexes retain re-openable call IDs and physical record lines. Policy was
 checked before queue regeneration. This verdict covers the software timeline
 only; pending GPU work stays blocked and main-site publication follows on this
 verified A+UI branch. No B status, implementation, deployment or merge changed.
+
+
+### 2026-10-21 — verifier — retain promoted checks in acceptance
+
+The five promoted tests now run automatically as
+`console-controls-regression` in `make verify-E9-T19`, after the affected target
+build supplies their Wasm dependency and before the browser gate. The recorder
+also binds the promoted test source in its digest catalogue.
+
+Direct `node --test tools/verify/e9-timeline-console.test.mjs` passes all five
+again (`target/evidence/e9-t19-verifier-ff28becd/promoted-gate-tests.log`), and
+Python AST parsing of the touched recorder passes. This is a test-recorder
+promotion only; all frozen runtime/UI/browser-checker sources remain unchanged,
+so the verified runtime and browser evidence carry forward. No full nine-command
+resubmission is claimed or required for this promotion.
+
+Promotion receipt: `target/evidence/e9-t19-verifier-ff28becd/promotion-receipt.json`,
+SHA-256 `b8efc674b665d4afb9ef5cd5b57577b2fa745f09fa46f2e7e3121aba4bc8c685`.
