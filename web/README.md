@@ -28,7 +28,7 @@ with `npm ci`, so builds are reproducible and work offline.
 ## Session timeline
 
 The app's **Time travel · session timeline** panel opens completed software recordings
-from the local history store. **Record Linux sample** saves a real, bounded Linux boot
+and admitted exact GPU histories from the local history store. **Record Linux sample** saves a real, bounded Linux boot
 excerpt with three incremental keyframes. It uses a separate guest and pauses the live
 guest. **Finish sample early** commits the completed prefix rather than inventing a
 successful full boot. The excerpt ends before external disk or network requests.
@@ -37,8 +37,10 @@ Open a recording, scrub or enter an exact transition, step in either direction, 
 or navigate saved keyframes and recorded events. The preview target is separate from the
 active position. The serial console, full transition/event position and expandable state
 digest update together only after the private replay is restored. Observation events
-navigate to the next transition boundary. GPU histories still open as checkpoints in
-**Local saved sessions**; accelerated event replay remains gated.
+navigate to the next transition boundary. Exact GPU histories recorded in the explicit
+1 GiB pure ICount/64 runtime also restore their physical canvas and recorded guest
+results. Older paced GPU histories remain checkpoint-only in **Local saved sessions**.
+Full desktop recording integration and performance remain E9-T22/E9-T24 work.
 
 `make verify-E9-T19` records the built-page keyboard, mouse and touch paths, narrow layout,
 independent from-start VM/console comparisons and 100 superseded seek requests. Build and
