@@ -236,7 +236,3 @@ The full local wall runs once at a clean frozen head. A separate
 `python3 -B tools/verify/e9-branch.py --output OUTPUT --cold-clone CLONE_DIRECTORY`
 checks that same revision from a pristine checkout and fresh build directory.
 These are correctness proofs; desktop performance budgets remain E9-T22.
-After a Wasm binding or documentation correction, `E9_BRANCH_CARRY_NATIVE=PREVIOUS_OUTPUT`
-can retain unchanged native gates. The runner checks the dependency diff,
-commands and every retained artifact digest, records the carry explicitly, and
-reruns the byte readers. The cold proof always rebuilds and executes its gates.
