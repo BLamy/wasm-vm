@@ -73,6 +73,23 @@ report.run=await page.evaluate(async()=>{
 });
 if(JSON.stringify(report.run.pixel)!=='[255,0,0,255]')throw Error('parent physical red frame');
 if(report.counter.opens!==1||report.counter.frames.map(frame=>frame.letter).join(',')!=='S,P')throw Error('original independent counter');
+console.log('Retaining the authenticated source history for independent interrogation');
+report.storage=await page.evaluate(async()=>{
+ const db=await new Promise((resolve,reject)=>{const request=indexedDB.open(p.store.databaseName);request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});
+ const saved={database:p.store.databaseName,stores:{}};
+ try{
+  for(const name of ['objects','sessions','metadata','chunks']){
+   const rows=await new Promise((resolve,reject)=>{const tx=db.transaction(name),table=tx.objectStore(name),keys=table.getAllKeys(),values=table.getAll();tx.oncomplete=()=>resolve(keys.result.map((key,i)=>[key,values.result[i]]));tx.onabort=()=>reject(tx.error);});
+   saved.stores[name]=[];
+   for(const [key,value]of rows){
+    if(value instanceof Blob){const bytes=new Uint8Array(await value.arrayBuffer());await __retain('chunks/'+key+'.bin',Array.from(bytes));saved.stores[name].push({key,bytes:bytes.length});}
+    else{if(value?.manifest instanceof Uint8Array)value.manifest=Array.from(value.manifest);saved.stores[name].push({key,value});}
+   }
+  }
+  await __retain('storage.json',Array.from(new TextEncoder().encode(JSON.stringify(saved,null,2))));
+  return {database:saved.database,counts:Object.fromEntries(Object.entries(saved.stores).map(([name,rows])=>[name,rows.length]))};
+ }finally{db.close();}
+});
 console.log('Opening the actual timeline and past GPU checkpoint');replayPhase=true;
 await page.evaluate(async()=>{
  const p=window.p,{mountSessionTimeline}=await import('/session-timeline.js'),{checkpointHash}=await import('/session-checkpoints.js');
