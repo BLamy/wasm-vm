@@ -35330,8 +35330,9 @@
       "activity": [
         {
           "date": "2026-10-21",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "Record verified GPU replay main-site publication",
             "Verify E9-T18c durable browser GPU replay",
             "Submit recorded GPU replay evidence for independent verification",
             "Begin durable GPU replay through the production browser bridge"
@@ -35340,7 +35341,7 @@
       ],
       "firstActivity": "2026-10-21",
       "lastActivity": "2026-10-21",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E9-T19",
@@ -35400,7 +35401,7 @@
       "epicKey": "9",
       "title": "Continue from the past on an isolated recording branch",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E9-T19",
         "E9-T04",
@@ -35428,13 +35429,21 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "(pending; no implementation or verification claim)",
+      "verificationLog": "### 2026-10-21 — worker — begin isolated continuations\n\nSelected the first eligible task after independently verified GPU result replay\n(`c7106fca3`) and its main-site publication (`72de0392`). The separately reviewed\nAI Sandboxing article is committed in `d906133f9`, PR600, and published on the main\nsite as `690be437`; it changes no admitted runtime bytes.\n\nRisk remains high. Each continuation will use a fresh recording owner, new\nsession/log identity and private writable COW state. The selected parent stays a\nsealed replay; historical connections remain offline, with an explicit go-live\nrefusal policy rather than automatic retransmission. Required runtime assets\nmust come from authenticated local history when branching. Implementation and\nproof must preserve parent futures, two independent children, real guest files,\ninputs, reload/deletion order and callback ownership. Admitted software and exact\nGPU histories need the corresponding ownership path; older paced GPU histories\nretain their checkpoint-only policy. No implementation or verification result is\nclaimed at activation.",
       "adversarial": "Write the same file differently in parent and two children, then delete/reopen in varying order. Use an external counter to detect unintended reconnects or duplicate state-changing sends.",
       "file": "tasks/epic-9-session-time-travel/E9-T20-branch-from-history.md",
-      "activity": [],
-      "firstActivity": null,
-      "lastActivity": null,
-      "commitCount": 0
+      "activity": [
+        {
+          "date": "2026-10-21",
+          "commits": 1,
+          "labels": [
+            "Begin isolated continuations from saved history"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-21",
+      "lastActivity": "2026-10-21",
+      "commitCount": 1
     },
     {
       "id": "E9-T21",

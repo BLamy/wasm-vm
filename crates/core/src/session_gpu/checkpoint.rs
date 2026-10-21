@@ -112,12 +112,16 @@ impl PreparedFrontier {
     }
 }
 impl crate::Machine {
-    pub(crate) fn encode_gpu_frontier(&self, gpu_bytes: &[u8]) -> Result<Vec<u8>, GpuError> {
+    pub(crate) fn encode_gpu_frontier_for_view(
+        &self,
+        gpu_bytes: &[u8],
+        branch: bool,
+    ) -> Result<Vec<u8>, GpuError> {
         let s = self.session_gpu.as_ref().ok_or(GpuError::Inactive)?;
         let clock = self.session_clock.as_ref().ok_or(GpuError::Inactive)?;
         need(
             clock.position.phase == SessionPhase::Before
-                && self.session_pending_events() == 0
+                && (branch || self.session_pending_events() == 0)
                 && self.extra_blk.is_empty(),
         )?;
         let (gpu, _, _, slot) = self.gpu.as_ref().ok_or(GpuError::Profile)?;
@@ -146,12 +150,15 @@ impl crate::Machine {
             )
             .ok_or(GpuError::Exhausted)?;
         let pending = gpu.submit3d.as_ref().and_then(|s| s.pending.as_ref());
+        // The physical renderer snapshot reconstructs completed state. Do not turn a
+        // half-completed replay command or its transport receipts into a live owner.
+        need(!branch || (s.replay && pending.is_none() && s.transport.is_empty()))?;
         let intent = pending
             .map(|p| request_digest(p, logical, logical_queue))
             .unwrap_or([0; 32]);
         let mut out = MAGIC.to_vec();
         out.extend_from_slice(&Sha256::digest(gpu_bytes));
-        out.push(u8::from(s.replay));
+        out.push(u8::from(s.replay && !branch));
         for v in [physical, logical, queue, logical_queue, s.cursor] {
             n64(&mut out, v);
         }
@@ -163,8 +170,9 @@ impl crate::Machine {
             n32(&mut out, bytes.len() as u32);
             blob(&mut out, bytes);
         }
-        out.push(u8::from(s.prepared.is_some()));
-        if let Some(p) = &s.prepared {
+        let prepared = s.prepared.as_ref().filter(|_| !branch);
+        out.push(u8::from(prepared.is_some()));
+        if let Some(p) = prepared {
             position(&mut out, p.position);
             blob(&mut out, &p.result.encode()?);
             out.push(u8::from(p.payload.is_some()));

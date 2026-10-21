@@ -600,6 +600,17 @@ export class WasmLinux {
         return ret[0] !== 0;
     }
     /**
+     * @param {Uint8Array} native
+     * @param {any} queues
+     * @param {Uint8Array | null} [renderer_digest]
+     */
+    beginExactBranch(native, queues, renderer_digest) {
+        const ret = wasm.wasmlinux_beginExactBranch(this.__wbg_ptr, native, queues, isLikeNone(renderer_digest) ? 0 : addToExternrefTable0(renderer_digest));
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * @param {Uint8Array} initial_resume
      * @param {Array<any>} events
      * @param {Array<any>} witnesses
@@ -683,6 +694,18 @@ export class WasmLinux {
     captureDiskDelta() {
         const ret = wasm.wasmlinux_captureDiskDelta(this.__wbg_ptr);
         return ret;
+    }
+    /**
+     * Synchronous owned copy of the selected replay. Callers never receive its mutable VM.
+     * @param {Uint8Array | null} [renderer_digest]
+     * @returns {any}
+     */
+    captureExactBranch(renderer_digest) {
+        const ret = wasm.wasmlinux_captureExactBranch(this.__wbg_ptr, isLikeNone(renderer_digest) ? 0 : addToExternrefTable0(renderer_digest));
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * Freeze RAM pages, CPU/devices and the genuine pending result frontier together.
@@ -893,6 +916,16 @@ export class WasmLinux {
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
+    }
+    /**
+     * @returns {boolean}
+     */
+    exactBranchNetworkOffline() {
+        const ret = wasm.wasmlinux_exactBranchNetworkOffline(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
     }
     /**
      * @param {SessionDeviceLease} lease
@@ -1774,6 +1807,12 @@ export class WasmLinux {
     relinquishSnapshotWriter() {
         const ret = wasm.wasmlinux_relinquishSnapshotWriter(this.__wbg_ptr);
         return ret;
+    }
+    requestExactBranchGoLive() {
+        const ret = wasm.wasmlinux_requestExactBranchGoLive(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
     }
     /**
      * The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
