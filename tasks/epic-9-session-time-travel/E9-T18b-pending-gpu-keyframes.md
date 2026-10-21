@@ -153,3 +153,19 @@ requirement; it is not verified. Independent eligible E9-T19 may proceed, while
 E9-T18c and the GPU replay release stay gated. Resume the same fresh verifier once
 the account gate is resolved, preserve the recorded findings, and finish coverage
 and verdict before publication.
+
+### 2026-10-21 — worker — preserve blocked work above the verified UI release
+
+Reparented this draft above verified T19 release `003e4b478` so the timeline can
+ship on the accepted A runtime without publishing this blocked native change.
+The original chain is retained at `refs/codex-safety/e9-t18b-before-reorder`
+(`9aba75f4c7e7b77457efe34153e256443dd8e226`). All changed native implementation,
+tests and pending-GPU proof harness files byte-match that retained submission.
+The rebuilt Wasm remains exactly 2400211 bytes, SHA-256
+`fca09f12b9969e54cfdbbc0e17b584d128249048cbe7ef19429d6dfe652af766`; all 56 GPU
+worker inputs produce the unchanged build ID
+`abe65b7af35437a31d88c17de9272a7ac4809200ae4a996013e218e68cecb204`.
+Identity audit: `target/evidence/e9-t18b-reparent-after-timeline.json`; build log:
+`/tmp/e9-t18b-reparent-build.log`. Prior native predictions and final wall/cold
+proofs retain their source/binary scope; no new passing critic verdict is claimed.
+The account security block is unchanged. This branch is not deployed.

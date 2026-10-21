@@ -64,9 +64,42 @@ policy and physical presentation evidence are E9-T18c, not claims of this slice.
 
 ## Keyframes and proof
 
-Accelerated capture is explicitly refused while the adapter is active. Ordinary
-checkpoint encoding cannot silently discard its payload window, pending descriptor
-or result cursor. E9-T18b supplies that codec and fresh-owner restoration.
+The legacy accelerated checkpoint API remains refused while the adapter is active.
+The explicit `save_gpu_result_resume` / `load_gpu_result_resume` APIs use native
+GPU format v2 and required resume section 22 (`WVGFRNT1`). The whole resume is
+sealed with the renderer witness and binds the existing CPU/RAM/device, build,
+base-disk and overlay-generation identity. Disk bytes are separately reconstructed
+by the embedding before native admission; the native codec never fabricates them.
+
+V2 retains the actual pending descriptor chain, accepted control/resource/backing
+snapshot, queue generation, command/transfer/scanout request, exchange counters,
+owned physical-ready completion and diagnostic command trace. Physical work must
+be settled even when the real guest response/fence and used entry remain pending.
+An unavailable or uncertain physical result is refused. No pending work is drained
+or reissued during capture/restore. All parsing, payload hashes, descriptor/queue
+RAM spans, cached ring/RAM positions, request/context identities and coherent result
+frontier checks precede the first incumbent mutation. V2 requires an empty staged
+common-clock queue and a balanced pending/completed/cancelled admission ledger,
+including its sequence high-water mark. V1 quiescent snapshots and
+the ICount/source policy remain unchanged.
+
+The frontier retains mode, logical/physical epoch and queue coordinates, result
+cursor, up to 64 MiB/256 immutable payloads, one prepared frame (up to 32 MiB), and
+64 MiB/256 transport receipts. Its encoding is bounded by 161 MiB and has its own
+seal plus a hash of the entire native GPU section, including its transport/cursors.
+Restore reserves fresh physical epoch and queue coordinates; only those explicitly
+host-owned coordinates are normalized in logical result intents. Every guest
+resource generation, descriptor, fence, counter, GPU shadow and scanout field is
+retained. Completion senders are opaque per-admission leases and never serialized.
+A former sender fails after revoke/rearm even if every numeric tag is reused. The
+unbound legacy mailbox cannot post into an opted-in session job.
+
+A restored settled owner applies future recorded logical DMA at its original
+boundary without requesting another physical job. Its retained transport frontier
+is retired with that owner's terminal result; it cannot authorize a new request.
+Subsequent real guest work uses ordinary fresh physical callbacks and the same
+logical identities. This is a native boundary; durable store chunks and actual
+browser GPU reconstruction remain E9-T18c.
 
 `make verify-E9-T18a` records literal RV64 code configuring the queue, publishing
 available heads, notifying GPU MMIO, polling the fenced response and loading the
