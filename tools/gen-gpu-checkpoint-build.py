@@ -16,7 +16,7 @@ def include(path):
     names.add(path)
     if path.suffix in ('.js','.mjs'):
         for match in imports.finditer(path.read_text()):include(path.parent/match.group(1))
-for name in ['linux-worker.js','linux-worker-protocol.js','loader.js','gpu-checkpoint.js','session-gpu-replay.js','session-gpu-replay-worker.js','pkg/wasm_vm_wasm_bg.wasm','session-pkg/wasm_vm_session_bg.wasm']:include(web/name)
+for name in ['linux-worker.js','linux-worker-protocol.js','loader.js','gpu-checkpoint.js','session-gpu-replay.js','session-gpu-replay-worker.js','session-branches.js','session-gpu-branch-worker.js','pkg/wasm_vm_wasm_bg.wasm','session-pkg/wasm_vm_session_bg.wasm']:include(web/name)
 for path in (web/'renderer').rglob('*'):
     if path.is_file() and path.suffix in ('.mjs','.wasm'):include(path)
 identity=hashlib.sha256(b'wasm-vm-production-gpu-worker-v1\0')

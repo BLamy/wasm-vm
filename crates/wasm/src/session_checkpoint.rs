@@ -36,7 +36,7 @@ fn context_for(inner: &LinuxInner, bytes: &[u8]) -> Result<CheckpointContext, Js
 // The exact-session adapter owns its complete immutable-base COW overlay inside the native
 // SESSION_DEVICES section. Its disk-root object is the accepted empty base binding from T14;
 // the native section, not this base root, supplies every later overlay block on restore.
-fn disk_at_keyframe(inner: &LinuxInner, native: &[u8]) -> Result<Vec<u8>, JsError> {
+pub(super) fn disk_at_keyframe(inner: &LinuxInner, native: &[u8]) -> Result<Vec<u8>, JsError> {
     if let Some(disk) = &inner.checkpoint_disk {
         return disk
             .snapshot_delta(inner.machine.overlay_generation())
@@ -49,7 +49,9 @@ fn disk_at_keyframe(inner: &LinuxInner, native: &[u8]) -> Result<Vec<u8>, JsErro
     let (header, _) = wasm_vm_core::resume::SnapshotHeader::parse(native)
         .map_err(|error| JsError::new(&format!("session_keyframe_header: {error:?}")))?;
     Ok(OverlayDelta {
-        image_len: 512 << 20,
+        image_len: inner
+            .exact_image_len
+            .ok_or_else(|| JsError::new("session_keyframe_disk_missing"))?,
         base_binding: header.base_image_hash,
         generation: header.overlay_generation,
         blocks: Vec::new(),

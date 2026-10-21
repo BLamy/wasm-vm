@@ -12,17 +12,43 @@ export async function openGpuTimelineReplay({store,id,configuration,onPublish=()
 }
 export class SessionGpuReplayController {
   #read;#database;#id;#publish;#progress;#beforeFrame;#selected=null;#active=null;#next=0;
+  #captures=new Map();#captureId=0;
   constructor({read,database,id,onPublish=()=>{},onProgress=()=>{},beforeFrame=async()=>{}}){
     need(read?.admitted&&typeof database==='string','GPU replay requires an admitted local store');this.#read=read;this.#database=database;this.#id=id;this.#publish=onPublish;this.#progress=onProgress;this.#beforeFrame=beforeFrame;
   }
   get end(){return pos(this.#read.manifest.end);}
   get selected(){const s=this.#selected;return s?{position:pos(s.position),checkpointId:s.checkpointId,requestId:s.requestId,rendered:s.rendered}:null;}
-  cancel(){this.#active?.cancel();this.#active=null;}
+  get canContinue(){return Boolean(this.#selected?.continuationReady&&!this.#active);}
+  cancel(){for(const cancel of [...this.#captures.values()])cancel();this.#active?.cancel();this.#active=null;}
   close(){this.cancel();this.#selected?.worker.terminate();this.#selected?.presentation.dispose();this.#selected=null;}
   forwardStep(){need(this.#selected,'select a GPU position first');return this.seekTransition((BigInt(this.#selected.position.transition)+1n).toString());}
   reverseStep(){need(this.#selected,'select a GPU position first');return this.seekTransition((BigInt(this.#selected.position.transition)-1n).toString());}
   seekTransition(transition){need(typeof transition==='string'&&/^(0|[1-9][0-9]*)$/.test(transition)&&BigInt(transition)>=BigInt(this.#read.manifest.begin.transition)&&BigInt(transition)<=BigInt(this.#read.manifest.end.transition),'GPU seek transition');return this.#request({transition,transitionOnly:true});}
   seekPosition(target){need(target?.phase==='before'&&compare(target,this.#read.manifest.begin)>=0&&compare(target,this.#read.manifest.end)<=0,'GPU seek position');return this.#request(pos(target));}
+  captureSelectedBranch({signal}={}){
+    need(this.canContinue&&!signal?.aborted,'select an available completed GPU point before continuing');
+    const selected=this.#selected,captureId=++this.#captureId,worker=selected.worker;
+    return new Promise((resolve,reject)=>{
+      let done=false,timer;
+      const cleanup=()=>{done=true;clearTimeout(timer);worker.removeEventListener('message',message);worker.removeEventListener('error',error);signal?.removeEventListener('abort',cancel);this.#captures.delete(captureId);};
+      const fail=value=>{if(done)return;cleanup();reject(value);};
+      const cancel=()=>fail(Error('GPU continuation capture cancelled'));
+      const error=event=>fail(Error(event.message||'GPU continuation worker failed'));
+      const message=event=>{
+        const value=event.data;if(value.captureId!==captureId||value.requestId!==selected.requestId||done)return;
+        if(value.type==='branch-error'){fail(Error(value.message));return;}
+        if(value.type!=='branch-captured')return;
+        try{
+          need(this.#selected===selected&&this.canContinue&&!signal?.aborted,'GPU source selection changed');
+          need(compare(value.position,selected.position)===0&&value.console===selected.rendered.console,'GPU source view changed');
+          cleanup();resolve(value);
+        }catch(error){fail(error);}
+      };
+      this.#captures.set(captureId,cancel);worker.addEventListener('message',message);worker.addEventListener('error',error);signal?.addEventListener('abort',cancel,{once:true});
+      timer=setTimeout(()=>fail(Error('GPU continuation capture timed out')),30000);
+      try{worker.postMessage({type:'capture-branch',requestId:selected.requestId,captureId});}catch(error){fail(error);}
+    });
+  }
   #request(target){
     this.cancel();const requestId=++this.#next;
     let resolve,reject;const result=new Promise((yes,no)=>{resolve=yes;reject=no;});
@@ -52,7 +78,7 @@ export class SessionGpuReplayController {
         if(value.frame){const before=presentation.snapshot().drawnPresents;need(presentation.present(value.frame)&&presentation.snapshot().drawnPresents>before,'actual selected GPU frame could not be painted');}
         const rendered={position:pos(value.position),digest:value.digest,console:value.console,canvas,gpu:value.gpu,presentation:presentation.snapshot()};
         await this.#beforeFrame(rendered);if(!owns()){presentation.dispose();return;}
-        const selected={worker,presentation,position:pos(value.position),checkpointId:point.id,requestId,rendered};
+        const selected={worker,presentation,position:pos(value.position),checkpointId:point.id,requestId,rendered,continuationReady:value.continuationReady===true};
         this.#publish(selected);if(!owns()){presentation.dispose();return;}
         const previous=this.#selected;this.#selected=selected;job.done=true;this.#active=null;previous?.worker.terminate();previous?.presentation.dispose();
         resolve({status:'ready',position:selected.position,checkpointId:point.id,requestId,rendered});

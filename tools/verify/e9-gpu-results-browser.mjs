@@ -8,7 +8,7 @@ import {execFileSync} from 'node:child_process';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const args=process.argv.slice(2),options={};
-for(let i=0;i<args.length;i+=2){assert.ok(['--output','--url','--capability-status','--pending-status','--gpu-status'].includes(args[i])&&args[i+1]);assert.equal(options[args[i]],undefined);options[args[i]]=args[i+1];}
+for(let i=0;i<args.length;i+=2){assert.ok(['--output','--url','--capability-status','--pending-status','--gpu-status','--branch-status'].includes(args[i])&&args[i+1]);assert.equal(options[args[i]],undefined);options[args[i]]=args[i+1];}
 assert.ok(options['--output']);const expectedStatus=options['--capability-status']??'verified';assert.ok(['in-progress','verified'].includes(expectedStatus));
 const taskText=await fs.readFile(path.join(root,'tasks/epic-9-session-time-travel/E9-T18c-browser-gpu-result-replay.md'),'utf8'),gpuStatus=options['--gpu-status']??(/^status: verified$/m.test(taskText)?'verified':'in-progress');assert.ok(['in-progress','verified'].includes(gpuStatus));
 const output=path.resolve(options['--output']),dist=path.join(root,'web/dist');await fs.mkdir(output,{recursive:true});
@@ -53,7 +53,7 @@ try{
   report.suite=await page.evaluate(()=>({passed:Number(document.querySelector('#metric-pass').textContent),failed:Number(document.querySelector('#metric-fail').textContent)}));
   assert.deepEqual(report.suite,{passed:RISCV_TESTS.length,failed:0});assert.equal(RISCV_TESTS.length,127);
   report.capabilities=await page.evaluate(async()=>{
-    const {ROADMAP}=await import('./roadmap.js');return ROADMAP.find(epic=>epic.epic==='E9').caps.filter(cap=>['Native owned GPU results','Guest-visible GPU replay','Accelerated desktop keyframes','Pending GPU result keyframes'].includes(cap.name));
+    const {ROADMAP}=await import('./roadmap.js');return ROADMAP.find(epic=>epic.epic==='E9').caps.filter(cap=>['Native owned GPU results','Guest-visible GPU replay','Accelerated desktop keyframes','Pending GPU result keyframes','Branches from saved history'].includes(cap.name));
   });
   assert.equal(report.capabilities.find(c=>c.name==='Native owned GPU results').status,expectedStatus);
   assert.equal(report.capabilities.find(c=>c.name==='Guest-visible GPU replay').status,gpuStatus);
@@ -61,6 +61,7 @@ try{
   report.nativePip=await page.locator('.cap').filter({hasText:'Native owned GPU results'}).locator('.cap-pip').getAttribute('class');assert.ok(report.nativePip.split(/\s+/).includes(expectedStatus));
   await page.screenshot({path:path.join(output,'built-demo.png'),fullPage:true});
   if(options['--pending-status']){assert.equal(report.capabilities.find(c=>c.name==='Pending GPU result keyframes').status,options['--pending-status']);report.pendingPip=await page.locator('.cap').filter({hasText:'Pending GPU result keyframes'}).locator('.cap-pip').getAttribute('class');assert.ok(report.pendingPip.split(/\s+/).includes(options['--pending-status']));}
+  if(options['--branch-status']){assert.ok(['in-progress','verified'].includes(options['--branch-status']));assert.equal(report.capabilities.find(c=>c.name==='Branches from saved history').status,options['--branch-status']);report.branchPip=await page.locator('.cap').filter({hasText:'Branches from saved history'}).locator('.cap-pip').getAttribute('class');assert.ok(report.branchPip.split(/\s+/).includes(options['--branch-status']));}
   assert.deepEqual(report.errors,[]);assert.deepEqual(report.httpErrors,[]);report.status='passed';report.browser=browser.version();
 }catch(error){report.status='failed';report.failure=error.stack??String(error);process.exitCode=1;await page?.screenshot({path:path.join(output,'failure.png'),fullPage:true}).catch(()=>{});}
 finally{

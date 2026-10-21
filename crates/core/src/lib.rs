@@ -80,6 +80,14 @@ enum RunCapture<'a, T: trace::TraceSink> {
     Traced(&'a mut T),
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum ResumeView {
+    Current,
+    #[cfg(feature = "virgl-renderer")]
+    LogicalGpu,
+    RecordingBranch,
+}
+
 impl<T: trace::TraceSink> RunCapture<'_, T> {
     #[cfg(not(feature = "zicsr-stub"))]
     #[inline(always)]
@@ -1935,6 +1943,7 @@ impl Machine {
         state.borrow_mut().mirror_legacy_input(exchange, &bytes)?;
         Ok(bytes)
     }
+
     #[cfg(feature = "virgl-renderer")]
     pub fn submit3d_scatter(
         &mut self,
@@ -3307,6 +3316,93 @@ impl Machine {
         self.save_resume_inner(None, true, true)
     }
 
+    pub fn can_capture_recording_branch(&self) -> bool {
+        let ready = self.host_ingress_gate.replay_active()
+            && self.session_replay_limit.is_some()
+            && self.extra_blk.is_empty()
+            && self.guest_clock_mode() == time::TimeMode::ICount
+            && self.session_device_replay() == Ok(true)
+            && self.session_network_replay() == Ok(true)
+            && self.session_sources.borrow().replay()
+            && self.session_position().is_some_and(|p| {
+                p.phase == session_clock::SessionPhase::Before && p.sequence < u64::MAX
+            });
+        #[cfg(feature = "virgl-renderer")]
+        if self.control3d_proof_installed() {
+            return ready && self.gpu_recording_branch_ready();
+        }
+        ready
+    }
+
+    /// Copy a selected replay into an initial recording image without changing its owner.
+    /// The image omits queued parent effects and prefetched GPU results. GPU continuations
+    /// require a completed command boundary; pending commands remain replayable but cannot fork.
+    /// The caller must restore into a fresh record-mode owner and apply the offline policy.
+    pub fn capture_recording_branch(
+        &mut self,
+        renderer_digest: Option<&[u8; 32]>,
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        let bad = crate::resume::SnapshotError::BadComponentState {
+            tag: crate::resume::section::SESSION_CLOCK,
+        };
+        if !self.can_capture_recording_branch() {
+            return Err(bad);
+        }
+        #[cfg(not(feature = "virgl-renderer"))]
+        if renderer_digest.is_some() {
+            return Err(bad);
+        }
+        let bytes = self.save_resume_inner_projected(
+            renderer_digest,
+            true,
+            true,
+            ResumeView::RecordingBranch,
+        )?;
+        #[cfg(feature = "virgl-renderer")]
+        if let Some(digest) = renderer_digest {
+            return dev::virtio::gpu::checkpoint::seal_resume(bytes, digest).map_err(|_| bad);
+        }
+        Ok(bytes)
+    }
+
+    /// Admit a continuation only into a fresh recording owner. Restore never reopens
+    /// the parent's ingress, and this owner's network policy cannot be cleared by a snapshot.
+    pub fn restore_recording_branch(
+        &mut self,
+        blob: &[u8],
+        renderer_digest: Option<&[u8; 32]>,
+    ) -> Result<(), crate::resume::SnapshotError> {
+        let bad = crate::resume::SnapshotError::BadComponentState {
+            tag: crate::resume::section::SESSION_CLOCK,
+        };
+        if self.session_position() != Some(Default::default())
+            || self.session_pending_events() != 0
+            || self.session_replay_limit.is_some()
+            || self.host_ingress_gate.replay_active()
+            || !self.host_ingress_gate.allows_host()
+            || self.session_device_replay() != Ok(false)
+            || self.session_network_replay() != Ok(false)
+            || self.session_branch_offline() != Ok(false)
+            || !self.session_sources.borrow().active()
+            || self.session_sources.borrow().replay()
+        {
+            return Err(bad);
+        }
+        #[cfg(not(feature = "virgl-renderer"))]
+        if renderer_digest.is_some() {
+            return Err(bad);
+        }
+        #[cfg(feature = "virgl-renderer")]
+        if let Some(digest) = renderer_digest {
+            self.load_gpu_result_resume(blob, digest)?;
+        } else {
+            self.load_session_resume(blob)?;
+        }
+        #[cfg(not(feature = "virgl-renderer"))]
+        self.load_session_resume(blob)?;
+        self.keep_session_branch_offline().map_err(|_| bad)
+    }
+
     /// Non-RAM half of an incremental software keyframe. The caller stores the frozen dirty
     /// pages separately and binds their content-addressed objects to this exact checkpoint.
     /// This is never a stand-alone restore image: the RAM base and every ancestor delta must
@@ -3446,7 +3542,7 @@ impl Machine {
                 tag: crate::resume::section::SESSION_GPU,
             });
         }
-        self.save_resume_inner_with_logical_gpu(None, true, false, true)
+        self.save_resume_inner_projected(None, true, false, ResumeView::LogicalGpu)
     }
 
     fn save_resume_inner(
@@ -3455,18 +3551,28 @@ impl Machine {
         exact_inputs: bool,
         include_ram: bool,
     ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
-        self.save_resume_inner_with_logical_gpu(gpu_witness, exact_inputs, include_ram, false)
+        self.save_resume_inner_projected(
+            gpu_witness,
+            exact_inputs,
+            include_ram,
+            ResumeView::Current,
+        )
     }
 
-    fn save_resume_inner_with_logical_gpu(
+    fn save_resume_inner_projected(
         &mut self,
         gpu_witness: Option<&[u8; 32]>,
         exact_inputs: bool,
         include_ram: bool,
-        logical_gpu: bool,
+        view: ResumeView,
     ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        let branch = view == ResumeView::RecordingBranch;
+        #[cfg(feature = "virgl-renderer")]
+        let logical_gpu = view == ResumeView::LogicalGpu;
         #[cfg(not(feature = "virgl-renderer"))]
-        let _ = (gpu_witness, logical_gpu);
+        let logical_gpu = false;
+        #[cfg(not(feature = "virgl-renderer"))]
+        let _ = gpu_witness;
         #[cfg(feature = "virgl-renderer")]
         if self.control3d_proof_installed() && gpu_witness.is_none() && !logical_gpu {
             return Err(crate::resume::SnapshotError::BadComponentState {
@@ -3595,11 +3701,18 @@ impl Machine {
                 .0
                 .borrow()
                 .snapshot_transport(&mut v);
-            for queue in [vq, cursor_vq] {
-                if logical_gpu && queue.is_none() {
+            for (index, queue) in [vq, cursor_vq].into_iter().enumerate() {
+                let software_empty_cache =
+                    exact_inputs && gpu_witness.is_none() && queue.is_none() && {
+                        let transport = self.virtio[*slot_index].0.borrow();
+                        let ring = transport.queue(index);
+                        ring.ready && dev::virtio::queue::Virtqueue::new(ring, 256).is_ok()
+                    };
+                if (logical_gpu || software_empty_cache) && queue.is_none() {
                     // None is an unmaterialized cache of the initial (0,0)
                     // ring cursors. Restore may create that cache to redraw a
-                    // cursor without any guest queue activity. Transport and
+                    // cursor without any guest queue activity. Restorable software
+                    // sessions canonicalize only valid, ready rings. Transport and
                     // every actual cursor remain part of the witness.
                     v.extend_from_slice(&[1, 0, 0, 0, 0]);
                 } else {
@@ -3643,7 +3756,7 @@ impl Machine {
             w.section(section::VIRTIO_GPU, &v);
             #[cfg(feature = "virgl-renderer")]
             if gpu_witness.is_some() && exact_inputs {
-                let frontier = self.encode_gpu_frontier(&v).map_err(|_| {
+                let frontier = self.encode_gpu_frontier_for_view(&v, branch).map_err(|_| {
                     crate::resume::SnapshotError::BadComponentState {
                         tag: section::SESSION_GPU,
                     }
@@ -3787,13 +3900,19 @@ impl Machine {
                 });
             }
             #[cfg(feature = "virgl-renderer")]
-            let encoded = if logical_gpu {
+            let encoded = if branch {
+                clock.encode_recording_branch()
+            } else if logical_gpu {
                 clock.encode_guest_state()
             } else {
                 clock.encode()
             };
             #[cfg(not(feature = "virgl-renderer"))]
-            let encoded = clock.encode();
+            let encoded = if branch {
+                clock.encode_recording_branch()
+            } else {
+                clock.encode()
+            };
             let payload = encoded.map_err(|_| crate::resume::SnapshotError::BadComponentState {
                 tag: section::SESSION_CLOCK,
             })?;

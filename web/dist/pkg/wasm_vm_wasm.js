@@ -600,6 +600,17 @@ export class WasmLinux {
         return ret[0] !== 0;
     }
     /**
+     * @param {Uint8Array} native
+     * @param {any} queues
+     * @param {Uint8Array | null} [renderer_digest]
+     */
+    beginExactBranch(native, queues, renderer_digest) {
+        const ret = wasm.wasmlinux_beginExactBranch(this.__wbg_ptr, native, queues, isLikeNone(renderer_digest) ? 0 : addToExternrefTable0(renderer_digest));
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * @param {Uint8Array} initial_resume
      * @param {Array<any>} events
      * @param {Array<any>} witnesses
@@ -656,6 +667,16 @@ export class WasmLinux {
         }
     }
     /**
+     * @returns {boolean}
+     */
+    canContinueExactBranch() {
+        const ret = wasm.wasmlinux_canContinueExactBranch(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
+    }
+    /**
      * @param {number} id
      */
     cancelFileDownload(id) {
@@ -683,6 +704,18 @@ export class WasmLinux {
     captureDiskDelta() {
         const ret = wasm.wasmlinux_captureDiskDelta(this.__wbg_ptr);
         return ret;
+    }
+    /**
+     * Synchronous owned copy of the selected replay. Callers never receive its mutable VM.
+     * @param {Uint8Array | null} [renderer_digest]
+     * @returns {any}
+     */
+    captureExactBranch(renderer_digest) {
+        const ret = wasm.wasmlinux_captureExactBranch(this.__wbg_ptr, isLikeNone(renderer_digest) ? 0 : addToExternrefTable0(renderer_digest));
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * Freeze RAM pages, CPU/devices and the genuine pending result frontier together.
@@ -893,6 +926,16 @@ export class WasmLinux {
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
+    }
+    /**
+     * @returns {boolean}
+     */
+    exactBranchNetworkOffline() {
+        const ret = wasm.wasmlinux_exactBranchNetworkOffline(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] !== 0;
     }
     /**
      * @param {SessionDeviceLease} lease
@@ -1361,6 +1404,12 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[0]);
         }
     }
+    markExactBranchReplayOffline() {
+        const ret = wasm.wasmlinux_markExactBranchReplayOffline(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
     /**
      * Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
      * `console=ttyS0 earlycon=sbi`. `output(bytes: Uint8Array)` receives console output.
@@ -1578,7 +1627,7 @@ export class WasmLinux {
         return WasmLinux.__wrap(ret[0]);
     }
     /**
-     * Pinned 256 MiB RV64 Linux software-session profile. It installs owned block, network,
+     * Pinned 256 MiB RV64 Linux software-session images. It installs owned block, network,
      * agent, RTC and entropy boundaries before boot, and never creates a live transport while
      * replaying. The caller supplies the immutable base chunks to the recording broker.
      * @param {Uint8Array} kernel
@@ -1774,6 +1823,12 @@ export class WasmLinux {
     relinquishSnapshotWriter() {
         const ret = wasm.wasmlinux_relinquishSnapshotWriter(this.__wbg_ptr);
         return ret;
+    }
+    requestExactBranchGoLive() {
+        const ret = wasm.wasmlinux_requestExactBranchGoLive(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
     }
     /**
      * The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
@@ -4085,7 +4140,7 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000006: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 110, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 111, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h4eecf702a8348cd1);
             return ret;
         },

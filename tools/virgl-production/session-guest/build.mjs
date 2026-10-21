@@ -14,15 +14,16 @@ const arrays={visible_query:join(packet(1,9,[90,1,0,10]),packet(19,0,[90]),packe
 await fs.writeFile(path.join(root,'commands.h'),Object.entries(arrays).map(([name,bytes])=>'static const unsigned char '+name+'[]={'+[...bytes].join(',')+'};').join('\n')+'\n');
 const container='wasm-vm-production-graphics-reference',dest='/capture/session-guest';
 execFileSync('docker',['exec',container,'mkdir','-p',dest]);execFileSync('docker',['cp',root+'/.',container+':'+dest]);
-for(const layered of [false,true]){
-const stem=layered?'production-gpu-session-layered':'production-gpu-session';
-execFileSync('docker',['exec','-w',dest,container,'riscv64-linux-gnu-gcc','-march=rv64imac_zicsr','-mabi=lp64','-mcmodel=medany','-mno-relax','-msmall-data-limit=0','-fno-pie','-fno-stack-protector','-ffreestanding','-nostdlib','-Os','-Wl,--no-relax,--build-id=none,-T,link.ld',...(layered?['-DE9_GPU_LAYERED']:[]),'start.S','main.c','-o','session.elf'],{stdio:'inherit'});
+for(const variant of ['default','layered','branch']){
+const layered=variant==='layered',branch=variant==='branch';
+const stem=layered?'production-gpu-session-layered':branch?'production-gpu-session-branch':'production-gpu-session';
+execFileSync('docker',['exec','-w',dest,container,'riscv64-linux-gnu-gcc','-march=rv64imac_zicsr','-mabi=lp64','-mcmodel=medany','-mno-relax','-msmall-data-limit=0','-fno-pie','-fno-stack-protector','-ffreestanding','-nostdlib','-Os','-Wl,--no-relax,--build-id=none,-T,link.ld',...(layered?['-DE9_GPU_LAYERED']:branch?['-DE9_GPU_BRANCH']:[]),'start.S','main.c','-o','session.elf'],{stdio:'inherit'});
 execFileSync('docker',['exec','-w',dest,container,'riscv64-linux-gnu-objcopy','-O','binary','session.elf','session.bin']);
 await fs.mkdir(path.join(root,'../../../guest/prebuilt'),{recursive:true});execFileSync('docker',['cp',container+':'+dest+'/session.bin',path.join(root,'../../../guest/prebuilt/'+stem+'.bin')]);
 const binary=await fs.readFile(path.join(root,'../../../guest/prebuilt/'+stem+'.bin'));
 const names=new Set(['gpu','disk','pixels','queryData','response','diskBytes','fence',...(layered?['layeredPixels']:[])]);
 const symbols=Object.fromEntries(execFileSync('docker',['exec','-w',dest,container,'riscv64-linux-gnu-nm','-S','--defined-only','session.elf'],{encoding:'utf8'}).trim().split('\n').map(line=>line.trim().split(/\s+/)).filter(fields=>fields.length===4&&names.has(fields[3])).map(([address,size,,name])=>[name,{address:'0x'+address,bytes:parseInt(size,16)}]));
 if(Object.keys(symbols).length!==names.size)throw Error('Missing guest symbols');
-await fs.writeFile(path.join(root,'../../../guest/prebuilt/'+stem+'.json'),JSON.stringify({version:1,architecture:'rv64imac_zicsr-supervisor',scope:layered?'Original layered MMIO GPU/query/disk fixture; not Linux/Mesa':'Original MMIO GPU/query/disk fixture; not Linux/Mesa',sha256:createHash('sha256').update(binary).digest('hex'),bytes:binary.length,symbols},null,2)+'\n');
+await fs.writeFile(path.join(root,'../../../guest/prebuilt/'+stem+'.json'),JSON.stringify({version:1,architecture:'rv64imac_zicsr-supervisor',scope:layered?'Original layered MMIO GPU/query/disk fixture; not Linux/Mesa':branch?'Original MMIO two-wave GPU/disk/network branch fixture; not Linux/Mesa':'Original MMIO GPU/query/disk fixture; not Linux/Mesa',sha256:createHash('sha256').update(binary).digest('hex'),bytes:binary.length,symbols},null,2)+'\n');
 }
 console.log('Built real original-MMIO supervisor guests; not a Linux/Mesa proof.');

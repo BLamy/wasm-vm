@@ -13,13 +13,14 @@ const tick=()=>new Promise(resolve=>setTimeout(resolve,0));
 const pos=p=>({transition:p.transition,retired:p.retired,sequence:p.sequence,ordinal:p.ordinal,phase:p.phase});
 const bootargs='root=/dev/vda rw console=ttyS0 earlycon=sbi init=/bin/sh -- +i';
 const consoleLimit=65536;
-export function renderReplayConsole(read,candidate,at){
-  const witness=candidate.exactSessionWitness(false),queues=candidate.exactSessionHostQueues();
+export function renderReplayConsole(read,candidate,at,{digest=true}={}){
+  const witness=digest?candidate.exactSessionWitness(false):candidate.inputPosition(),queues=candidate.exactSessionHostQueues();
   need(['transition','retired','sequence','ordinal','phase'].every(k=>witness[k]===at[k]),'Replay view position mismatch');
-  const chunks=read.receipts.filter(r=>r.kind==='host'&&r.channel===21&&BigInt(r.sequence)<=BigInt(at.sequence)).map(r=>r.bytes);
+  const chunks=[...(read.consolePrefix?.length?[read.consolePrefix]:[]),
+    ...read.receipts.filter(r=>r.kind==='host'&&r.channel===21&&BigInt(r.sequence)<=BigInt(at.sequence)).map(r=>r.bytes)];
   chunks.push(queues.output);let bytes=new Uint8Array(Math.min(consoleLimit,chunks.reduce((n,b)=>n+b.length,0))),offset=bytes.length;
   for(let i=chunks.length-1;i>=0&&offset>0;i--){const part=chunks[i].subarray(Math.max(0,chunks[i].length-offset));offset-=part.length;bytes.set(part,offset);}
-  return {position:pos(at),digest:hex(witness.digest),console:decoder.decode(bytes)};
+  return {position:pos(at),digest:digest?hex(witness.digest):null,console:decoder.decode(bytes)};
 }
 export async function openTimelineReplay({store,id,onPublish,onProgress,beforeFrame=async()=>{}}){
   await init();
@@ -35,7 +36,8 @@ export async function openTimelineReplay({store,id,onPublish,onProgress,beforeFr
   const read=await SessionInputJournal.readExact(store,id,{configuration});
   const kernelRef=manifest.assets.find(a=>a.role==='kernel')?.content;need(kernelRef,'Saved kernel is missing');
   const kernel=await readCheckpointObject(store,kernelRef,64*1048576);
-  const makeReplay=()=>WasmLinux.newExactSession(kernel,configuration.imageManifest,configuration.bootargs,()=>{},true);
+  const makeReplay=()=>{const machine=WasmLinux.newExactSession(kernel,configuration.imageManifest,configuration.bootargs,()=>{},true);
+    if(configuration.branchOrigin)machine.markExactBranchReplayOffline();return machine;};
   const controller=new SessionSeekController({read,store,id,makeReplay,quantum:4096,
     render:async(candidate,at)=>{const frame=renderReplayConsole(read,candidate,at);await beforeFrame(frame);return frame;},onPublish,onProgress});
   return {controller,manifest,events:read.receipts,configuration};

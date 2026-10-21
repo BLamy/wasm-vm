@@ -1026,13 +1026,14 @@
       </details>
       <details id="session-timeline" class="session-library session-timeline" open>
         <summary>Time travel · session timeline</summary>
-        <p class="session-note">Open a completed software recording, or record a short Linux boot sample. Replay uses a private machine and pauses the live guest. GPU checkpoints remain in Local saved sessions; GPU event replay is awaiting verification.</p>
+        <p class="session-note">Open a completed software recording or an admitted exact GPU history, or record a short Linux boot sample. Replay uses a private machine and pauses the live guest. Older paced GPU snapshots remain checkpoint-only in Local saved sessions.</p>
         <div class="session-fields">
           <label>Saved recording<select data-timeline="sessions" aria-label="Timeline saved recording" disabled></select></label>
           <button data-timeline="open" type="button" disabled>Open replay</button>
           <button data-timeline="refresh" type="button" disabled>Refresh history</button>
           <button data-timeline="record" type="button" disabled>Record Linux sample</button>
-          <button data-timeline="stop" type="button" disabled>Finish sample early</button>
+          <button data-timeline="record-file" type="button" disabled>Record file example</button>
+          <button data-timeline="stop" type="button" disabled>Stop recording</button>
         </div>
         <p data-timeline="mode">Live view · no replay restored</p>
         <p data-timeline="active">Active replay: none</p>
@@ -1047,6 +1048,22 @@
           <button data-timeline="pause" type="button" disabled>Pause / cancel seek</button>
         </div>
         <p data-timeline="preview" class="session-note"></p>
+        <div class="session-actions"><button data-timeline="branch-create" type="button" disabled>Continue from here</button></div>
+        <p data-timeline="branch-origin" class="session-note" hidden></p>
+        <div data-timeline="branch-controls" hidden>
+          <p class="session-note">This continuation has its own inputs and writable files. Its saved parent stays unchanged. Networking stays offline; Go live explicitly refuses reuse of historical connections.</p>
+          <div class="session-actions">
+            <button data-timeline="branch-run" type="button" disabled>Run continuation</button>
+            <button data-timeline="branch-pause" type="button" disabled>Pause continuation</button>
+            <button data-timeline="branch-save" type="button" disabled>Save continuation</button>
+            <button data-timeline="branch-discard" type="button" disabled>Discard unsaved continuation</button>
+            <button data-timeline="branch-live" type="button" disabled>Go live</button>
+          </div>
+          <div class="session-fields">
+            <label>Serial input<input data-timeline="branch-input" type="text" maxlength="4096" autocomplete="off" spellcheck="false" disabled></label>
+            <button data-timeline="branch-send" type="button" disabled>Send input + Enter</button>
+          </div>
+        </div>
         <div class="session-fields">
           <label>Saved keyframe<select data-timeline="points" disabled></select></label>
           <button data-timeline="point-go" type="button" disabled>Go to keyframe</button>

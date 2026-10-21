@@ -40,6 +40,19 @@ fn bytes(value: &JsValue, key: &str, limit: usize) -> Result<Vec<u8>, JsError> {
     }
     Ok(view.to_vec())
 }
+fn branch_queue(value: &JsValue, key: &str) -> Result<Vec<u8>, JsError> {
+    let v = get(value, key)?;
+    if !v.is_instance_of::<js_sys::Uint8Array>() {
+        return Err(JsError::new("branch queue must be owned bytes"));
+    }
+    // Inspect the caller's buffer before copying: the JS constructor would first
+    // copy a shared view into an ordinary ArrayBuffer and hide its ownership.
+    let view = v.unchecked_into::<js_sys::Uint8Array>();
+    if view.length() > 1 << 20 || !view.buffer().is_instance_of::<js_sys::ArrayBuffer>() {
+        return Err(JsError::new("branch host queue bound"));
+    }
+    Ok(view.to_vec())
+}
 fn position(value: &JsValue) -> Result<SessionPosition, JsError> {
     let phase = match get(value, "phase")?.as_string().as_deref() {
         Some("before") => SessionPhase::Before,
@@ -197,6 +210,205 @@ fn witness(value: JsValue) -> Result<StateWitness, JsError> {
 
 #[wasm_bindgen]
 impl WasmLinux {
+    #[wasm_bindgen(js_name = canContinueExactBranch)]
+    pub fn can_continue_exact_branch(&self) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        #[cfg(feature = "virgl-renderer")]
+        if inner.exact_gpu && self.gpu_session_stopped.get() {
+            return Ok(false);
+        }
+        Ok(inner.exact_session == Some(true)
+            && inner.exact_driver.is_some()
+            && inner.machine.can_capture_recording_branch())
+    }
+    /// Synchronous owned copy of the selected replay. Callers never receive its mutable VM.
+    #[wasm_bindgen(js_name = captureExactBranch)]
+    pub fn capture_exact_branch(
+        &self,
+        renderer_digest: Option<js_sys::Uint8Array>,
+    ) -> Result<JsValue, JsError> {
+        let renderer_digest: Option<[u8; 32]> = renderer_digest
+            .map(|v| {
+                if v.length() != 32 || !v.buffer().is_instance_of::<js_sys::ArrayBuffer>() {
+                    return Err(JsError::new("branch renderer digest"));
+                }
+                Ok(v.to_vec().try_into().unwrap())
+            })
+            .transpose()?;
+        let (at, source_digest, native, pending, output, disk) = {
+            let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+            #[cfg(feature = "virgl-renderer")]
+            if inner.exact_gpu && self.gpu_session_stopped.get() {
+                return Err(JsError::new(
+                    "The graphics context is unavailable. Reopen the saved replay.",
+                ));
+            }
+            if inner.exact_session != Some(true)
+                || inner.exact_driver.is_none()
+                || inner.exact_gpu != renderer_digest.is_some()
+                || inner.pending.len() > 1 << 20
+                || inner.out.borrow().len() > 1 << 20
+            {
+                return Err(JsError::new(
+                    "select an admitted paused replay before continuing",
+                ));
+            }
+            if !inner.machine.can_capture_recording_branch() {
+                return Err(JsError::new(
+                    "Select a completed GPU point before continuing.",
+                ));
+            }
+            let at = inner.machine.session_position().unwrap();
+            #[cfg(feature = "virgl-renderer")]
+            let source_digest = if inner.exact_gpu {
+                inner
+                    .machine
+                    .gpu_session_state_digest()
+                    .map_err(|e| JsError::new(&format!("branch source: {e:?}")))?
+            } else {
+                Sha256::digest(
+                    inner
+                        .machine
+                        .save_session_resume()
+                        .map_err(|e| JsError::new(&format!("branch source: {e:?}")))?,
+                )
+                .into()
+            };
+            #[cfg(not(feature = "virgl-renderer"))]
+            let source_digest: [u8; 32] = Sha256::digest(
+                inner
+                    .machine
+                    .save_session_resume()
+                    .map_err(|e| JsError::new(&format!("branch source: {e:?}")))?,
+            )
+            .into();
+            let native = inner
+                .machine
+                .capture_recording_branch(renderer_digest.as_ref())
+                .map_err(|e| {
+                    JsError::new(&format!(
+                        "branch capture (select a completed GPU point): {e:?}"
+                    ))
+                })?;
+            if native.len() > wasm_vm_core::session_replay::MAX_INITIAL_BYTES {
+                return Err(JsError::new(
+                    "branch native state exceeds the supported size",
+                ));
+            }
+            let disk = crate::session_checkpoint::disk_at_keyframe(&inner, &native)?;
+            let pending: Vec<u8> = inner.pending.iter().copied().collect();
+            let output = inner.out.borrow().clone();
+            (at, source_digest, native, pending, output, disk)
+        };
+        // Creating JS values can execute embedding code; release the source borrow first.
+        let result = encode_position(at);
+        for (name, data) in [
+            ("sourceDigest", source_digest.as_slice()),
+            ("native", native.as_slice()),
+            ("pending", pending.as_slice()),
+            ("output", output.as_slice()),
+            ("disk", disk.as_slice()),
+        ] {
+            js_sys::Reflect::set(
+                &result,
+                &name.into(),
+                &js_sys::Uint8Array::from(data).into(),
+            )
+            .map_err(|_| JsError::new("branch owned result"))?;
+        }
+        Ok(result)
+    }
+
+    #[wasm_bindgen(js_name = beginExactBranch)]
+    pub fn begin_exact_branch(
+        &self,
+        native: js_sys::Uint8Array,
+        queues: JsValue,
+        renderer_digest: Option<js_sys::Uint8Array>,
+    ) -> Result<(), JsError> {
+        if native.length() as usize > wasm_vm_core::session_replay::MAX_INITIAL_BYTES
+            || !native.buffer().is_instance_of::<js_sys::ArrayBuffer>()
+        {
+            return Err(JsError::new("branch native state bound"));
+        }
+        let native = native.to_vec();
+        let pending = branch_queue(&queues, "pending")?;
+        let output = branch_queue(&queues, "output")?;
+        let digest: Option<[u8; 32]> = renderer_digest
+            .map(|v| {
+                if v.length() != 32 || !v.buffer().is_instance_of::<js_sys::ArrayBuffer>() {
+                    return Err(JsError::new("branch renderer digest"));
+                }
+                Ok(v.to_vec().try_into().unwrap())
+            })
+            .transpose()?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        #[cfg(feature = "virgl-renderer")]
+        if inner.exact_gpu && self.gpu_session_stopped.get() {
+            return Err(JsError::new("The new graphics owner was stopped."));
+        }
+        if inner.exact_session != Some(false)
+            || inner.exact_driver.is_some()
+            || inner.finished.is_some()
+            || inner.exact_gpu != digest.is_some()
+            || inner.audio_attached
+            || inner.capture_attached
+            || inner.session_has_mic
+            || !inner.pending.is_empty()
+            || !inner.out.borrow().is_empty()
+        {
+            return Err(JsError::new(
+                "a continuation requires a fresh recording owner",
+            ));
+        }
+        inner
+            .machine
+            .restore_recording_branch(&native, digest.as_ref())
+            .map_err(|e| JsError::new(&format!("branch restore: {e:?}")))?;
+        inner.pending.extend(pending);
+        *inner.out.borrow_mut() = output;
+        Ok(())
+    }
+
+    #[wasm_bindgen(js_name = exactBranchNetworkOffline)]
+    pub fn exact_branch_network_offline(&self) -> Result<bool, JsError> {
+        self.inner
+            .try_borrow()
+            .map_err(|_| reentrant())?
+            .machine
+            .session_branch_offline()
+            .map_err(|e| JsError::new(&format!("branch network: {e:?}")))
+    }
+
+    #[wasm_bindgen(js_name = markExactBranchReplayOffline)]
+    pub fn mark_exact_branch_replay_offline(&self) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.exact_session != Some(true)
+            || inner.exact_driver.is_some()
+            || inner.machine.session_position() != Some(Default::default())
+        {
+            return Err(JsError::new(
+                "branch replay policy requires a fresh replay owner",
+            ));
+        }
+        inner
+            .machine
+            .mark_offline_branch_replay()
+            .map_err(|e| JsError::new(&format!("branch replay policy: {e:?}")))
+    }
+
+    #[wasm_bindgen(js_name = requestExactBranchGoLive)]
+    pub fn request_exact_branch_go_live(&self) -> Result<(), JsError> {
+        self.inner
+            .try_borrow()
+            .map_err(|_| reentrant())?
+            .machine
+            .go_live_session_branch()
+            .map_err(|_| {
+                JsError::new("Historical connections stay offline. Start a fresh guest to go live.")
+            })
+    }
+
     #[wasm_bindgen(js_name = exactSessionHostQueues)]
     pub fn exact_session_host_queues(&self) -> Result<JsValue, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;

@@ -119,6 +119,7 @@ export class WasmLinux {
      * a standalone synthetic ring producer.
      */
     audioOutputReady(): boolean;
+    beginExactBranch(native: Uint8Array, queues: any, renderer_digest?: Uint8Array | null): void;
     beginExactReplay(initial_resume: Uint8Array, events: Array<any>, witnesses: Array<any>, end: any, initial_queues?: any | null, gpu_options?: any | null): void;
     beginFileUpload(slot: number, name: string, total: number, sha256_hex: string): number;
     /**
@@ -127,6 +128,7 @@ export class WasmLinux {
      * Empty `[]` for a non-chunked boot.
      */
     bootProfile(): string;
+    canContinueExactBranch(): boolean;
     cancelFileDownload(id: number): void;
     cancelFileUpload(stream: number): void;
     /**
@@ -136,6 +138,10 @@ export class WasmLinux {
      * The exact u64 generation is encoded without crossing the legacy f64 generation API.
      */
     captureDiskDelta(): Promise<Uint8Array>;
+    /**
+     * Synchronous owned copy of the selected replay. Callers never receive its mutable VM.
+     */
+    captureExactBranch(renderer_digest?: Uint8Array | null): any;
     /**
      * Freeze RAM pages, CPU/devices and the genuine pending result frontier together.
      * The caller owns the paused guest until finishSoftwareRamEpoch acknowledges publication.
@@ -209,6 +215,7 @@ export class WasmLinux {
      * [`WasmMachine::enable_jit_with_policy`] for the policy labels and cap semantics.
      */
     enableJitWithPolicy(threshold: number, residency_policy: string): void;
+    exactBranchNetworkOffline(): boolean;
     exactCompleteDeviceRequest(lease: SessionDeviceLease, status: any, frames: any, bytes: Uint8Array): void;
     exactCompleteNetworkEvent(lease: SessionNetworkLease, input: Uint8Array): void;
     exactDeviceRequests(): any;
@@ -303,6 +310,7 @@ export class WasmLinux {
      * message rather than a device-internal string. NOT async (pure state application).
      */
     loadSnapshotBlob(blob: Uint8Array): void;
+    markExactBranchReplayOffline(): void;
     /**
      * Assemble the platform and boot. `initrd` empty = none; `bootargs` empty = the default
      * `console=ttyS0 earlycon=sbi`. `output(bytes: Uint8Array)` receives console output.
@@ -352,7 +360,7 @@ export class WasmLinux {
      */
     static newExactGpuSession(kernel: Uint8Array, manifest_json: string, bootargs: string, output: Function, replay: boolean): WasmLinux;
     /**
-     * Pinned 256 MiB RV64 Linux software-session profile. It installs owned block, network,
+     * Pinned 256 MiB RV64 Linux software-session images. It installs owned block, network,
      * agent, RTC and entropy boundaries before boot, and never creates a live transport while
      * replaying. The caller supplies the immutable base chunks to the recording broker.
      */
@@ -434,6 +442,7 @@ export class WasmLinux {
      * machine must acquire the writer lock before it can save or import snapshots.
      */
     relinquishSnapshotWriter(): Promise<void>;
+    requestExactBranchGoLive(): void;
     /**
      * The header-level resume-vs-cold-boot verdict for `stored` (the reassembled blob, or `None`),
      * against THIS boot's build identity + base binding + `current_generation`. Returns the stable
@@ -1019,18 +1028,33 @@ export interface InitOutput {
     readonly wasmmachine_step: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_takeTrace: (a: number) => [number, number, number, number];
     readonly wasmlinux_applyRecordedInput: (a: number, b: any, c: number, d: number, e: number, f: number, g: any, h: number, i: number, j: any, k: any) => [number, number];
+    readonly wasmlinux_beginExactBranch: (a: number, b: any, c: any, d: number) => [number, number];
     readonly wasmlinux_beginExactReplay: (a: number, b: any, c: any, d: any, e: any, f: number, g: number) => [number, number];
+    readonly wasmlinux_canContinueExactBranch: (a: number) => [number, number, number];
+    readonly wasmlinux_captureExactBranch: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_captureInputWitness: (a: number) => [number, number, number];
+    readonly wasmlinux_exactBranchNetworkOffline: (a: number) => [number, number, number];
     readonly wasmlinux_exactSessionHostQueues: (a: number) => [number, number, number];
     readonly wasmlinux_exactSessionWitness: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_inputLifecycle: (a: number, b: any) => [number, number];
     readonly wasmlinux_inputPosition: (a: number) => [number, number, number];
+    readonly wasmlinux_markExactBranchReplayOffline: (a: number) => [number, number];
+    readonly wasmlinux_requestExactBranchGoLive: (a: number) => [number, number];
     readonly wasmlinux_runExactReplayChunkTo: (a: number, b: any, c: number) => [number, number, number];
     readonly wasmlinux_runExactReplayToEnd: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_setInputPointerMode: (a: number, b: number) => [number, number];
     readonly wasmlinux_startInputCapture: (a: number, b: number) => [number, number];
     readonly wasmlinux_takeExactSessionDeliveries: (a: number) => [number, number, number];
     readonly wasmlinux_takeInputDeliveries: (a: number) => [number, number, number];
+    readonly setSlirpDhcpLeaseSeconds: (a: number) => void;
+    readonly setSlirpDohEndpoint: (a: number, b: number) => void;
+    readonly setSlirpMtu: (a: number) => void;
+    readonly setSlirpNet: (a: number) => void;
+    readonly setSlirpRelay: (a: number, b: number) => void;
+    readonly setSlirpRelayToken: (a: number, b: number) => void;
+    readonly setSlirpTailscaleWorker: (a: number, b: number, c: any) => void;
+    readonly slirpDhcpStats: () => [number, number];
+    readonly slirpTailscaleCommand: (a: number, b: number) => number;
     readonly __jit_amo: (a: bigint, b: bigint, c: number, d: number) => bigint;
     readonly __jit_fp_arith_s: (a: number, b: number, c: number, d: number) => bigint;
     readonly __jit_fp_div_s: (a: number, b: number, c: number) => bigint;
@@ -1072,27 +1096,6 @@ export interface InitOutput {
     readonly wasmmachine_networkRequests: (a: number) => [number, number, number];
     readonly wasmmachine_networkSessionReplay: (a: number) => [number, number, number];
     readonly wasmmachine_replayNetworkEvent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
-    readonly wasmlinux_captureDiskDelta: (a: number) => any;
-    readonly setSlirpDhcpLeaseSeconds: (a: number) => void;
-    readonly setSlirpDohEndpoint: (a: number, b: number) => void;
-    readonly setSlirpMtu: (a: number) => void;
-    readonly setSlirpNet: (a: number) => void;
-    readonly setSlirpRelay: (a: number, b: number) => void;
-    readonly setSlirpRelayToken: (a: number, b: number) => void;
-    readonly setSlirpTailscaleWorker: (a: number, b: number, c: any) => void;
-    readonly slirpDhcpStats: () => [number, number];
-    readonly slirpTailscaleCommand: (a: number, b: number) => number;
-    readonly __wbg_sessiondevicelease_free: (a: number, b: number) => void;
-    readonly wasmlinux_exactCompleteDeviceRequest: (a: number, b: number, c: any, d: any, e: any) => [number, number];
-    readonly wasmlinux_exactDeviceRequests: (a: number) => [number, number, number];
-    readonly wasmlinux_exactLeaseDeviceRequest: (a: number, b: number, c: number) => [number, number, number];
-    readonly wasmmachine_completeDeviceRequest: (a: number, b: number, c: any, d: any, e: any) => [number, number];
-    readonly wasmmachine_deviceRequests: (a: number) => [number, number, number];
-    readonly wasmmachine_installDeviceSession: (a: number, b: number, c: number, d: any) => [number, number];
-    readonly wasmmachine_leaseDeviceRequest: (a: number, b: number, c: number) => [number, number, number];
-    readonly wasmmachine_readDeviceMemory: (a: number, b: number, c: number, d: any) => [number, number, number, number];
-    readonly wasmmachine_replayDeviceCompletion: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
-    readonly wasmmachine_takeDeviceDeliveries: (a: number) => [number, number, number];
     readonly __wbg_wasmgputransport_free: (a: number, b: number) => void;
     readonly wasmgputransport_complete: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => [number, number];
     readonly wasmgputransport_gatherInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number) => [number, number, number];
@@ -1145,6 +1148,18 @@ export interface InitOutput {
     readonly wasmlinux_softwareCheckpointTopology: (a: number) => [number, number];
     readonly wasmlinux_softwareRamDigest: (a: number) => [number, number, number, number];
     readonly wasmlinux_takeExactGpuBatch: (a: number) => [number, number, number];
+    readonly __wbg_sessiondevicelease_free: (a: number, b: number) => void;
+    readonly wasmlinux_captureDiskDelta: (a: number) => any;
+    readonly wasmlinux_exactCompleteDeviceRequest: (a: number, b: number, c: any, d: any, e: any) => [number, number];
+    readonly wasmlinux_exactDeviceRequests: (a: number) => [number, number, number];
+    readonly wasmlinux_exactLeaseDeviceRequest: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmmachine_completeDeviceRequest: (a: number, b: number, c: any, d: any, e: any) => [number, number];
+    readonly wasmmachine_deviceRequests: (a: number) => [number, number, number];
+    readonly wasmmachine_installDeviceSession: (a: number, b: number, c: number, d: any) => [number, number];
+    readonly wasmmachine_leaseDeviceRequest: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmmachine_readDeviceMemory: (a: number, b: number, c: number, d: any) => [number, number, number, number];
+    readonly wasmmachine_replayDeviceCompletion: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
+    readonly wasmmachine_takeDeviceDeliveries: (a: number) => [number, number, number];
     readonly wasmmachine_takeNetworkDeliveries: (a: number) => [number, number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56: (a: number, b: number, c: any) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h0b706747458e1fca: (a: number, b: number, c: any, d: any) => void;

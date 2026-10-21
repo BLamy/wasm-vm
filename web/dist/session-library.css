@@ -14,7 +14,7 @@
 html.embed .session-library { display: none; }
 .session-timeline { min-width: 0; }
 .session-timeline [data-timeline="console"] { box-sizing: border-box; max-width: 100%; min-height: 9em; max-height: 22em; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px; background: #101418; color: #d8e5de; font: 12px/1.5 monospace; }
-.session-timeline [data-timeline="position"], .session-timeline [data-timeline="active"], .session-timeline [data-timeline="digest"], .session-timeline [role="status"] { overflow-wrap: anywhere; }
+.session-timeline [data-timeline="position"], .session-timeline [data-timeline="active"], .session-timeline [data-timeline="digest"], .session-timeline [data-timeline="branch-origin"], .session-timeline [role="status"] { overflow-wrap: anywhere; }
 .session-timeline [data-timeline="mode"] { font-weight: 600; }
 .session-timeline input[type="range"] { min-height: 44px; padding: 0; accent-color: #79b8ff; }
 .session-timeline button { min-height: 44px; }

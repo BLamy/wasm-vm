@@ -3,6 +3,7 @@
 // have positions too. Rendering is prepared off-screen before the ownership check.
 import {SessionInputJournal} from './session-inputs.js';
 import {SessionCheckpoints,decodeSoftwareKeyframeBase,readCheckpointObject} from './session-checkpoints.js';
+import {branchConsolePrefix} from './session-branch-format.js';
 
 const need=(condition,message)=>{if(!condition)throw Error('session seek: '+message);};
 const exact=value=>typeof value==='string'&&/^(0|[1-9][0-9]{0,19})$/.test(value)
@@ -36,6 +37,15 @@ export class SessionSeekController {
     checkpointId:this.#selected.checkpointId,rendered:this.#selected.rendered,
     requestId:this.#selected.requestId};}
   get end(){return position(this.#read.manifest.end);}
+  captureSelectedBranch(){
+    need(this.#selected&&(!this.#active||this.#active.settled),'wait for a selected replay point');
+    const current=this.#selected,capture=current.machine.captureExactBranch();
+    need(same(capture,current.position)&&hex(capture.sourceDigest)===current.rendered.digest,'selected branch source changed');
+    return {capture,position:position(current.position),console:current.rendered.console,consolePrefix:branchConsolePrefix(this.#read,current.position),
+      requestId:current.requestId,parentManifest:structuredClone(this.#read.manifest)};
+  }
+  get canContinue(){return !!this.#selected&&(!this.#active||this.#active.settled)
+    &&this.#selected.machine.canContinueExactBranch();}
   cancel(){if(this.#active)this.#active.cancel();}
   close(){this.cancel();this.#selected?.machine.free();this.#selected=null;}
   seekPosition(target){
@@ -89,7 +99,7 @@ export class SessionSeekController {
   }
   async #resume(checkpoint,job){
     if(checkpoint===this.#read.manifest.checkpoints[0])return {resume:this.#read.initialResume,
-      queues:{pending:new Uint8Array(),output:new Uint8Array()}};
+      queues:this.#read.initialQueues??{pending:new Uint8Array(),output:new Uint8Array()}};
     const checkpoints=new SessionCheckpoints(this.#store);
     const chain=await checkpoints.resolveDelta(this.#id,checkpoint.id,{signal:job.abort.signal});
     if(!this.#owns(job))return null;

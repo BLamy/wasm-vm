@@ -7,6 +7,10 @@ struct desc { u64 address; u32 length; u16 flags,next; };
 struct used {u32 id,length;};
 struct queue {struct desc d[256] __attribute__((aligned(4096))); volatile u16 availFlags,availIndex,available[256],availEvent; volatile u16 usedFlags __attribute__((aligned(4))),usedIndex; volatile struct used used[256];u16 usedEvent;};
 static struct queue gpu, cursor, disk;
+#ifdef E9_GPU_BRANCH
+static struct queue net, netRx;
+static u8 netPacket[12+64];
+#endif
 static volatile u8 response[256],request[16384];
 static u64 fence=0x0020000000000071UL;
 static float vertices[]={-1,-1,0,1,1,-1,0,1,-1,1,0,1,1,1,0,1};
@@ -41,6 +45,21 @@ static void cursorMove(void){head(0x300,0,56);word(28,cursorX);word(32,cursorY);
 static void diskOp(u32 write){u32 h[4]={write?1:0,0,8,0};u16 before=disk.usedIndex;diskStatus=0xff;disk.d[0]=(struct desc){(u64)h,16,1,1};disk.d[1]=(struct desc){(u64)diskBytes,512,write?1:3,2};disk.d[2]=(struct desc){(u64)&diskStatus,1,2,0};post(0,0,&disk,0);wait(0,&disk,before);if(diskStatus)fail("DISK_STATUS");}
 static void writeMarker(void){for(u32 i=0;i<512;i++)diskBytes[i]=(u8)marker;diskOp(1);}
 static void readMarker(void){zero(diskBytes,512);diskOp(0);for(u32 i=0;i<512;i++)if(diskBytes[i]!=(u8)marker)fail("DISK_MARKER");}
+#ifdef E9_GPU_BRANCH
+static void sendCounter(u8 letter){
+ zero(netPacket,sizeof(netPacket));
+ for(u32 i=0;i<6;i++)netPacket[12+i]=255;
+ const u8 src[]={0x52,0x54,0,0x12,0x34,0x56};copy(netPacket+18,src,6);
+ netPacket[24]=0x88;netPacket[25]=0xb5;copy(netPacket+26,"E9_BRANCH_COUNTER_",18);netPacket[44]=letter;
+ u16 before=net.usedIndex;net.d[0]=(struct desc){(u64)netPacket,sizeof(netPacket),0,0};post(1,1,&net,0);wait(1,&net,before);
+}
+static u8 choice(void){
+ volatile u8 *uart=(volatile u8 *)0x10000000UL;
+ for(;;){if(!(uart[5]&1))continue;u8 value=uart[0];
+  if(value=='P'||value=='A'||value=='B')return value;
+ }
+}
+#endif
 
 static void transfer(u32 id,u32 width,u32 height,u32 stride,u32 layerStride,u32 direction){
  head(direction,1,72);word(36,width);word(40,height);word(44,1);word(56,id);word(64,stride);word(68,layerStride);word(4,1);*(volatile u64*)(request+8)=fence++;gpuCommand(72,0);
@@ -68,6 +87,9 @@ static void layeredProof(void){
 #endif
 void main(void){
  text("SESSION_GUEST_START\n");
+#ifdef E9_GPU_BRANCH
+ init(1,0);queue(1,0,&netRx);queue(1,1,&net);*reg(1,0x70)=15;sendCounter('S');
+#endif
  init(0,0);queue(0,0,&disk);*reg(0,0x70)=15;writeMarker();readMarker();
  init(7,1);queue(7,0,&gpu);queue(7,1,&cursor);*reg(7,0x70)=15;
  head(0x200,1,96);word(24,7);copy(request+32,"session",7);gpuCommand(96,0);
@@ -88,9 +110,19 @@ void main(void){
  text("SESSION_READBACK_GREEN_16384\n");
  head(0x103,0,48);word(32,64);word(36,64);word(44,1);gpuCommand(48,0);flush();readMarker();
  text("SESSION_FRAME_AND_DISK_OK\n");
+#ifdef E9_GPU_BRANCH
+ text("BRANCH_READY\n");
+ u8 selected=choice();marker=selected;writeMarker();readMarker();sendCounter(selected);
+ if(selected=='P')stream(red,sizeof(red));else if(selected=='A')stream(blue,sizeof(blue));else stream(green,sizeof(green));
+ transfer(1,64,64,256,16384,0x206);
+ u32 component=selected=='P'?0:selected=='A'?2:1;
+ for(u32 i=0;i<sizeof(pixels);i++)if(pixels[i]!=(i%4==component||i%4==3?255:0))fail("BRANCH_FRESH_GPU_READBACK");
+ flush();readMarker();text("BRANCH_GPU_DONE_");putc(selected);text("\n");
+#else
  for(volatile u32 i=0;i<20000;i++)__asm__ volatile("nop");
  expectedResponse=0x1205;stream(invalid_query,sizeof(invalid_query));expectedResponse=0x1100;
  text("SESSION_EXPECTED_GPU_ERROR_1205\n");
  text("SESSION_DONE\n");
+#endif
  for(;;)__asm__ volatile("nop");
 }

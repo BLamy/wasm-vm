@@ -2,6 +2,7 @@
 import {sessionGpuResultInfo} from './pkg/wasm_vm_wasm.js';
 import {checkpointHash,checkpointReference} from './session-checkpoints.js';
 import {ownInputReceipt,inputEventParts} from './session-inputs.js';
+import {validateBranchOrigin} from './session-branch-format.js';
 export const GPU_EXACT_RUNTIME='rv64-linux-gpu-exact-session-v1';
 export const GPU_EXACT_INPUTS=['uart','keyboard','pointer','display','agent','clipboard','file-transfer','lifecycle','mtime','rtc','entropy','timers','block-read','block-write','dma','network','network-time','audio-playback','gpu-results','storage-control','checkpoint-control'];
 export const GPU_FRAME_LIMIT=640*1048576;
@@ -61,6 +62,7 @@ export function validateGpuConfiguration(input){
   need(config.profile&&config.profile.hostWords?.length===14&&Array.isArray(config.profile.formatRoles)&&typeof config.profile.renderer==='string','qualified physical profile');
   for(const role of ['kernel','wasm','renderer'])need(hash.test(config[role]?.sha256)&&typeof config[role]?.url==='string'&&exact(config[role]?.length)&&BigInt(config[role].length)>0n,'GPU asset identity');
   need(hash.test(config.renderer.buildId),'renderer build identity');
+  if(config.branchOrigin!==undefined)config.branchOrigin=validateBranchOrigin(config.branchOrigin);
   return config;
 }
 const metadataKeys=['version','runtime','position','rendererSha256','rendererEpoch','ramSha256','stateSha256','full'];
