@@ -3,7 +3,7 @@ id: E9-T15
 epic: 9
 title: Add incremental RAM keyframes with bounded storage work
 priority: 524.915
-status: evidence-needed
+status: implemented
 depends_on: [E9-T05, E9-T14]
 estimate: S
 risk: high
@@ -191,3 +191,56 @@ assertion sabotage; receipt/hash/ZIP/public-byte authentication. A fresh local
 browser launch was attempted but this verifier sandbox refuses loopback listen
 with `EPERM`, and browser security permission denied the public UI route; the
 authenticated built/public Playwright recordings were inspected instead.
+
+### 2026-10-20 — worker — post-rebase restore evidence submitted
+
+The prior verifier's P1–P6 predictions remain HELD; this response changes only
+the browser probe, its acceptance assertions and generated demo assets in
+`b5d9080e4191ffebadc6a968cfdea6c694743dec`. After capturing the later
+`WVKEYB01` full base, the real Alpine guest executes another 1,000,000
+transitions and dirties nine pages. The browser saves a depth-one
+`WVDELT01`/`WVRAMD01` delta, restores it into a fresh private exact candidate
+through that later full base, and byte-compares the complete native resume to
+an independent full snapshot. The restored full snapshot SHA-256 and the
+from-start exact replay digest both equal
+`bd62b728af379b4ae5846893a42be97b259555e94f466198b21dc04f5c91458d`.
+This specifically executes the previously unproven
+`web/session-checkpoints.js:265-268` and
+`crates/wasm/src/session_checkpoint.rs:259-271` branches.
+
+- Exact-head `make verify-E9-T15` passed at `b5d9080e4`, including affected
+  native/storage/Wasm tests, rebuilt `web/dist`, 127/0 browser suite, zero
+  console errors, five full-state digest witnesses, all previous attacks and
+  the new restore. [Command log](/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t15-gap-closure-head.log)
+  SHA-256 `ad5897a9390f021e90a124db022715f83d31455d047b78cf1b4c2f6e439f3175`;
+  [built report](/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-keyframes-gap-closure-head/report.json)
+  SHA-256 `1abb589b164f3b3348d27718175ab6aa6e87f1e2320b88c0207df8226066e665`;
+  [Playwright trace](/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-keyframes-gap-closure-head/browser-trace.zip)
+  SHA-256 `146823048ba5ba94ddbbcc7e30ec12f27bd6bafbe760c17731bf632ced5e3ec2`.
+  The new delta is 190,961 bytes, 1,117 ms pause and 4,765,792 staged bytes;
+  its private restore applies exactly nine pages in 1,369 ms with 32,266,318
+  staged bytes. Both are under the T01 5-second/64-MiB limits; the report
+  records encode/decode heap snapshots and the independent 13,979,882-byte
+  full snapshot digest.
+- `bash tools/deploy-cloudflare.sh` validated the staged local artifacts but
+  its unchanged 512-MiB R2 probe hit the known 30-second speed timeout and
+  Wrangler's 300-MiB upload limit. The seven R2 manifest identities are
+  unchanged from the fully checked prior deployment. The established
+  `npx --yes wrangler pages deploy web/dist --project-name wasm-vm --branch main --commit-dirty=true`
+  fallback published final source `b5d9080` to production deployment
+  `babd5961-01cd-4494-b3ba-f21659ac98d2` at
+  <https://wasm-vm.pages.dev/>. [Staging log](/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t15-gap-closure-deploy.log)
+  SHA-256 `5ea0290f0188b1e18902b210662508a00928759212a51d791cc1f9dafea6f37f`;
+  [publish log](/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t15-gap-closure-pages-publish.log)
+  SHA-256 `ae76e742abd91985e1012f35975c586d03a3506c81e7214b9be6b68fac373417`.
+  The [public asset receipt](/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t15-gap-closure-public-assets.json)
+  SHA-256 `ee805c350befe6ba9312ca2c5a27290c1433947ed51b66e1ff1988ebd7ec1947`
+  matches 12 deployed files byte-for-byte. The
+  [public Playwright report](/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t15-gap-closure-public-browser/report.json)
+  SHA-256 `ce448e1d883d2f1c8edd1df89460b74d9275b6a4a1f908a024044cf49acb2d6e`
+  repeats 127/0 and the post-rebase full-snapshot equality, with no
+  non-favicon 404 or page errors. Its screenshot and
+  [trace](/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t15-gap-closure-public-browser/browser-trace.zip)
+  SHA-256 `50b1397603d3d9c786f81039ec0fe3b1be5791a92bd6ca3e1b7c8a0f269ab768`
+  are available. A fresh verifier should inspect only the previously missing
+  coverage and carry P1–P6 forward as instructed by AGENTS.md.
