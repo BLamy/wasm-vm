@@ -3,7 +3,7 @@ id: E9-T19
 epic: 9
 title: Build the session timeline and accessible time-travel controls
 priority: 524.919
-status: implemented
+status: verified
 depends_on: [E9-T06, E9-T16]
 estimate: S
 risk: medium
@@ -20,9 +20,9 @@ The timeline UI and embedding control surface over the accepted seek controller.
 
 ## Acceptance criteria
 
-- [ ] Mouse, touch and keyboard users can select a saved session, scrub, step and navigate keyframes; previews never masquerade as completed machine restoration.
-- [ ] Visible position, active VM state and rendered frame agree after each completed seek; obsolete progress cannot overwrite a newer request.
-- [ ] Reflow on narrow screens, preserve focus/status announcements and keep controls responsive during restoration; unsupported accelerated sessions are clearly gated until T17/T18 are accepted.
+- [x] Mouse, touch and keyboard users can select a saved session, scrub, step and navigate keyframes; previews never masquerade as completed machine restoration.
+- [x] Visible position, active VM state and rendered frame agree after each completed seek; obsolete progress cannot overwrite a newer request.
+- [x] Reflow on narrow screens, preserve focus/status announcements and keep controls responsive during restoration; unsupported accelerated sessions are clearly gated until T17/T18 are accepted.
 
 ## Deterministic acceptance
 
@@ -137,3 +137,95 @@ submission remains historical passing evidence; this new exact source is the
 release claim. No GPU pending-keyframe code is in this branch, and full GPU
 replay remains gated. Await the fresh final verdict, then publish this branch
 to the main Cloudflare URL.
+
+
+### 2026-10-21 — verifier — VERDICT: verified
+
+Fresh independent review covered the task and complete diff from verified A
+`7d142f83d` through frozen runtime `ff28becd087b375399949df5db2472baec6a049b`;
+worker submission `1b24b19c0` adds only the task log/status and Queue. No
+implementation was changed by this verifier. Predictions were saved before the
+corresponding evidence was inspected in
+`target/evidence/e9-t19-verifier-{76aaf353,ff28becd}/predictions.md`.
+
+- **P1/P7 exact source and evidence — HELD.** Independently rehashed all 12
+  official files (19876765 bytes), all 14 source entries and the three worker
+  report/browser/trace digests. All eight commands passed; the 27 native tests
+  report zero ignored tests, and the built page reports 127 passed/0 failed,
+  zero console/HTTP/MIME errors. Source/dist modules agree. The deployed Wasm
+  remains the accepted A bytes, SHA-256
+  `eaf24659537e2cd79def0e49b698fdd3ced525998dc9332ba8d286538d13a35e`,
+  2361401 bytes; no native crate differs from A. See final `submission-audit.json`
+  and official `report.json:6-108`, `seek-regression.log:27,39`.
+- **AC1/P2/P8 restoration and real frame — HELD.** All 14 independent from-start
+  oracles match the full active position, active/visible/observed digest and
+  console. The final keyframe is transition 3000000/retired 2999343/before:0/
+  sequence 5, digest
+  `c1b1ac22df2fb67e3d2d0b2cf8914d15007b554d8f2d990ec2e484380e4b99ce`
+  (official browser `report.json:350-373`, trace `call@270`, physical line948).
+  Its real Linux output is visible in the DOM at trace line933 and in the
+  desktop capture; the former empty-console proof gap is closed. The separate
+  genuine 646-byte UART recording and explicitly synthetic 65536-byte tail
+  fixture carry unchanged from the earlier verifier recording.
+- **AC1/P4/P12-P13 native controls — HELD.** Keyboard text entry, transition
+  stepping, keyframe navigation and native slider interaction, plus mouse and
+  touch scrubbing, restore the independently observed states. The final slider
+  keyboard target is 3000. A further native letter gesture selects a second
+  canonical stored history through the real select/change listener, retaining
+  focus and the prior VM/console (independent trace `call@48`, physical line132;
+  raw V8 counter for `session-timeline.js:23` is positive). End and a quick
+  second-letter return were unsupported native Mac Chrome gestures in the
+  extra harness, also observed on a bare select; their failed receipts remain
+  labelled `selector-end-*`/`selector-prefix-*`. No product change or synthetic
+  DOM input was used to replace the passing native selection.
+- **AC2/P3/P6/P9 ownership — HELD.** The first held Open frame yields to the
+  newer 123 seek; all 100 obsolete held-frame requests cancel while only target
+  1000273 publishes (official trace `call@42`, `call@170`; latest oracle
+  `call@172`). Refresh/reselection preserves event choices. The same-transition
+  initial event disables Back (`call@124`), and the actual end disables Forward
+  (`call@272`). A bounded independent attack holds a successful real store
+  admission, cancels Open with Pause, completes a newer keyboard seek 63, then
+  releases the stale admission. Open settles cancelled without changing the
+  new VM/console/status or leaving pending set (independent trace `call@72`,
+  physical line228). The from-start 63 digest is
+  `7f4a6c2a6fa939c5dfbf2ce1efe5b2b2bde774a8bd9740e924d9f317998ef208`
+  (`call@74`, line236).
+- **AC3/P4 layout, status and admission — HELD.** The 390 px panel has client/
+  scroll 388 and right edge 390, with polite status, retained editing/selection
+  focus and responsive cancellation. Stored incompatible, incomplete, GPU and
+  missing histories retain the committed machine; GPU replay is explicitly
+  gated (official browser `report.json:528-574`). The real BusyBox worker
+  remains the same owner and changes paused false to true through `main.js`
+  (`call@26`/`call@44`). Full and early-finish recordings complete; the early
+  history ends at 64 with two checkpoints (`report.json:576-586`). Observation
+  marker routing is explicitly a UI fixture against unchanged authenticated
+  tape, with actual Linux state 64 independently checked; no RTC/GPU execution
+  claim is inferred from those metadata fixtures.
+- **P5/P10 COVERAGE — HELD.** All 46 submitted text/binary hunks are classified:
+  15 executed and 31 declarative/generated/history waivers; zero dead and zero
+  needs-evidence. Runtime subroutes have explicit execution citations or
+  defensive/unreachable dispositions in `coverage-closure.json`; raw V8 ranges
+  and function counts supplement the full official recording. Source for both
+  instrumented modules byte-matches the frozen source. The native controller
+  is unchanged; no unrelated full wall or portability cold clone is required
+  for this medium UI boundary.
+- **SUITE — HELD.** Promoted five deterministic tests in
+  `tools/verify/e9-timeline-console.test.mjs`: delivered serial receipt/queue
+  ordering, exact 65536-byte tail, frame-position refusal, same-transition step
+  boundaries and play-at-end/owner retirement. `node --test
+  tools/verify/e9-timeline-console.test.mjs` passes all 5 with zero skips
+  (`promoted-tests.log`). The existing `make verify-E9-T19` retains the real
+  browser/native acceptance and the preaudit regression paths.
+
+Verifier receipt: `target/evidence/e9-t19-verifier-ff28becd/receipt.json`, SHA-256
+`32df765b8a116d52c01dac8d84aae734d6e38f8f0cc26026f55470686458b551`.
+Independent report SHA-256
+`67556f3b9b8b1796a677e2fa82a8ba21c09a7dac8919b5e6f58d76b98f66a945`;
+independent browser trace SHA-256
+`bbf6d6b46e392a6350d30a8569398aedbc2813cd83ccb8c9641cbfa5aef16abd`;
+coverage closure SHA-256
+`05c29269e0ccf14309ec52c8405160a03452a3acc97114089a667bd15f9e07b7`.
+Trace indexes retain re-openable call IDs and physical record lines. Policy was
+checked before queue regeneration. This verdict covers the software timeline
+only; pending GPU work stays blocked and main-site publication follows on this
+verified A+UI branch. No B status, implementation, deployment or merge changed.
