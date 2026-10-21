@@ -5,6 +5,7 @@ import {SessionDiskRoots} from './session-disk-roots.js';
 import {deviceEventParts,joinDeviceCompletion} from './session-devices.js';
 import {networkEventParts,joinNetworkEvent} from './session-network.js';
 import {SessionCheckpoints,checkpointReference,checkpointChunks,readCheckpointObject,fetchCheckpointAsset,checkpointZeroPosition} from './session-checkpoints.js';
+import {validateBranchOrigin,sameBranchPosition} from './session-branch-format.js';
 await init();
 const encoder=new TextEncoder(),decoder=new TextDecoder('utf-8',{fatal:true});
 const need=(condition,message)=>{if(!condition)throw new SessionStoreError('InputPrefix',message);};
@@ -66,7 +67,7 @@ export class SessionInputJournal{
   constructor(writer,manifest){this.#writer=writer;this.#manifest=manifest;}
   // A partial-provider recording retains an exact native/input/disk witness. It is explicitly
   // ineligible for executable restore: SLIRP/time/provider state is owned by subsequent slices.
-  static async createWitness(store,writer,configuration,native,disk,pending,output,exactWitnesses){
+  static async createWitness(store,writer,configuration,native,disk,pending,output,exactWitnesses,{branch=false,assets=null,authorize=null}={}){
     const exactMode=configuration?.exactSession===1;
     need(exactMode?configuration.providersComplete===true:
       configuration?.inputPrefixWitness===1&&configuration.providersComplete===false,'input witness scope');
@@ -80,8 +81,19 @@ export class SessionInputJournal{
     header.setUint32(20,pending.length,true);header.setUint32(24,output.length,true);
     witness.set(native,28);witness.set(pending,28+native.length);witness.set(output,28+native.length+pending.length);
     const configBytes=encoder.encode(JSON.stringify(configuration)),config=JSON.parse(decoder.decode(configBytes));
+    need(configBytes.length<=1048576,'input configuration bound');
+    const origin=branch?validateBranchOrigin(config.branchOrigin):null;
+    need(branch?exactMode&&origin.parentId!==writer.id&&typeof authorize==='function':config.branchOrigin===undefined&&assets===null,'explicit continuation origin required');
+    // Own local assets before yielding. Creating a continuation must not fetch its parent's URLs.
+    const localAssets=branch?Object.fromEntries(['kernel','wasm'].map(role=>{
+      const bytes=assets?.[role];need(bytes instanceof Uint8Array&&bytes.buffer instanceof ArrayBuffer
+        &&bytes.length<=64*1048576&&String(bytes.length)===config[role]?.length
+        &&checkpointReference(bytes).sha256===config[role]?.sha256,'local branch asset identity');
+      return [role,bytes.slice()];
+    })):null;
     need((exactMode?config.ramMib===256:config.ramMib<=256)&&config.clock.mode==='icount'&&config.clock.interactive===null,'input witness profile');
-    if(exactMode)need(config.timeEntropyPolicy&&config.deviceCompletionPolicy&&config.networkPolicy&&pending.length===0&&output.length===0,'exact starting provider/queue inventory');
+    if(exactMode)need(config.timeEntropyPolicy&&config.deviceCompletionPolicy&&config.networkPolicy
+      &&(branch||pending.length===0&&output.length===0),'exact starting provider/queue inventory');
 
     if(config.timeEntropyPolicy!==undefined){const policy=config.timeEntropyPolicy;
       need(policy?.version===1&&policy.divider===config.clock.divider&&policy.timebase_hz===config.clock.timebase_hz
@@ -98,7 +110,7 @@ export class SessionInputJournal{
     const baseBytes=sessionCanonicalImage(config.imageManifest),base=checkpointReference(baseBytes);
     need(base.sha256===hex(disk.subarray(17,49)),'input witness base');
     const root=await new SessionDiskRoots(store).capture(writer,disk,config.imageManifest);
-    const zero=checkpointZeroPosition();
+    const zero=origin?{...origin.sourcePosition}:checkpointZeroPosition();
     const manifest={version:{major:1,minor:0},id:writer.id,
       machine:{vm_build:vm.sha256,wasm_build:config.wasm.sha256,base_image:base.sha256,kernel:config.kernel.sha256,
         initramfs:null,ram_bytes:String(config.ramMib*1048576),harts:1,devices:config.devices,gpu:null},
@@ -106,7 +118,7 @@ export class SessionInputJournal{
         checkpoint_version:{major:1,minor:0},boundary_version:1,clock:config.clock,required_inputs:[...inputs,...(config.timeEntropyPolicy?['mtime','rtc','entropy','timers']:[]),...(config.deviceCompletionPolicy?['block-read','audio-capture']:[]),...(config.networkPolicy?['network']:[])]},
       assets:[{role:'vm',content:vm},{role:'wasm',content:{sha256:config.wasm.sha256,length:config.wasm.length}},
         {role:'kernel',content:{sha256:config.kernel.sha256,length:config.kernel.length}},{role:'base',content:base}],
-      begin:zero,end:zero,events:[],checkpoints:[{id:exactMode?'exact-start':'input-witness',position:zero,next_sequence:'1',machine,disk_root:root.content.sha256,gpu:null}],extensions:[]};
+      begin:zero,end:zero,events:[],checkpoints:[{id:exactMode?'exact-start':'input-witness',position:zero,next_sequence:(BigInt(zero.sequence)+1n).toString(),machine,disk_root:root.content.sha256,gpu:null}],extensions:[]};
     if(exactMode){
       manifest.policy.required_inputs=[...exactInputs];
       need(Array.isArray(exactWitnesses)&&exactWitnesses.length>=1&&exactWitnesses.length<=16,'exact state witness count');
@@ -119,9 +131,9 @@ export class SessionInputJournal{
     const canonical=sessionValidateManifest(encoder.encode(JSON.stringify(manifest)));
     for(const [ref,bytes] of [[vm,configBytes],[base,baseBytes],[machine,witness]])await writer.put(ref,checkpointChunks(bytes));
     for(const role of ['kernel','wasm']){const ref=manifest.assets.find(a=>a.role===role).content;
-      const bytes=await fetchCheckpointAsset(config[role].url,ref.sha256,64*1048576);
+      const bytes=localAssets?localAssets[role]:await fetchCheckpointAsset(config[role].url,ref.sha256,64*1048576);
       need(String(bytes.length)===ref.length,'input witness asset length');await writer.put(ref,checkpointChunks(bytes));}
-    await writer.publish(canonical);return new SessionInputJournal(writer,manifest);
+    await writer.publish(canonical,null,authorize);return new SessionInputJournal(writer,manifest);
   }
   static createExact(store,writer,configuration,native,disk,witnesses){
     need(Array.isArray(witnesses)&&witnesses.length>=2,'precommitted exact witnesses');
@@ -130,6 +142,13 @@ export class SessionInputJournal{
   static createLiveExact(store,writer,configuration,native,disk,initialWitness){
     return this.createWitness(store,writer,{...configuration,exactSession:1,providersComplete:true},
       native,disk,new Uint8Array(),new Uint8Array(),[initialWitness]);
+  }
+  static createBranchExact(store,writer,configuration,capture,initialWitness,assets,authorize){
+    need(configuration?.exactSession===1&&configuration.providersComplete===true,'branch provider scope');
+    const origin=validateBranchOrigin(configuration.branchOrigin);
+    need(sameBranchPosition(origin.sourcePosition,initialWitness)&&initialWitness.resume instanceof Uint8Array,'branch source coordinate');
+    return this.createWitness(store,writer,configuration,initialWitness.resume,capture.disk,capture.pending,capture.output,
+      [initialWitness],{branch:true,assets,authorize});
   }
   get end(){return {...this.#manifest.end};}
   get pending(){return this.#pending.length;}
@@ -203,7 +222,7 @@ export class SessionInputJournal{
     for(const[ref,bytes]of objects)await this.#writer.put(ref,checkpointChunks(bytes));
     await this.#writer.publish(canonical);this.#manifest=manifest;this.#pending.splice(0,batch.length);return this.end;
   }
-  async completeExact(end,witnesses){
+  async completeExact(end,witnesses,authorize=undefined){
     need(this.#manifest.policy.mode==='exact-replay'&&this.#pending.length===0,'exact recording must be flushed');
     need(end?.phase==='before'&&exact(end.transition)&&exact(end.retired)&&exact(end.sequence)&&Number.isInteger(end.ordinal),'exact end coordinate');
     need(BigInt(end.transition)>=BigInt(this.#manifest.end.transition)&&end.sequence===this.#manifest.end.sequence,'exact end sequence');
@@ -222,7 +241,7 @@ export class SessionInputJournal{
         bytes:[...encoder.encode(JSON.stringify(values))]});
     }
     const canonical=sessionValidateManifest(encoder.encode(JSON.stringify(manifest)));
-    await this.#writer.publish(canonical);this.#manifest=manifest;return this.end;
+    await this.#writer.publish(canonical,null,authorize);this.#manifest=manifest;return this.end;
   }
   static async read(store,id,{exactMode=false}={}){
     const opened=await store.openSession(id);need(opened,'input prefix unavailable');
@@ -262,11 +281,20 @@ export class SessionInputJournal{
     const frame=await readCheckpointObject(store,manifest.checkpoints[0].machine,300*1048576+2*1048576+28);
     need(decoder.decode(frame.subarray(0,8))==='WVEXACT1','exact checkpoint magic');
     const view=new DataView(frame.buffer,frame.byteOffset,frame.byteLength),length=Number(view.getBigUint64(12,true)),pending=view.getUint32(20,true),output=view.getUint32(24,true);
-    need(view.getUint32(8,true)===1&&length>=84&&length<=300*1048576&&pending===0&&output===0&&28+length===frame.length,'exact checkpoint bounds');
+    need(view.getUint32(8,true)===1&&length>=84&&length<=300*1048576&&pending<=1048576&&output<=1048576
+      &&28+length+pending+output===frame.length,'exact checkpoint bounds');
+    const vm=manifest.assets.find(value=>value.role==='vm');need(vm,'exact configuration asset');
+    const formatConfig=configuration??JSON.parse(decoder.decode(await readCheckpointObject(store,vm.content,1048576)));
+    let origin=null;
+    if(formatConfig.branchOrigin!==undefined){origin=validateBranchOrigin(formatConfig.branchOrigin);
+      need(origin.parentId!==id&&sameBranchPosition(origin.sourcePosition,manifest.begin),'branch origin/manifest coordinate');}
+    else need(pending===0&&output===0&&samePosition(manifest.begin,checkpointZeroPosition()),'ordinary exact initial boundary');
     const events=receipts.map(receipt=>receipt.channel===17||receipt.channel===18?
       {...receipt,kind:'observation',sourceKind:Number(receipt.outcome[1]),status:Number(receipt.outcome[0]),requested:Number(receipt.outcome[2])}:
       {...receipt,kind:'host'});
-    return {manifest,receipts:events,witnesses,initialResume:frame.slice(28),admitted:!!configuration};
+    return {manifest,receipts:events,witnesses,initialResume:frame.slice(28,28+length),
+      initialQueues:{pending:frame.slice(28+length,28+length+pending),output:frame.slice(28+length+pending)},
+      consolePrefix:Uint8Array.from(origin?.consolePrefix??[]),admitted:!!configuration};
   }
 }
 const samePosition=(a,b)=>['transition','phase','ordinal','sequence','retired'].every(key=>a[key]===b[key]);

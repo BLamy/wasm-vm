@@ -8,8 +8,9 @@ import {SessionCheckpoints,readCheckpointObject} from './session-checkpoints.js'
 import {inspectRamDeltaChunk} from './session-keyframes.js';
 import {attachProductionVirgl,createWorkerScanoutPresenter} from './renderer/virgl-command/production.mjs';
 import {gpuNeed as need,gpuPosition as pos,gpuSamePosition as same,gpuCompare as compare,gpuHashBytes,gpuHex,decodeGpuExactFrame,GPU_FRAME_LIMIT} from './session-gpu-replay-format.js';
+import {branchConsolePrefix} from './session-branch-format.js';
 const decoder=new TextDecoder(),tick=()=>new Promise(resolve=>setTimeout(resolve,0));
-let machine=null,renderer=null,store=null,started=false,latestFrame=null;
+let machine=null,renderer=null,store=null,started=false,latestFrame=null,selected=null,capturing=false;
 const message=value=>postMessage(value);
 const dispose=async()=>{renderer?.dispose();renderer=null;machine?.free();machine=null;await store?.close();store=null;};
 function bindFrame(frame,checkpoint,read){
@@ -56,6 +57,7 @@ async function seek(request){
     if(frame.presentationToken)queueMicrotask(()=>presenter.acknowledge(frame.presentationToken,'superseded'));
   });
   renderer=await attachProductionVirgl(machine,{presenter,checkpoint:{exactHistory:true,renderer:rendererBytes,profile:config.profile,epoch:frame.meta.rendererEpoch,rendererSha256:frame.meta.rendererSha256}});
+  if(config.branchOrigin)machine.markExactBranchReplayOffline();
   machine.beginExactReplay(frame.native,events,witnesses,end,{pending:frame.pending,output:frame.output},
     {version:1,rendererDigest:gpuHashBytes(frame.meta.rendererSha256),ramDigest:frame.meta.full?null:gpuHashBytes(frame.meta.ramSha256),payloads:[...objects.values()]});
   await renderer.activateCheckpoint();
@@ -76,13 +78,36 @@ async function seek(request){
     const result=renderer.pump();need(result?.ok,'physical GPU presentation failed');
     if(result.status==='physical-pending')break;await tick();}
   const result=machine.exactGpuSessionWitness();need(same(result,outcome),'GPU selected state moved');
-  const queues=machine.exactSessionHostQueues(),chunks=read.receipts.filter(row=>row.kind==='host'&&row.channel===21&&BigInt(row.sequence)<=BigInt(outcome.sequence)).map(row=>row.bytes);chunks.push(queues.output);
+  const queues=machine.exactSessionHostQueues(),chunks=[Uint8Array.from(config.branchOrigin?.consolePrefix??[]),...read.receipts.filter(row=>row.kind==='host'&&row.channel===21&&BigInt(row.sequence)<=BigInt(outcome.sequence)).map(row=>row.bytes)];chunks.push(queues.output);
   let text=new Uint8Array(Math.min(65536,chunks.reduce((n,part)=>n+part.length,0))),at=text.length;
   for(let i=chunks.length-1;i>=0&&at>0;i--){const part=chunks[i].subarray(Math.max(0,chunks[i].length-at));at-=part.length;text.set(part,at);}
   const frameData=latestFrame?{...latestFrame,pixels:latestFrame.pixels}:null;
-  message({type:'ready',requestId:request.requestId,position:pos(outcome),digest:gpuHex(result.digest),console:decoder.decode(text),frame:frameData,gpu:renderer.inspect()});
+  selected={requestId:request.requestId,read,configuration:config,position:pos(outcome),digest:gpuHex(result.digest),console:decoder.decode(text)};
+  message({type:'ready',requestId:request.requestId,position:selected.position,digest:selected.digest,console:selected.console,frame:frameData,gpu:renderer.inspect(),continuationReady:machine.canContinueExactBranch()&&renderer.checkpointReady().ok});
+}
+async function captureBranch(request){
+  need(selected&&selected.requestId===request.requestId&&!capturing,'selected GPU replay is unavailable or busy');
+  need(machine.canContinueExactBranch()&&!renderer.inspect().lost&&renderer.checkpointReady().ok,'select a completed GPU command before continuing');
+  capturing=true;
+  try{
+    const source=selected,saved=await renderer.saveCheckpoint();
+    need(selected===source&&!renderer.inspect().lost&&machine.canContinueExactBranch()
+      &&same(source.position,machine.inputPosition())&&saved.epoch===machine.exactGpuSessionEpoch(),'GPU selection changed during capture');
+    need(saved.bytes instanceof Uint8Array&&saved.bytes.buffer instanceof ArrayBuffer&&saved.bytes.length<=256*1048576,'renderer capture bound');
+    const capture=machine.captureExactBranch(gpuHashBytes(saved.sha256));
+    need(same(capture,source.position)&&gpuHex(capture.sourceDigest)===source.digest,'GPU capture differs from the selected state');
+    const consolePrefix=branchConsolePrefix({...source.read,consolePrefix:Uint8Array.from(source.configuration.branchOrigin?.consolePrefix??[])},source.position);
+    const value={type:'branch-captured',requestId:request.requestId,captureId:request.captureId,
+      position:source.position,capture,console:source.console,consolePrefix,parentManifest:source.read.manifest,
+      renderer:{bytes:saved.bytes,sha256:saved.sha256,epoch:saved.epoch}};
+    const transfers=[...new Set([capture.native,capture.sourceDigest,capture.pending,capture.output,capture.disk,consolePrefix,saved.bytes].map(bytes=>bytes.buffer))];
+    postMessage(value,transfers);
+  }finally{capturing=false;}
 }
 onmessage=event=>{
+  if(event.data?.type==='capture-branch'){
+    void captureBranch(event.data).catch(error=>message({type:'branch-error',requestId:event.data.requestId,captureId:event.data.captureId,message:String(error.message)}));return;
+  }
   if(started||event.data?.type!=='seek')return;started=true;
   void seek(event.data).catch(async error=>{await dispose();message({type:'error',requestId:event.data.requestId,message:String(error.message),stack:error.stack});});
 };

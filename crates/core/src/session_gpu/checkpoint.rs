@@ -112,6 +112,17 @@ impl PreparedFrontier {
     }
 }
 impl crate::Machine {
+    pub(crate) fn gpu_recording_branch_ready(&self) -> bool {
+        self.session_gpu.as_ref().is_some_and(|s| {
+            s.replay
+                && self.gpu.as_ref().is_some_and(|(gpu, ..)| {
+                    gpu.borrow()
+                        .submit3d
+                        .as_ref()
+                        .is_some_and(|state| state.pending.is_none())
+                })
+        })
+    }
     pub(crate) fn encode_gpu_frontier_for_view(
         &self,
         gpu_bytes: &[u8],
@@ -152,7 +163,7 @@ impl crate::Machine {
         let pending = gpu.submit3d.as_ref().and_then(|s| s.pending.as_ref());
         // The physical renderer snapshot reconstructs completed state. Do not turn a
         // half-completed replay command or its transport receipts into a live owner.
-        need(!branch || (s.replay && pending.is_none() && s.transport.is_empty()))?;
+        need(!branch || self.gpu_recording_branch_ready())?;
         let intent = pending
             .map(|p| request_digest(p, logical, logical_queue))
             .unwrap_or([0; 32]);
@@ -164,8 +175,10 @@ impl crate::Machine {
         }
         out.extend_from_slice(&intent);
         position(&mut out, clock.position);
-        n32(&mut out, s.payloads.len() as u32);
-        for (sha, bytes) in &s.payloads.objects {
+        // With no pending command, past result bodies already live in guest RAM. The
+        // child's first recording batch must not inherit the parent's replay body cache.
+        n32(&mut out, if branch { 0 } else { s.payloads.len() as u32 });
+        for (sha, bytes) in s.payloads.objects.iter().filter(|_| !branch) {
             out.extend_from_slice(sha);
             n32(&mut out, bytes.len() as u32);
             blob(&mut out, bytes);
@@ -180,8 +193,8 @@ impl crate::Machine {
                 payload(&mut out, p);
             }
         }
-        n32(&mut out, s.transport.len() as u32);
-        for t in &s.transport {
+        n32(&mut out, if branch { 0 } else { s.transport.len() as u32 });
+        for t in s.transport.iter().filter(|_| !branch) {
             let e = t.exchange;
             for v in [
                 logical,

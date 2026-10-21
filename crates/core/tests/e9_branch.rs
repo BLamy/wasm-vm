@@ -76,6 +76,77 @@ fn history() -> (Machine, ReplayPlan) {
 }
 
 #[test]
+fn unused_ready_gpu_ring_cache_does_not_change_exact_software_replay() {
+    use wasm_vm_core::{
+        dev::virtio::gpu::NullSink,
+        mmio::{MmioDevice, Width},
+    };
+    let ready = |replay, initialized| {
+        let mut m = machine(replay);
+        let (slot, _) = m.enable_virtio_gpu(Box::new(NullSink)).unwrap();
+        let mut slot = slot.borrow_mut();
+        for (offset, value) in [(0x70, 3), (0x24, 1), (0x20, 1), (0x70, 11)] {
+            slot.write(offset, Width::B4, value).unwrap();
+        }
+        for index in 0..if initialized { 2 } else { 0 } {
+            let start = BASE + 0x1000 + index * 0x3000;
+            for (offset, value) in [
+                (0x30, index),
+                (0x38, 8),
+                (0x80, start),
+                (0x90, start + 0x1000),
+                (0xa0, start + 0x2000),
+                (0x44, 1),
+            ] {
+                slot.write(offset, Width::B4, value).unwrap();
+            }
+        }
+        slot.write(0x70, Width::B4, 15).unwrap();
+        drop(slot);
+        m
+    };
+    for initialized in [false, true] {
+        let mut source = ready(false, initialized);
+        let initial_resume = source.save_session_resume().unwrap();
+        let first = witness(&mut source);
+        run(&mut source, 20);
+        let last = witness(&mut source);
+        let plan = ReplayPlan {
+            begin: first.position,
+            end: last.position,
+            initial_resume,
+            events: vec![],
+            witnesses: vec![first, last],
+        };
+        let mut restored = ready(true, initialized);
+        let mut driver = ReplayDriver::start(&mut restored, plan).unwrap();
+        while !driver
+            .run_chunk_to(&mut restored, last.position, 3, |_, _, _| unreachable!())
+            .unwrap()
+        {}
+        assert_eq!(
+            restored.save_session_resume().unwrap(),
+            source.save_session_resume().unwrap()
+        );
+        if let Ok(directory) = std::env::var("E9_BRANCH_EVIDENCE") {
+            let path =
+                std::path::Path::new(&directory).join(format!("software-empty-ring-{initialized}"));
+            std::fs::create_dir_all(&path).unwrap();
+            std::fs::write(
+                path.join("source.resume"),
+                source.save_session_resume().unwrap(),
+            )
+            .unwrap();
+            std::fs::write(
+                path.join("replayed.resume"),
+                restored.save_session_resume().unwrap(),
+            )
+            .unwrap();
+        }
+    }
+}
+
+#[test]
 fn two_fresh_recordings_preserve_parent_future_and_replay_owner() {
     let (mut parent, plan) = history();
     let parent_before = parent.save_session_resume().unwrap();
@@ -161,4 +232,63 @@ fn capture_refuses_recording_and_restore_refuses_replay_without_opening_ingress(
         replay.lease_session_network(None),
         Err(NetworkError::ReplayIngress)
     ));
+}
+
+#[test]
+fn even_a_transition_zero_branch_cannot_reuse_its_recording_owner() {
+    let (_, plan) = history();
+    let mut selected = machine(true);
+    let _driver = ReplayDriver::start(&mut selected, plan).unwrap();
+    assert!(selected.can_capture_recording_branch());
+    let image = selected.capture_recording_branch(None).unwrap();
+    let mut child = machine(false);
+    child.restore_recording_branch(&image, None).unwrap();
+    assert_eq!(child.session_position(), Some(Default::default()));
+    let before = child.save_session_resume().unwrap();
+    assert!(child.restore_recording_branch(&image, None).is_err());
+    assert_eq!(child.save_session_resume().unwrap(), before);
+    assert_eq!(child.session_branch_offline(), Ok(true));
+}
+
+#[test]
+fn offline_branch_end_keeps_buffered_past_network_and_legacy_exhaustion_stays_strict() {
+    let mut source = machine(false);
+    let initial_resume = source.save_session_resume().unwrap();
+    let first = witness(&mut source);
+    let lease = source.lease_session_network(None).unwrap();
+    source
+        .complete_session_network(&lease, NetworkEvent::Receive(vec![0x37; 32]))
+        .unwrap();
+    let events = source.take_session_deliveries().unwrap();
+    run(&mut source, 4);
+    let last = witness(&mut source);
+    let final_bytes = source.save_session_resume().unwrap();
+    let plan = ReplayPlan {
+        begin: first.position,
+        end: last.position,
+        initial_resume,
+        events,
+        witnesses: vec![first, last],
+    };
+    for offline in [false, true] {
+        let mut replay = machine(true);
+        let mut driver = ReplayDriver::start(&mut replay, plan.clone()).unwrap();
+        if offline {
+            replay.mark_offline_branch_replay().unwrap();
+        }
+        let result = driver.run_to_end(&mut replay, 2, |_, _, _| unreachable!());
+        if offline {
+            result.unwrap();
+            assert_eq!(replay.save_session_resume().unwrap(), final_bytes);
+            assert_eq!(
+                replay.lease_session_network(None).err(),
+                Some(NetworkError::ReplayIngress)
+            );
+        } else {
+            assert!(
+                result.is_err(),
+                "ordinary prefix must still exhaust network buffers"
+            );
+        }
+    }
 }

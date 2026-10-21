@@ -38,6 +38,35 @@ fn state(rig: &mut Rig) -> StateWitness {
         resume_sha256: rig.machine.gpu_session_state_digest().unwrap(),
     }
 }
+fn branch_evidence(rig: &mut Rig, name: &str) {
+    let Ok(root) = std::env::var("E9_BRANCH_EVIDENCE") else {
+        return;
+    };
+    let thread = std::thread::current();
+    let case = thread.name().unwrap_or("branch").replace("::", "-");
+    let directory = std::path::Path::new(&root).join(case);
+    std::fs::create_dir_all(&directory).unwrap();
+    let witness = state(rig);
+    let logical = rig.machine.gpu_session_state_witness_bytes().unwrap();
+    let ram = rig.machine.bus_mut().ram().as_bytes().to_vec();
+    let trace = rig.trace.canonical();
+    std::fs::write(directory.join(format!("{name}.logical-state")), &logical).unwrap();
+    std::fs::write(directory.join(format!("{name}.ram")), &ram).unwrap();
+    std::fs::write(directory.join(format!("{name}.trace")), &trace).unwrap();
+    let report = format!(
+        "{{\"boundary\":\"native GPU architecture; synthetic physical sink, no browser-pixel claim\",\"transition\":\"{}\",\"retired\":\"{}\",\"sequence\":\"{}\",\"phase\":\"before\",\"ordinal\":{},\"stateSha256\":\"{}\",\"ramSha256\":\"{}\",\"logicalSha256\":\"{}\",\"traceSha256\":\"{}\",\"traceLines\":{}}}\n",
+        witness.position.transition,
+        witness.position.retired,
+        witness.position.sequence,
+        witness.position.ordinal,
+        hex(&witness.resume_sha256),
+        hex(&Sha256::digest(&ram)),
+        hex(&Sha256::digest(&logical)),
+        hex(&Sha256::digest(trace.as_bytes())),
+        trace.lines().count()
+    );
+    std::fs::write(directory.join(format!("{name}.json")), report).unwrap();
+}
 struct History {
     plan: ReplayPlan,
     payloads: Vec<Payload>,
@@ -46,12 +75,16 @@ struct History {
     ram_digest: [u8; 32],
     mid_position: SessionPosition,
     final_bytes: Vec<u8>,
+    branch_point: Option<StateWitness>,
 }
 fn history() -> History {
     history_with_unused_cursor(false)
 }
 fn history_with_unused_cursor(unused_cursor: bool) -> History {
-    let mut rig = Rig::new(64, None, false);
+    history_with_branch(unused_cursor, false)
+}
+fn history_with_branch(unused_cursor: bool, branch: bool) -> History {
+    let mut rig = Rig::with_owned_devices(64, None, false, 0, None, branch);
     let begin = state(&mut rig);
     let initial = rig.machine.save_gpu_result_resume(&RENDERER).unwrap();
     rig.pending();
@@ -109,16 +142,39 @@ fn history_with_unused_cursor(unused_cursor: bool) -> History {
     let ram_digest = rig.machine.snapshot().mem_digest;
     rig.done();
     rig.check(&final_bytes, 0x1100);
+    let branch_point = branch.then(|| state(&mut rig));
+    if let Some(point) = branch_point {
+        rig.until(point.position.transition + 5, 3);
+        rig.machine
+            .stage_session_effect(
+                rig.pos().transition,
+                SessionEffect::WriteRam {
+                    address: WITNESS + 192,
+                    bytes: vec![b'P'],
+                },
+            )
+            .unwrap();
+        rig.machine.deliver_session_boundary().unwrap();
+        rig.until(point.position.transition + 15, 3);
+    }
     let end = state(&mut rig);
+    if branch {
+        branch_evidence(&mut rig, "parent-recorded");
+    }
     let mut events = batch.events;
     events.extend(rig.machine.take_session_gpu_recording().unwrap().events);
+    let mut witnesses = vec![begin, before_physical];
+    if let Some(point) = branch_point {
+        witnesses.push(point);
+    }
+    witnesses.push(end);
     History {
         plan: ReplayPlan {
             begin: begin.position,
             end: end.position,
             initial_resume: initial,
             events,
-            witnesses: vec![begin, before_physical, end],
+            witnesses,
         },
         payloads: batch.payloads,
         mid,
@@ -126,6 +182,7 @@ fn history_with_unused_cursor(unused_cursor: bool) -> History {
         ram_digest,
         mid_position,
         final_bytes,
+        branch_point,
     }
 }
 fn config(payloads: Vec<Payload>) -> GpuReplayConfig {
@@ -135,15 +192,205 @@ fn config(payloads: Vec<Payload>) -> GpuReplayConfig {
         payloads,
     }
 }
+fn branch_rig(record: bool) -> Rig {
+    let mut machine = Machine::new(64 + 1024 * 1024);
+    machine.enable_plic();
+    machine.enable_clint(64);
+    machine.start_session_clock(1).unwrap();
+    machine
+        .enable_session_devices(None, false, false, !record)
+        .unwrap();
+    machine.enable_session_network(!record).unwrap();
+    machine.enable_virtio_gpu(Box::new(NullSink)).unwrap();
+    let host = Rc::new(RefCell::new(Host::default()));
+    let mail = Submit3dMailbox::new();
+    machine
+        .attach_qualified_virgl(
+            Box::new(Controls(host.clone())),
+            Box::new(Jobs(host.clone())),
+            mail.clone(),
+            caps(),
+        )
+        .unwrap();
+    let gpu = machine.virtio_gpu().unwrap().1;
+    if record {
+        machine
+            .start_session_sources(machine.source_policy(), None)
+            .unwrap();
+        machine.enable_session_gpu_results(false).unwrap();
+    }
+    Rig {
+        machine,
+        gpu,
+        host,
+        mail,
+        trace: VecSink::new(),
+        length: 64,
+        disk: None,
+    }
+}
+
+#[test]
+fn isolated_gpu_branches_drop_past_transport_and_bodies_without_changing_parent_future() {
+    let history = history_with_branch(false, true);
+    let at = history.branch_point.unwrap();
+    let mut source = branch_rig(false);
+    let mut driver = ReplayDriver::start_gpu(
+        &mut source.machine,
+        history.plan.clone(),
+        config(history.payloads.clone()),
+    )
+    .unwrap();
+    drive_to(&mut source, &mut driver, at.position, 19, Ok(())).unwrap();
+    source.check(&history.final_bytes, 0x1100);
+    assert!(source.machine.can_capture_recording_branch());
+    let before = source.machine.gpu_session_state_witness_bytes().unwrap();
+    assert_eq!(state(&mut source), at);
+    branch_evidence(&mut source, "selected-before-capture");
+    assert!(source.machine.capture_recording_branch(None).is_err());
+    let captured = source
+        .machine
+        .capture_recording_branch(Some(&RENDERER))
+        .unwrap();
+    assert_eq!(
+        source.machine.gpu_session_state_witness_bytes().unwrap(),
+        before
+    );
+    assert_eq!(state(&mut source), at);
+    branch_evidence(&mut source, "selected-after-capture");
+    let mut children = Vec::new();
+    for letter in [b'A', b'B'] {
+        let mut child = branch_rig(true);
+        let empty = child.machine.save_gpu_result_resume(&RENDERER).unwrap();
+        assert!(
+            child
+                .machine
+                .restore_recording_branch(&captured, Some(&[99; 32]))
+                .is_err()
+        );
+        assert_eq!(
+            child.machine.save_gpu_result_resume(&RENDERER).unwrap(),
+            empty
+        );
+        child
+            .machine
+            .restore_recording_branch(&captured, Some(&RENDERER))
+            .unwrap();
+        assert_eq!(child.machine.session_position(), Some(at.position));
+        assert_eq!(child.machine.session_branch_offline(), Ok(true));
+        child.check(&history.final_bytes, 0x1100);
+        let drained = child.machine.take_session_gpu_recording().unwrap();
+        assert!(drained.events.is_empty() && drained.payloads.is_empty());
+        let initial = child.machine.save_gpu_result_resume(&RENDERER).unwrap();
+        let first = state(&mut child);
+        child
+            .machine
+            .stage_session_effect(
+                at.position.transition,
+                SessionEffect::WriteRam {
+                    address: WITNESS + 192,
+                    bytes: vec![letter],
+                },
+            )
+            .unwrap();
+        child.machine.deliver_session_boundary().unwrap();
+        child.until(at.position.transition + 20, 3);
+        let last = state(&mut child);
+        branch_evidence(
+            &mut child,
+            if letter == b'A' { "child-a" } else { "child-b" },
+        );
+        let events = child.machine.take_session_gpu_recording().unwrap();
+        assert!(events.payloads.is_empty());
+        children.push((
+            letter,
+            ReplayPlan {
+                begin: first.position,
+                end: last.position,
+                initial_resume: initial,
+                events: events.events,
+                witnesses: vec![first, last],
+            },
+        ));
+    }
+    assert_eq!(
+        source.machine.gpu_session_state_witness_bytes().unwrap(),
+        before
+    );
+    // Only a RAM effect remains, so completing the original future needs no host callback.
+    while !driver
+        .run_chunk_to(
+            &mut source.machine,
+            history.plan.end,
+            3,
+            |_, _, _| unreachable!(),
+        )
+        .unwrap()
+    {}
+    assert_eq!(source.machine.bus_mut().load8(WITNESS + 192).unwrap(), b'P');
+    for (letter, plan) in children.into_iter().rev() {
+        let mut replay = branch_rig(false);
+        let mut child_driver =
+            ReplayDriver::start_gpu(&mut replay.machine, plan.clone(), config(vec![])).unwrap();
+        replay.machine.mark_offline_branch_replay().unwrap();
+        while !child_driver
+            .run_chunk_to(&mut replay.machine, plan.end, 3, |_, _, _| unreachable!())
+            .unwrap()
+        {}
+        assert_eq!(
+            replay.machine.bus_mut().load8(WITNESS + 192).unwrap(),
+            letter
+        );
+        replay.check(&history.final_bytes, 0x1100);
+    }
+}
+
+#[test]
+fn a_pending_gpu_command_refuses_branching_without_mutating_the_selected_replay() {
+    let history = history_with_branch(false, true);
+    let mut selected = branch_rig(false);
+    let mut driver = ReplayDriver::start_gpu(
+        &mut selected.machine,
+        history.plan.clone(),
+        config(history.payloads.clone()),
+    )
+    .unwrap();
+    drive_to(&mut selected, &mut driver, history.mid_position, 0, Ok(())).unwrap();
+    let before = selected.machine.gpu_session_state_witness_bytes().unwrap();
+    let before_witness = state(&mut selected);
+    branch_evidence(&mut selected, "pending-before-refusal");
+    assert!(!selected.machine.can_capture_recording_branch());
+    assert!(
+        selected
+            .machine
+            .capture_recording_branch(Some(&RENDERER))
+            .is_err()
+    );
+    assert_eq!(
+        selected.machine.gpu_session_state_witness_bytes().unwrap(),
+        before
+    );
+    assert_eq!(state(&mut selected), before_witness);
+    branch_evidence(&mut selected, "pending-after-refusal");
+}
 fn drive(
     rig: &mut Rig,
     driver: &mut ReplayDriver,
     delay: usize,
     outcome: Result<(), E>,
 ) -> Result<(), wasm_vm_core::session_replay::ReplayDivergence> {
+    drive_to(rig, driver, driver.end(), delay, outcome)
+}
+fn drive_to(
+    rig: &mut Rig,
+    driver: &mut ReplayDriver,
+    target: SessionPosition,
+    delay: usize,
+    outcome: Result<(), E>,
+) -> Result<(), wasm_vm_core::session_replay::ReplayDivergence> {
     let mut exchange = 1;
     for turn in 0..4000 {
-        let reached = driver.run_chunk_to(&mut rig.machine, driver.end(), 3, |_, _, _| {
+        let reached = driver.run_chunk_to(&mut rig.machine, target, 3, |_, _, _| {
             panic!("no live input")
         })?;
         if reached {

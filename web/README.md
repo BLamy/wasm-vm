@@ -203,3 +203,36 @@ readback/query/error workload, retained storage bytes, changed live results,
 seek cancellation and context-loss probes; `make verify-E9-T18` includes its
 native a/b result/keyframe checks. T22/T24 still own desktop budgets and final
 live desktop recording integration.
+
+The timeline's **Continue here** control creates a new recording from a selected
+exact software or healthy GPU replay position. Each child owns its VM, input
+queues, disk overlay and GPU worker. Saving a child preserves the parent's future;
+discarding an unsaved child deletes that child's identity. Parent and child
+histories retain their own authenticated assets and can be reopened independently,
+including after deleting their relatives.
+
+Continuations use retained local kernel, Wasm, renderer and disk chunks. Missing
+local history is an error. Historical external connections remain permanently
+offline in the child: **Go live** explicitly refuses them. A continuation never
+reconnects or retransmits the parent's sends. Starting a separate live session is
+the available policy; connection reset support is future work. Older paced GPU
+histories and GPU checkpoints containing failed or unproved work keep their
+existing continuation restrictions.
+
+**Record file example** boots the pinned Linux kernel with a reproducible 8 MiB
+ext2 filesystem and real RV64 BusyBox. It saves a position before `/state` changes
+and records the parent's `P` write. Continue from that position and enter `A` or
+`B` to write a different value in a private child. This second exact software
+profile pins the kernel, image manifest and boot arguments; it does not admit
+arbitrary images. Rebuild its bytes with
+`bash tools/session-branch-fixture/build.sh OUTPUT_DIRECTORY` using the pinned
+local rootfs builder, then package them with `tools/session-branch-fixture/package.py`.
+
+`make verify-E9-T20` records real Linux file writes and reload/deletion order,
+actual hardware GPU work in two children, raw native snapshots, an external
+counter, ABI ownership attacks and publication/paint/storage fault injection.
+Independent byte readers check the ext2 contents, COW sectors and GPU readback.
+The full local wall runs once at a clean frozen head. A separate
+`python3 -B tools/verify/e9-branch.py --output OUTPUT --cold-clone CLONE_DIRECTORY`
+checks that same revision from a pristine checkout and fresh build directory.
+These are correctness proofs; desktop performance budgets remain E9-T22.

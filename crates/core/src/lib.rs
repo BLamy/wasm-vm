@@ -3316,6 +3316,24 @@ impl Machine {
         self.save_resume_inner(None, true, true)
     }
 
+    pub fn can_capture_recording_branch(&self) -> bool {
+        let ready = self.host_ingress_gate.replay_active()
+            && self.session_replay_limit.is_some()
+            && self.extra_blk.is_empty()
+            && self.guest_clock_mode() == time::TimeMode::ICount
+            && self.session_device_replay() == Ok(true)
+            && self.session_network_replay() == Ok(true)
+            && self.session_sources.borrow().replay()
+            && self.session_position().is_some_and(|p| {
+                p.phase == session_clock::SessionPhase::Before && p.sequence < u64::MAX
+            });
+        #[cfg(feature = "virgl-renderer")]
+        if self.control3d_proof_installed() {
+            return ready && self.gpu_recording_branch_ready();
+        }
+        ready
+    }
+
     /// Copy a selected replay into an initial recording image without changing its owner.
     /// The image omits queued parent effects and prefetched GPU results. GPU continuations
     /// require a completed command boundary; pending commands remain replayable but cannot fork.
@@ -3327,17 +3345,7 @@ impl Machine {
         let bad = crate::resume::SnapshotError::BadComponentState {
             tag: crate::resume::section::SESSION_CLOCK,
         };
-        if !self.host_ingress_gate.replay_active()
-            || self.session_replay_limit.is_none()
-            || !self.extra_blk.is_empty()
-            || self.guest_clock_mode() != time::TimeMode::ICount
-            || self.session_device_replay() != Ok(true)
-            || self.session_network_replay() != Ok(true)
-            || !self.session_sources.borrow().replay()
-            || !self.session_position().is_some_and(|p| {
-                p.phase == session_clock::SessionPhase::Before && p.sequence < u64::MAX
-            })
-        {
+        if !self.can_capture_recording_branch() {
             return Err(bad);
         }
         #[cfg(not(feature = "virgl-renderer"))]
@@ -3693,11 +3701,18 @@ impl Machine {
                 .0
                 .borrow()
                 .snapshot_transport(&mut v);
-            for queue in [vq, cursor_vq] {
-                if logical_gpu && queue.is_none() {
+            for (index, queue) in [vq, cursor_vq].into_iter().enumerate() {
+                let software_empty_cache =
+                    exact_inputs && gpu_witness.is_none() && queue.is_none() && {
+                        let transport = self.virtio[*slot_index].0.borrow();
+                        let ring = transport.queue(index);
+                        ring.ready && dev::virtio::queue::Virtqueue::new(ring, 256).is_ok()
+                    };
+                if (logical_gpu || software_empty_cache) && queue.is_none() {
                     // None is an unmaterialized cache of the initial (0,0)
                     // ring cursors. Restore may create that cache to redraw a
-                    // cursor without any guest queue activity. Transport and
+                    // cursor without any guest queue activity. Restorable software
+                    // sessions canonicalize only valid, ready rings. Transport and
                     // every actual cursor remain part of the witness.
                     v.extend_from_slice(&[1, 0, 0, 0, 0]);
                 } else {

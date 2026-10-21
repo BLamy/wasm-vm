@@ -20,13 +20,19 @@ export class SessionTimeline {
     this.c=Object.fromEntries([...root.querySelectorAll('[data-timeline]')].map(el=>[el.dataset.timeline,el]));
     this.gpuFrame=document.createElement('div');this.gpuFrame.dataset.timelineGpuFrame='';this.c.console.before(this.gpuFrame);
     this.epoch=0;this.refreshEpoch=0;this.playEpoch=0;this.preview=null;this.owner=null;this.active=null;this.operation=null;this.playing=false;this.recording=null;
+    this.branch=null;this.branchCreation=null;this.branchBusy=false;this.branchEpoch=0;this.branchRunning=false;this.branchRunEpoch=0;this.branchRun=null;
     const c=this.c;
-    c.sessions.addEventListener('change',()=>void this.select(c.sessions.value));
+    c.sessions.addEventListener('change',()=>void this.guard(()=>this.select(c.sessions.value)));
     for(const [key,action] of [['refresh',()=>this.refresh()],['open',()=>this.open()],['record',()=>this.record()],
       ['back',()=>this.step(-1)],['forward',()=>this.step(1)],['play',()=>this.play()],['pause',()=>this.pause()],
       ['seek',()=>this.seek(c.target.value)],['point-go',()=>this.navigate('points')],['event-go',()=>this.navigate('events')]])
       c[key].addEventListener('click',()=>void this.guard(action));
-    c.stop.addEventListener('click',()=>{this.recording?.abort();this.status('Stopping the sample at a committed replay point…');});
+    for(const [key,action]of [['branch-create',()=>this.continueHere()],['branch-run',()=>this.runBranch()],['branch-pause',()=>this.pauseBranch()],
+      ['branch-save',()=>this.saveBranch()],['branch-discard',()=>this.discardBranch()],['branch-live',()=>this.goLiveBranch()],['branch-send',()=>this.sendBranchInput()]])
+      c[key]?.addEventListener('click',()=>void this.guard(action));
+    c['branch-input']?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void this.guard(()=>this.sendBranchInput());}});
+    c['record-file']?.addEventListener('click',()=>void this.guard(()=>this.record(true)));
+    c.stop.addEventListener('click',()=>{this.recording?.abort();this.status('Stopping the recording…');});
     c.target.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();void this.guard(()=>this.seek(c.target.value));}});
     c.scrub.addEventListener('input',()=>{
       if(!this.owner)return;this.stopPlaying();this.cancelRequest();
@@ -50,7 +56,11 @@ export class SessionTimeline {
   stopPlaying(){this.playing=false;this.playEpoch++;clearTimeout(this.playTimer);}
   retire(owner){if(!owner)return;owner.controller.close();this.retire(owner.previous);owner.previous=null;}
   cancelRequest(){this.epoch++;this.operation=null;this.owner?.controller.cancel();}
-  pause(){this.stopPlaying();this.cancelRequest();this.status(this.active?'Replay paused at the displayed position.':'Restoration cancelled; no replay position is active.');this.render();}
+  pause(){
+    if(this.branchCreation){this.branchCreation.abort();this.branchCreation=null;this.branchEpoch++;this.status('Continuation creation cancelled. The saved parent is unchanged.');this.render();return;}
+    if(this.branch)return this.pauseBranch();
+    this.stopPlaying();this.cancelRequest();this.status(this.active?'Replay paused at the displayed position.':'Restoration cancelled; no replay position is active.');this.render();
+  }
   async guard(action){try{return await action();}catch(error){this.status(error.message,'error');this.render();}}
   async initialize(){
     try{this.store??=await SessionStore.open();await this.refresh();}
@@ -66,6 +76,7 @@ export class SessionTimeline {
     await this.select(this.c.sessions.value);
   }
   async select(id){
+    if(this.branchLocked())throw Error('Save or discard the continuation before selecting another history.');
     this.refreshEpoch++;this.stopPlaying();this.cancelRequest();const token=this.epoch;this.preview=null;this.c.sessions.value=id;
     this.c.points.replaceChildren();this.c.events.replaceChildren();this.c.preview.textContent='';this.render();
     if(!id){this.status('No saved histories yet. Record a Linux sample to try time travel.');return;}
@@ -91,6 +102,7 @@ export class SessionTimeline {
     this.render();
   }
   async open(){
+    if(this.branchLocked())throw Error('Save or discard the continuation before opening another replay.');
     if(!this.preview?.compatible||this.recording)throw Error('Select a completed recording first.');
     this.stopPlaying();this.cancelRequest();const token=this.epoch,id=this.preview.id,previous=this.owner;
     const owner={id,controller:null,manifest:null,events:[],previous};
@@ -142,7 +154,8 @@ export class SessionTimeline {
       return {status:'error',error:error.message};
     }
   }
-  canControl(){return !!this.owner&&this.preview?.id===this.owner.id&&!this.recording;}
+  branchLocked(){return !!this.branch||!!this.branchCreation||this.branchBusy;}
+  canControl(){return !!this.owner&&this.preview?.id===this.owner.id&&!this.recording&&!this.branchLocked();}
   async seek(transition){
     if(!this.canControl())throw Error('Open the selected replay first.');
     this.stopPlaying();this.showTarget(transition);return this.request(()=>this.owner.controller.seekTransition(transition));
@@ -178,31 +191,131 @@ export class SessionTimeline {
     };
     await advance();
   }
-  async record(){
+  async record(fileExample=false){
+    if(this.branchLocked())throw Error('Save or discard the continuation before recording a sample.');
     if(this.recording)return;this.pause();const signal=new AbortController();this.recording=signal;this.render();
     try{
       await this.pauseLive();
-      const result=await recordTimelineSample({store:this.store,id:'linux-sample-'+crypto.randomUUID(),signal:signal.signal,
+      const record=fileExample?(await import('./session-file-sample.js')).recordFileTimelineSample:recordTimelineSample;
+      const result=await record({store:this.store,id:'linux-sample-'+crypto.randomUUID(),signal:signal.signal,
         onProgress:message=>{if(this.recording===signal)this.status(message,'recording');}});
       this.recording=null;await this.refresh(result.id);await this.open();
+      if(result.past)await this.request(()=>this.owner.controller.seekPosition(result.past));
     }catch(error){this.status(`Sample recording failed: ${error.message}. Existing histories are preserved.`,'error');}
     finally{this.recording=null;this.render();}
   }
+  paintBranch(view,id){
+    this.active={id,position:{...view.position},digest:view.digest??null,checkpointId:null,continuation:true};
+    this.c.console.textContent=view.console||'(No serial output at this position.)';
+    this.gpuFrame.replaceChildren(...(view.canvas?[view.canvas]:[]));this.c.position.textContent=positionText(view.position);
+    this.c.position.dataset.transition=view.position.transition;this.c.digest.textContent=view.digest??'Pause the continuation to compute its state digest.';
+    this.c.active.textContent=`Active continuation: ${id}`;
+  }
+  async continueHere(){
+    if(!this.canControl()||!this.owner.controller.canContinue)throw Error('Select an available completed replay point before continuing.');
+    this.pause();const token=++this.branchEpoch,source=this.owner,signal=new AbortController();this.branchCreation=signal;
+    this.status('Preparing a private continuation…','restoring');this.render();
+    try{
+      const {createSessionBranch}=await import('./session-branches.js');
+      if(signal.signal.aborted||token!==this.branchEpoch)return;
+      const branch=await createSessionBranch({store:this.store,parent:source,signal:signal.signal,onProgress:message=>{if(token===this.branchEpoch)this.status(message,'restoring');}});
+      if(token!==this.branchEpoch||signal.signal.aborted){await branch.discard();return;}
+      this.branch=branch;this.branchCreation=null;
+      const view=await branch.view();if(this.branch!==branch||token!==this.branchEpoch)return;
+      this.paintBranch(view,branch.id);
+      if(this.c['branch-origin'])this.c['branch-origin'].textContent=`Continuation ${branch.id} from ${source.id} at ${positionText(source.controller.selected.position)}. Network offline.`;
+      this.status('Continuation paused. Run it or send serial input; the saved parent remains unchanged.');
+    }catch(error){if(token===this.branchEpoch&&!signal.signal.aborted)throw error;}
+    finally{if(token===this.branchEpoch){this.branchCreation=null;this.render();}}
+  }
+  async runBranch(){
+    const branch=this.branch;if(!branch||this.branchBusy||this.branchRunning)return;
+    const token=++this.branchRunEpoch;this.branchRunning=true;this.status('Continuation running · network offline','recording');this.render();
+    const work=(async()=>{
+      let shown=0;
+      try{
+        while(this.branch===branch&&this.branchRunning&&token===this.branchRunEpoch){
+          await branch.advance(32768);
+          if(this.branch!==branch||token!==this.branchRunEpoch)break;
+          if(performance.now()-shown>100){this.paintBranch(branch.preview(),branch.id);shown=performance.now();}
+          await new Promise(resolve=>setTimeout(resolve,0));
+        }
+      }catch(error){
+        if(this.branch===branch&&token===this.branchRunEpoch){this.branchRunning=false;this.status(`Continuation paused: ${error.message}`,'error');}
+      }finally{if(this.branch===branch&&token===this.branchRunEpoch){this.branchRunning=false;this.render();}}
+    })();this.branchRun=work;try{await work;}finally{if(this.branchRun===work)this.branchRun=null;}
+  }
+  async pauseBranch(){
+    const branch=this.branch;if(!branch)return;
+    this.branchRunning=false;this.branchRunEpoch++;await this.branchRun?.catch(()=>{});
+    if(this.branch!==branch)return;
+    const view=await branch.view();if(this.branch!==branch)return;
+    this.paintBranch(view,branch.id);this.status('Continuation paused · network offline.');this.render();
+  }
+  async sendBranchInput(){
+    const branch=this.branch;if(!branch||this.branchBusy)throw Error('Open an available continuation first.');
+    const bytes=new TextEncoder().encode(this.c['branch-input'].value+'\n');
+    try{await branch.sendInput(bytes);if(this.branch!==branch)return;this.c['branch-input'].value='';this.paintBranch(branch.preview(),branch.id);this.render();}
+    catch(error){if(this.branch===branch)throw error;}
+  }
+  async goLiveBranch(){
+    const branch=this.branch;if(!branch||this.branchBusy)throw Error('Open an available continuation first.');
+    try{await branch.goLive();}catch(error){if(this.branch===branch)throw error;}
+  }
+  async saveBranch(){
+    const branch=this.branch;if(!branch||this.branchBusy)return;const token=++this.branchEpoch;
+    await this.pauseBranch();if(this.branch!==branch||token!==this.branchEpoch)return;
+    this.branchBusy=true;this.status('Saving the continuation…','recording');this.render();
+    try{
+      const saved=await branch.finish();if(this.branch!==branch||token!==this.branchEpoch)return;
+      this.branch=null;this.branchBusy=false;await this.refresh(saved.id);await this.open();
+    }catch(error){if(token===this.branchEpoch)throw error;}
+    finally{if(token===this.branchEpoch){this.branchBusy=false;this.render();}}
+  }
+  async discardBranch(restore=true){
+    const token=++this.branchEpoch,branch=this.branch;this.branchCreation?.abort();this.branchCreation=null;
+    this.branchRunning=false;this.branchRunEpoch++;this.branch=null;this.branchBusy=true;if(restore)this.render();
+    try{await branch?.discard();}
+    finally{
+      if(token===this.branchEpoch){
+        this.branchBusy=false;
+        if(restore){
+          const selected=this.owner?.controller.selected;
+          if(selected){const view=selected.rendered;this.active={id:this.owner.id,position:{...view.position},digest:view.digest,checkpointId:selected.checkpointId};
+            this.c.console.textContent=view.console||'(No serial output at this position.)';this.gpuFrame.replaceChildren(...(view.canvas?[view.canvas]:[]));
+            this.c.position.textContent=positionText(view.position);this.c.position.dataset.transition=view.position.transition;this.c.digest.textContent=view.digest;this.c.active.textContent=`Active replay: ${this.owner.id}`;}
+          this.status('Unsaved continuation discarded. The saved parent is unchanged.');this.render();
+        }
+      }
+    }
+  }
   get snapshot(){return {preview:this.preview?.id??null,active:this.active&&structuredClone(this.active),playing:this.playing,
-    pending:!!this.operation,mode:this.recording?'recording':this.active?'replay':'live',status:this.c.status.textContent};}
+    pending:!!this.operation||!!this.branchCreation||this.branchBusy,mode:this.recording?'recording':this.branch?'continuation':this.active?'replay':'live',status:this.c.status.textContent};}
   render(){
     const c=this.c,ready=!!this.store,recording=!!this.recording,control=this.canControl(),selected=control&&this.owner.controller.selected;
-    c.sessions.disabled=c.refresh.disabled=c.record.disabled=!ready||recording;c.stop.disabled=!recording;
-    c.open.disabled=!this.preview?.compatible||recording;
+    const branch=this.branch,locked=this.branchLocked();
+    c.sessions.disabled=c.refresh.disabled=c.record.disabled=!ready||recording||locked;c.stop.disabled=!recording;
+    if(c['record-file'])c['record-file'].disabled=!ready||recording||locked;
+    c.open.disabled=!this.preview?.compatible||recording||locked;
     c.scrub.disabled=c.target.disabled=c.seek.disabled=c['point-go'].disabled=!control;
-    c.points.disabled=!this.preview||recording;
+    c.points.disabled=!this.preview||recording||locked;
     c.events.disabled=c['event-go'].disabled=!control||!this.owner.events.length;
     c.play.disabled=!selected||this.playing;c.back.disabled=!selected||BigInt(selected.position.transition)<=BigInt(this.owner.manifest.begin.transition);
     c.forward.disabled=!selected||BigInt(selected.position.transition)>=BigInt(this.owner.manifest.end.transition);
-    c.pause.disabled=!this.playing&&!this.operation;
-    c.mode.textContent=recording?'Recording a separate Linux sample; replay paused':this.active?this.playing?'Replay · playing':'Replay · paused':'Live view · no replay restored';
+    c.pause.disabled=!this.playing&&!this.operation&&!this.branchCreation;
+    c.mode.textContent=recording?'Recording a separate Linux sample; replay paused':branch?this.branchRunning?'Continuation · running · offline':'Continuation · paused · offline':this.active?this.playing?'Replay · playing':'Replay · paused':'Live view · no replay restored';
+    if(c['branch-create']){
+      c['branch-create'].disabled=!selected||!this.owner.controller.canContinue;
+      c['branch-create'].title=selected&&!this.owner.controller.canContinue?'Select a completed, available command boundary.':'';
+      c['branch-controls'].hidden=!branch&&!this.branchCreation;c['branch-origin'].hidden=!branch;
+      c['branch-run'].disabled=!branch||this.branchRunning||this.branchBusy;
+      c['branch-pause'].disabled=!branch||!this.branchRunning||this.branchBusy;
+      c['branch-save'].disabled=c['branch-live'].disabled=c['branch-input'].disabled=c['branch-send'].disabled=!branch||this.branchBusy;
+      c['branch-discard'].disabled=(!branch&&!this.branchCreation)||this.branchBusy;
+      c['branch-discard'].textContent=this.branchCreation?'Cancel continuation':'Discard unsaved continuation';
+    }
     c.scrub.setAttribute('aria-valuetext',`Preview transition ${c.target.value||'0'}`);
-    this.root.setAttribute('aria-busy',String(!!this.operation||recording));
+    this.root.setAttribute('aria-busy',String(!!this.operation||recording||this.branchCreation||this.branchBusy));
   }
-  close(){this.pause();this.recording?.abort();this.retire(this.owner);this.owner=null;}
+  close(){this.stopPlaying();this.cancelRequest();this.recording?.abort();const closed=this.discardBranch(false);this.retire(this.owner);this.owner=null;return closed;}
 }

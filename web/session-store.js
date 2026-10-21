@@ -164,7 +164,7 @@ export class SessionStore {
         return owned.release().finally(() => maintenance.release());
       }, {
         part: bytes => this.#putPart(bytes, id), object: object => this.#putObject(object, id),
-        publish: (bytes, active, beforeCommit) => this.#publish(id, active, bytes, beforeCommit),
+        publish: (bytes, active, beforeCommit, authorize) => this.#publish(id, active, bytes, beforeCommit, authorize),
       });
       this.#writers.add(writer); return writer;
     } catch (error) { if (owned) await owned.release(); await maintenance.release(); throw wrap(error); }
@@ -466,7 +466,7 @@ export class SessionStore {
     }
     probe('object-durable', id, object.sha256);
   }
-  async #publish(id, active, bytes, beforeCommit) {
+  async #publish(id, active, bytes, beforeCommit, authorize) {
     const decoded = manifest(bytes);
     need(decoded.value.id === id, 'SessionId');
     const previous = await read(this.#db, 'sessions', id);
@@ -489,7 +489,14 @@ export class SessionStore {
       const checked = () => {
         if (--pending !== 0) return;
         try {
+          probe('before-final-authorize', id);
           active();
+          // Recheck revocable ownership in the same synchronous turn as the final put.
+          // beforeCommit may await; this final authorizer must never yield.
+          if (authorize) {
+            const result = authorize();
+            need(!result || typeof result.then !== 'function', 'PublicationGuard', 'final authorizer must be synchronous');
+          }
           tx.objectStore('sessions').put({id, revision: String(revision), manifest: decoded.bytes}, id);
           done({id, revision: String(revision), position: decoded.value.end});
         } catch (error) { abort(error); }
@@ -570,9 +577,10 @@ function createWriter(id, unlock, storage) {
         } finally { hash.free(); }
       });
     },
-    async publish(bytes, beforeCommit = null) {
-      need(beforeCommit === null || typeof beforeCommit === 'function', 'PublicationGuard');
-      return run(() => storage.publish(bytes, active, beforeCommit));
+    async publish(bytes, beforeCommit = null, authorize = null) {
+      need((beforeCommit === null || typeof beforeCommit === 'function')
+        && (authorize === null || typeof authorize === 'function'), 'PublicationGuard');
+      return run(() => storage.publish(bytes, active, beforeCommit, authorize));
     },
     release() {
       if (!releasing) { closed = true; releasing = Promise.allSettled([...pending]).then(unlock); }

@@ -204,10 +204,28 @@ impl Rig {
         job: u32,
         disk: Option<Vec<u8>>,
     ) -> Self {
+        Self::with_owned_devices(length, tape, cached, job, disk, false)
+    }
+    fn with_owned_devices(
+        length: usize,
+        tape: Option<ObservationTape>,
+        cached: bool,
+        job: u32,
+        disk: Option<Vec<u8>>,
+        owned: bool,
+    ) -> Self {
         let replay = tape.is_some();
         let mut machine = Machine::new(length + 1024 * 1024);
         machine.enable_plic();
         machine.enable_clint(64);
+        if owned {
+            assert!(disk.is_none());
+            machine.start_session_clock(1).unwrap();
+            machine
+                .enable_session_devices(None, false, false, replay)
+                .unwrap();
+            machine.enable_session_network(replay).unwrap();
+        }
         let disk = if let Some(bytes) = disk {
             Some(
                 machine
@@ -215,7 +233,9 @@ impl Rig {
                     .1,
             )
         } else {
-            machine.enable_virtio_slots(None);
+            if !owned {
+                machine.enable_virtio_slots(None);
+            }
             None
         };
         machine.enable_virtio_gpu(Box::new(NullSink)).unwrap();
@@ -232,7 +252,9 @@ impl Rig {
         let (slot, gpu) = machine.virtio_gpu().unwrap();
         let base = Platform::virtio_base(slot as u64);
         machine.set_block_cache(cached);
-        machine.start_session_clock(1).unwrap();
+        if !owned {
+            machine.start_session_clock(1).unwrap();
+        }
         machine
             .start_session_sources(machine.source_policy(), tape)
             .unwrap();

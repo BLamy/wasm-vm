@@ -45,7 +45,9 @@ fn branch_queue(value: &JsValue, key: &str) -> Result<Vec<u8>, JsError> {
     if !v.is_instance_of::<js_sys::Uint8Array>() {
         return Err(JsError::new("branch queue must be owned bytes"));
     }
-    let view = js_sys::Uint8Array::new(&v);
+    // Inspect the caller's buffer before copying: the JS constructor would first
+    // copy a shared view into an ordinary ArrayBuffer and hide its ownership.
+    let view = v.unchecked_into::<js_sys::Uint8Array>();
     if view.length() > 1 << 20 || !view.buffer().is_instance_of::<js_sys::ArrayBuffer>() {
         return Err(JsError::new("branch host queue bound"));
     }
@@ -208,6 +210,17 @@ fn witness(value: JsValue) -> Result<StateWitness, JsError> {
 
 #[wasm_bindgen]
 impl WasmLinux {
+    #[wasm_bindgen(js_name = canContinueExactBranch)]
+    pub fn can_continue_exact_branch(&self) -> Result<bool, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        #[cfg(feature = "virgl-renderer")]
+        if inner.exact_gpu && self.gpu_session_stopped.get() {
+            return Ok(false);
+        }
+        Ok(inner.exact_session == Some(true)
+            && inner.exact_driver.is_some()
+            && inner.machine.can_capture_recording_branch())
+    }
     /// Synchronous owned copy of the selected replay. Callers never receive its mutable VM.
     #[wasm_bindgen(js_name = captureExactBranch)]
     pub fn capture_exact_branch(
@@ -224,6 +237,12 @@ impl WasmLinux {
             .transpose()?;
         let (at, source_digest, native, pending, output, disk) = {
             let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+            #[cfg(feature = "virgl-renderer")]
+            if inner.exact_gpu && self.gpu_session_stopped.get() {
+                return Err(JsError::new(
+                    "The graphics context is unavailable. Reopen the saved replay.",
+                ));
+            }
             if inner.exact_session != Some(true)
                 || inner.exact_driver.is_none()
                 || inner.exact_gpu != renderer_digest.is_some()
@@ -232,6 +251,11 @@ impl WasmLinux {
             {
                 return Err(JsError::new(
                     "select an admitted paused replay before continuing",
+                ));
+            }
+            if !inner.machine.can_capture_recording_branch() {
+                return Err(JsError::new(
+                    "Select a completed GPU point before continuing.",
                 ));
             }
             let at = inner.machine.session_position().unwrap();
@@ -271,14 +295,7 @@ impl WasmLinux {
                     "branch native state exceeds the supported size",
                 ));
             }
-            let generation = inner.machine.overlay_generation();
-            let disk = inner
-                .checkpoint_disk
-                .as_ref()
-                .ok_or_else(|| JsError::new("branch disk binding is unavailable"))?
-                .snapshot_delta(generation)
-                .map_err(|e| JsError::new(&format!("branch disk: {e:?}")))?
-                .to_bytes();
+            let disk = crate::session_checkpoint::disk_at_keyframe(&inner, &native)?;
             let pending: Vec<u8> = inner.pending.iter().copied().collect();
             let output = inner.out.borrow().clone();
             (at, source_digest, native, pending, output, disk)
@@ -326,6 +343,10 @@ impl WasmLinux {
             })
             .transpose()?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        #[cfg(feature = "virgl-renderer")]
+        if inner.exact_gpu && self.gpu_session_stopped.get() {
+            return Err(JsError::new("The new graphics owner was stopped."));
+        }
         if inner.exact_session != Some(false)
             || inner.exact_driver.is_some()
             || inner.finished.is_some()
@@ -357,6 +378,23 @@ impl WasmLinux {
             .machine
             .session_branch_offline()
             .map_err(|e| JsError::new(&format!("branch network: {e:?}")))
+    }
+
+    #[wasm_bindgen(js_name = markExactBranchReplayOffline)]
+    pub fn mark_exact_branch_replay_offline(&self) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.exact_session != Some(true)
+            || inner.exact_driver.is_some()
+            || inner.machine.session_position() != Some(Default::default())
+        {
+            return Err(JsError::new(
+                "branch replay policy requires a fresh replay owner",
+            ));
+        }
+        inner
+            .machine
+            .mark_offline_branch_replay()
+            .map_err(|e| JsError::new(&format!("branch replay policy: {e:?}")))
     }
 
     #[wasm_bindgen(js_name = requestExactBranchGoLive)]

@@ -6,6 +6,7 @@ import {SessionCheckpoints,checkpointChunks,checkpointHash,checkpointReference,r
 import {decodeKeyframeDescriptor,encodeKeyframeDescriptor,inspectRamDeltaChunk,KEYFRAME_MAX_DEPTH} from './session-keyframes.js';
 import {decodeInputEventRecord} from './session-inputs.js';
 import {encodeCheckpointData} from './renderer/virgl-command/checkpoint-codec.mjs';
+import {validateBranchOrigin} from './session-branch-format.js';
 import {GPU_EXACT_INPUTS,GPU_FRAME_LIMIT,gpuNeed as need,gpuHex,gpuHashBytes,gpuPosition as pos,gpuSamePosition as same,gpuCompare as compare,ownGpuReceipt,gpuEventParts,validateGpuConfiguration,encodeGpuExactFrame,decodeGpuExactFrame} from './session-gpu-replay-format.js';
 await init();
 const encoder=new TextEncoder(),decoder=new TextDecoder('utf-8',{fatal:true});
@@ -15,6 +16,15 @@ const sameData=(a,b)=>{const x=encodeCheckpointData(a),y=encodeCheckpointData(b)
 const sameRef=(a,b)=>a?.sha256===b?.sha256&&a?.length===b?.length;
 function emptyDisk(manifest,base){const value=JSON.parse(manifest),bytes=new Uint8Array(61),view=new DataView(bytes.buffer);bytes.set(encoder.encode('WVOD1'));view.setUint32(5,4096,true);view.setBigUint64(9,BigInt(value.image_len),true);bytes.set(gpuHashBytes(base),17);return bytes;}
 function executable(row){return [17,18,23].includes(row.channel)?{...row,kind:'observation',sourceKind:Number(row.outcome[1]),status:Number(row.outcome[0]),requested:Number(row.outcome[2])}:{...row,kind:'host'};}
+function gpuManifest(id,config,vm,base,begin){
+  return {version:{major:1,minor:0},id,
+    machine:{vm_build:vm.sha256,wasm_build:config.wasm.sha256,base_image:base.sha256,kernel:config.kernel.sha256,initramfs:null,
+      ram_bytes:'1073741824',harts:1,devices:config.devices,gpu:{renderer_build:config.renderer.sha256,profile:checkpointHash(encodeCheckpointData(config.profile))}},
+    policy:{mode:'exact-replay',profile:'rv64-linux-gpu-v1',event_version:{major:1,minor:0},checkpoint_version:{major:1,minor:0},boundary_version:1,clock:config.clock,required_inputs:[...GPU_EXACT_INPUTS]},
+    assets:[{role:'vm',content:vm},{role:'wasm',content:{sha256:config.wasm.sha256,length:config.wasm.length}},
+      {role:'kernel',content:{sha256:config.kernel.sha256,length:config.kernel.length}},{role:'base',content:base},{role:'gpu-renderer',content:{sha256:config.renderer.sha256,length:config.renderer.length}}],
+    begin:pos(begin),end:pos(begin),events:[],checkpoints:[],extensions:[]};
+}
 export class SessionGpuJournal {
   #store;#writer;#manifest;#config;#pending=[];#bodies=new Map();#intervalBodies=new Map();#committedRows=0;#committedSmall=0;#busy=false;#complete=false;
   constructor(store,writer,manifest,config){this.#store=store;this.#writer=writer;this.#manifest=manifest;this.#config=config;}
@@ -23,14 +33,8 @@ export class SessionGpuJournal {
     const config=validateGpuConfiguration(input),configBytes=json(config),vm=checkpointReference(configBytes),image=sessionCanonicalImage(config.imageManifest),base=checkpointReference(image);
     need(JSON.stringify(JSON.parse(machine.exactGpuSessionTopology()))===JSON.stringify(config.devices),'installed GPU topology differs');
     need(JSON.stringify(machine.sessionSourcePolicy())===JSON.stringify(config.timeEntropyPolicy),'installed GPU source policy differs');
-    const rendererRef={sha256:config.renderer.sha256,length:config.renderer.length};
-    const manifest={version:{major:1,minor:0},id:writer.id,
-      machine:{vm_build:vm.sha256,wasm_build:config.wasm.sha256,base_image:base.sha256,kernel:config.kernel.sha256,initramfs:null,
-        ram_bytes:'1073741824',harts:1,devices:config.devices,gpu:{renderer_build:rendererRef.sha256,profile:checkpointHash(encodeCheckpointData(config.profile))}},
-      policy:{mode:'exact-replay',profile:'rv64-linux-gpu-v1',event_version:{major:1,minor:0},checkpoint_version:{major:1,minor:0},boundary_version:1,clock:config.clock,required_inputs:[...GPU_EXACT_INPUTS]},
-      assets:[{role:'vm',content:vm},{role:'wasm',content:{sha256:config.wasm.sha256,length:config.wasm.length}},
-        {role:'kernel',content:{sha256:config.kernel.sha256,length:config.kernel.length}},{role:'base',content:base},{role:'gpu-renderer',content:rendererRef}],
-      begin:pos(machine.inputPosition()),end:pos(machine.inputPosition()),events:[],checkpoints:[],extensions:[]};
+    need(config.branchOrigin===undefined,'use the private continuation constructor');
+    const manifest=gpuManifest(writer.id,config,vm,base,machine.inputPosition());
     need(manifest.begin.transition==='0'&&manifest.begin.sequence==='0','fresh GPU recording required');
     await writer.put(vm,checkpointChunks(configBytes));await writer.put(base,checkpointChunks(image));
     for(const role of ['kernel','wasm','renderer']){const bytes=await fetchCheckpointAsset(config[role].url,config[role].sha256,role==='renderer'?1048576:64*1048576);
@@ -40,9 +44,41 @@ export class SessionGpuJournal {
     const journal=new SessionGpuJournal(store,writer,manifest,config);
     await journal.captureKeyframe(machine,renderer,'gpu-start',{full:true,initial:true});return journal;
   }
+  // The private worker has paused after a real full keyframe. Publication remains
+  // on the page, where the source-selection authorizer runs in the store transaction.
+  static async createBranchExact(store,writer,input,prepared,assets,authorize){
+    const config=validateGpuConfiguration(input),origin=validateBranchOrigin(config.branchOrigin);
+    need(writer.id!==origin.parentId&&typeof authorize==='function','private branch owner/authorizer');
+    const own=(value,limit)=>{need(value instanceof Uint8Array&&value.buffer instanceof ArrayBuffer&&value.length<=limit,'owned branch object');return value.slice();};
+    const frameBytes=own(prepared.frame,GPU_FRAME_LIMIT),rendererBytes=own(prepared.renderer,256*1048576),disk=own(prepared.disk,64*1048576);
+    const retained={};
+    for(const role of ['kernel','wasm','renderer']){
+      const bytes=own(assets?.[role],role==='renderer'?1048576:64*1048576),ref=checkpointReference(bytes);
+      need(ref.sha256===config[role].sha256&&ref.length===config[role].length,'local branch '+role+' identity');retained[role]={bytes,ref};
+    }
+    need(decoder.decode(retained.renderer.bytes).includes(`GPU_CHECKPOINT_BUILD_ID="${config.renderer.buildId}"`),'branch renderer build');
+    const configBytes=json(config);need(configBytes.length<=1048576,'branch configuration bound');
+    const vm=checkpointReference(configBytes),image=sessionCanonicalImage(config.imageManifest),base=checkpointReference(image);
+    const frame=decodeGpuExactFrame(frameBytes),rendererRef=checkpointReference(rendererBytes),frameRef=checkpointReference(frameBytes);
+    need(frame.meta.full&&frame.meta.runtime===vm.sha256&&same(frame.meta.position,origin.sourcePosition)
+      &&frame.meta.rendererSha256===rendererRef.sha256,'branch initial GPU frame binding');
+    need(disk.length>=61&&gpuHex(frame.native.subarray(44,76))===gpuHex(disk.subarray(17,49))
+      &&new DataView(frame.native.buffer,frame.native.byteOffset).getBigUint64(76,true)===new DataView(disk.buffer).getBigUint64(49,true),'branch disk generation/base binding');
+    authorize();need(!await store.openSession(writer.id),'session ID already exists');authorize();
+    await writer.put(vm,checkpointChunks(configBytes));await writer.put(base,checkpointChunks(image));
+    for(const {bytes,ref}of Object.values(retained)){await writer.put(ref,checkpointChunks(bytes));authorize();}
+    const root=await new SessionDiskRoots(store).capture(writer,disk,config.imageManifest);authorize();
+    await writer.put(rendererRef,checkpointChunks(rendererBytes));await writer.put(frameRef,checkpointChunks(frameBytes));
+    const manifest=gpuManifest(writer.id,config,vm,base,frame.meta.position);
+    manifest.checkpoints=[{id:'gpu-start',position:pos(frame.meta.position),next_sequence:(BigInt(frame.meta.position.sequence)+1n).toString(),machine:frameRef,disk_root:root.content.sha256,gpu:rendererRef}];
+    manifest.extensions=[{kind:'e9-exact-initial-witness-v1',required:false,bytes:[...json([{...pos(frame.meta.position),digest:[...gpuHashBytes(frame.meta.stateSha256)]}])]}];
+    await writer.publish(canonical(manifest),null,authorize);
+    return new SessionGpuJournal(store,writer,manifest,config);
+  }
   get end(){return {...this.#manifest.end};}
   get pending(){return this.#pending.length;}
   get checkpoints(){return structuredClone(this.#manifest.checkpoints);}
+  get initialWitness(){const [value]=JSON.parse(decoder.decode(Uint8Array.from(this.#manifest.extensions[0].bytes)));return {...pos(value),digest:Uint8Array.from(value.digest)};}
   stage(batch){
     need(!this.#busy&&!this.#complete&&Array.isArray(batch?.events)&&Array.isArray(batch?.payloads)&&this.#pending.length+batch.events.length<=256,'GPU batch ownership/bound');
     need(this.#committedRows+this.#pending.length+batch.events.length<=4096,'GPU event inspection window');
@@ -116,7 +152,7 @@ export class SessionGpuJournal {
       return {...pos(frame),digest:frame.digest,ramDigest:frame.ramDigest,full,frameBytes:bytes.length,dirtyPages:pages,maxChunkBytes,rendererBytes:saved.bytes.length};
     }finally{if(frozen)machine.finishSoftwareRamEpoch(false);this.#busy=false;}
   }
-  async completeExact(end,witnesses){
+  async completeExact(end,witnesses,authorize=undefined){
     need(!this.#busy&&!this.#complete&&this.#pending.length===0&&Array.isArray(witnesses)&&witnesses.length>=2&&witnesses.length<=64,'GPU completion witnesses/bound');
     need(end.phase==='before'&&end.sequence===this.#manifest.end.sequence&&compare(end,this.#manifest.end)>=0,'GPU recording end');
     const values=witnesses.map(value=>{need(value.digest instanceof Uint8Array&&value.digest.length===32,'GPU witness digest');return witness(value);});
@@ -125,7 +161,7 @@ export class SessionGpuJournal {
     need(decoder.decode(Uint8Array.from(this.#manifest.extensions[0].bytes))===JSON.stringify([values[0]]),'GPU initial witness changed');
     const manifest=structuredClone(this.#manifest);manifest.end=pos(end);manifest.extensions.push({kind:'e9-exact-state-witnesses-v1',required:false,bytes:[...json(values)]});
     this.#busy=true;
-    try{await this.#writer.publish(canonical(manifest));this.#manifest=manifest;this.#complete=true;return this.end;}
+    try{await this.#writer.publish(canonical(manifest),null,authorize);this.#manifest=manifest;this.#complete=true;return this.end;}
     finally{this.#busy=false;}
   }
   static async readExact(store,id,{configuration}={}){
@@ -137,6 +173,8 @@ export class SessionGpuJournal {
       &&manifest.machine.gpu.renderer_build===config.renderer.sha256&&manifest.machine.gpu.profile===checkpointHash(encodeCheckpointData(config.profile))
       &&sameData(manifest.machine.devices,config.devices)&&sameData(manifest.policy.clock,config.clock)
       &&JSON.stringify(manifest.policy.required_inputs)===JSON.stringify(GPU_EXACT_INPUTS),'GPU runtime/provider identity mismatch');
+    if(config.branchOrigin)need(id!==config.branchOrigin.parentId&&same(manifest.begin,config.branchOrigin.sourcePosition),'GPU branch origin/position');
+    else need(['transition','sequence','retired'].every(key=>manifest.begin[key]==='0')&&manifest.begin.phase==='before'&&manifest.begin.ordinal===0,'ordinary GPU origin');
     const extension=manifest.extensions.find(value=>value.kind==='e9-exact-state-witnesses-v1');need(extension?.required===false,'finish this GPU recording before replay');
     const witnesses=JSON.parse(decoder.decode(Uint8Array.from(extension.bytes))).map(value=>({...pos(value),digest:Uint8Array.from(value.digest)}));
     need(witnesses.length>=2&&witnesses.length<=64&&same(witnesses[0],manifest.begin)&&same(witnesses.at(-1),manifest.end),'GPU witness endpoints');

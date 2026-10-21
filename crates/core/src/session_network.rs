@@ -296,6 +296,24 @@ impl crate::Machine {
             .borrow()
             .branch_offline)
     }
+    /// A branch replay can end with historical RX/TX still buffered. Its replay driver's
+    /// mandatory final whole-machine witness authenticates those bytes; no provider is opened.
+    pub fn mark_offline_branch_replay(&mut self) -> Result<(), NetworkError> {
+        if !self.host_ingress_gate.replay_active() {
+            return Err(NetworkError::ReplayIngress);
+        }
+        let mut hub = self
+            .session_network
+            .as_ref()
+            .ok_or(NetworkError::Inactive)?
+            .borrow_mut();
+        if !hub.replay {
+            return Err(NetworkError::ReplayIngress);
+        }
+        hub.branch_offline = true;
+        hub.incarnation = Rc::new(());
+        Ok(())
+    }
     /// Historical transport connections cannot be made live again. A fresh guest is required.
     pub fn go_live_session_branch(&self) -> Result<(), NetworkError> {
         if self.session_branch_offline()? {
@@ -334,9 +352,10 @@ impl crate::Machine {
             return Err(error);
         }
         if hub.guest.cursor != expected_cursor
-            || !hub.guest.pending.is_empty()
-            || !hub.guest.receive.is_empty()
-            || hub.guest.external_pending
+            || (!hub.branch_offline
+                && (!hub.guest.pending.is_empty()
+                    || !hub.guest.receive.is_empty()
+                    || hub.guest.external_pending))
         {
             return Err(NetworkError::Exhausted);
         }

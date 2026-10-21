@@ -2260,6 +2260,7 @@ struct LinuxInner {
     pending: std::collections::VecDeque<u8>,
     input_capture: Option<session_input::InputCapture>,
     exact_session: Option<bool>,
+    exact_image_len: Option<u64>,
     exact_gpu: bool,
     exact_driver: Option<wasm_vm_core::session_replay::ReplayDriver>,
     finished: Option<String>,
@@ -2698,7 +2699,7 @@ impl WasmLinux {
         )
     }
 
-    /// Pinned 256 MiB RV64 Linux software-session profile. It installs owned block, network,
+    /// Pinned 256 MiB RV64 Linux software-session images. It installs owned block, network,
     /// agent, RTC and entropy boundaries before boot, and never creates a live transport while
     /// replaying. The caller supplies the immutable base chunks to the recording broker.
     #[wasm_bindgen(js_name = newExactSession)]
@@ -2719,12 +2720,19 @@ impl WasmLinux {
             "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
         )
         .map_err(|_| JsError::new("exact session kernel pin"))?;
-        if manifest.base_hash() != pinned_base
-            || manifest.image_len != 512 << 20
-            || manifest.chunk_size != 128 << 10
-            || Sha256::digest(kernel).as_slice() != pinned_kernel
-            || bootargs != "root=/dev/vda rw console=ttyS0 earlycon=sbi init=/bin/sh -- +i"
-        {
+        let file_example_base = browser_file_transfer::parse_sha256(
+            "4540d8318e1033418d544d020c7011cd5871ccb3ac7e968dc9adae3859873f22",
+        )
+        .map_err(|_| JsError::new("exact session file example pin"))?;
+        let alpine = manifest.base_hash() == pinned_base
+            && manifest.image_len == 512 << 20
+            && manifest.chunk_size == 128 << 10
+            && bootargs == "root=/dev/vda rw console=ttyS0 earlycon=sbi init=/bin/sh -- +i";
+        let file_example = manifest.base_hash() == file_example_base
+            && manifest.image_len == 8 << 20
+            && manifest.chunk_size == 256 << 10
+            && bootargs == "root=/dev/vda rw console=ttyS0 earlycon=sbi init=/init";
+        if Sha256::digest(kernel).as_slice() != pinned_kernel || !(alpine || file_example) {
             return Err(JsError::new("exact session software profile mismatch"));
         }
         Self::assemble(
@@ -2976,6 +2984,10 @@ impl WasmLinux {
             .map_err(|_| JsError::new(&format!("cannot allocate {ram_mib} MiB of guest RAM")))?;
         let exact_replay = match &disk {
             DiskChoice::ExactSession { replay, .. } => Some(*replay),
+            _ => None,
+        };
+        let exact_image_len = match &disk {
+            DiskChoice::ExactSession { manifest, .. } => Some(manifest.image_len),
             _ => None,
         };
         let exact_gpu = matches!(&disk, DiskChoice::ExactSession { gpu: true, .. });
@@ -3348,6 +3360,7 @@ impl WasmLinux {
                     stopped: false,
                 }),
                 exact_session: exact_replay,
+                exact_image_len,
                 exact_gpu,
                 exact_driver: None,
                 finished: None,

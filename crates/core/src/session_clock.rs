@@ -492,69 +492,6 @@ pub(crate) enum Preparation {
     IdleAdvanced,
 }
 
-#[cfg(test)]
-mod branch_tests {
-    use super::*;
-    use alloc::vec;
-
-    #[test]
-    fn branch_image_drops_future_and_old_outbox_without_reusing_tickets() {
-        let mut parent = SessionClock::default();
-        parent.advance(7, 6);
-        assert_eq!(
-            parent.enqueue(
-                7,
-                SessionEffect::HostInput {
-                    channel: 1,
-                    bytes: vec![b'p']
-                }
-            ),
-            Ok(0)
-        );
-        let delivery = parent.due().unwrap().unwrap();
-        parent.acknowledge(delivery);
-        assert_eq!(
-            parent.enqueue(
-                13,
-                SessionEffect::HostInput {
-                    channel: 1,
-                    bytes: vec![b'f']
-                }
-            ),
-            Ok(1)
-        );
-        let before = parent.clone();
-        let encoded = parent.encode_recording_branch().unwrap();
-        assert_eq!(parent, before);
-        assert_eq!(parent.next_transition(), Some(13));
-        assert_eq!(parent.delivered.len(), 1);
-        let mut child = SessionClock::decode(&encoded).unwrap();
-        assert_eq!(child.position, parent.position);
-        assert_eq!(child.next_transition(), None);
-        assert!(child.take_deliveries().is_empty());
-        assert_eq!(
-            child.enqueue(
-                7,
-                SessionEffect::HostInput {
-                    channel: 1,
-                    bytes: vec![b'c']
-                }
-            ),
-            Ok(2)
-        );
-        let next = child.due().unwrap().unwrap();
-        assert_eq!(next.position.sequence, 2);
-        assert_eq!(next.ticket, 2);
-        assert_eq!(
-            next.effect,
-            SessionEffect::HostInput {
-                channel: 1,
-                bytes: vec![b'c']
-            }
-        );
-    }
-}
-
 impl crate::Machine {
     /// Start a fresh single-hart ICount coordinate. Provider admission is separate: an embedding
     /// must stage owned results instead of mutating guest state through debug escape hatches.
@@ -899,4 +836,67 @@ pub(crate) fn jit_safe(block: &crate::dispatch::DecodedBlock) -> bool {
                     | Bgeu { .. }
             )
     })
+}
+
+#[cfg(test)]
+mod branch_tests {
+    use super::*;
+    use alloc::vec;
+
+    #[test]
+    fn branch_image_drops_future_and_old_outbox_without_reusing_tickets() {
+        let mut parent = SessionClock::default();
+        parent.advance(7, 6);
+        assert_eq!(
+            parent.enqueue(
+                7,
+                SessionEffect::HostInput {
+                    channel: 1,
+                    bytes: vec![b'p']
+                }
+            ),
+            Ok(0)
+        );
+        let delivery = parent.due().unwrap().unwrap();
+        parent.acknowledge(delivery);
+        assert_eq!(
+            parent.enqueue(
+                13,
+                SessionEffect::HostInput {
+                    channel: 1,
+                    bytes: vec![b'f']
+                }
+            ),
+            Ok(1)
+        );
+        let before = parent.clone();
+        let encoded = parent.encode_recording_branch().unwrap();
+        assert_eq!(parent, before);
+        assert_eq!(parent.next_transition(), Some(13));
+        assert_eq!(parent.delivered.len(), 1);
+        let mut child = SessionClock::decode(&encoded).unwrap();
+        assert_eq!(child.position, parent.position);
+        assert_eq!(child.next_transition(), None);
+        assert!(child.take_deliveries().is_empty());
+        assert_eq!(
+            child.enqueue(
+                7,
+                SessionEffect::HostInput {
+                    channel: 1,
+                    bytes: vec![b'c']
+                }
+            ),
+            Ok(2)
+        );
+        let next = child.due().unwrap().unwrap();
+        assert_eq!(next.position.sequence, 2);
+        assert_eq!(next.ticket, 2);
+        assert_eq!(
+            next.effect,
+            SessionEffect::HostInput {
+                channel: 1,
+                bytes: vec![b'c']
+            }
+        );
+    }
 }
