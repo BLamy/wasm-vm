@@ -236,7 +236,7 @@ export const ROADMAP = [
       { name: "Seeking and reverse-step", status: "verified", probe: "session-seek", evidence: "E9-T16: independently verified transition fences, keyframe lookup and latest-request ownership" },
       { name: "Accelerated desktop keyframes", status: "verified", evidence: "E9-T17: independently verified Omarchy points, exact scanout restore, fresh owners, trusted input and library reopen" },
       { name: "Native owned GPU results", status: "verified", evidence: "E9-T18a: independently verified exact 32 MiB DMA, owned result/fence admission and refusal atomicity; browser GPU replay remains gated" },
-      { name: "Pending GPU result keyframes", status: "in-progress", evidence: "E9-T18b: native pending frontier and fresh-owner restore; final independent verification pending" },
+      { name: "Pending GPU result keyframes", status: "verified", evidence: "E9-T18b: independently verified native pending-fence restore, owned results and fresh callback leases; browser GPU replay remains gated" },
       { name: "Guest-visible GPU replay", status: "in-progress", evidence: "E9-T18a–c: native result admission, pending keyframes, then durable browser/physical GPU replay" },
       { name: "Accessible session timeline", status: "verified", evidence: "E9-T19: independently verified saved Linux restoration, real console output, accessible controls and cancellation ownership" },
       { name: "Branches from saved history", status: "pending", evidence: "E9-T20" },

@@ -9,7 +9,11 @@ import subprocess
 import time
 
 ROOT=Path(__file__).resolve().parents[2]
-p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
+p=argparse.ArgumentParser(description=__doc__)
+p.add_argument('--output',type=Path,required=True)
+p.add_argument('--pending-status',choices=['in-progress','verified'],default='verified',
+               help='Expected roadmap status: use in-progress while recording a worker submission.')
+a=p.parse_args()
 out=a.output.resolve();out.mkdir(parents=True,exist_ok=False)
 env={k:v for k,v in os.environ.items() if k not in ('RUSTFLAGS','RUSTDOCFLAGS','RUST_LOG') and not k.startswith('CARGO_')}
 env.update(CARGO_TERM_COLOR='never',CARGO_BUILD_JOBS='4',E9_GPU_RESULT_EVIDENCE=str(out/'native'))
@@ -49,7 +53,7 @@ try:
     for name in ['pkg/wasm_vm_wasm.js','pkg/wasm_vm_wasm_bg.wasm','roadmap.js']:
         assert (ROOT/'web'/name).read_bytes()==(ROOT/'web/dist'/name).read_bytes(),'stale committed dist: '+name
     run('browser-syntax',['node','--check','tools/verify/e9-gpu-results-browser.mjs'])
-    run('built-browser',['node','tools/verify/e9-gpu-results-browser.mjs','--output',str(out/'browser'),'--capability-status','verified','--pending-status','in-progress'])
+    run('built-browser',['node','tools/verify/e9-gpu-results-browser.mjs','--output',str(out/'browser'),'--capability-status','verified','--pending-status',a.pending_status])
     browser=json.loads((out/'browser/report.json').read_text());assert browser['status']=='passed' and browser['head']==report['head']
     assert browser['suite']=={'passed':127,'failed':0} and browser['errors']==[] and browser['httpErrors']==[]
     report['final_checkout_status']=clean();report['status']='passed'
