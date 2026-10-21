@@ -1,5 +1,5 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
-import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
+import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js';
 import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
 import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
 
@@ -423,9 +423,10 @@ export class WasmLinux {
      * @param {Array<any>} events
      * @param {Array<any>} witnesses
      * @param {any} end
+     * @param {any | null} [initial_queues]
      */
-    beginExactReplay(initial_resume, events, witnesses, end) {
-        const ret = wasm.wasmlinux_beginExactReplay(this.__wbg_ptr, initial_resume, events, witnesses, end);
+    beginExactReplay(initial_resume, events, witnesses, end, initial_queues) {
+        const ret = wasm.wasmlinux_beginExactReplay(this.__wbg_ptr, initial_resume, events, witnesses, end, isLikeNone(initial_queues) ? 0 : addToExternrefTable0(initial_queues));
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
@@ -760,6 +761,16 @@ export class WasmLinux {
      */
     exactNetworkRequests() {
         const ret = wasm.wasmlinux_exactNetworkRequests(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    exactSessionHostQueues() {
+        const ret = wasm.wasmlinux_exactSessionHostQueues(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -1588,6 +1599,20 @@ export class WasmLinux {
      */
     runChunk(max_instrs, persist_max_dirty_bytes) {
         const ret = wasm.wasmlinux_runChunk(this.__wbg_ptr, max_instrs, isLikeNone(persist_max_dirty_bytes) ? Number.MAX_SAFE_INTEGER : (persist_max_dirty_bytes) >>> 0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * One cancellable browser replay quantum. The caller owns the candidate until `reached`
+     * and can discard it between calls without publishing any partial machine state.
+     * @param {any} target
+     * @param {number} quantum
+     * @returns {any}
+     */
+    runExactReplayChunkTo(target, quantum) {
+        const ret = wasm.wasmlinux_runExactReplayChunkTo(this.__wbg_ptr, target, quantum);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -3733,7 +3758,7 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000006: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 108, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 109, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h4eecf702a8348cd1);
             return ret;
         },

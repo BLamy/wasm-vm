@@ -283,8 +283,7 @@ impl WasmLinux {
         let pending = u32::from_le_bytes(frame[20..24].try_into().unwrap());
         let output = u32::from_le_bytes(frame[24..28].try_into().unwrap());
         if version != 1
-            || length < 84
-            || length > 300 << 20
+            || !(84..=300 << 20).contains(&length)
             || pending != 0
             || output != 0
             || 28u64.checked_add(length) != Some(frame.len() as u64)

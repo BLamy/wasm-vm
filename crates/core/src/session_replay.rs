@@ -685,14 +685,46 @@ impl ReplayDriver {
         self.check_witnesses(machine)
     }
 
-    /// Continue only toward the next recorded boundary. A work budget changes scheduling, not
-    /// the declared event positions. The first mismatch poisons the driver permanently.
-    pub fn run_to_end(
+    /// Advance by at most `quantum` guest transitions toward a quiescent recorded coordinate.
+    /// `target` may name the state immediately before or after one of several deliveries at the
+    /// same boundary. Returning `false` leaves the driver ready for another bounded call; it
+    /// never exposes an observation in the middle of a guest transition as a seek result.
+    pub fn run_chunk_to(
         &mut self,
         machine: &mut Machine,
+        target: SessionPosition,
+        quantum: u64,
+        apply_input: impl FnMut(&mut Machine, u16, &[u8]) -> [u64; 4],
+    ) -> Result<bool, ReplayDivergence> {
+        self.run_chunk_to_fence(machine, target, false, quantum, apply_input)
+    }
+
+    /// Stop immediately before the next architectural transition at this number, after applying
+    /// all recorded before-boundary deliveries. A reverse step therefore preserves events that
+    /// preceded the instruction being reversed. The resulting full position supplies the actual
+    /// retirement and event counts, including traps and WFI advances.
+    pub fn run_chunk_to_transition(
+        &mut self,
+        machine: &mut Machine,
+        transition: u64,
+        quantum: u64,
+        apply_input: impl FnMut(&mut Machine, u16, &[u8]) -> [u64; 4],
+    ) -> Result<bool, ReplayDivergence> {
+        let target = SessionPosition {
+            transition,
+            ..self.plan.begin
+        };
+        self.run_chunk_to_fence(machine, target, true, quantum, apply_input)
+    }
+
+    fn run_chunk_to_fence(
+        &mut self,
+        machine: &mut Machine,
+        target: SessionPosition,
+        transition_only: bool,
         quantum: u64,
         mut apply_input: impl FnMut(&mut Machine, u16, &[u8]) -> [u64; 4],
-    ) -> Result<(), ReplayDivergence> {
+    ) -> Result<bool, ReplayDivergence> {
         if self.status != ReplayStatus::Ready {
             return Err(self.first_failure.clone().unwrap_or(ReplayDivergence {
                 reason: ReplayReason::Exhausted,
@@ -704,15 +736,68 @@ impl ReplayDriver {
         if quantum == 0 {
             return Err(self.failure(machine, ReplayReason::Exhausted, "budget is zero".into()));
         }
+        if (!transition_only && target.phase != SessionPhase::Before)
+            || target.retired > target.transition
+            || (transition_only
+                && (target.transition < self.plan.begin.transition
+                    || target.transition > self.plan.end.transition
+                    || target.transition
+                        < machine
+                            .session_position()
+                            .unwrap_or(self.plan.begin)
+                            .transition))
+            || (!transition_only
+                && (coordinate(target) < coordinate(self.plan.begin)
+                    || coordinate(target) > coordinate(self.plan.end)
+                    || coordinate(target)
+                        < coordinate(machine.session_position().unwrap_or(self.plan.begin))))
+        {
+            return Err(self.failure_at(
+                target,
+                ReplayReason::InvalidPlan,
+                "seek target outside remaining replay".into(),
+            ));
+        }
+        let mut delivered = 0;
         loop {
             self.append_source_window(machine)?;
             self.check_witnesses(machine)?;
             let position = machine.session_position().unwrap_or(self.plan.begin);
-            if let Some(expected) = self.plan.events.get(self.event_cursor)
-                && expected.position.phase == SessionPhase::Before
-                && expected.position.transition == position.transition
+            let before_event_pending =
+                self.plan
+                    .events
+                    .get(self.event_cursor)
+                    .is_some_and(|event| {
+                        event.position.phase == SessionPhase::Before
+                            && event.position.transition == position.transition
+                    });
+            if transition_only && position.transition == target.transition && !before_event_pending
             {
+                return Ok(true);
+            }
+            if !transition_only && position == target {
+                if target != self.plan.end {
+                    return Ok(true);
+                }
+                // The terminal coordinate must also exhaust all receipts and source windows.
+            } else if !transition_only
+                && target != self.plan.end
+                && position.transition >= target.transition
+                && (position.sequence >= target.sequence || !before_event_pending)
+            {
+                return Err(self.failure_at(
+                    target,
+                    ReplayReason::Exhausted,
+                    "seek coordinate is not a quiescent recorded boundary".into(),
+                ));
+            }
+            if before_event_pending {
                 self.apply_before(machine, &mut apply_input)?;
+                // A dense same-boundary tape must not monopolize a cancellable browser chunk.
+                delivered += 1;
+                if delivered >= quantum.min(64) {
+                    return Ok(false);
+                }
                 continue;
             }
             if position == self.plan.end {
@@ -767,7 +852,7 @@ impl ReplayDriver {
                         })?;
                 }
                 self.status = ReplayStatus::Completed;
-                return Ok(());
+                return Ok(true);
             }
             if position.transition >= self.plan.end.transition {
                 return Err(self.failure(
@@ -776,25 +861,25 @@ impl ReplayDriver {
                     "end coordinate differs".into(),
                 ));
             }
-            let mut target = self.plan.end.transition;
+            let mut fence = target.transition;
             if let Some(expected) = self.plan.events[self.event_cursor..].iter().find(|e| {
                 e.position.phase == SessionPhase::Before
                     && e.position.transition > position.transition
             }) {
-                target = target.min(expected.position.transition);
+                fence = fence.min(expected.position.transition);
             }
             if let Some(witness) = self.plan.witnesses.get(self.witness_cursor)
                 && witness.position.transition > position.transition
             {
-                target = target.min(witness.position.transition);
+                fence = fence.min(witness.position.transition);
             }
-            if let Some(fence) = self.source_fence() {
-                target = target.min(fence);
+            if let Some(source_fence) = self.source_fence() {
+                fence = fence.min(source_fence);
             }
             let before = position;
             let before_cursor = self.event_cursor;
             let before_witness = self.witness_cursor;
-            let outcome = match machine.run_session_until(target, quantum) {
+            let outcome = match machine.run_session_until(fence, quantum) {
                 Ok(outcome) => outcome,
                 Err(SessionError::SourceDivergence(source)) => {
                     // Earlier receipts from this work quantum may still be buffered. Compare
@@ -849,7 +934,22 @@ impl ReplayDriver {
                     "no transition or delivery".into(),
                 ));
             }
+            // A browser caller can now yield to a newer seek request. The next call will drain
+            // any events at this boundary before running another guest work quantum.
+            return Ok(false);
         }
+    }
+
+    /// Unbounded replay is retained for deterministic batch verification. Each inner call still
+    /// respects the guest work quantum; callers needing cancellation use `run_chunk_to` directly.
+    pub fn run_to_end(
+        &mut self,
+        machine: &mut Machine,
+        quantum: u64,
+        mut apply_input: impl FnMut(&mut Machine, u16, &[u8]) -> [u64; 4],
+    ) -> Result<(), ReplayDivergence> {
+        while !self.run_chunk_to(machine, self.plan.end, quantum, &mut apply_input)? {}
+        Ok(())
     }
 }
 

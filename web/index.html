@@ -999,6 +999,13 @@
         <div class="session-actions"><button id="session-keyframe-run" type="button" disabled>Check incremental keyframes</button></div>
         <p id="session-keyframe-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
       </details>
+      <details id="session-seek-panel" class="session-library">
+        <summary><span id="session-seek-pip" class="cap-pip in-progress" aria-hidden="true"></span> Time-travel seek check</summary>
+        <p class="session-note">Restore a saved Linux keyframe, seek between checkpoints, step forward and back, and check that rapid scrubbing shows only the newest result.</p>
+        <div class="session-actions"><button id="session-seek-run" type="button" disabled>Check time-travel seeking</button></div>
+        <p id="session-seek-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+        <p id="session-seek-render" class="session-note" aria-live="polite"></p>
+      </details>
       <details id="device-completions-panel" class="session-library">
         <summary><span id="device-completions-pip" class="cap-pip in-progress" aria-hidden="true"></span> Device delivery check</summary>
         <p class="session-note">Replay disk, file and audio results after delayed deliveries, then check that old callbacks cannot change a restored machine.</p>
