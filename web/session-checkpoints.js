@@ -69,11 +69,13 @@ function decodeCheckpoint(bytes, magic, fullRam, sessionClock) {
 export const decodeSoftwareCheckpoint = bytes => decodeCheckpoint(bytes,'WVSOFT01',true,false);
 export const decodeSoftwareKeyframeBase = bytes => decodeCheckpoint(bytes,'WVKEYB01',true,true);
 export const decodeSoftwareDeltaCheckpoint = bytes => decodeCheckpoint(bytes,'WVDELT01',false,true);
-export async function readCheckpointObject(store, ref, limit=CHECKPOINT_MAX_BYTES) {
+export async function readCheckpointObject(store, ref, limit=CHECKPOINT_MAX_BYTES,{signal}={}) {
+  need(!signal?.aborted,'read cancelled');
   need(typeof ref?.length==='string'&&/^[1-9][0-9]{0,9}$/.test(ref.length)
     &&BigInt(ref.length)<=BigInt(limit),'object bound');
   const bytes=new Uint8Array(Number(ref.length));let offset=0;
-  for await(const part of store.stream(ref)){bytes.set(part,offset);offset+=part.length;}
+  for await(const part of store.stream(ref)){need(!signal?.aborted,'read cancelled');bytes.set(part,offset);offset+=part.length;}
+  need(!signal?.aborted,'read cancelled');
   need(offset===bytes.length,'object length');return bytes;
 }
 async function fetchObject(url, expected, limit) {
@@ -228,13 +230,15 @@ export class SessionCheckpoints {
     return {publication,stats:{depth:0,fullBytes:frame.length}};
   }
 
-  async resolveDelta(id, checkpointId) {
-    const opened=await this.#store.openSession(id);need(opened,'session unavailable');
+  async resolveDelta(id, checkpointId,{signal}={}) {
+    need(!signal?.aborted,'resolve cancelled');
+    const opened=await this.#store.openSession(id);need(!signal?.aborted,'resolve cancelled');need(opened,'session unavailable');
     const manifest=JSON.parse(decoder.decode(opened.manifest));
     const target=manifest.checkpoints.findIndex(item=>item.id===checkpointId);
     need(target>=0,'checkpoint unavailable');
     const chain=[];let index=target,expectedDepth=null;
     while(index>=0){
+      need(!signal?.aborted,'resolve cancelled');
       const machine=manifest.checkpoints[index].machine;
       let prefix;
       for await(const block of this.#store.stream(machine)){prefix=block.subarray(0,8);break;}
@@ -244,7 +248,7 @@ export class SessionCheckpoints {
         return {manifest,base:machine,baseCheckpoint:manifest.checkpoints[index],deltas:chain.reverse()};
       }
       need(index>0&&chain.length<KEYFRAME_MAX_DEPTH,'keyframe chain bound');
-      const descriptor=decodeKeyframeDescriptor(await readCheckpointObject(this.#store,machine,KEYFRAME_MAX_DESCRIPTOR_BYTES));
+      const descriptor=decodeKeyframeDescriptor(await readCheckpointObject(this.#store,machine,KEYFRAME_MAX_DESCRIPTOR_BYTES,{signal}));
       const parent=manifest.checkpoints[index-1].machine;
       need(descriptor.parent.sha256===parent.sha256&&descriptor.parent.length===parent.length
         &&(expectedDepth===null||descriptor.depth===expectedDepth),'keyframe parent/depth');
@@ -256,25 +260,28 @@ export class SessionCheckpoints {
 
   // `candidate` is a fresh, private exact-session VM. openSession authenticates the entire
   // ancestor graph before this method mutates even its RAM; a failure discards the candidate.
-  async restoreExactDeltaToCandidate(id,checkpointId,candidate) {
+  async restoreExactDeltaToCandidate(id,checkpointId,candidate,{signal}={}) {
+    const live=()=>need(!signal?.aborted,'restore cancelled');
+    live();
     const heap=()=>performance.memory?.usedJSHeapSize??null;
     const start=performance.now(),heapBefore=heap();
-    const chain=await this.resolveDelta(id,checkpointId);
+    const chain=await this.resolveDelta(id,checkpointId,{signal});live();
     need(chain.manifest.policy.mode==='exact-replay'&&chain.deltas.length>0,'exact delta checkpoint');
     candidate.prepareSoftwareKeyframeCandidate();
-    const base=await readCheckpointObject(this.#store,chain.base);
+    const base=await readCheckpointObject(this.#store,chain.base,CHECKPOINT_MAX_BYTES,{signal});live();
     const baseMagic=decoder.decode(base.subarray(0,8));
     if(baseMagic==='WVEXACT1')candidate.seedSoftwareRamFromExactStart(base);
     else{need(baseMagic==='WVKEYB01','full keyframe ancestor');candidate.seedSoftwareRamFromCheckpoint(base);}
     let appliedPages=0,maxChunkBytes=0,totalDeltaBytes=0;
     for(const {checkpoint,descriptor} of chain.deltas){
       for(const ref of descriptor.chunks){
-        const chunk=await readCheckpointObject(this.#store,ref,4*1048576);
+        live();const chunk=await readCheckpointObject(this.#store,ref,4*1048576,{signal});live();
         appliedPages+=candidate.applySoftwareRamDeltaChunk(chunk);
         maxChunkBytes=Math.max(maxChunkBytes,chunk.length);totalDeltaBytes+=chunk.length;
       }
+      live();
       need(candidate.softwareRamDigest()===descriptor.ramSha256,'reconstructed RAM digest');
-      const frame=await readCheckpointObject(this.#store,descriptor.frame);
+      const frame=await readCheckpointObject(this.#store,descriptor.frame,CHECKPOINT_MAX_BYTES,{signal});live();
       const parts=decodeSoftwareDeltaCheckpoint(frame);
       need(JSON.stringify(parts.context.position)===JSON.stringify(checkpoint.position)
         &&parts.context.ram_bytes===chain.manifest.machine.ram_bytes,'delta position/identity');

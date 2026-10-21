@@ -15,7 +15,7 @@ const same=(a,b)=>['transition','retired','sequence','ordinal','phase'].every(ke
 const witness=(label,value)=>({label,position:{transition:value.transition,phase:value.phase,
  ordinal:value.ordinal,sequence:value.sequence,retired:value.retired},digest:hex(value.digest)});
 
-export async function runSessionKeyframeProbe({onProgress=()=>{}}={}){
+export async function runSessionKeyframeProbe({onProgress=()=>{},onSeekFixture=null}={}){
  await init();
  const artifactsResponse=await fetch(new URL('./artifacts.json',import.meta.url));
  need(artifactsResponse.ok,'pinned assets unavailable');
@@ -149,6 +149,8 @@ export async function runSessionKeyframeProbe({onProgress=()=>{}}={}){
    result.postRebaseRestore={...stats,fullSnapshotBytes:independent.resume.length,
     fullSnapshotSha256:checkpointHash(independent.resume)};
   }finally{afterRebaseCandidate.free();}
+  if(onSeekFixture)await onSeekFixture({store,id:KEYFRAME_PROBE_ID,configuration,make,read,
+   initial,final,atDelta2,atRebase});
   const sibling=structuredClone(read.manifest);sibling.id=KEYFRAME_PROBE_ID+'-sibling';
   const siblingWriter=await store.writer(sibling.id);
   try{await siblingWriter.publish(encoder.encode(JSON.stringify(sibling)));}

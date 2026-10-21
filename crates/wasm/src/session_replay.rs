@@ -196,6 +196,33 @@ fn witness(value: JsValue) -> Result<StateWitness, JsError> {
 
 #[wasm_bindgen]
 impl WasmLinux {
+    #[wasm_bindgen(js_name = exactSessionHostQueues)]
+    pub fn exact_session_host_queues(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        if inner.exact_session.is_none() {
+            return Err(JsError::new("exact session inactive"));
+        }
+        let pending: Vec<u8> = inner.pending.iter().copied().collect();
+        let output = inner.out.borrow();
+        if pending.len() > 1 << 20 || output.len() > 1 << 20 {
+            return Err(JsError::new("exact session host queue bound"));
+        }
+        let queues = js_sys::Object::new();
+        js_sys::Reflect::set(
+            &queues,
+            &"pending".into(),
+            &js_sys::Uint8Array::from(pending.as_slice()).into(),
+        )
+        .map_err(|_| JsError::new("exact session host queues"))?;
+        js_sys::Reflect::set(
+            &queues,
+            &"output".into(),
+            &js_sys::Uint8Array::from(output.as_slice()).into(),
+        )
+        .map_err(|_| JsError::new("exact session host queues"))?;
+        Ok(queues.into())
+    }
+
     #[wasm_bindgen(js_name = exactSessionWitness)]
     pub fn exact_session_witness(&self, include_resume: bool) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
@@ -250,7 +277,16 @@ impl WasmLinux {
         events: js_sys::Array,
         witnesses: js_sys::Array,
         end: JsValue,
+        initial_queues: Option<JsValue>,
     ) -> Result<(), JsError> {
+        let (pending_bytes, output_bytes) = if let Some(queues) = initial_queues {
+            (
+                bytes(&queues, "pending", 1 << 20)?,
+                bytes(&queues, "output", 1 << 20)?,
+            )
+        } else {
+            (Vec::new(), Vec::new())
+        };
         if events.length() > wasm_vm_core::session_replay::MAX_REPLAY_EVENTS as u32
             || witnesses.length() == 0
             || witnesses.length() > wasm_vm_core::session_replay::MAX_REPLAY_EVENTS as u32
@@ -288,6 +324,8 @@ impl WasmLinux {
         }
         let driver = ReplayDriver::start(&mut inner.machine, plan)
             .map_err(|e| JsError::new(&format!("exact replay admission: {e:?}")))?;
+        inner.pending.extend(pending_bytes);
+        *inner.out.borrow_mut() = output_bytes;
         inner.exact_driver = Some(driver);
         Ok(())
     }
@@ -329,6 +367,74 @@ impl WasmLinux {
         let out = encode_position(inner.machine.session_position().unwrap());
         let _ = js_sys::Reflect::set(&out, &"eventCursor".into(), &cursor.into());
         let _ = js_sys::Reflect::set(&out, &"status".into(), &format!("{status:?}").into());
+        Ok(out)
+    }
+
+    /// One cancellable browser replay quantum. The caller owns the candidate until `reached`
+    /// and can discard it between calls without publishing any partial machine state.
+    #[wasm_bindgen(js_name = runExactReplayChunkTo)]
+    pub fn run_exact_replay_chunk_to(
+        &self,
+        target: JsValue,
+        quantum: u32,
+    ) -> Result<JsValue, JsError> {
+        let transition_only = get(&target, "transitionOnly")?.as_bool() == Some(true);
+        let target = if transition_only {
+            SessionPosition {
+                transition: decimal(&target, "transition")?,
+                ..SessionPosition::default()
+            }
+        } else {
+            position(&target)?
+        };
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.exact_session != Some(true) {
+            return Err(JsError::new("exact replay inactive"));
+        }
+        let mut driver = inner
+            .exact_driver
+            .take()
+            .ok_or_else(|| JsError::new("exact replay not admitted"))?;
+        let result = {
+            let crate::LinuxInner {
+                machine,
+                pending,
+                uart,
+                out,
+                ..
+            } = &mut *inner;
+            let mut apply = |machine: &mut wasm_vm_core::Machine, channel, bytes: &[u8]| {
+                if channel == wasm_vm_core::session_replay::OUTPUT_DRAIN_CHANNEL {
+                    let mut actual = std::mem::take(&mut *out.borrow_mut());
+                    actual.extend_from_slice(&uart.borrow_mut().take_output());
+                    [u64::from(actual != bytes), actual.len() as u64, 0, 0]
+                } else {
+                    session_input::apply(machine, pending, uart, None, channel, bytes)
+                }
+            };
+            if transition_only {
+                driver.run_chunk_to_transition(
+                    machine,
+                    target.transition,
+                    u64::from(quantum),
+                    &mut apply,
+                )
+            } else {
+                driver.run_chunk_to(machine, target, u64::from(quantum), &mut apply)
+            }
+        };
+        let cursor = driver.event_cursor();
+        let status = driver.status();
+        inner.exact_driver = Some(driver);
+        let reached =
+            result.map_err(|error| JsError::new(&format!("exact replay divergence: {error:?}")))?;
+        let out = encode_position(inner.machine.session_position().unwrap());
+        js_sys::Reflect::set(&out, &"eventCursor".into(), &cursor.into())
+            .map_err(|_| JsError::new("exact replay result"))?;
+        js_sys::Reflect::set(&out, &"status".into(), &format!("{status:?}").into())
+            .map_err(|_| JsError::new("exact replay result"))?;
+        js_sys::Reflect::set(&out, &"reached".into(), &reached.into())
+            .map_err(|_| JsError::new("exact replay result"))?;
         Ok(out)
     }
 }

@@ -2768,3 +2768,10 @@ verify-E9-T15:
 	cargo test -p wasm-vm-wasm --test software_checkpoint
 	$(MAKE) web-dist
 	node tools/verify/e9-keyframes-browser.mjs --output "$${E9_KEYFRAME_EVIDENCE_DIR:-target/evidence/e9-keyframes-final}"
+
+.PHONY: verify-E9-T16
+verify-E9-T16:
+	cargo test -p wasm-vm-core --test e9_seek
+	cargo test -p wasm-vm-core --test e9_deterministic_replay
+	$(MAKE) web-dist
+	node tools/verify/e9-seek-browser.mjs --output "$${E9_SEEK_EVIDENCE_DIR:-target/evidence/e9-seek-final}"
