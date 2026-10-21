@@ -650,4 +650,121 @@ mod tests {
         assert!(window.is_empty());
         assert_eq!(window.resident_bytes(), 0);
     }
+    #[cfg(feature = "virgl-control-proof")]
+    fn quiet_profile(replay: bool, submission: bool) -> crate::Machine {
+        use crate::dev::virtio::gpu::{
+            NullSink,
+            control3d::{Control3dEvent, Control3dSink},
+            submit3d::{Submit3dMailbox, Submit3dRequest, Submit3dSink},
+        };
+        struct Quiet;
+        impl Control3dSink for Quiet {
+            fn apply(&mut self, _: &Control3dEvent) -> Result<(), Control3dError> {
+                Ok(())
+            }
+        }
+        impl Submit3dSink for Quiet {
+            fn begin_job(&mut self, _: &Submit3dRequest) -> Result<(), Control3dError> {
+                Ok(())
+            }
+            fn cancel_job(&mut self, _: Submit3dKey) -> Result<(), Control3dError> {
+                Ok(())
+            }
+        }
+        let mut m = crate::Machine::new(1 << 20);
+        m.enable_plic();
+        m.enable_virtio_slots(None);
+        if submission {
+            m.enable_virtio_gpu_submit3d_proof(
+                alloc::boxed::Box::new(NullSink),
+                alloc::boxed::Box::new(Quiet),
+                alloc::boxed::Box::new(Quiet),
+                Submit3dMailbox::new(),
+            )
+            .unwrap();
+        } else {
+            m.enable_virtio_gpu_control3d_proof(
+                alloc::boxed::Box::new(NullSink),
+                alloc::boxed::Box::new(Quiet),
+            )
+            .unwrap();
+        }
+        m.start_session_clock(1).unwrap();
+        let policy = m.source_policy();
+        m.start_session_sources(
+            policy,
+            replay.then_some(crate::session_clock::sources::ObservationTape {
+                policy,
+                records: alloc::vec![],
+            }),
+        )
+        .unwrap();
+        m
+    }
+    #[cfg(feature = "virgl-control-proof")]
+    #[test]
+    fn gpu_proof_gap_supported_control_only_construction_refuses_result_adapter_without_partial_installation()
+     {
+        let mut m = quiet_profile(false, false);
+        let gpu = m.gpu.as_ref().unwrap().0.clone();
+        let before = gpu.borrow().control3d_snapshot().unwrap();
+        let position = m.session_position();
+        assert_eq!(m.enable_session_gpu_results(false), Err(GpuError::Profile));
+        assert!(m.session_gpu.is_none());
+        assert_eq!(m.session_position(), position);
+        assert_eq!(gpu.borrow().control3d_snapshot().unwrap(), before);
+    }
+    #[cfg(feature = "virgl-control-proof")]
+    #[test]
+    fn gpu_proof_gap_prepared_gpu_result_caps_actual_dispatch_forwarding_at_the_next_boundary() {
+        use crate::{
+            bus::Bus,
+            platform::virt,
+            session_clock::{SessionPhase, SessionPosition},
+        };
+        let mut m = quiet_profile(true, true);
+        m.enable_session_gpu_results(true).unwrap();
+        m.set_block_cache(true);
+        m.bus_mut().store32(virt::DRAM_BASE, 0x0000_006f).unwrap();
+        m.hart_mut().regs.pc = virt::DRAM_BASE;
+        let position = SessionPosition {
+            transition: 7,
+            retired: 7,
+            phase: SessionPhase::Before,
+            ordinal: 1,
+            sequence: 1,
+        };
+        let result = GpuResult {
+            request_sha256: [0x77; 32],
+            kind: ResultKind::Complete(Submit3dCompletion {
+                key: Submit3dKey {
+                    epoch: 1,
+                    sequence: 1,
+                },
+                exchange_sequence: 0,
+                outcome: Ok(()),
+                gpu_complete: true,
+                applied_commands: 0,
+                draws: 0,
+            }),
+        };
+        m.prepare_session_gpu_replay(position, result, None)
+            .unwrap();
+        assert_eq!(m.next_session_gpu_transition(), Some(7));
+        assert_eq!(m.session_dispatch_budget(100), 7);
+        assert_eq!(m.session_dispatch_budget(3), 3);
+        assert_eq!(
+            m.run_session_until(7, 100),
+            Ok(crate::RunOutcome::MaxInstrs)
+        );
+        assert_eq!(m.session_position().unwrap().transition, 7);
+        assert_eq!(m.session_dispatch_budget(100), 0);
+        m.session_gpu.as_mut().unwrap().prepared = None;
+        assert_eq!(m.next_session_gpu_transition(), None);
+        assert_eq!(m.session_dispatch_budget(100), 100);
+        #[cfg(feature = "std")]
+        std::eprintln!(
+            "GPU_GAP_G3 future GPU frame caps100-work dispatch to7; reached exact Before7, budget0; removal restores100 without retirement"
+        );
+    }
 }

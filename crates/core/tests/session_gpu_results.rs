@@ -223,6 +223,12 @@ impl Rig {
                 put(&mut resource, 24 + 4 * i, n);
             }
         }
+        if job == 4 {
+            resource = packet(0x101, 0, 40);
+            for (at, value) in [(24, 3), (28, 67), (32, 4), (36, 4)] {
+                put(&mut resource, at, value);
+            }
+        }
         let mut backing = packet(0x106, 0, 48);
         put(&mut backing, 24, 3);
         put(&mut backing, 28, 1);
@@ -242,6 +248,12 @@ impl Rig {
         if job == 3 {
             submit = packet(0x104, 0, 48);
             for (at, value) in [(32, 4), (36, 4), (40, 3)] {
+                put(&mut submit, at, value);
+            }
+        }
+        if job == 4 {
+            submit = packet(0x105, 0, 56);
+            for (at, value) in [(32, 4), (36, 4), (48, 3)] {
                 put(&mut submit, at, value);
             }
         }
@@ -422,6 +434,14 @@ impl Rig {
             .unwrap();
             std::fs::write(root.join(format!("{name}.gpu")), self.virtual_gpu()).unwrap();
             std::fs::write(root.join(format!("{name}.trace")), self.trace.canonical()).unwrap();
+            if let Some(resource) = self.gpu.borrow().resources.get(3) {
+                let bytes: Vec<u8> = resource
+                    .host_pixels
+                    .iter()
+                    .flat_map(|v| v.to_le_bytes())
+                    .collect();
+                std::fs::write(root.join(format!("{name}.shadow")), bytes).unwrap();
+            }
         }
     }
     fn virtual_gpu(&self) -> Vec<u8> {
@@ -1276,5 +1296,415 @@ fn a_full_64m_payload_window_refuses_production_dma_before_any_guest_effect() {
     eprintln!(
         "GPU_PAYLOAD_WINDOW refusal=Limit bytes=67108864 position={clock:?} RAM={} cursor2",
         before.hex_digest()
+    );
+}
+
+#[test]
+fn gpu_proof_gap_result_wrong_mode_and_prepared_position_refusals_preserve_the_incumbent() {
+    let c = capture(64, 3, false);
+    let frame = gpu_events(&c)[0];
+    let mut record = Rig::new(64, None, false);
+    let before = record.machine.snapshot();
+    let clock = record.pos();
+    let gpu = record.virtual_gpu();
+    assert_eq!(
+        record
+            .machine
+            .prepare_session_gpu_replay(frame.0, frame.1, None),
+        Err(GpuError::ReplayIngress)
+    );
+    assert_eq!(
+        record.machine.deliver_session_gpu_replay(),
+        Err(GpuError::ReplayIngress)
+    );
+    let key = Submit3dKey {
+        epoch: 1,
+        sequence: 1,
+    };
+    let exchange = Submit3dExchange {
+        key,
+        exchange_sequence: 1,
+        backing: Submit3dBacking {
+            resource: wasm_vm_core::dev::virtio::gpu::control3d::Control3dId {
+                id: 3,
+                generation: 2,
+            },
+            generation: 1,
+        },
+        rows: Submit3dRows {
+            offset: 0,
+            row_bytes: 64,
+            row_stride: 64,
+            row_count: 1,
+        },
+    };
+    assert_eq!(
+        record
+            .machine
+            .replay_session_gpu_transport(&exchange, None, None),
+        Err(GpuError::ReplayIngress)
+    );
+    assert_eq!(record.machine.snapshot(), before);
+    assert_eq!(record.pos(), clock);
+    assert_eq!(record.virtual_gpu(), gpu);
+    for attack in 0..7 {
+        let mut r = Rig::new(64, Some(c.tape.clone()), true);
+        r.until(5, 3);
+        let mut position = frame.0;
+        match attack {
+            0 => position.phase = wasm_vm_core::session_clock::SessionPhase::Observe,
+            1 => position.transition = 4,
+            2 => position.retired = 4,
+            3 => position.retired = position.transition + 1,
+            4 => position.ordinal = 0,
+            5 => position.sequence = 0,
+            6 => {
+                r.machine
+                    .prepare_session_gpu_replay(position, frame.1, None)
+                    .unwrap();
+            }
+            _ => unreachable!(),
+        }
+        let before = r.machine.snapshot();
+        let clock = r.pos();
+        let gpu = r.virtual_gpu();
+        assert!(matches!(
+            r.machine.take_session_gpu_recording(),
+            Err(GpuError::ReplayIngress)
+        ));
+        assert_eq!(
+            r.machine
+                .prepare_session_gpu_replay(position, frame.1, None),
+            Err(GpuError::Position)
+        );
+        assert_eq!(r.machine.snapshot(), before);
+        assert_eq!(r.pos(), clock);
+        assert_eq!(r.virtual_gpu(), gpu);
+        assert_eq!(r.machine.session_gpu_cursor(), Ok(0));
+        if attack == 6 {
+            r.until(frame.0.transition, 13);
+            r.machine.deliver_session_gpu_replay().unwrap();
+            assert_eq!(r.machine.session_gpu_cursor(), Ok(1));
+        }
+    }
+    eprintln!(
+        "GPU_GAP_G1 wrong modes and seven invalid/duplicate preparations held CPU/RAM/GPU/clock; original prepared frame remained usable"
+    );
+}
+
+#[test]
+fn gpu_proof_gap_malformed_delivery_hash_pending_event_and_completion_generation_refuse_atomically()
+{
+    let c = capture(64, 3, false);
+    let frames = gpu_events(&c);
+    for attack in 0..5 {
+        let mut r = Rig::new(64, Some(c.tape.clone()), true);
+        let (mut position, mut result) = frames[0];
+        match attack {
+            0 => position.retired -= 1,
+            1 => position.ordinal += 1,
+            2 => position.sequence += 1,
+            3 => {
+                if let ResultKind::Gather {
+                    ref mut expected, ..
+                } = result.kind
+                {
+                    expected.sha256[0] ^= 1;
+                }
+            }
+            4 => {}
+            _ => unreachable!(),
+        }
+        r.machine
+            .prepare_session_gpu_replay(position, result, None)
+            .unwrap();
+        r.until(position.transition, 11);
+        if attack == 4 {
+            r.machine
+                .stage_session_effect(position.transition, SessionEffect::ExternalPending(false))
+                .unwrap();
+        }
+        let before = r.machine.snapshot();
+        let clock = r.pos();
+        let gpu = r.virtual_gpu();
+        let pending = r.machine.session_pending_events();
+        assert_eq!(
+            r.machine.deliver_session_gpu_replay(),
+            Err(if attack == 3 {
+                GpuError::Payload
+            } else {
+                GpuError::Position
+            })
+        );
+        assert_eq!(r.machine.snapshot(), before);
+        assert_eq!(r.pos(), clock);
+        assert_eq!(r.virtual_gpu(), gpu);
+        assert_eq!(r.machine.session_gpu_cursor(), Ok(0));
+        assert_eq!(r.machine.session_pending_events(), pending);
+        eprintln!("GPU_GAP_G1 admission attack={attack} refused before effects at {clock:?}");
+    }
+    let mut r = Rig::new(64, Some(c.tape.clone()), true);
+    for (i, (position, result)) in frames[..2].iter().copied().enumerate() {
+        r.machine
+            .prepare_session_gpu_replay(position, result, payload(&c, result))
+            .unwrap();
+        r.until(position.transition, 7);
+        r.machine.deliver_session_gpu_replay().unwrap();
+        r.machine
+            .replay_session_gpu_transport(
+                &r.exchange(i as u64 + 1),
+                (i == 1).then_some(&[0x33; 64][..]),
+                None,
+            )
+            .unwrap();
+    }
+    let (position, result) = frames[2];
+    r.machine
+        .prepare_session_gpu_replay(position, result, None)
+        .unwrap();
+    r.until(position.transition, 7);
+    r.mail.post(r.completion(Ok(()), 2)).unwrap();
+    let base = Platform::virtio_base(r.machine.virtio_gpu().unwrap().0 as u64);
+    r.machine.bus_mut().store32(base + 0x44, 0).unwrap();
+    let before = r.machine.snapshot();
+    let clock = r.pos();
+    let gpu = r.virtual_gpu();
+    assert_eq!(
+        r.machine.deliver_session_gpu_replay(),
+        Err(GpuError::StaleOwner)
+    );
+    assert_eq!(r.machine.snapshot(), before);
+    assert_eq!(r.pos(), clock);
+    assert_eq!(r.virtual_gpu(), gpu);
+    assert_eq!(r.machine.session_gpu_cursor(), Ok(2));
+    eprintln!("GPU_GAP_G1 stale completion queue generation refused at {clock:?}");
+}
+
+#[test]
+fn gpu_proof_gap_persisted_control_tape_and_invalid_wire_boundaries_are_exercised() {
+    let c = capture(64, 3, false);
+    let encoded = c.tape.encode().unwrap();
+    let decoded = ObservationTape::decode(&encoded).unwrap();
+    assert_eq!(decoded, c.tape);
+    let frames = gpu_events(&c);
+    let mut r = Rig::new(64, Some(decoded), true);
+    for (i, (position, result)) in frames.iter().copied().enumerate() {
+        r.machine
+            .prepare_session_gpu_replay(position, result, payload(&c, result))
+            .unwrap();
+        r.until(position.transition, 7);
+        if i == 2 {
+            r.mail.post(r.completion(Ok(()), 2)).unwrap();
+        }
+        r.machine.deliver_session_gpu_replay().unwrap();
+        if i < 2 {
+            r.machine
+                .replay_session_gpu_transport(
+                    &r.exchange(i as u64 + 1),
+                    (i == 1).then_some(&[0xff; 64][..]),
+                    None,
+                )
+                .unwrap();
+        }
+    }
+    r.until(c.end, 7);
+    assert_eq!(r.machine.snapshot(), c.snapshot);
+    assert_eq!(r.machine.hart().to_snapshot(), c.cpu);
+    assert_eq!(r.trace.canonical(), c.trace);
+    let gather = frames[0].1.encode().unwrap();
+    let complete = frames[2].1.encode().unwrap();
+    let mut cases = Vec::new();
+    for (offset, width, value) in [
+        (41, 8, 0u64),
+        (49, 8, 0),
+        (57, 8, 0),
+        (57, 8, 4097),
+        (65, 8, 0),
+        (73, 8, 0),
+        (89, 4, 0),
+        (93, 4, 32),
+        (101, 4, 0),
+    ] {
+        let mut bytes = gather.clone();
+        bytes[offset..offset + width].copy_from_slice(&value.to_le_bytes()[..width]);
+        cases.push((bytes, GpuError::Intent));
+    }
+    let mut bytes = gather.clone();
+    bytes[9..41].fill(0);
+    cases.push((bytes, GpuError::Intent));
+    for length in [0u32, 33_554_433] {
+        let mut bytes = gather.clone();
+        bytes[138..142].copy_from_slice(&length.to_le_bytes());
+        cases.push((bytes, GpuError::Limit));
+    }
+    let mut layered = frames[0].1;
+    if let ResultKind::Gather { ref mut layers, .. } = layered.kind {
+        *layers = Some((64, 1));
+    }
+    for offset in [106, 110] {
+        let mut bytes = layered.encode().unwrap();
+        bytes[offset..offset + 4].fill(0);
+        cases.push((bytes, GpuError::Intent));
+    }
+    for (offset, width, value) in [(57, 8, 4097u64), (67, 4, 4097), (71, 4, 257)] {
+        let mut bytes = complete.clone();
+        bytes[offset..offset + width].copy_from_slice(&value.to_le_bytes()[..width]);
+        cases.push((bytes, GpuError::Intent));
+    }
+    let mut bytes = complete;
+    bytes[66] = 0;
+    cases.push((bytes, GpuError::Intent));
+    cases.push((vec![0; 257], GpuError::Limit));
+    for (index, (bytes, error)) in cases.into_iter().enumerate() {
+        assert_eq!(GpuResult::decode(&bytes), Err(error));
+        if let Ok(root) = std::env::var("E9_GPU_RESULT_EVIDENCE") {
+            let root = std::path::Path::new(&root).join("codec-refusals");
+            std::fs::create_dir_all(&root).unwrap();
+            std::fs::write(root.join(format!("{index:02}-{error:?}.bin")), bytes).unwrap();
+        }
+    }
+    r.dump_state("persisted-control-tape", "replay");
+    eprintln!(
+        "GPU_GAP_G2 kind7 on-wire tape replay matched full CPU/RAM/trace; identity/exchange/layer/length/completion/oversize codec refusals held"
+    );
+}
+
+#[test]
+fn gpu_proof_gap_replay_receipt_count_and_byte_limits_allow_drain_then_retry() {
+    for (length, limit, name) in [(64, 256, "count"), (32 << 20, 2, "bytes")] {
+        let c = capture(length, 2, false);
+        let (position, base_result) = gpu_events(&c)[0];
+        let mut r = Rig::new(length, Some(c.tape.clone()), true);
+        r.machine
+            .prepare_session_gpu_replay(position, base_result, None)
+            .unwrap();
+        r.until(position.transition, 7);
+        for sequence in 1..=limit + 1 {
+            let mut result = base_result;
+            if let ResultKind::Gather {
+                ref mut exchange, ..
+            } = result.kind
+            {
+                exchange.exchange_sequence = sequence;
+            }
+            if sequence != 1 {
+                let mut position = r.pos();
+                position.ordinal += 1;
+                position.sequence += 1;
+                r.machine
+                    .prepare_session_gpu_replay(position, result, None)
+                    .unwrap();
+            }
+            if sequence <= limit {
+                r.machine.deliver_session_gpu_replay().unwrap();
+                r.machine.take_session_deliveries().unwrap();
+            } else {
+                let before = r.machine.snapshot();
+                let clock = r.pos();
+                let gpu = r.virtual_gpu();
+                let cpu = r.machine.hart().to_snapshot();
+                r.dump_state(&format!("receipt-limit-{name}"), "before-limit");
+                assert_eq!(r.machine.deliver_session_gpu_replay(), Err(GpuError::Limit));
+                r.dump_state(&format!("receipt-limit-{name}"), "refused");
+                assert_eq!(r.machine.snapshot(), before);
+                assert_eq!(r.pos(), clock);
+                assert_eq!(r.virtual_gpu(), gpu);
+                assert_eq!(r.machine.hart().to_snapshot(), cpu);
+                assert_eq!(r.machine.session_gpu_cursor(), Ok(limit));
+                let data = r
+                    .machine
+                    .replay_session_gpu_transport(&r.exchange(1), None, None)
+                    .unwrap();
+                assert_eq!(data.len(), length);
+                assert!(data.iter().all(|v| *v == 0x6d));
+                r.machine.deliver_session_gpu_replay().unwrap();
+                eprintln!(
+                    "GPU_GAP_G4 replay {name} Limit at {clock:?}; full CPU/RAM/GPU/cursor held, drain then retry accepted exchange{sequence}"
+                );
+            }
+        }
+        for sequence in 2..=limit + 1 {
+            r.machine
+                .replay_session_gpu_transport(&r.exchange(sequence), None, None)
+                .unwrap();
+        }
+        let mut completion = r.completion(Ok(()), limit + 1);
+        completion.key.epoch = base_result.key().epoch;
+        let result = GpuResult {
+            request_sha256: base_result.request_sha256,
+            kind: ResultKind::Complete(completion),
+        };
+        let mut position = r.pos();
+        position.ordinal += 1;
+        position.sequence += 1;
+        r.machine
+            .prepare_session_gpu_replay(position, result, None)
+            .unwrap();
+        r.mail.post(r.completion(Ok(()), limit + 1)).unwrap();
+        r.machine.deliver_session_gpu_replay().unwrap();
+        r.done();
+        r.check(&vec![0x6d; length], 0x1100);
+        r.dump_state(&format!("receipt-limit-{name}"), "resolved");
+    }
+}
+
+#[test]
+fn gpu_proof_gap_legacy_dense_length_refuses_before_shadow_dma_exchange_or_event() {
+    let mut r = Rig::with_job(64, None, false, 4);
+    r.pending();
+    let exchange = r.exchange(1);
+    let mut wrong = exchange;
+    wrong.rows.row_bytes = 32;
+    let before = r.machine.snapshot();
+    let clock = r.pos();
+    let gpu = r.virtual_gpu();
+    let shadow = r
+        .gpu
+        .borrow()
+        .resources
+        .get(3)
+        .unwrap()
+        .host_pixels
+        .to_vec();
+    r.dump_state("legacy-dense-refusal", "before-limit");
+    assert_eq!(
+        r.machine.session_gpu_dma(&wrong, None, None),
+        Err(GpuError::Intent)
+    );
+    r.dump_state("legacy-dense-refusal", "refused");
+    assert_eq!(r.machine.snapshot(), before);
+    assert_eq!(r.pos(), clock);
+    assert_eq!(r.virtual_gpu(), gpu);
+    assert_eq!(r.machine.session_gpu_cursor(), Ok(0));
+    assert_eq!(
+        r.gpu
+            .borrow()
+            .resources
+            .get(3)
+            .unwrap()
+            .host_pixels
+            .as_ref(),
+        shadow.as_slice()
+    );
+    assert_eq!(
+        r.machine.session_gpu_dma(&exchange, None, None).unwrap(),
+        [0x6d; 64]
+    );
+    assert_eq!(
+        r.gpu
+            .borrow()
+            .resources
+            .get(3)
+            .unwrap()
+            .host_pixels
+            .as_ref(),
+        &[0x6d6d6d6d; 16]
+    );
+    r.mail.post(r.completion(Ok(()), 1)).unwrap();
+    r.done();
+    r.check(&[0x6d; 64], 0x1100);
+    r.dump_state("legacy-dense-refusal", "resolved");
+    eprintln!(
+        "GPU_GAP_G4 backing-valid32-byte dense gather refused at {clock:?}; shadow/RAM/queue/cursor held; correct64-byte gather and original fence resolved"
     );
 }
