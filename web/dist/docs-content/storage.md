@@ -119,6 +119,10 @@ individual manifest, log and renderer limits can be smaller. No guest instructio
 runs during import, and replay does not reconnect to the original guest asset
 URLs or external peers.
 
+Known witness metadata uses canonical JSON. Duplicate inner fields or other
+non-canonical encodings are refused before import publication; malformed
+surviving witness metadata also stops cleanup and preserves staged data.
+
 Recording files contain guest memory and files, typed input and network
 payloads. Export/import are local operations with no automatic upload.
 **Cancel local transfer** stops an unfinished transfer; a completed durable

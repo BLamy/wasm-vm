@@ -7,7 +7,7 @@ import path from 'node:path';
 import {createServer} from 'node:http';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath, pathToFileURL} from 'node:url';
-import {archiveMutants, renamedArchive, readArchive} from './e9-bundle-mutants.mjs';
+import {archiveMutants, renamedArchive, readArchive, duplicateWitnessDigest} from './e9-bundle-mutants.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..'), options = {};
 for (let i = 2; i < process.argv.length; i += 2) {const key = process.argv[i]; assert(['--software', '--gpu', '--output', '--web-root', '--url'].includes(key) && process.argv[i + 1] && !options[key]); options[key] = process.argv[i + 1];}
@@ -221,12 +221,33 @@ try {
         assert.equal(await page.evaluate(()=>__bundleWriterCalls),writers,mutant.name+' reached a destination writer before validation');
         if(mutant.name==='rehashed-RAM-delta-with-stale-full-digest')assert.match(outcome.error,/reconstructed RAM digest/);
         if(mutant.name==='later-native-CPU-truncation-rehashed')assert.match(outcome.error,/session_replay|BadComponent|Snapshot|Truncated/i);
+        if(mutant.name==='duplicate-known-witness-field-rehashed')assert.match(outcome.error,/non-canonical witness JSON/);
         const after = await state(page); assert.deepEqual(after, baseline, mutant.name + ' changed saved or active state');
         result.attacks.push({name: mutant.name, bytes: bytes.length, sha256: sha(bytes), outcome, preserved: true,writerCalls:0,freshId:item.id+'-attack'});
       }
       const duplicate = await inputFile(page, item.bytes); assert.equal(duplicate.status, 'error'); assert.match(duplicate.error, /already exists/); assert.deepEqual(await state(page), baseline);
       result.duplicate = duplicate;
       if (item.name === 'software-child') {
+        const orphan=Buffer.from('E9-T21: known-witness GC orphan v1\n'),orphanRef={sha256:sha(orphan),length:String(orphan.length)};
+        const survivorId=item.id+'-ambiguous-survivor',survivor=readArchive(renamedArchive(item.bytes,survivorId));
+        const survivorManifest=duplicateWitnessDigest(JSON.parse(survivor.objects.get(survivor.header.manifest.sha256)),orphanRef);
+        const survivorBytes=Buffer.from(JSON.stringify(survivorManifest));
+        const blockedGc=await page.evaluate(async({id,manifest,orphan,ref})=>{
+          const store=__sessionTimeline.store;let found=false;try{await store.objectReference(ref.sha256);found=true;}catch{}if(found)throw Error('orphan must be unique');
+          // Model an already-corrupt survivor through the generic persistence API.
+          // Its opaque extension is outside native manifest shape validation.
+          const writer=await store.writer(id);try{await writer.publish(Uint8Array.from(manifest));}finally{await writer.release();}
+          const staging=await store.writer(id+'-staging');try{await staging.put(ref,(async function*(){yield Uint8Array.from(orphan);})());}finally{await staging.release();}
+          const before=await store.statistics();let failure;
+          try{await store.collectGarbage();}catch(error){failure={code:error.code,message:error.message};}
+          const after=await store.statistics(),parts=[];for await(const part of store.stream(ref))parts.push(...part);
+          const retained=await store.openSession(id),cleanup=await store.deleteSession(id);
+          return {before,after,failure,orphan:parts,survivorRetained:!!retained,cleanup};
+        },{id:survivorId,manifest:[...survivorBytes],orphan:[...orphan],ref:orphanRef});
+        assert.equal(blockedGc.failure?.code,'UnsupportedRetention');assert.match(blockedGc.failure.message,/non-canonical witness JSON/);
+        assert.deepEqual(blockedGc.after,blockedGc.before);assert.deepEqual(Buffer.from(blockedGc.orphan),orphan);assert(blockedGc.survivorRetained);
+        assert(blockedGc.cleanup.collected&&blockedGc.cleanup.reclaimedBytes===orphan.length);assert.deepEqual(await state(page),baseline);
+        result.ambiguousWitnessGc={...blockedGc,orphanRef,manifestSha256:sha(survivorBytes),preserved:true};
         const parent = cases.find(item => item.name === 'software-parent'), limits = baseline.statistics.limits;
         await page.evaluate(async id=>{
           const store=__sessionTimeline.store,db=await new Promise((resolve,reject)=>{const r=indexedDB.open(store.databaseName);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});

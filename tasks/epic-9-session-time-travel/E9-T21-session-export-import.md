@@ -120,3 +120,39 @@ independent closure/native reader SHA-256 is
 `50f96b055458dbba7082ef51fa452728b90ffb8c225bb27d7c8794c5880062d5`.
 All imported native snapshots equal the independently retained originals. These
 are development results; the following frozen submission remains authoritative.
+
+### 2026-10-21 — worker — repair Daybreak's ambiguous-witness finding
+
+The first exact-head submission at `9921bc071b51d564e393cea53cf67d3ab89a402c`
+is superseded. Fresh actual Daybreak's novel browser attack admitted a known
+witness containing a duplicate JSON member that shadowed a CAS-shaped value.
+The import returned `done`, opened one destination writer and published its
+row. Cleanup subsequently removed an unreachable byte despite the malformed
+surviving witness. Source: `web/session-witnesses.js` parsed JSON before
+checking the resulting keys, so duplicate members were silently collapsed.
+
+Evidence: `target/evidence/e9-t21-daybreak-adversarial/novel-attack/report.json`,
+SHA-256 `8bdd72a29262978c834446f1ffc32f3224a030a67098032bde35835ff4848ced`;
+mutant archive SHA-256
+`3fda47360a5c3205f91b3c124b7dbbbeb8675e87223b1f2939ace5610bb086ad`.
+The trace, screenshot, independent byte-level attack script and prediction
+ledger are retained beside that report. The whole primary/cold submissions
+were deliberately stopped with `KeyboardInterrupt` and an explicit stop note
+when this semantic gap became concrete; neither is a passing final proof.
+
+Known witness v1 metadata now must round-trip exactly as canonical JSON before
+its shape is trusted for import or GC. The new focused regression fails on the
+original module and passes on the corrected module; all 12 focused tests pass.
+Browser proof now includes coherently rehashed duplicate-witness archives
+with unused IDs and zero writer calls, plus a persisted malformed survivor
+and a real staged object: cleanup must refuse without deleting either, then
+resume and reclaim the orphan after that survivor is explicitly removed.
+The healthy recording remains byte-for-byte unchanged.
+
+Daybreak's evidence stage ended at `2026-10-21T23:50:13.654Z` with
+`cyberPolicy`, requiring Advanced Account Security enrollment and a compatible
+physical FIDO2 key. Its completed novel finding is valid evidence, but the
+stage did not complete the full charter or issue a final verdict. User input
+has been requested for that account requirement. No alternative model is
+authorized for independent verification; a fresh actual Daybreak verdict and
+test-kill remain required after the corrected frozen high/cold submissions.

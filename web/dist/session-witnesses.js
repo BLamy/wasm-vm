@@ -17,7 +17,8 @@ export function validateSessionWitnesses(manifest, {finished = false} = {}) {
     seen.add(extension.kind);
     need(Array.isArray(extension.bytes) && extension.bytes.length <= 1048576
       && extension.bytes.every(value => Number.isInteger(value) && value >= 0 && value <= 255), 'extension bytes');
-    const rows = JSON.parse(decoder.decode(Uint8Array.from(extension.bytes)));
+    const text = decoder.decode(Uint8Array.from(extension.bytes)), rows = JSON.parse(text);
+    need(JSON.stringify(rows) === text, 'non-canonical witness JSON');
     need(Array.isArray(rows) && rows.length >= 1 && rows.length <= (manifest.machine.gpu ? 64 : 4096), 'witness count');
     let previous = null;
     for (const row of rows) {

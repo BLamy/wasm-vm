@@ -28,6 +28,13 @@ export function changeManifest(bytes, update) {
   return rebuild(archive);
 }
 export function renamedArchive(bytes, id) {return changeManifest(bytes, manifest => {manifest.id = id;});}
+export function duplicateWitnessDigest(manifest, shadow = {sha256: 'f'.repeat(64), length: '1'}) {
+  const entry = manifest.extensions.find(value => value.kind === 'e9-exact-initial-witness-v1' || value.kind === 'e9-exact-state-witnesses-v1');
+  assert(entry); const before = Buffer.from(entry.bytes).toString('utf8'); assert(before.includes('"digest":'));
+  const after = before.replace('"digest":', '"digest":' + JSON.stringify(shadow) + ',"digest":');
+  assert.notEqual(after, before); assert.deepEqual(JSON.parse(after), JSON.parse(before));
+  entry.bytes = [...Buffer.from(after)]; return manifest;
+}
 function rebindParents(manifest, archive, replacements) {
   for(const point of manifest.checkpoints){
     const old=point.machine,bytes=archive.objects.get(old.sha256);
@@ -61,6 +68,7 @@ export function archiveMutants(bytes, kind) {
     {name: 'payload-digest', make: () => {const body = Buffer.from(bytes), at = 16 + body.readUInt32LE(12); body[at] ^= 1; return body;}},
     {name: 'foreign-manifest-version-rehashed', make: () => changeManifest(bytes, manifest => {manifest.version.major = 2;})},
     {name: 'unknown-required-extension-rehashed', make: () => changeManifest(bytes, manifest => {manifest.extensions.push({kind: 'future-required-reference-format', required: true, bytes: [123, 125]});})},
+    {name: 'duplicate-known-witness-field-rehashed', make: () => changeManifest(bytes, manifest => {duplicateWitnessDigest(manifest);})},
     {name: 'missing-historical-disk-root-with-valid-framing', make: () => {
       const archive = readArchive(bytes), manifest = JSON.parse(archive.objects.get(archive.header.manifest.sha256));
       // Exact guest writes are also present in the native owned-device snapshot;

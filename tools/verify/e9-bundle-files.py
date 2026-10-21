@@ -115,11 +115,18 @@ try:
         assert case['view']['pixel'] == case['source']['pixel']
         assert all(item['outcome']['status'] == 'error' and item['preserved'] for item in case['attacks'])
         assert all(item['writerCalls'] == 0 and item['freshId'] != case['id'] for item in case['attacks'])
+        if case['name'] != 'software-parent':
+            assert 'duplicate-known-witness-field-rehashed' in {item['name'] for item in case['attacks']}
         if case['name'] == 'software-deltas':
             assert full_frames > 0 and delta_frames > 0
             names = {item['name'] for item in case['attacks']}
             assert {'later-native-CPU-truncation-rehashed', 'rehashed-RAM-delta-with-stale-full-digest'} <= names
         if case['name'] == 'software-child':
+            blocked = case['ambiguousWitnessGc']
+            assert blocked['failure']['code'] == 'UnsupportedRetention' and blocked['before'] == blocked['after']
+            assert blocked['survivorRetained'] and blocked['preserved']
+            assert sha(bytes(blocked['orphan'])) == blocked['orphanRef']['sha256']
+            assert blocked['cleanup']['collected'] and blocked['cleanup']['reclaimedBytes'] == len(blocked['orphan'])
             assert len(case['quota']['stagedUniqueObjects']) == 1 and case['quota']['cleanup']['reclaimedBytes'] > 0
             assert case['postCommitRefreshRace']['held']['busy'] and not case['postCommitRefreshRace']['held']['entered']
         assert case['delete']['state']['statistics']['sessions'] == 0 and case['delete']['state']['statistics']['payloadBytes'] == 0

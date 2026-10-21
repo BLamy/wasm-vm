@@ -25,3 +25,16 @@ test('malformed or unknown extension data cannot authorize reclamation', () => {
   ];
   for (const mutate of cases) {const value = fixture(); mutate(value); assert.throws(() => validateSessionWitnesses(value));}
 });
+test('ambiguous and non-canonical known witness bytes cannot authorize import or GC', () => {
+  for (const index of [0, 1]) {
+    for (const replace of [
+      text => text.replace('"digest":', '"digest":{"sha256":"' + 'f'.repeat(64) + '","length":"1"},"digest":'),
+      text => text.replace('"phase":"before"', '"phase":{"sha256":"' + 'e'.repeat(64) + '","length":"1"},"phase":"before"'),
+      text => ' ' + text,
+    ]) {
+      const value = fixture(), entry = value.extensions[index], text = new TextDecoder().decode(Uint8Array.from(entry.bytes));
+      entry.bytes = [...new TextEncoder().encode(replace(text))];
+      assert.throws(() => validateSessionWitnesses(value), /non-canonical witness JSON/);
+    }
+  }
+});

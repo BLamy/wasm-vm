@@ -259,7 +259,7 @@ base binding; legacy overlay profiles are not admitted by version 1.
 objects sorted by SHA-256. There are no entry paths, compression or scripts.
 Limits are 8 MiB of header, 65,536 entries, 640 MiB per object, and 4 GiB total
 uncompressed object data, with the existing smaller manifest, log, frame and
-renderer limits also enforced. Duplicate entries/fields, unsupported versions,
+renderer limits also enforced. Duplicate archive entries or header/witness fields, unsupported versions,
 extra or missing objects, mismatched digests, invalid native sections and foreign
 runtime identities fail before any destination publication. Hashing and staging
 use bounded 1 MiB chunks. A private native decoder candidate validates the
@@ -273,7 +273,9 @@ authorizer; an already durable commit wins. Storage failure can leave unreachabl
 staging objects, but cannot make that unfinished recording playable or overwrite
 another recording. **Delete local recording** removes its row and reclaims only
 unshared reachable data. Unknown or malformed surviving extension metadata stops
-reclamation. Exported files remain on the user's device after local deletion.
+reclamation. Known witness v1 metadata must round-trip as canonical JSON, so a
+duplicate inner member cannot hide an unknown value during reclamation.
+Exported files remain on the user's device after local deletion.
 
 `make verify-E9-T21` records real UI export/import across fresh Chrome profiles,
 Linux and physical-GPU state witnesses, actual guest-I/O URL denial, archive
