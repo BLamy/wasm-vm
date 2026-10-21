@@ -3,7 +3,7 @@ id: E9-T17
 epic: 9
 title: Restore historical accelerated desktop checkpoint pairs
 priority: 524.917
-status: in-progress
+status: implemented
 depends_on: [E9-T05, E9-T16, E6-T11d74c, E6-T11d74d]
 estimate: S
 risk: high
@@ -200,3 +200,78 @@ separate real Linux desktop proof and does not replace it. Development recording
 `target/evidence/e9-t17-public-restore-dev-r2/report.json` passed both public
 restores with zero browser errors. Status remains
 `in-progress`; the corrected public path and final cold run must pass again.
+
+### 2026-10-21 — worker — frozen submission at 5ac10674
+
+Claim: two distinct positions in the original accelerated Omarchy Linux/Mesa
+desktop restore their coherent native RAM/device, historical disk and GPU state
+into fresh workers. Both restored physical canvases exactly match their saved
+pixel digests; each restored guest accepts new trusted keyboard input and renders
+again. The visible library saves/reopens a point and opens it from the ordinary
+demo in a fresh document. Incompatible build/physical host, crosswired disk/GPU,
+changed boot identity and lost context are refused while retaining the original
+manifest bytes/revision. This proves historical GPU checkpoints, not GPU result
+or event replay; that remains E9-T18.
+
+Frozen product/acceptance head:
+`5ac10674243b4a690c3930afd63f688dbe55ed88`. From the pristine full clone
+`/Users/blamy/Documents/Codex/.e9-t17-proof-cold-5ac10674`, the scrubbed recorder
+ran `make verify-E9-T17` with exit 0 in 1925.58 seconds. It ran the transport and
+archive boundary tests, `make web-dist`, the built-page 127/0 suite with zero
+browser errors, the actual supervisor-GPU adversarial/public-restore regression,
+and the original cold Omarchy/Mesa capture/restore/input/library matrix. Exact
+commands/environment and the executed recorder are retained in
+`/Users/blamy/Documents/Codex/e9-t17-final-cold-5ac10674/`; `report.json` SHA-256
+`f699ad01a8411037d240bdbe3f939161096f6fda51a5a7bb2a1ddb6e5c26bfef`
+records a clean final checkout and hashes all 2060 evidence files.
+
+The native/Wasm/features/RISC-V/determinism/performance and browser-storage gate
+at `709b19717553fdbeb65117d201641aac908b5862` is carried only for unchanged
+code and dependencies. Its report SHA-256 is
+`3b04d37a30b4abfa69ed8e9626ac2b95204736fc3ff3c6547e7a89f153767ea7`;
+the exact five pre-existing quarantined `zicsr-stub` dead-code diagnostics remain
+narrowly waived, with strict production linting and the remaining gauntlet green.
+No Rust/Cargo, worker, renderer or Wasm code changed. The fresh verifier rehashed
+449 native inputs and all 56 worker/runtime files; aggregate runtime identity
+remains `be4efb0a789b707ee38cb4aaae0313b1ebb9327aebb1680cab8f3e02ac712917`.
+The changed public launcher is proved by the new browser runs, not by that native
+gate. Carry receipt: `target/evidence/e9-t17-runtime-carry-5ac10674.json` SHA-256
+`67fc8938f05cfc0d5a06aed1fc521e1e6adb4b456821581f97d8d83183a14ec4`.
+
+Real-desktop evidence:
+
+- `desktop/e9-gpu-session-desktop.json` SHA-256
+  `18ede0195c3e9677fd4cb0970cdab79eade9dbcc205461053a36fb7592047a67`.
+  The points are at transitions 38400921493 and 39351366743. Restoring the first
+  removes the later first marker, preserves the original Foot process, and lets
+  trusted input create the second marker. Restoring the second retains the first
+  marker, excludes the second, and lets new input create the third. The library
+  and fresh-document route retain first/third, exclude second, and accept another
+  new trusted file write. All four input/clock probes pass.
+- The first saved/restored physical canvas SHA-256 is
+  `9a64eb8a469be4e312c0ac834322ec881b29ed07b81fa503094ff338f134ab8f`;
+  the second is
+  `b33c0ac1c42e026d516d9574aad45144bdfc47564e395ec5ae3a751c1099b6b7`.
+  Each fresh owner advances saved native epoch 2 to its own epoch 3 and records
+  current-epoch drawn retirement. Equal worker-local epoch numbers are not
+  mistaken for a shared owner. The authenticated ICount/divider-64 policy and
+  declared paced-on-keyboard transition remain intact.
+- `desktop/retained-session-objects/receipt.json` SHA-256
+  `cf8c13776a81ed178bac24ebdad7bfa3d2f4951bb96f238973ceda84a159778e`
+  indexes 1933 exact immutable objects, 343317156 bytes: canonical manifest and
+  revision 2, both actual WVGPAIR/native seals, descriptors, configuration/assets
+  and complete historical COW root closures. Original bytes and owner were
+  unchanged across collection. `desktop/browser-trace.zip` SHA-256
+  `bdae749a96614477a76be84157e31b6e6fcb04e3e26be54ac7caf76bda21d96e`
+  retains the actual browser interactions and network/source observations.
+- `target/evidence/e9-t17-worker-submission-5ac10674.json` SHA-256
+  `d8d9a1594afc420cc8f0ef7cb26689355e53e503bf2ee135b1e86bfad4fae4a5`
+  records an independent worker rehash of all 2060 files and all archived object
+  hashes/lengths, both exact canvas matches and the native carry boundary.
+
+The same fresh standard critic has independently passed the unchanged-boundary
+attacks, the new public-route regression/URL case and isolated removal-of-fix
+sabotage. Its raw review of the prior failed run remains scoped to that run's
+successful capture/refusal observations; it is not substituted for this final
+successful recording. Full review of the final evidence and hunk coverage is now
+required. Status is `implemented`; production publication awaits verification.
