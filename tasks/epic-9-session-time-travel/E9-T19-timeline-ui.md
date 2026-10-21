@@ -3,7 +3,7 @@ id: E9-T19
 epic: 9
 title: Build the session timeline and accessible time-travel controls
 priority: 524.919
-status: implemented
+status: in-progress
 depends_on: [E9-T06, E9-T16]
 estimate: S
 risk: medium
@@ -91,3 +91,21 @@ boundaries. All three are now exercised in the recording. This is a worker
 claim awaiting the independent final verdict. Main-site publication follows
 verification on this verified-runtime branch; the pending GPU branch remains
 blocked and must not ride that release.
+
+### 2026-10-21 — worker — close non-empty console proof
+
+Fresh sufficiency review found that the 2.1M-transition excerpt ended before any
+serial output, so the original 13 console comparisons covered only the empty
+view. Independent verifier evidence at
+`target/evidence/e9-t19-verifier-76aaf353/independent-report.json` demonstrates
+646 genuine pinned Linux UART bytes at transition 3000000 before external I/O,
+a matching private replay, an explicitly labelled 80003-byte formatting fixture
+with the exact 65536-byte tail, and a passing stale-admission/Pause/new-seek
+attack. Those renderer/controller/ownership results are retained HELD.
+
+The worker is extending the product excerpt to that observed 3M horizon so the
+demo itself can show the real kernel output, and adding an end-keyframe oracle
+to the official browser run. This changes the sample horizon, so status returns
+to in-progress and the selected medium-risk submission is recorded again at
+the new frozen source. The native runtime and accepted seek controller remain
+unchanged; no unrelated high-risk wall or cold clone is restarted.
