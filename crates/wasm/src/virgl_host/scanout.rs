@@ -55,6 +55,24 @@ pub(crate) fn binding(value: &Scanout3dBinding) -> Result<Object, JsValue> {
 pub(crate) struct JsScanoutSink(pub(crate) JsSubmitSink);
 
 impl Submit3dSink for JsScanoutSink {
+    fn begin_session_job(
+        &mut self,
+        request: &Submit3dRequest,
+        lease: Submit3dCompletionLease,
+    ) -> Result<(), Control3dError> {
+        self.0.begin_session_job(request, lease)
+    }
+
+    fn begin_session_scanout(
+        &mut self,
+        request: &Scanout3dRequest,
+        lease: Submit3dCompletionLease,
+    ) -> Result<(), Control3dError> {
+        let out = marshal_scanout(request).map_err(|_| Control3dError::BridgePoisoned)?;
+        self.0.own_transport(&out, lease)?;
+        control_result(invoke(&self.0.callback, &out))
+    }
+
     fn begin_job(&mut self, request: &Submit3dRequest) -> Result<(), Control3dError> {
         self.0.begin_job(request)
     }
@@ -72,26 +90,27 @@ impl Submit3dSink for JsScanoutSink {
             Ok::<_, JsValue>(out)
         })()
         .map_err(|_| Control3dError::BridgePoisoned)?;
-        control_result(invoke(&self.0.0, &out))
+        control_result(invoke(&self.0.callback, &out))
     }
 
     fn begin_scanout(&mut self, request: &Scanout3dRequest) -> Result<(), Control3dError> {
-        let out = (|| {
-            let out = Object::new();
-            set(&out, "type", "beginScanout")?;
-            set(&out, "epoch", hex(request.key.epoch))?;
-            set(&out, "sequence", hex(request.key.sequence))?;
-            set(&out, "binding", binding(&request.binding)?)?;
-            let header = Object::new();
-            set(&header, "type", request.header.ty)?;
-            set(&header, "flags", request.header.flags)?;
-            set(&header, "fenceId", hex(request.header.fence_id))?;
-            set(&header, "contextId", request.header.ctx_id)?;
-            set(&header, "ringIndex", u32::from(request.header.ring_idx))?;
-            set(&out, "header", header)?;
-            Ok::<_, JsValue>(out)
-        })()
-        .map_err(|_| Control3dError::BridgePoisoned)?;
-        control_result(invoke(&self.0.0, &out))
+        let out = marshal_scanout(request).map_err(|_| Control3dError::BridgePoisoned)?;
+        control_result(invoke(&self.0.callback, &out))
     }
+}
+
+fn marshal_scanout(request: &Scanout3dRequest) -> Result<Object, JsValue> {
+    let out = Object::new();
+    set(&out, "type", "beginScanout")?;
+    set(&out, "epoch", hex(request.key.epoch))?;
+    set(&out, "sequence", hex(request.key.sequence))?;
+    set(&out, "binding", binding(&request.binding)?)?;
+    let header = Object::new();
+    set(&header, "type", request.header.ty)?;
+    set(&header, "flags", request.header.flags)?;
+    set(&header, "fenceId", hex(request.header.fence_id))?;
+    set(&header, "contextId", request.header.ctx_id)?;
+    set(&header, "ringIndex", u32::from(request.header.ring_idx))?;
+    set(&out, "header", header)?;
+    Ok(out)
 }

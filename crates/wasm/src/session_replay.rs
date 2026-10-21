@@ -78,13 +78,14 @@ fn event(value: JsValue) -> Result<SessionDelivery, JsError> {
                 .ok_or_else(|| JsError::new("exact replay pending"))?,
         ),
         "observation" => {
-            let source = match integer(&value, "sourceKind", 6)? {
+            let source = match integer(&value, "sourceKind", 7)? {
                 1 => ObservationKind::RtcRead,
                 2 => ObservationKind::RtcSetLow,
                 3 => ObservationKind::RtcSetHigh,
                 4 => ObservationKind::RtcArm,
                 5 => ObservationKind::RtcPoll,
                 6 => ObservationKind::Entropy,
+                7 => ObservationKind::GpuControl,
                 _ => return Err(JsError::new("exact replay source kind")),
             };
             SessionEffect::Observation(ObservationValue {
@@ -124,7 +125,7 @@ fn event(value: JsValue) -> Result<SessionDelivery, JsError> {
         host_result,
     })
 }
-fn encode_event(row: SessionDelivery) -> JsValue {
+pub(crate) fn encode_event(row: SessionDelivery) -> JsValue {
     let object = event_clock::position_object(row.position);
     let out: JsValue = object.into();
     let set = |key: &str, value: JsValue| {
@@ -155,10 +156,10 @@ fn encode_event(row: SessionDelivery) -> JsValue {
             set("kind", "observation".into());
             set(
                 "channel",
-                (if value.kind == ObservationKind::Entropy {
-                    18u16
-                } else {
-                    17u16
+                (match value.kind {
+                    ObservationKind::Entropy => 18u16,
+                    ObservationKind::GpuControl => 23u16,
+                    _ => 17u16,
                 })
                 .into(),
             );
@@ -226,8 +227,10 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = exactSessionWitness)]
     pub fn exact_session_witness(&self, include_resume: bool) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        if inner.exact_session.is_none() {
-            return Err(JsError::new("exact session inactive"));
+        if inner.exact_session.is_none() || inner.exact_gpu {
+            return Err(JsError::new(
+                "exact software session required; GPU uses its logical witness",
+            ));
         }
         let frame = inner
             .machine
@@ -256,8 +259,10 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = takeExactSessionDeliveries)]
     pub fn take_exact_session_deliveries(&self) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        if inner.exact_session != Some(false) {
-            return Err(JsError::new("exact recording inactive"));
+        if inner.exact_session != Some(false) || inner.exact_gpu {
+            return Err(JsError::new(
+                "exact software recording required; GPU receipts and bodies drain atomically",
+            ));
         }
         let rows = inner
             .machine
@@ -278,6 +283,7 @@ impl WasmLinux {
         witnesses: js_sys::Array,
         end: JsValue,
         initial_queues: Option<JsValue>,
+        gpu_options: Option<JsValue>,
     ) -> Result<(), JsError> {
         let (pending_bytes, output_bytes) = if let Some(queues) = initial_queues {
             (
@@ -309,6 +315,70 @@ impl WasmLinux {
             events: rows,
             witnesses: states,
         };
+        #[cfg(feature = "virgl-renderer")]
+        let gpu = gpu_options
+            .as_ref()
+            .map(
+                |options| -> Result<wasm_vm_core::session_replay::GpuReplayConfig, JsError> {
+                    if integer(options, "version", 1)? != 1 {
+                        return Err(JsError::new("GPU replay adapter version"));
+                    }
+                    let renderer_digest = bytes(options, "rendererDigest", 32)?
+                        .try_into()
+                        .map_err(|_| JsError::new("GPU renderer digest"))?;
+                    let ram_value = get(options, "ramDigest")?;
+                    let ram_digest = if ram_value.is_null() || ram_value.is_undefined() {
+                        None
+                    } else {
+                        Some(
+                            bytes(options, "ramDigest", 32)?
+                                .try_into()
+                                .map_err(|_| JsError::new("GPU RAM digest"))?,
+                        )
+                    };
+                    let values = get(options, "payloads")?;
+                    if !js_sys::Array::is_array(&values) {
+                        return Err(JsError::new("GPU payload array"));
+                    }
+                    let values = js_sys::Array::from(&values);
+                    if values.length() as usize > wasm_vm_core::session_gpu::MAX_OBJECTS {
+                        return Err(JsError::new("GPU payload object bound"));
+                    }
+                    let mut payloads = Vec::new();
+                    let mut total = 0usize;
+                    for value in values.iter() {
+                        let data = bytes(&value, "bytes", wasm_vm_core::session_gpu::MAX_PAYLOAD)?;
+                        total = total
+                            .checked_add(data.len())
+                            .ok_or_else(|| JsError::new("GPU payload overflow"))?;
+                        if total > wasm_vm_core::session_gpu::MAX_RESIDENT_BYTES {
+                            return Err(JsError::new("GPU interval payload budget"));
+                        }
+                        let sha256 = bytes(&value, "sha256", 32)?
+                            .try_into()
+                            .map_err(|_| JsError::new("GPU payload digest"))?;
+                        let length = integer(
+                            &value,
+                            "length",
+                            wasm_vm_core::session_gpu::MAX_PAYLOAD as u32,
+                        )?;
+                        payloads.push(wasm_vm_core::session_gpu::Payload {
+                            reference: wasm_vm_core::session_gpu::PayloadRef { sha256, length },
+                            bytes: data,
+                        });
+                    }
+                    Ok(wasm_vm_core::session_replay::GpuReplayConfig {
+                        renderer_digest,
+                        ram_digest,
+                        payloads,
+                    })
+                },
+            )
+            .transpose()?;
+        #[cfg(not(feature = "virgl-renderer"))]
+        if gpu_options.is_some() {
+            return Err(JsError::new("GPU replay is unavailable in this build"));
+        }
         // Receipts are untrusted JS values. Their getters (and malformed Array fields) can
         // throw while the parser runs, so do not hold the Machine's mutable borrow until all
         // of them have been copied into owned Rust values.
@@ -322,8 +392,19 @@ impl WasmLinux {
                 "exact replay requires fresh, empty host queues",
             ));
         }
-        let driver = ReplayDriver::start(&mut inner.machine, plan)
-            .map_err(|e| JsError::new(&format!("exact replay admission: {e:?}")))?;
+        if inner.exact_gpu != gpu_options.is_some() {
+            return Err(JsError::new("exact replay profile/adapter mismatch"));
+        }
+        #[cfg(feature = "virgl-renderer")]
+        let admitted = if let Some(gpu) = gpu {
+            ReplayDriver::start_gpu(&mut inner.machine, plan, gpu)
+        } else {
+            ReplayDriver::start(&mut inner.machine, plan)
+        };
+        #[cfg(not(feature = "virgl-renderer"))]
+        let admitted = ReplayDriver::start(&mut inner.machine, plan);
+        let driver =
+            admitted.map_err(|e| JsError::new(&format!("exact replay admission: {e:?}")))?;
         inner.pending.extend(pending_bytes);
         *inner.out.borrow_mut() = output_bytes;
         inner.exact_driver = Some(driver);
@@ -333,8 +414,13 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = runExactReplayToEnd)]
     pub fn run_exact_replay_to_end(&self, quantum: u32) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        if inner.exact_session != Some(true) {
-            return Err(JsError::new("exact replay inactive"));
+        if inner.exact_session != Some(true) || inner.finished.is_some() {
+            return Err(JsError::new("exact replay inactive or stopped"));
+        }
+        if inner.exact_gpu {
+            return Err(JsError::new(
+                "GPU replay requires cancellable chunks and physical pumping",
+            ));
         }
         let mut driver = inner
             .exact_driver
@@ -388,8 +474,8 @@ impl WasmLinux {
             position(&target)?
         };
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        if inner.exact_session != Some(true) {
-            return Err(JsError::new("exact replay inactive"));
+        if inner.exact_session != Some(true) || inner.finished.is_some() {
+            return Err(JsError::new("exact replay inactive or stopped"));
         }
         let mut driver = inner
             .exact_driver

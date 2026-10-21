@@ -206,7 +206,7 @@ try{
  });
  assert.ok(report.checks.gates.every(r=>r.activeUnchanged));assert.ok(report.checks.gates.slice(0,2).every(r=>r.consoleUnchanged));
  assert.equal(report.checks.gates[0].openDisabled,true);assert.match(report.checks.gates[1].status,/incompatible guest build/);
- assert.equal(report.checks.gates[2].openDisabled,true);assert.match(report.checks.gates[2].status,/GPU event replay is awaiting verification/);
+ assert.equal(report.checks.gates[2].openDisabled,true);assert.match(report.checks.gates[2].status,/This saved clock\/runtime does not support event replay/);
  await page.setViewportSize({width:1440,height:1000});await page.evaluate(id=>__sessionTimeline.select(id),id);
  const priorOpen=await page.evaluate(()=>__sessionTimeline.snapshot.active);
  await c('open').click();await c('pause').click();await settled();

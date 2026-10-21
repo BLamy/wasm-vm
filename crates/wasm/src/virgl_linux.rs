@@ -5,6 +5,36 @@ use js_sys::{Function, Uint8Array};
 use wasm_vm_core::dev::virtio::gpu::submit3d::{Submit3dCompletion, Submit3dMailbox};
 #[wasm_bindgen]
 impl WasmLinux {
+    /// Fresh one-GiB, pure ICount/64 GPU session. Historical paced profiles do not enter here.
+    /// This uses the production Linux platform assembly, including owned I/O providers.
+    #[wasm_bindgen(js_name = newExactGpuSession)]
+    pub fn new_exact_gpu_session(
+        kernel: &[u8],
+        manifest_json: &str,
+        bootargs: String,
+        output: Function,
+        replay: bool,
+    ) -> Result<WasmLinux, JsError> {
+        if kernel.is_empty() || kernel.len() > 64 << 20 || bootargs.len() > 4096 {
+            return Err(JsError::new("exact GPU boot asset bounds"));
+        }
+        let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
+            .map_err(|e| JsError::new(&format!("exact GPU base manifest: {e:?}")))?;
+        Self::assemble(
+            1024,
+            kernel,
+            None,
+            DiskChoice::ExactSession {
+                manifest,
+                replay,
+                gpu: true,
+            },
+            &bootargs,
+            output,
+            false,
+        )
+    }
+
     #[wasm_bindgen(js_name = attachVirgl)]
     pub fn attach_virgl(
         &self,
@@ -20,13 +50,25 @@ impl WasmLinux {
             .machine
             .attach_qualified_virgl(
                 Box::new(JsControlSink(callback.clone())),
-                Box::new(crate::virgl_host::scanout::JsScanoutSink(JsSubmitSink(
-                    callback,
-                ))),
+                Box::new(crate::virgl_host::scanout::JsScanoutSink(
+                    JsSubmitSink::for_machine(
+                        callback,
+                        crate::virgl_session_transport::MachineGpuOwner {
+                            machine: std::rc::Rc::downgrade(&self.inner),
+                            stopped: self.gpu_session_stopped.clone(),
+                        },
+                    ),
+                )),
                 mailbox.clone(),
                 caps,
             )
             .map_err(JsError::new)?;
+        if inner.exact_gpu && inner.exact_session == Some(false) {
+            inner
+                .machine
+                .enable_session_gpu_results(false)
+                .map_err(|e| JsError::new(&format!("gpu_session_results: {e:?}")))?;
+        }
         // Only successful attachment stamps the ephemeral disk's checkpoint identity.
         // Ordinary software construction keeps its legacy behavior.
         if inner.resume_base.is_none()
@@ -112,6 +154,19 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = invalidateVirgl)]
     pub fn invalidate_virgl(&self) -> Result<(), JsError> {
         {
+            let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+            if inner.exact_gpu {
+                self.gpu_session_stopped.set(true);
+                if let Some(capture) = &mut inner.input_capture {
+                    capture.stopped = true;
+                }
+                inner.finished = Some("gpu_session_context_lost".into());
+                return Err(JsError::new(
+                    "gpu_session_context_lost: stopped before unrecorded guest mutation",
+                ));
+            }
+        }
+        {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
             let (_, gpu) = inner
                 .machine
@@ -193,6 +248,9 @@ impl WasmLinux {
             .inner
             .try_borrow_mut()
             .map_err(|_| JsError::new("Reentrant GPU DMA access"))?;
+        if inner.exact_gpu {
+            return Err(JsError::new("owned GPU request transport required"));
+        }
         let bytes = inner
             .machine
             .submit3d_gather(&exchange)
@@ -232,6 +290,9 @@ impl WasmLinux {
             .inner
             .try_borrow_mut()
             .map_err(|_| JsError::new("Reentrant GPU DMA access"))?;
+        if inner.exact_gpu {
+            return Err(JsError::new("owned GPU request transport required"));
+        }
         inner
             .machine
             .submit3d_scatter(&exchange, bytes)
@@ -271,6 +332,9 @@ impl WasmLinux {
             .inner
             .try_borrow_mut()
             .map_err(|_| JsError::new("Reentrant GPU DMA access"))?;
+        if inner.exact_gpu {
+            return Err(JsError::new("owned GPU request transport required"));
+        }
         let bytes = inner
             .machine
             .submit3d_gather_layered(&exchange, layer_stride, layer_count)
@@ -312,6 +376,9 @@ impl WasmLinux {
             .inner
             .try_borrow_mut()
             .map_err(|_| JsError::new("Reentrant GPU DMA access"))?;
+        if inner.exact_gpu {
+            return Err(JsError::new("owned GPU request transport required"));
+        }
         inner
             .machine
             .submit3d_scatter_layered(&exchange, layer_stride, layer_count, bytes)

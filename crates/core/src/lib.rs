@@ -3394,16 +3394,81 @@ impl Machine {
         dev::virtio::gpu::checkpoint::seal_resume(bytes, renderer_digest).map_err(|_| bad)
     }
 
+    /// Non-RAM GPU history state; the authenticated page graph supplies its RAM.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn save_gpu_result_state_without_ram(
+        &mut self,
+        renderer_digest: &[u8; 32],
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        let bad = crate::resume::SnapshotError::BadComponentState {
+            tag: crate::resume::section::SESSION_GPU,
+        };
+        if self.session_gpu.is_none()
+            || self.session_clock.is_none()
+            || !self.extra_blk.is_empty()
+            || self.guest_clock_mode() != time::TimeMode::ICount
+            || self.session_replay_limit.is_some()
+            || self.session_pending_events() != 0
+        {
+            return Err(bad);
+        }
+        let bytes = self.save_resume_inner(Some(renderer_digest), true, false)?;
+        dev::virtio::gpu::checkpoint::seal_resume(bytes, renderer_digest).map_err(|_| bad)
+    }
+
+    /// Versioned guest-state witness. Physical readiness, live handles, delivery mode
+    /// and prefetched tape bodies do not change architectural state. RAM, all native
+    /// devices, disk, complete logical GPU state and pending intent remain covered.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn gpu_session_state_digest(&mut self) -> Result<[u8; 32], crate::resume::SnapshotError> {
+        use sha2::{Digest, Sha256};
+        let bytes = self.gpu_session_state_witness_bytes()?;
+        let mut hash = Sha256::new();
+        hash.update(b"wasm-vm-gpu-guest-state-v1\0");
+        hash.update((bytes.len() as u64).to_le_bytes());
+        hash.update(&bytes);
+        hash.update(self.snapshot().mem_digest);
+        Ok(hash.finalize().into())
+    }
+
+    /// Read-only component evidence for the versioned logical witness. This
+    /// contains a non-restorable logical GPU section and no RAM payload.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn gpu_session_state_witness_bytes(
+        &mut self,
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        if self.session_clock.is_none()
+            || !self.extra_blk.is_empty()
+            || self.guest_clock_mode() != time::TimeMode::ICount
+            || self.session_pending_events() != 0
+        {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::SESSION_GPU,
+            });
+        }
+        self.save_resume_inner_with_logical_gpu(None, true, false, true)
+    }
+
     fn save_resume_inner(
         &mut self,
         gpu_witness: Option<&[u8; 32]>,
         exact_inputs: bool,
         include_ram: bool,
     ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        self.save_resume_inner_with_logical_gpu(gpu_witness, exact_inputs, include_ram, false)
+    }
+
+    fn save_resume_inner_with_logical_gpu(
+        &mut self,
+        gpu_witness: Option<&[u8; 32]>,
+        exact_inputs: bool,
+        include_ram: bool,
+        logical_gpu: bool,
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
         #[cfg(not(feature = "virgl-renderer"))]
-        let _ = gpu_witness;
+        let _ = (gpu_witness, logical_gpu);
         #[cfg(feature = "virgl-renderer")]
-        if self.control3d_proof_installed() && gpu_witness.is_none() {
+        if self.control3d_proof_installed() && gpu_witness.is_none() && !logical_gpu {
             return Err(crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
             });
@@ -3530,11 +3595,30 @@ impl Machine {
                 .0
                 .borrow()
                 .snapshot_transport(&mut v);
-            append_resume_queue(&mut v, vq);
-            append_resume_queue(&mut v, cursor_vq);
+            for queue in [vq, cursor_vq] {
+                if logical_gpu && queue.is_none() {
+                    // None is an unmaterialized cache of the initial (0,0)
+                    // ring cursors. Restore may create that cache to redraw a
+                    // cursor without any guest queue activity. Transport and
+                    // every actual cursor remain part of the witness.
+                    v.extend_from_slice(&[1, 0, 0, 0, 0]);
+                } else {
+                    append_resume_queue(&mut v, queue);
+                }
+            }
             let gpu = state.borrow();
             #[cfg(feature = "virgl-renderer")]
-            let payload = if let Some(witness) = gpu_witness {
+            let payload = if logical_gpu {
+                let (epoch, queue, cursor) = self.gpu_logical_coordinates().map_err(|_| {
+                    crate::resume::SnapshotError::BadComponentState {
+                        tag: section::SESSION_GPU,
+                    }
+                })?;
+                gpu.logical_session_bytes(epoch, queue, cursor)
+                    .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                        tag: section::VIRTIO_GPU,
+                    })?
+            } else if let Some(witness) = gpu_witness {
                 (if exact_inputs {
                     gpu.to_gpu_result_checkpoint(witness)
                 } else {
@@ -3702,12 +3786,17 @@ impl Machine {
                     tag: section::SESSION_CLOCK,
                 });
             }
-            let payload =
-                clock
-                    .encode()
-                    .map_err(|_| crate::resume::SnapshotError::BadComponentState {
-                        tag: section::SESSION_CLOCK,
-                    })?;
+            #[cfg(feature = "virgl-renderer")]
+            let encoded = if logical_gpu {
+                clock.encode_guest_state()
+            } else {
+                clock.encode()
+            };
+            #[cfg(not(feature = "virgl-renderer"))]
+            let encoded = clock.encode();
+            let payload = encoded.map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_CLOCK,
+            })?;
             w.section(section::SESSION_CLOCK, &payload);
         }
         if self
@@ -3834,6 +3923,21 @@ impl Machine {
         self.bus.ram_mut().apply_delta_chunk(bytes)
     }
 
+    #[cfg(feature = "virgl-renderer")]
+    pub fn seed_gpu_session_ram_from_full_resume(
+        &mut self,
+        blob: &[u8],
+        renderer_digest: &[u8; 32],
+    ) -> Result<(), crate::resume::SnapshotError> {
+        let payload =
+            dev::virtio::gpu::checkpoint::open_resume(blob, renderer_digest).map_err(|_| {
+                crate::resume::SnapshotError::BadComponentState {
+                    tag: crate::resume::section::VIRTIO_GPU,
+                }
+            })?;
+        self.seed_session_ram_from_full_resume(payload)
+    }
+
     /// Restore only the native half of a matching, independently reconstructed GPU checkpoint.
     /// Return the saved and fresh transport epochs so the host reconstruction lane can remap its
     /// logical identities. The ordinary load API retains its explicit accelerated refusal.
@@ -3885,6 +3989,40 @@ impl Machine {
             .ok_or(bad)
     }
 
+    #[cfg(feature = "virgl-renderer")]
+    pub(crate) fn load_recorded_gpu_history(
+        &mut self,
+        blob: &[u8],
+        renderer_digest: &[u8; 32],
+        ram_digest: Option<&[u8; 32]>,
+    ) -> Result<(), crate::resume::SnapshotError> {
+        let bad = crate::resume::SnapshotError::BadComponentState {
+            tag: crate::resume::section::SESSION_GPU,
+        };
+        if !self.host_ingress_gate.replay_active()
+            || self.session_replay_limit.is_some()
+            || self.session_gpu_replay() != Ok(true)
+            || !self.extra_blk.is_empty()
+            || self.guest_clock_mode() != time::TimeMode::ICount
+        {
+            return Err(bad);
+        }
+        let payload = dev::virtio::gpu::checkpoint::open_resume(blob, renderer_digest)
+            .map_err(|_| bad.clone())?;
+        if ram_digest.is_some_and(|expected| self.snapshot().mem_digest != *expected) {
+            return Err(crate::resume::SnapshotError::RamDigestMismatch);
+        }
+        self.load_resume_inner_with_purpose(
+            payload,
+            Some(renderer_digest),
+            true,
+            ram_digest.is_some(),
+            true,
+        )?
+        .ok_or(bad)?;
+        Ok(())
+    }
+
     fn load_resume_inner(
         &mut self,
         blob: &[u8],
@@ -3892,8 +4030,25 @@ impl Machine {
         exact_inputs: bool,
         ram_already_restored: bool,
     ) -> Result<Option<(u64, u64)>, crate::resume::SnapshotError> {
+        self.load_resume_inner_with_purpose(
+            blob,
+            gpu_witness,
+            exact_inputs,
+            ram_already_restored,
+            false,
+        )
+    }
+
+    fn load_resume_inner_with_purpose(
+        &mut self,
+        blob: &[u8],
+        gpu_witness: Option<&[u8; 32]>,
+        exact_inputs: bool,
+        ram_already_restored: bool,
+        recorded_gpu_history: bool,
+    ) -> Result<Option<(u64, u64)>, crate::resume::SnapshotError> {
         #[cfg(not(feature = "virgl-renderer"))]
-        let _ = gpu_witness;
+        let _ = (gpu_witness, recorded_gpu_history);
         #[cfg(feature = "virgl-renderer")]
         if (self.control3d_proof_installed() && gpu_witness.is_none())
             || (gpu_witness.is_some() && !self.control3d_proof_installed())
@@ -4305,17 +4460,29 @@ impl Machine {
                 .iter()
                 .find(|s| s.tag == section::VIRTIO_GPU)
                 .ok_or_else(bad)?;
-            let ram = sections
-                .iter()
-                .find(|s| s.tag == section::RAM)
-                .ok_or_else(bad)?;
+            let ram = if ram_already_restored {
+                None
+            } else {
+                Some(
+                    sections
+                        .iter()
+                        .find(|s| s.tag == section::RAM)
+                        .ok_or_else(bad)?
+                        .payload,
+                )
+            };
             Some(
                 self.prepare_gpu_frontier(
                     frontier.payload,
                     gpu.payload,
                     staged_gpu_checkpoint.as_mut().ok_or_else(bad)?,
                     staged_session_clock.as_ref().ok_or_else(bad)?,
-                    ram.payload,
+                    ram,
+                    if recorded_gpu_history {
+                        session_gpu::checkpoint::RestorePurpose::RecordedHistory
+                    } else {
+                        session_gpu::checkpoint::RestorePurpose::SameMode
+                    },
                 )
                 .map_err(|_| bad())?,
             )

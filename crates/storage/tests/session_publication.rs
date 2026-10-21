@@ -201,6 +201,58 @@ fn discover_verified_event_payloads_and_refuse_unindexed_bytes() {
 }
 
 #[test]
+fn gpu_readback_reference_is_bounded_and_discovered_without_inlining_the_body() {
+    // This is a metadata/ref-discovery fixture. Actual object bytes and their
+    // hashes are authenticated by the store, not by EventRecord's size check.
+    let expected = BlobRef {
+        sha256: ContentHash([42; 32]),
+        length: ExactU64(32 << 20),
+    };
+    let mut event = EventRecord::from_bytes(EVENT).unwrap();
+    event.kind = "gpu".into();
+    event.device = "gpu0".into();
+    event.payload = EventPayload::Blob {
+        content: expected.clone(),
+    };
+    let (index, bytes) = EventChunkIndex::from_records(&[event.clone()]).unwrap();
+    assert!(
+        bytes.len() < 1024,
+        "only a reference belongs in the event log"
+    );
+    assert_eq!(index.decode_records(&bytes).unwrap(), vec![event.clone()]);
+    let mut manifest = manifest();
+    manifest.end = index.last;
+    manifest.events = vec![index];
+    assert_eq!(
+        event_references(&manifest, &bytes),
+        Ok(vec![expected.clone()])
+    );
+
+    let mut oversized = expected.clone();
+    oversized.length.0 += 1;
+    event.payload = EventPayload::Blob { content: oversized };
+    assert_eq!(event.validate(), Err(SessionError::TooLarge("event blob")));
+
+    for kind in ["uart", "network", "annotation.gpu"] {
+        event.kind = kind.into();
+        event.required = kind != "annotation.gpu";
+        let mut reference = expected.clone();
+        reference.length = ExactU64((4 << 20) + 1);
+        event.payload = EventPayload::Blob { content: reference };
+        assert_eq!(event.validate(), Err(SessionError::TooLarge("event blob")));
+    }
+    event.kind = "gpu".into();
+    event.required = true;
+    event.payload = EventPayload::Inline {
+        bytes: vec![0; MAX_INLINE_BYTES + 1],
+    };
+    assert_eq!(
+        event.validate(),
+        Err(SessionError::TooLarge("inline event"))
+    );
+}
+
+#[test]
 fn conflicting_lengths_and_malformed_indexes_never_publish() {
     let mut m = manifest();
     m.checkpoints[0].machine = m.assets[0].content.clone();

@@ -219,11 +219,69 @@ impl Submit3dCompletionLease {
     pub fn key(&self) -> Submit3dKey {
         self.key
     }
+    /// Authorize DMA for the original recorded request before touching guest RAM.
+    /// Completion ownership alone is insufficient: a delayed gather/scatter must
+    /// not acquire a newly armed job that happens to reuse its numeric key.
+    pub fn authorize_transport(&self) -> Result<(), Control3dError> {
+        let state = self.mailbox.0.borrow();
+        if !state.protected
+            || !Rc::ptr_eq(&self.incarnation, &state.incarnation)
+            || state.active != Some(self.key)
+            || state.completion.is_some()
+        {
+            return Err(Control3dError::InvalidParameter);
+        }
+        Ok(())
+    }
     pub fn post(&self, completion: Submit3dCompletion) -> Result<(), Control3dError> {
         if completion.key != self.key {
             return Err(Control3dError::InvalidParameter);
         }
         self.mailbox.receive(completion, Some(&self.incarnation))
+    }
+}
+
+#[cfg(test)]
+mod session_transport_authority_tests {
+    use super::*;
+
+    #[test]
+    fn dma_authority_is_bound_to_admission_and_ends_at_completion() {
+        let mailbox = Submit3dMailbox::new();
+        let key = Submit3dKey {
+            epoch: 1,
+            sequence: 9,
+        };
+        mailbox.arm(key, false, 256, true);
+        let original = mailbox.lease(key);
+        assert_eq!(original.authorize_transport(), Ok(()));
+        mailbox.revoke();
+        mailbox.arm(key, false, 256, true);
+        let fresh = mailbox.lease(key);
+        assert_eq!(
+            original.authorize_transport(),
+            Err(Control3dError::InvalidParameter)
+        );
+        assert_eq!(fresh.authorize_transport(), Ok(()));
+        fresh
+            .post(Submit3dCompletion {
+                key,
+                exchange_sequence: 0,
+                outcome: Ok(()),
+                gpu_complete: true,
+                applied_commands: 0,
+                draws: 0,
+            })
+            .unwrap();
+        assert_eq!(
+            fresh.authorize_transport(),
+            Err(Control3dError::InvalidParameter)
+        );
+        mailbox.arm(key, false, 256, false);
+        assert_eq!(
+            mailbox.lease(key).authorize_transport(),
+            Err(Control3dError::InvalidParameter)
+        );
     }
 }
 
@@ -560,7 +618,13 @@ impl Submit3dState {
         Ok(())
     }
     pub(crate) fn cancel_physical(&mut self, key: Submit3dKey) -> Result<(), Control3dError> {
-        if self.physical_settled {
+        if self.physical_settled
+            || self
+                .physical_completion()
+                .is_some_and(|completion| completion.key == key && completion.gpu_complete)
+        {
+            // A rejected begin or an already finished job has no live physical
+            // work to cancel. An uncertain completion still requires cancellation.
             Ok(())
         } else {
             self.sink.cancel_job(key)

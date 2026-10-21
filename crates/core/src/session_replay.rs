@@ -219,6 +219,96 @@ pub struct ReplayDriver {
     source_chunks: Vec<ObservationTape>,
     source_chunk_index: usize,
     source_loaded: usize,
+    #[cfg(feature = "virgl-renderer")]
+    gpu: Option<GpuReplayState>,
+}
+
+#[cfg(feature = "virgl-renderer")]
+pub struct GpuReplayConfig {
+    pub renderer_digest: [u8; 32],
+    /// Present only after the candidate's authenticated RAM page graph is reconstructed.
+    pub ram_digest: Option<[u8; 32]>,
+    /// One bounded checkpoint interval, copied and authenticated before any restore.
+    pub payloads: Vec<crate::session_gpu::Payload>,
+}
+#[cfg(feature = "virgl-renderer")]
+struct GpuReplayState {
+    renderer_digest: [u8; 32],
+    ram_digest: Option<[u8; 32]>,
+    payloads: alloc::collections::BTreeMap<[u8; 32], crate::session_gpu::Payload>,
+    expected_cursor: Option<u64>,
+}
+#[cfg(feature = "virgl-renderer")]
+impl GpuReplayState {
+    fn new(plan: &ReplayPlan, config: GpuReplayConfig) -> Result<Self, ReplayDivergence> {
+        use crate::session_gpu::{
+            GpuResult, MAX_OBJECTS, MAX_RESIDENT_BYTES, PayloadRef, ResultKind,
+        };
+        let fail = |detail: &str| ReplayDivergence {
+            reason: ReplayReason::InvalidPlan,
+            position: plan.begin,
+            event_index: 0,
+            detail: detail.into(),
+        };
+        if config.renderer_digest == [0; 32] || config.payloads.len() > MAX_OBJECTS {
+            return Err(fail("GPU interval bound or renderer identity"));
+        }
+        let mut payloads = alloc::collections::BTreeMap::new();
+        let mut total = 0usize;
+        for payload in config.payloads {
+            total = total
+                .checked_add(payload.bytes.len())
+                .ok_or_else(|| fail("GPU interval overflow"))?;
+            if total > MAX_RESIDENT_BYTES
+                || PayloadRef::of(&payload.bytes).ok() != Some(payload.reference)
+                || payloads.insert(payload.reference.sha256, payload).is_some()
+            {
+                return Err(fail("GPU payload digest, duplicate or interval budget"));
+            }
+        }
+        let mut required = alloc::collections::BTreeMap::new();
+        for (index, event) in plan.events.iter().enumerate() {
+            if let SessionEffect::HostInput {
+                channel: crate::session_gpu::CHANNEL,
+                bytes,
+            } = &event.effect
+            {
+                let result = GpuResult::decode(bytes).map_err(|_| ReplayDivergence {
+                    event_index: index,
+                    position: event.position,
+                    ..fail("GPU envelope")
+                })?;
+                let reference = match result.kind {
+                    // Upload bytes are deterministic guest RAM, checked against this hash.
+                    // Only GPU-to-guest observations require an external durable body.
+                    ResultKind::Scatter { payload, .. } => Some(payload),
+                    _ => None,
+                };
+                if let Some(reference) = reference {
+                    if payloads
+                        .get(&reference.sha256)
+                        .is_none_or(|p| p.reference != reference)
+                    {
+                        return Err(ReplayDivergence {
+                            event_index: index,
+                            position: event.position,
+                            ..fail("missing or conflicting GPU payload")
+                        });
+                    }
+                    required.insert(reference.sha256, reference);
+                }
+            }
+        }
+        if required.len() != payloads.len() {
+            return Err(fail("unreferenced GPU payload"));
+        }
+        Ok(Self {
+            renderer_digest: config.renderer_digest,
+            ram_digest: config.ram_digest,
+            payloads,
+            expected_cursor: None,
+        })
+    }
 }
 
 impl ReplayDriver {
@@ -346,7 +436,33 @@ impl ReplayDriver {
     /// live host providers. The empty source mode precedes restore; recorded observations are
     /// installed only after the checkpoint's own cursor has been authenticated.
     pub fn start(machine: &mut Machine, plan: ReplayPlan) -> Result<Self, ReplayDivergence> {
+        Self::start_inner(
+            machine,
+            plan,
+            #[cfg(feature = "virgl-renderer")]
+            None,
+        )
+    }
+
+    #[cfg(feature = "virgl-renderer")]
+    pub fn start_gpu(
+        machine: &mut Machine,
+        plan: ReplayPlan,
+        gpu: GpuReplayConfig,
+    ) -> Result<Self, ReplayDivergence> {
+        Self::start_inner(machine, plan, Some(gpu))
+    }
+
+    fn start_inner(
+        machine: &mut Machine,
+        plan: ReplayPlan,
+        #[cfg(feature = "virgl-renderer")] gpu: Option<GpuReplayConfig>,
+    ) -> Result<Self, ReplayDivergence> {
         plan.validate()?;
+        #[cfg(feature = "virgl-renderer")]
+        let gpu = gpu
+            .map(|config| GpuReplayState::new(&plan, config))
+            .transpose()?;
         let source_chunks = Self::source_tapes(&plan, machine.source_policy())?;
         let source_loaded = source_chunks[0].records.len();
         let mut driver = Self {
@@ -360,6 +476,8 @@ impl ReplayDriver {
             source_chunks,
             source_chunk_index: 0,
             source_loaded,
+            #[cfg(feature = "virgl-renderer")]
+            gpu,
         };
         if machine.session_position() != Some(SessionPosition::default())
             || machine.session_sources_active()
@@ -385,10 +503,31 @@ impl ReplayDriver {
                     alloc::format!("source admission: {e:?}"),
                 )
             })?;
+        #[cfg(feature = "virgl-renderer")]
+        if driver.gpu.is_some() {
+            machine.enable_session_gpu_results(true).map_err(|e| {
+                driver.failure(
+                    machine,
+                    ReplayReason::InitialCheckpoint,
+                    alloc::format!("GPU result adapter: {e:?}"),
+                )
+            })?;
+        }
         machine.host_ingress_gate.begin_replay();
         let ingress_gate = alloc::rc::Rc::clone(&machine.host_ingress_gate);
         let initial_restore = {
             let _recorded = ingress_gate.recorded_scope();
+            #[cfg(feature = "virgl-renderer")]
+            if let Some(gpu) = &driver.gpu {
+                machine.load_recorded_gpu_history(
+                    &driver.plan.initial_resume,
+                    &gpu.renderer_digest,
+                    gpu.ram_digest.as_ref(),
+                )
+            } else {
+                machine.load_session_resume(&driver.plan.initial_resume)
+            }
+            #[cfg(not(feature = "virgl-renderer"))]
             machine.load_session_resume(&driver.plan.initial_resume)
         };
         initial_restore.map_err(|e| {
@@ -488,6 +627,38 @@ impl ReplayDriver {
                 )
             })?);
         }
+        #[cfg(feature = "virgl-renderer")]
+        if driver.gpu.is_some() {
+            let initial = machine.session_gpu_cursor().map_err(|e| {
+                driver.failure(
+                    machine,
+                    ReplayReason::InitialCheckpoint,
+                    alloc::format!("GPU cursor: {e:?}"),
+                )
+            })?;
+            let count = driver
+                .plan
+                .events
+                .iter()
+                .filter(|e| {
+                    matches!(
+                        &e.effect,
+                        SessionEffect::HostInput {
+                            channel: crate::session_gpu::CHANNEL,
+                            ..
+                        }
+                    )
+                })
+                .count() as u64;
+            let expected = initial.checked_add(count).ok_or_else(|| {
+                driver.failure(
+                    machine,
+                    ReplayReason::InvalidPlan,
+                    "GPU cursor overflow".into(),
+                )
+            })?;
+            driver.gpu.as_mut().unwrap().expected_cursor = Some(expected);
+        }
         machine.session_replay_limit = Some(driver.plan.end.transition);
         driver.check_witnesses(machine)?;
         Ok(driver)
@@ -542,14 +713,30 @@ impl ReplayDriver {
         while let Some(expected) = self.plan.witnesses.get(self.witness_cursor).copied() {
             let actual_position = machine.session_position().unwrap_or(self.plan.begin);
             if actual_position == expected.position {
-                let bytes = machine.save_session_resume().map_err(|e| {
+                #[cfg(feature = "virgl-renderer")]
+                let gpu_digest = if self.gpu.is_some() {
+                    Some(machine.gpu_session_state_digest())
+                } else {
+                    None
+                };
+                #[cfg(not(feature = "virgl-renderer"))]
+                let gpu_digest: Option<
+                    Result<[u8; 32], crate::resume::SnapshotError>,
+                > = None;
+                let actual = if let Some(digest) = gpu_digest {
+                    digest
+                } else {
+                    machine
+                        .save_session_resume()
+                        .map(|bytes| Sha256::digest(&bytes).into())
+                }
+                .map_err(|e| {
                     self.failure(
                         machine,
                         ReplayReason::Runtime,
                         alloc::format!("witness snapshot: {e:?}"),
                     )
                 })?;
-                let actual: [u8; 32] = Sha256::digest(&bytes).into();
                 if actual != expected.resume_sha256 {
                     return Err(self.failure(
                         machine,
@@ -625,7 +812,7 @@ impl ReplayDriver {
         &mut self,
         machine: &mut Machine,
         apply_input: &mut impl FnMut(&mut Machine, u16, &[u8]) -> [u64; 4],
-    ) -> Result<(), ReplayDivergence> {
+    ) -> Result<bool, ReplayDivergence> {
         let expected = self.plan.events[self.event_cursor].clone();
         let result = match expected.effect {
             SessionEffect::WriteRam { address, bytes } => machine
@@ -642,6 +829,42 @@ impl ReplayDriver {
                 )
                 .and_then(|_| machine.deliver_recorded_session_boundary())
                 .map_err(|e| alloc::format!("pending delivery: {e:?}")),
+            #[cfg(feature = "virgl-renderer")]
+            SessionEffect::HostInput {
+                channel: crate::session_gpu::CHANNEL,
+                bytes,
+            } => {
+                if self.gpu.is_none() {
+                    return Err(self.failure_at(
+                        expected.position,
+                        ReplayReason::Adapter,
+                        "GPU replay adapter absent".into(),
+                    ));
+                }
+                let result = crate::session_gpu::GpuResult::decode(&bytes).map_err(|e| {
+                    self.failure_at(
+                        expected.position,
+                        ReplayReason::EventPayload,
+                        alloc::format!("GPU envelope: {e:?}"),
+                    )
+                })?;
+                let payload =
+                    if let crate::session_gpu::ResultKind::Scatter { payload, .. } = result.kind {
+                        self.gpu
+                            .as_ref()
+                            .unwrap()
+                            .payloads
+                            .get(&payload.sha256)
+                            .cloned()
+                    } else {
+                        None
+                    };
+                match machine.replay_recorded_session_gpu(expected.position, result, payload) {
+                    Ok(()) => Ok(()),
+                    Err(crate::session_gpu::GpuError::PhysicalPending) => return Ok(false),
+                    Err(error) => Err(alloc::format!("GPU result admission: {error:?}")),
+                }
+            }
             SessionEffect::HostInput {
                 channel: crate::session_devices::CHANNEL,
                 bytes,
@@ -682,7 +905,8 @@ impl ReplayDriver {
         result
             .map_err(|detail| self.failure_at(expected.position, ReplayReason::Adapter, detail))?;
         self.compare_deliveries(machine)?;
-        self.check_witnesses(machine)
+        self.check_witnesses(machine)?;
+        Ok(true)
     }
 
     /// Advance by at most `quantum` guest transitions toward a quiescent recorded coordinate.
@@ -792,7 +1016,9 @@ impl ReplayDriver {
                 ));
             }
             if before_event_pending {
-                self.apply_before(machine, &mut apply_input)?;
+                if !self.apply_before(machine, &mut apply_input)? {
+                    return Ok(false);
+                }
                 // A dense same-boundary tape must not monopolize a cancellable browser chunk.
                 delivered += 1;
                 if delivered >= quantum.min(64) {
@@ -850,6 +1076,16 @@ impl ReplayDriver {
                                 alloc::format!("network exhaustion: {e:?}"),
                             )
                         })?;
+                }
+                #[cfg(feature = "virgl-renderer")]
+                if let Some(expected) = self.gpu.as_ref().and_then(|gpu| gpu.expected_cursor)
+                    && machine.session_gpu_cursor() != Ok(expected)
+                {
+                    return Err(self.failure(
+                        machine,
+                        ReplayReason::Exhausted,
+                        "GPU result cursor".into(),
+                    ));
                 }
                 self.status = ReplayStatus::Completed;
                 return Ok(true);
@@ -1078,6 +1314,8 @@ mod admission_tests {
             source_chunks: chunks.clone(),
             source_chunk_index: 0,
             source_loaded: MAX_EVENTS,
+            #[cfg(feature = "virgl-renderer")]
+            gpu: None,
         };
         let mut missing = driver(1);
         let failure = missing.append_source_window(&mut machine).unwrap_err();

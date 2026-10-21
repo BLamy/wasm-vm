@@ -14,6 +14,9 @@ pub const MAX_MANIFEST_BYTES: usize = 1 << 20;
 pub const MAX_INLINE_BYTES: usize = 1 << 20;
 pub const MAX_EVENT_BYTES: usize = 4 * MAX_INLINE_BYTES + 65_536;
 pub const MAX_CHUNK_BYTES: u64 = 4 << 20;
+/// Owned GPU readbacks use the native result boundary's 32 MiB limit. The event
+/// keeps only a content reference; the object store streams its ordinary parts.
+pub const MAX_GPU_EVENT_BLOB_BYTES: u64 = 32 << 20;
 pub const MAX_SESSION_BYTES: u64 = 4 << 30;
 pub const MAX_INDEX_ENTRIES: usize = 4096;
 pub const MAX_EVENTS_PER_CHUNK: u32 = 65_536;
@@ -845,7 +848,12 @@ impl EventRecord {
             }
             EventPayload::Blob { content } => {
                 content.validate()?;
-                if content.length.0 > MAX_CHUNK_BYTES {
+                let limit = if self.kind == "gpu" {
+                    MAX_GPU_EVENT_BLOB_BYTES
+                } else {
+                    MAX_CHUNK_BYTES
+                };
+                if content.length.0 > limit {
                     return Err(SessionError::TooLarge("event blob"));
                 }
             }

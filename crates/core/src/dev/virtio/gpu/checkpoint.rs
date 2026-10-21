@@ -402,6 +402,71 @@ impl PreparedGpuCheckpoint {
     }
 }
 impl GpuState {
+    /// Logical guest witness, never a restore image or a renderer checkpoint.
+    /// The result tap owns guest completion; physical mailbox readiness is excluded.
+    pub(crate) fn logical_session_bytes(
+        &self,
+        epoch: u64,
+        queue: u64,
+        cursor: u64,
+    ) -> Result<Vec<u8>, Error> {
+        need(
+            self.production_selected
+                && self
+                    .control3d
+                    .as_ref()
+                    .is_some_and(|c| c.result_tap_active()),
+        )?;
+        let mut out = b"WVGPULG1".to_vec();
+        out.push(u8::from(self.reset_pending));
+        out.extend_from_slice(
+            &self
+                .scanout_resource
+                .unwrap_or(NONE_RESOURCE_ID)
+                .to_le_bytes(),
+        );
+        out.extend_from_slice(&queue.to_le_bytes());
+        out.extend_from_slice(&cursor.to_le_bytes());
+        let mut control = self
+            .control3d
+            .as_ref()
+            .ok_or(Error::Unsupported)?
+            .snapshot();
+        control.epoch = epoch;
+        let submit_owner = self.submit3d.as_ref().ok_or(Error::Unsupported)?;
+        let mut submit = submit_owner.snapshot();
+        if let Some(pending) = &mut submit.pending {
+            pending.key.epoch = epoch;
+        }
+        for bytes in [
+            self.capabilities
+                .as_ref()
+                .ok_or(Error::Unsupported)?
+                .to_bytes(),
+            snapshot::encode_2d(
+                self,
+                self.scanout_resource
+                    .filter(|id| self.resources.get(*id).is_some()),
+            )
+            .map_err(|_| Error::Invalid)?,
+            control.canonical_bytes(),
+            submit.canonical_bytes(),
+            self.scanout3d
+                .as_ref()
+                .ok_or(Error::Unsupported)?
+                .snapshot()
+                .canonical_bytes(),
+        ] {
+            put_blob(&mut out, &bytes)?;
+        }
+        if let Some(pending) = &submit_owner.pending {
+            out.extend_from_slice(&crate::session_gpu::admission::request_digest(
+                pending, epoch, queue,
+            ));
+        }
+        Ok(out)
+    }
+
     pub(crate) fn checkpoint_ready(&self) -> Result<(), Error> {
         // The legacy v1 API cannot carry the result frontier. Only the explicit
         // GPU-session v2 API may capture an active result adapter.

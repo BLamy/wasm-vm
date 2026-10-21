@@ -69,7 +69,8 @@ function owner(options, replay=null) {
   };
   const consume = (name,args) => {
     need(cursor<frames.length,'unexpected replay transport call');
-    const frame=decodeCheckpointData(frames[cursor]);need(frame.op===name && same(frame.args,args),'replay transport identity differs');cursor++;return frame;
+    const frame=decodeCheckpointData(frames[cursor]);
+    need(frame.op===name && same(frame.args,args),`replay transport identity differs at ${cursor}: expected ${frame.op} ${JSON.stringify(frame.args)}, got ${name} ${JSON.stringify(args)}`);cursor++;return frame;
   };
   const queryIds=new WeakMap(),queries=new Map();let nextQuery=0;
   const queryGl=new Proxy(options.gl,{get(target,name){
@@ -90,33 +91,53 @@ function owner(options, replay=null) {
         }
         need(expected?.op==='query' && expected.id===id && expected.parameter===parameter && Object.is(expected.value,actual),'fresh physical query result differs');cursor++;return actual;
       }
+      if(name==='clientWaitSync') {
+        const actual=method.apply(target,args);
+        const next=mode==='replay'&&cursor<frames.length?decodeCheckpointData(frames[cursor]):null;
+        // A faster physical completion fence must not finish the submission before
+        // its recorded query polls ran. Only withhold readiness; never invent it.
+        if(next?.op==='query'&&next.parameter==='availability'
+          &&[target.ALREADY_SIGNALED,target.CONDITION_SATISFIED].includes(actual))return target.TIMEOUT_EXPIRED;
+        return actual;
+      }
       const result=method.apply(target,args);
       if(name==='createQuery' && result) {queryIds.set(result,++nextQuery);queries.set(nextQuery,result);}
       if(name==='deleteQuery')queries.delete(queryIds.get(args[0]));return result;
     };
   }});
-  const transport=Object.fromEntries(TRANSPORT.map(name=>[name,(...args)=>{
+  const wrapTransport=target=>Object.fromEntries(TRANSPORT.map(name=>[name,(...args)=>{
     if(mode==='replay') {
       if(name.startsWith('gather'))return unpackCheckpointDma(consume(name,args).data);
       if(name.startsWith('scatter')) {const data=checkpointBytes(args.at(-1));const frame=consume(name,args.slice(0,-1));need(equalCheckpointBytes(unpackCheckpointDma(frame.data),data),'fresh GPU output differs');return;}
       consume(name,args);return;
     }
-    if(unavailable)return options.transport[name](...args);
+    if(unavailable)return target[name](...args);
     try {
       const data=name.startsWith('scatter')?packCheckpointDma(args.at(-1)):null;
-      const result=options.transport[name](...args);
+      const result=target[name](...args);
+      if(result===null)return null; // owned replay DMA has not reached its recorded boundary
       if(name.startsWith('gather'))append({op:name,args,data:packCheckpointDma(result)});
       else if(data)append({op:name,args:args.slice(0,-1),data});
       else {append({op:name,args});if(args[3]!==0 || args[4]!==true)unavailable='a GPU job failed or has an unproved applied prefix';}
       return result;
     }catch(error){unavailable='transport failed';throw error;}
   }]));
+  const transport=wrapTransport(options.transport);
   const raw=unwrap(createVirglProductionBridge({gl:queryGl,shaderBridge:options.shaderBridge,transport,presenter:gate.presenter})).bridge;
   const bridge={
     apply(event) {
       if(disposed || !active)return {ok:false,error:{code:'bridge-poisoned',message:'GPU checkpoint owner is not active'}};
-      let frame;if(!unavailable)try{frame=encodeCheckpointData({op:'event',event});}catch(error){unavailable=String(error.message);}
-      const result=raw.apply(event);
+      const owned=Object.getOwnPropertyDescriptor(event,'ownedTransport');
+      let saved=event, delivered=event;
+      if(owned) {
+        // The native ownership capability is ephemeral. Historical reconstruction
+        // replays the ordinary recorded event through its isolated journal transport.
+        if(!Object.hasOwn(owned,'value'))return {ok:false,error:{code:'invalid-parameter',message:'Accessor request transport'}};
+        saved={...event};delete saved.ownedTransport;
+        delivered={...saved,ownedTransport:wrapTransport(owned.value)};
+      }
+      let frame;if(!unavailable)try{frame=encodeCheckpointData({op:'event',event:saved});}catch(error){unavailable=String(error.message);}
+      const result=raw.apply(delivered);
       if(result.ok && frame)append(decodeCheckpointData(frame));else if(!result.ok)unavailable='a control event failed';
       return result;
     },
@@ -192,7 +213,12 @@ export async function restoreProductionRenderer(source, options) {
       else if(frame.op==='rebase') {candidate.advance();unwrap(candidate.raw.rebaseCheckpointEpoch(frame.expected,frame.next));}
       else {
         if(!candidate.canPump()){await delay();pumps++;continue;}
-        const before=candidate.cursor;const result=unwrap(candidate.raw.pump());pumps++;need(result.status!=='idle' || candidate.cursor!==before,'incomplete reconstruction journal');await delay();
+        const before=candidate.cursor,step=candidate.raw.pump();
+        if(!step.ok) {
+          const failure=candidate.raw.inspect().lastFailure;
+          need(false,`${step.error?.message ?? 'reconstruction failed'}${failure?.message ? ': '+failure.message : ''}`);
+        }
+        const result=unwrap(step);pumps++;need(result.status!=='idle' || candidate.cursor!==before,'incomplete reconstruction journal');await delay();
       }
     }
     const state=unwrap(candidate.raw.checkpointState()),contents=await contentIdentity(state.contents);

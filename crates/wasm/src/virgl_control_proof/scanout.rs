@@ -89,7 +89,7 @@ impl WasmVirglScanoutProof {
             machine.enable_virtio_gpu_scanout3d_proof(
                 frame_sink,
                 Box::new(JsControlSink(callback.clone())),
-                Box::new(JsScanoutSink(JsSubmitSink(callback))),
+                Box::new(JsScanoutSink(JsSubmitSink::legacy(callback))),
                 mailbox.clone(),
             )
         } else {

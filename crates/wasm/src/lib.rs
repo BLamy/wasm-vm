@@ -19,6 +19,12 @@ mod virgl_control_proof;
 
 #[cfg(all(
     target_arch = "wasm32",
+    feature = "virgl-renderer",
+    not(feature = "zicsr-stub")
+))]
+mod session_gpu;
+#[cfg(all(
+    target_arch = "wasm32",
     any(feature = "virgl-renderer", feature = "virgl-control-proof"),
     not(feature = "zicsr-stub")
 ))]
@@ -29,6 +35,12 @@ mod virgl_host;
     not(feature = "zicsr-stub")
 ))]
 mod virgl_linux;
+#[cfg(all(
+    target_arch = "wasm32",
+    any(feature = "virgl-renderer", feature = "virgl-control-proof"),
+    not(feature = "zicsr-stub")
+))]
+mod virgl_session_transport;
 
 pub mod software_checkpoint;
 
@@ -2210,9 +2222,11 @@ impl wasm_vm_core::dev::virtio::snd::AudioClock for SharedAudioClock {
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 #[wasm_bindgen]
 pub struct WasmLinux {
-    inner: RefCell<LinuxInner>,
+    inner: std::rc::Rc<RefCell<LinuxInner>>,
     #[cfg(feature = "virgl-renderer")]
     gpu_mailbox: RefCell<Option<wasm_vm_core::dev::virtio::gpu::submit3d::Submit3dMailbox>>,
+    #[cfg(feature = "virgl-renderer")]
+    gpu_session_stopped: std::rc::Rc<core::cell::Cell<bool>>,
 }
 
 #[cfg(all(test, target_arch = "wasm32", not(feature = "zicsr-stub")))]
@@ -2246,6 +2260,7 @@ struct LinuxInner {
     pending: std::collections::VecDeque<u8>,
     input_capture: Option<session_input::InputCapture>,
     exact_session: Option<bool>,
+    exact_gpu: bool,
     exact_driver: Option<wasm_vm_core::session_replay::ReplayDriver>,
     finished: Option<String>,
     /// E3-T02 lazy-fetch state, present only for a `newChunkedDisk` boot (`None` otherwise). Held in
@@ -2332,6 +2347,7 @@ enum DiskChoice {
     ExactSession {
         manifest: wasm_vm_storage::ImageManifest,
         replay: bool,
+        gpu: bool,
     },
     Chunked {
         manifest: wasm_vm_storage::ImageManifest,
@@ -2715,7 +2731,11 @@ impl WasmLinux {
             256,
             kernel,
             None,
-            DiskChoice::ExactSession { manifest, replay },
+            DiskChoice::ExactSession {
+                manifest,
+                replay,
+                gpu: false,
+            },
             &bootargs,
             output,
             false,
@@ -2958,7 +2978,13 @@ impl WasmLinux {
             DiskChoice::ExactSession { replay, .. } => Some(*replay),
             _ => None,
         };
-        let uart = if let DiskChoice::ExactSession { manifest, replay } = &disk {
+        let exact_gpu = matches!(&disk, DiskChoice::ExactSession { gpu: true, .. });
+        let uart = if let DiskChoice::ExactSession {
+            manifest,
+            replay,
+            gpu,
+        } = &disk
+        {
             use wasm_vm_core::session_devices::{BaseDisk, PayloadRef};
             let chunks = manifest
                 .chunks
@@ -2973,20 +2999,44 @@ impl WasmLinux {
                     Ok(PayloadRef { sha256, length })
                 })
                 .collect::<Result<Vec<_>, JsError>>()?;
-            machine
-                .install_full_software_session(
-                    BaseDisk {
-                        identity: manifest.base_hash(),
-                        sectors: manifest.image_len / 512,
-                        chunk_bytes: manifest.chunk_size,
-                        chunks,
-                    },
+            let base = BaseDisk {
+                identity: manifest.base_hash(),
+                sectors: manifest.image_len / 512,
+                chunk_bytes: manifest.chunk_size,
+                chunks,
+            };
+            #[cfg(feature = "virgl-renderer")]
+            let installed = if *gpu {
+                machine.install_full_gpu_session(
+                    base,
                     Box::new(JsWallClock),
                     Box::new(crypto_entropy::CryptoEntropy),
                     build_core_hash(),
                     *replay,
                 )
-                .map_err(|e| JsError::new(&format!("exact session profile: {e:?}")))?
+            } else {
+                machine.install_full_software_session(
+                    base,
+                    Box::new(JsWallClock),
+                    Box::new(crypto_entropy::CryptoEntropy),
+                    build_core_hash(),
+                    *replay,
+                )
+            };
+            #[cfg(not(feature = "virgl-renderer"))]
+            let installed = {
+                if *gpu {
+                    return Err(JsError::new("GPU session support is unavailable"));
+                }
+                machine.install_full_software_session(
+                    base,
+                    Box::new(JsWallClock),
+                    Box::new(crypto_entropy::CryptoEntropy),
+                    build_core_hash(),
+                    *replay,
+                )
+            };
+            installed.map_err(|e| JsError::new(&format!("exact session profile: {e:?}")))?
         } else {
             // Ordinary live assemblies retain their established host transports and slot map.
             machine.enable_clint(10);
@@ -3278,7 +3328,9 @@ impl WasmLinux {
         Ok(WasmLinux {
             #[cfg(feature = "virgl-renderer")]
             gpu_mailbox: RefCell::new(None),
-            inner: RefCell::new(LinuxInner {
+            #[cfg(feature = "virgl-renderer")]
+            gpu_session_stopped: std::rc::Rc::new(core::cell::Cell::new(false)),
+            inner: std::rc::Rc::new(RefCell::new(LinuxInner {
                 machine,
                 session_kernel: Sha256::digest(kernel).into(),
                 session_has_initrd: initrd.is_some(),
@@ -3296,6 +3348,7 @@ impl WasmLinux {
                     stopped: false,
                 }),
                 exact_session: exact_replay,
+                exact_gpu,
                 exact_driver: None,
                 finished: None,
                 fetch,
@@ -3307,7 +3360,7 @@ impl WasmLinux {
                 resume_base,
                 snapshot_read_only,
                 snapshot_write_count: std::rc::Rc::new(std::cell::Cell::new(0)),
-            }),
+            })),
         })
     }
 

@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "architecture": "rv64imac_zicsr-supervisor",
+  "scope": "Original MMIO GPU/query/disk fixture; not Linux/Mesa",
+  "sha256": "a393783a4d9ae15fdcd7cfd52e9cc95ea31acef1f43a7555c3dcbf4c3a83a4d9",
+  "bytes": 4224,
+  "symbols": {
+    "disk": {
+      "address": "0x000000008020b000",
+      "bytes": 8192
+    },
+    "diskBytes": {
+      "address": "0x0000000080202110",
+      "bytes": 512
+    },
+    "fence": {
+      "address": "0x0000000080200f30",
+      "bytes": 8
+    },
+    "gpu": {
+      "address": "0x000000008020f000",
+      "bytes": 8192
+    },
+    "pixels": {
+      "address": "0x0000000080202350",
+      "bytes": 16384
+    },
+    "queryData": {
+      "address": "0x0000000080202310",
+      "bytes": 64
+    },
+    "response": {
+      "address": "0x0000000080202000",
+      "bytes": 256
+    }
+  }
+}

@@ -20,7 +20,10 @@ GPU profile, renderer checkpoint payload. The first checkpoint is the retained b
 
 The decoder caps metadata at 1 MiB, indexes at 4,096 entries, device identities at 32,
 and runtime assets at 16. Inline event payloads are at most 1 MiB; referenced event
-payloads and serialized event chunks are at most 4 MiB. A chunk holds at most 65,536
+payloads are at most 4 MiB, except required `gpu` events may reference a single
+owned readback object up to 32 MiB (E9-T18c). The object store streams that object
+through its existing bounded parts; it is not an inline event or a larger event
+index. Serialized event chunks remain at most 4 MiB. A chunk holds at most 65,536
 consecutive events and authenticates its exact bytes, count and endpoint positions.
 The sum of indexed event and machine/GPU checkpoint payloads is at most 4 GiB;
 the later store and retention slices account for referenced disk and runtime assets.

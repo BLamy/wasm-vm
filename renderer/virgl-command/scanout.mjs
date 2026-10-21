@@ -37,7 +37,8 @@ function binding(value, production) {
 export function normalizeScanoutEvent(input, production = false) {
   const type = Object.getOwnPropertyDescriptor(input, 'type')?.value;
   need(type === 'bindScanout' || type === 'beginScanout', 'Unknown scanout event.');
-  const event = record(input, type === 'bindScanout' ? ['type','epoch','binding'] : ['type','epoch','sequence','header','binding']);
+  const keys = type === 'bindScanout' ? ['type','epoch','binding'] : ['type','epoch','sequence','header','binding'];
+  const event = record(input, [...keys, ...(type === 'beginScanout' && production ? ['ownedTransport'] : [])], keys);
   hex(event.epoch); event.binding = binding(event.binding, production);
   if (type === 'beginScanout') {
     hex(event.sequence); event.header = record(event.header, ['type','flags','fenceId','contextId','ringIndex']);
