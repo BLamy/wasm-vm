@@ -26,7 +26,7 @@ Integrate the accepted production GPU checkpoint path, renderer/profile identity
 
 ## Deterministic acceptance
 
-`make verify-E9-T17`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.
+`make verify-E9-T17` runs the transport/archive guards, built-page suite, hardware GPU/public-restore regression and actual cold Omarchy capture/restore/input/library matrix. The risk-tier native submission and incremental evidence rules follow AGENTS.md.
 
 ## Adversarial verification
 

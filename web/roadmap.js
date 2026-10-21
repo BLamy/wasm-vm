@@ -234,7 +234,7 @@ export const ROADMAP = [
       { name: "Saved full Linux replay", status: "verified", probe: "session-replay", evidence: "E9-T14: pinned Alpine session, durable event tape, interpreter/JIT state digests, first-divergence and unbranched-input checks" },
       { name: "Incremental RAM keyframes", status: "verified", probe: "session-keyframe", evidence: "E9-T15: independently verified bounded dirty-page deltas, exact private restore, ancestor refusal and shared retention" },
       { name: "Seeking and reverse-step", status: "verified", probe: "session-seek", evidence: "E9-T16: independently verified transition fences, keyframe lookup and latest-request ownership" },
-      { name: "Accelerated desktop keyframes", status: "in-progress", evidence: "E9-T17: coherent RAM/disk/GPU points and physical scanout restore" },
+      { name: "Accelerated desktop keyframes", status: "verified", evidence: "E9-T17: independently verified Omarchy points, exact scanout restore, fresh owners, trusted input and library reopen" },
       { name: "Guest-visible GPU replay", status: "pending", evidence: "E9-T18" },
       { name: "Session timeline and branches", status: "pending", evidence: "E9-T19–T20" },
     ],
