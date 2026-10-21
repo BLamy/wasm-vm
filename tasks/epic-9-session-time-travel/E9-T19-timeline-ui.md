@@ -3,7 +3,7 @@ id: E9-T19
 epic: 9
 title: Build the session timeline and accessible time-travel controls
 priority: 524.919
-status: in-progress
+status: implemented
 depends_on: [E9-T06, E9-T16]
 estimate: S
 risk: medium
@@ -42,3 +42,52 @@ independent verifier's account security setup and leaves the active lane. This
 independent UI slice uses the accepted software seek controller and keeps full
 GPU replay gated until E9-T18c is verified. No UI implementation or recorded
 acceptance is claimed yet.
+
+### 2026-10-21 — worker — frozen software timeline submission
+
+Runtime/source head: `76aaf3539724cf32eb77a06716cb9d31142e2603`. The timeline
+PR was moved below the externally blocked GPU pending-keyframe PR. This release
+uses the exact already-verified A Wasm (`eaf24659537e2cd79def0e49b698fdd3ced525998dc9332ba8d286538d13a35e`,
+2361401 bytes) and contains no pending-GPU implementation. The UI and browser
+acceptance sources are byte-identical to the preliminary passing `9e09ee4e6`
+run; the final release recording below is on the verified runtime.
+
+Command: `E9_TIMELINE_EVIDENCE_DIR=target/evidence/e9-t19-final-76aaf353 make verify-E9-T19`.
+All eight medium-risk commands passed: policy, format, three JavaScript syntax
+checks, 21 deterministic replay plus 6 seek tests, the affected Wasm/browser
+build, and the built-page acceptance. No unrelated full workspace wall or cold
+clone is claimed for this UI-only medium-risk boundary.
+
+Evidence (relative to this checkout):
+
+- `target/evidence/e9-t19-final-76aaf353/report.json`, SHA-256 `cd7f77b1d2d57586b939d7da4ee5cc9b17b38ece282510fab113f6850b483472`; 108.61 seconds.
+- `target/evidence/e9-t19-final-76aaf353/browser/report.json`, SHA-256 `c6be9959e327e17f2db00a2bc0458830fa05088815e9fcbf258f7bdd6db41304`.
+- `target/evidence/e9-t19-final-76aaf353/browser/browser-trace.zip`, SHA-256 `c5661cc9a738bed262638827391c47c27fe495d271c594280b54485d3ed2967d`.
+- Desktop and phone captures: `target/evidence/e9-t19-final-76aaf353/browser/timeline-{desktop,phone}.png`.
+- Independent worker digest catalog audit: `target/evidence/e9-t19-final-audit-76aaf353.json`; all 12 recorded files (8124813 bytes) and 14 source hashes rechecked.
+
+The recording demonstrates a real saved Linux boot excerpt, private restoration
+and 13 independent from-start VM/console comparisons, exact full positions,
+keyboard text/slider/step/keyframe navigation, mouse and touch scrubbing,
+390-pixel reflow with retained focus and polite status announcements, actual
+live BusyBox controller pausing, playback/pause, refresh/reselection event
+navigation, and a complete early-finish recording ending at transition 64.
+A held first frame proves a newer seek survives cancellation of Open; 100
+superseded requests all cancel (0.735 ms total) while only the newest actual
+state publishes. Invalid transitions and stored incompatible/incomplete/GPU
+metadata leave the previous machine and console intact.
+
+The observation marker is explicitly a synthetic UI-routing fixture at
+63/observe: the authenticated tape stays untouched and the independently
+observed real Linux VM/console at transition 64 is asserted. The short excerpt
+does not claim to have produced a real RTC/entropy observation. GPU metadata
+fixtures prove gating, not GPU execution. Test hooks use the production 10000 ms
+worker watchdog instead of the special 300 ms fatal-watchdog-test default; no
+production timeout changed.
+
+Fresh preaudit identified and the worker fixed initial-open/new-seek retirement,
+event-option clearing on refresh, and step enablement at same-transition
+boundaries. All three are now exercised in the recording. This is a worker
+claim awaiting the independent final verdict. Main-site publication follows
+verification on this verified-runtime branch; the pending GPU branch remains
+blocked and must not ride that release.
