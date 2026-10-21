@@ -35119,18 +35119,18 @@
         },
         {
           "date": "2026-10-21",
-          "commits": 5,
+          "commits": 6,
           "labels": [
+            "E9-T17 fix public GPU restore option scope and prove both restores",
             "E9-T17 retain raw checkpoint evidence and focus desktop input proof",
             "E9-T17 validate restored options before replacing the desktop",
-            "E9-T17 refuse checkpoint publication after GPU context loss",
-            "Persist coherent accelerated session checkpoints"
+            "E9-T17 refuse checkpoint publication after GPU context loss"
           ]
         }
       ],
       "firstActivity": "2026-10-17",
       "lastActivity": "2026-10-21",
-      "commitCount": 6
+      "commitCount": 7
     },
     {
       "id": "E9-T18",
