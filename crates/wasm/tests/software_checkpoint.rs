@@ -116,6 +116,52 @@ fn tuple_exact_components_and_each_digest() {
         bytes.len()
     );
 }
+
+#[test]
+fn delta_envelope_omits_ram_and_cannot_be_opened_as_a_full_checkpoint() {
+    let (context, _, disk) = fixture();
+    let mut machine = Machine::new(16 << 20);
+    machine.enable_clint(10);
+    machine.start_session_clock(1).unwrap();
+    machine.set_snapshot_identity_with_generation(
+        [1; 32],
+        disk[17..49].try_into().unwrap(),
+        9_007_199_254_740_993,
+    );
+    let native = machine.save_session_resume().unwrap();
+    let (header, sections) = SectionReader::new(&native).unwrap();
+    let mut writer = SnapshotWriter::new(
+        &header.core_hash,
+        &header.base_image_hash,
+        header.overlay_generation,
+    );
+    for item in sections {
+        let item = item.unwrap();
+        if item.tag != section::RAM {
+            writer.section(item.tag, item.payload);
+        }
+    }
+    let delta =
+        SoftwareCheckpoint::encode_delta(&context, &writer.finish(), &disk, b"in", b"out").unwrap();
+    assert_eq!(&delta[..8], b"WVDELT01");
+    assert_eq!(
+        SoftwareCheckpoint::from_delta_bytes(&delta).unwrap().input,
+        b"in"
+    );
+    assert!(SoftwareCheckpoint::from_bytes(&delta).is_err());
+    let base =
+        SoftwareCheckpoint::encode_keyframe_base(&context, &native, &disk, b"", b"").unwrap();
+    assert_eq!(
+        SoftwareCheckpoint::from_keyframe_base_bytes(&base)
+            .unwrap()
+            .resume,
+        native
+    );
+    assert!(SoftwareCheckpoint::from_delta_bytes(&base).is_err());
+    assert!(SoftwareCheckpoint::from_bytes(&base).is_err());
+    assert!(SoftwareCheckpoint::encode(&context, &native, &disk, b"", b"").is_err());
+    assert!(SoftwareCheckpoint::encode_delta(&context, &native, &disk, b"", b"").is_err());
+}
 #[test]
 fn tuples_reject_wrong_disk_and_clock_even_when_rehashed() {
     let (mut context, native, mut disk) = fixture();

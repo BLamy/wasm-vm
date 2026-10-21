@@ -205,6 +205,8 @@ impl<'a> Reader<'a> {
 pub enum SnapshotError {
     /// An unbranched replay refuses host-initiated restore after replay starts.
     ReplayActive,
+    /// Reconstructed page chain did not produce the keyframe's committed full-RAM digest.
+    RamDigestMismatch,
     /// The blob is shorter than the fixed header (or a section runs past the end).
     Truncated,
     /// The leading magic is not [`MAGIC`].

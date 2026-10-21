@@ -30,6 +30,13 @@ pub(crate) fn position_object(position: SessionPosition) -> js_sys::Object {
 
 #[wasm_bindgen]
 impl WasmMachine {
+    /// Diagnostic witness for direct Wasm JIT stores that entered RAM's dirty-page path.
+    #[wasm_bindgen(js_name = jitDirectStoreMarks)]
+    pub fn jit_direct_store_marks(&self) -> Result<f64, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        Ok(inner.machine.bus_mut().ram().direct_store_marks() as f64)
+    }
+
     /// Select a single-hart deterministic board and begin a fresh exact coordinate. Validate
     /// host numbers before wasm integer coercion; wide event positions always use strings.
     #[wasm_bindgen(js_name=startEventClock)]

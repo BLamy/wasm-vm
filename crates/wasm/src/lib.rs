@@ -3265,6 +3265,16 @@ impl WasmLinux {
                 .start_session_sources(machine.source_policy(), None)
                 .map_err(|e| JsError::new(&format!("exact session sources: {e:?}")))?;
         }
+        if exact_replay.is_some() {
+            // T14's initial native checkpoint already includes every boot-loaded RAM byte.
+            // Start T15's incremental epoch at that full base, not at the zeroed allocation:
+            // otherwise the first one-instruction delta repeats the entire 24 MiB kernel.
+            let ram = machine.bus_mut().ram_mut();
+            ram.begin_dirty_epoch()
+                .map_err(|_| JsError::new("exact session RAM epoch"))?;
+            ram.finish_dirty_epoch(true)
+                .map_err(|_| JsError::new("exact session RAM epoch"))?;
+        }
         Ok(WasmLinux {
             #[cfg(feature = "virgl-renderer")]
             gpu_mailbox: RefCell::new(None),
@@ -3858,6 +3868,9 @@ impl WasmLinux {
         persist_max_dirty_bytes: Option<u32>,
     ) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.machine.ram_epoch_pending() {
+            return Err(JsError::new("session keyframe publication pending"));
+        }
         if let Some(capture) = &inner.input_capture {
             if capture.replay {
                 return Err(JsError::new(

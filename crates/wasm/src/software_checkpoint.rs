@@ -1,6 +1,7 @@
 //! E9-T05: authenticated native/disk/host-queue tuple; pure Rust so admission runs natively too.
 use sha2::{Digest, Sha256};
 use wasm_vm_core::resume::{SectionReader, SnapshotError, SnapshotHeader, section};
+use wasm_vm_storage::session::Phase;
 use wasm_vm_storage::{
     OverlayDelta, OverlayDeltaError,
     checkpoint::{CheckpointContext, MAX_CONTEXT_BYTES},
@@ -9,6 +10,29 @@ use wasm_vm_storage::{
 };
 
 const MAGIC: &[u8; 8] = b"WVSOFT01";
+const KEYFRAME_BASE_MAGIC: &[u8; 8] = b"WVKEYB01";
+const DELTA_MAGIC: &[u8; 8] = b"WVDELT01";
+#[derive(Clone, Copy)]
+enum FrameKind {
+    LegacyFull,
+    KeyframeBase,
+    Delta,
+}
+impl FrameKind {
+    fn magic(self) -> &'static [u8; 8] {
+        match self {
+            Self::LegacyFull => MAGIC,
+            Self::KeyframeBase => KEYFRAME_BASE_MAGIC,
+            Self::Delta => DELTA_MAGIC,
+        }
+    }
+    fn full_ram(self) -> bool {
+        !matches!(self, Self::Delta)
+    }
+    fn session_clock(self) -> bool {
+        !matches!(self, Self::LegacyFull)
+    }
+}
 const HEADER: usize = 12 + 5 * 40;
 pub const MAX_FRAME_BYTES: usize = 640 << 20;
 const LIMITS: [usize; 5] = [
@@ -41,10 +65,22 @@ fn digest(bytes: &[u8]) -> [u8; 32] {
 }
 impl<'a> SoftwareCheckpoint<'a> {
     pub fn from_bytes(bytes: &'a [u8]) -> Result<Self, CheckpointError> {
+        Self::decode(bytes, FrameKind::LegacyFull)
+    }
+
+    pub fn from_keyframe_base_bytes(bytes: &'a [u8]) -> Result<Self, CheckpointError> {
+        Self::decode(bytes, FrameKind::KeyframeBase)
+    }
+
+    pub fn from_delta_bytes(bytes: &'a [u8]) -> Result<Self, CheckpointError> {
+        Self::decode(bytes, FrameKind::Delta)
+    }
+
+    fn decode(bytes: &'a [u8], kind: FrameKind) -> Result<Self, CheckpointError> {
         if bytes.len() < HEADER || bytes.len() > MAX_FRAME_BYTES {
             return Err(CheckpointError::Bound);
         }
-        if &bytes[..8] != MAGIC || bytes[8..12] != 1u32.to_le_bytes() {
+        if &bytes[..8] != kind.magic() || bytes[8..12] != 1u32.to_le_bytes() {
             return Err(CheckpointError::Malformed);
         }
         let mut parts: [&[u8]; 5] = [&[]; 5];
@@ -85,13 +121,29 @@ impl<'a> SoftwareCheckpoint<'a> {
         }
         let (_, sections) = SectionReader::new(parts[1]).map_err(CheckpointError::Native)?;
         let mut clocks = 0;
+        let mut ram_sections = 0;
+        let mut session_clocks = 0;
         for item in sections {
             let item = item.map_err(CheckpointError::Native)?;
             // The checkpoint-only library has no event-log cursor binding yet. Never admit an
             // event clock under its legacy zero-position context. The bare-machine event-clock
             // API uses the native envelope; provider admission owns the library integration.
             if item.tag == section::SESSION_CLOCK {
-                return Err(CheckpointError::Malformed);
+                session_clocks += 1;
+                let p = item.payload;
+                if p.len() < 44
+                    || context.position.phase != Phase::Before
+                    || u64::from_le_bytes(p[12..20].try_into().unwrap())
+                        != context.position.transition.0
+                    || u64::from_le_bytes(p[20..28].try_into().unwrap())
+                        != context.position.retired.0
+                    || u64::from_le_bytes(p[28..36].try_into().unwrap())
+                        != u64::from(context.position.ordinal)
+                    || u64::from_le_bytes(p[36..44].try_into().unwrap())
+                        != context.position.sequence.0
+                {
+                    return Err(CheckpointError::Malformed);
+                }
             }
             if item.tag == section::CLOCK {
                 clocks += 1;
@@ -104,8 +156,14 @@ impl<'a> SoftwareCheckpoint<'a> {
                     return Err(CheckpointError::Malformed);
                 }
             }
+            if item.tag == section::RAM {
+                ram_sections += 1;
+            }
         }
-        if clocks != 1 {
+        if clocks != 1
+            || ram_sections != usize::from(kind.full_ram())
+            || session_clocks != usize::from(kind.session_clock())
+        {
             return Err(CheckpointError::Malformed);
         }
         Ok(Self {
@@ -123,6 +181,44 @@ impl<'a> SoftwareCheckpoint<'a> {
         disk: &[u8],
         input: &[u8],
         output: &[u8],
+    ) -> Result<Vec<u8>, CheckpointError> {
+        Self::encode_kind(context, resume, disk, input, output, FrameKind::LegacyFull)
+    }
+
+    pub fn encode_keyframe_base(
+        context: &CheckpointContext,
+        resume: &[u8],
+        disk: &[u8],
+        input: &[u8],
+        output: &[u8],
+    ) -> Result<Vec<u8>, CheckpointError> {
+        Self::encode_kind(
+            context,
+            resume,
+            disk,
+            input,
+            output,
+            FrameKind::KeyframeBase,
+        )
+    }
+
+    pub fn encode_delta(
+        context: &CheckpointContext,
+        resume: &[u8],
+        disk: &[u8],
+        input: &[u8],
+        output: &[u8],
+    ) -> Result<Vec<u8>, CheckpointError> {
+        Self::encode_kind(context, resume, disk, input, output, FrameKind::Delta)
+    }
+
+    fn encode_kind(
+        context: &CheckpointContext,
+        resume: &[u8],
+        disk: &[u8],
+        input: &[u8],
+        output: &[u8],
+        kind: FrameKind,
     ) -> Result<Vec<u8>, CheckpointError> {
         let metadata = context.to_bytes().map_err(CheckpointError::Context)?;
         let parts = [metadata.as_slice(), resume, disk, input, output];
@@ -142,7 +238,7 @@ impl<'a> SoftwareCheckpoint<'a> {
         bytes
             .try_reserve_exact(total)
             .map_err(|_| CheckpointError::Bound)?;
-        bytes.extend_from_slice(MAGIC);
+        bytes.extend_from_slice(kind.magic());
         bytes.extend_from_slice(&1u32.to_le_bytes());
         for part in parts {
             bytes.extend_from_slice(&(part.len() as u64).to_le_bytes());
@@ -151,7 +247,7 @@ impl<'a> SoftwareCheckpoint<'a> {
         for part in parts {
             bytes.extend_from_slice(part);
         }
-        SoftwareCheckpoint::from_bytes(&bytes)?;
+        SoftwareCheckpoint::decode(&bytes, kind)?;
         Ok(bytes)
     }
 }

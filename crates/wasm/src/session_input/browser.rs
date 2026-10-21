@@ -81,6 +81,9 @@ impl LinuxInner {
         result.map_err(|e| JsError::new(&e))
     }
     pub(crate) fn refuse_capture_mutation(&self) -> Result<(), JsError> {
+        if self.machine.ram_epoch_pending() {
+            return Err(JsError::new("session keyframe publication pending"));
+        }
         if self.input_capture.is_some() {
             Err(JsError::new(
                 "input prefix: unsupported mutation; stop and start a fresh machine",

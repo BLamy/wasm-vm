@@ -319,6 +319,19 @@ export class WasmLinux {
         }
     }
     /**
+     * @param {Uint8Array} bytes
+     * @returns {number}
+     */
+    applySoftwareRamDeltaChunk(bytes) {
+        const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_applySoftwareRamDeltaChunk(this.__wbg_ptr, ptr0, len0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] >>> 0;
+    }
+    /**
      * E5-T21d: attach the page-owned microphone ring as the guest's capture source. The ring is
      * allocated before boot but contains no host media handle; permission remains lazy until the
      * guest emits its first successful capture PCM_START edge.
@@ -512,6 +525,17 @@ export class WasmLinux {
         return takeFromExternrefTable0(ret[0]);
     }
     /**
+     * Begin a full keyframe and freeze the dirty set until its store publication resolves.
+     * @param {Uint8Array} context_bytes
+     * @returns {Promise<Uint8Array>}
+     */
+    captureSoftwareBaseKeyframe(context_bytes) {
+        const ptr0 = passArray8ToWasm0(context_bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_captureSoftwareBaseKeyframe(this.__wbg_ptr, ptr0, len0);
+        return ret;
+    }
+    /**
      * The loader fences all host mutations and execution until this bounded Promise settles.
      * Pending block fetches/durability drain without CPU execution; final serialization has no
      * await, callback or borrow release between architectural state, COW map and UART queues.
@@ -522,6 +546,18 @@ export class WasmLinux {
         const ptr0 = passArray8ToWasm0(context_bytes, wasm.__wbindgen_malloc);
         const len0 = WASM_VECTOR_LEN;
         const ret = wasm.wasmlinux_captureSoftwareCheckpoint(this.__wbg_ptr, ptr0, len0);
+        return ret;
+    }
+    /**
+     * Capture CPU/devices/disk/host queues while RAM is represented by separately streamed
+     * dirty-page objects. The caller must hold the guest paused until it acknowledges the epoch.
+     * @param {Uint8Array} context_bytes
+     * @returns {Promise<Uint8Array>}
+     */
+    captureSoftwareDeltaKeyframe(context_bytes) {
+        const ptr0 = passArray8ToWasm0(context_bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_captureSoftwareDeltaKeyframe(this.__wbg_ptr, ptr0, len0);
         return ret;
     }
     /**
@@ -802,6 +838,15 @@ export class WasmLinux {
      */
     finishFileDownload(id, success) {
         const ret = wasm.wasmlinux_finishFileDownload(this.__wbg_ptr, id, success);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {boolean} committed
+     */
+    finishSoftwareRamEpoch(committed) {
+        const ret = wasm.wasmlinux_finishSoftwareRamEpoch(this.__wbg_ptr, committed);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
@@ -1263,6 +1308,17 @@ export class WasmLinux {
         return WasmLinux.__wrap(ret[0]);
     }
     /**
+     * @param {number} from_page
+     * @returns {any}
+     */
+    nextSoftwareRamDeltaChunk(from_page) {
+        const ret = wasm.wasmlinux_nextSoftwareRamDeltaChunk(this.__wbg_ptr, from_page);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
      * E3-T21d: the persistent driver calls this right after `persistPending` so a durable IndexedDB
      * flush pause — during which the guest is frozen and cannot ACK or heartbeat an in-flight file
      * transfer — does not accrue against the WVFT idle-timeout budget. No-op when nothing is
@@ -1318,6 +1374,16 @@ export class WasmLinux {
         return v1;
     }
     /**
+     * @returns {number}
+     */
+    pendingSoftwareRamPages() {
+        const ret = wasm.wasmlinux_pendingSoftwareRamPages(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0] >>> 0;
+    }
+    /**
      * E3-T05: durably flush the overlay's pending writes to IndexedDB. Resolves to the number of
      * blocks persisted; its Promise resolves only after the IndexedDB transaction `complete` event
      * (`durability` per the store), so a caller that awaits it knows the writes survive a reload. A
@@ -1356,6 +1422,16 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Install the same owned observation adapter that T14's replay driver installs before its
+     * initial full restore. This candidate has no live providers and no admitted replay plan.
+     */
+    prepareSoftwareKeyframeCandidate() {
+        const ret = wasm.wasmlinux_prepareSoftwareKeyframeCandidate(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
     }
     /**
      * @param {number} stream
@@ -1466,6 +1542,23 @@ export class WasmLinux {
         const ptr1 = passArray8ToWasm0(expected_context, wasm.__wbindgen_malloc);
         const len1 = WASM_VECTOR_LEN;
         const ret = wasm.wasmlinux_restoreSoftwareCheckpoint(this.__wbg_ptr, ptr0, len0, ptr1, len1);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {Uint8Array} bytes
+     * @param {Uint8Array} expected_context
+     * @param {Uint8Array} expected_ram_digest
+     */
+    restoreSoftwareDeltaKeyframe(bytes, expected_context, expected_ram_digest) {
+        const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passArray8ToWasm0(expected_context, wasm.__wbindgen_malloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passArray8ToWasm0(expected_ram_digest, wasm.__wbindgen_malloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_restoreSoftwareDeltaKeyframe(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
@@ -1616,6 +1709,33 @@ export class WasmLinux {
         const ptr6 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
         const len6 = WASM_VECTOR_LEN;
         const ret = wasm.wasmlinux_scatterOutput(this.__wbg_ptr, ptr0, len0, ptr1, len1, ptr2, len2, resource_id, ptr3, len3, ptr4, len4, ptr5, len5, row_bytes, row_stride, row_count, ptr6, len6);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * Private restore candidate: validate the full ancestor envelope, then seed only RAM.
+     * Its disk generation may be older than the target; the final delta envelope is bound to
+     * the target candidate's disk generation before CPU/devices are committed.
+     * @param {Uint8Array} base_frame
+     */
+    seedSoftwareRamFromCheckpoint(base_frame) {
+        const ptr0 = passArray8ToWasm0(base_frame, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_seedSoftwareRamFromCheckpoint(this.__wbg_ptr, ptr0, len0);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * The exact journal's T14 initial checkpoint is already a full native resume. Admit its
+     * strict empty-queue envelope as a RAM ancestor without asking T14 to duplicate 256 MiB.
+     * @param {Uint8Array} frame
+     */
+    seedSoftwareRamFromExactStart(frame) {
+        const ptr0 = passArray8ToWasm0(frame, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_seedSoftwareRamFromExactStart(this.__wbg_ptr, ptr0, len0);
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
@@ -1862,6 +1982,27 @@ export class WasmLinux {
             return getStringFromWasm0(ret[0], ret[1]);
         } finally {
             wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+    /**
+     * @returns {string}
+     */
+    softwareRamDigest() {
+        let deferred2_0;
+        let deferred2_1;
+        try {
+            const ret = wasm.wasmlinux_softwareRamDigest(this.__wbg_ptr);
+            var ptr1 = ret[0];
+            var len1 = ret[1];
+            if (ret[3]) {
+                ptr1 = 0; len1 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred2_0 = ptr1;
+            deferred2_1 = len1;
+            return getStringFromWasm0(ptr1, len1);
+        } finally {
+            wasm.__wbindgen_free(deferred2_0, deferred2_1, 1);
         }
     }
     /**
@@ -2166,6 +2307,17 @@ export class WasmMachine {
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
+    }
+    /**
+     * Diagnostic witness for direct Wasm JIT stores that entered RAM's dirty-page path.
+     * @returns {number}
+     */
+    jitDirectStoreMarks() {
+        const ret = wasm.wasmmachine_jitDirectStoreMarks(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return ret[0];
     }
     /**
      * E4-T31: the bare-metal wrapper's authoritative compiled-tier counters. This mirrors the

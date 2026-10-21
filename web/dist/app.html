@@ -993,6 +993,12 @@
         <div class="session-actions"><button id="session-replay-run" type="button" disabled>Check saved-session replay</button></div>
         <p id="session-replay-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
       </details>
+      <details id="session-keyframe-panel" class="session-library">
+        <summary><span id="session-keyframe-pip" class="cap-pip in-progress" aria-hidden="true"></span> Incremental keyframe check</summary>
+        <p class="session-note">Capture two RAM deltas from the pinned Linux guest, restore a fresh private machine, and check ancestor loss and shared retention.</p>
+        <div class="session-actions"><button id="session-keyframe-run" type="button" disabled>Check incremental keyframes</button></div>
+        <p id="session-keyframe-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
       <details id="device-completions-panel" class="session-library">
         <summary><span id="device-completions-pip" class="cap-pip in-progress" aria-hidden="true"></span> Device delivery check</summary>
         <p class="session-note">Replay disk, file and audio results after delayed deliveries, then check that old callbacks cannot change a restored machine.</p>

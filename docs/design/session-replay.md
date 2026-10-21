@@ -534,3 +534,43 @@ roles. The wasm paths add exact record/replay entry points and suppress live
 providers during replay. The browser journal adds durable exact events and
 immutable state witnesses. The contract's planned status still denotes the full
 Epic 9 qualification, including keyframes, seeking, GPU replay and branching.
+
+### Incremental software keyframes (E9-T15)
+
+The exact journal's `WVEXACT1` initial native frame is the first full RAM base. The
+browser resets dirty tracking after boot loads that base, so its first delta contains
+only later guest writes. CPU stores, bus/DMA writes, sparse restores and direct Wasm
+JIT stores all mark 4 KiB physical RAM pages; a write that restores an earlier byte
+still marks its page. Capture freezes the dirty bitmap and guest execution until a
+durable append succeeds. A failed append merges the frozen bits back for retry.
+
+For a live recording, the initial state digest is committed with the initial frame.
+Only one append of the final witness list is permitted, at completion; the store
+checks that its first digest matches the immutable initial digest and its last
+coordinate equals the committed end. An unfinished live session has no final
+witness list and is refused by the executable replay reader. The earlier API for
+precommitted witnesses retains its immutable-extension rule.
+
+Each `WVDELT01` frame contains the exact native CPU, device, clock and host-queue
+state without its RAM section. Its `WVRAMD01` page objects are each at most 4 MiB,
+sorted by physical page, and independently content-addressed. A canonical
+`WVKEYF01` descriptor binds the frame, page objects, complete-RAM SHA-256 and
+immediately preceding checkpoint. Eight deltas is the hard chain limit; a new
+`WVKEYB01` full frame resets it. The existing session store authenticates every
+ancestor and retains shared objects while any session still references them.
+
+The exact software profile keeps its COW sectors in the native `SESSION_DEVICES`
+snapshot. Its existing disk root therefore remains the immutable pinned-base
+binding; the full device snapshot, including the overlay, is revalidated during
+private restore. The older checkpoint-only profile continues to use its separate
+`WVOD1` disk delta and immutable disk roots. A fresh replay candidate reconstructs
+RAM from a full base and every delta, compares the committed RAM digest, then
+restores the target's non-RAM native snapshot. Missing or corrupt ancestors fail
+before the candidate is modified. The browser proof records initial, delta and
+rebase full-state digest witnesses. T16 will schedule these keyframes for seeks;
+the 10-minute fixed-work performance campaign remains T22's acceptance.
+
+The source-matrix digests were re-audited for T15's changed resume codec,
+ingress fence, Wasm checkpoint bridge, browser journal and checkpoint store.
+These paths change when state is captured and restored; they add no new
+external input source or provider policy.

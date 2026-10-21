@@ -1583,6 +1583,11 @@ impl Machine {
         self.bus.ram().len()
     }
 
+    /// True while a two-phase incremental keyframe is awaiting durable publication.
+    pub fn ram_epoch_pending(&self) -> bool {
+        self.bus.ram().pending_dirty_pages().is_some()
+    }
+
     /// Linear-memory address of the guest RAM allocation. This is an integration seam for the
     /// wasm browser JIT's imported-memory fast path; callers must use the value only while this
     /// machine owns the allocation (the `Vec` is not resized during execution).
@@ -3258,7 +3263,7 @@ impl Machine {
         if self.session_clock.is_some() {
             return self.save_session_resume();
         }
-        self.save_resume_inner(None, false)
+        self.save_resume_inner(None, false, true)
     }
 
     /// Coherent software history boundary, retaining logical input ledgers and queue frames.
@@ -3271,7 +3276,22 @@ impl Machine {
                 tag: crate::resume::section::CLOCK,
             });
         }
-        self.save_resume_inner(None, true)
+        self.save_resume_inner(None, true, true)
+    }
+
+    /// Non-RAM half of an incremental software keyframe. The caller stores the frozen dirty
+    /// pages separately and binds their content-addressed objects to this exact checkpoint.
+    /// This is never a stand-alone restore image: the RAM base and every ancestor delta must
+    /// be reconstructed and authenticated before `load_session_state_without_ram` is called.
+    pub fn save_session_state_without_ram(
+        &mut self,
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        if !self.extra_blk.is_empty() || self.guest_clock_mode() != time::TimeMode::ICount {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::CLOCK,
+            });
+        }
+        self.save_resume_inner(None, true, false)
     }
 
     /// Service only original GPU queue work and completion mailboxes while the guest is paused.
@@ -3308,7 +3328,7 @@ impl Machine {
         &mut self,
         renderer_digest: &[u8; 32],
     ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
-        let bytes = self.save_resume_inner(Some(renderer_digest), false)?;
+        let bytes = self.save_resume_inner(Some(renderer_digest), false, true)?;
         dev::virtio::gpu::checkpoint::seal_resume(bytes, renderer_digest).map_err(|_| {
             crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
@@ -3320,6 +3340,7 @@ impl Machine {
         &mut self,
         gpu_witness: Option<&[u8; 32]>,
         exact_inputs: bool,
+        include_ram: bool,
     ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
         #[cfg(not(feature = "virgl-renderer"))]
         let _ = gpu_witness;
@@ -3351,7 +3372,9 @@ impl Machine {
             self.coherence.generation,
         );
         w.section(section::CPU, &self.hart.to_snapshot());
-        w.section(section::RAM, &self.bus.ram().to_snapshot());
+        if include_ram {
+            w.section(section::RAM, &self.bus.ram().to_snapshot());
+        }
         if let Some(clint) = &self.clint {
             w.section(section::CLINT, &clint.borrow().to_snapshot());
         }
@@ -3644,7 +3667,7 @@ impl Machine {
         if self.session_clock.is_some() {
             return self.load_session_resume(blob);
         }
-        self.load_resume_inner(blob, None, false).map(|_| ())
+        self.load_resume_inner(blob, None, false, false).map(|_| ())
     }
 
     /// Validate every component and the complete topology before exact software restore.
@@ -3658,7 +3681,80 @@ impl Machine {
                 tag: crate::resume::section::CLOCK,
             });
         }
-        self.load_resume_inner(blob, None, true).map(|_| ())
+        self.load_resume_inner(blob, None, true, false).map(|_| ())
+    }
+
+    /// Commit the non-RAM half of an incremental software keyframe after a private candidate's
+    /// RAM has been reconstructed from its authenticated full base and all ancestor page chunks.
+    /// The target header still must match the candidate's build, base image and disk generation.
+    pub fn load_session_state_without_ram(
+        &mut self,
+        blob: &[u8],
+        expected_ram_digest: &[u8; 32],
+    ) -> Result<(), crate::resume::SnapshotError> {
+        if self.session_replay_limit.is_some() {
+            return Err(crate::resume::SnapshotError::ReplayActive);
+        }
+        if !self.extra_blk.is_empty() || self.guest_clock_mode() != time::TimeMode::ICount {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: crate::resume::section::CLOCK,
+            });
+        }
+        if &self.snapshot().mem_digest != expected_ram_digest {
+            return Err(crate::resume::SnapshotError::RamDigestMismatch);
+        }
+        // Exact replay candidates fence ordinary host ingress. Restoring an authenticated
+        // keyframe is a recorded state transition, so its device visitors need the same narrow
+        // scope that ReplayDriver uses for its initial full checkpoint.
+        let ingress_gate = alloc::rc::Rc::clone(&self.host_ingress_gate);
+        let _recorded = ingress_gate
+            .replay_active()
+            .then(|| ingress_gate.recorded_scope());
+        self.load_resume_inner(blob, None, true, true).map(|_| ())
+    }
+
+    /// Seed only RAM from an authenticated full ancestor into a private target candidate.
+    /// Its overlay generation may differ from the target generation: intermediate immutable
+    /// disk roots are checked by the session store, while the final non-RAM snapshot is checked
+    /// against the target disk generation by `load_session_state_without_ram`.
+    pub fn seed_session_ram_from_full_resume(
+        &mut self,
+        blob: &[u8],
+    ) -> Result<(), crate::resume::SnapshotError> {
+        use crate::resume::{ComponentSnapshot, SectionReader, SnapshotError, section};
+        if self.session_replay_limit.is_some() {
+            return Err(SnapshotError::ReplayActive);
+        }
+        let (header, sections) = SectionReader::new(blob)?;
+        if header.core_hash != self.coherence.core_hash {
+            return Err(SnapshotError::CoreHashMismatch);
+        }
+        if header.base_image_hash != self.coherence.base_image_hash {
+            return Err(SnapshotError::BaseImageMismatch);
+        }
+        let mut ram = None;
+        for section in sections {
+            let section = section?;
+            if section.tag == section::RAM && ram.replace(section.payload).is_some() {
+                return Err(SnapshotError::BadComponentState { tag: section::RAM });
+            }
+        }
+        let payload = ram.ok_or(SnapshotError::BadComponentState { tag: section::RAM })?;
+        crate::resume::validate_sparse(payload, self.bus.ram().len())?;
+        self.bus.ram_mut().restore(payload)
+    }
+
+    /// Apply one independently authenticated, bounded page object to a private candidate.
+    /// The caller must authenticate all ancestor objects and compare the final full-RAM digest
+    /// before committing the target's CPU and device snapshot.
+    pub fn apply_session_ram_delta_chunk(
+        &mut self,
+        bytes: &[u8],
+    ) -> Result<usize, crate::ram::RamDeltaError> {
+        if self.session_replay_limit.is_some() {
+            return Err(crate::ram::RamDeltaError::ReplayActive);
+        }
+        self.bus.ram_mut().apply_delta_chunk(bytes)
     }
 
     /// Restore only the native half of a matching, independently reconstructed GPU checkpoint.
@@ -3679,7 +3775,7 @@ impl Machine {
                     tag: crate::resume::section::VIRTIO_GPU,
                 }
             })?;
-        self.load_resume_inner(payload, Some(renderer_digest), false)?
+        self.load_resume_inner(payload, Some(renderer_digest), false, false)?
             .ok_or(crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::VIRTIO_GPU,
             })
@@ -3690,6 +3786,7 @@ impl Machine {
         blob: &[u8],
         gpu_witness: Option<&[u8; 32]>,
         exact_inputs: bool,
+        ram_already_restored: bool,
     ) -> Result<Option<(u64, u64)>, crate::resume::SnapshotError> {
         #[cfg(not(feature = "virgl-renderer"))]
         let _ = gpu_witness;
@@ -3829,7 +3926,10 @@ impl Machine {
         if strict_topology {
             // An exact envelope requires every component once. Missing, duplicate or
             // unknown sections must not leave destination CPU/RAM/device state mixed with it.
-            let mut expected = alloc::vec![section::CPU, section::RAM, section::CLOCK];
+            let mut expected = alloc::vec![section::CPU, section::CLOCK];
+            if !ram_already_restored {
+                expected.push(section::RAM);
+            }
             if staged_session_clock.is_some() {
                 expected.push(section::SESSION_CLOCK);
             }
