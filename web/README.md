@@ -46,6 +46,8 @@ The public product pages are static and dependency-free:
 
 - [`products.html`](./products.html) — browser Linux, encrypted volumes, peer delivery, work
   market, critics, and embedding surfaces.
+- [`case-studies.html`](./case-studies.html) — case-study index, including the
+  [in-progress RV-Phone OS plan](./case-study-riscv-os.html) and its proof boundary.
 - [`work-market.html`](./work-market.html) — frozen tickets, builder submissions, critic quorum,
   challenge windows, and settlement economics.
 - [`security.html`](./security.html) — passkey-owned volumes, key hierarchy, shard verification,
