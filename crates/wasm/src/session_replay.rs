@@ -316,7 +316,7 @@ impl WasmLinux {
             )
             .map_err(|_| JsError::new("branch owned result"))?;
         }
-        Ok(result.into())
+        Ok(result)
     }
 
     #[wasm_bindgen(js_name = beginExactBranch)]

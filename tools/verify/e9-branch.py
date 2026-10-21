@@ -12,6 +12,9 @@ SOURCE = Path(__file__).resolve().parents[2]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--output', type=Path, required=True)
 parser.add_argument('--cold-clone', type=Path)
+parser.add_argument('--carry-native', type=Path,
+                    default=Path(os.environ['E9_BRANCH_CARRY_NATIVE']) if os.environ.get('E9_BRANCH_CARRY_NATIVE') else None,
+                    help='Carry authenticated native gates after a change outside their dependency boundary; forbidden for cold proof')
 args = parser.parse_args()
 out = args.output.resolve()
 out.mkdir(parents=True, exist_ok=False)
@@ -27,6 +30,9 @@ report = dict(task='E9-T20', risk='high', status='running', head=head,
               started=time.time(), commands=[], clone=str(root) if args.cold_clone else None,
               scope='Isolated exact software/GPU continuations, offline effects, real files and physical GPU; desktop budgets remain T22.')
 features = 'virgl-renderer,virgl-control-proof,gpu-trace,trace'
+native_dir = out / 'native'
+carried = {}
+native_gates = {'core-clippy', 'native-branches', 'storage-publication', 'core-no-std-wasm'}
 
 
 def sha(file):
@@ -52,6 +58,14 @@ def run(name, command, timeout=1800, cwd=None):
     report['active'] = name
     write()
     print(name, flush=True)
+    if name in carried:
+        original = carried[name]
+        assert original['command'] == command and original['exit_code'] == 0, 'changed carried command: ' + name
+        report['commands'].append(dict(name=name, command=command, exit_code=0, seconds=0,
+                                       execution='carried', originalSeconds=original['seconds'],
+                                       sourceHead=report['carriedNative']['head']))
+        write()
+        return
     start = time.time()
     with (out / (name + '.log')).open('wb') as log:
         result = subprocess.run(command, cwd=cwd or root, env=env, stdout=log,
@@ -64,6 +78,32 @@ def run(name, command, timeout=1800, cwd=None):
 
 try:
     clean(SOURCE)
+    if args.carry_native:
+        assert not args.cold_clone, 'a cold proof must build and execute its native gates'
+        previous_dir = args.carry_native.resolve()
+        previous_file = previous_dir / 'report.json'
+        previous = json.loads(previous_file.read_text())
+        assert previous['task'] == 'E9-T20' and not previous['clone'] and not previous.get('carriedNative'), 'only direct worker evidence may be carried'
+        changed = subprocess.check_output(['git', 'diff', '--name-only', previous['head'], head], cwd=SOURCE, text=True).splitlines()
+        # This resume is deliberately conservative: every other dependency change
+        # requires fresh native gates, including toolchains, fixtures and codecs.
+        allowed = lambda name: name.startswith(('crates/wasm/', 'crates/wasm-web/', 'web/dist/', 'tasks/')) or name in {
+            'tools/verify/e9-branch.py', 'web/README.md', 'web/tasks.json', 'web/gpu-checkpoint-build.js'}
+        assert all(allowed(name) for name in changed), 'a native dependency changed; cannot carry'
+        carried = {row['name']: row for row in previous['commands'] if row['name'] in native_gates}
+        assert set(carried) == native_gates and all(row['exit_code'] == 0 for row in carried.values()), 'missing successful native gates'
+        bound = []
+        for item in previous['files']:
+            if item['path'].startswith('native/') or item['path'] in {name + '.log' for name in native_gates}:
+                file = (previous_dir / item['path']).resolve()
+                assert file.is_relative_to(previous_dir) and file.stat().st_size == item['bytes'] and sha(file) == item['sha256'], 'carried evidence changed'
+                bound.append(item)
+        native_dir = previous_dir / 'native'
+        assert bound and native_dir.is_dir(), 'carried native evidence missing'
+        env.update(E9_BRANCH_EVIDENCE=str(native_dir), E9_GPU_RESULT_EVIDENCE=str(native_dir))
+        report['carriedNative'] = dict(directory=str(previous_dir), head=previous['head'], reportSha256=sha(previous_file),
+                                       changedPaths=changed, files=bound,
+                                       reason='Native source, dependencies, fixtures and commands are unchanged; rerun current byte oracles.')
     if args.cold_clone:
         assert not root.exists(), 'cold clone must not exist'
         run('clone', ['git', 'clone', '--quiet', '--no-hardlinks', '--no-checkout', str(SOURCE), str(root)], cwd=SOURCE)
@@ -80,7 +120,7 @@ try:
                             '--test', 'e9_branch', '--test', 'session_gpu_results', '--', '--nocapture', '--test-threads=1'])
     for label, script in [('gpu-results', 'e9-gpu-results-files.py'), ('pending-gpu', 'e9-pending-gpu-files.py')]:
         run('independent-native-' + label, ['python3', '-B', 'tools/verify/' + script,
-                                           '--directory', str(out / 'native')])
+                                           '--directory', str(native_dir)])
     run('storage-publication', ['cargo', 'test', '--locked', '-p', 'wasm-vm-storage',
                                 '--test', 'session_publication', '--', '--nocapture'])
     run('core-no-std-wasm', ['cargo', 'build', '--locked', '-p', 'wasm-vm-core', '--no-default-features',
@@ -124,6 +164,7 @@ try:
         # Keep later regression runs from overwriting the narrow recorded evidence.
         env.pop('E9_BRANCH_EVIDENCE')
         env.pop('E9_GPU_RESULT_EVIDENCE')
+        env.pop('E9_BRANCH_CARRY_NATIVE', None)
         run('local-gauntlet', ['python3', '-B', 'tools/verify/e9-local-gauntlet.py', '--task', 'E9-T20',
                                '--output', str(out / 'gauntlet')], timeout=10800)
     report['finalCheckoutStatus'] = clean(root)
