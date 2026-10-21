@@ -1708,3 +1708,244 @@ fn gpu_proof_gap_legacy_dense_length_refuses_before_shadow_dma_exchange_or_event
         "GPU_GAP_G4 backing-valid32-byte dense gather refused at {clock:?}; shadow/RAM/queue/cursor held; correct64-byte gather and original fence resolved"
     );
 }
+
+#[test]
+fn verifier_live_descriptor_rewrite_cannot_redirect_accepted_result_authority() {
+    let c = capture(64, 17, false);
+    let frames = gpu_events(&c);
+    let mut r = Rig::new(64, Some(c.tape.clone()), true);
+    let decoy = virt::DRAM_BASE + 0x1f000;
+    for (i, (position, result)) in frames.iter().copied().enumerate() {
+        r.machine
+            .prepare_session_gpu_replay(position, result, payload(&c, result))
+            .unwrap();
+        r.until(position.transition, 29);
+        if i == 0 {
+            r.write(decoy, &[0x4a; 64]);
+            // Change only live RAM after queue acceptance. The original descriptor
+            // and request held by pending must keep exclusive completion authority.
+            r.write(DESC + 4 * 32 + 16, &decoy.to_le_bytes());
+            r.write(
+                REQUEST + 4 * 256 + 8,
+                &0xfeed_cafe_1234_5678u64.to_le_bytes(),
+            );
+        }
+        if i == 2 {
+            r.mail.post(r.completion(Ok(()), 2)).unwrap();
+        }
+        r.machine.deliver_session_gpu_replay().unwrap();
+        if i < 2 {
+            let bytes = r
+                .machine
+                .replay_session_gpu_transport(
+                    &r.exchange(i as u64 + 1),
+                    (i == 1).then_some(&[0x92; 64][..]),
+                    None,
+                )
+                .unwrap();
+            if i == 0 {
+                assert_eq!(bytes, vec![0x6d; 64]);
+            } else {
+                assert!(bytes.is_empty());
+            }
+        }
+    }
+    r.until(c.end, 31);
+    r.check(&c.result, 0x1100);
+    let mut unchanged = [0u8; 64];
+    r.machine
+        .bus_mut()
+        .ram()
+        .read_slice(decoy, &mut unchanged)
+        .unwrap();
+    assert_eq!(
+        unchanged, [0x4a; 64],
+        "live descriptor must not redirect completion"
+    );
+    assert_eq!(
+        r.machine.bus_mut().load64(RESPONSE + 4 * 64 + 8).unwrap(),
+        0x1234_5678_9abc_def0
+    );
+    assert_eq!(r.machine.bus_mut().load32(USED + 4 + 4 * 8).unwrap(), 8);
+    assert_eq!(r.machine.bus_mut().load32(USED + 8 + 4 * 8).unwrap(), 24);
+    assert_eq!(r.machine.session_gpu_cursor(), Ok(3));
+    assert_eq!(r.machine.hart().to_snapshot(), c.cpu);
+    assert_eq!(r.virtual_gpu(), c.virtual_gpu);
+    assert_eq!(r.trace.canonical(), c.trace);
+    r.dump_state("verifier-live-descriptor", "replay");
+    eprintln!(
+        "VERIFIER_AUTHORITY held decoy={decoy:#x} original-fence=123456789abcdef0 accepted-head=8 used-len=24 cursor3 position={:?}",
+        r.pos()
+    );
+}
+
+#[test]
+fn verifier_gpu_control_intent_divergence_cannot_publish_unrecorded_response() {
+    let c = capture(64, 13, false);
+    let mut tape = c.tape.clone();
+    let boundary = tape.records[0].position.transition;
+    tape.records[0].value.bytes[0] ^= 1;
+    let mut r = Rig::new(64, Some(tape), true);
+    let frame = gpu_events(&c)[0];
+    r.machine
+        .prepare_session_gpu_replay(frame.0, frame.1, None)
+        .unwrap();
+    r.until(boundary, 17);
+    let before = r.machine.snapshot();
+    let cpu = r.machine.hart().to_snapshot();
+    let position = r.pos();
+    let ram = r.machine.bus_mut().ram().as_bytes().to_vec();
+    let result = r.machine.run_traced(100, &mut r.trace);
+    assert!(
+        matches!(result, RunOutcome::SessionStopped(SessionError::SourceDivergence(d))
+        if d.reason == wasm_vm_core::session_clock::sources::DivergenceReason::Intent),
+        "{result:?}"
+    );
+    assert_eq!(r.machine.snapshot(), before);
+    assert_eq!(r.machine.hart().to_snapshot(), cpu);
+    assert_eq!(r.machine.bus_mut().ram().as_bytes(), ram);
+    assert_eq!(r.pos(), position);
+    assert_eq!(r.machine.bus_mut().load16(USED + 2).unwrap(), 0);
+    assert!(r.machine.take_session_deliveries().unwrap().is_empty());
+    assert!(r.host.borrow().jobs.is_empty());
+    assert!(r.gpu.borrow().control3d_snapshot().unwrap().poisoned);
+    let failed_gpu = r.virtual_gpu();
+    let ResultKind::Gather { exchange, .. } = frame.1.kind else {
+        panic!("recorded gather frame");
+    };
+    assert_eq!(
+        r.machine
+            .replay_session_gpu_transport(&exchange, None, None),
+        Err(GpuError::Admission)
+    );
+    assert_eq!(r.machine.snapshot(), before);
+    assert_eq!(r.machine.hart().to_snapshot(), cpu);
+    assert_eq!(r.virtual_gpu(), failed_gpu);
+    assert_eq!(r.machine.session_gpu_cursor(), Ok(0));
+    assert_eq!(r.pos(), position);
+    r.dump_state("verifier-control-divergence", "refused");
+    eprintln!(
+        "VERIFIER_CONTROL_GATE {result:?} unchanged-position={position:?} RAM={}",
+        hex(&Sha256::digest(ram))
+    );
+}
+
+#[test]
+fn verifier_early_physical_completion_stays_behind_scatter_and_receipt_frontier() {
+    let c = capture(64, 13, false);
+    let frames = gpu_events(&c);
+    // A valid envelope may still contradict the admitted exchange frontier.
+    let mut wrong_frontier = Rig::new(64, Some(c.tape.clone()), true);
+    for (i, (position, result)) in frames[..2].iter().copied().enumerate() {
+        wrong_frontier
+            .machine
+            .prepare_session_gpu_replay(position, result, payload(&c, result))
+            .unwrap();
+        wrong_frontier.until(position.transition, 17);
+        wrong_frontier.machine.deliver_session_gpu_replay().unwrap();
+        wrong_frontier
+            .machine
+            .replay_session_gpu_transport(
+                &wrong_frontier.exchange(i as u64 + 1),
+                (i == 1).then_some(&[0x39; 64][..]),
+                None,
+            )
+            .unwrap();
+    }
+    let (position, mut bad_result) = frames[2];
+    let ResultKind::Complete(ref mut completion) = bad_result.kind else {
+        panic!("recorded completion frame");
+    };
+    completion.exchange_sequence = 1;
+    wrong_frontier
+        .machine
+        .prepare_session_gpu_replay(position, bad_result, None)
+        .unwrap();
+    wrong_frontier.until(position.transition, 23);
+    let before = wrong_frontier.machine.snapshot();
+    let cpu = wrong_frontier.machine.hart().to_snapshot();
+    let clock = wrong_frontier.pos();
+    let gpu = wrong_frontier.virtual_gpu();
+    wrong_frontier.dump_state("verifier-completion-frontier", "before");
+    assert_eq!(
+        wrong_frontier.machine.deliver_session_gpu_replay(),
+        Err(GpuError::Intent)
+    );
+    assert_eq!(
+        wrong_frontier.machine.run(1000),
+        RunOutcome::SessionStopped(SessionError::GpuResult(GpuError::Intent))
+    );
+    assert_eq!(wrong_frontier.machine.snapshot(), before);
+    assert_eq!(wrong_frontier.machine.hart().to_snapshot(), cpu);
+    assert_eq!(wrong_frontier.pos(), clock);
+    assert_eq!(wrong_frontier.virtual_gpu(), gpu);
+    assert_eq!(wrong_frontier.machine.session_gpu_cursor(), Ok(2));
+    wrong_frontier.dump_state("verifier-completion-frontier", "refused");
+    eprintln!(
+        "VERIFIER_COMPLETION_FRONTIER refused exchange1 after2 at {clock:?}; no retirement or partial effects"
+    );
+    let mut r = Rig::new(64, Some(c.tape.clone()), true);
+    for (i, (position, result)) in frames[..2].iter().copied().enumerate() {
+        r.machine
+            .prepare_session_gpu_replay(position, result, payload(&c, result))
+            .unwrap();
+        r.until(position.transition, 17);
+        r.machine.deliver_session_gpu_replay().unwrap();
+        if i == 0 {
+            assert_eq!(
+                r.machine
+                    .replay_session_gpu_transport(&r.exchange(1), None, None)
+                    .unwrap(),
+                vec![0x6d; 64]
+            );
+            r.mail.post(r.completion(Ok(()), 1)).unwrap();
+        }
+    }
+    let (position, result) = frames[2];
+    r.machine
+        .prepare_session_gpu_replay(position, result, None)
+        .unwrap();
+    r.until(position.transition, 23);
+    let before = r.machine.snapshot();
+    let clock = r.pos();
+    let gpu = r.virtual_gpu();
+    assert_eq!(
+        r.machine.deliver_session_gpu_replay(),
+        Err(GpuError::PhysicalPending)
+    );
+    assert_eq!(r.machine.snapshot(), before);
+    assert_eq!(r.pos(), clock);
+    assert_eq!(r.virtual_gpu(), gpu);
+    let mut wrong = r.exchange(2);
+    wrong.backing.generation += 1;
+    assert_eq!(
+        r.machine
+            .replay_session_gpu_transport(&wrong, Some(&[0x39; 64]), None),
+        Err(GpuError::Intent)
+    );
+    assert_eq!(r.machine.snapshot(), before);
+    assert_eq!(r.pos(), clock);
+    assert!(
+        r.machine
+            .replay_session_gpu_transport(&r.exchange(2), Some(&[0x39; 64]), None)
+            .unwrap()
+            .is_empty()
+    );
+    r.machine.deliver_session_gpu_replay().unwrap();
+    r.until(c.end, 31);
+    r.check(&c.result, 0x1100);
+    assert_eq!(r.machine.snapshot(), c.snapshot);
+    assert_eq!(r.machine.hart().to_snapshot(), c.cpu);
+    assert_eq!(r.virtual_gpu(), c.virtual_gpu);
+    assert_eq!(r.trace.canonical(), c.trace);
+    assert_eq!(r.machine.session_gpu_cursor(), Ok(3));
+    r.dump_state("verifier-early-completion", "replay");
+    dump(
+        "verifier-early-completion",
+        &c,
+        &[("replay".into(), r.trace.canonical())],
+    );
+    eprintln!(
+        "VERIFIER_EARLY_COMPLETION held undrained-receipt at {clock:?}; exact result and final cursor3"
+    );
+}

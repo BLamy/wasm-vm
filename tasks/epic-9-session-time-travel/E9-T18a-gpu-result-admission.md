@@ -3,7 +3,7 @@ id: E9-T18a
 epic: 9
 title: Own GPU result bytes and completion admission at guest event boundaries
 priority: 524.9181
-status: implemented
+status: verified
 depends_on: [E9-T17, E9-T09, E9-T14]
 estimate: S
 risk: high
@@ -25,14 +25,14 @@ are accepted, unsupported recording/keyframe profiles remain explicitly gated.
 
 ## Acceptance criteria
 
-- [ ] Record scatter/readback bytes and completion/query/error/fence envelopes at
+- [x] Record scatter/readback bytes and completion/query/error/fence envelopes at
   their real ordered event boundaries; replay supplies exact recorded effects
   without accepting live host substitutions or advancing past a missing result.
-- [ ] Support the admitted production exchange bound with bounded owned payloads
+- [x] Support the admitted production exchange bound with bounded owned payloads
   and atomic admission; do not truncate a result or silently narrow 32 MiB DMA to
   the existing device adapter's smaller inline limit. Failed admission leaves
   guest RAM, rings and committed event position unchanged.
-- [ ] An actual RV64 instruction-driven virtqueue/DMA workload has matching CPU,
+- [x] An actual RV64 instruction-driven virtqueue/DMA workload has matching CPU,
   RAM, response/ring and GPU virtual-state witnesses under changed host result
   bytes and completion schedules. Missing/corrupt/wrong-intent/stale results have
   explicit outcomes. This native proof does not claim physical GPU presentation.
@@ -125,3 +125,93 @@ completion probes plus a guard-removal sabotage that failed as expected and pass
 following restoration. Its preliminary report found proof gaps and no semantic
 contradiction. This worker submission awaits that session's final independent
 coverage review and verdict; only the verifier may set `verified`.
+
+
+### 2026-10-21 — verifier
+
+VERDICT: verified
+
+Fresh critic session `01a15e27-9b2d-7a61-b659-45373c5700b1`. Runtime
+`3b84dd50076d4525c04e88bbd5726fc978bd54a2`, proof-only response
+`07446481f2a02e16105a3782738f819352eff948`, formal submission
+`41c92574926fb35a218bfb949e81206d4a8f907f`. The initial read-only session's
+HELD results carry: all 218 retained critic artifacts rehash unchanged. Only
+three verifier regression tests are promoted; no runtime implementation changed.
+
+Final evidence base:
+`target/evidence/e9-t18a-standard-verifier/3b84dd50/final-07446481/`.
+Predictions were recorded in `predictions.md` before new raw state was opened.
+
+- **AC1 / P1–P3, P7, P17–P19 — HELD.** Exact recorded DMA/results and
+  completion/error/fence outcomes survive changed live bytes and schedules.
+  Independent G1 refusals execute at Before162, and stale completion generation
+  refuses at Before194 (`independent.log:94-99`). Kind7 serialized tape
+  decoding/replay and all 19 independently reconstructed malformed wire bodies
+  hold (`independent.log:101`, `submission-audit.json` codec entries). No missing
+  result advances retirement or admits a live replacement. G1/G2 are closed.
+- **AC2 / P4–P5, P21–P22 — HELD.** Carry the exact 32 MiB payload and record-side
+  limits. Replay's 257th small receipt and third 32 MiB receipt return Limit at
+  transition161, ordinal256/2, sequence260/6 (`independent.log:103-104`). Full
+  before/refused CPU/RAM/GPU/trace pairs match byte-for-byte. Refused RAM hashes
+  are `e61317da525e1ee83d4dcbec27a668171a045210c0b59e5427e366a24ec7802c`
+  and `46fc31cf36372f2d6df3d11a1a389b81908f6613ef7293b810841781ba5ee851`.
+  Drain/retry then resolves the original fence once, usedidx5/head8/len24.
+  Legacy's backing-valid 32-byte gather for a 64-byte rectangle refuses before
+  shadow/exchange/event mutation; its refused RAM hash is
+  `bd767993982587348e9592c83247062702bc8268ad4217ec9319b4d27482bea8`.
+  The valid retry changes the retained shadow from zero to exact 6d bytes and
+  resolves the fence (`independent.log:92`). G4 is closed.
+- **AC3 / P6, P8–P9, P11–P12, P14–P15 — HELD.** Carry real RV64 virtqueue/DMA
+  traces and full CPU/RAM/response/ring/GPU equivalence under independent
+  schedules 5/11/23, authentic stale-post refusals, pending-capture refusal,
+  descriptor rewrite isolation, corrupt control refusal and early completion
+  ordering. The prior intent-guard sabotage fails at `Ok(())` versus
+  `Err(Intent)` and passes after byte-exact restoration
+  (`../sabotage-intent-disabled.log:9-12`, `../probes-report.json`).
+- **P20 / G3 — HELD.** The forwarding probe observes 100→7 and 3→3, reaches
+  exact Before7 with budget0, and removal restores100 without retirement
+  (`independent.log:83`). Instrumented `admission.rs:178-184` and
+  `session_clock.rs:737` execute; this is a budget claim, not JIT/GPU rendering.
+- **P16 / G5 — HELD.** The runtime prefix SHA remains
+  `ffef8fc9db8257f91cf066a6e5fd7eb00158f625bf86def5ccbb74ffb4b58286`;
+  published Wasm remains the worker's exact 2,361,401 bytes/hash. The completed
+  2,039.52-second wall, three catalogued logs and full cold report rehash to
+  the submitted digests. Strict production Clippy passes; the only exception
+  is exactly the five historical stub diagnostics with its scoped passing
+  rerun and all remaining targets passing. The 13-command cold acceptance
+  (including built-browser127/0, zero errors) carries unchanged. G5 is closed.
+- **P23 / COVERAGE — HELD.** All 145 submitted text/binary hunks across 32 files are classified: 58 executed, 87 waived, zero dead and zero needs-evidence. No dead or needs-evidence
+  hunk remains. Per-line LLVM counts and source mappings are retained; every
+  zero-counter changed source line has a specific held execution citation or
+  waiver in `zero-line-dispositions.json`. Waivers cover declarative metadata,
+  assertion/trait scaffolding, private repeated preconditions, cryptographic
+  collision defense, compatibility paths already executed by the recorded
+  regressions, and explicitly closed B/C paths. Coverage SHA-256:
+  `ead890c0989455da15b063d7b92ae2e42f1f4ed49498313a2814580aceb8681d`. See `coverage.json` and `coverage-closure.log`.
+- **P24 / citation correction — HELD.** The fifth notification STORE is
+  `native/small/record.trace:158`, PC80002274, instruction0400a823; line159 is
+  the following used-ring load, not the notification. The helper observes
+  pending at Before159. Trace SHA-256
+  `b1f194bf8c459a02ea1fc35f3a5e3bffc14af8fbb80c417c7a45c9cf89df6342`.
+  `submission-audit.json` retains the exact correction and all five kick lines.
+- **P25–P26 / SUITE — HELD.** Promoted the three verifier tests for accepted
+  descriptor authority, corrupt control publication refusal and early physical
+  completion. They also prove sticky-source transport refuses Admission and a
+  completion with exchange1 after two exchanges refuses Intent without partial
+  state or later retirement. Raw before/refused pairs match; instrumented
+  `admission.rs:140` executes once and `submit3d.rs:462` twice. Three promoted
+  tests, affected strict Clippy and formatting pass
+  (`promoted-v2/promoted-report.json`, `remaining-guards.json`).
+
+Independent audit SHA-256: `39390b7801d105d487554baf541f3f43ce18bf0a1423455b0e90e9fdc1bd79cf`
+(`submission-audit.json`); all 62 incremental native files also byte-match the
+independent seven-test rerun. `receipt.json` binds final evidence; workflow and
+commit receipts are retained alongside it. Tests/fixtures/evidence alone changed
+after the frozen runtime, so unrelated gates were carried under AGENTS.md's
+incremental policy. Commands: `run-independent.py` (seven gap tests with LLVM
+coverage); `run-promoted-v2.py` (format, strict affected Clippy, three promoted
+tests); byte/catalog auditors; task policy before queue regeneration.
+
+This verifies the native A boundary only. Pending keyframes remain E9-T18b;
+Wasm/durable/physical GPU replay remains E9-T18c. No physical presentation claim,
+runtime fix, deployment, merge, push or advancement of B was made.
