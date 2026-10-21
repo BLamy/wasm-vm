@@ -215,3 +215,29 @@ tests); byte/catalog auditors; task policy before queue regeneration.
 This verifies the native A boundary only. Pending keyframes remain E9-T18b;
 Wasm/durable/physical GPU replay remains E9-T18c. No physical presentation claim,
 runtime fix, deployment, merge, push or advancement of B was made.
+
+
+### 2026-10-21 — publication — main site verified
+
+Released verified native capability metadata and task ledger at source
+`6789429c74284a8e3b4426520fc9f2d223fc21cd`, after verifier commit `8a53718eb`.
+`bash tools/deploy-cloudflare.sh` completed production deployment `3a893fc5`
+with `--branch main`; public URL is <https://wasm-vm.pages.dev/>. All pinned
+large R2 artifacts matched their expected bytes before the Pages publication.
+Deploy log SHA-256:
+`37a698b93ec6701f120a3f570e31999b95181bf9f5ce811476210e13b5eaeb87`.
+
+`node tools/verify/e9-gpu-results-browser.mjs --output
+ target/evidence/e9-t18a-production-3a893fc5 --url https://wasm-vm.pages.dev/
+ --capability-status verified` passed on the actual main URL: 11 exact served
+assets (including Wasm and both case-study pages), 127 passed / zero failed,
+zero console and HTTP errors, native result pip verified, complete GPU replay
+still in-progress and T17 keyframes verified. Report SHA-256
+`f59764ba5048b1b32179249f3fad9349817c73f7c20a9702151f0d2f710c1efa`;
+recorded browser trace SHA-256
+`51ebd93682b0c73110520ac3ee832b9ae52d04964d3871a28dd0a62eebfb39ea`.
+The screenshot, executed checker and exact asset hashes are retained alongside
+the report. The five deployment-only R2 manifest rewrites were preserved in
+`target/evidence/e9-t18a-release-6789429c/deployed-manifests/`, then only those
+generated files were restored to their committed local-build versions. PR #594
+remains open in the native stack; no merge was requested or performed.
