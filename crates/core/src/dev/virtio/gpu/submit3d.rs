@@ -1191,3 +1191,53 @@ mod completion_lease_tests {
         assert!(!mail.inspect().ready);
     }
 }
+
+#[cfg(test)]
+mod verifier_completion_scheduling {
+    use super::*;
+    #[test]
+    fn verifier_authentic_old_lease_cannot_post_after_same_numeric_key_is_rearmed() {
+        for schedule in [3u64, 17, 47, 101] {
+            let mail = Submit3dMailbox::new();
+            let key = Submit3dKey {
+                epoch: schedule,
+                sequence: 9,
+            };
+            let done = Submit3dCompletion {
+                key,
+                exchange_sequence: 0,
+                outcome: Ok(()),
+                gpu_complete: true,
+                applied_commands: 1,
+                draws: 0,
+            };
+            mail.arm(key, false, 256, true);
+            let oldest = mail.lease(key);
+            assert_eq!(oldest.key(), key);
+            mail.revoke();
+            mail.arm(key, false, 256, true);
+            let middle = mail.lease(key);
+            if schedule % 3 == 0 {
+                middle.post(done).unwrap();
+                assert_eq!(oldest.post(done), Err(Control3dError::InvalidParameter));
+                assert!(mail.inspect().ready);
+            } else {
+                assert_eq!(oldest.post(done), Err(Control3dError::InvalidParameter));
+                assert!(!mail.inspect().ready);
+                middle.post(done).unwrap();
+            }
+            mail.revoke();
+            mail.arm(key, false, 256, true);
+            let latest = mail.lease(key);
+            assert_eq!(oldest.post(done), Err(Control3dError::InvalidParameter));
+            assert_eq!(middle.post(done), Err(Control3dError::InvalidParameter));
+            assert_eq!(mail.post(done), Err(Control3dError::InvalidParameter));
+            assert!(!mail.inspect().ready);
+            latest.post(done).unwrap();
+            assert_eq!(latest.post(done), Err(Control3dError::InvalidParameter));
+            println!(
+                "VERIFIER_LEASE schedule={schedule} same_numeric_key=true rearms=2 stale_and_unbound_refused=true fresh_once=true"
+            );
+        }
+    }
+}

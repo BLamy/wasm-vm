@@ -951,3 +951,6 @@ fn pending_keyframe_cannot_relabel_an_owned_fence_as_quiescent() {
         target.machine.save_gpu_result_resume(&RENDERER).unwrap()
     );
 }
+
+#[path = "critic.rs"]
+mod independent_critic;
