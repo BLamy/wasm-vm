@@ -3,7 +3,7 @@ id: E9-T20
 epic: 9
 title: Continue from the past on an isolated recording branch
 priority: 524.920
-status: implemented
+status: verified
 depends_on: [E9-T19, E9-T04, E9-T14]
 estimate: S
 risk: high
@@ -20,9 +20,9 @@ Branch creation with a new session/log identity and private writable disk root. 
 
 ## Acceptance criteria
 
-- [ ] Create two continuations from one past position and preserve original future events, files and shared ancestors unchanged.
-- [ ] Branch writes and new inputs appear only in the selected child; reopen and replay parent and siblings independently.
-- [ ] An explicit go-live action resets or refuses historical external connections under the documented policy; no automatic reconnection or side-effect replay occurs during seek.
+- [x] Create two continuations from one past position and preserve original future events, files and shared ancestors unchanged.
+- [x] Branch writes and new inputs appear only in the selected child; reopen and replay parent and siblings independently.
+- [x] An explicit go-live action resets or refuses historical external connections under the documented policy; no automatic reconnection or side-effect replay occurs during seek.
 
 ## Deterministic acceptance
 
@@ -183,3 +183,74 @@ result substitution, SSH/rr dependency, GitHub Actions, merge or deployment is
 part of this submission. Host rr is waived by repository policy. Publication
 status alignment and deployment to the actual main URL follow independent
 verification; they are not claimed here.
+
+### 2026-10-21 — final Daybreak verifier
+
+VERDICT: verified
+
+- P1-P6/P8-P9 — **HELD (carried)**. The frozen runtime/dependency boundary is
+  unchanged from the completed fresh Daybreak stage. Its report
+  `target/evidence/e9-t20-daybreak-fresh-adversarial/report.md` hashes to
+  `890d1603268ea60a78b15bc675ccf750808b74224a737ed1094e52b8e5db2932`;
+  every entry in its artifact catalogue rehashed successfully. Routing receipt
+  `target/evidence/e9-t20-daybreak-adversarial-stage/routing.json` hashes to
+  `4dffc31d830152adf69558e5a14878c83fd6804d68b4ac5d15e28c1374b56030`
+  and records terminal `gpt-daybreak-blue-latest` / `daybreakBlue` execution.
+- P7 direct high submission — **HELD**. Predicted terminal pass at frozen head
+  `5ee35fb4da5d39b22891004c816568757b771194`; observed `status: passed`,
+  identical `head`/`finalHead`, empty final checkout status, and 20/20 direct
+  command exits zero. Report `target/evidence/e9-t20-frozen-3/report.json`
+  SHA-256 `b91e297abd06e96ce1d06bc12ed3f87a42b4a1e771af6b2f21b537fd8920e303`.
+- P7 wall — **HELD**. Report
+  `target/evidence/e9-t20-frozen-3/gauntlet/report.json` SHA-256
+  `11174103818438b13f3ae95d341d62868465a575e42fd5fd2671bcc56225089c`
+  is terminal passed at the frozen head. The initial strict `make ci` log contains
+  exactly the five quarantined `zicsr-stub` dead-code errors and no sixth strict
+  error. Only that alternative library rerun receives `-A dead_code`; it and the
+  remaining complete wall exit zero. Direct production core/Wasm Clippy remains
+  `-D warnings`; there is no broader warning waiver.
+- P7 pristine submission — **HELD**. Predicted fresh no-hardlink rebuild;
+  observed `status: passed`, identical frozen `head`/`finalHead`, empty final
+  checkout status, and 21/21 direct command exits zero. Report
+  `target/evidence/e9-t20-cold-final/report.json` SHA-256
+  `2fed52fdb772e732f82cd57f9c04bd1eececaa1ee2a77968b065fd06a2376fc5`.
+  All 736 direct and 733 cold retained-file entries, the three wall files, and
+  both 92-file frozen source catalogues rehashed with zero mismatch. Executed
+  Wasm is `d2bb362758e060f40351e57c7e52fa42b917a64017cdc2615d7f20d60a06bc2d`;
+  GPU graph is `fcf596828ffe68ed1930e34413573627cad563f084c5ebd35eb5e870f727005d`.
+- Acceptance — **HELD**. Independent ext2 reconstruction reads literal `past\n`,
+  `P\n`, `A\n`, `B\n`, with byte-identical source/replayed parent state and
+  independently reopenable siblings after deletion. Core source points are
+  `crates/core/src/lib.rs:3319` (capture readiness) and `:3368` (fresh-owner
+  restore). Raw A/B network intents remain private at resume offsets 28161/28162
+  with literal `E9_BRANCH_COUNTER_A/B`; only S/P reach the external counter.
+  Offline authority rotation/refusal is at `crates/core/src/session_network.rs:276`,
+  `:318`, `:375`, and `:407`. Physical GPU evidence holds green/red/blue/green,
+  private sector-8 COW, all eleven fault attacks, no reconnect/send/fetch leak,
+  and parent/sibling/reload/deletion independence.
+- COVERAGE — **SUFFICIENT**. Executed: core/clock/network/GPU projection and
+  ownership, Wasm ABI, software ext2/COW/queues, GPU worker/controller and paint
+  ordering, retained assets, synchronous publication, cancellation, fixtures and
+  direct runner. Generated browser/Wasm mirrors are digest-bound; demo/roadmap
+  declarations are executed/declarative-waived; the unchanged quiet-point
+  `prepared` GPU serialization branch retains its prior call-graph waiver;
+  documentation/metadata/logging/whitespace are waived. No task-semantic hunk is
+  unexecuted or dead.
+- SUITE — **PROMOTED**. `tools/verify/e9-branch-input-ownership.mjs` (SHA-256
+  `85740112d6d2d9e9f4efe6f0c0e44176a6855e1cab93accc95d504cfc20ecbb3`)
+  is integrated after physical GPU proof in `tools/verify/e9-branch.py`. With
+  separate fresh Chrome profiles it passed against retained direct and cold GPU
+  stores: reports SHA-256 `69d85da24fd606357a98437786dee573f275fe6c0a81fec14047dea42da5fe4f`
+  and `2c76fb09b1b240df6ad8560492c0d0d0875132e103bf132555658df2ce1fe2db`.
+  Each authenticates 50 chunks/48 objects, mutates caller A→B after queued input,
+  observes guest A plus blue physical pixels, leaves parent/counters unchanged,
+  refuses go-live, and deletes the candidate. Harness syntax checks pass; the
+  unchanged runtime/cold results are preserved under incremental policy.
+
+Final evidence: `target/evidence/e9-t20-daybreak-final/report.md`, SHA-256
+`d759774bc098df054d4359ebb8af8b1dc8caa360969a689891f4dada8b8e6074`.
+Commands: read-only diff/source/report/catalogue inspection; catalogue rehash;
+`node --check tools/verify/e9-branch-input-ownership.mjs`;
+`python3 -B tools/verify/e9-branch.py --help`; the promoted test against
+`target/evidence/e9-t20-frozen-3/gpu` and `target/evidence/e9-t20-cold-final/gpu`.
+No broad wall or cold clone was repeated.

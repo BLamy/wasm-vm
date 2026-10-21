@@ -117,6 +117,8 @@ try:
     run('independent-ext2-files', ['python3', '-B', 'tools/verify/e9-branch-files.py',
                                    '--directory', str(out / 'software'), '--kind', 'software'])
     run('physical-gpu-browser', ['node', 'tools/verify/e9-branch-gpu-browser.mjs', '--output', str(out / 'gpu')])
+    run('gpu-input-ownership', ['node', 'tools/verify/e9-branch-input-ownership.mjs',
+                                '--source', str(out / 'gpu'), '--output', str(out / 'gpu-input-ownership')])
     run('independent-gpu-disk-counter', ['python3', '-B', 'tools/verify/e9-branch-files.py',
                                          '--directory', str(out / 'gpu'), '--kind', 'gpu'])
     # The broad wall runs once, after the narrow gates that can refute this slice.
