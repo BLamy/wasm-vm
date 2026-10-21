@@ -3,8 +3,7 @@ id: E9-T18b
 epic: 9
 title: Restore genuine guest-pending GPU results across coherent keyframes
 priority: 524.9182
-status: blocked
-blocked_on: OpenAI account Advanced Account Security and compatible hardware FIDO2 key for the independent verifier
+status: implemented
 depends_on: [E9-T18a]
 estimate: S
 risk: high
@@ -169,3 +168,15 @@ Identity audit: `target/evidence/e9-t18b-reparent-after-timeline.json`; build lo
 `/tmp/e9-t18b-reparent-build.log`. Prior native predictions and final wall/cold
 proofs retain their source/binary scope; no new passing critic verdict is claimed.
 The account security block is unchanged. This branch is not deployed.
+
+### 2026-10-21 — worker — resume the same independent verifier after hardware setup
+
+The user reports that the hardware key is now added and explicitly requests
+another GPU validation attempt. The external account prerequisite is ready to
+retry, so this task returns to implemented for the same independent critic
+session `01a15e74-a699-7b43-905d-b0d2834b5180` to finish its interrupted review.
+No native implementation changed. Retain the exact `7941ea89` native submission,
+completed full wall and final pristine-clone receipts above; the UI reparent
+changes no GPU dependency or binary. The timeline's verified release is now
+`9ff9906c` at the main URL; B remains excluded from production until a passing
+fresh verdict. This status is a worker submission, not a verification claim.

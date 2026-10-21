@@ -464,7 +464,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.917` [E9-T17](epic-9-session-time-travel/E9-T17-gpu-session-checkpoints.md) — Restore historical accelerated desktop checkpoint pairs *(deps: E9-T05, E9-T16, E6-T11d74c, E6-T11d74d)*
 - [-] `524.918` [E9-T18](epic-9-session-time-travel/E9-T18-gpu-result-replay.md) — Replay guest-visible GPU results and completion ordering *(deps: E9-T17, E9-T09, E9-T14)*
 - [x] `524.9181` [E9-T18a](epic-9-session-time-travel/E9-T18a-gpu-result-admission.md) — Own GPU result bytes and completion admission at guest event boundaries *(deps: E9-T17, E9-T09, E9-T14)*
-- [b] `524.9182` [E9-T18b](epic-9-session-time-travel/E9-T18b-pending-gpu-keyframes.md) — Restore genuine guest-pending GPU results across coherent keyframes *(deps: E9-T18a)*
+- [?] `524.9182` [E9-T18b](epic-9-session-time-travel/E9-T18b-pending-gpu-keyframes.md) — Restore genuine guest-pending GPU results across coherent keyframes *(deps: E9-T18a)*
 - [ ] `524.9183` [E9-T18c](epic-9-session-time-travel/E9-T18c-browser-gpu-result-replay.md) — Replay durable GPU session results through the real browser bridge *(deps: E9-T18b, E9-T17, E9-T09, E9-T14)*
 - [x] `524.919` [E9-T19](epic-9-session-time-travel/E9-T19-timeline-ui.md) — Build the session timeline and accessible time-travel controls *(deps: E9-T06, E9-T16)*
 - [ ] `524.92` [E9-T20](epic-9-session-time-travel/E9-T20-branch-from-history.md) — Continue from the past on an isolated recording branch *(deps: E9-T19, E9-T04, E9-T14)*
