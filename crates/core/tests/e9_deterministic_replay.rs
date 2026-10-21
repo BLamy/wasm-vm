@@ -1457,6 +1457,154 @@ fn guest_rtc_entropy_observations_are_consumed_without_host_calls() {
 }
 
 #[test]
+fn supported_embedding_and_end_guards_report_first_divergence() {
+    let (mut original, _, _) = observed_fixture(false, false);
+    original
+        .start_session_sources(original.source_policy(), None)
+        .unwrap();
+    let initial_resume = original.save_session_resume().unwrap();
+    let first = witness(&mut original);
+    // Stop after the first observation cluster so every replay record is installed in the
+    // initial source window; this attack is about bypassing the driver, not window rollover.
+    let end_transition = 64;
+    let mut events = Vec::new();
+    while original.session_position().unwrap().transition < end_transition {
+        assert_eq!(
+            original.run_session_until(end_transition, 23).unwrap(),
+            RunOutcome::MaxInstrs
+        );
+        events.extend(original.take_session_deliveries().unwrap());
+    }
+    assert!(!events.is_empty());
+    let final_witness = witness(&mut original);
+    let plan = ReplayPlan {
+        begin: first.position,
+        end: final_witness.position,
+        initial_resume,
+        events,
+        witnesses: vec![first, final_witness],
+    };
+    plan.validate().unwrap();
+
+    // `Machine::run_session_until` and `take_session_deliveries` are public embedding APIs.
+    // If an embedding bypasses the driver with both, the driver must not mistake the matching
+    // guest state for completed replay: its own event cursor still names the first receipt.
+    let (mut bypassed, _, _) = observed_fixture(true, false);
+    let mut bypass_driver = ReplayDriver::start(&mut bypassed, plan.clone()).unwrap();
+    while bypassed.session_position().unwrap().transition < plan.end.transition {
+        assert_eq!(
+            bypassed.run_session_until(plan.end.transition, 19).unwrap(),
+            RunOutcome::MaxInstrs
+        );
+    }
+    assert_eq!(
+        bypassed.take_session_deliveries().unwrap().len(),
+        plan.events.len()
+    );
+    let failure = bypass_driver
+        .run_to_end(&mut bypassed, 19, |_, _, _| unreachable!())
+        .unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::MissingEvent);
+    assert_eq!(failure.position, plan.events[0].position);
+    assert_eq!(failure.event_index, 0);
+    assert_eq!(failure.detail, "declared end retains unconsumed event");
+
+    // Direct host MMIO is also a public embedding surface. An RTC source read outside a guest
+    // run poisons the source scope and must surface as the first runtime divergence.
+    let (mut outside, _, _) = observed_fixture(true, false);
+    let mut outside_driver = ReplayDriver::start(&mut outside, plan).unwrap();
+    assert!(
+        outside
+            .bus_mut()
+            .load32(wasm_vm_core::platform::virt::RTC_BASE)
+            .is_err()
+    );
+    let failure = outside_driver
+        .run_to_end(&mut outside, 19, |_, _, _| unreachable!())
+        .unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::Runtime);
+    assert!(failure.detail.contains("OutsideRun"));
+    assert_eq!(outside_driver.first_failure(), Some(&failure));
+
+    // The same supported out-of-run source call can poison a replay immediately before a
+    // recorded pending effect. That reaches the pending-delivery failure arm and must report the
+    // recorded effect coordinate without applying it.
+    let (mut pending_original, _, _) = observed_fixture(false, false);
+    pending_original
+        .start_session_sources(pending_original.source_policy(), None)
+        .unwrap();
+    let initial_resume = pending_original.save_session_resume().unwrap();
+    let first = witness(&mut pending_original);
+    pending_original
+        .stage_session_effect(0, SessionEffect::ExternalPending(true))
+        .unwrap();
+    pending_original.deliver_session_boundary().unwrap();
+    let event = pending_original
+        .take_session_deliveries()
+        .unwrap()
+        .remove(0);
+    let final_witness = witness(&mut pending_original);
+    let plan = ReplayPlan {
+        begin: first.position,
+        end: final_witness.position,
+        initial_resume,
+        events: vec![event],
+        witnesses: vec![first, final_witness],
+    };
+    plan.validate().unwrap();
+    let (mut poisoned_pending, _, _) = observed_fixture(true, false);
+    let mut pending_driver = ReplayDriver::start(&mut poisoned_pending, plan.clone()).unwrap();
+    assert!(
+        poisoned_pending
+            .bus_mut()
+            .load32(wasm_vm_core::platform::virt::RTC_BASE)
+            .is_err()
+    );
+    let failure = pending_driver
+        .run_to_end(&mut poisoned_pending, 19, |_, _, _| unreachable!())
+        .unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::Adapter);
+    assert_eq!(failure.position, plan.events[0].position);
+    assert_eq!(failure.event_index, 0);
+    assert!(failure.detail.contains("pending delivery"));
+    assert!(failure.detail.contains("OutsideRun"));
+    assert_eq!(pending_driver.first_failure(), Some(&failure));
+
+    // A valid replayed receive at the declared end can leave the offline network queue
+    // nonempty without any private-state tampering. Completion must therefore fail closed at
+    // the end fence instead of publishing a Completed replay with unread recorded ingress.
+    let mut network_original = network_fixture(false);
+    network_original
+        .start_session_sources(network_original.source_policy(), None)
+        .unwrap();
+    let initial_resume = network_original.save_session_resume().unwrap();
+    let first = witness(&mut network_original);
+    let event = capture_network(
+        &mut network_original,
+        NetworkEvent::Receive(vec![0x52, 0x58]),
+    );
+    let final_witness = witness(&mut network_original);
+    let plan = ReplayPlan {
+        begin: first.position,
+        end: final_witness.position,
+        initial_resume,
+        events: vec![event],
+        witnesses: vec![first, final_witness],
+    };
+    plan.validate().unwrap();
+    let mut network_replay = network_fixture(true);
+    let mut network_driver = ReplayDriver::start(&mut network_replay, plan.clone()).unwrap();
+    let failure = network_driver
+        .run_to_end(&mut network_replay, 19, |_, _, _| unreachable!())
+        .unwrap_err();
+    assert_eq!(failure.reason, ReplayReason::Exhausted);
+    assert_eq!(failure.position, plan.end);
+    assert_eq!(failure.event_index, 1);
+    assert!(failure.detail.contains("network exhaustion: Exhausted"));
+    assert_eq!(network_driver.first_failure(), Some(&failure));
+}
+
+#[test]
 fn missing_observation_before_source_window_fence_reports_its_recorded_position() {
     const READS: usize = 600;
     const KEPT_READS: usize = 255;

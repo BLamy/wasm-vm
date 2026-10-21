@@ -3,7 +3,7 @@ id: E9-T14
 epic: 9
 title: Replay recorded sessions and detect the first divergence
 priority: 524.914
-status: implemented
+status: verified
 depends_on: [E9-T05, E9-T10, E9-T11, E9-T12, E9-T13]
 estimate: S
 risk: high
@@ -684,3 +684,45 @@ Evidence of record:
 
 A fresh independent verifier must interrogate this exact-head evidence and
 the prior G01–G18 ledger before setting `verified`.
+
+### 2026-10-20 — independent verifier — VERDICT: verified
+
+- **P1 / AUTH — HELD.** Exact runtime head
+  `9aa5f3683256247107c0e1125b2e80a9cb79468a`, tree
+  `90cae2ad224d5cf35dbded7c84fc662ab3801330`, cold receipt SHA-256
+  `d7160cf9816e2935a058f7980fcf9ebb0ca76eb9de2cc7f345da5a157f9826d0`,
+  status `passed`. All 29 inventory hashes, 4,096 guest-trace records, raw
+  complete-frame digest, exact cold checkout, and command exits authenticate.
+  `make ci` has only the asserted five parent-reproduced `zicsr-stub`
+  diagnostics; every separately prescribed gate passed.
+- **P2–P8 / acceptance — HELD.** Prior unchanged guest/JIT/UART, ingress/end,
+  exact-coordinate, and production predictions carry. Scoped reruns passed
+  plan bounds 5/5, source admission 3/3, browser journal/ABI 57/57, and the
+  final core replay suite 21/21. Built/public reports each record 127/0, 47
+  events, interpreter/JIT complete-frame agreement, 12,879,803 real JIT
+  retirements, exact changed-input/observation/omitted-DMA points, and no
+  console errors except the allowed public favicon. Real IndexedDB missing
+  chunk, changed digest/revision, aborted transaction, and intact reopen all
+  behave as claimed. Deployment `5df682b8` and seven R2 objects authenticate.
+- **P9 / COVERAGE — HELD after adversarial correction.** Three proposed
+  waivers were false but the reached product behavior was correct: public
+  runner/delivery-drain bypass reaches the explicit unconsumed-event guard;
+  direct RTC MMIO outside guest scope reaches `OutsideRun` and the poisoned
+  `ExternalPending` delivery arm; a valid network Receive at the declared end
+  reaches network exhaustion with unread ingress. The promoted regression
+  `supported_embedding_and_end_guards_report_first_divergence` asserts exact
+  reason, position, index, detail, and retained first failure for all three.
+  Remaining G01–G18 waivers follow from concrete plan bounds, contiguous
+  sequence/cursor ownership, pre-end witness checks, source receipt ownership,
+  ingress gates, real content-address validation, or session `jit_safe`
+  admission. No task-relevant unexecuted or dead behavior remains.
+- **P10 / SENSITIVITY — HELD.** The promoted attack passes unchanged; changing
+  only its expected unconsumed-event reason to `ExtraEvent` exits 101 with
+  actual `MissingEvent`. Restored final suite and `cargo fmt --check` pass.
+- **SUITE:** promoted
+  `crates/core/tests/e9_deterministic_replay.rs::supported_embedding_and_end_guards_report_first_divergence`.
+  No implementation code was edited. Host rr is waived by policy.
+
+Predictions, all source/evidence citations, waiver proofs, exact commands and
+outcomes: `/Users/blamy/Documents/Codex/e9-t14-verifier-9aa5f368/assessment.md`,
+SHA-256 `6c7e1284b9c66002352d6815ba4e544558d1a49c0b46ba7528a461e262be1610`.
