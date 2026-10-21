@@ -4,7 +4,7 @@ epic: 9
 title: Measure recording storage and seek overhead on real guests
 priority: 524.922
 status: pending
-depends_on: [E9-T15, E9-T16, E9-T18, E9-T19]
+depends_on: [E9-T15, E9-T16, E9-T18c, E9-T19]
 estimate: S
 risk: medium
 capstone: false
