@@ -3,7 +3,7 @@ id: E9-T18c
 epic: 9
 title: Replay durable GPU session results through the real browser bridge
 priority: 524.9183
-status: implemented
+status: verified
 depends_on: [E9-T18b, E9-T17, E9-T09, E9-T14]
 estimate: S
 risk: high
@@ -23,15 +23,15 @@ and final product integration remain required by E9-T22/E9-T24.
 
 ## Acceptance criteria
 
-- [ ] Record every admitted guest-visible result, shared-memory write and
+- [x] Record every admitted guest-visible result, shared-memory write and
   query/error/fence completion in bounded durable history. Reopen and replay exact
   bytes/order, including genuine pending work across a keyframe, using the
   existing version/identity and committed-prefix rules.
-- [ ] An actual RV64 GPU workload through the production Wasm/physical GPU bridge
+- [x] An actual RV64 GPU workload through the production Wasm/physical GPU bridge
   produces matching replay CPU/RAM/device/disk/result witnesses and documented
   physical scanout. Vary live GPU results/timing during replay; no physical
   cross-GPU bit-identical pixel claim or software/canned-frame substitution.
-- [ ] Missing/corrupt results, unsupported host/build/clock profiles, context loss
+- [x] Missing/corrupt results, unsupported host/build/clock profiles, context loss
   and authentic stale replies after seek resolve explicitly without live result
   substitution, stranded fences, corruption of the original or replay egress.
   T17 paced-on-keyboard sessions remain checkpoints-only unless their exact clock
@@ -83,3 +83,15 @@ Replay changes actual live scatter bytes/query values, holds readiness and varie
 Fresh critic preaudits (all read-only so far) are sealed at `target/evidence/e9-t18c-verifier/frozen-browser-preaudit-1f21eaa2/report.md` (SHA256 `2b76e74c3f0073cf914e232ce26e6086ea1c3dcde7d1f19c3a7b4cdc5a6337a0`), `proof-incremental-e2ab203c4/report.md` (`734cb96c7473b85a5c29d5c79fbb14046f273a12e33bbc9c40abc3e2d97c1725`), and `final-preaudit-383588509/report.md` (`0231a6340f791e0cf156f4fc988d0c853c36083d4edeee0afdee7476d7ffb941`). They carry Native/storage/cancellation/cache results, independently authenticate raw state and literal layered bytes, kill a receipt-intent mutant, exercise a new physical schedule and inherited owned-capability method lookup, and classify 286 diff hunks with worker/Wasm coverage limits explicit. Formal cold authentication and verdict belong to the fresh verifier.
 
 Scope: the admitted 1 GiB pure ICount/64 profile only. This original MMIO fixture is not Linux/Mesa or full desktop qualification. T17 paced keyboard histories keep their authenticated checkpoint-only policy. No cross-GPU bit-identical rendering, instant-seek or new performance claim is made; T22/T24 retain their declared budgets/product integration. Publication and roadmap metadata follow the verifier's decision. Worker sets only implemented, never verified.
+
+
+### 2026-10-21 — fresh verifier — VERDICT: verified
+
+- **AC1 / durable history — HELD.** Predicted bounded authenticated results, genuine pending full/delta restoration and atomic prefix publication. Cold raw-byte reconstruction yields 11 default keyframes / 32 GPU rows / 3 literal bodies and 3 layered keyframes / 39 rows / 4 bodies. Actual authorizer abort preserves revision24, manifest, CPU/RAM and dirty-page retry; depth8 rolls to full. Storage metadata/ref-discovery and encoded chunk/interval/row bounds carry unchanged, with metadata-only probes labelled separately from body authentication.
+- **AC2 / exact guest state and physical bridge — HELD.** Independent stdlib parsers reproduce default `d3e017b082613411e5ac5f5de50ba3117d0340033e34005a213f892db5632f06` and layered `d1357d130463ddd0d7fde31a974871a3efeb129ada4b2f855efa54f843e561f9`; every native witness byte and whole-RAM observer agrees. Literal green/readback/query1/0/COW/error/fence and odd-offset two-plane/padding checks pass through actual Metal rendering. Cold guest points: `target/evidence/e9-t18c-verifier/formal-verdict-383588509/default-oracle/result.json:2195` and `layered-oracle/result.json:1077`. Changed live results/readiness and the independent quantum1021/17-held-fence/0xa7 schedule cannot replace recorded results.
+- **AC3 / ownership, refusal and preservation — HELD.** Missing/corrupt/profile, authentic old completion/DMA, uncertain cancellation, numeric bypass and context-loss injection-boundary assertions pass without original-history mutation or replay egress. Actual timeline Open/Back420511/Forward420512 returns the exact source state and green canvas. The complete incremental software suite passes127/0,14 independent state/console oracles,100 obsolete cancellations and legacy checkpoints; unsupported-clock GPU history stays blocked with active replay/console unchanged.
+- **Exact head / cold / mocks — HELD.** The current worker-claim head `a2fc5f356f05de8a2fb6c4a1720479d4bcd4cd17` differs from frozen `3835885099576a7538e721655d4adb0f9f826a95` only in task/queue metadata. All88 source bytes/git modes match current checkout and pristine clone; all9 fresh runtime outputs match committed dist. Cold report SHA256 `1cea6b52210cd1d0692893610850a3b3dde38cf50ad5e90340ab2c17bb46e05a`, all731 artifacts / 455285778 bytes and21 successful commands authenticate. The clone starts without target/npm state, scrubs Rust/Cargo inputs, uses locked builds and finishes clean;42 GPU integrations and423 library tests pass with0 ignored. The single final cold proof was interrogated, not rerun.
+- **Coverage / attacks / waiver — HELD.** All seven carried verifier catalogues rehash, including Native binaries/profiles; the286-hunk ledger explicitly distinguishes main-page counters, worker/Wasm callback/raw-state proof and narrow static/generated/type/diagnostic waivers. Owned layered methods, inherited transport lookup and actual UI controls have targeted runs. The receipt-tuple mutant is killed. The independently found `completeExact` publish overlap is closed by the guarded publication plus isolated and real IDB abort/retry regressions. High3 remains recorded as a failed aggregate; its successful2234s wall/runtime stages carry through the proof-only543s completion under the incremental policy. Only the exact five historical optional `zicsr-stub` dead-code diagnostics are waived; production/GPU Clippy remains strict. Host rr is waived by the2026-09-01 policy.
+- **SUITE.** Keep the committed Native pending/error/cache/owned1GiB and GPU metadata tests, real layered fixture/method/legacy/byte oracle, keyframe abort/depth rollover, completion overlap/abort/retry, and portable genuine GPU timeline controls in worker/cold verify targets. Retain expensive profiles and one-off probes as sealed evidence; no implementation fix or additional unrelated test is needed.
+
+Formal report: `target/evidence/e9-t18c-verifier/formal-verdict-383588509/report.md`, SHA256 `c3186c6520247f6f66e48991b4d72b1a04c476818a6cb56cd32384b1c41b6da8`; machine report `97051363374f4ff50558bbf7422073a8a858971ec4a8a0a2e5fd57ee3cad254e`; full evidence catalogue `e250825acc3c018324e812c065a784b6e86d0b7968e4ab94753a093a041af06e`. Predictions F1–F5 and prior J1–J8 are HELD. No open refutation or evidence gap remains for the admitted1GiB pure ICount/64 result boundary. This verdict does not qualify Linux/Mesa, full desktop performance, instant seek or cross-GPU pixel identity; T17 paced histories remain checkpoints-only and T22/T24 retain their work.
