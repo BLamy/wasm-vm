@@ -35276,13 +35276,15 @@
       "activity": [
         {
           "date": "2026-10-21",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "Add accessible timeline controls over actual saved Linux replay"
+          ]
         }
       ],
       "firstActivity": "2026-10-21",
       "lastActivity": "2026-10-21",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E9-T18c",
@@ -35360,21 +35362,23 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-10-21 — worker — start timeline controls\n\nSelected from the top of Next up. E9-T06 and E9-T16 are independently verified;\nrisk remains medium and the slice is S. E9-T18b is externally blocked on the\nindependent verifier's account security setup and leaves the active lane. This\nindependent UI slice uses the accepted software seek controller and keeps full\nGPU replay gated until E9-T18c is verified. No UI implementation or recorded\nacceptance is claimed yet.",
+      "verificationLog": "### 2026-10-21 — worker — start timeline controls\n\nSelected from the top of Next up. E9-T06 and E9-T16 are independently verified;\nrisk remains medium and the slice is S. E9-T18b is externally blocked on the\nindependent verifier's account security setup and leaves the active lane. This\nindependent UI slice uses the accepted software seek controller and keeps full\nGPU replay gated until E9-T18c is verified. No UI implementation or recorded\nacceptance is claimed yet.\n\n### 2026-10-21 — worker — frozen software timeline submission\n\nRuntime/source head: `76aaf3539724cf32eb77a06716cb9d31142e2603`. The timeline\nPR was moved below the externally blocked GPU pending-keyframe PR. This release\nuses the exact already-verified A Wasm (`eaf24659537e2cd79def0e49b698fdd3ced525998dc9332ba8d286538d13a35e`,\n2361401 bytes) and contains no pending-GPU implementation. The UI and browser\nacceptance sources are byte-identical to the preliminary passing `9e09ee4e6`\nrun; the final release recording below is on the verified runtime.\n\nCommand: `E9_TIMELINE_EVIDENCE_DIR=target/evidence/e9-t19-final-76aaf353 make verify-E9-T19`.\nAll eight medium-risk commands passed: policy, format, three JavaScript syntax\nchecks, 21 deterministic replay plus 6 seek tests, the affected Wasm/browser\nbuild, and the built-page acceptance. No unrelated full workspace wall or cold\nclone is claimed for this UI-only medium-risk boundary.\n\nEvidence (relative to this checkout):\n\n- `target/evidence/e9-t19-final-76aaf353/report.json`, SHA-256 `cd7f77b1d2d57586b939d7da4ee5cc9b17b38ece282510fab113f6850b483472`; 108.61 seconds.\n- `target/evidence/e9-t19-final-76aaf353/browser/report.json`, SHA-256 `c6be9959e327e17f2db00a2bc0458830fa05088815e9fcbf258f7bdd6db41304`.\n- `target/evidence/e9-t19-final-76aaf353/browser/browser-trace.zip`, SHA-256 `c5661cc9a738bed262638827391c47c27fe495d271c594280b54485d3ed2967d`.\n- Desktop and phone captures: `target/evidence/e9-t19-final-76aaf353/browser/timeline-{desktop,phone}.png`.\n- Independent worker digest catalog audit: `target/evidence/e9-t19-final-audit-76aaf353.json`; all 12 recorded files (8124813 bytes) and 14 source hashes rechecked.\n\nThe recording demonstrates a real saved Linux boot excerpt, private restoration\nand 13 independent from-start VM/console comparisons, exact full positions,\nkeyboard text/slider/step/keyframe navigation, mouse and touch scrubbing,\n390-pixel reflow with retained focus and polite status announcements, actual\nlive BusyBox controller pausing, playback/pause, refresh/reselection event\nnavigation, and a complete early-finish recording ending at transition 64.\nA held first frame proves a newer seek survives cancellation of Open; 100\nsuperseded requests all cancel (0.735 ms total) while only the newest actual\nstate publishes. Invalid transitions and stored incompatible/incomplete/GPU\nmetadata leave the previous machine and console intact.\n\nThe observation marker is explicitly a synthetic UI-routing fixture at\n63/observe: the authenticated tape stays untouched and the independently\nobserved real Linux VM/console at transition 64 is asserted. The short excerpt\ndoes not claim to have produced a real RTC/entropy observation. GPU metadata\nfixtures prove gating, not GPU execution. Test hooks use the production 10000 ms\nworker watchdog instead of the special 300 ms fatal-watchdog-test default; no\nproduction timeout changed.\n\nFresh preaudit identified and the worker fixed initial-open/new-seek retirement,\nevent-option clearing on refresh, and step enablement at same-transition\nboundaries. All three are now exercised in the recording. This is a worker\nclaim awaiting the independent final verdict. Main-site publication follows\nverification on this verified-runtime branch; the pending GPU branch remains\nblocked and must not ride that release.\n\n### 2026-10-21 — worker — close non-empty console proof\n\nFresh sufficiency review found that the 2.1M-transition excerpt ended before any\nserial output, so the original 13 console comparisons covered only the empty\nview. Independent verifier evidence at\n`target/evidence/e9-t19-verifier-76aaf353/independent-report.json` demonstrates\n646 genuine pinned Linux UART bytes at transition 3000000 before external I/O,\na matching private replay, an explicitly labelled 80003-byte formatting fixture\nwith the exact 65536-byte tail, and a passing stale-admission/Pause/new-seek\nattack. Those renderer/controller/ownership results are retained HELD.\n\nThe worker is extending the product excerpt to that observed 3M horizon so the\ndemo itself can show the real kernel output, and adding an end-keyframe oracle\nto the official browser run. This changes the sample horizon, so status returns\nto in-progress and the selected medium-risk submission is recorded again at\nthe new frozen source. The native runtime and accepted seek controller remain\nunchanged; no unrelated high-risk wall or cold clone is restarted.",
       "adversarial": "Operate the timeline with keyboard only, scrub faster than restores finish and select incompatible/incomplete sessions. Check displayed positions against independently observed VM digests.",
       "file": "tasks/epic-9-session-time-travel/E9-T19-timeline-ui.md",
       "activity": [
         {
           "date": "2026-10-21",
-          "commits": 1,
+          "commits": 3,
           "labels": [
+            "Record the fresh console proof gap and extend the real Linux excerpt",
+            "Submit recorded timeline controls on the verified production runtime",
             "Begin accessible timeline controls over verified session seeking"
           ]
         }
       ],
       "firstActivity": "2026-10-21",
       "lastActivity": "2026-10-21",
-      "commitCount": 1
+      "commitCount": 3
     },
     {
       "id": "E9-T20",

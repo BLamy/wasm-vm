@@ -67,7 +67,7 @@ export async function recordTimelineSample({store,id,onProgress=()=>{},signal}){
     onProgress('Saving the initial Linux state…');
     const journal=await SessionInputJournal.createLiveExact(store,writer,configuration,initial.resume,disk,initial);
     source.sendInput(new Uint8Array([120]));
-    const checkpoints=[64,1000000,2100000];let executed=0;
+    const checkpoints=[64,1000000,3000000];let executed=0;
     for(const target of checkpoints){
       do{
         const amount=Math.min(32768,target-executed),state=source.runChunk(amount);need(!state.done,'The sample guest stopped unexpectedly.');executed+=amount;

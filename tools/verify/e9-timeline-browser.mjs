@@ -138,7 +138,7 @@ try{
  await c('scrub').focus();await page.keyboard.press('Home');await settled();
  await page.keyboard.press('ArrowRight');await settled();
  assert.equal(await c('scrub').evaluate(e=>document.activeElement===e),true);
- assert.equal(await page.evaluate(()=>__sessionTimeline.snapshot.active.position.transition),'2100');await oracle('native-keyboard-scrub');
+ assert.equal(await page.evaluate(()=>__sessionTimeline.snapshot.active.position.transition),'3000');await oracle('native-keyboard-scrub');
  const box=await c('scrub').boundingBox();await page.mouse.click(box.x+box.width*0.68,box.y+box.height/2);await settled();
  await oracle('mouse-scrub');
  // Hold a real computed frame so previews, cancellation and latest ownership are observable.
@@ -212,6 +212,10 @@ try{
  await c('open').click();await c('pause').click();await settled();
  assert.deepEqual(await page.evaluate(()=>__sessionTimeline.snapshot.active),priorOpen);
  await c('open').click();await settled();
+ await c('points').selectOption({index:3});await c('point-go').click();await settled();
+ assert.equal(await page.evaluate(()=>__sessionTimeline.snapshot.active.position.transition),'3000000');
+ assert.doesNotMatch(await c('console').textContent(),/^\(No serial output/);await oracle('genuine-linux-console-at-end');
+ assert.equal(await c('forward').isDisabled(),true);
  await panel.screenshot({path:path.join(output,'timeline-desktop.png')});
  await c('record').click();await c('stop').click();
  await page.waitForFunction(previous=>__sessionTimeline.active?.id!==previous&&!__sessionTimeline.recording&&!__sessionTimeline.snapshot.pending,id,{timeout:300000});
