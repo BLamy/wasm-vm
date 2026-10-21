@@ -405,3 +405,93 @@ fn dense_boundary_deliveries_yield_before_transition_step_is_published() {
         before_instruction.resume_sha256
     );
 }
+
+#[test]
+fn dense_boundary_delivery_cap_repeats_and_preserves_exact_position_targets() {
+    let mut original = simple();
+    original
+        .start_session_sources(original.source_policy(), None)
+        .unwrap();
+    let initial_resume = original.save_session_resume().unwrap();
+    let initial = witness(&mut original);
+    let mut events = Vec::new();
+    let mut at_sixty_four = None;
+    for value in 1..=129u16 {
+        events.push(delivery(
+            &mut original,
+            SessionEffect::WriteRam {
+                address: BASE + 0x900,
+                bytes: vec![value as u8],
+            },
+        ));
+        if value == 64 {
+            at_sixty_four = Some(witness(&mut original));
+        }
+    }
+    let before_instruction = witness(&mut original);
+    until(&mut original, 1);
+    let after_instruction = witness(&mut original);
+    let plan = ReplayPlan {
+        begin: initial.position,
+        end: after_instruction.position,
+        initial_resume,
+        events,
+        witnesses: vec![initial, after_instruction],
+    };
+
+    let at_sixty_four = at_sixty_four.unwrap();
+    let mut exact = simple();
+    let mut exact_driver = ReplayDriver::start(&mut exact, plan.clone()).unwrap();
+    assert!(
+        !exact_driver
+            .run_chunk_to(
+                &mut exact,
+                at_sixty_four.position,
+                4096,
+                |_, _, _| unreachable!(),
+            )
+            .unwrap()
+    );
+    assert_eq!(exact.session_position(), Some(at_sixty_four.position));
+    assert_eq!(
+        witness(&mut exact).resume_sha256,
+        at_sixty_four.resume_sha256
+    );
+    assert!(
+        exact_driver
+            .run_chunk_to(
+                &mut exact,
+                at_sixty_four.position,
+                4096,
+                |_, _, _| unreachable!(),
+            )
+            .unwrap()
+    );
+
+    let mut transition = simple();
+    let mut transition_driver = ReplayDriver::start(&mut transition, plan).unwrap();
+    for expected_sequence in [64, 128] {
+        assert!(
+            !transition_driver
+                .run_chunk_to_transition(&mut transition, 0, 4096, |_, _, _| unreachable!())
+                .unwrap()
+        );
+        let position = transition.session_position().unwrap();
+        assert_eq!(position.transition, 0);
+        assert_eq!(position.retired, 0);
+        assert_eq!(position.sequence, expected_sequence);
+    }
+    assert!(
+        transition_driver
+            .run_chunk_to_transition(&mut transition, 0, 4096, |_, _, _| unreachable!())
+            .unwrap()
+    );
+    assert_eq!(
+        transition.session_position(),
+        Some(before_instruction.position)
+    );
+    assert_eq!(
+        witness(&mut transition).resume_sha256,
+        before_instruction.resume_sha256
+    );
+}
