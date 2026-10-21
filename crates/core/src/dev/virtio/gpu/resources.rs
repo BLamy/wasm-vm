@@ -738,22 +738,37 @@ impl ResourceMap {
     /// Retain the accepted legacy upload for the CPU cursor and recovery path.
     /// The caller has already validated/gathered the exact original DMA rows.
     #[cfg(feature = "virgl-renderer")]
+    pub(crate) fn validate_dense_upload(
+        &self,
+        id: u32,
+        rect: protocol::Rect,
+        length: usize,
+    ) -> Result<(), TransferError> {
+        let resource = self
+            .resources
+            .get(&id)
+            .ok_or(TransferError::InvalidResourceId)?;
+        if u64::from(rect.x) + u64::from(rect.width) > u64::from(resource.width)
+            || u64::from(rect.y) + u64::from(rect.height) > u64::from(resource.height)
+            || u64::from(rect.width) * u64::from(rect.height) * 4 != length as u64
+        {
+            return Err(TransferError::InvalidParameter);
+        }
+        Ok(())
+    }
+
+    #[cfg(feature = "virgl-renderer")]
     pub(crate) fn mirror_dense_upload(
         &mut self,
         id: u32,
         rect: protocol::Rect,
         bytes: &[u8],
     ) -> Result<(), TransferError> {
+        self.validate_dense_upload(id, rect, bytes.len())?;
         let resource = self
             .resources
             .get_mut(&id)
-            .ok_or(TransferError::InvalidResourceId)?;
-        if u64::from(rect.x) + u64::from(rect.width) > u64::from(resource.width)
-            || u64::from(rect.y) + u64::from(rect.height) > u64::from(resource.height)
-            || u64::from(rect.width) * u64::from(rect.height) * 4 != bytes.len() as u64
-        {
-            return Err(TransferError::InvalidParameter);
-        }
+            .expect("validated dense resource");
         let mut changed = false;
         for y in 0..rect.height as usize {
             for x in 0..rect.width as usize {

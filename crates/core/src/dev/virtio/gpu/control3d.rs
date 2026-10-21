@@ -657,6 +657,7 @@ impl Control3dSnapshot {
 
 pub(crate) struct Control3dState {
     sink: Box<dyn Control3dSink>,
+    result_tap: Option<crate::session_gpu::ControlResultTap>,
     desktop_resources: bool,
     dimensional_resources: bool,
     dimensional_depth_resources: bool,
@@ -747,6 +748,7 @@ impl Control3dState {
     ) -> Self {
         Self {
             sink,
+            result_tap: None,
             desktop_resources,
             dimensional_resources,
             dimensional_depth_resources,
@@ -814,11 +816,27 @@ impl Control3dState {
     pub(crate) fn poison(&mut self) {
         self.poisoned = true;
     }
+    pub(crate) fn set_result_tap(&mut self, tap: crate::session_gpu::ControlResultTap) {
+        self.result_tap = Some(tap);
+    }
+    pub(crate) fn result_observation_failed(&self) -> bool {
+        self.result_tap
+            .as_ref()
+            .is_some_and(|tap| tap.error().is_some())
+    }
+    pub(crate) fn result_tap_active(&self) -> bool {
+        self.result_tap.is_some()
+    }
     fn send(&mut self, operation: Control3dOperation) -> Result<(), Control3dError> {
-        let result = self.sink.apply(&Control3dEvent {
+        let event = Control3dEvent {
             epoch: self.epoch,
             operation,
-        });
+        };
+        let result = if let Some(tap) = &self.result_tap {
+            tap.apply(&event, self.sink.as_mut())
+        } else {
+            self.sink.apply(&event)
+        };
         if result == Err(Control3dError::BridgePoisoned) {
             self.poisoned = true;
         }

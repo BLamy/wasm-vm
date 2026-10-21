@@ -52,6 +52,8 @@ pub mod resume;
 pub mod sbi;
 pub mod session_clock;
 pub mod session_devices;
+#[cfg(feature = "virgl-renderer")]
+pub mod session_gpu;
 mod session_ingress;
 pub mod session_network;
 #[cfg(not(feature = "zicsr-stub"))]
@@ -286,6 +288,8 @@ pub struct Machine {
     /// Opt-in exact scheduling; ordinary machines retain their established run semantics.
     session_clock: Option<session_clock::SessionClock>,
     session_sources: alloc::rc::Rc<core::cell::RefCell<session_clock::sources::ObservationHub>>,
+    #[cfg(feature = "virgl-renderer")]
+    session_gpu: Option<session_gpu::GpuSession>,
     /// Transient execution fence, never part of a quiescent saved machine.
     session_fence: Option<u64>,
     /// A replay's declared end. Unlike a per-run fence this survives between calls and is never
@@ -972,6 +976,8 @@ impl Machine {
             bus: SystemBus::new(Ram::new(ram_bytes)?),
             session_clock: None,
             session_sources: Default::default(),
+            #[cfg(feature = "virgl-renderer")]
+            session_gpu: None,
             session_devices: None,
             session_network: None,
             session_fence: None,
@@ -1909,6 +1915,11 @@ impl Machine {
         &mut self,
         exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
     ) -> Result<alloc::vec::Vec<u8>, dev::virtio::gpu::control3d::Control3dError> {
+        if self.session_gpu.is_some() {
+            return self
+                .session_gpu_dma(exchange, None, None)
+                .map_err(|_| dev::virtio::gpu::control3d::Control3dError::BridgePoisoned);
+        }
         let (state, _, _, index) = self
             .gpu
             .as_ref()
@@ -1930,6 +1941,12 @@ impl Machine {
         exchange: &dev::virtio::gpu::submit3d::Submit3dExchange,
         bytes: &[u8],
     ) -> Result<(), dev::virtio::gpu::control3d::Control3dError> {
+        if self.session_gpu.is_some() {
+            return self
+                .session_gpu_dma(exchange, Some(bytes), None)
+                .map_err(|_| dev::virtio::gpu::control3d::Control3dError::BridgePoisoned)
+                .map(|_| ());
+        }
         let (state, _, _, index) = self
             .gpu
             .as_ref()
@@ -1952,6 +1969,11 @@ impl Machine {
         layer_stride: u32,
         layer_count: u32,
     ) -> Result<alloc::vec::Vec<u8>, dev::virtio::gpu::control3d::Control3dError> {
+        if self.session_gpu.is_some() {
+            return self
+                .session_gpu_dma(exchange, None, Some((layer_stride, layer_count)))
+                .map_err(|_| dev::virtio::gpu::control3d::Control3dError::BridgePoisoned);
+        }
         let (state, _, _, index) = self
             .gpu
             .as_ref()
@@ -1974,6 +1996,12 @@ impl Machine {
         layer_count: u32,
         bytes: &[u8],
     ) -> Result<(), dev::virtio::gpu::control3d::Control3dError> {
+        if self.session_gpu.is_some() {
+            return self
+                .session_gpu_dma(exchange, Some(bytes), Some((layer_stride, layer_count)))
+                .map_err(|_| dev::virtio::gpu::control3d::Control3dError::BridgePoisoned)
+                .map(|_| ());
+        }
         let (state, _, _, index) = self
             .gpu
             .as_ref()

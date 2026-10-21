@@ -351,6 +351,15 @@ pub(crate) struct PreparedGpuCheckpoint {
 }
 impl GpuState {
     pub(crate) fn checkpoint_ready(&self) -> Result<(), Error> {
+        // E9-T18b will persist the result frontier. Until then, never emit a
+        // checkpoint which could silently lose the newly owned payload window.
+        if self
+            .control3d
+            .as_ref()
+            .is_some_and(|control| control.result_tap_active())
+        {
+            return Err(Error::Unsupported);
+        }
         if !self.production_selected
             || self.capabilities.is_none()
             || self.control3d.is_none()

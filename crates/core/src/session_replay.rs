@@ -891,7 +891,9 @@ impl ReplayDriver {
                         DivergenceReason::Position => ReplayReason::MisorderedEvent,
                         DivergenceReason::Kind
                         | DivergenceReason::Length
+                        | DivergenceReason::Intent
                         | DivergenceReason::ProviderUnavailable => ReplayReason::EventPayload,
+                        DivergenceReason::PhysicalWitness => ReplayReason::Adapter,
                         DivergenceReason::OutsideRun => ReplayReason::Runtime,
                     };
                     let position = self
