@@ -357,8 +357,9 @@ export class SessionStore {
     for (const id of await this.#sessionKeys()) {
       const found = await this.#session(id); need(found, 'Corrupt', 'surviving session disappeared');
       const decoded = found.decoded;
-      need(decoded.value.machine.gpu === null && decoded.value.checkpoints.every(point => point.gpu === null)
-        && decoded.value.extensions.length === 0, 'UnsupportedRetention', 'unknown GPU/extension references');
+      // GPU keyframes name their complete pair directly in checkpoint.gpu; #references
+      // authenticates that blob before this mark pass, while roots cover its historical disk.
+      need(decoded.value.extensions.length === 0, 'UnsupportedRetention', 'unknown extension references');
       for (const object of await this.#references(decoded)) add(object);
       const roots = parsed(() => sessionManifestReferences(decoded.bytes)).roots;
       for (const hash of roots) {

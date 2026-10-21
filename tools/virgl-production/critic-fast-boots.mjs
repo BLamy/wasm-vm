@@ -7,6 +7,7 @@ import {assertPublicDesktopFinal} from './critic-fast-boots-final.mjs';
 import {verifyWarmGpuPixels} from './critic-warm-pixels.mjs';
 import {expectedPublishedSource} from './published-source.mjs';
 import {attachIsolatedInput} from './isolated-input.mjs';
+import {verifyGpuSessionDesktop} from './e9-gpu-session-desktop.mjs';
 import fs from 'node:fs/promises';
 import {createReadStream,appendFileSync} from 'node:fs';
 import path from 'node:path';
@@ -38,6 +39,7 @@ const omarchyPersist = process.env.CRITIC_FAST_BOOT_OMARCHY_PERSIST === '1';
 const saveOnRepeat = process.env.CRITIC_FAST_BOOT_SAVE_ON_REPEAT === '1';
 const gpuTrace = process.env.CRITIC_FAST_BOOT_GPU_TRACE === '1';
 const captureGpuPair = process.env.CRITIC_FAST_BOOT_CAPTURE_GPU_PAIR === '1';
+const sessionHistory = process.env.CRITIC_FAST_BOOT_SESSION_HISTORY === '1';
 const fullDesktopReady = process.env.CRITIC_FAST_BOOT_FULL_DESKTOP_READY === '1';
 const applicationWorkload = process.env.CRITIC_FAST_BOOT_APPLICATIONS === '1';
 const restoredApplications = process.env.CRITIC_FAST_BOOT_RESTORED_APPLICATIONS === '1';
@@ -59,11 +61,16 @@ if(restoredApplications)assert.ok(warmGpu&&!applicationWorkload&&!captureGpuPair
 if(swapCheckpoint)assert.ok(guests.length===1&&guests[0]==='omarchy'&&!coldGpu&&!captureGpuPair&&!applicationWorkload&&!restoredApplications&&!remoteUrl,'separate local Omarchy warm swap fixture, never the clean factory or publication timing');
 const failureHoldMs=Number(process.env.CRITIC_FAST_BOOT_HOLD_FAILURE_MS||1800000);
 assert.ok(Number.isSafeInteger(failureHoldMs)&&failureHoldMs>=60000&&failureHoldMs<=7200000,'bounded diagnostic hold');
+const coldReadyMs=Number(process.env.CRITIC_FAST_BOOT_COLD_READY_MS||1800000);
+assert.ok(Number.isSafeInteger(coldReadyMs)&&coldReadyMs>=1800000&&coldReadyMs<=5400000,'bounded cold desktop readiness');
 if(applicationContinuation)assert.ok(applicationWorkload&&warmGpu&&localGpuPairFile&&candidateDirectory&&!remoteUrl,
   'application continuation requires the explicitly owned local recorded pair and image; no repeat/publication claim');
 if(applicationComponent)assert.ok(applicationContinuation,'a missing-only application component requires the owned local recorded baseline');
 if(captureGpuPair||localGpuPairFile)assert.ok(acceleratedGpu&&!remoteUrl,'GPU factory capture requires the owned local accelerated session');
 if(fullDesktopReady)assert.ok(acceleratedGpu&&!gpuTimingOnly&&!factoryGuardOnly&&!swapCheckpoint,'full native desktop readiness requires a separate interactive GPU session');
+if(sessionHistory)assert.ok(coldGpu&&guests.length===1&&guests[0]==='omarchy'&&!captureGpuPair
+  &&!swapCheckpoint&&!applicationWorkload&&!restoredApplications&&!remoteUrl,
+  'accelerated session history owns a new cold Omarchy runtime');
 if (remoteUrl) {
   const url = new URL(remoteUrl);
   assert.equal(url.protocol, 'https:');
@@ -139,12 +146,19 @@ if(captureGpuPair||fullDesktopReady){
     await fs.writeFile(destination,bytes);
   }
 }
+if(sessionHistory){
+  const filename='e9-gpu-session-desktop.mjs',bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
+  report.harnessHashes[filename]=hash(bytes);await fs.writeFile(path.join(output,'executed-harness',filename),bytes);
+}
 let browser, server, activePage, activeInputDriver, phase = 'inventory';
 const sourcePaths = ['index.html','main.js','loader.js','linux-worker.js','linux-worker-protocol.js',
   'linux-worker-host.js','pkg/wasm_vm_wasm.js','pkg/wasm_vm_wasm_bg.wasm','src/sink/presentation.js',
   'artifacts.json','artifacts-alpine.json','artifacts-node-alpine.json','artifacts-omarchy.json'];
 if (web.endsWith('/dist')) sourcePaths[0]='app.html';
 if(acceleratedGpu)sourcePaths.push('artifacts-omarchy-virgl.json');
+if(sessionHistory)sourcePaths.push('session-gpu-checkpoints.js','session-store.js','session-disk-roots.js',
+  'session-checkpoints.js','session-library.js','gpu-checkpoint-build.js','gpu-checkpoint.js',
+  'session-pkg/wasm_vm_session.js','session-pkg/wasm_vm_session_bg.wasm');
 for (const filename of sourcePaths){
   const bytes=await fs.readFile(path.join(web,filename));
   report.sourceHashes[filename]=hash(bytes);
@@ -309,9 +323,25 @@ if (!remoteUrl) server=createServer(async (request,response)=>{
       if(!bytes){
         record.source='production-r2';
         if(!remoteChunks.has(pathname))remoteChunks.set(pathname,(async()=>{
-          const remote=await fetch(r2+pathname,{signal:AbortSignal.timeout(60000)});
-          assert.equal(remote.status,200,pathname+' production status');
-          const value=Buffer.from(await remote.arrayBuffer());assert.equal(hash(value),chunk[2]);return value;
+          // A transient transport failure must not turn an immutable, hash-pinned
+          // production chunk into a guest disk fault halfway through a cold boot.
+          // A missing object or a digest mismatch is still a hard failure.
+          for(let attempt=0;attempt<3;attempt++){
+            let value;
+            try{
+              const remote=await fetch(r2+pathname,{signal:AbortSignal.timeout(60000)});
+              assert.equal(remote.status,200,pathname+' production status');
+              value=Buffer.from(await remote.arrayBuffer());
+            }
+            catch(error){
+              if(error.code==='ERR_ASSERTION')throw error;
+              if(attempt===2)throw error;
+              await new Promise(resolve=>setTimeout(resolve,250*(attempt+1)));
+              continue;
+            }
+            assert.equal(hash(value),chunk[2]);return value;
+          }
+          throw Error(pathname+' production transport unavailable');
         })());
         bytes=await remoteChunks.get(pathname);
       }else record.source=isCandidate?'pinned-local-candidate-chunk':'pinned-local-production-chunk';
@@ -520,7 +550,7 @@ async function holdOwnedFailure(page) {
   }
 }
 async function waitActualReady(page,guest,started){
-  const deadline=Date.now()+(coldGpu?1800000:guest==='omarchy'?600000:300000);
+  const deadline=Date.now()+(coldGpu?coldReadyMs:guest==='omarchy'?600000:300000);
   let observedAt=0;
   while(Date.now()<deadline){
     if(await fs.stat(path.join(output,'abort')).then(()=>true,()=>false))throw Error('Owned capture stopped by its abort file');
@@ -732,6 +762,13 @@ try{
       assert.ok(state.workers.length>=1,phase+' actual worker');
       assert.deepEqual(state.workerErrors,[]);
       assert.deepEqual(pageErrors,[],phase+' browser errors');
+      if(sessionHistory){
+        report.sessionHistory=await verifyGpuSessionDesktop(page,guestCommand,output);
+        assert.equal(report.sessionHistory.status,'passed');
+        assert.deepEqual(pageErrors,[],phase+' browser errors after historical restore');
+        report.phases.push({phase,guest,round,url,restoredMs,result,state,sessionHistory:report.sessionHistory});
+        break;
+      }
       if(guest==='omarchy'){
         assert.ok(state.display?.successfulPresents>0,phase+' actual guest scanout');
         assert.equal(state.overlayHidden,true,phase+' desktop ready surface');

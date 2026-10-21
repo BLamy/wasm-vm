@@ -1026,7 +1026,7 @@
       </details>
       <details id="session-library" class="session-library" open>
         <summary>Local saved sessions</summary>
-        <p class="session-note">Save exact points in an offline software guest. Input recording also saves delivered input in order; full replay comes later. A new guest or Open replaces the current guest.</p>
+        <p class="session-note">Save exact points in an offline software guest or a qualified accelerated desktop. Input recording also saves delivered input in order. A new guest or Open replaces the current guest.</p>
         <div class="session-actions">
           <label><input type="checkbox" data-session="time-entropy" disabled> Include time and random inputs</label>
           <button type="button" data-session="input-start" disabled>Start input recording</button>
@@ -1036,12 +1036,15 @@
         <p class="session-note">Input prefixes remain incomplete until all replay adapters are available. Save commits pending inputs; Stop leaves the guest paused.</p>
         <div class="session-actions">
           <button type="button" data-session="new" disabled>New checkpoint guest</button>
+          <button type="button" data-session="gpu-new" disabled>New GPU desktop</button>
           <button type="button" data-session="start" disabled>Start checkpoint recording</button>
           <button type="button" data-session="checkpoint" disabled>Checkpoint</button>
           <button type="button" data-session="stop" disabled>Stop recording</button>
           <button type="button" data-session="retry" disabled>Retry recording</button>
           <button type="button" data-session="resume" disabled>Resume guest</button>
+          <button type="button" data-session="gpu-capture" disabled>Save GPU desktop point</button>
         </div>
+        <p class="session-note">A new GPU desktop starts from the pinned Omarchy image without a factory snapshot. Its first boot can take tens of minutes; save a point once the desktop is ready.</p>
         <p data-session="active">Active: no checkpoint guest</p>
         <div class="session-fields">
           <label>Selected preview<select data-session="sessions" aria-label="Saved session" disabled></select></label>

@@ -27,8 +27,10 @@ class SessionLibrary {
     this.state('loading', 'Reading local checkpoints…');
     const c = this.controls;
     for (const [key, action, progress] of [
-      ['new', () => this.newGuest(), 'restoring'], ['start', () => this.start(), 'capturing'],
+      ['new', () => this.newGuest(), 'restoring'], ['gpu-new', () => this.newGpuGuest(), 'restoring'],
+      ['start', () => this.start(), 'capturing'],
       ['checkpoint', () => this.capture(), 'capturing'], ['stop', () => this.stop(), 'capturing'],
+      ['gpu-capture', () => this.captureGpu(), 'capturing'],
       ['input-start', () => this.startInputs(), 'capturing'], ['input-save', () => this.saveInputs(), 'saving'],
       ['input-stop', () => this.stopInputs(), 'saving'],
       ['open', () => this.open(), 'restoring'], ['retry', () => this.retry(), 'capturing'],
@@ -40,6 +42,8 @@ class SessionLibrary {
     c.points.addEventListener('change', () => this.render());
     root.querySelector('form').addEventListener('submit', event => {event.preventDefault(); void this.run(() => this.rename(), 'saving');});
     window.addEventListener('wvm:guest-ready', () => this.render());
+    window.addEventListener('wvm:desktop-ready', () => this.syncGpuRoute());
+    window.addEventListener('wvm:guest-booting', () => this.render());
   }
   state(value, message) {
     this.root.dataset.state = value; this.controls.status.textContent = message; this.render();
@@ -64,9 +68,16 @@ class SessionLibrary {
         }
       } catch (error) {this.metadata.clear(); metadataError = error;}
       await this.refresh();
+      const route = new URLSearchParams(location.search), id = route.get('gpuSessionId');
+      if (id && this.rows.has(id)) {
+        await this.select(id);
+        const point = route.get('gpuSessionPoint');
+        if (this.preview?.gpu && this.preview.manifest.checkpoints.some(entry => entry.id === point))
+          this.controls.points.value = point;
+      }
       if (metadataError) this.state('storage-error', `Saved checkpoints are intact; local labels could not be read: ${metadataError.message}`);
     } catch (error) {this.state('storage-error', `Local sessions unavailable: ${error.message}`);}
-    this.render();
+    this.syncGpuRoute();
   }
   persistMetadata(next) {
     if (next.size > 256) throw Error('Session label limit reached');
@@ -109,7 +120,7 @@ class SessionLibrary {
     if (this.busy && this.controls.sessions.value !== this.selected) return;
     const token = ++this.generation; this.selected = id; this.preview = null;
     this.controls.sessions.value = id; this.controls.points.replaceChildren(); this.controls.name.value = this.metadata.get(id)?.name ?? id;
-    if (!id) {this.state('ready', 'No saved sessions yet. Start an offline checkpoint guest, then start recording.'); return;}
+    if (!id) {this.state('ready', 'No saved sessions yet. Start an offline checkpoint guest or a new GPU desktop, then save a point.'); return;}
     if (this.rows.get(id)?.state === 'incomplete') {
       this.state('incomplete', 'This session is incomplete or its browser data is missing. It cannot be opened.'); return;
     }
@@ -118,15 +129,22 @@ class SessionLibrary {
       const opened = await this.store.openSession(id);
       if (!opened) throw Error('session unavailable');
       const manifest = JSON.parse(decoder.decode(opened.manifest)), vm = manifest.assets.find(asset => asset.role === 'vm');
-      const configuration = JSON.parse(decoder.decode(await this.readObject(this.store, vm.content, 1048576)));
+      const gpu = manifest.policy.profile === 'rv64-linux-gpu-v1';
+      const configuration = JSON.parse(decoder.decode(await this.readObject(this.store, vm.content, gpu ? 8*1048576 : 1048576)));
       const references = new Map();
       for (const ref of [...manifest.assets.map(asset => asset.content), ...manifest.checkpoints.map(point => point.machine),
+        ...manifest.checkpoints.flatMap(point => point.gpu ? [point.gpu] : []),
         ...await this.diskRoots.liveReferences(manifest.checkpoints.map(point => point.disk_root))]) references.set(ref.sha256, ref);
       if (token !== this.generation) return;
-      const compatible = configuration.version === 1 && manifest.machine.initramfs === null && manifest.policy.mode === 'checkpoints-only' && manifest.policy.profile === 'rv64-linux-software-v1'
+      const softwareCompatible = configuration.version === 1 && manifest.machine.initramfs === null && manifest.policy.mode === 'checkpoints-only' && manifest.policy.profile === 'rv64-linux-software-v1'
         && configuration.runtime === GPU_CHECKPOINT_BUILD_ID && manifest.machine.wasm_build === SOFTWARE_CHECKPOINT_WASM_SHA256
         && configuration.wasm.sha256 === SOFTWARE_CHECKPOINT_WASM_SHA256 && manifest.machine.gpu === null;
-      this.preview = {id, manifest, compatible, runtime: configuration.runtime, bytes: [...references.values()].reduce((sum, ref) => sum + Number(ref.length), opened.manifest.length)};
+      const gpuCompatible = gpu && configuration.version === 1 && manifest.machine.initramfs === null
+        && manifest.policy.mode === 'checkpoints-only' && configuration.runtime === GPU_CHECKPOINT_BUILD_ID
+        && manifest.machine.wasm_build === SOFTWARE_CHECKPOINT_WASM_SHA256
+        && configuration.wasm?.sha256 === SOFTWARE_CHECKPOINT_WASM_SHA256 && Boolean(manifest.machine.gpu);
+      const compatible = softwareCompatible || gpuCompatible;
+      this.preview = {id, manifest, compatible, gpu, runtime: configuration.runtime, bytes: [...references.values()].reduce((sum, ref) => sum + Number(ref.length), opened.manifest.length)};
       for (const point of manifest.checkpoints) {
         const option = document.createElement('option'); option.value = point.id;
         const at = this.metadata.get(id)?.points.find(item => item.id === point.id)?.at;
@@ -135,7 +153,8 @@ class SessionLibrary {
       }
       this.controls.points.value = manifest.checkpoints.at(-1)?.id ?? '';
       this.state(compatible || manifest.policy.mode === 'capture-prefix' ? 'ready' : 'incompatible', manifest.policy.mode === 'capture-prefix' ? 'Input prefix preview. Delivered inputs are saved; full replay is unavailable until all device adapters are installed.' : compatible
-        ? 'Selected preview only. Open restores the chosen exact checkpoint and leaves it paused.'
+        ? gpu ? 'Selected accelerated preview. Open authenticates and restores the chosen desktop in a fresh GPU worker.'
+          : 'Selected preview only. Open restores the chosen exact checkpoint and leaves it paused.'
         : 'Incompatible saved build or profile. Opening is disabled; the active guest is unchanged.');
     } catch (error) {if (token === this.generation) this.state(errorState(error), error.message);}
   }
@@ -148,8 +167,11 @@ class SessionLibrary {
     c['input-start'].disabled=!ready||busy||!qualified||Boolean(this.recording||this.pausedRecording)||inputBusy||inputStopped;
     c['input-save'].disabled=c['input-stop'].disabled=busy||!inputBusy||owner?.controller!==this.inputRecording?.controller;
     c.new.disabled = !ready || busy || Boolean(this.recording || this.pausedRecording) || inputBusy;
+    c['gpu-new'].disabled = !ready || busy || Boolean(this.recording || this.pausedRecording) || inputBusy;
     c.start.disabled = !ready || busy || !qualified || Boolean(this.recording || this.pausedRecording) || inputBusy || inputStopped;
     c.checkpoint.disabled = busy || !this.recording || owner?.controller !== this.recording.controller;
+    c['gpu-capture'].disabled = !ready || busy || !owner?.accelerated || !owner.ready
+      || Boolean(this.recording || this.pausedRecording || inputBusy);
     c.stop.disabled = busy || !(this.recording || this.pausedRecording);
     c.retry.disabled = busy || !this.pausedRecording || owner?.controller !== this.pausedRecording.controller;
     for (const key of ['cleanup', 'limits-save', 'limit-bytes', 'limit-points', 'persist']) c[key].disabled = !ready || busy;
@@ -164,7 +186,8 @@ class SessionLibrary {
       ? `Active: ${this.metadata.get(this.active.id)?.name || this.active.id} · ${this.active.inputStopped ? 'input recording stopped; guest paused' : this.active.running ? 'recording delivered input; guest running' : 'recording delivered input; guest paused'}`
       : this.active
       ? `Active: ${this.metadata.get(this.active.id)?.name || this.active.id} · ${this.active.point ? 'last saved ' + this.active.point : 'no committed point'}${this.pausedRecording ? ' · recording paused; current memory may be unsaved' : this.recording ? ' · recording checkpoints' : this.active.running ? ' · running; later changes are unsaved' : this.active.unsaved ? ' · paused; current memory is unsaved' : ' · paused at saved point'}`
-      : owner?.profile ? 'Active: offline checkpoint guest · no saved session selected for this machine' : 'Active: no checkpoint guest';
+      : owner?.profile ? 'Active: offline checkpoint guest · no saved session selected for this machine'
+      : owner?.accelerated ? 'Active: accelerated desktop · no saved point selected' : 'Active: no checkpoint guest';
     const preview = this.preview, meta = this.metadata.get(this.selected);
     c.details.replaceChildren();
     if (preview) {
@@ -179,6 +202,17 @@ class SessionLibrary {
       ];
       for (const text of lines) {const line = document.createElement('p'); line.textContent = text; c.details.append(line);}
     }
+  }
+  syncGpuRoute() {
+    const route = new URLSearchParams(location.search), id = route.get('gpuSessionId'), point = route.get('gpuSessionPoint');
+    const owner = this.adapter.current();
+    if (id && point && this.preview?.gpu && this.selected === id
+      && this.preview.manifest.checkpoints.some(entry => entry.id === point)
+      && owner?.accelerated && owner.ready) {
+      this.controls.points.value = point;
+      this.active = {id, point, controller:owner.controller, running:true, gpu:true};
+    }
+    this.render();
   }
   ownerChanged() {
     const controller = this.adapter.current()?.controller;
@@ -217,6 +251,29 @@ class SessionLibrary {
   async newGuest() {
     await this.adapter.replace(null); this.active = null;
     this.state('ready', 'Offline checkpoint guest is starting. Start recording when its shell is ready.');
+  }
+  async newGpuGuest() {
+    const destination = new URL(location.pathname, location.href);
+    for (const [key, value] of [['guest', 'omarchy'], ['gpu', '1'], ['desktop', '1'], ['noSnapshot', '1']])
+      destination.searchParams.set(key, value);
+    destination.hash = 'ide';
+    location.assign(destination.href);
+  }
+  async captureGpu() {
+    const owner = this.adapter.current();
+    if (!owner?.accelerated || !owner.ready || this.recording || this.pausedRecording || this.inputRecording)
+      throw Error('Start a ready accelerated desktop first');
+    const id = this.active?.controller === owner.controller && this.active.gpu
+      ? this.active.id : uid('gpu-session-');
+    const point = uid('gpu-point-'), now = Date.now();
+    await this.adapter.captureGpu(id, point);
+    const next = new Map(this.metadata), old = next.get(id);
+    next.set(id, {id, name: old?.name ?? `GPU desktop ${new Date(now).toLocaleString()}`,
+      started: old?.started ?? now, updated: now, points: [...(old?.points ?? []), {id: point, at: now}]});
+    this.persistMetadata(next);
+    this.active = {id, point, controller: owner.controller, running: true, gpu: true};
+    await this.refresh(id);
+    this.state('ready', 'Accelerated desktop point saved. Open restores its exact machine, disk and GPU pair.');
   }
   async start() {
     const owner = this.adapter.current();
@@ -345,6 +402,14 @@ class SessionLibrary {
   async open() {
     const preview = this.preview, point = this.controls.points.value;
     if (!preview?.compatible || this.recording || this.pausedRecording) throw Error('Choose a compatible checkpoint and stop recording first');
+    if (preview.gpu) {
+      const controller = await this.adapter.replaceGpu({id: preview.id, checkpoint: point});
+      if (controller?.navigating) return;
+      if (this.adapter.current()?.controller !== controller) throw Error('Restored GPU guest is no longer active');
+      this.active = {id: preview.id, point, controller, running: true, gpu: true};
+      this.state('ready', 'Accelerated desktop point restored in a fresh GPU worker. New guest input and rendering are live.');
+      return;
+    }
     // Authenticate before retiring the current machine. The adapter additionally preflights the
     // actual topology in a disposable paused controller before it replaces the page owner.
     await this.store.withReadLease(async () => {

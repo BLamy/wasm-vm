@@ -23,7 +23,10 @@ const ROOT = "/root";
 const _ideQuery = new URLSearchParams(location.search);
 const _ideGuest = (_ideQuery.get("guest") || _ideQuery.get("boot") || _ideQuery.get("os") || "").toLowerCase();
 const OMARCHY_DESKTOP_MODE = _ideQuery.get("desktop") === "1" && _ideGuest === "omarchy";
-if (OMARCHY_DESKTOP_MODE) document.documentElement.dataset.wvmDesktop = "omarchy";
+if (OMARCHY_DESKTOP_MODE) {
+  document.documentElement.dataset.wvmDesktop = "omarchy";
+  document.getElementById("session-library")?.removeAttribute("open");
+}
 
 // ── styles (injected; no dependency on index.html CSS) ───────────────────────
 const css = `
@@ -281,6 +284,15 @@ html[data-wvm-desktop="omarchy"][data-gpu-boot-error="true"] .os-launcher:not([h
 html[data-wvm-desktop="omarchy"] #panel-ide.active {
   display: flex; height: 100vh; min-height: 100vh; overflow: hidden;
 }
+html[data-wvm-desktop="omarchy"] #panel-ide > details.session-library:not(#session-library) {
+  display: none !important;
+}
+html[data-wvm-desktop="omarchy"] #session-library {
+  position: fixed; top: 12px; right: 12px; z-index: 20;
+  width: min(540px, calc(100vw - 24px)); max-height: calc(100vh - 24px);
+  margin: 0; overflow: auto;
+}
+html[data-wvm-desktop="omarchy"] #session-library:not([open]) { width: auto; }
 html[data-wvm-desktop="omarchy"] #ide-root {
   position: relative; flex: 1 1 auto; width: 100%; height: 100%; min-height: 0;
 }

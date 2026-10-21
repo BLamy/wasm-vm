@@ -49,6 +49,7 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
     (interactivePolicy ? 'icount' : clockPolicy.guest));
   await record('initial-clock', {clockPolicy, interactivePolicy, initialClock});
   const canvas = page.locator('#ide-display-canvas');
+  await canvas.scrollIntoViewIfNeeded();
   let box = await canvas.boundingBox();
   assert.ok(box?.width > 0 && box?.height > 0);
   await canvas.focus();
@@ -110,6 +111,7 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   const monitor = monitors.find(value => value.id === foot.monitor) || monitors[0];
   assert.ok(monitor?.width > 0 && monitor?.height > 0);
   assert.equal(monitor.scale, 1, 'default package display scale');
+  await canvas.scrollIntoViewIfNeeded();
   box = await canvas.boundingBox();
   assert.ok(box?.width > 0 && box?.height > 0);
   const initialCursorText = await read('XDG_RUNTIME_DIR=/run/user/1000 hyprctl -i 0 cursorpos');
@@ -125,8 +127,11 @@ export async function verifyPublicDesktopInput(page, command, output, options = 
   const before = await page.evaluate(() => window.__linuxCtl.inputDeviceStats());
   const framesBefore = await page.evaluate(() => window.__keyboardCapture.frames());
   await record('geometry', {uid, layers, clients, monitors, foot, target, initialCursor, initialWorkerCursor, box, inputBefore: before, inputFramesBefore: framesBefore});
-  await page.mouse.click(box.x + target.x * box.width / monitor.width,
-    box.y + target.y * box.height / monitor.height);
+  const pageTarget={x:box.x + target.x * box.width / monitor.width,
+    y:box.y + target.y * box.height / monitor.height};
+  assert.equal(await page.evaluate(({x,y})=>document.elementFromPoint(x,y)?.id,pageTarget),
+    'ide-display-canvas','trusted pointer reaches the visible guest display');
+  await page.mouse.click(pageTarget.x,pageTarget.y);
   assert.equal(await page.evaluate(() => document.activeElement?.id), 'ide-display-canvas');
   if (await page.evaluate(() => document.documentElement.dataset.keyboardCapture) !== 'on') {
     await page.locator('#ide-keyboard-toggle').click();
