@@ -41,6 +41,15 @@ async function command(page,guestCommand,script){
   const result=await guestCommand(page,script,300000);
   assert.equal(result.exit,0,script);return result;
 }
+async function fingerprint(page){
+  return page.evaluate(async({id,database})=>{
+    const {SessionStore}=await import('/session-store.js'),{checkpointHash}=await import('/session-checkpoints.js');
+    const store=await SessionStore.open(database);
+    try{const opened=await store.openSession(id);return {sha256:checkpointHash(opened.manifest),revision:String(opened.revision),
+      manifest:JSON.parse(new TextDecoder().decode(opened.manifest))};}
+    finally{await store.close();}
+  },{id,database});
+}
 async function waitReopenedDesktop(page,oldOwner){
   await page.waitForFunction(async previous=>{
     const gpu=await globalThis.__linuxCtl?.gpuStats?.();
@@ -117,6 +126,9 @@ export async function verifyGpuSessionDesktop(page,guestCommand,output){
   try{
     const initial=await observe(page,'e9-gpu-desktop-initial',output);
     assert.equal(initial.restored,false,'cold real desktop, not the retained historical factory');
+    report.guestRenderer=await command(page,guestCommand,'/opt/virgl-proof/eglinfo -B -p gbm -a gles');
+    assert.match(report.guestRenderer.stdout,/virgl\s*\(/);
+    assert.doesNotMatch(report.guestRenderer.stdout,/llvmpipe|softpipe|lavapipe/i);
     const typed=await verifyPublicDesktopInput(page,guestCommand,output,{name:'e9-gpu-desktop-original-input',
       initialClockMode:initial.clock.mode,prepareFactory:true,barActions:false,delay:0,text:first,markerAbsent:absent(firstPath),
       markerRead:present(firstPath),expected:'PRESENT',
@@ -132,11 +144,28 @@ export async function verifyGpuSessionDesktop(page,guestCommand,output){
       wvmDemo.captureGpuSession(id,'after-input',database),{id,database})});
     report.after=await observe(page,'e9-gpu-after-input',output);
     assert.notEqual(report.before.screen.sha256,report.after.screen.sha256,'actual desktop positions have distinct scanout pixels');
-    const stored=await page.evaluate(async({id,database})=>{
-      const {SessionStore}=await import('/session-store.js'),store=await SessionStore.open(database);
-      try{return JSON.parse(new TextDecoder().decode((await store.openSession(id)).manifest));}
-      finally{await store.close();}
+    report.originalSession=await fingerprint(page);
+    const stored=report.originalSession.manifest;
+    report.descriptors=await page.evaluate(async({id,database})=>{
+      const {SessionStore}=await import('/session-store.js'),{readCheckpointObject}=await import('/session-checkpoints.js');
+      const {decodeCheckpointData}=await import('/renderer/virgl-command/checkpoint-codec.mjs');
+      const store=await SessionStore.open(database);
+      try{const manifest=JSON.parse(new TextDecoder().decode((await store.openSession(id)).manifest));
+        const descriptors=[];
+        for(const point of manifest.checkpoints){const bytes=await readCheckpointObject(store,point.machine,4096);
+          if(new TextDecoder().decode(bytes.subarray(0,8))!=='WVGKEY01')throw Error('descriptor framing');
+          descriptors.push({id:point.id,value:decodeCheckpointData(bytes.subarray(8))});}
+        return descriptors;
+      }finally{await store.close();}
     },{id,database});
+    for(const [index,row]of report.descriptors.entries()){
+      const point=stored.checkpoints[index],descriptor=row.value;
+      assert.equal(row.id,point.id);assert.deepEqual(descriptor.position,point.position);
+      assert.deepEqual(descriptor.pair,point.gpu);assert.equal(descriptor.diskRoot,point.disk_root);
+      assert.equal(descriptor.profileSha256,stored.machine.gpu.profile);
+      assert.match(descriptor.rendererSha256,/^[0-9a-f]{64}$/);
+      assert.match(descriptor.nativeSha256,/^[0-9a-f]{64}$/);assert.match(descriptor.diskSha256,/^[0-9a-f]{64}$/);
+    }
     report.manifest={id:stored.id,clock:stored.policy.clock,profile:stored.policy.profile,
       checkpoints:stored.checkpoints.map(point=>({id:point.id,position:point.position,
         disk_root:point.disk_root,gpu:point.gpu,machine:point.machine}))};
@@ -155,6 +184,10 @@ export async function verifyGpuSessionDesktop(page,guestCommand,output){
     assert.equal(report.preflight.accepted,false,'foreign runtime refused before current owner retires');
     assert.equal((await page.evaluate(()=>__linuxCtl.gpuStats())).epoch,report.after.gpu.epoch,
       'foreign runtime preserves the running desktop');
+    assert.equal(await page.evaluate(()=>wvmDemo.guestSession().key),report.after.owner.key);
+    report.afterBuildRefusal=await fingerprint(page);assert.deepEqual(report.afterBuildRefusal,report.originalSession);
+    await page.evaluate(async()=>{await __linuxCtl.pause();await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));});
+    report.beforeHostRefusal=await observe(page,'e9-gpu-before-host-refusal',output);
     report.hostPreflight=await page.evaluate(async({id,database})=>{
       const original=WebGL2RenderingContext.prototype.getParameter;
       WebGL2RenderingContext.prototype.getParameter=function(parameter){
@@ -169,6 +202,35 @@ export async function verifyGpuSessionDesktop(page,guestCommand,output){
     assert.equal(report.hostPreflight.accepted,false,'incompatible physical GPU refused before retirement');
     assert.match(report.hostPreflight.error,/saved limit|WebGL2 limits/);
     assert.equal(report.hostPreflight.epoch,report.after.gpu.epoch,'host preflight preserves original worker');
+    report.afterHostRefusal=await observe(page,'e9-gpu-after-host-refusal',output);
+    assert.equal(report.afterHostRefusal.owner.key,report.beforeHostRefusal.owner.key);
+    assert.equal(report.afterHostRefusal.screen.sha256,report.beforeHostRefusal.screen.sha256);
+    report.afterHostSession=await fingerprint(page);assert.deepEqual(report.afterHostSession,report.originalSession);
+    await page.evaluate(()=>__linuxCtl.resume());
+    report.crosswires=[];
+    for(const component of ['disk_root','gpu']){
+      const candidate='e9-t17-crosswire-'+component;
+      await page.evaluate(async({id,database,candidate,component})=>{
+        const {SessionStore}=await import('/session-store.js'),{sessionValidateManifest}=await import('/session-pkg/wasm_vm_session.js');
+        const store=await SessionStore.open(database);let writer;
+        try{const manifest=JSON.parse(new TextDecoder().decode((await store.openSession(id)).manifest));
+          manifest.id=candidate;manifest.checkpoints[0][component]=structuredClone(manifest.checkpoints[1][component]);
+          writer=await store.writer(candidate);await writer.publish(sessionValidateManifest(new TextEncoder().encode(JSON.stringify(manifest))));
+        }finally{await writer?.release();await store.close();}
+      },{id,database,candidate,component});
+      const attack=await page.evaluate(async({candidate,database})=>{
+        try{await wvmDemo.restoreGpuSession(candidate,'before-input',database);return {accepted:true};}
+        catch(error){return {accepted:false,error:String(error),owner:wvmDemo.guestSession().key};}
+      },{candidate,database});
+      assert.equal(attack.accepted,false);assert.match(attack.error,/keyframe component binding/);
+      assert.equal(attack.owner,report.after.owner.key);
+      const surviving=await fingerprint(page);assert.deepEqual(surviving,report.originalSession);
+      report.crosswires.push({component,...attack,originalSha256:surviving.sha256,originalRevision:surviving.revision});
+      await page.evaluate(async({candidate,database})=>{
+        const {SessionStore}=await import('/session-store.js'),store=await SessionStore.open(database);
+        try{await store.deleteSession(candidate);}finally{await store.close();}
+      },{candidate,database});
+    }
     await save();
 
     await page.evaluate(()=>{globalThis.__e9RetiredGpuController=__linuxCtl;});
@@ -227,6 +289,7 @@ export async function verifyGpuSessionDesktop(page,guestCommand,output){
       finally{await store.close();}
     },{id,database});
     assert.deepEqual(surviving,['before-input','after-input'],'both earlier points survive rejected capture');
+    report.afterContextLoss=await fingerprint(page);assert.deepEqual(report.afterContextLoss,report.originalSession);
     report.libraryReopened=await reopenVisibleLibraryFromGeneralPage(page,report.library.saved,output,
       report.library.observed.owner.key);
     assert.notEqual(report.libraryReopened.observed.documentTimeOrigin,report.library.observed.documentTimeOrigin,

@@ -75,7 +75,8 @@ try{
     globalThis.__startGpuSession=async checkpoint=>{
       const old=globalThis.__gpuSession;if(old){for(const detach of old.detach)detach();await old.controller.stop();old.worker.terminate();}
       const worker=new Worker('/linux-worker.js',{type:'module'}),presentation=new PresentationController(canvas,{scheduleFrames:false}),decoder=new TextDecoder();
-      const p=globalThis.__gpuSession={worker,presentation,serial:'',errors:[],states:[],frames:[],events:[],detach:[],deferNextFrame:false,pendingFrame:null};
+      const p=globalThis.__gpuSession={worker,presentation,serial:'',errors:[],states:[],frames:[],events:[],detach:[],deferNextFrame:globalThis.__holdNextGpuSessionFrame===true,pendingFrame:null};
+      globalThis.__holdNextGpuSessionFrame=false;
       const client=createLinuxWorkerClient(worker,{bootTimeoutMs:90000,
         onOutput(bytes){p.serial+=decoder.decode(bytes,{stream:true});document.querySelector('#serial').textContent=p.serial.slice(-6000);},
         onState(value){p.states.push(value);},onError(error){p.errors.push(String(error));},
@@ -104,6 +105,13 @@ try{
       const store=await SessionStore.open(db);
       try{return await store.collectGarbage();}finally{await store.close();}
     };
+    globalThis.__gpuSessionFingerprint=async()=>{
+      const {checkpointHash}=await import('/session-checkpoints.js');
+      const store=await SessionStore.open(db);
+      try{const opened=await store.openSession(id);return {sha256:checkpointHash(opened.manifest),revision:String(opened.revision),
+        manifest:JSON.parse(new TextDecoder().decode(opened.manifest))};}
+      finally{await store.close();}
+    };
     globalThis.__gpuSessionManifest=async()=>{
       const store=await SessionStore.open(db);
       try{const opened=await store.openSession(id);return JSON.parse(new TextDecoder().decode(opened.manifest));}
@@ -126,6 +134,7 @@ try{
   report.manifest=await page.evaluate(()=>__gpuSessionManifest());
   assert.deepEqual(report.manifest.checkpoints.map(c=>c.id),['green','red']);
   assert.notEqual(report.manifest.checkpoints[0].gpu.sha256,report.manifest.checkpoints[1].gpu.sha256);
+  report.fingerprintBeforeAttacks=await page.evaluate(()=>__gpuSessionFingerprint());
   report.attacks=await page.evaluate(async()=>{
     const {SessionStore}=await import('/session-store.js');
     const {SessionGpuCheckpoints}=await import('/session-gpu-checkpoints.js');
@@ -158,6 +167,8 @@ try{
   assert.equal(report.attacks.crosswire.accepted,false);assert.match(report.attacks.crosswire.error,/witness/);
   assert.equal(report.attacks.profile.accepted,false);assert.match(report.attacks.profile.error,/profile/);
   assert.equal(report.attacks.build.accepted,false);assert.deepEqual(report.attacks.sessions.sessions.map(row=>row.id),['accelerated-positions']);
+  report.fingerprintAfterAttacks=await page.evaluate(()=>__gpuSessionFingerprint());
+  assert.deepEqual(report.fingerprintAfterAttacks,report.fingerprintBeforeAttacks);
   report.gc=await page.evaluate(()=>__collectGpuSession());
   report.red=await page.evaluate(()=>__startGpuSession('red'));assert.equal(report.red.restored,true);
   const redRestored=await state('red-restored');assert.deepEqual(redRestored.pixel,[255,0,0,255]);assert.deepEqual(redRestored.errors,[]);
@@ -185,13 +196,66 @@ try{
   assert.ok(report.stale.before.retainedFrames>=1);assert.equal(report.stale.accepted,false);
   assert.equal(report.stale.held.retainedFrames,report.stale.before.retainedFrames);
   assert.equal(report.stale.presented,true);
-  report.loss=await page.evaluate(async()=>{
-    const p=__gpuSession,before=(await __gpuSessionManifest()).checkpoints.length;
-    await p.controller.loseGpuContext('now');
-    try{await __captureGpuSession('lost');return {accepted:true};}
-    catch(error){return {accepted:false,error:String(error),before,after:(await __gpuSessionManifest()).checkpoints.length};}
+  // Preserve an authentic completion on the old channel, then activate a new owner
+  // with its own pending frame. Equal numeric tokens across workers never share ownership.
+  await page.evaluate(()=>{__gpuSession.deferNextFrame=true;});
+  await page.locator('#display').focus();await page.keyboard.press('b');
+  await page.waitForFunction(()=>Boolean(__gpuSession.pendingFrame),null,{timeout:15000});
+  report.retiredOwner=await page.evaluate(async()=>{
+    const p=__gpuSession;globalThis.__retiredGpuSession=p;
+    const gpu=await p.controller.gpuStats();p.pendingToken={sequence:gpu.scanout.presenter.queued,generation:gpu.scanout.presenter.generation};globalThis.__holdNextGpuSessionFrame=true;
+    return {epoch:gpu.epoch,presenter:gpu.scanout.presenter};
   });
-  assert.equal(report.loss.accepted,false);assert.equal(report.loss.after,report.loss.before);
+  await page.evaluate(()=>__startGpuSession('red'));
+  await page.waitForFunction(()=>Boolean(__gpuSession.pendingFrame),null,{timeout:15000});
+  report.authenticStale=await page.evaluate(async()=>{
+    const old=__retiredGpuSession,p=__gpuSession;
+    const snapshot=async()=>({gpu:(await p.controller.gpuStats()).scanout,
+      pixels:[...document.querySelector('#display').getContext('2d').getImageData(32,32,1,1).data]});
+    const before=await snapshot();
+    old.pendingFrame.onRetired?.('drawn',{backend:'canvas2d'});
+    let rejected;
+    try{rejected=(await old.controller.acknowledgeGpuFrame(old.pendingToken,'drawn',{backend:'canvas2d'}))===false;}
+    catch(error){rejected=true;}
+    const after=await snapshot();
+    const frame=p.pendingFrame;p.pendingFrame=null;
+    const presented=p.presentation.present(frame);
+    frame.onRetired?.(presented?'drawn':'failed',{backend:p.presentation.snapshot().backend});
+    return {before,after,rejected,presented};
+  });
+  assert.ok(report.authenticStale.before.gpu.presenter.retainedFrames>=1);
+  assert.equal(report.authenticStale.rejected,true);assert.deepEqual(report.authenticStale.after,report.authenticStale.before);
+  assert.equal(report.authenticStale.presented,true);
+  await page.waitForFunction(async()=>{const g=await __gpuSession.controller.gpuStats();return g.scanout.retirements.some(r=>r.epoch===g.epoch&&r.status==='drawn');},null,{timeout:15000});
+  report.fingerprintBeforeLoss=await page.evaluate(()=>__gpuSessionFingerprint());
+  report.lossRace=await page.evaluate(async()=>{
+    const {SessionStore}=await import('/session-store.js');
+    const {SessionGpuCheckpoints}=await import('/session-gpu-checkpoints.js');
+    const actual=__gpuSession.controller;let injected=false;
+    const controller={};
+    for(const name of ['isPaused','pause','resume','gpuSessionConfiguration','saveGpuCheckpoint'])controller[name]=(...args)=>actual[name](...args);
+    controller.gpuSessionPosition=async()=>{
+      const position=await actual.gpuSessionPosition();
+      if(!injected){injected=true;await actual.loseGpuContext('now');
+        const deadline=Date.now()+15000;
+        while(!(await actual.gpuStats()).lost){if(Date.now()>deadline)throw Error('context loss injection timed out');await new Promise(r=>setTimeout(r,10));}}
+      return position;
+    };
+    const store=await SessionStore.open('wasm-vm-sessions-v1-e9-gpu-probe');
+    try{await new SessionGpuCheckpoints(store).captureController('accelerated-positions','lost-race',controller);
+      return {accepted:true,injected,lost:(await actual.gpuStats()).lost};}
+    catch(error){return {accepted:false,injected,lost:(await actual.gpuStats()).lost,error:String(error)};}
+    finally{await store.close();}
+  });
+  assert.equal(report.lossRace.injected,true);assert.equal(report.lossRace.lost,true);
+  assert.equal(report.lossRace.accepted,false,'loss during persistence must refuse publication');
+  report.loss=await page.evaluate(async()=>{
+    try{await __captureGpuSession('already-lost');return {accepted:true};}
+    catch(error){return {accepted:false,error:String(error)};}
+  });
+  assert.equal(report.loss.accepted,false);
+  report.fingerprintAfterLoss=await page.evaluate(()=>__gpuSessionFingerprint());
+  assert.deepEqual(report.fingerprintAfterLoss,report.fingerprintBeforeLoss);
   report.afterLoss=await page.evaluate(()=>__startGpuSession('red'));assert.equal(report.afterLoss.restored,true);
   const afterLoss=await state('red-after-loss');assert.deepEqual(afterLoss.pixel,[255,0,0,255]);
   await page.screenshot({path:path.join(output,'browser.png'),fullPage:true});assert.deepEqual(errors,[]);report.status='passed';

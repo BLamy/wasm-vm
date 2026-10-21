@@ -96,12 +96,19 @@ export class SessionGpuCheckpoints {
       const pair=await controller.saveGpuCheckpoint();
       const position=await controller.gpuSessionPosition();
       const writer=await this.#store.writer(id);
-      try{return await this.save(writer,checkpointId,pair,config,position);}
+      try{return await this.save(writer,checkpointId,pair,config,position,async()=>{
+        const currentPosition=await controller.gpuSessionPosition();
+        const current=await controller.gpuSessionConfiguration();
+        need(same(current.identity,config.identity)&&same(current.profile,config.profile),
+          'captured GPU owner changed before publication');
+        need(same(positionOf(currentPosition),positionOf(position)),
+          'captured GPU position changed before publication');
+      });}
       finally{await writer.release();}
     }finally{if(!wasPaused)await controller.resume();}
   }
 
-  async save(writer,checkpointId,source,input,retiredInstructions){
+  async save(writer,checkpointId,source,input,retiredInstructions,beforeCommit=null){
     need(source instanceof Uint8Array&&source.buffer instanceof ArrayBuffer
       &&source.length>=48&&source.length<=GPU_PAIR_MAX_BYTES,'pair bound');
     const bytes=new Uint8Array(source); // own the coherent tuple before the first await
@@ -155,7 +162,7 @@ export class SessionGpuCheckpoints {
       need(String(asset.length)===ref.length,'asset length');
       await writer.put(ref,checkpointChunks(asset));
     }
-    return writer.publish(canonical);
+    return writer.publish(canonical,beforeCommit);
   }
 
   async admit(id,checkpointId,runtime,wasmHash){

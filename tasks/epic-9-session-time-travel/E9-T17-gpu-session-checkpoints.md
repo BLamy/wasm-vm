@@ -81,3 +81,33 @@ mistake a repeated worker-local number for shared ownership.
 
 The final `make verify-E9-T17`, exact-head cold proof, public publication and
 fresh independent verifier are still required. Status remains `in-progress`.
+
+### 2026-10-21 — worker — independent publication race repaired
+
+A fresh preflight reviewer reproduced context loss after the pair was captured but
+before its manifest was published. The old head `7952cfac` incorrectly accepted
+that save, twice (`target/evidence/e9-t17-verifier-preflight/context-loss-race-run2`
+and `context-loss-race-recheck`). The partial review ended at an account access
+check, so it is not a completed verifier verdict. The obsolete cold gauntlet was
+interrupted and its partial output retained at
+`/Users/blamy/Documents/Codex/e9-t17-cold-proof-7952cfac-evidence`.
+
+The store now supports a caller publication guard after asynchronous object
+validation and immediately before the manifest transaction. GPU capture uses it
+to revalidate the paused live owner, profile and historical position. The promoted
+real-worker race in `tools/verify/e9-gpu-session-browser.mjs` injects the actual
+context loss during capture and requires refusal plus identical canonical
+manifest bytes/digest and revision. Development recording
+`target/evidence/e9-t17-guard-dev-r2/report.json` passed. It also delivers an
+authentic old frame callback after a fresh worker is active, proves its retained
+frame/binding/canvas did not change, then successfully retires the current frame.
+
+The real-desktop recorder now checks guest Mesa/virgl, records keyframe
+descriptors, compares original session bytes/revision after each refusal, and
+cross-wires actual disk/GPU references before restoring. Its expanded public
+library navigation proof remains pending in the final cold acceptance run.
+The recording-server transport retry has a bounded deterministic test covering
+transient disconnect, exhausted retries, missing object and wrong digest; missing
+or corrupt bytes are refused on their first response. Runtime changes require a
+new frozen-head risk submission and fresh independent verdict; no criterion is
+marked verified by this development entry.

@@ -8,6 +8,7 @@ import {verifyWarmGpuPixels} from './critic-warm-pixels.mjs';
 import {expectedPublishedSource} from './published-source.mjs';
 import {attachIsolatedInput} from './isolated-input.mjs';
 import {verifyGpuSessionDesktop} from './e9-gpu-session-desktop.mjs';
+import {fetchPinnedChunk} from './pinned-chunk.mjs';
 import fs from 'node:fs/promises';
 import {createReadStream,appendFileSync} from 'node:fs';
 import path from 'node:path';
@@ -87,7 +88,7 @@ const report = {status:'running', scope:factoryGuardOnly?'read-only native facto
   head:execFileSync('git',['rev-parse','HEAD'],{cwd:repo,encoding:'utf8'}).trim(),
   webRoot:web, releaseCache, publicAssetOrigin:publicAssetOrigin.href, saveOnRepeat, gpuTrace, gpuTimingOnly, remoteUrl, warmGpu, applicationContinuation, restoredApplications, omarchyPersist, swapCheckpointMode:swapCheckpoint, phases:[], requests:[], remoteFetches:[], liveSources:[], sourceHashes:{}, harnessHashes:{}, errors:[]};
 if(applicationComponent)report.applicationComponent={name:applicationComponent,scope:'Only missing native Writer/Node/npm/wallpaper and final desktop proof; not Chromium/SVG or publication timing.'};
-for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs','critic-canvas-observation.mjs','isolated-input.mjs','isolated-input-worker.mjs']){
+for(const filename of ['critic-fast-boots.mjs','critic-fast-boots-input.mjs','critic-fast-boots-bar-content.mjs','critic-fast-boots-final.mjs','critic-desktop-actions.mjs','critic-warm-pixels.mjs','published-source.mjs','critic-canvas-observation.mjs','isolated-input.mjs','isolated-input-worker.mjs','pinned-chunk.mjs']){
   const bytes=await fs.readFile(path.join(repo,'tools/virgl-production',filename));
   report.harnessHashes[filename]=hash(bytes);
   await fs.mkdir(path.join(output,'executed-harness'),{recursive:true});
@@ -322,27 +323,7 @@ if (!remoteUrl) server=createServer(async (request,response)=>{
       if(isCandidate)assert.ok(bytes,pathname+' immutable candidate chunk exists');
       if(!bytes){
         record.source='production-r2';
-        if(!remoteChunks.has(pathname))remoteChunks.set(pathname,(async()=>{
-          // A transient transport failure must not turn an immutable, hash-pinned
-          // production chunk into a guest disk fault halfway through a cold boot.
-          // A missing object or a digest mismatch is still a hard failure.
-          for(let attempt=0;attempt<3;attempt++){
-            let value;
-            try{
-              const remote=await fetch(r2+pathname,{signal:AbortSignal.timeout(60000)});
-              assert.equal(remote.status,200,pathname+' production status');
-              value=Buffer.from(await remote.arrayBuffer());
-            }
-            catch(error){
-              if(error.code==='ERR_ASSERTION')throw error;
-              if(attempt===2)throw error;
-              await new Promise(resolve=>setTimeout(resolve,250*(attempt+1)));
-              continue;
-            }
-            assert.equal(hash(value),chunk[2]);return value;
-          }
-          throw Error(pathname+' production transport unavailable');
-        })());
+        if(!remoteChunks.has(pathname))remoteChunks.set(pathname,fetchPinnedChunk(r2+pathname,chunk[2]));
         bytes=await remoteChunks.get(pathname);
       }else record.source=isCandidate?'pinned-local-candidate-chunk':'pinned-local-production-chunk';
       assert.equal(hash(bytes),chunk[2],pathname+' chunk digest');
