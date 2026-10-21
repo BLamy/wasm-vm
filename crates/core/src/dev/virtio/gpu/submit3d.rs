@@ -303,6 +303,8 @@ pub(crate) struct Submit3dState {
     counters: Submit3dCounters,
     layered_dma: bool,
     production: bool,
+    pub(crate) result_tap: Option<crate::session_gpu::ControlResultTap>,
+    admitted_completion: Option<Submit3dCompletion>,
 }
 impl Submit3dState {
     pub fn new(sink: Box<dyn Submit3dSink>, mailbox: Submit3dMailbox) -> Self {
@@ -337,6 +339,8 @@ impl Submit3dState {
             counters: Submit3dCounters::default(),
             layered_dma,
             production: false,
+            result_tap: None,
+            admitted_completion: None,
         }
     }
     pub fn snapshot(&self) -> Submit3dSnapshot {
@@ -358,7 +362,7 @@ impl Submit3dState {
                     .map(|r| r.backing.as_ref().map_or(0, |v| v.len() as u32))
                     .sum(),
                 last_exchange: mailbox.last_exchange,
-                completion_ready: mailbox.ready,
+                completion_ready: self.guest_ready(),
             }),
         }
     }
@@ -426,9 +430,47 @@ impl Submit3dState {
         }
     }
     pub fn bind_scanout(&mut self, event: &Scanout3dEvent) -> Result<(), Control3dError> {
-        self.sink.bind_scanout(event)
+        if let Some(tap) = &self.result_tap {
+            tap.scanout(event, &mut *self.sink)
+        } else {
+            self.sink.bind_scanout(event)
+        }
+    }
+    pub(crate) fn guest_ready(&self) -> bool {
+        if self.result_tap.is_some() {
+            self.admitted_completion.is_some()
+        } else {
+            self.mailbox.inspect().ready
+        }
+    }
+    pub(crate) fn physical_completion(&self) -> Option<Submit3dCompletion> {
+        self.mailbox.0.borrow().completion
+    }
+    pub(crate) fn validate_result(
+        &self,
+        completion: Submit3dCompletion,
+    ) -> Result<(), Control3dError> {
+        let state = self.mailbox.0.borrow();
+        if state.active != Some(completion.key)
+            || completion.exchange_sequence != state.last_exchange
+            || completion.applied_commands > 4096
+            || completion.draws > state.draw_limit
+            || state.scanout && (completion.applied_commands != 0 || completion.draws != 0)
+            || !completion.gpu_complete && completion.outcome != Err(Control3dError::BridgePoisoned)
+            || self.admitted_completion.is_some()
+        {
+            return Err(Control3dError::InvalidParameter);
+        }
+        Ok(())
+    }
+    pub(crate) fn cancel_physical(&mut self, key: Submit3dKey) -> Result<(), Control3dError> {
+        self.sink.cancel_job(key)
+    }
+    pub(crate) fn admit_result(&mut self, completion: Submit3dCompletion) {
+        self.admitted_completion = Some(completion);
     }
     pub fn revoke(&mut self) {
+        self.admitted_completion = None;
         self.mailbox.revoke();
         if let Some(pending) = self.pending.take() {
             self.counters.cancelled = self.counters.cancelled.saturating_add(1);
@@ -436,7 +478,11 @@ impl Submit3dState {
         }
     }
     pub fn take_ready(&mut self) -> Option<(PendingSubmit3d, Submit3dCompletion)> {
-        let completion = self.mailbox.0.borrow_mut().completion.take()?;
+        let completion = if self.result_tap.is_some() {
+            self.admitted_completion.take()?
+        } else {
+            self.mailbox.0.borrow_mut().completion.take()?
+        };
         let pending = self
             .pending
             .take()
@@ -482,7 +528,7 @@ impl Submit3dState {
         }
         if request.key != exchange.key
             || m.active != Some(exchange.key)
-            || m.ready
+            || (m.ready && self.result_tap.as_ref().is_none_or(|tap| !tap.replay()))
             || exchange.exchange_sequence != m.last_exchange + 1
             || exchange.exchange_sequence > MAX_EXCHANGES
         {

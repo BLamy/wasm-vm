@@ -4,7 +4,7 @@ epic: 9
 title: Export and import complete bounded local session bundles
 priority: 524.921
 status: pending
-depends_on: [E9-T07, E9-T16, E9-T18]
+depends_on: [E9-T07, E9-T16, E9-T18c]
 estimate: S
 risk: high
 capstone: false

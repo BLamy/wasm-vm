@@ -334,7 +334,7 @@ pub struct GpuState {
     #[cfg(feature = "virgl-renderer")]
     control3d: Option<control3d::Control3dState>,
     #[cfg(feature = "virgl-renderer")]
-    submit3d: Option<submit3d::Submit3dState>,
+    pub(crate) submit3d: Option<submit3d::Submit3dState>,
     #[cfg(feature = "virgl-renderer")]
     scanout3d: Option<scanout3d::Scanout3dState>,
     #[cfg(feature = "virgl-renderer")]
@@ -370,6 +370,32 @@ pub struct GpuState {
 }
 
 impl GpuState {
+    #[cfg(feature = "virgl-renderer")]
+    pub(crate) fn install_session_result_tap(
+        &mut self,
+        tap: crate::session_gpu::ControlResultTap,
+    ) -> Result<(), crate::session_gpu::GpuError> {
+        if self
+            .submit3d
+            .as_ref()
+            .is_none_or(|submit| submit.pending.is_some())
+            || self
+                .control3d
+                .as_ref()
+                .is_none_or(|control| control.snapshot().poisoned)
+        {
+            return Err(crate::session_gpu::GpuError::Profile);
+        }
+        self.submit3d.as_mut().unwrap().result_tap = Some(tap.clone());
+        self.control3d.as_mut().unwrap().set_result_tap(tap);
+        Ok(())
+    }
+    #[cfg(feature = "virgl-renderer")]
+    fn result_observation_failed(&self) -> bool {
+        self.control3d
+            .as_ref()
+            .is_some_and(|control| control.result_observation_failed())
+    }
     fn new(sink: Box<dyn FrameSink>) -> Self {
         Self {
             events_read: 0,
@@ -509,7 +535,7 @@ impl GpuState {
             && self
                 .submit3d
                 .as_ref()
-                .is_some_and(|submit| submit.pending.is_some() && !submit.mailbox.inspect().ready)
+                .is_some_and(|submit| submit.pending.is_some() && !submit.guest_ready())
     }
 
     #[cfg(feature = "virgl-renderer")]
@@ -545,6 +571,41 @@ impl GpuState {
                     height: t.box_.height,
                 },
                 bytes,
+            )
+            .map_err(|_| control3d::Control3dError::InvalidParameter)
+    }
+
+    #[cfg(feature = "virgl-renderer")]
+    fn validate_legacy_input(
+        &self,
+        exchange: &submit3d::Submit3dExchange,
+        length: usize,
+    ) -> Result<(), control3d::Control3dError> {
+        let Some(pending) = self.submit3d.as_ref().and_then(|s| s.pending.as_ref()) else {
+            return Ok(());
+        };
+        let submit3d::PendingRequest::Render(request) = &pending.request else {
+            return Ok(());
+        };
+        let submit3d::Submit3dKind::Transfer(t) = request.kind else {
+            return Ok(());
+        };
+        if request.header.ty != protocol::CMD_TRANSFER_TO_HOST_2D
+            || t.resource_id != exchange.backing.resource.id
+            || self.resources.get(t.resource_id).is_none()
+        {
+            return Ok(());
+        }
+        self.resources
+            .validate_dense_upload(
+                t.resource_id,
+                Rect {
+                    x: t.box_.x,
+                    y: t.box_.y,
+                    width: t.box_.width,
+                    height: t.box_.height,
+                },
+                length,
             )
             .map_err(|_| control3d::Control3dError::InvalidParameter)
     }
@@ -1815,6 +1876,22 @@ fn service_kicked(
     state: &Rc<RefCell<GpuState>>,
     bus: &mut SystemBus,
 ) {
+    // A failed observation has not admitted a host result. Do not turn it into
+    // an unrecorded guest error or publish a used entry. The session loop reports
+    // the precise source failure before another guest instruction can execute.
+    macro_rules! checked_reply {
+        ($chain:expr, $bus:expr, $bytes:expr) => {{
+            #[cfg(feature = "virgl-renderer")]
+            if state.borrow().result_observation_failed() {
+                return;
+            }
+            write_prefix($chain, $bus, $bytes)
+        }};
+    }
+    #[cfg(feature = "virgl-renderer")]
+    if state.borrow().result_observation_failed() {
+        return;
+    }
     let queue_state = *slot.borrow().queue(0);
     if !queue_state.ready {
         *vq = None;
@@ -1918,7 +1995,7 @@ fn service_kicked(
                 match if chain.writable_len() < 24 {
                     Ok(0)
                 } else {
-                    write_prefix(&chain, bus, &response)
+                    checked_reply!(&chain, bus, &response)
                 } {
                     Ok(written) => written,
                     Err(()) => {
@@ -2007,7 +2084,7 @@ fn service_kicked(
                 match if chain.writable_len() < 24 {
                     Ok(0)
                 } else {
-                    write_prefix(&chain, bus, &response)
+                    checked_reply!(&chain, bus, &response)
                 } {
                     Ok(written) => written,
                     Err(()) => {
@@ -2122,7 +2199,7 @@ fn service_kicked(
                 match if chain.writable_len() < protocol::CTRL_HDR_SIZE as u64 {
                     Ok(0)
                 } else {
-                    write_prefix(&chain, bus, &response)
+                    checked_reply!(&chain, bus, &response)
                 } {
                     Ok(written) => written,
                     Err(()) => {
@@ -2140,7 +2217,7 @@ fn service_kicked(
                     height,
                 )
                 .to_bytes();
-                match write_prefix(&chain, bus, &response) {
+                match checked_reply!(&chain, bus, &response) {
                     Ok(written) => {
                         state.borrow_mut().commands_served += 1;
                         written
@@ -2161,11 +2238,11 @@ fn service_kicked(
                             edid,
                         }
                         .to_bytes();
-                        write_prefix(&chain, bus, &response)
+                        checked_reply!(&chain, bus, &response)
                     }
                     Err(response_type) => {
                         let response = response_header(request, response_type).to_bytes();
-                        write_prefix(&chain, bus, &response)
+                        checked_reply!(&chain, bus, &response)
                     }
                 };
                 match written {
@@ -2186,7 +2263,7 @@ fn service_kicked(
                         None => protocol::RESP_ERR_INVALID_PARAMETER,
                     };
                 let response = response_header(request, response_type).to_bytes();
-                match write_prefix(&chain, bus, &response) {
+                match checked_reply!(&chain, bus, &response) {
                     Ok(written) => written,
                     Err(()) => {
                         slot.borrow_mut().protocol_violation();
@@ -2201,7 +2278,7 @@ fn service_kicked(
                     Err(error) => backing_error_response(error),
                 };
                 let response = response_header(request, response_type).to_bytes();
-                match write_prefix(&chain, bus, &response) {
+                match checked_reply!(&chain, bus, &response) {
                     Ok(written) => written,
                     Err(()) => {
                         slot.borrow_mut().protocol_violation();
@@ -2216,7 +2293,7 @@ fn service_kicked(
                     Err(error) => backing_error_response(error),
                 };
                 let response = response_header(request, response_type).to_bytes();
-                match write_prefix(&chain, bus, &response) {
+                match checked_reply!(&chain, bus, &response) {
                     Ok(written) => written,
                     Err(()) => {
                         slot.borrow_mut().protocol_violation();
@@ -2231,7 +2308,7 @@ fn service_kicked(
                     Err(error) => unref_error_response(error),
                 };
                 let response = response_header(request, response_type).to_bytes();
-                match write_prefix(&chain, bus, &response) {
+                match checked_reply!(&chain, bus, &response) {
                     Ok(written) => written,
                     Err(()) => {
                         slot.borrow_mut().protocol_violation();
@@ -2260,7 +2337,7 @@ fn service_kicked(
                 match if chain.writable_len() < 24 {
                     Ok(0)
                 } else {
-                    write_prefix(&chain, bus, &response)
+                    checked_reply!(&chain, bus, &response)
                 } {
                     Ok(written) => written,
                     Err(()) => {
@@ -2276,7 +2353,7 @@ fn service_kicked(
                     Err(error) => scanout_error_response(error),
                 };
                 let response = response_header(request, response_type).to_bytes();
-                match write_prefix(&chain, bus, &response) {
+                match checked_reply!(&chain, bus, &response) {
                     Ok(written) => written,
                     Err(()) => {
                         slot.borrow_mut().protocol_violation();
@@ -2291,7 +2368,7 @@ fn service_kicked(
                     Err(error) => transfer_error_response(error),
                 };
                 let response = response_header(request, response_type).to_bytes();
-                match write_prefix(&chain, bus, &response) {
+                match checked_reply!(&chain, bus, &response) {
                     Ok(written) => written,
                     Err(()) => {
                         slot.borrow_mut().protocol_violation();
@@ -2306,7 +2383,7 @@ fn service_kicked(
                     Err(error) => flush_error_response(error),
                 };
                 let response = response_header(request, response_type).to_bytes();
-                match write_prefix(&chain, bus, &response) {
+                match checked_reply!(&chain, bus, &response) {
                     Ok(written) => written,
                     Err(()) => {
                         slot.borrow_mut().protocol_violation();
@@ -2317,7 +2394,7 @@ fn service_kicked(
             }
             Some(request) => {
                 let response = response_header(request, protocol::RESP_ERR_UNSPEC).to_bytes();
-                match write_prefix(&chain, bus, &response) {
+                match checked_reply!(&chain, bus, &response) {
                     Ok(written) => written,
                     Err(()) => {
                         slot.borrow_mut().protocol_violation();
@@ -2329,6 +2406,10 @@ fn service_kicked(
             _ => 0,
         };
 
+        #[cfg(feature = "virgl-renderer")]
+        if state.borrow().result_observation_failed() {
+            return;
+        }
         #[cfg(feature = "gpu-trace")]
         let response_type = if written >= 4 {
             read_writable_at::<4>(&chain, bus, 0)
@@ -5301,14 +5382,14 @@ fn is_submit3d_type(ty: u32) -> bool {
     )
 }
 #[cfg(feature = "virgl-renderer")]
-enum PendingService {
+pub(crate) enum PendingService {
     Absent,
     Waiting,
     Completed,
     Revoked,
 }
 #[cfg(feature = "virgl-renderer")]
-fn service_submit3d_completion(
+pub(crate) fn service_submit3d_completion(
     slot: &Rc<RefCell<VirtioMmio>>,
     vq: &mut Option<Virtqueue>,
     state: &Rc<RefCell<GpuState>>,
@@ -5322,7 +5403,7 @@ fn service_submit3d_completion(
         let Some(pending) = submit.pending.as_ref() else {
             return PendingService::Absent;
         };
-        (pending.queue_generation, submit.mailbox.inspect().ready)
+        (pending.queue_generation, submit.guest_ready())
     };
     if slot.borrow().queue_generation(0) != Some(generation) || vq.is_none() {
         state.borrow_mut().revoke_submit3d();
@@ -5412,8 +5493,90 @@ fn service_submit3d_completion(
     PendingService::Completed
 }
 
-/// Fresh DMA, callable only by the host outside Machine::run. Every row and SG
-/// span is checked before access; scatter uses checked Bus spans to invalidate caches.
+/// Pure DMA preflight. No guest memory, mailbox or counters change until commit.
+#[cfg(feature = "virgl-renderer")]
+pub(crate) struct PreparedDma {
+    spans: Vec<(u64, usize)>,
+    pub length: usize,
+}
+#[cfg(feature = "virgl-renderer")]
+pub(crate) fn prepare_submit3d_dma(
+    slot: &Rc<RefCell<VirtioMmio>>,
+    state: &Rc<RefCell<GpuState>>,
+    bus: &SystemBus,
+    exchange: &submit3d::Submit3dExchange,
+    output_length: Option<usize>,
+    layers: Option<(u32, u32)>,
+) -> Result<PreparedDma, control3d::Control3dError> {
+    use control3d::Control3dError as E;
+    let s = state.borrow();
+    let submit = s.submit3d.as_ref().ok_or(E::InvalidParameter)?;
+    let pending = submit.pending.as_ref().ok_or(E::InvalidParameter)?;
+    if slot.borrow().queue_generation(0) != Some(pending.queue_generation) {
+        return Err(E::BridgePoisoned);
+    }
+    let (spans, length) = submit.dma_spans(
+        exchange,
+        &s.control3d.as_ref().ok_or(E::InvalidParameter)?.snapshot(),
+        layers,
+    )?;
+    if output_length.is_some_and(|n| n != length)
+        || spans
+            .iter()
+            .any(|(addr, len)| !bus.ram().ram_contains(*addr, *len as u64))
+    {
+        return Err(E::InvalidParameter);
+    }
+    if output_length.is_none() && layers.is_none() {
+        s.validate_legacy_input(exchange, length)?;
+    }
+    Ok(PreparedDma { spans, length })
+}
+#[cfg(feature = "virgl-renderer")]
+impl PreparedDma {
+    pub(crate) fn read(&self, bus: &SystemBus) -> Result<Vec<u8>, control3d::Control3dError> {
+        let mut bytes = Vec::new();
+        bytes
+            .try_reserve_exact(self.length)
+            .map_err(|_| control3d::Control3dError::OutOfMemory)?;
+        bytes.resize(self.length, 0);
+        let mut at = 0;
+        for (addr, len) in &self.spans {
+            bus.ram()
+                .read_slice(*addr, &mut bytes[at..at + len])
+                .expect("preflighted exclusive RAM read");
+            at += len;
+        }
+        Ok(bytes)
+    }
+    pub(crate) fn commit(
+        &self,
+        state: &Rc<RefCell<GpuState>>,
+        bus: &mut SystemBus,
+        exchange: &submit3d::Submit3dExchange,
+        output: Option<&[u8]>,
+    ) {
+        if let Some(bytes) = output {
+            let mut at = 0;
+            for (addr, len) in &self.spans {
+                bus.write_ram_slice(*addr, &bytes[at..at + len])
+                    .expect("preflighted exclusive RAM write");
+                at += len;
+            }
+        }
+        state
+            .borrow_mut()
+            .submit3d
+            .as_mut()
+            .expect("preflighted pending")
+            .consume_exchange(
+                exchange.exchange_sequence,
+                self.length as u64,
+                output.is_some(),
+            );
+    }
+}
+/// Ordinary unrecorded DMA retains its existing protocol-poisoning contract.
 #[cfg(feature = "virgl-renderer")]
 pub(crate) fn submit3d_dma(
     slot: &Rc<RefCell<VirtioMmio>>,
@@ -5423,58 +5586,20 @@ pub(crate) fn submit3d_dma(
     output: Option<&[u8]>,
     layers: Option<(u32, u32)>,
 ) -> Result<Vec<u8>, control3d::Control3dError> {
-    use control3d::Control3dError as E;
-    let generation = state
-        .borrow()
-        .submit3d
-        .as_ref()
-        .and_then(|s| s.pending.as_ref())
-        .map(|p| p.queue_generation)
-        .ok_or(E::InvalidParameter)?;
-    if slot.borrow().queue_generation(0) != Some(generation) {
-        state.borrow_mut().revoke_submit3d();
-        slot.borrow_mut().protocol_violation();
-        return Err(E::BridgePoisoned);
-    }
-    let (spans, length) = {
-        let s = state.borrow();
-        s.submit3d.as_ref().ok_or(E::InvalidParameter)?.dma_spans(
-            exchange,
-            &s.control3d.as_ref().ok_or(E::InvalidParameter)?.snapshot(),
-            layers,
-        )?
+    let prepared =
+        match prepare_submit3d_dma(slot, state, bus, exchange, output.map(<[u8]>::len), layers) {
+            Err(control3d::Control3dError::BridgePoisoned) => {
+                state.borrow_mut().revoke_submit3d();
+                slot.borrow_mut().protocol_violation();
+                return Err(control3d::Control3dError::BridgePoisoned);
+            }
+            other => other?,
+        };
+    let bytes = if output.is_none() {
+        prepared.read(bus)?
+    } else {
+        Vec::new()
     };
-    if output.is_some_and(|bytes| bytes.len() != length)
-        || spans
-            .iter()
-            .any(|(addr, len)| !bus.ram().ram_contains(*addr, *len as u64))
-    {
-        return Err(E::InvalidParameter);
-    }
-    let mut bytes = Vec::new();
-    if output.is_none() {
-        bytes
-            .try_reserve_exact(length)
-            .map_err(|_| E::OutOfMemory)?;
-        bytes.resize(length, 0);
-    }
-    let mut at = 0;
-    for (addr, len) in spans {
-        if let Some(source) = output {
-            bus.write_ram_slice(addr, &source[at..at + len])
-                .map_err(|_| E::BridgePoisoned)?;
-        } else {
-            bus.ram()
-                .read_slice(addr, &mut bytes[at..at + len])
-                .map_err(|_| E::BridgePoisoned)?;
-        }
-        at += len;
-    }
-    state
-        .borrow_mut()
-        .submit3d
-        .as_mut()
-        .expect("pending owner")
-        .consume_exchange(exchange.exchange_sequence, length as u64, output.is_some());
+    prepared.commit(state, bus, exchange, output);
     Ok(bytes)
 }

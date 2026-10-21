@@ -1,4 +1,5 @@
-//! Ordered on-demand RTC/entropy observations. Live providers are never invoked in replay.
+//! Ordered synchronous provider observations. GPU control reconstruction has an
+//! explicit witness callback; its live return value never substitutes for the log.
 //! The immutable log is external; checkpoints retain its policy and consumed observation cursor.
 use super::{
     MAX_EVENTS, MAX_OWNED_BYTES, MAX_PAYLOAD, SessionClock, SessionDelivery, SessionEffect,
@@ -34,6 +35,7 @@ pub enum ObservationKind {
     RtcArm = 4,
     RtcPoll = 5,
     Entropy = 6,
+    GpuControl = 7,
 }
 impl ObservationKind {
     fn decode(value: u8) -> Result<Self, SessionError> {
@@ -44,6 +46,7 @@ impl ObservationKind {
             4 => Self::RtcArm,
             5 => Self::RtcPoll,
             6 => Self::Entropy,
+            7 => Self::GpuControl,
             _ => return Err(SessionError::MalformedObservation),
         })
     }
@@ -57,6 +60,8 @@ pub enum DivergenceReason {
     ProviderUnavailable,
     OutsideRun,
     ExtraRecords,
+    Intent,
+    PhysicalWitness,
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SourceDivergence {
@@ -77,7 +82,11 @@ impl ObservationValue {
     pub fn validate(&self) -> Result<(), SessionError> {
         if self.requested == 0
             || self.requested as usize > MAX_PAYLOAD
-            || (self.kind != ObservationKind::Entropy && self.requested != 8)
+            || (match self.kind {
+                ObservationKind::Entropy => false,
+                ObservationKind::GpuControl => self.requested != 40,
+                _ => self.requested != 8,
+            })
             || self.status > 1
             || (self.status == 0 && self.bytes.len() != self.requested as usize)
             || (self.status == 1 && !self.bytes.is_empty())
@@ -393,6 +402,17 @@ impl ObservationHub {
         length: usize,
         live: impl FnOnce() -> Result<Vec<u8>, ()>,
     ) -> Result<Vec<u8>, ()> {
+        self.observe_checked(kind, length, live, |_| Ok(()))
+    }
+    /// Validate an external intent and any physical reconstruction before the
+    /// replay cursor is consumed. Existing providers use a no-op check.
+    pub(crate) fn observe_checked(
+        &mut self,
+        kind: ObservationKind,
+        length: usize,
+        live: impl FnOnce() -> Result<Vec<u8>, ()>,
+        replay_check: impl FnOnce(&[u8]) -> Result<(), DivergenceReason>,
+    ) -> Result<Vec<u8>, ()> {
         if self.error.is_some() {
             return Err(());
         }
@@ -472,6 +492,12 @@ impl ObservationHub {
                 );
                 return Err(());
             }
+            if record.value.status == 0
+                && let Err(reason) = replay_check(&record.value.bytes)
+            {
+                self.fail(reason, position, 0, 1);
+                return Err(());
+            }
             self.remaining.pop_front().unwrap().value
         } else {
             match live() {
@@ -508,6 +534,13 @@ impl ObservationHub {
         self.scope = Some(scope);
         self.consumed = consumed;
         result
+    }
+    #[cfg(feature = "virgl-renderer")]
+    pub(crate) fn reject_gpu_observation(&mut self, reason: DivergenceReason) {
+        let position = self
+            .scope
+            .map_or(SessionPosition::default(), |scope| scope.position);
+        self.fail(reason, position, 0, 1);
     }
     pub fn commit(&mut self, clock: Option<&mut SessionClock>) -> Result<(), SessionError> {
         if !self.receipts.is_empty() {

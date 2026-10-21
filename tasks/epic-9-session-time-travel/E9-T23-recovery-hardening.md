@@ -4,7 +4,7 @@ epic: 9
 title: Harden recording and seeking against crashes and corrupt history
 priority: 524.923
 status: pending
-depends_on: [E9-T07, E9-T18, E9-T20, E9-T21, E9-T22]
+depends_on: [E9-T07, E9-T18c, E9-T20, E9-T21, E9-T22]
 estimate: S
 risk: high
 capstone: false

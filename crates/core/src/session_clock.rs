@@ -17,6 +17,8 @@ pub enum SessionError {
     Inactive,
     ReplayActive,
     DeviceCompletion(crate::session_devices::DeviceError),
+    #[cfg(feature = "virgl-renderer")]
+    GpuResult(crate::session_gpu::GpuError),
     Network(crate::session_network::NetworkError),
     AlreadyActive,
     UnsupportedScheduling,
@@ -696,6 +698,9 @@ impl crate::Machine {
             return Ok(Preparation::Fence);
         }
         clock.reserve_transition()?;
+        #[cfg(feature = "virgl-renderer")]
+        self.prepare_gpu_boundary()
+            .map_err(SessionError::GpuResult)?;
         // Internal transition preparation may drain only effects already admitted by the
         // recording path or the replay driver; public delivery remains closed in replay mode.
         self.deliver_boundary(false, |_, _, _| unreachable!("host input is fenced"))?;
@@ -728,6 +733,8 @@ impl crate::Machine {
             clock.next_transition(),
             self.session_fence,
             self.session_replay_limit,
+            #[cfg(feature = "virgl-renderer")]
+            self.next_session_gpu_transition(),
         ]
         .into_iter()
         .flatten()

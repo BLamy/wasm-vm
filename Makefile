@@ -2783,3 +2783,7 @@ verify-E9-T17:
 	node tools/verify/e9-gpu-session-demo.mjs "$${E9_GPU_DEMO_EVIDENCE_DIR:-target/evidence/e9-gpu-demo-final}"
 	node tools/verify/e9-gpu-session-browser.mjs "$${E9_GPU_SESSION_EVIDENCE_DIR:-target/evidence/e9-gpu-session-final}"
 	CRITIC_FAST_BOOT_WEB_ROOT=web/dist CRITIC_FAST_BOOT_GPU=1 CRITIC_FAST_BOOT_GUESTS=omarchy CRITIC_FAST_BOOT_GPU_TRACE=1 CRITIC_FAST_BOOT_SESSION_HISTORY=1 CRITIC_FAST_BOOT_PERSISTENCE=0 CRITIC_FAST_BOOT_COLD_READY_MS=2700000 CRITIC_FAST_BOOT_HOLD_FAILURE_MS=60000 node tools/virgl-production/critic-fast-boots.mjs "$${E9_GPU_DESKTOP_EVIDENCE_DIR:-target/evidence/e9-gpu-desktop-final}"
+
+.PHONY: verify-E9-T18a
+verify-E9-T18a:
+	python3 -B tools/verify/e9-gpu-results.py --output "$${E9_GPU_RESULT_EVIDENCE_DIR:-target/evidence/e9-gpu-results-final}"
