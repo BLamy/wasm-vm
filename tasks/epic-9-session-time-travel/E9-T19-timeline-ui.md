@@ -247,3 +247,27 @@ resubmission is claimed or required for this promotion.
 
 Promotion receipt: `target/evidence/e9-t19-verifier-ff28becd/promotion-receipt.json`,
 SHA-256 `b8efc674b665d4afb9ef5cd5b57577b2fa745f09fa46f2e7e3121aba4bc8c685`.
+
+### 2026-10-21 — worker — main-site production receipt
+
+Release `003e4b478b75cc8424142d6bf34168f30db86737` is deployed as Cloudflare
+`9ff9906c` to **https://wasm-vm.pages.dev/** with the accepted A native runtime;
+blocked B code is absent. The actual main URL served all 14 checked runtime,
+timeline and Case Studies assets byte-for-byte from the committed dist. Its
+browser suite passed 127/0 with no console or HTTP errors. A fresh real Linux
+sample reached transition 3000000 and restored the final keyframe to its full
+saved coordinate and native digest
+`c1b1ac22df2fb67e3d2d0b2cf8914d15007b554d8f2d990ec2e484380e4b99ce`.
+
+Evidence: `target/evidence/e9-t19-production-release/receipt.json`, deployment log,
+committed/deployed manifest pairs, and `browser/built-demo.png`. Main browser
+report SHA-256 `1567e9723be4e38f387afc5a5f2365e10a2f2db10a80d341cacb26f229e19325`; browser trace SHA-256 `e0b3e393f93f9f2c53923ed7d2d9db4c16280e2d739992db7f4b45643a105bca`.
+Only the five deployment-rewritten manifest files were restored to their exact
+committed originals after saving the deployed copies.
+
+The corrected native stack is #598 with 21 open, unqueued PRs: A #594, timeline
+#597, blocked B #595 at the top. During ancestry repair GitHub automatically
+marked old draft #596 merged into the B draft; replacement #597 is open on A.
+No merge command was run and remote main stayed
+`05fa92c82288a4de217eac7345ba2766737a8c16`. The verified timeline and
+[Case Studies](https://wasm-vm.pages.dev/case-studies.html) are live.
