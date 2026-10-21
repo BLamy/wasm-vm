@@ -110,6 +110,66 @@ fn append_refuses_replaced_checkpoint_or_event() {
     }
 }
 
+fn witness(position: Position, byte: u8) -> serde_json::Value {
+    let mut value = serde_json::to_value(position).unwrap();
+    value["digest"] = serde_json::json!(vec![byte; 32]);
+    value
+}
+
+#[test]
+fn live_exact_witnesses_are_finalized_once_without_rewriting_initial_state() {
+    let mut previous = manifest();
+    let first = witness(previous.begin, 7);
+    previous.extensions = vec![Extension {
+        kind: "e9-exact-initial-witness-v1".into(),
+        required: false,
+        bytes: serde_json::to_vec(&vec![first.clone()]).unwrap(),
+    }];
+    previous.validate().unwrap();
+    let mut next = previous.clone();
+    next.extensions.push(Extension {
+        kind: "e9-exact-state-witnesses-v1".into(),
+        required: false,
+        bytes: serde_json::to_vec(&vec![first, witness(next.end, 9)]).unwrap(),
+    });
+    assert_eq!(check_append(&previous, &next), Ok(()));
+    assert_eq!(check_append(&next, &next), Ok(()));
+
+    let mut attack = next.clone();
+    attack.extensions[0].bytes[0] ^= 1;
+    assert!(check_append(&previous, &attack).is_err());
+    let mut attack = next.clone();
+    attack.extensions[1].bytes =
+        serde_json::to_vec(&vec![witness(previous.begin, 8), witness(next.end, 9)]).unwrap();
+    assert_eq!(
+        check_append(&previous, &attack),
+        Err(SessionError::IdentityMismatch("session publication"))
+    );
+    let mut attack = next.clone();
+    attack.extensions[1].bytes = serde_json::to_vec(&vec![
+        witness(previous.begin, 7),
+        witness(previous.begin, 9),
+    ])
+    .unwrap();
+    assert_eq!(
+        check_append(&previous, &attack),
+        Err(SessionError::IdentityMismatch("session publication"))
+    );
+    let mut attack = next.clone();
+    attack.extensions[1].bytes[0] ^= 1;
+    assert!(check_append(&next, &attack).is_err());
+    let mut attack = next.clone();
+    attack.extensions.push(Extension {
+        kind: "unexpected".into(),
+        required: false,
+        bytes: vec![1],
+    });
+    assert_eq!(
+        check_append(&next, &attack),
+        Err(SessionError::IdentityMismatch("session publication"))
+    );
+}
+
 #[test]
 fn discover_verified_event_payloads_and_refuse_unindexed_bytes() {
     let mut m = manifest();

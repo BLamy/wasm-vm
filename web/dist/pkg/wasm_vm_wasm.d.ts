@@ -70,6 +70,7 @@ export class WasmLinux {
      * methods cannot reach it. T14 will own authenticated cursor admission and execution.
      */
     applyRecordedInput(channel: any, transition: string, sequence: string, ordinal: any, retired: string, bytes: Uint8Array, expected: Array<any>): void;
+    applySoftwareRamDeltaChunk(bytes: Uint8Array): number;
     /**
      * E5-T21d: attach the page-owned microphone ring as the guest's capture source. The ring is
      * allocated before boot but contains no host media handle; permission remains lazy until the
@@ -128,11 +129,20 @@ export class WasmLinux {
      */
     captureInputWitness(): any;
     /**
+     * Begin a full keyframe and freeze the dirty set until its store publication resolves.
+     */
+    captureSoftwareBaseKeyframe(context_bytes: Uint8Array): Promise<Uint8Array>;
+    /**
      * The loader fences all host mutations and execution until this bounded Promise settles.
      * Pending block fetches/durability drain without CPU execution; final serialization has no
      * await, callback or borrow release between architectural state, COW map and UART queues.
      */
     captureSoftwareCheckpoint(context_bytes: Uint8Array): Promise<Uint8Array>;
+    /**
+     * Capture CPU/devices/disk/host queues while RAM is represented by separately streamed
+     * dirty-page objects. The caller must hold the guest paused until it acknowledges the epoch.
+     */
+    captureSoftwareDeltaKeyframe(context_bytes: Uint8Array): Promise<Uint8Array>;
     /**
      * E3-T10 (critic BUG-4): close the IndexedDB connection so a `deleteDatabase` (reset-disk)
      * can proceed instead of blocking on our open handle. Call before wiping; the machine must
@@ -200,6 +210,7 @@ export class WasmLinux {
     fileTransferReady(slot: number): boolean;
     fileTransferStatus(): string;
     finishFileDownload(id: number, success: boolean): void;
+    finishSoftwareRamEpoch(committed: boolean): void;
     /**
      * Exact identities and row arithmetic are validated by core before RAM access.
      */
@@ -314,6 +325,7 @@ export class WasmLinux {
      * replaying. The caller supplies the immutable base chunks to the recording broker.
      */
     static newExactSession(kernel: Uint8Array, manifest_json: string, bootargs: string, output: Function, replay: boolean): WasmLinux;
+    nextSoftwareRamDeltaChunk(from_page: number): any;
     /**
      * E3-T21d: the persistent driver calls this right after `persistPending` so a durable IndexedDB
      * flush pause — during which the guest is frozen and cannot ACK or heartbeat an in-flight file
@@ -338,6 +350,7 @@ export class WasmLinux {
      * after each `runChunk` and, if non-empty, awaits `fetchPending` before the next `runChunk`.
      */
     pendingChunks(): Uint32Array;
+    pendingSoftwareRamPages(): number;
     /**
      * E3-T05: durably flush the overlay's pending writes to IndexedDB. Resolves to the number of
      * blocks persisted; its Promise resolves only after the IndexedDB transaction `complete` event
@@ -363,6 +376,11 @@ export class WasmLinux {
      * non-persistent boots.
      */
     persistStats(): any;
+    /**
+     * Install the same owned observation adapter that T14's replay driver installs before its
+     * initial full restore. This candidate has no live providers and no admitted replay plan.
+     */
+    prepareSoftwareKeyframeCandidate(): void;
     pushFileUpload(stream: number, bytes: Uint8Array, finished: boolean): number;
     /**
      * Read the persisted snapshot blob back (reassembled), or `null` if none is stored / not on the
@@ -404,6 +422,7 @@ export class WasmLinux {
      * share generations). All fallible checks precede the first CPU/device/host-queue mutation.
      */
     restoreSoftwareCheckpoint(bytes: Uint8Array, expected_context: Uint8Array): void;
+    restoreSoftwareDeltaKeyframe(bytes: Uint8Array, expected_context: Uint8Array, expected_ram_digest: Uint8Array): void;
     /**
      * Load and, only when coherent, apply the persisted snapshot directly inside wasm. The stored
      * blob is held by one Rust allocation while the coherence header is checked and the machine is
@@ -439,6 +458,17 @@ export class WasmLinux {
     saveSnapshot(): any;
     scatterLayeredOutput(epoch: string, sequence: string, exchange_sequence: string, resource_id: number, resource_generation: string, backing_generation: string, offset: string, row_bytes: number, row_stride: number, row_count: number, layer_stride: number, layer_count: number, bytes: Uint8Array): void;
     scatterOutput(epoch: string, sequence: string, exchange_sequence: string, resource_id: number, resource_generation: string, backing_generation: string, offset: string, row_bytes: number, row_stride: number, row_count: number, bytes: Uint8Array): void;
+    /**
+     * Private restore candidate: validate the full ancestor envelope, then seed only RAM.
+     * Its disk generation may be older than the target; the final delta envelope is bound to
+     * the target candidate's disk generation before CPU/devices are committed.
+     */
+    seedSoftwareRamFromCheckpoint(base_frame: Uint8Array): void;
+    /**
+     * The exact journal's T14 initial checkpoint is already a full native resume. Admit its
+     * strict empty-queue envelope as a RAM ancestor without asking T14 to duplicate 256 MiB.
+     */
+    seedSoftwareRamFromExactStart(frame: Uint8Array): void;
     /**
      * E5-T26f: enqueue one owned host-to-guest frame on the named virtio-console agent port.
      * Returning the accepted byte count lets the page Channel fail closed on bounded
@@ -526,6 +556,7 @@ export class WasmLinux {
      * Device map of the standard Linux constructor, using the authoritative platform constants.
      */
     softwareCheckpointTopology(): string;
+    softwareRamDigest(): string;
     /**
      * E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
      * shipped, build-time boot snapshot can be restored on the initramfs path (which otherwise has no
@@ -623,6 +654,10 @@ export class WasmMachine {
     getStats(): any;
     installDeviceSession(configuration: string, replay: any): void;
     installNetworkSession(replay: any): void;
+    /**
+     * Diagnostic witness for direct Wasm JIT stores that entered RAM's dirty-page path.
+     */
+    jitDirectStoreMarks(): number;
     /**
      * E4-T31: the bare-metal wrapper's authoritative compiled-tier counters. This mirrors the
      * Linux wrapper and lets hosts distinguish a bounded JIT run from an interpreted trace run.
@@ -951,6 +986,7 @@ export interface InitOutput {
     readonly wasmlinux_scatterOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number];
     readonly wasmmachine_deliverEventBoundary: (a: number) => [number, number];
     readonly wasmmachine_eventPosition: (a: number) => [number, number, number];
+    readonly wasmmachine_jitDirectStoreMarks: (a: number) => [number, number, number];
     readonly wasmmachine_restoreEventCheckpoint: (a: number, b: number, c: number) => [number, number];
     readonly wasmmachine_runEventUntil: (a: number, b: number, c: number, d: number) => [number, number, number];
     readonly wasmmachine_saveEventCheckpoint: (a: number) => [number, number, number, number];
@@ -958,10 +994,63 @@ export interface InitOutput {
     readonly wasmmachine_stageEventWrite: (a: number, b: number, c: number, d: number, e: number, f: any) => [number, number, number, number];
     readonly wasmmachine_startEventClock: (a: number, b: any, c: any) => [number, number];
     readonly wasmmachine_takeEventDeliveries: (a: number) => [number, number, number];
+    readonly __jit_amo: (a: bigint, b: bigint, c: number, d: number) => bigint;
+    readonly __jit_fp_arith_s: (a: number, b: number, c: number, d: number) => bigint;
+    readonly __jit_fp_div_s: (a: number, b: number, c: number) => bigint;
+    readonly __jit_fp_flags: () => number;
+    readonly __jit_fp_fmadd_s: (a: number, b: number, c: number, d: number) => bigint;
+    readonly __jit_fp_from_int_s: (a: bigint, b: number, c: number) => bigint;
+    readonly __jit_fp_op32: (a: number, b: bigint, c: bigint, d: bigint, e: number) => bigint;
+    readonly __jit_fp_op64: (a: number, b: bigint, c: bigint, d: bigint, e: number) => bigint;
+    readonly __jit_fp_to_word_s: (a: number, b: number, c: number) => bigint;
+    readonly __jit_load: (a: bigint, b: number) => bigint;
+    readonly __jit_lr: (a: bigint, b: number) => bigint;
+    readonly __jit_sc: (a: bigint, b: bigint, c: number) => bigint;
+    readonly __jit_store: (a: bigint, b: bigint, c: number) => void;
+    readonly __wbg_sessiondevicelease_free: (a: number, b: number) => void;
+    readonly wasmlinux_exactCompleteDeviceRequest: (a: number, b: number, c: any, d: any, e: any) => [number, number];
+    readonly wasmlinux_exactDeviceRequests: (a: number) => [number, number, number];
+    readonly wasmlinux_exactLeaseDeviceRequest: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmmachine_completeDeviceRequest: (a: number, b: number, c: any, d: any, e: any) => [number, number];
+    readonly wasmmachine_deviceRequests: (a: number) => [number, number, number];
+    readonly wasmmachine_installDeviceSession: (a: number, b: number, c: number, d: any) => [number, number];
+    readonly wasmmachine_leaseDeviceRequest: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmmachine_readDeviceMemory: (a: number, b: number, c: number, d: any) => [number, number, number, number];
+    readonly wasmmachine_replayDeviceCompletion: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
+    readonly wasmmachine_takeDeviceDeliveries: (a: number) => [number, number, number];
+    readonly wasmlinux_captureDiskDelta: (a: number) => any;
+    readonly __wbg_sessionnetworklease_free: (a: number, b: number) => void;
+    readonly wasmlinux_applyRecordedInput: (a: number, b: any, c: number, d: number, e: number, f: number, g: any, h: number, i: number, j: any, k: any) => [number, number];
     readonly wasmlinux_beginExactReplay: (a: number, b: any, c: any, d: any, e: any) => [number, number];
+    readonly wasmlinux_captureInputWitness: (a: number) => [number, number, number];
+    readonly wasmlinux_exactCompleteNetworkEvent: (a: number, b: number, c: any) => [number, number];
+    readonly wasmlinux_exactLeaseNetworkRequest: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmlinux_exactNetworkRequests: (a: number) => [number, number, number];
     readonly wasmlinux_exactSessionWitness: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_inputLifecycle: (a: number, b: any) => [number, number];
+    readonly wasmlinux_inputPosition: (a: number) => [number, number, number];
     readonly wasmlinux_runExactReplayToEnd: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_setInputPointerMode: (a: number, b: number) => [number, number];
+    readonly wasmlinux_startInputCapture: (a: number, b: number) => [number, number];
     readonly wasmlinux_takeExactSessionDeliveries: (a: number) => [number, number, number];
+    readonly wasmlinux_takeInputDeliveries: (a: number) => [number, number, number];
+    readonly wasmmachine_completeNetworkEvent: (a: number, b: number, c: any) => [number, number];
+    readonly wasmmachine_finishNetworkReplay: (a: number, b: number, c: number) => [number, number];
+    readonly wasmmachine_installNetworkSession: (a: number, b: any) => [number, number];
+    readonly wasmmachine_leaseNetworkRequest: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmmachine_networkCursor: (a: number) => [number, number, number, number];
+    readonly wasmmachine_networkRequests: (a: number) => [number, number, number];
+    readonly wasmmachine_networkSessionReplay: (a: number) => [number, number, number];
+    readonly wasmmachine_replayNetworkEvent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
+    readonly setSlirpDhcpLeaseSeconds: (a: number) => void;
+    readonly setSlirpDohEndpoint: (a: number, b: number) => void;
+    readonly setSlirpMtu: (a: number) => void;
+    readonly setSlirpNet: (a: number) => void;
+    readonly setSlirpRelay: (a: number, b: number) => void;
+    readonly setSlirpRelayToken: (a: number, b: number) => void;
+    readonly setSlirpTailscaleWorker: (a: number, b: number, c: any) => void;
+    readonly slirpDhcpStats: () => [number, number];
+    readonly slirpTailscaleCommand: (a: number, b: number) => number;
     readonly __wbg_sessionsourceprobe_free: (a: number, b: number) => void;
     readonly sessionsourceprobe_applyRecordedLifecycle: (a: number, b: any, c: number, d: number, e: number, f: number, g: any, h: number, i: number) => [number, number];
     readonly sessionsourceprobe_control: (a: number, b: any) => [number, number];
@@ -976,64 +1065,22 @@ export interface InitOutput {
     readonly sessionsourceprobe_runUntil: (a: number, b: number, c: number, d: any) => [number, number, number];
     readonly sessionsourceprobe_takeDeliveries: (a: number) => [number, number, number];
     readonly sessionsourceprobe_traceText: (a: number) => [number, number];
-    readonly wasmlinux_applyRecordedInput: (a: number, b: any, c: number, d: number, e: number, f: number, g: any, h: number, i: number, j: any, k: any) => [number, number];
-    readonly wasmlinux_captureInputWitness: (a: number) => [number, number, number];
-    readonly wasmlinux_inputLifecycle: (a: number, b: any) => [number, number];
-    readonly wasmlinux_inputPosition: (a: number) => [number, number, number];
-    readonly wasmlinux_sessionSourcePolicy: (a: number) => [number, number, number];
-    readonly wasmlinux_setInputPointerMode: (a: number, b: number) => [number, number];
-    readonly wasmlinux_startInputCapture: (a: number, b: number) => [number, number];
-    readonly wasmlinux_startInputSourceCapture: (a: number) => [number, number];
-    readonly wasmlinux_takeInputDeliveries: (a: number) => [number, number, number];
-    readonly __wbg_sessionnetworklease_free: (a: number, b: number) => void;
+    readonly wasmlinux_applySoftwareRamDeltaChunk: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmlinux_captureSoftwareBaseKeyframe: (a: number, b: number, c: number) => any;
     readonly wasmlinux_captureSoftwareCheckpoint: (a: number, b: number, c: number) => any;
-    readonly wasmlinux_exactCompleteNetworkEvent: (a: number, b: number, c: any) => [number, number];
-    readonly wasmlinux_exactLeaseNetworkRequest: (a: number, b: number, c: number) => [number, number, number];
-    readonly wasmlinux_exactNetworkRequests: (a: number) => [number, number, number];
+    readonly wasmlinux_captureSoftwareDeltaKeyframe: (a: number, b: number, c: number) => any;
+    readonly wasmlinux_finishSoftwareRamEpoch: (a: number, b: number) => [number, number];
+    readonly wasmlinux_nextSoftwareRamDeltaChunk: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_pendingSoftwareRamPages: (a: number) => [number, number, number];
+    readonly wasmlinux_prepareSoftwareKeyframeCandidate: (a: number) => [number, number];
     readonly wasmlinux_restoreSoftwareCheckpoint: (a: number, b: number, c: number, d: number, e: number) => [number, number];
+    readonly wasmlinux_restoreSoftwareDeltaKeyframe: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number];
+    readonly wasmlinux_seedSoftwareRamFromCheckpoint: (a: number, b: number, c: number) => [number, number];
+    readonly wasmlinux_seedSoftwareRamFromExactStart: (a: number, b: number, c: number) => [number, number];
+    readonly wasmlinux_sessionSourcePolicy: (a: number) => [number, number, number];
     readonly wasmlinux_softwareCheckpointTopology: (a: number) => [number, number];
-    readonly wasmmachine_completeNetworkEvent: (a: number, b: number, c: any) => [number, number];
-    readonly wasmmachine_finishNetworkReplay: (a: number, b: number, c: number) => [number, number];
-    readonly wasmmachine_installNetworkSession: (a: number, b: any) => [number, number];
-    readonly wasmmachine_leaseNetworkRequest: (a: number, b: number, c: number) => [number, number, number];
-    readonly wasmmachine_networkCursor: (a: number) => [number, number, number, number];
-    readonly wasmmachine_networkRequests: (a: number) => [number, number, number];
-    readonly wasmmachine_networkSessionReplay: (a: number) => [number, number, number];
-    readonly wasmmachine_replayNetworkEvent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
-    readonly __jit_amo: (a: bigint, b: bigint, c: number, d: number) => bigint;
-    readonly __jit_fp_arith_s: (a: number, b: number, c: number, d: number) => bigint;
-    readonly __jit_fp_div_s: (a: number, b: number, c: number) => bigint;
-    readonly __jit_fp_flags: () => number;
-    readonly __jit_fp_fmadd_s: (a: number, b: number, c: number, d: number) => bigint;
-    readonly __jit_fp_from_int_s: (a: bigint, b: number, c: number) => bigint;
-    readonly __jit_fp_op32: (a: number, b: bigint, c: bigint, d: bigint, e: number) => bigint;
-    readonly __jit_fp_op64: (a: number, b: bigint, c: bigint, d: bigint, e: number) => bigint;
-    readonly __jit_fp_to_word_s: (a: number, b: number, c: number) => bigint;
-    readonly __jit_load: (a: bigint, b: number) => bigint;
-    readonly __jit_lr: (a: bigint, b: number) => bigint;
-    readonly __jit_sc: (a: bigint, b: bigint, c: number) => bigint;
-    readonly __jit_store: (a: bigint, b: bigint, c: number) => void;
-    readonly setSlirpDhcpLeaseSeconds: (a: number) => void;
-    readonly setSlirpDohEndpoint: (a: number, b: number) => void;
-    readonly setSlirpMtu: (a: number) => void;
-    readonly setSlirpNet: (a: number) => void;
-    readonly setSlirpRelay: (a: number, b: number) => void;
-    readonly setSlirpRelayToken: (a: number, b: number) => void;
-    readonly setSlirpTailscaleWorker: (a: number, b: number, c: any) => void;
-    readonly slirpDhcpStats: () => [number, number];
-    readonly slirpTailscaleCommand: (a: number, b: number) => number;
-    readonly wasmlinux_captureDiskDelta: (a: number) => any;
-    readonly __wbg_sessiondevicelease_free: (a: number, b: number) => void;
-    readonly wasmlinux_exactCompleteDeviceRequest: (a: number, b: number, c: any, d: any, e: any) => [number, number];
-    readonly wasmlinux_exactDeviceRequests: (a: number) => [number, number, number];
-    readonly wasmlinux_exactLeaseDeviceRequest: (a: number, b: number, c: number) => [number, number, number];
-    readonly wasmmachine_completeDeviceRequest: (a: number, b: number, c: any, d: any, e: any) => [number, number];
-    readonly wasmmachine_deviceRequests: (a: number) => [number, number, number];
-    readonly wasmmachine_installDeviceSession: (a: number, b: number, c: number, d: any) => [number, number];
-    readonly wasmmachine_leaseDeviceRequest: (a: number, b: number, c: number) => [number, number, number];
-    readonly wasmmachine_readDeviceMemory: (a: number, b: number, c: number, d: any) => [number, number, number, number];
-    readonly wasmmachine_replayDeviceCompletion: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
-    readonly wasmmachine_takeDeviceDeliveries: (a: number) => [number, number, number];
+    readonly wasmlinux_softwareRamDigest: (a: number) => [number, number, number, number];
+    readonly wasmlinux_startInputSourceCapture: (a: number) => [number, number];
     readonly wasmmachine_takeNetworkDeliveries: (a: number) => [number, number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56: (a: number, b: number, c: any) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h0b706747458e1fca: (a: number, b: number, c: any, d: any) => void;

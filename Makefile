@@ -2760,3 +2760,11 @@ verify-E9-T13:
 .PHONY: verify-E9-T14
 verify-E9-T14:
 	python3 -B tools/verify/e9-deterministic-replay.py --output "$${E9_REPLAY_EVIDENCE_DIR:-target/evidence/e9-deterministic-replay-final}"
+
+.PHONY: verify-E9-T15
+verify-E9-T15:
+	cargo test -p wasm-vm-core --test e9_incremental_keyframes
+	cargo test -p wasm-vm-storage --test session_publication
+	cargo test -p wasm-vm-wasm --test software_checkpoint
+	$(MAKE) web-dist
+	node tools/verify/e9-keyframes-browser.mjs --output "$${E9_KEYFRAME_EVIDENCE_DIR:-target/evidence/e9-keyframes-final}"

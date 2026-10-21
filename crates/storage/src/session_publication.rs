@@ -1,9 +1,75 @@
 //! E9-T03: the manifest boundary used by the browser's append-only session store.
 //! IndexedDB owns durability; these pure checks own append/identity and reference discovery.
-use crate::session::{BlobRef, ContentHash, EventPayload, SessionError, SessionManifest};
+use crate::session::{
+    BlobRef, ContentHash, EventPayload, ExactU64, Phase, Position, RecordingMode, SessionError,
+    SessionManifest,
+};
 use alloc::collections::BTreeMap;
 use alloc::vec::Vec;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+
+#[derive(Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct ExactStateWitness {
+    transition: ExactU64,
+    phase: Phase,
+    ordinal: u32,
+    sequence: ExactU64,
+    retired: ExactU64,
+    digest: Vec<u8>,
+}
+
+impl ExactStateWitness {
+    fn position(&self) -> Position {
+        Position {
+            transition: self.transition,
+            phase: self.phase,
+            ordinal: self.ordinal,
+            sequence: self.sequence,
+            retired: self.retired,
+        }
+    }
+}
+
+/// A live exact recording may commit its initial state before the final state exists. The
+/// final witness list is the only extension that may be added later, and only once.
+fn exact_completion_append(previous: &SessionManifest, candidate: &SessionManifest) -> bool {
+    if previous.policy.mode != RecordingMode::ExactReplay
+        || previous.extensions.len() != 1
+        || candidate.extensions.len() != 2
+        || candidate.extensions[0] != previous.extensions[0]
+        || previous.extensions[0].kind != "e9-exact-initial-witness-v1"
+        || candidate.extensions[1].kind != "e9-exact-state-witnesses-v1"
+        || previous.extensions[0].required
+        || candidate.extensions[1].required
+    {
+        return false;
+    }
+    let Ok(initial) =
+        serde_json::from_slice::<Vec<ExactStateWitness>>(&previous.extensions[0].bytes)
+    else {
+        return false;
+    };
+    let Ok(final_witnesses) =
+        serde_json::from_slice::<Vec<ExactStateWitness>>(&candidate.extensions[1].bytes)
+    else {
+        return false;
+    };
+    initial.len() == 1
+        && initial[0].digest.len() == 32
+        && initial[0].position() == previous.begin
+        && (2..=64).contains(&final_witnesses.len())
+        && final_witnesses[0] == initial[0]
+        && final_witnesses
+            .iter()
+            .all(|witness| witness.digest.len() == 32)
+        && final_witnesses
+            .windows(2)
+            .all(|pair| pair[1].position().follows(pair[0].position()))
+        && final_witnesses
+            .last()
+            .is_some_and(|last| last.position() == candidate.end)
+}
 
 #[derive(Debug, PartialEq, Eq, Serialize)]
 pub struct PublicationRefs {
@@ -89,7 +155,8 @@ pub fn check_append(
         || previous.policy != candidate.policy
         || previous.assets != candidate.assets
         || previous.begin != candidate.begin
-        || previous.extensions != candidate.extensions
+        || (previous.extensions != candidate.extensions
+            && !exact_completion_append(previous, candidate))
     {
         return Err(SessionError::IdentityMismatch("session publication"));
     }

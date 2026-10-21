@@ -1,10 +1,10 @@
 // E9-T10: durable input-only prefixes. These are inspectable recordings; full replay is gated.
-import init, {sessionValidateManifest,sessionIndexEventChunk} from './session-pkg/wasm_vm_session.js';
+import init, {sessionValidateManifest,sessionValidateCheckpointContext,sessionIndexEventChunk} from './session-pkg/wasm_vm_session.js';
 import {SessionStoreError} from './session-store.js';
 import {SessionDiskRoots} from './session-disk-roots.js';
 import {deviceEventParts,joinDeviceCompletion} from './session-devices.js';
 import {networkEventParts,joinNetworkEvent} from './session-network.js';
-import {checkpointReference,checkpointChunks,readCheckpointObject,fetchCheckpointAsset,checkpointZeroPosition} from './session-checkpoints.js';
+import {SessionCheckpoints,checkpointReference,checkpointChunks,readCheckpointObject,fetchCheckpointAsset,checkpointZeroPosition} from './session-checkpoints.js';
 await init();
 const encoder=new TextEncoder(),decoder=new TextDecoder('utf-8',{fatal:true});
 const need=(condition,message)=>{if(!condition)throw new SessionStoreError('InputPrefix',message);};
@@ -84,11 +84,12 @@ export class SessionInputJournal{
       begin:zero,end:zero,events:[],checkpoints:[{id:exactMode?'exact-start':'input-witness',position:zero,next_sequence:'1',machine,disk_root:root.content.sha256,gpu:null}],extensions:[]};
     if(exactMode){
       manifest.policy.required_inputs=[...exactInputs];
-      need(Array.isArray(exactWitnesses)&&exactWitnesses.length>=2&&exactWitnesses.length<=16,'exact state witness count');
+      need(Array.isArray(exactWitnesses)&&exactWitnesses.length>=1&&exactWitnesses.length<=16,'exact state witness count');
       const values=exactWitnesses.map(value=>{need(value?.digest instanceof Uint8Array&&value.digest.length===32,'exact state digest');
         return {...position(value),digest:[...value.digest]};});
       need(samePosition(values[0],zero),'exact initial state witness');
-      manifest.extensions.push({kind:'e9-exact-state-witnesses-v1',required:false,bytes:[...encoder.encode(JSON.stringify(values))]});
+      manifest.extensions.push({kind:values.length===1?'e9-exact-initial-witness-v1':'e9-exact-state-witnesses-v1',
+        required:false,bytes:[...encoder.encode(JSON.stringify(values))]});
     }
     const canonical=sessionValidateManifest(encoder.encode(JSON.stringify(manifest)));
     for(const [ref,bytes] of [[vm,configBytes],[base,baseBytes],[machine,witness]])await writer.put(ref,checkpointChunks(bytes));
@@ -98,7 +99,12 @@ export class SessionInputJournal{
     await writer.publish(canonical);return new SessionInputJournal(writer,manifest);
   }
   static createExact(store,writer,configuration,native,disk,witnesses){
+    need(Array.isArray(witnesses)&&witnesses.length>=2,'precommitted exact witnesses');
     return this.createWitness(store,writer,{...configuration,exactSession:1,providersComplete:true},native,disk,new Uint8Array(),new Uint8Array(),witnesses);
+  }
+  static createLiveExact(store,writer,configuration,native,disk,initialWitness){
+    return this.createWitness(store,writer,{...configuration,exactSession:1,providersComplete:true},
+      native,disk,new Uint8Array(),new Uint8Array(),[initialWitness]);
   }
   get end(){return {...this.#manifest.end};}
   get pending(){return this.#pending.length;}
@@ -116,6 +122,46 @@ export class SessionInputJournal{
   flush(){
     if(this.#inflight)return this.#inflight;
     this.#inflight=this.#flush().finally(()=>{this.#inflight=null;});return this.#inflight;
+  }
+  async captureKeyframe(store,machine,configuration,checkpointId,{full=false}={}){
+    need(this.#manifest.policy.mode==='exact-replay'&&this.#pending.length===0,'exact keyframe requires flushed receipts');
+    const position=machine.inputPosition();
+    need(position.phase==='before'&&!position.paused&&!position.stopped&&!position.replay
+      &&position.sequence===this.#manifest.end.sequence
+      &&BigInt(position.transition)>=BigInt(this.#manifest.end.transition),'exact keyframe boundary');
+    const context={version:{major:1,minor:0},runtime:this.#manifest.machine.vm_build,
+      kernel:this.#manifest.machine.kernel,ram_bytes:this.#manifest.machine.ram_bytes,
+      clock:this.#manifest.policy.clock,position:{transition:position.transition,phase:position.phase,
+        ordinal:position.ordinal,sequence:position.sequence,retired:position.retired},
+      held:{keyboard:[],tablet:[],mouse:[]}};
+    const bytes=sessionValidateCheckpointContext(encoder.encode(JSON.stringify(context)));
+    const heap=()=>performance.memory?.usedJSHeapSize??null;
+    const start=performance.now(),heapBefore=heap();let captured=false;
+    try{
+      const frame=await (full?machine.captureSoftwareBaseKeyframe(bytes):machine.captureSoftwareDeltaKeyframe(bytes));
+      captured=true;
+      const captureMs=performance.now()-start,heapAfterEncode=heap();
+      const manager=new SessionCheckpoints(store);
+      let result;
+      if(full)result=await manager.saveKeyframeBase(this.#writer,checkpointId,frame,configuration);
+      else{
+        const dirtyPages=machine.pendingSoftwareRamPages(),ramSha256=machine.softwareRamDigest();
+        const chunks=async function*(){let cursor=0;while(true){const next=machine.nextSoftwareRamDeltaChunk(cursor);
+          if(next===null)break;need(next.next>cursor,'RAM chunk cursor');cursor=next.next;yield next.bytes;}};
+        result=await manager.saveDelta(this.#writer,checkpointId,frame,configuration,chunks(),ramSha256,dirtyPages);
+      }
+      machine.finishSoftwareRamEpoch(true);captured=false;
+      const opened=await store.openSession(this.#writer.id);
+      need(opened,'published exact keyframe unavailable');
+      this.#manifest=JSON.parse(decoder.decode(opened.manifest));
+      const heapAfterPublish=heap();
+      return {...result.stats,captureMs,pauseMs:performance.now()-start,
+        heapBytes:{before:heapBefore,afterEncode:heapAfterEncode,afterPublish:heapAfterPublish},
+        // Conservative explicit-buffer bound: Wasm/source/owned frame copies, source/owned/blob
+        // page copies, and one 4 MiB storage chunk. JS heap samples are reported separately;
+        // this is not a whole-process RSS measurement.
+        maxStagedBytes:3*frame.length+3*(result.stats.maxChunkBytes??0)+4*1048576};
+    }catch(error){if(captured)try{machine.finishSoftwareRamEpoch(false);}catch{}throw error;}
   }
   async #flush(){
     const batch=this.#pending.slice();if(!batch.length)return this.end;
@@ -149,7 +195,14 @@ export class SessionInputJournal{
     need(samePosition(values[0],this.#manifest.begin)&&samePosition(values.at(-1),end),'exact witness endpoints');
     const manifest=structuredClone(this.#manifest);manifest.end=position(end);
     const stored=manifest.extensions.find(value=>value.kind==='e9-exact-state-witnesses-v1');
-    need(stored&&decoder.decode(Uint8Array.from(stored.bytes))===JSON.stringify(values),'exact immutable witness commitment');
+    if(stored)need(decoder.decode(Uint8Array.from(stored.bytes))===JSON.stringify(values),'exact immutable witness commitment');
+    else{
+      const initial=manifest.extensions.find(value=>value.kind==='e9-exact-initial-witness-v1');
+      need(initial&&decoder.decode(Uint8Array.from(initial.bytes))===JSON.stringify([values[0]]),
+        'exact immutable initial witness commitment');
+      manifest.extensions.push({kind:'e9-exact-state-witnesses-v1',required:false,
+        bytes:[...encoder.encode(JSON.stringify(values))]});
+    }
     const canonical=sessionValidateManifest(encoder.encode(JSON.stringify(manifest)));
     await this.#writer.publish(canonical);this.#manifest=manifest;return this.end;
   }

@@ -3,6 +3,8 @@
 import init, {SessionSha256, sessionValidateManifest, sessionManifestReferences,
   sessionEventReferences, sessionCheckAppend, sessionValidateDiskRoot,
   sessionDiskRootReferences} from './session-pkg/wasm_vm_session.js';
+import {decodeKeyframeDescriptor, isKeyframeDescriptorPrefix,
+  KEYFRAME_MAX_DESCRIPTOR_BYTES} from './session-keyframes.js';
 
 export const SESSION_DATABASE = 'wasm-vm-sessions-v1';
 export const SESSION_CHUNK_BYTES = 1024 * 1024;
@@ -237,6 +239,10 @@ export class SessionStore {
     return bytes;
   }
   #small(expected) { return this.#bytes(expected, MAX_SOURCE_CHUNK); }
+  async #objectPrefix(expected) {
+    for await (const part of this.stream(expected)) return part.subarray(0,8);
+    fail('Corrupt','empty keyframe object');
+  }
   async #references(parsedManifest) {
     const refs = parsed(() => sessionManifestReferences(parsedManifest.bytes)), all = new Map();
     const add = value => {
@@ -246,6 +252,26 @@ export class SessionStore {
     };
     for (const ref of refs.blobs) add(ref);
     for (const hash of refs.roots) add(await this.#root(hash));
+    let priorKind = 'none', priorDepth = 0;
+    for (const [index,checkpoint] of parsedManifest.value.checkpoints.entries()) {
+      const prefix=await this.#objectPrefix(checkpoint.machine);
+      if (isKeyframeDescriptorPrefix(prefix)) {
+        need(index>0 && (priorKind==='keyframe-full' || priorKind==='delta'), 'Corrupt', 'keyframe base missing');
+        let descriptor;
+        try {descriptor=decodeKeyframeDescriptor(await this.#bytes(checkpoint.machine,KEYFRAME_MAX_DESCRIPTOR_BYTES));}
+        catch(error){fail('Corrupt',error.message);}
+        const parent=parsedManifest.value.checkpoints[index-1].machine;
+        need(descriptor.depth===priorDepth+1
+          && descriptor.parent.sha256===parent.sha256 && descriptor.parent.length===parent.length
+          && descriptor.ramBytes===parsedManifest.value.machine.ram_bytes,
+        'Corrupt','keyframe ancestor/identity');
+        add(descriptor.frame);
+        for(const chunk of descriptor.chunks)add(chunk);
+        priorKind='delta';priorDepth=descriptor.depth;
+      } else if (prefix.length===8 && ['WVKEYB01','WVEXACT1'].includes(decoder.decode(prefix))) {
+        priorKind='keyframe-full';priorDepth=0;
+      } else {priorKind='other';priorDepth=0;}
+    }
     for (const event of parsedManifest.value.events) {
       const bytes = await this.#small(event.content);
       for (const ref of parsed(() => sessionEventReferences(parsedManifest.bytes, bytes))) add(ref);

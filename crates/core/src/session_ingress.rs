@@ -17,6 +17,10 @@ impl SessionIngressGate {
         !self.replay.get() || self.recorded.get()
     }
 
+    pub(crate) fn replay_active(&self) -> bool {
+        self.replay.get()
+    }
+
     pub(crate) fn begin_replay(&self) {
         self.replay.set(true);
     }
