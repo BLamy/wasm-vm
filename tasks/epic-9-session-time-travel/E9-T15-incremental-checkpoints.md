@@ -3,7 +3,7 @@ id: E9-T15
 epic: 9
 title: Add incremental RAM keyframes with bounded storage work
 priority: 524.915
-status: implemented
+status: verified
 depends_on: [E9-T05, E9-T14]
 estimate: S
 risk: high
@@ -244,3 +244,98 @@ This specifically executes the previously unproven
   SHA-256 `50b1397603d3d9c786f81039ec0fe3b1be5791a92bd6ca3e1b7c8a0f269ab768`
   are available. A fresh verifier should inspect only the previously missing
   coverage and carry P1–P6 forward as instructed by AGENTS.md.
+
+### 2026-10-20 — independent verifier — VERDICT: verified
+
+- **P1 / AUTHENTICITY — HELD (carried forward unchanged).** The response
+  changes only `web/session-keyframe-probe.js`, its generated `web/dist` copy
+  and cache token, `tools/verify/e9-keyframes-browser.mjs`, generated task
+  manifests, and the claim. The native/runtime implementation and dependency
+  boundary are unchanged. The predecessor evidence still hashes to
+  `c091a0a40bf8a6faa14fa0100fb64c57657af797c9777514817dce43de9140c3`,
+  `f3dc9c996729f36b5df37dbdf8ace11037400364a75e1a28103bb2d70576d2c5`,
+  and `87e81c19d8a551fd6f4f287b6d3176533103de121214877db7a40ab37f7c6dfb`.
+- **P2 / AC1 reconstruction and dirty paths — HELD (carried forward
+  unchanged).** No native RAM mutation, reconstruction, or Wasm product code
+  changed in `d0557a7cb..b6ad82c6c`; the predecessor's six schedule runs,
+  independent full snapshot comparison, 13/13 RAM tests, and browser JIT
+  tracking remain the accepted result.
+- **P3 / AC2 bounds — HELD (carried forward unchanged).** The previously
+  exercised chain, depth refusal, full rebase, and original restore evidence
+  and digests are unchanged. P10 below checks only the newly exercised
+  post-rebase capture/restore costs.
+- **P4 / AC3 ancestor integrity and retention — HELD (carried forward
+  unchanged).** The storage implementation and predecessor evidence digest are
+  unchanged; the real IndexedDB missing/corrupt-ancestor refusals and sibling
+  retention remain held.
+- **P5 / NOVEL ATTACK AND SENSITIVITY — HELD (carried forward unchanged).**
+  The native delta parser/digest boundary did not change, so the predecessor's
+  duplicate-page rejection, candidate non-mutation, assertion sabotage, and
+  wrong-digest gate remain held.
+- **P6 / BROWSER AND PUBLICATION — HELD (carried forward unchanged).** The
+  predecessor's deployment-specific assets and report retain their recorded
+  digests. P11 independently authenticates the new probe/publication delta.
+- **P7 / POST-REBASE DELTA — HELD.** Predicted a nonempty depth-one delta after
+  `base-2`. The exact-head built report records the depth-zero 13,980,594-byte
+  rebase and a depth-one 190,961-byte delta with nine dirty pages
+  (`e9-keyframes-gap-closure-head/report.json:137-164`). A fresh local
+  browser-only verifier run reproduced depth 0 then depth 1/nine pages at
+  `target/evidence/e9-t15-verifier-fresh/report.json:133-160`; its report
+  SHA-256 is
+  `e0a049db75d03ee05240ca571f784c6f4dbeb03ab8e8e963a132de47db5aaf8c`.
+- **P8 / WVKEYB01 CANDIDATE RESTORE — HELD.** Predicted the fresh private
+  candidate would traverse `WVKEYB01` and the Wasm
+  `seedSoftwareRamFromCheckpoint` wrapper, then report depth 1 and exactly the
+  delta's page count. The fresh run reports depth 1 and nine applied pages
+  (`report.json:181-194`). For the bounded novel attack I monkey-patched only
+  that wrapper in an isolated Playwright page to flip one byte inside the
+  authenticated full-resume part before calling the real wrapper. The run
+  reached the post-rebase branch and refused with
+  `Error: session_keyframe_base: Digest`, with zero console errors. Without the
+  patch, the same fresh browser command passed. This directly exercises
+  `web/session-checkpoints.js:265-268` and
+  `crates/wasm/src/session_checkpoint.rs:259-271`.
+- **P9 / COMPLETE SNAPSHOT AND WITNESS — HELD.** Predicted byte equality of
+  the complete resume, not only a RAM digest. The probe's passing assertion at
+  `web/session-keyframe-probe.js:141-150` compares digest, resume length, and
+  every resume byte. The built, public, and fresh reports all record a
+  13,979,882-byte snapshot whose SHA-256 is
+  `bd62b728af379b4ae5846893a42be97b259555e94f466198b21dc04f5c91458d`,
+  identical to the final witness and completed from-start replay digest
+  (`e9-keyframes-gap-closure-head/report.json:115-125,166-170,185-199`).
+- **P10 / BOUNDS — HELD.** Predicted both operations below 5,000 ms and 64 MiB
+  staged. The fresh capture took 1,161.04 ms with 4,765,792 staged bytes and
+  the restore took 1,383.01 ms with 32,266,318 staged bytes; encode/decode heap
+  observations and the full-snapshot size are present
+  (`target/evidence/e9-t15-verifier-fresh/report.json:145-160,181-194`). The
+  authenticated worker built/public reports independently stay within the same
+  limits. Their exact timings, rather than the worker prose's approximate
+  1,117/1,369 ms figures, are the accepted measurements.
+- **P11 / PUBLICATION — HELD.** The supplied built log/report/trace hashes match
+  the claim, and both ZIPs pass CRC. The public report at the supplied (correct)
+  `e9-t15-gap-closure-public-browser` path hashes to
+  `ce448e1d883d2f1c8edd1df89460b74d9275b6a4a1f908a024044cf49acb2d6e`
+  and records 127/0, no non-favicon errors, and the same post-rebase result
+  (`report.json:1-12,140-201`). The deployment listing identifies production
+  deployment `babd5961-01cd-4494-b3ba-f21659ac98d2`, branch `main`, source
+  `b5d9080`; all 12 files fetched afresh from its deployment-specific URL match
+  receipt SHA-256 values, including the probe and Wasm assets. The worker log's
+  `e9-keyframes-gap-closure-public-browser` link is a path typo only.
+- **COVERAGE / MOCK / ENV / SUITE.** Every executable probe and assertion hunk
+  in `d0557a7cb..b5d9080e4` ran in the authenticated recording and the fresh
+  isolated browser. `web/dist/session-keyframe-probe.js` is the exact generated
+  source copy; the service-worker version and task manifests are generated
+  metadata and are waived. The store remains real IndexedDB. A connected
+  shared-profile Chrome tab loaded the public UI with no console errors but did
+  not reach `wasmReady`, leaving the probe control disabled; the isolated local
+  Playwright context passed, so that profile condition is not a product result.
+  No new test is promoted: the changed permanent browser harness now contains
+  the complete post-rebase equality and bounds assertions, while the transient
+  byte-flip is a branch-sensitivity check overlapping the permanent corrupt-
+  ancestor refusal.
+
+Commands: authenticated SHA-256/ZIP/receipt and diff-boundary checks;
+`node tools/verify/e9-keyframes-browser.mjs --output
+target/evidence/e9-t15-verifier-fresh --probe-only`; isolated Playwright
+`WVKEYB01` resume-byte corruption attack; fresh deployment-specific asset
+fetch/hash comparison; connected Chrome inspection; `git diff --check`.
