@@ -35071,15 +35071,16 @@
         },
         {
           "date": "2026-10-21",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "Persist coherent accelerated session checkpoints",
             "Start E9-T17 accelerated session checkpoints"
           ]
         }
       ],
       "firstActivity": "2026-10-17",
       "lastActivity": "2026-10-21",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E9-T18",
