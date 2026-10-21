@@ -35071,8 +35071,9 @@
         },
         {
           "date": "2026-10-21",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "E9-T17 refuse checkpoint publication after GPU context loss",
             "Persist coherent accelerated session checkpoints",
             "Start E9-T17 accelerated session checkpoints"
           ]
@@ -35080,7 +35081,7 @@
       ],
       "firstActivity": "2026-10-17",
       "lastActivity": "2026-10-21",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E9-T18",
