@@ -139,7 +139,8 @@ try{
     const {SessionStore}=await import('/session-store.js');
     const {SessionGpuCheckpoints}=await import('/session-gpu-checkpoints.js');
     const {encodeGpuCheckpointPair,GPU_PAIR_MAX_BYTES}=await import('/gpu-checkpoint.js');
-    const {readCheckpointObject}=await import('/session-checkpoints.js');
+    const {readCheckpointObject,checkpointReference,checkpointChunks}=await import('/session-checkpoints.js');
+    const {sessionValidateManifest}=await import('/session-pkg/wasm_vm_session.js');
     const {GPU_CHECKPOINT_BUILD_ID,SOFTWARE_CHECKPOINT_WASM_SHA256}=await import('/gpu-checkpoint-build.js');
     const store=await SessionStore.open('wasm-vm-sessions-v1-e9-gpu-probe');
     const result={};
@@ -160,6 +161,24 @@ try{
       finally{await writer.release();}
       try{await helper.admit('accelerated-positions','green','0'.repeat(64),SOFTWARE_CHECKPOINT_WASM_SHA256);result.build={accepted:true};}
       catch(error){result.build={accepted:false,error:String(error)};}
+      const wrongBoot=structuredClone(red.configuration);wrongBoot.bootargs+=' verifier_incompatible_boot=1';
+      writer=await store.writer('bad-boot-options');
+      try{await helper.save(writer,'foreign',intact,wrongBoot,'1');result.bootSave={accepted:true};}
+      catch(error){result.bootSave={accepted:false,error:String(error)};}
+      finally{await writer.release();}
+      // Build an independently malformed persisted candidate without using helper.save.
+      // Admission must revalidate options too, preserving the original session and owner.
+      const bad=JSON.parse(new TextDecoder().decode((await store.openSession('accelerated-positions')).manifest));
+      bad.id='bad-imported-boot';
+      const configBytes=new TextEncoder().encode(JSON.stringify(wrongBoot)),vm=checkpointReference(configBytes);
+      bad.machine.vm_build=vm.sha256;bad.assets.find(asset=>asset.role==='vm').content=vm;
+      writer=await store.writer(bad.id);
+      try{await writer.put(vm,checkpointChunks(configBytes));
+        await writer.publish(sessionValidateManifest(new TextEncoder().encode(JSON.stringify(bad))));}
+      finally{await writer.release();}
+      try{await helper.admit(bad.id,'red',GPU_CHECKPOINT_BUILD_ID,SOFTWARE_CHECKPOINT_WASM_SHA256);result.bootAdmission={accepted:true};}
+      catch(error){result.bootAdmission={accepted:false,error:String(error)};}
+      await store.deleteSession(bad.id);
       result.sessions=await store.list();
       return result;
     }finally{await store.close();}
@@ -167,6 +186,8 @@ try{
   assert.equal(report.attacks.crosswire.accepted,false);assert.match(report.attacks.crosswire.error,/witness/);
   assert.equal(report.attacks.profile.accepted,false);assert.match(report.attacks.profile.error,/profile/);
   assert.equal(report.attacks.build.accepted,false);assert.deepEqual(report.attacks.sessions.sessions.map(row=>row.id),['accelerated-positions']);
+  assert.equal(report.attacks.bootSave.accepted,false);assert.match(report.attacks.bootSave.error,/configuration identity/);
+  assert.equal(report.attacks.bootAdmission.accepted,false);assert.match(report.attacks.bootAdmission.error,/configuration identity/);
   report.fingerprintAfterAttacks=await page.evaluate(()=>__gpuSessionFingerprint());
   assert.deepEqual(report.fingerprintAfterAttacks,report.fingerprintBeforeAttacks);
   report.gc=await page.evaluate(()=>__collectGpuSession());

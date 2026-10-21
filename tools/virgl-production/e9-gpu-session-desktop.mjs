@@ -208,21 +208,29 @@ export async function verifyGpuSessionDesktop(page,guestCommand,output){
     report.afterHostSession=await fingerprint(page);assert.deepEqual(report.afterHostSession,report.originalSession);
     await page.evaluate(()=>__linuxCtl.resume());
     report.crosswires=[];
-    for(const component of ['disk_root','gpu']){
+    for(const component of ['disk_root','gpu','bootargs']){
       const candidate='e9-t17-crosswire-'+component;
       await page.evaluate(async({id,database,candidate,component})=>{
         const {SessionStore}=await import('/session-store.js'),{sessionValidateManifest}=await import('/session-pkg/wasm_vm_session.js');
+        const {readCheckpointObject,checkpointReference,checkpointChunks}=await import('/session-checkpoints.js');
         const store=await SessionStore.open(database);let writer;
         try{const manifest=JSON.parse(new TextDecoder().decode((await store.openSession(id)).manifest));
-          manifest.id=candidate;manifest.checkpoints[0][component]=structuredClone(manifest.checkpoints[1][component]);
-          writer=await store.writer(candidate);await writer.publish(sessionValidateManifest(new TextEncoder().encode(JSON.stringify(manifest))));
+          manifest.id=candidate;writer=await store.writer(candidate);
+          if(component==='bootargs'){
+            const vm=manifest.assets.find(asset=>asset.role==='vm');
+            const config=JSON.parse(new TextDecoder().decode(await readCheckpointObject(store,vm.content,8*1048576)));
+            config.bootargs+=' verifier_incompatible_boot=1';
+            const bytes=new TextEncoder().encode(JSON.stringify(config)),ref=checkpointReference(bytes);
+            await writer.put(ref,checkpointChunks(bytes));vm.content=ref;manifest.machine.vm_build=ref.sha256;
+          }else manifest.checkpoints[0][component]=structuredClone(manifest.checkpoints[1][component]);
+          await writer.publish(sessionValidateManifest(new TextEncoder().encode(JSON.stringify(manifest))));
         }finally{await writer?.release();await store.close();}
       },{id,database,candidate,component});
       const attack=await page.evaluate(async({candidate,database})=>{
         try{await wvmDemo.restoreGpuSession(candidate,'before-input',database);return {accepted:true};}
         catch(error){return {accepted:false,error:String(error),owner:wvmDemo.guestSession().key};}
       },{candidate,database});
-      assert.equal(attack.accepted,false);assert.match(attack.error,/keyframe component binding/);
+      assert.equal(attack.accepted,false);assert.match(attack.error,component==='bootargs'?/configuration identity/:/keyframe component binding/);
       assert.equal(attack.owner,report.after.owner.key);
       const surviving=await fingerprint(page);assert.deepEqual(surviving,report.originalSession);
       report.crosswires.push({component,...attack,originalSha256:surviving.sha256,originalRevision:surviving.revision});

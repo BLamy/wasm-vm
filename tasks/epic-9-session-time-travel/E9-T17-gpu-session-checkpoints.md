@@ -111,3 +111,27 @@ transient disconnect, exhausted retries, missing object and wrong digest; missin
 or corrupt bytes are refused on their first response. Runtime changes require a
 new frozen-head risk submission and fresh independent verdict; no criterion is
 marked verified by this development entry.
+
+### 2026-10-21 — worker — restored configuration identity repaired
+
+The next fresh review's bounded novel attack showed that an intact pair plus a
+changed `configuration.bootargs` was accepted by save/admit at `55e8f0e5`, but
+rejected by the real replacement worker after retirement. Its concrete receipt is
+`target/evidence/e9-t17-fresh-verifier/novel-boot-identity/report.json`, SHA-256
+`b87beaea5c6e1d288ee9786bfa626d9f85fb8950431cd6c26d92a2baaa65e15e`.
+Both `e9-t17-final-gauntlet-55e8f0e5` and `e9-t17-final-cold-55e8f0e5` under
+`/Users/blamy/Documents/Codex/` were stopped, with partial evidence preserved.
+
+Configuration validation now reconstructs the loader's complete identity and
+requires exact agreement, at both save and admission, before ownership changes.
+Admission also checks manifest RAM size against those options. The promoted
+regression builds a malformed stored candidate independently of the save helper;
+`target/evidence/e9-t17-identity-dev-r1/report.json` rejects both paths and retains
+the original manifest bytes/revision. The real desktop command now includes the
+same malformed-candidate preflight against its incumbent owner.
+
+The independent guard-removal sabotage at the preceding head failed exactly at
+the loss-during-capture assertion (no unrelated browser errors), proving that the
+promoted regression detects the actual publication bug. The fresh session then
+stopped at the model's account-security requirement and did not issue a complete
+verdict. Final frozen-head proof and a completed fresh verifier remain pending.

@@ -69,6 +69,13 @@ function configuration(input,pair,renderer){
     &&validHash(config.runtime)&&validHash(config.wasm?.sha256)
     &&typeof config.imageManifest==='string'&&typeof config.baseUrl==='string'
     &&typeof config.bootargs==='string'&&Array.isArray(config.devices),'capture configuration');
+  // Match the identity the loader reconstructs before creating a replacement worker.
+  // Otherwise a valid pair can be paired with options that fail only after retirement.
+  const restoredIdentity={buildId:config.runtime,kernelSha256:config.kernel.sha256,
+    imageManifestSha256:checkpointHash(encoder.encode(config.imageManifest)),ramMib:config.ramMib,
+    bootargs:config.bootargs,guestClock:config.identity.guestClock??null,
+    icountDivider:config.identity.icountDivider??null,interactiveClock:config.identity.interactiveClock??null};
+  need(same(config.identity,restoredIdentity),'configuration identity');
   need(same(config.identity,pair.identity)&&same(config.profile,pair.profile),'pair identity/profile');
   need(config.clock?.mode===(config.identity.guestClock??'icount')
     &&config.clock.divider===pair.clockState.clockDiv
@@ -180,6 +187,7 @@ export class SessionGpuCheckpoints {
       &&config.wasm?.sha256===wasmHash&&manifest.machine.wasm_build===wasmHash
       &&manifest.machine.vm_build===vm.content.sha256
       &&config.kernel?.sha256===manifest.machine.kernel
+      &&manifest.machine.ram_bytes===String(config.ramMib*1048576)
       &&config.renderer?.sha256===manifest.machine.gpu.renderer_build
       &&same(config.devices,manifest.machine.devices)
       &&same(config.clock,manifest.policy.clock),'runtime unavailable');
@@ -194,6 +202,7 @@ export class SessionGpuCheckpoints {
     'keyframe component binding');
     const bytes=await readCheckpointObject(this.#store,checkpoint.gpu,GPU_PAIR_MAX_BYTES);
     const pair=await decodeGpuCheckpointPair(bytes,config.identity);
+    configuration(config,pair,localRenderer);
     await nativeWitness(pair);
     need(pair.sha256===checkpoint.gpu.sha256
       &&checkpointHash(pair.native)===descriptor.nativeSha256
