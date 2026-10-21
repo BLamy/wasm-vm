@@ -75,15 +75,18 @@ fn caps() -> QualifiedCapabilities {
 }
 #[derive(Default)]
 struct Host {
+    leases: Vec<Submit3dCompletionLease>,
+    controls: Vec<Control3dEvent>,
     jobs: Vec<Submit3dRequest>,
     scanouts: Vec<wasm_vm_core::dev::virtio::gpu::scanout3d::Scanout3dRequest>,
     cancelled: Vec<Submit3dKey>,
     fail: Option<E>,
     cancel_fail: bool,
 }
-struct Controls;
+struct Controls(Rc<RefCell<Host>>);
 impl Control3dSink for Controls {
-    fn apply(&mut self, _: &Control3dEvent) -> Result<(), E> {
+    fn apply(&mut self, event: &Control3dEvent) -> Result<(), E> {
+        self.0.borrow_mut().controls.push(event.clone());
         Ok(())
     }
 }
@@ -106,6 +109,22 @@ impl Submit3dSink for Jobs {
     ) -> Result<(), E> {
         self.0.borrow_mut().scanouts.push(*request);
         Ok(())
+    }
+    fn begin_session_job(
+        &mut self,
+        request: &Submit3dRequest,
+        completion: Submit3dCompletionLease,
+    ) -> Result<(), E> {
+        self.0.borrow_mut().leases.push(completion);
+        self.begin_job(request)
+    }
+    fn begin_session_scanout(
+        &mut self,
+        request: &wasm_vm_core::dev::virtio::gpu::scanout3d::Scanout3dRequest,
+        completion: Submit3dCompletionLease,
+    ) -> Result<(), E> {
+        self.0.borrow_mut().leases.push(completion);
+        self.begin_scanout(request)
     }
     fn cancel_job(&mut self, key: Submit3dKey) -> Result<(), E> {
         let mut h = self.0.borrow_mut();
@@ -168,6 +187,7 @@ struct Rig {
     mail: Submit3dMailbox,
     trace: VecSink,
     length: usize,
+    disk: Option<Rc<RefCell<wasm_vm_core::dev::virtio::blk::BlkState>>>,
 }
 impl Rig {
     fn new(length: usize, tape: Option<ObservationTape>, cached: bool) -> Self {
@@ -175,17 +195,35 @@ impl Rig {
     }
     // 0 command stream, 1/2 original transfer-to/from, 3 global scanout capture.
     fn with_job(length: usize, tape: Option<ObservationTape>, cached: bool, job: u32) -> Self {
+        Self::with_disk(length, tape, cached, job, None)
+    }
+    fn with_disk(
+        length: usize,
+        tape: Option<ObservationTape>,
+        cached: bool,
+        job: u32,
+        disk: Option<Vec<u8>>,
+    ) -> Self {
         let replay = tape.is_some();
         let mut machine = Machine::new(length + 1024 * 1024);
         machine.enable_plic();
         machine.enable_clint(64);
-        machine.enable_virtio_slots(None);
+        let disk = if let Some(bytes) = disk {
+            Some(
+                machine
+                    .enable_virtio_blk(Box::new(wasm_vm_core::block::MemBackend::new(bytes)))
+                    .1,
+            )
+        } else {
+            machine.enable_virtio_slots(None);
+            None
+        };
         machine.enable_virtio_gpu(Box::new(NullSink)).unwrap();
         let host = Rc::new(RefCell::new(Host::default()));
         let mail = Submit3dMailbox::new();
         machine
             .attach_qualified_virgl(
-                Box::new(Controls),
+                Box::new(Controls(host.clone())),
                 Box::new(Jobs(host.clone())),
                 mail.clone(),
                 caps(),
@@ -206,6 +244,7 @@ impl Rig {
             mail,
             trace: VecSink::new(),
             length,
+            disk,
         };
         let context = packet(0x200, 2, 96);
         let mut resource = packet(0x204, 0, 72);
@@ -397,6 +436,9 @@ impl Rig {
             },
         }
     }
+    fn post(&self, completion: Submit3dCompletion) -> Result<(), E> {
+        self.host.borrow().leases.last().unwrap().post(completion)
+    }
     fn completion(&self, outcome: Result<(), E>, exchanges: u64) -> Submit3dCompletion {
         Submit3dCompletion {
             key: {
@@ -511,12 +553,11 @@ fn capture(length: usize, delay: u64, failed: bool) -> Capture {
         rig.machine.submit3d_scatter(&scatter, &result).unwrap();
         rig.until(rig.pos().transition + 19, 3);
     }
-    rig.mail
-        .post(rig.completion(
-            if failed { Err(E::OutOfMemory) } else { Ok(()) },
-            if failed { 0 } else { 2 },
-        ))
-        .unwrap();
+    rig.post(rig.completion(
+        if failed { Err(E::OutOfMemory) } else { Ok(()) },
+        if failed { 0 } else { 2 },
+    ))
+    .unwrap();
     rig.done();
     rig.check(&result, if failed { 0x1201 } else { 0x1100 });
     let batch = rig.machine.take_session_gpu_recording().unwrap();
@@ -659,7 +700,7 @@ fn rv64_gpu_result_replay_owns_bytes_and_fence_across_host_schedules() {
                         assert!(data.is_empty());
                     }
                     if i == 2 && seed != 19 {
-                        r.mail.post(r.completion(Ok(()), 2)).unwrap();
+                        r.post(r.completion(Ok(()), 2)).unwrap();
                     }
                 }
                 r.until(position.transition, seed);
@@ -674,7 +715,7 @@ fn rv64_gpu_result_replay_owns_bytes_and_fence_across_host_schedules() {
                     .deliver_session_gpu_replay()
                     .or_else(|error| {
                         if i == 2 && error == GpuError::PhysicalPending {
-                            r.mail.post(r.completion(Ok(()), 2)).unwrap();
+                            r.post(r.completion(Ok(()), 2)).unwrap();
                             r.machine.deliver_session_gpu_replay()
                         } else {
                             Err(error)
@@ -730,10 +771,7 @@ fn rv64_recorded_failure_cancels_new_physical_job_without_stranding_fence() {
     assert_eq!(r.machine.take_session_deliveries().unwrap(), c.events);
     assert_eq!(r.virtual_gpu(), c.virtual_gpu);
     assert_eq!(r.host.borrow().cancelled.len(), 1);
-    assert_eq!(
-        r.mail.post(r.completion(Ok(()), 0)),
-        Err(E::InvalidParameter)
-    );
+    assert_eq!(r.post(r.completion(Ok(()), 0)), Err(E::InvalidParameter));
     r.dump_state("recorded-failure", "replay");
     dump(
         "recorded-failure",
@@ -992,15 +1030,12 @@ fn missing_or_failed_physical_completion_cannot_publish_recorded_success() {
     assert_eq!(r.virtual_gpu(), gpu);
     let mut wrong = r.completion(Ok(()), 2);
     wrong.key.epoch += 1;
-    assert_eq!(r.mail.post(wrong), Err(E::InvalidParameter));
+    assert_eq!(r.post(wrong), Err(E::InvalidParameter));
     let mut wrong = r.completion(Ok(()), 2);
     wrong.exchange_sequence = 1;
-    assert_eq!(r.mail.post(wrong), Err(E::InvalidParameter));
-    r.mail.post(r.completion(Err(E::OutOfMemory), 2)).unwrap();
-    assert_eq!(
-        r.mail.post(r.completion(Ok(()), 2)),
-        Err(E::InvalidParameter)
-    );
+    assert_eq!(r.post(wrong), Err(E::InvalidParameter));
+    r.post(r.completion(Err(E::OutOfMemory), 2)).unwrap();
+    assert_eq!(r.post(r.completion(Ok(()), 2)), Err(E::InvalidParameter));
     assert_eq!(
         r.machine.deliver_session_gpu_replay(),
         Err(GpuError::PhysicalFailure)
@@ -1067,7 +1102,7 @@ fn automatic_before_hook_admits_each_due_result_once_and_holds_missing_successor
             )
             .unwrap();
     }
-    r.mail.post(r.completion(Ok(()), 2)).unwrap();
+    r.post(r.completion(Ok(()), 2)).unwrap();
     let (position, result) = frames[2];
     r.machine
         .prepare_session_gpu_replay(position, result, None)
@@ -1135,7 +1170,6 @@ fn original_transfer_and_global_scanout_requests_keep_their_result_identity() {
         }
         original.until(original.pos().transition + 11, 3);
         original
-            .mail
             .post(original.completion(Ok(()), if job == 3 { 0 } else { 2 }))
             .unwrap();
         original.done();
@@ -1187,7 +1221,6 @@ fn original_transfer_and_global_scanout_requests_keep_their_result_identity() {
             replay.until(frame.position.transition, 7);
             if matches!(result.kind, ResultKind::Complete(_)) {
                 replay
-                    .mail
                     .post(replay.completion(Ok(()), if job == 3 { 0 } else { 2 }))
                     .unwrap();
             }
@@ -1463,7 +1496,7 @@ fn gpu_proof_gap_malformed_delivery_hash_pending_event_and_completion_generation
         .prepare_session_gpu_replay(position, result, None)
         .unwrap();
     r.until(position.transition, 7);
-    r.mail.post(r.completion(Ok(()), 2)).unwrap();
+    r.post(r.completion(Ok(()), 2)).unwrap();
     let base = Platform::virtio_base(r.machine.virtio_gpu().unwrap().0 as u64);
     r.machine.bus_mut().store32(base + 0x44, 0).unwrap();
     let before = r.machine.snapshot();
@@ -1494,7 +1527,7 @@ fn gpu_proof_gap_persisted_control_tape_and_invalid_wire_boundaries_are_exercise
             .unwrap();
         r.until(position.transition, 7);
         if i == 2 {
-            r.mail.post(r.completion(Ok(()), 2)).unwrap();
+            r.post(r.completion(Ok(()), 2)).unwrap();
         }
         r.machine.deliver_session_gpu_replay().unwrap();
         if i < 2 {
@@ -1640,7 +1673,7 @@ fn gpu_proof_gap_replay_receipt_count_and_byte_limits_allow_drain_then_retry() {
         r.machine
             .prepare_session_gpu_replay(position, result, None)
             .unwrap();
-        r.mail.post(r.completion(Ok(()), limit + 1)).unwrap();
+        r.post(r.completion(Ok(()), limit + 1)).unwrap();
         r.machine.deliver_session_gpu_replay().unwrap();
         r.done();
         r.check(&vec![0x6d; length], 0x1100);
@@ -1700,7 +1733,7 @@ fn gpu_proof_gap_legacy_dense_length_refuses_before_shadow_dma_exchange_or_event
             .as_ref(),
         &[0x6d6d6d6d; 16]
     );
-    r.mail.post(r.completion(Ok(()), 1)).unwrap();
+    r.post(r.completion(Ok(()), 1)).unwrap();
     r.done();
     r.check(&[0x6d; 64], 0x1100);
     r.dump_state("legacy-dense-refusal", "resolved");
@@ -1731,7 +1764,7 @@ fn verifier_live_descriptor_rewrite_cannot_redirect_accepted_result_authority() 
             );
         }
         if i == 2 {
-            r.mail.post(r.completion(Ok(()), 2)).unwrap();
+            r.post(r.completion(Ok(()), 2)).unwrap();
         }
         r.machine.deliver_session_gpu_replay().unwrap();
         if i < 2 {
@@ -1898,7 +1931,7 @@ fn verifier_early_physical_completion_stays_behind_scatter_and_receipt_frontier(
                     .unwrap(),
                 vec![0x6d; 64]
             );
-            r.mail.post(r.completion(Ok(()), 1)).unwrap();
+            r.post(r.completion(Ok(()), 1)).unwrap();
         }
     }
     let (position, result) = frames[2];
@@ -1949,3 +1982,6 @@ fn verifier_early_physical_completion_stays_behind_scatter_and_receipt_frontier(
         "VERIFIER_EARLY_COMPLETION held undrained-receipt at {clock:?}; exact result and final cursor3"
     );
 }
+
+#[path = "session_gpu_results/pending.rs"]
+mod pending_keyframes;

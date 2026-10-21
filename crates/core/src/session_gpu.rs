@@ -5,6 +5,7 @@ use alloc::{collections::BTreeMap, rc::Rc, vec::Vec};
 use core::cell::RefCell;
 use sha2::{Digest, Sha256};
 mod admission;
+pub(crate) mod checkpoint;
 mod control;
 pub(crate) use control::ControlResultTap;
 
@@ -21,17 +22,21 @@ pub const MAX_OBJECTS: usize = 256;
 pub const MAX_ENVELOPE: usize = 256;
 const MAGIC: &[u8; 8] = b"WVGPUR01";
 
-/// The initial native epoch is logical too. Restore rebasing is introduced by
-/// E9-T18b; guest resets advance both coordinates and can never wrap.
+/// Epoch and queue-generation coordinates are rebased only by explicit GPU
+/// history restore. Guest resets advance both coordinates and can never wrap.
 pub(crate) struct Epochs {
     pub physical: u64,
     pub logical: u64,
+    pub physical_queue: u64,
+    pub logical_queue: u64,
 }
 impl Epochs {
     pub fn new(epoch: u64) -> Self {
         Self {
             physical: epoch,
             logical: epoch,
+            physical_queue: 1,
+            logical_queue: 1,
         }
     }
     pub fn observe(&mut self, physical: u64) -> Result<u64, GpuError> {
@@ -47,6 +52,22 @@ impl Epochs {
         self.logical = logical;
         Ok(logical)
     }
+    pub fn observe_queue(&mut self, physical: u64) -> Result<u64, GpuError> {
+        let logical = self
+            .logical_queue
+            .checked_add(
+                physical
+                    .checked_sub(self.physical_queue)
+                    .ok_or(GpuError::StaleOwner)?,
+            )
+            .ok_or(GpuError::Exhausted)?;
+        if logical == 0 {
+            return Err(GpuError::Exhausted);
+        }
+        self.physical_queue = physical;
+        self.logical_queue = logical;
+        Ok(logical)
+    }
 }
 
 pub(crate) struct GpuSession {
@@ -57,6 +78,8 @@ pub(crate) struct GpuSession {
     pub prepared: Option<admission::PreparedResult>,
     pub transport: alloc::collections::VecDeque<admission::TransportReceipt>,
     pub transport_bytes: usize,
+    /// Captured physical work is already settled; future logical DMA has no host reissue.
+    pub restored_complete: Option<Submit3dKey>,
 }
 
 /// Receipts and their large immutable objects transfer together to the recorder.
@@ -99,6 +122,7 @@ impl crate::Machine {
             prepared: None,
             transport: alloc::collections::VecDeque::new(),
             transport_bytes: 0,
+            restored_complete: None,
         });
         Ok(())
     }

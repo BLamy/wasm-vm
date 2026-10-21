@@ -2791,3 +2791,7 @@ verify-E9-T18a:
 .PHONY: verify-E9-T19
 verify-E9-T19:
 	python3 -B tools/verify/e9-timeline.py --output "$${E9_TIMELINE_EVIDENCE_DIR:-target/evidence/e9-timeline-final}"
+
+.PHONY: verify-E9-T18b
+verify-E9-T18b:
+	python3 -B tools/verify/e9-pending-gpu.py --output "$${E9_PENDING_GPU_EVIDENCE_DIR:-target/evidence/e9-pending-gpu-final}" --pending-status "$${E9_PENDING_GPU_STATUS:-verified}"

@@ -10,16 +10,16 @@ use crate::{
 };
 
 pub(crate) struct PreparedResult {
-    position: SessionPosition,
-    result: GpuResult,
-    payload: Option<Payload>,
+    pub(super) position: SessionPosition,
+    pub(super) result: GpuResult,
+    pub(super) payload: Option<Payload>,
 }
 pub(crate) struct TransportReceipt {
-    exchange: Submit3dExchange,
-    layers: Option<(u32, u32)>,
-    output: bool,
-    length: usize,
-    bytes: Vec<u8>,
+    pub(super) exchange: Submit3dExchange,
+    pub(super) layers: Option<(u32, u32)>,
+    pub(super) output: bool,
+    pub(super) length: usize,
+    pub(super) bytes: Vec<u8>,
 }
 impl crate::Machine {
     /// Record a fresh physical exchange. Replay's physical transport has a separate
@@ -199,6 +199,9 @@ impl crate::Machine {
             .transport
             .retain(|receipt| Some(receipt.exchange.key) == current);
         session.transport_bytes = session.transport.iter().map(|r| r.bytes.len()).sum();
+        if session.restored_complete != current {
+            session.restored_complete = None;
+        }
         Ok(())
     }
     pub(crate) fn prepare_gpu_boundary(&mut self) -> Result<(), GpuError> {
@@ -276,7 +279,11 @@ impl crate::Machine {
             .epochs
             .borrow_mut()
             .observe(pending.request.key().epoch)?;
-        Ok((request_digest(pending, epoch), epoch))
+        let logical_queue = session
+            .epochs
+            .borrow_mut()
+            .observe_queue(pending.queue_generation)?;
+        Ok((request_digest(pending, epoch, logical_queue), epoch))
     }
     /// Every fallible check precedes event reservation. From reservation through
     /// RAM/shadow/ring publication this holds the sole mutable Machine borrow.
@@ -324,6 +331,7 @@ impl crate::Machine {
             }
             ResultKind::Complete(completion) => completion.key = physical_key,
         }
+        let settled = session.restored_complete == Some(physical_key);
         let mut dma = None;
         let mut payload = None;
         match physical_result.kind {
@@ -383,13 +391,13 @@ impl crate::Machine {
                     if !physical.gpu_complete || physical.outcome.is_err() {
                         return Err(GpuError::PhysicalFailure);
                     }
-                    if !session.transport.is_empty() {
+                    if !settled && !session.transport.is_empty() {
                         return Err(GpuError::PhysicalPending);
                     }
                 }
             }
         }
-        if replay && dma.is_some() {
+        if replay && !settled && dma.is_some() {
             let retained = if matches!(result.kind, ResultKind::Gather { .. }) {
                 bytes.as_ref().unwrap().len()
             } else {
@@ -428,6 +436,7 @@ impl crate::Machine {
         if replay
             && let ResultKind::Complete(completion) = physical_result.kind
             && completion.outcome.is_err()
+            && !settled
             && state
                 .borrow_mut()
                 .submit3d
@@ -472,7 +481,7 @@ impl crate::Machine {
                             .insert(payload)
                             .expect("preflighted immutable window")
                     }
-                    if replay {
+                    if replay && !settled {
                         let retained = if output { Vec::new() } else { input };
                         session.transport_bytes += retained.len();
                         session.transport.push_back(TransportReceipt {
@@ -489,10 +498,11 @@ impl crate::Machine {
                     exchange.exchange_sequence
                 }
                 ResultKind::Complete(completion) => {
-                    if completion.outcome.is_err() {
+                    if completion.outcome.is_err() || settled {
                         session.transport.clear();
                         session.transport_bytes = 0;
                     }
+                    session.restored_complete = None;
                     state
                         .borrow_mut()
                         .submit3d
@@ -560,13 +570,17 @@ fn validate_completion(
     Ok(())
 }
 /// Canonical accepted authority, never Debug text or current descriptor-table bytes.
-fn request_digest(pending: &gpu::submit3d::PendingSubmit3d, logical_epoch: u64) -> [u8; 32] {
+pub(super) fn request_digest(
+    pending: &gpu::submit3d::PendingSubmit3d,
+    logical_epoch: u64,
+    logical_queue: u64,
+) -> [u8; 32] {
     let mut hash = Sha256::new();
     hash.update(b"wasm-vm-gpu-result-intent-v1\0");
     let mut accepted = pending.accepted.clone();
     accepted.epoch = logical_epoch;
     hash.update(accepted.canonical_bytes());
-    hash.update(pending.queue_generation.to_le_bytes());
+    hash.update(logical_queue.to_le_bytes());
     hash.update(logical_epoch.to_le_bytes());
     hash.update(pending.request.key().sequence.to_le_bytes());
     hash.update(pending.request.header().to_bytes());

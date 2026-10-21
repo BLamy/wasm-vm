@@ -68,6 +68,8 @@ pub mod section {
     pub const SESSION_DEVICES: u32 = 20;
     /// E9-T13: owned network intent, pending frames and recorded transport outcomes.
     pub const SESSION_NETWORK: u32 = 21;
+    /// E9-T18b: owned pending GPU result frontier, explicit GPU session API only.
+    pub const SESSION_GPU: u32 = 22;
 }
 
 /// Is `tag` a section number this format family reserves (the whole reserved universe, whether or
@@ -96,6 +98,7 @@ pub fn is_known_section(tag: u32) -> bool {
             | section::SESSION_SOURCES
             | section::SESSION_DEVICES
             | section::SESSION_NETWORK
+            | section::SESSION_GPU
     )
 }
 
@@ -128,6 +131,7 @@ pub fn is_supported_section(tag: u32) -> bool {
             | section::SESSION_SOURCES
             | section::SESSION_DEVICES
             | section::SESSION_NETWORK
+            | section::SESSION_GPU
     )
 }
 
@@ -700,6 +704,33 @@ pub(crate) fn restore_sparse_into(enc: &[u8], destination: &mut [u8]) -> Result<
     })
 }
 
+/// Read a bounded range without allocating a second full RAM image during preflight.
+#[cfg(feature = "virgl-renderer")]
+pub(crate) fn read_sparse_range(
+    enc: &[u8],
+    expected_len: usize,
+    offset: usize,
+    out: &mut [u8],
+) -> Result<(), SnapshotError> {
+    let end = offset
+        .checked_add(out.len())
+        .filter(|v| *v <= expected_len)
+        .ok_or(SnapshotError::BadSparseEncoding)?;
+    let mut start = 0usize;
+    walk_sparse(enc, expected_len, |length, bytes| {
+        let left = start.max(offset);
+        let right = (start + length).min(end);
+        if left < right {
+            match bytes {
+                Some(bytes) => out[left - offset..right - offset]
+                    .copy_from_slice(&bytes[left - start..right - start]),
+                None => out[left - offset..right - offset].fill(0),
+            }
+        }
+        start += length;
+    })
+}
+
 fn walk_sparse(
     enc: &[u8],
     expected_len: usize,
@@ -759,3 +790,19 @@ fn u64_le(b: &[u8]) -> u64 {
 #[cfg(test)]
 #[path = "resume_tests.rs"]
 mod resume_tests;
+
+#[cfg(all(test, feature = "virgl-renderer"))]
+mod sparse_range_tests {
+    #[test]
+    fn sparse_range_preflight_reads_data_zero_and_cross_run_boundaries() {
+        // Independent wire fixture: data(3)=9,8,7; zero(4); data(2)=6,5.
+        let bytes = [1, 3, 0, 0, 0, 9, 8, 7, 0, 4, 0, 0, 0, 1, 2, 0, 0, 0, 6, 5];
+        let mut out = [0xff; 7];
+        super::read_sparse_range(&bytes, 9, 1, &mut out).unwrap();
+        assert_eq!(out, [8, 7, 0, 0, 0, 0, 6]);
+        let mut empty = [];
+        super::read_sparse_range(&bytes, 9, 9, &mut empty).unwrap();
+        assert!(super::read_sparse_range(&bytes, 9, 3, &mut out).is_err());
+        assert!(super::read_sparse_range(&bytes[..19], 9, 1, &mut out).is_err());
+    }
+}

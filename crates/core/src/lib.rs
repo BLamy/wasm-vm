@@ -3364,6 +3364,36 @@ impl Machine {
         })
     }
 
+    /// Exact ICount GPU history, including physically settled work whose guest fence
+    /// is genuinely pending. The separately reconstructed renderer is digest-bound.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn save_gpu_result_resume(
+        &mut self,
+        renderer_digest: &[u8; 32],
+    ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        let bad = crate::resume::SnapshotError::BadComponentState {
+            tag: crate::resume::section::SESSION_GPU,
+        };
+        if self.session_gpu.is_none()
+            || self.session_clock.is_none()
+            || !self.extra_blk.is_empty()
+            || self.guest_clock_mode() != time::TimeMode::ICount
+            || self.session_replay_limit.is_some()
+            || self.session_pending_events() != 0
+        {
+            return Err(bad);
+        }
+        if let Some((reason, in_flight)) = self
+            .blk
+            .as_ref()
+            .and_then(|(state, _)| state.borrow().residual())
+        {
+            return Err(crate::resume::SnapshotError::NotQuiesced { reason, in_flight });
+        }
+        let bytes = self.save_resume_inner(Some(renderer_digest), true, true)?;
+        dev::virtio::gpu::checkpoint::seal_resume(bytes, renderer_digest).map_err(|_| bad)
+    }
+
     fn save_resume_inner(
         &mut self,
         gpu_witness: Option<&[u8; 32]>,
@@ -3386,7 +3416,14 @@ impl Machine {
             let Some((state, ..)) = &self.gpu else {
                 return Err(error);
             };
-            if witness.iter().all(|b| *b == 0) || state.borrow().checkpoint_ready().is_err() {
+            if witness.iter().all(|b| *b == 0)
+                || (if exact_inputs {
+                    state.borrow().result_checkpoint_ready()
+                } else {
+                    state.borrow().checkpoint_ready()
+                })
+                .is_err()
+            {
                 return Err(error);
             }
         }
@@ -3498,10 +3535,13 @@ impl Machine {
             let gpu = state.borrow();
             #[cfg(feature = "virgl-renderer")]
             let payload = if let Some(witness) = gpu_witness {
-                gpu.to_gpu_checkpoint(witness).map_err(|_| {
-                    crate::resume::SnapshotError::BadComponentState {
-                        tag: section::VIRTIO_GPU,
-                    }
+                (if exact_inputs {
+                    gpu.to_gpu_result_checkpoint(witness)
+                } else {
+                    gpu.to_gpu_checkpoint(witness)
+                })
+                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
+                    tag: section::VIRTIO_GPU,
                 })?
             } else {
                 gpu.to_snapshot()
@@ -3517,6 +3557,15 @@ impl Machine {
                     })?;
             v.extend_from_slice(&payload);
             w.section(section::VIRTIO_GPU, &v);
+            #[cfg(feature = "virgl-renderer")]
+            if gpu_witness.is_some() && exact_inputs {
+                let frontier = self.encode_gpu_frontier(&v).map_err(|_| {
+                    crate::resume::SnapshotError::BadComponentState {
+                        tag: section::SESSION_GPU,
+                    }
+                })?;
+                w.section(section::SESSION_GPU, &frontier);
+            }
         }
         if let Some((state, eventq, statusq)) = &self.keyboard {
             // Desktop reconnects release physical keys; session history retains exact ledgers.
@@ -3809,6 +3858,33 @@ impl Machine {
             })
     }
 
+    /// Restore the exact native GPU result frontier without issuing guest commands
+    /// or physical jobs. The embedding reconstructs the paired renderer beforehand.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn load_gpu_result_resume(
+        &mut self,
+        blob: &[u8],
+        renderer_digest: &[u8; 32],
+    ) -> Result<(u64, u64), crate::resume::SnapshotError> {
+        let bad = crate::resume::SnapshotError::BadComponentState {
+            tag: crate::resume::section::SESSION_GPU,
+        };
+        if self.session_gpu.is_none()
+            || self.session_clock.is_none()
+            || !self.extra_blk.is_empty()
+            || self.guest_clock_mode() != time::TimeMode::ICount
+        {
+            return Err(bad);
+        }
+        if self.session_replay_limit.is_some() {
+            return Err(crate::resume::SnapshotError::ReplayActive);
+        }
+        let payload = dev::virtio::gpu::checkpoint::open_resume(blob, renderer_digest)
+            .map_err(|_| bad.clone())?;
+        self.load_resume_inner(payload, Some(renderer_digest), true, false)?
+            .ok_or(bad)
+    }
+
     fn load_resume_inner(
         &mut self,
         blob: &[u8],
@@ -3948,6 +4024,20 @@ impl Machine {
                 .map_err(|_| network_bad())
             })
             .transpose()?;
+        #[cfg(feature = "virgl-renderer")]
+        let gpu_result_mode = gpu_witness.is_some() && exact_inputs && self.session_gpu.is_some();
+        #[cfg(not(feature = "virgl-renderer"))]
+        let gpu_result_mode = false;
+        if sections
+            .iter()
+            .filter(|s| s.tag == section::SESSION_GPU)
+            .count()
+            != usize::from(gpu_result_mode)
+        {
+            return Err(crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_GPU,
+            });
+        }
         let strict_topology = exact_inputs || self.session_network.is_some();
         #[cfg(feature = "virgl-renderer")]
         let strict_topology = strict_topology || gpu_witness.is_some();
@@ -3969,6 +4059,9 @@ impl Machine {
             }
             if staged_network.is_some() {
                 expected.push(section::SESSION_NETWORK);
+            }
+            if gpu_result_mode {
+                expected.push(section::SESSION_GPU);
             }
             for (tag, present) in [
                 (section::CLINT, self.clint.is_some()),
@@ -4086,17 +4179,24 @@ impl Machine {
                             });
                         };
                         staged_gpu_checkpoint = Some(
-                            state
-                                .borrow()
-                                .prepare_gpu_checkpoint(
+                            (if gpu_result_mode {
+                                state.borrow().prepare_gpu_result_checkpoint(
                                     payload,
                                     witness,
                                     self.ram_base(),
                                     self.ram_len() as u64,
                                 )
-                                .map_err(|_| crate::resume::SnapshotError::BadComponentState {
-                                    tag: sec.tag,
-                                })?,
+                            } else {
+                                state.borrow().prepare_gpu_checkpoint(
+                                    payload,
+                                    witness,
+                                    self.ram_base(),
+                                    self.ram_len() as u64,
+                                )
+                            })
+                            .map_err(|_| {
+                                crate::resume::SnapshotError::BadComponentState { tag: sec.tag }
+                            })?,
                         );
                         continue;
                     }
@@ -4192,6 +4292,36 @@ impl Machine {
                 _ => {}
             }
         }
+        #[cfg(feature = "virgl-renderer")]
+        let staged_gpu_frontier = if gpu_result_mode {
+            let bad = || crate::resume::SnapshotError::BadComponentState {
+                tag: section::SESSION_GPU,
+            };
+            let frontier = sections
+                .iter()
+                .find(|s| s.tag == section::SESSION_GPU)
+                .ok_or_else(bad)?;
+            let gpu = sections
+                .iter()
+                .find(|s| s.tag == section::VIRTIO_GPU)
+                .ok_or_else(bad)?;
+            let ram = sections
+                .iter()
+                .find(|s| s.tag == section::RAM)
+                .ok_or_else(bad)?;
+            Some(
+                self.prepare_gpu_frontier(
+                    frontier.payload,
+                    gpu.payload,
+                    staged_gpu_checkpoint.as_mut().ok_or_else(bad)?,
+                    staged_session_clock.as_ref().ok_or_else(bad)?,
+                    ram.payload,
+                )
+                .map_err(|_| bad())?,
+            )
+        } else {
+            None
+        };
         for sec in &sections {
             match sec.tag {
                 section::VIRTIO_GPU => {
@@ -4485,7 +4615,8 @@ impl Machine {
                 | section::VIRTIO_TABLET
                 | section::VIRTIO_MOUSE
                 | section::VIRTIO_SND
-                | section::VIRTIO_RNG => {}
+                | section::VIRTIO_RNG
+                | section::SESSION_GPU => {}
                 other => {
                     return Err(crate::resume::SnapshotError::UnsupportedSection { tag: other });
                 }
@@ -4498,6 +4629,10 @@ impl Machine {
             self.restore_session_network(restore);
         }
         self.session_clock = staged_session_clock;
+        #[cfg(feature = "virgl-renderer")]
+        if let Some(frontier) = staged_gpu_frontier {
+            frontier.commit(self);
+        }
         if let Some(cursor) = staged_source_cursor {
             self.session_sources.borrow_mut().restore_cursor(cursor);
         }
