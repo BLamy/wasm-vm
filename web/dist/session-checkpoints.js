@@ -243,7 +243,8 @@ export class SessionCheckpoints {
       let prefix;
       for await(const block of this.#store.stream(machine)){prefix=block.subarray(0,8);break;}
       if(!isKeyframeDescriptorPrefix(prefix)){
-        need(['WVKEYB01','WVEXACT1'].includes(decoder.decode(prefix)),'full base missing');
+        need(['WVKEYB01','WVEXACT1'].includes(decoder.decode(prefix))
+          || (decoder.decode(prefix)==='WVGPUB01'&&manifest.machine.gpu!==null&&manifest.policy.mode==='exact-replay'),'full base missing');
         need(expectedDepth===null||expectedDepth===0,'keyframe depth');
         return {manifest,base:machine,baseCheckpoint:manifest.checkpoints[index],deltas:chain.reverse()};
       }

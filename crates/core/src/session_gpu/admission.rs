@@ -165,6 +165,44 @@ impl crate::Machine {
         session.transport_bytes -= receipt.bytes.len();
         Ok(receipt.bytes)
     }
+    /// Only the tape-owning ReplayDriver can deliver inside an admitted replay.
+    pub(crate) fn replay_recorded_session_gpu(
+        &mut self,
+        position: SessionPosition,
+        result: GpuResult,
+        payload: Option<Payload>,
+    ) -> Result<(), GpuError> {
+        if self.session_replay_limit.is_none()
+            || !self.host_ingress_gate.replay_active()
+            || !self.session_gpu_replay()?
+        {
+            return Err(GpuError::ReplayIngress);
+        }
+        let mut next = self.session_position().ok_or(GpuError::Inactive)?;
+        if next.phase != SessionPhase::Before {
+            return Err(GpuError::Position);
+        }
+        next.sequence = next.sequence.checked_add(1).ok_or(GpuError::Exhausted)?;
+        next.ordinal = next.ordinal.checked_add(1).ok_or(GpuError::Exhausted)?;
+        if next != position {
+            return Err(GpuError::Position);
+        }
+        match result.kind {
+            ResultKind::Scatter {
+                payload: expected, ..
+            } => {
+                let supplied = payload.as_ref().ok_or(GpuError::MissingPayload)?;
+                if supplied.reference != expected || PayloadRef::of(&supplied.bytes)? != expected {
+                    return Err(GpuError::Payload);
+                }
+            }
+            _ if payload.is_some() => return Err(GpuError::Payload),
+            _ => {}
+        }
+        self.admit_gpu_result(result, payload.map(|p| p.bytes), true)
+            .map(|_| ())
+    }
+
     /// Paused replay can admit a due frame without inventing a guest transition.
     pub fn deliver_session_gpu_replay(&mut self) -> Result<(), GpuError> {
         if self.session_replay_limit.is_some() || !self.host_ingress_gate.allows_host() {
@@ -212,6 +250,9 @@ impl crate::Machine {
             return Ok(());
         };
         if session.replay {
+            if self.session_replay_limit.is_some() {
+                return Ok(());
+            }
             if session.prepared.is_some() {
                 self.apply_prepared_gpu()?;
             }
@@ -431,8 +472,13 @@ impl crate::Machine {
         } else {
             None
         };
-        self.stage_session_effect(position.transition, effect)
-            .map_err(|_| GpuError::Admission)?;
+        let recorded = replay && self.session_replay_limit.is_some();
+        (if recorded {
+            self.stage_recorded_session_effect(position.transition, effect)
+        } else {
+            self.stage_session_effect(position.transition, effect)
+        })
+        .map_err(|_| GpuError::Admission)?;
         if replay
             && let ResultKind::Complete(completion) = physical_result.kind
             && completion.outcome.is_err()
@@ -449,7 +495,7 @@ impl crate::Machine {
             return Err(GpuError::PhysicalFailure);
         }
         let mut returned = None;
-        self.deliver_session_host_boundary(|machine, channel, _| {
+        let apply = |machine: &mut crate::Machine, channel, _: &[u8]| {
             assert_eq!(channel, CHANNEL);
             let session = machine.session_gpu.as_mut().unwrap();
             let mut length = 0;
@@ -528,6 +574,11 @@ impl crate::Machine {
                 length,
                 sequence,
             ]
+        };
+        (if recorded {
+            self.deliver_recorded_session_host_boundary(apply)
+        } else {
+            self.deliver_session_host_boundary(apply)
         })
         .map_err(|_| GpuError::Admission)?;
         Ok(returned)
@@ -570,7 +621,7 @@ fn validate_completion(
     Ok(())
 }
 /// Canonical accepted authority, never Debug text or current descriptor-table bytes.
-pub(super) fn request_digest(
+pub(crate) fn request_digest(
     pending: &gpu::submit3d::PendingSubmit3d,
     logical_epoch: u64,
     logical_queue: u64,

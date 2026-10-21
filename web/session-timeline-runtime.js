@@ -25,10 +25,11 @@ export async function openTimelineReplay({store,id,onPublish,onProgress,beforeFr
   await init();
   const opened=await store.openSession(id);need(opened,'Saved session is unavailable');
   const manifest=JSON.parse(decoder.decode(opened.manifest));
-  need(manifest.policy.mode==='exact-replay'&&manifest.policy.profile==='rv64-linux-software-v1'&&manifest.machine.gpu===null,
-    manifest.machine.gpu?'This accelerated session supports checkpoints. GPU replay is awaiting verification.':'Finish and save an exact recording before replaying it.');
+  need(manifest.policy.mode==='exact-replay','Finish and save an exact recording before replaying it.');
   const vm=manifest.assets.find(a=>a.role==='vm');need(vm,'Saved guest configuration is missing');
-  const configuration=JSON.parse(decoder.decode(await readCheckpointObject(store,vm.content,1048576)));
+  const configuration=JSON.parse(decoder.decode(await readCheckpointObject(store,vm.content,manifest.machine.gpu?8*1048576:1048576)));
+  if(manifest.machine.gpu){const {openGpuTimelineReplay}=await import('./session-gpu-replay.js');return openGpuTimelineReplay({store,id,configuration,onPublish,onProgress,beforeFrame});}
+  need(manifest.policy.profile==='rv64-linux-software-v1','Unsupported saved replay profile');
   need(configuration.version===1&&configuration.runtime==='rv64-linux-exact-session-v1'&&configuration.ramMib===256
     &&configuration.wasm?.sha256===SOFTWARE_CHECKPOINT_WASM_SHA256,'This recording uses an incompatible guest build.');
   const read=await SessionInputJournal.readExact(store,id,{configuration});

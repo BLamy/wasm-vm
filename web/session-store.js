@@ -109,6 +109,7 @@ function descriptor(value, expected) {
 export class SessionStore {
   #db; #writers = new Set(); #closed = false;
   constructor(db) { need(db instanceof IDBDatabase, 'Database'); this.#db = db; }
+  get databaseName() { return this.#db.name; }
   static async open(name = SESSION_DATABASE) {
     need(typeof name === 'string' && /^wasm-vm-sessions-v1(?:-[a-z0-9-]{1,64})?$/.test(name), 'Namespace');
     need(globalThis.indexedDB, 'Unavailable', 'IndexedDB');
@@ -268,7 +269,9 @@ export class SessionStore {
         add(descriptor.frame);
         for(const chunk of descriptor.chunks)add(chunk);
         priorKind='delta';priorDepth=descriptor.depth;
-      } else if (prefix.length===8 && ['WVKEYB01','WVEXACT1'].includes(decoder.decode(prefix))) {
+      } else if (prefix.length===8 && (['WVKEYB01','WVEXACT1'].includes(decoder.decode(prefix))
+        || (decoder.decode(prefix)==='WVGPUB01' && parsedManifest.value.machine.gpu!==null
+          && parsedManifest.value.policy.mode==='exact-replay'))) {
         priorKind='keyframe-full';priorDepth=0;
       } else {priorKind='other';priorDepth=0;}
     }

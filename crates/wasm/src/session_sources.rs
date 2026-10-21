@@ -87,10 +87,10 @@ pub(crate) fn receipt_object(delivery: SessionDelivery) -> Result<js_sys::Object
                 .ok_or_else(|| error(SessionError::MalformedObservation))?,
         ),
         SessionEffect::Observation(value) => (
-            if value.kind == ObservationKind::Entropy {
-                18
-            } else {
-                17
+            match value.kind {
+                ObservationKind::Entropy => 18,
+                ObservationKind::GpuControl => 23,
+                _ => 17,
             },
             value.bytes,
             [

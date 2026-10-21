@@ -36,6 +36,31 @@ function own(receipt,previous){
   return {...position(receipt),channel:receipt.channel,outcome:[...receipt.outcome],bytes:receipt.bytes.slice(),
     ...(receipt.ticket===undefined?{}:{ticket:receipt.ticket})};
 }
+export const ownInputReceipt=own;
+export function inputEventParts(receipt){
+  if(receipt.channel===19||receipt.channel===20){
+    const parts=receipt.channel===20?networkEventParts(receipt):deviceEventParts(receipt);
+    return {...parts,intent:[...encoder.encode(JSON.stringify({...parts.intent,...(receipt.ticket===undefined?{}:{ticket:receipt.ticket})}))]};
+  }
+  need(receipt.channel>=1&&receipt.channel<=21&&kinds[receipt.channel],'ordinary input adapter');
+  const object=receipt.bytes.length>65536?[checkpointReference(receipt.bytes),receipt.bytes]:null;
+  return {kind:kinds[receipt.channel],device:devices[receipt.channel],status:recordStatus(receipt.channel,receipt.outcome),
+    intent:[...encoder.encode(JSON.stringify({version:1,channel:receipt.channel,outcome:receipt.outcome,...(receipt.ticket===undefined?{}:{ticket:receipt.ticket})}))],
+    payload:object?{storage:'blob',content:object[0]}:{storage:'inline',bytes:[...receipt.bytes]},object};
+}
+export async function decodeInputEventRecord(store,record,previous,{exactMode=false}={}){
+  const intent=JSON.parse(decoder.decode(Uint8Array.from(record.intent)));
+  const completion=intent.channel===19||intent.channel===20;
+  need(intent.version===1&&Object.keys(intent).sort().join(',')===(completion?
+    (exactMode?'channel,header,outcome,ticket,version':'channel,header,outcome,version'):
+    (exactMode?'channel,outcome,ticket,version':'channel,outcome,version')),'input adapter version');
+  let bytes=record.payload.storage==='inline'?Uint8Array.from(record.payload.bytes):await readCheckpointObject(store,record.payload.content,1048576);
+  if(completion)bytes=(intent.channel===20?joinNetworkEvent:joinDeviceCompletion)(Uint8Array.from(intent.header),bytes);
+  const receipt=own({...position(record),channel:intent.channel,outcome:intent.outcome,bytes,...(intent.ticket===undefined?{}:{ticket:intent.ticket})},previous);
+  const expected=inputEventParts(receipt);
+  need(record.kind===expected.kind&&record.device===expected.device&&record.status===expected.status,'input adapter identity');
+  return receipt;
+}
 export class SessionInputJournal{
   #writer;#manifest;#pending=[];#inflight=null;
   constructor(writer,manifest){this.#writer=writer;this.#manifest=manifest;}
@@ -167,15 +192,8 @@ export class SessionInputJournal{
     const batch=this.#pending.slice();if(!batch.length)return this.end;
     const manifest=structuredClone(this.#manifest),objects=[],encoded=[];
     for(const receipt of batch){
-      if(receipt.channel===19||receipt.channel===20){const parts=receipt.channel===20?networkEventParts(receipt):deviceEventParts(receipt);if(parts.object)objects.push(parts.object);
-        encoded.push(JSON.stringify({version:{major:1,minor:0},kind:parts.kind,required:true,...position(receipt),device:parts.device,intent:[...encoder.encode(JSON.stringify({...parts.intent,...(receipt.ticket===undefined?{}:{ticket:receipt.ticket})}))],status:parts.status,payload:parts.payload}));manifest.end=position(receipt);continue;}
-      let payload;
-      if(receipt.bytes.length>65536){const ref=checkpointReference(receipt.bytes);payload={storage:'blob',content:ref};objects.push([ref,receipt.bytes]);}
-      else payload={storage:'inline',bytes:[...receipt.bytes]};
-      const record={version:{major:1,minor:0},kind:kinds[receipt.channel],required:true,...position(receipt),
-        device:devices[receipt.channel],intent:[...encoder.encode(JSON.stringify({version:1,channel:receipt.channel,outcome:receipt.outcome,...(receipt.ticket===undefined?{}:{ticket:receipt.ticket})}))],
-        status:recordStatus(receipt.channel,receipt.outcome),payload};
-      encoded.push(JSON.stringify(record));manifest.end=position(receipt);
+      const parts=inputEventParts(receipt);if(parts.object)objects.push(parts.object);
+      encoded.push(JSON.stringify({version:{major:1,minor:0},kind:parts.kind,required:true,...position(receipt),device:parts.device,intent:parts.intent,status:parts.status,payload:parts.payload}));manifest.end=position(receipt);
     }
     let group=[],length=2;
     const seal=()=>{if(!group.length)return;const bytes=encoder.encode('['+group.join(',')+']');
@@ -213,18 +231,8 @@ export class SessionInputJournal{
     for(const index of manifest.events){
       const records=JSON.parse(decoder.decode(await readCheckpointObject(store,index.content,4194304)));
       for(const record of records){
-        const intent=JSON.parse(decoder.decode(Uint8Array.from(record.intent)));
-        const completion=intent.channel===19||intent.channel===20;
-        need(intent.version===1&&Object.keys(intent).sort().join(',')===(completion?
-          (exactMode?'channel,header,outcome,ticket,version':'channel,header,outcome,version'):
-          (exactMode?'channel,outcome,ticket,version':'channel,outcome,version')),'input adapter version');
-        let bytes=record.payload.storage==='inline'?Uint8Array.from(record.payload.bytes)
-          :await readCheckpointObject(store,record.payload.content,1048576);
-        if(completion)bytes=(intent.channel===20?joinNetworkEvent:joinDeviceCompletion)(Uint8Array.from(intent.header),bytes);
-        const receipt=own({...position(record),channel:intent.channel,outcome:intent.outcome,bytes,...(intent.ticket===undefined?{}:{ticket:intent.ticket})},previous);
+        const receipt=await decodeInputEventRecord(store,record,previous,{exactMode});
         need(receipt.channel===20?manifest.policy.required_inputs.includes('network'):receipt.channel===19?manifest.policy.required_inputs.includes('block-read'):receipt.channel<17||manifest.policy.required_inputs.includes(kinds[receipt.channel]),'source adapter is absent from this prefix');
-        const expected=completion?(receipt.channel===20?networkEventParts(receipt):deviceEventParts(receipt)):{kind:kinds[receipt.channel],device:devices[receipt.channel],status:recordStatus(receipt.channel,receipt.outcome)};
-        need(record.kind===expected.kind&&record.device===expected.device&&record.status===expected.status,'input adapter identity');
         total+=receipt.bytes.length;need(total<=4*1048576&&receipts.length<4096,'input inspection bound; use bounded chunks for larger histories');
         receipts.push(receipt);previous=receipt;
       }

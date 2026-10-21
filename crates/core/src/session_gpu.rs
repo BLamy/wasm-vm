@@ -4,7 +4,7 @@
 use alloc::{collections::BTreeMap, rc::Rc, vec::Vec};
 use core::cell::RefCell;
 use sha2::{Digest, Sha256};
-mod admission;
+pub(crate) mod admission;
 pub(crate) mod checkpoint;
 mod control;
 pub(crate) use control::ControlResultTap;
@@ -528,6 +528,41 @@ impl Reader<'_> {
     }
     fn u64(&mut self) -> Result<u64, GpuError> {
         Ok(u64::from_le_bytes(self.take(8)?.try_into().unwrap()))
+    }
+}
+
+impl crate::Machine {
+    pub(crate) fn gpu_logical_coordinates(&self) -> Result<(u64, u64, u64), GpuError> {
+        let session = self.session_gpu.as_ref().ok_or(GpuError::Inactive)?;
+        let (gpu, _, _, slot) = self.gpu.as_ref().ok_or(GpuError::Profile)?;
+        let physical = gpu
+            .borrow()
+            .control3d_snapshot()
+            .ok_or(GpuError::Profile)?
+            .epoch;
+        let queue = self.virtio[*slot]
+            .0
+            .borrow()
+            .queue_generation(0)
+            .ok_or(GpuError::Profile)?;
+        let epochs = session.epochs.borrow();
+        let logical = epochs
+            .logical
+            .checked_add(
+                physical
+                    .checked_sub(epochs.physical)
+                    .ok_or(GpuError::StaleOwner)?,
+            )
+            .ok_or(GpuError::Exhausted)?;
+        let logical_queue = epochs
+            .logical_queue
+            .checked_add(
+                queue
+                    .checked_sub(epochs.physical_queue)
+                    .ok_or(GpuError::StaleOwner)?,
+            )
+            .ok_or(GpuError::Exhausted)?;
+        Ok((logical, logical_queue, session.cursor))
     }
 }
 

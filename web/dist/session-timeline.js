@@ -18,6 +18,7 @@ export class SessionTimeline {
   constructor(root,{store=null,pauseLive=async()=>{},beforeFrame=async()=>{}}={}){
     this.root=root;this.store=store;this.pauseLive=pauseLive;this.beforeFrame=beforeFrame;
     this.c=Object.fromEntries([...root.querySelectorAll('[data-timeline]')].map(el=>[el.dataset.timeline,el]));
+    this.gpuFrame=document.createElement('div');this.gpuFrame.dataset.timelineGpuFrame='';this.c.console.before(this.gpuFrame);
     this.epoch=0;this.refreshEpoch=0;this.playEpoch=0;this.preview=null;this.owner=null;this.active=null;this.operation=null;this.playing=false;this.recording=null;
     const c=this.c;
     c.sessions.addEventListener('change',()=>void this.select(c.sessions.value));
@@ -72,18 +73,25 @@ export class SessionTimeline {
     try{
       const opened=await this.store.openSession(id);if(!opened)throw Error('This session is incomplete or no longer available.');
       const manifest=JSON.parse(decode.decode(opened.manifest));if(token!==this.epoch)return;
-      const compatible=manifest.policy.mode==='exact-replay'&&manifest.policy.profile==='rv64-linux-software-v1'&&manifest.machine.gpu===null;
+      let compatible=manifest.policy.mode==='exact-replay'&&manifest.policy.profile==='rv64-linux-software-v1'&&manifest.machine.gpu===null;
+      if(manifest.policy.mode==='exact-replay'&&manifest.machine.gpu){
+        const vm=manifest.assets.find(asset=>asset.role==='vm');
+        const {readCheckpointObject}=await import('./session-checkpoints.js');
+        const config=JSON.parse(decode.decode(await readCheckpointObject(this.store,vm.content,8*1048576)));
+        compatible=config.version===1&&config.runtime==='rv64-linux-gpu-exact-session-v1'&&config.clock?.mode==='icount'&&config.clock.divider===64&&config.clock.interactive===null;
+        if(token!==this.epoch)return;
+      }
       this.preview={id,manifest,compatible};
       for(const point of manifest.checkpoints)this.c.points.add(new Option(`${point.id} · ${point.position.transition}`,point.id));
       if(this.owner?.id===id)this.fillEvents(this.owner);
-      this.status(manifest.machine.gpu?'GPU checkpoints are available in Local saved sessions. GPU event replay is awaiting verification.':compatible
+      this.status(manifest.machine.gpu&&!compatible?'GPU checkpoints are available in Local saved sessions. This saved clock/runtime does not support event replay.':compatible
         ?'Selected preview only. Open replay restores a private machine and pauses the live guest.'
         :'This is an incomplete recording or a checkpoint-only session. Full replay is unavailable.',compatible?'ready':'gated');
     }catch(error){if(token===this.epoch)this.status(`Cannot preview this session: ${error.message}`,'error');}
     this.render();
   }
   async open(){
-    if(!this.preview?.compatible||this.recording)throw Error('Select a completed software recording first.');
+    if(!this.preview?.compatible||this.recording)throw Error('Select a completed recording first.');
     this.stopPlaying();this.cancelRequest();const token=this.epoch,id=this.preview.id,previous=this.owner;
     const owner={id,controller:null,manifest:null,events:[],previous};
     this.operation={token,owner,stage:'open'};
@@ -96,6 +104,7 @@ export class SessionTimeline {
           if(!same(selection.position,selection.rendered.position))throw Error('The replay frame does not match the selected machine.');
           this.active={id,position:{...selection.position},digest:selection.rendered.digest,checkpointId:selection.checkpointId};
           this.c.console.textContent=selection.rendered.console||'(No serial output at this position.)';
+          this.gpuFrame.replaceChildren(...(selection.rendered.canvas?[selection.rendered.canvas]:[]));
           this.c.position.textContent=positionText(selection.position);this.c.position.dataset.transition=selection.position.transition;
           this.c.digest.textContent=selection.rendered.digest;this.c.active.textContent=`Active replay: ${id}`;
           this.c.target.value=selection.position.transition;

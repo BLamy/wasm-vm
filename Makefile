@@ -2795,3 +2795,11 @@ verify-E9-T19:
 .PHONY: verify-E9-T18b
 verify-E9-T18b:
 	python3 -B tools/verify/e9-pending-gpu.py --output "$${E9_PENDING_GPU_EVIDENCE_DIR:-target/evidence/e9-pending-gpu-final}" --pending-status "$${E9_PENDING_GPU_STATUS:-verified}"
+
+.PHONY: verify-E9-T18c verify-E9-T18
+verify-E9-T18c:
+	python3 -B tools/verify/e9-gpu-replay.py --output "$${E9_GPU_REPLAY_EVIDENCE_DIR:-target/evidence/e9-gpu-replay-final}"
+
+# C records the native a/b gates and their independent byte oracles as well as
+# the durable physical-browser adapter. One frozen submission covers the whole epic slice.
+verify-E9-T18: verify-E9-T18c

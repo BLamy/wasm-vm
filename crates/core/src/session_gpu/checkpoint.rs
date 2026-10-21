@@ -95,6 +95,12 @@ fn payload(out: &mut Vec<u8>, p: &Payload) {
     blob(out, &p.bytes);
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(crate) enum RestorePurpose {
+    SameMode,
+    RecordedHistory,
+}
+
 pub(crate) struct PreparedFrontier {
     session: GpuSession,
     epochs: Epochs,
@@ -212,7 +218,8 @@ impl crate::Machine {
         gpu_bytes: &[u8],
         native: &mut PreparedGpuCheckpoint,
         clock: &SessionClock,
-        ram_sparse: &[u8],
+        ram_sparse: Option<&[u8]>,
+        purpose: RestorePurpose,
     ) -> Result<PreparedFrontier, GpuError> {
         let current = self.session_gpu.as_ref().ok_or(GpuError::Inactive)?;
         need(bytes.len() >= 32 && bytes.len() <= MAX_BYTES + 32)?;
@@ -221,7 +228,10 @@ impl crate::Machine {
         let mut r = Cursor { bytes: body, at: 0 };
         need(r.take(8)? == MAGIC && r.take(32)? == Sha256::digest(gpu_bytes).as_slice())?;
         let replay = r.bool()?;
-        need(replay == current.replay)?;
+        need(match purpose {
+            RestorePurpose::SameMode => replay == current.replay,
+            RestorePurpose::RecordedHistory => !replay && current.replay,
+        })?;
         let saved_physical = r.u64()?;
         let logical = r.u64()?;
         let saved_queue = r.u64()?;
@@ -283,8 +293,15 @@ impl crate::Machine {
             )
             .map_err(|_| GpuError::Malformed)?;
             let mut used = [0; 2];
-            crate::resume::read_sparse_range(ram_sparse, self.ram_len(), offset, &mut used)
-                .map_err(|_| GpuError::Malformed)?;
+            if let Some(sparse) = ram_sparse {
+                crate::resume::read_sparse_range(sparse, self.ram_len(), offset, &mut used)
+                    .map_err(|_| GpuError::Malformed)?;
+            } else {
+                self.bus
+                    .ram()
+                    .read_slice(qs.device + 2, &mut used)
+                    .map_err(|_| GpuError::Malformed)?;
+            }
             need(u16::from_le_bytes(used) == rings[0].2)?;
         } else {
             need(intent == [0; 32] && (!rings[0].0 || rings[0].1 == rings[0].2))?;
@@ -448,7 +465,7 @@ impl crate::Machine {
         native.rebase_pending(restored_queue);
         Ok(PreparedFrontier {
             session: GpuSession {
-                replay,
+                replay: current.replay,
                 epochs: current.epochs.clone(),
                 cursor,
                 payloads,

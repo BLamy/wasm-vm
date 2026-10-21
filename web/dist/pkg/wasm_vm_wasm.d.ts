@@ -47,6 +47,23 @@ export class SessionSourceProbe {
     traceText(): string;
 }
 
+export class WasmGpuTransport {
+    private constructor();
+    free(): void;
+    [Symbol.dispose](): void;
+    /**
+     * Does not borrow Machine: a sink may complete synchronously during dispatch.
+     */
+    complete(epoch: string, sequence: string, exchange_sequence: string, outcome_code: number, gpu_complete: boolean, applied_commands: number, draws: number): void;
+    /**
+     * Exact identities and row arithmetic are validated by core before RAM access.
+     */
+    gatherInput(epoch: string, sequence: string, exchange_sequence: string, resource_id: number, resource_generation: string, backing_generation: string, offset: string, row_bytes: number, row_stride: number, row_count: number): any;
+    gatherLayeredInput(epoch: string, sequence: string, exchange_sequence: string, resource_id: number, resource_generation: string, backing_generation: string, offset: string, row_bytes: number, row_stride: number, row_count: number, layer_stride: number, layer_count: number): any;
+    scatterLayeredOutput(epoch: string, sequence: string, exchange_sequence: string, resource_id: number, resource_generation: string, backing_generation: string, offset: string, row_bytes: number, row_stride: number, row_count: number, layer_stride: number, layer_count: number, bytes: Uint8Array): any;
+    scatterOutput(epoch: string, sequence: string, exchange_sequence: string, resource_id: number, resource_generation: string, backing_generation: string, offset: string, row_bytes: number, row_stride: number, row_count: number, bytes: Uint8Array): any;
+}
+
 /**
  * E2-T21: a browser-side unmodified-Linux boot. Unlike [`WasmMachine`] (bare-metal ELF + a
  * Uart0 stub), this assembles the full `virt` platform (CLINT/PLIC/16550/virtio/goldfish-RTC/
@@ -102,7 +119,7 @@ export class WasmLinux {
      * a standalone synthetic ring producer.
      */
     audioOutputReady(): boolean;
-    beginExactReplay(initial_resume: Uint8Array, events: Array<any>, witnesses: Array<any>, end: any, initial_queues?: any | null): void;
+    beginExactReplay(initial_resume: Uint8Array, events: Array<any>, witnesses: Array<any>, end: any, initial_queues?: any | null, gpu_options?: any | null): void;
     beginFileUpload(slot: number, name: string, total: number, sha256_hex: string): number;
     /**
      * E3-T03 dev-mode recorder: the ordered first-touch chunk-access list of this boot as a JSON
@@ -119,6 +136,11 @@ export class WasmLinux {
      * The exact u64 generation is encoded without crossing the legacy f64 generation API.
      */
     captureDiskDelta(): Promise<Uint8Array>;
+    /**
+     * Freeze RAM pages, CPU/devices and the genuine pending result frontier together.
+     * The caller owns the paused guest until finishSoftwareRamEpoch acknowledges publication.
+     */
+    captureExactGpuKeyframe(renderer_digest: Uint8Array, full: boolean): any;
     /**
      * Exact COW bytes from the same ephemeral disk backend used by the guest.
      * Persistent and secondary-drive shapes explicitly remain outside this factory profile.
@@ -190,6 +212,10 @@ export class WasmLinux {
     exactCompleteDeviceRequest(lease: SessionDeviceLease, status: any, frames: any, bytes: Uint8Array): void;
     exactCompleteNetworkEvent(lease: SessionNetworkLease, input: Uint8Array): void;
     exactDeviceRequests(): any;
+    exactGpuSessionEpoch(): string;
+    exactGpuSessionState(): Uint8Array;
+    exactGpuSessionTopology(): string;
+    exactGpuSessionWitness(): any;
     exactLeaseDeviceRequest(id: string): SessionDeviceLease;
     exactLeaseNetworkRequest(id: string): SessionNetworkLease;
     exactNetworkRequests(): any;
@@ -320,6 +346,11 @@ export class WasmLinux {
      * bootargs mount `/dev/vda` as root.
      */
     static newDisk(ram_mib: number, kernel: Uint8Array, disk: Uint8Array, bootargs: string, output: Function, enable_mic: boolean): WasmLinux;
+    /**
+     * Fresh one-GiB, pure ICount/64 GPU session. Historical paced profiles do not enter here.
+     * This uses the production Linux platform assembly, including owned I/O providers.
+     */
+    static newExactGpuSession(kernel: Uint8Array, manifest_json: string, bootargs: string, output: Function, replay: boolean): WasmLinux;
     /**
      * Pinned 256 MiB RV64 Linux software-session profile. It installs owned block, network,
      * agent, RTC and entropy boundaries before boot, and never creates a live transport while
@@ -464,6 +495,7 @@ export class WasmLinux {
     saveSnapshot(): any;
     scatterLayeredOutput(epoch: string, sequence: string, exchange_sequence: string, resource_id: number, resource_generation: string, backing_generation: string, offset: string, row_bytes: number, row_stride: number, row_count: number, layer_stride: number, layer_count: number, bytes: Uint8Array): void;
     scatterOutput(epoch: string, sequence: string, exchange_sequence: string, resource_id: number, resource_generation: string, backing_generation: string, offset: string, row_bytes: number, row_stride: number, row_count: number, bytes: Uint8Array): void;
+    seedExactGpuRam(native: Uint8Array, renderer_digest: Uint8Array): void;
     /**
      * Private restore candidate: validate the full ancestor envelope, then seed only RAM.
      * Its disk generation may be older than the target; the final delta envelope is bound to
@@ -604,6 +636,10 @@ export class WasmLinux {
      * transferred through the worker protocol and then decoded by the page-owned T23d Channel.
      */
     takeAgentOutput(): Uint8Array;
+    /**
+     * Receipts and every owned readback transfer atomically out of the native window.
+     */
+    takeExactGpuBatch(): any;
     takeExactSessionDeliveries(): any;
     takeFileDownloadChunk(id: number): Uint8Array;
     takeInputDeliveries(): any;
@@ -808,6 +844,11 @@ export function overlayDbName(manifest_json: string, seed_identity?: string | nu
 export function seedOverlayDelta(manifest_json: string, delta_bytes: Uint8Array, seed_identity?: string | null): Promise<boolean>;
 
 /**
+ * Decode the small native envelope before durable publication or replay admission.
+ */
+export function sessionGpuResultInfo(bytes: Uint8Array): any;
+
+/**
  * Configure the DHCP lease duration for subsequent boots (used by the renewal acceptance).
  */
 export function setSlirpDhcpLeaseSeconds(seconds: number): void;
@@ -977,64 +1018,19 @@ export interface InitOutput {
     readonly wasmmachine_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmmachine_step: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_takeTrace: (a: number) => [number, number, number, number];
-    readonly setSlirpDhcpLeaseSeconds: (a: number) => void;
-    readonly setSlirpDohEndpoint: (a: number, b: number) => void;
-    readonly setSlirpMtu: (a: number) => void;
-    readonly setSlirpNet: (a: number) => void;
-    readonly setSlirpRelay: (a: number, b: number) => void;
-    readonly setSlirpRelayToken: (a: number, b: number) => void;
-    readonly setSlirpTailscaleWorker: (a: number, b: number, c: any) => void;
-    readonly slirpDhcpStats: () => [number, number];
-    readonly slirpTailscaleCommand: (a: number, b: number) => number;
     readonly wasmlinux_applyRecordedInput: (a: number, b: any, c: number, d: number, e: number, f: number, g: any, h: number, i: number, j: any, k: any) => [number, number];
-    readonly wasmlinux_applySoftwareRamDeltaChunk: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmlinux_beginExactReplay: (a: number, b: any, c: any, d: any, e: any, f: number, g: number) => [number, number];
     readonly wasmlinux_captureInputWitness: (a: number) => [number, number, number];
-    readonly wasmlinux_captureSoftwareBaseKeyframe: (a: number, b: number, c: number) => any;
-    readonly wasmlinux_captureSoftwareCheckpoint: (a: number, b: number, c: number) => any;
-    readonly wasmlinux_captureSoftwareDeltaKeyframe: (a: number, b: number, c: number) => any;
-    readonly wasmlinux_finishSoftwareRamEpoch: (a: number, b: number) => [number, number];
-    readonly wasmlinux_inputLifecycle: (a: number, b: any) => [number, number];
-    readonly wasmlinux_inputPosition: (a: number) => [number, number, number];
-    readonly wasmlinux_nextSoftwareRamDeltaChunk: (a: number, b: number) => [number, number, number];
-    readonly wasmlinux_pendingSoftwareRamPages: (a: number) => [number, number, number];
-    readonly wasmlinux_prepareSoftwareKeyframeCandidate: (a: number) => [number, number];
-    readonly wasmlinux_restoreSoftwareCheckpoint: (a: number, b: number, c: number, d: number, e: number) => [number, number];
-    readonly wasmlinux_restoreSoftwareDeltaKeyframe: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number];
-    readonly wasmlinux_seedSoftwareRamFromCheckpoint: (a: number, b: number, c: number) => [number, number];
-    readonly wasmlinux_seedSoftwareRamFromExactStart: (a: number, b: number, c: number) => [number, number];
-    readonly wasmlinux_setInputPointerMode: (a: number, b: number) => [number, number];
-    readonly wasmlinux_softwareCheckpointTopology: (a: number) => [number, number];
-    readonly wasmlinux_softwareRamDigest: (a: number) => [number, number, number, number];
-    readonly wasmlinux_startInputCapture: (a: number, b: number) => [number, number];
-    readonly wasmlinux_takeInputDeliveries: (a: number) => [number, number, number];
-    readonly __wbg_sessiondevicelease_free: (a: number, b: number) => void;
-    readonly wasmlinux_exactCompleteDeviceRequest: (a: number, b: number, c: any, d: any, e: any) => [number, number];
-    readonly wasmlinux_exactDeviceRequests: (a: number) => [number, number, number];
-    readonly wasmlinux_exactLeaseDeviceRequest: (a: number, b: number, c: number) => [number, number, number];
-    readonly wasmmachine_completeDeviceRequest: (a: number, b: number, c: any, d: any, e: any) => [number, number];
-    readonly wasmmachine_deliverEventBoundary: (a: number) => [number, number];
-    readonly wasmmachine_deviceRequests: (a: number) => [number, number, number];
-    readonly wasmmachine_eventPosition: (a: number) => [number, number, number];
-    readonly wasmmachine_installDeviceSession: (a: number, b: number, c: number, d: any) => [number, number];
-    readonly wasmmachine_jitDirectStoreMarks: (a: number) => [number, number, number];
-    readonly wasmmachine_leaseDeviceRequest: (a: number, b: number, c: number) => [number, number, number];
-    readonly wasmmachine_readDeviceMemory: (a: number, b: number, c: number, d: any) => [number, number, number, number];
-    readonly wasmmachine_replayDeviceCompletion: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
-    readonly wasmmachine_restoreEventCheckpoint: (a: number, b: number, c: number) => [number, number];
-    readonly wasmmachine_runEventUntil: (a: number, b: number, c: number, d: number) => [number, number, number];
-    readonly wasmmachine_saveEventCheckpoint: (a: number) => [number, number, number, number];
-    readonly wasmmachine_stageEventPending: (a: number, b: number, c: number, d: number) => [number, number, number, number];
-    readonly wasmmachine_stageEventWrite: (a: number, b: number, c: number, d: number, e: number, f: any) => [number, number, number, number];
-    readonly wasmmachine_startEventClock: (a: number, b: any, c: any) => [number, number];
-    readonly wasmmachine_takeDeviceDeliveries: (a: number) => [number, number, number];
-    readonly wasmmachine_takeEventDeliveries: (a: number) => [number, number, number];
-    readonly wasmlinux_beginExactReplay: (a: number, b: any, c: any, d: any, e: any, f: number) => [number, number];
-    readonly wasmlinux_captureDiskDelta: (a: number) => any;
     readonly wasmlinux_exactSessionHostQueues: (a: number) => [number, number, number];
     readonly wasmlinux_exactSessionWitness: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_inputLifecycle: (a: number, b: any) => [number, number];
+    readonly wasmlinux_inputPosition: (a: number) => [number, number, number];
     readonly wasmlinux_runExactReplayChunkTo: (a: number, b: any, c: number) => [number, number, number];
     readonly wasmlinux_runExactReplayToEnd: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_setInputPointerMode: (a: number, b: number) => [number, number];
+    readonly wasmlinux_startInputCapture: (a: number, b: number) => [number, number];
     readonly wasmlinux_takeExactSessionDeliveries: (a: number) => [number, number, number];
+    readonly wasmlinux_takeInputDeliveries: (a: number) => [number, number, number];
     readonly __jit_amo: (a: bigint, b: bigint, c: number, d: number) => bigint;
     readonly __jit_fp_arith_s: (a: number, b: number, c: number, d: number) => bigint;
     readonly __jit_fp_div_s: (a: number, b: number, c: number) => bigint;
@@ -1063,22 +1059,9 @@ export interface InitOutput {
     readonly sessionsourceprobe_runUntil: (a: number, b: number, c: number, d: any) => [number, number, number];
     readonly sessionsourceprobe_takeDeliveries: (a: number) => [number, number, number];
     readonly sessionsourceprobe_traceText: (a: number) => [number, number];
-    readonly wasmlinux_attachVirgl: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number];
-    readonly wasmlinux_captureGpuDiskDelta: (a: number) => [number, number, number];
-    readonly wasmlinux_complete: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => [number, number];
-    readonly wasmlinux_drainGpuCheckpointBoundary: (a: number) => [number, number, number];
-    readonly wasmlinux_enableGpuCommandTrace: (a: number) => [number, number];
     readonly wasmlinux_exactCompleteNetworkEvent: (a: number, b: number, c: any) => [number, number];
     readonly wasmlinux_exactLeaseNetworkRequest: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_exactNetworkRequests: (a: number) => [number, number, number];
-    readonly wasmlinux_gatherInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number) => [number, number, number];
-    readonly wasmlinux_gatherLayeredInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number, number];
-    readonly wasmlinux_gpuCommandTrace: (a: number) => [number, number, number, number];
-    readonly wasmlinux_invalidateVirgl: (a: number) => [number, number];
-    readonly wasmlinux_loadAcceleratedSnapshotBlob: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
-    readonly wasmlinux_saveAcceleratedSnapshot: (a: number, b: number, c: number) => [number, number, number];
-    readonly wasmlinux_scatterLayeredOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number, t: number, u: number) => [number, number];
-    readonly wasmlinux_scatterOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number];
     readonly wasmlinux_sessionSourcePolicy: (a: number) => [number, number, number];
     readonly wasmlinux_startInputSourceCapture: (a: number) => [number, number];
     readonly wasmmachine_completeNetworkEvent: (a: number, b: number, c: any) => [number, number];
@@ -1089,6 +1072,79 @@ export interface InitOutput {
     readonly wasmmachine_networkRequests: (a: number) => [number, number, number];
     readonly wasmmachine_networkSessionReplay: (a: number) => [number, number, number];
     readonly wasmmachine_replayNetworkEvent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
+    readonly wasmlinux_captureDiskDelta: (a: number) => any;
+    readonly setSlirpDhcpLeaseSeconds: (a: number) => void;
+    readonly setSlirpDohEndpoint: (a: number, b: number) => void;
+    readonly setSlirpMtu: (a: number) => void;
+    readonly setSlirpNet: (a: number) => void;
+    readonly setSlirpRelay: (a: number, b: number) => void;
+    readonly setSlirpRelayToken: (a: number, b: number) => void;
+    readonly setSlirpTailscaleWorker: (a: number, b: number, c: any) => void;
+    readonly slirpDhcpStats: () => [number, number];
+    readonly slirpTailscaleCommand: (a: number, b: number) => number;
+    readonly __wbg_sessiondevicelease_free: (a: number, b: number) => void;
+    readonly wasmlinux_exactCompleteDeviceRequest: (a: number, b: number, c: any, d: any, e: any) => [number, number];
+    readonly wasmlinux_exactDeviceRequests: (a: number) => [number, number, number];
+    readonly wasmlinux_exactLeaseDeviceRequest: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmmachine_completeDeviceRequest: (a: number, b: number, c: any, d: any, e: any) => [number, number];
+    readonly wasmmachine_deviceRequests: (a: number) => [number, number, number];
+    readonly wasmmachine_installDeviceSession: (a: number, b: number, c: number, d: any) => [number, number];
+    readonly wasmmachine_leaseDeviceRequest: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmmachine_readDeviceMemory: (a: number, b: number, c: number, d: any) => [number, number, number, number];
+    readonly wasmmachine_replayDeviceCompletion: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
+    readonly wasmmachine_takeDeviceDeliveries: (a: number) => [number, number, number];
+    readonly __wbg_wasmgputransport_free: (a: number, b: number) => void;
+    readonly wasmgputransport_complete: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => [number, number];
+    readonly wasmgputransport_gatherInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number) => [number, number, number];
+    readonly wasmgputransport_gatherLayeredInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number, number];
+    readonly wasmgputransport_scatterLayeredOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number, t: number, u: number) => [number, number, number];
+    readonly wasmgputransport_scatterOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number, number];
+    readonly wasmmachine_deliverEventBoundary: (a: number) => [number, number];
+    readonly wasmmachine_eventPosition: (a: number) => [number, number, number];
+    readonly wasmmachine_jitDirectStoreMarks: (a: number) => [number, number, number];
+    readonly wasmmachine_restoreEventCheckpoint: (a: number, b: number, c: number) => [number, number];
+    readonly wasmmachine_runEventUntil: (a: number, b: number, c: number, d: number) => [number, number, number];
+    readonly wasmmachine_saveEventCheckpoint: (a: number) => [number, number, number, number];
+    readonly wasmmachine_stageEventPending: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly wasmmachine_stageEventWrite: (a: number, b: number, c: number, d: number, e: number, f: any) => [number, number, number, number];
+    readonly wasmmachine_startEventClock: (a: number, b: any, c: any) => [number, number];
+    readonly wasmmachine_takeEventDeliveries: (a: number) => [number, number, number];
+    readonly sessionGpuResultInfo: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_applySoftwareRamDeltaChunk: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmlinux_attachVirgl: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number];
+    readonly wasmlinux_captureExactGpuKeyframe: (a: number, b: number, c: number, d: number) => [number, number, number];
+    readonly wasmlinux_captureGpuDiskDelta: (a: number) => [number, number, number];
+    readonly wasmlinux_captureSoftwareBaseKeyframe: (a: number, b: number, c: number) => any;
+    readonly wasmlinux_captureSoftwareCheckpoint: (a: number, b: number, c: number) => any;
+    readonly wasmlinux_captureSoftwareDeltaKeyframe: (a: number, b: number, c: number) => any;
+    readonly wasmlinux_complete: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => [number, number];
+    readonly wasmlinux_drainGpuCheckpointBoundary: (a: number) => [number, number, number];
+    readonly wasmlinux_enableGpuCommandTrace: (a: number) => [number, number];
+    readonly wasmlinux_exactGpuSessionEpoch: (a: number) => [number, number, number, number];
+    readonly wasmlinux_exactGpuSessionState: (a: number) => [number, number, number];
+    readonly wasmlinux_exactGpuSessionTopology: (a: number) => [number, number, number, number];
+    readonly wasmlinux_exactGpuSessionWitness: (a: number) => [number, number, number];
+    readonly wasmlinux_finishSoftwareRamEpoch: (a: number, b: number) => [number, number];
+    readonly wasmlinux_gatherInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number) => [number, number, number];
+    readonly wasmlinux_gatherLayeredInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number, number];
+    readonly wasmlinux_gpuCommandTrace: (a: number) => [number, number, number, number];
+    readonly wasmlinux_invalidateVirgl: (a: number) => [number, number];
+    readonly wasmlinux_loadAcceleratedSnapshotBlob: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
+    readonly wasmlinux_newExactGpuSession: (a: number, b: number, c: number, d: number, e: number, f: number, g: any, h: number) => [number, number, number];
+    readonly wasmlinux_nextSoftwareRamDeltaChunk: (a: number, b: number) => [number, number, number];
+    readonly wasmlinux_pendingSoftwareRamPages: (a: number) => [number, number, number];
+    readonly wasmlinux_prepareSoftwareKeyframeCandidate: (a: number) => [number, number];
+    readonly wasmlinux_restoreSoftwareCheckpoint: (a: number, b: number, c: number, d: number, e: number) => [number, number];
+    readonly wasmlinux_restoreSoftwareDeltaKeyframe: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => [number, number];
+    readonly wasmlinux_saveAcceleratedSnapshot: (a: number, b: number, c: number) => [number, number, number];
+    readonly wasmlinux_scatterLayeredOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number, t: number, u: number) => [number, number];
+    readonly wasmlinux_scatterOutput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number, r: number, s: number) => [number, number];
+    readonly wasmlinux_seedExactGpuRam: (a: number, b: number, c: number, d: number, e: number) => [number, number];
+    readonly wasmlinux_seedSoftwareRamFromCheckpoint: (a: number, b: number, c: number) => [number, number];
+    readonly wasmlinux_seedSoftwareRamFromExactStart: (a: number, b: number, c: number) => [number, number];
+    readonly wasmlinux_softwareCheckpointTopology: (a: number) => [number, number];
+    readonly wasmlinux_softwareRamDigest: (a: number) => [number, number, number, number];
+    readonly wasmlinux_takeExactGpuBatch: (a: number) => [number, number, number];
     readonly wasmmachine_takeNetworkDeliveries: (a: number) => [number, number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56: (a: number, b: number, c: any) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h0b706747458e1fca: (a: number, b: number, c: any, d: any) => void;

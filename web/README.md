@@ -185,3 +185,13 @@ campaign is [`runtime-compute-benchmarks.json`](./runtime-compute-benchmarks.jso
 under a separate heading on the landing page alongside the native JIT handoff diagnostic. A fast
 compute result must not be used to imply that filesystem or networking boundaries are fast, and
 unmeasured environments remain explicitly unmeasured until the exact fixture completes.
+
+The exact GPU event adapter is `session-gpu-journal.js` with
+`session-gpu-replay.js` / `session-gpu-replay-worker.js`. Its explicit production
+runtime admits 1 GiB pure ICount/64 histories; older paced GPU checkpoints retain
+checkpoint-only controls. The timeline displays a physical GPU canvas when an
+admitted saved GPU history is selected. `make verify-E9-T18c` records the RV64
+readback/query/error workload, retained storage bytes, changed live results,
+seek cancellation and context-loss probes; `make verify-E9-T18` includes its
+native a/b result/keyframe checks. T22/T24 still own desktop budgets and final
+live desktop recording integration.

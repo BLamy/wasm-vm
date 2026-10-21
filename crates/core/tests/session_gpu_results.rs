@@ -1985,3 +1985,6 @@ fn verifier_early_physical_completion_stays_behind_scatter_and_receipt_frontier(
 
 #[path = "session_gpu_results/pending.rs"]
 mod pending_keyframes;
+
+#[path = "session_gpu_results/browser_driver.rs"]
+mod browser_driver;

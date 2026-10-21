@@ -259,9 +259,22 @@ impl SessionClock {
     }
 
     pub fn encode(&self) -> Result<Vec<u8>, SessionError> {
+        self.encode_inner(false)
+    }
+
+    /// Digest-only view of already applied state. This never publishes a checkpoint;
+    /// the real capture API still requires every delivered receipt to be drained.
+    #[cfg(feature = "virgl-renderer")]
+    pub(crate) fn encode_guest_state(&self) -> Result<Vec<u8>, SessionError> {
+        self.encode_inner(true)
+    }
+
+    fn encode_inner(&self, guest_state: bool) -> Result<Vec<u8>, SessionError> {
         // The embedding must publish/drain receipts before capture; silently dropping them would
         // admit an applied effect absent from the event log. Pending effects are serialized.
-        if !self.delivered.is_empty() || self.position.phase != SessionPhase::Before {
+        if (!guest_state && !self.delivered.is_empty())
+            || self.position.phase != SessionPhase::Before
+        {
             return Err(SessionError::PendingUndrained);
         }
         let mut out = Vec::new();

@@ -242,7 +242,11 @@ strings and the eventual binary codec uses checked integer widths. Payloads bind
 and SHA-256. The fixed initial bounds are 1 MiB inline event payload, 4 MiB blob/chunk,
 4 KiB RAM page, 4 GiB logical session size and 65,536 events per log chunk. Stream larger
 observations across bounded referenced chunks without breaking their single publication.
-Budget overflow pauses recording before an unrecorded guest effect can execute.
+Required `gpu` events may instead reference one authenticated readback object of
+at most 32 MiB (E9-T18c), streamed through the existing object-store parts. The
+1 MiB inline and 4 MiB encoded chunk limits, other event blob limits, identity
+checks and 4 GiB logical session budget remain unchanged. Budget overflow pauses
+recording before an unrecorded guest effect can execute.
 
 A keyframe atomically binds machine/CPU/RAM/devices, immutable disk root and overlay
 generation, next event sequence/position, clock state/policy, pending observations,
@@ -574,3 +578,61 @@ The source-matrix digests were re-audited for T15's changed resume codec,
 ingress fence, Wasm checkpoint bridge, browser journal and checkpoint store.
 These paths change when state is captured and restored; they add no new
 external input source or provider policy.
+
+### Production GPU event history (E9-T18c)
+
+The explicit `rv64-linux-gpu-exact-session-v1` runtime uses the production
+`WasmLinux` assembly with 1 GiB RAM, pure ICount/64, authenticated assets and the
+owned source/device/network providers. Its clock is an admission requirement.
+Existing T17 paced keyboard histories keep their original configuration and
+remain checkpoints-only. Desktop latency budgets and final live desktop controls
+remain T22/T24 work.
+
+`SessionGpuJournal` stores GPU control observations and asynchronous DMA/fence
+results alongside the existing event tape. A GPU readback is one direct,
+content-addressed event body (at most 32 MiB); the store streams it in existing 1 MiB
+parts. Inline payloads remain 1 MiB, non-GPU event blobs 4 MiB, event indices 4 MiB.
+The writer and native driver admit at most 256 distinct bodies /64 MiB per
+checkpoint interval. The writer carries that budget across successful flushes and
+resets it only after publishing a new keyframe. The bounded adapter admits at most
+4,096 receipts /64 MiB of envelope bytes per history; a larger history needs a
+future streaming reader. Missing, corrupt or over-budget data refuses before replay state is installed. The writer
+publishes the existing immutable committed prefix last; no live readback can fill
+in a missing recorded body.
+
+Full `WVGPUB01` and non-RAM `WVGPUD01` frames bind the native strong seal, exact
+position, renderer artifact/epoch, full RAM digest and guest-state digest. Delta
+frames use the existing `WVKEYF01` parent/frame/page graph. Checkpoint GPU
+references retain physical renderer artifacts directly. The guest-state digest
+covers CPU, RAM, native devices, COW disk, accepted GPU commands, logical result
+cursor and pending fence. Physical readiness, callback epochs and already
+consumed transport receipts are host bookkeeping and do not alter that digest.
+They remain validated in restorable checkpoint state. An unmaterialized queue
+cursor and its materialized zero/zero cache have the same logical witness; real
+nonzero used/available positions remain distinct. The restorable queue encoding
+and validation are unchanged.
+
+Every physical submission receives an opaque capability minted by its original
+native mailbox. It checks the original incarnation and weak machine owner before
+DMA and cannot be serialized or reconstructed from numeric request keys. Replay
+writes only authenticated recorded scatter bytes into guest RAM; current physical
+bytes are discarded. Physical work still has to settle for a successful recorded
+completion. A recorded failure cancels outstanding work; an authentic already
+completed physical job needs no second cancellation. Uncertain work still must
+cancel or explicitly diverge without advancing the guest.
+
+A private worker reconstructs the actual renderer, restores the authenticated
+native/page graph, and replays a bounded interval. Reconstruction may delay a
+fresh physical fence to consume recorded query polls, but never invents query
+readiness or results. Each seek owns a fresh worker and capability set. A startup
+handshake waits for Wasm module initialization. Cancelling terminates the old
+worker; only the latest completed selection may publish a canvas. The canvas is
+painted from a real physical GPU readback. Exact guest results do not claim
+bit-identical physical pixels across different GPUs.
+
+A context loss stops the exact recording/replay and revokes transport before
+further guest execution. The existing saved prefix survives. A failed physical
+journal refuses a later renderer checkpoint; its recorded failure can still be
+replayed from the preceding valid point. Collection of extension-bearing exact
+histories remains explicitly refused by the existing storage policy until T21;
+this adapter does not introduce hidden references or silently delete them.

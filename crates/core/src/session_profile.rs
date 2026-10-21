@@ -35,7 +35,36 @@ impl Machine {
         core_hash: [u8; 32],
         replay: bool,
     ) -> Result<Rc<RefCell<Uart16550>>, ProfileError> {
-        if self.ram_len() != RAM_BYTES
+        self.install_owned_session(base, rtc, entropy, core_hash, replay, RAM_BYTES, 10)
+    }
+
+    /// Fresh exact GPU assembly. It has the same owned providers as software,
+    /// one GiB RAM and pure ICount/64; qualified 3D attachment still precedes run.
+    /// This does not admit or rewrite a paced-on-keyboard historical checkpoint.
+    #[cfg(feature = "virgl-renderer")]
+    pub fn install_full_gpu_session(
+        &mut self,
+        base: BaseDisk,
+        rtc: Box<dyn WallClock>,
+        entropy: Box<dyn EntropySource>,
+        core_hash: [u8; 32],
+        replay: bool,
+    ) -> Result<Rc<RefCell<Uart16550>>, ProfileError> {
+        self.install_owned_session(base, rtc, entropy, core_hash, replay, 1 << 30, 64)
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn install_owned_session(
+        &mut self,
+        base: BaseDisk,
+        rtc: Box<dyn WallClock>,
+        entropy: Box<dyn EntropySource>,
+        core_hash: [u8; 32],
+        replay: bool,
+        ram_bytes: usize,
+        divider: u64,
+    ) -> Result<Rc<RefCell<Uart16550>>, ProfileError> {
+        if self.ram_len() != ram_bytes
             || self.guest_clock_mode() != TimeMode::ICount
             || self.session_position().is_some()
         {
@@ -43,7 +72,7 @@ impl Machine {
         }
         base.validate().map_err(ProfileError::Device)?;
         self.set_snapshot_identity(core_hash, base.identity);
-        self.enable_clint(10);
+        self.enable_clint(divider);
         self.enable_plic();
         self.enable_rtc(rtc);
         self.enable_syscon();
