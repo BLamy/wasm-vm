@@ -88,7 +88,9 @@ try:
         # This resume is deliberately conservative: every other dependency change
         # requires fresh native gates, including toolchains, fixtures and codecs.
         allowed = lambda name: name.startswith(('crates/wasm/', 'crates/wasm-web/', 'web/dist/', 'tasks/')) or name in {
-            'tools/verify/e9-branch.py', 'web/README.md', 'web/tasks.json', 'web/gpu-checkpoint-build.js'}
+            'tools/verify/e9-branch.py', 'tools/verify/e9-branch-gpu-attacks.mjs',
+            'tools/verify/e9-branch-context-loss-worker.mjs', 'tools/verify/e9-branch-gpu-browser.mjs',
+            'web/README.md', 'web/tasks.json', 'web/gpu-checkpoint-build.js'}
         assert all(allowed(name) for name in changed), 'a native dependency changed; cannot carry'
         carried = {row['name']: row for row in previous['commands'] if row['name'] in native_gates}
         assert set(carried) == native_gates and all(row['exit_code'] == 0 for row in carried.values()), 'missing successful native gates'

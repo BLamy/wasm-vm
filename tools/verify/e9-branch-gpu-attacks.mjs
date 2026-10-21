@@ -9,6 +9,62 @@ const pixel=view=>[...view.canvas.getContext('2d').getImageData(32,32,1,1).data]
 const complete=manifest=>manifest.extensions.some(value=>value.kind==='e9-exact-state-witnesses-v1');
 export async function gpuBranchAttacks(proof){
  const {store,timeline}=proof,parent=timeline.owner,parentHash=checkpointHash((await store.openSession(parent.id)).manifest),results=[];
+ // Exercise the no-yield guard in the real final IndexedDB transaction.
+ for(const kind of ['promise-authorizer','thenable-authorizer']){
+  const before=await store.openSession(parent.id),writer=await store.writer(parent.id);let hit=0,thenCalls=0,failure,code;
+  try{
+   try{await writer.publish(before.manifest,null,()=>{hit++;return kind==='promise-authorizer'?Promise.resolve(true):{then(){thenCalls++;}};});}
+   catch(error){failure=error.message;code=error.code;}
+   need(hit===1&&code==='PublicationGuard'&&thenCalls===0,'a yielding final authorizer was not refused synchronously');
+  }finally{await writer.release();}
+  const after=await store.openSession(parent.id);need(after.revision===before.revision&&checkpointHash(after.manifest)===parentHash,'yielding final authorizer changed the session');
+  results.push({kind,hit,code,failure,thenCalls,unchangedRevision:after.revision});
+ }
+ for(const kind of ['missing-retained-wasm','existing-session-id','foreign-renderer-build']){
+  console.log('GPU branch refusal: '+kind);
+  const before=(await store.list()).sessions.map(row=>row.id).sort(),old=await store.openSession(parent.id),stream=store.stream,WorkerClass=globalThis.Worker;
+  const id=kind==='existing-session-id'?parent.id:'gpu-refusal-'+kind;
+  let streamHit=0,workers=0,failure,unexpected;
+  globalThis.Worker=class extends WorkerClass{constructor(...args){super(...args);if(new URL(String(args[0]),location).pathname.endsWith('/session-gpu-branch-worker.js'))workers++;}};
+  if(kind==='missing-retained-wasm'){
+   const ref=parent.manifest.assets.find(asset=>asset.role==='wasm').content;
+   store.stream=function(expected){if(expected.sha256===ref.sha256){streamHit++;throw Error('intentional unavailable retained Wasm');}return stream.call(this,expected);};
+  }
+  const source=kind==='foreign-renderer-build'?{...parent,configuration:{...parent.configuration,renderer:{...parent.configuration.renderer,buildId:'00'.repeat(32)}}}:parent;
+  try{try{unexpected=await createSessionBranch({store,parent:source,id});}catch(error){failure=error.message;}}
+  finally{store.stream=stream;globalThis.Worker=WorkerClass;if(unexpected)await unexpected.discard();}
+  need(!unexpected&&failure,'invalid creation was admitted');
+  if(kind==='missing-retained-wasm')need(streamHit===1&&workers===0&&/unavailable retained Wasm/.test(failure),'missing asset did not refuse before worker startup');
+  if(kind==='existing-session-id')need(workers===0&&/session ID already exists/.test(failure),'ID collision did not preserve the existing owner');
+  if(kind==='foreign-renderer-build')need(workers===1&&/build unavailable/.test(failure),'foreign build did not reach the fresh worker refusal');
+  const after=(await store.list()).sessions.map(row=>row.id).sort(),saved=await store.openSession(parent.id);
+  need(JSON.stringify(before)===JSON.stringify(after)&&saved.revision===old.revision&&checkpointHash(saved.manifest)===parentHash,'failed creation changed local history');
+  results.push({kind,streamHit,workers,failure,sameSessions:true,unchangedRevision:saved.revision});
+ }
+ // A wrapper only observes getContext and invokes WEBGL_lose_context; it imports
+ // the unchanged production branch worker for all execution and error handling.
+ {
+  console.log('GPU branch fault: real worker context loss');
+  const WorkerClass=globalThis.Worker,id='gpu-fault-context-loss';let worker,branch;
+  globalThis.Worker=class extends WorkerClass{constructor(url,options){
+   const branchUrl=new URL(String(url),location).pathname.endsWith('/session-gpu-branch-worker.js');
+   super(branchUrl?new URL('/__verify__/branch-context-loss-worker.mjs',location):url,options);if(branchUrl)worker=this;
+  }};
+  try{
+   branch=await createSessionBranch({store,parent,id});need(worker,'no real branch worker was created');
+   const event=await new Promise((resolve,reject)=>{
+    const timeout=setTimeout(()=>reject(Error('real branch context-loss event timed out')),10000);
+    worker.addEventListener('message',message=>{if(message.data.type==='verify-branch-context-lost'&&message.data.id===id){clearTimeout(timeout);resolve(message.data);}});
+    worker.postMessage({type:'verify-branch-context-loss',id});
+   });
+   need(event.lost===true&&!event.error,'real worker WebGL context was not lost');
+   const failure=await refusal(()=>branch.advance(64));need(/context.*lost/i.test(failure),'lost context did not stop real execution');
+   const stopped=await refusal(()=>branch.view());await refusal(()=>branch.finish());
+   need(!complete(JSON.parse(new TextDecoder().decode((await store.openSession(id)).manifest))),'lost context published a completed child');
+   results.push({kind:'context-loss',lost:true,failure,stopped,finalManifest:false});
+  }finally{globalThis.Worker=WorkerClass;await branch?.discard();}
+  need(!await store.openSession(id)&&checkpointHash((await store.openSession(parent.id)).manifest)===parentHash,'lost context damaged retained history');
+ }
  for(const kind of ['journal','paint-advance','paint-finish','cancel-final-put']){
   console.log('GPU branch fault: '+kind);
   const id='gpu-fault-'+kind,branch=await createSessionBranch({store,parent,id}),present=PresentationController.prototype.present,
