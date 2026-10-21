@@ -35071,8 +35071,9 @@
         },
         {
           "date": "2026-10-21",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "E9-T17 validate restored options before replacing the desktop",
             "E9-T17 refuse checkpoint publication after GPU context loss",
             "Persist coherent accelerated session checkpoints",
             "Start E9-T17 accelerated session checkpoints"
@@ -35081,7 +35082,7 @@
       ],
       "firstActivity": "2026-10-17",
       "lastActivity": "2026-10-21",
-      "commitCount": 4
+      "commitCount": 5
     },
     {
       "id": "E9-T18",
