@@ -2756,3 +2756,7 @@ verify-E9-T12:
 .PHONY: verify-E9-T13
 verify-E9-T13:
 	python3 -B tools/verify/e9-network-capture.py --output "$${E9_NETWORK_EVIDENCE_DIR:-target/evidence/e9-network-capture-final}"
+
+.PHONY: verify-E9-T14
+verify-E9-T14:
+	python3 -B tools/verify/e9-deterministic-replay.py --output "$${E9_REPLAY_EVIDENCE_DIR:-target/evidence/e9-deterministic-replay-final}"

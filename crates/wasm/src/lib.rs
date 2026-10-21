@@ -45,6 +45,8 @@ mod session_devices;
 mod session_input;
 mod session_network;
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod session_replay;
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod session_sources;
 pub use jit_browser::{BROWSER_MAX_BATCHES, BrowserExecutor};
 #[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
@@ -2243,6 +2245,8 @@ struct LinuxInner {
     output: js_sys::Function,
     pending: std::collections::VecDeque<u8>,
     input_capture: Option<session_input::InputCapture>,
+    exact_session: Option<bool>,
+    exact_driver: Option<wasm_vm_core::session_replay::ReplayDriver>,
     finished: Option<String>,
     /// E3-T02 lazy-fetch state, present only for a `newChunkedDisk` boot (`None` otherwise). Held in
     /// an `Rc` so `fetchPending` can clone it out and `await` without keeping the inner borrow.
@@ -2323,6 +2327,12 @@ async fn wait_for_snapshot_writes(count: std::rc::Rc<std::cell::Cell<u32>>) {
 enum DiskChoice {
     None,
     Mem(Vec<u8>),
+    /// Exact software-session ownership: the core block broker holds the immutable manifest and
+    /// its local COW state; no ordinary chunk cache, persistence queue or live network is opened.
+    ExactSession {
+        manifest: wasm_vm_storage::ImageManifest,
+        replay: bool,
+    },
     Chunked {
         manifest: wasm_vm_storage::ImageManifest,
         base_url: String,
@@ -2672,6 +2682,46 @@ impl WasmLinux {
         )
     }
 
+    /// Pinned 256 MiB RV64 Linux software-session profile. It installs owned block, network,
+    /// agent, RTC and entropy boundaries before boot, and never creates a live transport while
+    /// replaying. The caller supplies the immutable base chunks to the recording broker.
+    #[wasm_bindgen(js_name = newExactSession)]
+    pub fn new_exact_session(
+        kernel: &[u8],
+        manifest_json: &str,
+        bootargs: String,
+        output: js_sys::Function,
+        replay: bool,
+    ) -> Result<WasmLinux, JsError> {
+        let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
+            .map_err(|e| JsError::new(&format!("exact session manifest: {e:?}")))?;
+        let pinned_base = browser_file_transfer::parse_sha256(
+            "bf6a2c61eb5292f5d1901bced572c51db4f63a18a85bf673b5871bccc46c8c46",
+        )
+        .map_err(|_| JsError::new("exact session base pin"))?;
+        let pinned_kernel = browser_file_transfer::parse_sha256(
+            "af7c4e471ed4dabdbe5a2717d81cc034b511d2b0f7706de66ad9e84e078c7cce",
+        )
+        .map_err(|_| JsError::new("exact session kernel pin"))?;
+        if manifest.base_hash() != pinned_base
+            || manifest.image_len != 512 << 20
+            || manifest.chunk_size != 128 << 10
+            || Sha256::digest(kernel).as_slice() != pinned_kernel
+            || bootargs != "root=/dev/vda rw console=ttyS0 earlycon=sbi init=/bin/sh -- +i"
+        {
+            return Err(JsError::new("exact session software profile mismatch"));
+        }
+        Self::assemble(
+            256,
+            kernel,
+            None,
+            DiskChoice::ExactSession { manifest, replay },
+            &bootargs,
+            output,
+            false,
+        )
+    }
+
     /// Boot from a chunked base image plus a validated, in-memory `WVOD1` copy-on-write seed.
     /// The delta is bound to the manifest's base hash and image length, and its generation is
     /// stamped into the whole-machine resume coherence header. This constructor never opens or
@@ -2904,12 +2954,47 @@ impl WasmLinux {
         let bytes = (ram_mib as usize).saturating_mul(1024 * 1024);
         let mut machine = Machine::try_new(bytes)
             .map_err(|_| JsError::new(&format!("cannot allocate {ram_mib} MiB of guest RAM")))?;
-        // Devices in dependency order (PLIC before its consumers).
-        machine.enable_clint(10);
-        machine.enable_plic();
-        machine.enable_rtc(Box::new(JsWallClock));
-        machine.enable_syscon();
-        let uart = machine.enable_uart16550();
+        let exact_replay = match &disk {
+            DiskChoice::ExactSession { replay, .. } => Some(*replay),
+            _ => None,
+        };
+        let uart = if let DiskChoice::ExactSession { manifest, replay } = &disk {
+            use wasm_vm_core::session_devices::{BaseDisk, PayloadRef};
+            let chunks = manifest
+                .chunks
+                .iter()
+                .enumerate()
+                .map(|(index, hash)| {
+                    let sha256 = browser_file_transfer::parse_sha256(hash)
+                        .map_err(|e| JsError::new(&format!("session base chunk: {e:?}")))?;
+                    let length = (manifest.image_len
+                        - index as u64 * u64::from(manifest.chunk_size))
+                    .min(u64::from(manifest.chunk_size)) as u32;
+                    Ok(PayloadRef { sha256, length })
+                })
+                .collect::<Result<Vec<_>, JsError>>()?;
+            machine
+                .install_full_software_session(
+                    BaseDisk {
+                        identity: manifest.base_hash(),
+                        sectors: manifest.image_len / 512,
+                        chunk_bytes: manifest.chunk_size,
+                        chunks,
+                    },
+                    Box::new(JsWallClock),
+                    Box::new(crypto_entropy::CryptoEntropy),
+                    build_core_hash(),
+                    *replay,
+                )
+                .map_err(|e| JsError::new(&format!("exact session profile: {e:?}")))?
+        } else {
+            // Ordinary live assemblies retain their established host transports and slot map.
+            machine.enable_clint(10);
+            machine.enable_plic();
+            machine.enable_rtc(Box::new(JsWallClock));
+            machine.enable_syscon();
+            machine.enable_uart16550()
+        };
         let mut fetch = None;
         let mut persist = None;
         let mut disk_ro: Option<std::rc::Rc<std::cell::Cell<bool>>> = None;
@@ -2922,6 +3007,7 @@ impl WasmLinux {
         let mut resume_base: Option<[u8; 32]> = None;
         let mut snapshot_read_only = false;
         match disk {
+            DiskChoice::ExactSession { .. } => {}
             // Alpine over virtio-blk: the image is owned by an in-memory BlockBackend in slot 0.
             DiskChoice::Mem(image) => {
                 machine.enable_virtio_blk(Box::new(wasm_vm_core::block::MemBackend::new(image)));
@@ -3068,7 +3154,10 @@ impl WasmLinux {
         // Default: E3-T13 loopback (frames echo back). With `setSlirpNet(true)`, E3-net swaps in the
         // synchronous slirp LOCAL stack so the guest can DHCP a real IP (10.0.2.15) and reach the
         // gateway (10.0.2.2) — no tokio, no outbound yet (that's the WebSocket-relay slice).
-        if slirp_net_enabled() {
+        if exact_replay.is_some() {
+            // The qualified core adapter was installed before boot. A replay cannot construct a
+            // live provider; the page owns only immutable recording bytes.
+        } else if slirp_net_enabled() {
             let start = js_sys::Date::now();
             let clock = Box::new(move || (js_sys::Date::now() - start) as i64);
             let (backend, dns): (_, Box<dyn wasm_vm_slirp::DnsService>) =
@@ -3122,53 +3211,60 @@ impl WasmLinux {
         // it, so `getrandom(2)`/`/dev/urandom` are ready early — without it the interpreted guest
         // scavenges entropy from interrupt jitter for many seconds, long enough that the first TLS
         // ClientHello's `RAND_bytes` stalls or fails (the E3-T19 guest-HTTPS flakiness).
-        let _ = machine.enable_virtio_rng(Box::new(crypto_entropy::CryptoEntropy));
-        // E5-T11c: attach the guest-visible keyboard on every browser boot. The host keymap can
-        // inject make/break frames through WasmLinux::sendKeyboardEvent/syncKeyboard.
-        let _ = machine.enable_virtio_keyboard();
-        // A browser key transition is two bounded input events (EV_KEY + SYN_REPORT). Give the
-        // interactive path the same finite burst headroom as the native display workload so a
-        // terminal command cannot overflow the default generic-device budget and strand a key.
-        if let Some(keyboard) = machine.keyboard_input() {
-            keyboard.borrow_mut().set_pending_event_budget(
-                wasm_vm_core::dev::virtio::input::keyboard::INTERACTIVE_PENDING_EVENT_BUDGET,
+        if exact_replay.is_none() {
+            let _ = machine.enable_virtio_rng(Box::new(crypto_entropy::CryptoEntropy));
+            // E5-T11c: attach the guest-visible keyboard on every browser boot. The host keymap can
+            // inject make/break frames through WasmLinux::sendKeyboardEvent/syncKeyboard.
+            let _ = machine.enable_virtio_keyboard();
+            // A browser key transition is two bounded input events (EV_KEY + SYN_REPORT). Give the
+            // interactive path the same finite burst headroom as the native display workload so a
+            // terminal command cannot overflow the default generic-device budget and strand a key.
+            if let Some(keyboard) = machine.keyboard_input() {
+                keyboard.borrow_mut().set_pending_event_budget(
+                    wasm_vm_core::dev::virtio::input::keyboard::INTERACTIVE_PENDING_EVENT_BUDGET,
+                );
+            }
+            // E5-T14a: keep both pointer devices guest-visible on every browser boot. T14b selects
+            // which state receives DOM frames; the tablet and relative mouse remain stable peers.
+            let _ = machine.enable_virtio_pointer();
+            // E5-T19d: expose the four-queue virtio-snd device after the established input slots. The
+            // browser sink is intentionally NullSink until E5-T20's AudioWorklet bridge, but the
+            // guest-facing controlq and real-time pacing already run through the production assembly.
+            let audio_clock = JsHostTimer::new()
+                .map(|clock| {
+                    std::rc::Rc::new(clock)
+                        as std::rc::Rc<dyn wasm_vm_core::dev::virtio::snd::AudioClock>
+                })
+                .unwrap_or_else(|| {
+                    std::rc::Rc::new(wasm_vm_core::dev::virtio::snd::ManualAudioClock::new())
+                        as std::rc::Rc<dyn wasm_vm_core::dev::virtio::snd::AudioClock>
+                });
+            let _ = machine.enable_virtio_snd_with_audio_and_capture(
+                audio_clock,
+                Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
+                enable_mic,
             );
+            // E5-T06d: preserve the established sound slot, then use the remaining optional
+            // virtio-mmio slot for the browser display. A fully occupied legacy layout simply keeps
+            // the GPU absent; attachDisplay reports that fact to the loader without replacing a
+            // working device.
+            let _ = machine.enable_virtio_gpu(Box::new(wasm_vm_core::dev::virtio::gpu::NullSink));
+            // E5-T26f: the browser keeps all established devices and uses the ninth extension window
+            // for the T23 named agent channel. Native callers retain the fixed slot-7 console helper.
+            let _ = machine
+                .enable_virtio_console_at(wasm_vm_core::platform::virt::VIRTIO_COUNT as usize - 1);
+            machine.enable_builtin_sbi();
         }
-        // E5-T14a: keep both pointer devices guest-visible on every browser boot. T14b selects
-        // which state receives DOM frames; the tablet and relative mouse remain stable peers.
-        let _ = machine.enable_virtio_pointer();
-        // E5-T19d: expose the four-queue virtio-snd device after the established input slots. The
-        // browser sink is intentionally NullSink until E5-T20's AudioWorklet bridge, but the
-        // guest-facing controlq and real-time pacing already run through the production assembly.
-        let audio_clock = JsHostTimer::new()
-            .map(|clock| {
-                std::rc::Rc::new(clock)
-                    as std::rc::Rc<dyn wasm_vm_core::dev::virtio::snd::AudioClock>
-            })
-            .unwrap_or_else(|| {
-                std::rc::Rc::new(wasm_vm_core::dev::virtio::snd::ManualAudioClock::new())
-                    as std::rc::Rc<dyn wasm_vm_core::dev::virtio::snd::AudioClock>
-            });
-        let _ = machine.enable_virtio_snd_with_audio_and_capture(
-            audio_clock,
-            Box::new(wasm_vm_core::dev::virtio::snd::NullSink::new()),
-            enable_mic,
-        );
-        // E5-T06d: preserve the established sound slot, then use the remaining optional
-        // virtio-mmio slot for the browser display. A fully occupied legacy layout simply keeps
-        // the GPU absent; attachDisplay reports that fact to the loader without replacing a
-        // working device.
-        let _ = machine.enable_virtio_gpu(Box::new(wasm_vm_core::dev::virtio::gpu::NullSink));
-        // E5-T26f: the browser keeps all established devices and uses the ninth extension window
-        // for the T23 named agent channel. Native callers retain the fixed slot-7 console helper.
-        let _ = machine
-            .enable_virtio_console_at(wasm_vm_core::platform::virt::VIRTIO_COUNT as usize - 1);
-        machine.enable_builtin_sbi();
         let out = std::rc::Rc::new(RefCell::new(Vec::new()));
         machine.sbi_set_console(Box::new(BufSink { buf: out.clone() }));
         machine
             .place_and_boot(kernel, initrd, bootargs)
             .map_err(|e| JsError::new(&format!("boot layout failed: {e:?}")))?;
+        if exact_replay == Some(false) {
+            machine
+                .start_session_sources(machine.source_policy(), None)
+                .map_err(|e| JsError::new(&format!("exact session sources: {e:?}")))?;
+        }
         Ok(WasmLinux {
             #[cfg(feature = "virgl-renderer")]
             gpu_mailbox: RefCell::new(None),
@@ -3184,7 +3280,13 @@ impl WasmLinux {
                 out,
                 output,
                 pending: std::collections::VecDeque::new(),
-                input_capture: None,
+                input_capture: exact_replay.map(|replay| session_input::InputCapture {
+                    replay,
+                    paused: false,
+                    stopped: false,
+                }),
+                exact_session: exact_replay,
+                exact_driver: None,
                 finished: None,
                 fetch,
                 persist,
@@ -3767,6 +3869,7 @@ impl WasmLinux {
             }
         }
         let mut session_error = None;
+        let mut recorded_console = Vec::new();
         let retired_before = inner.machine.irq_stats().retired;
         if inner.finished.is_none() {
             // Interleave RX refills with execution. The 16550 RX FIFO is 16 bytes; feeding it only
@@ -3837,9 +3940,51 @@ impl WasmLinux {
                 }
             };
             inner.machine.end_cooperative_run(outcome);
-            // Drain the 16550 TX into the console buffer.
-            let uart_out = inner.uart.borrow_mut().take_output();
-            inner.out.borrow_mut().extend_from_slice(&uart_out);
+            if inner.exact_session == Some(false) && matches!(outcome, RunOutcome::MaxInstrs) {
+                // The TX queue is part of the native UART snapshot. A browser scheduling change
+                // must not decide when it is cleared: record the exact output bytes and apply the
+                // drain through the same owned before-boundary as every other host effect.
+                let mut expected = (*inner.out.borrow()).clone();
+                expected.extend_from_slice(inner.uart.borrow().pending_output());
+                if !expected.is_empty() {
+                    if expected.len() > wasm_vm_core::session_clock::MAX_PAYLOAD {
+                        return Err(JsError::new("exact console output exceeds event limit"));
+                    }
+                    let transition = inner.machine.session_position().unwrap().transition;
+                    inner
+                        .machine
+                        .stage_session_effect(
+                            transition,
+                            wasm_vm_core::session_clock::SessionEffect::HostInput {
+                                channel: wasm_vm_core::session_replay::OUTPUT_DRAIN_CHANNEL,
+                                bytes: expected,
+                            },
+                        )
+                        .map_err(|e| JsError::new(&format!("exact console reserve: {e:?}")))?;
+                    let uart = inner.uart.clone();
+                    let out = inner.out.clone();
+                    let mut matched = false;
+                    inner
+                        .machine
+                        .deliver_session_host_boundary(|_, channel, bytes| {
+                            if channel != wasm_vm_core::session_replay::OUTPUT_DRAIN_CHANNEL {
+                                return [1, 0, 0, 0];
+                            }
+                            recorded_console = std::mem::take(&mut *out.borrow_mut());
+                            recorded_console.extend_from_slice(&uart.borrow_mut().take_output());
+                            matched = recorded_console == bytes;
+                            [u64::from(!matched), recorded_console.len() as u64, 0, 0]
+                        })
+                        .map_err(|e| JsError::new(&format!("exact console drain: {e:?}")))?;
+                    if !matched {
+                        return Err(JsError::new("exact console drain mismatch"));
+                    }
+                }
+            } else {
+                // The legacy live path has no event clock; preserve its existing console flow.
+                let uart_out = inner.uart.borrow_mut().take_output();
+                inner.out.borrow_mut().extend_from_slice(&uart_out);
+            }
             inner.finished = match outcome {
                 RunOutcome::Reset(wasm_vm_core::ExitReason::PowerOff) => Some("poweroff".into()),
                 RunOutcome::Reset(wasm_vm_core::ExitReason::Reboot) => Some("reboot".into()),
@@ -3854,7 +3999,11 @@ impl WasmLinux {
             };
         }
         // Flush accumulated console output to JS as one chunk.
-        let bytes = std::mem::take(&mut *inner.out.borrow_mut());
+        let bytes = if inner.exact_session == Some(false) {
+            recorded_console
+        } else {
+            std::mem::take(&mut *inner.out.borrow_mut())
+        };
         if !bytes.is_empty() {
             let arr = js_sys::Uint8Array::from(&bytes[..]);
             let _ = inner.output.call1(&JsValue::NULL, &arr);

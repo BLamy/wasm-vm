@@ -52,6 +52,7 @@ proptest = "1"
 rayon = "1"
 syn = { version = "2", features = ["full", "visit"] }
 proc-macro2 = "1"
+wasm-vm-storage = { path = "../storage" }
 
 [[bench]]
 name = "mmio_dispatch"

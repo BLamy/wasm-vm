@@ -203,6 +203,8 @@ impl<'a> Reader<'a> {
 /// A rejected snapshot — every failure is one of these, never a panic.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SnapshotError {
+    /// An unbranched replay refuses host-initiated restore after replay starts.
+    ReplayActive,
     /// The blob is shorter than the fixed header (or a section runs past the end).
     Truncated,
     /// The leading magic is not [`MAGIC`].

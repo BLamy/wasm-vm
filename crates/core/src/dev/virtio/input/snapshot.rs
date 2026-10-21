@@ -25,6 +25,7 @@ const MAX_SNAPSHOT_BUDGET: u32 = 1 << 20;
 /// A malformed or unsafe virtio-input snapshot payload.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum InputSnapshotError {
+    ReplayIngress,
     Truncated,
     BadMagic,
     UnsupportedVersion { found: u16, supported: u16 },
@@ -47,6 +48,7 @@ impl InputSnapshotError {
     /// Stable machine-readable code for restore diagnostics.
     pub const fn code(self) -> &'static str {
         match self {
+            Self::ReplayIngress => "replay_ingress",
             Self::Truncated => "truncated",
             Self::BadMagic => "bad_magic",
             Self::UnsupportedVersion { .. } => "unsupported_version",

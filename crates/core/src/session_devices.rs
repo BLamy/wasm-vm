@@ -339,6 +339,25 @@ impl crate::Machine {
         capture: bool,
         replay: bool,
     ) -> Result<(), DeviceError> {
+        self.enable_session_devices_at(
+            base,
+            agent,
+            capture,
+            replay,
+            crate::dev::virtio::console::VIRTIO_CONSOLE_SLOT,
+        )
+    }
+
+    /// The browser Linux topology reserves the ninth MMIO window for the named agent. Validate
+    /// its slot before installing any adapter so an unsupported profile cannot partially boot.
+    pub fn enable_session_devices_at(
+        &mut self,
+        base: Option<BaseDisk>,
+        agent: bool,
+        capture: bool,
+        replay: bool,
+        agent_slot: usize,
+    ) -> Result<(), DeviceError> {
         if self.session_devices.is_some()
             || self.session_position() != Some(Default::default())
             || !self.virtio.is_empty()
@@ -346,6 +365,7 @@ impl crate::Machine {
             || !self.extra_blk.is_empty()
             || self.snd.is_some()
             || (agent && self.console.is_some())
+            || (agent && agent_slot >= crate::platform::virt::VIRTIO_COUNT as usize)
         {
             return Err(DeviceError::Unsupported);
         }
@@ -378,7 +398,7 @@ impl crate::Machine {
             self.enable_virtio_slots(None);
         }
         if agent {
-            self.enable_virtio_console();
+            self.enable_virtio_console_at(agent_slot);
         }
         if capture {
             self.enable_virtio_snd_with_audio_and_capture(
@@ -417,7 +437,18 @@ impl crate::Machine {
             .guest
             .cursor)
     }
+    pub fn session_device_replay(&self) -> Result<bool, DeviceError> {
+        Ok(self
+            .session_devices
+            .as_ref()
+            .ok_or(DeviceError::Inactive)?
+            .borrow()
+            .replay)
+    }
     pub fn lease_session_device(&self, id: u64) -> Result<CompletionLease, DeviceError> {
+        if !self.host_ingress_gate.allows_host() {
+            return Err(DeviceError::ReplayIngress);
+        }
         let hub = self
             .session_devices
             .as_ref()
@@ -444,6 +475,9 @@ impl crate::Machine {
         frames: u32,
         bytes: Vec<u8>,
     ) -> Result<(), DeviceError> {
+        if !self.host_ingress_gate.allows_host() {
+            return Err(DeviceError::ReplayIngress);
+        }
         {
             let hub = self
                 .session_devices
@@ -466,6 +500,28 @@ impl crate::Machine {
     }
     /// Replay owners position the machine before calling this; real host ingress is unavailable.
     pub fn replay_session_device(
+        &mut self,
+        position: crate::session_clock::SessionPosition,
+        completion: DeviceCompletion,
+    ) -> Result<(), DeviceError> {
+        if self.session_replay_limit.is_some() || !self.host_ingress_gate.allows_host() {
+            return Err(DeviceError::ReplayIngress);
+        }
+        self.replay_session_device_owned(position, completion)
+    }
+
+    pub(crate) fn replay_recorded_session_device(
+        &mut self,
+        position: crate::session_clock::SessionPosition,
+        completion: DeviceCompletion,
+    ) -> Result<(), DeviceError> {
+        if self.session_replay_limit.is_none() {
+            return Err(DeviceError::ReplayIngress);
+        }
+        self.replay_session_device_owned(position, completion)
+    }
+
+    fn replay_session_device_owned(
         &mut self,
         position: crate::session_clock::SessionPosition,
         completion: DeviceCompletion,
@@ -516,16 +572,19 @@ impl crate::Machine {
         }
         let position = self.session_position().ok_or(DeviceError::Inactive)?;
         let encoded = completion.encode()?;
-        self.stage_session_effect(
-            position.transition,
-            crate::session_clock::SessionEffect::HostInput {
-                channel: CHANNEL,
-                bytes: encoded,
-            },
-        )
-        .map_err(|_| DeviceError::Position)?;
+        let effect = crate::session_clock::SessionEffect::HostInput {
+            channel: CHANNEL,
+            bytes: encoded,
+        };
+        let full_replay = self.session_replay_limit.is_some();
+        let staged = if full_replay {
+            self.stage_recorded_session_effect(position.transition, effect)
+        } else {
+            self.stage_session_effect(position.transition, effect)
+        };
+        staged.map_err(|_| DeviceError::Position)?;
         let mut completion = Some(completion);
-        self.deliver_session_host_boundary(|machine, channel, _| {
+        let apply = |machine: &mut Self, channel, _: &[u8]| {
             assert_eq!(channel, CHANNEL);
             let completion = completion.take().expect("one exclusive completion");
             let mut accepted = completion.bytes.len() as u64;
@@ -548,7 +607,12 @@ impl crate::Machine {
             ];
             hub.borrow_mut().accept(completion);
             result
-        })
+        };
+        if full_replay {
+            self.deliver_recorded_session_host_boundary(apply)
+        } else {
+            self.deliver_session_host_boundary(apply)
+        }
         .map_err(|_| DeviceError::Position)
     }
 }

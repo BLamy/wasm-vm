@@ -1,4 +1,6 @@
 //! Exact, owned network ABI. Live transports are constructed only by the recording host.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+use super::WasmLinux;
 use super::{WasmMachine, event_clock, reentrant};
 use wasm_bindgen::{JsCast, prelude::*};
 use wasm_vm_core::{
@@ -19,6 +21,61 @@ fn bytes(input: js_sys::Uint8Array) -> Result<Vec<u8>, JsError> {
 #[wasm_bindgen]
 pub struct SessionNetworkLease {
     lease: NetworkLease,
+}
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen]
+impl WasmLinux {
+    #[wasm_bindgen(js_name = exactNetworkRequests)]
+    pub fn exact_network_requests(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        if inner.exact_session != Some(false) {
+            return Err(error(NetworkError::ReplayIngress));
+        }
+        let out = js_sys::Array::new();
+        for request in inner.machine.session_network_requests().map_err(error)? {
+            let object = js_sys::Object::new();
+            js_sys::Reflect::set(&object, &"id".into(), &request.id.to_string().into()).unwrap();
+            js_sys::Reflect::set(
+                &object,
+                &"frame".into(),
+                &js_sys::Uint8Array::from(request.frame.as_slice()).into(),
+            )
+            .unwrap();
+            out.push(&object);
+        }
+        Ok(out.into())
+    }
+    #[wasm_bindgen(js_name = exactLeaseNetworkRequest)]
+    pub fn exact_lease_network_request(&self, id: &str) -> Result<SessionNetworkLease, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        if inner.exact_session != Some(false) {
+            return Err(error(NetworkError::ReplayIngress));
+        }
+        let id = if id.is_empty() {
+            None
+        } else {
+            Some(event_clock::exact_u64(id).map_err(JsError::new)?)
+        };
+        Ok(SessionNetworkLease {
+            lease: inner.machine.lease_session_network(id).map_err(error)?,
+        })
+    }
+    #[wasm_bindgen(js_name = exactCompleteNetworkEvent)]
+    pub fn exact_complete_network_event(
+        &self,
+        lease: &SessionNetworkLease,
+        input: js_sys::Uint8Array,
+    ) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.exact_session != Some(false) {
+            return Err(error(NetworkError::ReplayIngress));
+        }
+        let event = NetworkEvent::decode(&bytes(input)?).map_err(error)?;
+        inner
+            .machine
+            .complete_session_network(&lease.lease, event)
+            .map_err(error)
+    }
 }
 #[wasm_bindgen]
 impl WasmMachine {

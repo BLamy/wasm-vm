@@ -52,7 +52,11 @@ pub mod resume;
 pub mod sbi;
 pub mod session_clock;
 pub mod session_devices;
+mod session_ingress;
 pub mod session_network;
+#[cfg(not(feature = "zicsr-stub"))]
+pub mod session_profile;
+pub mod session_replay;
 pub mod snapshot;
 pub mod softfloat;
 pub mod time;
@@ -284,6 +288,11 @@ pub struct Machine {
     session_sources: alloc::rc::Rc<core::cell::RefCell<session_clock::sources::ObservationHub>>,
     /// Transient execution fence, never part of a quiescent saved machine.
     session_fence: Option<u64>,
+    /// A replay's declared end. Unlike a per-run fence this survives between calls and is never
+    /// serialized into a guest checkpoint; a finished replay cannot silently become live.
+    session_replay_limit: Option<u64>,
+    /// Shared with ordinary device handles, including clones retained by the embedding.
+    host_ingress_gate: alloc::rc::Rc<session_ingress::SessionIngressGate>,
     session_devices: Option<alloc::rc::Rc<core::cell::RefCell<session_devices::DeviceHub>>>,
     session_network: Option<alloc::rc::Rc<core::cell::RefCell<session_network::NetworkHub>>>,
     htif: Option<Htif>,
@@ -966,6 +975,8 @@ impl Machine {
             session_devices: None,
             session_network: None,
             session_fence: None,
+            session_replay_limit: None,
+            host_ingress_gate: alloc::rc::Rc::new(session_ingress::SessionIngressGate::default()),
             htif: None,
             last_tohost: 0,
             htif_commands: 0,
@@ -1597,7 +1608,9 @@ impl Machine {
             .as_ref()
             .expect("enable_plic before enable_uart16550");
         let line = dev::plic::Plic::irq_line(plic, platform::virt::UART0_IRQ as usize);
-        let cell = alloc::rc::Rc::new(core::cell::RefCell::new(dev::uart16550::Uart16550::new()));
+        let mut uart = dev::uart16550::Uart16550::new();
+        uart.bind_host_ingress_gate(alloc::rc::Rc::clone(&self.host_ingress_gate));
+        let cell = alloc::rc::Rc::new(core::cell::RefCell::new(uart));
         self.bus
             .attach(
                 bus::mmap::UART0_BASE,
@@ -2190,6 +2203,9 @@ impl Machine {
             dev::virtio::input::keyboard::keyboard_spec(),
             sink,
         );
+        state
+            .borrow_mut()
+            .bind_host_ingress_gate(alloc::rc::Rc::clone(&self.host_ingress_gate));
         assert!(
             self.virtio[slot_index]
                 .0
@@ -2248,6 +2264,9 @@ impl Machine {
         let (tablet, tablet_state) = dev::virtio::input::VirtioInput::new_with_state(
             dev::virtio::input::pointer::tablet_spec(),
         );
+        tablet_state
+            .borrow_mut()
+            .bind_host_ingress_gate(alloc::rc::Rc::clone(&self.host_ingress_gate));
         assert!(
             self.virtio[tablet_slot]
                 .0
@@ -2261,6 +2280,9 @@ impl Machine {
         let (mouse, mouse_state) = dev::virtio::input::VirtioInput::new_with_state(
             dev::virtio::input::pointer::mouse_spec(),
         );
+        mouse_state
+            .borrow_mut()
+            .bind_host_ingress_gate(alloc::rc::Rc::clone(&self.host_ingress_gate));
         assert!(
             self.virtio[mouse_slot]
                 .0
@@ -2449,6 +2471,11 @@ impl Machine {
         blob: &[u8],
         host_viewport: desktop_restore::DisplaySize,
     ) -> Result<desktop_restore::DesktopRestoreReport, desktop_restore::DesktopRestoreError> {
+        if self.session_replay_limit.is_some() {
+            return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "replay_active",
+            });
+        }
         #[cfg(feature = "virgl-renderer")]
         if self.control3d_proof_installed() {
             return Err(desktop_restore::DesktopRestoreError::CommitRefused {
@@ -2946,6 +2973,11 @@ impl Machine {
     /// to one terminal. Without a sink, SBI console output is dropped (machine still runs).
     #[cfg(not(feature = "zicsr-stub"))]
     pub fn sbi_set_console(&mut self, sink: alloc::boxed::Box<dyn dev::console::ConsoleSink>) {
+        // A replay profile installs its output sink before the driver starts. It is configuration,
+        // not input; once the driver owns the machine, the sink cannot be replaced unbranched.
+        if self.session_replay_limit.is_some() {
+            return;
+        }
         self.sbi_state.console_out = Some(sink);
     }
 
@@ -2953,6 +2985,9 @@ impl Machine {
     /// `getchar`). Non-blocking semantics are the callee's: an empty queue reads 0 / -1.
     #[cfg(not(feature = "zicsr-stub"))]
     pub fn sbi_push_input(&mut self, bytes: &[u8]) {
+        if !self.host_ingress_gate.allows_host() {
+            return;
+        }
         self.sbi_state.console_in.extend(bytes.iter().copied());
     }
 
@@ -3615,6 +3650,9 @@ impl Machine {
     /// Validate every component and the complete topology before exact software restore.
     /// This creates no physical-input release, guest instruction or host clock rebase.
     pub fn load_session_resume(&mut self, blob: &[u8]) -> Result<(), crate::resume::SnapshotError> {
+        if self.session_replay_limit.is_some() {
+            return Err(crate::resume::SnapshotError::ReplayActive);
+        }
         if !self.extra_blk.is_empty() || self.guest_clock_mode() != time::TimeMode::ICount {
             return Err(crate::resume::SnapshotError::BadComponentState {
                 tag: crate::resume::section::CLOCK,
@@ -3632,6 +3670,9 @@ impl Machine {
         blob: &[u8],
         renderer_digest: &[u8; 32],
     ) -> Result<(u64, u64), crate::resume::SnapshotError> {
+        if self.session_replay_limit.is_some() {
+            return Err(crate::resume::SnapshotError::ReplayActive);
+        }
         let payload =
             dev::virtio::gpu::checkpoint::open_resume(blob, renderer_digest).map_err(|_| {
                 crate::resume::SnapshotError::BadComponentState {
@@ -5547,6 +5588,20 @@ impl Machine {
                 });
             };
             ran_any = true;
+            // A compiled span sees one device boundary at entry; account for the boundaries
+            // it skipped before returning. A trapping instruction also has a boundary, even
+            // though it does not retire, so its span needs one additional tick.
+            if self.session_clock.is_some()
+                && let Some((uart, _)) = &self.uart
+            {
+                let skipped = match &step {
+                    BlockStep::Committed { retired, .. } | BlockStep::Budget { retired } => {
+                        retired.saturating_sub(1)
+                    }
+                    BlockStep::Trapped { retired, .. } => *retired,
+                };
+                uart.borrow_mut().tick_by(skipped);
+            }
             match step {
                 BlockStep::Budget { retired } => {
                     debug_assert!(retired > 0 && retired <= block_budget);

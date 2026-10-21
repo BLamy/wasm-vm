@@ -319,6 +319,9 @@ impl crate::Machine {
         Ok(hub.guest.pending.values().cloned().collect())
     }
     pub fn lease_session_network(&self, id: Option<u64>) -> Result<NetworkLease, NetworkError> {
+        if !self.host_ingress_gate.allows_host() {
+            return Err(NetworkError::ReplayIngress);
+        }
         let hub = self
             .session_network
             .as_ref()
@@ -349,6 +352,9 @@ impl crate::Machine {
         lease: &NetworkLease,
         event: NetworkEvent,
     ) -> Result<(), NetworkError> {
+        if !self.host_ingress_gate.allows_host() {
+            return Err(NetworkError::ReplayIngress);
+        }
         {
             let hub = self
                 .session_network
@@ -373,6 +379,28 @@ impl crate::Machine {
         self.apply_session_network(event)
     }
     pub fn replay_session_network(
+        &mut self,
+        position: SessionPosition,
+        event: NetworkEvent,
+    ) -> Result<(), NetworkError> {
+        if self.session_replay_limit.is_some() || !self.host_ingress_gate.allows_host() {
+            return Err(NetworkError::ReplayIngress);
+        }
+        self.replay_session_network_owned(position, event)
+    }
+
+    pub(crate) fn replay_recorded_session_network(
+        &mut self,
+        position: SessionPosition,
+        event: NetworkEvent,
+    ) -> Result<(), NetworkError> {
+        if self.session_replay_limit.is_none() {
+            return Err(NetworkError::ReplayIngress);
+        }
+        self.replay_session_network_owned(position, event)
+    }
+
+    fn replay_session_network_owned(
         &mut self,
         position: SessionPosition,
         event: NetworkEvent,
@@ -409,23 +437,31 @@ impl crate::Machine {
         }
         let position = self.session_position().ok_or(NetworkError::Inactive)?;
         let encoded = event.encode()?;
-        self.stage_session_effect(
-            position.transition,
-            SessionEffect::HostInput {
-                channel: CHANNEL,
-                bytes: encoded,
-            },
-        )
-        .map_err(|_| NetworkError::Position)?;
+        let effect = SessionEffect::HostInput {
+            channel: CHANNEL,
+            bytes: encoded,
+        };
+        let full_replay = self.session_replay_limit.is_some();
+        let staged = if full_replay {
+            self.stage_recorded_session_effect(position.transition, effect)
+        } else {
+            self.stage_session_effect(position.transition, effect)
+        };
+        staged.map_err(|_| NetworkError::Position)?;
         let mut event = Some(event);
-        self.deliver_session_host_boundary(|machine, channel, _| {
+        let apply = |machine: &mut Self, channel, _: &[u8]| {
             assert_eq!(channel, CHANNEL);
             let event = event.take().expect("one exclusive network event");
             let result = event.outcome(hub.borrow().guest.cursor + 1);
             hub.borrow_mut().accept(event);
             machine.fabric_idle_epoch = None;
             result
-        })
+        };
+        if full_replay {
+            self.deliver_recorded_session_host_boundary(apply)
+        } else {
+            self.deliver_session_host_boundary(apply)
+        }
         .map_err(|_| NetworkError::Position)
     }
 }

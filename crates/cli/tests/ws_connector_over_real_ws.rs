@@ -46,11 +46,17 @@ impl FrameTransport for WsWireTransport {
     }
 }
 
-struct ChildGuard(Child);
+struct ChildGuard {
+    child: Child,
+    stdout_drain: Option<std::thread::JoinHandle<()>>,
+}
 impl Drop for ChildGuard {
     fn drop(&mut self) {
-        let _ = self.0.kill();
-        let _ = self.0.wait();
+        let _ = self.child.kill();
+        let _ = self.child.wait();
+        if let Some(drain) = self.stdout_drain.take() {
+            let _ = drain.join();
+        }
     }
 }
 
@@ -87,13 +93,25 @@ fn spawn_relay() -> (ChildGuard, SocketAddr) {
         .expect("spawn wvrelay");
     let stdout = child.stdout.take().unwrap();
     let mut line = String::new();
-    BufReader::new(stdout).read_line(&mut line).unwrap();
+    let mut reader = BufReader::new(stdout);
+    reader.read_line(&mut line).unwrap();
     let addr: SocketAddr = line
         .split("ws://")
         .nth(1)
         .and_then(|s| s.trim().parse().ok())
         .unwrap_or_else(|| panic!("bad readiness line: {line:?}"));
-    (ChildGuard(child), addr)
+    // The relay writes connection diagnostics after readiness. Keep consuming its
+    // stdout so a later write cannot panic on the closed readiness pipe.
+    let stdout_drain = std::thread::spawn(move || {
+        let _ = std::io::copy(&mut reader, &mut std::io::sink());
+    });
+    (
+        ChildGuard {
+            child,
+            stdout_drain: Some(stdout_drain),
+        },
+        addr,
+    )
 }
 
 /// Connect a real WS to `relay_addr` and wire it into a [`WsWireTransport`] with reader + writer pumps.

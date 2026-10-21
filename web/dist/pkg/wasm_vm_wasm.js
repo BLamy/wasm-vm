@@ -1,5 +1,5 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
-import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js';
+import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
 import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
 import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
 
@@ -406,6 +406,18 @@ export class WasmLinux {
         return ret[0] !== 0;
     }
     /**
+     * @param {Uint8Array} initial_resume
+     * @param {Array<any>} events
+     * @param {Array<any>} witnesses
+     * @param {any} end
+     */
+    beginExactReplay(initial_resume, events, witnesses, end) {
+        const ret = wasm.wasmlinux_beginExactReplay(this.__wbg_ptr, initial_resume, events, witnesses, end);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * @param {number} slot
      * @param {string} name
      * @param {number} total
@@ -646,6 +658,87 @@ export class WasmLinux {
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
+    }
+    /**
+     * @param {SessionDeviceLease} lease
+     * @param {any} status
+     * @param {any} frames
+     * @param {Uint8Array} bytes
+     */
+    exactCompleteDeviceRequest(lease, status, frames, bytes) {
+        _assertClass(lease, SessionDeviceLease);
+        const ret = wasm.wasmlinux_exactCompleteDeviceRequest(this.__wbg_ptr, lease.__wbg_ptr, status, frames, bytes);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @param {SessionNetworkLease} lease
+     * @param {Uint8Array} input
+     */
+    exactCompleteNetworkEvent(lease, input) {
+        _assertClass(lease, SessionNetworkLease);
+        const ret = wasm.wasmlinux_exactCompleteNetworkEvent(this.__wbg_ptr, lease.__wbg_ptr, input);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @returns {any}
+     */
+    exactDeviceRequests() {
+        const ret = wasm.wasmlinux_exactDeviceRequests(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {string} id
+     * @returns {SessionDeviceLease}
+     */
+    exactLeaseDeviceRequest(id) {
+        const ptr0 = passStringToWasm0(id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_exactLeaseDeviceRequest(this.__wbg_ptr, ptr0, len0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return SessionDeviceLease.__wrap(ret[0]);
+    }
+    /**
+     * @param {string} id
+     * @returns {SessionNetworkLease}
+     */
+    exactLeaseNetworkRequest(id) {
+        const ptr0 = passStringToWasm0(id, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_exactLeaseNetworkRequest(this.__wbg_ptr, ptr0, len0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return SessionNetworkLease.__wrap(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    exactNetworkRequests() {
+        const ret = wasm.wasmlinux_exactNetworkRequests(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {boolean} include_resume
+     * @returns {any}
+     */
+    exactSessionWitness(include_resume) {
+        const ret = wasm.wasmlinux_exactSessionWitness(this.__wbg_ptr, include_resume);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * E3-T02: fetch (and hash-verify) every chunk the device is parked on, populating the store so
@@ -1146,6 +1239,30 @@ export class WasmLinux {
         return WasmLinux.__wrap(ret[0]);
     }
     /**
+     * Pinned 256 MiB RV64 Linux software-session profile. It installs owned block, network,
+     * agent, RTC and entropy boundaries before boot, and never creates a live transport while
+     * replaying. The caller supplies the immutable base chunks to the recording broker.
+     * @param {Uint8Array} kernel
+     * @param {string} manifest_json
+     * @param {string} bootargs
+     * @param {Function} output
+     * @param {boolean} replay
+     * @returns {WasmLinux}
+     */
+    static newExactSession(kernel, manifest_json, bootargs, output, replay) {
+        const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_newExactSession(ptr0, len0, ptr1, len1, ptr2, len2, output, replay);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return WasmLinux.__wrap(ret[0]);
+    }
+    /**
      * E3-T21d: the persistent driver calls this right after `persistPending` so a durable IndexedDB
      * flush pause — during which the guest is frozen and cannot ACK or heartbeat an in-flight file
      * transfer — does not accrue against the WVFT idle-timeout budget. No-op when nothing is
@@ -1378,6 +1495,17 @@ export class WasmLinux {
      */
     runChunk(max_instrs, persist_max_dirty_bytes) {
         const ret = wasm.wasmlinux_runChunk(this.__wbg_ptr, max_instrs, isLikeNone(persist_max_dirty_bytes) ? Number.MAX_SAFE_INTEGER : (persist_max_dirty_bytes) >>> 0);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @param {number} quantum
+     * @returns {any}
+     */
+    runExactReplayToEnd(quantum) {
+        const ret = wasm.wasmlinux_runExactReplayToEnd(this.__wbg_ptr, quantum);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -1831,6 +1959,16 @@ export class WasmLinux {
      */
     takeAgentOutput() {
         const ret = wasm.wasmlinux_takeAgentOutput(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * @returns {any}
+     */
+    takeExactSessionDeliveries() {
+        const ret = wasm.wasmlinux_takeExactSessionDeliveries(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -3025,6 +3163,10 @@ function __wbg_get_imports() {
             const ret = invokeJitBlock(arg0, arg1 >>> 0, arg2 >>> 0);
             return ret;
         },
+        __wbg_isArray_0677c962b281d01a: function(arg0) {
+            const ret = Array.isArray(arg0);
+            return ret;
+        },
         __wbg_keys_58421f8f96795607: function(arg0) {
             const ret = Object.keys(arg0);
             return ret;
@@ -3419,27 +3561,27 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000002: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 82, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 93, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714);
             return ret;
         },
         __wbindgen_cast_0000000000000003: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 82, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 93, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_2);
             return ret;
         },
         __wbindgen_cast_0000000000000004: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 82, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 93, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_3);
             return ret;
         },
         __wbindgen_cast_0000000000000005: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 82, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 93, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_4);
             return ret;
         },
         __wbindgen_cast_0000000000000006: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 99, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 108, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h4eecf702a8348cd1);
             return ret;
         },
