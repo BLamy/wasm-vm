@@ -3,7 +3,7 @@ id: E9-T17
 epic: 9
 title: Restore historical accelerated desktop checkpoint pairs
 priority: 524.917
-status: implemented
+status: verified
 depends_on: [E9-T05, E9-T16, E6-T11d74c, E6-T11d74d]
 estimate: S
 risk: high
@@ -20,9 +20,9 @@ Integrate the accepted production GPU checkpoint path, renderer/profile identity
 
 ## Acceptance criteria
 
-- [ ] Capture two real accelerated desktop positions and restore the matching guest state, disk root, GPU resources and physical scanout from each.
-- [ ] Require actual post-restore guest rendering/input and current-epoch scanout; old screenshots, retained readiness messages and software fallback do not prove accelerated restore.
-- [ ] Reject incompatible host/profile/build or lost-context captures cleanly. Reuse the verified E6-T11d74a/b/c/d native/renderer/worker/publication path; the cancelled E6-T11 container is not an executable prerequisite. Retain the authenticated clock policy and fresh epochs.
+- [x] Capture two real accelerated desktop positions and restore the matching guest state, disk root, GPU resources and physical scanout from each.
+- [x] Require actual post-restore guest rendering/input and current-epoch scanout; old screenshots, retained readiness messages and software fallback do not prove accelerated restore.
+- [x] Reject incompatible host/profile/build or lost-context captures cleanly. Reuse the verified E6-T11d74a/b/c/d native/renderer/worker/publication path; the cancelled E6-T11 container is not an executable prerequisite. Retain the authenticated clock policy and fresh epochs.
 
 ## Deterministic acceptance
 
@@ -275,3 +275,94 @@ sabotage. Its raw review of the prior failed run remains scoped to that run's
 successful capture/refusal observations; it is not substituted for this final
 successful recording. Full review of the final evidence and hunk coverage is now
 required. Status is `implemented`; production publication awaits verification.
+
+
+### 2026-10-21 — verifier — VERDICT: verified
+
+Independent critic session, continuing its preserved preflights and predictions;
+not the implementer. Product head `5ac10674243b4a690c3930afd63f688dbe55ed88`,
+worker submission `97968a538f522da1928af886325345fab567231d`. The submission adds
+only task/queue metadata. No implementation was changed by this review.
+
+- **F1/F7 — HELD:** the pristine exact-product-head `make verify-E9-T17` completed
+  with exit 0; its checkout remains clean. Independently rehashed all 2060 final
+  evidence files, 36 frozen changed sources, 23 executed source copies, 13 executed
+  harness copies and all 56 worker/runtime files. Cold report SHA-256
+  `f699ad01a8411037d240bdbe3f939161096f6fda51a5a7bb2a1ddb6e5c26bfef`;
+  independent `final/provenance-audit.json` records the comparisons. Built demo
+  127/0 and zero console/HTTP errors, transport/archive tests and actual short
+  hardware/public restores passed. The unchanged native gate, its previously
+  rehashed 449 files and 4096-instruction trace carry under the same pinned digest
+  `3b04d37a30b4abfa69ed8e9626ac2b95204736fc3ff3c6547e7a89f153767ea7`.
+  Only the exact five pre-existing quarantined zicsr-stub diagnostics are waived;
+  production linting stays strict. That gate is not used to prove the page launcher.
+- **F2 — HELD:** independently authenticated the new 1933-object, 343317156-byte
+  closure, both WVGPAIR/component digests, native self-seals/witnesses, descriptors,
+  full configuration/clock/profile identities and complete historical COW roots.
+  Each root reconstructs the pair's exact disk delta; each sparse RAM stream is
+  exactly 1 GiB and native counters equal positions 38400921493 / 39351366743.
+  Canonical original manifest SHA-256
+  `1bdf7f83c0aee5e2cb7f695e52ee9660802aaaa3bbf69e59eb99c6fb48b25766`,
+  revision 2. Archive receipt SHA-256
+  `cf8c13776a81ed178bac24ebdad7bfa3d2f4951bb96f238973ceda84a159778e`;
+  `final/raw-archive-audit.json` and `final/raw-object-index.json` retain details.
+- **F3/F4/F5 — HELD:** in the final real Linux/Mesa trace, public restores
+  `call@10535` (trace.trace line 5977) and `call@10909` (6455) return restored=true.
+  Fresh distinct owners advance each saved local epoch 2 to epoch 3. Their actual
+  physical canvas digests match the original saved values
+  `9a64eb8a469be4e312c0ac834322ec881b29ed07b81fa503094ff338f134ab8f` and
+  `b33c0ac1c42e026d516d9574aad45144bdfc47564e395ec5ae3a751c1099b6b7`.
+  Matching resource bindings, current-epoch drawn retirements and later new draws
+  (840→935, 876→975) accompany original Foot PID 773 and the historical file matrix:
+  first restore excludes first and creates second; second retains first, excludes
+  second and creates third. All four uid-1000 trusted-input/new-file/clock probes
+  pass; pause freezes retirement/mtime and resume progresses under the declared
+  divider-64 paced-on-keyboard policy. The physical screenshots were visually
+  inspected. Seven canonical fingerprints preserve original bytes/revision after
+  build, actual host-limit, disk/GPU/configuration and context-loss refusals.
+  Desktop report SHA-256
+  `18ede0195c3e9677fd4cb0970cdab79eade9dbcc205461053a36fb7592047a67`;
+  trace ZIP SHA-256
+  `bdae749a96614477a76be84157e31b6e6fcb04e3e26be54ac7caf76bda21d96e`.
+  `final/trace-audit.json` gives exact before/after lines, calls and digests.
+- **F6 — HELD:** visible default-database Save (`call@11375`, line 6958), Open
+  (`call@11387`, 7009) and general-page Open (`call@11467`, 7216) execute the real
+  library. Independently resolved recorded DOM snapshots at lines 7002/7047/7280/
+  7286 confirm active/selected IDs, point and status. The saved post-restore point
+  is at 42325727390, beyond the 39351366743 baseline plus earlier local retirement.
+  Reopening and fresh-document navigation retain first/third, exclude second;
+  new trusted route input creates another file and more current-epoch GPU draws.
+  The library and route restore saved epoch 3 into separate fresh local epoch 4
+  owners. Repeated worker-local numbers are valid; global uniqueness is not required.
+- **Unchanged adversarial predictions — HELD:** carry the independent RAM/native,
+  profile/build, disk/GPU and full boot/image identity attacks; original canonical
+  bytes/revision preservation; authentic old-worker callback isolation with retained
+  frame/binding/canvas unchanged and a successful current completion; actual early
+  and asynchronous-publication context loss; GC, four tab interruptions and twenty
+  two-tab races. The prior before-commit loss guard-removal regression and current
+  public-query fix-removal regression each fail at the intended defect only.
+  The bounded image-text/duplicate and no-debug-URL cases remain HELD. Capture's
+  boundary is final owner validation immediately before publication; later loss
+  does not invalidate an already committed pair. Earlier failed runs and receipts
+  remain unchanged, including the 795dc scope failure; none is restore proof.
+- **F8/F9 — HELD:** all 126 submitted hunks are classified: 103 executed, 23
+  nonbehavioral/declarative waived, 0 dead, 0 needs-evidence. Coverage SHA-256
+  `012454dfbfa4ddf1a528521d2aa4eeb22abcb3ee067467e4ba15a07b708991b3` (`final/coverage.json`). Four bounded UI/route
+  cases additionally execute same-session metadata append, New GPU URL assignment
+  (request aborted before boot), invalid route and missing-route error reporting;
+  exact V8 ranges are retained. No extra Linux boot or native suite was run.
+  Only this verification log/status, supported AC checkboxes and regenerated queue
+  are committed. Final receipt: `target/evidence/e9-t17-standard-verifier/5ac10674/final/receipt.json`.
+  Receipt SHA-256 `3ce9f9c5b2eb723e3732114c2b9c2af96bd95608f57a0f3a5085376ff6ceed63`.
+- **SUITE:** retain `make verify-E9-T17` and its deterministic transport/archive,
+  actual worker/public-restore and real-desktop regressions. The one-off bounded UI
+  probe over an archived graph remains evidence, not a portable permanent test;
+  the existing verify target supplies the recurring machine/library proof. GPU
+  event/result replay is E9-T18; no bar-glyph or latency claim was added.
+
+Commands: independent read-only archive, trace/DOM and provenance auditors plus
+`node .../final/ui-coverage.mjs` (four cases, zero Linux boots); exact commands and
+hashes in `final/commands.json`. Task policy is run before queue generation;
+`final/workflow.json` and `final/commit-result.json` retain those results. Prior
+HELD preflight/raw receipts remain intact. No rr is required under AGENTS' waiver;
+no implementation fix, deployment, merge or new task was performed.
