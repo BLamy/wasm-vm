@@ -366,3 +366,28 @@ hashes in `final/commands.json`. Task policy is run before queue generation;
 `final/workflow.json` and `final/commit-result.json` retain those results. Prior
 HELD preflight/raw receipts remain intact. No rr is required under AGENTS' waiver;
 no implementation fix, deployment, merge or new task was performed.
+
+### 2026-10-21 — worker — production publication
+
+Published verified runtime plus roadmap/task metadata at source commit
+`1f2a93db1210409e2277e14b9a9944573af5062d` using
+`bash tools/deploy-cloudflare.sh` (`--branch main`), deployment `9a0c435f`.
+The direct main URL is <https://wasm-vm.pages.dev/>. The built-page recheck passed
+127/0 with zero errors and a verified T17 detail. No worker/Wasm/runtime bytes
+changed after the frozen acceptance; only declarative roadmap, task and bundle
+metadata changed.
+
+`node target/evidence/e9-t17-release-check.mjs target/evidence/e9-t17-production-9a0c435f-r2`
+then checked the main URL itself: all 64 assets (including all 56 pinned runtime
+files, both case-study pages and marketing CSS) exactly match the deployed bundle;
+the actual in-page ISA harness passes 127/0, the public roadmap badge is verified,
+and there are zero console/HTTP errors. Browser trace/screenshots and executed
+checker are retained beside `report.json`, SHA-256
+`220651bac65bd2dcb5fc7d84a5b2a35739453153daa2662c91764f26972d5a7e`.
+The first checker attempt's 64 hashes passed but its visible-click action targeted
+the launcher's hidden legacy harness; that failure remains separately recorded.
+The corrected checker invokes the existing handler as the frozen acceptance does.
+Deploy log SHA-256
+`9d06faae4039b2239648136cf566c5b3603277db514fae34d2fa017c56900ee4`.
+Expected R2 manifest staging rewrites were retained as evidence, then restored to
+the committed local build form. The PR remains open; no merge was performed.
