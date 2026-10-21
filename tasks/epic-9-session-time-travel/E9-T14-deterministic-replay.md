@@ -3,7 +3,7 @@ id: E9-T14
 epic: 9
 title: Replay recorded sessions and detect the first divergence
 priority: 524.914
-status: in-progress
+status: implemented
 depends_on: [E9-T05, E9-T10, E9-T11, E9-T12, E9-T13]
 estimate: S
 risk: high
@@ -623,3 +623,64 @@ borrowed`. This is a runtime defect, so T14 returns to `in-progress` for a
 parser repair and a new high-risk exact-head proof. The failing browser harness
 receipt is `/Users/blamy/Documents/Codex/e9-t14-coverage-journal/report.json`,
 SHA-256 `24a81ed11885eab2a33115fe2a6144eda8661c774865f31d093b9baaf1636ead`.
+
+### 2026-10-20 — worker — parser repair and coverage evidence submitted
+
+VERDICT CLAIM: frozen runtime and deploy source
+`9aa5f3683256247107c0e1125b2e80a9cb79468a` rejects malformed Wasm
+receipts before borrowing the machine; an absent or non-array host outcome is
+an ordinary `exact replay outcome` error, and a throwing field getter is
+reported without poisoning the Wasm instance. Native tests now independently
+exercise actual extra and both directions of misordered receipts, invalid RAM
+and decoded adapter intent, failed witness serialization, malformed start
+conditions, source length/availability, external pending, and a skipped
+receipt at the declared end. The browser exercises real IndexedDB corruption
+and transaction aborts, Wasm lease refusals, and immutable witness commitment.
+The previous verifier's semantic HELD results are unchanged. The remaining
+defensive-arm waiver arguments, with source coordinates, are in
+`/Users/blamy/Documents/Codex/e9-t14-coverage-closure-9aa5f368.md`
+(SHA-256 `61b9f4d6c7037c9e85e112de528ddc821bc607e942a755c471cd3e80ef23a65d`);
+they are claims for the new verifier to attack, not a self-verdict.
+
+Evidence of record:
+
+- From a fresh separate sparse checkout with `RUSTFLAGS`, `RUSTDOCFLAGS`,
+  `RUST_LOG`, and inherited `CARGO_*` overrides scrubbed:
+  `E9_REPLAY_EVIDENCE_DIR=/Users/blamy/Documents/Codex/e9-t14-cold-proof-9aa5f368-evidence make verify-E9-T14`.
+  [Exact-head receipt](/Users/blamy/Documents/Codex/e9-t14-cold-proof-9aa5f368-evidence/report.json)
+  SHA-256 `d7160cf9816e2935a058f7980fcf9ebb0ca76eb9de2cc7f345da5a157f9826d0`,
+  `status: passed`, 23 gates. `make ci` alone exits 2 on exactly the five
+  pre-existing `zicsr-stub` dead-code diagnostics reproduced on untouched
+  parent `c52ab64`; the separately run full native/wasm workspace, RISC-V,
+  replay attacks, real JIT, performance, cross-target, Clippy, contract and
+  browser gates all exit 0. The checkout ended clean.
+- [Guest trace](/Users/blamy/Documents/Codex/e9-t14-cold-proof-9aa5f368-evidence/guest-trace/guest-instructions.trace)
+  has 4,096 instructions, SHA-256
+  `f1b4ecb90f66224ef2e61dd73d8367f11f0080b5acd8c3e1fce5d37bc19d4a81`;
+  its complete-resume digest is
+  `7d3baa054f978ddb541a6263d950c50c501bfeaf8488d5fcad683d0783c97814`.
+  [Built-browser report](/Users/blamy/Documents/Codex/e9-t14-cold-proof-9aa5f368-evidence/browser/report.json)
+  SHA-256 `21e1cb4fdf0ebf00deca6e36daf64ba74c810843cf43b95c399a6bed26b7d3b5`
+  records 127/0, zero console errors, 47 durable events, interpreter/JIT
+  matching complete-state digests, 12,879,803 real JIT retirements, four
+  precise divergence attacks, and 11 Wasm/provider/lease refusals. The
+  [journal report](/Users/blamy/Documents/Codex/e9-t14-cold-proof-9aa5f368-evidence/journal-bounds/report.json)
+  SHA-256 `36c19347bb02b96e00f808b41a47fa872fa47f3f7bd5833e20693764f2c6ba6f`
+  has 57 passing checks.
+- `bash tools/deploy-cloudflare.sh` published the staged build to the main
+  `wasm-vm` Pages project, deployment `5df682b8`. The [deploy log](/Users/blamy/Documents/Codex/e9-t14-deploy-proof-9aa5f368/deploy.log)
+  SHA-256 `57c03e4ef5ddf32b67b7d1d7a560ab630ae781fa958ddc2958d38a0c98caacaa`
+  validates the staged manifests and lists the production URL
+  <https://wasm-vm.pages.dev/>. The [public R2 receipt](/Users/blamy/Documents/Codex/e9-t14-deploy-proof-9aa5f368/r2-public-exact.json)
+  SHA-256 `48b4e6effc877438af50a7465bc05751e3ef0c7304e45783878bf5006d7b1771`
+  streamed all seven release objects (1,056,405,181 bytes) and matched size
+  and SHA-256 for each.
+- [Production Playwright report](/Users/blamy/Documents/Codex/e9-t14-public-browser-9aa5f368/report.json)
+  SHA-256 `b47ba8afdcd08b9089afccf8fa1d0febe1df786a81205770112840ce862a5237`
+  records 127/0, 47 events, 11 ABI checks, interpreter/JIT complete-state
+  agreement, live roadmap pips, and no console errors except the permitted
+  favicon 404. All seven fetched app/JS/wasm asset hashes equal the tested
+  cold-build assets. Its screenshot and Playwright trace are next to the report.
+
+A fresh independent verifier must interrogate this exact-head evidence and
+the prior G01–G18 ledger before setting `verified`.
