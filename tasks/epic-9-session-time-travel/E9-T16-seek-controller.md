@@ -3,7 +3,7 @@ id: E9-T16
 epic: 9
 title: Seek and reverse-step with cancellable replay-forward
 priority: 524.916
-status: pending
+status: in-progress
 depends_on: [E9-T14, E9-T15]
 estimate: S
 risk: high
