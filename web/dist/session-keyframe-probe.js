@@ -91,12 +91,21 @@ export async function runSessionKeyframeProbe({onProgress=()=>{}}={}){
   need(BigInt(source.inputPosition().transition)>BigInt(beforeRebase),'full rebase advances the session end');
   result.rebase=await journal.captureKeyframe(store,source,configuration,'base-2',{full:true});
   need(result.rebase.depth===0,'new full base resets chain');
+  const atRebase=source.exactSessionWitness(false);
+  const afterRebase=source.runChunk(1000000);
+  need(!afterRebase.done,'guest ended before post-rebase delta');
+  journal.stage(source.takeExactSessionDeliveries());await journal.flush();
+  onProgress('Capturing a RAM delta after the new full base');
+  result.postRebase=await journal.captureKeyframe(store,source,configuration,'delta-after-rebase');
+  need(result.postRebase.depth===1&&result.postRebase.dirtyPages>0,
+   'post-rebase guest writes must produce a depth-one delta');
   result.historyGrowthBytes=(await store.statistics()).payloadBytes-initialStoredBytes;
   need(result.historyGrowthBytes<=256*1048576,'software history growth budget');
-  need([...result.deltas,result.rebase].every(value=>value.pauseMs<=5000&&value.maxStagedBytes<=64*1048576),
+  need([...result.deltas,result.rebase,result.postRebase].every(value=>value.pauseMs<=5000&&value.maxStagedBytes<=64*1048576),
    'software checkpoint pause/staging budget');
   const final=source.exactSessionWitness(true);
-  result.witnesses.push(witness('rebase',final));
+  result.witnesses.push(witness('rebase',atRebase));
+  result.witnesses.push(witness('post-rebase-delta',final));
   need(!same(final,initial)&&hex(final.digest)!==hex(initial.digest),'recording reached a new state');
   const changed={...initial,digest:initial.digest.slice()};changed.digest[0]^=1;
   let changedInitial='';try{await journal.completeExact(final,[changed,final]);}
@@ -107,7 +116,7 @@ export async function runSessionKeyframeProbe({onProgress=()=>{}}={}){
   await journal.completeExact(final,[initial,final]);
   await writer.release();writer=null;
   const read=await SessionInputJournal.readExact(store,KEYFRAME_PROBE_ID,{configuration});
-  need(read.manifest.checkpoints.length===10,'published checkpoint count');
+  need(read.manifest.checkpoints.length===11,'published checkpoint count');
   const replay=make(true);
   try{
    replay.beginExactReplay(read.initialResume,read.receipts,read.witnesses,final);
@@ -125,6 +134,21 @@ export async function runSessionKeyframeProbe({onProgress=()=>{}}={}){
    need(stats.restoreMs<=5000&&stats.maxStagedBytes<=64*1048576,'software restore budget');
    result.restore=stats;
   }finally{restored.free();}
+  const afterRebaseCandidate=make(true);
+  try{
+   const stats=await new SessionCheckpoints(store).restoreExactDeltaToCandidate(
+    KEYFRAME_PROBE_ID,'delta-after-rebase',afterRebaseCandidate);
+   const independent=afterRebaseCandidate.exactSessionWitness(true);
+   need(hex(independent.digest)===hex(final.digest)
+    &&independent.resume.length===final.resume.length
+    &&independent.resume.every((byte,index)=>byte===final.resume[index]),
+   'post-rebase delta must reconstruct the independent complete snapshot');
+   need(stats.depth===1&&stats.appliedPages===result.postRebase.dirtyPages
+    &&stats.restoreMs<=5000&&stats.maxStagedBytes<=64*1048576,
+   'post-rebase restore budget and page count');
+   result.postRebaseRestore={...stats,fullSnapshotBytes:independent.resume.length,
+    fullSnapshotSha256:checkpointHash(independent.resume)};
+  }finally{afterRebaseCandidate.free();}
   const sibling=structuredClone(read.manifest);sibling.id=KEYFRAME_PROBE_ID+'-sibling';
   const siblingWriter=await store.writer(sibling.id);
   try{await siblingWriter.publish(encoder.encode(JSON.stringify(sibling)));}

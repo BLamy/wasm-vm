@@ -61,22 +61,30 @@ try{
  assert.equal(report.probe.status,'passed');assert.equal(report.probe.deltas.length,2);
  assert.deepEqual(report.probe.depths,[1,2,3,4,5,6,7,8]);
  assert.equal(report.probe.rebase.depth,0);
+ assert.equal(report.probe.postRebase.depth,1);
+ assert.ok(report.probe.postRebase.dirtyPages>0);
  assert.equal(report.probe.restore.depth,2);
+ assert.equal(report.probe.postRebaseRestore.depth,1);
+ assert.equal(report.probe.postRebaseRestore.appliedPages,report.probe.postRebase.dirtyPages);
+ assert.ok(/^[0-9a-f]{64}$/.test(report.probe.postRebaseRestore.fullSnapshotSha256));
  assert.equal(report.probe.liveReplay.status,'Completed');
  assert.equal(report.probe.liveReplay.eventCursor,2);
  assert.equal(report.probe.liveReplay.digest,report.probe.witnesses.at(-1).digest);
  assert.ok(report.probe.restore.restoreMs<=5000&&report.probe.restore.maxStagedBytes<=64*1048576);
  assert.equal(report.probe.shared,true);
- assert.deepEqual(report.probe.witnesses.map(value=>value.label),['initial','delta-1','delta-2','rebase']);
+ assert.deepEqual(report.probe.witnesses.map(value=>value.label),
+  ['initial','delta-1','delta-2','rebase','post-rebase-delta']);
  assert.ok(report.probe.witnesses.every(value=>/^[0-9a-f]{64}$/.test(value.digest)));
- assert.equal(new Set(report.probe.witnesses.map(value=>value.digest)).size,4);
+ assert.equal(new Set(report.probe.witnesses.map(value=>value.digest)).size,5);
  assert.deepEqual(report.probe.attacks.map(attack=>attack.name),
   ['unfinished-replay','chain-limit','changed-initial','missing-ancestor','corrupt-ancestor']);
  assert.ok(report.probe.jitStore.executedBlocks>0&&report.probe.jitStore.retiredViaJit>0
   &&report.probe.jitStore.directMarks>0);
  assert.ok(report.probe.historyGrowthBytes<=256*1048576);
- assert.ok([...report.probe.deltas,report.probe.rebase].every(value=>value.pauseMs<=5000
+ assert.ok([...report.probe.deltas,report.probe.rebase,report.probe.postRebase].every(value=>value.pauseMs<=5000
   &&value.maxStagedBytes<=64*1048576));
+ assert.ok(report.probe.postRebaseRestore.restoreMs<=5000
+  &&report.probe.postRebaseRestore.maxStagedBytes<=64*1048576);
  assert.match(await page.locator('#session-keyframe-pip').getAttribute('class'),/\blive\b/);
  assert.match(await page.locator('.cap',{hasText:'Incremental RAM keyframes'}).locator('.cap-pip').getAttribute('class'),/\blive\b/);
  assert.deepEqual(report.errors,[]);
