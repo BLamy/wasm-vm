@@ -21,6 +21,7 @@ export class SessionTimeline {
     this.gpuFrame=document.createElement('div');this.gpuFrame.dataset.timelineGpuFrame='';this.c.console.before(this.gpuFrame);
     this.epoch=0;this.refreshEpoch=0;this.playEpoch=0;this.preview=null;this.owner=null;this.active=null;this.operation=null;this.playing=false;this.recording=null;
     this.branch=null;this.branchCreation=null;this.branchBusy=false;this.branchEpoch=0;this.branchRunning=false;this.branchRunEpoch=0;this.branchRun=null;
+    this.transfer=null;this.closed=false;
     const c=this.c;
     c.sessions.addEventListener('change',()=>void this.guard(()=>this.select(c.sessions.value)));
     for(const [key,action] of [['refresh',()=>this.refresh()],['open',()=>this.open()],['record',()=>this.record()],
@@ -32,6 +33,11 @@ export class SessionTimeline {
       c[key]?.addEventListener('click',()=>void this.guard(action));
     c['branch-input']?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();void this.guard(()=>this.sendBranchInput());}});
     c['record-file']?.addEventListener('click',()=>void this.guard(()=>this.record(true)));
+    c['bundle-export']?.addEventListener('click',()=>void this.guard(()=>this.exportLocal()));
+    c['bundle-import']?.addEventListener('click',()=>{if(!this.transfer)c['bundle-file'].click();});
+    c['bundle-file']?.addEventListener('change',()=>{const file=c['bundle-file'].files[0];c['bundle-file'].value='';if(file)void this.guard(()=>this.importLocal(file));});
+    c['bundle-cancel']?.addEventListener('click',()=>this.pause());
+    c['bundle-delete']?.addEventListener('click',()=>void this.guard(()=>this.deleteLocal()));
     c.stop.addEventListener('click',()=>{this.recording?.abort();this.status('Stopping the recording…');});
     c.target.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();void this.guard(()=>this.seek(c.target.value));}});
     c.scrub.addEventListener('input',()=>{
@@ -57,25 +63,28 @@ export class SessionTimeline {
   retire(owner){if(!owner)return;owner.controller.close();this.retire(owner.previous);owner.previous=null;}
   cancelRequest(){this.epoch++;this.operation=null;this.owner?.controller.cancel();}
   pause(){
+    if(this.transfer){if(this.transfer.kind!=='delete'){this.transfer.controller.abort();this.status('Cancelling the local transfer…');this.render();}return;}
     if(this.branchCreation){this.branchCreation.abort();this.branchCreation=null;this.branchEpoch++;this.status('Continuation creation cancelled. The saved parent is unchanged.');this.render();return;}
     if(this.branch)return this.pauseBranch();
     this.stopPlaying();this.cancelRequest();this.status(this.active?'Replay paused at the displayed position.':'Restoration cancelled; no replay position is active.');this.render();
   }
-  async guard(action){try{return await action();}catch(error){this.status(error.message,'error');this.render();}}
+  async guard(action){try{return await action();}catch(error){if(!this.closed){this.status(error.message,'error');this.render();}}}
   async initialize(){
     try{this.store??=await SessionStore.open();await this.refresh();}
     catch(error){this.status(`Local history unavailable: ${error.message}`,'error');this.render();}
   }
-  async refresh(preferred=this.c.sessions.value){
-    const token=++this.refreshEpoch,rows=await this.store.list();if(token!==this.refreshEpoch)return;
+  async refresh(preferred=this.c.sessions.value,transfer=null){
+    if(this.closed)return;this.transferIdle(transfer);
+    const token=++this.refreshEpoch,rows=await this.store.list();if(token!==this.refreshEpoch||!this.ownsTransfer(transfer))return;
     const options=[...rows.sessions,...rows.unavailable.map(r=>({...r,mode:'incomplete'}))];
     this.c.sessions.replaceChildren();
     if(!options.length)this.c.sessions.add(new Option('No saved sessions',''));
     for(const row of options)this.c.sessions.add(new Option(`${row.id} · ${row.mode}`,row.id));
     this.c.sessions.value=options.some(r=>r.id===preferred)?preferred:options[0]?.id??'';
-    await this.select(this.c.sessions.value);
+    await this.select(this.c.sessions.value,transfer);
   }
-  async select(id){
+  async select(id,transfer=null){
+    if(this.closed)return;this.transferIdle(transfer);
     if(this.branchLocked())throw Error('Save or discard the continuation before selecting another history.');
     this.refreshEpoch++;this.stopPlaying();this.cancelRequest();const token=this.epoch;this.preview=null;this.c.sessions.value=id;
     this.c.points.replaceChildren();this.c.events.replaceChildren();this.c.preview.textContent='';this.render();
@@ -83,14 +92,14 @@ export class SessionTimeline {
     this.status('Reading preview. The displayed replay remains at its last restored position.','loading');
     try{
       const opened=await this.store.openSession(id);if(!opened)throw Error('This session is incomplete or no longer available.');
-      const manifest=JSON.parse(decode.decode(opened.manifest));if(token!==this.epoch)return;
+      const manifest=JSON.parse(decode.decode(opened.manifest));if(token!==this.epoch||!this.ownsTransfer(transfer))return;
       let compatible=manifest.policy.mode==='exact-replay'&&manifest.policy.profile==='rv64-linux-software-v1'&&manifest.machine.gpu===null;
       if(manifest.policy.mode==='exact-replay'&&manifest.machine.gpu){
         const vm=manifest.assets.find(asset=>asset.role==='vm');
         const {readCheckpointObject}=await import('./session-checkpoints.js');
         const config=JSON.parse(decode.decode(await readCheckpointObject(this.store,vm.content,8*1048576)));
         compatible=config.version===1&&config.runtime==='rv64-linux-gpu-exact-session-v1'&&config.clock?.mode==='icount'&&config.clock.divider===64&&config.clock.interactive===null;
-        if(token!==this.epoch)return;
+        if(token!==this.epoch||!this.ownsTransfer(transfer))return;
       }
       this.preview={id,manifest,compatible};
       for(const point of manifest.checkpoints)this.c.points.add(new Option(`${point.id} · ${point.position.transition}`,point.id));
@@ -98,10 +107,11 @@ export class SessionTimeline {
       this.status(manifest.machine.gpu&&!compatible?'GPU checkpoints are available in Local saved sessions. This saved clock/runtime does not support event replay.':compatible
         ?'Selected preview only. Open replay restores a private machine and pauses the live guest.'
         :'This is an incomplete recording or a checkpoint-only session. Full replay is unavailable.',compatible?'ready':'gated');
-    }catch(error){if(token===this.epoch)this.status(`Cannot preview this session: ${error.message}`,'error');}
-    this.render();
+    }catch(error){if(token===this.epoch&&this.ownsTransfer(transfer))this.status(`Cannot preview this session: ${error.message}`,'error');}
+    if(this.ownsTransfer(transfer))this.render();
   }
   async open(){
+    this.transferIdle();
     if(this.branchLocked())throw Error('Save or discard the continuation before opening another replay.');
     if(!this.preview?.compatible||this.recording)throw Error('Select a completed recording first.');
     this.stopPlaying();this.cancelRequest();const token=this.epoch,id=this.preview.id,previous=this.owner;
@@ -155,7 +165,7 @@ export class SessionTimeline {
     }
   }
   branchLocked(){return !!this.branch||!!this.branchCreation||this.branchBusy;}
-  canControl(){return !!this.owner&&this.preview?.id===this.owner.id&&!this.recording&&!this.branchLocked();}
+  canControl(){return !!this.owner&&this.preview?.id===this.owner.id&&!this.recording&&!this.branchLocked()&&!this.transfer;}
   async seek(transition){
     if(!this.canControl())throw Error('Open the selected replay first.');
     this.stopPlaying();this.showTarget(transition);return this.request(()=>this.owner.controller.seekTransition(transition));
@@ -192,6 +202,7 @@ export class SessionTimeline {
     await advance();
   }
   async record(fileExample=false){
+    this.transferIdle();
     if(this.branchLocked())throw Error('Save or discard the continuation before recording a sample.');
     if(this.recording)return;this.pause();const signal=new AbortController();this.recording=signal;this.render();
     try{
@@ -212,6 +223,7 @@ export class SessionTimeline {
     this.c.active.textContent=`Active continuation: ${id}`;
   }
   async continueHere(){
+    this.transferIdle();
     if(!this.canControl()||!this.owner.controller.canContinue)throw Error('Select an available completed replay point before continuing.');
     this.pause();const token=++this.branchEpoch,source=this.owner,signal=new AbortController();this.branchCreation=signal;
     this.status('Preparing a private continuation…','restoring');this.render();
@@ -289,11 +301,71 @@ export class SessionTimeline {
       }
     }
   }
+  ownsTransfer(transfer){return !this.closed&&this.transfer===transfer;}
+  transferIdle(transfer=null){if(this.transfer&&this.transfer!==transfer)throw Error('Finish or cancel the local transfer first.');}
+  async localTransfer(kind,action,afterCommit=null){
+    this.transferIdle();
+    if(this.closed||this.recording||this.branchLocked())throw Error('Finish or discard the current recording before transferring saved history.');
+    this.pause();this.refreshEpoch++;const transfer={kind,controller:new AbortController()};this.transfer=transfer;
+    this.status(kind==='export'?'Preparing a complete local recording file…':kind==='import'?'Checking the local recording file…':'Deleting the selected local recording…','transferring');this.render();
+    let result,completed=false;
+    try{
+      result=await action({signal:transfer.controller.signal,onProgress:message=>{
+        if(this.transfer===transfer&&!this.closed&&!transfer.controller.signal.aborted)this.status(message,'transferring');
+      }});
+      completed=true;
+      if(this.ownsTransfer(transfer)&&afterCommit)await afterCommit(result,transfer);
+      return {status:'done',result};
+    }catch(error){
+      if(completed){
+        if(this.ownsTransfer(transfer))this.status(`Local ${kind} completed. The view could not refresh: ${error.message}. Refresh history to view the saved result.`,'error');
+        return {status:'done',result,viewError:error.message};
+      }
+      const cancelled=transfer.controller.signal.aborted;
+      if(!this.closed)this.status(cancelled?'Local transfer cancelled. Existing recordings are preserved.':`Local ${kind} failed: ${error.message}. Existing recordings are preserved.`,cancelled?'ready':'error');
+      return {status:cancelled?'cancelled':'error',error:error.message};
+    }finally{if(this.transfer===transfer)this.transfer=null;if(!this.closed)this.render();}
+  }
+  async exportLocal(){
+    const id=this.preview?.id;if(!id)throw Error('Select a saved recording to export.');
+    return this.localTransfer('export',async options=>{
+      const {exportSessionBundle}=await import('./session-bundles.js');return exportSessionBundle(this.store,id,options);
+    },({blob,manifestSha256,objects})=>{
+      const url=URL.createObjectURL(blob),link=document.createElement('a');
+      link.href=url;link.download='wasm-vm-session-'+id.replace(/[^A-Za-z0-9_.-]/g,'_')+'.wvsession';link.hidden=true;document.body.append(link);
+      try{link.click();}finally{link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+      this.c['bundle-details'].textContent=`${objects} objects · ${(blob.size/1048576).toFixed(1)} MiB · manifest ${manifestSha256}`;
+      this.status('Recording exported to a local file. No data was uploaded.');
+    });
+  }
+  async importLocal(file){
+    return this.localTransfer('import',async options=>{
+      const {importSessionBundle}=await import('./session-bundles.js');return importSessionBundle(this.store,file,options);
+    },async(result,transfer)=>{
+      await this.refresh(result.id,transfer);if(!this.ownsTransfer(transfer))return;
+      this.c['bundle-details'].textContent=`Imported manifest ${result.manifestSha256}`;
+      this.status('Recording imported locally. Open replay to restore it; the displayed guest is unchanged.');
+    });
+  }
+  async deleteLocal(){
+    this.transferIdle();const id=this.c.sessions.value;
+    if(!id||!window.confirm(`Delete local recording “${id}”? Its restore points will be removed; data referenced by other recordings is kept. Exported files stay on your device.`))return;
+    return this.localTransfer('delete',()=>this.store.deleteSession(id),async(result,transfer)=>{
+      if(this.owner?.id===id||this.active?.id===id){
+        this.retire(this.owner);this.owner=null;this.active=null;this.gpuFrame.replaceChildren();
+        this.c.console.textContent='Open a replay to view its console.';this.c.position.textContent='No position restored.';
+        delete this.c.position.dataset.transition;this.c.digest.textContent='No replay digest.';this.c.active.textContent='Active replay: none';
+      }
+      await this.refresh(undefined,transfer);if(!this.ownsTransfer(transfer))return;
+      this.c['bundle-details'].textContent='';
+      this.status(result.collected?'Local recording deleted; unshared data reclaimed.':`Local recording deleted. Storage cleanup needs attention: ${result.error?.detail??'retry Cleanup in Local saved sessions'}.`);
+    });
+  }
   get snapshot(){return {preview:this.preview?.id??null,active:this.active&&structuredClone(this.active),playing:this.playing,
-    pending:!!this.operation||!!this.branchCreation||this.branchBusy,mode:this.recording?'recording':this.branch?'continuation':this.active?'replay':'live',status:this.c.status.textContent};}
+    pending:!!this.operation||!!this.branchCreation||this.branchBusy||!!this.transfer,mode:this.transfer?'transfer':this.recording?'recording':this.branch?'continuation':this.active?'replay':'live',status:this.c.status.textContent};}
   render(){
     const c=this.c,ready=!!this.store,recording=!!this.recording,control=this.canControl(),selected=control&&this.owner.controller.selected;
-    const branch=this.branch,locked=this.branchLocked();
+    const branch=this.branch,locked=this.branchLocked()||!!this.transfer;
     c.sessions.disabled=c.refresh.disabled=c.record.disabled=!ready||recording||locked;c.stop.disabled=!recording;
     if(c['record-file'])c['record-file'].disabled=!ready||recording||locked;
     c.open.disabled=!this.preview?.compatible||recording||locked;
@@ -302,7 +374,13 @@ export class SessionTimeline {
     c.events.disabled=c['event-go'].disabled=!control||!this.owner.events.length;
     c.play.disabled=!selected||this.playing;c.back.disabled=!selected||BigInt(selected.position.transition)<=BigInt(this.owner.manifest.begin.transition);
     c.forward.disabled=!selected||BigInt(selected.position.transition)>=BigInt(this.owner.manifest.end.transition);
-    c.pause.disabled=!this.playing&&!this.operation&&!this.branchCreation;
+    c.pause.disabled=!this.playing&&!this.operation&&!this.branchCreation&&(!this.transfer||this.transfer.kind==='delete');
+    if(c['bundle-export']){
+      c['bundle-export'].disabled=!this.preview?.compatible||recording||locked;
+      c['bundle-import'].disabled=c['bundle-file'].disabled=!ready||recording||locked;
+      c['bundle-delete'].disabled=!ready||!c.sessions.value||recording||locked;
+      c['bundle-cancel'].disabled=!this.transfer||this.transfer.kind==='delete';
+    }
     c.mode.textContent=recording?'Recording a separate Linux sample; replay paused':branch?this.branchRunning?'Continuation · running · offline':'Continuation · paused · offline':this.active?this.playing?'Replay · playing':'Replay · paused':'Live view · no replay restored';
     if(c['branch-create']){
       c['branch-create'].disabled=!selected||!this.owner.controller.canContinue;
@@ -315,7 +393,7 @@ export class SessionTimeline {
       c['branch-discard'].textContent=this.branchCreation?'Cancel continuation':'Discard unsaved continuation';
     }
     c.scrub.setAttribute('aria-valuetext',`Preview transition ${c.target.value||'0'}`);
-    this.root.setAttribute('aria-busy',String(!!this.operation||recording||this.branchCreation||this.branchBusy));
+    this.root.setAttribute('aria-busy',String(!!this.operation||recording||this.branchCreation||this.branchBusy||!!this.transfer));
   }
-  close(){this.stopPlaying();this.cancelRequest();this.recording?.abort();const closed=this.discardBranch(false);this.retire(this.owner);this.owner=null;return closed;}
+  close(){this.closed=true;this.refreshEpoch++;this.transfer?.controller.abort();this.stopPlaying();this.cancelRequest();this.recording?.abort();const closed=this.discardBranch(false);this.retire(this.owner);this.owner=null;return closed;}
 }

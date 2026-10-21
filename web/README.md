@@ -231,8 +231,56 @@ local rootfs builder, then package them with `tools/session-branch-fixture/packa
 `make verify-E9-T20` records real Linux file writes and reload/deletion order,
 actual hardware GPU work in two children, raw native snapshots, an external
 counter, ABI ownership attacks and publication/paint/storage fault injection.
+
+## Local recording files
+
+The timeline's **Export recording** downloads one complete `.wvsession` file.
+**Import recording file** checks that file before publishing a local session;
+it selects a preview without replacing the displayed guest. **Open replay** is
+still explicit. A recording's ID and manifest remain unchanged; an existing ID
+is a conflict, not an overwrite. Parent and sibling recordings are not included
+unless their immutable objects are actually required by the chosen recording.
+
+Version 1 transfers finished exact software (256 MiB, ICount/10) and exact GPU
+(1 GiB, pure ICount/64) recordings admitted by the installed VM build. Partial
+input captures, checkpoint-only histories and foreign builds are refused. The
+archive includes the manifest, log, payloads, kernel/Wasm/renderer identity,
+base-image descriptor, complete historical COW pages, full keyframes and all RAM
+delta ancestors/pages. Recorded read results supply historical disk I/O; replay
+does not fetch the original guest asset URLs. A matching installed app provides
+host JavaScript and validates the bundled Wasm; this is a recording archive,
+not a standalone copy of the website. GPU import also runs the existing hardware
+qualification and saved-profile checks in a separate disposable WebGL context.
+In these exact runtimes, private COW pages are serialized inside the native owned
+device snapshot. The separately referenced disk root must be the accepted empty
+base binding; legacy overlay profiles are not admitted by version 1.
+
+`WVBUND01` uses a 16-byte prefix, a canonical JSON header and concatenated raw
+objects sorted by SHA-256. There are no entry paths, compression or scripts.
+Limits are 8 MiB of header, 65,536 entries, 640 MiB per object, and 4 GiB total
+uncompressed object data, with the existing smaller manifest, log, frame and
+renderer limits also enforced. Duplicate entries/fields, unsupported versions,
+extra or missing objects, mismatched digests, invalid native sections and foreign
+runtime identities fail before any destination publication. Hashing and staging
+use bounded 1 MiB chunks. A private native decoder candidate validates the
+state at every keyframe, including reconstructed delta RAM, without retiring
+guest instructions.
+
+Recording files contain guest memory/files, typed input and network payloads.
+Transfers are explicit local file operations with no upload. **Cancel local
+transfer** revokes an unfinished import, including its final transaction's
+authorizer; an already durable commit wins. Storage failure can leave unreachable
+staging objects, but cannot make that unfinished recording playable or overwrite
+another recording. **Delete local recording** removes its row and reclaims only
+unshared reachable data. Unknown or malformed surviving extension metadata stops
+reclamation. Exported files remain on the user's device after local deletion.
+
+`make verify-E9-T21` records real UI export/import across fresh Chrome profiles,
+Linux and physical-GPU state witnesses, actual guest-I/O URL denial, archive
+mutation/refusal tests, duplicate IDs, quota, both sides of cancellation, and
+reclamation while preserving other recordings.
 Independent byte readers check the ext2 contents, COW sectors and GPU readback.
 The full local wall runs once at a clean frozen head. A separate
-`python3 -B tools/verify/e9-branch.py --output OUTPUT --cold-clone CLONE_DIRECTORY`
+`python3 -B tools/verify/e9-bundles.py --output OUTPUT --cold-clone CLONE_DIRECTORY`
 checks that same revision from a pristine checkout and fresh build directory.
 These are correctness proofs; desktop performance budgets remain E9-T22.

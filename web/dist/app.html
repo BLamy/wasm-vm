@@ -1035,6 +1035,15 @@
           <button data-timeline="record-file" type="button" disabled>Record file example</button>
           <button data-timeline="stop" type="button" disabled>Stop recording</button>
         </div>
+        <div class="session-actions">
+          <button data-timeline="bundle-export" type="button" disabled>Export recording</button>
+          <button data-timeline="bundle-import" type="button" disabled>Import recording file</button>
+          <input data-timeline="bundle-file" type="file" accept=".wvsession,application/x-wasm-vm-session" aria-label="Local recording file" hidden disabled>
+          <button data-timeline="bundle-cancel" type="button" disabled>Cancel local transfer</button>
+          <button data-timeline="bundle-delete" type="button" disabled>Delete local recording</button>
+        </div>
+        <p class="session-note">Recording files contain guest memory and files, typed input and network payloads. Export and import stay on your device. Use the same app build; GPU recordings also require compatible hardware. Delete removes the local recording, while exported files remain on your device.</p>
+        <p data-timeline="bundle-details" class="session-note" aria-live="polite"></p>
         <p data-timeline="mode">Live view · no replay restored</p>
         <p data-timeline="active">Active replay: none</p>
         <p data-timeline="position" aria-label="Active replay position">No position restored.</p>

@@ -26,7 +26,30 @@ An explicit user-invoked local bundle format; include manifest, log, reachable k
 
 ## Deterministic acceptance
 
-`make verify-E9-T21`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.
+`make verify-E9-T21` runs the clean-head local build, strict affected-crate checks,
+format/witness tests, built demo, real Linux file and physical-GPU recordings,
+fresh-profile file export/import, independent archive/native byte readers, and
+the prescribed local wall. Evidence is written beneath
+`E9_BUNDLE_EVIDENCE_DIR` (or the target's default directory).
+
+The final portability command is
+`python3 -B tools/verify/e9-bundles.py --output OUTPUT --cold-clone CLONE_DIRECTORY`.
+It checks the same frozen revision with fresh native/wasm/npm build directories;
+the broad wall runs once in the primary submission. These commands are proof
+requirements, not a verification claim until their final reports pass.
+
+## Portability policy
+
+Archive v1 admits finished exact software (256 MiB ICount/10) and exact GPU
+(1 GiB pure ICount/64) recordings matching the installed app/VM/renderer build.
+It retains the complete selected manifest closure, including recorded I/O,
+kernel, Wasm, renderer identity, base metadata, native owned device/COW state,
+full keyframes and RAM-delta ancestors/pages. The current exact profiles require
+an empty separate historical base-binding root; foreign legacy overlays are
+rejected. Matching installed host JavaScript remains required; this file is not
+a standalone website or a migration between runtime builds. Replay does not
+re-fetch the original guest asset URLs. GPU import separately qualifies the
+actual host against the saved profile.
 
 ## Adversarial verification
 
@@ -55,3 +78,45 @@ Implementation and final deterministic acceptance, exact-head high-risk and
 pristine-clone proofs, adversarial import attacks and a fresh Daybreak verdict
 remain required. No implementation or verification result is claimed at
 activation.
+
+### 2026-10-21 — worker — implementation and development repair ledger
+
+Added the bounded uncompressed `WVBUND01` format and visible local export,
+file import, cancellation and delete controls. Every object is authenticated,
+the exact transitive closure is checked, and every full/reconstructed native
+keyframe is decoded in a private non-running candidate before obtaining a
+destination writer. One authorized final manifest transaction publishes a
+playable row. Duplicate IDs are conflicts; storage/cancellation failures cannot
+replace another row. Conservative GC now understands only the two existing
+reference-free exact witness extensions and refuses unknown/malformed metadata.
+
+Fresh actual Daybreak preaudit
+`target/evidence/e9-t21-daybreak-preaudit/final-message.md` identified two gaps:
+later native/RAM states needed real decoder admission, and the transfer token
+had to survive its asynchronous post-commit refresh. Both were repaired. Its
+bounded static follow-up
+`target/evidence/e9-t21-daybreak-repair-review/final-message.md` found those
+repairs sound, retaining unchanged boundary results; it explicitly did not
+issue the final task verdict or inspect development recordings.
+
+Development recordings and failed harness attempts remain beneath
+`target/evidence/e9-t21-development/`. The four-case `bundles-6` run passed
+fresh-profile software parent/child, incremental Linux and hardware-GPU imports,
+raw native-byte equality, fresh-ID malformed input refusals with zero writer
+calls, no guest run/step/resume during transfer, real quota failure after a
+unique object became durable, orphan GC, final-publication cancellation and
+post-commit list/close barriers. A genuine mixed full/incremental Linux fixture
+and the proposed deeper GPU preview-close barrier strengthen the frozen proof.
+No desktop performance or full desktop integration claim follows from the
+bounded physical-GPU fixture. Final exact-head high-risk, pristine-clone,
+adversarial Daybreak and production-publication evidence remain outstanding.
+
+The strengthened `bundles-7` development run passed all four cases, 57 malformed
+imports with fresh IDs/zero destination-writer calls, genuine full/incremental
+Linux state, staged-data quota cleanup, the deeper GPU `openSession` close
+barrier, and a 390px layout screenshot with no horizontal overflow. Its browser
+report SHA-256 is `9018d30b425c31450c8b2d1475c6ff80a01b74738a3edca87906c0022e8dae26`;
+independent closure/native reader SHA-256 is
+`50f96b055458dbba7082ef51fa452728b90ffb8c225bb27d7c8794c5880062d5`.
+All imported native snapshots equal the independently retained originals. These
+are development results; the following frozen submission remains authoritative.
