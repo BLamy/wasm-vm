@@ -3,7 +3,7 @@ id: E9-T19
 epic: 9
 title: Build the session timeline and accessible time-travel controls
 priority: 524.919
-status: pending
+status: in-progress
 depends_on: [E9-T06, E9-T16]
 estimate: S
 risk: medium
@@ -34,4 +34,11 @@ Operate the timeline with keyboard only, scrub faster than restores finish and s
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-21 — worker — start timeline controls
+
+Selected from the top of Next up. E9-T06 and E9-T16 are independently verified;
+risk remains medium and the slice is S. E9-T18b is externally blocked on the
+independent verifier's account security setup and leaves the active lane. This
+independent UI slice uses the accepted software seek controller and keeps full
+GPU replay gated until E9-T18c is verified. No UI implementation or recorded
+acceptance is claimed yet.
