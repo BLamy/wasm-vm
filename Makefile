@@ -2787,3 +2787,7 @@ verify-E9-T17:
 .PHONY: verify-E9-T18a
 verify-E9-T18a:
 	python3 -B tools/verify/e9-gpu-results.py --output "$${E9_GPU_RESULT_EVIDENCE_DIR:-target/evidence/e9-gpu-results-final}"
+
+.PHONY: verify-E9-T19
+verify-E9-T19:
+	python3 -B tools/verify/e9-timeline.py --output "$${E9_TIMELINE_EVIDENCE_DIR:-target/evidence/e9-timeline-final}"

@@ -237,7 +237,8 @@ export const ROADMAP = [
       { name: "Accelerated desktop keyframes", status: "verified", evidence: "E9-T17: independently verified Omarchy points, exact scanout restore, fresh owners, trusted input and library reopen" },
       { name: "Native owned GPU results", status: "verified", evidence: "E9-T18a: independently verified exact 32 MiB DMA, owned result/fence admission and refusal atomicity; pending keyframes and browser GPU replay remain gated" },
       { name: "Guest-visible GPU replay", status: "in-progress", evidence: "E9-T18a–c: native result admission, pending keyframes, then durable browser/physical GPU replay" },
-      { name: "Session timeline and branches", status: "pending", evidence: "E9-T19–T20" },
+      { name: "Accessible session timeline", status: "verified", evidence: "E9-T19: independently verified saved Linux restoration, real console output, accessible controls and cancellation ownership" },
+      { name: "Branches from saved history", status: "pending", evidence: "E9-T20" },
     ],
   },
 ];

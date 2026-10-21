@@ -10,6 +10,7 @@ import { startLinuxBoot, resetDisk, tailscaleCommand } from "./loader.js";
 import { startLinuxBootWorker, stopLinuxController } from "./linux-worker-host.js";
 import { resolveOverlayResetSeedIdentity } from "./overlay-reset-target.js";
 import { mountSessionLibrary } from "./session-library.js";
+import { mountSessionTimeline } from "./session-timeline.js";
 import {GPU_CHECKPOINT_BUILD_ID, SOFTWARE_CHECKPOINT_WASM_SHA256} from "./gpu-checkpoint-build.js";
 import { runEventClockProbe } from "./event-clock-probe.js";
 import { runInputRecordingProbe } from "./input-recording-probe.js";
@@ -2591,6 +2592,9 @@ window.wvmDemo = {
 
 // E9-T06: library actions share the ordinary page's one-controller ownership protocol.
 // Restore admission and actual-topology construction finish privately before the old guest retires.
+void mountSessionTimeline(document.getElementById('session-timeline'),{
+  pauseLive:async()=>{await linuxCtl?.pause();},
+}).then(timeline=>{if(_startupQuery.has('testHooks'))window.__sessionTimeline=timeline;});
 void mountSessionLibrary(document.getElementById("session-library"), {
   current: () => linuxCtl ? {controller: linuxCtl, profile: Boolean(linuxActiveRequest?.sessionSoftware),
     accelerated: Boolean(linuxCtl.gpuSessionConfiguration

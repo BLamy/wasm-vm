@@ -25,6 +25,25 @@ Must be served over **HTTP** — wasm streaming and ES-module MIME rules break u
 `file://`. There is **no CDN**: xterm.js is pinned in `package-lock.json` and installed
 with `npm ci`, so builds are reproducible and work offline.
 
+## Session timeline
+
+The app's **Time travel · session timeline** panel opens completed software recordings
+from the local history store. **Record Linux sample** saves a real, bounded Linux boot
+excerpt with three incremental keyframes. It uses a separate guest and pauses the live
+guest. **Finish sample early** commits the completed prefix rather than inventing a
+successful full boot. The excerpt ends before external disk or network requests.
+
+Open a recording, scrub or enter an exact transition, step in either direction, play/pause,
+or navigate saved keyframes and recorded events. The preview target is separate from the
+active position. The serial console, full transition/event position and expandable state
+digest update together only after the private replay is restored. Observation events
+navigate to the next transition boundary. GPU histories still open as checkpoints in
+**Local saved sessions**; accelerated event replay remains gated.
+
+`make verify-E9-T19` records the built-page keyboard, mouse and touch paths, narrow layout,
+independent from-start VM/console comparisons and 100 superseded seek requests. Build and
+commit `web/dist` before recording the frozen-head acceptance.
+
 ## Browser support
 
 Current **Chrome** and **Firefox** (both ship `WebAssembly`, ES modules, and
