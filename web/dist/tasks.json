@@ -25444,13 +25444,15 @@
       "activity": [
         {
           "date": "2026-10-21",
-          "commits": 0,
-          "labels": []
+          "commits": 1,
+          "labels": [
+            "E9-T17 retain raw checkpoint evidence and focus desktop input proof"
+          ]
         }
       ],
       "firstActivity": "2026-10-21",
       "lastActivity": "2026-10-21",
-      "commitCount": 0
+      "commitCount": 1
     },
     {
       "id": "E6-T01",
@@ -35117,18 +35119,18 @@
         },
         {
           "date": "2026-10-21",
-          "commits": 4,
+          "commits": 5,
           "labels": [
+            "E9-T17 retain raw checkpoint evidence and focus desktop input proof",
             "E9-T17 validate restored options before replacing the desktop",
             "E9-T17 refuse checkpoint publication after GPU context loss",
-            "Persist coherent accelerated session checkpoints",
-            "Start E9-T17 accelerated session checkpoints"
+            "Persist coherent accelerated session checkpoints"
           ]
         }
       ],
       "firstActivity": "2026-10-17",
       "lastActivity": "2026-10-21",
-      "commitCount": 5
+      "commitCount": 6
     },
     {
       "id": "E9-T18",
