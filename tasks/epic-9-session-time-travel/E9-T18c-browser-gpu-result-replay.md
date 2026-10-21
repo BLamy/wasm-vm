@@ -3,7 +3,7 @@ id: E9-T18c
 epic: 9
 title: Replay durable GPU session results through the real browser bridge
 priority: 524.9183
-status: pending
+status: in-progress
 depends_on: [E9-T18b, E9-T17, E9-T09, E9-T14]
 estimate: S
 risk: high
@@ -57,4 +57,11 @@ its verified a/b predecessors.
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-21 — worker — start the production GPU replay adapter
+
+Selected from Next up after T18b was independently verified (`17d45b8d6`) and
+published to the main URL as `c50b963d`; production receipt is `5ddba9c2d`.
+Risk remains high. This slice connects the accepted native result/frontier
+boundary to the admitted Wasm profile, durable session data and physical browser
+bridge. T17 paced keyboard histories retain their authenticated checkpoint-only
+policy. No browser GPU replay, performance or completion claim is made yet.
