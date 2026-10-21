@@ -3,7 +3,7 @@ id: E9-T17
 epic: 9
 title: Restore historical accelerated desktop checkpoint pairs
 priority: 524.917
-status: pending
+status: in-progress
 depends_on: [E9-T05, E9-T16, E6-T11d74c, E6-T11d74d]
 estimate: S
 risk: high
