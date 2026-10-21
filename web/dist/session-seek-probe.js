@@ -61,7 +61,13 @@ export async function runSessionSeekProbe({onProgress=()=>{},onRender=()=>{}}={}
    need(BigInt(lastGap)>BigInt(fixture.atRebase.transition),'post-rebase between-keyframe target');
    await check('before-event',beforeEvents);
    await check('after-event',firstAfter);
-   await check('after-second-event',eventTargets[1]);
+   const afterSecondEvent=await check('after-second-event',eventTargets[1]);
+   const boundaryForward=await controller.forwardStep();
+   const boundaryReverse=await controller.reverseStep();
+   need(BigInt(boundaryForward.position.transition)===BigInt(eventTargets[1].transition)+1n
+    &&equal(boundaryReverse.position,afterSecondEvent.position)
+    &&boundaryReverse.rendered.digest===afterSecondEvent.rendered.digest,
+    'reverse instruction step must preserve prior same-boundary deliveries');
    await check('first-gap',firstGap,true);
    await check('post-rebase-gap',lastGap,true);
    const afterForward=await controller.forwardStep();
@@ -111,7 +117,9 @@ export async function runSessionSeekProbe({onProgress=()=>{},onRender=()=>{}}={}
    const winnerOracle=fromStart(winnerTarget,true);
    need(equal(winner.position,winnerOracle.position)
     &&winner.rendered.digest===winnerOracle.digest,'winning state from-start');
-   proof={status:'passed',checked,forward:afterForward.position,reverse:afterReverse.position,
+   proof={status:'passed',checked,boundaryForward:pos(boundaryForward.position),
+    boundaryReverse:pos(boundaryReverse.position),
+    forward:afterForward.position,reverse:afterReverse.position,
     seededRequests:100,cancelled:obsolete.length,cancellationMs,winner:pos(winner.position),winnerTarget,
     restoreCancelMs,restoreCancelled:restoreCancelled.status,
     winnerDigest:winnerOracle.digest,latestRender:publishes.at(-1).rendered.text,

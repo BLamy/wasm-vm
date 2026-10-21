@@ -59,6 +59,9 @@ try{
  assert.deepEqual(report.probe.checked.map(value=>value.label),
   ['before-event','after-event','after-second-event','first-gap','post-rebase-gap']);
  assert.ok(report.probe.checked.every(value=>/^[0-9a-f]{64}$/.test(value.expectedDigest)));
+ assert.equal(report.probe.boundaryForward.transition,
+  (BigInt(report.probe.checked[2].position.transition)+1n).toString());
+ assert.deepEqual(report.probe.boundaryReverse,report.probe.checked[2].position);
  assert.equal(report.probe.seededRequests,100);
  assert.equal(report.probe.cancelled,100);
  assert.ok(report.probe.cancellationMs<=250);

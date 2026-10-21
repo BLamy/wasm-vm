@@ -354,3 +354,54 @@ fn reverse_transition_fence_preserves_deliveries_before_the_reversed_instruction
         before_instruction.resume_sha256
     );
 }
+
+#[test]
+fn dense_boundary_deliveries_yield_before_transition_step_is_published() {
+    let mut original = simple();
+    original
+        .start_session_sources(original.source_policy(), None)
+        .unwrap();
+    let initial_resume = original.save_session_resume().unwrap();
+    let initial = witness(&mut original);
+    let mut events = Vec::new();
+    for value in 1..=65u8 {
+        events.push(delivery(
+            &mut original,
+            SessionEffect::WriteRam {
+                address: BASE + 0x800,
+                bytes: vec![value],
+            },
+        ));
+    }
+    let before_instruction = witness(&mut original);
+    until(&mut original, 1);
+    let after_instruction = witness(&mut original);
+    let plan = ReplayPlan {
+        begin: initial.position,
+        end: after_instruction.position,
+        initial_resume,
+        events,
+        witnesses: vec![initial, after_instruction],
+    };
+    let mut candidate = simple();
+    let mut driver = ReplayDriver::start(&mut candidate, plan).unwrap();
+    assert!(
+        !driver
+            .run_chunk_to_transition(&mut candidate, 0, 4096, |_, _, _| unreachable!())
+            .unwrap()
+    );
+    assert_eq!(candidate.session_position().unwrap().sequence, 64);
+    assert!(
+        driver
+            .run_chunk_to_transition(&mut candidate, 0, 4096, |_, _, _| unreachable!())
+            .unwrap()
+    );
+    assert_eq!(
+        candidate.session_position(),
+        Some(before_instruction.position)
+    );
+    assert_eq!(
+        witness(&mut candidate).resume_sha256,
+        before_instruction.resume_sha256
+    );
+}

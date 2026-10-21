@@ -699,10 +699,10 @@ impl ReplayDriver {
         self.run_chunk_to_fence(machine, target, false, quantum, apply_input)
     }
 
-    /// Stop before the next architectural transition at this number, including when the
-    /// preceding transition was a trap, interrupt delivery or WFI idle advance. The resulting
-    /// full position supplies the actual retirement and event counts; callers must not infer
-    /// either from `transition`.
+    /// Stop immediately before the next architectural transition at this number, after applying
+    /// all recorded before-boundary deliveries. A reverse step therefore preserves events that
+    /// preceded the instruction being reversed. The resulting full position supplies the actual
+    /// retirement and event counts, including traps and WFI advances.
     pub fn run_chunk_to_transition(
         &mut self,
         machine: &mut Machine,
@@ -758,11 +758,21 @@ impl ReplayDriver {
                 "seek target outside remaining replay".into(),
             ));
         }
+        let mut delivered = 0;
         loop {
             self.append_source_window(machine)?;
             self.check_witnesses(machine)?;
             let position = machine.session_position().unwrap_or(self.plan.begin);
-            if transition_only && position.transition == target.transition {
+            let before_event_pending =
+                self.plan
+                    .events
+                    .get(self.event_cursor)
+                    .is_some_and(|event| {
+                        event.position.phase == SessionPhase::Before
+                            && event.position.transition == position.transition
+                    });
+            if transition_only && position.transition == target.transition && !before_event_pending
+            {
                 return Ok(true);
             }
             if !transition_only && position == target {
@@ -773,15 +783,7 @@ impl ReplayDriver {
             } else if !transition_only
                 && target != self.plan.end
                 && position.transition >= target.transition
-                && (position.sequence >= target.sequence
-                    || !self
-                        .plan
-                        .events
-                        .get(self.event_cursor)
-                        .is_some_and(|event| {
-                            event.position.phase == SessionPhase::Before
-                                && event.position.transition == position.transition
-                        }))
+                && (position.sequence >= target.sequence || !before_event_pending)
             {
                 return Err(self.failure_at(
                     target,
@@ -789,11 +791,13 @@ impl ReplayDriver {
                     "seek coordinate is not a quiescent recorded boundary".into(),
                 ));
             }
-            if let Some(expected) = self.plan.events.get(self.event_cursor)
-                && expected.position.phase == SessionPhase::Before
-                && expected.position.transition == position.transition
-            {
+            if before_event_pending {
                 self.apply_before(machine, &mut apply_input)?;
+                // A dense same-boundary tape must not monopolize a cancellable browser chunk.
+                delivered += 1;
+                if delivered >= quantum.min(64) {
+                    return Ok(false);
+                }
                 continue;
             }
             if position == self.plan.end {
