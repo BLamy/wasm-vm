@@ -3,7 +3,7 @@ id: E9-T19
 epic: 9
 title: Build the session timeline and accessible time-travel controls
 priority: 524.919
-status: in-progress
+status: implemented
 depends_on: [E9-T06, E9-T16]
 estimate: S
 risk: medium
@@ -109,3 +109,31 @@ to the official browser run. This changes the sample horizon, so status returns
 to in-progress and the selected medium-risk submission is recorded again at
 the new frozen source. The native runtime and accepted seek controller remain
 unchanged; no unrelated high-risk wall or cold clone is restarted.
+
+### 2026-10-21 — worker — final genuine-console resubmission
+
+Frozen release/runtime head: `ff28becd087b375399949df5db2472baec6a049b`.
+Only the sample horizon changed from 2.1M to the independently observed 3M
+transitions; the native A runtime, controller and console renderer are unchanged.
+The official harness now also navigates the final keyframe, asserts non-empty
+real Linux output and a disabled forward step, and compares that machine/console
+to a from-start replay (14 state/console oracles total).
+
+Command: `E9_TIMELINE_EVIDENCE_DIR=target/evidence/e9-t19-final-ff28becd make verify-E9-T19`.
+All eight selected medium-risk commands passed again, including 27 native seek/
+replay tests, the affected target build and the built browser suite (127 passed,
+0 failed, zero console errors). The exact accepted A Wasm SHA remains
+`eaf24659537e2cd79def0e49b698fdd3ced525998dc9332ba8d286538d13a35e`.
+
+- `target/evidence/e9-t19-final-ff28becd/report.json`: SHA-256 `4d200b2e272213ed77680be4047f61d69cb2a919afcaad71f808454a80c9349e`; 120.55 seconds.
+- `target/evidence/e9-t19-final-ff28becd/browser/report.json`: SHA-256 `be8b136e4a17eb6e5590934920a280cf177a218b7afd3f9ef5601d57ab5f1ced`.
+- `target/evidence/e9-t19-final-ff28becd/browser/browser-trace.zip`: SHA-256 `4e052c90cde5a45c1c1b3ff283238a238ee9a3ee963720eda710541fce6c5f79`.
+- `target/evidence/e9-t19-final-audit-ff28becd.json`: all 12 recorded files (19876765 bytes) plus 14 source hashes independently rechecked by the worker.
+- Final desktop/phone captures are beside the browser report; the desktop capture now shows the genuine kernel output.
+
+Retain the verifier’s unchanged renderer/ownership/formatting predictions and
+receipts in `target/evidence/e9-t19-verifier-76aaf353`. The previous frozen
+submission remains historical passing evidence; this new exact source is the
+release claim. No GPU pending-keyframe code is in this branch, and full GPU
+replay remains gated. Await the fresh final verdict, then publish this branch
+to the main Cloudflare URL.
