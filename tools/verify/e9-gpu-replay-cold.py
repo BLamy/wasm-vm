@@ -97,10 +97,14 @@ try:
                             'tools/virgl-production/gpu-checkpoint-dma.test.mjs',
                             'tools/virgl-production/critic-checkpoint-dma.test.mjs',
                             'tools/virgl-production/e9-gpu-session-evidence.test.mjs'])
+    run('software-console', ['node', '--test', 'tools/verify/e9-timeline-console.test.mjs'])
     run('built-demo', ['node', 'tools/verify/e9-gpu-results-browser.mjs', '--output', str(out / 'demo')])
     run('hardware-browser', ['node', 'tools/verify/e9-gpu-replay-browser.mjs', '--output', str(out / 'browser')])
     run('independent-browser-bytes', ['python3', '-B', 'tools/verify/e9-gpu-replay-files.py',
                                       '--directory', str(out / 'browser')])
+    run('gpu-timeline-ui', ['node', 'tools/verify/e9-gpu-timeline-ui.mjs', '--output', str(out / 'gpu-timeline'), '--directory', str(out / 'browser')])
+    run('layered-hardware-browser', ['node', 'tools/verify/e9-gpu-replay-browser.mjs', '--fixture', 'layered', '--output', str(out / 'layered-browser')])
+    run('independent-layered-bytes', ['python3', '-B', 'tools/verify/e9-gpu-replay-files.py', '--directory', str(out / 'layered-browser')])
     report['finalCheckoutStatus'] = subprocess.check_output(
         ['git', 'status', '--porcelain', '--untracked-files=all'], cwd=clone, text=True)
     assert not report['finalCheckoutStatus'], 'cold acceptance changed the checkout'

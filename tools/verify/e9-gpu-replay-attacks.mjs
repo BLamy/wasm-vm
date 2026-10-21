@@ -34,7 +34,8 @@ function instrumentWorkers(records,{variation=false,hold=false,quantum=4096}={})
    await init();let active=false,waits=0;const begin=WasmLinux.prototype.beginExactReplay;
    WasmLinux.prototype.beginExactReplay=function(...args){const result=begin.apply(this,args);active=true;postMessage({type:'gpu-test-started'});return result;};
    const scatterNames=['scatterOutput','scatterLayeredOutput'];for(const name of scatterNames){const original=WasmGpuTransport.prototype[name];WasmGpuTransport.prototype[name]=function(...args){const actual=args.at(-1),delivered=${variation}?new Uint8Array(actual.length).fill(0xee):actual;
-   if(active)postMessage({type:'gpu-test-probe',kind:'scatter',actual:[...actual],delivered:[...delivered]});return original.apply(this,[...args.slice(0,-1),delivered]);};}
+   if(active)postMessage({type:'gpu-test-probe',kind:'scatter',method:name,args:args.slice(0,-1),actual:[...actual],delivered:[...delivered]});return original.apply(this,[...args.slice(0,-1),delivered]);};}
+   for(const name of ['gatherInput','gatherLayeredInput']){const original=WasmGpuTransport.prototype[name];WasmGpuTransport.prototype[name]=function(...args){const result=original.apply(this,args);if(active)postMessage({type:'gpu-test-probe',kind:'gather',method:name,args,bytes:result===null?null:[...result]});return result;};}
    if(${hold}){const complete=WasmGpuTransport.prototype.complete;WasmGpuTransport.prototype.complete=function(...args){if(active){postMessage({type:'gpu-test-probe',kind:'held-completion',key:args.slice(0,2)});return;}return complete.apply(this,args);};}
    const context=OffscreenCanvas.prototype.getContext;OffscreenCanvas.prototype.getContext=function(...args){const gl=context.apply(this,args);if(!gl||args[0]!=='webgl2')return gl;return new Proxy(gl,{get(target,name){const value=Reflect.get(target,name,target);if(typeof value!=='function')return value;return(...args)=>{const actual=value.apply(target,args);let delivered=actual;
    if(active&&${variation}&&name==='getQueryParameter'&&args[1]===target.QUERY_RESULT)delivered=actual===0?1:0;
@@ -56,7 +57,7 @@ async function journalBounds(p,read){
  const fresh=async id=>{const manifest=structuredClone(read.manifest);manifest.id=id;manifest.end={...manifest.begin};manifest.events=[];manifest.checkpoints=manifest.checkpoints.slice(0,1);manifest.extensions=manifest.extensions.slice(0,1);
   const writer=await store.writer(id);await writer.publish(sessionValidateManifest(new TextEncoder().encode(JSON.stringify(manifest))));return {writer,journal:new SessionGpuJournal(store,writer,manifest,p.config)};};
  try{
-  const original=p.batches.flatMap(batch=>batch.events).find(row=>row.channel===22&&row.bytes[8]===2);need(original,'real scatter envelope missing');
+  const original=p.batches.flatMap(batch=>batch.events).find(row=>row.channel===22&&row.bytes[8]===2&&row.bytes[105]===0);need(original,'real scatter envelope missing');
   const {writer,journal}=await fresh('gpu-body-window');
   const batch=(number,fill)=>{const bytes=new Uint8Array(32*1048576).fill(fill),digest=checkpointHash(bytes),header=Uint8Array.from(original.bytes),view=new DataView(header.buffer);header.set(Uint8Array.from(digest.match(/../g),b=>parseInt(b,16)),106);view.setUint32(93,bytes.length,true);view.setUint32(97,bytes.length,true);view.setUint32(101,1,true);view.setUint32(138,bytes.length,true);
    return {events:[{...original,transition:String(number),retired:String(number),ordinal:1,sequence:String(number),bytes:header,outcome:[...original.outcome.slice(0,2),String(bytes.length),original.outcome[3]]}],payloads:[{bytes,sha256:Uint8Array.from(digest.match(/../g),b=>parseInt(b,16)),length:bytes.length}]};};
@@ -93,6 +94,9 @@ export async function runGpuReplayAttacks(p){
    report.seeks.push({variation,position:selected.position,digest:selected.rendered.digest,checkpointId:selected.checkpointId});
    const changed=probes.filter(row=>row.kind==='scatter'&&!same(row.actual,row.delivered));
    if(variation){need(changed.length>=3,'real GPU readback bytes were not varied');need(probes.some(row=>row.kind==='getQueryParameter'&&row.actual!==row.delivered),'real query result was not varied');}
+   if(p.layeredExpected){const expected=[...new Uint8Array([0x11,0x22,0x33,255,0x11,0x22,0x33,255,0x11,0x22,0x33,255,0x11,0x22,0x33,255,0x44,0x55,0x66,255,0x44,0x55,0x66,255,0x44,0x55,0x66,255,0x44,0x55,0x66,255])];
+    need(probes.some(row=>row.method==='gatherLayeredInput'&&same(row.args.slice(6),['0000000000000005',8,13,2,37,2])&&same(row.bytes,expected)),'owned layered gather with padded rows/layers not exercised');
+    need(probes.some(row=>row.method==='scatterLayeredOutput'&&same(row.args.slice(6),['0000000000000005',8,13,2,37,2])&&same(row.actual,expected)&&(!variation||!same(row.actual,row.delivered))),'owned layered scatter with recorded replay bytes not exercised');}
    report.physical.push({variation,probes});
    const end=await opened.controller.seekPosition(opened.manifest.end);need(end.rendered.digest===hex(p.vm.exactGpuSessionWitness().digest),'GPU error/fence suffix changed');
   }finally{opened?.controller.close();patch.restore();}
@@ -110,7 +114,9 @@ export async function runGpuReplayAttacks(p){
  const old=p.owners[0],event=old.event;
  report.refusals.push(await refusal(()=>old.cap.complete(event.epoch,event.sequence,'0000000000000000',0,true,0,0),'authentic retired GPU completion after seeks'));
  report.refusals.push(await refusal(()=>old.cap.gatherInput(event.epoch,event.sequence,'0000000000000001',2,'0000000000000003','0000000000000002','0000000000000000',64,64,1),'authentic retired GPU DMA after seeks'));
- need(hex(p.vm.exactGpuSessionWitness().digest)===originalState,'retired capability changed original machine');
+ const numeric=[event.epoch,event.sequence,'0000000000000001',2,'0000000000000001','0000000000000001','0000000000000000',64,64,1];
+ for(const [name,args]of [['gatherInput',numeric],['scatterOutput',[...numeric,new Uint8Array(64)]],['gatherLayeredInput',[...numeric,64,1]],['scatterLayeredOutput',[...numeric,64,1,new Uint8Array(64)]]]){const rejected=await refusal(()=>p.vm[name](...args),'legacy '+name+' bypass');need(rejected.error.includes('owned GPU request transport required'),'legacy numeric call bypassed its exact-session guard');report.refusals.push(rejected);}
+ need(hex(p.vm.exactGpuSessionWitness().digest)===originalState,'retired capability or numeric bypass changed original machine');
  for(const [label,edit]of [
   ['old clock',c=>{c.clock.divider=10;}],['paced clock',c=>{c.clock.mode='paced-icount';c.clock.interactive={};}],
   ['other Wasm',c=>{c.wasm.sha256='0'.repeat(64);}],['other renderer build',c=>{c.renderer.buildId='0'.repeat(64);}],

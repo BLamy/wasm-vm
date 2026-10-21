@@ -116,6 +116,12 @@ for point in manifest['checkpoints']:
             body=bytes(view[start:start+symbol['bytes']])
             expected={'pixels':bytes([0,255,0,255])*4096,'queryData':struct.pack('<IIIIIIIIIIIIIIII',1,4,1,0,0,0,0,0,1,4,0,0,0,0,0,0),'diskBytes':bytes([0x4d])*512}[name]
             assert body==expected,name+' guest RAM differs from literal GPU/disk expectations'
+    if point['id']=='green' and 'layeredPixels' in report['fixture']['symbols']:
+        symbol=report['fixture']['symbols']['layeredPixels'];start=int(symbol['address'],16)-0x80000000
+        expected=bytearray([0xc7])*96
+        for layer,color in enumerate([bytes([0x11,0x22,0x33,255]),bytes([0x44,0x55,0x66,255])]):
+            for row in range(2):expected[5+37*layer+13*row:5+37*layer+13*row+8]=color*2
+        assert symbol['bytes']==96 and bytes(view[start:start+96])==expected,'layered literal pixels/padding'
     frames.append({'id':point['id'],'position':point['position'],'ramSha256':meta['ramSha256'],'stateSha256':meta['stateSha256'],
                    'pending':pending,'sections':{str(tag):sha(body) for tag,body in sections.items() if tag!=2}})
     previous=point['machine']
@@ -130,7 +136,8 @@ for chunk in manifest['events']:
             assert header[:8]==b'WVGPUR01' and header[8] in (1,2,3)
             if header[8]==2:
                 ref=record['payload']['content'];body=read(ref)
-                assert header[106:138].hex()==ref['sha256'] and u32(header,138)==len(body)
+                offset=106+(8 if header[105] else 0)
+                assert header[offset:offset+32].hex()==ref['sha256'] and u32(header,offset+32)==len(body)
                 result_bodies.append(body)
             if record['status']=='failed':failures+=1
         else:assert intent['channel']==23 and len(header)==40
@@ -146,9 +153,19 @@ assert source==replayed and report['run']['ramDigest']==report['replay']['ramDig
 expected=sha(b'wasm-vm-gpu-guest-state-v1\0'+struct.pack('<Q',len(source))+source+bytes.fromhex(report['run']['ramDigest']))
 assert expected==report['replay']['digest']
 assert report['run']['trace']['dropped']==0 and len(report['run']['trace']['records'])>=25
-assert sum(row['type']==0x206 for row in report['run']['trace']['records'])==3
+assert sum(row['type']==0x206 for row in report['run']['trace']['records'])==(4 if 'layeredPixels' in report['fixture']['symbols'] else 3)
 assert report['run']['trace']['records'][-1]['response']==0x1205
 assert report['run']['pixel']==[0,255,0,255] and report['replay']['pixel']==[0,255,0,255]
+if 'layeredPixels' in report['fixture']['symbols']:
+    expected=bytes([0x11,0x22,0x33,255])*4+bytes([0x44,0x55,0x66,255])*4
+    layered=[]
+    for row in rows:
+        intent=json.loads(bytes(row['intent']));header=bytes(intent['header'])
+        if intent['channel']==22 and header[8] in [1,2] and header[105]==1:
+            assert u64(header,81)==5 and tuple(u32(header,at)for at in [89,93,97,101,106,110])==(20,8,13,2,37,2)
+            assert header[114:146].hex()==sha(expected) and u32(header,146)==32
+            layered.append(header[8])
+    assert layered==[1,2] and expected in result_bodies
 result={'status':'passed','chunks':len(storage['stores']['chunks']),'objects':len(objects),'frames':frames,
         'gpuEvents':len(rows),'failedCompletions':failures,'bodies':[{'bytes':len(b),'sha256':sha(b)} for b in result_bodies],
         'finalStateSha256':report['replay']['digest']}

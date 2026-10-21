@@ -12,6 +12,9 @@ static u64 fence=0x0020000000000071UL;
 static float vertices[]={-1,-1,0,1,1,-1,0,1,-1,1,0,1,1,1,0,1};
 static u8 pixels[64*64*4] __attribute__((aligned(16)));
 static u32 queryData[2][8] __attribute__((aligned(16)));
+#ifdef E9_GPU_LAYERED
+static u8 layeredPixels[96] __attribute__((aligned(16)));
+#endif
 static u32 expectedResponse=0x1100;
 
 static u8 diskBytes[512] __attribute__((aligned(16)));static volatile u8 diskStatus;
@@ -42,6 +45,27 @@ static void readMarker(void){zero(diskBytes,512);diskOp(0);for(u32 i=0;i<512;i++
 static void transfer(u32 id,u32 width,u32 height,u32 stride,u32 layerStride,u32 direction){
  head(direction,1,72);word(36,width);word(40,height);word(44,1);word(56,id);word(64,stride);word(68,layerStride);word(4,1);*(volatile u64*)(request+8)=fence++;gpuCommand(72,0);
 }
+#ifdef E9_GPU_LAYERED
+void *memcpy(void *d,const void *s,u64 n){volatile u8 *a=d;const u8 *b=s;while(n--)*a++=*b++;return d;}
+static void layeredTransfer(u32 direction){
+ head(direction,1,72);word(36,2);word(40,2);word(44,2);*(volatile u64*)(request+48)=5;word(56,20);word(64,13);word(68,37);word(4,1);*(volatile u64*)(request+8)=fence++;gpuCommand(72,0);
+}
+static void layeredProof(void){
+ head(0x204,0,72);u32 values[]={20,3,67,10,2,2,2,1,0,0,0,0};copy(request+24,values,48);gpuCommand(72,0);
+ head(0x202,1,32);word(24,20);gpuCommand(32,0);backing(20,layeredPixels,sizeof(layeredPixels));
+ for(u32 i=0;i<sizeof(layeredPixels);i++)layeredPixels[i]=0xa3;
+ for(u32 layer=0;layer<2;layer++)for(u32 row=0;row<2;row++)for(u32 byte=0;byte<8;byte++)layeredPixels[5+37*layer+13*row+byte]=(byte%4==3)?255:((layer?0x44:0x11)+0x11*(byte%4));
+ layeredTransfer(0x205);
+ for(u32 i=0;i<sizeof(layeredPixels);i++)layeredPixels[i]=0xc7;
+ layeredTransfer(0x206);
+ for(u32 i=0;i<sizeof(layeredPixels);i++){
+  u32 wanted=0xc7;
+  for(u32 layer=0;layer<2;layer++)for(u32 row=0;row<2;row++)if(i>=5+37*layer+13*row&&i<5+37*layer+13*row+8){u32 byte=i-(5+37*layer+13*row);wanted=(byte%4==3)?255:((layer?0x44:0x11)+0x11*(byte%4));}
+  if(layeredPixels[i]!=wanted)fail("LAYERED_PADDING_OR_PIXEL");
+ }
+ text("SESSION_LAYERED_GUARD_BYTES_OK\n");
+}
+#endif
 void main(void){
  text("SESSION_GUEST_START\n");
  init(0,0);queue(0,0,&disk);*reg(0,0x70)=15;writeMarker();readMarker();
@@ -49,6 +73,9 @@ void main(void){
  head(0x200,1,96);word(24,7);copy(request+32,"session",7);gpuCommand(96,0);
  resource(1,2,67,2,64,64);resource(2,0,64,16,64,1);backing(1,pixels,sizeof(pixels));backing(2,vertices,64);
  transfer(2,64,1,0,0,0x205);stream(initial,sizeof(initial));
+#ifdef E9_GPU_LAYERED
+ layeredProof();
+#endif
  for(u32 i=0;i<2;i++){resource(10+i,0,64,131072,32,1);backing(10+i,queryData[i],32);transfer(10+i,32,1,0,0,0x205);}
  stream(visible_query,sizeof(visible_query));transfer(10,32,1,0,0,0x206);
  if(queryData[0][0]!=1||queryData[0][1]!=4||queryData[0][2]!=1||queryData[0][3]!=0)fail("VISIBLE_QUERY");

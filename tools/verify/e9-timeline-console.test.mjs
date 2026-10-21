@@ -39,9 +39,15 @@ test('a frame cannot represent a different machine position',()=>{
 
 function controlsAt(position){
   const names=['sessions','refresh','open','record','stop','mode','active','position','scrub','target','seek','back','forward','play','pause','preview','points','point-go','events','event-go','console','digest','status'];
-  const elements=names.map(name=>({dataset:{timeline:name},value:'0',textContent:'',addEventListener(){},setAttribute(){}}));
+  const elements=names.map(name=>({dataset:{timeline:name},value:'0',textContent:'',before(){},addEventListener(){},setAttribute(){}}));
   const root={dataset:{},querySelectorAll:()=>elements,setAttribute(){}};
-  const timeline=new SessionTimeline(root,{store:{}}),begin={...at,transition:'0',retired:'0',sequence:'0'},end={...at,transition:'10',retired:'9'};
+  // This control fixture only needs the constructor's GPU preview container.
+  // The recorded production-browser proof checks the actual DOM and canvas.
+  const previousDocument=globalThis.document;let timeline;
+  globalThis.document={createElement:()=>({dataset:{}})};
+  try{timeline=new SessionTimeline(root,{store:{}});}
+  finally{if(previousDocument===undefined)delete globalThis.document;else globalThis.document=previousDocument;}
+  const begin={...at,transition:'0',retired:'0',sequence:'0'},end={...at,transition:'10',retired:'9'};
   const calls={seek:0,close:0};
   timeline.preview={id:'history',compatible:true};
   timeline.owner={id:'history',manifest:{begin,end},events:[],controller:{
