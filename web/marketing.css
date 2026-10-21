@@ -49,3 +49,6 @@
   .case-table tbody td:first-of-type::before{content:"Typical dev-board path"}
   .case-table tbody td:last-of-type::before{content:"Planned browser path"}
 }
+
+/* Nested boundaries in the AI Sandboxing architecture study. */
+.sandbox-stack{margin:28px 0;max-width:760px}.sandbox-boundary{border:1px solid #4e7277;padding:24px;background:#0c171a;min-width:0}.sandbox-boundary .sandbox-boundary{margin-top:20px;background:#101f23}.sandbox-boundary .sandbox-workload{background:#172b2f;border-color:var(--cyan)}.sandbox-boundary h3{margin:12px 0;font-size:23px;letter-spacing:-.025em}.sandbox-boundary p{margin:0;font-size:13px;line-height:1.7}.sandbox-stack figcaption{font:11px/1.7 var(--mono);color:var(--dim);margin-top:14px;max-width:650px}.sandbox-stack .case-status{display:block;font-size:9px;overflow-wrap:anywhere}@media(max-width:600px){.sandbox-boundary{padding:17px}.sandbox-boundary .sandbox-boundary{margin-top:16px}.sandbox-boundary h3{font-size:20px}.sandbox-boundary p{font-size:12px}.sandbox-stack figcaption{font-size:10px}.case-cards{grid-template-columns:1fr}}
