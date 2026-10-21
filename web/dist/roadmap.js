@@ -239,7 +239,7 @@ export const ROADMAP = [
       { name: "Pending GPU result keyframes", status: "verified", evidence: "E9-T18b–c: independently verified pending-work restore, recorded results and fresh callback leases in native and physical GPU replay" },
       { name: "Guest-visible GPU replay", status: "verified", evidence: "E9-T18c: independently verified durable RV64 GPU results, private seek and physical canvas in 1 GiB pure ICount/64; desktop budgets and integration remain T22/T24" },
       { name: "Accessible session timeline", status: "verified", evidence: "E9-T19: independently verified saved Linux restoration, real console output, accessible controls and cancellation ownership" },
-      { name: "Branches from saved history", status: "in-progress", evidence: "E9-T20: private software/GPU continuations, local retained assets and explicit offline policy; independent verification pending" },
+      { name: "Branches from saved history", status: "verified", evidence: "E9-T20: Daybreak verified isolated software/GPU continuations, real Linux files, private COW/input state, retained local assets and permanent offline network policy" },
     ],
   },
 ];
