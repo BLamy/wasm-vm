@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E9-T20** — Continue from the past on an isolated recording branch
 1. **E9-T21** — Export and import complete bounded local session bundles
 1. **E9-T22** — Measure recording storage and seek overhead on real guests
 1. **E6-T11e** — Survive hostile guest 3D requests and browser graphics context loss
@@ -469,7 +468,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.9182` [E9-T18b](epic-9-session-time-travel/E9-T18b-pending-gpu-keyframes.md) — Restore genuine guest-pending GPU results across coherent keyframes *(deps: E9-T18a)*
 - [x] `524.9183` [E9-T18c](epic-9-session-time-travel/E9-T18c-browser-gpu-result-replay.md) — Replay durable GPU session results through the real browser bridge *(deps: E9-T18b, E9-T17, E9-T09, E9-T14)*
 - [x] `524.919` [E9-T19](epic-9-session-time-travel/E9-T19-timeline-ui.md) — Build the session timeline and accessible time-travel controls *(deps: E9-T06, E9-T16)*
-- [ ] `524.92` [E9-T20](epic-9-session-time-travel/E9-T20-branch-from-history.md) — Continue from the past on an isolated recording branch *(deps: E9-T19, E9-T04, E9-T14)*
+- [~] `524.92` [E9-T20](epic-9-session-time-travel/E9-T20-branch-from-history.md) — Continue from the past on an isolated recording branch *(deps: E9-T19, E9-T04, E9-T14)*
 - [ ] `524.921` [E9-T21](epic-9-session-time-travel/E9-T21-session-export-import.md) — Export and import complete bounded local session bundles *(deps: E9-T07, E9-T16, E9-T18c)*
 - [ ] `524.922` [E9-T22](epic-9-session-time-travel/E9-T22-replay-performance.md) — Measure recording storage and seek overhead on real guests *(deps: E9-T15, E9-T16, E9-T18c, E9-T19)*
 - [ ] `524.923` [E9-T23](epic-9-session-time-travel/E9-T23-recovery-hardening.md) — Harden recording and seeking against crashes and corrupt history *(deps: E9-T07, E9-T18c, E9-T20, E9-T21, E9-T22)*

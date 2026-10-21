@@ -3,7 +3,7 @@ id: E9-T20
 epic: 9
 title: Continue from the past on an isolated recording branch
 priority: 524.920
-status: pending
+status: in-progress
 depends_on: [E9-T19, E9-T04, E9-T14]
 estimate: S
 risk: high
@@ -34,4 +34,20 @@ Write the same file differently in parent and two children, then delete/reopen i
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-21 — worker — begin isolated continuations
+
+Selected the first eligible task after independently verified GPU result replay
+(`c7106fca3`) and its main-site publication (`72de0392`). The separately reviewed
+AI Sandboxing article is committed in `d906133f9`, PR600, and published on the main
+site as `690be437`; it changes no admitted runtime bytes.
+
+Risk remains high. Each continuation will use a fresh recording owner, new
+session/log identity and private writable COW state. The selected parent stays a
+sealed replay; historical connections remain offline, with an explicit go-live
+refusal policy rather than automatic retransmission. Required runtime assets
+must come from authenticated local history when branching. Implementation and
+proof must preserve parent futures, two independent children, real guest files,
+inputs, reload/deletion order and callback ownership. Admitted software and exact
+GPU histories need the corresponding ownership path; older paced GPU histories
+retain their checkpoint-only policy. No implementation or verification result is
+claimed at activation.
