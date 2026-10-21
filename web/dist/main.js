@@ -2242,6 +2242,7 @@ window.wvmDemo = {
   },
   async restoreGpuSession(id, checkpoint, database = 'wasm-vm-sessions-v1') {
     if (linuxBootPromise) throw Error('Another guest is booting');
+    const query = new URLSearchParams(location.search);
     const incumbent = linuxCtl;
     // Reject a foreign, incomplete or unsupported pair before retiring the live owner.
     await preflightGpuSessionCandidate(id, checkpoint, database);

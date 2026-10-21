@@ -40,7 +40,16 @@ const server=createServer(async(req,res)=>{try{
   else if(name==='/guest/chunks/'+chunkHash+'.bin')bytes=chunk;
   else if(name==='/boot.json'){bytes=Buffer.from(JSON.stringify({artifacts:{kernel:{url:'/kernel.bin',size:kernel.length,sha256:sha(kernel)}}}));type='application/json';}
   else if(sources.has(name)){const source=sources.get(name);bytes=source.bytes;type=name.endsWith('.wasm')?'application/wasm':'text/javascript';}
-  else throw Error('unknown path '+name);
+  else {
+    // Also exercise the public page's successful restore path with these same
+    // real supervisor keyframes. The full Linux desktop remains a separate gate.
+    const file=path.resolve(root,'web/dist','.'+decodeURIComponent(name));
+    assert.ok(file.startsWith(path.join(root,'web/dist')+path.sep));
+    bytes=await fs.readFile(file);
+    type=({'.html':'text/html','.css':'text/css','.js':'text/javascript',
+      '.mjs':'text/javascript','.json':'application/json','.wasm':'application/wasm',
+      '.svg':'image/svg+xml'})[path.extname(file)]??'application/octet-stream';
+  }
   served.push({path:name,bytes:bytes.length,sha256:sha(bytes)});
   res.writeHead(200,{'Content-Type':type,'Content-Length':bytes.length}).end(bytes);
 }catch(error){res.writeHead(404).end(String(error));}});
@@ -283,9 +292,36 @@ try{
   assert.deepEqual(report.fingerprintAfterLoss,report.fingerprintBeforeLoss);
   report.afterLoss=await page.evaluate(()=>__startGpuSession('red'));assert.equal(report.afterLoss.restored,true);
   const afterLoss=await state('red-after-loss');assert.deepEqual(afterLoss.pixel,[255,0,0,255]);
-  await page.screenshot({path:path.join(output,'browser.png'),fullPage:true});assert.deepEqual(errors,[]);report.status='passed';
+  await page.screenshot({path:path.join(output,'browser.png'),fullPage:true});
+  await page.evaluate(async()=>{await __gpuSession.controller.stop();__gpuSession.worker.terminate();});
+  await page.goto('http://127.0.0.1:'+server.address().port+'/app.html?noAutoBoot=1&desktop=1&testHooks=1&gpuTrace=1#ide');
+  await page.waitForFunction(()=>globalThis.__ready===true&&globalThis.wvmDemo?.restoreGpuSession,
+    null,{timeout:60000});
+  const publicRestores=[];
+  for(const [checkpoint,pixel]of [['green',[0,255,0,255]],['red',[255,0,0,255]]]){
+    const previous=await page.evaluate(()=>wvmDemo.guestSession());
+    const result=await page.evaluate(checkpoint=>wvmDemo.restoreGpuSession(
+      'accelerated-positions',checkpoint,'wasm-vm-sessions-v1-e9-gpu-probe'),checkpoint);
+    assert.equal(result.restored,true,'public valid keyframe restore succeeds');
+    await page.waitForFunction(expected=>{
+      const canvas=document.querySelector('#ide-display-canvas');
+      // This guest presents a 64x64 scanout at the public canvas origin.
+      const value=canvas?.getContext('2d').getImageData(32,32,1,1).data;
+      return value&&expected.every((channel,index)=>value[index]===channel);
+    },pixel,{timeout:30000});
+    const current=await page.evaluate(async()=>({owner:wvmDemo.guestSession(),gpu:await __linuxCtl.gpuStats(),
+      display:__presentation.state()}));
+    assert.notEqual(current.owner.key,previous?.key,'public restore claims a fresh owner');
+    assert.ok(current.gpu.scanout.retirements.some(row=>row.epoch===current.gpu.epoch&&row.status==='drawn'),
+      'public restore presents from the current GPU epoch');
+    publicRestores.push({checkpoint,result,previous,current,pixel});
+  }
+  report.publicRestores=publicRestores;
+  await page.screenshot({path:path.join(output,'public-restores.png'),fullPage:true});
+  assert.deepEqual(errors,[]);report.status='passed';
 }catch(error){report.status='failed';report.failure={message:error.message,stack:error.stack};process.exitCode=1;console.error(error.stack);
-  if(page)try{report.partial=await page.evaluate(()=>({serial:globalThis.__gpuSession?.serial,errors:globalThis.__gpuSession?.errors,states:globalThis.__gpuSession?.states}));await page.screenshot({path:path.join(output,'failure.png'),fullPage:true});}catch(capture){report.captureFailure=String(capture);}
+  if(page)try{report.partial=await page.evaluate(async()=>({serial:globalThis.__gpuSession?.serial,errors:globalThis.__gpuSession?.errors,states:globalThis.__gpuSession?.states,
+    publicOwner:globalThis.wvmDemo?.guestSession?.(),publicGpu:await globalThis.__linuxCtl?.gpuStats?.()}));await page.screenshot({path:path.join(output,'failure.png'),fullPage:true});}catch(capture){report.captureFailure=String(capture);}
 }finally{
   report.served=served;report.finishedAt=new Date().toISOString();
   await fs.writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');

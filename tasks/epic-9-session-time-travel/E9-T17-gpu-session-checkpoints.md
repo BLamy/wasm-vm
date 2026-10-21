@@ -174,3 +174,29 @@ These changes touch recording scripts and evidence only. Runtime files, their
 dependency boundary and the full native gate's digests are unchanged; carry that
 passed gate forward under incremental re-verification. The focused final browser
 command, final clean-clone proof and complete independent verdict remain pending.
+
+### 2026-10-21 — worker — public restore scope failure retained
+
+The frozen `795dc80b093f20c2514cb174f26fe2fffba2a4d7` cold run captured both
+actual Linux/Mesa positions, completed trusted input, exported 2144 immutable
+objects (344686234 bytes), and refused foreign build/physical host and crosswired
+disk/GPU/configuration candidates while preserving the original manifest and
+revision. Its first valid public restore then failed at `web/main.js:2255`:
+`ReferenceError: query is not defined`. No successful restoration is claimed.
+The original recording remains at
+`/Users/blamy/Documents/Codex/e9-t17-final-cold-795dc80b/desktop/`;
+`e9-gpu-session-desktop.json` SHA-256
+`a802bb8ccb6a5576bc6c7bed9ca25eba3616ec89a202d4292c39ba56d0172cfb`,
+raw archive receipt SHA-256
+`486988fb2efd2a80609ffe045c771f879333c277cef7c43df42428d1f1b6a28f`,
+and `browser-trace.zip` SHA-256
+`8795657dfcce86fe734c608fb4b0114fb55fc05ae78ccebfa9b1d47a9ab00b43`.
+
+The restore method now creates its own URL parameters before retiring any owner.
+The short hardware-browser regression also exercises two successful restores
+through the actual public page/API with its real supervisor guest keyframes,
+requiring a fresh owner and current-epoch physical pixels. This supplements the
+separate real Linux desktop proof and does not replace it. Development recording
+`target/evidence/e9-t17-public-restore-dev-r2/report.json` passed both public
+restores with zero browser errors. Status remains
+`in-progress`; the corrected public path and final cold run must pass again.
