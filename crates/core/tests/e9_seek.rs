@@ -302,3 +302,55 @@ fn delivered_ecall_trap_has_its_own_reverse_step_boundary() {
         assert_eq!(witness(&mut machine).resume_sha256, expected.resume_sha256);
     }
 }
+
+#[test]
+fn reverse_transition_fence_preserves_deliveries_before_the_reversed_instruction() {
+    let mut original = simple();
+    original
+        .start_session_sources(original.source_policy(), None)
+        .unwrap();
+    let initial_resume = original.save_session_resume().unwrap();
+    let initial = witness(&mut original);
+    let a = delivery(
+        &mut original,
+        SessionEffect::WriteRam {
+            address: BASE + 0x800,
+            bytes: vec![1],
+        },
+    );
+    let b = delivery(
+        &mut original,
+        SessionEffect::WriteRam {
+            address: BASE + 0x801,
+            bytes: vec![2],
+        },
+    );
+    let before_instruction = witness(&mut original);
+    until(&mut original, 1);
+    let after_instruction = witness(&mut original);
+    let plan = ReplayPlan {
+        begin: initial.position,
+        end: after_instruction.position,
+        initial_resume,
+        events: vec![a, b],
+        witnesses: vec![initial, after_instruction],
+    };
+
+    // Reverse-step restores a fresh candidate and replays to transition - 1. Deliveries made
+    // before the reversed instruction remain part of that instruction boundary's exact state.
+    let mut candidate = simple();
+    let mut driver = ReplayDriver::start(&mut candidate, plan).unwrap();
+    while !driver
+        .run_chunk_to_transition(&mut candidate, 0, 1, |_, _, _| unreachable!())
+        .unwrap()
+    {}
+
+    assert_eq!(
+        candidate.session_position(),
+        Some(before_instruction.position)
+    );
+    assert_eq!(
+        witness(&mut candidate).resume_sha256,
+        before_instruction.resume_sha256
+    );
+}
