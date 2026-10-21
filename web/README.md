@@ -69,6 +69,9 @@ The public product pages are static and dependency-free:
   market, critics, and embedding surfaces.
 - [`case-studies.html`](./case-studies.html) — case-study index, including the
   [in-progress RV-Phone OS plan](./case-study-riscv-os.html) and its proof boundary.
+- [`case-study-ai-sandboxing.html`](./case-study-ai-sandboxing.html) — proposed hosted
+  isolation stack: the agent in wasm-vm, a sandboxed browser, and Firecracker around
+  the entire browser. Separates the current demo from the containment evidence still needed.
 - [`work-market.html`](./work-market.html) — frozen tickets, builder submissions, critic quorum,
   challenge windows, and settlement economics.
 - [`security.html`](./security.html) — passkey-owned volumes, key hierarchy, shard verification,
