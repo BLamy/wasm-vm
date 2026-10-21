@@ -1024,6 +1024,40 @@
         <div class="session-actions"><button id="input-recording-run" type="button" disabled>Check delivered inputs</button></div>
         <p id="input-recording-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
       </details>
+      <details id="session-timeline" class="session-library session-timeline" open>
+        <summary>Time travel · session timeline</summary>
+        <p class="session-note">Open a completed software recording, or record a short Linux boot sample. Replay uses a private machine and pauses the live guest. GPU checkpoints remain in Local saved sessions; GPU event replay is awaiting verification.</p>
+        <div class="session-fields">
+          <label>Saved recording<select data-timeline="sessions" aria-label="Timeline saved recording" disabled></select></label>
+          <button data-timeline="open" type="button" disabled>Open replay</button>
+          <button data-timeline="refresh" type="button" disabled>Refresh history</button>
+          <button data-timeline="record" type="button" disabled>Record Linux sample</button>
+          <button data-timeline="stop" type="button" disabled>Finish sample early</button>
+        </div>
+        <p data-timeline="mode">Live view · no replay restored</p>
+        <p data-timeline="active">Active replay: none</p>
+        <p data-timeline="position" aria-label="Active replay position">No position restored.</p>
+        <label>Scrub saved history<input data-timeline="scrub" type="range" min="0" max="1000" value="0" aria-label="Scrub saved history" disabled></label>
+        <div class="session-fields">
+          <label>Exact transition<input data-timeline="target" type="text" inputmode="numeric" pattern="[0-9]{1,20}" maxlength="20" value="0" disabled></label>
+          <button data-timeline="seek" type="button" disabled>Seek transition</button>
+          <button data-timeline="back" type="button" disabled>Step back</button>
+          <button data-timeline="forward" type="button" disabled>Step forward</button>
+          <button data-timeline="play" type="button" disabled>Play replay</button>
+          <button data-timeline="pause" type="button" disabled>Pause / cancel seek</button>
+        </div>
+        <p data-timeline="preview" class="session-note"></p>
+        <div class="session-fields">
+          <label>Saved keyframe<select data-timeline="points" disabled></select></label>
+          <button data-timeline="point-go" type="button" disabled>Go to keyframe</button>
+          <label>Recorded event<select data-timeline="events" disabled></select></label>
+          <button data-timeline="event-go" type="button" disabled>Go to event</button>
+        </div>
+        <p class="session-note">Observation events navigate to the next transition boundary. The full position below identifies the restored state. The console shows its recorded serial output.</p>
+        <pre data-timeline="console" tabindex="0" aria-label="Replay serial console">Open a replay to view its console.</pre>
+        <details><summary>Active state digest</summary><code data-timeline="digest">No replay digest.</code></details>
+        <p data-timeline="status" role="status" aria-live="polite" aria-atomic="true">Reading saved sessions…</p>
+      </details>
       <details id="session-library" class="session-library" open>
         <summary>Local saved sessions</summary>
         <p class="session-note">Save exact points in an offline software guest or a qualified accelerated desktop. Input recording also saves delivered input in order. A new guest or Open replaces the current guest.</p>
