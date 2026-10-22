@@ -362,3 +362,77 @@ Deployment/worker proof receipt:
 `a10327e4f1de279c76141dab5e865adcad8283e472f4bdffe9d9c3fa633cef3a`. These are worker publication claims; the fresh actual
 Daybreak publication verdict is still required. E9-T22 through E9-T24 remain
 outstanding and Epic 9 is not claimed complete.
+
+### 2026-10-22 — fresh actual Daybreak publication verifier
+
+VERDICT: verified
+
+- P1 publication boundary — **HELD**. Clean launch head
+  `7ef1f7eb25d0699f3f5aeb67d08b1703a5e669ed` is a task-log-only child of
+  harness head `b75a85058665edd249c0f6ed141ddedbbbfc72ab`. Release
+  `66d655d437fcb644a67f01dc5e9c23fe889edbeb..62936461529446c8c2f3f17f8a0c2185ee9b45fd`
+  is exactly roadmap source/dist, generated tasks source/dist and the built SW
+  stamp. The harness diff is exactly two evidence/reporting files. No VM,
+  renderer, parser, importer, store or timeline runtime semantics changed.
+- P2 deployment and public bytes — **HELD**. Receipt SHA-256
+  `a10327e4f1de279c76141dab5e865adcad8283e472f4bdffe9d9c3fa633cef3a`
+  and deploy log SHA-256
+  `274d11d27f3e82ee69bb09b823b1a781237fb07bf192e76589f50e67f7e88f75`
+  identify production deployment `58cada9e`, project `wasm-vm`, branch `main`,
+  source `62936461529446c8c2f3f17f8a0c2185ee9b45fd` and actual
+  <https://wasm-vm.pages.dev/>. Fresh main-host GETs matched Git/sidecars for
+  the GPU graph stamp, Wasm, both bundle modules, witness/store/timeline,
+  roadmap/tasks/app/SW, all five deployed manifests and all three marketing
+  cases. Seven exact declared R2 URLs returned HEAD 200 with declared sizes.
+- P3 direct results — **HELD**. Bound report SHA-256 values rehash exactly:
+  local `67053948218588e1a4985e96adfb40d7b55d49213a714be11c02609ff1fa074a`,
+  public assets `de8628ee288e16128ca69757caaaa99463b010cc14ae183b5d4c64e84dd2504a`,
+  public browser `70d0b3f75c46a1f1cf8d48c52cb60f21b46751b340a64af4463487198e90b9c5`,
+  corrected transfers `ab5b2b32be0bfc90fe5cab1913550dd99b53583dab954b2541fc4c2acdf19485`
+  and independent reader
+  `9c41b3672e0b176ba8b22321d84f56bf20ed04c9241586fb89fd8b478513eb9c`.
+  Actual public demo is 127 passed / 0 failed with verified branch/bundle pips;
+  transfer proof has four cases and 60 malformed refusals with zero other
+  console/page/egress/blocked errors.
+- P4 explicit favicon exception — **HELD**. Original report remains terminal
+  **failed** at SHA-256
+  `bb2f1335f214964fb0755762289d6e901e204d19a84ef8421c49ebb54a8ada05`.
+  Audit SHA-256
+  `2d1f69649d4516f7b151a5d109e68e9035f4c70720623f7c17edc39161fb7036`
+  reopens eight traces; each contains exactly one console error at
+  `https://wasm-vm.pages.dev/favicon.ico`, status 404, and no other console
+  error. Direct GET independently returned 404. The corrected executed harness
+  is byte-identical to Git at `b75a8505`; only the exact same-origin URL plus
+  404 resource-message class is retained, every other console/page error stays
+  fatal, and the independent reader rechecks each retained row. No failed result
+  was relabeled.
+- P5 carried high-risk boundary — **HELD**. Prior actual Daybreak report JSON /
+  Markdown rehash to
+  `ad67b9c6a3359a858bb3f63235aa809ec69ddd05a91231004a199b24c498c48e` /
+  `c1d9d960c3571e102edfe168accbb3e9ae93b236c08b4f64bb461ccacdc6f7ec`.
+  Wasm remains
+  `d2bb362758e060f40351e57c7e52fa42b917a64017cdc2615d7f20d60a06bc2d`
+  and the unchanged 74-file GPU graph remains
+  `5e50271a8fc4df404aa5ca2a31ed8ffbdf591fd27aac195f4005d03e9a080e17`.
+  The high-risk verdict at `66d655d437fcb644a67f01dc5e9c23fe889edbeb`
+  is carried; no broad/cold/native/guest-boot/performance/novel/sabotage gate
+  was repeated.
+- P6 claim/governance discipline — **HELD**. Retained receipts say Actions are
+  disabled and PR 603 was draft/open at release head with null auto-merge.
+  Public/source content leaves T22/T23/T24 pending, RV-Phone in progress, and
+  hosted Firecracker/deterministic-simulation integration explicitly proposed.
+  No full-desktop, performance or Epic-9-complete claim is made.
+- COVERAGE — **SUFFICIENT**. Five release files are exercised by exact local/public
+  bytes and the browser proof; both harness files are exercised by the corrected
+  transfer and reader reports; the launch child is declarative task metadata.
+  No product/runtime hunk exists in this publication slice.
+- SUITE — **RETAIN EXISTING; NO NEW PROMOTION**. Publication evidence report:
+  `target/evidence/e9-t21-daybreak-publication/report.json`, SHA-256
+  `d06d11b69dd97d9b8b0a712f81f0175052465c6dfa05f979618f7c497a6d6578`;
+  Markdown SHA-256
+  `a6313cd20a85f4f15e6fc3a0a13d8a23875056e25650fa945208cea34c1d1232`;
+  frozen predictions SHA-256
+  `409e6c9ba06f2df36264d07557307ca2e70f9513f8f78025e2c11235de843c77`.
+
+Remaining Epic 9 work is unchanged: E9-T22 performance, E9-T23 recovery and
+E9-T24 capstone.
