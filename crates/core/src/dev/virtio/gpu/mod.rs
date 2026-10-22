@@ -371,6 +371,14 @@ pub struct GpuState {
 
 impl GpuState {
     #[cfg(feature = "virgl-renderer")]
+    pub(crate) fn enable_owned_live_transport(&mut self) -> Result<(), control3d::Control3dError> {
+        self.submit3d
+            .as_mut()
+            .ok_or(control3d::Control3dError::InvalidParameter)?
+            .enable_owned_live_transport()
+    }
+
+    #[cfg(feature = "virgl-renderer")]
     pub(crate) fn install_session_result_tap(
         &mut self,
         tap: crate::session_gpu::ControlResultTap,

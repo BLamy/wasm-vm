@@ -504,7 +504,7 @@ impl crate::Machine {
         {
             return Err(SessionError::UnsupportedScheduling);
         }
-        if self.session_clock.is_some() {
+        if self.session_clock.is_some() || self.live_unrecorded.is_some() {
             return Err(SessionError::AlreadyActive);
         }
         self.session_clock = Some(SessionClock::default());
@@ -692,7 +692,13 @@ impl crate::Machine {
     #[cfg(not(feature = "zicsr-stub"))]
     pub(crate) fn prepare_session_transition(&mut self) -> Result<Preparation, SessionError> {
         let Some(clock) = self.session_clock.as_ref() else {
-            return Ok(Preparation::Ready);
+            return self.prepare_live_work().map(|idle| {
+                if idle {
+                    Preparation::IdleAdvanced
+                } else {
+                    Preparation::Ready
+                }
+            });
         };
         if let Some(error) = self.session_sources.borrow().error() {
             return Err(error);
@@ -808,6 +814,7 @@ impl crate::Machine {
 
     #[cfg(not(feature = "zicsr-stub"))]
     pub(crate) fn advance_session(&mut self, transitions: u64, retired: u64) {
+        self.advance_live_work(transitions, retired);
         if let Some(clock) = &mut self.session_clock {
             clock.advance(transitions, retired);
             self.session_sources.borrow_mut().end();

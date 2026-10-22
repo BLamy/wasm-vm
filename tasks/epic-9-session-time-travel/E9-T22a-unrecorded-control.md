@@ -34,7 +34,9 @@ an exact recording. Do not add a live network service in this slice; T22b owns i
 
 ## Deterministic acceptance
 
-`make verify-E9-T22a`. Planned target to implement for this atomic boundary.
+`make verify-E9-T22a`. The orchestrator requires a clean frozen head; a second
+run with `--cold-clone NEW_DIRECTORY` rebuilds from that exact revision and
+reconstructs the full immutable Alpine image from authenticated public chunks.
 Record all affected core/Wasm tests, native/Wasm builds and direct browser
 control assertions, plus source/evidence digests and the final cold-clone proof.
 
@@ -62,3 +64,62 @@ acceptance target is implemented at activation. Implement, record the full
 prescribed risk-tier proof and final cold clone, and hand the exact diff plus
 evidence to a fresh actual Daybreak verifier. Only that verifier sets verified.
 No merge is authorized; continue the native stack with every PR left open.
+
+### 2026-10-22 — worker — development findings and implementation (not final acceptance)
+
+The explicit mode now assembles the same owned-provider software/GPU profiles
+with raw live RTC/entropy and no SessionClock, source/input/result tape,
+recorder dirty bitmap, checkpoint history or durable namespace. Payload-free
+native work counters charge actual interpreter/JIT/tail retires, traps/SBI,
+interrupts and separately fenced WFI timer advancement. UART offer/FIFO counters
+report actual positions and bytes; ordinary optimizations remain enabled.
+
+Fresh actual Daybreak design sessions used `gpt-daybreak-blue-latest`,
+`cyberAccessProgram=daybreakBlue`, with provider fallback disabled. Candidate 1
+found clock, GPU profile/lease, WFI wake and history ingress defects; they were
+fixed with direct regressions. Candidate 2 carried P1/P2/P3/P5/P6 and the narrow
+P8 construction predictions, and identified the remaining legacy snapshot
+namespace chain. Its report is `target/evidence/e9-t22a-daybreak-runtime-design-2/final-message.md`,
+SHA256 3dda06ae15427d93948d154f2c76691e06ff611cafaa0a4ac14fb813f3c2c959. Neither design audit sets task status or substitutes for
+final exact-head verification.
+
+The preserved pre-fix browser counterexample is
+`target/evidence/e9-t22a-legacy-history-development-failure-1/report.json`,
+SHA256 `52d68feafa3e1a9ea389bc534dca6be2069141f2932751be154a43fbd2c10d36`:
+`stampBootSnapshotIdentity` plus `importStoredSnapshot` created an IndexedDB
+namespace while OFF, and generation advanced from 0 to 1. Explicit OFF guards
+now precede all nine legacy identity/generation/snapshot operations; diagnostics
+also expose the legacy resume and persistent namespace flags. The new isolated
+history attack is a required acceptance gate.
+
+Development evidence before this last correction includes full pinned Alpine
+file/setup and all three UART frames delivered, the 127/0 visible demo with real
+JIT execution, physical M4 Max GPU query/readback and 24 original-owner/numeric/
+profile/history refusal attacks, plus the existing interpreter/JIT software and
+physical GPU record/replay regressions. These dirty-tree receipts are preserved
+under `target/evidence/e9-t22a-*-development-*`; they are self-validation, not a
+final claim. The native OFF/record comparison now retains both complete 4096-line
+guest traces and a standalone literal-instruction/value oracle. Trace SHA256
+`ff4c8f7046da309f79f8af510369a74bc1fd590f3deb1b0ff88c95c816f2046a`;
+architectural digest `2f46d4f0185cd2e94327082dc107b2c75c94b0637dfa678113789184de6d779f`.
+
+`make verify-E9-T22a` now selects affected strict native/Wasm checks, recorded
+native/guest boundaries, built demo, full Alpine OFF and physical GPU OFF proof,
+legacy-history attacks, both complete record/replay regressions and an artifact
+reader, followed by the prescribed full local wall. The final cold-clone mode
+rebuilds from the exact clean revision with scrubbed Rust/Cargo configuration,
+no inherited target/node_modules/rootfs, and independently reconstructs the full
+pinned Alpine base from authenticated public content-addressed chunks. The
+full risk-tier run, final cold proof, fresh Daybreak full charter, publication
+and terminal verification remain outstanding. No HTTP, desktop workload or
+performance result is claimed by this task.
+
+The corrected legacy attack passed at development Wasm
+`b103aa2068b06bfbafdd85b0ddbb0f8e12db8cb2c3c3ef9cf694eabc5e0d31a1`:
+`target/evidence/e9-t22a-legacy-history-development-fixed-1/report.json`, SHA256
+`f8f58524d8fe4e15fca7c61a9b0acc2bd827c4c53e954ef29968bb55e18b2fa8`.
+All nine operations refused, both legacy namespace flags stayed false, generation
+remained zero, and no IndexedDB database was created. This remains development
+evidence; final frozen submission is required below. Candidate 2's report has a
+one-entry inventory typo (34 source files, not 35); its cited manifest and patch
+hashes match exactly, and the original report is preserved with a companion note.

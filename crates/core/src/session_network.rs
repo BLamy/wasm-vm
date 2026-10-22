@@ -113,6 +113,7 @@ impl GuestState {
 }
 pub(crate) struct NetworkHub {
     replay: bool,
+    unrecorded: bool,
     // Host policy belongs to this constructor/owner, never to an imported guest snapshot.
     branch_offline: bool,
     incarnation: Rc<()>,
@@ -240,7 +241,11 @@ impl crate::Machine {
     /// adopted: the host owner explicitly pumps its provider outside the guest machine.
     pub fn enable_session_network(&mut self, replay: bool) -> Result<(), NetworkError> {
         if self.session_network.is_some()
-            || self.session_position() != Some(Default::default())
+            || if self.live_unrecorded.is_some() {
+                replay || self.session_position().is_some()
+            } else {
+                self.session_position() != Some(Default::default())
+            }
             || self.net.is_some()
             || self.net_backend.is_some()
             || (!self.virtio.is_empty()
@@ -250,6 +255,7 @@ impl crate::Machine {
         }
         let hub = Rc::new(RefCell::new(NetworkHub {
             replay,
+            unrecorded: self.live_unrecorded.is_some(),
             branch_offline: false,
             incarnation: Rc::new(()),
             guest: GuestState::default(),
@@ -492,6 +498,11 @@ impl crate::Machine {
             .ok_or(NetworkError::Inactive)?
             .clone();
         hub.borrow().validate(&event)?;
+        if hub.borrow().unrecorded {
+            hub.borrow_mut().accept(event);
+            self.fabric_idle_epoch = None;
+            return Ok(());
+        }
         if self.session_pending_events() != 0 {
             return Err(NetworkError::Position);
         }

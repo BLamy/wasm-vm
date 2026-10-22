@@ -421,6 +421,8 @@ pub(crate) struct Submit3dState {
     layered_dma: bool,
     production: bool,
     pub(crate) result_tap: Option<crate::session_gpu::ControlResultTap>,
+    // Ephemeral host policy: the live OFF control still requires original-request leases.
+    owned_live_transport: bool,
     admitted_completion: Option<Submit3dCompletion>,
     physical_settled: bool,
 }
@@ -458,9 +460,17 @@ impl Submit3dState {
             layered_dma,
             production: false,
             result_tap: None,
+            owned_live_transport: false,
             admitted_completion: None,
             physical_settled: false,
         }
+    }
+    pub(crate) fn enable_owned_live_transport(&mut self) -> Result<(), Control3dError> {
+        if !self.production || self.pending.is_some() || self.result_tap.is_some() {
+            return Err(Control3dError::InvalidParameter);
+        }
+        self.owned_live_transport = true;
+        Ok(())
     }
     pub fn snapshot(&self) -> Submit3dSnapshot {
         let mailbox = self.mailbox.inspect();
@@ -546,14 +556,16 @@ impl Submit3dState {
             key,
             matches!(pending.request, PendingRequest::Scanout(_)),
             if self.production { 256 } else { 64 },
-            self.result_tap.is_some(),
+            self.result_tap.is_some() || self.owned_live_transport,
         );
         self.pending = Some(pending);
         let result = match &self.pending.as_ref().expect("installed pending").request {
-            PendingRequest::Render(r) if self.result_tap.is_some() => {
+            PendingRequest::Render(r) if self.result_tap.is_some() || self.owned_live_transport => {
                 self.sink.begin_session_job(r, self.mailbox.lease(key))
             }
-            PendingRequest::Scanout(r) if self.result_tap.is_some() => {
+            PendingRequest::Scanout(r)
+                if self.result_tap.is_some() || self.owned_live_transport =>
+            {
                 self.sink.begin_session_scanout(r, self.mailbox.lease(key))
             }
             PendingRequest::Render(r) => self.sink.begin_job(r),

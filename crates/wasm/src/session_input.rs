@@ -81,6 +81,92 @@ pub(crate) fn validate(channel: u16, bytes: &[u8]) -> Result<(), &'static str> {
     }
 }
 
+/// Payload-free observation of live UART offers and actual FIFO delivery. No event tape.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub(crate) struct UnrecordedInputProgress {
+    pub offered_frames: u64,
+    pub offered_bytes: u64,
+    pub applied_bytes: u64,
+    pub last_offer_transition: u64,
+    pub last_feed_transition: u64,
+}
+impl UnrecordedInputProgress {
+    pub fn offered(self, bytes: u64, at: u64) -> Result<Self, &'static str> {
+        if at < self.last_offer_transition {
+            return Err("unrecorded input position moved backward");
+        }
+        Ok(Self {
+            offered_frames: self
+                .offered_frames
+                .checked_add(1)
+                .ok_or("unrecorded input frame count exhausted")?,
+            offered_bytes: self
+                .offered_bytes
+                .checked_add(bytes)
+                .ok_or("unrecorded input byte count exhausted")?,
+            last_offer_transition: at,
+            ..self
+        })
+    }
+    pub fn fed(self, bytes: u64, at: u64) -> Result<Self, &'static str> {
+        let applied = self
+            .applied_bytes
+            .checked_add(bytes)
+            .ok_or("unrecorded applied input exhausted")?;
+        if applied > self.offered_bytes || at < self.last_feed_transition {
+            return Err("unrecorded FIFO accounting mismatch");
+        }
+        Ok(Self {
+            applied_bytes: applied,
+            last_feed_transition: at,
+            ..self
+        })
+    }
+}
+
+#[cfg(test)]
+mod unrecorded_progress_tests {
+    use super::*;
+    #[test]
+    fn offered_input_is_distinct_from_applied_fifo_bytes_and_overflow_is_atomic() {
+        let empty = UnrecordedInputProgress::default();
+        let offered = empty.offered(64, 7).unwrap();
+        assert_eq!(
+            (
+                offered.offered_frames,
+                offered.offered_bytes,
+                offered.applied_bytes
+            ),
+            (1, 64, 0)
+        );
+        let partial = offered.fed(16, 9).unwrap();
+        assert_eq!(
+            (partial.applied_bytes, partial.last_feed_transition),
+            (16, 9)
+        );
+        assert!(partial.fed(49, 10).is_err());
+        assert!(partial.fed(1, 8).is_err());
+        let done = partial.fed(48, 10).unwrap();
+        assert_eq!(
+            (
+                done.applied_bytes,
+                done.last_offer_transition,
+                done.last_feed_transition
+            ),
+            (64, 7, 10)
+        );
+        let max = UnrecordedInputProgress {
+            offered_frames: u64::MAX,
+            offered_bytes: u64::MAX,
+            applied_bytes: u64::MAX,
+            ..done
+        };
+        assert!(max.offered(1, 11).is_err());
+        assert!(max.fed(1, 11).is_err());
+        assert_eq!(max.offered_frames, u64::MAX);
+    }
+}
+
 pub(crate) struct InputCapture {
     pub replay: bool,
     pub paused: bool,

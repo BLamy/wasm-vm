@@ -987,6 +987,12 @@
         <div class="session-actions"><button id="network-capture-run" type="button" disabled>Check offline network replay</button></div>
         <p id="network-capture-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
       </details>
+      <details id="unrecorded-control-panel" class="session-library">
+        <summary><span id="unrecorded-control-pip" class="cap-pip partial" aria-hidden="true"></span> Recording disabled check</summary>
+        <p class="session-note">Run a short Linux boot excerpt with recording off and check that it cannot be used as saved history. This check reports no performance result.</p>
+        <div class="session-actions"><button id="unrecorded-control-run" type="button" disabled>Check recording is off</button></div>
+        <p id="unrecorded-control-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
       <details id="session-replay-panel" class="session-library">
         <summary><span id="session-replay-pip" class="cap-pip in-progress" aria-hidden="true"></span> Full Linux replay check</summary>
         <p class="session-note">Record the pinned Alpine guest through a real disk read, reopen its saved event tape, and compare interpreter and JIT replay. This check takes a few minutes.</p>

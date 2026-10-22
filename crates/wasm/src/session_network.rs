@@ -28,7 +28,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = exactNetworkRequests)]
     pub fn exact_network_requests(&self) -> Result<JsValue, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
-        if inner.exact_session != Some(false) {
+        if inner.exact_session != Some(false) && inner.machine.live_unrecorded_work().is_none() {
             return Err(error(NetworkError::ReplayIngress));
         }
         let out = js_sys::Array::new();
@@ -48,7 +48,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = exactLeaseNetworkRequest)]
     pub fn exact_lease_network_request(&self, id: &str) -> Result<SessionNetworkLease, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
-        if inner.exact_session != Some(false) {
+        if inner.exact_session != Some(false) && inner.machine.live_unrecorded_work().is_none() {
             return Err(error(NetworkError::ReplayIngress));
         }
         let id = if id.is_empty() {
@@ -67,7 +67,7 @@ impl WasmLinux {
         input: js_sys::Uint8Array,
     ) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        if inner.exact_session != Some(false) {
+        if inner.exact_session != Some(false) && inner.machine.live_unrecorded_work().is_none() {
             return Err(error(NetworkError::ReplayIngress));
         }
         let event = NetworkEvent::decode(&bytes(input)?).map_err(error)?;

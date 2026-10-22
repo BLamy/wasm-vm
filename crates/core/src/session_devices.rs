@@ -168,6 +168,7 @@ pub(crate) struct DeviceHub {
     agent: bool,
     pub(crate) capture: bool,
     replay: bool,
+    unrecorded: bool,
     incarnation: Rc<()>,
     guest: GuestState,
     pub(crate) error: Option<DeviceError>,
@@ -359,7 +360,11 @@ impl crate::Machine {
         agent_slot: usize,
     ) -> Result<(), DeviceError> {
         if self.session_devices.is_some()
-            || self.session_position() != Some(Default::default())
+            || if self.live_unrecorded.is_some() {
+                replay || self.session_position().is_some()
+            } else {
+                self.session_position() != Some(Default::default())
+            }
             || !self.virtio.is_empty()
             || self.blk.is_some()
             || !self.extra_blk.is_empty()
@@ -385,6 +390,7 @@ impl crate::Machine {
             agent,
             capture,
             replay,
+            unrecorded: self.live_unrecorded.is_some(),
             incarnation: Rc::new(()),
             guest: GuestState::default(),
             error: None,
@@ -566,6 +572,22 @@ impl crate::Machine {
                 .is_none_or(|console| console.state.borrow().generation() != generation)
         {
             return Err(DeviceError::StaleLease);
+        }
+        if hub.borrow().unrecorded {
+            // Validate the same lease, generation, payload and pending request as recording.
+            // Apply live bytes directly: no envelope, SessionEffect or delivery receipt allocation.
+            if matches!(completion.request.intent, DeviceIntent::Agent { .. })
+                && completion.status == CompletionStatus::Supplied
+            {
+                self.console
+                    .as_ref()
+                    .unwrap()
+                    .state
+                    .borrow_mut()
+                    .enqueue_agent_input(&completion.bytes);
+            }
+            hub.borrow_mut().accept(completion);
+            return Ok(());
         }
         if self.session_pending_events() != 0 {
             return Err(DeviceError::Position);

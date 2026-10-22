@@ -1,5 +1,5 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
-import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
+import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js';
 import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
 import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
 
@@ -1651,6 +1651,49 @@ export class WasmLinux {
         return WasmLinux.__wrap(ret[0]);
     }
     /**
+     * Same one-GiB pure ICount/64 owned-provider profile without a recorder.
+     * @param {Uint8Array} kernel
+     * @param {string} manifest_json
+     * @param {string} bootargs
+     * @param {Function} output
+     * @returns {WasmLinux}
+     */
+    static newUnrecordedGpuSession(kernel, manifest_json, bootargs, output) {
+        const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_newUnrecordedGpuSession(ptr0, len0, ptr1, len1, ptr2, len2, output);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return WasmLinux.__wrap(ret[0]);
+    }
+    /**
+     * Same pinned software profile and owned providers, with all capture disabled.
+     * This live control cannot create, restore, export or masquerade as recorded history.
+     * @param {Uint8Array} kernel
+     * @param {string} manifest_json
+     * @param {string} bootargs
+     * @param {Function} output
+     * @returns {WasmLinux}
+     */
+    static newUnrecordedSession(kernel, manifest_json, bootargs, output) {
+        const ptr0 = passArray8ToWasm0(kernel, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(manifest_json, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ptr2 = passStringToWasm0(bootargs, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len2 = WASM_VECTOR_LEN;
+        const ret = wasm.wasmlinux_newUnrecordedSession(ptr0, len0, ptr1, len1, ptr2, len2, output);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return WasmLinux.__wrap(ret[0]);
+    }
+    /**
      * @param {number} from_page
      * @returns {any}
      */
@@ -2519,6 +2562,17 @@ export class WasmLinux {
      */
     takeInputDeliveries() {
         const ret = wasm.wasmlinux_takeInputDeliveries(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Actual work and capture-state diagnostics for the explicit OFF control only.
+     * @returns {any}
+     */
+    unrecordedControlState() {
+        const ret = wasm.wasmlinux_unrecordedControlState(this.__wbg_ptr);
         if (ret[2]) {
             throw takeFromExternrefTable0(ret[1]);
         }
@@ -4120,22 +4174,22 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000002: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 89, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("ErrorEvent")], shim_idx: 90, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714);
             return ret;
         },
         __wbindgen_cast_0000000000000003: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 89, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("Event")], shim_idx: 90, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_2);
             return ret;
         },
         __wbindgen_cast_0000000000000004: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 89, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("IDBVersionChangeEvent")], shim_idx: 90, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_3);
             return ret;
         },
         __wbindgen_cast_0000000000000005: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 89, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [NamedExternref("MessageEvent")], shim_idx: 90, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_4);
             return ret;
         },

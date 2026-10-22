@@ -20,6 +20,7 @@ import {runNetworkCaptureProbe} from "./network-capture-probe.js";
 import {runSessionReplayProbe} from "./session-replay-probe.js";
 import {runSessionKeyframeProbe} from "./session-keyframe-probe.js";
 import {runSessionSeekProbe} from "./session-seek-probe.js";
+import {runUnrecordedControlProbe} from "./unrecorded-control-probe.js";
 
 // E4-T32: the complete machine runs in a worker by default. This path needs no SAB/COOP headers;
 // `?worker=0` and the older `?singlethread=1` spelling are explicit main-thread
@@ -2742,6 +2743,8 @@ let sessionReplayRunning=false,sessionReplayResult=null;
 const sessionReplayRun=document.getElementById("session-replay-run"),sessionReplayStatus=document.getElementById("session-replay-status");
 let sessionKeyframeRunning=false,sessionKeyframeResult=null;
 const sessionKeyframeRun=document.getElementById("session-keyframe-run"),sessionKeyframeStatus=document.getElementById("session-keyframe-status");
+let unrecordedRunning=false,unrecordedResult=null;
+const unrecordedRun=document.getElementById("unrecorded-control-run"),unrecordedStatus=document.getElementById("unrecorded-control-status");
 let sessionSeekRunning=false,sessionSeekResult=null;
 const sessionSeekRun=document.getElementById("session-seek-run"),sessionSeekStatus=document.getElementById("session-seek-status");
 let deviceCompletionsRunning=false,deviceCompletionsResult=null;
@@ -3055,6 +3058,8 @@ function renderRoadmap() {
 }
 
 function refreshRoadmapLive() {
+  const offCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="unrecorded-control");
+  document.getElementById("unrecorded-control-pip").className="cap-pip "+(unrecordedResult?.status==="passed"?"live":unrecordedResult?.status==="failed"?"regressed":offCap.status);
   const replayCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="session-replay");
   document.getElementById("session-replay-pip").className="cap-pip "+(sessionReplayResult?.status==="passed"?"live":sessionReplayResult?.status==="failed"?"regressed":replayCap.status);
   const keyframeCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="session-keyframe");
@@ -3072,6 +3077,7 @@ function refreshRoadmapLive() {
   const inputCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==='input-recording');
   document.getElementById('input-recording-pip').className=`cap-pip ${inputRecordingResult?.status==='passed'?'live':inputRecordingResult?.status==='failed'?'regressed':inputCap.status}`;
   for (const rc of roadmapCaps) {
+    if(rc.probe==="unrecorded-control"){const state=unrecordedResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Linux boot excerpt runs with capture OFF and refuses history APIs · live in browser; no performance result":rc.base.evidence;continue;}
     if(rc.probe==="session-replay"){const state=sessionReplayResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Pinned Linux, exact interpreter/JIT state and rejected unbranched input · live in browser":rc.base.evidence;continue;}
     if(rc.probe==="session-keyframe"){const state=sessionKeyframeResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Two persisted RAM deltas, exact restore, missing ancestor refusal and shared retention · live in browser":rc.base.evidence;continue;}
     if(rc.probe==="session-seek"){const state=sessionSeekResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Persisted keyframe seek, independent state digest and 100 superseded requests · live in browser":rc.base.evidence;continue;}
@@ -3126,7 +3132,8 @@ function refreshRoadmapLive() {
 }
 
 function setInteractiveState() {
-  const busy = running || suiteRunning || eventClockRunning || inputRecordingRunning || timeEntropyRunning || deviceCompletionsRunning || networkCaptureRunning || sessionReplayRunning || sessionKeyframeRunning || sessionSeekRunning;
+  const busy = unrecordedRunning || running || suiteRunning || eventClockRunning || inputRecordingRunning || timeEntropyRunning || deviceCompletionsRunning || networkCaptureRunning || sessionReplayRunning || sessionKeyframeRunning || sessionSeekRunning;
+  unrecordedRun.disabled=busy||!wasmReady;
   sessionReplayRun.disabled=busy||!wasmReady;
   sessionKeyframeRun.disabled=busy||!wasmReady;
   sessionSeekRun.disabled=busy||!wasmReady;
@@ -3384,6 +3391,13 @@ runBtn.addEventListener("click", run);
 resetBtn.addEventListener("click", reset);
 benchBtn.addEventListener("click", runBench);
 suiteRunBtn.addEventListener("click", runSuite);
+unrecordedRun.addEventListener('click',async()=>{
+ if(unrecordedRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||sessionSeekRunning||!wasmReady)return;
+ unrecordedRunning=true;unrecordedResult=null;unrecordedStatus.textContent='Preparing Linux with recording off…';setInteractiveState();refreshRoadmapLive();
+ try{unrecordedResult=await runUnrecordedControlProbe({onProgress:message=>{unrecordedStatus.textContent=message;}});unrecordedStatus.textContent='Passed · Linux boot excerpt completed with recording off. Performance measurements remain pending.';}
+ catch(error){unrecordedResult={status:'failed',failure:String(error)};unrecordedStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__unrecordedControlReport=unrecordedResult;unrecordedStatus.dataset.status=unrecordedResult.status;unrecordedRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
 sessionReplayRun.addEventListener('click',async()=>{
  if(running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||!wasmReady)return;
  sessionReplayRunning=true;sessionReplayResult=null;sessionReplayStatus.textContent='Preparing the pinned Linux recording…';setInteractiveState();refreshRoadmapLive();

@@ -2259,6 +2259,7 @@ struct LinuxInner {
     output: js_sys::Function,
     pending: std::collections::VecDeque<u8>,
     input_capture: Option<session_input::InputCapture>,
+    unrecorded_input: Option<session_input::UnrecordedInputProgress>,
     exact_session: Option<bool>,
     exact_image_len: Option<u64>,
     exact_gpu: bool,
@@ -2347,7 +2348,7 @@ enum DiskChoice {
     /// its local COW state; no ordinary chunk cache, persistence queue or live network is opened.
     ExactSession {
         manifest: wasm_vm_storage::ImageManifest,
-        replay: bool,
+        mode: wasm_vm_core::session_profile::ExecutionMode,
         gpu: bool,
     },
     Chunked {
@@ -2710,6 +2711,44 @@ impl WasmLinux {
         output: js_sys::Function,
         replay: bool,
     ) -> Result<WasmLinux, JsError> {
+        Self::new_software_session_mode(
+            kernel,
+            manifest_json,
+            bootargs,
+            output,
+            if replay {
+                wasm_vm_core::session_profile::ExecutionMode::Replay
+            } else {
+                wasm_vm_core::session_profile::ExecutionMode::Record
+            },
+        )
+    }
+
+    /// Same pinned software profile and owned providers, with all capture disabled.
+    /// This live control cannot create, restore, export or masquerade as recorded history.
+    #[wasm_bindgen(js_name = newUnrecordedSession)]
+    pub fn new_unrecorded_session(
+        kernel: &[u8],
+        manifest_json: &str,
+        bootargs: String,
+        output: js_sys::Function,
+    ) -> Result<WasmLinux, JsError> {
+        Self::new_software_session_mode(
+            kernel,
+            manifest_json,
+            bootargs,
+            output,
+            wasm_vm_core::session_profile::ExecutionMode::LiveUnrecorded,
+        )
+    }
+
+    fn new_software_session_mode(
+        kernel: &[u8],
+        manifest_json: &str,
+        bootargs: String,
+        output: js_sys::Function,
+        mode: wasm_vm_core::session_profile::ExecutionMode,
+    ) -> Result<WasmLinux, JsError> {
         let manifest = wasm_vm_storage::ImageManifest::from_json(manifest_json)
             .map_err(|e| JsError::new(&format!("exact session manifest: {e:?}")))?;
         let pinned_base = browser_file_transfer::parse_sha256(
@@ -2741,7 +2780,7 @@ impl WasmLinux {
             None,
             DiskChoice::ExactSession {
                 manifest,
-                replay,
+                mode,
                 gpu: false,
             },
             &bootargs,
@@ -2982,10 +3021,13 @@ impl WasmLinux {
         let bytes = (ram_mib as usize).saturating_mul(1024 * 1024);
         let mut machine = Machine::try_new(bytes)
             .map_err(|_| JsError::new(&format!("cannot allocate {ram_mib} MiB of guest RAM")))?;
-        let exact_replay = match &disk {
-            DiskChoice::ExactSession { replay, .. } => Some(*replay),
+        let owned_mode = match &disk {
+            DiskChoice::ExactSession { mode, .. } => Some(*mode),
             _ => None,
         };
+        let exact_replay = owned_mode
+            .filter(|mode| mode.captures())
+            .map(|mode| mode.replay());
         let exact_image_len = match &disk {
             DiskChoice::ExactSession { manifest, .. } => Some(manifest.image_len),
             _ => None,
@@ -2993,7 +3035,7 @@ impl WasmLinux {
         let exact_gpu = matches!(&disk, DiskChoice::ExactSession { gpu: true, .. });
         let uart = if let DiskChoice::ExactSession {
             manifest,
-            replay,
+            mode,
             gpu,
         } = &disk
         {
@@ -3019,20 +3061,20 @@ impl WasmLinux {
             };
             #[cfg(feature = "virgl-renderer")]
             let installed = if *gpu {
-                machine.install_full_gpu_session(
+                machine.install_full_gpu_mode(
                     base,
                     Box::new(JsWallClock),
                     Box::new(crypto_entropy::CryptoEntropy),
                     build_core_hash(),
-                    *replay,
+                    *mode,
                 )
             } else {
-                machine.install_full_software_session(
+                machine.install_full_software_mode(
                     base,
                     Box::new(JsWallClock),
                     Box::new(crypto_entropy::CryptoEntropy),
                     build_core_hash(),
-                    *replay,
+                    *mode,
                 )
             };
             #[cfg(not(feature = "virgl-renderer"))]
@@ -3040,12 +3082,12 @@ impl WasmLinux {
                 if *gpu {
                     return Err(JsError::new("GPU session support is unavailable"));
                 }
-                machine.install_full_software_session(
+                machine.install_full_software_mode(
                     base,
                     Box::new(JsWallClock),
                     Box::new(crypto_entropy::CryptoEntropy),
                     build_core_hash(),
-                    *replay,
+                    *mode,
                 )
             };
             installed.map_err(|e| JsError::new(&format!("exact session profile: {e:?}")))?
@@ -3216,7 +3258,7 @@ impl WasmLinux {
         // Default: E3-T13 loopback (frames echo back). With `setSlirpNet(true)`, E3-net swaps in the
         // synchronous slirp LOCAL stack so the guest can DHCP a real IP (10.0.2.15) and reach the
         // gateway (10.0.2.2) — no tokio, no outbound yet (that's the WebSocket-relay slice).
-        if exact_replay.is_some() {
+        if owned_mode.is_some() {
             // The qualified core adapter was installed before boot. A replay cannot construct a
             // live provider; the page owns only immutable recording bytes.
         } else if slirp_net_enabled() {
@@ -3273,7 +3315,7 @@ impl WasmLinux {
         // it, so `getrandom(2)`/`/dev/urandom` are ready early — without it the interpreted guest
         // scavenges entropy from interrupt jitter for many seconds, long enough that the first TLS
         // ClientHello's `RAND_bytes` stalls or fails (the E3-T19 guest-HTTPS flakiness).
-        if exact_replay.is_none() {
+        if owned_mode.is_none() {
             let _ = machine.enable_virtio_rng(Box::new(crypto_entropy::CryptoEntropy));
             // E5-T11c: attach the guest-visible keyboard on every browser boot. The host keymap can
             // inject make/break frames through WasmLinux::sendKeyboardEvent/syncKeyboard.
@@ -3359,6 +3401,9 @@ impl WasmLinux {
                     paused: false,
                     stopped: false,
                 }),
+                unrecorded_input: owned_mode
+                    .filter(|mode| !mode.captures())
+                    .map(|_| Default::default()),
                 exact_session: exact_replay,
                 exact_image_len,
                 exact_gpu,
@@ -3488,6 +3533,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = saveDesktopSnapshot)]
     pub fn save_desktop_snapshot(&self) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         inner.refuse_capture_mutation()?;
         let blob = inner
             .machine
@@ -3508,6 +3554,7 @@ impl WasmLinux {
         host_height: u32,
     ) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         inner.refuse_capture_mutation()?;
         let report = inner
             .machine
@@ -3787,6 +3834,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = setGuestClock)]
     pub fn set_guest_clock(&self, mode: &str) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         inner.refuse_capture_mutation()?;
         select_guest_clock(&mut inner.machine, mode, || {
             JsHostTimer::new()
@@ -3803,6 +3851,7 @@ impl WasmLinux {
             .filter(|v| v.is_finite() && v.fract() == 0.0 && (1.0..=1024.0).contains(v))
             .ok_or_else(|| JsError::new("ICount divider must be an integer from 1 to 1024"))?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         inner.refuse_capture_mutation()?;
         inner
             .machine
@@ -3814,6 +3863,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = rebaseGuestClock)]
     pub fn rebase_guest_clock(&self) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         inner.machine.rebase_guest_clock();
         Ok(())
     }
@@ -3921,6 +3971,38 @@ impl WasmLinux {
         Ok(jit_stats_object(&inner.machine))
     }
 
+    /// Actual work and capture-state diagnostics for the explicit OFF control only.
+    #[wasm_bindgen(js_name = unrecordedControlState)]
+    pub fn unrecorded_control_state(&self) -> Result<JsValue, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        let machine = &inner.machine;
+        let work = machine
+            .live_unrecorded_work()
+            .ok_or_else(|| JsError::new("unrecorded control required"))?;
+        let input = inner
+            .unrecorded_input
+            .ok_or_else(|| JsError::new("unrecorded input accounting missing"))?;
+        #[cfg(feature = "virgl-renderer")]
+        let gpu_result_capture = machine.session_gpu_cursor().is_ok();
+        #[cfg(not(feature = "virgl-renderer"))]
+        let gpu_result_capture = false;
+        js_sys::JSON::parse(&serde_json::json!({
+            "version":1,"mode":"live-unrecorded","ramBytes":machine.ram_len().to_string(),
+            "divider":machine.guest_clock_div().to_string(),"gpu":inner.exact_gpu,
+            "transition":work.transitions.to_string(),"retired":work.retired.to_string(),"idleTransitions":work.idle_transitions.to_string(),
+            "sessionClock":machine.session_position().is_some(),"sourceCapture":machine.session_sources_active(),
+            "pendingEvents":machine.session_pending_events(),"inputCapture":inner.input_capture.is_some(),
+            "durableRecording":inner.persist.is_some() || inner.snapshot_base.is_some(),
+            "legacyResumeIdentity":inner.resume_base.is_some(),"legacySnapshotNamespace":inner.snapshot_base.is_some(),
+            "recorderDirtyTracking":machine.recorder_dirty_tracking(),
+            "pendingRamEpoch":machine.ram_epoch_pending(),"gpuResultCapture":gpu_result_capture,
+            "uart":{"scope":"host offers and actual FIFO feeds; no payload history","offeredFrames":input.offered_frames.to_string(),
+                "offeredBytes":input.offered_bytes.to_string(),"appliedBytes":input.applied_bytes.to_string(),
+                "lastOfferTransition":input.last_offer_transition.to_string(),"lastFeedTransition":input.last_feed_transition.to_string(),
+                "pendingBytes":inner.pending.len()}
+        }).to_string()).map_err(|_| JsError::new("unrecorded diagnostics"))
+    }
+
     /// Run up to `max_instrs`, drain console output to the JS callback, feed queued input to the
     /// 16550 RX, and return `{ done: bool, state: string|null, retired: number }`. A persistent caller may pass
     /// `persist_max_dirty_bytes`; execution then yields as soon as the write-back queue reaches
@@ -3982,8 +4064,18 @@ impl WasmLinux {
                                 return Err(JsError::new("UART delivery refused before execution"));
                             }
                         } else {
+                            let at = inner
+                                .machine
+                                .live_unrecorded_work()
+                                .map_or(0, |work| work.transitions);
+                            let input = inner
+                                .unrecorded_input
+                                .map(|progress| progress.fed(n as u64, at))
+                                .transpose()
+                                .map_err(JsError::new)?;
                             let batch: Vec<u8> = inner.pending.drain(..n).collect();
                             inner.uart.borrow_mut().push_input(&batch);
+                            inner.unrecorded_input = input;
                         }
                     }
                 }
@@ -4234,7 +4326,27 @@ impl WasmLinux {
             inner.capture_input(session_input::UART_OFFER, bytes, false)?;
             return Ok(());
         }
+        let progress = if let Some(input) = inner.unrecorded_input {
+            if bytes.len() > session_input::MAX_UART_PENDING
+                || inner.pending.len() > session_input::MAX_UART_PENDING - bytes.len()
+            {
+                return Err(JsError::new("unrecorded pending UART input exceeds 1 MiB"));
+            }
+            let at = inner
+                .machine
+                .live_unrecorded_work()
+                .ok_or_else(|| JsError::new("unrecorded input owner missing"))?
+                .transitions;
+            Some(
+                input
+                    .offered(bytes.len() as u64, at)
+                    .map_err(JsError::new)?,
+            )
+        } else {
+            None
+        };
         inner.pending.extend(bytes.iter().copied());
+        inner.unrecorded_input = progress;
         Ok(())
     }
 
@@ -4700,6 +4812,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = saveSnapshot)]
     pub fn save_snapshot(&self) -> Result<JsValue, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         inner.refuse_capture_mutation()?;
         let blob = inner.machine.save_resume().map_err(|e| match e {
             resume::SnapshotError::NotQuiesced { reason, in_flight } => {
@@ -4719,6 +4832,7 @@ impl WasmLinux {
     pub async fn persist_snapshot(&self) -> Result<(), JsError> {
         let (blob, base, write_count) = {
             let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+            inner.refuse_unrecorded_mutation()?;
             let Some(base) = inner.snapshot_base else {
                 return Err(JsError::new("not_persistent"));
             };
@@ -4760,6 +4874,7 @@ impl WasmLinux {
     pub async fn relinquish_snapshot_writer(&self) -> Result<(), JsError> {
         let write_count = {
             let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+            inner.refuse_unrecorded_mutation()?;
             inner.snapshot_read_only = true;
             inner.snapshot_write_count.clone()
         };
@@ -4775,6 +4890,7 @@ impl WasmLinux {
     pub async fn read_stored_snapshot(&self) -> Result<JsValue, JsError> {
         let base = {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            inner.refuse_unrecorded_mutation()?;
             match inner.snapshot_base {
                 Some(base) => base,
                 None => return Ok(JsValue::NULL),
@@ -4802,6 +4918,7 @@ impl WasmLinux {
     pub async fn restore_stored_snapshot(&self) -> Result<String, JsError> {
         let base = {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            inner.refuse_unrecorded_mutation()?;
             inner.refuse_capture_mutation()?;
             match inner.snapshot_base {
                 Some(base) => base,
@@ -4853,6 +4970,7 @@ impl WasmLinux {
     pub async fn import_stored_snapshot(&self, blob: Vec<u8>) -> Result<(), JsError> {
         let (base, current_generation, write_count) = {
             let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+            inner.refuse_unrecorded_mutation()?;
             if inner.snapshot_read_only {
                 return Err(JsError::new("read_only"));
             }
@@ -4924,6 +5042,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = advanceOverlayGeneration)]
     pub fn advance_overlay_generation(&self) -> Result<f64, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         Ok(inner.machine.advance_overlay_generation() as f64)
     }
 
@@ -4958,6 +5077,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = loadSnapshotBlob)]
     pub fn load_snapshot_blob(&self, blob: Vec<u8>) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         inner.refuse_capture_mutation()?;
         inner
             .machine
@@ -4985,6 +5105,7 @@ impl WasmLinux {
         let mut base = [0u8; 32];
         base.copy_from_slice(base_id);
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         inner.machine.set_snapshot_identity(build_core_hash(), base);
         inner.resume_base = Some(base);
         inner.snapshot_base = Some(base);

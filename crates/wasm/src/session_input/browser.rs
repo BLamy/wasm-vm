@@ -80,6 +80,15 @@ impl LinuxInner {
         }
         result.map_err(|e| JsError::new(&e))
     }
+    /// Configuration, recorder and history operations only; ordinary live input remains usable.
+    pub(crate) fn refuse_unrecorded_mutation(&self) -> Result<(), JsError> {
+        if self.machine.live_unrecorded_work().is_some() {
+            return Err(JsError::new(
+                "unrecorded profile is fixed and has no history",
+            ));
+        }
+        Ok(())
+    }
     pub(crate) fn refuse_capture_mutation(&self) -> Result<(), JsError> {
         if self.machine.ram_epoch_pending() {
             return Err(JsError::new("session keyframe publication pending"));

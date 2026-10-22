@@ -12,6 +12,21 @@ use crate::{
     time::TimeMode,
 };
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ExecutionMode {
+    LiveUnrecorded,
+    Record,
+    Replay,
+}
+impl ExecutionMode {
+    pub fn replay(self) -> bool {
+        self == Self::Replay
+    }
+    pub fn captures(self) -> bool {
+        self != Self::LiveUnrecorded
+    }
+}
+
 pub const RAM_BYTES: usize = 256 << 20;
 pub const AGENT_SLOT: usize = crate::platform::virt::VIRTIO_COUNT as usize - 1;
 
@@ -35,7 +50,17 @@ impl Machine {
         core_hash: [u8; 32],
         replay: bool,
     ) -> Result<Rc<RefCell<Uart16550>>, ProfileError> {
-        self.install_owned_session(base, rtc, entropy, core_hash, replay, RAM_BYTES, 10)
+        self.install_full_software_mode(
+            base,
+            rtc,
+            entropy,
+            core_hash,
+            if replay {
+                ExecutionMode::Replay
+            } else {
+                ExecutionMode::Record
+            },
+        )
     }
 
     /// Fresh exact GPU assembly. It has the same owned providers as software,
@@ -50,7 +75,40 @@ impl Machine {
         core_hash: [u8; 32],
         replay: bool,
     ) -> Result<Rc<RefCell<Uart16550>>, ProfileError> {
-        self.install_owned_session(base, rtc, entropy, core_hash, replay, 1 << 30, 64)
+        self.install_full_gpu_mode(
+            base,
+            rtc,
+            entropy,
+            core_hash,
+            if replay {
+                ExecutionMode::Replay
+            } else {
+                ExecutionMode::Record
+            },
+        )
+    }
+
+    pub fn install_full_software_mode(
+        &mut self,
+        base: BaseDisk,
+        rtc: Box<dyn WallClock>,
+        entropy: Box<dyn EntropySource>,
+        core_hash: [u8; 32],
+        mode: ExecutionMode,
+    ) -> Result<Rc<RefCell<Uart16550>>, ProfileError> {
+        self.install_owned_session(base, rtc, entropy, core_hash, mode, RAM_BYTES, 10)
+    }
+
+    #[cfg(feature = "virgl-renderer")]
+    pub fn install_full_gpu_mode(
+        &mut self,
+        base: BaseDisk,
+        rtc: Box<dyn WallClock>,
+        entropy: Box<dyn EntropySource>,
+        core_hash: [u8; 32],
+        mode: ExecutionMode,
+    ) -> Result<Rc<RefCell<Uart16550>>, ProfileError> {
+        self.install_owned_session(base, rtc, entropy, core_hash, mode, 1 << 30, 64)
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -60,24 +118,50 @@ impl Machine {
         rtc: Box<dyn WallClock>,
         entropy: Box<dyn EntropySource>,
         core_hash: [u8; 32],
-        replay: bool,
+        mode: ExecutionMode,
         ram_bytes: usize,
         divider: u64,
     ) -> Result<Rc<RefCell<Uart16550>>, ProfileError> {
         if self.ram_len() != ram_bytes
             || self.guest_clock_mode() != TimeMode::ICount
             || self.session_position().is_some()
+            || self.live_unrecorded.is_some()
+        {
+            return Err(ProfileError::Unsupported);
+        }
+        if mode == ExecutionMode::LiveUnrecorded
+            && (self.bus.ram().pending_dirty_pages().is_some()
+                || self.session_sources_active()
+                || !self.virtio.is_empty()
+                || self.blk.is_some()
+                || !self.extra_blk.is_empty()
+                || self.net.is_some()
+                || self.snd.is_some()
+                || self.console.is_some()
+                || self.rtc.is_some()
+                || self.plic.is_some()
+                || self.clint.is_some()
+                || self.uart.is_some()
+                || self.gpu.is_some()
+                || self.syscon.is_some())
         {
             return Err(ProfileError::Unsupported);
         }
         base.validate().map_err(ProfileError::Device)?;
         self.set_snapshot_identity(core_hash, base.identity);
         self.enable_clint(divider);
+        let replay = mode.replay();
+        if mode == ExecutionMode::LiveUnrecorded {
+            self.start_live_unrecorded().map_err(ProfileError::Clock)?;
+        }
+
         self.enable_plic();
         self.enable_rtc(rtc);
         self.enable_syscon();
         let uart = self.enable_uart16550();
-        self.start_session_clock(1).map_err(ProfileError::Clock)?;
+        if mode.captures() {
+            self.start_session_clock(1).map_err(ProfileError::Clock)?;
+        }
         self.enable_session_devices_at(Some(base), true, false, replay, AGENT_SLOT)
             .map_err(ProfileError::Device)?;
         self.enable_session_network(replay)

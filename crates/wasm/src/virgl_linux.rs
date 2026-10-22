@@ -15,6 +15,43 @@ impl WasmLinux {
         output: Function,
         replay: bool,
     ) -> Result<WasmLinux, JsError> {
+        Self::new_gpu_session_mode(
+            kernel,
+            manifest_json,
+            bootargs,
+            output,
+            if replay {
+                wasm_vm_core::session_profile::ExecutionMode::Replay
+            } else {
+                wasm_vm_core::session_profile::ExecutionMode::Record
+            },
+        )
+    }
+
+    /// Same one-GiB pure ICount/64 owned-provider profile without a recorder.
+    #[wasm_bindgen(js_name = newUnrecordedGpuSession)]
+    pub fn new_unrecorded_gpu_session(
+        kernel: &[u8],
+        manifest_json: &str,
+        bootargs: String,
+        output: Function,
+    ) -> Result<WasmLinux, JsError> {
+        Self::new_gpu_session_mode(
+            kernel,
+            manifest_json,
+            bootargs,
+            output,
+            wasm_vm_core::session_profile::ExecutionMode::LiveUnrecorded,
+        )
+    }
+
+    fn new_gpu_session_mode(
+        kernel: &[u8],
+        manifest_json: &str,
+        bootargs: String,
+        output: Function,
+        mode: wasm_vm_core::session_profile::ExecutionMode,
+    ) -> Result<WasmLinux, JsError> {
         if kernel.is_empty() || kernel.len() > 64 << 20 || bootargs.len() > 4096 {
             return Err(JsError::new("exact GPU boot asset bounds"));
         }
@@ -26,7 +63,7 @@ impl WasmLinux {
             None,
             DiskChoice::ExactSession {
                 manifest,
-                replay,
+                mode,
                 gpu: true,
             },
             &bootargs,
@@ -46,6 +83,20 @@ impl WasmLinux {
         let caps = qualified_capabilities(host_words, format_roles, renderer)?;
         let mailbox = Submit3dMailbox::new();
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.machine.live_unrecorded_work().is_some() && !inner.exact_gpu {
+            return Err(JsError::new(
+                "unrecorded software profile cannot attach an accelerated GPU",
+            ));
+        }
+        if inner
+            .machine
+            .live_unrecorded_work()
+            .is_some_and(|work| work.transitions != 0)
+        {
+            return Err(JsError::new(
+                "unrecorded GPU transport must attach before execution",
+            ));
+        }
         inner
             .machine
             .attach_qualified_virgl(
@@ -68,6 +119,12 @@ impl WasmLinux {
                 .machine
                 .enable_session_gpu_results(false)
                 .map_err(|e| JsError::new(&format!("gpu_session_results: {e:?}")))?;
+        }
+        if inner.machine.live_unrecorded_work().is_some() {
+            inner
+                .machine
+                .enable_live_unrecorded_gpu_transport()
+                .map_err(transport_error)?;
         }
         // Only successful attachment stamps the ephemeral disk's checkpoint identity.
         // Ordinary software construction keeps its legacy behavior.
@@ -102,6 +159,9 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = captureGpuDiskDelta)]
     pub fn capture_gpu_disk_delta(&self) -> Result<Uint8Array, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.machine.live_unrecorded_work().is_some() {
+            return Err(JsError::new("unrecorded control has no checkpoint history"));
+        }
         inner
             .machine
             .quiesce()
@@ -122,6 +182,7 @@ impl WasmLinux {
             .try_into()
             .map_err(|_| JsError::new("renderer digest must have32bytes"))?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         let blob = inner
             .machine
             .save_accelerated_resume(witness)
@@ -139,6 +200,7 @@ impl WasmLinux {
             .try_into()
             .map_err(|_| JsError::new("renderer digest must have32bytes"))?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         let (saved, fresh) = inner
             .machine
             .load_accelerated_resume(&blob, witness)
@@ -192,6 +254,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = enableGpuCommandTrace)]
     pub fn enable_gpu_command_trace(&self) -> Result<(), JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         let (_, gpu) = inner
             .machine
             .virtio_gpu()
@@ -248,7 +311,7 @@ impl WasmLinux {
             .inner
             .try_borrow_mut()
             .map_err(|_| JsError::new("Reentrant GPU DMA access"))?;
-        if inner.exact_gpu {
+        if inner.exact_gpu || inner.machine.live_unrecorded_work().is_some() {
             return Err(JsError::new("owned GPU request transport required"));
         }
         let bytes = inner
@@ -290,7 +353,7 @@ impl WasmLinux {
             .inner
             .try_borrow_mut()
             .map_err(|_| JsError::new("Reentrant GPU DMA access"))?;
-        if inner.exact_gpu {
+        if inner.exact_gpu || inner.machine.live_unrecorded_work().is_some() {
             return Err(JsError::new("owned GPU request transport required"));
         }
         inner
@@ -332,7 +395,7 @@ impl WasmLinux {
             .inner
             .try_borrow_mut()
             .map_err(|_| JsError::new("Reentrant GPU DMA access"))?;
-        if inner.exact_gpu {
+        if inner.exact_gpu || inner.machine.live_unrecorded_work().is_some() {
             return Err(JsError::new("owned GPU request transport required"));
         }
         let bytes = inner
@@ -376,7 +439,7 @@ impl WasmLinux {
             .inner
             .try_borrow_mut()
             .map_err(|_| JsError::new("Reentrant GPU DMA access"))?;
-        if inner.exact_gpu {
+        if inner.exact_gpu || inner.machine.live_unrecorded_work().is_some() {
             return Err(JsError::new("owned GPU request transport required"));
         }
         inner

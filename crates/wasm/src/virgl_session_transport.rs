@@ -44,6 +44,17 @@ impl WasmGpuTransport {
         let mut inner = owner
             .try_borrow_mut()
             .map_err(|_| JsError::new("Reentrant GPU DMA access"))?;
+        if inner.machine.live_unrecorded_work().is_some() {
+            let bytes = inner
+                .machine
+                .live_unrecorded_gpu_dma(exchange, output, layers)
+                .map_err(transport_error)?;
+            return if output.is_some() {
+                Ok(JsValue::UNDEFINED)
+            } else {
+                Ok(owned(&bytes).into())
+            };
+        }
         let replay = inner.machine.session_gpu_replay().map_err(gpu_error)?;
         let result = if replay {
             inner
