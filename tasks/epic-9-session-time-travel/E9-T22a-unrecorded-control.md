@@ -3,7 +3,7 @@ id: E9-T22a
 epic: 9
 title: Add a genuine live unrecorded execution control
 priority: 524.92201
-status: evidence-needed
+status: verified
 depends_on: [E9-T15, E9-T16, E9-T18c, E9-T19]
 estimate: S
 risk: high
@@ -30,7 +30,7 @@ an exact recording. Do not add a live network service in this slice; T22b owns i
 - [x] Read-only diagnostics and direct tests demonstrate no session clock/source tape, receipt queues, recorder dirty epoch, GPU-result history or durable recording in OFF; record/replay remain unchanged and refuse cross-mode misuse before mutation.
 - [x] Equal-work accounting includes actual attempted/retired/idle transitions without a per-instruction JavaScript loop, invented requested work, or artificial baseline delay. Input positions and completed work are independently inspectable.
 - [x] Exercise real full Alpine disk/input/file work and the production physical GPU path. These qualify the new mode only; full GPU desktop/HTTP and performance claims remain gated on T22b/c/d.
-- [ ] Run the high-risk local gauntlet, recorded deterministic state/guest evidence, actual built-browser proof, exact-head final cold clone and fresh actual Daybreak attacks; surface the accepted control on the demo/roadmap and publish the built main Cloudflare path.
+- [x] Run the high-risk local gauntlet, recorded deterministic state/guest evidence, actual built-browser proof, exact-head final cold clone and fresh actual Daybreak attacks; surface the accepted control on the demo/roadmap and publish the built main Cloudflare path.
 
 ## Deterministic acceptance
 
@@ -394,3 +394,66 @@ verifier must carry the unchanged local/cold/full-charter HELD results, inspect
 these receipts and independently read the current main path, then close only
 T22a if every criterion holds. T22b/c/d, T23 and T24 remain required. No merge
 or performance/full-desktop/HTTP campaign claim is made.
+
+### 2026-10-22 — final Daybreak publication verifier — VERDICT: verified
+
+- **P1 unchanged local/cold/full charter — HELD.** The frozen predictions are
+  `target/evidence/e9-t22a-daybreak-final-publication/predictions.md`, SHA256
+  `25adabf5baaaa8f005907bc700a68085d2fc65171c5f519313350e895a4d6d6c`.
+  Independent rehashing found zero mismatch across all 141 primary evidence
+  files, 364 cold files and both 51-source manifests at `ba85c397`; the 27/28
+  command results, raw 4096-line OFF/Record traces, 9096-line agent trace and
+  23-byte DMA, Alpine, physical default/layered GPU, history/audio refusal,
+  novel cross-owner and meaningful clock-guard sabotage anchors all agree. All
+  193 hunks remain classified. The exact five historical zicsr-stub dead-code
+  diagnostics retain their scoped waiver; production Clippy is strict. Carried
+  charter: `target/evidence/e9-t22a-daybreak-full-charter/report.json`, SHA256
+  `03acae1882bf92a9d5ceda60006abfcd87d82481487d4f57049f376c8017f96a`,
+  committed by `5830efac71dadd4f96fc461e47e64ba0685e6899`.
+- **P2 post-runtime release boundary — HELD.** No runtime, test or fixture changed
+  after `ba85c3978d665fe20c9b750c7261d803e8f6340d`. Release
+  `242c7d5b92aaeee87306fc123821272b368d2ea9` changes exactly roadmap/tasks
+  source+dist and the service-worker stamp. Wasm stays
+  `05fdca361c492aa7d4bf45ae1d41f69f354162627807a042ba1889d64b46b3ea`;
+  the independently recomputed 74-file GPU graph stays
+  `e49121f1109c9b5cdbdc5bec0e2ecb94d8496b822658c87dc6fcf32c79424164`.
+  The three marketing cases retain RV-Phone Phase 0/in-progress, proposed
+  Firecracker and proposed celld-integration caveats. No capstone or performance
+  claim was added.
+- **P3 actual main-site publication — HELD.** Fresh no-cache GETs returned HTTP
+  200 and exact accepted bytes for marketing `/` and demo `/app`, plus main.js,
+  roadmap, tasks, service worker, GPU build stamp, OFF probe, Wasm and all five
+  deployed manifests. Main therefore serves deployment `1fe76e3b` / release
+  `242c7d5`, not only the preview hostname and not the preserved old T21 app.
+  The initial failed receipt remains unchanged at SHA256
+  `ccb35857d5bade03857dff8fd49d9456114512d185a3affd917ee7039173ca1b`;
+  successful recheck receipt SHA256 is
+  `b8b230fc1d283c729823206c4df501a237d5f5780383de42902f7c8ffedcc1cd`.
+- **P4 public control/error/egress boundary — HELD.** The raw production report,
+  screenshot and Playwright trace show 127 passed/0 failed, the visible one-
+  million-transition real-JIT OFF control, refusal checks, live pip and absent
+  clock/source/input/output/GPU-result/history/dirty/persistence state. The only
+  console error is the separately retained same-origin `/favicon.ico` 404;
+  `errors=[]` and `missing=[]`. Actual trace requests are same-origin except the
+  one exact content-addressed R2 Alpine kernel URL. No hidden replay egress,
+  software-frame GPU substitution, changed fixture or preview-only proof exists.
+  Public browser report SHA256 is
+  `813d02b36b70c16a54bc6df38ccd8ad57f326b158d1fb05b86f413ec76d24a16`.
+- **P5 deployed manifests and R2 ownership — HELD.** Fresh main GETs of all five
+  manifests match the deployment sidecars byte-for-byte and name exactly the
+  seven permitted content-addressed R2 objects. Each object returned HEAD 200
+  and bounded bytes 0–4095 GET 206/4096; all prefixes matched independently
+  hashed local payloads. The original deploy proof retains full-payload hashes,
+  so no large object was downloaded again. Public-assets report SHA256 is
+  `a9185847e2873a8f440bfa60d09d14879fdb566d77f2710b8313bd290e869725`.
+- **SUITE — retain existing.** Publication closure found no new runtime primitive;
+  retain the already-permanent session-live, GPU authority and agent tests plus
+  the guest/browser evidence. Final report JSON SHA256 is
+  `3b0e110c9a2550302c8bd611ef7f12a02ce578b8e407fb17a1d3c1a160c36f88`;
+  Markdown SHA256 is
+  `19740f83b35a5c7b3723f891e2e61a11c20b2ff8e68f96a126b5b5ebc6128bef`.
+
+This terminal result verifies only the genuine functional capture-OFF baseline
+and its actual main-site publication. Full HTTP, complete GPU desktop workload,
+performance budgets, recovery matrix and capstone remain E9-T22b, T22c, T22d,
+T23 and T24. PR #605 and the rest of the stack remain open and unmerged.
