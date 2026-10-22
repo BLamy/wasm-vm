@@ -90,6 +90,12 @@ try:
         env.pop('E9_UNRECORDED_TRACE_DIR', None)
     run('owned-GPU-mailbox-unit', ['cargo', 'test', '--locked', '-p', 'wasm-vm-core', '--features',
                                   'virgl-renderer', '--lib', 'dev::virtio::gpu::submit3d::', '--', '--nocapture'])
+    env['E9_UNRECORDED_AGENT_EVIDENCE'] = str(out / 'agent-providers')
+    try:
+        run('unrecorded-original-agent', ['cargo', 'test', '--locked', '-p', 'wasm-vm-core', '--features',
+                                         'trace,virgl-renderer', '--test', 'e9_unrecorded_providers', '--', '--nocapture'])
+    finally:
+        env.pop('E9_UNRECORDED_AGENT_EVIDENCE', None)
     integrations = ['e9_event_clock', 'e9_time_entropy', 'e9_input_boundary', 'e9_device_completions',
                     'e9_network_capture', 'e9_session_checkpoint', 'e9_incremental_keyframes', 'e9_deterministic_replay', 'e9_seek']
     command = ['cargo', 'test', '--locked', '-p', 'wasm-vm-core', '--features', 'trace,virgl-renderer']
@@ -121,6 +127,8 @@ try:
                        ('gpu-record-replay', 'e9-gpu-replay-browser.mjs')]:
         data = browser(name, tool)
         report['browserReports'][name] = {'status': data['status'], 'sha256': sha(out / name / 'report.json')}
+    layered = browser('gpu-off-layered', 'e9-unrecorded-gpu-browser.mjs', fixture='layered')
+    report['browserReports']['gpu-off-layered'] = {'status': layered['status'], 'sha256': sha(out / 'gpu-off-layered' / 'report.json')}
     run('independent-direct-artifact-reader', ['python3', '-B', 'tools/verify/e9-unrecorded-files.py', '--directory', str(out)])
     if not a.cold_clone:
         run('local-gauntlet', ['python3', '-B', 'tools/verify/e9-local-gauntlet.py', '--task', 'E9-T22a',

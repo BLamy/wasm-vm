@@ -25,7 +25,7 @@ def off(value, gpu=False):
     assert value['ramBytes'] == ('1073741824' if gpu else '268435456')
     assert value['divider'] == ('64' if gpu else '10') and value['gpu'] is gpu
     for name in ['sessionClock', 'sourceCapture', 'inputCapture', 'durableRecording',
-                 'legacyResumeIdentity', 'legacySnapshotNamespace', 'recorderDirtyTracking', 'pendingRamEpoch', 'gpuResultCapture']:
+                 'legacyResumeIdentity', 'legacySnapshotNamespace', 'audioOutputAttached', 'audioCaptureAttached', 'recorderDirtyTracking', 'pendingRamEpoch', 'gpuResultCapture']:
         assert value[name] is False, 'capture became active: ' + name
     assert value['pendingEvents'] == 0
     assert int(value['transition']) >= int(value['retired']) + int(value['idleTransitions'])
@@ -76,10 +76,19 @@ try:
     assert state == '2f46d4f0185cd2e94327082dc107b2c75c94b0637dfa678113789184de6d779f'
     report['checks'].append({'prediction': '4096 literal retirements, x1=1366, x2=2730, equal OFF/record guest trace',
                               'result': 'HELD', 'traceSha256': hashlib.sha256(text).hexdigest(), 'stateDigest': state})
+    agent = root / 'agent-providers'
+    assert (agent / 'agent-dma.bin').read_bytes() == b'off-owned-agent-receive'
+    summary = dict(line.split('=', 1) for line in (agent / 'summary.txt').read_text().splitlines())
+    assert summary == {'transitions': '9096', 'retired': '9096', 'idle': '0', 'provider_cursor': '1',
+                       'used_idx': '1', 'session_clock': 'false', 'source_capture': 'false', 'recorder_dirty': 'false'}
+    assert len((agent / 'guest.trace').read_text().splitlines()) == 9096
+    assert re.fullmatch('[a-f0-9]{64}', (agent / 'state-digest.txt').read_text())
+    report['checks'].append({'prediction': 'original named-agent receive produces 23 literal guest DMA bytes, one used entry and no recording', 'result': 'HELD'})
     history = load('history-off')
     assert history['status'] == 'passed' and not history['errors'] and not history['missing']
     legacy = history['result']
-    assert len(legacy['attempts']) == 9 and all(row['error'] for row in legacy['attempts'])
+    assert len(legacy['attempts']) == 11 and all(row['error'] for row in legacy['attempts'])
+    assert legacy['ordinaryValidRingControl'] == {'output': True, 'capture': True}
     assert legacy['before'] == legacy['after'] and legacy['initialDatabases'] == legacy['finalDatabases'] == []
     report['checks'].append({'prediction': 'legacy identity, generation and async snapshot APIs refuse OFF without creating persistence', 'result': 'HELD'})
     demo, alpine, gpu = [load(name) for name in ['demo', 'alpine-off', 'gpu-off']]
@@ -128,6 +137,21 @@ try:
         assert len(result[collection]) == count, collection
         for refusal in result[collection]:
             assert refusal['error'] and refusal['before'] == refusal['after'], refusal['name']
+    assert {'gatherInput', 'scatterOutput'} <= {row['name'] for row in result['actualNumericRefusals']}
+    for refusal in result['actualNumericRefusals']:
+        assert 'owned GPU request transport required' in refusal['error'] and refusal['before'] == refusal['after']
+    layered = load('gpu-off-layered')
+    assert layered['status'] == 'passed' and not layered['errors'] and not layered['missing'] and not layered['external']
+    detail = layered['result']
+    off(detail['initial'], True)
+    off(detail['final'], True)
+    assert detail['layered'] is True and 'SESSION_LAYERED_GUARD_BYTES_OK' in detail['console']
+    assert detail['pixel'] == [0, 255, 0, 255] and detail['initialDatabases'] == detail['finalDatabases'] == []
+    assert not re.search('software|SwiftShader|llvmpipe', detail['gpuInitial']['profile']['identity'], re.I)
+    assert {'gatherLayeredInput', 'scatterLayeredOutput'} <= {row['name'] for row in detail['typedDma']}
+    assert {'gatherLayeredInput', 'scatterLayeredOutput'} <= {row['name'] for row in detail['actualNumericRefusals']}
+    for refusal in detail['actualNumericRefusals']:
+        assert 'owned GPU request transport required' in refusal['error'] and refusal['before'] == refusal['after']
     report['checks'].append({'prediction': 'physical typed GPU DMA works; profile/numeric/history/stale-owner attacks refuse before state or RAM changes', 'result': 'HELD'})
     software_replay, gpu_replay = [load(name) for name in ['software-record-replay', 'gpu-record-replay']]
     assert software_replay['status'] == gpu_replay['status'] == 'passed'

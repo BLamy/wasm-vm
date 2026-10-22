@@ -11,7 +11,7 @@ export async function qualifySoftware(contract){
  const state={status:'running',scope:'full Alpine OFF-mode file/setup functionality only; no replay/GPU/network/performance claim',console:'',inputs:[],blocks:[],phases:[],initialDatabases:await indexedDB.databases()};
  let parser,rpc,lastProgress=0;const start=performance.now();
  const machine=WasmLinux.newUnrecordedSession(kernel,image,software.bootargs,bytes=>{const text=dec.decode(bytes,{stream:true});need(state.console.length+text.length<=1048576,'total console bound');state.console+=text;if(parser){const result=parser.feed(text);if(result)rpc=result;}});
- const inspect=()=>{const result=machine.unrecordedControlState();need(['sessionClock','sourceCapture','inputCapture','durableRecording','legacyResumeIdentity','legacySnapshotNamespace','recorderDirtyTracking','pendingRamEpoch','gpuResultCapture'].every(k=>result[k]===false)&&result.pendingEvents===0,'capture became active');return result;};
+ const inspect=()=>{const result=machine.unrecordedControlState();need(['sessionClock','sourceCapture','inputCapture','durableRecording','legacyResumeIdentity','legacySnapshotNamespace','audioOutputAttached','audioCaptureAttached','recorderDirtyTracking','pendingRamEpoch','gpuResultCapture'].every(k=>result[k]===false)&&result.pendingEvents===0,'capture became active');return result;};
  const step=async()=>{
   need(performance.now()-start<900000&&BigInt(inspect().transition)<3000000000n,'full OFF boot/command bound');
   for(const request of machine.exactDeviceRequests()){

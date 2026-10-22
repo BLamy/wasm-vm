@@ -3,7 +3,7 @@ import {WasmLinux} from './pkg/wasm_vm_wasm.js';
 import {checkpointHash} from './session-checkpoints.js';
 const need=(ok,why)=>{if(!ok)throw Error('unrecorded control: '+why);};
 const tick=()=>new Promise(resolve=>setTimeout(resolve,0));
-const disabled=['sessionClock','sourceCapture','inputCapture','durableRecording','legacyResumeIdentity','legacySnapshotNamespace','recorderDirtyTracking','pendingRamEpoch','gpuResultCapture'];
+const disabled=['sessionClock','sourceCapture','inputCapture','durableRecording','legacyResumeIdentity','legacySnapshotNamespace','audioOutputAttached','audioCaptureAttached','recorderDirtyTracking','pendingRamEpoch','gpuResultCapture'];
 export async function runUnrecordedControlProbe({onProgress=()=>{}}={}){
   const descriptor=await(await fetch(new URL('./artifacts-alpine.json',import.meta.url))).json();
   const fixture=await(await fetch(new URL('./session-software-fixture.json',import.meta.url))).json();

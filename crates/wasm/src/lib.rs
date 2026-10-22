@@ -3437,6 +3437,7 @@ impl WasmLinux {
         let sink = SharedAudioSink::new(shared_buffer, capacity_frames, sample_rate_hz)?;
         let clock = SharedAudioClock::new(clock_buffer, sample_rate_hz)?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         inner.refuse_capture_mutation()?;
         if inner.machine.replace_virtio_snd_audio(
             std::rc::Rc::new(clock),
@@ -3706,6 +3707,7 @@ impl WasmLinux {
     ) -> Result<(), JsError> {
         let source = SharedAudioCapture::new(shared_buffer, capacity_frames, sample_rate_hz)?;
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
         inner.refuse_capture_mutation()?;
         if inner.machine.replace_virtio_snd_capture(Box::new(source)) {
             inner.capture_attached = true;
@@ -3994,6 +3996,7 @@ impl WasmLinux {
             "pendingEvents":machine.session_pending_events(),"inputCapture":inner.input_capture.is_some(),
             "durableRecording":inner.persist.is_some() || inner.snapshot_base.is_some(),
             "legacyResumeIdentity":inner.resume_base.is_some(),"legacySnapshotNamespace":inner.snapshot_base.is_some(),
+            "audioOutputAttached":inner.audio_attached,"audioCaptureAttached":inner.capture_attached,
             "recorderDirtyTracking":machine.recorder_dirty_tracking(),
             "pendingRamEpoch":machine.ram_epoch_pending(),"gpuResultCapture":gpu_result_capture,
             "uart":{"scope":"host offers and actual FIFO feeds; no payload history","offeredFrames":input.offered_frames.to_string(),
