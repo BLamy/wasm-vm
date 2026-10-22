@@ -3,7 +3,7 @@ id: E9-T22b
 epic: 9
 title: Connect the shared owned network path to witnessed local HTTP
 priority: 524.92202
-status: evidence-needed
+status: verified
 depends_on: [E9-T22a]
 estimate: S
 risk: high
@@ -28,7 +28,7 @@ remote credentials, fixture-only replies or a different OFF transport.
 - [x] Full pinned Alpine BusyBox wget reaches the real local service via guest Ethernet/TCP at the unchanged URL, receiving ten exact indexed 1024-byte bodies `(17+INDEX)%256` with independently retained server request/body counts.
 - [x] Both OFF and ON use the same live network pump/service. ON records every real owned network observation and replays exact state and HTTP bytes with zero server/provider/host egress; OFF retains no event/observation history.
 - [x] Bound all queues, payloads and callback lifetimes; reject malformed/stale/replay callbacks before mutation and settle cancellation/provider failure.
-- [ ] Record the high-risk prescribed gates, native/guest/browser witnesses, final exact-head cold proof and fresh actual Daybreak adversarial verdict; update demo/roadmap and deploy the verified browser boundary to the main Cloudflare URL.
+- [x] Record the high-risk prescribed gates, native/guest/browser witnesses, final exact-head cold proof and fresh actual Daybreak adversarial verdict; update demo/roadmap and deploy the verified browser boundary to the main Cloudflare URL.
 
 ## Deterministic acceptance
 
@@ -281,3 +281,38 @@ stack PRs remain OPEN/unmerged/unqueued. Actions permissions remain disabled.
 A NEW fresh actual Daybreak final-publication verifier must independently close
 P17, carry unchanged P1–P16 only by source/dependency/evidence identity, and alone
 set verified. No merge is authorized. T22c/d, T23 and T24 remain required.
+
+### 2026-10-22 — fresh actual Daybreak final-publication verifier
+
+VERDICT: verified
+
+- P1–P16 remain HELD under the unchanged implementation/dependency boundary,
+  accepted runtime bytes, and exact evidence digests. The charter report is
+  `33e54db57afe66ef15185e583543e2c5846f9e372e652553afd0c4b6277f8681`;
+  raw trace/witness anchors retain the ten OFF/ON bodies and counters, 485/115
+  event counts, twelve witnesses, exact replay state, bounded attacks, novel
+  mixed-case duplicate-Host result, factory-guard sabotage, cold reconstruction,
+  finite hunk ledger, strict production Clippy and five historical waivers.
+- P17 HELD at actual main. Independent GETs byte-bound the marketing root,
+  `/app`, main/roadmap/task/SW/GPU/probe/Wasm assets and all five deployed
+  manifest sidecars. All 227 unique Alpine chunks rehashed to their exact R2
+  IDs; all seven large immutable objects returned the expected HEAD identity,
+  with independent initramfs and browser-kernel body hashes.
+- The unmocked raw browser trace proves 127/0, twenty exact 1024-byte bodies
+  across OFF/ON with independent server counts, OFF without retained history,
+  ON with 485 events and twelve witnesses, and byte-identical complete replay
+  after server close/provider drop. Original server/factory state is unchanged,
+  replay fetch/socket traps are zero, and both public pips are live. Earlier
+  inspector-buffer failures remain failed and preserved; no runtime,
+  deployment, product source, response mock or route fulfillment changed.
+- Release `3efeff9dd069d94c3577cefd4eb9439870ef32d3`, deployment `a14eb837`, and
+  `https://wasm-vm.pages.dev/` are the verified publication binding. No runtime
+  contradiction or performance/desktop/capstone claim was found. E9-T22c,
+  E9-T22d, E9-T23 and E9-T24 remain required.
+- Evidence: `target/evidence/e9-t22b-daybreak-final-publication/report.json`,
+  SHA-256 `05f0d191c9d1c659af58dd9ce5430d6bc7a749e0207aee64d81a75fe7def4c93`.
+  Predictions: `predictions.md`, SHA-256
+  `e584affaf10e8e1d6e859b9c28cf2876032cbf4455e2fc1ca2f4ad38004d5c57`.
+  Suite decision: retain existing permanent direct tests and
+  `make verify-E9-T22b`; no new fixture is warranted for this declarative
+  publication closeout.
