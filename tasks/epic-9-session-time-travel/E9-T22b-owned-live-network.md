@@ -3,7 +3,7 @@ id: E9-T22b
 epic: 9
 title: Connect the shared owned network path to witnessed local HTTP
 priority: 524.92202
-status: implemented
+status: evidence-needed
 depends_on: [E9-T22a]
 estimate: S
 risk: high
@@ -25,9 +25,9 @@ remote credentials, fixture-only replies or a different OFF transport.
 
 ## Acceptance criteria
 
-- [ ] Full pinned Alpine BusyBox wget reaches the real local service via guest Ethernet/TCP at the unchanged URL, receiving ten exact indexed 1024-byte bodies `(17+INDEX)%256` with independently retained server request/body counts.
-- [ ] Both OFF and ON use the same live network pump/service. ON records every real owned network observation and replays exact state and HTTP bytes with zero server/provider/host egress; OFF retains no event/observation history.
-- [ ] Bound all queues, payloads and callback lifetimes; reject malformed/stale/replay callbacks before mutation and settle cancellation/provider failure.
+- [x] Full pinned Alpine BusyBox wget reaches the real local service via guest Ethernet/TCP at the unchanged URL, receiving ten exact indexed 1024-byte bodies `(17+INDEX)%256` with independently retained server request/body counts.
+- [x] Both OFF and ON use the same live network pump/service. ON records every real owned network observation and replays exact state and HTTP bytes with zero server/provider/host egress; OFF retains no event/observation history.
+- [x] Bound all queues, payloads and callback lifetimes; reject malformed/stale/replay callbacks before mutation and settle cancellation/provider failure.
 - [ ] Record the high-risk prescribed gates, native/guest/browser witnesses, final exact-head cold proof and fresh actual Daybreak adversarial verdict; update demo/roadmap and deploy the verified browser boundary to the main Cloudflare URL.
 
 ## Deterministic acceptance
@@ -179,3 +179,55 @@ attack and replay-factory guard sabotage. Do not mark verified from the worker
 claim. After local evidence holds, publish the accepted boundary to main
 Cloudflare and obtain a new independent Daybreak public-path verdict. All PRs
 stay open and unmerged.
+
+### VERDICT: needs-evidence — 2026-10-22 — fresh actual Daybreak verifier
+
+No runtime contradiction was found. P1–P16 HELD: launch reports and every
+declared evidence/source binding rehashed; the eleven unchanged gates carried
+byte-for-byte while all remaining primary and all 23 cold gates ran at
+`d260f684a8edba718a315b366928bb8db6d28bf5`. The preserved old report remains
+failed only on its original source/built-HTML equality assertion. The cold
+checkout freshly reconstructed all 227 unique chunks of the authenticated
+536870912-byte Alpine image (SHA-256
+`ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8`).
+
+Raw OFF and ON captures each contain the ten actual BusyBox-wget bodies and
+independent server counts. OFF has no observation tape. ON has 485 ordered
+events / 115 network events; all 31 Receive events follow a causative accepted
+Send, and independent TCP reassembly recovers the ten exact streams. Twelve
+whole-machine witnesses bind initial through final state. `final.resume` and
+`replay.resume` are byte-identical (27687441 bytes, SHA-256
+`f24d3c498f73bfcc9e6b2d0adf474f8b47c110e7acc039384e20f2b11c8568f6`),
+with zero replay egress and unchanged closed-server/factory counters. The
+8192-instruction native trace and whole architectural digest hold, as do
+quanta 1/7/101 replay traces.
+
+All stated bounds and preflight corrections HELD: malformed inputs,
+fragmentation/tiny windows/half-close, four-active/fifth-refusal, 128/129
+lifetime settlement, accepted-TX/dequeued-RX pressure, real SYN pending/WFI,
+guest ICount clock, retained legacy lease and all callback fences, pure dequeue,
+immediate RX preflight, and factory-before-construction refusal. An independent
+scratch-only mixed-case duplicate-Host real-TCP attack returned 400 with no
+valid counter increment. A scratch replay-guard mutant caused the permanent
+factory tripwire to fail (`4` vs `2`), and exact restoration passed. A separate
+coverage probe hit both finite 256-frame overflow bodies. Every changed hunk is
+executed, carried under an unchanged dependency/evidence digest, or narrowly
+waived as generated/declarative/debug/defensive metadata. The visible local
+demo passes 127/0 with both pips live. Production Clippy is strict-clean; the
+full wall's only waiver is exactly the five historical quarantined zicsr-stub
+dead-code diagnostics.
+
+Evidence: `target/evidence/e9-t22b-daybreak-full-charter/report.json`,
+`report.md`, `predictions.md`, `coverage.md`, `bindings.md`, `attacks.md`,
+`rehash-results.json`, and `raw-interrogation.json`. Suite decision: retain the
+existing permanent direct tests and `make verify-E9-T22b`; discard the novel
+duplicate-Host mirror and sabotage mutant because the stable parser/guard
+tripwires already exist.
+
+P17 NEEDS EVIDENCE only for the deliberately outstanding actual main
+publication. The smallest missing proof is to publish this accepted `web/dist`
+to `https://wasm-vm.pages.dev`, then have a new fresh actual Daybreak
+final-publication verifier check deployed asset bindings, visible 127/0, the
+same full-Alpine OFF/ON/closed-server replay, live pips, and zero browser/host
+replay egress. This local verdict is not authorization to deploy, push, merge,
+or mark verified; the fourth acceptance checkbox remains open.
