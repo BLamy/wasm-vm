@@ -3,7 +3,7 @@ id: E9-T21
 epic: 9
 title: Export and import complete bounded local session bundles
 priority: 524.921
-status: in-progress
+status: implemented
 depends_on: [E9-T07, E9-T16, E9-T18c]
 estimate: S
 risk: high
@@ -156,3 +156,87 @@ stage did not complete the full charter or issue a final verdict. User input
 has been requested for that account requirement. No alternative model is
 authorized for independent verification; a fresh actual Daybreak verdict and
 test-kill remain required after the corrected frozen high/cold submissions.
+
+
+### 2026-10-21 — worker — completed local submission, final independent verdict pending
+
+Product semantics are frozen at `efc7fe6d3f9edb1783a910249001450f867865f6`;
+final direct proof head is `89277243c313117865969bae1000f4f554a9e954`. Their sole difference is the
+one-line bounded GC fixture ID in `tools/verify/e9-bundle-browser.mjs`. No
+runtime/dependency changed. Wasm remains
+`d2bb362758e060f40351e57c7e52fa42b917a64017cdc2615d7f20d60a06bc2d`;
+GPU graph is `5e50271a8fc4df404aa5ca2a31ed8ffbdf591fd27aac195f4005d03e9a080e17`
+(74 files). All 14 rebuilt runtime hashes still match source, committed dist
+and the independently cold-built app.
+
+The frozen parent reports `target/evidence/e9-t21-frozen-2/report.json`
+(SHA-256 `9ab5aa520853d10c862ed375e422bd7c959069aa49da055cd4592d2a241543f4`)
+and `target/evidence/e9-t21-cold-final-2/report.json`
+(`463cacf45fb8cb7c9d4d596033728f34a947f9e35807632ae84709f962b6d3da`)
+remain **failed** whole commands at the obsolete overlong test fixture ID.
+Their preceding 14 gates passed, plus cold clone/checkout: policy/fmt, strict
+affected storage/Wasm Clippy, storage manifest/publication/disk tests, builds,
+12 focused tests/docs, built 127/0 demo, real Linux/GPU source recordings and
+independent file/counter readers, and permanent owned-input race. The cold
+run began without target/node_modules and rebuilt with scrubbed environment.
+The one-line harness correction triggered the missing browser proof directly;
+AGENTS incremental policy carries unchanged build/runtime portions. No failed
+report was rewritten and no result-reuse flag was added.
+
+Commands run at clean `89277243c313117865969bae1000f4f554a9e954`:
+
+- `node tools/verify/e9-bundle-browser.mjs --software target/evidence/e9-t21-frozen-2/software --gpu target/evidence/e9-t21-frozen-2/gpu --output target/evidence/e9-t21-browser-final-3`
+- `node tools/verify/e9-bundle-browser.mjs --software target/evidence/e9-t21-cold-final-2/software --gpu target/evidence/e9-t21-cold-final-2/gpu --web-root /Users/blamy/Documents/Codex/.e9-t21-final-cold-efc7fe6d/web/dist --output target/evidence/e9-t21-cold-browser-final-3`
+- `python3 -B tools/verify/e9-bundle-files.py --directory target/evidence/e9-t21-browser-final-3`
+- `python3 -B tools/verify/e9-bundle-files.py --directory target/evidence/e9-t21-cold-browser-final-3`
+- `python3 -B tools/verify/e9-local-gauntlet.py --task E9-T21 --output target/evidence/e9-t21-local-wall-final`
+
+Both supplemental browser reports pass all four fresh-profile imports and
+60 malformed-input refusals with zero destination writers. Imported native
+bytes equal the independently retained originals, including mixed Linux
+full/delta state and physical GPU results. Actual malformed-survivor GC
+preserves all data until explicit deletion; real quota failure/orphan cleanup,
+publication cancellation and UI close/refresh races pass. There is no
+transfer-time guest execution, browser error, importer fixture access or
+egress, and the 390px layout does not overflow.
+
+Primary browser/reader report SHA-256:
+`5c4ab92241afcb24f4a35b29a1fefd7c66af1a177acb2a8fcaf174a8cbbb91ce` /
+`926943fae98bd1176d51266e3a6613d0d18edc64dd7c86f815b4ff260978d542`.
+Cold-built browser/reader:
+`1320659fc7f93c3f61a8f630da9b275befc0197c83aabc543699fa88b3a0eb56` /
+`04cdd3a263a5bf92b9fcc3f5105bb0599d6a76df35e512ed69582a435378f349`.
+
+The direct local wall is terminal **passed**, SHA-256 `efb01514ac65618e93970d2857e255326f5b2c093a8d0ad47859ccf817c9a0b8`.
+`make ci` exited 2 only at the exact five historical quarantined zicsr-stub
+`dead_code` diagnostics; production Clippy remained strict. The explicit
+alternative-only waiver exited 0, then
+`make test wasm features test-riscv riscv-tests-suite determinism perf-smoke`
+exited 0. Native/wasm fingerprints match and perf-smoke measured 49.2 MIPS
+against its existing floor 15; this is not the T22 recording/seek budget proof.
+The finalized three-file wall catalogue rehashes correctly.
+
+Actual fresh Daybreak evidence stage completed on the same code head through
+`gpt-daybreak-blue-latest` / `daybreakBlue`, thread
+`01a16137-a383-7270-b1ba-910926da4f6a`, with no service error. Report:
+`target/evidence/e9-t21-daybreak-validation-retry-proof/report.json`, SHA-256
+`1e397f05e79690f547bbbde3ee831a85288844d3e8164a5c6bd0b57c8b909e0d`.
+It independently HELD P1-P13, including changed-hunk coverage, source/raw
+artifact rehash, a novel exponent-spelling witness refusal and actual
+scratch-only guard sabotage (baseline 3/3; mutant 2/3, targeted failure).
+It explicitly withheld the final verdict pending P14, the then-running wall.
+
+A single copied unit-test digest in that stage's JSON summary differs from
+its own authenticated raw source audit: correct unchanged Git/file digest is
+`9077a5b7628b3185fc43e53c7e023ca8e6d139ef968e6881a61ea2f0c2e2750e`.
+`target/evidence/e9-t21-daybreak-summary-erratum.json` preserves the exact
+mismatch without altering the independent report. The fresh final verifier
+must reconcile it in its own verdict and rehash the completed wall catalogue.
+No runtime repair or unrelated proof repetition follows from this reporting
+issue.
+
+Transparent worker index: `target/evidence/e9-t21-submission-index.json`,
+SHA-256 `d513aa0af42e9afb48c18b79b518597510fdea3657e7dd6665bdf0543753262b`. This entry is the worker claim only.
+Final fresh Daybreak verdict/status, release metadata, native open PR and
+actual main-site deployment/publication proof remain outstanding. E9-T22,
+E9-T23 and E9-T24 remain outside this task and are not claimed complete.
