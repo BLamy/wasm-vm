@@ -3,7 +3,7 @@ id: E9-T22b
 epic: 9
 title: Connect the shared owned network path to witnessed local HTTP
 priority: 524.92202
-status: in-progress
+status: implemented
 depends_on: [E9-T22a]
 estimate: S
 risk: high
@@ -111,3 +111,71 @@ Daybreak session must independently falsify the evidence, audit changed hunks,
 run the charter's novel attack and replay-factory sabotage, and later close the
 main-publication criteria. Every PR remains open; T22c/d, T23 and T24 remain
 required.
+
+### 2026-10-22 — worker — frozen high-risk submission
+
+Product/runtime freeze: `89c0c61c1c5e6f7b06790791273a1443f3ac09c4`.
+Final acceptance head: `d260f684a8edba718a315b366928bb8db6d28bf5`.
+The latter changes only the acceptance runner's prescribed source/deploy HTML
+mapping and digest-checked incremental carry; no runtime/dependency changed.
+The original failed harness report `target/evidence/e9-t22b-final-89c0c61c1/report.json`
+(SHA-256 `05ea4ab97485a7dc3d1426a57f90daff1b0bf73e9f4057047e1cb9f26c212734`) remains failed and preserved. Its eleven
+passing native/build gates carry only after source and evidence rehashing;
+the remaining primary gates and every cold gate use the final acceptance head.
+
+Commands: `python3 -B tools/verify/e9-owned-http.py --output
+ target/evidence/e9-t22b-final-d260f684a --resume-from
+ target/evidence/e9-t22b-final-89c0c61c1`; and the same runner with
+`--output target/evidence/e9-t22b-cold-d260f684a --cold-clone
+ /Users/blamy/Documents/Codex/.e9-t22b-cold-d260f684a`.
+The full prescribed local wall executes once in the primary submission; the
+pristine clone repeats direct native/Wasm/build/full-guest/browser gates, with
+no target, node_modules or rootfs inherited and scrubbed Rust/Cargo settings.
+The cold checkout remains intact for the independent verifier.
+
+- primary: `target/evidence/e9-t22b-final-d260f684a/report.json`, SHA-256 `35d61834a271caef0d44838d7e4f1f6796e42a10e9ac5826f703e4fe356e9027`; 22 commands / 181 retained files.
+- wall: `target/evidence/e9-t22b-final-d260f684a/gauntlet/report.json`, SHA-256 `1f01ca36343d46624b991de0eb0bdd20b0e9651f2ebeb620bacc3681485462b5`; 3 commands / 3 retained files.
+- cold: `target/evidence/e9-t22b-cold-d260f684a/report.json`, SHA-256 `4788d54d4a45a6bc421e3c72e237cbee0fd97cd09c6cbb3cffcf0538bf4cc56f`; 23 commands / 404 retained files.
+
+Both submissions rehash all changed source bindings and rebuilt runtime entries.
+The full wall records 2496 passing test invocations. Its only waiver
+is the same five historical quarantined zicsr-stub dead-code diagnostics,
+individually retained in the wall report; production Clippy remains strict.
+No new failure is waived.
+
+The native proof retains 8192 canonical guest instructions, exact replay traces
+at quanta 1/7/101, native frames and owned network envelopes. The actual full
+512 MiB Alpine image authenticates as
+`ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8`;
+the cold run freshly reconstructs and verifies all 227 unique immutable chunks.
+Both OFF and ON guests boot that image, configure eth0 and use real BusyBox
+wget for all ten 1024-byte indexed responses. Literal guest bytes/hashes,
+independent per-index server counts and separately reconstructed TCP streams
+agree. The primary ON tape has 485 events / 115 network events and twelve whole-machine
+witnesses. All 15 duplicate/retained-legacy/replay-construction refusals preserve
+state. Native tests additionally cover retained accepted-TX and RX backpressure,
+foreign/restored/offline ownership, true TCP pending/WFI behavior in OFF and ON,
+four concurrent clients/fifth refusal, and the 128/129 lifetime boundary with
+owned-link failure and queued TX settlement.
+
+The live server is closed and its backend dropped before a fresh replay. The
+retained `alpine-http/final.resume` and `alpine-http/replay.resume` match byte
+for byte (27687441 bytes), SHA-256
+`f24d3c498f73bfcc9e6b2d0adf474f8b47c110e7acc039384e20f2b11c8568f6`. Original server counters and the independent
+factory counter remain unchanged; replay fetch/socket tripwires count zero.
+The visible built demo passes 127/0, exercises the same product probe, and lights
+both the panel and roadmap pip live. The independent artifact reader verifies
+the raw files, literal bodies, native identity, source pins and tape witnesses.
+
+Claim: the bounded shared owned live HTTP provider works in genuine recording
+OFF and ON, records actual Ethernet observations only in ON, and replays this
+full-guest HTTP capture without a live service/provider or host egress. This
+is the T22b provider boundary; full scheduled software/GPU desktop workloads,
+unchanged performance budgets, recovery and the capstone remain T22c/d, T23/T24.
+
+Main production publication remains outstanding. A fresh actual Daybreak must
+now run the full high-risk charter, changed-hunk coverage, a novel bounded
+attack and replay-factory guard sabotage. Do not mark verified from the worker
+claim. After local evidence holds, publish the accepted boundary to main
+Cloudflare and obtain a new independent Daybreak public-path verdict. All PRs
+stay open and unmerged.

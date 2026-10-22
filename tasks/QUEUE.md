@@ -470,7 +470,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.921` [E9-T21](epic-9-session-time-travel/E9-T21-session-export-import.md) — Export and import complete bounded local session bundles *(deps: E9-T07, E9-T16, E9-T18c)*
 - [-] `524.922` [E9-T22](epic-9-session-time-travel/E9-T22-replay-performance.md) — Measure recording storage and seek overhead on real guests *(deps: E9-T15, E9-T16, E9-T18c, E9-T19)*
 - [x] `524.92201` [E9-T22a](epic-9-session-time-travel/E9-T22a-unrecorded-control.md) — Add a genuine live unrecorded execution control *(deps: E9-T15, E9-T16, E9-T18c, E9-T19)*
-- [~] `524.92202` [E9-T22b](epic-9-session-time-travel/E9-T22b-owned-live-network.md) — Connect the shared owned network path to witnessed local HTTP *(deps: E9-T22a)*
+- [?] `524.92202` [E9-T22b](epic-9-session-time-travel/E9-T22b-owned-live-network.md) — Connect the shared owned network path to witnessed local HTTP *(deps: E9-T22a)*
 - [ ] `524.92203` [E9-T22c](epic-9-session-time-travel/E9-T22c-real-workload-qualification.md) — Qualify both full pinned performance workloads *(deps: E9-T22b)*
 - [ ] `524.92204` [E9-T22d](epic-9-session-time-travel/E9-T22d-replay-performance-campaign.md) — Measure the unchanged complete replay performance budgets *(deps: E9-T15, E9-T16, E9-T19, E9-T22c)*
 - [ ] `524.923` [E9-T23](epic-9-session-time-travel/E9-T23-recovery-hardening.md) — Harden recording and seeking against crashes and corrupt history *(deps: E9-T07, E9-T18c, E9-T20, E9-T21, E9-T22d)*
