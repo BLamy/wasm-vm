@@ -332,3 +332,65 @@ corrected independent manifest audit SHA256
 The initial audit receipt is retained separately: it treated the authenticated sparse
 zero chunk as absent; after applying the manifest's explicit sparse-hole rule, the
 full reconstruction matched exactly. No push, merge or publication was performed.
+
+### 2026-10-22 — worker — main production release and public proof
+
+Published committed release `242c7d5b92aaeee87306fc123821272b368d2ea9` with
+`bash tools/deploy-cloudflare.sh` to project `wasm-vm`, production branch `main`:
+**https://wasm-vm.pages.dev/**, demo **https://wasm-vm.pages.dev/app**.
+Cloudflare deployment is `1fe76e3b`. The native stack submission pushed the same
+release to draft OPEN PR #605; all 28 PRs remain open/unmerged/unqueued, Actions
+is disabled, and auto-merge is absent. The release differs from verifier commit
+`5830efac71dadd4f96fc461e47e64ba0685e6899` in exactly five declarative/generated
+files: roadmap source/dist, task JSON source/dist and the app-shell cache stamp
+`ec4afe2e12e2`. Manual `make web-dist` completed before committing its dist;
+accepted Wasm `05fdca36…b3ea` and 74-file GPU graph `e49121f1…4164` are unchanged.
+Local release demo report SHA256
+`ff67046d03e37fe1edbf48cab396b4210413f709ba739a9e46d540601a0866df`
+proves 127/0, the real-JIT one-million-transition OFF control and live pips with
+zero errors. The documentation check passed after rerunning with write access
+to its normal receipt directory; its first sandboxed invocation could not write
+`target/docs-build/docs-validation.json`. No product check was contradicted.
+
+The deployment validated all local and public content-addressed R2 payloads,
+then uploaded the site. Exact committed/deployed five-manifest sidecars and the
+original deploy log are retained. Temporary R2 URL rewrites were restored to
+committed bytes before subsequent browser proof, leaving tracked source clean.
+The first immediate public-byte check failed: main `/app.html` returned SHA256
+`1b3ccafecb3a0a641a1f62b0592ec07a4fb7ddb4426c762e5887de554197e252`,
+exactly the prior T21 accepted HTML, instead of current
+`515aa72dd77ac6819147dcbdafaa90bd43c03ab271eb86cd84d9e990384adad6`.
+The original publication receipt remains FAILED, SHA256
+`ccb35857d5bade03857dff8fd49d9456114512d185a3affd917ee7039173ca1b`;
+its failed public-assets report remains SHA256
+`fc75b9abd34454c89eb6eb5b8d0e219b51f9eeb614717a321708fcc081e92155`.
+Later raw GETs of both main spellings and deployment `/app` returned the exact
+new 64376-byte HTML, preserved with headers/diffs under
+`target/evidence/e9-t22a-public-html-diagnosis-1`. No original result was relabelled.
+
+After that main-alias rollout delay, repeated only the missing public proof,
+with no product or redeployment change. The strict reader uses the original
+five deployed manifest sidecars as expected bytes while source remains restored;
+all other files compare against committed dist. Final follow-up receipt:
+`target/evidence/e9-t22a-production-release-public-recheck/receipt.json`, SHA256
+`b8b230fc1d283c729823206c4df501a237d5f5780383de42902f7c8ffedcc1cd`.
+Its public-assets report SHA256
+`a9185847e2873a8f440bfa60d09d14879fdb566d77f2710b8313bd290e869725`
+proves all 107 actual-main assets, including the full 74-file trusted runtime,
+every changed deployable and all three marketing cases. Its recorded public
+browser report SHA256
+`813d02b36b70c16a54bc6df38ccd8ad57f326b158d1fb05b86f413ec76d24a16`
+proves 127 passed/0 failed, one million real OFF transitions with JIT execution,
+refused history APIs, absent capture/persistence flags and live pips. No
+unexpected console/page/missing requests occurred. One exact same-origin
+`/favicon.ico` resource 404 is retained separately under the AGENTS exception.
+The sole off-origin probe request was the exact content-addressed pinned R2
+kernel; the probe checks its full response digest. Screenshot, Playwright trace
+and exact executed driver are retained; driver SHA256
+`50a07a4b14a011ccb1c1c301b920c5eb99e16bb8aa176ffe740eec13320b5a94`.
+
+This worker entry does not set verified. The final fresh actual Daybreak public
+verifier must carry the unchanged local/cold/full-charter HELD results, inspect
+these receipts and independently read the current main path, then close only
+T22a if every criterion holds. T22b/c/d, T23 and T24 remain required. No merge
+or performance/full-desktop/HTTP campaign claim is made.
