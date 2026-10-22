@@ -3,7 +3,7 @@ id: E9-T22e
 epic: 9
 title: Publish long GPU histories through bounded resident windows
 priority: 524.922021
-status: pending
+status: in-progress
 depends_on: [E9-T22b]
 estimate: S
 risk: high
@@ -54,3 +54,21 @@ the active lane after its dependencies are verified. Prospective checkpoint,
 witness-extension and storage limits are not waived; independently reproduce
 any additional blocker and give it its own ordered S boundary. All PRs remain
 open; no merge is authorized.
+
+
+### 2026-10-22 — worker — activate bounded durable GPU journal
+
+E9-T22c is blocked on the authenticated long-history boundaries and has left
+the active lane. Its corrected clean-head full software phase and complete
+source-sealed filesystem oracle pass; a separate fresh Daybreak phase audit
+is pending and will not be represented as C verification. This task alone
+occupies the active lane. Its dependency E9-T22b is independently verified at
+`8b99d05a0e5b3ee23198e72ea9d4d324eb3e8744` and remains the production runtime.
+
+Native branch `codex/e9-streamed-gpu-journal` continues the stack above the C
+preparation layer; all 30 existing PRs remain open, draft, unmerged and
+unqueued. Risk is high for durable recording/identity. Implement only the
+writer/publication boundary here, with actual native-receipt browser proof;
+whole-history reading, bounded replay and full original Omarchy qualification
+remain their ordered tasks. Preserve every failed capture and avoid a
+constants-only lifetime increase.
