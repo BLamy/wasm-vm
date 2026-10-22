@@ -316,3 +316,49 @@ report interrogation; source/dist/Git/cold-Wasm comparisons; exact diagnostic
 count; policy precheck. Incremental policy preserved unchanged cold/runtime and
 Daybreak P1–P13 evidence; no broad wall, cold clone, browser boot, novel attack
 or sabotage was repeated. Host rr/ssh remained waived.
+
+
+### 2026-10-22 — worker — actual main-site release, publication verdict pending
+
+Normal pre-commit build `5a7387d10` plus generated task-source alignment
+produced clean release `62936461529446c8c2f3f17f8a0c2185ee9b45fd`.
+Its only changes from the Daybreak verification commit are roadmap
+source/dist status/evidence, generated task JSON source/dist and SW stamp.
+Wasm and the 74-file GPU runtime identity remain unchanged.
+
+`gh stack submit --auto` pushed the 26-branch native stack and opened
+<https://github.com/BLamy/wasm-vm/pull/603>, based on the E9-T20 branch.
+The PR is draft/open, auto-merge is null, and no PR was merged. Direct
+GitHub Actions permission read remains `enabled: false`.
+`bash tools/deploy-cloudflare.sh` validated the local artifacts and exact
+public R2 objects, then deployed project `wasm-vm`, production branch
+`main`, deployment `58cada9e`. The actual publication URL is
+<https://wasm-vm.pages.dev/>. Five deployed manifest sidecars and the exact
+log are retained; only the script's five tracked URL rewrites were restored.
+The source checkout remains clean.
+
+Direct release evidence:
+
+- Built demo: `target/evidence/e9-t21-release-demo/report.json`, SHA-256 `67053948218588e1a4985e96adfb40d7b55d49213a714be11c02609ff1fa074a`.
+- Actual main bytes: `target/evidence/e9-t21-release-public-assets/report.json`, SHA-256 `de8628ee288e16128ca69757caaaa99463b010cc14ae183b5d4c64e84dd2504a` — 109 exact assets, including all 74 runtime files, every changed deployable file and all three marketing cases.
+- Actual main browser: `target/evidence/e9-t21-release-public-browser/report.json`, SHA-256 `70d0b3f75c46a1f1cf8d48c52cb60f21b46751b340a64af4463487198e90b9c5` — 127 passed, 0 failed, verified branch/bundle pips, zero non-favicon console/page/HTTP errors, screenshot and trace.
+- Actual main transfers: `target/evidence/e9-t21-release-public-bundles-2/report.json`, SHA-256 `ab5b2b32be0bfc90fe5cab1913550dd99b53583dab954b2541fc4c2acdf19485` — four fresh-profile cases, 60 malformed refusals, source/imported native-byte equality, physical GPU results, GC/quota/cancellation and close/refresh races, no guest execution during transfer or replay egress.
+- Independent archive/native reader: `target/evidence/e9-t21-release-public-bundles-2/independent-files.json`, SHA-256 `9c41b3672e0b176ba8b22321d84f56bf20ed04c9241586fb89fd8b478513eb9c`.
+
+The first production transfer report remains **failed** at its final console
+assertion. All semantic cases had completed, but each of eight profiles
+logged the same main-origin `/favicon.ico` 404. The trace audit
+`target/evidence/e9-t21-public-favicon-audit.json` cites all exact entries,
+lines and digests. AGENTS explicitly permits a favicon 404. Harness-only
+commit `b75a85058665edd249c0f6ed141ddedbbbfc72ab` now separately records only that exact URL plus 404
+resource-message combination; every other console/page error remains fatal.
+The independent reader rechecks each exception's URL and message. The new
+production report passes with exactly eight allowed favicon records and
+zero other errors. App/runtime/deployed bytes remain release `629364615`;
+no product repair, redeployment, broad wall or cold-clone repeat was needed.
+
+Deployment/worker proof receipt:
+`target/evidence/e9-t21-production-release/receipt.json`, SHA-256
+`a10327e4f1de279c76141dab5e865adcad8283e472f4bdffe9d9c3fa633cef3a`. These are worker publication claims; the fresh actual
+Daybreak publication verdict is still required. E9-T22 through E9-T24 remain
+outstanding and Epic 9 is not claimed complete.
