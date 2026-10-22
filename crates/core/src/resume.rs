@@ -232,6 +232,8 @@ pub enum SnapshotError {
     /// unknown tag, kept a *distinct* variant so a reserved-not-yet-implemented section is
     /// observably different from a garbage tag.
     UnsupportedSection { tag: u32 },
+    /// A live unrecorded control has no authenticated history and cannot save or load one.
+    UnrecordedControl,
     /// A section's declared length exceeds the bytes remaining in the blob.
     SectionLengthOverflow { tag: u32 },
     /// The zero-elision payload decoded to a different length than expected, or is malformed.

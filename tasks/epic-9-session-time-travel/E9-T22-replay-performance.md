@@ -8,6 +8,7 @@ depends_on: [E9-T15, E9-T16, E9-T18c, E9-T19]
 estimate: S
 risk: medium
 capstone: false
+decomposed_into: [E9-T22a, E9-T22b, E9-T22c, E9-T22d]
 ---
 
 ## Goal

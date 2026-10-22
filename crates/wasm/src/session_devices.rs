@@ -107,7 +107,7 @@ impl WasmLinux {
     pub fn exact_device_requests(&self) -> Result<JsValue, JsError> {
         use wasm_vm_core::session_devices::DeviceIntent;
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
-        if inner.exact_session != Some(false) {
+        if inner.exact_session != Some(false) && inner.machine.live_unrecorded_work().is_none() {
             return Err(error(DeviceError::ReplayIngress));
         }
         let out = js_sys::Array::new();
@@ -142,7 +142,7 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = exactLeaseDeviceRequest)]
     pub fn exact_lease_device_request(&self, id: &str) -> Result<SessionDeviceLease, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
-        if inner.exact_session != Some(false) {
+        if inner.exact_session != Some(false) && inner.machine.live_unrecorded_work().is_none() {
             return Err(error(DeviceError::ReplayIngress));
         }
         let id = event_clock::exact_u64(id).map_err(JsError::new)?;
@@ -159,7 +159,7 @@ impl WasmLinux {
         bytes: js_sys::Uint8Array,
     ) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
-        if inner.exact_session != Some(false) {
+        if inner.exact_session != Some(false) && inner.machine.live_unrecorded_work().is_none() {
             return Err(error(DeviceError::ReplayIngress));
         }
         let status = match exact(status, 2)? {

@@ -55,6 +55,7 @@ pub mod session_devices;
 #[cfg(feature = "virgl-renderer")]
 pub mod session_gpu;
 mod session_ingress;
+pub mod session_live;
 pub mod session_network;
 #[cfg(not(feature = "zicsr-stub"))]
 pub mod session_profile;
@@ -295,6 +296,7 @@ pub struct Machine {
     bus: SystemBus,
     /// Opt-in exact scheduling; ordinary machines retain their established run semantics.
     session_clock: Option<session_clock::SessionClock>,
+    live_unrecorded: Option<session_live::LiveWork>,
     session_sources: alloc::rc::Rc<core::cell::RefCell<session_clock::sources::ObservationHub>>,
     #[cfg(feature = "virgl-renderer")]
     session_gpu: Option<session_gpu::GpuSession>,
@@ -983,6 +985,7 @@ impl Machine {
             hart: Hart::new(),
             bus: SystemBus::new(Ram::new(ram_bytes)?),
             session_clock: None,
+            live_unrecorded: None,
             session_sources: Default::default(),
             #[cfg(feature = "virgl-renderer")]
             session_gpu: None,
@@ -2201,10 +2204,15 @@ impl Machine {
             self.virtio.len() > 2,
             "enable_virtio_slots/enable_virtio_blk before enable_virtio_rng"
         );
-        let source = alloc::boxed::Box::new(session_clock::sources::ObservedEntropy {
-            source,
-            hub: alloc::rc::Rc::clone(&self.session_sources),
-        });
+        let source: alloc::boxed::Box<dyn dev::virtio::rng::EntropySource> =
+            if self.live_unrecorded.is_some() {
+                source
+            } else {
+                alloc::boxed::Box::new(session_clock::sources::ObservedEntropy {
+                    source,
+                    hub: alloc::rc::Rc::clone(&self.session_sources),
+                })
+            };
         let (devhalf, state) = dev::virtio::rng::new(source);
         assert!(
             self.virtio[2]
@@ -2513,6 +2521,11 @@ impl Machine {
         blob: &[u8],
         host_viewport: desktop_restore::DisplaySize,
     ) -> Result<desktop_restore::DesktopRestoreReport, desktop_restore::DesktopRestoreError> {
+        if self.live_unrecorded.is_some() {
+            return Err(desktop_restore::DesktopRestoreError::CommitRefused {
+                code: "unrecorded_control",
+            });
+        }
         if self.session_replay_limit.is_some() {
             return Err(desktop_restore::DesktopRestoreError::CommitRefused {
                 code: "replay_active",
@@ -2629,6 +2642,9 @@ impl Machine {
     pub fn save_desktop_snapshot(
         &mut self,
     ) -> Result<alloc::vec::Vec<u8>, desktop_snapshot::DesktopSnapshotSaveError> {
+        if self.live_unrecorded.is_some() {
+            return Err(desktop_snapshot::DesktopSnapshotSaveError::UnrecordedControl);
+        }
         #[cfg(feature = "virgl-renderer")]
         if self.control3d_proof_installed() {
             return Err(
@@ -2824,10 +2840,14 @@ impl Machine {
     ) -> alloc::rc::Rc<core::cell::RefCell<dev::rtc::GoldfishRtc>> {
         let plic = self.plic.as_ref().expect("enable_plic before enable_rtc");
         let line = dev::plic::Plic::irq_line(plic, platform::virt::RTC_IRQ as usize);
-        let clock = alloc::boxed::Box::new(session_clock::sources::ObservedRtc {
-            source: clock,
-            hub: alloc::rc::Rc::clone(&self.session_sources),
-        });
+        let clock: alloc::boxed::Box<dyn dev::rtc::WallClock> = if self.live_unrecorded.is_some() {
+            clock
+        } else {
+            alloc::boxed::Box::new(session_clock::sources::ObservedRtc {
+                source: clock,
+                hub: alloc::rc::Rc::clone(&self.session_sources),
+            })
+        };
         let cell = alloc::rc::Rc::new(core::cell::RefCell::new(dev::rtc::GoldfishRtc::new(clock)));
         self.bus
             .attach(
@@ -3422,6 +3442,9 @@ impl Machine {
     /// No instruction, guest clock tick, other device poll or translated block executes here.
     #[cfg(feature = "virgl-renderer")]
     pub fn drain_accelerated_checkpoint_boundary(&mut self) -> Result<bool, &'static str> {
+        if self.live_unrecorded.is_some() {
+            return Err("unrecorded control has no checkpoint history");
+        }
         if !self.control3d_proof_installed() {
             return Err("qualified renderer required");
         }
@@ -3566,6 +3589,9 @@ impl Machine {
         include_ram: bool,
         view: ResumeView,
     ) -> Result<alloc::vec::Vec<u8>, crate::resume::SnapshotError> {
+        if self.live_unrecorded.is_some() {
+            return Err(crate::resume::SnapshotError::UnrecordedControl);
+        }
         let branch = view == ResumeView::RecordingBranch;
         #[cfg(feature = "virgl-renderer")]
         let logical_gpu = view == ResumeView::LogicalGpu;
@@ -4007,6 +4033,9 @@ impl Machine {
         blob: &[u8],
     ) -> Result<(), crate::resume::SnapshotError> {
         use crate::resume::{ComponentSnapshot, SectionReader, SnapshotError, section};
+        if self.live_unrecorded.is_some() {
+            return Err(SnapshotError::UnrecordedControl);
+        }
         if self.session_replay_limit.is_some() {
             return Err(SnapshotError::ReplayActive);
         }
@@ -4036,6 +4065,9 @@ impl Machine {
         &mut self,
         bytes: &[u8],
     ) -> Result<usize, crate::ram::RamDeltaError> {
+        if self.live_unrecorded.is_some() {
+            return Err(crate::ram::RamDeltaError::NotCapturing);
+        }
         if self.session_replay_limit.is_some() {
             return Err(crate::ram::RamDeltaError::ReplayActive);
         }
@@ -4166,6 +4198,9 @@ impl Machine {
         ram_already_restored: bool,
         recorded_gpu_history: bool,
     ) -> Result<Option<(u64, u64)>, crate::resume::SnapshotError> {
+        if self.live_unrecorded.is_some() {
+            return Err(crate::resume::SnapshotError::UnrecordedControl);
+        }
         #[cfg(not(feature = "virgl-renderer"))]
         let _ = (gpu_witness, recorded_gpu_history);
         #[cfg(feature = "virgl-renderer")]
@@ -5259,6 +5294,9 @@ impl Machine {
     /// Fractional progress toward the next tick is conservatively quantized to the new divisor.
     /// Host configuration only: the existing resume clock section already stores both fields.
     pub fn set_icount_divider(&mut self, divider: u64) -> Result<(), &'static str> {
+        if self.live_unrecorded.is_some() {
+            return Err("unrecorded profile clock is fixed");
+        }
         if !(1..=1024).contains(&divider) {
             return Err("ICount divider must be an integer from 1 to 1024");
         }
@@ -5403,6 +5441,15 @@ impl Machine {
         self.keyboard
             .as_ref()
             .is_some_and(|(state, _, _)| state.borrow().awaiting_host_key_release())
+    }
+
+    /// Ordinary and capture-OFF live execution use the same host wake conditions.
+    /// Exact recording/replay retains its separately ordered external-pending policy.
+    #[cfg(not(feature = "zicsr-stub"))]
+    fn external_wake_io_pending(&self) -> bool {
+        self.external_net_io_pending()
+            || self.external_gpu_io_pending()
+            || self.external_keyboard_io_pending()
     }
 
     /// E2-T20: run the sliding-window interrupt-storm detector. Called only when a trap lands
@@ -6858,6 +6905,10 @@ impl Machine {
         self.irqstats.on_wfi();
         self.hart.last_was_wfi = false;
         self.wfi_watchdog_check(); // deadlock watchdog (WFI + no wakeup armed)
+        if let Some(work) = &mut self.live_unrecorded {
+            work.idle_pending = true;
+            return;
+        }
         if let Some(clock) = &mut self.session_clock {
             // Idle advancement is a separate, fenceable transition. Owned pending-state controls
             // at the new boundary are delivered before deciding whether the timer may advance.
@@ -6868,10 +6919,7 @@ impl Machine {
         // this block ran), so this WFI is a real idle wait. Skip the idle spin by jumping mtime to
         // the nearest armed timer deadline — deterministic, so native and wasm agree. Turns a ~20×
         // `sleep` into near-real-time. No-op if no timer armed.
-        if !self.external_net_io_pending()
-            && !self.external_gpu_io_pending()
-            && !self.external_keyboard_io_pending()
-        {
+        if !self.external_wake_io_pending() {
             self.wfi_fast_forward();
         }
     }
@@ -6986,6 +7034,7 @@ impl Machine {
             // The loop body's successful-retire accounting (profiling is off here).
             self.advance_clock();
             self.irqstats.on_retire(); // E2-T20 progress denominator
+            self.advance_live_work(1, 1);
             if self.hart.last_was_wfi {
                 self.after_wfi_retire();
             }
@@ -7015,6 +7064,7 @@ impl Machine {
         self.hart.csr.retire_span(n);
         self.advance_clock_by(n);
         self.irqstats.on_retire_n(n);
+        self.advance_live_work(n, n);
     }
 
     fn run_capture_inner<T: trace::TraceSink>(
@@ -7055,7 +7105,19 @@ impl Machine {
 
         #[cfg(not(feature = "zicsr-stub"))]
         let source_capture = self.session_sources_active();
-        let mut remaining_work = max_instrs;
+        let mut remaining_work = self.live_work_budget(max_instrs);
+        if max_instrs != 0 && remaining_work == 0 {
+            return RunOutcome::SessionStopped(
+                if self
+                    .live_unrecorded
+                    .is_some_and(|work| work.retired == u64::MAX)
+                {
+                    session_clock::SessionError::RetiredExhausted
+                } else {
+                    session_clock::SessionError::TransitionExhausted
+                },
+            );
+        }
         while remaining_work != 0 {
             #[cfg(not(feature = "zicsr-stub"))]
             match self.prepare_session_transition() {
@@ -7277,6 +7339,7 @@ impl Machine {
                         self.hart.csr.mtvec_base()
                     };
                     if handler == 0 {
+                        self.advance_live_work(1, 0);
                         return RunOutcome::Trapped(trap);
                     }
                     let epc = self.hart.regs.pc;

@@ -6,6 +6,9 @@ use wasm_vm_storage::checkpoint::CheckpointContext;
 use wasm_vm_storage::session::Phase;
 
 fn context_for(inner: &LinuxInner, bytes: &[u8]) -> Result<CheckpointContext, JsError> {
+    if inner.machine.live_unrecorded_work().is_some() {
+        return Err(JsError::new("unrecorded control has no checkpoint history"));
+    }
     if inner.machine.ram_epoch_pending() {
         return Err(JsError::new("session keyframe publication pending"));
     }
@@ -305,6 +308,9 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = applySoftwareRamDeltaChunk)]
     pub fn apply_software_ram_delta_chunk(&self, bytes: &[u8]) -> Result<u32, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.machine.live_unrecorded_work().is_some() {
+            return Err(JsError::new("unrecorded control has no checkpoint history"));
+        }
         if inner.exact_session.is_none() {
             inner.refuse_capture_mutation()?;
         } else if inner.exact_session != Some(true) || inner.exact_driver.is_some() {

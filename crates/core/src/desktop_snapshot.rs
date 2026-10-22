@@ -138,6 +138,8 @@ impl DesktopSnapshotError {
 /// live component could not contribute a payload at the save boundary.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DesktopSnapshotSaveError {
+    /// The explicit live control has no snapshot/history surface.
+    UnrecordedControl,
     /// The requested machine was assembled without one of the desktop participants.
     MissingComponent { tag: u16 },
     /// A participant rejected its current state as unsnapshotable.
@@ -150,6 +152,7 @@ impl DesktopSnapshotSaveError {
     /// Stable machine-readable code for the host/browser boundary.
     pub const fn code(self) -> &'static str {
         match self {
+            Self::UnrecordedControl => "unrecorded_control",
             Self::MissingComponent { .. } => "missing_component",
             Self::ComponentRefused { .. } => "component_refused",
             Self::BlockNotQuiesced => "block_not_quiesced",

@@ -36,6 +36,7 @@ pub struct Ram {
     data: Vec<u8>,
     /// Writes since the last committed keyframe (or since a capture began).
     dirty: Vec<u64>,
+    recorder_dirty_enabled: bool,
     /// Frozen page set being persisted. A failed publication unions it back into `dirty`;
     /// writes during publication remain in `dirty` regardless of the outcome.
     pending_dirty: Option<Vec<u64>>,
@@ -67,6 +68,7 @@ impl Ram {
             base,
             data,
             dirty,
+            recorder_dirty_enabled: true,
             pending_dirty: None,
             direct_store_marks: 0,
         })
@@ -136,7 +138,7 @@ impl Ram {
 
     #[inline]
     fn mark_dirty_offset(&mut self, offset: usize, len: usize) {
-        if len == 0 {
+        if len == 0 || !self.recorder_dirty_enabled {
             return;
         }
         let first = offset / KEYFRAME_PAGE_BYTES;
@@ -159,7 +161,9 @@ impl Ram {
     /// counting an interpreted fast store.
     pub fn mark_jit_dirty_physical_range(&mut self, addr: u64, len: u64) -> Result<(), BusFault> {
         self.mark_dirty_physical_range(addr, len)?;
-        self.direct_store_marks = self.direct_store_marks.saturating_add(1);
+        if self.recorder_dirty_enabled {
+            self.direct_store_marks = self.direct_store_marks.saturating_add(1);
+        }
         Ok(())
     }
 
@@ -169,8 +173,22 @@ impl Ram {
 
     /// Freeze the dirty set for an asynchronously published keyframe. A second capture cannot
     /// begin until the first one is committed or abandoned. New writes go to a fresh bitmap.
-    pub fn begin_dirty_epoch(&mut self) -> Result<(), DirtyEpochBusy> {
+    pub fn recorder_dirty_tracking(&self) -> bool {
+        self.recorder_dirty_enabled
+    }
+
+    #[cfg(not(feature = "zicsr-stub"))]
+    pub(crate) fn disable_recorder_dirty_tracking(&mut self) -> Result<(), DirtyEpochBusy> {
         if self.pending_dirty.is_some() {
+            return Err(DirtyEpochBusy);
+        }
+        self.recorder_dirty_enabled = false;
+        self.dirty = Vec::new();
+        Ok(())
+    }
+
+    pub fn begin_dirty_epoch(&mut self) -> Result<(), DirtyEpochBusy> {
+        if !self.recorder_dirty_enabled || self.pending_dirty.is_some() {
             return Err(DirtyEpochBusy);
         }
         let mut fresh = Vec::new();

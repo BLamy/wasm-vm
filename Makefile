@@ -2811,3 +2811,7 @@ verify-E9-T20:
 .PHONY: verify-E9-T21
 verify-E9-T21:
 	python3 -B tools/verify/e9-bundles.py --output "$${E9_BUNDLE_EVIDENCE_DIR:-target/evidence/e9-bundles-final}"
+
+.PHONY: verify-E9-T22a
+verify-E9-T22a:
+	python3 -B tools/verify/e9-unrecorded.py --output "$${E9_UNRECORDED_EVIDENCE_DIR:-target/evidence/e9-unrecorded-final}"
