@@ -1,5 +1,5 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
-import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js';
+import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
 import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
 import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
 
@@ -693,6 +693,16 @@ export class WasmLinux {
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
+    }
+    /**
+     * @returns {any}
+     */
+    cancelOwnedLocalHttp() {
+        const ret = wasm.wasmlinux_cancelOwnedLocalHttp(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * Own a bounded disk delta after draining original disk work, without retiring instructions.
@@ -1733,6 +1743,16 @@ export class WasmLinux {
         return ret[0] !== 0;
     }
     /**
+     * Opt into only 10.0.2.2:9191/e9/1..10, once for this VM's lifetime.
+     * The core refuses replay/offline construction before entering the factory.
+     */
+    openOwnedLocalHttp() {
+        const ret = wasm.wasmlinux_openOwnedLocalHttp(this.__wbg_ptr);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
      * The current overlay commit generation (the snapshot coherence's third binding). `u64` fits
      * exactly in an `f64` for every realistic generation count.
      * @returns {number}
@@ -1743,6 +1763,33 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return ret[0];
+    }
+    /**
+     * Independent payload-free tripwire. No replay VM or snapshot owns this value.
+     * @returns {string}
+     */
+    static ownedLocalHttpFactoryEntries() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.wasmlinux_ownedLocalHttpFactoryEntries();
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+    /**
+     * Aggregate counters only; no additional frame, request or observation history.
+     * @returns {any}
+     */
+    ownedLocalHttpState() {
+        const ret = wasm.wasmlinux_ownedLocalHttpState(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * E3-T02: the chunk indices the virtio-blk device is currently parked on (guest reads awaiting a
@@ -1818,6 +1865,18 @@ export class WasmLinux {
         if (ret[1]) {
             throw takeFromExternrefTable0(ret[0]);
         }
+    }
+    /**
+     * Fixed 64-step work budget. Drain `more` before executing another CPU chunk;
+     * `blocked` requires capturing observations or letting the guest consume RX.
+     * @returns {any}
+     */
+    pumpOwnedLocalHttp() {
+        const ret = wasm.wasmlinux_pumpOwnedLocalHttp(this.__wbg_ptr);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        return takeFromExternrefTable0(ret[0]);
     }
     /**
      * @param {number} stream
@@ -4194,7 +4253,7 @@ function __wbg_get_imports() {
             return ret;
         },
         __wbindgen_cast_0000000000000006: function(arg0, arg1) {
-            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 111, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
+            // Cast intrinsic for `Closure(Closure { owned: true, function: Function { arguments: [], shim_idx: 112, ret: Unit, inner_ret: Some(Unit) }, mutable: true }) -> Externref`.
             const ret = makeMutClosure(arg0, arg1, wasm_bindgen__convert__closures_____invoke__h4eecf702a8348cd1);
             return ret;
         },

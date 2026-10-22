@@ -60,6 +60,7 @@ pub struct SlirpStack {
     dns_tcp: SocketHandle,
     /// Permanent local-only WVFT listeners on `10.0.2.2:10021`; never represented as NAT flows.
     file_tcp: [SocketHandle; FILE_TRANSFER_SLOTS],
+    http_tcp: Option<[SocketHandle; crate::local_http::SLOTS]>,
     /// Guest UDP datagrams bound for our internal services (DHCP/DNS), DIVERTED out of the smoltcp
     /// path (which drops UDP) for the caller to dispatch via `UdpServices` — sync for DHCP, async for
     /// DNS. Drained by [`take_service_udp`](Self::take_service_udp); replies come back via
@@ -135,6 +136,7 @@ impl SlirpStack {
             flows: BTreeMap::new(),
             dns_tcp,
             file_tcp,
+            http_tcp: None,
             service_udp: Vec::new(),
         }
     }
@@ -392,6 +394,107 @@ impl SlirpStack {
         true
     }
 
+    pub(crate) fn register_http(&mut self) -> Result<(), crate::local_http::HttpError> {
+        self.device.bounded = true;
+        use crate::local_http::{HttpError, PORT, SLOTS};
+        if self.http_tcp.is_some() {
+            return Err(HttpError::AlreadyRegistered);
+        }
+        // The owned service exposes only HTTP plus DHCP/ARP/ICMP. Closed unrelated
+        // listeners still let smoltcp return a real TCP refusal on other ports.
+        self.sockets.get_mut::<tcp::Socket>(self.dns_tcp).abort();
+        for handle in self.file_tcp {
+            self.sockets.get_mut::<tcp::Socket>(handle).abort();
+        }
+        self.http_tcp = Some(std::array::from_fn::<_, SLOTS, _>(|_| {
+            let mut socket = tcp::Socket::new(
+                tcp::SocketBuffer::new(vec![0; crate::local_http::MAX_HEADER_BYTES]),
+                tcp::SocketBuffer::new(vec![0; 2048]),
+            );
+            socket.set_timeout(Some(smoltcp::time::Duration::from_secs(30)));
+            socket
+                .listen(IpListenEndpoint {
+                    addr: Some(IpAddress::Ipv4(net::GATEWAY)),
+                    port: PORT,
+                })
+                .expect("fixed local HTTP endpoint");
+            self.sockets.add(socket)
+        }));
+        Ok(())
+    }
+
+    fn http_handle(&self, slot: usize) -> Option<SocketHandle> {
+        self.http_tcp.as_ref()?.get(slot).copied()
+    }
+
+    pub(crate) fn http_tcp_state(&self, slot: usize) -> tcp::State {
+        self.http_handle(slot).map_or(tcp::State::Closed, |handle| {
+            self.sockets.get::<tcp::Socket>(handle).state()
+        })
+    }
+
+    pub(crate) fn http_tcp_recv(&mut self, slot: usize) -> Vec<u8> {
+        let Some(handle) = self.http_handle(slot) else {
+            return Vec::new();
+        };
+        let socket = self.sockets.get_mut::<tcp::Socket>(handle);
+        let mut bytes = Vec::new();
+        while socket.can_recv() {
+            let count = socket
+                .recv(|part| {
+                    bytes.extend_from_slice(part);
+                    (part.len(), part.len())
+                })
+                .unwrap_or(0);
+            if count == 0 {
+                break;
+            }
+        }
+        bytes
+    }
+
+    pub(crate) fn http_tcp_send(&mut self, slot: usize, bytes: &[u8]) -> usize {
+        self.http_handle(slot).map_or(0, |handle| {
+            self.sockets
+                .get_mut::<tcp::Socket>(handle)
+                .send_slice(bytes)
+                .unwrap_or(0)
+        })
+    }
+
+    pub(crate) fn http_tcp_close(&mut self, slot: usize) {
+        if let Some(handle) = self.http_handle(slot) {
+            self.sockets.get_mut::<tcp::Socket>(handle).close();
+        }
+    }
+
+    pub(crate) fn http_tcp_abort(&mut self, slot: usize) {
+        if let Some(handle) = self.http_handle(slot) {
+            self.sockets.get_mut::<tcp::Socket>(handle).abort();
+        }
+    }
+
+    pub(crate) fn http_tcp_relisten(&mut self, slot: usize) {
+        let Some(handle) = self.http_handle(slot) else {
+            return;
+        };
+        let socket = self.sockets.get_mut::<tcp::Socket>(handle);
+        if !matches!(
+            socket.state(),
+            tcp::State::Closed | tcp::State::TimeWait | tcp::State::Closing
+        ) {
+            return;
+        }
+        socket.abort();
+        debug_assert_eq!(socket.state(), tcp::State::Closed);
+        socket
+            .listen(IpListenEndpoint {
+                addr: Some(IpAddress::Ipv4(net::GATEWAY)),
+                port: crate::local_http::PORT,
+            })
+            .expect("fixed local HTTP relisten");
+    }
+
     pub fn file_tcp_state(&self, slot: usize) -> tcp::State {
         self.sockets.get::<tcp::Socket>(self.file_tcp[slot]).state()
     }
@@ -457,11 +560,29 @@ impl SlirpStack {
     /// `accept_frame` filter: frames smoltcp must NOT auto-respond to (external ICMP/UDP, un-opened
     /// TCP, non-gateway ARP) are dropped so the stack never impersonates a host it hasn't opened.
     pub fn inject(&mut self, frame: Vec<u8>) {
+        if self.device.bounded
+            && (frame.len() > wasm_vm_core::session_network::MAX_FRAME
+                || self.device.rx.len() + self.service_udp.len()
+                    >= crate::local_http::MAX_EGRESS_FRAMES
+                || self.device.rx.iter().map(Vec::len).sum::<usize>()
+                    + self
+                        .service_udp
+                        .iter()
+                        .map(|g| g.payload.len())
+                        .sum::<usize>()
+                    + frame.len()
+                    > crate::local_http::MAX_EGRESS_BYTES)
+        {
+            self.device.overflow = true;
+            return;
+        }
         let mut frame = frame;
         if let Some(g) = parse_udp(&frame)
             && is_service_udp(g.dst_ip, g.dst_port)
         {
-            self.service_udp.push(g);
+            if self.http_tcp.is_none() || g.dst_port == DHCP_SERVER_PORT {
+                self.service_udp.push(g);
+            }
             return; // handled by the service path, not smoltcp
         }
         self.rewrite_guest_tcp_port(&mut frame);
@@ -547,7 +668,19 @@ impl SlirpStack {
     /// Enqueue a caller-framed ethernet frame (a service reply) for delivery to the guest — it appears
     /// in the next [`take_egress`](Self::take_egress) alongside smoltcp's own output.
     pub fn push_egress(&mut self, frame: Vec<u8>) {
+        if self.device.bounded
+            && (self.device.tx.len() >= crate::local_http::MAX_EGRESS_FRAMES
+                || self.device.tx.iter().map(Vec::len).sum::<usize>() + frame.len()
+                    > crate::local_http::MAX_EGRESS_BYTES)
+        {
+            self.device.overflow = true;
+            return;
+        }
         self.device.tx.push_back(frame);
+    }
+
+    pub(crate) fn bounded_queue_overflow(&self) -> bool {
+        self.device.overflow
     }
 
     /// Service every DIVERTED DHCP datagram (dst port 67) with `dhcp`, framing each reply back to the

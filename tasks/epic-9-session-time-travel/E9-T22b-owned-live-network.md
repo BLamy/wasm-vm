@@ -70,3 +70,44 @@ guard sabotage; a later independent public-path verdict closes publication.
 Surface the accepted boundary on the demo/roadmap and ship main Cloudflare.
 T22c/d full real workloads and unchanged performance budgets, T23 recovery and
 T24 capstone remain required. No merge is authorized.
+
+### 2026-10-22 — worker — implementation and Daybreak preflight corrections
+
+Development work adds the fixed real Slirp HTTP service, shared owned Rust
+pump, read-only core lease/capacity preflights and VM-owned browser API. The
+service accepts only the ten fixed paths; ordinary Slirp keeps the service
+disabled. The pump retains accepted TX and popped RX across staging pressure,
+uses the guest clock, captures actual pending/link edges, and closes/cancels
+without adopting historical connections. The demo now exercises the complete
+Alpine HTTP OFF/ON/replay path and has a matching live roadmap pip.
+
+A fresh actual `gpt-daybreak-blue-latest` preflight, with fallback disabled and
+`daybreakBlue`, reviewed a frozen source snapshot. It found two blockers:
+legacy network callbacks could bypass the new provider, and `rx()` could hide
+an un-preflighted service pass. The worker fenced all legacy request/lease/
+completion methods while the provider is installed, split a pure egress dequeue,
+and added an immediate RX preflight. Retained pre-open leases are attacked by
+the product probe in both modes. Daybreak also requested OFF/WFI and quota
+proof: native tests now exercise real pending TCP in both modes, four active
+clients/fifth refusal, and the 128/129 boundary with owned-link failure and
+queued-TX settlement. The original preflight report is retained unchanged at
+`target/evidence/e9-t22b-daybreak-runtime-preflight/final-message.md`, SHA-256
+`c780ebbc766ddb5c59d44d57c6707d083bd4c848049235aed4ad1b028715c2ce`; this is a development preflight, not acceptance.
+
+Development self-checks passed strict affected native/Wasm Clippy, the ten
+owned-pump tests, and real HTTP fragmentation/tiny-window/half-close/refusal/
+header/cancel/timeout/queue-limit checks. A bounded native recorded run retains
+8192 instructions and equal replay traces for quanta 1, 7 and 101. The latest
+self-checks `target/evidence/e9-t22b-alpine-development-5/report.json` and
+`target/evidence/e9-t22b-demo-development-1/report.json` pass the full guest
+provider path and the visible 127/0 suite. Earlier failed development runs
+remain intact (boot-reset revocation, harness progress-before-open, and a
+renamed immutable-chunk route); they are not relabelled as passing evidence.
+
+No frozen final submission, final cold checkout, fresh full adversarial
+acceptance verdict, or B production deployment is claimed here. Freeze and
+record `make verify-E9-T22b`, then the one final cold proof. A fresh actual
+Daybreak session must independently falsify the evidence, audit changed hunks,
+run the charter's novel attack and replay-factory sabotage, and later close the
+main-publication criteria. Every PR remains open; T22c/d, T23 and T24 remain
+required.

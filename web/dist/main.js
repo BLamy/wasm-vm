@@ -21,6 +21,7 @@ import {runSessionReplayProbe} from "./session-replay-probe.js";
 import {runSessionKeyframeProbe} from "./session-keyframe-probe.js";
 import {runSessionSeekProbe} from "./session-seek-probe.js";
 import {runUnrecordedControlProbe} from "./unrecorded-control-probe.js";
+import {runOwnedHttpProbe} from "./owned-http-probe.js";
 
 // E4-T32: the complete machine runs in a worker by default. This path needs no SAB/COOP headers;
 // `?worker=0` and the older `?singlethread=1` spelling are explicit main-thread
@@ -2743,6 +2744,8 @@ let sessionReplayRunning=false,sessionReplayResult=null;
 const sessionReplayRun=document.getElementById("session-replay-run"),sessionReplayStatus=document.getElementById("session-replay-status");
 let sessionKeyframeRunning=false,sessionKeyframeResult=null;
 const sessionKeyframeRun=document.getElementById("session-keyframe-run"),sessionKeyframeStatus=document.getElementById("session-keyframe-status");
+let ownedHttpRunning=false,ownedHttpResult=null;
+const ownedHttpRun=document.getElementById("owned-http-run"),ownedHttpStatus=document.getElementById("owned-http-status");
 let unrecordedRunning=false,unrecordedResult=null;
 const unrecordedRun=document.getElementById("unrecorded-control-run"),unrecordedStatus=document.getElementById("unrecorded-control-status");
 let sessionSeekRunning=false,sessionSeekResult=null;
@@ -3058,6 +3061,8 @@ function renderRoadmap() {
 }
 
 function refreshRoadmapLive() {
+  const httpCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="owned-http");
+  document.getElementById("owned-http-pip").className="cap-pip "+(ownedHttpResult?.status==="passed"?"live":ownedHttpResult?.status==="failed"?"regressed":httpCap.status);
   const offCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="unrecorded-control");
   document.getElementById("unrecorded-control-pip").className="cap-pip "+(unrecordedResult?.status==="passed"?"live":unrecordedResult?.status==="failed"?"regressed":offCap.status);
   const replayCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="session-replay");
@@ -3077,6 +3082,7 @@ function refreshRoadmapLive() {
   const inputCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==='input-recording');
   document.getElementById('input-recording-pip').className=`cap-pip ${inputRecordingResult?.status==='passed'?'live':inputRecordingResult?.status==='failed'?'regressed':inputCap.status}`;
   for (const rc of roadmapCaps) {
+    if(rc.probe==="owned-http"){const state=ownedHttpResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Full Alpine fetches ten real HTTP bodies with recording off/on; closed-server replay matches the whole machine · live in browser":rc.base.evidence;continue;}
     if(rc.probe==="unrecorded-control"){const state=unrecordedResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Linux boot excerpt runs with capture OFF and refuses history APIs · live in browser; no performance result":rc.base.evidence;continue;}
     if(rc.probe==="session-replay"){const state=sessionReplayResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Pinned Linux, exact interpreter/JIT state and rejected unbranched input · live in browser":rc.base.evidence;continue;}
     if(rc.probe==="session-keyframe"){const state=sessionKeyframeResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Two persisted RAM deltas, exact restore, missing ancestor refusal and shared retention · live in browser":rc.base.evidence;continue;}
@@ -3132,7 +3138,8 @@ function refreshRoadmapLive() {
 }
 
 function setInteractiveState() {
-  const busy = unrecordedRunning || running || suiteRunning || eventClockRunning || inputRecordingRunning || timeEntropyRunning || deviceCompletionsRunning || networkCaptureRunning || sessionReplayRunning || sessionKeyframeRunning || sessionSeekRunning;
+  const busy = ownedHttpRunning || unrecordedRunning || running || suiteRunning || eventClockRunning || inputRecordingRunning || timeEntropyRunning || deviceCompletionsRunning || networkCaptureRunning || sessionReplayRunning || sessionKeyframeRunning || sessionSeekRunning;
+  ownedHttpRun.disabled=busy||!wasmReady;
   unrecordedRun.disabled=busy||!wasmReady;
   sessionReplayRun.disabled=busy||!wasmReady;
   sessionKeyframeRun.disabled=busy||!wasmReady;
@@ -3391,6 +3398,15 @@ runBtn.addEventListener("click", run);
 resetBtn.addEventListener("click", reset);
 benchBtn.addEventListener("click", runBench);
 suiteRunBtn.addEventListener("click", runSuite);
+ownedHttpRun.addEventListener('click',async()=>{
+ if(ownedHttpRunning||unrecordedRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||sessionSeekRunning||!wasmReady)return;
+ ownedHttpRunning=true;ownedHttpResult=null;ownedHttpStatus.textContent='Booting Alpine for the HTTP check…';setInteractiveState();refreshRoadmapLive();
+ try{
+  ownedHttpResult=await runOwnedHttpProbe({onProgress:progress=>{ownedHttpStatus.textContent=progress.phase==='replay-start'?'Replaying with the live HTTP server closed…':progress.phase==='replay-end'?'Comparing the complete machine…':`Alpine ${progress.mode??''} · ${progress.server?.server?.requests?.reduce((a,b)=>a+b,0)??0}/10 HTTP requests`;}});
+  ownedHttpStatus.textContent=ownedHttpResult.status==='passed'?'Passed · ten real HTTP bodies agree with recording off/on and exact offline replay.':'Failed · '+ownedHttpResult.error;
+ }catch(error){ownedHttpResult={status:'failed',failure:String(error)};ownedHttpStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__ownedHttpReport=ownedHttpResult;ownedHttpStatus.dataset.status=ownedHttpResult.status;ownedHttpRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
 unrecordedRun.addEventListener('click',async()=>{
  if(unrecordedRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||sessionSeekRunning||!wasmReady)return;
  unrecordedRunning=true;unrecordedResult=null;unrecordedStatus.textContent='Preparing Linux with recording off…';setInteractiveState();refreshRoadmapLive();

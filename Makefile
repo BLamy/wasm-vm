@@ -2815,3 +2815,7 @@ verify-E9-T21:
 .PHONY: verify-E9-T22a
 verify-E9-T22a:
 	python3 -B tools/verify/e9-unrecorded.py --output "$${E9_UNRECORDED_EVIDENCE_DIR:-target/evidence/e9-unrecorded-final}"
+
+.PHONY: verify-E9-T22b
+verify-E9-T22b:
+	python3 -B tools/verify/e9-owned-http.py --output "$${E9_OWNED_HTTP_EVIDENCE_DIR:-target/evidence/e9-owned-http-final}"

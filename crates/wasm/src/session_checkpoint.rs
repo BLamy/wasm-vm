@@ -355,6 +355,7 @@ impl WasmLinux {
             .machine
             .load_session_state_without_ram(checkpoint.resume, &digest)
             .map_err(|error| JsError::new(&format!("session_keyframe_native: {error:?}")))?;
+        inner.owned_http = None;
         inner.pending = pending;
         *inner.out.borrow_mut() = output;
         Ok(())
@@ -450,6 +451,7 @@ impl WasmLinux {
             .machine
             .load_session_resume(checkpoint.resume)
             .map_err(|error| JsError::new(&format!("session_checkpoint_native: {error:?}")))?;
+        inner.owned_http = None;
         inner.pending = pending;
         *inner.out.borrow_mut() = output;
         Ok(())
