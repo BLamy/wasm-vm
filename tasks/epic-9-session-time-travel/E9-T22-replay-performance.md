@@ -8,7 +8,7 @@ depends_on: [E9-T15, E9-T16, E9-T18c, E9-T19]
 estimate: S
 risk: medium
 capstone: false
-decomposed_into: [E9-T22a, E9-T22b, E9-T22c, E9-T22d]
+decomposed_into: [E9-T22a, E9-T22b, E9-T22e, E9-T22f, E9-T22g, E9-T22h, E9-T22c, E9-T22d]
 ---
 
 ## Goal
@@ -110,3 +110,14 @@ asset pins are retained. The unchanged frozen GPU probe cross-compiled in the
 existing reference container to RV64 ELF SHA-256
 `3080482f8bd8749f8947371d762570dcf699da00b952887c8eb1449a3652e213`.
 Its real desktop execution/renderer qualification remains required by T22c.
+
+
+### 2026-10-22 — worker — long-history runtime boundaries
+
+A fresh actual Daybreak audit of the corrected original cold Omarchy run
+proved the production journal lifetime bound rejects the 702nd receipt,
+before the desktop/workload. The full authenticated report and exact repro
+are recorded in E9-T22c. Add ordered high-risk S prerequisites E9-T22e/f/g/h
+for bounded durable publication, authenticated reading, exact replay windows
+and browser integration. This preserves all C/D requirements and numerical
+budgets; it does not complete the parent or qualify a shortened workload.

@@ -3,8 +3,9 @@ id: E9-T22c
 epic: 9
 title: Qualify both full pinned performance workloads
 priority: 524.92203
-status: pending
-depends_on: [E9-T22b]
+status: blocked
+blocked_on: [E9-T22e, E9-T22f, E9-T22g, E9-T22h]
+depends_on: [E9-T22b, E9-T22h]
 estimate: S
 risk: medium
 capstone: false
@@ -45,4 +46,213 @@ missing GL results, hidden live replay I/O and an incomplete long recording.
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-22 — worker — begin complete real-workload qualification
+
+Activated only after fresh actual Daybreak verified E9-T22b at
+`8b99d05a0e5b3ee23198e72ea9d4d324eb3e8744`, including actual main deployment
+`a14eb837` / release `3efeff9dd069d94c3577cefd4eb9439870ef32d3`.
+The native branch `codex/e9-real-workload-qualification` is the next layer;
+all 29 preceding PRs remain open/unmerged/unqueued. This task alone occupies
+the active lane. Risk is medium for the qualification harness/reference
+boundary; no runtime semantic change is included.
+
+A preparatory fresh actual Daybreak read-only design audit is retained at
+`target/evidence/e9-t22c-daybreak-design/final-message.md`, SHA-256
+`b60fed572468ef464510251985c058edc1f1cd06d765875de1c85dc876c80768`.
+It establishes no acceptance verdict. Compose the genuine full-Alpine owned
+HTTP path with a sealed absolute-transition scheduler and complete journal;
+boot the original full Omarchy kernel/chunk manifest in fresh 1 GiB pure
+ICount/64, use the production physical renderer, transfer/execute the original
+RV64 EGL/GLES probe and verify both adopted viewports. Reopen both stores and
+replay from their actual initial frames through the complete histories, with
+full state/files/source/network/GPU witnesses and zero replay egress.
+
+Seal original source/asset/compiler/library/ELF/renderer identities and explicit
+profile receipts before execution/timing. Preserve the original Chrome .80
+reference and existing .85 amendment, all workload amounts, all numeric budgets,
+and every failed attempt. The pinned Omarchy manifest is authoritative (12 GiB
+base, distinct from 1 GiB RAM); do not substitute a different base for stale
+4 GiB prose. Keep setup, exactly 100 scheduled UART deliveries, and auxiliary
+GPU controls separate and seal the exact payloads/origin. No performance claim
+belongs in this task.
+
+The 4096-receipt/64 MiB GPU inspection window is an immediate capacity risk to
+check against the real boot. If it or another runtime boundary prevents the
+full qualification, retain the exact repro and create an ordered prerequisite;
+do not hide semantic fixes, raise constants in a harness, truncate history,
+begin after boot, reuse a paced warm pair, or label a software renderer GPU.
+A fresh actual Daybreak critic must independently audit the complete frozen
+proof and apply one bounded novel attack before marking verified. T22d, T23
+and T24 remain required, and no merge is authorized.
+
+
+### 2026-10-22 — worker — qualification input preparation (development only)
+
+Adds the exact frozen schedule serializer, absolute-u64-coordinate checks,
+accepted-offer validator and a disjoint byte-identified ledger for every UART
+producer. The immutable input helper authenticates original manifests/kernels,
+the complete Alpine raw base, and every materialized cached desktop chunk,
+including unused local cache members. It preserves the original 12 GiB desktop
+base, reference amendment and all numeric budgets. This is input preparation;
+`make verify-E9-T22c` and the two complete qualifying workloads are not yet
+implemented or accepted.
+
+`node --test tools/verify/e9-workload-schedule.test.mjs
+ tools/verify/e9-workload-assets.test.mjs` passes six direct tests; the latest
+log is `target/evidence/e9-t22c-direct-harness-development-2.log`.
+`target/evidence/e9-t22c-assets-development-1.json` separately retains the
+original source-asset loader self-check (before the later ledger clarification).
+The original negative-test fixture failure is preserved: an aliased
+`Buffer.slice` changed the expected filename when corrupting its body; the
+helper correctly failed closed. An independent copy fixed the test fixture.
+No runtime or acceptance result was relabelled.
+
+The fresh actual Daybreak bootstrap source audit is retained at
+`target/evidence/e9-t22c-daybreak-bootstrap/final-message.md`, SHA-256
+`f7fd3c1fd531a5142132a42cd052c3d8780f12dbf06d8eb45e9dc6ec177399ef`.
+It proved missing production-terminal replies in the diagnostic page, the need
+for complete input-ledger partitioning, and that the current journal's lifetime
+limits do not reset at keyframes. It confirmed first real pending TX is a valid
+provider-open boundary: the emulated net device advertises no carrier-status
+feature, so the hub's initial link field is not guest carrier-down. This is a
+source audit, not a task verdict or an accepted runtime failure.
+
+Development attempts remain preserved separately. Attempt 1 was operator-stopped
+because the driver flushed every small batch and repeatedly authenticated the
+whole stored closure. Attempt 2 reached original Omarchy userspace and captured
+partial native/renderer state, but its Node parent exhausted its default heap
+while handling large numeric-byte-array/trace transfers; no complete report,
+trace or store export exists. Its raw files, OOM log, later STOP chronology and
+own-orphan-browser shutdown are retained under
+`target/evidence/e9-t22c-desktop-development-2/` and the adjacent log. Those facts
+do not establish a production-workload capacity verdict. Attempt 3 uses the
+actual pinned production terminal bridge, records its responses separately,
+streams raw receipt sidecars instead of returning large arrays, and keeps
+screenshots/source/action traces with network snapshots disabled. It is a new
+run, not a patch to either earlier attempt. It remains development only.
+
+Next: finish the genuine corrected bootstrap and full software/desktop workloads,
+seal the RV64 original-probe/compiler/guest-library/renderer receipts, prove all
+literal and full-state witnesses through beginning-to-end offline replay, then
+freeze the medium-risk submission for a fresh actual Daybreak critic. Correct
+checkpoint scheduling must stay within the original 50M gap; do not silently
+accept a late capture. Any actual runtime prerequisite must be its own ordered
+task, never a harness limit change or a shortened history. All PRs stay open.
+
+
+### 2026-10-22 — worker — authenticated capacity prerequisite and software proof repair
+
+The corrected original cold Omarchy attempt 3 completed its failure capture at
+`target/evidence/e9-t22c-desktop-development-3/`. Reproduce the diagnostic with
+`node target/evidence/e9-t22c-boot-prototype-v3.mjs --output <new-directory>`;
+its immutable executed browser/page copies, full report, all raw receipts,
+rejected batch, retained IndexedDB graph and browser trace remain preserved.
+The report SHA-256 is
+`56fd66815fe3b78144ebbdb54791a0cd98e74c90c00b6086c890a333d91b65b1`.
+Production `SessionGpuJournal.stage` rejected sequence 702 / transition
+`2207340032` at `67179533` lifetime envelope bytes versus `67108864`, with
+only `524420` resident pending+candidate bytes. The 256 block envelopes alone
+exceed the lifetime bound; flush/keyframe changes cannot repair this.
+
+A fresh actual Daybreak evidence-only audit independently rehashed all 1174
+physical chunks and 473 logical objects and reconstructed the exact published
+701-event prefix. Report:
+`target/evidence/e9-t22c-daybreak-capacity/report.md`, SHA-256
+`a341f3ffc80ca87b347d97cc1ea6e2270323e1004e752fcd6db47a4a2f9d53ec`.
+Its requested/returned model is `gpt-daybreak-blue-latest`, `daybreakBlue`,
+fallback disabled, completed without errors. The report's generic model
+self-description does not replace that controller routing receipt. Its
+ordering/length mutations were rejected. Failure-state/renderer witnesses
+are diagnostic only: a full native/end-queue snapshot was refused because
+33 block-chunk requests remained in flight. This is no completed/replayable
+recording, desktop qualification or performance result.
+
+Ordered high-risk S prerequisites E9-T22e/f/g/h now specify durable bounded
+publication, authenticated bounded reading, bounded exact replay continuation
+and browser integration. Each needs its own frozen proof and NEW actual
+Daybreak critic. Original assets, cold profile, 50M gap, amounts and budgets
+remain fixed. Witness/checkpoint/storage bounds remain prospective, not waived.
+
+The new software harness runs the complete original full-Alpine workload,
+records every UART producer, reopens its full store and replays from the
+actual initial state with the original provider machine freed. Development
+attempt 1 failed when the caller requested a ninth delta instead of a full
+checkpoint; it is retained. Attempt 2 corrected that caller selection and
+passed all 100 offers, ten rewrites and counted wire HTTP responses, 846
+receipts/23 witnesses and byte-identical 27863837-byte final/replay native
+states, SHA-256
+`9d42ace6c6f197374f992445fede2a56d1cb3f264081d56e519775fcf9750440`.
+Its report is `target/evidence/e9-t22c-software-development-2/report.json`,
+SHA-256 `f5dbbe92ce81e345702cce1619f666e2552e815023435daf4868b59c4870d2a6`.
+
+Fresh actual Daybreak separately audited this development phase at
+`target/evidence/e9-t22c-daybreak-software-development/report.md`, SHA-256
+`d6482bc3a8939a307184c989b3318cd1eecdeeb75c5b2a54ffc71c61b53dda1f`.
+Routing completed on the same requested/returned Daybreak model without
+errors. It independently reconstructed all 846 saved receipts, 284 chunks,
+171 objects, the literal 100-offer schedule/UART partition, ten TCP GETs and
+1024-byte response bodies, RTC and derived guest entropy, full native replay
+and zero live replay calls. A mutated scheduled byte was rejected. This is a
+limited evidence audit, not C verification or frozen final acceptance.
+
+The later direct filesystem oracle failed at origin entropy because the
+unchanged setup syncs before creating entropy. Daybreak independently found
+the bytes in captured RAM/page cache and found complete final/replay entropy
+and HTTP files on disk; this does not relabel the failed worker oracle.
+Preserve its failed report/log. The repaired harness records an auxiliary
+sync after setup and another before final inspection, outside the unchanged
+100 scheduled offers; the qualification serialization states this origin
+explicitly before timing. The oracle now seals/copies its own source,
+continues through all points and files, and always rechecks the immutable
+base. A new full run and complete direct oracle are required next. The trace
+uses snapshots:false to bound capture memory; its empty trace.network is not
+an independent network enumeration. Listener/tripwire results and decoded
+actual guest Ethernet/TCP frames remain the network evidence.
+
+`make verify-E9-T22c`, full GPU qualification, the original probe execution,
+final risk-tier submission and final fresh Daybreak verdict remain required.
+Only C currently occupies the active lane while finishing this independent
+software capture repair. All PRs remain open and production remains verified B.
+
+
+### 2026-10-22 — worker — blocked on long-history runtime prerequisites
+
+C is blocked on E9-T22e/f/g/h. The exact corrected Omarchy repro, original
+runtime/asset identities, rejected sequence/byte arithmetic, retained durable
+prefix and completed independent Daybreak capacity audit are recorded above.
+No smaller batch, extra flush or earlier legal checkpoint avoids the lifetime
+limit. The full original desktop workload, probe and whole-history replay
+remain impossible through the current writer/reader/admission boundaries.
+This removes C from the active lane so the ordered runtime work can proceed;
+it does not waive or complete any C criterion, timing budget, T23 or T24.
+
+The corrected software-only frozen phase at
+`e87a5894c31e1bbc708017c03a623daccc4a7233` passed its complete worker run:
+`node tools/verify/e9-workload-software-browser.mjs --output
+ target/evidence/e9-t22c-software-qualification-3`.
+Report SHA-256
+`196c5d51ed86e430cac8c5ee7dc7d786fcf37861f4760e2dfc4a9bca57b7e424`.
+It has 100 original scheduled offers, ten rewrites/HTTP responses, 108 total
+UART offers including eight auxiliary offers, 854 saved receipts and 23
+witnesses. All beginning-to-end replay native bytes match at 27875178 bytes /
+SHA-256 `fc130f82f7c636ec1a0432ad4b530455e0d21b68b6f1d139f24fb5013065b9ff`;
+fetch/socket replay counts and page/missing/external errors are zero.
+
+`python3 -B tools/verify/e9-workload-software-files.py --directory
+ target/evidence/e9-t22c-software-qualification-3` separately passes all four
+before/origin/final/replay points. The complete direct oracle report is
+`literal-files-oracle/report.json`, SHA-256
+`7501e128aa86c96bcf299748bb0d9a8694f1a30196fabce436040be042778185`;
+its copied executed source is
+`fbddedaa0ab95df7ee9a58974fa64bddcf6f7c3e190c6d77ceeb0ff261b5da5b`.
+Every literal state/entropy/HTTP byte matches, final/replay pre-recovery COW
+media match, and base/source integrity checks pass. Explicit auxiliary syncs
+are recorded outside the unchanged 100-offer schedule. Six schedule/asset
+unit checks pass in `e9-t22c-direct-harness-development-3.log`.
+
+A NEW actual Daybreak evidence-only audit is running at
+`target/evidence/e9-t22c-daybreak-software-qualification-3/`; no final software
+critic result is claimed here. Its scope is this frozen software phase only,
+including a bounded novel attack on the repaired proof harness. Future C
+acceptance must account for any later changed dependency boundary, complete
+the real GPU workload and final submission, and obtain the final fresh critic.
