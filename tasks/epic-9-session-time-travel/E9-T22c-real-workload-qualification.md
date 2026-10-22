@@ -3,8 +3,9 @@ id: E9-T22c
 epic: 9
 title: Qualify both full pinned performance workloads
 priority: 524.92203
-status: in-progress
-depends_on: [E9-T22b]
+status: blocked
+blocked_on: [E9-T22e, E9-T22f, E9-T22g, E9-T22h]
+depends_on: [E9-T22b, E9-T22h]
 estimate: S
 risk: medium
 capstone: false
@@ -212,3 +213,46 @@ actual guest Ethernet/TCP frames remain the network evidence.
 final risk-tier submission and final fresh Daybreak verdict remain required.
 Only C currently occupies the active lane while finishing this independent
 software capture repair. All PRs remain open and production remains verified B.
+
+
+### 2026-10-22 — worker — blocked on long-history runtime prerequisites
+
+C is blocked on E9-T22e/f/g/h. The exact corrected Omarchy repro, original
+runtime/asset identities, rejected sequence/byte arithmetic, retained durable
+prefix and completed independent Daybreak capacity audit are recorded above.
+No smaller batch, extra flush or earlier legal checkpoint avoids the lifetime
+limit. The full original desktop workload, probe and whole-history replay
+remain impossible through the current writer/reader/admission boundaries.
+This removes C from the active lane so the ordered runtime work can proceed;
+it does not waive or complete any C criterion, timing budget, T23 or T24.
+
+The corrected software-only frozen phase at
+`e87a5894c31e1bbc708017c03a623daccc4a7233` passed its complete worker run:
+`node tools/verify/e9-workload-software-browser.mjs --output
+ target/evidence/e9-t22c-software-qualification-3`.
+Report SHA-256
+`196c5d51ed86e430cac8c5ee7dc7d786fcf37861f4760e2dfc4a9bca57b7e424`.
+It has 100 original scheduled offers, ten rewrites/HTTP responses, 108 total
+UART offers including eight auxiliary offers, 854 saved receipts and 23
+witnesses. All beginning-to-end replay native bytes match at 27875178 bytes /
+SHA-256 `fc130f82f7c636ec1a0432ad4b530455e0d21b68b6f1d139f24fb5013065b9ff`;
+fetch/socket replay counts and page/missing/external errors are zero.
+
+`python3 -B tools/verify/e9-workload-software-files.py --directory
+ target/evidence/e9-t22c-software-qualification-3` separately passes all four
+before/origin/final/replay points. The complete direct oracle report is
+`literal-files-oracle/report.json`, SHA-256
+`7501e128aa86c96bcf299748bb0d9a8694f1a30196fabce436040be042778185`;
+its copied executed source is
+`fbddedaa0ab95df7ee9a58974fa64bddcf6f7c3e190c6d77ceeb0ff261b5da5b`.
+Every literal state/entropy/HTTP byte matches, final/replay pre-recovery COW
+media match, and base/source integrity checks pass. Explicit auxiliary syncs
+are recorded outside the unchanged 100-offer schedule. Six schedule/asset
+unit checks pass in `e9-t22c-direct-harness-development-3.log`.
+
+A NEW actual Daybreak evidence-only audit is running at
+`target/evidence/e9-t22c-daybreak-software-qualification-3/`; no final software
+critic result is claimed here. Its scope is this frozen software phase only,
+including a bounded novel attack on the repaired proof harness. Future C
+acceptance must account for any later changed dependency boundary, complete
+the real GPU workload and final submission, and obtain the final fresh critic.
