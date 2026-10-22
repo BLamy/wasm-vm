@@ -2807,3 +2807,7 @@ verify-E9-T18: verify-E9-T18c
 .PHONY: verify-E9-T20
 verify-E9-T20:
 	python3 -B tools/verify/e9-branch.py --output "$${E9_BRANCH_EVIDENCE_DIR:-target/evidence/e9-branch-final}"
+
+.PHONY: verify-E9-T21
+verify-E9-T21:
+	python3 -B tools/verify/e9-bundles.py --output "$${E9_BUNDLE_EVIDENCE_DIR:-target/evidence/e9-bundles-final}"

@@ -8,8 +8,9 @@ import {fileURLToPath} from 'node:url';
 import {execFileSync} from 'node:child_process';
 import assert from 'node:assert/strict';
 import {chromium} from '../../web/node_modules/playwright/index.mjs';
+import {retainSessionStore} from './e9-retain-session-store.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..'),options={};
-for(let i=2;i<process.argv.length;i+=2){assert(['--output','--web-root'].includes(process.argv[i])&&!options[process.argv[i]]&&process.argv[i+1]);options[process.argv[i]]=process.argv[i+1];}
+for(let i=2;i<process.argv.length;i++){const key=process.argv[i];assert(!options[key]);if(key==='--include-deltas'){options[key]=true;continue;}assert(['--output','--web-root'].includes(key)&&process.argv[i+1]);options[key]=process.argv[++i];}
 assert(options['--output']);const out=path.resolve(options['--output']),web=path.resolve(root,options['--web-root']??'web/dist');await fs.mkdir(out);
 const app=await fs.access(path.join(web,'app.html')).then(()=>'app.html',()=>'index.html');
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -23,7 +24,7 @@ const server=createServer(async(request,response)=>{
  try{
   let name=decodeURIComponent(new URL(request.url,'http://localhost').pathname);
   if(request.method==='POST'){
-   assert(/^\/__proof__\/(past|P|A|B|discard|source-P|divergent-P)\.resume$/.test(name));const parts=[];let length=0;
+   assert(/^\/__proof__\/(past|P|A|B|D|discard|source-P|divergent-P)\.resume$/.test(name));const parts=[];let length=0;
    for await(const part of request){length+=part.length;assert(length<=512*1048576);parts.push(part);}
    const bytes=Buffer.concat(parts),file=path.basename(name);await fs.writeFile(path.join(out,file),bytes);
    report.raw.push({file,bytes:bytes.length,sha256:sha(bytes)});response.writeHead(200,{'Content-Type':'application/json'}).end(JSON.stringify({sha256:sha(bytes)}));return;
@@ -128,6 +129,25 @@ try{
  await page.waitForFunction(()=>!proof.timeline.branch&&!proof.timeline.branchBusy);
  assert.equal(await page.evaluate(id=>proof.store.openSession(id),discarded),null);report.discarded=discarded;
  // Real reload, B before A, then delete the parent and A before reopening B.
+ if(options['--include-deltas']){
+  console.log('Recording a genuine Linux boot excerpt with full and incremental keyframes');
+  report.deltaSample=await page.evaluate(async()=>{
+   const {recordTimelineSample}=await import('/session-timeline-runtime.js');
+   const {SessionInputJournal}=await import('/session-inputs.js'),capture=SessionInputJournal.prototype.captureKeyframe;
+   let result;try{
+    // Exercise the public full-capture option amid actual incremental Linux work.
+    SessionInputJournal.prototype.captureKeyframe=function(store,machine,configuration,id,options){return capture.call(this,store,machine,configuration,id,id==='point-1000000'?{full:true}:options);};
+    result=await recordTimelineSample({store:proof.store,id:'bundle-linux-deltas',onProgress:()=>{}});
+   }finally{SessionInputJournal.prototype.captureKeyframe=capture;}
+   const t=proof.timeline;
+   await t.refresh(result.id);await t.open();const outcome=await t.request(()=>t.owner.controller.seekPosition(t.owner.manifest.end));if(outcome.status!=='ready')throw Error(t.snapshot.status);
+   let deltas=0,fulls=0;for(const point of t.owner.manifest.checkpoints){for await(const part of proof.store.stream(point.machine)){const magic=new TextDecoder().decode(part.subarray(0,8));if(magic==='WVKEYF01')deltas++;if(magic==='WVKEYB01')fulls++;break;}}
+   if(deltas===0||fulls===0||BigInt(t.active.position.retired)===0n)throw Error('real mixed full/incremental Linux work was not recorded');
+   const captured=t.owner.controller.captureSelectedBranch(),response=await fetch('/__proof__/D.resume',{method:'POST',body:captured.capture.native});if(!response.ok)throw Error('incremental native retention');
+   return {id:result.id,active:t.active,console:t.c.console.textContent,deltas,fulls,recipe:'public captureKeyframe full:true at point-1000000; default deltas elsewhere',manifestSha256:proof.checkpointHash((await proof.store.openSession(result.id)).manifest),capture:await response.json()};
+  });
+ }
+ report.retained=await retainSessionStore(page,'wasm-vm-sessions-v1-branch-files',path.join(out,'saved'));
  await page.evaluate(async()=>{proof.timeline.close();await proof.store.close();});await page.reload();
  report.reloaded=await page.evaluate(async({parent,children})=>{
   const {SessionStore}=await import('/session-store.js'),{openTimelineReplay}=await import('/session-timeline-runtime.js'),{checkpointHash}=await import('/session-checkpoints.js');

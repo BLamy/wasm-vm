@@ -62,7 +62,7 @@ The [demo](./app.html) has a **Local saved sessions** library. Choose **New chec
 3. Select a session and restore point, then choose **Open checkpoint**. It restores CPU, RAM, device state, disk changes and pending input together, initially paused. Choose **Resume guest** to continue. Selecting a preview alone leaves the active guest in place.
 4. Rename sessions to distinguish them. A reload or another tab on the same browser origin can reopen the saved points. Opening a point or starting a new checkpoint guest replaces the current guest.
 
-**Checkpoint restore.** The library restores explicit saved points. Continuous input replay, arbitrary-time seeking, reverse-step and accelerated desktop session history are later Epic 9 boundaries. Recording cannot recover execution from before it started. A session requires its exact compatible runtime, Wasm, kernel and image; an update can leave an older named session visibly incompatible without deleting it.
+**Checkpoint restore.** This library restores explicit saved points. The separate **Time travel · session timeline** opens completed software recordings and admitted exact GPU histories, with seeking, reverse-step and private continuations. Older paced GPU histories remain checkpoint-only. Full desktop recording integration and performance qualification are still separate work. Recording cannot recover execution from before it started. A session requires its exact compatible runtime, Wasm, kernel and image; an update can leave an older named session visibly incompatible without deleting it.
 
 The demo also has an **Execution boundary check**. It runs a small guest and compares exact stops, queued-event order and restored counters on the interpreter and JIT. The check reports its result in the page and runs separately from your active guest. It proves the common event-clock mechanism; the saved-session library continues to offer explicit checkpoints.
 
@@ -75,7 +75,7 @@ its final boundary and leaves that guest paused. Start a fresh guest to return t
 
 These rows are labelled incomplete input captures. They preserve exact bytes, frame order
 and accepted/failed/cancelled upload controls, but full provider replay and Open are disabled.
-Choose **Include time and random inputs** before starting to also save RTC samples, exact random bytes and their frozen instruction-clock policy. Asynchronous device completions and network replay are later Epic 9 adapters.
+Choose **Include time and random inputs** before starting to also save RTC samples, exact random bytes and their frozen instruction-clock policy. These input-prefix controls do not install the complete device and network adapters used by the separate completed-recording timeline.
 Guest file-transfer capture is available through the same controller on a local SLIRP software
 guest; live outbound connections, audio/microphone and accelerated guests are gated.
 
@@ -87,7 +87,44 @@ A failed input-prefix save pauses execution and preserves the committed prefix a
 owned batch. Free space or raise the data limit, then choose **Save input prefix** to retry.
 The recording cannot recover execution from before capture started. A guest that powers off publishes its final observations before the recording writer closes.
 
-The **Time and entropy check** runs a separate RV64 guest with RTC reads, random fills and a timer sleep. It compares recorded and replayed machine frames, traces and guest bytes with replay providers disabled. Full Linux replay remains unavailable until the remaining provider adapters are installed.
+The **Time and entropy check** runs a separate RV64 guest with RTC reads, random fills and a timer sleep. It compares recorded and replayed machine frames, traces and guest bytes with replay providers disabled. This probe qualifies those sources; completed Linux recordings use the separate timeline.
+
+## Local recording files
+
+In **Time travel · session timeline**, select a finished recording and choose
+**Export recording**. Import its `.wvsession` file with **Import recording file**
+in another browser profile. Import selects a preview; choose **Open replay** to
+restore it. Existing recording IDs are refused rather than overwritten.
+
+The file includes the recording's required keyframes, RAM changes, historical
+disk pages, recorded I/O, guest kernel and pinned VM assets. Parents and siblings
+keep their own histories. Version 1 supports the installed build's completed
+exact software and pure ICount/64 GPU profiles. It requires a matching installed
+app for host code; it does not contain the whole website or migrate older
+builds. GPU imports require compatible qualified hardware. Partial input captures
+and older checkpoint-only profiles are not admitted by this archive version.
+
+Imports check versions, digests, the complete referenced content and runtime
+compatibility before publishing a playable recording. The format is uncompressed
+and has no file paths: ZIP/gzip files, duplicate entries, missing content,
+unsupported versions and oversized sections are rejected. It permits at most
+4 GiB of object data, 640 MiB per object, 65,536 objects and an 8 MiB header;
+individual manifest, log and renderer limits can be smaller. No guest instruction
+runs during import, and replay does not reconnect to the original guest asset
+URLs or external peers.
+
+Known witness metadata uses canonical JSON. Duplicate inner fields or other
+non-canonical encodings are refused before import publication; malformed
+surviving witness metadata also stops cleanup and preserves staged data.
+
+Recording files contain guest memory and files, typed input and network
+payloads. Export/import are local operations with no automatic upload.
+**Cancel local transfer** stops an unfinished transfer; a completed durable
+import remains saved. A storage failure preserves other recordings and leaves
+the incomplete import unavailable. **Delete local recording** removes the local
+row and reclaims data that no other recording uses. Exported files stay on your
+device. If a surviving recording is corrupt or uses unknown extension metadata,
+cleanup reports a refusal and preserves its data for recovery.
 
 ### Limits, quota and deletion
 
