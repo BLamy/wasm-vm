@@ -53,6 +53,8 @@ use wasm_bindgen::prelude::*;
 mod event_clock;
 mod jit_browser;
 mod session_devices;
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+mod session_http;
 #[cfg(any(test, all(target_arch = "wasm32", not(feature = "zicsr-stub"))))]
 mod session_input;
 mod session_network;
@@ -2264,6 +2266,7 @@ struct LinuxInner {
     exact_image_len: Option<u64>,
     exact_gpu: bool,
     exact_driver: Option<wasm_vm_core::session_replay::ReplayDriver>,
+    owned_http: Option<wasm_vm_slirp::session_http::OwnedSessionHttp>,
     finished: Option<String>,
     /// E3-T02 lazy-fetch state, present only for a `newChunkedDisk` boot (`None` otherwise). Held in
     /// an `Rc` so `fetchPending` can clone it out and `await` without keeping the inner borrow.
@@ -3408,6 +3411,7 @@ impl WasmLinux {
                 exact_image_len,
                 exact_gpu,
                 exact_driver: None,
+                owned_http: None,
                 finished: None,
                 fetch,
                 persist,
@@ -3568,6 +3572,7 @@ impl WasmLinux {
         let set = |key: &str, value: JsValue| {
             let _ = js_sys::Reflect::set(&object, &JsValue::from_str(key), &value);
         };
+        inner.owned_http = None;
         let size = |value: wasm_vm_core::desktop_restore::DisplaySize| {
             let pair = js_sys::Object::new();
             let _ = js_sys::Reflect::set(
@@ -4958,6 +4963,7 @@ impl WasmLinux {
             inner.machine.load_resume(&blob).map_err(|e| {
                 JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code())
             })?;
+            inner.owned_http = None;
         }
         Ok(decision.code().to_string())
     }
@@ -5085,7 +5091,9 @@ impl WasmLinux {
         inner
             .machine
             .load_resume(&blob)
-            .map_err(|e| JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code()))
+            .map_err(|e| JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code()))?;
+        inner.owned_http = None;
+        Ok(())
     }
 
     /// E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a

@@ -328,12 +328,137 @@ impl crate::Machine {
             Err(NetworkError::Unsupported)
         }
     }
+    /// Check current live ownership without accepting an observation or touching a provider.
+    fn validate_live_network_lease(
+        &self,
+        lease: &NetworkLease,
+    ) -> Result<Rc<RefCell<NetworkHub>>, NetworkError> {
+        if !self.host_ingress_gate.allows_host() {
+            return Err(NetworkError::ReplayIngress);
+        }
+        let hub = self
+            .session_network
+            .as_ref()
+            .ok_or(NetworkError::Inactive)?
+            .clone();
+        {
+            let state = hub.borrow();
+            if state.replay {
+                return Err(NetworkError::ReplayIngress);
+            }
+            if state.branch_offline {
+                return Err(NetworkError::BranchOffline);
+            }
+            if let Some(error) = state.error {
+                return Err(error);
+            }
+            if !Rc::ptr_eq(&state.incarnation, &lease.incarnation) {
+                return Err(NetworkError::StaleLease);
+            }
+        }
+        Ok(hub)
+    }
+
+    /// Owner capabilities cannot be substituted with a particular TX request capability.
+    pub fn validate_session_network_provider(
+        &self,
+        lease: &NetworkLease,
+    ) -> Result<(), NetworkError> {
+        self.validate_live_network_lease(lease)?;
+        if lease.request.is_some() {
+            return Err(NetworkError::Intent);
+        }
+        Ok(())
+    }
+
+    fn network_observation_capacity(
+        &self,
+        hub: &NetworkHub,
+        events: u32,
+    ) -> Result<(), NetworkError> {
+        if events == 0 {
+            return Err(NetworkError::Payload);
+        }
+        hub.guest
+            .cursor
+            .checked_add(u64::from(events))
+            .ok_or(NetworkError::Exhausted)?;
+        if !hub.unrecorded {
+            if self.session_pending_events() != 0 {
+                return Err(NetworkError::Position);
+            }
+            let position = self.session_position().ok_or(NetworkError::Inactive)?;
+            position
+                .sequence
+                .checked_add(u64::from(events))
+                .ok_or(NetworkError::Exhausted)?;
+            position
+                .ordinal
+                .checked_add(events)
+                .ok_or(NetworkError::Exhausted)?;
+        }
+        Ok(())
+    }
+
+    /// Reserve no state: refuse a finite prospective observation span before live side effects.
+    /// A bridge still retains in-flight outcomes if later staging capacity becomes unavailable.
+    pub fn validate_session_network_capacity(
+        &self,
+        lease: &NetworkLease,
+        events: u32,
+    ) -> Result<(), NetworkError> {
+        let hub = self.validate_live_network_lease(lease)?;
+        if lease.request.is_some() {
+            return Err(NetworkError::Intent);
+        }
+        let state = hub.borrow();
+        self.network_observation_capacity(&state, events)
+    }
+
+    /// Read-only callback preflight. Acceptance remains the original completion operation.
+    pub fn preflight_session_network_completion(
+        &self,
+        lease: &NetworkLease,
+        event: &NetworkEvent,
+    ) -> Result<(), NetworkError> {
+        let hub = self.validate_live_network_lease(lease)?;
+        match (&lease.request, event) {
+            (Some(expected), NetworkEvent::Send { request, .. }) if expected == request => {}
+            (
+                None,
+                NetworkEvent::Receive(_) | NetworkEvent::Link { .. } | NetworkEvent::Pending(_),
+            ) => {}
+            _ => return Err(NetworkError::Intent),
+        }
+        let state = hub.borrow();
+        state.validate(event)?;
+        self.network_observation_capacity(&state, 1)
+    }
+
+    /// The smallest queued TX intent, without cloning the entire bounded pending map.
+    pub fn session_network_next_request(&self) -> Result<Option<NetworkRequest>, NetworkError> {
+        let hub = self
+            .session_network
+            .as_ref()
+            .ok_or(NetworkError::Inactive)?
+            .borrow();
+        if let Some(error) = hub.error {
+            return Err(error);
+        }
+        Ok(hub
+            .guest
+            .pending
+            .first_key_value()
+            .map(|(_, request)| request.clone()))
+    }
+
     /// Gate construction itself, so a replay caller cannot even open a live provider.
     pub fn open_session_network_provider<P>(
         &self,
         open: impl FnOnce() -> P,
     ) -> Result<(P, NetworkLease), NetworkError> {
         let lease = self.lease_session_network(None)?;
+        self.validate_session_network_capacity(&lease, 1)?;
         Ok((open(), lease))
     }
     pub fn session_network_cursor(&self) -> Result<u64, NetworkError> {

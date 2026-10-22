@@ -17,6 +17,8 @@ pub const IP_MTU: usize = 1500;
 /// A queue-backed ethernet device. `rx` = frames from the guest (we consume), `tx` = frames for the
 /// guest (smoltcp produces).
 pub struct SlirpDevice {
+    pub(crate) bounded: bool,
+    pub(crate) overflow: bool,
     pub(crate) rx: VecDeque<Vec<u8>>,
     pub(crate) tx: VecDeque<Vec<u8>>,
 }
@@ -30,9 +32,18 @@ impl Default for SlirpDevice {
 impl SlirpDevice {
     pub fn new() -> Self {
         SlirpDevice {
+            bounded: false,
+            overflow: false,
             rx: VecDeque::new(),
             tx: VecDeque::new(),
         }
+    }
+
+    pub(crate) fn tx_ready(&self) -> bool {
+        !self.bounded
+            || (self.tx.len() < crate::local_http::MAX_EGRESS_FRAMES
+                && self.tx.iter().map(Vec::len).sum::<usize>() + IP_MTU + 14
+                    <= crate::local_http::MAX_EGRESS_BYTES)
     }
 }
 
@@ -62,11 +73,17 @@ impl Device for SlirpDevice {
     type TxToken<'a> = SlirpTxToken<'a>;
 
     fn receive(&mut self, _t: Instant) -> Option<(Self::RxToken<'_>, Self::TxToken<'_>)> {
+        if !self.tx_ready() {
+            return None;
+        }
         let frame = self.rx.pop_front()?;
         Some((SlirpRxToken(frame), SlirpTxToken(&mut self.tx)))
     }
 
     fn transmit(&mut self, _t: Instant) -> Option<Self::TxToken<'_>> {
+        if !self.tx_ready() {
+            return None;
+        }
         Some(SlirpTxToken(&mut self.tx))
     }
 

@@ -21,6 +21,7 @@ pub mod doh;
 mod e2e_pump_stack;
 pub mod file_transfer;
 pub mod local_backend;
+pub mod local_http;
 pub mod manager;
 pub mod nat;
 #[cfg(feature = "native")]
@@ -32,6 +33,7 @@ pub mod native_resolver;
 #[cfg(feature = "native")]
 pub mod pump;
 pub mod resolver;
+pub mod session_http;
 pub mod stack;
 // E3-net slice 2a: the synchronous, poll-driven outbound connector (browser-compatible) + its native
 // `std::net` implementation. The trait is always available; `StdConnector` is native-only (real
@@ -65,6 +67,7 @@ pub use file_transfer::{
     TransferStore,
 };
 pub use local_backend::SlirpLocalBackend;
+pub use local_http::{HttpError, HttpStats, HttpStatsHandle};
 pub use nat::{FlowKey, FlowTable, Proto, TouchOutcome};
 #[cfg(feature = "native")]
 pub use native::NativeConnector;

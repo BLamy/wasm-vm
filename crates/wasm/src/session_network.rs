@@ -28,6 +28,11 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = exactNetworkRequests)]
     pub fn exact_network_requests(&self) -> Result<JsValue, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        if inner.owned_http.is_some() {
+            return Err(JsError::new(
+                "network callbacks owned by local HTTP provider",
+            ));
+        }
         if inner.exact_session != Some(false) && inner.machine.live_unrecorded_work().is_none() {
             return Err(error(NetworkError::ReplayIngress));
         }
@@ -48,6 +53,11 @@ impl WasmLinux {
     #[wasm_bindgen(js_name = exactLeaseNetworkRequest)]
     pub fn exact_lease_network_request(&self, id: &str) -> Result<SessionNetworkLease, JsError> {
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        if inner.owned_http.is_some() {
+            return Err(JsError::new(
+                "network callbacks owned by local HTTP provider",
+            ));
+        }
         if inner.exact_session != Some(false) && inner.machine.live_unrecorded_work().is_none() {
             return Err(error(NetworkError::ReplayIngress));
         }
@@ -67,6 +77,11 @@ impl WasmLinux {
         input: js_sys::Uint8Array,
     ) -> Result<(), JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.owned_http.is_some() {
+            return Err(JsError::new(
+                "network callbacks owned by local HTTP provider",
+            ));
+        }
         if inner.exact_session != Some(false) && inner.machine.live_unrecorded_work().is_none() {
             return Err(error(NetworkError::ReplayIngress));
         }

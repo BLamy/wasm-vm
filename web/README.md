@@ -286,3 +286,38 @@ The full local wall runs once at a clean frozen head. A separate
 `python3 -B tools/verify/e9-bundles.py --output OUTPUT --cold-clone CLONE_DIRECTORY`
 checks that same revision from a pristine checkout and fresh build directory.
 These are correctness proofs; desktop performance budgets remain E9-T22.
+
+
+### Owned local HTTP and replay check (E9-T22b)
+
+The demo's **Live HTTP and offline replay check** boots the pinned full Alpine
+image with recording OFF and ON, fetches `/e9/1` through `/e9/10` at guest
+`10.0.2.2:9191`, closes the live service, and compares a fresh replay's complete
+native machine bytes. Each response is 1024 copies of byte `17 + INDEX`. The
+service runs inside Slirp's real TCP stack; it opens no outbound connector.
+This is functional provider evidence. The full scheduled desktop workload and
+performance campaign remain T22c/d.
+
+`WasmLinux.openOwnedLocalHttp()` installs one provider owned by that VM. Open it
+after Linux initializes virtio-net: a guest device reset revokes old ownership.
+Call `pumpOwnedLocalHttp()` around bounded CPU chunks and drain its `more` flag
+before running again. A `blocked` result retains in-flight outcomes for retry;
+draining recording receipts or guest RX capacity must precede further live
+work. The demo fails explicitly if that capacity does not settle. The pump
+uses guest ICount-derived milliseconds in both OFF and ON modes.
+
+`ownedLocalHttpState()` returns aggregate pump/server counters, and
+`cancelOwnedLocalHttp()` settles pending sends and closes the backend. Dropping
+the VM also retires its sockets. The service has four sockets, a 4 KiB header
+limit, 128 lifetime connections, a 30-second guest-time lifetime, and finite
+frame/byte queues. There are no caller-supplied destinations, ports or network
+callbacks. Legacy network callback methods refuse while this provider owns the
+VM; replay refuses its factory before construction.
+
+Run `make verify-E9-T22b` on a clean committed tree. Evidence includes the full
+immutable image identity, actual guest body bytes and hashes, per-index server
+counts, independently reconstructed TCP streams, complete original/replay
+machine files, the event tape, a native guest instruction trace, the visible
+built-page check, and the local high-risk regression wall. The runner's
+`--cold-clone PATH` option performs the final independent-build proof without
+repeating the primary regression wall.
