@@ -3,7 +3,7 @@ id: E9-T22a
 epic: 9
 title: Add a genuine live unrecorded execution control
 priority: 524.92201
-status: implemented
+status: evidence-needed
 depends_on: [E9-T15, E9-T16, E9-T18c, E9-T19]
 estimate: S
 risk: high
@@ -26,10 +26,10 @@ an exact recording. Do not add a live network service in this slice; T22b owns i
 
 ## Acceptance criteria
 
-- [ ] An explicit constructor/mode provides the original 256 MiB/ICount10 and 1 GiB/ICount64 live controls using the same owned device/provider seams as record mode.
-- [ ] Read-only diagnostics and direct tests demonstrate no session clock/source tape, receipt queues, recorder dirty epoch, GPU-result history or durable recording in OFF; record/replay remain unchanged and refuse cross-mode misuse before mutation.
-- [ ] Equal-work accounting includes actual attempted/retired/idle transitions without a per-instruction JavaScript loop, invented requested work, or artificial baseline delay. Input positions and completed work are independently inspectable.
-- [ ] Exercise real full Alpine disk/input/file work and the production physical GPU path. These qualify the new mode only; full GPU desktop/HTTP and performance claims remain gated on T22b/c/d.
+- [x] An explicit constructor/mode provides the original 256 MiB/ICount10 and 1 GiB/ICount64 live controls using the same owned device/provider seams as record mode.
+- [x] Read-only diagnostics and direct tests demonstrate no session clock/source tape, receipt queues, recorder dirty epoch, GPU-result history or durable recording in OFF; record/replay remain unchanged and refuse cross-mode misuse before mutation.
+- [x] Equal-work accounting includes actual attempted/retired/idle transitions without a per-instruction JavaScript loop, invented requested work, or artificial baseline delay. Input positions and completed work are independently inspectable.
+- [x] Exercise real full Alpine disk/input/file work and the production physical GPU path. These qualify the new mode only; full GPU desktop/HTTP and performance claims remain gated on T22b/c/d.
 - [ ] Run the high-risk local gauntlet, recorded deterministic state/guest evidence, actual built-browser proof, exact-head final cold clone and fresh actual Daybreak attacks; surface the accepted control on the demo/roadmap and publish the built main Cloudflare path.
 
 ## Deterministic acceptance
@@ -263,3 +263,72 @@ public-path verdict are still outstanding. Only the verifier may set verified.
 The roadmap remains partial until the accepted local boundary is ready to ship.
 No HTTP, full GPU desktop, recording-overhead or Epic 9 completion claim is
 made; T22b/c/d, T23 and T24 remain required. PR #605 stays open and unmerged.
+
+### 2026-10-22 — verifier — VERDICT: needs-evidence
+
+- **P1–P17 local/cold correctness and sufficiency — HELD.** Predictions were frozen
+  before evidence inspection in
+  `target/evidence/e9-t22a-daybreak-full-charter/predictions.md`, SHA256
+  `2616cc3b023ef9a28d8e6331a10e7c6052bf3eee8677b7bf39c86b0dfc1fd24f`.
+  Independent rehashing found zero mismatch across all 141 primary and 364 cold
+  manifest files, all 51 exact-`ba85c39` source bindings and all nine rebuilt
+  source/committed-dist entries. The cold checkout is clean at `ba85c39`; its
+  independently streamed full 512 MiB Alpine reconstruction matches raw SHA256
+  `ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8`.
+  The literal 4096-line OFF/Record traces, 9096-line agent trace/23-byte DMA,
+  full Alpine file/input/RTC/entropy work, 127/0 visible demo, default/layered
+  physical GPU authority attacks, valid-audio control plus 11 atomic OFF refusals,
+  and unchanged software/physical-GPU Record/Replay were inspected at their raw
+  values. Primary/cold/wall bindings remain respectively
+  `1415078644a610f64f5a7fc06dbc9886153430eb679b76d3ab982a1c6b7dae8a`,
+  `2506fcd84d1746e7225ecd740caeedfcd8afa11fc099bc4a4bb43a77ec0da00d`,
+  and `0d07370e5c0d09e14e3b72a29caacc01f197ec2be12614dbe52007ecd720270b`.
+  The full wall contains only the exact five historical quarantined zicsr-stub
+  dead-code diagnostics, with its exact waiver and strict production Clippy passing.
+- **P18 novel post-construction owner-confusion attack — HELD.** After a valid OFF
+  receive, a Record-owner capability with the same numeric request id and identical
+  frame was rejected `StaleLease` without changing the OFF snapshot, request, cursor,
+  work or queued receive; the original OFF lease then completed. Scratch log SHA256
+  `f1027e0a013f75e695b0522cd568eeb38305caa6df6ff02f2591a173b99f1605`;
+  preserved test patch SHA256
+  `5d3d40a4a67133c8fa0bcda689e2e3ce15e59af73100e0e23b8e68ae027fda27`.
+- **P19 sabotage — HELD.** The permanent history/mode-refusal test passed original,
+  failed exit 101 with `Ok(())` versus `Err(AlreadyActive)` when only the
+  `live_unrecorded` guard in `start_session_clock` was removed, and passed after exact
+  restoration. Mutant log SHA256
+  `3e2d6d83513fb7647c9eb10d35d6d85b9c5e5e2286f0bb485379400577f7ca95`;
+  sabotage patch SHA256
+  `6f78a0aadbecc00665c9daf7a4ec7d8c1d6e77d63f4d22709387758a8d14fc28`.
+  Main runtime/fixture source was never edited.
+- **COVERAGE — HELD.** All 193 textual hunks across 51 changed files are classified:
+  core 56/12 files, Wasm 60/8, verifier/Make 10/10, source web runtime 10/5 and
+  deployable runtime 32/10 are exercised; generated `tasks.json` 11/1,
+  declarations/cache stamp 11/3 and task metadata 3/2 are narrowly waived.
+  No changed runtime hunk needs evidence. Exact hunk headers and evidence mapping are
+  in `manifest-audit.json:/hunkInventory` and `report.json:/changedHunkCoverage`.
+- **SUITE — retain existing.** The permanent `session_live`, GPU capability and locked
+  agent regressions plus the guest traces already assert the verified primitives. The
+  novel scratch composition found no new primitive warranting a frozen-source test
+  promotion; its runnable patch/log are preserved without invalidating the cold boundary.
+- **P20 main publication — NEEDS EVIDENCE.** No deployment or remote request was
+  authorized in this charter. The sole remaining T22a proof is publication of the exact
+  accepted committed dist to `https://wasm-vm.pages.dev`, followed by a new independent
+  Daybreak verifier binding main `/app` bytes to Wasm
+  `05fdca361c492aa7d4bf45ae1d41f69f354162627807a042ba1889d64b46b3ea`
+  and GPU graph
+  `e49121f1109c9b5cdbdc5bec0e2ecb94d8496b822658c87dc6fcf32c79424164`,
+  and checking the bounded public 127/0 OFF control, live/verified pips, no history/
+  namespace and zero unexpected errors. This is not a runtime refutation; status is
+  `evidence-needed`, and the fifth acceptance checkbox remains open. T22b/c/d, T23
+  and T24 are unchanged.
+
+Full reports:
+`target/evidence/e9-t22a-daybreak-full-charter/report.json`, SHA256
+`03acae1882bf92a9d5ceda60006abfcd87d82481487d4f57049f376c8017f96a`;
+`report.md`, SHA256
+`ff9fe8bd96b8491d1d92a30e1b82620810d2403df624605e616d85d9653f75b9`;
+corrected independent manifest audit SHA256
+`0d8b1e8840bf303fec7f10696f58333d6ac12a2273f2ed624dc6899e0e081a3d`.
+The initial audit receipt is retained separately: it treated the authenticated sparse
+zero chunk as absent; after applying the manifest's explicit sparse-hole rule, the
+full reconstruction matched exactly. No push, merge or publication was performed.
