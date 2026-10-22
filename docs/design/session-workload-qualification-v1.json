@@ -13,14 +13,15 @@
     "qualificationBrowser": "Chrome 155.0.8059.85"
   },
   "schedule": {
-    "origin": "First drained before-phase host boundary observing E9_AFTER and the unchanged successful setup RPC fence, after draining actual terminal replies; retain a native/state witness. All later targets remain absolute.",
+    "origin": "First drained before-phase host boundary after the unchanged successful setup RPC fence/E9_AFTER and an explicitly recorded auxiliary sync fence, after draining actual terminal replies; retain a native/state witness. All later targets remain absolute.",
     "offers": 100,
     "absoluteOffsets": "500000 * frame index, frame index 1..100; never relative sleep after auxiliary work",
     "normalOffer": "Substitute FRAME_INDEX in the original template, append one newline.",
     "tenthOffer": "The same frame command and newline, then original rewrite command with INDEX 1..10 and newline, all in one UART offer.",
     "authoritativeEvidence": "Actual channel-1 accepted offer receipts, exact payload bytes and coordinates; separate setup and auxiliary GPU-control ledgers.",
     "setup": "Run original setup unchanged and its original advance exchange. Auxiliary network setup, probe transfer/library inspection and viewport controls do not change that source or count among the 100.",
-    "auxiliaryLedger": "Every channel-1 offer belongs to exactly one predeclared producer: original setup, advance, actual terminal reply, scheduled frame, network setup, probe transfer/inspection/invocation or explicit file/guest inspection. Retain full source coordinates, sequence, byte length and SHA-256; their disjoint union must cover all UART offers. Viewport controls and GPU observations have separate typed projections of the same durable stream."
+    "auxiliaryLedger": "Every channel-1 offer belongs to exactly one predeclared producer: original setup, advance, actual terminal reply, scheduled frame, network setup, probe transfer/inspection/invocation or explicit file/guest inspection. Retain full source coordinates, sequence, byte length and SHA-256; their disjoint union must cover all UART offers. Viewport controls and GPU observations have separate typed projections of the same durable stream.",
+    "auxiliarySync": "Record one auxiliary sync after original setup/entropy and before the origin witness, and one after the tenth original wget and before final file inspection/capture. Classify both as file-witness UART activity outside the unchanged 100 scheduled offers; preserve original setup/rewrite source, amounts and all numeric budgets."
   },
   "profiles": {
     "software": "Original full Alpine assets, 256 MiB RAM, one hart, pure ICount/10.",
