@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
 import time
@@ -12,6 +13,7 @@ SOURCE = Path(__file__).resolve().parents[2]
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument('--output', required=True, type=Path)
 p.add_argument('--cold-clone', type=Path)
+p.add_argument('--resume-from', type=Path, help='Carry passed gates after an acceptance-runner-only correction')
 a = p.parse_args()
 out = a.output.resolve()
 out.mkdir(parents=True, exist_ok=False)
@@ -46,6 +48,11 @@ def clean(directory):
 
 
 def run(name, command, timeout=1800, cwd=None):
+    carried = next((row for row in report.get('carriedCommands', []) if row['name'] == name), None)
+    if carried is not None:
+        assert carried['command'] == command, 'carried command differs: ' + name
+        print(name + ' (carried unchanged runtime evidence)', flush=True)
+        return
     report['active'] = name
     write()
     print(name, flush=True)
@@ -71,6 +78,29 @@ def browser(name, tool, **extra):
 
 try:
     clean(SOURCE)
+    if a.resume_from:
+        assert not a.cold_clone, 'cold proof always starts from its final pristine head'
+        previous = a.resume_from.resolve()
+        old = json.loads((previous / 'report.json').read_text())
+        assert old['task'] == 'E9-T22b' and old['status'] == 'failed'
+        assert old.get('failure') == "AssertionError('built app HTML differs')", 'unreviewed resume condition'
+        changed = subprocess.check_output(['git','diff','--name-only',old['head'],head],cwd=root,text=True).splitlines()
+        assert changed == ['tools/verify/e9-owned-http.py'], 'only a runner correction can carry these gates'
+        for row in old['sources']:
+            if row['path'] != 'tools/verify/e9-owned-http.py':
+                assert sha(root / row['path']) == row['sha256'], 'changed dependency: ' + row['path']
+        for row in old['files']:
+            source = previous / row['path']
+            assert source.is_relative_to(previous) and sha(source) == row['sha256']
+            destination = out / row['path']; destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, destination)
+        assert all(row['exit_code'] == 0 for row in old['commands'])
+        report['carryForward'] = dict(report=str(previous / 'report.json'),sha256=sha(previous / 'report.json'),
+            sourceHead=old['head'],targetHead=head,changed=changed,
+            reason='Source/deployed HTML normalization was missing in the acceptance harness; runtime, dependencies and original evidence digests are unchanged.')
+        report['carriedCommands'] = old['commands']
+        report['commands'] = list(old['commands'])
+        write()
     if a.cold_clone:
         assert not root.exists(), 'cold clone destination must not exist'
         run('clone', ['git', 'clone', '--quiet', '--no-hardlinks', '--no-checkout', str(SOURCE), str(root)], cwd=SOURCE)
@@ -106,7 +136,14 @@ try:
         source,dist=root/'web'/name,root/'web/dist'/name
         assert source.read_bytes()==dist.read_bytes(),'rebuilt runtime differs from committed dist: '+name
         report['rebuiltRuntime'].append(dict(path=name,bytes=source.stat().st_size,sha256=sha(source)))
-    assert (root/'web/index.html').read_bytes()==(root/'web/dist/app.html').read_bytes(),'built app HTML differs'
+    expected_app = (root/'web/index.html').read_bytes()
+    for before,after in [(b'./node_modules/@xterm/xterm/css/xterm.css',b'./vendor/xterm/xterm.css'),
+                         (b'./node_modules/@xterm/xterm/lib/xterm.js',b'./vendor/xterm/xterm.js'),
+                         (b'./node_modules/@xterm/addon-fit/lib/addon-fit.js',b'./vendor/xterm/addon-fit.js'),
+                         (b'./landing.html',b'./')]:
+        expected_app = expected_app.replace(before,after)
+    assert expected_app == (root/'web/dist/app.html').read_bytes(),'built app HTML differs from the prescribed vendor/navigation mapping'
+    report['appHtml'] = dict(source=sha(root/'web/index.html'),deployed=sha(root/'web/dist/app.html'),mapping='tools/build-web-dist.sh exact xterm vendoring and landing-to-root substitutions')
     for name in ['e9-owned-http-browser.mjs','e9-owned-http-page.mjs','e9-owned-http-wire.mjs','e9-owned-http-demo-browser.mjs']:
         run('syntax-'+Path(name).stem,['node','--check','tools/verify/'+name])
     run('syntax-product-probe',['node','--check','web/owned-http-probe.js'])
