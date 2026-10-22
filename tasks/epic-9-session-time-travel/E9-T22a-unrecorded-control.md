@@ -3,7 +3,7 @@ id: E9-T22a
 epic: 9
 title: Add a genuine live unrecorded execution control
 priority: 524.92201
-status: in-progress
+status: implemented
 depends_on: [E9-T15, E9-T16, E9-T18c, E9-T19]
 estimate: S
 risk: high
@@ -192,3 +192,74 @@ its final exact-head cold checkout and a fresh actual Daybreak full charter.
 Only that later verifier may set a terminal task status. No new ISA or compliance
 ELF is introduced by this mode boundary; the existing 127-test demo remains the
 required live suite. No merge or performance/desktop/HTTP claim is authorized.
+
+### 2026-10-22 — worker — final corrected exact-head submission
+
+Runtime is frozen at `ba85c3978d665fe20c9b750c7261d803e8f6340d`, with clean
+source before and after both submissions. The diff is `73794d3ec..ba85c397`;
+this status/log commit changes no runtime or harness. The corrected submission
+passed all 27 selected gates, including the complete local wall:
+
+- Command: `E9_UNRECORDED_EVIDENCE_DIR="$PWD/target/evidence/e9-t22a-final-ba85c39" make verify-E9-T22a`.
+- Primary report: `target/evidence/e9-t22a-final-ba85c39/report.json`, SHA256
+  `1415078644a610f64f5a7fc06dbc9886153430eb679b76d3ab982a1c6b7dae8a`.
+- Wall report: `target/evidence/e9-t22a-final-ba85c39/gauntlet/report.json`,
+  SHA256 `0d07370e5c0d09e14e3b72a29caacc01f197ec2be12614dbe52007ecd720270b`.
+  Initial `make ci` stopped at exactly the five documented historical
+  quarantined zicsr-stub dead-code diagnostics. Its exact scoped waiver passed;
+  production Clippy remained strict. The complete remaining wall passed in
+  1957.65 seconds: native/Wasm tests, feature matrix, RISC-V suites, native/Wasm
+  golden fingerprints and performance smoke. Its passing test summaries total
+  2480 invocations, not a claim of 2480 unique cases. Performance smoke is not
+  the deferred recording-overhead campaign.
+- Final cold command: `python3 -B tools/verify/e9-unrecorded.py --output "$PWD/target/evidence/e9-t22a-cold-ba85c39" --cold-clone /Users/blamy/Documents/Codex/.e9-t22a-cold-ba85c39`.
+  All 28 cold gates passed. Report SHA256
+  `2506fcd84d1746e7225ecd740caeedfcd8afa11fc099bc4a4bb43a77ec0da00d`.
+  The exact detached runtime checkout had no inherited target, node_modules or
+  rootfs, and used scrubbed Rust/Cargo environment. It reconstructed the full
+  536870912-byte Alpine base from 227 unique authenticated public chunks;
+  final raw SHA256 `ebcd6b7a3569f6280f901b9697f3b8f06a11dd800b2410b540fb6bbdea8c60f8`.
+  The full wall executes once in the primary; cold repeats the direct native,
+  Wasm, built-browser and artifact gates. Both final source manifests (51
+  changed files) and all rebuilt runtime identities match exactly.
+
+Both submissions recorded the literal 4096-instruction OFF/record comparison,
+IRQ/exception/SBI/WFI/tail/overflow and code-coherence assertions, original-owner
+block/network/agent boundaries, actual UART delivery counters, and unchanged
+software/GPU record/replay. The permanent workspace-locked agent test retained
+9096 guest trace lines and the real 23-byte DMA payload with cursor/used = 1.
+The trace is SHA256 `48ada638af5fe8bc36b2e0dbb7fbe6860764cd85ab06ba5cc3437cd622b82245`;
+DMA SHA256 `4325207858c8fa8276b84319205a2fab3cdc528f31c210e33ab1c6cf1485df7c`.
+The independent artifact readers passed: primary SHA256
+`949ade0d45c644c0b5e546c1c20e8a92df415fd758a60890940e0e6f02b2495f`, cold
+`627a12e803e095327970213f6a667045895c98126329c7b49d5a851130443f42`.
+All 141 primary and 364 cold evidence-file hashes were rechecked before this
+submission. Raw files, original failed attempts and old-build passing receipts
+remain preserved; none were relabelled as final corrected proof.
+
+All seven browser paths passed in both final submissions: valid-ring ordinary
+control plus 11 OFF history/audio refusals; the 127/0 demo with the visible
+one-million-transition real-JIT control; full pinned Alpine literal file/input/
+RTC/entropy work; physical Apple M4 Max GPU OFF; software record/replay; physical
+GPU record/replay with rollback/context-loss attacks; and physical layered GPU
+OFF with authentic pending numeric-DMA refusals, successful original typed DMA
+and guard bytes. Reports bind screenshots, Playwright traces, full source and
+raw witnesses. No unexpected console errors were recorded. Built Wasm SHA256
+is `05fdca361c492aa7d4bf45ae1d41f69f354162627807a042ba1889d64b46b3ea`;
+GPU graph is `e49121f1109c9b5cdbdc5bec0e2ecb94d8496b822658c87dc6fcf32c79424164`
+over 74 files. Source/dist bytes and the cold rebuild agree.
+
+Actual Daybreak's read-only corrected preflight completed with P1–P7 HELD,
+no new runtime contradiction, and P8 requiring the then-unfinished final proof.
+Report `target/evidence/e9-t22a-daybreak-corrected-review/final-message.md`, SHA256
+`e0f8e8f6146a926bf0cca55b20f74b31670cae82693acb2751783f3f38cca26e`;
+routing SHA256 `03756ff6b07c2553e8a74c8c7fbe02f25c4b879dcfd3d0b0f526705f6d659eb0`.
+The requested/returned model was `gpt-daybreak-blue-latest`, program
+`daybreakBlue`, provider fallback disabled. That preflight was not a full task
+verdict. A new fresh actual Daybreak session must now perform the complete
+charter, bounded novel attack and guard sabotage, audit coverage and retain or
+promote the permanent checks. The main Cloudflare publication and independent
+public-path verdict are still outstanding. Only the verifier may set verified.
+The roadmap remains partial until the accepted local boundary is ready to ship.
+No HTTP, full GPU desktop, recording-overhead or Epic 9 completion claim is
+made; T22b/c/d, T23 and T24 remain required. PR #605 stays open and unmerged.
