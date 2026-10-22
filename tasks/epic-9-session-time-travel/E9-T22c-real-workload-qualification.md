@@ -83,3 +83,57 @@ begin after boot, reuse a paced warm pair, or label a software renderer GPU.
 A fresh actual Daybreak critic must independently audit the complete frozen
 proof and apply one bounded novel attack before marking verified. T22d, T23
 and T24 remain required, and no merge is authorized.
+
+
+### 2026-10-22 — worker — qualification input preparation (development only)
+
+Adds the exact frozen schedule serializer, absolute-u64-coordinate checks,
+accepted-offer validator and a disjoint byte-identified ledger for every UART
+producer. The immutable input helper authenticates original manifests/kernels,
+the complete Alpine raw base, and every materialized cached desktop chunk,
+including unused local cache members. It preserves the original 12 GiB desktop
+base, reference amendment and all numeric budgets. This is input preparation;
+`make verify-E9-T22c` and the two complete qualifying workloads are not yet
+implemented or accepted.
+
+`node --test tools/verify/e9-workload-schedule.test.mjs
+ tools/verify/e9-workload-assets.test.mjs` passes six direct tests; the latest
+log is `target/evidence/e9-t22c-direct-harness-development-2.log`.
+`target/evidence/e9-t22c-assets-development-1.json` separately retains the
+original source-asset loader self-check (before the later ledger clarification).
+The original negative-test fixture failure is preserved: an aliased
+`Buffer.slice` changed the expected filename when corrupting its body; the
+helper correctly failed closed. An independent copy fixed the test fixture.
+No runtime or acceptance result was relabelled.
+
+The fresh actual Daybreak bootstrap source audit is retained at
+`target/evidence/e9-t22c-daybreak-bootstrap/final-message.md`, SHA-256
+`f7fd3c1fd531a5142132a42cd052c3d8780f12dbf06d8eb45e9dc6ec177399ef`.
+It proved missing production-terminal replies in the diagnostic page, the need
+for complete input-ledger partitioning, and that the current journal's lifetime
+limits do not reset at keyframes. It confirmed first real pending TX is a valid
+provider-open boundary: the emulated net device advertises no carrier-status
+feature, so the hub's initial link field is not guest carrier-down. This is a
+source audit, not a task verdict or an accepted runtime failure.
+
+Development attempts remain preserved separately. Attempt 1 was operator-stopped
+because the driver flushed every small batch and repeatedly authenticated the
+whole stored closure. Attempt 2 reached original Omarchy userspace and captured
+partial native/renderer state, but its Node parent exhausted its default heap
+while handling large numeric-byte-array/trace transfers; no complete report,
+trace or store export exists. Its raw files, OOM log, later STOP chronology and
+own-orphan-browser shutdown are retained under
+`target/evidence/e9-t22c-desktop-development-2/` and the adjacent log. Those facts
+do not establish a production-workload capacity verdict. Attempt 3 uses the
+actual pinned production terminal bridge, records its responses separately,
+streams raw receipt sidecars instead of returning large arrays, and keeps
+screenshots/source/action traces with network snapshots disabled. It is a new
+run, not a patch to either earlier attempt. It remains development only.
+
+Next: finish the genuine corrected bootstrap and full software/desktop workloads,
+seal the RV64 original-probe/compiler/guest-library/renderer receipts, prove all
+literal and full-state witnesses through beginning-to-end offline replay, then
+freeze the medium-risk submission for a fresh actual Daybreak critic. Correct
+checkpoint scheduling must stay within the original 50M gap; do not silently
+accept a late capture. Any actual runtime prerequisite must be its own ordered
+task, never a harness limit change or a shortened history. All PRs stay open.

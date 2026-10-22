@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "task": "E9-T22c",
+  "scope": "Untimed qualification serialization and explicit supported profile; no runtime or performance acceptance",
+  "originalContract": {
+    "path": "docs/design/session-replay-contract.json",
+    "sha256": "646899bea0da60ba13020a2015f6214236526082a8e34952cca91481cb89dba1"
+  },
+  "referenceAmendment": {
+    "path": "docs/design/session-replay-performance-reference-v1.json",
+    "sha256": "05c3c5ce07a29f87226cdfb9758037f49ef2a8460496d0a515594f2f96050751",
+    "originalBrowser": "Chrome 155.0.8059.80",
+    "qualificationBrowser": "Chrome 155.0.8059.85"
+  },
+  "schedule": {
+    "origin": "First drained before-phase host boundary observing E9_AFTER and the unchanged successful setup RPC fence, after draining actual terminal replies; retain a native/state witness. All later targets remain absolute.",
+    "offers": 100,
+    "absoluteOffsets": "500000 * frame index, frame index 1..100; never relative sleep after auxiliary work",
+    "normalOffer": "Substitute FRAME_INDEX in the original template, append one newline.",
+    "tenthOffer": "The same frame command and newline, then original rewrite command with INDEX 1..10 and newline, all in one UART offer.",
+    "authoritativeEvidence": "Actual channel-1 accepted offer receipts, exact payload bytes and coordinates; separate setup and auxiliary GPU-control ledgers.",
+    "setup": "Run original setup unchanged and its original advance exchange. Auxiliary network setup, probe transfer/library inspection and viewport controls do not change that source or count among the 100.",
+    "auxiliaryLedger": "Every channel-1 offer belongs to exactly one predeclared producer: original setup, advance, actual terminal reply, scheduled frame, network setup, probe transfer/inspection/invocation or explicit file/guest inspection. Retain full source coordinates, sequence, byte length and SHA-256; their disjoint union must cover all UART offers. Viewport controls and GPU observations have separate typed projections of the same durable stream."
+  },
+  "profiles": {
+    "software": "Original full Alpine assets, 256 MiB RAM, one hart, pure ICount/10.",
+    "desktop": "Original Omarchy kernel and raw pinned 8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8 manifest (12 GiB base), one GiB RAM, one hart, fresh pure ICount/64 with interactive:null; no historical paced warm checkpoint.",
+    "historicalCandidate": "Preserve original T01 paced-on-keyboard candidate and its asset/renderer identities; this qualification does not coerce that checkpoint.",
+    "renderer": "Production physical renderer; pin host and guest identities, original RV64 EGL/GLES probe source/compiler/sysroot/binary and actual guest-resolved library identities before timing.",
+    "viewportSequence": [
+      [
+        640,
+        480
+      ],
+      [
+        803,
+        603
+      ]
+    ]
+  },
+  "history": "Capture and reopen complete histories from actual initial frames through their ends; no final-keyframe shortcut, partial-prefix acceptance, fixture substitution or hidden live replay I/O.",
+  "capacity": "Existing runtime bounds remain unchanged. An actual full-workload failure at those bounds requires its own ordered runtime prerequisite.",
+  "numericBudgets": "All original T01 values and all original workload amounts remain unchanged. Later timing is E9-T22d."
+}
