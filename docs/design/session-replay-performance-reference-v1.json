@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "kind": "reference-environment-amendment",
+  "task": "E9-T22",
+  "date": "2026-10-22",
+  "appliesBefore": "first timed campaign; development qualification receipts remain qualification-only",
+  "originalContract": {
+    "path": "docs/design/session-replay-contract.json",
+    "sha256": "646899bea0da60ba13020a2015f6214236526082a8e34952cca91481cb89dba1",
+    "contract_version": {
+      "major": 1,
+      "minor": 0
+    }
+  },
+  "reference": {
+    "cpu": "Apple M4 Max",
+    "cpu_cores": 16,
+    "ram_bytes": 137438953472,
+    "os": "macOS 26.6.2",
+    "os_build": "25G83",
+    "browser": "Chrome 155.0.8059.85",
+    "playwright": "1.49.1",
+    "node": "24.20.0",
+    "rustc": "1.96.0",
+    "conditions": [
+      "fresh-profile",
+      "single-vm",
+      "foreground",
+      "ac-power",
+      "profiling-off",
+      "no-background-emulator-or-compiler"
+    ]
+  },
+  "changes": [
+    {
+      "field": "browser",
+      "before": "Chrome 155.0.8059.80",
+      "after": "Chrome 155.0.8059.85",
+      "reason": "Installed browser patch release observed before measurements; no earlier timed campaign is replaced."
+    }
+  ],
+  "unchanged": {
+    "budgets": {
+      "software": {
+        "recording_ratio_median_max": 1.25,
+        "preview_p95_ms_max": 100,
+        "restore_p95_ms_max": 5000,
+        "seek_p95_ms_max": 5000,
+        "cancel_ack_ms_max": 250,
+        "history_growth_bytes_max": 268435456,
+        "recorder_working_bytes_max": 67108864
+      },
+      "desktop": {
+        "recording_ratio_median_max": 1.5,
+        "preview_p95_ms_max": 100,
+        "restore_p95_ms_max": 15000,
+        "seek_p95_ms_max": 15000,
+        "cancel_ack_ms_max": 250,
+        "history_growth_bytes_max": 1073741824,
+        "recorder_working_bytes_max": 134217728
+      }
+    },
+    "workload": {
+      "seed": 17,
+      "schedule": {
+        "input_frames": 100,
+        "input_transition_offsets": {
+          "first": 500000,
+          "stride": 500000
+        },
+        "rewrites": 10,
+        "rewrite_every_frame": 10,
+        "http_responses": 10,
+        "http_response_bytes": 1024,
+        "seek_count": 20,
+        "seek_selection": "LCG32: x0=17; x=(1664525*x+1013904223) mod 2^32; target=x mod 50000001",
+        "observation_window_ms": 600000,
+        "ab_pairs": 5,
+        "pair_order": [
+          "off-on",
+          "on-off",
+          "off-on",
+          "on-off",
+          "off-on"
+        ]
+      },
+      "guest_path": "/root/e9-session/state",
+      "before_hex": "65393a6265666f72650a",
+      "before_sha256": "9db352766463465c7af691d4bed9133f2d8c01d968b62a90c946a44b4666e0c6",
+      "after_hex": "65393a61667465720a",
+      "after_sha256": "c93da81a8be3355a13ad4d69801280303b5a5fa53699e91863f76f5c073b7ae6",
+      "serial_advance": "advance\n",
+      "setup": "mkdir -p /root/e9-session; printf 'e9:before\\n' > /root/e9-session/state; sync; printf 'E9_BEFORE\\n'; IFS= read -r e9_advance; test \"$e9_advance\" = advance || exit 2; printf 'e9:after\\n' > /root/e9-session/state; sync; date -u +%s; dd if=/dev/urandom of=/root/e9-session/entropy bs=32 count=1; sha256sum /root/e9-session/state /root/e9-session/entropy; printf 'E9_AFTER\\n'",
+      "input_frame_template": "printf 'E9_INPUT_%03d\\n' FRAME_INDEX",
+      "rewrite_command": "printf 'e9:after\\n' > /root/e9-session/state; sync; busybox wget -qO /root/e9-session/http http://10.0.2.2:9191/e9/INDEX; sha256sum /root/e9-session/state /root/e9-session/http",
+      "http_body": "1024 repetitions of the one byte (17 + INDEX) mod 256, INDEX=1..10; server counts each request",
+      "witnesses": [
+        "pc",
+        "integer-and-floating-registers",
+        "privilege-and-csrs",
+        "reservation",
+        "ram-sha256",
+        "device-state-sha256",
+        "disk-root-sha256",
+        "clock-policy-and-state",
+        "pending-input-and-completions",
+        "event-cursor",
+        "literal-state-file-bytes",
+        "recorded-entropy-and-http-bytes",
+        "zero-replay-egress"
+      ],
+      "desktop": {
+        "viewport_sequence": [
+          [
+            640,
+            480
+          ],
+          [
+            803,
+            603
+          ]
+        ],
+        "probe": "docs/design/session-gpu-probe.c",
+        "probe_sha256": "822b258f329ee2d16d7f25fa676684e02227531dbdf8bf5edbf7dc8b45868155",
+        "expected_gl_error": 0,
+        "expected_rgba_hex": "ff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ffff0000ff",
+        "requires": "qualified RV64 guest renderer/binary receipt; software rendering is a refusal"
+      }
+    }
+  },
+  "fixtureQualification": "pending; this reference amendment admits no new asset, clock mode, renderer, or guest profile",
+  "runtimeStatus": "not measured"
+}
