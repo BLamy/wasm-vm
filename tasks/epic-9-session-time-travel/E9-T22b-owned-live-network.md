@@ -231,3 +231,53 @@ final-publication verifier check deployed asset bindings, visible 127/0, the
 same full-Alpine OFF/ON/closed-server replay, live pips, and zero browser/host
 replay egress. This local verdict is not authorization to deploy, push, merge,
 or mark verified; the fourth acceptance checkbox remains open.
+
+### 2026-10-22 — worker — actual main publication
+
+Release `3efeff9dd069d94c3577cefd4eb9439870ef32d3` follows local Daybreak charter commit
+`d40f70f29fe4f09e87fda0fe34a7478b499af497`. Exactly five declarative/generated
+files changed: roadmap source/dist, task source/dist and service-worker cache
+stamp. The accepted Wasm (`86dcab8e71db0e78be9910fb53c7d127647e5602ca3a9e586b4952d6cb4fece3`),
+GPU graph (`4be4dc4c59d4fb7fd14c858d093512b9a82e3014eb0ac09027c8040be0f4fb90`)
+and the other executable runtime bytes remain unchanged. The broad runtime
+inventory includes the intentional declarative roadmap change; the initial
+operator guard stopped on that entry before any commit/push/deploy, and its
+correction is retained without weakening any executable comparison.
+
+`REBUILD=0 bash tools/deploy-cloudflare.sh` published production deployment
+`a14eb837` to the actual main `https://wasm-vm.pages.dev/`, project
+`wasm-vm`, branch `main`. All five temporary deployed artifact-manifest byte
+changes have committed/deployed sidecars; source was restored clean before
+public proof. Deployment binding: `target/evidence/e9-t22b-production-release/deployment-receipt.json`,
+SHA-256 `ddce7b04c9e8e566b790d157f7ca3d0f010a65414c4df0ffc7d0619c8d951cc1`.
+
+- local: `target/evidence/e9-t22b-release-local-demo/report.json`, SHA-256 `1154e3284ee7d475336413589bac88f3b5fbd706337bcc605f3d257ea1fdc515`.
+- public-assets: `target/evidence/e9-t22b-production-release/public-assets/report.json`, SHA-256 `2ca6dd5cdaa1d31907ae89056278b7cc9a7426d5c393088f1561babde901899f`.
+- public-demo: `target/evidence/e9-t22b-production-release-public-recheck-v3/public-demo/report.json`, SHA-256 `35cf52858c2fc9a0e9d8f2d02f545ff0a6f9f0d1747ae7c8d71a3f03edce50f0`.
+- final publication receipt: `target/evidence/e9-t22b-production-release-public-recheck-v3/receipt.json`, SHA-256 `50372cfb7dcf2599b0767bfa44695f326ea56737bab2901e9eb57432560b56c3`.
+
+The main asset proof binds all 74 runtime files and 108 public assets.
+The unmocked main browser uses real pinned R2 kernel/chunk responses, checks
+127/0, retrieves all ten actual indexed HTTP bodies in OFF and ON, closes the
+server and matches complete native replay bytes plus twelve witnesses. Both
+pips are live; fetch/socket replay tripwires remain zero and no unexpected
+console/page/missing/external request occurs. Screenshot and Playwright trace
+are retained with the public report. This is functional provider qualification,
+not the full scheduled software/GPU desktop or performance campaign.
+
+The first public attempt remains failed: its product run passed, but Chrome
+inspector evicted the 24 MiB kernel response before the strict body rehash.
+`target/evidence/e9-t22b-public-response-clone-repair.json` binds both failed
+reports and the corrected ignored capture script. A separate larger CDP buffer
+attempt also failed and remains preserved. The final capture hashes a clone
+of the actual native browser fetch response with WebCrypto and returns its
+untouched original to product code; no mock, interception or extra GET is used.
+Product/head/deployment stayed unchanged.
+The successful follow-up reruns only the public browser proof and carries the
+already-passing asset receipt by digest. It is not a relabelled original result.
+
+Native PR606 is OPEN draft at the release head, auto-merge null, and all 29
+stack PRs remain OPEN/unmerged/unqueued. Actions permissions remain disabled.
+A NEW fresh actual Daybreak final-publication verifier must independently close
+P17, carry unchanged P1–P16 only by source/dependency/evidence identity, and alone
+set verified. No merge is authorized. T22c/d, T23 and T24 remain required.
