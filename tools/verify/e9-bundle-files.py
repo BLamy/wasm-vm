@@ -5,6 +5,7 @@ import hashlib
 import json
 from pathlib import Path
 import struct
+from urllib.parse import urljoin
 
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument('--directory', type=Path, required=True)
@@ -134,6 +135,9 @@ try:
                                 'uncompressedBytes': int(header['uncompressedBytes']), 'nativeSha256': sha(imported.read_bytes()),
                                 'negativeCases': len(case['attacks']), 'fullFrames': full_frames, 'deltaFrames': delta_frames,
                                 'completeClosure': True, 'sourceBytesEqual': True})
+    for ignored in browser.get('allowedFavicon404', []):
+        assert ignored['location']['url'] == urljoin(browser['base'], '/favicon.ico')
+        assert ignored['text'].startswith('Failed to load resource: the server responded with a status of 404 ')
     assert len(report['cases']) == 4 and not browser['errors'] and not browser['external'] and not browser['blocked']
     assert browser['sourceCachesUnavailableToImport'] and all(row['label'].startswith('export-') for row in browser['fixtureReads'])
     assert all(not profile['instructionGuard']['calls'] for profile in browser['profiles'])

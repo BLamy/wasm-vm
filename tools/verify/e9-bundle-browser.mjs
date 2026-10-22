@@ -15,7 +15,7 @@ assert(options['--software'] && options['--gpu'] && options['--output']);
 const web = path.resolve(root, options['--web-root'] ?? 'web/dist'), out = path.resolve(options['--output']); await fs.mkdir(out);
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const report = {task: 'E9-T21', status: 'running', head: execFileSync('git', ['rev-parse', 'HEAD'], {cwd: root, encoding: 'utf8'}).trim(),
-  dirty: execFileSync('git', ['status', '--porcelain'], {cwd: root, encoding: 'utf8'}).trim(), started: new Date().toISOString(), cases: [], profiles: [], errors: [], blocked: [], external: [], fixtureReads: []};
+  dirty: execFileSync('git', ['status', '--porcelain'], {cwd: root, encoding: 'utf8'}).trim(), started: new Date().toISOString(), cases: [], profiles: [], errors: [], allowedFavicon404: [], blocked: [], external: [], fixtureReads: []};
 const fixtures = {}, contexts = new Set(), temporary = [];
 let server, inputDirectory, base = options['--url'];
 const {chromium} = await import(pathToFileURL(path.join(root, 'web/node_modules/playwright/index.mjs')));
@@ -37,7 +37,14 @@ async function newProfile(label) {
     viewport: {width: 1440, height: 1000}, serviceWorkers: 'block', acceptDownloads: true, args: ['--enable-gpu', '--use-gl=angle', '--use-angle=metal']});
   contexts.add(context); await context.tracing.start({screenshots: true, snapshots: true, sources: true});
   const page = context.pages()[0] ?? await context.newPage(); let ready = false;
-  page.on('console', message => {if (message.type() === 'error') report.errors.push({label, text: message.text()});});
+  page.on('console', message => {
+    if (message.type() !== 'error') return;
+    const row = {label, text: message.text(), location: message.location()};
+    // AGENTS permits this single resource exception; retain its exact URL in evidence.
+    const favicon404 = row.location.url === new URL('/favicon.ico', base).href
+      && /^Failed to load resource: the server responded with a status of 404(?:\s|$)/.test(row.text);
+    (favicon404 ? report.allowedFavicon404 : report.errors).push(row);
+  });
   page.on('pageerror', error => report.errors.push({label, text: error.stack}));
   page.on('websocket', socket => report.external.push({label, socket: socket.url()}));
   await context.route('**/*', async route => {
