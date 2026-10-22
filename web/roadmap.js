@@ -240,7 +240,7 @@ export const ROADMAP = [
       { name: "Guest-visible GPU replay", status: "verified", evidence: "E9-T18c: independently verified durable RV64 GPU results, private seek and physical canvas in 1 GiB pure ICount/64; desktop budgets and integration remain T22/T24" },
       { name: "Accessible session timeline", status: "verified", evidence: "E9-T19: independently verified saved Linux restoration, real console output, accessible controls and cancellation ownership" },
       { name: "Branches from saved history", status: "verified", evidence: "E9-T20: Daybreak verified isolated software/GPU continuations, real Linux files, private COW/input state, retained local assets and permanent offline network policy" },
-      { name: "Live execution with recording disabled", status: "partial", probe: "unrecorded-control", evidence: "E9-T22a in progress: explicit capture-OFF control; full browser/GPU verification and performance campaign remain pending" },
+      { name: "Live execution with recording disabled", status: "verified", probe: "unrecorded-control", evidence: "Capture-OFF fixed profiles verified with full Alpine file/input work and physical GPU fixtures (E9-T22a); full HTTP/desktop workload and performance campaign remain pending" },
       { name: "Local recording bundles", status: "verified", evidence: "E9-T21: Daybreak verified bounded software/GPU archives, authenticated closure and fresh-profile replay; matching installed runtime required" },
     ],
   },
