@@ -229,7 +229,7 @@ try {
       result.duplicate = duplicate;
       if (item.name === 'software-child') {
         const orphan=Buffer.from('E9-T21: known-witness GC orphan v1\n'),orphanRef={sha256:sha(orphan),length:String(orphan.length)};
-        const survivorId=item.id+'-ambiguous-survivor',survivor=readArchive(renamedArchive(item.bytes,survivorId));
+        const survivorId='ambiguous-'+sha(Buffer.from(item.id)).slice(0,16),survivor=readArchive(renamedArchive(item.bytes,survivorId));
         const survivorManifest=duplicateWitnessDigest(JSON.parse(survivor.objects.get(survivor.header.manifest.sha256)),orphanRef);
         const survivorBytes=Buffer.from(JSON.stringify(survivorManifest));
         const blockedGc=await page.evaluate(async({id,manifest,orphan,ref})=>{
