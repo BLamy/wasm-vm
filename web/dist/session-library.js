@@ -157,7 +157,10 @@ class SessionLibrary {
         this.controls.points.append(option);
       }
       this.controls.points.value = manifest.checkpoints.at(-1)?.id ?? '';
-      this.state(compatible || manifest.policy.mode === 'capture-prefix' ? 'ready' : 'incompatible', storageOnly ? 'Paged witness storage is saved. Opening this recording is not available yet.' : manifest.policy.mode === 'capture-prefix' ? 'Input prefix preview. Delivered inputs are saved; full replay is unavailable until all device adapters are installed.' : compatible
+      this.state(compatible || manifest.policy.mode === 'capture-prefix' ? 'ready' : 'incompatible', storageOnly ? compatible
+        ? 'Paged GPU history is available in Time travel. Open it there to replay the complete recording.'
+        : 'This paged GPU history has an incompatible saved build or profile. The active guest is unchanged.'
+        : manifest.policy.mode === 'capture-prefix' ? 'Input prefix preview. Delivered inputs are saved; full replay is unavailable until all device adapters are installed.' : compatible
         ? gpu ? 'Selected accelerated preview. Open authenticates and restores the chosen desktop in a fresh GPU worker.'
           : 'Selected preview only. Open restores the chosen exact checkpoint and leaves it paused.'
         : 'Incompatible saved build or profile. Opening is disabled; the active guest is unchanged.');
@@ -203,7 +206,7 @@ class SessionLibrary {
           : `${preview.manifest.checkpoints.length} exact restore points · ${bytesLabel(preview.bytes)} referenced data (shared data may be counted by other sessions)`,
         meta?.started > 0 ? `Capture window ${(span / 1000).toFixed(1)} seconds` : 'Capture duration unavailable',
         `Runtime ${preview.runtime} · Wasm ${preview.manifest.machine.wasm_build} · image ${preview.manifest.machine.base_image}`,
-        preview.storageOnly ? 'Storage-only archive. Playback for this recording is not available yet.' : preview.manifest.policy.mode === 'capture-prefix' ? `${preview.manifest.events.reduce((n,e)=>n+e.count,0)} input events saved. Incomplete capture: full replay is unavailable until all device adapters are installed.` : 'Checkpoints only. No event replay or history from before recording was enabled.',
+        preview.storageOnly ? preview.compatible ? 'Paged GPU history. Use Time travel to replay it.' : 'Paged GPU history uses an incompatible saved build or profile.' : preview.manifest.policy.mode === 'capture-prefix' ? `${preview.manifest.events.reduce((n,e)=>n+e.count,0)} input events saved. Incomplete capture: full replay is unavailable until all device adapters are installed.` : 'Checkpoints only. No event replay or history from before recording was enabled.',
       ];
       for (const text of lines) {const line = document.createElement('p'); line.textContent = text; c.details.append(line);}
     }

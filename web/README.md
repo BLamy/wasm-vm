@@ -328,7 +328,7 @@ repeating the primary regression wall.
 The **Paged state witness storage check** records 130 actual native GPU machine
 state witnesses through bounded content-addressed pages, preserves every
 checkpoint, and checks cleanup and a storage-only local archive round trip.
-The check takes several minutes. Whole-history playback remains gated.
+The check takes several minutes. Complete browser playback is exercised by E9-T22h.
 
 Explicit paged recording uses the required `e9-exact-witness-pages-v2` extension;
 older clients refuse it before cleanup. The default v1 writer/readers and their
@@ -346,7 +346,22 @@ Daybreak critic. Original workload and performance qualification stays open.
 `SessionGpuHistoryReader.withOpen` authenticates finished v2 GPU recordings before
 exposing one-use receipt and witness cursors. It preserves all original positions
 and content identities beyond the old whole-history 4096-receipt/64-MiB limits,
-while retaining those limits for each window. Its result is storage-only; native
-continuation and timeline execution remain gated. The demo's **Complete GPU
-history read check** exercises both real long histories. See [the reader contract](../docs/design/session-gpu-history-reader.md)
+while retaining those limits for each window. The reader itself performs storage
+authentication only; E9-T22h consumes it through private native replay. The demo's
+**Complete GPU history read check** exercises both real long histories. See [the reader contract](../docs/design/session-gpu-history-reader.md)
 and `make verify-E9-T22f` for the frozen local proof and adversarial checks.
+
+### Complete GPU browser replay (E9-T22h)
+
+The timeline now opens paged GPU histories. Its private worker regroups bounded
+storage pages at committed state witnesses and continues the same native machine
+through each admissible interval. A history whose witness gap exceeds native row,
+receipt-byte, or GPU-body limits is refused before any partial selection is
+published. Archive export/import authenticates the entire paged graph and checks
+every saved native keyframe; garbage collection retains that graph.
+
+The demo's GPU history check records and replays the two long native input/block
+histories. `make verify-E9-T22h` adds the physical GPU readback fixture, full
+original-versus-replay machine-state and renderer checks, zero-egress browser
+capture, corrupted-middle and incompatible-archive attacks, and cancellation
+checks. Cold Omarchy workload and fixed performance budgets remain E9-T22c/d.

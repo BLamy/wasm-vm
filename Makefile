@@ -2836,3 +2836,7 @@ verify-E9-T22f:
 .PHONY: verify-E9-T22g
 verify-E9-T22g:
 	python3 -B tools/verify/e9-streamed-replay.py --output "$${E9_OUT:-target/evidence/e9-t22g-$$(date -u +%Y%m%dT%H%M%SZ)}"
+
+.PHONY: verify-E9-T22h
+verify-E9-T22h:
+	python3 -B tools/verify/e9-gpu-whole-chain-replay.py --output "$${E9_OUT:-target/evidence/e9-t22h-$$(date -u +%Y%m%dT%H%M%SZ)}"

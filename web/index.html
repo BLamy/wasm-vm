@@ -995,8 +995,8 @@
       </details>
       <details id="gpu-history-reader-panel" class="session-library">
         <summary><span id="gpu-history-reader-pip" class="cap-pip in-progress" aria-hidden="true"></span> Complete GPU history read check</summary>
-        <p class="session-note">Read every input and disk result from the two long test histories in bounded windows. This uses browser storage and checks the complete recording; timeline playback is still being qualified.</p>
-        <div class="session-actions"><button id="gpu-history-reader-run" type="button" disabled>Check complete history reads</button></div>
+        <p class="session-note">Read every input and disk result from two long test histories, then replay both through every authenticated witness window in a private GPU worker. This uses browser storage and can take several minutes. Full desktop qualification remains separate.</p>
+        <div class="session-actions"><button id="gpu-history-reader-run" type="button" disabled>Check complete GPU replay</button></div>
         <p id="gpu-history-reader-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
       </details>
       <details id="gpu-journal-stream-panel" class="session-library">

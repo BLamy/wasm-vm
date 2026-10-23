@@ -10,6 +10,9 @@ import {checkpointHash, checkpointReference, readCheckpointObject,
 import {decodeKeyframeDescriptor, isKeyframeDescriptorPrefix, inspectRamDeltaChunk} from './session-keyframes.js';
 import {SessionInputJournal} from './session-inputs.js';
 import {SessionGpuJournal} from './session-gpu-journal.js';
+import {SessionGpuHistoryReader} from './session-gpu-history-reader.js';
+import {witnessCommitment} from './session-witness-pages.js';
+import {inventoryWitnessGraph} from './session-witness-graph.js';
 import {decodeGpuExactFrame, validateGpuConfiguration} from './session-gpu-replay-format.js';
 import {encodeCheckpointData, decodeCheckpointData} from './renderer/virgl-command/checkpoint-codec.mjs';
 import {GPU_CHECKPOINT_BUILD_ID, SOFTWARE_CHECKPOINT_WASM_SHA256,
@@ -129,6 +132,20 @@ async function decodeKeyframes(store, manifest, configuration, read, frames, ker
       }
       if (gpu) {
         const frame = decodeGpuExactFrame(bytes), end = frames[index + 1]?.point.position ?? manifest.end;
+        if (read.paged) {
+          const committed = read.checkpointWitnesses.get(point.id);
+          need(committed && samePosition(committed, point.position)
+            && hex(committed.digest) === frame.meta.stateSha256, 'paged GPU keyframe witness', 'BundleDigest');
+          candidate.attachVirgl(Uint32Array.from(configuration.profile.hostWords), Uint32Array.from(configuration.profile.formatRoles),
+            configuration.profile.renderer, event => {if (event.ownedTransport) owners.push(event.ownedTransport);});
+          candidate.beginExactReplay(frame.native, [], [committed], point.position,
+            {pending: frame.pending, output: frame.output},
+            {version: 1, rendererDigest: hashBytes(frame.meta.rendererSha256),
+              ramDigest: frame.meta.full ? null : hashBytes(frame.meta.ramSha256), payloads: []});
+          need(samePosition(candidate.inputPosition(), point.position),'paged GPU native decoder coordinate');
+          active(signal);onProgress(`Decoded keyframe ${index + 1} of ${frames.length}`);
+          continue;
+        }
         const events = read.receipts.filter(value => BigInt(value.sequence) > BigInt(point.position.sequence) && comparePosition(value, end) <= 0);
         const witnesses = read.witnesses.filter(value => comparePosition(value, point.position) >= 0 && comparePosition(value, end) <= 0);
         need(witnesses.length && samePosition(witnesses[0], point.position) && samePosition(witnesses.at(-1), end), 'GPU interval witness endpoints');
@@ -165,6 +182,37 @@ async function decodeKeyframes(store, manifest, configuration, read, frames, ker
   }
 }
 
+async function consumePagedGpuHistory(reader,manifestBytes,manifest,signal){
+  const metadata=reader.metadata;
+  need(metadata.storageAuthenticated&&metadata.session.manifestSha256===checkpointHash(manifestBytes)
+    &&samePosition(metadata.begin,manifest.begin)&&samePosition(metadata.end,manifest.end),
+  'paged GPU archive manifest changed','BundleDigest');
+  let cursor=reader.initialEventCursor,receipts=0,windows=0;
+  while(cursor){active(signal);const window=await reader.nextReceiptWindow(cursor);
+    need(window.nativeAdmitted===false&&window.index===windows,'paged GPU archive receipt order','BundleDigest');
+    receipts+=window.receipts.length;windows++;cursor=window.nextCursor;
+  }
+  need(receipts===metadata.receipts&&windows===metadata.receiptWindows,
+    'paged GPU archive receipt closure','BundleDigest');
+  const checkpointWitnesses=new Map();let checkpoint=0,witnesses=0;
+  cursor=reader.initialWitnessCursor;
+  while(cursor){active(signal);const page=await reader.nextWitnessWindow(cursor);
+    for(const row of page.rows){
+      while(checkpoint<manifest.checkpoints.length
+        &&comparePosition(manifest.checkpoints[checkpoint].position,row)<0)
+        need(false,'paged GPU archive checkpoint witness missing','BundleDigest');
+      if(checkpoint<manifest.checkpoints.length&&samePosition(manifest.checkpoints[checkpoint].position,row)){
+        checkpointWitnesses.set(manifest.checkpoints[checkpoint].id,row);checkpoint++;
+      }
+      witnesses++;
+    }
+    cursor=page.nextCursor;
+  }
+  need(witnesses===metadata.witnesses&&checkpoint===manifest.checkpoints.length,
+    'paged GPU archive witness closure','BundleDigest');
+  return {paged:true,checkpointWitnesses};
+}
+
 async function walkRecording(store, manifestBytes, {signal, onProgress = () => {}, checkHardware = false} = {}) {
   active(signal); const canonical = sessionValidateManifest(manifestBytes);
   need(equal(canonical, manifestBytes), 'non-canonical manifest'); const manifest = parsed(canonical), gpu = manifest.machine.gpu !== null;
@@ -174,7 +222,8 @@ async function walkRecording(store, manifestBytes, {signal, onProgress = () => {
     && manifest.policy.profile === (gpu ? 'rv64-linux-gpu-v1' : 'rv64-linux-software-v1'),
   'only supported finished exact recording versions can be transferred', 'BundleCompatibility');
   need(manifest.machine.wasm_build === SOFTWARE_CHECKPOINT_WASM_SHA256, 'incompatible installed Wasm build', 'BundleCompatibility');
-  const witnesses = validateSessionWitnesses(manifest, {finished: true}), refs = new Map(); let total = manifestBytes.length;
+  const paged=gpu&&Boolean(witnessCommitment(manifest));
+  const witnesses=paged?null:validateSessionWitnesses(manifest, {finished: true}), refs = new Map(); let total = manifestBytes.length;
   const add = value => {
     const ref = bundleReference(value), previous = refs.get(ref.sha256);
     need(!previous || previous.length === ref.length, 'conflicting referenced lengths');
@@ -182,6 +231,9 @@ async function walkRecording(store, manifestBytes, {signal, onProgress = () => {
   };
   const direct = parsed(sessionManifestReferences(manifestBytes));
   for (const ref of direct.blobs) add(ref);
+  if(paged){const graph=await inventoryWitnessGraph(store,manifestBytes,{signal});
+    for(const ref of graph.refs)add(ref);
+  }
   const asset = role => { const entry = manifest.assets.find(value => value.role === role); need(entry, 'missing ' + role + ' asset', 'BundleMissing'); return entry.content; };
   const configuration = parsed(await readCheckpointObject(store, asset('vm'), gpu ? 8 * 1048576 : 1048576, {signal}));
   need(manifest.assets.length === (gpu ? 5 : 4) && configuration.version === 1 && configuration.providersComplete === true
@@ -218,8 +270,11 @@ async function walkRecording(store, manifestBytes, {signal, onProgress = () => {
   const readStore = {...store, stream: ref => store.stream(ref), openSession: async id => {
     need(id === manifest.id, 'archive session ID'); return {id, revision: '1', manifest: manifestBytes};
   }};
-  const read = gpu ? await SessionGpuJournal.readExact(readStore, manifest.id, {configuration})
-    : await SessionInputJournal.readExact(readStore, manifest.id, {configuration});
+  const read = paged ? await (store instanceof SessionStore
+    ? SessionGpuHistoryReader.withOpen(store,manifest.id,{signal},reader=>consumePagedGpuHistory(reader,manifestBytes,manifest,signal))
+    : SessionGpuHistoryReader.withImmutableArchive(store,manifest.id,manifestBytes,{signal},reader=>consumePagedGpuHistory(reader,manifestBytes,manifest,signal)))
+    : gpu ? await SessionGpuJournal.readExact(readStore, manifest.id, {configuration})
+      : await SessionInputJournal.readExact(readStore, manifest.id, {configuration});
   let depth = 0, previous = null, core = null, baseIndex = 0;
   const keyframes = [];
   const rendererChecks = new Map();
@@ -244,7 +299,7 @@ async function walkRecording(store, manifestBytes, {signal, onProgress = () => {
       const frame = decodeGpuExactFrame(bytes); native = frame.native; coordinate = frame.meta.position;
       need(frame.meta.full === full && frame.meta.runtime === manifest.machine.vm_build && frame.meta.rendererSha256 === point.gpu?.sha256
         && (!delta || frame.meta.ramSha256 === delta.ramSha256), 'GPU checkpoint/renderer identity');
-      const committed = witnesses.find(value => samePosition(value, coordinate));
+      const committed = paged?read.checkpointWitnesses.get(point.id):witnesses.find(value => samePosition(value, coordinate));
       need(committed && hex(Uint8Array.from(committed.digest)) === frame.meta.stateSha256, 'GPU state witness');
       if (!rendererChecks.has(point.gpu.sha256)) {
         const renderer = await readCheckpointObject(store, point.gpu, 256 * 1048576, {signal}), view = new DataView(renderer.buffer, renderer.byteOffset, renderer.byteLength);
@@ -306,7 +361,7 @@ async function preflight(source, options) {
   await initMetadata(); await initMachine(); active(options.signal);
   const archive = await indexSessionBundle(source);
   need(archive.header.portability === 'wasm-vm-installed-build-v1',
-    'storage-only witness archives are not admitted for playback', 'BundleCompatibility');
+    'unsupported installed-build archive', 'BundleCompatibility');
   need(archive.header.runtime.wasm === SOFTWARE_CHECKPOINT_WASM_SHA256
     && (archive.header.runtime.gpu === null || archive.header.runtime.gpu === GPU_CHECKPOINT_BUILD_ID), 'incompatible installed build', 'BundleCompatibility');
   let count = 0;
