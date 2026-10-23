@@ -81,4 +81,3 @@ export async function runGpuJournalStream({database='wasm-vm-sessions-v1-gpu-str
  }
  result.status=result.cases.every(row=>row.status==='recorded')?'recorded':'failed';return result;
 }
-
