@@ -245,7 +245,8 @@ export class SessionInputJournal{
   }
   static async read(store,id,{exactMode=false}={}){
     const opened=await store.openSession(id);need(opened,'input prefix unavailable');
-    const manifest=JSON.parse(decoder.decode(opened.manifest));need(manifest.policy.mode===(exactMode?'exact-replay':'capture-prefix'),'recording mode');
+    const manifest=JSON.parse(decoder.decode(opened.manifest));
+    need(!manifest.extensions.some(value=>value.kind==='e9-exact-witness-pages-v2'),'paged playback requires the bounded reader');need(manifest.policy.mode===(exactMode?'exact-replay':'capture-prefix'),'recording mode');
     const receipts=[];let previous=manifest.begin,total=0;
     for(const index of manifest.events){
       const records=JSON.parse(decoder.decode(await readCheckpointObject(store,index.content,4194304)));

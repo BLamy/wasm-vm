@@ -321,3 +321,22 @@ machine files, the event tape, a native guest instruction trace, the visible
 built-page check, and the local high-risk regression wall. The runner's
 `--cold-clone PATH` option performs the final independent-build proof without
 repeating the primary regression wall.
+
+
+### Paged native witness storage (E9-T22i)
+
+The **Paged state witness storage check** records 130 actual native GPU machine
+state witnesses through bounded content-addressed pages, preserves every
+checkpoint, and checks cleanup and a storage-only local archive round trip.
+The check takes several minutes. Whole-history playback remains gated.
+
+Explicit paged recording uses the required `e9-exact-witness-pages-v2` extension;
+older clients refuse it before cleanup. The default v1 writer/readers and their
+limits are unchanged. New storage archives use the distinct
+`wasm-vm-witness-storage-v2` header with `scope: "storage-only"`; importing one
+does not admit it for playback or claim installed-runtime portability. The
+existing playback archive schema and native checks remain separate.
+See [the format and closure rules](../docs/design/session-witness-pages.md).
+`make verify-E9-T22i` is the scoped native/Wasm/browser submission, with literal
+byte authentication in `tools/verify/e9-witness-pages-files.py` and a fresh
+Daybreak critic. Original workload and performance qualification stays open.

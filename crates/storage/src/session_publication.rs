@@ -110,6 +110,9 @@ pub fn references(manifest: &SessionManifest) -> Result<PublicationRefs, Session
         }
         roots.push(checkpoint.disk_root);
     }
+    if let Some(commitment) = crate::session_witness::commitment(manifest)? {
+        insert(&mut refs, &commitment.tail)?;
+    }
     roots.sort_unstable();
     roots.dedup();
     Ok(PublicationRefs {
@@ -156,9 +159,15 @@ pub fn check_append(
         || previous.assets != candidate.assets
         || previous.begin != candidate.begin
         || (previous.extensions != candidate.extensions
-            && !exact_completion_append(previous, candidate))
+            && !exact_completion_append(previous, candidate)
+            && !crate::session_witness::check_append(previous, candidate))
     {
         return Err(SessionError::IdentityMismatch("session publication"));
+    }
+    if crate::session_witness::commitment(previous)?.is_some_and(|value| value.finished)
+        && previous != candidate
+    {
+        return Err(SessionError::Invalid("finished paged history"));
     }
     if !candidate.events.starts_with(&previous.events)
         || !candidate.checkpoints.starts_with(&previous.checkpoints)

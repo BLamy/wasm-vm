@@ -987,6 +987,12 @@
         <div class="session-actions"><button id="network-capture-run" type="button" disabled>Check offline network replay</button></div>
         <p id="network-capture-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
       </details>
+      <details id="witness-pages-panel" class="session-library">
+        <summary><span id="witness-pages-pip" class="cap-pip in-progress" aria-hidden="true"></span> Paged state witness storage check</summary>
+        <p class="session-note">Save 130 native machine state witnesses, retain their checkpoints, and transfer a complete local storage archive. This check takes several minutes and uses browser storage. Playback for these histories is still being qualified.</p>
+        <div class="session-actions"><button id="witness-pages-run" type="button" disabled>Check witness storage</button></div>
+        <p id="witness-pages-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
       <details id="gpu-journal-stream-panel" class="session-library">
         <summary><span id="gpu-journal-stream-pip" class="cap-pip in-progress" aria-hidden="true"></span> Long GPU history recording check</summary>
         <p class="session-note">Record 4,100 inputs and 256 distinct disk reads with a small test guest, then authenticate the saved histories. This uses local browser storage; full desktop playback is still being qualified.</p>

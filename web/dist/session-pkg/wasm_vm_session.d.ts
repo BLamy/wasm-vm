@@ -35,6 +35,11 @@ export function sessionValidateDiskRoot(bytes: Uint8Array): Uint8Array;
 
 export function sessionValidateManifest(bytes: Uint8Array): Uint8Array;
 
+/**
+ * Strict canonical v2 page codec; whole-chain authentication belongs to the durable store.
+ */
+export function sessionValidateWitnessPage(bytes: Uint8Array): Uint8Array;
+
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
@@ -50,6 +55,7 @@ export interface InitOutput {
     readonly sessionValidateCheckpointContext: (a: number, b: number) => [number, number, number, number];
     readonly sessionValidateDiskRoot: (a: number, b: number) => [number, number, number, number];
     readonly sessionValidateManifest: (a: number, b: number) => [number, number, number, number];
+    readonly sessionValidateWitnessPage: (a: number, b: number) => [number, number, number, number];
     readonly sessionsha256_finish: (a: number) => [number, number, number, number];
     readonly sessionsha256_new: () => number;
     readonly sessionsha256_update: (a: number, b: number, c: number) => [number, number];

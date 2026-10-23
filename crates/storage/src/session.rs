@@ -574,10 +574,11 @@ impl SessionManifest {
             if extension.bytes.len() > 8192 {
                 return Err(SessionError::TooLarge("extension bytes"));
             }
-            if extension.required {
+            if extension.required && extension.kind != crate::session_witness::KIND {
                 return Err(SessionError::UnsupportedRequired(extension.kind.clone()));
             }
         }
+        crate::session_witness::commitment(self)?;
         if self.assets.len() > 16 {
             return Err(SessionError::TooLarge("runtime assets"));
         }
@@ -706,6 +707,11 @@ impl SessionManifest {
     /// Read-only compatibility; no attempt to migrate, clear or mutate the recording.
     pub fn admit(&self, runtime: &RuntimeDescriptor) -> Result<(), SessionError> {
         self.validate()?;
+        if crate::session_witness::commitment(self)?.is_some() {
+            return Err(SessionError::UnsupportedRequired(
+                "paged witness replay admission".into(),
+            ));
+        }
         if self.policy.mode == RecordingMode::CapturePrefix {
             return Err(SessionError::MissingCapture(
                 "complete replay adapters".into(),

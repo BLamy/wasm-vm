@@ -131,8 +131,13 @@ class SessionLibrary {
       const manifest = JSON.parse(decoder.decode(opened.manifest)), vm = manifest.assets.find(asset => asset.role === 'vm');
       const gpu = manifest.policy.profile === 'rv64-linux-gpu-v1';
       const configuration = JSON.parse(decoder.decode(await this.readObject(this.store, vm.content, gpu ? 8*1048576 : 1048576)));
-      const references = new Map();
-      for (const ref of [...manifest.assets.map(asset => asset.content), ...manifest.checkpoints.map(point => point.machine),
+      const storageOnly = manifest.extensions.some(value => value.kind === 'e9-exact-witness-pages-v2');
+      const references = new Map(); let witnessCount = null;
+      if (storageOnly) {
+        const {inventoryWitnessGraph} = await import('./session-witness-graph.js');
+        const graph = await inventoryWitnessGraph(this.store, opened.manifest); witnessCount = graph.witness.count;
+        for (const ref of graph.refs) references.set(ref.sha256, ref);
+      } else for (const ref of [...manifest.assets.map(asset => asset.content), ...manifest.checkpoints.map(point => point.machine),
         ...manifest.checkpoints.flatMap(point => point.gpu ? [point.gpu] : []),
         ...await this.diskRoots.liveReferences(manifest.checkpoints.map(point => point.disk_root))]) references.set(ref.sha256, ref);
       if (token !== this.generation) return;
@@ -144,7 +149,7 @@ class SessionLibrary {
         && manifest.machine.wasm_build === SOFTWARE_CHECKPOINT_WASM_SHA256
         && configuration.wasm?.sha256 === SOFTWARE_CHECKPOINT_WASM_SHA256 && Boolean(manifest.machine.gpu);
       const compatible = softwareCompatible || gpuCompatible;
-      this.preview = {id, manifest, compatible, gpu, runtime: configuration.runtime, bytes: [...references.values()].reduce((sum, ref) => sum + Number(ref.length), opened.manifest.length)};
+      this.preview = {id, manifest, compatible, gpu, storageOnly, witnessCount, runtime: configuration.runtime, bytes: [...references.values()].reduce((sum, ref) => sum + Number(ref.length), opened.manifest.length)};
       for (const point of manifest.checkpoints) {
         const option = document.createElement('option'); option.value = point.id;
         const at = this.metadata.get(id)?.points.find(item => item.id === point.id)?.at;
@@ -152,7 +157,7 @@ class SessionLibrary {
         this.controls.points.append(option);
       }
       this.controls.points.value = manifest.checkpoints.at(-1)?.id ?? '';
-      this.state(compatible || manifest.policy.mode === 'capture-prefix' ? 'ready' : 'incompatible', manifest.policy.mode === 'capture-prefix' ? 'Input prefix preview. Delivered inputs are saved; full replay is unavailable until all device adapters are installed.' : compatible
+      this.state(compatible || manifest.policy.mode === 'capture-prefix' ? 'ready' : 'incompatible', storageOnly ? 'Paged witness storage is saved. Opening this recording is not available yet.' : manifest.policy.mode === 'capture-prefix' ? 'Input prefix preview. Delivered inputs are saved; full replay is unavailable until all device adapters are installed.' : compatible
         ? gpu ? 'Selected accelerated preview. Open authenticates and restores the chosen desktop in a fresh GPU worker.'
           : 'Selected preview only. Open restores the chosen exact checkpoint and leaves it paused.'
         : 'Incompatible saved build or profile. Opening is disabled; the active guest is unchanged.');
@@ -193,12 +198,12 @@ class SessionLibrary {
     if (preview) {
       const span = Math.max(0, (meta?.updated ?? 0) - (meta?.started ?? 0));
       const lines = [
-        preview.manifest.policy.mode === 'capture-prefix'
+        preview.storageOnly ? `${preview.witnessCount} state witnesses · ${bytesLabel(preview.bytes)} complete referenced data` : preview.manifest.policy.mode === 'capture-prefix'
           ? `${preview.manifest.events.reduce((n,e)=>n+e.count,0)} input events · ${bytesLabel(preview.bytes)} initial witness and runtime data`
           : `${preview.manifest.checkpoints.length} exact restore points · ${bytesLabel(preview.bytes)} referenced data (shared data may be counted by other sessions)`,
         meta?.started > 0 ? `Capture window ${(span / 1000).toFixed(1)} seconds` : 'Capture duration unavailable',
         `Runtime ${preview.runtime} · Wasm ${preview.manifest.machine.wasm_build} · image ${preview.manifest.machine.base_image}`,
-        preview.manifest.policy.mode === 'capture-prefix' ? `${preview.manifest.events.reduce((n,e)=>n+e.count,0)} input events saved. Incomplete capture: full replay is unavailable until all device adapters are installed.` : 'Checkpoints only. No event replay or history from before recording was enabled.',
+        preview.storageOnly ? 'Storage-only archive. Playback for this recording is not available yet.' : preview.manifest.policy.mode === 'capture-prefix' ? `${preview.manifest.events.reduce((n,e)=>n+e.count,0)} input events saved. Incomplete capture: full replay is unavailable until all device adapters are installed.` : 'Checkpoints only. No event replay or history from before recording was enabled.',
       ];
       for (const text of lines) {const line = document.createElement('p'); line.textContent = text; c.details.append(line);}
     }

@@ -223,6 +223,23 @@ export function sessionValidateManifest(bytes) {
     wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
     return v2;
 }
+
+/**
+ * Strict canonical v2 page codec; whole-chain authentication belongs to the durable store.
+ * @param {Uint8Array} bytes
+ * @returns {Uint8Array}
+ */
+export function sessionValidateWitnessPage(bytes) {
+    const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.sessionValidateWitnessPage(ptr0, len0);
+    if (ret[3]) {
+        throw takeFromExternrefTable0(ret[2]);
+    }
+    var v2 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
+    wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+    return v2;
+}
 function __wbg_get_imports() {
     const import0 = {
         __proto__: null,
