@@ -3,7 +3,7 @@ id: E9-T22g
 epic: 9
 title: Continue exact replay across bounded native admission windows
 priority: 524.922023
-status: pending
+status: in-progress
 depends_on: [E9-T22f]
 estimate: S
 risk: high
@@ -54,3 +54,10 @@ the active lane after its dependencies are verified. Prospective checkpoint,
 witness-extension and storage limits are not waived; independently reproduce
 any additional blocker and give it its own ordered S boundary. All PRs remain
 open; no merge is authorized.
+
+
+### 2026-10-23 — worker — begin bounded native continuation
+
+E9-T22f is independently verified at `7cce84411405a81023b0d8f94bbb557f950bf7d3` after production deployment `d1141406` on the main wasm-vm URL. The fresh actual Daybreak final report is `target/evidence/e9-t22f-daybreak-final-publication/report.json`, SHA-256 `6b36071e4211f5afbafe2a074b633a62be16bccbe234cdf2a289f3d923c89207`; its completed routing receipt is SHA-256 `aef4756d2d9ee7dece6e2e274e4f48048c218ea81d353ea75fe1e28318872a24`. All four F criteria are verified, and the preceding 33 native stack PRs remain open and unmerged.
+
+This high-risk S task changes only the core/Wasm exact replay continuation boundary. It must preserve one private machine and continuous architectural/cursor/queue state across bounded windows. Every next window is bound before execution to the already admitted predecessor and a real witness; per-window event/body limits stay fixed. Long original software and GPU histories, guest traces, targeted attacks, final local wall, browser path, pristine proof, main publication and a new actual Daybreak verdict are required before this task can be verified. H/C/D and T23/T24 remain separate.
