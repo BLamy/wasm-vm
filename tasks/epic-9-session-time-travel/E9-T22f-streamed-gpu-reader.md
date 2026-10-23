@@ -3,7 +3,7 @@ id: E9-T22f
 epic: 9
 title: Authenticate long GPU histories with bounded interval reads
 priority: 524.922022
-status: implemented
+status: verified
 depends_on: [E9-T22i]
 estimate: S
 risk: high
@@ -20,10 +20,10 @@ One authenticated persisted-history reader boundary. Consume the complete durabl
 
 ## Acceptance criteria
 
-- [ ] Read the complete production history beyond 4096 receipts/64 MiB as ordered bounded windows, with exact initial/final positions, contiguous sequence coverage and independently verified raw content identities.
-- [ ] Authenticate the complete store closure and required runtime/provider/renderer identity before allocating a replay candidate. Never retain all envelope bodies in a global array; report observed resident window bounds.
-- [ ] Reject a corrupted or missing middle chunk/body, invalid range/order/ticket, changed profile and unfinished/invalid witness commitment at its exact anchor. Preserve compatible small-history reads and cancellation ownership.
-- [ ] Record scoped high-risk native/Wasm/browser gates, demo/main publication and a final pristine proof; obtain a fresh actual Daybreak critic with full changed-boundary attacks, a novel attack and meaningful sabotage.
+- [x] Read the complete production history beyond 4096 receipts/64 MiB as ordered bounded windows, with exact initial/final positions, contiguous sequence coverage and independently verified raw content identities.
+- [x] Authenticate the complete store closure and required runtime/provider/renderer identity before allocating a replay candidate. Never retain all envelope bodies in a global array; report observed resident window bounds.
+- [x] Reject a corrupted or missing middle chunk/body, invalid range/order/ticket, changed profile and unfinished/invalid witness commitment at its exact anchor. Preserve compatible small-history reads and cancellation ownership.
+- [x] Record scoped high-risk native/Wasm/browser gates, demo/main publication and a final pristine proof; obtain a fresh actual Daybreak critic with full changed-boundary attacks, a novel attack and meaningful sabotage.
 
 ## Deterministic acceptance
 
@@ -250,3 +250,103 @@ Frozen evidence:
 - `target/evidence/e9-t22f-final-submission-3/reader/report.json`, SHA-256 `d11257181ef8d4fb2082d179c88e5ba000590383dbe4432b122205690a55b40e`.
 - `target/evidence/e9-t22f-final-submission-3/reader/independent-reader-oracle/report.json`, SHA-256 `f9de938579acd0014ae1255f21cf2618c0c757097d7c4d5b9aa5d7b757a48f3b`.
 - `target/evidence/e9-t22f-final-submission-3/demo/report.json`, SHA-256 `e0b87dff9df1d7c03db0128d4c39df4d40977a675a50b6ea59036d19368ca223`.
+
+### 2026-10-23 — fresh actual Daybreak final publication verifier — VERDICT: verified
+
+- P1 source/publication boundary — HELD. Runtime acceptance is
+  `24e9da174a7e6cf44f1edce1487a9c56514f6f60`; declarative release and the
+  PR #610 head recorded by the authenticated receipt are
+  `2044753baca75cc9f6d81e0a52cc0f66d99df410`. The acceptance-to-release
+  diff contains only this task, `tasks/QUEUE.md`, `web/tasks.json`,
+  `web/dist/tasks.json`, and `web/dist/sw.js`; all runtime/dependency bytes
+  are unchanged and the checkout was clean.
+- P2 carried local closure — HELD. The completed local-gate report/routing
+  remain SHA-256 `0801d7e1d34e1b74cf35be0732cf8d6690738d0bf954bfcaba37d135ab1fce02`
+  / `b0ff6e166c271df26477a3f36b014b2daadd0a737fffd8d82c0a50f3105d9d86`:
+  actual completed requested/returned `gpt-daybreak-blue-latest`,
+  `daybreakBlue`, no errors/fallback/turn error, and needs-evidence solely
+  for publication with all local/wall/cold/source booleans held. Formal3
+  report `d159b745554f98f3d00af775fb2e629f6995be8b05540f11364bac7f7e73dd5d`
+  passed 50 commands and final-cold-1 report
+  `eb22e1288e691d2b6bfae1be8c64cec6afdd4cf86af5514a546b3e590c38ec21`
+  passed all 53 with clean final checkouts. Raw `make ci` is retained as exit
+  2 solely for the exact five historical zicsr-stub dead-code warnings;
+  strict production Clippy, the narrow stub waiver and remaining wall passed.
+- P3 local attacks/coverage — HELD. Current-stamp evidence preserves 4,359
+  receipts, 67,125,819 block-history bytes, real witness 2,048, the
+  4,096/4,097 Before cut, original physical GPU bodies/query/green-pixel
+  oracle, 58 reader attacks, 10 codecs, and four v1/v2 abort/close scans with
+  zero late IDB through full inner settlement. Completed frozen-boundary
+  novelty/sabotage report/routing are `86f892956fb8814007ca2feaf57bb2a8017b152b3fe1787839bb283f31e806a3`
+  / `3ae91a9b97044ebff1655e709988e3d30bf9d56760f5e436a0fb7fdbbc8396c1`;
+  completed legacy repair review report/routing are
+  `bc22572795848a3b0e0a50359b2e02f58b2136b27129cdad5a3fd03998504b1f`
+  / `f15fb88de7548788fbc742c38e8c4808deac202283557876d469f245447c3da7`.
+  The old failed cyberPolicy v1 route is not counted. Callback-settlement
+  review `f9b2166225e68dba8128e0329255c7c0a862512e6710969f3e696be81b9a9df2`
+  / `59c293d497ae8ee3080b0869ad967566de69f877bcbfe4a8b9a7a48ddafc896b`
+  is carried only at its explicit no-stronger-drain scope.
+- P4 deployment authentication — HELD. Frozen worker receipt SHA-256
+  `583a1ed62ac8663e52d4dbfe8df0969f77b40d6ee8cc3823ce9a778d729896cc`,
+  immutable deployment receipt
+  `219fdcc8370bcbf2d98034de5182861a752c386ae6418a22992a9e9cf910769d`,
+  and deploy log `62c9c9b73ff8d83cbd7b3b0a9102784a9a8b58343149ab09eb97e278a9efb777`
+  authenticate project `wasm-vm`, explicit production branch `main`,
+  deployment `d1141406`, `REBUILD=0`, five allowed temporary manifest
+  rewrites, and restored-clean checkout. Recovery
+  `2e474e9c50bce4a0b7d22a1df19f63011ec30636433997e5efcbc5589844d372`
+  performed no reupload.
+- P5 public assets — HELD. The retained first asset report
+  `efe7daef734e4df451438a3d420178f9d114c51bc93e8a64e58c02c850fdcc23`
+  honestly failed exactly `app.html` and the two new small physical-guest
+  files during propagation. Same-deployment retry
+  `b522079a36813788fe29fd2ee1fb755b4a6df9ec6f5d8404006738448dca9b15`
+  passed 126 unique public files, all 80 runtime-closure files, every changed
+  deployable file and unchanged case studies, including the retained five
+  deployed manifest sidecars.
+- P6 MAIN browser — HELD. The first report
+  `d06418f500bb34182166ff76d0c4f6c2630a03df7b94d2441d2aae46f0d82900`
+  reached 127/0 and both exact histories; trace
+  `8407171bdbc8711241f5626ff1f6a983cb7a56e9006c2cc38c9f9e04e3a9d16a`
+  identifies its sole console error as the permitted `/favicon.ico` 404 and
+  records no non-favicon HTTP error. Disclosed one-line checker
+  `b80ff45f7435ae0e7f37e684b1188cc55e3e4b47042cd63db27120256b694ea3`
+  produced passed MAIN report
+  `5c5ab8e510ad1186807d0ad1c7c1041defd0038161983e1390187e47e9db2235`:
+  127/0, both pips LIVE, coordinated controls, exact count/block histories,
+  `storageAuthenticated:true`, `nativeAdmitted:false`, and desktop/mobile
+  no-overflow captures.
+- P7 independent public checks — HELD. Thirty-eight bounded MAIN body GETs
+  returned 200 and exactly matched committed-dist or deployed-sidecar bytes,
+  including `/app`, reader/frame/store/demo/probes, current VM/metadata
+  modules and Wasm/snippets, build stamp, main/roadmap/tasks/service worker,
+  manifests and small guest fixtures. VM is
+  `ad6b8fd8b76c89d67ad4c38b6ae6b414e6abc57d885c37742dd29e50e8849db8`
+  at 2,599,831 bytes, GPU build is
+  `d2d4d0f21ab13b9eff92aeeffe57ebfe60b11dfb528a21a2a1ca9c412a8a5cf7`,
+  and metadata Wasm is
+  `e487be15ede44f9febda723e1da4ae84cdb3071be5ac46014a3f2f8e2ad0790b`.
+  Seven exact manifest-authenticated R2 HEADs returned 200 and expected
+  lengths; content identity comes from each content-addressed URL/manifest,
+  not from HEAD response bodies or non-SHA ETags.
+- P8 scope/governance — HELD. This verifies only F's bounded authenticated
+  storage reader with `storageAuthenticated:true/nativeAdmitted:false`.
+  G/H remain pending, C blocked, D pending and later tasks gated. All 33
+  recorded native PRs remain OPEN/unmerged/unqueued, PR #610 draft without
+  auto-merge, and Actions disabled.
+- SUITE: retained existing deterministic, literal-oracle, novelty and sabotage
+  artifacts; no publication-only test or fixture promotion was warranted.
+
+Final verifier reports were frozen before this log entry and were not modified:
+
+- `target/evidence/e9-t22f-daybreak-final-publication/report.md`, SHA-256
+  `8ed839129cc0fd8f8949f2f645bf0a351881e148b6d1851857b7d6b9bee4483a`.
+- `target/evidence/e9-t22f-daybreak-final-publication/report.json`, SHA-256
+  `6b36071e4211f5afbafe2a074b633a62be16bccbe234cdf2a289f3d923c89207`.
+- Sealed predictions SHA-256
+  `ab94e472e14095da8c1b16ee3094b48e259f97ea767f67a8b4b901f822e7c2c8`.
+
+No G/H/C/D or whole-Epic claim is made; original assets, maximum gap,
+workload amounts and budgets remain unchanged. No merge, push, deployment,
+message, credential/configuration change, runtime probe, broad suite, workload
+recording, cold clone or benchmark was performed by this verifier.
