@@ -478,7 +478,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.922024` [E9-T22h](epic-9-session-time-travel/E9-T22h-streamed-gpu-browser-replay.md) — Run the complete GPU replay chain through browser consumers *(deps: E9-T22g)*
 - [x] `524.922025` [E9-T22j](epic-9-session-time-travel/E9-T22j-full-gpu-parked-chain.md) — Preserve parked owned block chains in full exact-GPU keyframes *(deps: E9-T22b, E9-T22h)*
 - [x] `524.922027` [E9-T22k](epic-9-session-time-travel/E9-T22k-local-witness-graph-bound.md) — Admit bounded large local histories without widening portable archives *(deps: E9-T22j)*
-- [b] `524.92203` [E9-T22c](epic-9-session-time-travel/E9-T22c-real-workload-qualification.md) — Qualify both full pinned performance workloads *(deps: E9-T22b, E9-T22h, E9-T22j, E9-T22k)*
+- [~] `524.92203` [E9-T22c](epic-9-session-time-travel/E9-T22c-real-workload-qualification.md) — Qualify both full pinned performance workloads *(deps: E9-T22b, E9-T22h, E9-T22j, E9-T22k)*
 - [ ] `524.92204` [E9-T22d](epic-9-session-time-travel/E9-T22d-replay-performance-campaign.md) — Measure the unchanged complete replay performance budgets *(deps: E9-T15, E9-T16, E9-T19, E9-T22c)*
 - [ ] `524.923` [E9-T23](epic-9-session-time-travel/E9-T23-recovery-hardening.md) — Harden recording and seeking against crashes and corrupt history *(deps: E9-T07, E9-T18c, E9-T20, E9-T21, E9-T22d)*
 - [ ] `524.924` [E9-T24](epic-9-session-time-travel/E9-T24-capstone-local-time-traveler.md) — CAPSTONE locally saved replayable VM sessions with a time-travel UI **[CAPSTONE]** *(deps: E9-T08, E9-T13, E9-T18c, E9-T19, E9-T20, E9-T21, E9-T22d, E9-T23)*

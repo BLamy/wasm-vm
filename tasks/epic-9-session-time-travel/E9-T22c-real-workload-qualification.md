@@ -3,8 +3,7 @@ id: E9-T22c
 epic: 9
 title: Qualify both full pinned performance workloads
 priority: 524.92203
-status: blocked
-blocked_on: [E9-T22k]
+status: in-progress
 depends_on: [E9-T22b, E9-T22h, E9-T22j, E9-T22k]
 estimate: S
 risk: medium
@@ -116,6 +115,16 @@ This is a runtime-semantic boundary, so ordered high-risk E9-T22j must fix and
 be independently verified before C resumes. The unchanged 50M cadence, full
 Omarchy workload, 8 GiB setting, original RV64 probe and complete replay remain
 required. This failure is neither C acceptance nor a performance result.
+
+### 2026-10-23 — worker — resume qualification after runtime prerequisites
+
+E9-T22e/i/f/g/h and E9-T22b are verified. E9-T22h's independent Daybreak
+publication verdict is committed at `0ecb2283f`; the canonical main deployment
+is `9bafecaa`. Resume the original pinned Omarchy cold workload and its full
+replay using the now-verified bounded GPU journal, witness, reader, continuation
+and browser boundaries. Carry the separately verified software-phase evidence
+only where its source and dependency digest are unchanged. This entry does not
+claim C acceptance, timing, or a completed GPU run.
 
 ### 2026-10-22 — worker — begin complete real-workload qualification
 
