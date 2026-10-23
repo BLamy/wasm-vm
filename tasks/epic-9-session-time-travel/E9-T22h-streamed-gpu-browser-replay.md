@@ -3,7 +3,7 @@ id: E9-T22h
 epic: 9
 title: Run the complete GPU replay chain through browser consumers
 priority: 524.922024
-status: pending
+status: in-progress
 depends_on: [E9-T22g]
 estimate: S
 risk: high
