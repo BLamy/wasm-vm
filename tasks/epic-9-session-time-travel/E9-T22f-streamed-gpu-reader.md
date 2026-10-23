@@ -4,7 +4,7 @@ epic: 9
 title: Authenticate long GPU histories with bounded interval reads
 priority: 524.922022
 status: pending
-depends_on: [E9-T22e]
+depends_on: [E9-T22i]
 estimate: S
 risk: high
 capstone: false

@@ -4,7 +4,7 @@ epic: 9
 title: Qualify both full pinned performance workloads
 priority: 524.92203
 status: blocked
-blocked_on: [E9-T22e, E9-T22f, E9-T22g, E9-T22h]
+blocked_on: [E9-T22e, E9-T22i, E9-T22f, E9-T22g, E9-T22h]
 depends_on: [E9-T22b, E9-T22h]
 estimate: S
 risk: medium
@@ -256,3 +256,30 @@ critic result is claimed here. Its scope is this frozen software phase only,
 including a bounded novel attack on the repaired proof harness. Future C
 acceptance must account for any later changed dependency boundary, complete
 the real GPU workload and final submission, and obtain the final fresh critic.
+
+
+### 2026-10-22 — worker — corrected software phase survives fresh critic
+
+The NEW actual Daybreak corrected software-phase audit completed with all
+16 sealed predictions HELD, none FAILED or NEEDS EVIDENCE. Report
+`target/evidence/e9-t22c-daybreak-software-qualification-3/report.md`, SHA-256
+`7e931a27c50113f89f13908c057cc689a62c8bf0ba2ca99983f2aa9a1cd4b454`.
+The controller requested/returned `gpt-daybreak-blue-latest`, `daybreakBlue`,
+without fallback or errors. It independently authenticated the complete
+clean-head source/assets, 100 exact offers and 108-offer UART union, both sync
+fences, ten TCP HTTP bodies, real RTC/entropy, 854 receipts/23 witnesses,
+all applicable literal files, full native replay and zero live replay calls.
+Its missing-origin scratch attack refused the bad proof while processing
+final/replay and rechecking the immutable base. This is only the software
+phase; no C status, GPU, timing or whole-epic verdict follows. C remains blocked.
+
+A further fresh Daybreak format projection from the authentic 45-keyframe
+Omarchy prefix concretely exposed v1 witness bytes: 9888 versus the unchanged
+8192-byte extension limit, first overflow at witness 38. The actual production
+Wasm rejects the candidate; an otherwise identical two-endpoint format control
+passes. The original incomplete recording is untouched. Report
+`target/evidence/e9-t22c-daybreak-witness-capacity/report.md`, SHA-256
+`ac298bc3f0691b1093fc728ea9cd5c41cd37bcce29dfac52856322170f7f9975`.
+All five predictions held. Add E9-T22i after E and before F as the distinct
+high-risk bounded durable witness-commitment boundary. No constants, 50M
+cadence, workload amount or numeric performance budget is waived.
