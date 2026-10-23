@@ -143,14 +143,15 @@ export async function attackGpuHistoryReader(page,proof){
     void reading.catch(()=>{});await entered.promise;if(mode==='abort')abort.abort();else await local.close();await refused(mode+'-pending-callback',()=>reading,/Cancelled|Closed/);
     await refused(mode+'-escaped-cursor',()=>escaped.nextReceiptWindow(token),/ReadLeaseRevoked|Closed|ReaderRevoked/);const writer=await store.writer(count.id);await writer.release();report.checks.push({name:mode+'-releases-writer'});hold.resolve();await Promise.resolve();await local.close();
    }
-   // Initial open performs its own complete closure scan. Revocation must
-   // prevent that losing scan from issuing even one later IDB transaction.
-   for(const mode of ['abort','close']){
-    const local=await SessionStore.open(proof.database),abort=new AbortController(),blocked=deferred(),resume=deferred(),drained=deferred(),stream=local.stream.bind(local);let first=true,monitor=false,lateTransactions=0;
+   // Both v2 and unsupported v1 scan storage before reader admission. Stop the
+   // entire losing open, including every legacy metadata helper, after release.
+   for(const [format,id] of [['v2',count.id],['v1',count.smallV1.id]])for(const mode of ['abort','close']){
+    const local=await SessionStore.open(proof.database),abort=new AbortController(),blocked=deferred(),resume=deferred(),settled=deferred(),stream=local.stream.bind(local),open=local.openSession.bind(local);let first=true,monitor=false,lateTransactions=0,signalForwarded=false;
     const transaction=IDBDatabase.prototype.transaction;IDBDatabase.prototype.transaction=function(...args){if(monitor)lateTransactions++;return transaction.apply(this,args);};
-    local.stream=async function*(ref,options){if(first){first=false;blocked.resolve();await resume.promise;try{yield*stream(ref,options);}finally{drained.resolve();}}else yield*stream(ref,options);};
-    const reading=SessionGpuHistoryReader.withOpen(local,count.id,{signal:abort.signal},async()=>{report.consumerCallbacks++;throw Error('initial cancelled scan exposed callback');});void reading.catch(()=>{});
-    try{await blocked.promise;if(mode==='abort')abort.abort();else await local.close();await refused(mode+'-initial-directory-scan',()=>reading,/Cancelled|Closed/);const writer=await store.writer(count.id);await writer.release();monitor=true;resume.resolve();await drained.promise;monitor=false;need(lateTransactions===0,mode+' losing scan read after release');report.checks.push({name:mode+'-initial-scan-no-late-transactions',lateTransactions});}
+    local.openSession=async(...args)=>{try{return await open(...args);}finally{settled.resolve();}};
+    local.stream=async function*(ref,options){if(first){first=false;signalForwarded=options?.signal===abort.signal;blocked.resolve();await resume.promise;}yield*stream(ref,options);};
+    const reading=SessionGpuHistoryReader.withOpen(local,id,{signal:abort.signal},async()=>{report.consumerCallbacks++;throw Error('initial cancelled scan exposed callback');});void reading.catch(()=>{});
+    try{await blocked.promise;if(mode==='abort')abort.abort();else await local.close();await refused(mode+'-'+format+'-initial-directory-scan',()=>reading,/Cancelled|Closed/);const writer=await store.writer(id);await writer.release();monitor=true;resume.resolve();await settled.promise;monitor=false;need(signalForwarded,format+' scan dropped signal');need(lateTransactions===0,mode+' '+format+' losing scan read after release');report.checks.push({name:mode+'-'+format+'-initial-scan-no-late-transactions',lateTransactions,signalForwarded});}
     finally{monitor=false;IDBDatabase.prototype.transaction=transaction;resume.resolve();await local.close();}
    }
    // Abort while an authenticated fetch is suspended, not only an idle callback.

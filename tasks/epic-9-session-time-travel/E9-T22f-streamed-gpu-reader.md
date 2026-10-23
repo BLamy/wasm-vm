@@ -153,3 +153,37 @@ pixels and visible/empty query packets, rather than relying on the reader's body
 reference for that association. Keep the failed submission/log and development
 evidence. Rerun the failed gate and the final frozen submission; no verdict or
 publication is claimed.
+
+
+### 2026-10-23 — worker — preserve completed submission and repair legacy cancellation
+
+Frozen high-risk submission 2 passed all 50 commands at
+`2b61e2d6091ce16e8c6168ac7d43900b0458ed1b` with clean final checkout.
+Report `target/evidence/e9-t22f-final-submission-2/report.json`, SHA-256
+`40a4e1cc8f4053e15ad09dd1943cd37fdc79883878b93719b74033dfe5b6213e`.
+It includes the complete bounded reader/literal oracle, 130-witness/archive
+regression, original GPU replay/literal oracle, v1 store crash/race/quota,
+built demo and local gauntlet. The gauntlet preserves the raw make-ci failure
+and exact five pre-existing zicsr-stub dead-code warnings; the narrow explicit
+waiver and remaining full wall passed. This is worker evidence, not a verdict.
+
+The separate actual Daybreak v1 cancellation session executed its sealed
+bounded browser probe and recorded 38 losing-scan IDB transactions after the
+outer cancellation and writer-lock reuse, with no callback/result/candidate
+escape. Its raw probe is `target/evidence/e9-t22f-daybreak-v1-cancel-probe/probe-raw.json`,
+SHA-256 `794b014c2741e5c4ffb7ff288711063971c1b1e4d66f20edfc720a1989d940e8`.
+The session subsequently FAILED with a cyberPolicy account eligibility error;
+it produced no completed report/verdict. Preserve routing and the raw probe;
+do not count this session as completed independent verification.
+
+The worker propagates cancellation through legacy root/prefix/small/descriptor
+metadata reads, checks activity across their awaits and preserves Cancelled/
+Closed through descriptor parsing. The permanent v1/v2 initial-open regression
+now waits for the entire losing open to settle, rather than only its first
+stream, and tests abort plus store close. A focused development replay of the
+same retained genuine v1/v2 inputs passed with the same caller signal and zero
+late transactions for either format; no callback or replay candidate.
+Worker-only self-check `target/evidence/e9-t22f-v1-cancel-repair-development/probe-raw.json`,
+SHA-256 `d9c45dc73d821092aa409735114c84a86db608e1c62f30ceabbdb04c25ee3f80`.
+Runtime changes require a new freeze, selected high-risk gates and final cold
+proof; all terminal criteria and status remain incomplete.

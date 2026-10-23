@@ -250,9 +250,11 @@ export class SessionStore {
     this.#active();
     return descriptor(await read(this.#db, 'objects', expected.sha256), expected);
   }
-  async #root(hash) {
+  async #root(hash, {signal} = {}) {
+    const active = () => {this.#active(); need(!signal?.aborted, 'Cancelled');};
+    active();
     need(typeof hash === 'string' && hashPattern.test(hash), 'Reference');
-    const value = await read(this.#db, 'objects', hash);
+    const value = await read(this.#db, 'objects', hash); active();
     need(value, 'MissingObject', hash);
     descriptor(value, {sha256: hash, length: value.length});
     return {sha256: hash, length: value.length};
@@ -281,16 +283,19 @@ export class SessionStore {
     } finally { hash.free(); }
   }
 
-  async #bytes(expected, limit) {
-    need(Number(expected.length) <= limit, 'Bound', 'metadata object');
+  async #bytes(expected, limit, {signal} = {}) {
+    const active = () => {this.#active(); need(!signal?.aborted, 'Cancelled');};
+    active(); need(Number(expected.length) <= limit, 'Bound', 'metadata object');
     const bytes = new Uint8Array(Number(expected.length)); let at = 0;
-    for await (const part of this.stream(expected)) { bytes.set(part, at); at += part.length; }
-    return bytes;
+    for await (const part of this.stream(expected, {signal})) { active(); bytes.set(part, at); at += part.length; }
+    active(); return bytes;
   }
-  #small(expected) { return this.#bytes(expected, MAX_SOURCE_CHUNK); }
-  async #objectPrefix(expected) {
-    for await (const part of this.stream(expected)) return part.subarray(0,8);
-    fail('Corrupt','empty keyframe object');
+  #small(expected, options) { return this.#bytes(expected, MAX_SOURCE_CHUNK, options); }
+  async #objectPrefix(expected, {signal} = {}) {
+    const active = () => {this.#active(); need(!signal?.aborted, 'Cancelled');};
+    active();
+    for await (const part of this.stream(expected, {signal})) { active(); return part.subarray(0,8); }
+    active(); fail('Corrupt','empty keyframe object');
   }
   async #references(parsedManifest, previous = null, {signal} = {}) {
     const active = () => {this.#active(); need(!signal?.aborted, 'Cancelled');};
@@ -319,15 +324,15 @@ export class SessionStore {
       all.set(ref.sha256, ref);
     };
     for (const ref of refs.blobs) add(ref);
-    for (const hash of refs.roots) add(await this.#root(hash));
+    for (const hash of refs.roots) {active(); add(await this.#root(hash, {signal})); active();}
     let priorKind = 'none', priorDepth = 0;
     for (const [index,checkpoint] of parsedManifest.value.checkpoints.entries()) {
-      const prefix=await this.#objectPrefix(checkpoint.machine);
+      active(); const prefix=await this.#objectPrefix(checkpoint.machine, {signal}); active();
       if (isKeyframeDescriptorPrefix(prefix)) {
         need(index>0 && (priorKind==='keyframe-full' || priorKind==='delta'), 'Corrupt', 'keyframe base missing');
         let descriptor;
-        try {descriptor=decodeKeyframeDescriptor(await this.#bytes(checkpoint.machine,KEYFRAME_MAX_DESCRIPTOR_BYTES));}
-        catch(error){fail('Corrupt',error.message);}
+        try {descriptor=decodeKeyframeDescriptor(await this.#bytes(checkpoint.machine,KEYFRAME_MAX_DESCRIPTOR_BYTES,{signal})); active();}
+        catch(error){if (['Cancelled', 'Closed'].includes(error.code)) throw error; fail('Corrupt',error.message);}
         const parent=parsedManifest.value.checkpoints[index-1].machine;
         need(descriptor.depth===priorDepth+1
           && descriptor.parent.sha256===parent.sha256 && descriptor.parent.length===parent.length
@@ -343,15 +348,15 @@ export class SessionStore {
       } else {priorKind='other';priorDepth=0;}
     }
     for (const event of parsedManifest.value.events) {
-      const bytes = await this.#small(event.content);
+      active(); const bytes = await this.#small(event.content, {signal}); active();
       for (const ref of parsed(() => sessionEventReferences(parsedManifest.bytes, bytes))) add(ref);
     }
     let total = parsedManifest.bytes.length;
     const verified = [];
     for (const ref of all.values()) {
-      total += Number(ref.length); need(total <= MAX_BYTES, 'Bound', 'session bytes');
+      active(); total += Number(ref.length); need(total <= MAX_BYTES, 'Bound', 'session bytes');
       for await (const _ of source.stream(ref)) { /* exhaust all hashes before publication/open */ }
-      verified.push(await this.#object(ref));
+      active(); verified.push(await this.#object(ref)); active();
     }
     return verified;
   }
