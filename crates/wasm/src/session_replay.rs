@@ -11,6 +11,61 @@ use wasm_vm_core::{
     session_replay::{ReplayDriver, ReplayPlan, StateWitness},
 };
 
+#[wasm_bindgen(inline_js = r#"
+const clockU8 = Uint8Array;
+const clockTyped = Object.getPrototypeOf(clockU8.prototype);
+const clockTag = Object.getOwnPropertyDescriptor(clockTyped, Symbol.toStringTag).get;
+const clockBuffer = Object.getOwnPropertyDescriptor(clockTyped, 'buffer').get;
+const clockLength = Object.getOwnPropertyDescriptor(clockTyped, 'length').get;
+const clockOffset = Object.getOwnPropertyDescriptor(clockTyped, 'byteOffset').get;
+const clockAbLength = Object.getOwnPropertyDescriptor(ArrayBuffer.prototype, 'byteLength').get;
+export function ownedClockOriginBytes(value, limit) {
+  if (clockTag.call(value) !== 'Uint8Array') throw Error('clock origin byte type');
+  const buffer = clockBuffer.call(value);
+  clockAbLength.call(buffer); // Reject shared buffers before the Rust copy, including shadowed properties.
+  const length = clockLength.call(value), offset = clockOffset.call(value);
+  if (length > limit) throw Error('clock origin byte bound');
+  return new clockU8(buffer, offset, length);
+}
+"#)]
+extern "C" {
+    #[wasm_bindgen(catch, js_name = ownedClockOriginBytes)]
+    fn owned_clock_origin_bytes(value: &JsValue, limit: u32)
+    -> Result<js_sys::Uint8Array, JsValue>;
+}
+
+/// Inspect only an already authenticated SESSION_CLOCK section. This API creates no VM.
+#[wasm_bindgen(js_name = sessionInspectClockOrigin)]
+pub fn session_inspect_clock_origin(value: JsValue) -> Result<String, JsError> {
+    use wasm_vm_core::session_clock::{MAX_EVENTS, MAX_OWNED_BYTES, inspect_session_clock_origin};
+    let view = owned_clock_origin_bytes(&value, (MAX_OWNED_BYTES + MAX_EVENTS * 32 + 64) as u32)
+        .map_err(|_| JsError::new("clock origin ownership or bound"))?;
+    let origin = inspect_session_clock_origin(&view.to_vec())
+        .map_err(|error| JsError::new(&format!("clock origin: {error:?}")))?;
+    let pending = origin.pending.into_iter().map(|entry| {
+        let effect = match entry.effect {
+            SessionEffect::HostInput { channel, bytes } => serde_json::json!({
+                "kind": "host", "channel": channel, "length": bytes.len().to_string(),
+                "sha256": format!("{:x}", Sha256::digest(&bytes)),
+            }),
+            SessionEffect::WriteRam { address, bytes } => serde_json::json!({
+                "kind": "ram", "address": address.to_string(), "length": bytes.len().to_string(),
+                "sha256": format!("{:x}", Sha256::digest(&bytes)),
+            }),
+            SessionEffect::ExternalPending(value) => serde_json::json!({"kind": "pending", "value": value}),
+            SessionEffect::Observation(_) => return Err(JsError::new("observation cannot be queued at an origin")),
+        };
+        Ok(serde_json::json!({"transition": entry.transition.to_string(), "ticket": entry.ticket.to_string(), "effect": effect}))
+    }).collect::<Result<Vec<_>, JsError>>()?;
+    serde_json::to_string(&serde_json::json!({
+        "version": 1,
+        "position": {"transition": origin.position.transition.to_string(), "retired": origin.position.retired.to_string(),
+            "phase": origin.position.phase.label(), "ordinal": origin.position.ordinal, "sequence": origin.position.sequence.to_string()},
+        "nextTicket": origin.next_ticket.to_string(),
+        "pending": pending,
+    })).map_err(|error| JsError::new(&error.to_string()))
+}
+
 fn get(value: &JsValue, key: &str) -> Result<JsValue, JsError> {
     js_sys::Reflect::get(value, &key.into()).map_err(|_| JsError::new("exact replay field"))
 }

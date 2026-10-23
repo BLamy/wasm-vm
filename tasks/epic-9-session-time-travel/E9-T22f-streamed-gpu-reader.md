@@ -27,7 +27,7 @@ One authenticated persisted-history reader boundary. Consume the complete durabl
 
 ## Deterministic acceptance
 
-`make verify-E9-T22f`. Planned single target including `node tools/verify/e9-gpu-reader-stream-browser.mjs --events 4100 --mutate-middle`; no passing target exists yet.
+`make verify-E9-T22f`. The single frozen submission includes `node tools/verify/e9-gpu-reader-stream-browser.mjs --events 4100 --mutate-middle`, its independent literal byte oracle, native/Wasm gates, affected store/witness/GPU regressions and the built demo. Final pristine proof, publication and fresh Daybreak verification are also required.
 
 ## Adversarial verification
 
@@ -83,3 +83,61 @@ Native continuation remains G, browser execution remains H, and original
 Linux/Omarchy/workload/performance remain C/D. No later-checkpoint substitute
 for complete directory coverage, global body array or constants-only increase.
 The planned acceptance target does not exist or pass yet.
+
+### 2026-10-23 — worker — freeze the bounded reader for formal submission
+
+The implementation adds a callback-scoped session read lease, allocation-free
+core/Wasm CLOCK-origin and installed-topology inspectors, streamed native-frame
+inspection, retained renderer/profile checks, a complete closure-first preflight
+and one-use bounded receipt/witness cursors. The default v1 writer and small v1
+reader and all existing body, staging, directory and native-plan limits remain.
+The demo exposes the complete bounded read check and a live roadmap pip. F
+returns `storageAuthenticated:true, nativeAdmitted:false`; G/H and original C/D
+qualification are not claimed.
+
+A NEW actual Daybreak frozen-source review identified missing same-Observe ticket
+contiguity and requested initial-scan cancellation, structured failure anchors
+and explicit buffer evidence. Review JSON
+`target/evidence/e9-t22f-daybreak-reader-review-1/report.json`, SHA-256
+`cc7810296aea64a05f2ee62383099fef4a9dcf1807ac63f7810057fa1742865d`;
+completed actual requested/returned `gpt-daybreak-blue-latest`, `daybreakBlue`, no
+errors/fallback, routing SHA-256
+`d3822b46701cd89315800f46d04eb5b99b462747bd41cd896839743008989502`.
+
+The ticket finding conflicted with the earlier design R2, so a separate NEW
+actual Daybreak session resolved it against native source and a focused real
+observation/replay test. Its JSON
+`target/evidence/e9-t22f-daybreak-observe-ticket-resolution/report.json`, SHA-256
+`dbd999e018066cb5704b32491081806b2336d0f3078fd73cfba476bfe1b7f346`,
+explicitly retracts the earlier phase-wide-gap allowance for the current ABI:
+commit leaves Observe; reopening a scope resets transition or ordinal, so
+consecutive same-T Observe ordinals require ticket+1. Same-Before gaps and
+cross-transition decreases remain allowed. Actual completed routing SHA-256
+`df0c8702bdd260257efbe6ecf621bd925f5ead47398f6c37346ed94b6c529913`,
+requested/returned Daybreak, no errors/fallback. This is the governing R2
+correction; the old review is retained, not overwritten.
+
+Worker development checks (not final frozen acceptance): core library 409/0,
+format and scoped strict Clippy pass. Development browser capture
+`target/evidence/e9-t22f-reader-development-6/report.json`, SHA-256
+`fdc40db2eed19dd57a03845092a156219a527a8bc27cdb5ce985141233266c7e`, recorded 4359 native receipts and a separate
+67125819-byte native receipt history, plus the original production physical GPU
+query/readback guest. All exact reads, 54 adversarial checks and 10 codec/ownership
+checks passed with zero replay-candidate allocations, browser errors, HTTP
+failures or external requests. Initial-scan abort and close each showed zero
+late IDB transactions. The actual first Before cut is 4096/4097 at T0; the genuine
+2048 witness is preserved. Largest receipt window is 66863580 bytes. Counters
+state explicit window maxima and a conservative buffer upper bound, not RSS or
+JS heap use; encoded retained metadata and renderer decode buffers are separate.
+The literal Python oracle passed all raw/CAS/returned identities and window
+digests at
+`target/evidence/e9-t22f-reader-development-6/independent-reader-oracle/report.json`,
+SHA-256 `c23de5eb6caf17e41007096a47d8ee5abe7a2029ed96d6ddf5f8fd476096f25c`. Earlier failed development harness attempts
+are retained: optional effects were rejected earlier by the native codec,
+coherent identity mutants initially hit the existing frame/witness guard before
+F, and the first oracle caught the mutation harness aliasing its saved report.
+The production fixes are described above; harness corrections did not fabricate
+new guest executions or change original workloads.
+
+Status remains in-progress. The next step is the exact-head high-risk target,
+pristine proof, fresh actual Daybreak charter/sabotage and main publication.

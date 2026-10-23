@@ -993,6 +993,12 @@
         <div class="session-actions"><button id="witness-pages-run" type="button" disabled>Check witness storage</button></div>
         <p id="witness-pages-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
       </details>
+      <details id="gpu-history-reader-panel" class="session-library">
+        <summary><span id="gpu-history-reader-pip" class="cap-pip in-progress" aria-hidden="true"></span> Complete GPU history read check</summary>
+        <p class="session-note">Read every input and disk result from the two long test histories in bounded windows. This uses browser storage and checks the complete recording; timeline playback is still being qualified.</p>
+        <div class="session-actions"><button id="gpu-history-reader-run" type="button" disabled>Check complete history reads</button></div>
+        <p id="gpu-history-reader-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
       <details id="gpu-journal-stream-panel" class="session-library">
         <summary><span id="gpu-journal-stream-pip" class="cap-pip in-progress" aria-hidden="true"></span> Long GPU history recording check</summary>
         <p class="session-note">Record 4,100 inputs and 256 distinct disk reads with a small test guest, then authenticate the saved histories. This uses local browser storage; full desktop playback is still being qualified.</p>

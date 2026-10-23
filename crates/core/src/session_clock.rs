@@ -112,6 +112,40 @@ struct Queued {
     effect: SessionEffect,
 }
 
+/// Read-only facts from an authenticated clock origin. Decoding never constructs a machine.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SessionClockOrigin {
+    pub position: SessionPosition,
+    pub next_ticket: u64,
+    pub pending: Vec<SessionOriginPending>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SessionOriginPending {
+    pub transition: u64,
+    pub ticket: u64,
+    pub effect: SessionEffect,
+}
+
+/// Use the ordinary bounded clock codec before allocating a replay candidate.
+/// Queued effects are owned data; the caller receives no live clock or machine handle.
+pub fn inspect_session_clock_origin(bytes: &[u8]) -> Result<SessionClockOrigin, SessionError> {
+    let clock = SessionClock::decode(bytes)?;
+    Ok(SessionClockOrigin {
+        position: clock.position,
+        next_ticket: clock.next_ticket,
+        pending: clock
+            .pending
+            .into_iter()
+            .map(|queued| SessionOriginPending {
+                transition: queued.transition,
+                ticket: queued.ticket,
+                effect: queued.effect,
+            })
+            .collect(),
+    })
+}
+
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub(crate) struct SessionClock {
     pub position: SessionPosition,
@@ -904,6 +938,85 @@ mod branch_tests {
                 channel: 1,
                 bytes: vec![b'c']
             }
+        );
+    }
+
+    #[test]
+    fn origin_inspector_preserves_reserved_future_tickets_without_a_machine() {
+        let mut clock = SessionClock::default();
+        assert_eq!(
+            clock
+                .enqueue(
+                    50,
+                    SessionEffect::HostInput {
+                        channel: 1,
+                        bytes: alloc::vec![97, 98]
+                    }
+                )
+                .unwrap(),
+            0
+        );
+        assert_eq!(
+            clock
+                .enqueue(10, SessionEffect::ExternalPending(true))
+                .unwrap(),
+            1
+        );
+        let bytes = clock.encode().unwrap();
+        let origin = inspect_session_clock_origin(&bytes).unwrap();
+        assert_eq!(origin.position, SessionPosition::default());
+        assert_eq!(origin.next_ticket, 2);
+        assert_eq!(origin.pending.len(), 2);
+        assert_eq!(
+            (origin.pending[0].transition, origin.pending[0].ticket),
+            (10, 1)
+        );
+        assert_eq!(
+            (origin.pending[1].transition, origin.pending[1].ticket),
+            (50, 0)
+        );
+        assert_eq!(
+            origin.pending[1].effect,
+            SessionEffect::HostInput {
+                channel: 1,
+                bytes: alloc::vec![97, 98]
+            }
+        );
+        assert_eq!(clock.encode().unwrap(), bytes);
+    }
+
+    #[test]
+    fn origin_inspector_uses_the_native_codec_bounds_and_exact_before_position() {
+        let mut clock = SessionClock::default();
+        clock.position = SessionPosition {
+            transition: 4,
+            retired: 3,
+            phase: SessionPhase::Before,
+            ordinal: 7,
+            sequence: 9,
+        };
+        clock.next_ticket = 12;
+        let bytes = clock.encode().unwrap();
+        let origin = inspect_session_clock_origin(&bytes).unwrap();
+        assert_eq!(origin.position, clock.position);
+        assert_eq!(origin.next_ticket, 12);
+        assert!(origin.pending.is_empty());
+        let mut trailing = bytes.clone();
+        trailing.push(0);
+        assert_eq!(
+            inspect_session_clock_origin(&trailing),
+            Err(SessionError::MalformedSnapshot)
+        );
+        let mut wrong_version = bytes.clone();
+        wrong_version[8] = 2;
+        assert_eq!(
+            inspect_session_clock_origin(&wrong_version),
+            Err(SessionError::MalformedSnapshot)
+        );
+        let oversized = alloc::vec![0; MAX_OWNED_BYTES + MAX_EVENTS * 32 + 65];
+        assert_eq!(
+            inspect_session_clock_origin(&oversized),
+            Err(SessionError::MalformedSnapshot)
         );
     }
 }
