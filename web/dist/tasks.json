@@ -35902,15 +35902,16 @@
         },
         {
           "date": "2026-10-23",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "Authenticate complete GPU histories with bounded owned read windows",
             "Start bounded GPU history reader after verified witness storage"
           ]
         }
       ],
       "firstActivity": "2026-10-22",
       "lastActivity": "2026-10-23",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E9-T22g",
