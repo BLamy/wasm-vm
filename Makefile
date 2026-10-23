@@ -2819,3 +2819,8 @@ verify-E9-T22a:
 .PHONY: verify-E9-T22b
 verify-E9-T22b:
 	python3 -B tools/verify/e9-owned-http.py --output "$${E9_OWNED_HTTP_EVIDENCE_DIR:-target/evidence/e9-owned-http-final}"
+
+# E9-T22e — bounded durable GPU journal windows, full local submission.
+.PHONY: verify-E9-T22e
+verify-E9-T22e:
+	python3 -B tools/verify/e9-gpu-journal-stream.py --output "$${E9_OUT:-target/evidence/e9-gpu-journal-stream-$$(date -u +%Y%m%dT%H%M%SZ)}"

@@ -3,7 +3,7 @@ id: E9-T22e
 epic: 9
 title: Publish long GPU histories through bounded resident windows
 priority: 524.922021
-status: pending
+status: verified
 depends_on: [E9-T22b]
 estimate: S
 risk: high
@@ -20,14 +20,14 @@ One durable GPU recording publication boundary. Separate lifetime durable event 
 
 ## Acceptance criteria
 
-- [ ] Persist a production GPU journal with more than 4096 receipts and at least 67125760 block-envelope bytes, then reopen and independently authenticate every byte, sequence, manifest range and content reference without truncation.
-- [ ] Keep pending batches at 256 receipts/4 MiB and GPU bodies/intervals at their existing 256-object/64 MiB bounds. Separate durable-history accounting from resident windows; no constants-only increase, dropped receipt or record-after-boot shortcut.
-- [ ] Preserve immutable initial/provider/renderer/profile identity, append/CAS ownership, failure atomicity and retained older roots. Refuse an overfull resident batch and corrupt/missing content with precise evidence.
-- [ ] Record the scoped high-risk local browser/store gates, actual demo proof, production release and final pristine proof. A fresh actual Daybreak critic must cover all changed hunks, adversarial cases, one novel attack and sabotage before setting verified.
+- [x] Persist a production GPU journal with more than 4096 receipts and at least 67125760 block-envelope bytes, then reopen and independently authenticate every byte, sequence, manifest range and content reference without truncation.
+- [x] Keep pending batches at 256 receipts/4 MiB and GPU bodies/intervals at their existing 256-object/64 MiB bounds. Separate durable-history accounting from resident windows; no constants-only increase, dropped receipt or record-after-boot shortcut.
+- [x] Preserve immutable initial/provider/renderer/profile identity, append/CAS ownership, failure atomicity and retained older roots. Refuse an overfull resident batch and corrupt/missing content with precise evidence.
+- [x] Record the scoped high-risk local browser/store gates, actual demo proof, production release and final pristine proof. A fresh actual Daybreak critic must cover all changed hunks, adversarial cases, one novel attack and sabotage before setting verified.
 
 ## Deterministic acceptance
 
-`make verify-E9-T22e`. Planned single acceptance target for production store/browser streaming publication; includes `node tools/verify/e9-gpu-journal-stream-browser.mjs --events 4100 --block-bytes 67125760` once implemented. It is not an existing passing target.
+`make verify-E9-T22e`. The single submission target records the scoped native/Wasm gates, asset reproduction, actual production browser histories and independent byte audit, GPU/store regression attacks, the built demo and full local gauntlet. For the final pristine exact-head proof, run `python3 -B tools/verify/e9-gpu-journal-stream.py --output <fresh-evidence-directory> --cold-clone <fresh-clone-directory>`; the primary submission carries the once-run broad regression wall.
 
 ## Adversarial verification
 
@@ -54,3 +54,318 @@ the active lane after its dependencies are verified. Prospective checkpoint,
 witness-extension and storage limits are not waived; independently reproduce
 any additional blocker and give it its own ordered S boundary. All PRs remain
 open; no merge is authorized.
+
+
+### 2026-10-22 — worker — activate bounded durable GPU journal
+
+E9-T22c is blocked on the authenticated long-history boundaries and has left
+the active lane. Its corrected clean-head full software phase and complete
+source-sealed filesystem oracle pass; a separate fresh Daybreak phase audit
+is pending and will not be represented as C verification. This task alone
+occupies the active lane. Its dependency E9-T22b is independently verified at
+`8b99d05a0e5b3ee23198e72ea9d4d324eb3e8744` and remains the production runtime.
+
+Native branch `codex/e9-streamed-gpu-journal` continues the stack above the C
+preparation layer; all 30 existing PRs remain open, draft, unmerged and
+unqueued. Risk is high for durable recording/identity. Implement only the
+writer/publication boundary here, with actual native-receipt browser proof;
+whole-history reading, bounded replay and full original Omarchy qualification
+remain their ordered tasks. Preserve every failed capture and avoid a
+constants-only lifetime increase.
+
+
+### 2026-10-22 — worker — bounded checkpoint-window design
+
+Automatic approval review rejected a proposed removal of both cumulative
+journal guards as weakening persistent resource limits. That edit did not
+execute. Use the stricter bounded-window alternative: keep the existing
+4096-row and 64 MiB counters/guards for each checkpoint interval, and reset
+both only after successful durable checkpoint publication and native epoch
+acknowledgement. A failed/aborted checkpoint leaves both counters unchanged.
+The caller must capture an earlier lawful checkpoint before the interval is
+full; it must not reset, discard or trim events at an ordinary flush.
+
+The independent durable limits remain enforced: session-store.js has the
+unchanged 4 GiB authenticated session closure, 2 GiB default physical retention,
+4 MiB source chunks and 256 sessions; the Rust manifest validator retains
+1 MiB metadata, 4096 index entries and 4 GiB session payload. This alternative
+keeps all per-interval, pending and durable resource limits concrete. The
+real native test will cross the old lifetime limits over multiple successful
+checkpoint intervals, with all raw receipts preserved. No timing/full-desktop
+or full-history replay claim is made in this slice.
+
+
+### 2026-10-22 — worker — development proof before frozen submission
+
+The bounded-window implementation preserves every numeric resident and durable
+limit. Native UART offers cross 4096 lifetime receipts, and 256 distinct native
+block completions cross 64 MiB of envelopes; each history is checkpointed over
+legal intervals and reopened with all native rows/bytes retained. The independent
+Python oracle imports no product codec, reproduces ordered durable rows and full
+state/RAM commitment, and checks interval maxima. Existing publication-abort
+proof now starts with a nonempty interval, keeps it unchanged on failure, and
+checks zero only after a successful retry. Both overfull resident caller batches
+(257 rows and 4,195,390 bytes) reject before publishing or changing counters.
+
+Development commands: `node tools/verify/e9-gpu-journal-stream-browser.mjs
+--development --output target/evidence/e9-t22e-window-development-2`;
+`python3 -B tools/verify/e9-gpu-journal-stream-files.py --directory
+target/evidence/e9-t22e-window-development-2`; the existing GPU replay browser
+and independent oracle; `make web-dist`; and the new built-demo command. The
+built page passed 127/0, zero console errors, both live pips, mutually disabled
+controls during recording and a 390-pixel viewport without overflow. Desktop
+and mobile screenshots are retained in the demo directory.
+
+- `target/evidence/e9-t22e-window-development-2/report.json` SHA-256 `9c8b38223960ae8264adcd768d917534d90b1e28698cf2ced35cd45246148043`.
+- `target/evidence/e9-t22e-window-development-2/independent-storage-oracle/report.json` SHA-256 `f82359e99610692a6120a31791613e21cb7728fc957d37d7457a9567d812d138`.
+- `target/evidence/e9-t22e-gpu-regression-development-1/report.json` SHA-256 `14af8fcfb68f6fe45f8be49fcd8d3ada3751d83005af8e3b2b3ed3cc3b17322c`.
+- `target/evidence/e9-t22e-demo-development-1/report.json` SHA-256 `2302a3b2093f476af9a534fd33b2b849ef8ad73a2b569260462b44cab0c0af42`.
+
+All development failures and their executed sources remain retained. The first
+independent parser incorrectly treated UART outcome queue depth as the constant
+one; the corrected parser checks the actual queued depth. A source-sealed old
+journal control still refuses the long histories even with the new lawful
+intermediate checkpoints. No software/Linux/Mesa/full desktop, whole-history
+reader/replay or performance result is inferred from the small storage guest.
+Frozen primary, pristine clone, Daybreak adversarial and main-site proof remain
+required before verification.
+
+
+### 2026-10-22 — worker — disk exhaustion and incremental evidence recovery
+
+Frozen runtime/source head `9835e6e1451b1dde2efccf1b7e5d7a6bcbabdfa2`
+passed the first 15 direct submission gates. The real browser recording then
+failed while writing progress.json with ENOSPC; its failed report and all
+partial raw evidence remain in `target/evidence/e9-t22e-final-submission-1`.
+The concurrent fresh checkout failed on unrelated historical recording
+archives for the same reason; its failed checkout log remains in
+`target/evidence/e9-t22e-cold-submission-1`. Neither is a passing proof.
+
+The worker underestimated the full checkout size. The authoritative source
+checkout already uses a source-complete sparse projection containing all
+runtime, tests, tools, releases and named earlier evidence dependencies.
+The cold wrapper now reproduces that same projection in a fresh no-hardlinks
+clone, avoiding unused historical archives, while running every direct gate
+afresh with scrubbed Rust/Cargo environment. This is not a later guest origin
+or a shortened recording. The failed checkout is preserved as an environment
+failure. Primary recovery may carry only the sealed successful prefix after
+rehashing every previous evidence file and unchanged source and requiring
+that intervening changes affect only this wrapper or task/queue metadata.
+Any runtime/dependency change refuses that carry. The failed browser stage
+and all subsequent gates, including the full wall not yet run, execute anew.
+
+Space cleanup is user-authorized and recorded separately: completed compiler
+intermediates only, plus byte-verified historical duplicate corpus copies.
+No unique raw evidence, active source, current build or release is deleted.
+This evidence/harness response does not change the submitted runtime.
+
+
+### 2026-10-23 — worker — frozen high-risk submission complete
+
+Implementation/runtime remains frozen at
+`9835e6e1451b1dde2efccf1b7e5d7a6bcbabdfa2`; the final accepted harness/source
+head is `03ce37a31f740a0b7d18a60d7461425c5848cc86`. The recovered primary
+submission passed all 22 command gates, carrying exactly 15 earlier successful
+gates only after source/evidence authentication. The interrupted browser gate
+and all subsequent gates ran anew. The fresh no-hardlinks, source-complete
+pristine clone ran all 25 direct gates afresh, with no resumed prefix, scrubbed
+Rust/Cargo environment and a clean final checkout. Previous ENOSPC captures
+and the unfinished first-cold report remain explicitly non-passing evidence.
+
+Commands: `python3 -B tools/verify/e9-gpu-journal-stream.py --output
+target/evidence/e9-t22e-final-submission-2 --resume
+target/evidence/e9-t22e-final-submission-1`; and `python3 -B
+tools/verify/e9-gpu-journal-stream.py --output
+target/evidence/e9-t22e-cold-submission-2 --cold-clone
+/Users/blamy/Documents/Codex/.e9-t22e-cold-03ce37a31`. The full local wall is
+recorded once in the primary. Raw `make ci` stopped on exactly the same five
+historical quarantined zicsr-stub dead-code diagnostics; the exact narrow
+waiver and the entire remaining local native/Wasm/features/RISC-V/determinism/
+performance-smoke wall passed. Strict production and affected-target Clippy
+passed without that waiver. This is not an unqualified raw make-ci exit zero.
+
+The recorded production GPU machine executed two literal small RISC-V guests: the
+count history retains 4,359 receipts including 4,100 native UART offers; the
+byte history retains 260 receipts including 256 distinct native 256 KiB block
+completions, totaling 67,125,819 envelope bytes. The independent parser
+authenticates 380 physical chunks and 346 logical objects, all rows and
+references, initial/final bindings and both complete native/RAM commitments.
+Intervals peak at 2,311 rows / 33,562,910 bytes. The nonempty publication-abort
+case preserves 1 row / 1 byte, native/RAM/manifest prefix and revision 25;
+successful retry alone resets both counters. Existing guard, ownership,
+quota/crash/race and real physical-GPU replay tests pass. The built demo is
+127/0 with no console/HTTP errors, live pips, coordinated controls and
+desktop/390-pixel captures with no horizontal overflow.
+
+Fresh actual Daybreak evidence-only charter held P1-P15 with no failed
+prediction or runtime contradiction. Its novel forced-failure/double-dispatch
+UI attack confirms a single probe call, regressed pips, restored controls and
+testHooks-only exposure. The source-sealed oracle passes original evidence,
+rejects a valid-JSON tail-row mutation and corrupt/missing tail content, and
+returns identical passing digests after restoration. It retains the permanent
+verify target, independent oracle and GPU/store regressions. Its P16 remains
+nonterminal: it deliberately did not inspect the then-running wall or actual
+main site. A NEW fresh Daybreak gate-closure reviewer must bind the now-frozen
+wall and carry unchanged local results; a later main-publication reviewer must
+close the remote gap. Only the verifier may set verified. No original Linux/
+Omarchy qualification, whole-history read/replay, performance or Epic 9
+completion is claimed by this storage boundary.
+
+- `target/evidence/e9-t22e-final-submission-2/report.json` SHA-256 `999bacd3fbadabeddb1d9efeb91ae6cb71ab5e781d7db7a403ec3632c653566c`.
+- `target/evidence/e9-t22e-final-submission-2/gauntlet/report.json` SHA-256 `9888c001ac69f3a1cd147f8974cbe0c8c0058d11cc024a8dc168323f588104b4`.
+- `target/evidence/e9-t22e-cold-submission-2/report.json` SHA-256 `40a10d5efc9bd30472bb303e1a292979c1ae91edff49f35b75eda1d8c9109e20`.
+- `target/evidence/e9-t22e-daybreak-full-charter/report.json` SHA-256 `30a51d650192f11e2d3588d64d473035c748c387ba9241ae498388573b983459`.
+- `target/evidence/e9-t22e-daybreak-full-charter/routing.json` SHA-256 `4084f30a40170067cc5499e575e0566836034e5075467498fa3ed7b2ef7d6b02`.
+
+
+### 2026-10-23 — verifier — VERDICT: needs-evidence
+
+- P1-P15 carried charter — HELD. Predicted the prior actual-Daybreak results could be carried only
+  if source, dependency, evidence and attack bindings were unchanged; all immutable launch hashes
+  match, `9835e6e1..03ce37a3` changes only the recovery wrapper/task log, and
+  `03ce37a3..5e05b0bb` changes only this task and `tasks/QUEUE.md`. Charter JSON remains
+  `30a51d650192f11e2d3588d64d473035c748c387ba9241ae498388573b983459`, with P1-P15 HELD and
+  zero FAILED. Changed semantic-hunk coverage and reasoned waivers therefore carry unchanged,
+  including the native-acknowledgement waiver.
+- P16 local wall — HELD. Predicted the frozen wall would contain only the documented historical
+  exception and a complete successful remainder. Wall report
+  `9888c001ac69f3a1cd147f8974cbe0c8c0058d11cc024a8dc168323f588104b4`
+  binds head `03ce37a3`: raw `make ci` exits 2 on exactly five quarantined `zicsr-stub`
+  `dead_code` diagnostics (plus Cargo's aggregate line), the narrow `-A dead_code` check exits 0,
+  strict production/affected-target Clippy passes without that waiver, and the complete remaining
+  native/Wasm/features/RISC-V/determinism/perf-smoke wall exits 0. Raw `make ci` is not claimed as
+  an unqualified zero-exit pass.
+- Primary/cold authentication — HELD. Primary report
+  `999bacd3fbadabeddb1d9efeb91ae6cb71ab5e781d7db7a403ec3632c653566c`
+  has 22 zero-exit wrapper gates, exactly 15 authenticated carried prefix gates and seven newly
+  executed later gates; 1,557/1,557 sealed files and 55/55 source blobs rehash. Cold report
+  `40a10d5efc9bd30472bb303e1a292979c1ae91edff49f35b75eda1d8c9109e20`
+  has 25/25 fresh direct gates, no resumed prefix, matching source-complete projection, no
+  hardlinks, scrubbed Rust/Cargo environment, clean exact head, and 1,572/1,572 files plus 55/55
+  source blobs rehashed.
+- Acceptance and attacks — HELD. Raw anchors confirm 4,359 receipts/4,100 native UART offers;
+  260 receipts/256 distinct native 256 KiB block completions/67,125,819 envelope bytes; 380
+  physical chunks/346 logical objects; maxima 2,311 rows/33,562,910 bytes; and publication abort
+  `1/1`, revision `25/25`, identical prefix/native/RAM with successful-retry-only reset `0/0`.
+  Resident overflow, row 4,097, third distinct 32 MiB body, quota/crash/stale-writer, and
+  corrupt/missing content refuse. The carried UI forced-failure/double-dispatch and byte-oracle
+  original-pass/mutant-fail/restored-identical-pass digests rehash.
+- P16 actual main publication — NEEDS EVIDENCE. Predicted an authenticated exact-head main-site
+  result; every sealed demo is loopback and neither primary nor cold inventory contains a
+  publication report. Publish `03ce37a3` to `https://wasm-vm.pages.dev/` and commission a NEW
+  actual-Daybreak final-publication verifier. This task is `evidence-needed`, not `verified`; the
+  final publication acceptance checkbox remains open.
+- SUITE: retain `make verify-E9-T22e`, the independent byte oracle, and existing GPU/store
+  regression artifacts unchanged. No additional permanent promotion is justified by this
+  incremental closure.
+
+Closure artifacts:
+
+- `target/evidence/e9-t22e-daybreak-gate-closure/report.json` SHA-256
+  `c07f7f15ba36098bc572da17a199afbd86add04034131ccea0ef3e193625eb6f`.
+- `target/evidence/e9-t22e-daybreak-gate-closure/report.md` SHA-256
+  `0afef64648e836f81451754b46427f68997c78859e840ad806d7ba05e1a0aa71`.
+- `target/evidence/e9-t22e-daybreak-gate-closure/predictions.md` SHA-256
+  `480257ef234268f2c36484463aceca9e619ba764aad10fa5c799640233f411be`.
+- `target/evidence/e9-t22e-daybreak-gate-closure/source-evidence-closure-bindings.md` SHA-256
+  `6bab9e1721ada0065f2ba9513fd5a0058db6719c36a2970bf8abd7e2752930dc`.
+
+Read-only verifier commands: SHA-256/size authentication for the launch reports and all 3,129
+sealed primary/cold files; Git-blob authentication for both 55-source lists; carried-log hashing;
+raw wall diagnostic/failure scans; compact `jq` inspection of journal/oracle/GPU/store/demo and
+novel/sabotage anchors; exact source-range and sparse-projection comparison. No broad suite,
+browser run, cold clone, remote request, deployment, implementation edit or test mutation was run.
+
+
+### 2026-10-23 — worker — exact main publication proof
+
+Release `13ba6e20e79dce8c1d4fa800c7950629f0c28ceb` is deployed to production project
+`wasm-vm`, branch `main`, deployment `9eb734fc`, at
+<https://wasm-vm.pages.dev/app>. All seven unchanged large R2 artifacts were
+rehash-verified before Pages publication. The release changed only the
+independently-held capability status/evidence, generated task catalog and
+service-worker stamp; main/journal/probe/GPU stamp and both Wasm binaries
+remain byte-identical to the pristine proof. PR #608 remains draft/open,
+all 31 stacked PRs remain unmerged/unqueued, and Actions is disabled.
+
+The complete main-only asset audit authenticates 121 files, including all
+74 runtime members, changed deployables, new fixtures and deployed five
+R2-rewritten artifact manifests. The actual public app passed 127/0, both
+real native recording cases, both live pips, coordinated controls and
+desktop/390-pixel layout. Both final native digests, receipt counts,
+envelope bytes and actual Wasm/renderer hashes exactly match cold evidence.
+There are no unexpected console/HTTP errors. The one root favicon.ico404
+is explicitly allowed by AGENTS.md and retained with its exact URL/text.
+
+The initial immediate asset audit failed on one HTTP404, with no failing
+URL retained by its parallel collector. A fresh complete main-only audit
+then passed all 121 identical path/hash/status checks; only evidence error
+reporting was enhanced. A separate first public browser run passed every
+functional assertion but failed its strict console check on the permitted
+favicon404. The trace identifies that exact favicon URL. The fresh public
+harness retains that one exception and continues to reject every other
+console/page/HTTP error. Both failures and original executed scripts remain
+unaltered; no product source change or second deployment was needed.
+
+Publication completion receipt: `target/evidence/e9-t22e-production-release-completion-1/receipt.json`,
+SHA-256 `7f5413fc32fb8bcf53f371d494e08621ea9743a6616e395393aae8b706574299`.
+
+- `target/evidence/e9-t22e-production-release-public-recheck-1/report.json` SHA-256 `f7db1e1e03110ab685202b73b4d0bd60da333fa89d110f4ad901a619f4ef0ff0`.
+- `target/evidence/e9-t22e-production-release-public-demo-2/report.json` SHA-256 `49a90243015ccf3181aab358399c77669c222bc2a5d33713e4b06510bd31ebf2`.
+
+The checkout was restored clean after exactly the five allowed staging
+manifest rewrites. A NEW actual Daybreak final-publication verifier must
+independently inspect the main path and carry unchanged local results before
+setting this task verified. All downstream Epic 9 tasks remain required.
+
+
+### 2026-10-23 — final-publication verifier — VERDICT: verified
+
+- P1 carried source/evidence boundary — HELD. All immutable launch bindings rehash. Fresh gate
+  closure `c07f7f15ba36098bc572da17a199afbd86add04034131ccea0ef3e193625eb6f`
+  binds accepted source `03ce37a31f740a0b7d18a60d7461425c5848cc86`, carries charter P1-P15
+  plus the local wall with no failures, and records source/dependency/evidence unchanged. Release
+  `13ba6e20e79dce8c1d4fa800c7950629f0c28ceb` changes only the five declared
+  roadmap/tasks/SW files; later reviewed metadata head
+  `aa70037449eef51b6c27cdb5017bb626a35eb5dd` changes only this task log.
+- P2 main deployment and bytes — HELD. Completion receipt
+  `7f5413fc32fb8bcf53f371d494e08621ea9743a6616e395393aae8b706574299`
+  binds Cloudflare Pages project `wasm-vm`, branch `main`, deployment `9eb734fc`, and
+  `https://wasm-vm.pages.dev/`. Retained audit
+  `f7db1e1e03110ab685202b73b4d0bd60da333fa89d110f4ad901a619f4ef0ff0`
+  passes 121/121 files and all 74 runtime members. Independent GETs for 22 required main assets
+  all returned 200 with exact release/deployed-sidecar sizes and SHA-256 values; all seven finite
+  exact R2 URLs returned HEAD 200 with manifest-bound lengths.
+- P3 actual public browser path — HELD. Public report
+  `49a90243015ccf3181aab358399c77669c222bc2a5d33713e4b06510bd31ebf2`
+  and trace `733ad995e818917e76ef6c2c894537138ba3556d59532fc073c6c7e42adf7cd9`
+  show actual main navigation and user clicks, 127/0, both live pips, coordinated controls,
+  390-pixel no-overflow, qualified Apple M4 Max Metal profile, 4,359/4,100 count receipts/offers,
+  260/256 byte receipts/block completions, 67,125,819 envelope bytes, and final native digests
+  `7d0a17139307dcbbf5ce0b87b35c83632b833f7ce92f01da8cd4f47c63cb1cdf` /
+  `894b33e00073ba1592385ea4b61a883764451faf5e4776afb0f1f547df436d51`.
+  Executed harness `654f6d8ff8b59d5355dc280efef21fd5129cde8e785526c062711474fdd1b4ab`
+  has no route fulfillment or mocked native result. The only console error is the exact allowed
+  same-origin `/favicon.ico` 404; every unexpected console/page/HTTP error list is empty.
+- P4 product configuration and scope — HELD. Public VM Wasm
+  `86dcab8e71db0e78be9910fb53c7d127647e5602ca3a9e586b4952d6cb4fece3`,
+  session validator `b1a932a81ac46b74e03705a973274c7c50c8e01ab9c22060795f32e05d66377d`,
+  and renderer graph `7f0523f6ad9708ace234d6f5a082668d4b9ef20a2a18433e946b86907f129d82`
+  equal cold/release bindings. This verdict is bounded recording publication only: raw `make ci`
+  is not claimed zero, and reader/replay, original Linux/Mesa/Omarchy, performance, capstone and
+  Epic 9 completion remain later tasks.
+- SUITE: retain `make verify-E9-T22e`, the independent byte oracle, existing GPU/store regressions,
+  public trace and 121-file asset audit unchanged; no additional promotion is needed.
+
+Final verifier artifacts:
+
+- `target/evidence/e9-t22e-daybreak-final-publication/report.json` SHA-256
+  `add71ca57c9da025140e849f744e084472cf75d009399624d1983e49d5956415`.
+- `target/evidence/e9-t22e-daybreak-final-publication/report.md` SHA-256
+  `5a85df53d57c8525028251501aa14017e968a8b128eac21640ff8c45d58f3dda`.
+- `target/evidence/e9-t22e-daybreak-final-publication/predictions.md` SHA-256
+  `a1526f02c2a9b7b0cca609e1755bea0941b30222828c01c85df02d55c595bd6d`.
+
+Read-only verifier work: local source/evidence hashing, retained report/trace/raw-value inspection,
+22 bounded main GETs and seven exact R2 HEADs. No broad test, browser rerun, boot, benchmark, cold
+clone, deployment, push, merge, message, credential, remote mutation or product edit was performed.

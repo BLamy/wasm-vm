@@ -77,6 +77,11 @@ export class SessionGpuJournal {
   }
   get end(){return {...this.#manifest.end};}
   get pending(){return this.#pending.length;}
+  // These fixed admission budgets apply until the next durable checkpoint.
+  // Ordinary flushes never reset them; the store separately bounds all history.
+  get intervalWindow(){return Object.freeze({rows:this.#committedRows+this.#pending.length,
+    bytes:this.#committedSmall+this.#pending.reduce((sum,row)=>sum+row.bytes.length,0),
+    rowLimit:4096,byteLimit:64*1048576});}
   get checkpoints(){return structuredClone(this.#manifest.checkpoints);}
   get initialWitness(){const [value]=JSON.parse(decoder.decode(Uint8Array.from(this.#manifest.extensions[0].bytes)));return {...pos(value),digest:Uint8Array.from(value.digest)};}
   stage(batch){
@@ -149,6 +154,10 @@ export class SessionGpuJournal {
       if(!previous){const root=await new SessionDiskRoots(this.#store).capture(this.#writer,emptyDisk(this.#config.imageManifest,manifest.machine.base_image),this.#config.imageManifest);manifest.checkpoints[0].disk_root=root.content.sha256;}
       await this.#writer.publish(canonical(manifest),()=>{need(same(frame,machine.inputPosition())&&saved.epoch===machine.exactGpuSessionEpoch(),'GPU owner changed before publication');});
       this.#manifest=manifest;this.#intervalBodies.clear();machine.finishSoftwareRamEpoch(true);frozen=false;
+      // Publication and epoch acknowledgement both succeeded. The full ordered
+      // history stays in the authenticated manifest/CAS; only this bounded
+      // checkpoint interval's admission counters start over.
+      this.#committedRows=0;this.#committedSmall=0;
       return {...pos(frame),digest:frame.digest,ramDigest:frame.ramDigest,full,frameBytes:bytes.length,dirtyPages:pages,maxChunkBytes,rendererBytes:saved.bytes.length};
     }finally{if(frozen)machine.finishSoftwareRamEpoch(false);this.#busy=false;}
   }

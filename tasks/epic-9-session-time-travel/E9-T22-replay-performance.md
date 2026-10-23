@@ -8,7 +8,7 @@ depends_on: [E9-T15, E9-T16, E9-T18c, E9-T19]
 estimate: S
 risk: medium
 capstone: false
-decomposed_into: [E9-T22a, E9-T22b, E9-T22e, E9-T22f, E9-T22g, E9-T22h, E9-T22c, E9-T22d]
+decomposed_into: [E9-T22a, E9-T22b, E9-T22e, E9-T22i, E9-T22f, E9-T22g, E9-T22h, E9-T22c, E9-T22d]
 ---
 
 ## Goal
@@ -121,3 +121,12 @@ are recorded in E9-T22c. Add ordered high-risk S prerequisites E9-T22e/f/g/h
 for bounded durable publication, authenticated reading, exact replay windows
 and browser integration. This preserves all C/D requirements and numerical
 budgets; it does not complete the parent or qualify a shortened workload.
+
+
+### 2026-10-22 — worker — bounded witness commitment prerequisite
+
+A fresh Daybreak audit recovered authentic checkpoint witnesses and reproduced
+an 8192-byte extension failure in the real session validator without another
+VM run. E9-T22i now follows E and precedes F; C's exact repro and report hashes
+are in its log. This adds the observed durable witness boundary, preserving
+all original C/D requirements and numerical budgets.
