@@ -39,7 +39,7 @@ const server = createServer(async (req, res) => {
   try {
     const name = decodeURIComponent(new URL(req.url, 'http://local').pathname);
     if (req.method === 'POST') {
-      assert(/^\/__retain__\/(batch-\d{5}\.json|native-\d{5}\.(json|state)|witness-storage\.wvsession|attack-[-a-z0-9]+\.json|legacy-v1\.wvsession)$/.test(name));
+      assert(/^\/__retain__\/(batch-\d{5}\.json|native-\d{5}\.(json|state)|witness-storage\.wvsession|attack-[-a-z0-9]+\.(json|bin)|legacy-v1\.wvsession)$/.test(name));
       const file = path.basename(name), hash = createHash('sha256'); let bytes = 0;
       const tap = new Transform({transform(part, encoding, done) {bytes += part.length; if (bytes > 64 * 1048576) return done(Error('raw transfer bound')); hash.update(part); done(null, part);}});
       await pipeline(req, tap, createWriteStream(path.join(out, file), {flags: 'wx'})); const ref = {file, bytes, sha256: hash.digest('hex')}; report.raw.push(ref);
@@ -86,6 +86,7 @@ try {
     }, retain: async (name, bytes) => {const response = await fetch('/__retain__/' + name, {method: 'POST', body: bytes}); if (!response.ok) throw Error('raw transfer'); return response.json();}});
   });
   assert.equal(report.result.status, 'passed', report.result.error); assert.equal(report.result.pages.count, 130); assert(report.result.checkpoints > 63);
+  assert(report.result.tailRows >= 1 && report.result.tailRows < 16, 'recorded final tail must be partial');
   assert.equal(report.result.rawWitnesses.length, 130); assert(report.result.pages.maxPageRows <= 16 && report.result.pages.maxPageBytes <= 8192);
   assert.equal(report.result.maxResidentRows, 16); assert.equal(report.result.archive.witnesses, 130);
   if (opts['--mutate-middle']) {

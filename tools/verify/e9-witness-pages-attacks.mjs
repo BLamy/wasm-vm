@@ -8,7 +8,7 @@ export async function attackWitnessPages(page, proof) {
     const {exportSessionWitnessArchive, inspectSessionWitnessArchive, importSessionWitnessArchive} = await import('/session-witness-archives.js');
     const {inspectSessionBundle, exportSessionBundle} = await import('/session-bundles.js');
     const {indexSessionBundle, encodeBundleHeader, bundlePrefix} = await import('/session-bundle-format.js');
-    const {sessionValidateManifest, sessionValidateDiskRoot, sessionValidateWitnessPage} = await import('/session-pkg/wasm_vm_session.js');
+    const {sessionValidateManifest, sessionValidateDiskRoot, sessionValidateWitnessPage, sessionIndexEventChunk} = await import('/session-pkg/wasm_vm_session.js');
     const {checkpointHash, checkpointReference, readCheckpointObject} = await import('/session-checkpoints.js');
     const need = (ok, detail) => {if (!ok) throw Error('Witness attack: ' + detail);};
     const encoder = new TextEncoder(), decoder = new TextDecoder(), json = value => encoder.encode(JSON.stringify(value));
@@ -23,8 +23,8 @@ export async function attackWitnessPages(page, proof) {
         if (remove) object.delete(key); else if (replacement !== undefined) object.put(replacement, key);
       };
     });
-    const retain = async (name, bytes) => {
-      const response = await fetch('/__retain__/attack-' + name + '.json', {method: 'POST', body: bytes}); need(response.ok, 'retain mutant'); return response.json();
+    const retain = async (name, bytes, extension = 'json') => {
+      const response = await fetch('/__retain__/attack-' + name + '.' + extension, {method: 'POST', body: bytes}); need(response.ok, 'retain mutant'); return response.json();
     };
     const rejected = async (name, call, pattern) => {
       let failure; try {await call();} catch (error) {failure = {message: error.message, code: error.code ?? null};}
@@ -156,6 +156,50 @@ export async function attackWitnessPages(page, proof) {
         manifest:await retain('disk-inventory-manifest',diskManifest),rootBytes:await retain('disk-inventory-root',rootBytes)};
       report.checks.push({name:'complete-disk-descendant-inventory',status:'held'});
       await store.deleteSession(diskFixture.id);
+      // Move the identical bytes of a genuine recorded event out of line.
+      // This storage-representation fixture exercises graph closure, not a new
+      // guest execution or a fabricated physical GPU result.
+      const blobFixture = structuredClone(manifest); blobFixture.id = 'attack-blob-inventory';
+      const eventBytes = await readCheckpointObject(store, manifest.events[0].content, 4*1048576);
+      const records = JSON.parse(decoder.decode(eventBytes)), originalPayload = structuredClone(records[0].payload);
+      need(originalPayload.storage==='inline'&&originalPayload.bytes.length>0, 'genuine inline event fixture');
+      const bodyBytes = Uint8Array.from(originalPayload.bytes), bodyRef = checkpointReference(bodyBytes);
+      records[0].payload = {storage:'blob',content:bodyRef};
+      const blobEventBytes = json(records), blobIndex = JSON.parse(decoder.decode(sessionIndexEventChunk(blobEventBytes)));
+      blobFixture.events[0] = blobIndex; const blobManifest = canonical(blobFixture), blobWriter = await store.writer(blobFixture.id);
+      try {
+        await blobWriter.put(blobIndex.content,[blobEventBytes]);
+        await rejected('missing-event-blob-before-publication',()=>blobWriter.publish(blobManifest),/Corrupt|MissingObject/);
+        need(!await store.openSession(blobFixture.id),'missing event body published');
+        await blobWriter.put(bodyRef,[bodyBytes]);await blobWriter.publish(blobManifest);
+      } finally {await blobWriter.release();}
+      const blobGraph = await inventoryWitnessGraph(store,blobManifest);
+      need(blobGraph.refs.some(ref=>ref.sha256===bodyRef.sha256&&ref.length===bodyRef.length),'event blob omitted from complete graph');
+      const bodyObject = await raw('objects',bodyRef.sha256),bodyPart=bodyObject.parts[0],savedBody=await raw('chunks',bodyPart.sha256);
+      const beforeBlobGc=await store.statistics();
+      try {
+        const corrupt = new Uint8Array(await savedBody.arrayBuffer());corrupt[0]^=1;
+        await raw('chunks',bodyPart.sha256,new Blob([corrupt]));
+        await rejected('corrupt-event-blob-open',()=>store.openSession(blobFixture.id),/Corrupt/);
+        await rejected('corrupt-event-blob-blocks-gc',()=>store.collectGarbage(),/Corrupt/);
+        const after=await store.statistics();need(after.chunks===beforeBlobGc.chunks&&after.payloadBytes===beforeBlobGc.payloadBytes,'bad blob mark swept data');
+      } finally {await raw('chunks',bodyPart.sha256,savedBody);}
+      const blobArchive=await exportSessionWitnessArchive(store,blobFixture.id),blobInspection=await inspectSessionWitnessArchive(blobArchive.blob);
+      const blobDestination=await SessionStore.open(proof.database+'-blob');
+      try {
+        await importSessionWitnessArchive(blobDestination,blobArchive.blob);const imported=await blobDestination.openSession(blobFixture.id);
+        need(checkpointHash(imported.manifest)===checkpointHash(blobManifest),'blob archive manifest differs');
+        const importedGraph=await inventoryWitnessGraph(blobDestination,imported.manifest);
+        need(importedGraph.refs.some(ref=>ref.sha256===bodyRef.sha256&&ref.length===bodyRef.length),'import lost event body');
+        need((await blobDestination.collectGarbage()).collected,'blob destination cleanup');
+        need(checkpointHash(await readCheckpointObject(blobDestination,bodyRef,4*1048576))===bodyRef.sha256,'cleanup reclaimed imported event body');
+      } finally {await blobDestination.close();}
+      report.blobFixture={scope:'storage representation of the identical genuine recorded inline event; not another guest execution or physical GPU-result claim',body:bodyRef,event:blobIndex.content,
+        originalEvent:manifest.events[0].content,inspection:blobInspection,
+        manifest:await retain('blob-inventory-manifest',blobManifest),eventBytes:await retain('blob-inventory-event',blobEventBytes),
+        bodyBytes:await retain('blob-inventory-body',bodyBytes,'bin'),archive:await retain('blob-inventory-archive',blobArchive.blob,'bin')};
+      report.checks.push({name:'event-blob-publication-gc-export-import-inventory',status:'held'});
+      await store.deleteSession(blobFixture.id);
       const archive = await exportSessionWitnessArchive(store, proof.id), indexed = await indexSessionBundle(archive.blob);
       await rejected('storage-archive-playback-refused', () => inspectSessionBundle(archive.blob), /storage-only witness archives/);
       await rejected('paged-playback-export-refused', () => exportSessionBundle(store, proof.id), /unsupported extension/);

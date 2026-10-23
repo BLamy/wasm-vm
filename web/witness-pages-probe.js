@@ -6,7 +6,7 @@ import {SessionGpuJournal} from './session-gpu-journal.js';
 import {authenticateWitnessPages} from './session-witness-pages.js';
 import {inventoryWitnessGraph} from './session-witness-graph.js';
 import {exportSessionWitnessArchive, inspectSessionWitnessArchive, importSessionWitnessArchive} from './session-witness-archives.js';
-import {checkpointHash} from './session-checkpoints.js';
+import {checkpointHash, readCheckpointObject} from './session-checkpoints.js';
 import {GPU_CHECKPOINT_BUILD_ID} from './gpu-checkpoint-build.js';
 import {attachProductionVirgl, createWorkerScanoutPresenter} from './renderer/virgl-command/production.mjs';
 const encoder = new TextEncoder(), decoder = new TextDecoder();
@@ -69,7 +69,7 @@ export async function runWitnessPages({database = 'wasm-vm-sessions-v1-witness-p
       let point;
       // A full resident page, >63 genuine keyframes, then another full page and a
       // partial tail exercise distinct format bounds without changing the guest.
-      if (n >= 17 && n <= 81 || n === 129) {point = await journal.captureKeyframe(vm, gpu, 'witness-' + n); result.checkpoints++;}
+      if (n >= 17 && n <= 81 || n === 125) {point = await journal.captureKeyframe(vm, gpu, 'witness-' + n); result.checkpoints++;}
       else {point = vm.exactGpuSessionWitness(); await journal.observeExactWitness(point);}
       result.maxResidentRows = Math.max(result.maxResidentRows, journal.witnessWindow.peakRows);
       await raw(point);
@@ -81,6 +81,8 @@ export async function runWitnessPages({database = 'wasm-vm-sessions-v1-witness-p
     result.saved = {id, revision: opened.revision, manifestSha256: checkpointHash(opened.manifest), manifest};
     result.initial = pos(journal.initialWitness); result.final = {...pos(final), digest: hex(final.digest)};
     result.pages = await authenticateWitnessPages(store, manifest); need(result.pages.count === 130 && result.checkpoints > 63, 'native witness/keyframe coverage');
+    result.tailRows = JSON.parse(decoder.decode(await readCheckpointObject(store, result.pages.commitment.tail, 8192))).rows.length;
+    need(result.tailRows >= 1 && result.tailRows < 16, 'finished partial witness tail');
     result.inventory = (await inventoryWitnessGraph(store, opened.manifest)).refs;
     // A second saved prefix shares genuine old roots. Reclamation must retain it.
     const prefixManifest = JSON.parse(decoder.decode(prefix.manifest)); prefixManifest.id = id + '-prefix';

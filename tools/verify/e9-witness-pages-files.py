@@ -100,6 +100,8 @@ def pages(store):
     return rows, refs
 
 rows, page_refs = pages(source)
+tail_rows = len(json.loads(source.read(commitment['tail']))['rows'])
+assert 1 <= tail_rows < 16 and run['tailRows'] == tail_rows, 'final tail must be independently partial'
 assert pages(imported) == (rows, page_refs)
 assert len(canonical(rows)) > 8192, 'must cross the actual old extension byte capacity'
 raw_rows = []
@@ -208,10 +210,39 @@ if not a.development:
             'old-client-refuses-required-pages', 'storage-archive-playback-refused'} <= names
     assert attacks['quota']['sessions'] == 0 and attacks['quota']['objects'] > 0 and attacks['finalGc']['collected']
     assert all(r['status'] in ('rejected', 'held') for r in attacks['checks'])
+    assert {'missing-event-blob-before-publication','corrupt-event-blob-open','corrupt-event-blob-blocks-gc',
+            'event-blob-publication-gc-export-import-inventory'} <= names
+    fixture = attacks['blobFixture']
+    body = (root / fixture['bodyBytes']['file']).read_bytes()
+    assert fixture['body'] == {'sha256':sha(body),'length':str(len(body))} and body
+    original_records = json.loads(source.read(fixture['originalEvent']))
+    modified_bytes = (root / fixture['eventBytes']['file']).read_bytes()
+    assert fixture['event'] == {'sha256':sha(modified_bytes),'length':str(len(modified_bytes))}
+    modified_records = json.loads(modified_bytes)
+    assert original_records[0]['payload']['storage'] == 'inline' and bytes(original_records[0]['payload']['bytes']) == body
+    restored = json.loads(modified_bytes)
+    assert restored[0]['payload'] == {'storage':'blob','content':fixture['body']}
+    restored[0]['payload'] = original_records[0]['payload']
+    assert restored == original_records, 'storage fixture must preserve every original event value'
+    blob_manifest = (root / fixture['manifest']['file']).read_bytes()
+    blob_archive = (root / fixture['archive']['file']).read_bytes()
+    assert blob_archive[:8] == b'WVBUND01' and u32(blob_archive,8)==1
+    hlen=u32(blob_archive,12); bh=json.loads(blob_archive[16:16+hlen]); offset=16+hlen; found={}; prior=''
+    assert bh['portability']=='wasm-vm-witness-storage-v2' and bh['scope']=='storage-only'
+    assert canonical(bh)==blob_archive[16:offset] and len(blob_archive)==offset+int(bh['uncompressedBytes'])
+    for ref in bh['objects']:
+        assert prior<ref['sha256'];prior=ref['sha256'];n=int(ref['length']);payload=blob_archive[offset:offset+n];offset+=n
+        assert len(payload)==n and sha(payload)==ref['sha256'];found[ref['sha256']]=ref
+    assert offset==len(blob_archive)
+    blob_manifest_ref={'sha256':sha(blob_manifest),'length':str(len(blob_manifest))}
+    blob_expected=dict(expected);del blob_expected[fixture['originalEvent']['sha256']]
+    for ref in [fixture['body'],fixture['event'],blob_manifest_ref]:blob_expected[ref['sha256']]=ref
+    assert found==blob_expected and bh['manifest']==blob_manifest_ref
+
 
 out = root / 'independent-witness-oracle'; out.mkdir(exist_ok=False)
 result = {'status': 'passed', 'witnesses': len(rows), 'pages': len(page_refs), 'fullV1WitnessBytes': len(canonical(rows)),
-          'commitmentBytes': len(extensions[1]['bytes']), 'checkpoints': len(states), 'states': states,
+          'tailRows': tail_rows, 'commitmentBytes': len(extensions[1]['bytes']), 'checkpoints': len(states), 'states': states,
           'physicalObjects': len(source.objects), 'inventoryObjects': len(expected), 'archiveObjects': len(archive_refs),
           'manifestSha256': sha(manifest_bytes), 'tail': commitment['tail'], 'rawNativeStates': len(raw_rows),
           'scope': 'All 130 logical-native state/digest bindings; independent full/delta RAM reconstruction at every required native checkpoint. Not whole-history replay or desktop qualification.'}

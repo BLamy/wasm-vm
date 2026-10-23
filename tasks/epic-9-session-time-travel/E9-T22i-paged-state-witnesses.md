@@ -176,3 +176,63 @@ inventory/gating in the library. These final changes still require the new
 clean exact-head submission, fresh complete native/browser evidence, final cold
 proof, full actual Daybreak charter and main publication. No checkbox or task
 status is advanced on these development claims. F/G/H/C/D and T23/T24 remain open.
+
+
+### 2026-10-23 — worker — respond to actual Daybreak preflight P4/P5
+
+Fresh actual Daybreak read-only preflight of frozen source
+`ea33370c877ebe1c76e75e5b1c66db184351caa2` completed as the requested/returned
+`gpt-daybreak-blue-latest`, `daybreakBlue`, no errors or fallback. Report
+`target/evidence/e9-t22i-daybreak-preflight/final-message.md`, SHA-256
+`42bcea37aa3d88d1c66c583216ee9fbbd867a96b91c08ecd3b2b29ea176ccc7f`;
+routing SHA-256 `ef08de415df760aa714495103b5bb5eb638af56e616e00dce6bd944bb7cdb5b9`.
+P2 canonical codec, P3 exact prefix/terminal state and P7 archive/UI separation
+held at source. P4 needed an exercised out-of-line event payload in the shared
+paged graph. P5 refuted the worker's partial-final-tail claim: the retained
+tail had 16 rows, not a partial page. All runtime/cold/full-charter/main proof
+was explicitly still outstanding; this was not a terminal task verdict.
+
+Primary submission 1 was interrupted deliberately in its GPU regression,
+before the remaining demo/wall, to address those findings. Parent report
+`target/evidence/e9-t22i-final-submission-1/report.json`, SHA-256
+`5bf157fc10ad5e685da9757f8c7acf4baabd1a6d59547df8616553a67912dff0`,
+is FAILED with `KeyboardInterrupt()` and stays failed. The exact owned process
+and rationale are in `target/evidence/e9-t22i-primary-1-interruption-request.json`.
+It is not a passing submission. Its complete native/browser child DID pass
+at the frozen source: 130 actual native states, 67 keyframes, 70 pages, real
+v1 archive control, 36 bounded controls, physical store retention and independent
+RAM/page decoding. Child report SHA-256
+`d82925840c0cd70d9ce90301207864044d8154d61fb41c723d75f90fc900cb67`;
+literal oracle SHA-256
+`44ffc681e325a8094520617c14a850e5df33a90332af5274a433a0db7962c77a`.
+That run still has a full final page and cannot support the partial-tail claim.
+
+The proof fixture now takes the special final keyframe at input 125 instead of
+129. Inputs, 128-transition execution slices, total 130 native witnesses, more
+than 63 native checkpoints, original guest/assets and every production bound
+are unchanged. The last four genuine native witnesses now require finalization
+of a partial page after the last checkpoint; browser and literal-byte oracles
+explicitly assert a final tail of 1–15 rows. This changes only the small storage
+proof workload, not any original C/D qualification workload or budget.
+
+A labelled storage-representation fixture moves the identical byte `a` of one
+genuine recorded inline event into a content-addressed blob. It is not another
+guest execution or a physical GPU-result claim. Missing body prevents publication;
+corruption prevents open and the entire GC sweep; complete body participates in
+the shared inventory and survives storage export/import and destination cleanup.
+The literal oracle independently compares every event field and its original
+inline byte, body hash/length, and the exact archive inventory.
+
+`target/evidence/e9-t22i-development-blob-followup-2/report.json` passed 40
+bounded storage controls by reusing the completed EA333 history; it did not
+execute the changed 125/129 schedule. The earlier blob followup 1 failed only
+because that ad-hoc server did not permit binary evidence uploads; it remains
+failed. Permanent capture accepts the explicitly bounded binary mutant paths.
+No runtime codec, store, archive, native VM or replay semantics changed in this
+response. New clean-head submission, full fresh native/browser evidence, final
+cold, full actual Daybreak charter and main release are still required.
+
+Native draft PR #609 is pushed and attached, based on open draft PR #608; all
+32 stacked PRs remain OPEN/draft, unmerged/unqueued. Fresh Actions permissions
+are `enabled:false`. The historical tracked perf-regression workflow from
+`cd0366a5a` is unchanged; no workflow was added or re-enabled.
