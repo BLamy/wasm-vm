@@ -129,3 +129,32 @@ intermediate checkpoints. No software/Linux/Mesa/full desktop, whole-history
 reader/replay or performance result is inferred from the small storage guest.
 Frozen primary, pristine clone, Daybreak adversarial and main-site proof remain
 required before verification.
+
+
+### 2026-10-22 — worker — disk exhaustion and incremental evidence recovery
+
+Frozen runtime/source head `9835e6e1451b1dde2efccf1b7e5d7a6bcbabdfa2`
+passed the first 15 direct submission gates. The real browser recording then
+failed while writing progress.json with ENOSPC; its failed report and all
+partial raw evidence remain in `target/evidence/e9-t22e-final-submission-1`.
+The concurrent fresh checkout failed on unrelated historical recording
+archives for the same reason; its failed checkout log remains in
+`target/evidence/e9-t22e-cold-submission-1`. Neither is a passing proof.
+
+The worker underestimated the full checkout size. The authoritative source
+checkout already uses a source-complete sparse projection containing all
+runtime, tests, tools, releases and named earlier evidence dependencies.
+The cold wrapper now reproduces that same projection in a fresh no-hardlinks
+clone, avoiding unused historical archives, while running every direct gate
+afresh with scrubbed Rust/Cargo environment. This is not a later guest origin
+or a shortened recording. The failed checkout is preserved as an environment
+failure. Primary recovery may carry only the sealed successful prefix after
+rehashing every previous evidence file and unchanged source and requiring
+that intervening changes affect only this wrapper or task/queue metadata.
+Any runtime/dependency change refuses that carry. The failed browser stage
+and all subsequent gates, including the full wall not yet run, execute anew.
+
+Space cleanup is user-authorized and recorded separately: completed compiler
+intermediates only, plus byte-verified historical duplicate corpus copies.
+No unique raw evidence, active source, current build or release is deleted.
+This evidence/harness response does not change the submitted runtime.
