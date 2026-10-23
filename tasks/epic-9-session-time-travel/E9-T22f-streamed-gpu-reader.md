@@ -3,7 +3,7 @@ id: E9-T22f
 epic: 9
 title: Authenticate long GPU histories with bounded interval reads
 priority: 524.922022
-status: in-progress
+status: implemented
 depends_on: [E9-T22i]
 estimate: S
 risk: high
@@ -187,3 +187,66 @@ Worker-only self-check `target/evidence/e9-t22f-v1-cancel-repair-development/pro
 SHA-256 `d9c45dc73d821092aa409735114c84a86db608e1c62f30ceabbdb04c25ee3f80`.
 Runtime changes require a new freeze, selected high-risk gates and final cold
 proof; all terminal criteria and status remain incomplete.
+
+
+### 2026-10-23 — worker — implemented complete authenticated bounded history reads
+
+Final runtime source `24e9da174a7e6cf44f1edce1487a9c56514f6f60` passed the frozen high-risk submission
+`E9_OUT=target/evidence/e9-t22f-final-submission-3 make verify-E9-T22f`.
+The one final pristine run used
+`python3 -B tools/verify/e9-gpu-reader-stream.py --output target/evidence/e9-t22f-final-cold-1 --cold-clone /Users/blamy/Documents/Codex/.e9-t22f-final-cold-24e9da17`:
+fresh checkout/target/npm dependencies, scrubbed Rust/Cargo/log flags, debug
+information disabled while normal debug assertions remain enabled. All 53
+pristine commands passed and source/dist runtime bytes matched with clean final
+checkouts. The primary local wall retains raw `make ci` exit2 for ONLY the exact
+five historical quarantined zicsr-stub dead-code diagnostics; strict production
+Clippy, the explicit narrow stub waiver and the remaining complete local wall
+passed. Do not describe raw `make ci` as an unqualified pass.
+
+The actual native recordings contain 4,359 input/control receipts and a separate
+67,125,819-byte block receipt history, plus the original physical GPU/query/
+readback guest. Closure/runtime/profile/frame/witness authentication precedes
+consumer/candidate access. All 58 threats and 10 codec/ownership checks passed,
+including four v1/v2 abort/close initial scans with the identical caller signal,
+zero new IDB transactions after writer reuse through full losing-open settlement,
+zero consumer/candidate/result escape, and unchanged 2,048-receipt v1 reading.
+Opaque one-use bounded cursors retain exact positions/sequences and real 2,048
+witnesses with the 4,096/4,097 Before cut. The literal oracle independently decoded
+raw/native GPU body refs, CAS and returned bytes, green pixels and query results.
+Reported window/buffer maxima are explicit ownership counters, not RSS or heap
+use. All three native final/RAM/queue/logical-state/workload results match the
+pristine run; only actual ephemeral loopback URL ports differ in configurations,
+as separately enumerated without normalizing persisted bytes.
+
+The built app and pristine app both passed 127/0 with zero browser/HTTP errors,
+coordinated controls, panel/roadmap LIVE and desktop/phone screenshots. Root viewed
+the fresh primary captures and the layout holds. Current VM SHA
+`ad6b8fd8b76c89d67ad4c38b6ae6b414e6abc57d885c37742dd29e50e8849db8`,
+2599831 bytes; GPU build
+`d2d4d0f21ab13b9eff92aeeffe57ebfe60b11dfb528a21a2a1ca9c412a8a5cf7`.
+
+Completed actual Daybreak reviews held the repaired legacy metadata boundary,
+root/descriptor/event await edges, meaningful sabotage (38 late reads on the
+mutant versus 0 frozen), unchanged scoped predictions and the full current local
+proof/coverage. The callback-settlement scope review found no stronger read-drain
+guarantee in F and demanded no rework; do not infer a new zero-I/O promise for
+unawaited consumer operations. Local closure is nonterminal and still requires
+main deployment/public byte and browser checks plus a fresh final publication
+critic. Status becomes implemented only. No native continuation, timeline
+execution, original Linux/Omarchy workload/performance or whole-Epic completion
+is claimed; G/H/C/D and later T23/T24 remain gated. Native stacked PRs remain
+OPEN/draft/unmerged/unqueued and Actions disabled.
+
+Frozen evidence:
+
+- `target/evidence/e9-t22f-final-submission-3/report.json`, SHA-256 `d159b745554f98f3d00af775fb2e629f6995be8b05540f11364bac7f7e73dd5d`.
+- `target/evidence/e9-t22f-final-cold-1/report.json`, SHA-256 `eb22e1288e691d2b6bfae1be8c64cec6afdd4cf86af5514a546b3e590c38ec21`.
+- `target/evidence/e9-t22f-daybreak-legacy-repair-review/report.json`, SHA-256 `bc22572795848a3b0e0a50359b2e02f58b2136b27129cdad5a3fd03998504b1f`.
+- `target/evidence/e9-t22f-daybreak-legacy-repair-review/routing.json`, SHA-256 `f15fb88de7548788fbc742c38e8c4808deac202283557876d469f245447c3da7`.
+- `target/evidence/e9-t22f-daybreak-callback-settlement-probe/report.json`, SHA-256 `f9b2166225e68dba8128e0329255c7c0a862512e6710969f3e696be81b9a9df2`.
+- `target/evidence/e9-t22f-daybreak-callback-settlement-probe/routing.json`, SHA-256 `59c293d497ae8ee3080b0869ad967566de69f877bcbfe4a8b9a7a48ddafc896b`.
+- `target/evidence/e9-t22f-daybreak-local-gate-closure/report.json`, SHA-256 `0801d7e1d34e1b74cf35be0732cf8d6690738d0bf954bfcaba37d135ab1fce02`.
+- `target/evidence/e9-t22f-daybreak-local-gate-closure/routing.json`, SHA-256 `b0ff6e166c271df26477a3f36b014b2daadd0a737fffd8d82c0a50f3105d9d86`.
+- `target/evidence/e9-t22f-final-submission-3/reader/report.json`, SHA-256 `d11257181ef8d4fb2082d179c88e5ba000590383dbe4432b122205690a55b40e`.
+- `target/evidence/e9-t22f-final-submission-3/reader/independent-reader-oracle/report.json`, SHA-256 `f9de938579acd0014ae1255f21cf2618c0c757097d7c4d5b9aa5d7b757a48f3b`.
+- `target/evidence/e9-t22f-final-submission-3/demo/report.json`, SHA-256 `e0b87dff9df1d7c03db0128d4c39df4d40977a675a50b6ea59036d19368ca223`.
