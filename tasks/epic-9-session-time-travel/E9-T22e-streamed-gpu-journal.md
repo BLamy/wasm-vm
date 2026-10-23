@@ -3,7 +3,7 @@ id: E9-T22e
 epic: 9
 title: Publish long GPU histories through bounded resident windows
 priority: 524.922021
-status: implemented
+status: evidence-needed
 depends_on: [E9-T22b]
 estimate: S
 risk: high
@@ -20,9 +20,9 @@ One durable GPU recording publication boundary. Separate lifetime durable event 
 
 ## Acceptance criteria
 
-- [ ] Persist a production GPU journal with more than 4096 receipts and at least 67125760 block-envelope bytes, then reopen and independently authenticate every byte, sequence, manifest range and content reference without truncation.
-- [ ] Keep pending batches at 256 receipts/4 MiB and GPU bodies/intervals at their existing 256-object/64 MiB bounds. Separate durable-history accounting from resident windows; no constants-only increase, dropped receipt or record-after-boot shortcut.
-- [ ] Preserve immutable initial/provider/renderer/profile identity, append/CAS ownership, failure atomicity and retained older roots. Refuse an overfull resident batch and corrupt/missing content with precise evidence.
+- [x] Persist a production GPU journal with more than 4096 receipts and at least 67125760 block-envelope bytes, then reopen and independently authenticate every byte, sequence, manifest range and content reference without truncation.
+- [x] Keep pending batches at 256 receipts/4 MiB and GPU bodies/intervals at their existing 256-object/64 MiB bounds. Separate durable-history accounting from resident windows; no constants-only increase, dropped receipt or record-after-boot shortcut.
+- [x] Preserve immutable initial/provider/renderer/profile identity, append/CAS ownership, failure atomicity and retained older roots. Refuse an overfull resident batch and corrupt/missing content with precise evidence.
 - [ ] Record the scoped high-risk local browser/store gates, actual demo proof, production release and final pristine proof. A fresh actual Daybreak critic must cover all changed hunks, adversarial cases, one novel attack and sabotage before setting verified.
 
 ## Deterministic acceptance
@@ -216,3 +216,62 @@ completion is claimed by this storage boundary.
 - `target/evidence/e9-t22e-cold-submission-2/report.json` SHA-256 `40a10d5efc9bd30472bb303e1a292979c1ae91edff49f35b75eda1d8c9109e20`.
 - `target/evidence/e9-t22e-daybreak-full-charter/report.json` SHA-256 `30a51d650192f11e2d3588d64d473035c748c387ba9241ae498388573b983459`.
 - `target/evidence/e9-t22e-daybreak-full-charter/routing.json` SHA-256 `4084f30a40170067cc5499e575e0566836034e5075467498fa3ed7b2ef7d6b02`.
+
+
+### 2026-10-23 — verifier — VERDICT: needs-evidence
+
+- P1-P15 carried charter — HELD. Predicted the prior actual-Daybreak results could be carried only
+  if source, dependency, evidence and attack bindings were unchanged; all immutable launch hashes
+  match, `9835e6e1..03ce37a3` changes only the recovery wrapper/task log, and
+  `03ce37a3..5e05b0bb` changes only this task and `tasks/QUEUE.md`. Charter JSON remains
+  `30a51d650192f11e2d3588d64d473035c748c387ba9241ae498388573b983459`, with P1-P15 HELD and
+  zero FAILED. Changed semantic-hunk coverage and reasoned waivers therefore carry unchanged,
+  including the native-acknowledgement waiver.
+- P16 local wall — HELD. Predicted the frozen wall would contain only the documented historical
+  exception and a complete successful remainder. Wall report
+  `9888c001ac69f3a1cd147f8974cbe0c8c0058d11cc024a8dc168323f588104b4`
+  binds head `03ce37a3`: raw `make ci` exits 2 on exactly five quarantined `zicsr-stub`
+  `dead_code` diagnostics (plus Cargo's aggregate line), the narrow `-A dead_code` check exits 0,
+  strict production/affected-target Clippy passes without that waiver, and the complete remaining
+  native/Wasm/features/RISC-V/determinism/perf-smoke wall exits 0. Raw `make ci` is not claimed as
+  an unqualified zero-exit pass.
+- Primary/cold authentication — HELD. Primary report
+  `999bacd3fbadabeddb1d9efeb91ae6cb71ab5e781d7db7a403ec3632c653566c`
+  has 22 zero-exit wrapper gates, exactly 15 authenticated carried prefix gates and seven newly
+  executed later gates; 1,557/1,557 sealed files and 55/55 source blobs rehash. Cold report
+  `40a10d5efc9bd30472bb303e1a292979c1ae91edff49f35b75eda1d8c9109e20`
+  has 25/25 fresh direct gates, no resumed prefix, matching source-complete projection, no
+  hardlinks, scrubbed Rust/Cargo environment, clean exact head, and 1,572/1,572 files plus 55/55
+  source blobs rehashed.
+- Acceptance and attacks — HELD. Raw anchors confirm 4,359 receipts/4,100 native UART offers;
+  260 receipts/256 distinct native 256 KiB block completions/67,125,819 envelope bytes; 380
+  physical chunks/346 logical objects; maxima 2,311 rows/33,562,910 bytes; and publication abort
+  `1/1`, revision `25/25`, identical prefix/native/RAM with successful-retry-only reset `0/0`.
+  Resident overflow, row 4,097, third distinct 32 MiB body, quota/crash/stale-writer, and
+  corrupt/missing content refuse. The carried UI forced-failure/double-dispatch and byte-oracle
+  original-pass/mutant-fail/restored-identical-pass digests rehash.
+- P16 actual main publication — NEEDS EVIDENCE. Predicted an authenticated exact-head main-site
+  result; every sealed demo is loopback and neither primary nor cold inventory contains a
+  publication report. Publish `03ce37a3` to `https://wasm-vm.pages.dev/` and commission a NEW
+  actual-Daybreak final-publication verifier. This task is `evidence-needed`, not `verified`; the
+  final publication acceptance checkbox remains open.
+- SUITE: retain `make verify-E9-T22e`, the independent byte oracle, and existing GPU/store
+  regression artifacts unchanged. No additional permanent promotion is justified by this
+  incremental closure.
+
+Closure artifacts:
+
+- `target/evidence/e9-t22e-daybreak-gate-closure/report.json` SHA-256
+  `c07f7f15ba36098bc572da17a199afbd86add04034131ccea0ef3e193625eb6f`.
+- `target/evidence/e9-t22e-daybreak-gate-closure/report.md` SHA-256
+  `0afef64648e836f81451754b46427f68997c78859e840ad806d7ba05e1a0aa71`.
+- `target/evidence/e9-t22e-daybreak-gate-closure/predictions.md` SHA-256
+  `480257ef234268f2c36484463aceca9e619ba764aad10fa5c799640233f411be`.
+- `target/evidence/e9-t22e-daybreak-gate-closure/source-evidence-closure-bindings.md` SHA-256
+  `6bab9e1721ada0065f2ba9513fd5a0058db6719c36a2970bf8abd7e2752930dc`.
+
+Read-only verifier commands: SHA-256/size authentication for the launch reports and all 3,129
+sealed primary/cold files; Git-blob authentication for both 55-source lists; carried-log hashing;
+raw wall diagnostic/failure scans; compact `jq` inspection of journal/oracle/GPU/store/demo and
+novel/sabotage anchors; exact source-range and sparse-projection comparison. No broad suite,
+browser run, cold clone, remote request, deployment, implementation edit or test mutation was run.
