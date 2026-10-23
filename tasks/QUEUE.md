@@ -474,7 +474,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.922021` [E9-T22e](epic-9-session-time-travel/E9-T22e-streamed-gpu-journal.md) — Publish long GPU histories through bounded resident windows *(deps: E9-T22b)*
 - [x] `524.9220215` [E9-T22i](epic-9-session-time-travel/E9-T22i-paged-state-witnesses.md) — Commit long exact histories with bounded durable witness pages *(deps: E9-T22e)*
 - [x] `524.922022` [E9-T22f](epic-9-session-time-travel/E9-T22f-streamed-gpu-reader.md) — Authenticate long GPU histories with bounded interval reads *(deps: E9-T22i)*
-- [~] `524.922023` [E9-T22g](epic-9-session-time-travel/E9-T22g-streamed-exact-replay.md) — Continue exact replay across bounded native admission windows *(deps: E9-T22f)*
+- [?] `524.922023` [E9-T22g](epic-9-session-time-travel/E9-T22g-streamed-exact-replay.md) — Continue exact replay across bounded native admission windows *(deps: E9-T22f)*
 - [ ] `524.922024` [E9-T22h](epic-9-session-time-travel/E9-T22h-streamed-gpu-browser-replay.md) — Run the complete GPU replay chain through browser consumers *(deps: E9-T22g)*
 - [b] `524.92203` [E9-T22c](epic-9-session-time-travel/E9-T22c-real-workload-qualification.md) — Qualify both full pinned performance workloads *(deps: E9-T22b, E9-T22h)*
 - [ ] `524.92204` [E9-T22d](epic-9-session-time-travel/E9-T22d-replay-performance-campaign.md) — Measure the unchanged complete replay performance budgets *(deps: E9-T15, E9-T16, E9-T19, E9-T22c)*
