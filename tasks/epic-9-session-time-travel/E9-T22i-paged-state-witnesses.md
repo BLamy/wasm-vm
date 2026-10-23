@@ -3,7 +3,7 @@ id: E9-T22i
 epic: 9
 title: Commit long exact histories with bounded durable witness pages
 priority: 524.9220215
-status: evidence-needed
+status: verified
 depends_on: [E9-T22e]
 estimate: S
 risk: high
@@ -28,7 +28,7 @@ validate every referenced page. Reader/executor integration remains F/G/H.
 - [x] Persist, reopen and independently authenticate a complete ordered commitment with at least 130 actual native state witnesses using bounded resident pages, exact initial/final bindings and no global witness-byte array.
 - [x] Preserve the existing manifest/extension/session/retention limits, native replay-plan limits and v1 semantics. Bind count/order/positions/digests/page references to the immutable initial state and final endpoint; no constants-only increase or omitted checkpoint witness.
 - [x] Reject missing/reordered/duplicated/corrupt pages, conflicting content lengths, wrong endpoints, stale publication and partial quota failure before publication/restore. GC/export/import inventory must include the complete page closure; older recordings remain intact.
-- [ ] Complete the scoped high-risk local native/Wasm/browser gate, visible demo/main release and final pristine proof; obtain a NEW actual Daybreak critic covering every changed boundary, all attacks, one novel attack and meaningful sabotage.
+- [x] Complete the scoped high-risk local native/Wasm/browser gate, visible demo/main release and final pristine proof; obtain a NEW actual Daybreak critic covering every changed boundary, all attacks, one novel attack and meaningful sabotage.
 
 ## Deterministic acceptance
 
@@ -419,3 +419,72 @@ target/evidence/e9-t22i-final-submission-2/witnesses/witness-storage.wvsession
 `node target/evidence/e9-t22i-daybreak-gate-closure/counterfactual.mjs`.
 SUITE: retain the existing permanent Rust/browser/oracle tests; no code fix or
 new promotion was required.
+
+
+### 2026-10-23 — actual Daybreak final-publication verifier — VERDICT: verified
+
+- P1 source/publication identity — HELD. Accepted behavioral source
+  `3e8ebe0712343640efe68216948460cfbca5abbb`, release
+  `278e0bcb65481ccbccb85617b33514a7371da04e` and deployment `c19a6ac8`
+  authenticate exactly. The release delta SHA-256 is
+  `07b7cdcf5b89f446ca3df7f184a57203810a919caa36acdad0311125990fa586`
+  and changes only task/queue metadata, declarative roadmap status, generated
+  task mirrors and the generated service-worker cache revision; the scoped
+  critical runtime diff is empty.
+
+- P2 sealed publication/reference closure — HELD. All 12 sealed inputs and all
+  27 receipt-referenced worker reports, sources and manifest sidecars matched.
+  Independent main-origin GETs authenticated 24 selected bodies covering the
+  corrected archive, page, graph, store, UI, main, roadmap, task JSON, service
+  worker, VM, metadata, GPU stamp and AI/RV-Phone/DST marketing paths. Five
+  canonical `.html` requests returned 308 to the expected extensionless routes;
+  every destination body matched. Seven exact R2 `HEAD`s returned 200 with the
+  declared lengths; no body SHA is inferred from `HEAD`.
+
+- P3 public native/storage bindings — HELD. Recorded main trace SHA-256
+  `c387a48d40b8404f4f9d25479b7c09b6cd9571c0515a2d17be6a412d265b24bd`
+  contains one completed public probe and 127/0 suite result. Its exact initial,
+  final and complete page commitment structures equal the authenticated primary
+  and cold evidence: 130 actual native states, 129 inputs, 67 checkpoints, 71
+  pages, a four-row tail and maximum resident 16. Commitment-structure SHA-256
+  is `ee00faaa92e30c98563a49a65dab7ecd4ffa0aa03bc391c44199df63a980c7c9`.
+  The 334-object referenced inventory, 335-object storage-only archive, all-page
+  import and complete GC held; playback remains explicitly unavailable.
+
+- P4 visible behavior — HELD. The trace has no failed calls or page errors and
+  exactly the waived favicon 404 as its sole error console entry. Library and
+  timeline open controls are disabled/storage-only, both witness pips are live,
+  and the independently inspected desktop/mobile captures are readable and
+  truthful with mobile width/scroll 388/388.
+
+- P5 incremental local carry — HELD. Local closure report SHA-256
+  `15cf6d5144db2f39d3f4fdd15ddf7782126693b267838e2db45634a57a00e16a`
+  remains source/dependency/evidence-identical: full strict-schema novel attack,
+  coherent terminal `finished:false` sabotage, old-reader refusal, 55-hunk
+  coverage, native/oracle/page/graph/archive/GPU/store and pristine locale
+  results carry unchanged. Raw `make ci` remains exit 2 solely on the five
+  historical quarantined diagnostics; only the exact waiver and remaining wall
+  are passes.
+
+- ROUTING PATH ERRATUM — HELD. The earlier cited
+  `50482dc2555d54fbf4865f6abbf045e35d6f320727eaa8e611fbdf7aa9cc9def`
+  authenticates `critic-route-summary.json`; actual completed model receipt
+  `routing.json` is
+  `6a903541b7224e858fb306362edd45bf7d11736ff7e4e378591c1af6c133e8ae`,
+  requested/returned `gpt-daybreak-blue-latest` / `daybreakBlue`, errors `[]`,
+  `turnError: null`. This is only a path-label correction.
+
+- COVERAGE/SCOPE — HELD. Release-only roadmap/task/cache hunks were directly
+  checked or waived as generated/declarative; no behavioral product hunk is
+  unexecuted. This verifies bounded durable storage only. F/G/H/C/D, T23/T24,
+  installed-runtime admission, whole-history replay, full Linux/Omarchy and
+  performance remain unclaimed. PR #609 is OPEN/draft without auto-merge; all
+  32 recorded stack PRs are OPEN, unmerged and unqueued; Actions is disabled.
+
+All four acceptance criteria hold. Final report
+`target/evidence/e9-t22i-daybreak-final-publication/report.json`, SHA-256
+`7c9d17325054ffb5ec34975f3e3f0d791a3e690fae16b0d982ed154c425fa8d6`;
+Markdown report SHA-256
+`30fcaa8da637acfe9bcd6b5c94da9816d522ed9ce392cad52739f18a954586d8`.
+SUITE: retain the existing permanent Rust/browser/oracle tests and labelled
+failed/development evidence; no new promotion was required.
