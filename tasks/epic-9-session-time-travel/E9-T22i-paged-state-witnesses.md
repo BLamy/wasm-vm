@@ -3,7 +3,7 @@ id: E9-T22i
 epic: 9
 title: Commit long exact histories with bounded durable witness pages
 priority: 524.9220215
-status: pending
+status: in-progress
 depends_on: [E9-T22e]
 estimate: S
 risk: high
@@ -74,3 +74,38 @@ witness-capacity directory (the report's command examples accidentally use
 the prior capacity directory in several places; routing records the correct
 executed commands). This is a concrete format-boundary prerequisite after E
 and before F, outside medium-risk C. All PRs remain open/unmerged/unqueued.
+
+
+### 2026-10-23 — worker — activate the witness commitment boundary
+
+E9-T22e is independently verified at
+`e52219ad5bbf70531f7237a0e72d187573e726a5`, pushed to open draft PR #608.
+Actual main release `13ba6e20e79dce8c1d4fa800c7950629f0c28ceb`, deployment
+`9eb734fc`, is live at <https://wasm-vm.pages.dev/app>. The NEW actual
+Daybreak final-publication report is
+`target/evidence/e9-t22e-daybreak-final-publication/report.json`, SHA-256
+`add71ca57c9da025140e849f744e084472cf75d009399624d1983e49d5956415`;
+requested/returned `gpt-daybreak-blue-latest`, `daybreakBlue`, completed,
+no errors or fallback. It independently authenticated 22 main GETs and
+seven exact R2 HEADs and carried the source-bound local/cold charter.
+All 31 existing native stacked PRs stay open, draft, unmerged and unqueued;
+Actions is disabled. This task alone now occupies the active lane.
+
+Continue on native branch `codex/e9-paged-state-witnesses`. Risk is high for
+versioned persistence/identity/reference closure. Implement one atomic
+commitment boundary across native/Wasm metadata validation, durable
+publication, closure/GC and archive inventory. Keep existing v1 semantics,
+8192-byte extensions, manifest/session/retention caps, original assets, 50M
+checkpoint gap and all downstream workload/performance budgets. A new
+reference-bearing feature must make unsupported old clients fail before
+cleanup rather than omit its references. Reader/executor integration remains
+F/G/H; do not imply completed whole-history replay or desktop qualification.
+
+The current native publication codec allows immutable extensions or one v1
+completion list only; reference discovery does not yet inspect extensions.
+The new format must authenticate all bounded pages and exact previous
+prefixes, retain every required state/checkpoint witness and preserve old
+roots under failed publication, GC and transfer inventory. At least 130
+actual native witnesses must be recorded and independently decoded; generated
+coordinates or an endpoints-only list cannot substitute. The planned
+acceptance command is still not implemented or passing.
