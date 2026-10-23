@@ -275,3 +275,45 @@ sealed primary/cold files; Git-blob authentication for both 55-source lists; car
 raw wall diagnostic/failure scans; compact `jq` inspection of journal/oracle/GPU/store/demo and
 novel/sabotage anchors; exact source-range and sparse-projection comparison. No broad suite,
 browser run, cold clone, remote request, deployment, implementation edit or test mutation was run.
+
+
+### 2026-10-23 — worker — exact main publication proof
+
+Release `13ba6e20e79dce8c1d4fa800c7950629f0c28ceb` is deployed to production project
+`wasm-vm`, branch `main`, deployment `9eb734fc`, at
+<https://wasm-vm.pages.dev/app>. All seven unchanged large R2 artifacts were
+rehash-verified before Pages publication. The release changed only the
+independently-held capability status/evidence, generated task catalog and
+service-worker stamp; main/journal/probe/GPU stamp and both Wasm binaries
+remain byte-identical to the pristine proof. PR #608 remains draft/open,
+all 31 stacked PRs remain unmerged/unqueued, and Actions is disabled.
+
+The complete main-only asset audit authenticates 121 files, including all
+74 runtime members, changed deployables, new fixtures and deployed five
+R2-rewritten artifact manifests. The actual public app passed 127/0, both
+real native recording cases, both live pips, coordinated controls and
+desktop/390-pixel layout. Both final native digests, receipt counts,
+envelope bytes and actual Wasm/renderer hashes exactly match cold evidence.
+There are no unexpected console/HTTP errors. The one root favicon.ico404
+is explicitly allowed by AGENTS.md and retained with its exact URL/text.
+
+The initial immediate asset audit failed on one HTTP404, with no failing
+URL retained by its parallel collector. A fresh complete main-only audit
+then passed all 121 identical path/hash/status checks; only evidence error
+reporting was enhanced. A separate first public browser run passed every
+functional assertion but failed its strict console check on the permitted
+favicon404. The trace identifies that exact favicon URL. The fresh public
+harness retains that one exception and continues to reject every other
+console/page/HTTP error. Both failures and original executed scripts remain
+unaltered; no product source change or second deployment was needed.
+
+Publication completion receipt: `target/evidence/e9-t22e-production-release-completion-1/receipt.json`,
+SHA-256 `7f5413fc32fb8bcf53f371d494e08621ea9743a6616e395393aae8b706574299`.
+
+- `target/evidence/e9-t22e-production-release-public-recheck-1/report.json` SHA-256 `f7db1e1e03110ab685202b73b4d0bd60da333fa89d110f4ad901a619f4ef0ff0`.
+- `target/evidence/e9-t22e-production-release-public-demo-2/report.json` SHA-256 `49a90243015ccf3181aab358399c77669c222bc2a5d33713e4b06510bd31ebf2`.
+
+The checkout was restored clean after exactly the five allowed staging
+manifest rewrites. A NEW actual Daybreak final-publication verifier must
+independently inspect the main path and carry unchanged local results before
+setting this task verified. All downstream Epic 9 tasks remain required.
