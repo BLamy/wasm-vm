@@ -3,7 +3,7 @@ id: E9-T22e
 epic: 9
 title: Publish long GPU histories through bounded resident windows
 priority: 524.922021
-status: in-progress
+status: implemented
 depends_on: [E9-T22b]
 estimate: S
 risk: high
@@ -158,3 +158,61 @@ Space cleanup is user-authorized and recorded separately: completed compiler
 intermediates only, plus byte-verified historical duplicate corpus copies.
 No unique raw evidence, active source, current build or release is deleted.
 This evidence/harness response does not change the submitted runtime.
+
+
+### 2026-10-23 — worker — frozen high-risk submission complete
+
+Implementation/runtime remains frozen at
+`9835e6e1451b1dde2efccf1b7e5d7a6bcbabdfa2`; the final accepted harness/source
+head is `03ce37a31f740a0b7d18a60d7461425c5848cc86`. The recovered primary
+submission passed all 22 command gates, carrying exactly 15 earlier successful
+gates only after source/evidence authentication. The interrupted browser gate
+and all subsequent gates ran anew. The fresh no-hardlinks, source-complete
+pristine clone ran all 25 direct gates afresh, with no resumed prefix, scrubbed
+Rust/Cargo environment and a clean final checkout. Previous ENOSPC captures
+and the unfinished first-cold report remain explicitly non-passing evidence.
+
+Commands: `python3 -B tools/verify/e9-gpu-journal-stream.py --output
+target/evidence/e9-t22e-final-submission-2 --resume
+target/evidence/e9-t22e-final-submission-1`; and `python3 -B
+tools/verify/e9-gpu-journal-stream.py --output
+target/evidence/e9-t22e-cold-submission-2 --cold-clone
+/Users/blamy/Documents/Codex/.e9-t22e-cold-03ce37a31`. The full local wall is
+recorded once in the primary. Raw `make ci` stopped on exactly the same five
+historical quarantined zicsr-stub dead-code diagnostics; the exact narrow
+waiver and the entire remaining local native/Wasm/features/RISC-V/determinism/
+performance-smoke wall passed. Strict production and affected-target Clippy
+passed without that waiver. This is not an unqualified raw make-ci exit zero.
+
+The recorded production GPU machine executed two literal small RISC-V guests: the
+count history retains 4,359 receipts including 4,100 native UART offers; the
+byte history retains 260 receipts including 256 distinct native 256 KiB block
+completions, totaling 67,125,819 envelope bytes. The independent parser
+authenticates 380 physical chunks and 346 logical objects, all rows and
+references, initial/final bindings and both complete native/RAM commitments.
+Intervals peak at 2,311 rows / 33,562,910 bytes. The nonempty publication-abort
+case preserves 1 row / 1 byte, native/RAM/manifest prefix and revision 25;
+successful retry alone resets both counters. Existing guard, ownership,
+quota/crash/race and real physical-GPU replay tests pass. The built demo is
+127/0 with no console/HTTP errors, live pips, coordinated controls and
+desktop/390-pixel captures with no horizontal overflow.
+
+Fresh actual Daybreak evidence-only charter held P1-P15 with no failed
+prediction or runtime contradiction. Its novel forced-failure/double-dispatch
+UI attack confirms a single probe call, regressed pips, restored controls and
+testHooks-only exposure. The source-sealed oracle passes original evidence,
+rejects a valid-JSON tail-row mutation and corrupt/missing tail content, and
+returns identical passing digests after restoration. It retains the permanent
+verify target, independent oracle and GPU/store regressions. Its P16 remains
+nonterminal: it deliberately did not inspect the then-running wall or actual
+main site. A NEW fresh Daybreak gate-closure reviewer must bind the now-frozen
+wall and carry unchanged local results; a later main-publication reviewer must
+close the remote gap. Only the verifier may set verified. No original Linux/
+Omarchy qualification, whole-history read/replay, performance or Epic 9
+completion is claimed by this storage boundary.
+
+- `target/evidence/e9-t22e-final-submission-2/report.json` SHA-256 `999bacd3fbadabeddb1d9efeb91ae6cb71ab5e781d7db7a403ec3632c653566c`.
+- `target/evidence/e9-t22e-final-submission-2/gauntlet/report.json` SHA-256 `9888c001ac69f3a1cd147f8974cbe0c8c0058d11cc024a8dc168323f588104b4`.
+- `target/evidence/e9-t22e-cold-submission-2/report.json` SHA-256 `40a10d5efc9bd30472bb303e1a292979c1ae91edff49f35b75eda1d8c9109e20`.
+- `target/evidence/e9-t22e-daybreak-full-charter/report.json` SHA-256 `30a51d650192f11e2d3588d64d473035c748c387ba9241ae498388573b983459`.
+- `target/evidence/e9-t22e-daybreak-full-charter/routing.json` SHA-256 `4084f30a40170067cc5499e575e0566836034e5075467498fa3ed7b2ef7d6b02`.
