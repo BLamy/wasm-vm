@@ -1023,6 +1023,12 @@
         <div class="session-actions"><button id="session-replay-run" type="button" disabled>Check saved-session replay</button></div>
         <p id="session-replay-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
       </details>
+      <details id="streamed-replay-panel" class="session-library">
+        <summary><span id="streamed-replay-pip" class="cap-pip in-progress" aria-hidden="true"></span> Streamed exact replay check</summary>
+        <p class="session-note">Replay a short Linux run through two bounded windows on one private machine. This checks the native state, pending input, and rejection of stale or malformed handoffs. The long GPU history is qualified separately.</p>
+        <div class="session-actions"><button id="streamed-replay-run" type="button" disabled>Check replay handoff</button></div>
+        <p id="streamed-replay-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
       <details id="session-keyframe-panel" class="session-library">
         <summary><span id="session-keyframe-pip" class="cap-pip in-progress" aria-hidden="true"></span> Incremental keyframe check</summary>
         <p class="session-note">Capture two RAM deltas from the pinned Linux guest, restore a fresh private machine, and check ancestor loss and shared retention.</p>

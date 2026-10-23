@@ -76,6 +76,7 @@ struct History {
     mid_position: SessionPosition,
     final_bytes: Vec<u8>,
     branch_point: Option<StateWitness>,
+    original_trace: String,
 }
 fn history() -> History {
     history_with_unused_cursor(false)
@@ -84,6 +85,14 @@ fn history_with_unused_cursor(unused_cursor: bool) -> History {
     history_with_branch(unused_cursor, false)
 }
 fn history_with_branch(unused_cursor: bool, branch: bool) -> History {
+    history_with_extra(unused_cursor, branch, 0, 0).0
+}
+fn history_with_extra(
+    unused_cursor: bool,
+    branch: bool,
+    extra_count: usize,
+    extra_bytes: usize,
+) -> (History, Option<StateWitness>) {
     let mut rig = Rig::with_owned_devices(64, None, false, 0, None, branch);
     let begin = state(&mut rig);
     let initial = rig.machine.save_gpu_result_resume(&RENDERER).unwrap();
@@ -142,6 +151,35 @@ fn history_with_branch(unused_cursor: bool, branch: bool) -> History {
     let ram_digest = rig.machine.snapshot().mem_digest;
     rig.done();
     rig.check(&final_bytes, 0x1100);
+    let mut events = batch.events;
+    let mut stream_mid = None;
+    for index in 0..extra_count {
+        let transition = rig.pos().transition;
+        let mut bytes = vec![index as u8; extra_bytes];
+        if extra_bytes >= 8 {
+            bytes[..8].copy_from_slice(&(index as u64).to_le_bytes());
+        }
+        rig.machine
+            .stage_session_effect(transition, SessionEffect::HostInput { channel: 1, bytes })
+            .unwrap();
+        rig.machine
+            .deliver_session_host_boundary(|_, channel, bytes| {
+                assert_eq!(channel, 1);
+                [0, bytes.len() as u64, 0, 0]
+            })
+            .unwrap();
+        if (index + 1) % 8 == 0 {
+            let drained = rig.machine.take_session_gpu_recording().unwrap();
+            assert!(drained.payloads.is_empty());
+            events.extend(drained.events);
+        }
+        if index + 1 == extra_count / 2 {
+            stream_mid = Some(state(&mut rig));
+        }
+        if index + 1 < extra_count {
+            rig.until(transition + 1, 1);
+        }
+    }
     let branch_point = branch.then(|| state(&mut rig));
     if let Some(point) = branch_point {
         rig.until(point.position.transition + 5, 3);
@@ -161,29 +199,35 @@ fn history_with_branch(unused_cursor: bool, branch: bool) -> History {
     if branch {
         branch_evidence(&mut rig, "parent-recorded");
     }
-    let mut events = batch.events;
     events.extend(rig.machine.take_session_gpu_recording().unwrap().events);
     let mut witnesses = vec![begin, before_physical];
+    if let Some(point) = stream_mid {
+        witnesses.push(point);
+    }
     if let Some(point) = branch_point {
         witnesses.push(point);
     }
     witnesses.push(end);
-    History {
-        plan: ReplayPlan {
-            begin: begin.position,
-            end: end.position,
-            initial_resume: initial,
-            events,
-            witnesses,
+    (
+        History {
+            plan: ReplayPlan {
+                begin: begin.position,
+                end: end.position,
+                initial_resume: initial,
+                events,
+                witnesses,
+            },
+            payloads: batch.payloads,
+            mid,
+            nonram,
+            ram_digest,
+            mid_position,
+            final_bytes,
+            branch_point,
+            original_trace: rig.trace.canonical(),
         },
-        payloads: batch.payloads,
-        mid,
-        nonram,
-        ram_digest,
-        mid_position,
-        final_bytes,
-        branch_point,
-    }
+        stream_mid,
+    )
 }
 fn config(payloads: Vec<Payload>) -> GpuReplayConfig {
     GpuReplayConfig {
@@ -191,6 +235,252 @@ fn config(payloads: Vec<Payload>) -> GpuReplayConfig {
         ram_digest: None,
         payloads,
     }
+}
+
+fn config_for(events: &[SessionDelivery], payloads: &[Payload]) -> GpuReplayConfig {
+    let required: Vec<_> = events
+        .iter()
+        .filter_map(|event| match &event.effect {
+            SessionEffect::HostInput {
+                channel: session_gpu::CHANNEL,
+                bytes,
+            } => match GpuResult::decode(bytes).unwrap().kind {
+                ResultKind::Scatter { payload, .. } => Some(payload),
+                _ => None,
+            },
+            _ => None,
+        })
+        .collect();
+    config(
+        payloads
+            .iter()
+            .filter(|payload| required.contains(&payload.reference))
+            .cloned()
+            .collect(),
+    )
+}
+
+#[test]
+fn session_replay_streamed_initial_to_end_gpu_pending_fence() {
+    let history = history();
+    let first_witness = history.plan.witnesses[0];
+    let mid_witness = history.plan.witnesses[1];
+    let final_witness = *history.plan.witnesses.last().unwrap();
+    let split = history
+        .plan
+        .events
+        .partition_point(|event| event.position.sequence <= mid_witness.position.sequence);
+    let first = ReplayPlan {
+        begin: first_witness.position,
+        end: mid_witness.position,
+        initial_resume: history.plan.initial_resume.clone(),
+        events: history.plan.events[..split].to_vec(),
+        witnesses: vec![first_witness, mid_witness],
+    };
+    let second = ReplayPlan {
+        begin: mid_witness.position,
+        end: final_witness.position,
+        initial_resume: vec![],
+        events: history.plan.events[split..].to_vec(),
+        witnesses: vec![mid_witness, final_witness],
+    };
+    first.validate().unwrap();
+    second.validate_continuation().unwrap();
+    let mut rig = fresh(64);
+    let mut driver = ReplayDriver::start_gpu(
+        &mut rig.machine,
+        first.clone(),
+        config_for(&first.events, &history.payloads),
+    )
+    .unwrap();
+    let mut exchange = 1;
+    drive_to_with_exchange(&mut rig, &mut driver, first.end, 0, Ok(()), &mut exchange).unwrap();
+    let frontier = driver.frontier(&mut rig.machine).unwrap();
+    assert_eq!(frontier.position, mid_witness.position);
+    assert_eq!(frontier.state_sha256, mid_witness.resume_sha256);
+    assert_eq!(frontier.renderer_digest, Some(RENDERER));
+    assert!(frontier.gpu_cursor.is_some());
+    driver
+        .continue_gpu_window(
+            &mut rig.machine,
+            frontier,
+            second.clone(),
+            config_for(&second.events, &history.payloads),
+        )
+        .unwrap();
+    drive_to_with_exchange(&mut rig, &mut driver, second.end, 0, Ok(()), &mut exchange).unwrap();
+    assert_eq!(driver.status(), ReplayStatus::Completed);
+    assert_eq!(driver.event_cursor(), history.plan.events.len());
+    assert_eq!(state(&mut rig), final_witness);
+    rig.check(&history.final_bytes, 0x1100);
+}
+
+#[test]
+fn session_replay_streamed_gpu_rejects_stale_cursor_and_renderer_before_work() {
+    let history = history();
+    let middle = history.plan.witnesses[1];
+    let split = history
+        .plan
+        .events
+        .partition_point(|event| event.position.sequence <= middle.position.sequence);
+    let first = ReplayPlan {
+        begin: history.plan.begin,
+        end: middle.position,
+        initial_resume: history.plan.initial_resume.clone(),
+        events: history.plan.events[..split].to_vec(),
+        witnesses: history.plan.witnesses[..=1].to_vec(),
+    };
+    let second = ReplayPlan {
+        begin: middle.position,
+        end: history.plan.end,
+        initial_resume: vec![],
+        events: history.plan.events[split..].to_vec(),
+        witnesses: history.plan.witnesses[1..].to_vec(),
+    };
+    for wrong_cursor in [true, false] {
+        let mut rig = fresh(64);
+        let mut driver = ReplayDriver::start_gpu(
+            &mut rig.machine,
+            first.clone(),
+            config_for(&first.events, &history.payloads),
+        )
+        .unwrap();
+        drive_to(&mut rig, &mut driver, first.end, 0, Ok(())).unwrap();
+        let mut frontier = driver.frontier(&mut rig.machine).unwrap();
+        let before = rig.machine.gpu_session_state_witness_bytes().unwrap();
+        let mut next = config_for(&second.events, &history.payloads);
+        if wrong_cursor {
+            frontier.gpu_cursor = frontier.gpu_cursor.map(|cursor| cursor + 1);
+        } else {
+            next.renderer_digest = [99; 32];
+        }
+        let error = driver
+            .continue_gpu_window(&mut rig.machine, frontier, second.clone(), next)
+            .unwrap_err();
+        assert_eq!(error.reason, ReplayReason::InvalidPlan);
+        assert_eq!(driver.status(), ReplayStatus::Diverged);
+        assert_eq!(
+            rig.machine.gpu_session_state_witness_bytes().unwrap(),
+            before
+        );
+    }
+}
+
+fn replay_long_gpu_history(extra_count: usize, extra_bytes: usize) {
+    let (history, middle) = history_with_extra(false, false, extra_count, extra_bytes);
+    let middle = middle.unwrap();
+    assert!(
+        history.plan.events.len() > wasm_vm_core::session_replay::MAX_REPLAY_EVENTS
+            || extra_count * extra_bytes > wasm_vm_core::session_replay::MAX_REPLAY_BYTES
+    );
+    let split = history
+        .plan
+        .events
+        .partition_point(|event| event.position.sequence <= middle.position.sequence);
+    let first = ReplayPlan {
+        begin: history.plan.begin,
+        end: middle.position,
+        initial_resume: history.plan.initial_resume.clone(),
+        events: history.plan.events[..split].to_vec(),
+        witnesses: history
+            .plan
+            .witnesses
+            .iter()
+            .copied()
+            .filter(|witness| witness.position.sequence <= middle.position.sequence)
+            .collect(),
+    };
+    let second = ReplayPlan {
+        begin: middle.position,
+        end: history.plan.end,
+        initial_resume: vec![],
+        events: history.plan.events[split..].to_vec(),
+        witnesses: history
+            .plan
+            .witnesses
+            .iter()
+            .copied()
+            .filter(|witness| witness.position.sequence >= middle.position.sequence)
+            .collect(),
+    };
+    first.validate().unwrap();
+    second.validate_continuation().unwrap();
+    assert!(first.events.len() <= wasm_vm_core::session_replay::MAX_REPLAY_EVENTS);
+    assert!(second.events.len() <= wasm_vm_core::session_replay::MAX_REPLAY_EVENTS);
+    let mut rig = fresh(64);
+    let mut driver = ReplayDriver::start_gpu(
+        &mut rig.machine,
+        first.clone(),
+        config_for(&first.events, &history.payloads),
+    )
+    .unwrap();
+    let mut exchange = 1;
+    drive_to_with_exchange(&mut rig, &mut driver, first.end, 0, Ok(()), &mut exchange).unwrap();
+    let frontier = driver.frontier(&mut rig.machine).unwrap();
+    assert_eq!(frontier.state_sha256, middle.resume_sha256);
+    assert_eq!(frontier.event_cursor, first.events.len());
+    driver
+        .continue_gpu_window(
+            &mut rig.machine,
+            frontier,
+            second.clone(),
+            config_for(&second.events, &history.payloads),
+        )
+        .unwrap();
+    drive_to_with_exchange(&mut rig, &mut driver, second.end, 0, Ok(()), &mut exchange).unwrap();
+    assert_eq!(driver.status(), ReplayStatus::Completed);
+    assert_eq!(driver.event_cursor(), history.plan.events.len());
+    assert_eq!(state(&mut rig), *history.plan.witnesses.last().unwrap());
+    rig.check(&history.final_bytes, 0x1100);
+    if let Ok(root) = std::env::var("E9_STREAMED_EVIDENCE") {
+        let case = if extra_count > wasm_vm_core::session_replay::MAX_REPLAY_EVENTS {
+            "gpu-event-count"
+        } else {
+            "gpu-body-bytes"
+        };
+        let directory = std::path::Path::new(&root).join(case);
+        std::fs::create_dir_all(&directory).unwrap();
+        std::fs::write(
+            directory.join("original.guest-trace"),
+            &history.original_trace,
+        )
+        .unwrap();
+        std::fs::write(
+            directory.join("final.logical-state"),
+            rig.machine.gpu_session_state_witness_bytes().unwrap(),
+        )
+        .unwrap();
+        std::fs::write(
+            directory.join("final.ram"),
+            rig.machine.bus_mut().ram().as_bytes(),
+        )
+        .unwrap();
+        std::fs::write(
+            directory.join("frontiers.json"),
+            format!(
+                "{{\"middle\":{{\"transition\":\"{}\",\"sequence\":\"{}\",\"stateSha256\":\"{}\",\"eventCursor\":{}}},\"final\":{{\"transition\":\"{}\",\"sequence\":\"{}\",\"stateSha256\":\"{}\",\"eventCursor\":{}}}}}\n",
+                frontier.position.transition,
+                frontier.position.sequence,
+                hex(&frontier.state_sha256),
+                frontier.event_cursor,
+                history.plan.end.transition,
+                history.plan.end.sequence,
+                hex(&history.plan.witnesses.last().unwrap().resume_sha256),
+                driver.event_cursor(),
+            ),
+        )
+        .unwrap();
+    }
+}
+
+#[test]
+fn session_replay_streamed_initial_to_end_gpu_event_count() {
+    replay_long_gpu_history(wasm_vm_core::session_replay::MAX_REPLAY_EVENTS + 263, 1);
+}
+
+#[test]
+fn session_replay_streamed_initial_to_end_gpu_body_bytes() {
+    replay_long_gpu_history(260, 262_144);
 }
 fn branch_rig(record: bool) -> Rig {
     let mut machine = Machine::new(64 + 1024 * 1024);
@@ -389,9 +679,20 @@ fn drive_to(
     outcome: Result<(), E>,
 ) -> Result<(), wasm_vm_core::session_replay::ReplayDivergence> {
     let mut exchange = 1;
+    drive_to_with_exchange(rig, driver, target, delay, outcome, &mut exchange)
+}
+fn drive_to_with_exchange(
+    rig: &mut Rig,
+    driver: &mut ReplayDriver,
+    target: SessionPosition,
+    delay: usize,
+    outcome: Result<(), E>,
+    exchange: &mut u64,
+) -> Result<(), wasm_vm_core::session_replay::ReplayDivergence> {
     for turn in 0..4000 {
-        let reached = driver.run_chunk_to(&mut rig.machine, target, 3, |_, _, _| {
-            panic!("no live input")
+        let reached = driver.run_chunk_to(&mut rig.machine, target, 3, |_, channel, bytes| {
+            assert_eq!(channel, 1, "no live input or provider callback");
+            [0, bytes.len() as u64, 0, 0]
         })?;
         if reached {
             return Ok(());
@@ -399,8 +700,8 @@ fn drive_to(
         if turn < delay || rig.host.borrow().jobs.is_empty() {
             continue;
         }
-        if exchange <= 2 {
-            let e = rig.exchange(exchange);
+        if *exchange <= 2 {
+            let e = rig.exchange(*exchange);
             rig.host
                 .borrow()
                 .leases
@@ -411,24 +712,24 @@ fn drive_to(
             let output = [0xa7; 64];
             match rig.machine.replay_session_gpu_transport(
                 &e,
-                (exchange == 2).then_some(output.as_slice()),
+                (*exchange == 2).then_some(output.as_slice()),
                 None,
             ) {
                 Ok(bytes) => {
-                    if exchange == 1 {
+                    if *exchange == 1 {
                         assert_eq!(bytes, vec![0x6d; 64]);
                     } else {
                         assert!(bytes.is_empty());
                     }
-                    exchange += 1;
+                    *exchange += 1;
                 }
                 Err(GpuError::PhysicalPending) => {}
                 error => panic!("physical receipt: {error:?}"),
             }
         }
-        if exchange == 3 {
+        if *exchange == 3 {
             rig.post(rig.completion(outcome, 2)).unwrap();
-            exchange = 4;
+            *exchange = 4;
         }
     }
     panic!("bounded driver failed to settle")

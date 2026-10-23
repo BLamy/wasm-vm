@@ -252,6 +252,12 @@ impl ObservationHub {
     pub fn replay(&self) -> bool {
         self.active() && self.replay
     }
+    /// A completed replay window may admit more observations only from this exact cursor.
+    /// The remaining queue must be empty before a new window can be considered.
+    pub(crate) fn replay_frontier(&self) -> Option<(u64, Option<SessionPosition>)> {
+        (self.replay() && self.error.is_none() && self.remaining.is_empty() && self.scope.is_none())
+            .then_some((self.consumed, self.last_loaded))
+    }
     pub fn policy(&self) -> Option<SourcePolicy> {
         self.policy
     }

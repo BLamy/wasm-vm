@@ -64,6 +64,15 @@ pub struct ReplayDivergence {
 
 impl ReplayPlan {
     pub fn validate(&self) -> Result<(), ReplayDivergence> {
+        self.validate_inner(true)
+    }
+
+    /// Later windows resume the already admitted machine and must not carry another snapshot.
+    pub fn validate_continuation(&self) -> Result<(), ReplayDivergence> {
+        self.validate_inner(false)
+    }
+
+    fn validate_inner(&self, initial: bool) -> Result<(), ReplayDivergence> {
         let fail = |detail: &'static str| ReplayDivergence {
             reason: ReplayReason::InvalidPlan,
             position: self.begin,
@@ -76,7 +85,10 @@ impl ReplayPlan {
             || self.begin.sequence > self.end.sequence
             || self.begin.retired > self.begin.transition
             || self.end.retired > self.end.transition
-            || self.initial_resume.is_empty()
+            || (initial && self.initial_resume.is_empty())
+            || (!initial
+                && (!self.initial_resume.is_empty()
+                    || coordinate(self.begin) >= coordinate(self.end)))
             || self.initial_resume.len() > MAX_INITIAL_BYTES
             || self.events.len() > MAX_REPLAY_EVENTS
             || self.witnesses.is_empty()
@@ -208,8 +220,25 @@ pub enum ReplayStatus {
     Diverged,
 }
 
+/// Exact end of one admitted window. A later window must name this whole predecessor before
+/// changing the machine's source tape or replay limit. The state digest covers the native
+/// machine; the browser binding separately checks its pending/output byte queues.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ReplayFrontier {
+    pub position: SessionPosition,
+    pub state_sha256: [u8; 32],
+    pub event_cursor: usize,
+    pub source_cursor: u64,
+    pub source_last_loaded: Option<SessionPosition>,
+    pub device_cursor: Option<u64>,
+    pub network_cursor: Option<u64>,
+    pub gpu_cursor: Option<u64>,
+    pub renderer_digest: Option<[u8; 32]>,
+}
+
 pub struct ReplayDriver {
     plan: ReplayPlan,
+    completed_events: usize,
     event_cursor: usize,
     witness_cursor: usize,
     status: ReplayStatus,
@@ -467,6 +496,7 @@ impl ReplayDriver {
         let source_loaded = source_chunks[0].records.len();
         let mut driver = Self {
             plan,
+            completed_events: 0,
             event_cursor: 0,
             witness_cursor: 0,
             status: ReplayStatus::Ready,
@@ -671,10 +701,314 @@ impl ReplayDriver {
         self.first_failure.as_ref()
     }
     pub fn event_cursor(&self) -> usize {
-        self.event_cursor
+        self.completed_events + self.event_cursor
     }
     pub fn end(&self) -> SessionPosition {
         self.plan.end
+    }
+
+    /// Poison a completed candidate when its browser-owned predecessor or host queues differ.
+    /// The next window can never execute after an admission failure.
+    pub fn reject_continuation(
+        &mut self,
+        machine: &Machine,
+        detail: &'static str,
+    ) -> ReplayDivergence {
+        self.failure(machine, ReplayReason::InvalidPlan, detail.into())
+    }
+
+    /// Authenticate the quiescent predecessor after one bounded plan has fully executed.
+    /// This reads the *current* machine rather than trusting a returned browser caption.
+    pub fn frontier(&mut self, machine: &mut Machine) -> Result<ReplayFrontier, ReplayDivergence> {
+        if self.status != ReplayStatus::Completed
+            || self.event_cursor != self.plan.events.len()
+            || self.witness_cursor != self.plan.witnesses.len()
+            || machine.session_position() != Some(self.plan.end)
+            || machine.host_ingress_gate.allows_host()
+        {
+            return Err(self.failure(
+                machine,
+                ReplayReason::InvalidPlan,
+                "replay predecessor is not complete and private".into(),
+            ));
+        }
+        let expected = self.plan.witnesses.last().unwrap().resume_sha256;
+        #[cfg(feature = "virgl-renderer")]
+        let actual = if self.gpu.is_some() {
+            machine.gpu_session_state_digest()
+        } else {
+            machine
+                .save_session_resume()
+                .map(|bytes| Sha256::digest(&bytes).into())
+        };
+        #[cfg(not(feature = "virgl-renderer"))]
+        let actual = machine
+            .save_session_resume()
+            .map(|bytes| Sha256::digest(&bytes).into());
+        let actual = actual.map_err(|e| {
+            self.failure(
+                machine,
+                ReplayReason::Runtime,
+                alloc::format!("predecessor state: {e:?}"),
+            )
+        })?;
+        if actual != expected {
+            return Err(self.failure(
+                machine,
+                ReplayReason::StateDigest,
+                "predecessor state witness differs".into(),
+            ));
+        }
+        let source = { machine.session_sources.borrow().replay_frontier() };
+        let Some((source_cursor, source_last_loaded)) = source else {
+            return Err(self.failure(
+                machine,
+                ReplayReason::Exhausted,
+                "predecessor source is not fully consumed".into(),
+            ));
+        };
+        let device_cursor = if let Some(expected) = self.expected_device_cursor {
+            let actual = machine.session_device_cursor().map_err(|e| {
+                self.failure(
+                    machine,
+                    ReplayReason::Runtime,
+                    alloc::format!("predecessor device cursor: {e:?}"),
+                )
+            })?;
+            if actual != expected {
+                return Err(self.failure(
+                    machine,
+                    ReplayReason::Exhausted,
+                    "predecessor device cursor differs".into(),
+                ));
+            }
+            Some(actual)
+        } else {
+            None
+        };
+        let network_cursor = if let Some(expected) = self.expected_network_cursor {
+            let actual = machine.session_network_cursor().map_err(|e| {
+                self.failure(
+                    machine,
+                    ReplayReason::Runtime,
+                    alloc::format!("predecessor network cursor: {e:?}"),
+                )
+            })?;
+            if actual != expected {
+                return Err(self.failure(
+                    machine,
+                    ReplayReason::Exhausted,
+                    "predecessor network cursor differs".into(),
+                ));
+            }
+            Some(actual)
+        } else {
+            None
+        };
+        #[cfg(feature = "virgl-renderer")]
+        let (gpu_cursor, renderer_digest) = if let Some(gpu) = &self.gpu {
+            let expected = gpu.expected_cursor;
+            let renderer_digest = gpu.renderer_digest;
+            let actual = machine.session_gpu_cursor().map_err(|e| {
+                self.failure(
+                    machine,
+                    ReplayReason::Runtime,
+                    alloc::format!("predecessor GPU cursor: {e:?}"),
+                )
+            })?;
+            if expected != Some(actual) {
+                return Err(self.failure(
+                    machine,
+                    ReplayReason::Exhausted,
+                    "predecessor GPU cursor differs".into(),
+                ));
+            }
+            (Some(actual), Some(renderer_digest))
+        } else {
+            (None, None)
+        };
+        #[cfg(not(feature = "virgl-renderer"))]
+        let (gpu_cursor, renderer_digest) = (None, None);
+        Ok(ReplayFrontier {
+            position: self.plan.end,
+            state_sha256: actual,
+            event_cursor: self.event_cursor(),
+            source_cursor,
+            source_last_loaded,
+            device_cursor,
+            network_cursor,
+            gpu_cursor,
+            renderer_digest,
+        })
+    }
+
+    /// Admit a new bounded plan on the same private machine. Every check, including a fresh
+    /// native witness, finishes before the first observation tape or guest transition changes.
+    pub fn continue_window(
+        &mut self,
+        machine: &mut Machine,
+        predecessor: ReplayFrontier,
+        plan: ReplayPlan,
+    ) -> Result<(), ReplayDivergence> {
+        self.continue_inner(
+            machine,
+            predecessor,
+            plan,
+            #[cfg(feature = "virgl-renderer")]
+            None,
+        )
+    }
+
+    #[cfg(feature = "virgl-renderer")]
+    pub fn continue_gpu_window(
+        &mut self,
+        machine: &mut Machine,
+        predecessor: ReplayFrontier,
+        plan: ReplayPlan,
+        gpu: GpuReplayConfig,
+    ) -> Result<(), ReplayDivergence> {
+        self.continue_inner(machine, predecessor, plan, Some(gpu))
+    }
+
+    fn continue_inner(
+        &mut self,
+        machine: &mut Machine,
+        predecessor: ReplayFrontier,
+        plan: ReplayPlan,
+        #[cfg(feature = "virgl-renderer")] gpu: Option<GpuReplayConfig>,
+    ) -> Result<(), ReplayDivergence> {
+        let actual = self.frontier(machine)?;
+        if predecessor != actual {
+            return Err(self.failure_at(
+                actual.position,
+                ReplayReason::InvalidPlan,
+                "wrong or stale replay predecessor".into(),
+            ));
+        }
+        plan.validate_continuation().map_err(|e| {
+            self.failure_at(
+                e.position,
+                e.reason,
+                alloc::format!("next window: {}", e.detail),
+            )
+        })?;
+        if plan.begin != actual.position
+            || plan.witnesses[0].resume_sha256 != actual.state_sha256
+            || self
+                .completed_events
+                .checked_add(self.plan.events.len())
+                .is_none()
+        {
+            return Err(self.failure_at(
+                actual.position,
+                ReplayReason::InvalidPlan,
+                "next window does not bind the exact endpoint".into(),
+            ));
+        }
+        #[cfg(feature = "virgl-renderer")]
+        let next_gpu = {
+            if self.gpu.is_some() != gpu.is_some()
+                || gpu
+                    .as_ref()
+                    .is_some_and(|next| Some(next.renderer_digest) != actual.renderer_digest)
+            {
+                return Err(self.failure_at(
+                    actual.position,
+                    ReplayReason::InvalidPlan,
+                    "next GPU window changes replay or renderer identity".into(),
+                ));
+            }
+            gpu.map(|config| GpuReplayState::new(&plan, config))
+                .transpose()
+                .map_err(|e| self.failure_at(e.position, e.reason, e.detail))?
+        };
+        let source_chunks = Self::source_tapes(&plan, machine.source_policy())
+            .map_err(|e| self.failure_at(e.position, e.reason, e.detail))?;
+        let source_loaded = source_chunks[0].records.len();
+        let count_channel = |channel| {
+            plan.events
+                .iter()
+                .filter(|e| matches!(&e.effect, SessionEffect::HostInput { channel: ch, .. } if *ch == channel))
+                .count() as u64
+        };
+        if (actual.device_cursor.is_none() && count_channel(crate::session_devices::CHANNEL) != 0)
+            || (actual.network_cursor.is_none()
+                && count_channel(crate::session_network::CHANNEL) != 0)
+        {
+            return Err(self.failure_at(
+                actual.position,
+                ReplayReason::Adapter,
+                "next window requires an absent replay adapter".into(),
+            ));
+        }
+        let device_cursor = actual
+            .device_cursor
+            .and_then(|n| n.checked_add(count_channel(crate::session_devices::CHANNEL)));
+        if actual.device_cursor.is_some() && device_cursor.is_none() {
+            return Err(self.failure_at(
+                actual.position,
+                ReplayReason::InvalidPlan,
+                "next device cursor overflow".into(),
+            ));
+        }
+        let network_cursor = actual
+            .network_cursor
+            .and_then(|n| n.checked_add(count_channel(crate::session_network::CHANNEL)));
+        if actual.network_cursor.is_some() && network_cursor.is_none() {
+            return Err(self.failure_at(
+                actual.position,
+                ReplayReason::InvalidPlan,
+                "next network cursor overflow".into(),
+            ));
+        }
+        #[cfg(feature = "virgl-renderer")]
+        let mut next_gpu = next_gpu;
+        #[cfg(feature = "virgl-renderer")]
+        if next_gpu.is_none() && count_channel(crate::session_gpu::CHANNEL) != 0 {
+            return Err(self.failure_at(
+                actual.position,
+                ReplayReason::Adapter,
+                "next window requires the GPU replay adapter".into(),
+            ));
+        }
+        #[cfg(feature = "virgl-renderer")]
+        if let Some(ref mut next) = next_gpu {
+            next.expected_cursor = actual
+                .gpu_cursor
+                .and_then(|n| n.checked_add(count_channel(crate::session_gpu::CHANNEL)));
+            if next.expected_cursor.is_none() {
+                return Err(self.failure_at(
+                    actual.position,
+                    ReplayReason::InvalidPlan,
+                    "next GPU cursor overflow".into(),
+                ));
+            }
+        }
+        machine
+            .append_recorded_session_source_replay(source_chunks[0].clone())
+            .map_err(|e| {
+                self.failure_at(
+                    actual.position,
+                    ReplayReason::InvalidPlan,
+                    alloc::format!("next source window: {e:?}"),
+                )
+            })?;
+        self.completed_events = actual.event_cursor;
+        self.plan = plan;
+        self.event_cursor = 0;
+        self.witness_cursor = 1; // the new initial witness matched the actual previous endpoint
+        self.expected_device_cursor = device_cursor;
+        self.expected_network_cursor = network_cursor;
+        self.source_chunks = source_chunks;
+        self.source_chunk_index = 0;
+        self.source_loaded = source_loaded;
+        #[cfg(feature = "virgl-renderer")]
+        {
+            self.gpu = next_gpu;
+        }
+        machine.session_replay_limit = Some(self.plan.end.transition);
+        self.status = ReplayStatus::Ready;
+        Ok(())
     }
 
     fn failure(
@@ -699,7 +1033,7 @@ impl ReplayDriver {
         let failure = ReplayDivergence {
             reason,
             position,
-            event_index: self.event_cursor,
+            event_index: self.event_cursor(),
             detail,
         };
         self.status = ReplayStatus::Diverged;
@@ -953,7 +1287,7 @@ impl ReplayDriver {
             return Err(self.first_failure.clone().unwrap_or(ReplayDivergence {
                 reason: ReplayReason::Exhausted,
                 position: machine.session_position().unwrap_or(self.plan.end),
-                event_index: self.event_cursor,
+                event_index: self.event_cursor(),
                 detail: "replay is stopped".into(),
             }));
         }
@@ -1305,6 +1639,7 @@ mod admission_tests {
 
         let driver = |cursor| ReplayDriver {
             plan: plan.clone(),
+            completed_events: 0,
             event_cursor: cursor,
             witness_cursor: 0,
             status: ReplayStatus::Ready,

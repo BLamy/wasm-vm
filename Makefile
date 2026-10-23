@@ -2832,3 +2832,7 @@ verify-E9-T22i:
 .PHONY: verify-E9-T22f
 verify-E9-T22f:
 	python3 -B tools/verify/e9-gpu-reader-stream.py --output "$${E9_OUT:-target/evidence/e9-t22f-$$(date -u +%Y%m%dT%H%M%SZ)}"
+
+.PHONY: verify-E9-T22g
+verify-E9-T22g:
+	python3 -B tools/verify/e9-streamed-replay.py --output "$${E9_OUT:-target/evidence/e9-t22g-$$(date -u +%Y%m%dT%H%M%SZ)}"
