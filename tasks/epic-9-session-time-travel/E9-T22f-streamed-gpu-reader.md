@@ -3,7 +3,7 @@ id: E9-T22f
 epic: 9
 title: Authenticate long GPU histories with bounded interval reads
 priority: 524.922022
-status: pending
+status: in-progress
 depends_on: [E9-T22i]
 estimate: S
 risk: high
@@ -54,3 +54,32 @@ the active lane after its dependencies are verified. Prospective checkpoint,
 witness-extension and storage limits are not waived; independently reproduce
 any additional blocker and give it its own ordered S boundary. All PRs remain
 open; no merge is authorized.
+
+
+### 2026-10-23 — worker — activate the bounded durable-reader boundary
+
+E9-T22i is verified at `f9b6b514284ef49305a8a6672d6fa0a08bf4a264`
+and pushed to open draft PR #609. Main source release
+`278e0bcb65481ccbccb85617b33514a7371da04e`, deployment `c19a6ac8`,
+is live at <https://wasm-vm.pages.dev/app>. A NEW actual Daybreak final
+publication critic verified all four I criteria, source/digest/cold carry,
+the full current main native witness recording, readable UI captures, 24
+main response bodies and seven exact R2 HEAD references. Final report
+`target/evidence/e9-t22i-daybreak-final-publication/report.json`, SHA-256
+`7c9d17325054ffb5ec34975f3e3f0d791a3e690fae16b0d982ed154c425fa8d6`;
+actual completed requested/returned `gpt-daybreak-blue-latest`, `daybreakBlue`,
+no errors/fallback, routing SHA-256
+`e9e92a74bb1ad2644afaf338f7dd6900409826eb798401fe79e592c0d3890218`.
+All 32 existing native PRs stay OPEN/draft/unmerged/unqueued; Actions disabled.
+
+Continue the native stack on `codex/e9-streamed-gpu-reader`. F alone enters
+the active lane, high risk for authenticated persisted history and asynchronous
+window ownership. Consume complete durable v2 pages, every event/body and
+checkpoint identity through bounded windows. Keep the required runtime/provider/
+renderer fences, old v1 reads and all manifest/extension/retention/native plan/
+body/staging bounds. Prove actual native history beyond 4096 receipts and
+64 MiB, including a corrupted middle body/chunk and stale/cancelled ownership.
+Native continuation remains G, browser execution remains H, and original
+Linux/Omarchy/workload/performance remain C/D. No later-checkpoint substitute
+for complete directory coverage, global body array or constants-only increase.
+The planned acceptance target does not exist or pass yet.
