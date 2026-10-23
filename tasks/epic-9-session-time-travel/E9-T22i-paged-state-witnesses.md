@@ -3,7 +3,7 @@ id: E9-T22i
 epic: 9
 title: Commit long exact histories with bounded durable witness pages
 priority: 524.9220215
-status: implemented
+status: evidence-needed
 depends_on: [E9-T22e]
 estimate: S
 risk: high
@@ -25,9 +25,9 @@ validate every referenced page. Reader/executor integration remains F/G/H.
 
 ## Acceptance criteria
 
-- [ ] Persist, reopen and independently authenticate a complete ordered commitment with at least 130 actual native state witnesses using bounded resident pages, exact initial/final bindings and no global witness-byte array.
-- [ ] Preserve the existing manifest/extension/session/retention limits, native replay-plan limits and v1 semantics. Bind count/order/positions/digests/page references to the immutable initial state and final endpoint; no constants-only increase or omitted checkpoint witness.
-- [ ] Reject missing/reordered/duplicated/corrupt pages, conflicting content lengths, wrong endpoints, stale publication and partial quota failure before publication/restore. GC/export/import inventory must include the complete page closure; older recordings remain intact.
+- [x] Persist, reopen and independently authenticate a complete ordered commitment with at least 130 actual native state witnesses using bounded resident pages, exact initial/final bindings and no global witness-byte array.
+- [x] Preserve the existing manifest/extension/session/retention limits, native replay-plan limits and v1 semantics. Bind count/order/positions/digests/page references to the immutable initial state and final endpoint; no constants-only increase or omitted checkpoint witness.
+- [x] Reject missing/reordered/duplicated/corrupt pages, conflicting content lengths, wrong endpoints, stale publication and partial quota failure before publication/restore. GC/export/import inventory must include the complete page closure; older recordings remain intact.
 - [ ] Complete the scoped high-risk local native/Wasm/browser gate, visible demo/main release and final pristine proof; obtain a NEW actual Daybreak critic covering every changed boundary, all attacks, one novel attack and meaningful sabotage.
 
 ## Deterministic acceptance
@@ -340,3 +340,82 @@ novel/semantic-sabotage/coverage results can be carried only where their source
 and evidence identities stay exact. Main still serves the older E release;
 publication and final independent public-path review remain required.
 Only the worker status becomes implemented here; the worker cannot verify it.
+
+
+### 2026-10-23 — actual Daybreak verifier — VERDICT: needs-evidence
+
+- P1 sealed inputs — HELD. All fourteen supplied report digests matched exactly.
+  The ce8 implementation diff rehashed to `9678ff88eb72cf086de1e5d72760a29c0ef35d9569b4c27afac3ac3f58f319c1`;
+  the repaired locale delta rehashed to
+  `0009df7d8bdb34fadf6e5e1beaedc7c9e076d22fb4e426d094406b8fbbf4a594`.
+
+- P2 incremental carry — HELD. The prior full-charter strict-schema novel attack,
+  meaningful `finished:false` semantic sabotage, authentication/old-reader
+  refusal and 55-file ledger remain held only for their unchanged source and
+  evidence identities. Forty-seven untouched files carry directly; the eight
+  touched ce8 files and two new helper files were reclassified in the new
+  coverage ledger. The sealed primary wall and pristine cold reports are now
+  passed. Raw `make ci` remains exit 2, not a pass, on exactly the five historical
+  quarantined `zicsr-stub` dead-code diagnostics; the exact narrow waiver and
+  remaining wall passed.
+
+- P3 numeric-locale repair — HELD. Independent current-head Chrome 155 resolved
+  `en-US-u-kn-true` with `numeric:true` and a real inventory divergence at index
+  zero. Production inspect/import/export/reinspect passed in ordinary and numeric
+  contexts with 130 witnesses, 335 archive objects, one exact published session,
+  zero console/external errors and identical 4,074,751-byte archive SHA-256
+  `51930e114a7992dcbc4d07be1e604e9c801a9426b4bec3cbcf27762b6e56a281`.
+  Citation: `target/evidence/e9-t22i-daybreak-gate-closure/independent-locale/report.json`,
+  SHA-256 `03c12af1ce8cec332b4522e95fd2172b2c89042e16cda50dd840c933ae56162e`.
+
+- P4 meaningful counterfactual — HELD. Fixed baseline passed; an evidence-local
+  served overlay replacing both strict lexical comparators with the exact ce8
+  `localeCompare` source failed at `session-witness-archives.js:64` with
+  `BundleMissing: missing or unreferenced archive object`, before any publication
+  and not at envelope checksum/digest validation; exact fixed restoration passed.
+  Original archive bytes stayed immutable. Citation:
+  `target/evidence/e9-t22i-daybreak-gate-closure/counterfactual-2/report.json`,
+  SHA-256 `19cab2dbfe5cd7f65ea2ad6e106024991bc6d30f7f80d93a62aab17ac4cbe579`.
+  The retained first harness attempt failed only its evidence-local database
+  namespace before the archive API and is not counted.
+
+- P5 repaired pristine boundary — HELD. The `3e8ebe071...` clone used
+  `--no-hardlinks`, the source-complete sparse projection, scrubbed Rust/CARGO
+  environment, no initial target/node_modules and a fresh browser/Wasm build.
+  All 18 runtime source/dist pairs rehashed; only the corrected archive module
+  differs from ce8. The immutable ce8 archive is explicitly reused as old native
+  recording input, not relabelled as new guest execution or installed-runtime
+  admission. Locale-cold parent SHA-256
+  `2219c40625f25d339acd4e6ea27b9f7ce6748bb4757a905aa3a33c108f13e779`;
+  locale child SHA-256
+  `d18df573a65756a44da09dfd1a9b8244a61cf03b046432d0520e69f6189a27b6`.
+
+- COVERAGE — HELD locally. Both comparator hunks and both new helper files
+  executed. The main acceptance route/copy/invoke and runner syntax-list deltas
+  are narrow harness glue/config covered by the direct real-API proof; generated
+  service-worker/task mirrors are waived by byte identity/build provenance.
+  No behavioral product hunk is unexecuted. Coverage SHA-256
+  `0397913d79109ae58b753cf7d7a4b6be3b1753b9d00e76219a9282507676d94f`.
+
+- PUBLICATION — NEEDS EVIDENCE. Main remains older release
+  `13ba6e20e79dce8c1d4fa800c7950629f0c28ceb` / deployment `9eb734fc`.
+  PR #609 and all 32 stacked PRs remain open, draft, unmerged and unqueued;
+  Actions remains disabled. Publish only through a separately authorized main
+  workflow, then obtain the final fresh Daybreak public-path proof. This task is
+  not verified before that evidence exists.
+
+Local criteria 1–3 are accepted; criterion 4 remains unchecked solely for main
+publication and final public proof. Report
+`target/evidence/e9-t22i-daybreak-gate-closure/report.json`, SHA-256
+`15cf6d5144db2f39d3f4fdd15ddf7782126693b267838e2db45634a57a00e16a`;
+routing SHA-256
+`50482dc2555d54fbf4865f6abbf045e35d6f320727eaa8e611fbdf7aa9cc9def`.
+
+Commands: sealed `shasum -a 256` authentication; bounded source/diff/hash
+inspection; `node tools/verify/e9-witness-archive-locales-browser.mjs --archive
+target/evidence/e9-t22i-final-submission-2/witnesses/witness-storage.wvsession
+--source-report target/evidence/e9-t22i-final-submission-2/witnesses/report.json
+--output target/evidence/e9-t22i-daybreak-gate-closure/independent-locale`;
+`node target/evidence/e9-t22i-daybreak-gate-closure/counterfactual.mjs`.
+SUITE: retain the existing permanent Rust/browser/oracle tests; no code fix or
+new promotion was required.
