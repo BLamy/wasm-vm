@@ -987,15 +987,17 @@ mod branch_tests {
 
     #[test]
     fn origin_inspector_uses_the_native_codec_bounds_and_exact_before_position() {
-        let mut clock = SessionClock::default();
-        clock.position = SessionPosition {
-            transition: 4,
-            retired: 3,
-            phase: SessionPhase::Before,
-            ordinal: 7,
-            sequence: 9,
+        let clock = SessionClock {
+            position: SessionPosition {
+                transition: 4,
+                retired: 3,
+                phase: SessionPhase::Before,
+                ordinal: 7,
+                sequence: 9,
+            },
+            next_ticket: 12,
+            ..Default::default()
         };
-        clock.next_ticket = 12;
         let bytes = clock.encode().unwrap();
         let origin = inspect_session_clock_origin(&bytes).unwrap();
         assert_eq!(origin.position, clock.position);

@@ -165,6 +165,17 @@ try:
                 assert row['ticket'] not in seen_tickets and exact(row['ticket']) < (1 << 64) - 1
                 seen_tickets.add(row['ticket'])
                 body = row.get('body')
+                expected_body = None
+                if recorded['channel'] == 22:
+                    assert payload[:8] == b'WVGPUR01' and payload[8] in [1, 2, 3]
+                    if payload[8] == 2:
+                        assert payload[105] in [0, 1]
+                        offset = 106 + (8 if payload[105] else 0)
+                        assert len(payload) == offset + 36
+                        expected_body = {'sha256': payload[offset:offset + 32].hex(),
+                                         'length': str(struct.unpack_from('<I', payload, offset + 32)[0])}
+                        assert saved_row['payload'] == {'storage': 'blob', 'content': expected_body}
+                assert body == expected_body, 'returned GPU body differs from literal native envelope'
                 if body:
                     value = content(body, 32 * 1048576)
                     assert sha(value) == body['sha256']
@@ -297,6 +308,11 @@ try:
         data = (out / artifact['file']).read_bytes()
         assert len(data) == artifact['bytes'] == payload['length'] and sha(data) == artifact['sha256'] == payload['sha256']
     assert any(p['length'] == 16384 for p in physical['payloads'])
+    physical_bodies = [(out / p['artifact']['file']).read_bytes() for p in physical['payloads']]
+    assert bytes([0, 255, 0, 255]) * 4096 in physical_bodies
+    query_bodies = [b for b in physical_bodies if len(b) == 32]
+    assert any(struct.unpack_from('<IIII', b) == (1, 4, 1, 0) for b in query_bodies)
+    assert any(struct.unpack_from('<IIII', b) == (1, 4, 0, 0) for b in query_bodies)
     for marker in ['SESSION_QUERY_VISIBLE_1', 'SESSION_QUERY_EMPTY_0', 'SESSION_READBACK_GREEN_16384', 'SESSION_FRAME_AND_DISK_OK', 'SESSION_EXPECTED_GPU_ERROR_1205', 'SESSION_DONE']:
         assert marker in physical['serial']
     logical_ref = physical['logicalState']

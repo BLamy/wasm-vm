@@ -141,3 +141,15 @@ new guest executions or change original workloads.
 
 Status remains in-progress. The next step is the exact-head high-risk target,
 pristine proof, fresh actual Daybreak charter/sabotage and main publication.
+
+### 2026-10-23 — worker — strict test lint and oracle refinement
+
+Frozen submission 1 at `7b4a244bec86d9ce0b9814b5b86d9662ad8878eb`
+stopped at affected all-target Clippy: the new origin test assigned fields after
+`Default::default()`. Use a struct initializer; no lint allowance or runtime
+semantic change. No later formal gate ran. The independent oracle now also
+decodes native `WVGPUR01` body hash/length fields literally and checks real green
+pixels and visible/empty query packets, rather than relying on the reader's body
+reference for that association. Keep the failed submission/log and development
+evidence. Rerun the failed gate and the final frozen submission; no verdict or
+publication is claimed.
