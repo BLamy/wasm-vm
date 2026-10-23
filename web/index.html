@@ -987,6 +987,12 @@
         <div class="session-actions"><button id="network-capture-run" type="button" disabled>Check offline network replay</button></div>
         <p id="network-capture-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
       </details>
+      <details id="gpu-journal-stream-panel" class="session-library">
+        <summary><span id="gpu-journal-stream-pip" class="cap-pip in-progress" aria-hidden="true"></span> Long GPU history recording check</summary>
+        <p class="session-note">Record 4,100 inputs and 256 distinct disk reads with a small test guest, then authenticate the saved histories. This uses local browser storage; full desktop playback is still being qualified.</p>
+        <div class="session-actions"><button id="gpu-journal-stream-run" type="button" disabled>Check long history recording</button></div>
+        <p id="gpu-journal-stream-status" class="session-note" role="status" aria-live="polite">Ready when the machine loads.</p>
+      </details>
       <details id="owned-http-panel" class="session-library">
         <summary><span id="owned-http-pip" class="cap-pip in-progress" aria-hidden="true"></span> Live HTTP and offline replay check</summary>
         <p class="session-note">Boot Alpine with recording off and on, fetch ten 1 KiB responses from its local gateway, then close the server and replay the complete machine. This check takes a few minutes and reports no performance result.</p>

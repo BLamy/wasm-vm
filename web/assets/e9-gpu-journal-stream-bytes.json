@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "scope": "Real freestanding UART/immutable-block storage-boundary fixture; not Linux/Mesa, full desktop, replay or performance qualification",
+  "variant": "bytes",
+  "inputs": 1,
+  "blocks": 256,
+  "architecture": "rv64imac_zicsr-supervisor",
+  "imageSha256": "1e11c3ae32217a4fc44a958d6ca3cfb847ab2881e6beb40339ab521a5a9e6041",
+  "sourceSha256": "468d44805433777464290a1895a9c227682deaa2d978d59ba7109369c0d7fbfe",
+  "startSha256": "12089d7803526622824f67dfbac7d1d91a25fb73bc3f91833f1f778a9147a274",
+  "linkerSha256": "27c1a40ade75de0bb5d38be9ac20a7b131420a31a449d9339e686b922fa88379",
+  "compiler": {
+    "imageId": "sha256:986b9aec6385491294c550e1a95275e05f56fa76b0581b606527f7871daefce8",
+    "compiler": "riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0",
+    "arguments": [
+      "-march=rv64imac_zicsr",
+      "-mabi=lp64",
+      "-mcmodel=medany",
+      "-mno-relax",
+      "-msmall-data-limit=0",
+      "-fno-pie",
+      "-fno-stack-protector",
+      "-ffreestanding",
+      "-nostdlib",
+      "-Os",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wl,--no-relax,--build-id=none,-T,link.ld",
+      "-DINPUT_COUNT=1",
+      "-DBLOCK_COUNT=256",
+      "start.S",
+      "main.c",
+      "-o",
+      "guest.elf"
+    ]
+  },
+  "bytes": 1208,
+  "sha256": "3979ea042dcdf85c8b5c2b6b7b4a2cf743a6b79b8811e7dc73d41d0b0669bcc1"
+}

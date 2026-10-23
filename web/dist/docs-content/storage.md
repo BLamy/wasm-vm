@@ -154,3 +154,20 @@ Passkey-encrypted user volumes belong to the proposed ProofMesh product layer. T
 - [Bounded file transfer](./docs.html?page=reference-docs-design-file-transfer)
 - [Alpine rootfs build](./docs.html?page=reference-docs-rootfs)
 - [Image artifacts](./docs.html?page=reference-docs-images)
+
+### Long GPU journal recording
+
+The **Long GPU history recording check** runs two small native test guests. It
+records 4,100 queued inputs and 256 distinct immutable disk reads, publishes
+intermediate checkpoints and authenticates the saved storage. This is a
+recording check; full desktop playback and performance qualification remain
+separate.
+
+GPU recording keeps a maximum of 256 pending receipts and 4 MiB of pending
+envelopes. Each checkpoint interval retains its 4,096-receipt and 64 MiB
+admission limits. Ordinary flushes preserve those counters. Only a successfully
+published checkpoint, acknowledged by the native machine, starts a new interval;
+failed publication preserves the old interval and committed prefix. Callers
+must capture a lawful checkpoint before the interval fills. The existing
+session, retention, manifest and per-object limits still apply to the complete
+saved history. Long-history reading and replay are separate qualification work.
