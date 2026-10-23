@@ -77,8 +77,8 @@ try:
                  'web/main.js', 'web/roadmap.js', 'tools/verify/e9-gpu-whole-chain-replay-browser.mjs',
                  'tools/verify/e9-gpu-reader-stream-demo.mjs']:
         run('syntax-' + Path(name).stem, ['node', '--check', name])
-    run('docs', ['node', 'tools/check-docs.mjs'])
     run('browser-build', ['make', 'web-dist'], timeout=7200)
+    run('docs', ['node', 'tools/check-docs.mjs'])
     runtime = ['session-gpu-replay-windows.js', 'session-gpu-history-reader.js',
                'session-gpu-replay-worker.js', 'session-gpu-replay.js', 'session-bundles.js',
                'session-gpu-reader-demo.js', 'session-timeline.js', 'session-library.js',
