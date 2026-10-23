@@ -129,3 +129,11 @@ mod tests {
         );
     }
 }
+
+/// Strict canonical v2 page codec; whole-chain authentication belongs to the durable store.
+#[wasm_bindgen(js_name = sessionValidateWitnessPage)]
+pub fn validate_witness_page(bytes: &[u8]) -> Result<Vec<u8>, JsError> {
+    wasm_vm_storage::session_witness::WitnessPage::from_bytes(bytes)
+        .and_then(|page| page.to_bytes())
+        .map_err(js_error)
+}

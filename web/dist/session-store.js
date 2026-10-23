@@ -6,6 +6,8 @@ import init, {SessionSha256, sessionValidateManifest, sessionManifestReferences,
 import {decodeKeyframeDescriptor, isKeyframeDescriptorPrefix,
   KEYFRAME_MAX_DESCRIPTOR_BYTES} from './session-keyframes.js';
 import {validateSessionWitnesses} from './session-witnesses.js';
+import {witnessCommitment} from './session-witness-pages.js';
+import {inventoryWitnessGraph} from './session-witness-graph.js';
 
 export const SESSION_DATABASE = 'wasm-vm-sessions-v1';
 export const SESSION_CHUNK_BYTES = 1024 * 1024;
@@ -245,7 +247,15 @@ export class SessionStore {
     for await (const part of this.stream(expected)) return part.subarray(0,8);
     fail('Corrupt','empty keyframe object');
   }
-  async #references(parsedManifest) {
+  async #references(parsedManifest, previous = null) {
+    if (witnessCommitment(parsedManifest.value)) {
+      let graph;
+      try {graph = await inventoryWitnessGraph(this, parsedManifest.bytes, {previous});}
+      catch (error) {fail('Corrupt', error.message);}
+      const objects = [];
+      for (const ref of graph.refs) objects.push(await this.#object(ref));
+      return objects;
+    }
     const refs = parsed(() => sessionManifestReferences(parsedManifest.bytes)), all = new Map();
     const add = value => {
       const ref = reference(value), previous = all.get(ref.sha256);
@@ -323,7 +333,9 @@ export class SessionStore {
         if (!opened) continue;
         const value = JSON.parse(decoder.decode(opened.manifest));
         sessions.push({id, revision: opened.revision, begin: value.begin, end: value.end,
-          mode: value.policy.mode, profile: value.policy.profile, checkpoints: value.checkpoints.length});
+          mode: value.policy.mode, profile: value.policy.profile, checkpoints: value.checkpoints.length,
+          ...(witnessCommitment(value) ? {storageOnly: true, pagedWitnesses: {version: 2,
+            count: witnessCommitment(value).count, finished: witnessCommitment(value).finished}} : {})});
       } catch (error) { unavailable.push({id, code: wrap(error).code}); }
     }
     return {sessions, unavailable};
@@ -363,11 +375,12 @@ export class SessionStore {
       const decoded = found.decoded;
       // GPU keyframes name their complete pair directly in checkpoint.gpu; #references
       // authenticates that blob before this mark pass, while roots cover its historical disk.
-      // Known v1 witness extensions carry no object references. Validate their full
-      // schema before treating them as reference-free; unknown extensions still stop GC.
-      try { validateSessionWitnesses(decoded.value); }
+      // v1 witnesses are reference-free. Required v2 pages are fully authenticated and
+      // marked by #references; unsupported extensions must still stop cleanup.
+      try { if (!witnessCommitment(decoded.value)) validateSessionWitnesses(decoded.value); }
       catch (error) { fail('UnsupportedRetention', error.message); }
       for (const object of await this.#references(decoded)) add(object);
+      if (witnessCommitment(decoded.value)) continue; // The shared paged graph already includes every disk block.
       const roots = parsed(() => sessionManifestReferences(decoded.bytes)).roots;
       for (const hash of roots) {
         const ref = await this.#root(hash), bytes = await this.#bytes(ref, MAX_DISK_ROOT_BYTES);
@@ -482,7 +495,7 @@ export class SessionStore {
     }
     const revision = previous ? BigInt(previous.revision) + 1n : 1n;
     need(revision <= MAX_U64, 'Overflow');
-    const objects = await this.#references(decoded);
+    const objects = await this.#references(decoded, previous ? manifest(previous.manifest).value : null);
     active();
     probe('before-commit', id);
     // The caller may revalidate a device owner after all asynchronous object checks.

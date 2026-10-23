@@ -30,6 +30,7 @@ mod prefetch;
 mod pullthrough;
 pub mod session;
 pub mod session_publication;
+pub mod session_witness;
 mod snapmeta;
 mod writeback;
 pub use blobstore::{BlobBackend, BlobError, BlobId, BlobStore, MemBlobBackend, blob_id};

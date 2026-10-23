@@ -305,6 +305,8 @@ export async function exportSessionBundle(store, id, options = {}) {
 async function preflight(source, options) {
   await initMetadata(); await initMachine(); active(options.signal);
   const archive = await indexSessionBundle(source);
+  need(archive.header.portability === 'wasm-vm-installed-build-v1',
+    'storage-only witness archives are not admitted for playback', 'BundleCompatibility');
   need(archive.header.runtime.wasm === SOFTWARE_CHECKPOINT_WASM_SHA256
     && (archive.header.runtime.gpu === null || archive.header.runtime.gpu === GPU_CHECKPOINT_BUILD_ID), 'incompatible installed build', 'BundleCompatibility');
   let count = 0;

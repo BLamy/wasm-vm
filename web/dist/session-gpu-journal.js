@@ -2,6 +2,7 @@
 // deltas use the existing authenticated parent/frame/page graph and publication rule.
 import init,{sessionCanonicalImage,sessionValidateManifest,sessionIndexEventChunk} from './session-pkg/wasm_vm_session.js';
 import {SessionDiskRoots} from './session-disk-roots.js';
+import {SessionWitnessPages,witnessCommitment,witnessExtension,WITNESS_PAGE_ROWS,WITNESS_MAX_PAGES} from './session-witness-pages.js';
 import {SessionCheckpoints,checkpointChunks,checkpointHash,checkpointReference,readCheckpointObject,fetchCheckpointAsset} from './session-checkpoints.js';
 import {decodeKeyframeDescriptor,encodeKeyframeDescriptor,inspectRamDeltaChunk,KEYFRAME_MAX_DEPTH} from './session-keyframes.js';
 import {decodeInputEventRecord} from './session-inputs.js';
@@ -26,9 +27,9 @@ function gpuManifest(id,config,vm,base,begin){
     begin:pos(begin),end:pos(begin),events:[],checkpoints:[],extensions:[]};
 }
 export class SessionGpuJournal {
-  #store;#writer;#manifest;#config;#pending=[];#bodies=new Map();#intervalBodies=new Map();#committedRows=0;#committedSmall=0;#busy=false;#complete=false;
-  constructor(store,writer,manifest,config){this.#store=store;this.#writer=writer;this.#manifest=manifest;this.#config=config;}
-  static async create(store,writer,input,machine,renderer){
+  #store;#writer;#manifest;#config;#pending=[];#bodies=new Map();#intervalBodies=new Map();#committedRows=0;#committedSmall=0;#busy=false;#complete=false;#witnesses=null;
+  constructor(store,writer,manifest,config){this.#store=store;this.#writer=writer;this.#manifest=manifest;this.#config=config;const committed=witnessCommitment(manifest);if(committed){this.#witnesses=new SessionWitnessPages(committed);this.#complete=committed.finished;}}
+  static async create(store,writer,input,machine,renderer,{witnessPages=false}={}){
     need(!await store.openSession(writer.id),'session ID already exists');
     const config=validateGpuConfiguration(input),configBytes=json(config),vm=checkpointReference(configBytes),image=sessionCanonicalImage(config.imageManifest),base=checkpointReference(image);
     need(JSON.stringify(JSON.parse(machine.exactGpuSessionTopology()))===JSON.stringify(config.devices),'installed GPU topology differs');
@@ -42,6 +43,7 @@ export class SessionGpuJournal {
       if(role==='renderer')need(decoder.decode(bytes).includes(`GPU_CHECKPOINT_BUILD_ID="${config.renderer.buildId}"`),'renderer build asset');
       await writer.put({sha256:config[role].sha256,length:config[role].length},checkpointChunks(bytes));}
     const journal=new SessionGpuJournal(store,writer,manifest,config);
+    if(witnessPages)journal.#witnesses=new SessionWitnessPages();
     await journal.captureKeyframe(machine,renderer,'gpu-start',{full:true,initial:true});return journal;
   }
   // The private worker has paused after a real full keyframe. Publication remains
@@ -122,7 +124,7 @@ export class SessionGpuJournal {
   }
   async captureKeyframe(machine,renderer,id,{full=false,initial=false}={}){
     need(!this.#busy&&!this.#complete&&this.#pending.length===0,'GPU keyframe requires flushed history');
-    need(this.#manifest.checkpoints.length<63,'GPU state witness/keyframe bound');
+    need(this.#manifest.checkpoints.length<(this.#witnesses?WITNESS_MAX_PAGES:63),'GPU state witness/keyframe bound');
     need(typeof id==='string'&&/^[A-Za-z0-9_.:/-]{1,64}$/.test(id)&&!this.#manifest.checkpoints.some(value=>value.id===id),'GPU checkpoint ID');
     this.#busy=true;let frozen=false;
     try{
@@ -152,8 +154,10 @@ export class SessionGpuJournal {
       manifest.end=pos(frame);manifest.checkpoints.push({id,position:pos(frame),next_sequence:(BigInt(frame.sequence)+1n).toString(),machine:machineRef,
         disk_root:previous?.disk_root??this.#manifest.initialDiskRoot,gpu:rendererRef});
       if(!previous){const root=await new SessionDiskRoots(this.#store).capture(this.#writer,emptyDisk(this.#config.imageManifest,manifest.machine.base_image),this.#config.imageManifest);manifest.checkpoints[0].disk_root=root.content.sha256;}
+      const commitment=this.#witnesses?await this.#witnesses.prepare(this.#writer,{extra:[frame]}):null;
+      if(commitment)manifest.extensions=[manifest.extensions[0],witnessExtension(commitment)];
       await this.#writer.publish(canonical(manifest),()=>{need(same(frame,machine.inputPosition())&&saved.epoch===machine.exactGpuSessionEpoch(),'GPU owner changed before publication');});
-      this.#manifest=manifest;this.#intervalBodies.clear();machine.finishSoftwareRamEpoch(true);frozen=false;
+      this.#manifest=manifest;if(commitment)this.#witnesses.accept(commitment);this.#intervalBodies.clear();machine.finishSoftwareRamEpoch(true);frozen=false;
       // Publication and epoch acknowledgement both succeeded. The full ordered
       // history stays in the authenticated manifest/CAS; only this bounded
       // checkpoint interval's admission counters start over.
@@ -161,8 +165,34 @@ export class SessionGpuJournal {
       return {...pos(frame),digest:frame.digest,ramDigest:frame.ramDigest,full,frameBytes:bytes.length,dirtyPages:pages,maxChunkBytes,rendererBytes:saved.bytes.length};
     }finally{if(frozen)machine.finishSoftwareRamEpoch(false);this.#busy=false;}
   }
+  // Each supplied witness comes from the real native owner while its receipts are flushed.
+  // The page buffer is never a replacement for the bounded native replay-plan window.
+  get witnessWindow(){return this.#witnesses?Object.freeze({pending:this.#witnesses.pending,peakRows:this.#witnesses.peakRows,rowLimit:WITNESS_PAGE_ROWS,commitment:this.#witnesses.committed}):null;}
+  async observeExactWitness(value){
+    need(this.#witnesses&&!this.#busy&&!this.#complete&&this.#pending.length===0,'paged witness requires flushed history');
+    need(value.phase==='before'&&value.sequence===this.#manifest.end.sequence&&compare(value,this.#manifest.end)>=0,'paged witness boundary');
+    this.#witnesses.stage(value);
+    if(this.#witnesses.pending===WITNESS_PAGE_ROWS)await this.flushWitnesses();
+  }
+  async flushWitnesses({finished=false,end=null,authorize=undefined}={}){
+    need(this.#witnesses&&!this.#busy&&!this.#complete&&this.#pending.length===0,'paged witness writer is busy or complete');
+    if(!this.#witnesses.pending&&!finished)return this.end;
+    const last=this.#witnesses.last;need(last&&last.sequence===this.#manifest.end.sequence&&compare(last,this.#manifest.end)>=0,'paged witness publication boundary');
+    if(end)need(same(end,last),'paged final witness endpoint');
+    this.#busy=true;
+    try{
+      const commitment=await this.#witnesses.prepare(this.#writer,{finished}),manifest=structuredClone(this.#manifest);
+      manifest.end=pos(last);manifest.extensions=[manifest.extensions[0],witnessExtension(commitment)];
+      await this.#writer.publish(canonical(manifest),null,authorize);
+      this.#manifest=manifest;this.#witnesses.accept(commitment);this.#complete=finished;return this.end;
+    }finally{this.#busy=false;}
+  }
+  async completeExactPaged(end,authorize=undefined){
+    need(this.#witnesses&&!this.#busy&&!this.#complete&&this.#pending.length===0,'paged completion boundary');
+    await this.observeExactWitness(end);return this.flushWitnesses({finished:true,end,authorize});
+  }
   async completeExact(end,witnesses,authorize=undefined){
-    need(!this.#busy&&!this.#complete&&this.#pending.length===0&&Array.isArray(witnesses)&&witnesses.length>=2&&witnesses.length<=64,'GPU completion witnesses/bound');
+    need(!this.#witnesses&&!this.#busy&&!this.#complete&&this.#pending.length===0&&Array.isArray(witnesses)&&witnesses.length>=2&&witnesses.length<=64,'GPU completion witnesses/bound');
     need(end.phase==='before'&&end.sequence===this.#manifest.end.sequence&&compare(end,this.#manifest.end)>=0,'GPU recording end');
     const values=witnesses.map(value=>{need(value.digest instanceof Uint8Array&&value.digest.length===32,'GPU witness digest');return witness(value);});
     need(this.#manifest.checkpoints.every(point=>values.some(value=>same(value,point.position))),'GPU keyframe witness missing');
@@ -184,6 +214,7 @@ export class SessionGpuJournal {
       &&JSON.stringify(manifest.policy.required_inputs)===JSON.stringify(GPU_EXACT_INPUTS),'GPU runtime/provider identity mismatch');
     if(config.branchOrigin)need(id!==config.branchOrigin.parentId&&same(manifest.begin,config.branchOrigin.sourcePosition),'GPU branch origin/position');
     else need(['transition','sequence','retired'].every(key=>manifest.begin[key]==='0')&&manifest.begin.phase==='before'&&manifest.begin.ordinal===0,'ordinary GPU origin');
+    need(!witnessCommitment(manifest),'paged GPU playback requires the bounded reader');
     const extension=manifest.extensions.find(value=>value.kind==='e9-exact-state-witnesses-v1');need(extension?.required===false,'finish this GPU recording before replay');
     const witnesses=JSON.parse(decoder.decode(Uint8Array.from(extension.bytes))).map(value=>({...pos(value),digest:Uint8Array.from(value.digest)}));
     need(witnesses.length>=2&&witnesses.length<=64&&same(witnesses[0],manifest.begin)&&same(witnesses.at(-1),manifest.end),'GPU witness endpoints');

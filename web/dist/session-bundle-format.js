@@ -24,10 +24,14 @@ export function bundleReference(value, max = BUNDLE_MAX_OBJECT_BYTES) {
   return {sha256: value.sha256, length: value.length};
 }
 export function encodeBundleHeader(value) {
-  need(keys(value, ['version', 'encoding', 'portability', 'runtime', 'manifest', 'objects', 'uncompressedBytes']), 'header fields');
+  const storage = value?.portability === 'wasm-vm-witness-storage-v2';
+  need(keys(value, storage
+    ? ['version', 'encoding', 'portability', 'scope', 'manifest', 'objects', 'uncompressedBytes']
+    : ['version', 'encoding', 'portability', 'runtime', 'manifest', 'objects', 'uncompressedBytes']), 'header fields');
   need(value.version === BUNDLE_VERSION && value.encoding === 'raw'
-    && value.portability === 'wasm-vm-installed-build-v1', 'unsupported version, encoding or portability policy');
-  need(keys(value.runtime, ['wasm', 'gpu']) && typeof value.runtime.wasm === 'string' && digest.test(value.runtime.wasm)
+    && (storage || value.portability === 'wasm-vm-installed-build-v1'), 'unsupported version, encoding or portability policy');
+  if (storage) need(value.scope === 'storage-only', 'storage archive scope');
+  else need(keys(value.runtime, ['wasm', 'gpu']) && typeof value.runtime.wasm === 'string' && digest.test(value.runtime.wasm)
     && (value.runtime.gpu === null || typeof value.runtime.gpu === 'string' && digest.test(value.runtime.gpu)), 'runtime identity');
   const manifest = bundleReference(value.manifest, 1024 ** 2);
   need(Array.isArray(value.objects) && value.objects.length > 0 && value.objects.length <= BUNDLE_MAX_OBJECTS, 'object count');

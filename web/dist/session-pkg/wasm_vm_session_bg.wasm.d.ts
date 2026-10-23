@@ -12,6 +12,7 @@ export const sessionManifestReferences: (a: number, b: number) => [number, numbe
 export const sessionValidateCheckpointContext: (a: number, b: number) => [number, number, number, number];
 export const sessionValidateDiskRoot: (a: number, b: number) => [number, number, number, number];
 export const sessionValidateManifest: (a: number, b: number) => [number, number, number, number];
+export const sessionValidateWitnessPage: (a: number, b: number) => [number, number, number, number];
 export const sessionsha256_finish: (a: number) => [number, number, number, number];
 export const sessionsha256_new: () => number;
 export const sessionsha256_update: (a: number, b: number, c: number) => [number, number];
