@@ -472,7 +472,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.92201` [E9-T22a](epic-9-session-time-travel/E9-T22a-unrecorded-control.md) — Add a genuine live unrecorded execution control *(deps: E9-T15, E9-T16, E9-T18c, E9-T19)*
 - [x] `524.92202` [E9-T22b](epic-9-session-time-travel/E9-T22b-owned-live-network.md) — Connect the shared owned network path to witnessed local HTTP *(deps: E9-T22a)*
 - [x] `524.922021` [E9-T22e](epic-9-session-time-travel/E9-T22e-streamed-gpu-journal.md) — Publish long GPU histories through bounded resident windows *(deps: E9-T22b)*
-- [~] `524.9220215` [E9-T22i](epic-9-session-time-travel/E9-T22i-paged-state-witnesses.md) — Commit long exact histories with bounded durable witness pages *(deps: E9-T22e)*
+- [?] `524.9220215` [E9-T22i](epic-9-session-time-travel/E9-T22i-paged-state-witnesses.md) — Commit long exact histories with bounded durable witness pages *(deps: E9-T22e)*
 - [ ] `524.922022` [E9-T22f](epic-9-session-time-travel/E9-T22f-streamed-gpu-reader.md) — Authenticate long GPU histories with bounded interval reads *(deps: E9-T22i)*
 - [ ] `524.922023` [E9-T22g](epic-9-session-time-travel/E9-T22g-streamed-exact-replay.md) — Continue exact replay across bounded native admission windows *(deps: E9-T22f)*
 - [ ] `524.922024` [E9-T22h](epic-9-session-time-travel/E9-T22h-streamed-gpu-browser-replay.md) — Run the complete GPU replay chain through browser consumers *(deps: E9-T22g)*

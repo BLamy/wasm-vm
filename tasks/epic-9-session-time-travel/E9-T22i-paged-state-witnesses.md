@@ -3,7 +3,7 @@ id: E9-T22i
 epic: 9
 title: Commit long exact histories with bounded durable witness pages
 priority: 524.9220215
-status: in-progress
+status: implemented
 depends_on: [E9-T22e]
 estimate: S
 risk: high
@@ -279,3 +279,64 @@ to seal before source edits. Preserve them as ce8 results, never relabel them
 as post-fix exact-head acceptance. New frozen source, affected archive proof
 and final exact-head pristine evidence must close this portability finding
 before deployment, along with a fresh actual Daybreak incremental review.
+
+
+### 2026-10-23 — worker — frozen final incremental submission
+
+Frozen repaired source: `3e8ebe0712343640efe68216948460cfbca5abbb`.
+The ce8 complete native/page/store/legacy/GPU/demo submission and its prescribed
+local wall are now SEALED PASSED, as is its source-complete pristine clone.
+Raw `make ci` still exits 2 only on the five documented historical alternate
+`zicsr-stub` dead-code diagnostics; its exact narrow Clippy waiver passes, and
+the remaining native/Wasm/features/RISC-V/determinism/perf-smoke wall passes.
+Production Clippy remains strict. Never call unqualified raw make-ci a pass.
+
+The runtime repair changes only the two browser archive SHA comparators.
+The new independent locale counterexample is repaired by strict lexical sort;
+no Rust/native VM, Wasm metadata, page/graph/store, replay or renderer behavior
+changes. New permanent real-API regression is integrated into normal recording
+acceptance and has a standalone archive-only command. The worker development
+negative remains failed as intended; the real repaired source and in-memory
+proposal both pass. These are not relabelled as pristine evidence.
+
+Final exact-head pristine command:
+`python3 -B target/evidence/e9-t22i-locale-cold-proof.py --output target/evidence/e9-t22i-locale-cold-submission-1 --clone /Users/blamy/Documents/Codex/.e9-t22i-locale-cold-3e8ebe071`.
+It uses no-hardlink source-complete sparse clone, scrubbed Rust/CARGO environment,
+fresh npm dependencies and no prebuilt target. It rebuilds actual browser/Wasm
+artifacts, requires every served/runtime byte to equal committed dist and every
+unchanged native dependency to match the genuine ce8 recording, and runs the
+real production inspect/import/export/reinspect APIs in fresh ordinary and
+numeric-collation Chrome contexts. Both contexts inspect all 130 states and
+335 objects, publish one exact manifest and export identical original bytes.
+The actual SHA order differs under numeric collation, so this is an exercised
+regression. The original native archive remains immutable.
+
+The pristine check intentionally reuses the authenticated genuine ce8 native
+recording for archive transfer. It does not claim a new guest execution or
+installed-runtime admission. Native/page/graph/Rust wall evidence is carried
+only through exact unchanged code/dependency/runtime/evidence identities, per
+incremental re-verification; all changed archive behavior executes anew.
+The unchanged full ce8 cold browser proof remains 127/0, 130 actual native
+states, 67 native keyframes, 71 pages, final four-row page, max resident 16,
+zero unexpected errors and mobile width/scroll 388/388. Full original Alpine/
+Omarchy/workload/performance and replay continuation are not claimed here.
+
+Sealed reports (paths beneath `target/evidence/`):
+
+- `e9-t22i-final-submission-2/report.json`, SHA-256 `f26a3facd6985618d077ac8f8104e000944ed6ca6574eb0e91421425320e0611`.
+
+- `e9-t22i-final-submission-2/gauntlet/report.json`, SHA-256 `c0672b3be7b863f6af64b2674f011dce42a21d9da27e014a2f30427f2be9502d`.
+
+- `e9-t22i-cold-submission-1/report.json`, SHA-256 `3e78fca08b2d7f0c0ad3f61bf5bd74867846e21e8a87f2909fd6b0c9c66e9a1b`.
+
+- `e9-t22i-locale-cold-submission-1/report.json`, SHA-256 `2219c40625f25d339acd4e6ea27b9f7ce6748bb4757a905aa3a33c108f13e779`.
+
+- `e9-t22i-locale-cold-submission-1/locales/report.json`, SHA-256 `d18df573a65756a44da09dfd1a9b8244a61cf03b046432d0520e69f6189a27b6`.
+
+All current local worker gates pass; NEW actual Daybreak must independently
+authenticate the incremental carry, attack the fixed locale boundary, inspect
+the permanent regression and adjudicate sufficiency. Prior full-charter HELD
+novel/semantic-sabotage/coverage results can be carried only where their source
+and evidence identities stay exact. Main still serves the older E release;
+publication and final independent public-path review remain required.
+Only the worker status becomes implemented here; the worker cannot verify it.
