@@ -19,6 +19,7 @@ import { runTimeEntropyProbe } from "./time-entropy-probe.js";
 import { runDeviceCompletionsProbe } from "./device-completions-probe.js";
 import {runNetworkCaptureProbe} from "./network-capture-probe.js";
 import {runSessionReplayProbe} from "./session-replay-probe.js";
+import {runSessionStreamedReplayProbe} from "./session-streamed-replay-probe.js";
 import {runSessionKeyframeProbe} from "./session-keyframe-probe.js";
 import {runSessionSeekProbe} from "./session-seek-probe.js";
 import {runUnrecordedControlProbe} from "./unrecorded-control-probe.js";
@@ -2745,6 +2746,8 @@ let networkCaptureRunning=false,networkCaptureResult=null;
 const networkCaptureRun=document.getElementById("network-capture-run"),networkCaptureStatus=document.getElementById("network-capture-status");
 let sessionReplayRunning=false,sessionReplayResult=null;
 const sessionReplayRun=document.getElementById("session-replay-run"),sessionReplayStatus=document.getElementById("session-replay-status");
+let streamedReplayResult=null;
+const streamedReplayRun=document.getElementById("streamed-replay-run"),streamedReplayStatus=document.getElementById("streamed-replay-status");
 let sessionKeyframeRunning=false,sessionKeyframeResult=null;
 const sessionKeyframeRun=document.getElementById("session-keyframe-run"),sessionKeyframeStatus=document.getElementById("session-keyframe-status");
 let gpuJournalRunning=false,gpuJournalResult=null;
@@ -3082,6 +3085,8 @@ function refreshRoadmapLive() {
   document.getElementById("unrecorded-control-pip").className="cap-pip "+(unrecordedResult?.status==="passed"?"live":unrecordedResult?.status==="failed"?"regressed":offCap.status);
   const replayCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="session-replay");
   document.getElementById("session-replay-pip").className="cap-pip "+(sessionReplayResult?.status==="passed"?"live":sessionReplayResult?.status==="failed"?"regressed":replayCap.status);
+  const streamedCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="streamed-replay");
+  document.getElementById("streamed-replay-pip").className="cap-pip "+(streamedReplayResult?.status==="passed"?"live":streamedReplayResult?.status==="failed"?"regressed":streamedCap.status);
   const keyframeCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="session-keyframe");
   document.getElementById("session-keyframe-pip").className="cap-pip "+(sessionKeyframeResult?.status==="passed"?"live":sessionKeyframeResult?.status==="failed"?"regressed":keyframeCap.status);
   const seekCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="session-seek");
@@ -3103,6 +3108,7 @@ function refreshRoadmapLive() {
     if(rc.probe==="owned-http"){const state=ownedHttpResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Full Alpine fetches ten real HTTP bodies with recording off/on; closed-server replay matches the whole machine · live in browser":rc.base.evidence;continue;}
     if(rc.probe==="unrecorded-control"){const state=unrecordedResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Linux boot excerpt runs with capture OFF and refuses history APIs · live in browser; no performance result":rc.base.evidence;continue;}
     if(rc.probe==="session-replay"){const state=sessionReplayResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Pinned Linux, exact interpreter/JIT state and rejected unbranched input · live in browser":rc.base.evidence;continue;}
+    if(rc.probe==="streamed-replay"){const state=streamedReplayResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Two exact native windows, carried pending input and failed stale/malformed handoffs · live in browser":rc.base.evidence;continue;}
     if(rc.probe==="session-keyframe"){const state=sessionKeyframeResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Two persisted RAM deltas, exact restore, missing ancestor refusal and shared retention · live in browser":rc.base.evidence;continue;}
     if(rc.probe==="session-seek"){const state=sessionSeekResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Persisted keyframe seek, independent state digest and 100 superseded requests · live in browser":rc.base.evidence;continue;}
     if(rc.probe==="network-capture"){const state=networkCaptureResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Guest network bytes, offline replay and transport suppression · live in browser":rc.base.evidence;continue;}
@@ -3163,6 +3169,7 @@ function setInteractiveState() {
   ownedHttpRun.disabled=busy||!wasmReady;
   unrecordedRun.disabled=busy||!wasmReady;
   sessionReplayRun.disabled=busy||!wasmReady;
+  streamedReplayRun.disabled=busy||!wasmReady;
   sessionKeyframeRun.disabled=busy||!wasmReady;
   sessionSeekRun.disabled=busy||!wasmReady;
   inputRecordingRun.disabled=busy||!wasmReady;
@@ -3469,6 +3476,13 @@ sessionReplayRun.addEventListener('click',async()=>{
  try{sessionReplayResult=await runSessionReplayProbe({onProgress:message=>{sessionReplayStatus.textContent=message;}});sessionReplayStatus.textContent='Passed · saved Alpine session matches interpreter and JIT replay, including disk DMA, and refuses unbranched input.';}
  catch(error){sessionReplayResult={status:'failed',failure:String(error)};sessionReplayStatus.textContent='Failed · '+error.message;}
  finally{if(_startupQuery.has('testHooks'))globalThis.__sessionReplayReport=sessionReplayResult;sessionReplayStatus.dataset.status=sessionReplayResult.status;sessionReplayRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+streamedReplayRun.addEventListener('click',async()=>{
+ if(witnessPagesRunning||gpuJournalRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||sessionSeekRunning||!wasmReady)return;
+ sessionReplayRunning=true;streamedReplayResult=null;streamedReplayStatus.textContent='Replaying two bounded Linux windows…';setInteractiveState();refreshRoadmapLive();
+ try{streamedReplayResult=await runSessionStreamedReplayProbe();streamedReplayStatus.textContent='Passed · exact native state and pending input cross the handoff; stale and malformed windows stop before guest work.';}
+ catch(error){streamedReplayResult={status:'failed',failure:String(error)};streamedReplayStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__streamedReplayReport=streamedReplayResult;streamedReplayStatus.dataset.status=streamedReplayResult.status;sessionReplayRunning=false;refreshRoadmapLive();setInteractiveState();}
 });
 sessionKeyframeRun.addEventListener('click',async()=>{
  if(witnessPagesRunning||gpuJournalRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||!wasmReady)return;

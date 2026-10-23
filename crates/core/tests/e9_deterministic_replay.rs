@@ -1457,6 +1457,112 @@ fn guest_rtc_entropy_observations_are_consumed_without_host_calls() {
 }
 
 #[test]
+fn session_replay_streamed_observations_keep_source_cursor_and_refuse_reordering() {
+    let (mut original, _, _) = observed_fixture(false, false);
+    original
+        .start_session_sources(original.source_policy(), None)
+        .unwrap();
+    let initial_resume = original.save_session_resume().unwrap();
+    let initial = witness(&mut original);
+    let split = OBSERVATION_PROGRAM
+        .chunks_exact(4)
+        .position(|word| u32::from_le_bytes(word.try_into().unwrap()) == 0x5310_0013)
+        .unwrap() as u64;
+    let end = OBSERVATION_PROGRAM.len() as u64 / 4;
+    let mut before = Vec::new();
+    while original.session_position().unwrap().transition < split {
+        assert_eq!(
+            original.run_session_until(split, 23).unwrap(),
+            RunOutcome::MaxInstrs
+        );
+        before.extend(original.take_session_deliveries().unwrap());
+    }
+    let middle = witness(&mut original);
+    let mut after = Vec::new();
+    while original.session_position().unwrap().transition < end {
+        assert_eq!(
+            original.run_session_until(end, 23).unwrap(),
+            RunOutcome::MaxInstrs
+        );
+        after.extend(original.take_session_deliveries().unwrap());
+    }
+    let final_state = witness(&mut original);
+    let final_resume = original.save_session_resume().unwrap();
+    let first = ReplayPlan {
+        begin: initial.position,
+        end: middle.position,
+        initial_resume,
+        events: before.clone(),
+        witnesses: vec![initial, middle],
+    };
+    let second = ReplayPlan {
+        begin: middle.position,
+        end: final_state.position,
+        initial_resume: vec![],
+        events: after.clone(),
+        witnesses: vec![middle, final_state],
+    };
+    first.validate().unwrap();
+    second.validate_continuation().unwrap();
+    let before_observations = before
+        .iter()
+        .filter(|event| matches!(event.effect, SessionEffect::Observation(_)))
+        .count();
+    assert!(before_observations > 0);
+    assert!(
+        after
+            .iter()
+            .any(|event| matches!(event.effect, SessionEffect::Observation(_)))
+    );
+    let (mut replay, time_calls, entropy_calls) = observed_fixture(true, true);
+    let mut driver = ReplayDriver::start(&mut replay, first.clone()).unwrap();
+    driver
+        .run_to_end(&mut replay, 17, |_, _, _| unreachable!())
+        .unwrap();
+    let frontier = driver.frontier(&mut replay).unwrap();
+    assert_eq!(frontier.source_cursor, before_observations as u64);
+    assert!(frontier.source_last_loaded.is_some());
+    assert_eq!((time_calls.get(), entropy_calls.get()), (0, 0));
+    driver
+        .continue_window(&mut replay, frontier, second.clone())
+        .unwrap();
+    driver
+        .run_to_end(&mut replay, 19, |_, _, _| unreachable!())
+        .unwrap();
+    assert_eq!(driver.event_cursor(), before.len() + after.len());
+    assert_eq!(replay.save_session_resume().unwrap(), final_resume);
+    assert_eq!((time_calls.get(), entropy_calls.get()), (0, 0));
+
+    let mut reordered = second;
+    let observation_indices: Vec<_> = reordered
+        .events
+        .iter()
+        .enumerate()
+        .filter_map(|(index, event)| {
+            matches!(event.effect, SessionEffect::Observation(_)).then_some(index)
+        })
+        .collect();
+    assert!(observation_indices.len() >= 2);
+    reordered
+        .events
+        .swap(observation_indices[0], observation_indices[1]);
+    let (mut rejected, rejected_time, rejected_entropy) = observed_fixture(true, false);
+    let mut rejected_driver = ReplayDriver::start(&mut rejected, first).unwrap();
+    rejected_driver
+        .run_to_end(&mut rejected, 7, |_, _, _| unreachable!())
+        .unwrap();
+    let predecessor = rejected_driver.frontier(&mut rejected).unwrap();
+    let before_refusal = rejected.save_session_resume().unwrap();
+    let error = rejected_driver
+        .continue_window(&mut rejected, predecessor, reordered)
+        .unwrap_err();
+    assert_eq!(error.reason, ReplayReason::InvalidPlan);
+    assert_eq!(rejected_driver.status(), ReplayStatus::Diverged);
+    assert_eq!(rejected.save_session_resume().unwrap(), before_refusal);
+    assert_eq!((rejected_time.get(), rejected_entropy.get()), (0, 0));
+}
+
+#[test]
 fn supported_embedding_and_end_guards_report_first_divergence() {
     let (mut original, _, _) = observed_fixture(false, false);
     original

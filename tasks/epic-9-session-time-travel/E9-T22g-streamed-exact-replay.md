@@ -27,7 +27,7 @@ One core/Wasm replay continuation boundary. Preserve one exact execution and its
 
 ## Deterministic acceptance
 
-`make verify-E9-T22g`. Planned single target including `cargo test -p wasm-vm-core session_replay_streamed_initial_to_end` and `cargo test -p wasm-vm-wasm session_replay_streamed_bindings`; no passing target exists yet.
+`make verify-E9-T22g`. The target records bounded software/GPU long-history native tests, guest traces and state digests, adversarial observation and GPU regression tests, affected native/Wasm Clippy, a rebuilt browser ABI handoff, the visible demo and ISA suite, and the full local gauntlet at one clean exact head. Run the same script with `--cold-clone <scratch path>` for the final pristine proof.
 
 ## Adversarial verification
 

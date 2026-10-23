@@ -232,6 +232,7 @@ export const ROADMAP = [
       { name: "Offline network recording", status: "verified", probe: "network-capture", evidence: "E9-T13: real guest Ethernet intents, owned replies, exact delivery positions and zero live replay transport" },
       { name: "Owned device completion recording", status: "verified", probe: "device-completions", evidence: "E9-T12: authenticated base payloads, real block/agent/audio DMA and revocable callback leases" },
       { name: "Saved full Linux replay", status: "verified", probe: "session-replay", evidence: "E9-T14: pinned Alpine session, durable event tape, interpreter/JIT state digests, first-divergence and unbranched-input checks" },
+      { name: "Bounded native replay handoff", status: "in-progress", probe: "streamed-replay", evidence: "E9-T22g: one private machine continues across bounded exact replay windows; final GPU history qualification remains separate" },
       { name: "Incremental RAM keyframes", status: "verified", probe: "session-keyframe", evidence: "E9-T15: independently verified bounded dirty-page deltas, exact private restore, ancestor refusal and shared retention" },
       { name: "Seeking and reverse-step", status: "verified", probe: "session-seek", evidence: "E9-T16: independently verified transition fences, keyframe lookup and latest-request ownership" },
       { name: "Accelerated desktop keyframes", status: "verified", evidence: "E9-T17: independently verified Omarchy points, exact scanout restore, fresh owners, trusted input and library reopen" },

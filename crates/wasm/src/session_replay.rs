@@ -8,7 +8,7 @@ use wasm_vm_core::{
         SessionDelivery, SessionEffect, SessionPhase, SessionPosition,
         sources::{ObservationKind, ObservationValue},
     },
-    session_replay::{ReplayDriver, ReplayPlan, StateWitness},
+    session_replay::{ReplayDriver, ReplayFrontier, ReplayPlan, StateWitness},
 };
 
 #[wasm_bindgen(inline_js = r#"
@@ -86,13 +86,8 @@ fn integer(value: &JsValue, key: &str, max: u32) -> Result<u32, JsError> {
 }
 fn bytes(value: &JsValue, key: &str, limit: usize) -> Result<Vec<u8>, JsError> {
     let value = get(value, key)?;
-    if !value.is_instance_of::<js_sys::Uint8Array>() {
-        return Err(JsError::new("exact replay owned bytes"));
-    }
-    let view = js_sys::Uint8Array::new(&value);
-    if view.length() as usize > limit {
-        return Err(JsError::new("exact replay byte limit"));
-    }
+    let view = owned_clock_origin_bytes(&value, limit as u32)
+        .map_err(|_| JsError::new("exact replay byte ownership or bound"))?;
     Ok(view.to_vec())
 }
 fn branch_queue(value: &JsValue, key: &str) -> Result<Vec<u8>, JsError> {
@@ -260,6 +255,110 @@ fn witness(value: JsValue) -> Result<StateWitness, JsError> {
     Ok(StateWitness {
         position: position(&value)?,
         resume_sha256,
+    })
+}
+
+fn hex32(bytes: &[u8; 32]) -> String {
+    bytes.iter().map(|byte| format!("{byte:02x}")).collect()
+}
+
+fn json_position(p: SessionPosition) -> serde_json::Value {
+    serde_json::json!({
+        "transition": p.transition.to_string(), "retired": p.retired.to_string(),
+        "phase": p.phase.label(), "ordinal": p.ordinal,
+        "sequence": p.sequence.to_string(),
+    })
+}
+
+/// Stable, whole-predecessor receipt. The browser must supply this exact receipt together with
+/// the authenticated next window and its expected host queues; it is checked again inside the
+/// private replay candidate before a new source tape or guest transition is admitted.
+fn frontier_json(frontier: ReplayFrontier, pending: &[u8], output: &[u8]) -> String {
+    serde_json::to_string(&serde_json::json!({
+        "version": 1,
+        "position": json_position(frontier.position),
+        "stateSha256": hex32(&frontier.state_sha256),
+        "eventCursor": frontier.event_cursor.to_string(),
+        "sourceCursor": frontier.source_cursor.to_string(),
+        "sourceLastLoaded": frontier.source_last_loaded.map(json_position),
+        "deviceCursor": frontier.device_cursor.map(|n| n.to_string()),
+        "networkCursor": frontier.network_cursor.map(|n| n.to_string()),
+        "gpuCursor": frontier.gpu_cursor.map(|n| n.to_string()),
+        "rendererDigest": frontier.renderer_digest.map(|n| hex32(&n)),
+        "pending": {"length": pending.len().to_string(),
+            "sha256": hex32(&Sha256::digest(pending).into())},
+        "output": {"length": output.len().to_string(),
+            "sha256": hex32(&Sha256::digest(output).into())},
+    }))
+    .expect("frontier contains only JSON primitives")
+}
+
+fn poison_malformed_continuation(vm: &WasmLinux) {
+    if let Ok(mut inner) = vm.inner.try_borrow_mut()
+        && inner.exact_session == Some(true)
+        && inner.finished.is_none()
+        && let Some(mut driver) = inner.exact_driver.take()
+    {
+        driver.reject_continuation(&inner.machine, "malformed next replay window");
+        inner.exact_driver = Some(driver);
+    }
+}
+
+#[cfg(feature = "virgl-renderer")]
+fn gpu_replay_config(
+    options: &JsValue,
+) -> Result<wasm_vm_core::session_replay::GpuReplayConfig, JsError> {
+    if integer(options, "version", 1)? != 1 {
+        return Err(JsError::new("GPU replay adapter version"));
+    }
+    let renderer_digest = bytes(options, "rendererDigest", 32)?
+        .try_into()
+        .map_err(|_| JsError::new("GPU renderer digest"))?;
+    let ram_value = get(options, "ramDigest")?;
+    let ram_digest = if ram_value.is_null() || ram_value.is_undefined() {
+        None
+    } else {
+        Some(
+            bytes(options, "ramDigest", 32)?
+                .try_into()
+                .map_err(|_| JsError::new("GPU RAM digest"))?,
+        )
+    };
+    let values = get(options, "payloads")?;
+    if !js_sys::Array::is_array(&values) {
+        return Err(JsError::new("GPU payload array"));
+    }
+    let values = js_sys::Array::from(&values);
+    if values.length() as usize > wasm_vm_core::session_gpu::MAX_OBJECTS {
+        return Err(JsError::new("GPU payload object bound"));
+    }
+    let mut payloads = Vec::new();
+    let mut total = 0usize;
+    for value in values.iter() {
+        let data = bytes(&value, "bytes", wasm_vm_core::session_gpu::MAX_PAYLOAD)?;
+        total = total
+            .checked_add(data.len())
+            .ok_or_else(|| JsError::new("GPU payload overflow"))?;
+        if total > wasm_vm_core::session_gpu::MAX_RESIDENT_BYTES {
+            return Err(JsError::new("GPU interval payload budget"));
+        }
+        let sha256 = bytes(&value, "sha256", 32)?
+            .try_into()
+            .map_err(|_| JsError::new("GPU payload digest"))?;
+        let length = integer(
+            &value,
+            "length",
+            wasm_vm_core::session_gpu::MAX_PAYLOAD as u32,
+        )?;
+        payloads.push(wasm_vm_core::session_gpu::Payload {
+            reference: wasm_vm_core::session_gpu::PayloadRef { sha256, length },
+            bytes: data,
+        });
+    }
+    Ok(wasm_vm_core::session_replay::GpuReplayConfig {
+        renderer_digest,
+        ram_digest,
+        payloads,
     })
 }
 
@@ -560,6 +659,11 @@ impl WasmLinux {
         } else {
             (Vec::new(), Vec::new())
         };
+        let initial_resume = owned_clock_origin_bytes(
+            initial_resume.as_ref(),
+            wasm_vm_core::session_replay::MAX_INITIAL_BYTES as u32,
+        )
+        .map_err(|_| JsError::new("exact replay initial byte ownership or bound"))?;
         if events.length() > wasm_vm_core::session_replay::MAX_REPLAY_EVENTS as u32
             || witnesses.length() == 0
             || witnesses.length() > wasm_vm_core::session_replay::MAX_REPLAY_EVENTS as u32
@@ -583,65 +687,7 @@ impl WasmLinux {
             witnesses: states,
         };
         #[cfg(feature = "virgl-renderer")]
-        let gpu = gpu_options
-            .as_ref()
-            .map(
-                |options| -> Result<wasm_vm_core::session_replay::GpuReplayConfig, JsError> {
-                    if integer(options, "version", 1)? != 1 {
-                        return Err(JsError::new("GPU replay adapter version"));
-                    }
-                    let renderer_digest = bytes(options, "rendererDigest", 32)?
-                        .try_into()
-                        .map_err(|_| JsError::new("GPU renderer digest"))?;
-                    let ram_value = get(options, "ramDigest")?;
-                    let ram_digest = if ram_value.is_null() || ram_value.is_undefined() {
-                        None
-                    } else {
-                        Some(
-                            bytes(options, "ramDigest", 32)?
-                                .try_into()
-                                .map_err(|_| JsError::new("GPU RAM digest"))?,
-                        )
-                    };
-                    let values = get(options, "payloads")?;
-                    if !js_sys::Array::is_array(&values) {
-                        return Err(JsError::new("GPU payload array"));
-                    }
-                    let values = js_sys::Array::from(&values);
-                    if values.length() as usize > wasm_vm_core::session_gpu::MAX_OBJECTS {
-                        return Err(JsError::new("GPU payload object bound"));
-                    }
-                    let mut payloads = Vec::new();
-                    let mut total = 0usize;
-                    for value in values.iter() {
-                        let data = bytes(&value, "bytes", wasm_vm_core::session_gpu::MAX_PAYLOAD)?;
-                        total = total
-                            .checked_add(data.len())
-                            .ok_or_else(|| JsError::new("GPU payload overflow"))?;
-                        if total > wasm_vm_core::session_gpu::MAX_RESIDENT_BYTES {
-                            return Err(JsError::new("GPU interval payload budget"));
-                        }
-                        let sha256 = bytes(&value, "sha256", 32)?
-                            .try_into()
-                            .map_err(|_| JsError::new("GPU payload digest"))?;
-                        let length = integer(
-                            &value,
-                            "length",
-                            wasm_vm_core::session_gpu::MAX_PAYLOAD as u32,
-                        )?;
-                        payloads.push(wasm_vm_core::session_gpu::Payload {
-                            reference: wasm_vm_core::session_gpu::PayloadRef { sha256, length },
-                            bytes: data,
-                        });
-                    }
-                    Ok(wasm_vm_core::session_replay::GpuReplayConfig {
-                        renderer_digest,
-                        ram_digest,
-                        payloads,
-                    })
-                },
-            )
-            .transpose()?;
+        let gpu = gpu_options.as_ref().map(gpu_replay_config).transpose()?;
         #[cfg(not(feature = "virgl-renderer"))]
         if gpu_options.is_some() {
             return Err(JsError::new("GPU replay is unavailable in this build"));
@@ -676,6 +722,154 @@ impl WasmLinux {
         *inner.out.borrow_mut() = output_bytes;
         inner.exact_driver = Some(driver);
         Ok(())
+    }
+
+    /// Return the complete native/host predecessor after a bounded replay window. The receipt
+    /// is observational; continuation recomputes it from the still-private candidate.
+    #[wasm_bindgen(js_name = exactReplayFrontier)]
+    pub fn exact_replay_frontier(&self) -> Result<String, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.exact_session != Some(true) || inner.finished.is_some() {
+            return Err(JsError::new("exact replay inactive or stopped"));
+        }
+        #[cfg(feature = "virgl-renderer")]
+        if inner.exact_gpu && self.gpu_session_stopped.get() {
+            return Err(JsError::new("GPU replay is stopped"));
+        }
+        let mut driver = inner
+            .exact_driver
+            .take()
+            .ok_or_else(|| JsError::new("exact replay not admitted"))?;
+        let result = driver.frontier(&mut inner.machine).and_then(|frontier| {
+            if inner.pending.len() > 1 << 20 || inner.out.borrow().len() > 1 << 20 {
+                return Err(driver
+                    .reject_continuation(&inner.machine, "replay predecessor host queue bound"));
+            }
+            let pending: Vec<u8> = inner.pending.iter().copied().collect();
+            let output = inner.out.borrow();
+            Ok(frontier_json(frontier, &pending, &output))
+        });
+        inner.exact_driver = Some(driver);
+        result.map_err(|e| JsError::new(&format!("exact replay frontier: {e:?}")))
+    }
+
+    /// Append exactly one bounded window to the same private VM. The supplied predecessor and
+    /// expected host queues are owned copies of the authenticated prior endpoint. Every mismatch
+    /// poisons this candidate before the next tape or guest work is admitted.
+    #[wasm_bindgen(js_name = continueExactReplay)]
+    pub fn continue_exact_replay(
+        &self,
+        predecessor: String,
+        events: js_sys::Array,
+        witnesses: js_sys::Array,
+        end: JsValue,
+        expected_queues: JsValue,
+        gpu_options: Option<JsValue>,
+    ) -> Result<(), JsError> {
+        // Parse all JS getters and copy every byte before entering the mutable Machine borrow.
+        // A parse failure still poisons the already admitted private candidate.
+        let parsed = (|| -> Result<_, JsError> {
+            let pending_expected = bytes(&expected_queues, "pending", 1 << 20)?;
+            let output_expected = bytes(&expected_queues, "output", 1 << 20)?;
+            if predecessor.len() > 4096
+                || events.length() > wasm_vm_core::session_replay::MAX_REPLAY_EVENTS as u32
+                || witnesses.length() < 2
+                || witnesses.length() > wasm_vm_core::session_replay::MAX_REPLAY_EVENTS as u32
+            {
+                return Err(JsError::new("exact replay continuation limit"));
+            }
+            let mut rows = Vec::with_capacity(events.length() as usize);
+            for value in events.iter() {
+                rows.push(event(value)?);
+            }
+            let mut states = Vec::with_capacity(witnesses.length() as usize);
+            for value in witnesses.iter() {
+                states.push(witness(value)?);
+            }
+            let plan = ReplayPlan {
+                begin: states[0].position,
+                end: position(&end)?,
+                initial_resume: vec![],
+                events: rows,
+                witnesses: states,
+            };
+            #[cfg(feature = "virgl-renderer")]
+            {
+                let gpu = gpu_options.as_ref().map(gpu_replay_config).transpose()?;
+                Ok((pending_expected, output_expected, plan, gpu))
+            }
+            #[cfg(not(feature = "virgl-renderer"))]
+            {
+                if gpu_options.is_some() {
+                    return Err(JsError::new("GPU replay is unavailable in this build"));
+                }
+                Ok((pending_expected, output_expected, plan))
+            }
+        })();
+        #[cfg(feature = "virgl-renderer")]
+        let (pending_expected, output_expected, plan, gpu) = match parsed {
+            Ok(value) => value,
+            Err(error) => {
+                poison_malformed_continuation(self);
+                return Err(error);
+            }
+        };
+        #[cfg(not(feature = "virgl-renderer"))]
+        let (pending_expected, output_expected, plan) = match parsed {
+            Ok(value) => value,
+            Err(error) => {
+                poison_malformed_continuation(self);
+                return Err(error);
+            }
+        };
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        if inner.exact_session != Some(true) || inner.finished.is_some() {
+            return Err(JsError::new("exact replay inactive or stopped"));
+        }
+        #[cfg(feature = "virgl-renderer")]
+        if inner.exact_gpu && self.gpu_session_stopped.get() {
+            return Err(JsError::new("GPU replay is stopped"));
+        }
+        let mut driver = inner
+            .exact_driver
+            .take()
+            .ok_or_else(|| JsError::new("exact replay not admitted"))?;
+        let result = (|| {
+            let frontier = driver.frontier(&mut inner.machine)?;
+            if inner.pending.len() > 1 << 20 || inner.out.borrow().len() > 1 << 20 {
+                return Err(
+                    driver.reject_continuation(&inner.machine, "next replay host queue bound")
+                );
+            }
+            let pending_actual: Vec<u8> = inner.pending.iter().copied().collect();
+            let output_actual = inner.out.borrow().clone();
+            if pending_actual != pending_expected || output_actual != output_expected {
+                return Err(driver.reject_continuation(
+                    &inner.machine,
+                    "next window host queues differ from the authenticated predecessor",
+                ));
+            }
+            if frontier_json(frontier, &pending_actual, &output_actual) != predecessor {
+                return Err(driver.reject_continuation(
+                    &inner.machine,
+                    "wrong or stale browser replay predecessor",
+                ));
+            }
+            if inner.exact_gpu != gpu_options.is_some() {
+                return Err(driver
+                    .reject_continuation(&inner.machine, "next window changes replay profile"));
+            }
+            #[cfg(feature = "virgl-renderer")]
+            if let Some(gpu) = gpu {
+                driver.continue_gpu_window(&mut inner.machine, frontier, plan, gpu)
+            } else {
+                driver.continue_window(&mut inner.machine, frontier, plan)
+            }
+            #[cfg(not(feature = "virgl-renderer"))]
+            driver.continue_window(&mut inner.machine, frontier, plan)
+        })();
+        inner.exact_driver = Some(driver);
+        result.map_err(|e| JsError::new(&format!("exact replay continuation: {e:?}")))
     }
 
     #[wasm_bindgen(js_name = runExactReplayToEnd)]
