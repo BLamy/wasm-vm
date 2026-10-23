@@ -460,47 +460,52 @@ impl WasmLinux {
     /// Device map of the standard Linux constructor, using the authoritative platform constants.
     #[wasm_bindgen(js_name = softwareCheckpointTopology)]
     pub fn software_checkpoint_topology(&self) -> String {
-        use wasm_vm_core::platform::virt;
-        let mut entries = Vec::new();
-        for (id, kind, base, length, irq) in [
-            (
-                "uart0",
-                "uart16550",
-                virt::UART0_BASE,
-                virt::UART0_LEN,
-                virt::UART0_IRQ,
-            ),
-            ("clint", "clint", virt::CLINT_BASE, virt::CLINT_LEN, 0),
-            ("plic", "plic", virt::PLIC_BASE, virt::PLIC_LEN, 0),
-            (
-                "rtc",
-                "goldfish-rtc",
-                virt::RTC_BASE,
-                virt::RTC_LEN,
-                virt::RTC_IRQ,
-            ),
-        ] {
-            entries.push(format!("{{\"id\":\"{id}\",\"kind\":\"{kind}\",\"mmio_base\":\"{base}\",\"mmio_length\":{length},\"irq\":{irq},\"state_version\":1}}"));
-        }
-        for (slot, kind) in [
-            "virtio-blk",
-            "virtio-net",
-            "virtio-rng",
-            "virtio-keyboard",
-            "virtio-tablet",
-            "virtio-mouse",
-            "virtio-snd",
-            "virtio-gpu2d",
-            "virtio-console",
-        ]
-        .iter()
-        .enumerate()
-        {
-            let base = virt::VIRTIO_BASE + slot as u64 * virt::VIRTIO_STRIDE;
-            let irq = virt::VIRTIO_IRQ_BASE + slot as u32;
-            let length = virt::VIRTIO_LEN;
-            entries.push(format!("{{\"id\":\"slot{slot}\",\"kind\":\"{kind}\",\"mmio_base\":\"{base}\",\"mmio_length\":{length},\"irq\":{irq},\"state_version\":1}}"));
-        }
-        format!("[{}]", entries.join(","))
+        software_checkpoint_topology()
     }
+}
+
+// Shared by the live device map and allocation-free exact-history admission.
+pub(crate) fn software_checkpoint_topology() -> String {
+    use wasm_vm_core::platform::virt;
+    let mut entries = Vec::new();
+    for (id, kind, base, length, irq) in [
+        (
+            "uart0",
+            "uart16550",
+            virt::UART0_BASE,
+            virt::UART0_LEN,
+            virt::UART0_IRQ,
+        ),
+        ("clint", "clint", virt::CLINT_BASE, virt::CLINT_LEN, 0),
+        ("plic", "plic", virt::PLIC_BASE, virt::PLIC_LEN, 0),
+        (
+            "rtc",
+            "goldfish-rtc",
+            virt::RTC_BASE,
+            virt::RTC_LEN,
+            virt::RTC_IRQ,
+        ),
+    ] {
+        entries.push(format!("{{\"id\":\"{id}\",\"kind\":\"{kind}\",\"mmio_base\":\"{base}\",\"mmio_length\":{length},\"irq\":{irq},\"state_version\":1}}"));
+    }
+    for (slot, kind) in [
+        "virtio-blk",
+        "virtio-net",
+        "virtio-rng",
+        "virtio-keyboard",
+        "virtio-tablet",
+        "virtio-mouse",
+        "virtio-snd",
+        "virtio-gpu2d",
+        "virtio-console",
+    ]
+    .iter()
+    .enumerate()
+    {
+        let base = virt::VIRTIO_BASE + slot as u64 * virt::VIRTIO_STRIDE;
+        let irq = virt::VIRTIO_IRQ_BASE + slot as u32;
+        let length = virt::VIRTIO_LEN;
+        entries.push(format!("{{\"id\":\"slot{slot}\",\"kind\":\"{kind}\",\"mmio_base\":\"{base}\",\"mmio_length\":{length},\"irq\":{irq},\"state_version\":1}}"));
+    }
+    format!("[{}]", entries.join(","))
 }

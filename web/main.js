@@ -5,6 +5,7 @@
 
 import init, { FileSha256, WasmMachine, version, bench } from "./pkg/wasm_vm_wasm.js";
 import { RISCV_TESTS } from "./riscv-tests.js";
+import {runGpuHistoryReaderDemo} from "./session-gpu-reader-demo.js";
 import { ROADMAP } from "./roadmap.js";
 import { startLinuxBoot, resetDisk, tailscaleCommand } from "./loader.js";
 import { startLinuxBootWorker, stopLinuxController } from "./linux-worker-host.js";
@@ -2747,6 +2748,8 @@ const sessionReplayRun=document.getElementById("session-replay-run"),sessionRepl
 let sessionKeyframeRunning=false,sessionKeyframeResult=null;
 const sessionKeyframeRun=document.getElementById("session-keyframe-run"),sessionKeyframeStatus=document.getElementById("session-keyframe-status");
 let gpuJournalRunning=false,gpuJournalResult=null;
+let gpuReaderResult=null;
+const gpuReaderRun=document.getElementById("gpu-history-reader-run"),gpuReaderStatus=document.getElementById("gpu-history-reader-status");
 let witnessPagesRunning=false,witnessPagesResult=null;
 const witnessPagesRun=document.getElementById("witness-pages-run"),witnessPagesStatus=document.getElementById("witness-pages-status");
 const gpuJournalRun=document.getElementById("gpu-journal-stream-run"),gpuJournalStatus=document.getElementById("gpu-journal-stream-status");
@@ -3067,6 +3070,8 @@ function renderRoadmap() {
 }
 
 function refreshRoadmapLive() {
+  const gpuReaderCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="gpu-history-reader");
+  document.getElementById("gpu-history-reader-pip").className="cap-pip "+(gpuReaderResult?.status==="passed"?"live":gpuReaderResult?.status==="failed"?"regressed":gpuReaderCap.status);
   const witnessCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="witness-pages");
   document.getElementById("witness-pages-pip").className="cap-pip "+(witnessPagesResult?.status==="passed"?"live":witnessPagesResult?.status==="failed"?"regressed":witnessCap.status);
   const gpuJournalCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==="gpu-journal-stream");
@@ -3092,6 +3097,7 @@ function refreshRoadmapLive() {
   const inputCap=ROADMAP.flatMap(epic=>epic.caps).find(cap=>cap.probe==='input-recording');
   document.getElementById('input-recording-pip').className=`cap-pip ${inputRecordingResult?.status==='passed'?'live':inputRecordingResult?.status==='failed'?'regressed':inputCap.status}`;
   for (const rc of roadmapCaps) {
+    if(rc.probe==="gpu-history-reader"){const state=gpuReaderResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Complete native input and disk histories read through bounded authenticated windows · live in browser; playback remains in qualification":rc.base.evidence;continue;}
     if(rc.probe==="witness-pages"){const state=witnessPagesResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"130 native state witnesses, bounded pages and complete storage-only archive transfer · live in browser; playback remains in qualification":rc.base.evidence;continue;}
     if(rc.probe==="gpu-journal-stream"){const state=gpuJournalResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"4,100 native inputs and 256 distinct block reads retained across bounded checkpoint intervals · live in browser; full desktop playback remains in qualification":rc.base.evidence;continue;}
     if(rc.probe==="owned-http"){const state=ownedHttpResult?.status;rc.pip.className="cap-pip "+(state==="passed"?"live":state==="failed"?"regressed":rc.base.status);if(rc.evEl)rc.evEl.textContent=state==="passed"?"Full Alpine fetches ten real HTTP bodies with recording off/on; closed-server replay matches the whole machine · live in browser":rc.base.evidence;continue;}
@@ -3153,6 +3159,7 @@ function setInteractiveState() {
   const busy = witnessPagesRunning ||gpuJournalRunning || ownedHttpRunning || unrecordedRunning || running || suiteRunning || eventClockRunning || inputRecordingRunning || timeEntropyRunning || deviceCompletionsRunning || networkCaptureRunning || sessionReplayRunning || sessionKeyframeRunning || sessionSeekRunning;
   witnessPagesRun.disabled=busy||!wasmReady;
   gpuJournalRun.disabled=busy||!wasmReady;
+  gpuReaderRun.disabled=busy||!wasmReady;
   ownedHttpRun.disabled=busy||!wasmReady;
   unrecordedRun.disabled=busy||!wasmReady;
   sessionReplayRun.disabled=busy||!wasmReady;
@@ -3420,6 +3427,15 @@ witnessPagesRun.addEventListener('click',async()=>{
   witnessPagesStatus.textContent=witnessPagesResult.status==='passed'?'Passed · 130 native witnesses remain in authenticated pages after cleanup and a complete local archive transfer. Playback is still being qualified.':'Failed · '+(witnessPagesResult.error??'incomplete witness history').split('\n')[0];
  }catch(error){witnessPagesResult={status:'failed',error:String(error)};witnessPagesStatus.textContent='Failed · '+error.message;}
  finally{if(_startupQuery.has('testHooks'))globalThis.__witnessPagesReport=witnessPagesResult;witnessPagesStatus.dataset.status=witnessPagesResult.status;witnessPagesRunning=false;refreshRoadmapLive();setInteractiveState();}
+});
+gpuReaderRun.addEventListener('click',async()=>{
+ if(witnessPagesRunning||gpuJournalRunning||ownedHttpRunning||unrecordedRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||sessionSeekRunning||!wasmReady)return;
+ gpuJournalRunning=true;gpuReaderResult=null;gpuReaderStatus.textContent='Recording and reading the complete test histories…';setInteractiveState();refreshRoadmapLive();
+ try{
+  gpuReaderResult=await runGpuHistoryReaderDemo({notify:row=>{gpuReaderStatus.textContent=`${row.variant==='count'?'Input':'Disk'} history · ${row.receipts} receipts`;}});
+  gpuReaderStatus.textContent='Passed · both complete histories read in bounded windows. Playback is still being qualified.';
+ }catch(error){gpuReaderResult={status:'failed',failure:String(error)};gpuReaderStatus.textContent='Failed · '+error.message;}
+ finally{if(_startupQuery.has('testHooks'))globalThis.__gpuHistoryReaderReport=gpuReaderResult;gpuReaderStatus.dataset.status=gpuReaderResult.status;gpuJournalRunning=false;refreshRoadmapLive();setInteractiveState();}
 });
 gpuJournalRun.addEventListener('click',async()=>{
  if(witnessPagesRunning||gpuJournalRunning||ownedHttpRunning||unrecordedRunning||running||suiteRunning||eventClockRunning||inputRecordingRunning||timeEntropyRunning||deviceCompletionsRunning||networkCaptureRunning||sessionReplayRunning||sessionKeyframeRunning||sessionSeekRunning||!wasmReady)return;

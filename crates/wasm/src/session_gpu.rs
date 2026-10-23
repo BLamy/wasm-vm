@@ -48,26 +48,11 @@ impl WasmLinux {
     }
     #[wasm_bindgen(js_name=exactGpuSessionTopology)]
     pub fn exact_gpu_session_topology(&self) -> Result<String, JsError> {
-        use wasm_vm_core::{platform::virt, session_profile::AGENT_SLOT};
         let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
         if !inner.exact_gpu || !inner.machine.control3d_proof_installed() {
             return Err(JsError::new("qualified exact GPU profile required"));
         }
-        let mut entries: Vec<serde_json::Value> =
-            serde_json::from_str(&self.software_checkpoint_topology()).map_err(gpu_error)?;
-        for entry in &mut entries {
-            if entry["kind"] == "virtio-gpu2d" {
-                entry["kind"] = "virtio-gpu3d".into();
-            }
-            if entry["kind"] == "virtio-console" {
-                entry["id"] = format!("slot{AGENT_SLOT}").into();
-                entry["mmio_base"] = (virt::VIRTIO_BASE + AGENT_SLOT as u64 * virt::VIRTIO_STRIDE)
-                    .to_string()
-                    .into();
-                entry["irq"] = (virt::VIRTIO_IRQ_BASE + AGENT_SLOT as u32).into();
-            }
-        }
-        serde_json::to_string(&entries).map_err(gpu_error)
+        exact_gpu_topology()
     }
 
     #[wasm_bindgen(js_name=exactGpuSessionWitness)]
@@ -225,4 +210,35 @@ pub fn session_gpu_result_info(bytes: &[u8]) -> Result<JsValue, JsError> {
             .map_err(|_| JsError::new("GPU result reference"))?;
     }
     Ok(out.into())
+}
+
+fn exact_gpu_topology() -> Result<String, JsError> {
+    use wasm_vm_core::{platform::virt, session_profile::AGENT_SLOT};
+    let mut entries: Vec<serde_json::Value> =
+        serde_json::from_str(&crate::session_checkpoint::software_checkpoint_topology())
+            .map_err(gpu_error)?;
+    for entry in &mut entries {
+        if entry["kind"] == "virtio-gpu2d" {
+            entry["kind"] = "virtio-gpu3d".into();
+        }
+        if entry["kind"] == "virtio-console" {
+            entry["id"] = format!("slot{AGENT_SLOT}").into();
+            entry["mmio_base"] = (virt::VIRTIO_BASE + AGENT_SLOT as u64 * virt::VIRTIO_STRIDE)
+                .to_string()
+                .into();
+            entry["irq"] = (virt::VIRTIO_IRQ_BASE + AGENT_SLOT as u32).into();
+        }
+    }
+    serde_json::to_string(&entries).map_err(gpu_error)
+}
+
+/// Installed exact GPU identity, without constructing or restoring a machine.
+#[wasm_bindgen(js_name = sessionExactGpuIdentity)]
+pub fn session_exact_gpu_identity() -> Result<String, JsError> {
+    let topology: serde_json::Value =
+        serde_json::from_str(&exact_gpu_topology()?).map_err(gpu_error)?;
+    serde_json::to_string(&serde_json::json!({
+        "version": 1, "coreHash": crate::build_core_hash().iter().map(|b| format!("{b:02x}")).collect::<String>(),
+        "devices": topology,
+    })).map_err(gpu_error)
 }

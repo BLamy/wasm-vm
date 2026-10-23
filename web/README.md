@@ -340,3 +340,13 @@ See [the format and closure rules](../docs/design/session-witness-pages.md).
 `make verify-E9-T22i` is the scoped native/Wasm/browser submission, with literal
 byte authentication in `tools/verify/e9-witness-pages-files.py` and a fresh
 Daybreak critic. Original workload and performance qualification stays open.
+
+### Complete bounded GPU history reads (E9-T22f)
+
+`SessionGpuHistoryReader.withOpen` authenticates finished v2 GPU recordings before
+exposing one-use receipt and witness cursors. It preserves all original positions
+and content identities beyond the old whole-history 4096-receipt/64-MiB limits,
+while retaining those limits for each window. Its result is storage-only; native
+continuation and timeline execution remain gated. The demo's **Complete GPU
+history read check** exercises both real long histories. See [the reader contract](../docs/design/session-gpu-history-reader.md)
+and `make verify-E9-T22f` for the frozen local proof and adversarial checks.

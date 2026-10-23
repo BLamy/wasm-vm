@@ -61,7 +61,12 @@ function reference(value) {
 function manifest(bytes) {
   need(bytes instanceof Uint8Array && bytes.byteLength <= 1024 * 1024, 'Manifest');
   try { const canonical = sessionValidateManifest(bytes); return {bytes: canonical, value: JSON.parse(decoder.decode(canonical))}; }
-  catch (error) { fail('Manifest', error.message); }
+  catch (error) {
+    const failure = new SessionStoreError('Manifest', error.message), hash = new SessionSha256();
+    try {hash.update(bytes); failure.reference = {sha256: hash.finish(), length: String(bytes.length)};}
+    finally {hash.free();}
+    throw failure;
+  }
 }
 function parsed(call) { try { return JSON.parse(decoder.decode(call())); } catch (error) { fail('Manifest', error.message); } }
 function probe(phase, id, hash = null) {
@@ -110,7 +115,7 @@ function descriptor(value, expected) {
 }
 
 export class SessionStore {
-  #db; #writers = new Set(); #closed = false;
+  #db; #writers = new Set(); #readers = new Set(); #closed = false;
   constructor(db) { need(db instanceof IDBDatabase, 'Database'); this.#db = db; }
   get databaseName() { return this.#db.name; }
   static async open(name = SESSION_DATABASE) {
@@ -145,13 +150,15 @@ export class SessionStore {
       request.onsuccess = () => { if (failed) request.result.close(); else resolve(request.result); };
     });
     const store = new SessionStore(db);
-    db.onversionchange = () => { store.#closed = true; for (const writer of store.#writers) void writer.release(); db.close(); };
+    db.onversionchange = () => { store.#closed = true; for (const reader of store.#readers) reader.revoke('Closed'); for (const writer of store.#writers) void writer.release(); db.close(); };
     return store;
   }
   #active() { need(!this.#closed, 'Closed'); }
   async close() {
     this.#closed = true;
-    await Promise.all([...this.#writers].map(writer => writer.release()));
+    const readers = [...this.#readers];
+    for (const reader of readers) reader.revoke('Closed');
+    await Promise.all([...this.#writers].map(writer => writer.release()).concat(readers.map(reader => reader.done)));
     this.#db.close();
   }
   async writer(id) {
@@ -182,6 +189,40 @@ export class SessionStore {
     try { this.#active(); return await callback(); }
     finally { await lease.release(); }
   }
+  // Freeze one durable session as well as its reachable chunks. The callback's
+  // authorization is revoked on abort, close, version change or callback exit.
+  async withSessionReadLease(id, {signal} = {}, callback) {
+    this.#active();
+    need(typeof id === 'string' && idPattern.test(id), 'SessionId');
+    need(typeof callback === 'function' && (signal === undefined || typeof signal?.aborted === 'boolean'
+      && typeof signal.addEventListener === 'function' && typeof signal.removeEventListener === 'function'), 'ReadLease');
+    let live = true, rejectRevoked, finish, maintenance, owned;
+    const revoked = new Promise((resolve, reject) => {rejectRevoked = reject;});
+    // Revocation can race lock acquisition before the work/race is installed.
+    void revoked.catch(() => {});
+    const done = new Promise(resolve => {finish = resolve;});
+    const reader = {done, revoke: code => {if (live) {live = false; rejectRevoked(new SessionStoreError(code, 'session read revoked'));}}};
+    const active = () => {this.#active(); need(live && !signal?.aborted, 'ReadLeaseRevoked');};
+    const abort = () => reader.revoke('Cancelled');
+    this.#readers.add(reader);
+    try {
+      active(); maintenance = await this.#maintenance('shared'); active();
+      owned = await holdLock(`wasm-vm-session-${this.#db.name}-${id}`, 'shared', active, 'WriterBusy'); active();
+      signal?.addEventListener('abort', abort, {once: true}); active();
+      const work = Promise.resolve().then(() => {active(); return callback(active);});
+      const result = await Promise.race([work, revoked]); active(); return result;
+    } finally {
+      live = false;
+      try {signal?.removeEventListener('abort', abort);}
+      finally {
+        try {await owned?.release();}
+        finally {
+          try {await maintenance?.release();}
+          finally {this.#readers.delete(reader); finish();}
+        }
+      }
+    }
+  }
   async statistics() {
     this.#active();
     return transaction(this.#db, ['metadata', 'sessions', 'objects', 'chunks'], 'readonly', (tx, done, abort) => {
@@ -209,9 +250,11 @@ export class SessionStore {
     this.#active();
     return descriptor(await read(this.#db, 'objects', expected.sha256), expected);
   }
-  async #root(hash) {
+  async #root(hash, {signal} = {}) {
+    const active = () => {this.#active(); need(!signal?.aborted, 'Cancelled');};
+    active();
     need(typeof hash === 'string' && hashPattern.test(hash), 'Reference');
-    const value = await read(this.#db, 'objects', hash);
+    const value = await read(this.#db, 'objects', hash); active();
     need(value, 'MissingObject', hash);
     descriptor(value, {sha256: hash, length: value.length});
     return {sha256: hash, length: value.length};
@@ -220,40 +263,58 @@ export class SessionStore {
     this.#active();
     return this.#root(hash);
   }
-  async *stream(expected) {
-    const ref = reference(expected), object = await this.#object(ref), hash = new SessionSha256();
+  async *stream(expected, {signal} = {}) {
+    const ref = reference(expected), active = () => {this.#active(); need(!signal?.aborted, 'Cancelled');};
+    active(); const hash = new SessionSha256();
     try {
+      const object = await this.#object(ref); active();
       for (const part of object.parts) {
-        this.#active();
-        const stored = await read(this.#db, 'chunks', part.sha256);
-        // Blob metadata is checked BEFORE allocating bytes, even for corrupted durable values.
+        active(); const stored = await read(this.#db, 'chunks', part.sha256); active();
+        // Check Blob metadata before allocation and cancellation at every asynchronous edge.
         need(stored instanceof Blob && stored.size === Number(part.length) && stored.size <= SESSION_CHUNK_BYTES, 'Corrupt', part.sha256);
-        const bytes = new Uint8Array(await stored.arrayBuffer());
-        need(await sha256(bytes) === part.sha256, 'Corrupt', part.sha256);
-        hash.update(bytes);
-        yield bytes;
+        const bytes = new Uint8Array(await stored.arrayBuffer()); active();
+        const digest = await sha256(bytes); active(); need(digest === part.sha256, 'Corrupt', part.sha256);
+        hash.update(bytes); yield bytes; active();
       }
       need(hash.finish() === ref.sha256, 'Corrupt', ref.sha256);
+    } catch (error) {
+      if (error instanceof SessionStoreError) error.reference ??= ref;
+      throw error;
     } finally { hash.free(); }
   }
-  async #bytes(expected, limit) {
-    need(Number(expected.length) <= limit, 'Bound', 'metadata object');
+
+  async #bytes(expected, limit, {signal} = {}) {
+    const active = () => {this.#active(); need(!signal?.aborted, 'Cancelled');};
+    active(); need(Number(expected.length) <= limit, 'Bound', 'metadata object');
     const bytes = new Uint8Array(Number(expected.length)); let at = 0;
-    for await (const part of this.stream(expected)) { bytes.set(part, at); at += part.length; }
-    return bytes;
+    for await (const part of this.stream(expected, {signal})) { active(); bytes.set(part, at); at += part.length; }
+    active(); return bytes;
   }
-  #small(expected) { return this.#bytes(expected, MAX_SOURCE_CHUNK); }
-  async #objectPrefix(expected) {
-    for await (const part of this.stream(expected)) return part.subarray(0,8);
-    fail('Corrupt','empty keyframe object');
+  #small(expected, options) { return this.#bytes(expected, MAX_SOURCE_CHUNK, options); }
+  async #objectPrefix(expected, {signal} = {}) {
+    const active = () => {this.#active(); need(!signal?.aborted, 'Cancelled');};
+    active();
+    for await (const part of this.stream(expected, {signal})) { active(); return part.subarray(0,8); }
+    active(); fail('Corrupt','empty keyframe object');
   }
-  async #references(parsedManifest, previous = null) {
+  async #references(parsedManifest, previous = null, {signal} = {}) {
+    const active = () => {this.#active(); need(!signal?.aborted, 'Cancelled');};
+    const store = this; let lastReference = null;
+    const source = {
+      async *stream(ref) {active(); lastReference = ref; for await (const part of store.stream(ref, {signal})) {active(); yield part; active();} active();},
+      async objectReference(hash) {active(); lastReference = {sha256: hash}; const ref = await store.objectReference(hash); active(); lastReference = ref; return ref;},
+    };
+    active();
     if (witnessCommitment(parsedManifest.value)) {
       let graph;
-      try {graph = await inventoryWitnessGraph(this, parsedManifest.bytes, {previous});}
-      catch (error) {fail('Corrupt', error.message);}
+      try {graph = await inventoryWitnessGraph(source, parsedManifest.bytes, {previous, signal}); active();}
+      catch (error) {
+        if (['Cancelled', 'Closed'].includes(error.code)) throw error;
+        const failure = new SessionStoreError('Corrupt', error.message);
+        failure.reference = error.reference ?? lastReference; throw failure;
+      }
       const objects = [];
-      for (const ref of graph.refs) objects.push(await this.#object(ref));
+      for (const ref of graph.refs) {active(); objects.push(await this.#object(ref)); active();}
       return objects;
     }
     const refs = parsed(() => sessionManifestReferences(parsedManifest.bytes)), all = new Map();
@@ -263,15 +324,15 @@ export class SessionStore {
       all.set(ref.sha256, ref);
     };
     for (const ref of refs.blobs) add(ref);
-    for (const hash of refs.roots) add(await this.#root(hash));
+    for (const hash of refs.roots) {active(); add(await this.#root(hash, {signal})); active();}
     let priorKind = 'none', priorDepth = 0;
     for (const [index,checkpoint] of parsedManifest.value.checkpoints.entries()) {
-      const prefix=await this.#objectPrefix(checkpoint.machine);
+      active(); const prefix=await this.#objectPrefix(checkpoint.machine, {signal}); active();
       if (isKeyframeDescriptorPrefix(prefix)) {
         need(index>0 && (priorKind==='keyframe-full' || priorKind==='delta'), 'Corrupt', 'keyframe base missing');
         let descriptor;
-        try {descriptor=decodeKeyframeDescriptor(await this.#bytes(checkpoint.machine,KEYFRAME_MAX_DESCRIPTOR_BYTES));}
-        catch(error){fail('Corrupt',error.message);}
+        try {descriptor=decodeKeyframeDescriptor(await this.#bytes(checkpoint.machine,KEYFRAME_MAX_DESCRIPTOR_BYTES,{signal})); active();}
+        catch(error){if (['Cancelled', 'Closed'].includes(error.code)) throw error; fail('Corrupt',error.message);}
         const parent=parsedManifest.value.checkpoints[index-1].machine;
         need(descriptor.depth===priorDepth+1
           && descriptor.parent.sha256===parent.sha256 && descriptor.parent.length===parent.length
@@ -287,15 +348,15 @@ export class SessionStore {
       } else {priorKind='other';priorDepth=0;}
     }
     for (const event of parsedManifest.value.events) {
-      const bytes = await this.#small(event.content);
+      active(); const bytes = await this.#small(event.content, {signal}); active();
       for (const ref of parsed(() => sessionEventReferences(parsedManifest.bytes, bytes))) add(ref);
     }
     let total = parsedManifest.bytes.length;
     const verified = [];
     for (const ref of all.values()) {
-      total += Number(ref.length); need(total <= MAX_BYTES, 'Bound', 'session bytes');
-      for await (const _ of this.stream(ref)) { /* exhaust all hashes before publication/open */ }
-      verified.push(await this.#object(ref));
+      active(); total += Number(ref.length); need(total <= MAX_BYTES, 'Bound', 'session bytes');
+      for await (const _ of source.stream(ref)) { /* exhaust all hashes before publication/open */ }
+      active(); verified.push(await this.#object(ref)); active();
     }
     return verified;
   }
@@ -309,10 +370,11 @@ export class SessionStore {
     need(decoded.value.id === id, 'Corrupt', 'manifest ID');
     return {row, decoded};
   }
-  async openSession(id) {
-    const found = await this.#session(id);
+  async openSession(id, {signal} = {}) {
+    const active = () => {this.#active(); need(!signal?.aborted, 'Cancelled');};
+    active(); const found = await this.#session(id); active();
     if (!found) return null;
-    await this.#references(found.decoded);
+    await this.#references(found.decoded, null, {signal}); active();
     return {id, revision: found.row.revision, manifest: found.decoded.bytes};
   }
   async #sessionKeys() {
