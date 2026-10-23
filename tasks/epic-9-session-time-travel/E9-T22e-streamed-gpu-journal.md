@@ -3,7 +3,7 @@ id: E9-T22e
 epic: 9
 title: Publish long GPU histories through bounded resident windows
 priority: 524.922021
-status: evidence-needed
+status: verified
 depends_on: [E9-T22b]
 estimate: S
 risk: high
@@ -23,7 +23,7 @@ One durable GPU recording publication boundary. Separate lifetime durable event 
 - [x] Persist a production GPU journal with more than 4096 receipts and at least 67125760 block-envelope bytes, then reopen and independently authenticate every byte, sequence, manifest range and content reference without truncation.
 - [x] Keep pending batches at 256 receipts/4 MiB and GPU bodies/intervals at their existing 256-object/64 MiB bounds. Separate durable-history accounting from resident windows; no constants-only increase, dropped receipt or record-after-boot shortcut.
 - [x] Preserve immutable initial/provider/renderer/profile identity, append/CAS ownership, failure atomicity and retained older roots. Refuse an overfull resident batch and corrupt/missing content with precise evidence.
-- [ ] Record the scoped high-risk local browser/store gates, actual demo proof, production release and final pristine proof. A fresh actual Daybreak critic must cover all changed hunks, adversarial cases, one novel attack and sabotage before setting verified.
+- [x] Record the scoped high-risk local browser/store gates, actual demo proof, production release and final pristine proof. A fresh actual Daybreak critic must cover all changed hunks, adversarial cases, one novel attack and sabotage before setting verified.
 
 ## Deterministic acceptance
 
@@ -317,3 +317,55 @@ The checkout was restored clean after exactly the five allowed staging
 manifest rewrites. A NEW actual Daybreak final-publication verifier must
 independently inspect the main path and carry unchanged local results before
 setting this task verified. All downstream Epic 9 tasks remain required.
+
+
+### 2026-10-23 — final-publication verifier — VERDICT: verified
+
+- P1 carried source/evidence boundary — HELD. All immutable launch bindings rehash. Fresh gate
+  closure `c07f7f15ba36098bc572da17a199afbd86add04034131ccea0ef3e193625eb6f`
+  binds accepted source `03ce37a31f740a0b7d18a60d7461425c5848cc86`, carries charter P1-P15
+  plus the local wall with no failures, and records source/dependency/evidence unchanged. Release
+  `13ba6e20e79dce8c1d4fa800c7950629f0c28ceb` changes only the five declared
+  roadmap/tasks/SW files; later reviewed metadata head
+  `aa70037449eef51b6c27cdb5017bb626a35eb5dd` changes only this task log.
+- P2 main deployment and bytes — HELD. Completion receipt
+  `7f5413fc32fb8bcf53f371d494e08621ea9743a6616e395393aae8b706574299`
+  binds Cloudflare Pages project `wasm-vm`, branch `main`, deployment `9eb734fc`, and
+  `https://wasm-vm.pages.dev/`. Retained audit
+  `f7db1e1e03110ab685202b73b4d0bd60da333fa89d110f4ad901a619f4ef0ff0`
+  passes 121/121 files and all 74 runtime members. Independent GETs for 22 required main assets
+  all returned 200 with exact release/deployed-sidecar sizes and SHA-256 values; all seven finite
+  exact R2 URLs returned HEAD 200 with manifest-bound lengths.
+- P3 actual public browser path — HELD. Public report
+  `49a90243015ccf3181aab358399c77669c222bc2a5d33713e4b06510bd31ebf2`
+  and trace `733ad995e818917e76ef6c2c894537138ba3556d59532fc073c6c7e42adf7cd9`
+  show actual main navigation and user clicks, 127/0, both live pips, coordinated controls,
+  390-pixel no-overflow, qualified Apple M4 Max Metal profile, 4,359/4,100 count receipts/offers,
+  260/256 byte receipts/block completions, 67,125,819 envelope bytes, and final native digests
+  `7d0a17139307dcbbf5ce0b87b35c83632b833f7ce92f01da8cd4f47c63cb1cdf` /
+  `894b33e00073ba1592385ea4b61a883764451faf5e4776afb0f1f547df436d51`.
+  Executed harness `654f6d8ff8b59d5355dc280efef21fd5129cde8e785526c062711474fdd1b4ab`
+  has no route fulfillment or mocked native result. The only console error is the exact allowed
+  same-origin `/favicon.ico` 404; every unexpected console/page/HTTP error list is empty.
+- P4 product configuration and scope — HELD. Public VM Wasm
+  `86dcab8e71db0e78be9910fb53c7d127647e5602ca3a9e586b4952d6cb4fece3`,
+  session validator `b1a932a81ac46b74e03705a973274c7c50c8e01ab9c22060795f32e05d66377d`,
+  and renderer graph `7f0523f6ad9708ace234d6f5a082668d4b9ef20a2a18433e946b86907f129d82`
+  equal cold/release bindings. This verdict is bounded recording publication only: raw `make ci`
+  is not claimed zero, and reader/replay, original Linux/Mesa/Omarchy, performance, capstone and
+  Epic 9 completion remain later tasks.
+- SUITE: retain `make verify-E9-T22e`, the independent byte oracle, existing GPU/store regressions,
+  public trace and 121-file asset audit unchanged; no additional promotion is needed.
+
+Final verifier artifacts:
+
+- `target/evidence/e9-t22e-daybreak-final-publication/report.json` SHA-256
+  `add71ca57c9da025140e849f744e084472cf75d009399624d1983e49d5956415`.
+- `target/evidence/e9-t22e-daybreak-final-publication/report.md` SHA-256
+  `5a85df53d57c8525028251501aa14017e968a8b128eac21640ff8c45d58f3dda`.
+- `target/evidence/e9-t22e-daybreak-final-publication/predictions.md` SHA-256
+  `a1526f02c2a9b7b0cca609e1755bea0941b30222828c01c85df02d55c595bd6d`.
+
+Read-only verifier work: local source/evidence hashing, retained report/trace/raw-value inspection,
+22 bounded main GETs and seven exact R2 HEADs. No broad test, browser rerun, boot, benchmark, cold
+clone, deployment, push, merge, message, credential, remote mutation or product edit was performed.
