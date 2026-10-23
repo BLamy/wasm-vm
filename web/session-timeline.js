@@ -79,7 +79,7 @@ export class SessionTimeline {
     const options=[...rows.sessions,...rows.unavailable.map(r=>({...r,mode:'incomplete'}))];
     this.c.sessions.replaceChildren();
     if(!options.length)this.c.sessions.add(new Option('No saved sessions',''));
-    for(const row of options)this.c.sessions.add(new Option(`${row.id} · ${row.storageOnly?'paged storage · replay unavailable':row.mode}`,row.id));
+    for(const row of options)this.c.sessions.add(new Option(`${row.id} · ${row.storageOnly?'paged GPU history':row.mode}`,row.id));
     this.c.sessions.value=options.some(r=>r.id===preferred)?preferred:options[0]?.id??'';
     await this.select(this.c.sessions.value,transfer);
   }
@@ -95,7 +95,7 @@ export class SessionTimeline {
       const manifest=JSON.parse(decode.decode(opened.manifest));if(token!==this.epoch||!this.ownsTransfer(transfer))return;
       const storageOnly=manifest.extensions.some(value=>value.kind==='e9-exact-witness-pages-v2');
       let compatible=!storageOnly&&manifest.policy.mode==='exact-replay'&&manifest.policy.profile==='rv64-linux-software-v1'&&manifest.machine.gpu===null;
-      if(!storageOnly&&manifest.policy.mode==='exact-replay'&&manifest.machine.gpu){
+      if(manifest.policy.mode==='exact-replay'&&manifest.machine.gpu){
         const vm=manifest.assets.find(asset=>asset.role==='vm');
         const {readCheckpointObject}=await import('./session-checkpoints.js');
         const config=JSON.parse(decode.decode(await readCheckpointObject(this.store,vm.content,8*1048576)));
@@ -105,7 +105,7 @@ export class SessionTimeline {
       this.preview={id,manifest,compatible};
       for(const point of manifest.checkpoints)this.c.points.add(new Option(`${point.id} · ${point.position.transition}`,point.id));
       if(this.owner?.id===id)this.fillEvents(this.owner);
-      this.status(storageOnly?'Paged witness storage is saved. Playback for this recording is not available yet.':manifest.machine.gpu&&!compatible?'GPU checkpoints are available in Local saved sessions. This saved clock/runtime does not support event replay.':compatible
+      this.status(storageOnly&&!compatible?'This paged GPU history has an incompatible replay profile.':manifest.machine.gpu&&!compatible?'GPU checkpoints are available in Local saved sessions. This saved clock/runtime does not support event replay.':compatible
         ?'Selected preview only. Open replay restores a private machine and pauses the live guest.'
         :'This is an incomplete recording or a checkpoint-only session. Full replay is unavailable.',compatible?'ready':'gated');
     }catch(error){if(token===this.epoch&&this.ownsTransfer(transfer))this.status(`Cannot preview this session: ${error.message}`,'error');}

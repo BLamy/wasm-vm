@@ -53,6 +53,22 @@ export class SessionGpuHistoryReader {
       finally{reader.#closed=true;reader.#eventToken=null;reader.#witnessToken=null;await reader.#events?.return?.();}
     });
   }
+  // Bundle preflight indexes an immutable Blob before calling this path. The
+  // archive has no mutable session writer, while the callback still owns the
+  // cursor lifetime and cancellation boundary.
+  static async withImmutableArchive(archive,id,manifestBytes,{signal}={},callback){
+    need(manifestBytes instanceof Uint8Array&&typeof archive?.stream==='function'
+      &&typeof archive?.objectReference==='function'&&typeof callback==='function',
+    'ReaderArguments',{id});
+    await initMetadata();await initMachine();
+    const source={stream:ref=>archive.stream(ref),objectReference:hash=>archive.objectReference(hash),
+      openSession:async requested=>requested===id?{id,revision:'1',manifest:manifestBytes}:null};
+    const authorize=()=>need(!signal?.aborted,'Cancelled',{id});
+    const reader=new SessionGpuHistoryReader(privateKey,source,authorize,signal);
+    try{await reader.#prepare(id,signal);reader.#active();return await callback(reader);}
+    catch(error){throw reader.#failure(error);}
+    finally{reader.#closed=true;reader.#eventToken=null;reader.#witnessToken=null;await reader.#events?.return?.();}
+  }
   get metadata(){this.#active();return this.#metadata;}
   get resident(){this.#active();const m=this.#metrics;return freeze({...structuredClone(m),measurement:{
     kind:'Explicit owned window maxima and conservative buffer upper bound; not RSS or JavaScript heap usage',
