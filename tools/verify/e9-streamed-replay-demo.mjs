@@ -67,4 +67,7 @@ try{
  server.closeAllConnections();await new Promise(resolve=>server.close(resolve));
  report.finished=new Date().toISOString();await fs.writeFile(path.join(out,'report.json'),JSON.stringify(report,null,2)+'\n');
  console.log(JSON.stringify({status:report.status,failure:report.failure,output:out}));
+ // Playwright can retain an idle Node handle after Chrome and the HTTP server close in a
+ // pristine checkout. The report and trace are already durable; do not hold the proof open.
+ process.exit(report.status==='passed'?0:1);
 }
