@@ -3,7 +3,7 @@ id: E9-T22h
 epic: 9
 title: Run the complete GPU replay chain through browser consumers
 priority: 524.922024
-status: implemented
+status: verified
 depends_on: [E9-T22g]
 estimate: S
 risk: high
@@ -20,10 +20,10 @@ One browser integration boundary for authenticated long histories: timeline seek
 
 ## Acceptance criteria
 
-- [ ] Open and navigate a long production GPU history using authenticated bounded window admission while preserving latest-owner cancellation, selected state, branch eligibility and exact event navigation.
-- [ ] Execute EVERY window from the actual initial checkpoint to final end in a recorded whole-chain proof with zero live replay egress; compare full native/RAM/disk/device/clock, pending/output queues, actual renderer checkpoint content/identity and global event cursor.
-- [ ] Authenticate all long-history content and witnesses in local export/import and GC/retention, including a middle corruption and incompatible profile. Keep previous selected view/source history intact on rejected or cancelled work.
-- [ ] Complete scoped high-risk browser/local gates, update the visible demo and publish to the main Cloudflare URL; retain final pristine evidence and a fresh actual Daybreak adversarial verdict including novel attack and sabotage.
+- [x] Open and navigate a long production GPU history using authenticated bounded window admission while preserving latest-owner cancellation, selected state, branch eligibility and exact event navigation.
+- [x] Execute EVERY window from the actual initial checkpoint to final end in a recorded whole-chain proof with zero live replay egress; compare full native/RAM/disk/device/clock, pending/output queues, actual renderer checkpoint content/identity and global event cursor.
+- [x] Authenticate all long-history content and witnesses in local export/import and GC/retention, including a middle corruption and incompatible profile. Keep previous selected view/source history intact on rejected or cancelled work.
+- [x] Complete scoped high-risk browser/local gates, update the visible demo and publish to the main Cloudflare URL; retain final pristine evidence and a fresh actual Daybreak adversarial verdict including novel attack and sabotage.
 
 ## Deterministic acceptance
 
@@ -62,3 +62,11 @@ the active lane after its dependencies are verified. Prospective checkpoint,
 witness-extension and storage limits are not waived; independently reproduce
 any additional blocker and give it its own ordered S boundary. All PRs remain
 open; no merge is authorized.
+
+### 2026-10-23 — fresh actual Daybreak final-publication verifier — VERDICT: verified
+
+- P0-P11 local high-risk charter — HELD. Runtime/deployable head `7c17d868ffc898ce6adfa126f81fa9725f2c0f97`, deployed source/claim head `51a5a1b71ecc095b92820ed876e83d37119702fc`, and all dependency/evidence boundaries remain unchanged. Fresh local report `target/evidence/e9-t22h-daybreak-local/report.md` SHA-256 `f09a3402e3bab5d91c456a6666eea4344baba174e36d2a37fd0ef3d2f51668a7` and routing SHA-256 `d076bac0facb849f258c86a2d476c1ececb828039a728c3b1f982be19e2a8ac9` record requested/returned `gpt-daybreak-blue-latest` on `daybreakBlue`, no fallback/error. Submission report SHA-256 is `be2d98cd8d4b84bae55fb03769478b9d67534bbdd7fcc9edf8c8bd5bba9c5ba7`; corrected 25-command pristine report is `697ac90d1218f22eb44402986da017a52bf74892a57ef603fddc6a234240d441`; failed cold-1 remains preserved at `d0d804af7b412830589eafb3f1398df38f2ab3605d9a966f260f79b8ec57fb88`. Raw `make ci` remains exit 2 only on five historical quarantined Zicsr-stub dead-code diagnostics and is not described as a clean pass.
+- P12 native stack — HELD. Sealed receipt `target/evidence/e9-t22h-main-publication-1/receipt.json` SHA-256 `a7ab3e4b73c93bf5044fc4b3913d3a45c0edb443a8ea007e1bbac2fc1fda2266` has exact status `worker-main-proven-awaiting-final-Daybreak-verdict`. Pushed PR #612 remains recorded draft/OPEN at head `cdea08011a868a40878febf36f469814fff30040`, directly above #611 in the local native-stack ledger; neither head is in local `origin/main`. The only deployed-source-to-PR diff is the one-line precisely located `/favicon.ico` console exception in `tools/verify/e9-gpu-reader-stream-demo.mjs`; executed and committed source SHA-256 is `a7d2e25b26d0025f7c9cd3761861b8f8c232a3dbf00b0733ff2bcdce4fd5ffcc`. No runtime, deployable or evidence dependency changed, and no merge, queue, push or remote mutation occurred.
+- P12 canonical publication — HELD. Cloudflare Pages production project `wasm-vm`, branch `main`, deployment `9bafecaa` (`https://9bafecaa.wasm-vm.pages.dev`) and canonical `https://wasm-vm.pages.dev/` are fixed by deploy log SHA-256 `7846a1870ef3eec243e0eca62376ccca5328924c1aab4856329eb42106d77d09` and deploy-script SHA-256 `5814fd32da476c23d386a7c81826af8e51c8d1c4fca70df2dadddecf7bb54435`. After freezing predictions, 17 canonical GET bodies matched committed `web/dist` or the five sealed published sidecars; seven content-addressed R2 objects returned exact HEAD lengths without downloading large bodies. Independent ledger SHA-256 is `10b88bfdd19bc4b7aeecc6f9a16108aebf5a058bcce771bc196ca5d4a87f91ce`; the worker's 19-asset report remains `11069928b7f1b385b7a881db57490f2adfa55198beb0960f5e978f29b3444749`.
+- Public browser proof — HELD. Successful canonical report SHA-256 `8637e08b98d62efd3eca347cfed522980e045cc826fc1a4d99a4cec9b940ec62` and trace SHA-256 `f3c73f3c5e987cbb2bb2feab60e77ce83136921c3e6276a5dd09539754258817` retain 127/0, authenticated 4359/260 reads, 2/2 whole-chain replay windows and event cursors, physical-GPU replay scope, three live pips, no mobile overflow, and zero non-favicon errors. Failed-attempt report SHA-256 `33fa2e23bcc6d1ce0d9853f24349757b7f8a3b962422a86e2fe923b59296bd8f` completed the suite/probe and its trace pins the sole error to `https://wasm-vm.pages.dev/favicon.ico`; AGENTS.md permits it. The retained trace removed concrete doubt, so no extra browser pass was run.
+- Final verifier artifacts: `target/evidence/e9-t22h-daybreak-final-publication/report.md` SHA-256 `feb49782725d000a32b5f9c2621e2428abba5b22341c8a67968536168f305be5`; `report.json` SHA-256 `220468c1903516b10dcfec41cc27370907cbe87c99c9f11ebf6a98d1f2700ee1`. Scope is E9-T22h only: no E9-T22c full Omarchy qualification, E9-T22d performance, E9-T23 or E9-T24 result is awarded. SUITE: retain the existing deterministic/browser/cold artifacts; this incremental publication verifier adds only the canonical byte/R2 ledger and no duplicate promoted test.
