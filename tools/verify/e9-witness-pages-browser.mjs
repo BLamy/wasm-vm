@@ -13,6 +13,7 @@ import {chromium} from '../../web/node_modules/playwright/index.mjs';
 import {retainSessionStore} from './e9-retain-session-store.mjs';
 import {attackWitnessPages} from './e9-witness-pages-attacks.mjs';
 import {controlV1WitnessArchives} from './e9-witness-pages-v1-control.mjs';
+import {checkWitnessArchiveLocales} from './e9-witness-archive-locales.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..'), opts = {};
 for (let i = 2; i < process.argv.length; i++) {
   const key = process.argv[i]; assert(!opts[key]);
@@ -29,6 +30,7 @@ if (!report.development) assert.equal(report.dirty, '', 'freeze source before ac
 await fs.copyFile(fileURLToPath(import.meta.url), path.join(out, 'executed-browser.mjs'));
 await fs.copyFile(new URL('./e9-witness-pages-attacks.mjs', import.meta.url), path.join(out, 'executed-attacks.mjs'));
 await fs.copyFile(new URL('./e9-witness-pages-v1-control.mjs', import.meta.url), path.join(out, 'executed-v1-control.mjs'));
+await fs.copyFile(new URL('./e9-witness-archive-locales.mjs', import.meta.url), path.join(out, 'executed-archive-locales.mjs'));
 let browser, context, page; const seen = new Map(), types = {'.js': 'text/javascript', '.mjs': 'text/javascript', '.wasm': 'application/wasm', '.json': 'application/json', '.css': 'text/css'};
 async function retainDatabase(database, directory) {
   const capture = await context.newPage();
@@ -49,6 +51,10 @@ const server = createServer(async (req, res) => {
     if (name === '/') {
       res.writeHead(200, {'Content-Type': 'text/html', 'Cache-Control': 'no-store', 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Embedder-Policy': 'require-corp'})
         .end('<!doctype html><title>Paged native witness storage</title><h1>Native witness pages</h1><p>Storage and archive proof. Playback integration remains gated.</p><pre>Starting…</pre>'); return;
+    }
+    if (name === '/__witness_archive__') {
+      const bytes = await fs.readFile(path.join(out, 'witness-storage.wvsession'));
+      res.writeHead(200, {'Content-Type': 'application/octet-stream', 'Cache-Control': 'no-store'}).end(bytes); return;
     }
     if (name.startsWith('/__legacy_metadata__/')) {
       const file = name.slice('/__legacy_metadata__/'.length); assert(['wasm_vm_session.js', 'wasm_vm_session_bg.wasm'].includes(file));
@@ -94,6 +100,7 @@ try {
     report.legacyV1.retained = await retainDatabase(report.legacyV1.database, path.join(out, 'legacy-v1'));
   }
   if (opts['--mutate-middle']) report.attacks = await attackWitnessPages(page, report.result);
+  report.archiveLocales = await checkWitnessArchiveLocales(browser, report.origin, out);
   report.retained = await retainDatabase(report.result.database, path.join(out, 'saved'));
   report.imported = await retainDatabase(report.result.importedDatabase, path.join(out, 'imported'));
   await page.screenshot({path: path.join(out, 'witness-pages.png')});

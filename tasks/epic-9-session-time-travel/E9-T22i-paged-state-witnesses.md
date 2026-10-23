@@ -236,3 +236,46 @@ Native draft PR #609 is pushed and attached, based on open draft PR #608; all
 32 stacked PRs remain OPEN/draft, unmerged/unqueued. Fresh Actions permissions
 are `enabled:false`. The historical tracked perf-regression workflow from
 `cd0366a5a` is unchanged; no workflow was added or re-enabled.
+
+
+### 2026-10-23 — worker — Daybreak refutes locale-dependent archive ordering
+
+Fresh actual Daybreak supplemental audit independently reproduced a real current
+source contradiction at `ce8debcf583dfaac4cbe617303d1d6f258382bda`. Chrome
+`en-US` inspects/imports the immutable 130-state archive; the valid default
+locale `en-US-u-kn-true` resolves `numeric:true`, changes SHA inventory order
+and causes both real inspect/import APIs to reject the same byte-valid archive
+at `session-witness-archives.js:64` with `BundleMissing`. No metadata or payload
+is published. A bounded independent recheck reproduced it. The canonical
+header requires lexical byte order, so the two locale-sensitive archive sorts
+contradicted the existing canonical contract. This is inside task acceptance.
+
+Audit `target/evidence/e9-t22i-daybreak-locale-audit/report.json`, SHA-256
+`e01d3c0d9c818133f636bc04cfb57eb41566c3c0f443323948faebd242181201`;
+recheck SHA `20b297f06ec83b563d2cb18f4abdeb5cc0543a243746f0b082eed00e4dd8fc88`.
+Routing is completed actual requested/returned `gpt-daybreak-blue-latest`,
+`daybreakBlue`, no fallback/errors. The archive remains 4074751 bytes, SHA
+`51930e114a7992dcbc4d07be1e604e9c801a9426b4bec3cbcf27762b6e56a281`.
+This finding is refuted and must be repaired; the task stays in-progress.
+The earlier full charter's unchanged HELD predictions are preserved, but its
+source-level archive claim cannot overrule this concrete browser contradiction.
+
+Replace only the two archive SHA sorts with strict lexical comparison. The new
+permanent `e9-witness-archive-locales.mjs` calls production inspect/import/export
+in fresh ordinary and genuinely numeric-collation Chrome contexts, proves the
+real SHA orders differ, and demands identical original/re-exported archive
+bytes, complete 130-state bindings and one exact manifest publication in each.
+It is part of the normal recorded browser acceptance, with both context traces.
+The new regression is a storage API run over authenticated recorded native
+evidence; it does not fabricate another guest execution or broaden C/D scope.
+
+The new regression first failed on unchanged ce8 with the numeric-locale
+BundleMissing (`target/evidence/e9-t22i-locale-fix-baseline-1/report.json`);
+that intentional negative stays failed. The in-memory proposed-source overlay
+then passed that direct check before repository edits (`target/evidence/e9-t22i-locale-fix-overlay-1/report.json`); this is only
+development self-validation. Native Rust/Wasm, storage/page/graph/identity and
+replay code are unchanged by the fix. The frozen ce8 primary/cold were allowed
+to seal before source edits. Preserve them as ce8 results, never relabel them
+as post-fix exact-head acceptance. New frozen source, affected archive proof
+and final exact-head pristine evidence must close this portability finding
+before deployment, along with a fresh actual Daybreak incremental review.

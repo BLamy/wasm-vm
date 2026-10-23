@@ -41,7 +41,7 @@ export async function exportSessionWitnessArchive(store, id, options = {}) {
   return store.withReadLease(async () => {
     active(options.signal); const opened = await store.openSession(id); need(opened, 'selected recording is unavailable', 'BundleMissing');
     const checked = await inventoryWitnessGraph(store, opened.manifest, options), manifest = reference(opened.manifest);
-    const objects = [...checked.refs, manifest].sort((a, b) => a.sha256.localeCompare(b.sha256));
+    const objects = [...checked.refs, manifest].sort((a, b) => a.sha256 < b.sha256 ? -1 : a.sha256 > b.sha256 ? 1 : 0);
     const header = encodeBundleHeader({version: 1, encoding: 'raw', portability: WITNESS_ARCHIVE_POLICY,
       scope: 'storage-only', manifest, objects, uncompressedBytes: String(objects.reduce((sum, ref) => sum + Number(ref.length), 0))});
     const parts = [bundlePrefix(header), header];
@@ -60,7 +60,7 @@ async function preflight(blob, options) {
   for (const ref of archive.header.objects) await authenticate(archive, ref, options.signal);
   const bytes = await small(archive, archive.header.manifest, 1048576, options.signal);
   const checked = await inventoryWitnessGraph(archive, bytes, options);
-  const expected = [...checked.refs, archive.header.manifest].sort((a, b) => a.sha256.localeCompare(b.sha256));
+  const expected = [...checked.refs, archive.header.manifest].sort((a, b) => a.sha256 < b.sha256 ? -1 : a.sha256 > b.sha256 ? 1 : 0);
   need(JSON.stringify(expected) === JSON.stringify(archive.header.objects), 'missing or unreferenced archive object', 'BundleMissing');
   return {archive, bytes, checked};
 }

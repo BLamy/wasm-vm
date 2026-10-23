@@ -74,7 +74,7 @@ try:
         report['rebuiltRuntime'].append({'path': name, 'bytes': file.stat().st_size, 'sha256': sha(file)})
     for name in names:
         if name.endswith('.js'): run('syntax-' + Path(name).stem, ['node', '--check', str(Path('web') / name)])
-    for name in ['e9-witness-pages-browser.mjs', 'e9-witness-pages-attacks.mjs', 'e9-witness-pages-v1-control.mjs', 'e9-witness-pages-demo.mjs']:
+    for name in ['e9-witness-pages-browser.mjs', 'e9-witness-pages-attacks.mjs', 'e9-witness-pages-v1-control.mjs', 'e9-witness-archive-locales.mjs', 'e9-witness-archive-locales-browser.mjs', 'e9-witness-pages-demo.mjs']:
         run('syntax-' + Path(name).stem, ['node', '--check', str(Path('tools/verify') / name)])
     run('legacy-canonical-formats', ['node', '--test', 'tools/verify/e9-bundle-format.test.mjs', 'tools/verify/e9-session-witnesses.test.mjs', 'tools/verify/e9-timeline-console.test.mjs'])
     run('docs', ['node', 'tools/check-docs.mjs'])
