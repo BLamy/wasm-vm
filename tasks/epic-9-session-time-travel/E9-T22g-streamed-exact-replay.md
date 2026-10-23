@@ -3,7 +3,7 @@ id: E9-T22g
 epic: 9
 title: Continue exact replay across bounded native admission windows
 priority: 524.922023
-status: implemented
+status: verified
 depends_on: [E9-T22f]
 estimate: S
 risk: high
@@ -20,10 +20,10 @@ One core/Wasm replay continuation boundary. Preserve one exact execution and its
 
 ## Acceptance criteria
 
-- [ ] Execute an initial-to-end software and GPU exact history beyond the current 4096-event/64 MiB whole-plan bounds using bounded continuation windows; retain all intermediate and final architectural/RAM/device/disk/clock/queue/cursor witnesses.
-- [ ] Bind each next window to the admitted predecessor, exact position, source cursor, pending/output frontiers and GPU payload/renderer identity. Reject duplicates, gaps, overlap, stale epoch, reordered observations and wrong endpoint before executing that window.
-- [ ] Keep live replay providers/factories/egress absent and preserve fail-closed cancellation/error behavior. Do not reset the guest to an unrelated later checkpoint, materialize a global plan, or raise the resident limits.
-- [ ] Pass the high-risk prescribed local gauntlet, deterministic guest traces/state digests and relevant browser paths; retain final pristine evidence and obtain a new actual Daybreak critic with threat-model attacks, novel attack and sabotage.
+- [x] Execute an initial-to-end software and GPU exact history beyond the current 4096-event/64 MiB whole-plan bounds using bounded continuation windows; retain all intermediate and final architectural/RAM/device/disk/clock/queue/cursor witnesses.
+- [x] Bind each next window to the admitted predecessor, exact position, source cursor, pending/output frontiers and GPU payload/renderer identity. Reject duplicates, gaps, overlap, stale epoch, reordered observations and wrong endpoint before executing that window.
+- [x] Keep live replay providers/factories/egress absent and preserve fail-closed cancellation/error behavior. Do not reset the guest to an unrelated later checkpoint, materialize a global plan, or raise the resident limits.
+- [x] Pass the high-risk prescribed local gauntlet, deterministic guest traces/state digests and relevant browser paths; retain final pristine evidence and obtain a new actual Daybreak critic with threat-model attacks, novel attack and sabotage.
 
 ## Deterministic acceptance
 
@@ -101,3 +101,82 @@ Continuation binds the native state/source/adapter/GPU cursors and browser
 pending/output bytes before admitting the next window. This is a worker claim,
 not a verifier verdict. Main publication and a fresh actual Daybreak adversarial
 review remain required before `verified`; H, C, D, T23 and T24 remain open.
+
+### 2026-10-23 — fresh actual Daybreak final publication verifier — VERDICT: verified
+
+- C1 bounded initial-to-end software/GPU history — HELD. Predicted the unchanged
+  original histories would cross both whole-plan limits through two resident
+  windows and retain original endpoint equality. The fresh local Daybreak critic
+  independently recomputed all four trace/state digests and GPU composite
+  witnesses at unchanged runtime `da1fc30bd9a4f2f52afb5658aa6453876bb575dd`;
+  its report SHA-256 is
+  `56e27c95e2b94ec5c7d313c78fe617c4305063a76485dd2076a580ec93578a64`.
+- C2 complete admission fences and refusal-before-work — HELD. The same fresh
+  critic covered predecessor/position/source/network/GPU/renderer/queue identity,
+  before/observe, same-transition, WFI, deferred GPU completion, duplicates,
+  gap/overlap/stale/reorder/wrong endpoint, an independent late-ordinal attack,
+  and a partial-work sabotage oracle. Requested/returned
+  `gpt-daybreak-blue-latest` on `daybreakBlue`; routing SHA-256
+  `3d79de9777e3bb53a4ad86f8a0d01307686a87565894fa4fb2cb93463321b6ef`,
+  completed without fallback or errors.
+- C3 same private machine and fail-closed boundary — HELD. The final critic
+  confirmed `a64e15c69332962fba34657427493c8d2264a14c..1fb03f231b9f6c107607dc77f86fd13def175638`
+  changes only the task, queue, generated task timelines, and service-worker
+  cache key; `da1fc30b..a64e15c6` is browser-runner shutdown only. No runtime,
+  dependency, test, fixture, recording, live ingress/egress, resident-limit, or
+  evidence boundary changed, so all four local HELD results carry forward.
+- C4 high-risk proof and final publication — HELD. Local submission report
+  `target/evidence/e9-t22g-submission-2/report.json` SHA-256
+  `b17313662cf4e813ab8325f932d3c785ce2568497f97ab442469c169bbf8cda8`
+  retains 14/14 commands. Pristine report
+  `target/evidence/e9-t22g-cold-2/report.json` SHA-256
+  `d302713eb54bfe8039f76805823c7edff519c43c264937536d836dcc594b5b89`
+  retains 16/16 at cold head `a64e15c6`; exact demo report SHA-256
+  `633b2b214ce23fc49e9b0c8a84edc6f6197720d8b937506e82e7ba8052d03ad5`
+  retains 127/0. Raw `make ci` remains exit 2 for exactly five historical
+  `zicsr-stub` dead-code diagnostics and is not claimed as a pass; production
+  Clippy, the narrow waiver, and the remaining wall passed.
+- MAIN publication — HELD. Frozen receipt
+  `target/evidence/e9-t22g-main-publication-1/receipt.json` SHA-256
+  `3a0264f8f0aca719f3cc05feba3a1f0302b436febd04a771b4d0bd3ef1996019`
+  retains status `worker-main-proven-awaiting-final-Daybreak-verdict`, project
+  `wasm-vm`, branch `main`, source head `1fb03f23`, `REBUILD=0`, and deployment
+  `8cefc9c1` (`https://8cefc9c1.wasm-vm.pages.dev`). Acceptance was independently
+  checked on canonical `https://wasm-vm.pages.dev/`: root, all 14 changed
+  deployable bodies, and five sealed sidecars returned exact hashes; seven exact
+  artifact R2 refs and two chunk-manifest refs returned bounded HEAD 200. Deploy
+  log SHA-256 is
+  `bf6f8823acb940287877eb753dc3ffd81fc10fe751183f219b79f8745f838ed2`.
+- Retained public browser evidence — HELD. Report/executed-source/trace SHA-256
+  values are respectively
+  `2fcf049674a74bf7ba4abcfaad8bce7ba584f9e5e5330f21610a7e378ef1f823`,
+  `0020ce8c5a1eed696f46d871b850c7d077b2ffee2a33f34c298ee7ba9cf05e21`,
+  and `c709455ee3d96e9c5f9b1575bc776f4658c2c427613b6d62aae32bf7bb08aa83`.
+  They retain 127/0, six ABI refusals, both G pips live, mobile `388 == 388`,
+  and zero non-favicon console/HTTP/request errors. The first attempt's only
+  console error is pinned by its trace to
+  `https://wasm-vm.pages.dev/favicon.ico`, which AGENTS.md permits.
+- Publication/PR hygiene — HELD. PR #611's sealed post-push snapshot SHA-256
+  `e641489db6f68d4f971dadecf6b22ceea71f2133bfef3c53c3d32bcd64ad3269`
+  and receipt record draft/OPEN, head `1fb03f23`, base
+  `codex/e9-streamed-gpu-reader`; local and `origin/` refs match. Prior stack
+  evidence SHA-256
+  `25ab031a362ddb102230383756e06358a9e3ec0671e9f36677c0c70dfca13769`
+  records all 33 predecessors OPEN/unmerged/unqueued, and retained Actions-policy
+  evidence SHA-256
+  `32700f5e09febdcc97d40b65c42a1c4b981b4b96af6eb1b8e87c932aba0a71ca`
+  records `enabled:false`. No merge, queue, push, deployment, or remote mutation
+  was performed by this verifier.
+- Final verifier evidence: predictions SHA-256
+  `edc14cb34ed743adc9477e28a6fd5a73150803817a643f92266cec412af8f02f`;
+  `target/evidence/e9-t22g-daybreak-final-publication/report.md` SHA-256
+  `9bd169ce826363705ea20115a290a801efc28ec4af7180fee21ff7a7187fbb61`;
+  `report.json` SHA-256
+  `4562a3b1878a8cfa3d586ddc43043a04d5519f9c573e9f2acc7272d42f91aed3`.
+  Checkout was clean after the temporary production-manifest rewrite/restore.
+- SUITE: retained the existing deterministic, guest-trace, pristine, adversarial,
+  sabotage, browser-trace, and publication artifacts. No publication-only test,
+  fixture, benchmark, broad-suite rerun, or browser rerun was warranted.
+
+No E9-T22h timeline-consumer, full Alpine/Omarchy qualification, performance,
+T23, T24, or whole-Epic claim is made.
