@@ -50,14 +50,16 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
    previousSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v1.json')),
    secondSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v2.json')),
    thirdSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v3.json')),
-   serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v4.json'));
+   fourthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v4.json')),
+   serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v5.json'));
  const amendment=JSON.parse(sourceReference);need(amendment.originalContract.sha256===receipt.contractSha256&&JSON.stringify(amendment.unchanged.workload)===JSON.stringify(contract.workload)&&JSON.stringify(amendment.unchanged.budgets)===JSON.stringify(contract.budgets),'no reference workload/budget drift');
  need(sha(previousSerialization)==='f59e6190ec3006eaf22c8eda0d9e6915065458a709505afd4ac9e33601767b27','preserved first qualification serialization');
  need(sha(secondSerialization)==='7ea0bb9bc4329da72a9497d184ba139bbc5677ed4e4ea2ba43a6593b0812c5e9','preserved Chrome .86 qualification serialization');
  need(sha(thirdSerialization)==='5802635c6c7a9c7e1746e1da5b7b4c7460c5c2c2564c6e7492b69456d8492082','preserved tool-aware qualification serialization');
- need(sha(serialization)==='a191b05860be6f32bcc356953ecd4e969eebd47426689d27f643b7bcde13c2c8','frozen supported-retention qualification serialization');
+ need(sha(fourthSerialization)==='a191b05860be6f32bcc356953ecd4e969eebd47426689d27f643b7bcde13c2c8','preserved supported-retention qualification serialization');
+ need(sha(serialization)==='d1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de','frozen persistent-profile qualification serialization');
  const qualification=JSON.parse(serialization);
- need(qualification.version===4&&qualification.previousQualification.sha256===sha(thirdSerialization)
+ need(qualification.version===5&&qualification.previousQualification.sha256===sha(fourthSerialization)
    &&qualification.originalContract.sha256===receipt.contractSha256
    &&qualification.referenceAmendment.sha256===sha(sourceReference)
    &&qualification.referenceAmendment.originalBrowser==='Chrome 155.0.8059.80'
@@ -66,7 +68,10 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
    &&qualification.history.includes('actual initial frames')
    &&qualification.retention.defaultMaxBytes===2*1024**3
    &&qualification.retention.maxBytes===8*1024**3
-   &&qualification.retention.maxCheckpoints===4096,'frozen desktop qualification profile/reference');
+   &&qualification.retention.maxCheckpoints===4096
+   &&qualification.browserContext.mode==='fresh-persistent-user-data-dir'
+   &&qualification.browserContext.controlledSourceSha256==='934dd4afc94cf28ecf60888644b110b49b448023fc02f7ed5653d357d2173b7e',
+   'frozen desktop qualification profile/reference');
  let imageBytes,image,disk,chunkPrefix,busybox=null;
  try{
  if(profile==='software'){

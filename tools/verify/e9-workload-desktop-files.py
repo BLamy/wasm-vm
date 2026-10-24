@@ -118,9 +118,20 @@ try:
     assert sha(contract_bytes) == '646899bea0da60ba13020a2015f6214236526082a8e34952cca91481cb89dba1'
     assert sha(image_bytes) == '8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8'
     assert image['image_len'] == 12884901888 and image['chunk_size'] == 262144
-    profile_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v4.json').read_bytes()
-    assert sha(profile_bytes) == 'a191b05860be6f32bcc356953ecd4e969eebd47426689d27f643b7bcde13c2c8'
-    retention = json.loads(profile_bytes)['retention']
+    profile_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v5.json').read_bytes()
+    assert sha(profile_bytes) == 'd1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de'
+    profile = json.loads(profile_bytes)
+    retention = profile['retention']
+    assert browser['inputs']['serializationSha256'] == sha(profile_bytes)
+    assert browser['browserContext']['mode'] == profile['browserContext']['mode']
+    assert Path(browser['browserContext']['directory']) == out / 'chrome-profile'
+    assert (out / 'chrome-profile/Last Version').read_text().strip() == browser['browser']
+    assert browser['chromeVersion']['product'] == 'Chrome/' + browser['browser']
+    assert browser['browserStorageBefore']['quota'] >= retention['maxBytes']
+    assert browser['hostFreeBytesBefore'].isdigit()
+    assert int(browser['hostFreeBytesBefore']) >= retention['maxBytes']
+    assert browser['hardware']['source'] == 'production-virgl-inspection'
+    assert browser['hardware']['profile'] == browser['result']['physical']
     assert browser['result']['retention'] == {
         'before':{'maxBytes':retention['defaultMaxBytes'],'maxCheckpoints':retention['maxCheckpoints']},
         'after':{'maxBytes':retention['maxBytes'],'maxCheckpoints':retention['maxCheckpoints']}}
@@ -219,6 +230,8 @@ finally:
                                  '5802635c6c7a9c7e1746e1da5b7b4c7460c5c2c2564c6e7492b69456d8492082'),
               'qualificationV4':(out / 'executed-source/docs/design/session-workload-qualification-v4.json',
                                  'a191b05860be6f32bcc356953ecd4e969eebd47426689d27f643b7bcde13c2c8'),
+              'qualificationV5':(out / 'executed-source/docs/design/session-workload-qualification-v5.json',
+                                 'd1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de'),
               'busyboxSource':(root / 'releases/initramfs/busybox',
                                '9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30')}
     report['immutableInputs'] = {}

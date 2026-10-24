@@ -31,7 +31,8 @@ export async function qualifyDesktopWorkload(contract,qualification){
   const fixture=contract.fixtures.find(row=>row.id==='desktop-gpu-candidate-v1');
   need(fixture&&contract.workload?.desktop?.probe_sha256==='822b258f329ee2d16d7f25fa676684e02227531dbdf8bf5edbf7dc8b45868155','frozen desktop contract');
   const auxiliary=qualification?.auxiliaryDesktopTool;
-  need(qualification?.version===4&&qualification.retention?.defaultMaxBytes===2*1024**3
+  need(qualification?.version===5&&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
+    &&qualification.retention?.defaultMaxBytes===2*1024**3
     &&qualification.retention?.maxBytes===8*1024**3&&qualification.retention?.maxCheckpoints===4096
     &&auxiliary?.sourceSha256==='9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30'
     &&auxiliary?.transportSha256==='dac2c1dd4ebc37266d5152eae3160f662f587f7e9deb91a35aa6f3d7c75f4679'
