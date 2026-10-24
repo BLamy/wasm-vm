@@ -36288,16 +36288,17 @@
       "activity": [
         {
           "date": "2026-10-24",
-          "commits": 2,
+          "commits": 3,
           "labels": [
             "tasks: start bounded local manifest capacity",
-            "tasks: isolate local manifest capacity before workload qualification"
+            "tasks: isolate local manifest capacity before workload qualification",
+            "E9-T22l: admit bounded large local session manifests"
           ]
         }
       ],
       "firstActivity": "2026-10-24",
       "lastActivity": "2026-10-24",
-      "commitCount": 2
+      "commitCount": 3
     },
     {
       "id": "E9-T23",
