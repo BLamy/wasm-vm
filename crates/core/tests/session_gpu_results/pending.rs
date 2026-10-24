@@ -271,6 +271,425 @@ fn reseal(bytes: &mut [u8]) {
     let sha = Sha256::digest(&bytes[..n]);
     bytes[n..].copy_from_slice(&sha);
 }
+
+#[test]
+fn full_and_delta_gpu_keyframes_preserve_completed_but_parked_owned_read() {
+    use wasm_vm_core::session_devices::{BaseDisk, CompletionStatus, DeviceIntent};
+    use wasm_vm_core::session_replay::{GpuReplayConfig, ReplayDriver, ReplayPlan, StateWitness};
+    let chunk = vec![0x5b; 512];
+    let other_chunk = vec![0xa7; 512];
+    let base = || BaseDisk {
+        identity: [0x92; 32],
+        sectors: 2,
+        chunk_bytes: 512,
+        chunks: vec![
+            wasm_vm_core::session_devices::PayloadRef::of(&chunk).unwrap(),
+            wasm_vm_core::session_devices::PayloadRef::of(&other_chunk).unwrap(),
+        ],
+    };
+    let mut source = Rig::with_owned_base(
+        64,
+        None,
+        false,
+        0,
+        None,
+        true,
+        RigSession {
+            base: Some(base()),
+            activate_sources: true,
+        },
+    );
+    let d = virt::DRAM_BASE + 0x20000;
+    let a = d + 0x1000;
+    let u = d + 0x2000;
+    let h = d + 0x3000;
+    let data = d + 0x4000;
+    let status = h + 128;
+    source.write(h, &[0; 16]); // IN, sector zero.
+    source.write(data, &[0xa5; 512]);
+    source.write(status, &[0xa5]);
+    for (i, (addr, len, flags)) in [(h, 16u32, 1u16), (data, 512, 3), (status, 1, 2)]
+        .into_iter()
+        .enumerate()
+    {
+        let at = d + i as u64 * 16;
+        source.machine.bus_mut().store64(at, addr).unwrap();
+        source.machine.bus_mut().store32(at + 8, len).unwrap();
+        source.machine.bus_mut().store16(at + 12, flags).unwrap();
+        source
+            .machine
+            .bus_mut()
+            .store16(at + 14, (i as u16 + 1) % 3)
+            .unwrap();
+    }
+    source.write(a + 4, &0u16.to_le_bytes());
+    let mut code = Code::default();
+    code.li(1, Platform::virtio_base(0) as u32);
+    for (offset, value) in [
+        (0x70, 3),
+        (0x24, 1),
+        (0x20, 1),
+        (0x70, 11),
+        (0x70, 15),
+        (0x30, 0),
+        (0x38, 8),
+        (0x80, d as u32),
+        (0x90, a as u32),
+        (0xa0, u as u32),
+        (0x44, 1),
+    ] {
+        code.mmio(offset, value);
+    }
+    code.li(2, 1);
+    code.li(3, a as u32);
+    code.store(3, 2, 2, 1);
+    code.mmio(0x50, 0);
+    code.0.push(0x0000_006f); // no further guest action while the block request is owned.
+    source.write(
+        virt::DRAM_BASE + 0x3000,
+        &code
+            .0
+            .into_iter()
+            .flat_map(u32::to_le_bytes)
+            .collect::<Vec<_>>(),
+    );
+    source.machine.hart_mut().regs.pc = virt::DRAM_BASE + 0x3000;
+    let request = (0..500)
+        .find_map(|_| {
+            source.step();
+            source.machine.session_device_requests().unwrap().pop()
+        })
+        .expect("guest read must publish one owned base-chunk request");
+    assert!(matches!(
+        request.intent,
+        DeviceIntent::BaseBlock { chunk: 0, .. }
+    ));
+    assert_eq!(source.machine.pending_blk_chunks(), vec![0]);
+    assert_eq!(source.machine.bus_mut().load16(u + 2).unwrap(), 0);
+    let lease = source.machine.lease_session_device(request.id).unwrap();
+    let pending_request_frame = source.machine.save_gpu_result_resume(&RENDERER).unwrap();
+    let before_completion = source.pos();
+    let before_digest = source.machine.gpu_session_state_digest().unwrap();
+    source
+        .machine
+        .complete_session_device(&lease, CompletionStatus::Supplied, 0, chunk.clone())
+        .unwrap();
+    let receipt = source.machine.take_session_deliveries().unwrap();
+    assert_eq!(receipt.len(), 1);
+    assert_eq!(source.pos().transition, before_completion.transition);
+    assert!(source.machine.session_device_requests().unwrap().is_empty());
+    assert_eq!(source.machine.pending_blk_chunks(), vec![0]);
+    assert_eq!(source.machine.bus_mut().load16(u + 2).unwrap(), 0);
+    assert_eq!(source.machine.bus_mut().load8(status).unwrap(), 0xa5);
+
+    let position = source.pos();
+    let full = source.machine.save_gpu_result_resume(&RENDERER).unwrap();
+    let delta = source
+        .machine
+        .save_gpu_result_state_without_ram(&RENDERER)
+        .unwrap();
+    assert_eq!(
+        source.pos(),
+        position,
+        "capture must keep the exact coordinate"
+    );
+    let full_parts = sections(&full);
+    let delta_parts = sections(&delta);
+    assert_eq!(
+        full_parts
+            .iter()
+            .filter(|(tag, _)| *tag != 2)
+            .cloned()
+            .collect::<Vec<_>>(),
+        delta_parts
+    );
+    let session = full_parts
+        .iter()
+        .find(|(tag, _)| *tag == 20)
+        .unwrap()
+        .1
+        .clone();
+    assert!(!session.is_empty());
+    let le32 = |bytes: &[u8], at: usize| u32::from_le_bytes(bytes[at..at + 4].try_into().unwrap());
+    let le64 = |bytes: &[u8], at: usize| u64::from_le_bytes(bytes[at..at + 8].try_into().unwrap());
+    let hub_len = le32(&session, 0) as usize;
+    let hub = &session[4..4 + hub_len];
+    assert_eq!(&hub[..8], b"WVDEVST1");
+    let mut at = 12 + le32(hub, 8) as usize; // configuration
+    assert_eq!(le64(hub, at), 1); // next request ID
+    assert_eq!(le64(hub, at + 8), 1); // accepted completion cursor
+    at += 32; // next ID, cursor, clock, capture epoch
+    assert_eq!(le32(hub, at), 0); // no pending host requests
+    at += 4;
+    assert_eq!(le32(hub, at), 1); // one authenticated resident chunk
+    at += 4;
+    assert_eq!(le32(hub, at), 0); // chunk zero
+    assert_eq!(le64(hub, at + 4), 1); // completion cursor
+    assert_eq!(le32(hub, at + 12), 512);
+    assert_eq!(&hub[at + 16..at + 528], chunk);
+    at += 528;
+    assert_eq!(le32(hub, at), 0); // no failed chunks
+    at += 4;
+    assert_eq!(le32(hub, at), 1); // one pinned read
+    at += 4;
+    assert_eq!(le64(hub, at), 0); // sector zero
+    assert_eq!(le32(hub, at + 8), 512);
+    assert_eq!(le32(hub, at + 12), 1);
+    assert_eq!(le32(hub, at + 16), 0); // pin requires chunk zero
+    let pending_at = 4 + hub_len + 4;
+    assert_eq!(
+        le32(&session, 4 + hub_len),
+        session.len() as u32 - pending_at as u32
+    );
+    assert_eq!(&session[pending_at..pending_at + 2], &[0, 0]);
+    assert_eq!(le32(&session, pending_at + 2), 1); // one parked descriptor
+    assert_eq!(session[pending_at + 8], 0); // Chunk reason
+    assert_eq!(le64(&session, pending_at + 9), 0); // same chunk zero
+
+    // The page graph supplies RAM for a delta frame. Use the identical full-frame RAM
+    // section at this coordinate to exercise native restore of the delta state.
+    let mut reconstituted = delta_parts.clone();
+    reconstituted.insert(
+        1,
+        full_parts
+            .iter()
+            .find(|(tag, _)| *tag == 2)
+            .unwrap()
+            .clone(),
+    );
+    let delta_with_ram = assemble(&delta, &reconstituted);
+    let mut restored = Vec::new();
+    for frame in [&full, &delta_with_ram] {
+        let mut target = Rig::with_owned_base(
+            64,
+            None,
+            false,
+            0,
+            None,
+            true,
+            RigSession {
+                base: Some(base()),
+                activate_sources: true,
+            },
+        );
+        target
+            .machine
+            .load_gpu_result_resume(frame, &RENDERER)
+            .unwrap();
+        assert_eq!(target.pos(), position);
+        assert!(target.machine.session_device_requests().unwrap().is_empty());
+        assert_eq!(target.machine.pending_blk_chunks(), vec![0]);
+        assert_eq!(target.machine.bus_mut().load16(u + 2).unwrap(), 0);
+        assert_eq!(
+            sections(&target.machine.save_gpu_result_resume(&RENDERER).unwrap())
+                .into_iter()
+                .find(|(tag, _)| *tag == 20)
+                .unwrap()
+                .1,
+            session
+        );
+        restored.push(target);
+    }
+    // A malformed section-20 chain is rejected before changing the installed state.
+    let incumbent = restored[0]
+        .machine
+        .save_gpu_result_resume(&RENDERER)
+        .unwrap();
+    for attack in 0..4 {
+        let mut bad = full_parts.clone();
+        let payload = &mut bad.iter_mut().find(|(tag, _)| *tag == 20).unwrap().1;
+        match attack {
+            0 => payload.push(0), // trailing material
+            1 => payload[pending_at + 6..pending_at + 8].copy_from_slice(&256u16.to_le_bytes()),
+            2 => payload[pending_at + 9..pending_at + 17].copy_from_slice(&1u64.to_le_bytes()),
+            3 => payload[pending_at + 21..pending_at + 29]
+                .copy_from_slice(&(virt::DRAM_BASE - 1).to_le_bytes()),
+            _ => unreachable!(),
+        }
+        let malformed = assemble(&full, &bad);
+        assert!(
+            restored[0]
+                .machine
+                .load_gpu_result_resume(&malformed, &RENDERER)
+                .is_err(),
+            "malformed parked chain attack {attack} accepted"
+        );
+        assert_eq!(
+            restored[0]
+                .machine
+                .save_gpu_result_resume(&RENDERER)
+                .unwrap(),
+            incumbent,
+            "malformed parked chain attack {attack} mutated state"
+        );
+    }
+    // Rehashed section-20 mutant: a second valid read pins chunk 1, while the
+    // original sector-0 descriptor is falsely parked on that other read's chunk.
+    // Global "any pinned chunk" validation would accept this crosswire.
+    let mut bad = full_parts.clone();
+    let payload = &mut bad.iter_mut().find(|(tag, _)| *tag == 20).unwrap().1;
+    let pin_count = 4 + at - 4;
+    payload[pin_count..pin_count + 4].copy_from_slice(&2u32.to_le_bytes());
+    let mut second_pin = Vec::new();
+    second_pin.extend_from_slice(&1u64.to_le_bytes());
+    second_pin.extend_from_slice(&512u32.to_le_bytes());
+    second_pin.extend_from_slice(&1u32.to_le_bytes());
+    second_pin.extend_from_slice(&1u32.to_le_bytes());
+    payload.splice(4 + at + 20..4 + at + 20, second_pin);
+    payload[..4].copy_from_slice(&((hub_len + 20) as u32).to_le_bytes());
+    let valid_two_pins = assemble(&full, &bad);
+    let mut two_pins = Rig::with_owned_base(
+        64,
+        None,
+        false,
+        0,
+        None,
+        true,
+        RigSession {
+            base: Some(base()),
+            activate_sources: true,
+        },
+    );
+    two_pins
+        .machine
+        .load_gpu_result_resume(&valid_two_pins, &RENDERER)
+        .expect("both independently valid pins must decode before the crosswire");
+    let pending_at = pending_at + 20;
+    bad.iter_mut().find(|(tag, _)| *tag == 20).unwrap().1[pending_at + 9..pending_at + 17]
+        .copy_from_slice(&1u64.to_le_bytes());
+    assert!(
+        restored[0]
+            .machine
+            .load_gpu_result_resume(&assemble(&full, &bad), &RENDERER)
+            .is_err(),
+        "crosswired valid read pin accepted"
+    );
+    assert_eq!(
+        restored[0]
+            .machine
+            .save_gpu_result_resume(&RENDERER)
+            .unwrap(),
+        incumbent,
+        "crosswired valid read pin mutated state"
+    );
+
+    let trace_start = source.trace.canonical().len();
+    source.until(position.transition + 2, 1);
+    for target in &mut restored {
+        target.until(position.transition + 2, 1);
+        assert_eq!(
+            target.machine.bus_mut().ram().as_bytes(),
+            source.machine.bus_mut().ram().as_bytes()
+        );
+        assert_eq!(
+            target.trace.canonical(),
+            source.trace.canonical()[trace_start..]
+        );
+    }
+    let end = source.pos();
+    let end_digest = source.machine.gpu_session_state_digest().unwrap();
+    let plan = ReplayPlan {
+        begin: before_completion,
+        end,
+        initial_resume: pending_request_frame,
+        events: receipt.clone(),
+        witnesses: vec![
+            StateWitness {
+                position: before_completion,
+                resume_sha256: before_digest,
+            },
+            StateWitness {
+                position: end,
+                resume_sha256: end_digest,
+            },
+        ],
+    };
+    plan.validate().unwrap();
+    let tape = ObservationTape {
+        policy: source.machine.source_policy(),
+        records: vec![],
+    };
+    let mut replay = Rig::with_owned_base(
+        64,
+        Some(tape),
+        false,
+        0,
+        None,
+        true,
+        RigSession {
+            base: Some(base()),
+            activate_sources: false,
+        },
+    );
+    let mut driver = ReplayDriver::start_gpu(
+        &mut replay.machine,
+        plan,
+        GpuReplayConfig {
+            renderer_digest: RENDERER,
+            ram_digest: None,
+            payloads: vec![],
+        },
+    )
+    .unwrap();
+    driver
+        .run_to_end(&mut replay.machine, 1, |_, channel, _| {
+            panic!("unexpected host input channel {channel}")
+        })
+        .unwrap();
+    assert_eq!(replay.pos(), end);
+    assert_eq!(
+        replay.machine.gpu_session_state_digest().unwrap(),
+        end_digest
+    );
+    assert_eq!(
+        replay.machine.bus_mut().ram().as_bytes(),
+        source.machine.bus_mut().ram().as_bytes()
+    );
+    restored.push(replay);
+    for machine in
+        std::iter::once(&mut source.machine).chain(restored.iter_mut().map(|rig| &mut rig.machine))
+    {
+        assert_eq!(machine.bus_mut().load16(u + 2).unwrap(), 1);
+        assert_eq!(machine.bus_mut().load8(status).unwrap(), 0);
+        assert_eq!(machine.bus_mut().load32(u + 4).unwrap(), 0);
+        assert_eq!(machine.bus_mut().load32(u + 8).unwrap(), 513);
+        assert_eq!(
+            machine
+                .bus_mut()
+                .load32(Platform::virtio_base(0) + 0x60)
+                .unwrap()
+                & 1,
+            1
+        );
+        assert_eq!(
+            machine.bus_mut().load64(data).unwrap(),
+            0x5b5b_5b5b_5b5b_5b5b
+        );
+        assert!(machine.pending_blk_chunks().is_empty());
+        assert!(machine.session_device_requests().unwrap().is_empty());
+        assert_eq!(machine.session_device_cursor(), Ok(1));
+        assert!(
+            machine
+                .complete_session_device(&lease, CompletionStatus::Supplied, 0, chunk.clone())
+                .is_err()
+        );
+    }
+    source.until(position.transition + 7, 1);
+    assert_eq!(source.machine.bus_mut().load16(u + 2).unwrap(), 1);
+    if let Ok(root) = std::env::var("E9_T22J_EVIDENCE") {
+        let root = std::path::Path::new(&root);
+        std::fs::create_dir_all(root).unwrap();
+        std::fs::write(root.join("full.resume"), &full).unwrap();
+        std::fs::write(root.join("delta.resume"), &delta).unwrap();
+        std::fs::write(root.join("delivery.txt"), format!("{receipt:?}\n")).unwrap();
+        std::fs::write(root.join("guest.trace"), source.trace.canonical()).unwrap();
+    }
+    println!(
+        "E9_T22J position={position:?} full_sha={} delta_sha={} parked_then_used_once=true",
+        hex(&Sha256::digest(full)),
+        hex(&Sha256::digest(delta))
+    );
+}
 #[test]
 fn pending_keyframe_corrupt_truncated_crosswired_and_unavailable_work_refuse_atomically() {
     let c = capture(64, 17, false);

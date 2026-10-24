@@ -42,6 +42,11 @@ export class SessionGpuReplayController {
   reverseStep(){need(this.#selected,'select a GPU position first');return this.seekTransition((BigInt(this.#selected.position.transition)-1n).toString());}
   seekTransition(transition){need(typeof transition==='string'&&/^(0|[1-9][0-9]*)$/.test(transition)&&BigInt(transition)>=BigInt(this.#read.manifest.begin.transition)&&BigInt(transition)<=BigInt(this.#read.manifest.end.transition),'GPU seek transition');return this.#request({transition,transitionOnly:true});}
   seekPosition(target){need(target?.phase==='before'&&compare(target,this.#read.manifest.begin)>=0&&compare(target,this.#read.manifest.end)<=0,'GPU seek position');return this.#request(pos(target));}
+  seekFromCheckpoint(checkpointId,target){
+    need(target?.phase==='before'&&compare(target,this.#read.manifest.begin)>=0
+      &&compare(target,this.#read.manifest.end)<=0,'GPU checkpoint seek position');
+    return this.#request(pos(target),checkpointId);
+  }
   captureSelectedBranch({signal}={}){
     need(this.canContinue&&!signal?.aborted,'select an available completed GPU point before continuing');
     const selected=this.#selected,captureId=++this.#captureId,worker=selected.worker;
@@ -91,13 +96,19 @@ export class SessionGpuReplayController {
       try{worker.postMessage({type:'inspect-selected',requestId:selected.requestId,inspectionId});}catch(cause){fail(cause);}
     });
   }
-  #request(target){
+  #request(target,checkpointId=null){
     this.cancel();const requestId=++this.#next;
     let resolve,reject;const result=new Promise((yes,no)=>{resolve=yes;reject=no;});
     const worker=new Worker(new URL('./session-gpu-replay-worker.js',import.meta.url),{type:'module'});
     let point=this.#read.manifest.checkpoints[0];for(const candidate of (this.#read.paged?[]:this.#read.manifest.checkpoints.slice(1))){
       const eligible=target.transitionOnly?BigInt(candidate.position.transition)<=BigInt(target.transition):compare(candidate.position,target)<=0;
       if(eligible)point=candidate;}
+    if(checkpointId!==null){
+      const index=this.#read.manifest.checkpoints.findIndex(candidate=>candidate.id===checkpointId);
+      need(index>=0,'GPU checkpoint missing');point=this.#read.manifest.checkpoints[index];
+      const next=this.#read.manifest.checkpoints[index+1];
+      need(compare(point.position,target)<=0&&(!next||compare(target,next.position)<=0),'GPU checkpoint seek outside interval');
+    }
     let startupTimer;
     const job={requestId,worker,done:false,cancel(){if(!this.done){this.done=true;clearTimeout(startupTimer);worker.terminate();resolve({status:'cancelled',requestId});}}};this.#active=job;
     const owns=()=>this.#active===job&&!job.done;

@@ -117,6 +117,29 @@ fn machine_with_backend(backend: Box<dyn BlockBackend>) -> (Machine, Ctx) {
     (m, Ctx { seq: 0 })
 }
 
+#[test]
+fn exact_network_only_session_refuses_unowned_parked_block_chain() {
+    let (mut m, mut ctx) = machine_with_backend(Box::new(NeverArrives));
+    m.start_session_clock(1).unwrap();
+    m.enable_session_network(false).unwrap();
+    write_hdr(&mut m, 0, 1);
+    wdesc(&mut m, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut m, 1, DATA, 512, F_WRITE | F_NEXT, 2);
+    wdesc(&mut m, 2, STATUS, 1, F_WRITE, 0);
+    submit(&mut m, &mut ctx, 0);
+    let position = m.session_position();
+    assert_eq!(used_idx(&mut m), 0);
+    assert_eq!(
+        m.save_session_resume(),
+        Err(SnapshotError::NotQuiesced {
+            reason: QuiesceReason::Chunk,
+            in_flight: 1,
+        })
+    );
+    assert_eq!(m.session_position(), position);
+    assert_eq!(used_idx(&mut m), 0);
+}
+
 fn wdesc(m: &mut Machine, i: u16, addr: u64, len: u32, flags: u16, next: u16) {
     let base = DESC + 16 * u64::from(i);
     m.bus_mut().store64(base, addr).unwrap();

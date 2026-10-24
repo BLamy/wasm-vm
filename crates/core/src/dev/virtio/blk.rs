@@ -189,7 +189,53 @@ pub(crate) struct SessionPending {
     reset_pending: bool,
     parked: alloc::vec::Vec<(DescriptorChain, ParkReason)>,
 }
+pub(crate) struct ParkedReadPin {
+    pub(crate) sector: u64,
+    pub(crate) length: u32,
+    pub(crate) chunk: usize,
+}
 impl SessionPending {
+    /// Bind every parked chunk to the exact virtio read whose header and data
+    /// buffers will be re-executed. A chunk pinned by another chain is not proof.
+    pub(crate) fn parked_read_pins(
+        &self,
+        mut read: impl FnMut(u64, &mut [u8]) -> Result<(), crate::session_devices::DeviceError>,
+    ) -> Result<alloc::vec::Vec<ParkedReadPin>, crate::session_devices::DeviceError> {
+        use crate::session_devices::DeviceError;
+        let mut pins = alloc::vec::Vec::with_capacity(self.parked.len());
+        for (chain, reason) in &self.parked {
+            let ParkReason::Chunk(chunk) = reason else {
+                return Err(DeviceError::Snapshot);
+            };
+            let length = chain
+                .writable_len()
+                .checked_sub(1)
+                .and_then(|length| u32::try_from(length).ok())
+                .filter(|length| *length > 0 && length.is_multiple_of(SECTOR_SIZE as u32))
+                .ok_or(DeviceError::Snapshot)?;
+            let mut header = [0u8; 16];
+            let mut filled = 0;
+            for segment in chain.readable() {
+                let count = (16 - filled).min(segment.len as usize);
+                read(segment.addr, &mut header[filled..filled + count])?;
+                filled += count;
+                if filled == 16 {
+                    break;
+                }
+            }
+            if filled != 16 || u32::from_le_bytes(header[0..4].try_into().unwrap()) != T_IN {
+                return Err(DeviceError::Snapshot);
+            }
+            let sector = u64::from_le_bytes(header[8..16].try_into().unwrap());
+            pins.push(ParkedReadPin {
+                sector,
+                length,
+                chunk: *chunk,
+            });
+        }
+        Ok(pins)
+    }
+
     pub(crate) fn decode(
         bytes: &[u8],
         base: u64,

@@ -18,7 +18,7 @@ const message=value=>postMessage(value);
 const dispose=async()=>{renderer?.dispose();renderer=null;machine?.free();machine=null;await store?.close();store=null;};
 const tail=parts=>{const size=Math.min(65536,parts.reduce((n,part)=>n+part.length,0)),bytes=new Uint8Array(size);let at=size;
   for(let i=parts.length-1;i>=0&&at>0;i--){const part=parts[i].subarray(Math.max(0,parts[i].length-at));at-=part.length;bytes.set(part,at);}return bytes;};
-async function runPagedPlan(request,plan,goal){
+async function runPagedPlan(request,plan,goal,skipped=0){
   let outcome,unchanged=0,lastPosition=null;
   for(let calls=0;calls<100000;calls++){
     need(!renderer.inspect().lost,'GPU context loss stopped replay');
@@ -31,19 +31,22 @@ async function runPagedPlan(request,plan,goal){
     await tick();
   }
   need(outcome?.reached,'GPU replay work bound');
-  if(same(goal,plan.end))need(outcome.status==='Completed'&&outcome.eventCursor===plan.completedEvents,
+  if(same(goal,plan.end))need(outcome.status==='Completed'&&outcome.eventCursor===plan.completedEvents-skipped,
     'GPU native replay window did not exhaust its authenticated receipts');
   return outcome;
 }
 async function seekPaged(request,manifest,config,reader){
   const metadata=reader.metadata;
-  need(metadata.session.id===request.sessionId&&metadata.checkpoints[0].id===request.checkpointId
+  const checkpoint=manifest.checkpoints.find(point=>point.id===request.checkpointId);
+  need(metadata.session.id===request.sessionId&&checkpoint
     &&same(metadata.begin,manifest.begin)&&same(metadata.end,manifest.end),'paged GPU history changed');
-  const windows=gpuReplayWitnessWindows(reader),first=await windows.next();need(!first.done,'paged GPU history has no replay window');
-  const checkpoint=manifest.checkpoints[0],frame=decodeGpuExactFrame(await readCheckpointObject(store,checkpoint.machine,GPU_FRAME_LIMIT));
+  const skipped=Number(checkpoint.position.sequence);
+  need(Number.isSafeInteger(skipped)&&skipped>=0,'paged GPU checkpoint cursor');
+  const windows=gpuReplayWitnessWindows(reader,{start:checkpoint.position}),first=await windows.next();need(!first.done,'paged GPU history has no replay window');
+  const frame=decodeGpuExactFrame(await readCheckpointObject(store,checkpoint.machine,GPU_FRAME_LIMIT));
   need(frame.meta.full&&same(frame.meta.position,checkpoint.position)&&frame.meta.runtime===manifest.machine.vm_build
     &&frame.meta.rendererSha256===checkpoint.gpu.sha256&&frame.meta.stateSha256===gpuHex(first.value.begin.digest),
-    'initial GPU replay frame/witness binding');
+    'selected full GPU replay frame/witness binding');
   const rendererBytes=await readCheckpointObject(store,checkpoint.gpu,256*1048576),kernelRef=manifest.assets.find(value=>value.role==='kernel')?.content;
   need(kernelRef,'GPU kernel missing');const kernel=await readCheckpointObject(store,kernelRef,64*1048576);
   machine=WasmLinux.newExactGpuSession(kernel,config.imageManifest,config.bootargs,()=>{},true);
@@ -63,7 +66,7 @@ async function seekPaged(request,manifest,config,reader){
     admitted++;
     const reachesTarget=request.target.transitionOnly
       ?BigInt(request.target.transition)<=BigInt(plan.end.transition):compare(request.target,plan.end)<=0;
-    outcome=await runPagedPlan(request,plan,reachesTarget?request.target:plan.end);
+    outcome=await runPagedPlan(request,plan,reachesTarget?request.target:plan.end,skipped);
     if(reachesTarget)break;
     consoleParts.push(...plan.events.filter(row=>row.kind==='host'&&row.channel===21).map(row=>row.bytes));
     consoleParts=[tail(consoleParts)];
@@ -80,13 +83,13 @@ async function seekPaged(request,manifest,config,reader){
     &&BigInt(row.sequence)<=BigInt(outcome.sequence)).map(row=>row.bytes)]);
   const queues=machine.exactSessionHostQueues(),console=decoder.decode(tail([prefix,queues.output]));
   const completed=same(outcome,metadata.end)&&outcome.status==='Completed';
-  if(completed){const end=await windows.next();need(end.done&&outcome.eventCursor===metadata.receipts,'GPU whole-chain cursor/closure');}
+  if(completed){const end=await windows.next();need(end.done&&outcome.eventCursor===metadata.receipts-skipped,'GPU whole-chain cursor/closure');}
   selected={requestId:request.requestId,read:{manifest,receipts:[],consolePrefix:prefix},configuration:config,
     position:pos(outcome),digest:gpuHex(result.digest),console};
   message({type:'ready',requestId:request.requestId,position:selected.position,digest:selected.digest,console,
     frame:latestFrame?{...latestFrame,pixels:latestFrame.pixels}:null,gpu:renderer.inspect(),
     continuationReady:machine.canContinueExactBranch()&&renderer.checkpointReady().ok,
-    replay:{paged:true,windows:admitted,eventCursor:outcome.eventCursor,wholeChain:completed}});
+    replay:{paged:true,windows:admitted,eventCursor:outcome.eventCursor+skipped,wholeChain:completed}});
 }
 function bindFrame(frame,checkpoint,read){
   need(frame.meta.runtime===read.manifest.machine.vm_build&&same(frame.meta.position,checkpoint.position)

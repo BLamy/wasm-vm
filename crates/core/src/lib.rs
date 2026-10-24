@@ -3502,13 +3502,6 @@ impl Machine {
         {
             return Err(bad);
         }
-        if let Some((reason, in_flight)) = self
-            .blk
-            .as_ref()
-            .and_then(|(state, _)| state.borrow().residual())
-        {
-            return Err(crate::resume::SnapshotError::NotQuiesced { reason, in_flight });
-        }
         let bytes = self.save_resume_inner(Some(renderer_digest), true, true)?;
         dev::virtio::gpu::checkpoint::seal_resume(bytes, renderer_digest).map_err(|_| bad)
     }
@@ -3624,7 +3617,19 @@ impl Machine {
                 return Err(error);
             }
         }
-        if !(exact_inputs && (self.session_devices.is_some() || self.session_network.is_some())) {
+        if exact_inputs {
+            // Only section 20 can preserve a parked block descriptor. An exact snapshot
+            // cannot service a legacy chain without moving its guest boundary, so fail
+            // closed when the owned device adapter is absent (even with session network).
+            if self.session_devices.is_none()
+                && let Some((reason, in_flight)) = self
+                    .blk
+                    .as_ref()
+                    .and_then(|(state, _)| state.borrow().residual())
+            {
+                return Err(crate::resume::SnapshotError::NotQuiesced { reason, in_flight });
+            }
+        } else {
             self.quiesce()?;
         }
         use crate::resume::{ComponentSnapshot, SnapshotWriter, section};
@@ -4305,6 +4310,14 @@ impl Machine {
                         .ok_or_else(device_bad)?
                         .position
                         .sequence,
+                    if ram_already_restored {
+                        None
+                    } else {
+                        sections
+                            .iter()
+                            .find(|section| section.tag == section::RAM)
+                            .map(|section| section.payload)
+                    },
                 )
                 .map_err(|_| device_bad())
             })

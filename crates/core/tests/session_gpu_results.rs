@@ -189,6 +189,10 @@ struct Rig {
     length: usize,
     disk: Option<Rc<RefCell<wasm_vm_core::dev::virtio::blk::BlkState>>>,
 }
+struct RigSession {
+    base: Option<wasm_vm_core::session_devices::BaseDisk>,
+    activate_sources: bool,
+}
 impl Rig {
     fn new(length: usize, tape: Option<ObservationTape>, cached: bool) -> Self {
         Self::with_job(length, tape, cached, 0)
@@ -214,6 +218,28 @@ impl Rig {
         disk: Option<Vec<u8>>,
         owned: bool,
     ) -> Self {
+        Self::with_owned_base(
+            length,
+            tape,
+            cached,
+            job,
+            disk,
+            owned,
+            RigSession {
+                base: None,
+                activate_sources: true,
+            },
+        )
+    }
+    fn with_owned_base(
+        length: usize,
+        tape: Option<ObservationTape>,
+        cached: bool,
+        job: u32,
+        disk: Option<Vec<u8>>,
+        owned: bool,
+        session: RigSession,
+    ) -> Self {
         let replay = tape.is_some();
         let mut machine = Machine::new(length + 1024 * 1024);
         machine.enable_plic();
@@ -222,7 +248,7 @@ impl Rig {
             assert!(disk.is_none());
             machine.start_session_clock(1).unwrap();
             machine
-                .enable_session_devices(None, false, false, replay)
+                .enable_session_devices(session.base, false, false, replay)
                 .unwrap();
             machine.enable_session_network(replay).unwrap();
         }
@@ -255,10 +281,12 @@ impl Rig {
         if !owned {
             machine.start_session_clock(1).unwrap();
         }
-        machine
-            .start_session_sources(machine.source_policy(), tape)
-            .unwrap();
-        machine.enable_session_gpu_results(replay).unwrap();
+        if session.activate_sources {
+            machine
+                .start_session_sources(machine.source_policy(), tape)
+                .unwrap();
+            machine.enable_session_gpu_results(replay).unwrap();
+        }
         let mut rig = Self {
             machine,
             gpu,

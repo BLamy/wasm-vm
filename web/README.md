@@ -365,3 +365,15 @@ histories. `make verify-E9-T22h` adds the physical GPU readback fixture, full
 original-versus-replay machine-state and renderer checks, zero-egress browser
 capture, corrupted-middle and incompatible-archive attacks, and cancellation
 checks. Cold Omarchy workload and fixed performance budgets remain E9-T22c/d.
+
+### Full GPU keyframes with parked owned block reads (E9-T22j)
+
+The live long-journal disk probe now takes a full GPU keyframe immediately after
+an authenticated base-chunk completion while its virtio-blk descriptor remains
+parked. The exact native session frame retains the resident chunk, read pin and
+descriptor until the next device service publishes DMA and the used ring once.
+`make verify-E9-T22j` exercises native full/delta capture, restore, replay and
+malformed-state refusal, then runs the built physical-GPU browser and demo
+suite. The browser reopens its bounded paged history and replays from that
+specific full keyframe to the post-service and final witnesses. Complete
+Omarchy workload qualification remains E9-T22c.
