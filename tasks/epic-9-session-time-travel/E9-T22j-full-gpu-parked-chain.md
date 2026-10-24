@@ -3,7 +3,7 @@ id: E9-T22j
 epic: 9
 title: Preserve parked owned block chains in full exact-GPU keyframes
 priority: 524.922025
-status: in-progress
+status: implemented
 depends_on: [E9-T22b, E9-T22h]
 estimate: S
 risk: high
@@ -57,6 +57,14 @@ to admit a legacy torn snapshot. The verifier must inspect the executed diff,
 one bounded novel attack, and a pristine-clone run at the final head.
 
 ## Verification log
+
+### 2026-10-23 — worker — exact-head parked-chain submission
+
+Runtime and deployable implementation is `37927798e`; the harness-only evidence-path correction is `135c0f24afce32d46816e9a0fede94fa86a0ae21`. At that clean head, `E9_OUT=target/evidence/e9-t22j-final-135c0f24a make verify-E9-T22j` passed. The native log SHA-256 is `99889e4e2c783f3a591ed68e0769aaf27166a2fc599de4fd2feff75503ea6c83`; full and delta resume SHA-256 values are `b14d1ccac383f68b4d0654fb81ceeb36c2bfc4896c4225d3ad50ac9648305a62` and `85f89316aadfec4f6a1a72782793f2ce9626fab19e8dc9f6fc6d45f728c977bf`, and the guest trace is `target/evidence/e9-t22j-final-135c0f24a/native/guest.trace` SHA-256 `692f7ef965d0577f3d1de75d177bfced16d9645e5da0725cee1fb7828f15bd8f`. An actual owned virtio-blk read at unchanged before-position transition 74/retired 74/sequence 1 had an empty broker but retained its resident chunk, read pin, and parked descriptor. Both captures restored equivalent broker/cache/pin/parked state; the next service published guest DMA, used ring, and IRQ once with no host reissue. Recording/replay trace witnesses matched. Corrupt section-20, wrong chunk, valid-pin crosswire, network-only exact, and legacy nonexact parked variants refused without a torn snapshot.
+
+The built Chrome/Metal proof `target/evidence/e9-t22j-final-135c0f24a/browser/report.json` SHA-256 `44caba3936a9b2ad238ee60dd00c90dacf30a996a376df4735d04787f531a659` recorded 260 receipts/256 real block reads, took the full `block-mid` keyframe with one parked chain after owned completion, reopened paged authenticated history, and replayed explicitly from that checkpoint through the next service and final digest `894b33e00073ba1592385ea4b61a883764451faf5e4776afb0f1f547df436d51`; error/missing/external lists were empty. The demo report SHA-256 `3be565c4c000789ec784764b779cfdfc1116b316e11074e12143f2b67e8c25ec` records 127 passed/0 failed, live GPU pips, zero console/HTTP errors and no mobile overflow. This bounded proof does not claim that the full Alpine or Omarchy workloads have qualified.
+
+`make ci` passed format and strict production workspace Clippy but stopped at exactly five pre-existing quarantined Zicsr-stub `dead_code` diagnostics; its log SHA-256 is `dc98b81714a87727e6494d3162945db1d51dc23fd88a0175539231b1411145db`. The isolated `cargo clippy -p wasm-vm-core --no-default-features --features std,trace,zicsr-stub --lib -- -D warnings -A dead_code` passed. The remaining prescribed `make test wasm features test-riscv riscv-tests-suite determinism perf-smoke` passed at the same head; log SHA-256 `17442b39f062744d13556ef6dab542f8f14c379237d26fb820342d0995e527ea`, including 128/128 committed RISC-V corpus and 57.5 MIPS against the 15 MIPS smoke floor. The final pristine clone with scrubbed Cargo/Rust flags, `E9_OUT=/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t22j-cold-135c0f24a bash tools/verify/cold_clone.sh --parent /private/tmp verify-E9-T22j`, passed. Its log SHA-256 is `c023d47b6bf40240ed1760266656a417c06f3aaec67524c407e40f93d23613b8`; independent browser and demo report SHA-256 values are `32e29bb0fc11e7e0045f49d3effa501230f57436364af23c29323cb2409809ef` and `a65160fc5bc440024d334010d745885de9f4edf7839acb6e42bfc7e9041ed1b7`. The native stacked PR, main Cloudflare publication, and final fresh actual Daybreak verdict remain the publication/verification steps before `verified`.
 
 ### 2026-10-23 — worker — activate after E9-T22c exact failure
 
