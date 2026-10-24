@@ -3,7 +3,7 @@ id: E9-T22l
 epic: 9
 title: Admit bounded local session metadata above the portable payload cap
 priority: 524.922029
-status: implemented
+status: verified
 depends_on: [E9-T22k]
 estimate: S
 risk: high
@@ -60,6 +60,68 @@ every changed caller so archive and immutable readers cannot silently choose
 local policy. Sabotage one bound assertion and prove the focused test fails.
 
 ## Verification log
+
+### 2026-10-24 — Daybreak verifier — VERDICT: verified
+
+- P1 exact failed boundary — **HELD.** Predicted a fresh reconstruction from the retained
+  `bcc6bc1c4` browser state would uniquely recover `cold-257`, account for the committed
+  4,291,892,438 bytes plus the 4,642,115-byte candidate increment, admit the resulting
+  4,296,534,553-byte manifest locally and reject it portably. The independent replay produced
+  candidate SHA-256 `7e3695bb903112a43d6f1d3a04c85f7a727573b15a6848b7ecccaaabe5decf57`
+  and a report byte-identical to the worker's, SHA-256
+  `e9edcaa41fa1be104770a5795025142f64e4fcda9db2d0a62fb93178553e68cd`.
+- P2 local publication and atomic failure — **HELD.** Predicted the saved-profile run would
+  publish revision 495→496, reopen the exact manifest, authenticate all 2,138 references,
+  remove only the corrupt unrequested orphan, survive post-GC reopen, reach the unfinished
+  commitment check through the local GPU reader, and reject a 64-GiB-plus-one candidate before
+  publication while acknowledging the frozen RAM epoch only with `false`. The report records
+  every value, including 5,994,290,586 reachable physical bytes below 8 GiB, zero publication
+  attempts for the over-limit candidate and revision 496 after failure. Citation: exact-browser
+  report SHA-256 `ff1fe2ddcfe8dfce7e735e8445262cbab06fd332b6a107103303beeba0553ce0`
+  and trace SHA-256 `ce986e0f6c0b42b01051bfd129899e6951df34a2a976f1829c280f0149fd2143`.
+- P3 portable and per-blob boundaries — **HELD.** Predicted storage-only archive through both
+  ordinary and misleading `scope: 'local'` options, playback export and immutable GPU reading
+  would return typed `BundleBound`; local validation would still reject a blob above 4 GiB and
+  malformed, missing or corrupt references. The prefix and browser reports record all refusals;
+  focused native tests independently passed the exact 64-GiB edge, one-byte overflow, 4-GiB
+  portable rejection and per-blob guard.
+- P4 exact-head and browser evidence — **HELD.** Runtime evidence is frozen at
+  `8b85004ea130390b617f296cc3d8380d879f5218`; report heads and served hashes agree with that
+  commit. The pristine sparse clone at the same head passed the acceptance with scrubbed Cargo
+  and Rust flags and remained clean. Cold report SHA-256 values are prefix
+  `e9edcaa41fa1be104770a5795025142f64e4fcda9db2d0a62fb93178553e68cd`, browser
+  `c63a4d239cad173dd820c918a6c1690ca8573d3657af2651d22d07f88114b269`, trace
+  `fb51aa3975b205650f629abd776922609533bc69094be79ca3e6a8bdeb73d327`, and demo
+  `dac029e693910fde5608a8321416b80c699e0647c2ec1366a4805fec64c0ddd3` (127 passed,
+  0 failed, no browser/HTTP errors). Source/dist pairs, generated bindings/build ID, task ledgers
+  and Make wiring are **WAIVED** as generated or declarative support exercised by both acceptance
+  runs; every semantic Rust and browser caller hunk is covered by focused tests, the exact-browser
+  trace, or the cited supplemental caller reports.
+- P5 supplemental caller compatibility — **HELD.** Full/delta keyframes, software/GPU bundles,
+  real Linux and hardware-GPU branching, legacy GPU checkpoints, and real Linux input/file
+  transfer all passed at the frozen head. The two older software-checkpoint runs also completed
+  this diff's changed local publication path at revision 1, preserved it through injected failure,
+  reloaded and restored byte-exact state before failing the unchanged stop-ownership helper.
+  That reproducible helper result predates this diff (`4169888c59`) and does not contradict L's
+  manifest-policy claim; retain it as a separate integration finding rather than relabeling either
+  failed run.
+- P6 sabotage sensitivity — **HELD.** In the pristine scratch clone, inverting the new local
+  admission assertion made `cargo test -p wasm-vm-storage --test session_local` fail 1/2 at the
+  changed assertion with the actual value still admitted; restoring it returned the focused suite
+  to 2/2.
+- Novel conflicting-reference attack — **HELD.** A scratch-only local manifest added a second
+  role with the same authenticated hash but a different declared length. Local manifest syntax
+  remained admissible, while `references_local` rejected the deduplicated collision with
+  `LengthMismatch`; no ambiguous physical object entered publication.
+- SUITE: retain `crates/storage/tests/session_local.rs`, the exact failed-prefix/browser harnesses
+  and `verify-E9-T22l`. The scratch collision duplicates the existing shared reference-conflict
+  invariant and is not promoted. No complete E9-T22c workload or performance claim follows.
+
+Commands: `cargo test -p wasm-vm-storage --test session_local`; fresh
+`node tools/verify/e9-local-manifest-repro.mjs ...`; isolated assertion sabotage and conflicting
+deduplicated-reference attack in `/private/tmp/e9-t22l-cold-proof-20261024`; read-only report,
+trace, diff and caller audit from failed parent `bcc6bc1c4` through frozen runtime head
+`8b85004ea` and submission head `050b7baf1`.
 
 ### 2026-10-24 — worker — implemented at frozen runtime head `8b85004ea130390b617f296cc3d8380d879f5218`
 
