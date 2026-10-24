@@ -36228,15 +36228,16 @@
       "activity": [
         {
           "date": "2026-10-24",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "Admit bounded large local witness graphs",
             "Track local witness graph prerequisite for full workload"
           ]
         }
       ],
       "firstActivity": "2026-10-24",
       "lastActivity": "2026-10-24",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E9-T23",
