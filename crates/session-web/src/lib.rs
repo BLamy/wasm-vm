@@ -47,6 +47,18 @@ pub fn validate_manifest(bytes: &[u8]) -> Result<Vec<u8>, JsError> {
         .map_err(js_error)
 }
 
+#[wasm_bindgen(js_name = sessionValidateLocalManifest)]
+pub fn validate_local_manifest(bytes: &[u8]) -> Result<Vec<u8>, JsError> {
+    SessionManifest::from_bytes_local(bytes)
+        .and_then(|m| m.to_bytes_local())
+        .map_err(js_error)
+}
+
+#[wasm_bindgen(js_name = sessionLocalManifestReferences)]
+pub fn local_manifest_references(bytes: &[u8]) -> Result<Vec<u8>, JsError> {
+    session_publication::references_json_local(bytes).map_err(js_error)
+}
+
 #[wasm_bindgen(js_name = sessionManifestReferences)]
 pub fn manifest_references(bytes: &[u8]) -> Result<Vec<u8>, JsError> {
     session_publication::references_json(bytes).map_err(js_error)
@@ -71,6 +83,18 @@ pub fn index_event_chunk(bytes: &[u8]) -> Result<Vec<u8>, JsError> {
 #[wasm_bindgen(js_name = sessionEventReferences)]
 pub fn event_references(manifest: &[u8], chunk: &[u8]) -> Result<Vec<u8>, JsError> {
     session_publication::event_references_json(manifest, chunk).map_err(js_error)
+}
+
+#[wasm_bindgen(js_name = sessionLocalEventReferences)]
+pub fn local_event_references(manifest: &[u8], chunk: &[u8]) -> Result<Vec<u8>, JsError> {
+    session_publication::event_references_json_local(manifest, chunk).map_err(js_error)
+}
+
+#[wasm_bindgen(js_name = sessionCheckLocalAppend)]
+pub fn check_local_append(previous: &[u8], candidate: &[u8]) -> Result<(), JsError> {
+    let previous = SessionManifest::from_bytes_local(previous).map_err(js_error)?;
+    let candidate = SessionManifest::from_bytes_local(candidate).map_err(js_error)?;
+    session_publication::check_append_local(&previous, &candidate).map_err(js_error)
 }
 
 #[wasm_bindgen(js_name = sessionCheckAppend)]

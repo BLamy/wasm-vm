@@ -1,6 +1,6 @@
 // A continuation always owns a fresh recorder; a selected replay is only a source of copied bytes.
 import {WasmLinux} from './pkg/wasm_vm_wasm.js';
-import {sessionValidateManifest} from './session-pkg/wasm_vm_session.js';
+import {sessionValidateLocalManifest} from './session-pkg/wasm_vm_session.js';
 import {SessionInputJournal} from './session-inputs.js';
 import {checkpointHash,readCheckpointObject} from './session-checkpoints.js';
 import {branchOrigin,sameBranchPosition} from './session-branch-format.js';
@@ -19,7 +19,7 @@ export async function createSessionBranch({store,parent,id='branch-'+crypto.rand
     need(!signal?.aborted&&parent.controller.selected?.requestId===selected.requestId&&parent.controller.canContinue,'creation was cancelled or the source selection changed');
   };
   check();
-  const parentManifestSha256=checkpointHash(sessionValidateManifest(encoder.encode(JSON.stringify(selected.parentManifest))));
+  const parentManifestSha256=checkpointHash(sessionValidateLocalManifest(encoder.encode(JSON.stringify(selected.parentManifest))));
   const opened=await store.openSession(parent.id);check();
   need(opened&&checkpointHash(opened.manifest)===parentManifestSha256,'saved source history changed');
   const configuration=JSON.parse(JSON.stringify(parent.configuration));

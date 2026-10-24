@@ -1,5 +1,5 @@
 // Private GPU execution lives in a worker; the page owns the writer and publication checks.
-import {sessionValidateManifest} from './session-pkg/wasm_vm_session.js';
+import {sessionValidateLocalManifest} from './session-pkg/wasm_vm_session.js';
 import {SessionGpuJournal} from './session-gpu-journal.js';
 import {checkpointHash,readCheckpointObject} from './session-checkpoints.js';
 import {branchOrigin,sameBranchPosition} from './session-branch-format.js';
@@ -48,7 +48,7 @@ function splitBatch(batch){
 export async function createGpuSessionBranch({store,parent,id,signal,onProgress=()=>{}}){
   const selected=await parent.controller.captureSelectedBranch({signal});
   const check=()=>need(!signal?.aborted&&parent.controller.selected?.requestId===selected.requestId&&parent.controller.canContinue,'creation cancelled or source selection changed');check();
-  const parentManifestSha256=checkpointHash(sessionValidateManifest(encoder.encode(JSON.stringify(selected.parentManifest))));
+  const parentManifestSha256=checkpointHash(sessionValidateLocalManifest(encoder.encode(JSON.stringify(selected.parentManifest))));
   const opened=await store.openSession(parent.id);check();need(opened&&checkpointHash(opened.manifest)===parentManifestSha256,'saved source history changed');
   const configuration=JSON.parse(JSON.stringify(parent.configuration));
   configuration.branchOrigin=branchOrigin({parentId:parent.id,parentManifestSha256,sourceDigestSha256:gpuHex(selected.capture.sourceDigest),position:selected.position,consolePrefix:selected.consolePrefix});

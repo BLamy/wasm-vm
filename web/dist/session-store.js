@@ -1,7 +1,7 @@
 // E9-T03: immutable chunk streaming + a last, strict IndexedDB publication transaction.
 // The existing resume-snapshot database and the live disk overlay are independent.
-import init, {SessionSha256, sessionValidateManifest, sessionManifestReferences,
-  sessionEventReferences, sessionCheckAppend, sessionValidateDiskRoot,
+import init, {SessionSha256, sessionValidateLocalManifest, sessionLocalManifestReferences,
+  sessionLocalEventReferences, sessionCheckLocalAppend, sessionValidateDiskRoot,
   sessionDiskRootReferences} from './session-pkg/wasm_vm_session.js';
 import {decodeKeyframeDescriptor, isKeyframeDescriptorPrefix,
   KEYFRAME_MAX_DESCRIPTOR_BYTES} from './session-keyframes.js';
@@ -15,7 +15,8 @@ export const SESSION_CHUNK_BYTES = 1024 * 1024;
 export const SESSION_DATABASE_VERSION = 2;
 export const DEFAULT_SESSION_RETENTION = Object.freeze({maxBytes: 2 * 1024 ** 3, maxCheckpoints: 4096});
 const MAX_SOURCE_CHUNK = 4 * 1024 * 1024;
-const MAX_BYTES = 4 * 1024 * 1024 * 1024, MAX_SESSIONS = 256, MAX_U64 = (1n << 64n) - 1n;
+const MAX_BYTES = 4 * 1024 ** 3, MAX_LOCAL_BYTES = 64 * 1024 ** 3;
+const MAX_SESSIONS = 256, MAX_U64 = (1n << 64n) - 1n;
 const MAX_GC_OBJECTS = LOCAL_WITNESS_GRAPH_MAX_OBJECTS, MAX_GC_CHUNKS = 1048576, MAX_DISK_ROOT_BYTES = 12 * 1024 * 1024;
 const decoder = new TextDecoder('utf-8', {fatal: true});
 const sameBytes = (a, b) => a instanceof Uint8Array && b instanceof Uint8Array && a.length === b.length && a.every((value, index) => value === b[index]);
@@ -61,7 +62,7 @@ function reference(value) {
 }
 function manifest(bytes) {
   need(bytes instanceof Uint8Array && bytes.byteLength <= 1024 * 1024, 'Manifest');
-  try { const canonical = sessionValidateManifest(bytes); return {bytes: canonical, value: JSON.parse(decoder.decode(canonical))}; }
+  try { const canonical = sessionValidateLocalManifest(bytes); return {bytes: canonical, value: JSON.parse(decoder.decode(canonical))}; }
   catch (error) {
     const failure = new SessionStoreError('Manifest', error.message), hash = new SessionSha256();
     try {hash.update(bytes); failure.reference = {sha256: hash.finish(), length: String(bytes.length)};}
@@ -318,7 +319,7 @@ export class SessionStore {
       for (const ref of graph.refs) {active(); objects.push(await this.#object(ref)); active();}
       return objects;
     }
-    const refs = parsed(() => sessionManifestReferences(parsedManifest.bytes)), all = new Map();
+    const refs = parsed(() => sessionLocalManifestReferences(parsedManifest.bytes)), all = new Map();
     const add = value => {
       const ref = reference(value), previous = all.get(ref.sha256);
       need(!previous || previous.length === ref.length, 'Corrupt', 'conflicting object lengths');
@@ -350,12 +351,12 @@ export class SessionStore {
     }
     for (const event of parsedManifest.value.events) {
       active(); const bytes = await this.#small(event.content, {signal}); active();
-      for (const ref of parsed(() => sessionEventReferences(parsedManifest.bytes, bytes))) add(ref);
+      for (const ref of parsed(() => sessionLocalEventReferences(parsedManifest.bytes, bytes))) add(ref);
     }
     let total = parsedManifest.bytes.length;
     const verified = [];
     for (const ref of all.values()) {
-      active(); total += Number(ref.length); need(total <= MAX_BYTES, 'Bound', 'session bytes');
+      active(); total += Number(ref.length); need(total <= MAX_LOCAL_BYTES, 'Bound', 'session bytes');
       for await (const _ of source.stream(ref)) { /* exhaust all hashes before publication/open */ }
       active(); verified.push(await this.#object(ref)); active();
     }
@@ -444,7 +445,7 @@ export class SessionStore {
       catch (error) { fail('UnsupportedRetention', error.message); }
       for (const object of await this.#references(decoded)) add(object);
       if (witnessCommitment(decoded.value)) continue; // The shared paged graph already includes every disk block.
-      const roots = parsed(() => sessionManifestReferences(decoded.bytes)).roots;
+      const roots = parsed(() => sessionLocalManifestReferences(decoded.bytes)).roots;
       for (const hash of roots) {
         const ref = await this.#root(hash), bytes = await this.#bytes(ref, MAX_DISK_ROOT_BYTES);
         let canonical;
@@ -553,7 +554,7 @@ export class SessionStore {
     if (previous) {
       need(previous.id === id && typeof previous.revision === 'string'
         && /^[1-9][0-9]{0,19}$/.test(previous.revision) && BigInt(previous.revision) <= MAX_U64, 'Corrupt', 'commit cursor');
-      try { sessionCheckAppend(previous.manifest, decoded.bytes); }
+      try { sessionCheckLocalAppend(previous.manifest, decoded.bytes); }
       catch (error) { fail('NotAppend', error.message); }
     }
     const revision = previous ? BigInt(previous.revision) + 1n : 1n;

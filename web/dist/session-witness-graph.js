@@ -1,5 +1,7 @@
 // One complete authenticated closure for paged publication/open, GC and storage transfer.
-import init, {SessionSha256, sessionValidateManifest, sessionManifestReferences, sessionEventReferences, sessionCheckAppend,
+import init, {SessionSha256, sessionValidateManifest, sessionValidateLocalManifest,
+  sessionManifestReferences, sessionLocalManifestReferences, sessionEventReferences, sessionLocalEventReferences,
+  sessionCheckAppend, sessionCheckLocalAppend,
   sessionValidateDiskRoot, sessionDiskRootReferences} from './session-pkg/wasm_vm_session.js';
 import {authenticateWitnessPages, witnessCommitment} from './session-witness-pages.js';
 import {decodeKeyframeDescriptor, isKeyframeDescriptorPrefix, inspectRamDeltaChunk} from './session-keyframes.js';
@@ -57,18 +59,28 @@ async function gpuCheckpointWitness(source, point, row, manifest, signal) {
     && meta.stateSha256 === row.digest.map(byte => byte.toString(16).padStart(2, '0')).join(''), 'GPU checkpoint witness digest/identity');
 }
 export async function inventoryWitnessGraph(source, manifestBytes, {signal, previous = null, scope = 'archive'} = {}) {
-  active(signal); const canonical = sessionValidateManifest(manifestBytes);
+  active(signal);
+  const local = scope === 'local';
+  // The archive codec remains authoritative for portable transfers. Its
+  // aggregate failure is presented as the archive's stable typed bound.
+  let canonical;
+  try {canonical = (local ? sessionValidateLocalManifest : sessionValidateManifest)(manifestBytes);}
+  catch (error) {
+    if (!local && /TooLarge\("session payload"\)/.test(String(error.message)))
+      need(false, 'archive session payload bound', 'BundleBound');
+    throw error;
+  }
   need(equal(canonical, manifestBytes), 'non-canonical manifest'); const manifest = parsed(canonical);
   need(witnessCommitment(manifest), 'required paged witnesses', 'BundleCompatibility');
   checkWitnessGraphLimit(scope, manifestBytes.length, 0);
-  if (previous) sessionCheckAppend(new TextEncoder().encode(JSON.stringify(previous)), canonical);
+  if (previous) (local ? sessionCheckLocalAppend : sessionCheckAppend)(new TextEncoder().encode(JSON.stringify(previous)), canonical);
   const refs = new Map(); let total = manifestBytes.length;
   const add = value => {
     const ref = bundleReference(value), previous = refs.get(ref.sha256);
     need(!previous || previous.length === ref.length, 'conflicting referenced lengths');
     if (!previous) {total += Number(ref.length); checkWitnessGraphLimit(scope, total, refs.size + 1); refs.set(ref.sha256, ref);}
   };
-  const direct = parsed(sessionManifestReferences(canonical)); for (const ref of direct.blobs) add(ref);
+  const direct = parsed((local ? sessionLocalManifestReferences : sessionManifestReferences)(canonical)); for (const ref of direct.blobs) add(ref);
   const witness = await authenticateWitnessPages(source, manifest, {previous, onReference: add, onCheckpoint: (point, row) => gpuCheckpointWitness(source, point, row, manifest, signal)});
   for (const hash of direct.roots) {
     const ref = await source.objectReference(hash); add(ref);
@@ -78,7 +90,7 @@ export async function inventoryWitnessGraph(source, manifestBytes, {signal, prev
   }
   for (const event of manifest.events) {
     const bytes = await small(source, event.content, 4 * 1048576, signal);
-    for (const ref of parsed(sessionEventReferences(canonical, bytes))) add(ref);
+    for (const ref of parsed((local ? sessionLocalEventReferences : sessionEventReferences)(canonical, bytes))) add(ref);
   }
   let checkpointPrevious = null, depth = 0;
   for (const point of manifest.checkpoints) {

@@ -2863,6 +2863,22 @@ verify-E9-T22k:
 	  node tools/verify/e9-local-witness-graph-repro.mjs --directory "$$desktop" --output "$$out/prefix"; \
 	  node tools/verify/e9-local-witness-graph-browser.mjs --desktop "$$desktop" --candidate "$$out/prefix/cold-127-candidate.json" --output "$$out/exact-browser"; \
 	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo"
+.PHONY: verify-E9-T22l
+verify-E9-T22l:
+	@set -eu; desktop="$${E9_T22L_DESKTOP:-target/evidence/e9-t22c-submission-bcc6bc1c4/desktop}"; \
+	  test -f "$$desktop/saved/storage.json" && test -d "$$desktop/chrome-profile" || { echo "E9-T22l requires the saved failed C prefix: set E9_T22L_DESKTOP" >&2; exit 1; }; \
+	  out="$${E9_OUT:-target/evidence/e9-t22l-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  cargo fmt --all --check; \
+	  cargo test -p wasm-vm-storage --test session_local --test session_manifest --test session_publication; \
+	  cargo clippy -p wasm-vm-storage --all-targets -- -D warnings; \
+	  cargo clippy -p wasm-vm-session-web --target wasm32-unknown-unknown -- -D warnings; \
+	  node --test web/tests/e9-t22k-graph-limits.test.mjs > "$$out/policy.log" 2>&1; \
+	  $(MAKE) web-dist; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-local-manifest-repro.mjs --directory "$$desktop" --output "$$out/prefix"; \
+	  node tools/verify/e9-local-manifest-browser.mjs --desktop "$$desktop" --candidate "$$out/prefix/cold-257-candidate.json" --output "$$out/exact-browser"; \
+	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo"
+
 .PHONY: verify-E9-T22c
 verify-E9-T22c:
 	mkdir -p target/evidence

@@ -1,6 +1,6 @@
 // E9-T05: authenticate the entire machine/disk/input tuple before publishing or private restore.
 import init, {SessionSha256, sessionValidateCheckpointContext, sessionCanonicalImage,
-  sessionValidateManifest} from './session-pkg/wasm_vm_session.js';
+  sessionValidateLocalManifest} from './session-pkg/wasm_vm_session.js';
 import {SessionStore, SessionStoreError} from './session-store.js';
 import {SessionDiskRoots} from './session-disk-roots.js';
 import {encodeKeyframeDescriptor, decodeKeyframeDescriptor, isKeyframeDescriptorPrefix,
@@ -127,7 +127,7 @@ export class SessionCheckpoints {
       next_sequence:String(BigInt(parts.context.position.sequence)+1n),machine:machineRef,disk_root:root.content.sha256,gpu:null});
     // Refuse malformed metadata before fetching or publishing. No commit cursor changes until all
     // components, disk descendants and retained assets have reached their immutable object rows.
-    const canonical=sessionValidateManifest(encoder.encode(JSON.stringify(manifest)));
+    const canonical=sessionValidateLocalManifest(encoder.encode(JSON.stringify(manifest)));
     for(const [ref,bytes] of [[vmRef,configBytes],[baseRef,image]])await writer.put(ref,checkpointChunks(bytes));
     for(const role of ['kernel','wasm']) {
       const ref=manifest.assets.find(asset=>asset.role===role).content;
@@ -192,7 +192,7 @@ export class SessionCheckpoints {
     manifest.checkpoints.push({id:checkpointId,position:parts.context.position,
       next_sequence:String(BigInt(parts.context.position.sequence)+1n),machine,
       disk_root:root.content.sha256,gpu:null});
-    const canonical=sessionValidateManifest(encoder.encode(JSON.stringify(manifest)));
+    const canonical=sessionValidateLocalManifest(encoder.encode(JSON.stringify(manifest)));
     const publication=await writer.publish(canonical);
     return {publication,stats:{depth:depth+1,dirtyPages,frameBytes:frame.length,
       deltaBytes:payloadBytes+descriptor.length,maxChunkBytes,chunkCount:chunkRefs.length}};
@@ -225,7 +225,7 @@ export class SessionCheckpoints {
     manifest.checkpoints.push({id:checkpointId,position:parts.context.position,
       next_sequence:String(BigInt(parts.context.position.sequence)+1n),machine,
       disk_root:root.content.sha256,gpu:null});
-    const canonical=sessionValidateManifest(encoder.encode(JSON.stringify(manifest)));
+    const canonical=sessionValidateLocalManifest(encoder.encode(JSON.stringify(manifest)));
     const publication=await writer.publish(canonical);
     return {publication,stats:{depth:0,fullBytes:frame.length}};
   }

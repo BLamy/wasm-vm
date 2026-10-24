@@ -109,6 +109,21 @@ export function sessionCheckAppend(previous, candidate) {
 }
 
 /**
+ * @param {Uint8Array} previous
+ * @param {Uint8Array} candidate
+ */
+export function sessionCheckLocalAppend(previous, candidate) {
+    const ptr0 = passArray8ToWasm0(previous, wasm.__wbindgen_malloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passArray8ToWasm0(candidate, wasm.__wbindgen_malloc);
+    const len1 = WASM_VECTOR_LEN;
+    const ret = wasm.sessionCheckLocalAppend(ptr0, len0, ptr1, len1);
+    if (ret[1]) {
+        throw takeFromExternrefTable0(ret[0]);
+    }
+}
+
+/**
  * @param {Uint8Array} bytes
  * @returns {Uint8Array}
  */
@@ -161,6 +176,41 @@ export function sessionIndexEventChunk(bytes) {
 }
 
 /**
+ * @param {Uint8Array} manifest
+ * @param {Uint8Array} chunk
+ * @returns {Uint8Array}
+ */
+export function sessionLocalEventReferences(manifest, chunk) {
+    const ptr0 = passArray8ToWasm0(manifest, wasm.__wbindgen_malloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ptr1 = passArray8ToWasm0(chunk, wasm.__wbindgen_malloc);
+    const len1 = WASM_VECTOR_LEN;
+    const ret = wasm.sessionLocalEventReferences(ptr0, len0, ptr1, len1);
+    if (ret[3]) {
+        throw takeFromExternrefTable0(ret[2]);
+    }
+    var v3 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
+    wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+    return v3;
+}
+
+/**
+ * @param {Uint8Array} bytes
+ * @returns {Uint8Array}
+ */
+export function sessionLocalManifestReferences(bytes) {
+    const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.sessionLocalManifestReferences(ptr0, len0);
+    if (ret[3]) {
+        throw takeFromExternrefTable0(ret[2]);
+    }
+    var v2 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
+    wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+    return v2;
+}
+
+/**
  * @param {Uint8Array} bytes
  * @returns {Uint8Array}
  */
@@ -200,6 +250,22 @@ export function sessionValidateDiskRoot(bytes) {
     const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
     const len0 = WASM_VECTOR_LEN;
     const ret = wasm.sessionValidateDiskRoot(ptr0, len0);
+    if (ret[3]) {
+        throw takeFromExternrefTable0(ret[2]);
+    }
+    var v2 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
+    wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
+    return v2;
+}
+
+/**
+ * @param {Uint8Array} bytes
+ * @returns {Uint8Array}
+ */
+export function sessionValidateLocalManifest(bytes) {
+    const ptr0 = passArray8ToWasm0(bytes, wasm.__wbindgen_malloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.sessionValidateLocalManifest(ptr0, len0);
     if (ret[3]) {
         throw takeFromExternrefTable0(ret[2]);
     }

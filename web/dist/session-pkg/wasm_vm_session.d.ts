@@ -18,6 +18,8 @@ export function sessionCanonicalImage(text: string): Uint8Array;
 
 export function sessionCheckAppend(previous: Uint8Array, candidate: Uint8Array): void;
 
+export function sessionCheckLocalAppend(previous: Uint8Array, candidate: Uint8Array): void;
+
 export function sessionDiskRootReferences(bytes: Uint8Array): Uint8Array;
 
 export function sessionEventReferences(manifest: Uint8Array, chunk: Uint8Array): Uint8Array;
@@ -27,11 +29,17 @@ export function sessionEventReferences(manifest: Uint8Array, chunk: Uint8Array):
  */
 export function sessionIndexEventChunk(bytes: Uint8Array): Uint8Array;
 
+export function sessionLocalEventReferences(manifest: Uint8Array, chunk: Uint8Array): Uint8Array;
+
+export function sessionLocalManifestReferences(bytes: Uint8Array): Uint8Array;
+
 export function sessionManifestReferences(bytes: Uint8Array): Uint8Array;
 
 export function sessionValidateCheckpointContext(bytes: Uint8Array): Uint8Array;
 
 export function sessionValidateDiskRoot(bytes: Uint8Array): Uint8Array;
+
+export function sessionValidateLocalManifest(bytes: Uint8Array): Uint8Array;
 
 export function sessionValidateManifest(bytes: Uint8Array): Uint8Array;
 
@@ -48,12 +56,16 @@ export interface InitOutput {
     readonly sessionAdmitDiskRoot: (a: number, b: number, c: number, d: number, e: number, f: number) => [number, number, number, number];
     readonly sessionCanonicalImage: (a: number, b: number) => [number, number, number, number];
     readonly sessionCheckAppend: (a: number, b: number, c: number, d: number) => [number, number];
+    readonly sessionCheckLocalAppend: (a: number, b: number, c: number, d: number) => [number, number];
     readonly sessionDiskRootReferences: (a: number, b: number) => [number, number, number, number];
     readonly sessionEventReferences: (a: number, b: number, c: number, d: number) => [number, number, number, number];
     readonly sessionIndexEventChunk: (a: number, b: number) => [number, number, number, number];
+    readonly sessionLocalEventReferences: (a: number, b: number, c: number, d: number) => [number, number, number, number];
+    readonly sessionLocalManifestReferences: (a: number, b: number) => [number, number, number, number];
     readonly sessionManifestReferences: (a: number, b: number) => [number, number, number, number];
     readonly sessionValidateCheckpointContext: (a: number, b: number) => [number, number, number, number];
     readonly sessionValidateDiskRoot: (a: number, b: number) => [number, number, number, number];
+    readonly sessionValidateLocalManifest: (a: number, b: number) => [number, number, number, number];
     readonly sessionValidateManifest: (a: number, b: number) => [number, number, number, number];
     readonly sessionValidateWitnessPage: (a: number, b: number) => [number, number, number, number];
     readonly sessionsha256_finish: (a: number) => [number, number, number, number];

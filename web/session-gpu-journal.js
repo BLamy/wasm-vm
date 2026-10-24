@@ -1,6 +1,6 @@
 // Durable exact GPU results. Every external body is a direct event reference; RAM
 // deltas use the existing authenticated parent/frame/page graph and publication rule.
-import init,{sessionCanonicalImage,sessionValidateManifest,sessionIndexEventChunk} from './session-pkg/wasm_vm_session.js';
+import init,{sessionCanonicalImage,sessionValidateLocalManifest,sessionIndexEventChunk} from './session-pkg/wasm_vm_session.js';
 import {SessionDiskRoots} from './session-disk-roots.js';
 import {SessionWitnessPages,witnessCommitment,witnessExtension,WITNESS_PAGE_ROWS,WITNESS_MAX_PAGES} from './session-witness-pages.js';
 import {SessionCheckpoints,checkpointChunks,checkpointHash,checkpointReference,readCheckpointObject,fetchCheckpointAsset} from './session-checkpoints.js';
@@ -11,7 +11,7 @@ import {validateBranchOrigin} from './session-branch-format.js';
 import {GPU_EXACT_INPUTS,GPU_FRAME_LIMIT,gpuNeed as need,gpuHex,gpuHashBytes,gpuPosition as pos,gpuSamePosition as same,gpuCompare as compare,ownGpuReceipt,gpuEventParts,validateGpuConfiguration,encodeGpuExactFrame,decodeGpuExactFrame} from './session-gpu-replay-format.js';
 await init();
 const encoder=new TextEncoder(),decoder=new TextDecoder('utf-8',{fatal:true});
-const json=value=>encoder.encode(JSON.stringify(value)),canonical=value=>sessionValidateManifest(json(value));
+const json=value=>encoder.encode(JSON.stringify(value)),canonical=value=>sessionValidateLocalManifest(json(value));
 const witness=value=>({...pos(value),digest:[...value.digest]});
 const sameData=(a,b)=>{const x=encodeCheckpointData(a),y=encodeCheckpointData(b);return x.length===y.length&&x.every((value,index)=>value===y[index]);};
 const sameRef=(a,b)=>a?.sha256===b?.sha256&&a?.length===b?.length;

@@ -214,7 +214,14 @@ async function consumePagedGpuHistory(reader,manifestBytes,manifest,signal){
 }
 
 async function walkRecording(store, manifestBytes, {signal, onProgress = () => {}, checkHardware = false} = {}) {
-  active(signal); const canonical = sessionValidateManifest(manifestBytes);
+  active(signal);
+  let canonical;
+  try {canonical = sessionValidateManifest(manifestBytes);}
+  catch (error) {
+    if (/TooLarge\("session payload"\)/.test(String(error.message)))
+      need(false, 'archive session payload bound', 'BundleBound');
+    throw error;
+  }
   need(equal(canonical, manifestBytes), 'non-canonical manifest'); const manifest = parsed(canonical), gpu = manifest.machine.gpu !== null;
   need(exactVersion(manifest.version) && exactVersion(manifest.policy.event_version) && exactVersion(manifest.policy.checkpoint_version)
     && manifest.policy.boundary_version === 1 && manifest.policy.mode === 'exact-replay'

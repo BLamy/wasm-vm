@@ -1,6 +1,6 @@
 // E9-T17: one immutable pair owns the native machine, COW disk and renderer checkpoint.
 // The manifest's machine descriptor binds its exact position and disk root to that pair.
-import init, {sessionCanonicalImage, sessionValidateManifest} from './session-pkg/wasm_vm_session.js';
+import init, {sessionCanonicalImage, sessionValidateLocalManifest} from './session-pkg/wasm_vm_session.js';
 import {SessionStore, SessionStoreError} from './session-store.js';
 import {SessionDiskRoots} from './session-disk-roots.js';
 import {checkpointChunks, checkpointHash, checkpointReference, readCheckpointObject,
@@ -160,7 +160,7 @@ export class SessionGpuCheckpoints {
     manifest.end=position;
     manifest.checkpoints.push({id:checkpointId,position,next_sequence:'1',
       machine,disk_root:root.content.sha256,gpu:pairRef});
-    const canonical=sessionValidateManifest(encoder.encode(JSON.stringify(manifest)));
+    const canonical=sessionValidateLocalManifest(encoder.encode(JSON.stringify(manifest)));
     for(const [ref,value]of [[vm,configBytes],[base,baseBytes],[renderer.ref,renderer.bytes],
       [machine,descriptor],[pairRef,bytes]])await writer.put(ref,checkpointChunks(value));
     if(!previous)for(const role of ['kernel','wasm']){

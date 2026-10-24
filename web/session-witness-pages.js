@@ -1,6 +1,6 @@
 // Required v2 witness commitments. Payload residency is one <=16-row, <=8 KiB page.
 // Legacy readers must refuse this reference-bearing feature until they implement it.
-import init, {SessionSha256, sessionValidateManifest, sessionValidateWitnessPage} from './session-pkg/wasm_vm_session.js';
+import init, {SessionSha256, sessionValidateLocalManifest, sessionValidateWitnessPage} from './session-pkg/wasm_vm_session.js';
 await init();
 export const WITNESS_PAGES_KIND = 'e9-exact-witness-pages-v2';
 export const WITNESS_PAGE_ROWS = 16, WITNESS_PAGE_BYTES = 8192, WITNESS_MAX_PAGES = 4096;
@@ -31,7 +31,7 @@ function own(value) {
 }
 export function witnessCommitment(manifest, {finished = false} = {}) {
   if (!manifest.extensions.some(value => value.kind === WITNESS_PAGES_KIND)) return null;
-  const canonical = JSON.parse(decoder.decode(sessionValidateManifest(json(manifest))));
+  const canonical = JSON.parse(decoder.decode(sessionValidateLocalManifest(json(manifest))));
   const value = JSON.parse(decoder.decode(Uint8Array.from(canonical.extensions[1].bytes)));
   need(!finished || value.finished, 'finish the paged commitment before transfer');
   return value;

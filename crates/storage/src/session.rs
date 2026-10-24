@@ -18,6 +18,9 @@ pub const MAX_CHUNK_BYTES: u64 = 4 << 20;
 /// keeps only a content reference; the object store streams its ordinary parts.
 pub const MAX_GPU_EVENT_BLOB_BYTES: u64 = 32 << 20;
 pub const MAX_SESSION_BYTES: u64 = 4 << 30;
+/// Local manifests may retain a larger logical history. Physical storage is
+/// separately limited by the browser store retention policy.
+pub const MAX_LOCAL_SESSION_BYTES: u64 = 64 << 30;
 pub const MAX_INDEX_ENTRIES: usize = 4096;
 pub const MAX_EVENTS_PER_CHUNK: u32 = 65_536;
 pub const CAPTURE_INPUTS: &[&str] = &[
@@ -428,12 +431,31 @@ impl SessionManifest {
         Ok(manifest)
     }
 
+    pub fn from_bytes_local(bytes: &[u8]) -> Result<Self, SessionError> {
+        let manifest: Self = decode(bytes, MAX_MANIFEST_BYTES)?;
+        manifest.validate_local()?;
+        Ok(manifest)
+    }
+
     pub fn to_bytes(&self) -> Result<Vec<u8>, SessionError> {
         self.validate()?;
         encode(self, MAX_MANIFEST_BYTES)
     }
 
+    pub fn to_bytes_local(&self) -> Result<Vec<u8>, SessionError> {
+        self.validate_local()?;
+        encode(self, MAX_MANIFEST_BYTES)
+    }
+
     pub fn validate(&self) -> Result<(), SessionError> {
+        self.validate_with_payload_limit(MAX_SESSION_BYTES)
+    }
+
+    pub fn validate_local(&self) -> Result<(), SessionError> {
+        self.validate_with_payload_limit(MAX_LOCAL_SESSION_BYTES)
+    }
+
+    fn validate_with_payload_limit(&self, payload_limit: u64) -> Result<(), SessionError> {
         self.version.validate("manifest")?;
         self.policy.event_version.validate("events")?;
         self.policy.checkpoint_version.validate("checkpoints")?;
@@ -698,7 +720,7 @@ impl SessionManifest {
         if self.checkpoints[0].position != self.begin {
             return Err(SessionError::Invalid("initial checkpoint"));
         }
-        if total > MAX_SESSION_BYTES {
+        if total > payload_limit {
             return Err(SessionError::TooLarge("session payload"));
         }
         Ok(())

@@ -1,6 +1,6 @@
 // Complete, bounded, storage-authenticated GPU history. A cursor owns a single
 // session read lease; this API never creates a VM, native plan or renderer owner.
-import initMetadata,{SessionSha256,sessionCanonicalImage,sessionEventReferences,sessionValidateDiskRoot,sessionAdmitDiskRoot,sessionValidateWitnessPage} from './session-pkg/wasm_vm_session.js';
+import initMetadata,{SessionSha256,sessionCanonicalImage,sessionEventReferences,sessionLocalEventReferences,sessionValidateDiskRoot,sessionAdmitDiskRoot,sessionValidateWitnessPage} from './session-pkg/wasm_vm_session.js';
 import initMachine,{sessionExactGpuIdentity} from './pkg/wasm_vm_wasm.js';
 import {SessionStore} from './session-store.js';
 import {inventoryWitnessGraph} from './session-witness-graph.js';
@@ -146,7 +146,7 @@ export class SessionGpuHistoryReader {
     for(const chunk of this.#manifest.events){
       this.#anchor={stage:'event-chunk',object:chunk.content.sha256,firstSequence:chunk.first.sequence,lastSequence:chunk.last.sequence};
       const bytes=await readCheckpointObject(this.#source,chunk.content,4*1048576);this.#live();this.#metrics.eventChunkBytes=Math.max(this.#metrics.eventChunkBytes,bytes.length);
-      sessionEventReferences(this.#manifestBytes,bytes);
+      (this.#store instanceof SessionStore ? sessionLocalEventReferences : sessionEventReferences)(this.#manifestBytes,bytes);
       for(const record of parsed(bytes)){
         this.#anchor={stage:'receipt',object:chunk.content.sha256,sequence:record.sequence,position:pos(record)};let row;
         if(record.kind==='gpu'){

@@ -1,5 +1,5 @@
 // E9-T10: durable input-only prefixes. These are inspectable recordings; full replay is gated.
-import init, {sessionValidateManifest,sessionValidateCheckpointContext,sessionIndexEventChunk} from './session-pkg/wasm_vm_session.js';
+import init, {sessionValidateLocalManifest,sessionValidateCheckpointContext,sessionIndexEventChunk} from './session-pkg/wasm_vm_session.js';
 import {SessionStoreError} from './session-store.js';
 import {SessionDiskRoots} from './session-disk-roots.js';
 import {deviceEventParts,joinDeviceCompletion} from './session-devices.js';
@@ -128,7 +128,7 @@ export class SessionInputJournal{
       manifest.extensions.push({kind:values.length===1?'e9-exact-initial-witness-v1':'e9-exact-state-witnesses-v1',
         required:false,bytes:[...encoder.encode(JSON.stringify(values))]});
     }
-    const canonical=sessionValidateManifest(encoder.encode(JSON.stringify(manifest)));
+    const canonical=sessionValidateLocalManifest(encoder.encode(JSON.stringify(manifest)));
     for(const [ref,bytes] of [[vm,configBytes],[base,baseBytes],[machine,witness]])await writer.put(ref,checkpointChunks(bytes));
     for(const role of ['kernel','wasm']){const ref=manifest.assets.find(a=>a.role===role).content;
       const bytes=localAssets?localAssets[role]:await fetchCheckpointAsset(config[role].url,ref.sha256,64*1048576);
@@ -218,7 +218,7 @@ export class SessionInputJournal{
     const seal=()=>{if(!group.length)return;const bytes=encoder.encode('['+group.join(',')+']');
       const index=JSON.parse(decoder.decode(sessionIndexEventChunk(bytes)));manifest.events.push(index);objects.push([index.content,bytes]);group=[];length=2;};
     for(const text of encoded){const size=encoder.encode(text).length;if(length+size+Number(group.length>0)>4194304)seal();group.push(text);length+=size+Number(group.length>1);}seal();
-    const canonical=sessionValidateManifest(encoder.encode(JSON.stringify(manifest)));
+    const canonical=sessionValidateLocalManifest(encoder.encode(JSON.stringify(manifest)));
     for(const[ref,bytes]of objects)await this.#writer.put(ref,checkpointChunks(bytes));
     await this.#writer.publish(canonical);this.#manifest=manifest;this.#pending.splice(0,batch.length);return this.end;
   }
@@ -240,7 +240,7 @@ export class SessionInputJournal{
       manifest.extensions.push({kind:'e9-exact-state-witnesses-v1',required:false,
         bytes:[...encoder.encode(JSON.stringify(values))]});
     }
-    const canonical=sessionValidateManifest(encoder.encode(JSON.stringify(manifest)));
+    const canonical=sessionValidateLocalManifest(encoder.encode(JSON.stringify(manifest)));
     await this.#writer.publish(canonical,null,authorize);this.#manifest=manifest;return this.end;
   }
   static async read(store,id,{exactMode=false}={}){

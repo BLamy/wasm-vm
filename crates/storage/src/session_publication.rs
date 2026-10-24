@@ -95,6 +95,15 @@ fn insert(refs: &mut BTreeMap<ContentHash, BlobRef>, value: &BlobRef) -> Result<
 
 pub fn references(manifest: &SessionManifest) -> Result<PublicationRefs, SessionError> {
     manifest.validate()?;
+    collect_references(manifest)
+}
+
+pub fn references_local(manifest: &SessionManifest) -> Result<PublicationRefs, SessionError> {
+    manifest.validate_local()?;
+    collect_references(manifest)
+}
+
+fn collect_references(manifest: &SessionManifest) -> Result<PublicationRefs, SessionError> {
     let mut refs = BTreeMap::new();
     let mut roots = Vec::new();
     for asset in &manifest.assets {
@@ -127,6 +136,21 @@ pub fn event_references(
     bytes: &[u8],
 ) -> Result<Vec<BlobRef>, SessionError> {
     manifest.validate()?;
+    collect_event_references(manifest, bytes)
+}
+
+pub fn event_references_local(
+    manifest: &SessionManifest,
+    bytes: &[u8],
+) -> Result<Vec<BlobRef>, SessionError> {
+    manifest.validate_local()?;
+    collect_event_references(manifest, bytes)
+}
+
+fn collect_event_references(
+    manifest: &SessionManifest,
+    bytes: &[u8],
+) -> Result<Vec<BlobRef>, SessionError> {
     if bytes.len() > crate::session::MAX_CHUNK_BYTES as usize {
         return Err(SessionError::TooLarge("event chunk"));
     }
@@ -153,6 +177,22 @@ pub fn check_append(
 ) -> Result<(), SessionError> {
     previous.validate()?;
     candidate.validate()?;
+    check_append_identity(previous, candidate)
+}
+
+pub fn check_append_local(
+    previous: &SessionManifest,
+    candidate: &SessionManifest,
+) -> Result<(), SessionError> {
+    previous.validate_local()?;
+    candidate.validate_local()?;
+    check_append_identity(previous, candidate)
+}
+
+fn check_append_identity(
+    previous: &SessionManifest,
+    candidate: &SessionManifest,
+) -> Result<(), SessionError> {
     if previous.id != candidate.id
         || previous.machine != candidate.machine
         || previous.policy != candidate.policy
@@ -187,5 +227,18 @@ pub fn references_json(bytes: &[u8]) -> Result<Vec<u8>, SessionError> {
 pub fn event_references_json(manifest: &[u8], chunk: &[u8]) -> Result<Vec<u8>, SessionError> {
     let manifest = SessionManifest::from_bytes(manifest)?;
     serde_json::to_vec(&event_references(&manifest, chunk)?)
+        .map_err(|_| SessionError::Invalid("reference encoding"))
+}
+
+/// Local variants are opt-in: portable callers continue through the 4 GiB codec.
+pub fn references_json_local(bytes: &[u8]) -> Result<Vec<u8>, SessionError> {
+    let manifest = SessionManifest::from_bytes_local(bytes)?;
+    serde_json::to_vec(&references_local(&manifest)?)
+        .map_err(|_| SessionError::Invalid("reference encoding"))
+}
+
+pub fn event_references_json_local(manifest: &[u8], chunk: &[u8]) -> Result<Vec<u8>, SessionError> {
+    let manifest = SessionManifest::from_bytes_local(manifest)?;
+    serde_json::to_vec(&event_references_local(&manifest, chunk)?)
         .map_err(|_| SessionError::Invalid("reference encoding"))
 }
