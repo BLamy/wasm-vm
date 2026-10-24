@@ -1,0 +1,17 @@
+{
+  "version": 8,
+  "task": "E9-T22c",
+  "scope": "Untimed original Omarchy qualification with recorded COW-only root serial getty and NetworkManager service readiness override; all v5 asset, workload, browser, retention and budget pins are inherited unchanged",
+  "previousQualification": {
+    "path": "docs/design/session-workload-qualification-v7.json",
+    "sha256": "775db4ae386b71d39391e00a5e395a44e9b3f5f20606a49243fa0f0077f4b002"
+  },
+  "desktopNetworkReadiness": {
+    "reason": "The unchanged image starts NetworkManager but waits for its D-Bus name before network.target, systemd-user-sessions, serial getty and SDDM. Two clean cold qualification runs remained in that wait after the prior successful profile's readiness window. Preserve the NetworkManager executable and dependencies while allowing systemd to release the desktop services once the daemon starts. The frozen workload still configures eth0 and proves real counted HTTP traffic through the owned guest network.",
+    "dropinPath": "/etc/systemd/system/NetworkManager.service.d/e9-qualification.conf",
+    "dropin": "[Service]\nType=simple\n",
+    "mode": "0644",
+    "handoff": "In the recorded root PID-1 bootstrap, write and hash-verify this COW-only drop-in alongside the v7 root getty override, sync both, then exec the original /sbin/init. Require the root shell to report both exact hashes and verify both files independently from the COW at every saved workload point.",
+    "evidence": "The initial witness precedes both COW changes. The original image, NetworkManager executable, frozen T01 workload, 50M checkpoint cadence and numeric budgets are unchanged. This is a local qualification profile, not a production image change."
+  }
+}

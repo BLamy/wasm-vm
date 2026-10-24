@@ -53,7 +53,8 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
    fourthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v4.json')),
    fifthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v5.json')),
    sixthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v6.json')),
-   serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v7.json'));
+   seventhSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v7.json')),
+   serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v8.json'));
  const amendment=JSON.parse(sourceReference);need(amendment.originalContract.sha256===receipt.contractSha256&&JSON.stringify(amendment.unchanged.workload)===JSON.stringify(contract.workload)&&JSON.stringify(amendment.unchanged.budgets)===JSON.stringify(contract.budgets),'no reference workload/budget drift');
  need(sha(previousSerialization)==='f59e6190ec3006eaf22c8eda0d9e6915065458a709505afd4ac9e33601767b27','preserved first qualification serialization');
  need(sha(secondSerialization)==='7ea0bb9bc4329da72a9497d184ba139bbc5677ed4e4ea2ba43a6593b0812c5e9','preserved Chrome .86 qualification serialization');
@@ -61,15 +62,21 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
  need(sha(fourthSerialization)==='a191b05860be6f32bcc356953ecd4e969eebd47426689d27f643b7bcde13c2c8','preserved supported-retention qualification serialization');
  need(sha(fifthSerialization)==='d1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de','frozen persistent-profile qualification serialization');
  need(sha(sixthSerialization)==='5e85dda123738e944c93e5bc0c4a16bb2376e1aca1be8136964d1faeb6800cc0','preserved failed sudo bootstrap qualification');
- const priorQualification=JSON.parse(fifthSerialization),failedBootstrap=JSON.parse(sixthSerialization),bootstrapAmendment=JSON.parse(serialization);
- const qualification={...priorQualification,...failedBootstrap,...bootstrapAmendment};
+ need(sha(seventhSerialization)==='775db4ae386b71d39391e00a5e395a44e9b3f5f20606a49243fa0f0077f4b002','preserved root getty qualification');
+ const priorQualification=JSON.parse(fifthSerialization),failedBootstrap=JSON.parse(sixthSerialization),
+   bootstrapAmendment=JSON.parse(seventhSerialization),networkAmendment=JSON.parse(serialization);
+ const qualification={...priorQualification,...failedBootstrap,...bootstrapAmendment,...networkAmendment};
  need(priorQualification.version===5&&priorQualification.previousQualification.sha256===sha(fourthSerialization)
    &&failedBootstrap.version===6&&failedBootstrap.previousQualification.sha256===sha(fifthSerialization)
-   &&qualification.version===7&&qualification.previousQualification.sha256===sha(sixthSerialization)
+   &&bootstrapAmendment.version===7&&bootstrapAmendment.previousQualification.sha256===sha(sixthSerialization)
+   &&qualification.version===8&&qualification.previousQualification.sha256===sha(seventhSerialization)
    &&qualification.desktopBootstrap.bootargs==='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0 init=/bin/bash -- -i'
    &&qualification.desktopBootstrap.gettyPath==='/etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf'
    &&qualification.desktopBootstrap.gettyOverride==='[Service]\nExecStart=\nExecStart=-/usr/bin/agetty --autologin root --noclear --keep-baud 115200,38400,9600 - $TERM\n'
    &&qualification.desktopBootstrap.gettyMode==='0644'
+   &&qualification.desktopNetworkReadiness.dropinPath==='/etc/systemd/system/NetworkManager.service.d/e9-qualification.conf'
+   &&qualification.desktopNetworkReadiness.dropin==='[Service]\nType=simple\n'
+   &&qualification.desktopNetworkReadiness.mode==='0644'
    &&qualification.originalContract.sha256===receipt.contractSha256
    &&qualification.referenceAmendment.sha256===sha(sourceReference)
    &&qualification.referenceAmendment.originalBrowser==='Chrome 155.0.8059.80'

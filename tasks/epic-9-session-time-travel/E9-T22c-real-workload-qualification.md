@@ -45,6 +45,52 @@ missing GL results, hidden live replay I/O and an incomplete long recording.
 
 ## Verification log
 
+### 2026-10-24 — worker — v7 cold-run prefix retained; v8 network-readiness qualification
+
+The clean exact-head `1252a6c61170645ec0136e9a5e635d3f78947d81` run of
+`E9_OUT=target/evidence/e9-t22c-submission-1252a6c61 make verify-E9-T22c`
+passed full Alpine and its literal-file oracle. The original Omarchy image
+reached systemd after the v7 COW root-getty bootstrap passed, but remained
+behind NetworkManager's readiness gate at transition `6300000000`: 126
+committed periodic checkpoints, 1,194 receipts and 467 authenticated base
+completions, with no serial getty or SDDM output. The run was intentionally
+closed through its recorded `STOP` control and is **not** a desktop/GPU/replay
+qualification. Its failed report is
+`target/evidence/e9-t22c-submission-1252a6c61/desktop/report.json`, SHA-256
+`8a8423387605e23afe7bb9c2d713e1a6112ba1e1472566166d34e6c40580f8bb`;
+the saved graph index is SHA-256
+`9db516a7de3bd107dec5a4d87f3494a995854a09959fe28fed0d431542229685`.
+
+Fresh actual Daybreak independently reconstructed the pinned systemd units
+from the earlier retained COW/base and found that this image holds both getty
+and SDDM behind `NetworkManager.service`'s D-Bus name, via `network.target`
+and `systemd-user-sessions.service`. Its narrow proposal is a test-only COW
+drop-in setting `Type=simple`, preserving the original NetworkManager
+executable and dependencies while releasing the desktop service chain when
+the daemon starts. Qualification v8 records and hash-checks this drop-in
+alongside v7's root getty override before `exec /sbin/init`; the direct oracle
+must find the exact bytes in every saved COW state. The original base image,
+frozen workload, 50M checkpoint cadence, and budgets remain unchanged.
+The full v8 run, real HTTP, GPU probe, complete replay and fresh Daybreak
+final verdict are still required.
+
+A separate fresh Daybreak v8 preflight held the exact drop-in bytes, SHA-256,
+bootstrap shell command, v7→v8 serialization chain and four-point COW oracle,
+but rejected the first v8 proof scope: `Type=simple` alone says only that
+systemd launched NetworkManager. It does not show the daemon stayed alive or
+owned its D-Bus name; manually configured guest HTTP cannot establish either.
+The harness now records `systemctl is-active`, a live nonzero `MainPID`, and
+`org.freedesktop.NetworkManager` bus ownership before and after the full
+workload, requiring the same PID at both points. The independent report oracle
+checks both recorded command results. That amended source still needs its own
+frozen full run and final critic. Daybreak's follow-up preflight returned
+**GO for the long run** with no deterministic command/parser blocker; its
+read-only diagnostic is `target/evidence/e9-t22c-daybreak-network-dependency/report.md`,
+SHA-256 `004b5b74b50ebaee21da4d50e13afac8464dba2d8e44b3a4b975ca812c82278c`.
+That report states the exact pinned unit bytes could not be re-extracted in
+this pass because the Docker/debugfs reader lacked Colima socket access; the
+full run's live service and D-Bus observations remain required evidence.
+
 ### 2026-10-24 — worker — authenticated tty interleaving in the Alpine leg
 
 At clean exact head `df2499fa0b3c39b963de022cbd47569f618c7ec4`, the

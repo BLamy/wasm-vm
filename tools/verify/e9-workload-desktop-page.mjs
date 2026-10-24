@@ -31,13 +31,16 @@ export async function qualifyDesktopWorkload(contract,qualification){
   const fixture=contract.fixtures.find(row=>row.id==='desktop-gpu-candidate-v1');
   need(fixture&&contract.workload?.desktop?.probe_sha256==='822b258f329ee2d16d7f25fa676684e02227531dbdf8bf5edbf7dc8b45868155','frozen desktop contract');
   const auxiliary=qualification?.auxiliaryDesktopTool;
-  need(qualification?.version===7&&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
+  need(qualification?.version===8&&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
     &&qualification.retention?.defaultMaxBytes===2*1024**3
     &&qualification.retention?.maxBytes===8*1024**3&&qualification.retention?.maxCheckpoints===4096
     &&qualification.desktopBootstrap?.bootargs==='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0 init=/bin/bash -- -i'
     &&qualification.desktopBootstrap?.gettyPath==='/etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf'
     &&qualification.desktopBootstrap?.gettyOverride==='[Service]\nExecStart=\nExecStart=-/usr/bin/agetty --autologin root --noclear --keep-baud 115200,38400,9600 - $TERM\n'
     &&qualification.desktopBootstrap?.gettyMode==='0644'
+    &&qualification.desktopNetworkReadiness?.dropinPath==='/etc/systemd/system/NetworkManager.service.d/e9-qualification.conf'
+    &&qualification.desktopNetworkReadiness?.dropin==='[Service]\nType=simple\n'
+    &&qualification.desktopNetworkReadiness?.mode==='0644'
     &&auxiliary?.sourceSha256==='9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30'
     &&auxiliary?.transportSha256==='dac2c1dd4ebc37266d5152eae3160f662f587f7e9deb91a35aa6f3d7c75f4679'
     &&auxiliary?.guestPath==='/usr/local/bin/busybox','explicit original desktop tool profile');
@@ -164,6 +167,16 @@ export async function qualifyDesktopWorkload(contract,qualification){
   const command=async(text,id,kind)=>{parser=createFencedRpc(id);rpcResult=null;
     await offer(kind,formatRpcCommand(text,id));await until(()=>!!rpcResult);
     need(rpcResult.exit===0,'guest command '+id+': '+JSON.stringify(rpcResult));return rpcResult;};
+  const networkStatus=async id=>{
+    const result=await command(`e9_nm_pid=$(systemctl show NetworkManager -p MainPID --value) && `+
+      `test "$(systemctl is-active NetworkManager)" = active && test "$e9_nm_pid" -gt 1 && `+
+      `kill -0 "$e9_nm_pid" && `+
+      `test "$(busctl --system call org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus NameHasOwner s org.freedesktop.NetworkManager)" = 'b true' && `+
+      `printf 'E9_NM_PID=%s\\n' "$e9_nm_pid"`,id,'guest-inspection');
+    const match=result.stdout.trim().match(/^E9_NM_PID=([1-9][0-9]*)$/);
+    need(match,'original NetworkManager active with live PID and D-Bus owner');
+    return {...result,pid:Number(match[1])};
+  };
   const stageBusybox=async()=>{
     const padded=new Uint8Array(auxiliary.transportPaddedBytes);padded.set(busyboxTransport);
     const source=auxiliary.sourceSha256,guest=auxiliary.guestPath,count=padded.length/4096;
@@ -235,19 +248,26 @@ export async function qualifyDesktopWorkload(contract,qualification){
     await until(()=>/(?:^|\n)[^\n]*#\s*$/.test(textView()));
     const getty=qualification.desktopBootstrap.gettyPath;
     const gettyHash=digest(encoder.encode(qualification.desktopBootstrap.gettyOverride));
+    const network=qualification.desktopNetworkReadiness.dropinPath;
+    const networkHash=digest(encoder.encode(qualification.desktopNetworkReadiness.dropin));
     state.bootstrap=await command(`test "$(id -u)" = 0 && test -x /sbin/init && `+
       `mkdir -p /etc/systemd/system/serial-getty@ttyS0.service.d && `+
       `printf '%s\\n' '[Service]' 'ExecStart=' 'ExecStart=-/usr/bin/agetty --autologin root --noclear --keep-baud 115200,38400,9600 - $TERM' > '${getty}' && `+
       `chmod 0644 '${getty}' && test "$(stat -c '%u:%a' '${getty}')" = '0:644' && `+
       `test "$(sha256sum '${getty}')" = '${gettyHash}  ${getty}' && `+
+      `mkdir -p /etc/systemd/system/NetworkManager.service.d && `+
+      `printf '%s\\n' '[Service]' 'Type=simple' > '${network}' && `+
+      `chmod 0644 '${network}' && test "$(stat -c '%u:%a' '${network}')" = '0:644' && `+
+      `test "$(sha256sum '${network}')" = '${networkHash}  ${network}' && `+
       `sync && printf 'E9_QBOOT_OK\\n'`,'cbootstrap','guest-inspection');
-    need(state.bootstrap.stdout.includes('E9_QBOOT_OK'),'recorded COW-only root getty');
+    need(state.bootstrap.stdout.includes('E9_QBOOT_OK'),'recorded COW-only root getty and NetworkManager readiness');
     state.bootstrapHandoff=pos(vm.inputPosition());
     const systemdConsoleAt=state.console.length;
     await offer('guest-inspection','exec /sbin/init\r');
     await until(()=>/(?:^|\n)[^\n]*#\s*$/.test(stripConsole(state.console.slice(systemdConsoleAt))));
-    state.identity=await command(`id -u; printf '%s\\n' "$HOME"; sha256sum '${getty}'; stat -c '%u:%a' '${getty}'; command -v hyprctl; command -v gzip; command -v dd; command -v stty`,'cidentity','guest-inspection');
-    need(state.identity.stdout.startsWith(`0\n/root\n${gettyHash}  ${getty}\n0:644\n`),'root shell and recorded COW getty for unchanged /root fixture');
+    state.identity=await command(`id -u; printf '%s\\n' "$HOME"; sha256sum '${getty}' '${network}'; stat -c '%u:%a' '${getty}' '${network}'; command -v hyprctl; command -v gzip; command -v dd; command -v stty`,'cidentity','guest-inspection');
+    need(state.identity.stdout.startsWith(`0\n/root\n${gettyHash}  ${getty}\n${networkHash}  ${network}\n0:644\n0:644\n`),'root shell and both recorded COW service overrides for unchanged /root fixture');
+    state.networkServiceBefore=await networkStatus('cnetwork0');
     await command('stty -echo','cstty','guest-inspection');
     phase='desktop';
     await until(()=>presentation.snapshot().drawnPresents>0&&hasDesktopPixels(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data));
@@ -303,6 +323,8 @@ export async function qualifyDesktopWorkload(contract,qualification){
     state.inputMarkers=verifyGuestInputMarkers(stripConsole(state.console),contract,state.workloadOrigin,uartRows);
     state.files=await command('sync; od -An -v -tx1 /root/e9-session/state; od -An -v -tx1 /root/e9-session/entropy; od -An -v -tx1 /root/e9-session/http; sha256sum /root/e9-session/state /root/e9-session/entropy /root/e9-session/http','cfilebytes','file-witness');
     need(state.files.stdout.trim().split('\n')[0].replace(/\s/g,'')===contract.workload.after_hex,'literal final guest file');
+    state.networkServiceAfter=await networkStatus('cnetwork1');
+    need(state.networkServiceAfter.pid===state.networkServiceBefore.pid,'same NetworkManager daemon through original workload');
     let closing=vm.cancelOwnedLocalHttp();await collect();
     for(let n=0;!closing.closed&&n<1024;n++){need(closing.more&&!closing.blocked,'server close stalled');closing=vm.pumpOwnedLocalHttp();await collect();}
     need(closing.closed,'owned server closed');state.server=vm.ownedLocalHttpState();

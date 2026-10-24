@@ -120,15 +120,19 @@ try:
     assert image['image_len'] == 12884901888 and image['chunk_size'] == 262144
     v5_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v5.json').read_bytes()
     v6_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v6.json').read_bytes()
-    profile_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v7.json').read_bytes()
+    v7_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v7.json').read_bytes()
+    profile_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v8.json').read_bytes()
     assert sha(v5_bytes) == 'd1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de'
     assert sha(v6_bytes) == '5e85dda123738e944c93e5bc0c4a16bb2376e1aca1be8136964d1faeb6800cc0'
-    assert sha(profile_bytes) == '775db4ae386b71d39391e00a5e395a44e9b3f5f20606a49243fa0f0077f4b002'
+    assert sha(v7_bytes) == '775db4ae386b71d39391e00a5e395a44e9b3f5f20606a49243fa0f0077f4b002'
+    assert sha(profile_bytes) == '8003e0f4918de869ff124dd527f66b1d5b305ebd32a5d1e4e3e6c7febbc257d2'
     v6 = json.loads(v6_bytes)
-    v7 = json.loads(profile_bytes)
+    v7 = json.loads(v7_bytes)
+    v8 = json.loads(profile_bytes)
     assert v6['previousQualification']['sha256'] == sha(v5_bytes)
     assert v7['previousQualification']['sha256'] == sha(v6_bytes)
-    profile = {**json.loads(v5_bytes), **v6, **v7}
+    assert v8['previousQualification']['sha256'] == sha(v7_bytes)
+    profile = {**json.loads(v5_bytes), **v6, **v7, **v8}
     retention = profile['retention']
     assert browser['inputs']['serializationSha256'] == sha(profile_bytes)
     assert browser['browserContext']['mode'] == profile['browserContext']['mode']
@@ -146,11 +150,23 @@ try:
     getty = profile['desktopBootstrap']
     getty_path = getty['gettyPath']
     getty_bytes = getty['gettyOverride'].encode()
+    network = profile['desktopNetworkReadiness']
+    network_path = network['dropinPath']
+    network_bytes = network['dropin'].encode()
     assert browser['result']['bootstrap']['exit'] == 0
     assert 'E9_QBOOT_OK' in browser['result']['bootstrap']['stdout']
     assert browser['result']['identity']['exit'] == 0
     assert browser['result']['identity']['stdout'].startswith(
-        '0\n/root\n' + sha(getty_bytes) + '  ' + getty_path + '\n0:644\n')
+        '0\n/root\n' + sha(getty_bytes) + '  ' + getty_path + '\n' +
+        sha(network_bytes) + '  ' + network_path + '\n0:644\n0:644\n')
+    def network_pid(point):
+        row = browser['result'][point]
+        assert row['exit'] == 0
+        pid = row['pid']
+        assert isinstance(pid,int) and pid > 1
+        assert row['stdout'].strip() == 'E9_NM_PID=' + str(pid)
+        return pid
+    assert network_pid('networkServiceBefore') == network_pid('networkServiceAfter')
     tool = profile['auxiliaryDesktopTool']
     assert browser['result']['toolTransfer']['source'] == {'bytes':tool['sourceBytes'],'sha256':tool['sourceSha256']}
     assert browser['result']['toolTransfer']['transport'] == {'bytes':tool['transportBytes'],'sha256':tool['transportSha256']}
@@ -198,6 +214,9 @@ try:
         root_getty = read_guest_file(disk.name,getty_path,label+'.root-getty')
         assert bytes.fromhex(root_getty['hex']) == getty_bytes, label + ' literal COW root serial getty'
         files['rootGetty'] = root_getty
+        network_dropin = read_guest_file(disk.name,network_path,label+'.network-readiness')
+        assert bytes.fromhex(network_dropin['hex']) == network_bytes, label + ' literal COW NetworkManager drop-in'
+        files['networkReadiness'] = network_dropin
         staged = read_guest_file(disk.name,tool['guestPath'],label+'.busybox')
         assert staged['bytes'] == tool['sourceBytes'] and staged['sha256'] == tool['sourceSha256'], label + ' original static RV64 BusyBox'
         files['busybox'] = staged
@@ -255,6 +274,8 @@ finally:
                                  '5e85dda123738e944c93e5bc0c4a16bb2376e1aca1be8136964d1faeb6800cc0'),
               'qualificationV7':(out / 'executed-source/docs/design/session-workload-qualification-v7.json',
                                  '775db4ae386b71d39391e00a5e395a44e9b3f5f20606a49243fa0f0077f4b002'),
+              'qualificationV8':(out / 'executed-source/docs/design/session-workload-qualification-v8.json',
+                                 '8003e0f4918de869ff124dd527f66b1d5b305ebd32a5d1e4e3e6c7febbc257d2'),
               'busyboxSource':(root / 'releases/initramfs/busybox',
                                '9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30')}
     report['immutableInputs'] = {}
