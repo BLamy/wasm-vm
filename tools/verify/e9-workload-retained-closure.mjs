@@ -4,8 +4,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
-import initSession,{sessionValidateManifest,sessionManifestReferences,sessionValidateDiskRoot,
-  sessionDiskRootReferences,sessionEventReferences} from '../../web/session-pkg/wasm_vm_session.js';
+import initSession,{sessionValidateManifest,sessionValidateLocalManifest,sessionLocalManifestReferences,
+  sessionValidateDiskRoot,sessionDiskRootReferences,sessionLocalEventReferences} from '../../web/session-pkg/wasm_vm_session.js';
 import {decodeKeyframeDescriptor,isKeyframeDescriptorPrefix} from '../../web/session-keyframes.js';
 const at=process.argv.indexOf('--directory');assert(at>0&&process.argv[at+1]);
 const development=process.argv.includes('--allow-incomplete'),out=path.resolve(process.argv[at+1]);
@@ -44,7 +44,12 @@ try{
   report.objects=objects.size;
   const session=saved.stores.sessions.find(row=>row.key===(browser.result?.sessionId??(development?saved.stores.sessions[0]?.key:null)));
   assert(session,'exported named session');const manifestBytes=Buffer.from(session.value.manifest);
-  assert.deepEqual(Buffer.from(sessionValidateManifest(manifestBytes)),manifestBytes,'canonical exported manifest');
+  assert.deepEqual(Buffer.from(sessionValidateLocalManifest(manifestBytes)),manifestBytes,'canonical exported local manifest');
+  if(!development){
+    assert.throws(()=>sessionValidateManifest(manifestBytes),/TooLarge\("session payload"\)/,
+      'complete local history must remain outside portable bundle admission');
+    report.portableAdmission='rejected-above-4-GiB';
+  }
   if(!development)assert.equal(sha(manifestBytes),browser.result?.authenticatedHistory?.manifestSha256,'live/export manifest identity');
   const manifest=JSON.parse(manifestBytes),references=new Map();
   const add=ref=>{assert(ref&&/^[a-f0-9]{64}$/.test(ref.sha256));const value=objects.get(ref.sha256);
@@ -52,7 +57,7 @@ try{
     references.set(ref.sha256,ref);};
   const fromHash=hash=>{const value=objects.get(hash);assert(value,'missing bare-hash object '+hash);
     return {sha256:hash,length:String(value.length)};};
-  const direct=JSON.parse(Buffer.from(sessionManifestReferences(manifestBytes)).toString());
+  const direct=JSON.parse(Buffer.from(sessionLocalManifestReferences(manifestBytes)).toString());
   for(const ref of direct.blobs)add(ref);
   for(const hash of direct.roots){const ref=fromHash(hash);add(ref);
     const bytes=await object(ref,{materialize:true});
@@ -61,7 +66,7 @@ try{
     for(const child of JSON.parse(Buffer.from(sessionDiskRootReferences(bytes)).toString()))add(child);
     report.roots++;}
   for(const event of manifest.events){add(event.content);const bytes=await object(event.content,{materialize:true});
-    for(const ref of JSON.parse(Buffer.from(sessionEventReferences(manifestBytes,bytes)).toString()))add(ref);
+    for(const ref of JSON.parse(Buffer.from(sessionLocalEventReferences(manifestBytes,bytes)).toString()))add(ref);
     report.eventChunks++;}
   for(const point of manifest.checkpoints){add(point.machine);if(point.gpu)add(point.gpu);
     const descriptor=objects.get(point.machine.sha256),first=descriptor.parts[0];assert(first);
