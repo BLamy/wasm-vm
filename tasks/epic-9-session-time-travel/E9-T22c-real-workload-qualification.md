@@ -45,6 +45,45 @@ missing GL results, hidden live replay I/O and an incomplete long recording.
 
 ## Verification log
 
+### 2026-10-24 — worker — preserve failed cold attempt and amend test bootstrap
+
+The clean exact-head `67eea6f160631f0c93912c16bf59902e98cfb66c` run of
+`E9_OUT=target/evidence/e9-t22c-submission-67eea6f16 make verify-E9-T22c`
+passed the complete unchanged Alpine leg and its direct filesystem oracle.
+The desktop leg crossed the earlier 6.4-billion local-graph failure and
+committed 188 periodic checkpoints with 1,325 receipts and 533 actual base
+chunk requests. It was intentionally stopped through its recorded `STOP`
+control at transition `9437748736`, while still booting. Its complete failed
+report, trace, saved IndexedDB graph, console and failure state remain under
+`target/evidence/e9-t22c-submission-67eea6f16/desktop/`; report SHA-256 is
+`0e9a04b1b04a71a738880bdb8aebf8646b4feef3ce8282a7fa33521172906bd0`
+and saved storage index SHA-256 is
+`db81a461c43c630212d2bc0212f690feab929573a3003b8a37bca9be7ff64438`.
+This is not desktop qualification or timing evidence.
+
+A fresh actual Daybreak read-only diagnostic compared the harness with the
+same pinned image's authentic E9-T17 serial log and image sanitation source.
+The image autologins `omarchy`; the harness's bare `login:` wait cannot reliably
+match its `login: omarchy (automatic login)` line. The sanitized image also
+removes `/etc/sudoers` and every sudoers drop-in, locks root, and grants
+`omarchy` no privileged group; the subsequent `sudo -n -s` cannot yield the
+required `/root` shell. These are source/fixture contradictions found before
+the current run reached login; the intentional stop preserves its actual
+prefix without mislabelling either predicted failure as observed at that
+position. The guest's NetworkManager wait was still retiring instructions and
+delivering UART receipts at stop, although longer than the older paced run.
+
+The v6 qualification amendment preserves the original kernel, 12 GiB manifest,
+T01 command bytes, 100-input/10-rewrite/10-response amounts, 50M cadence and
+all numeric budgets. It records a PID-1 Bash bootstrap after the pristine
+initial witness, writes a minimal `/etc/sudoers` policy only in the guest COW,
+validates and syncs it, then `exec`s the original systemd image. The serial
+autologin then supplies the ordinary user shell; a recorded exact-command
+sudo invocation must prove UID 0 and `/root`. No production image, runtime
+semantic path or deployed privilege policy changes. The task remains medium
+risk as a qualification harness/profile change. The amended full cold run and
+all desktop/replay/file witnesses are still required before implementation.
+
 ### 2026-10-24 — worker — blocked on local witness-graph admission boundary
 
 At clean exact head `b4071260307146339230ec0986daafcd9661dbeb`, run

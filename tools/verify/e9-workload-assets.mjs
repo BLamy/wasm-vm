@@ -51,15 +51,20 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
    secondSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v2.json')),
    thirdSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v3.json')),
    fourthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v4.json')),
-   serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v5.json'));
+   fifthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v5.json')),
+   serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v6.json'));
  const amendment=JSON.parse(sourceReference);need(amendment.originalContract.sha256===receipt.contractSha256&&JSON.stringify(amendment.unchanged.workload)===JSON.stringify(contract.workload)&&JSON.stringify(amendment.unchanged.budgets)===JSON.stringify(contract.budgets),'no reference workload/budget drift');
  need(sha(previousSerialization)==='f59e6190ec3006eaf22c8eda0d9e6915065458a709505afd4ac9e33601767b27','preserved first qualification serialization');
  need(sha(secondSerialization)==='7ea0bb9bc4329da72a9497d184ba139bbc5677ed4e4ea2ba43a6593b0812c5e9','preserved Chrome .86 qualification serialization');
  need(sha(thirdSerialization)==='5802635c6c7a9c7e1746e1da5b7b4c7460c5c2c2564c6e7492b69456d8492082','preserved tool-aware qualification serialization');
  need(sha(fourthSerialization)==='a191b05860be6f32bcc356953ecd4e969eebd47426689d27f643b7bcde13c2c8','preserved supported-retention qualification serialization');
- need(sha(serialization)==='d1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de','frozen persistent-profile qualification serialization');
- const qualification=JSON.parse(serialization);
- need(qualification.version===5&&qualification.previousQualification.sha256===sha(fourthSerialization)
+ need(sha(fifthSerialization)==='d1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de','frozen persistent-profile qualification serialization');
+ const priorQualification=JSON.parse(fifthSerialization),bootstrapAmendment=JSON.parse(serialization);
+ const qualification={...priorQualification,...bootstrapAmendment};
+ need(priorQualification.version===5&&priorQualification.previousQualification.sha256===sha(fourthSerialization)
+   &&qualification.version===6&&qualification.previousQualification.sha256===sha(fifthSerialization)
+   &&qualification.desktopBootstrap.bootargs==='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0 init=/bin/bash -- -i'
+   &&qualification.desktopBootstrap.policy==='omarchy ALL=(root) NOPASSWD: /bin/bash'
    &&qualification.originalContract.sha256===receipt.contractSha256
    &&qualification.referenceAmendment.sha256===sha(sourceReference)
    &&qualification.referenceAmendment.originalBrowser==='Chrome 155.0.8059.80'
@@ -89,7 +94,7 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
   receipt.auxiliaryTool={path:tool.sourcePath,bytes:busybox.length,sha256:sha(busybox)};
   const entry=fixture.chunked_image;need(entry.sha256==='8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8'&&entry.size===3539054,'original desktop base');await fs.mkdir(cacheRoot,{recursive:true});const file=path.join(cacheRoot,'manifest-'+entry.sha256+'.json');
   try{imageBytes=await fs.readFile(file);receipt.manifestSource='hash-authenticated-local-cache';}catch(error){if(error.code!=='ENOENT')throw error;imageBytes=await publicBody(R2+entry.key,entry.size,receipt.attempts);need(sha(imageBytes)===entry.sha256,'downloaded desktop manifest');await fs.writeFile(file,imageBytes,{flag:'wx'});receipt.manifestSource='pinned-public-object';}
-  need(imageBytes.length===entry.size,'desktop manifest bytes');image=pinnedImage(imageBytes,entry.sha256);need(image.image_len===12884901888&&image.chunk_size===262144,'pinned 12 GiB base distinct from RAM');chunkPrefix=R2+'chunked-omarchy/chunks/';receipt.bootargs='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0';receipt.historicalWarmCheckpointExecuted=false;
+  need(imageBytes.length===entry.size,'desktop manifest bytes');image=pinnedImage(imageBytes,entry.sha256);need(image.image_len===12884901888&&image.chunk_size===262144,'pinned 12 GiB base distinct from RAM');chunkPrefix=R2+'chunked-omarchy/chunks/';receipt.bootargs=qualification.desktopBootstrap.bootargs;receipt.historicalWarmCheckpointExecuted=false;
  }
  const directory=path.join(cacheRoot,profile+'-chunks');const initialCache=await inspectMaterializedChunks(directory,image),ids=new Set(image.chunks),first=new Map();image.chunks.forEach((id,index)=>{if(!first.has(id))first.set(id,index);});
  Object.assign(receipt,{kernel:{bytes:kernel.length,sha256:sha(kernel)},wasm:{bytes:wasm.length,sha256:sha(wasm)},renderer:{bytes:rendererAsset.length,sha256:sha(rendererAsset)},image:{bytes:imageBytes.length,sha256:sha(imageBytes),imageBytes:image.image_len,chunkBytes:image.chunk_size,chunks:image.chunks.length,uniqueChunks:ids.size},referenceSha256:sha(sourceReference),serializationSha256:sha(serialization),initialMaterializedCache:initialCache,qualifiedClock:{mode:'icount',divider:profile==='software'?10:64,interactive:null},ramMib:profile==='software'?256:1024});

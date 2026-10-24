@@ -31,9 +31,11 @@ export async function qualifyDesktopWorkload(contract,qualification){
   const fixture=contract.fixtures.find(row=>row.id==='desktop-gpu-candidate-v1');
   need(fixture&&contract.workload?.desktop?.probe_sha256==='822b258f329ee2d16d7f25fa676684e02227531dbdf8bf5edbf7dc8b45868155','frozen desktop contract');
   const auxiliary=qualification?.auxiliaryDesktopTool;
-  need(qualification?.version===5&&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
+  need(qualification?.version===6&&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
     &&qualification.retention?.defaultMaxBytes===2*1024**3
     &&qualification.retention?.maxBytes===8*1024**3&&qualification.retention?.maxCheckpoints===4096
+    &&qualification.desktopBootstrap?.bootargs==='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0 init=/bin/bash -- -i'
+    &&qualification.desktopBootstrap?.policy==='omarchy ALL=(root) NOPASSWD: /bin/bash'
     &&auxiliary?.sourceSha256==='9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30'
     &&auxiliary?.transportSha256==='dac2c1dd4ebc37266d5152eae3160f662f587f7e9deb91a35aa6f3d7c75f4679'
     &&auxiliary?.guestPath==='/usr/local/bin/busybox','explicit original desktop tool profile');
@@ -68,7 +70,7 @@ export async function qualifyDesktopWorkload(contract,qualification){
   let parser,rpcResult,vm,gpu,store,writer,journal,stagedBytes=0,nextCapture=50000000n;
   let lastProgress=0,opened=false,terminalDisposed=false,rawToolTransfer=false,phase='boot',rows=[],uartRows=[],sourceRows=[],offers=[],savedPayloads=new Set();
   const begun=performance.now();
-  const bootargs='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0';
+  const bootargs=qualification.desktopBootstrap.bootargs;
   const textView=()=>stripConsole(state.console.slice(-131072));
   const retain=async(name,bytes)=>{const response=await fetch('/__retain__/'+name,{method:'POST',body:bytes});need(response.ok,'raw retention '+name);return response.json();};
   const progress=async()=>{
@@ -228,13 +230,20 @@ export async function qualifyDesktopWorkload(contract,qualification){
     journal=await SessionGpuJournal.create(store,writer,config,vm,gpu,{witnessPages:true});
     const initial=journal.initialWitness;state.initial={...pos(initial),digest:hex(initial.digest),state:await retain('initial.state',vm.exactGpuSessionState())};
     vm.enableJit(2);
-    await until(()=>/login:\s*$/.test(textView()));
-    await offer('guest-inspection','omarchy\r');
-    await until(()=>/\[omarchy@omarchy-demo [^\n]*\]\$\s*$/.test(textView()));
-    await offer('guest-inspection','sudo -n -s\r');
     await until(()=>/(?:^|\n)[^\n]*#\s*$/.test(textView()));
-    state.identity=await command('id -u; printf "%s\\n" "$HOME"; command -v hyprctl; command -v gzip; command -v dd; command -v stty','cidentity','guest-inspection');
-    need(state.identity.stdout.startsWith('0\n'),'root shell for unchanged /root fixture');
+    const policy=qualification.desktopBootstrap.policy;
+    state.bootstrap=await command(`test "$(id -u)" = 0 && test -x /sbin/init && command -v sudo && command -v visudo && `+
+      `umask 077 && printf '%s\\n' '${policy}' > /etc/sudoers && chmod 0440 /etc/sudoers && `+
+      `visudo -cf /etc/sudoers && test "$(stat -c '%u:%a' /etc/sudoers)" = '0:440' && `+
+      `sync && printf 'E9_QBOOT_OK\\n'`,'cbootstrap','guest-inspection');
+    need(state.bootstrap.stdout.includes('E9_QBOOT_OK'),'recorded COW-only root policy');
+    state.bootstrapHandoff=pos(vm.inputPosition());
+    await offer('guest-inspection','exec /sbin/init\r');
+    await until(()=>/\[omarchy@omarchy-demo [^\n]*\]\$\s*$/.test(textView()));
+    await offer('guest-inspection','sudo -n -H /bin/bash\r');
+    await until(()=>/(?:^|\n)[^\n]*#\s*$/.test(textView()));
+    state.identity=await command('id -u; printf "%s\\n" "$HOME"; stat -c "%u:%a" /etc/sudoers; command -v hyprctl; command -v gzip; command -v dd; command -v stty','cidentity','guest-inspection');
+    need(state.identity.stdout.startsWith('0\n/root\n0:440\n'),'root shell and recorded COW policy for unchanged /root fixture');
     await command('stty -echo','cstty','guest-inspection');
     phase='desktop';
     await until(()=>presentation.snapshot().drawnPresents>0&&hasDesktopPixels(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data));
