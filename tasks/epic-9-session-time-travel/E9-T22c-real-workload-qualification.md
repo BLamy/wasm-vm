@@ -3,8 +3,9 @@ id: E9-T22c
 epic: 9
 title: Qualify both full pinned performance workloads
 priority: 524.92203
-status: in-progress
-depends_on: [E9-T22b, E9-T22h, E9-T22j, E9-T22k]
+status: blocked
+blocked_on: E9-T22l
+depends_on: [E9-T22b, E9-T22h, E9-T22j, E9-T22k, E9-T22l]
 estimate: S
 risk: medium
 capstone: false
@@ -44,6 +45,32 @@ and count live server calls. Refuse software renderer or changed probe/assets,
 missing GL results, hidden live replay I/O and an incomplete long recording.
 
 ## Verification log
+
+### 2026-10-24 — worker — blocked on shared local session-metadata bound
+
+At clean exact head `bcc6bc1c4a8eb7d6cb82a1ffc1653b2827d63a60`, run
+`E9_OUT=target/evidence/e9-t22c-submission-bcc6bc1c4 make verify-E9-T22c`.
+The full Alpine workload and literal-file oracle passed. The unchanged pinned
+Omarchy image booted through NetworkManager, logind, SDDM, serial getty and a
+root login to its normal MOTD. The desktop leg failed during the next periodic
+checkpoint at transition `12900000000`, sequence `1913`, before a prompt,
+GPU probe or complete replay. The reported error is
+`session metadata: TooLarge("session payload")` from the shared native
+manifest validator, not a shell or browser-quota failure. Retain the failed
+report (`target/evidence/e9-t22c-submission-bcc6bc1c4/desktop/report.json`,
+SHA-256 `6d1ca384432259f80cfd74d07c448124cdc6088614055a62e56722dd4e2f8ff3`),
+its saved graph (`desktop/saved/storage.json`, SHA-256
+`e79d64639e8015496c9e7869f63449ab802324581`) and browser trace.
+
+Fresh actual Daybreak independently totaled the committed manifest's 237 event
+chunks and 258 checkpoint pairs at `4291892438` logical bytes. The staged
+`cold-257` candidate adds a 465-byte machine descriptor and 4,641,650-byte
+GPU renderer reference, yielding `4296534553`, exactly `1567257` above
+4 GiB. The browser had about 6.0 GiB physically used within its 8 GiB local
+retention setting and about 16.7 GiB quota. This is a runtime semantic limit:
+E9-T22l must admit bounded local metadata without widening the portable 4 GiB
+archive contract, then C reruns the unchanged full qualification at a new
+exact head. This failed prefix does not qualify the GPU workload.
 
 ### 2026-10-24 — worker — v8 reached logind; v9 tests the Plymouth ordering frontier
 
