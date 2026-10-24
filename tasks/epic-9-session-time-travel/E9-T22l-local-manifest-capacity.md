@@ -3,7 +3,7 @@ id: E9-T22l
 epic: 9
 title: Admit bounded local session metadata above the portable payload cap
 priority: 524.922029
-status: pending
+status: in-progress
 depends_on: [E9-T22k]
 estimate: S
 risk: high
