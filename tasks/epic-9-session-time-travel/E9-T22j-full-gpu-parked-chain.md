@@ -3,7 +3,7 @@ id: E9-T22j
 epic: 9
 title: Preserve parked owned block chains in full exact-GPU keyframes
 priority: 524.922025
-status: implemented
+status: verified
 depends_on: [E9-T22b, E9-T22h]
 estimate: S
 risk: high
@@ -26,18 +26,18 @@ non-session snapshot quiescence. E9-T22c owns the later complete workload run.
 
 ## Acceptance criteria
 
-- [ ] With an actual owned block request accepted at an exact before-boundary,
+- [x] With an actual owned block request accepted at an exact before-boundary,
       prove the broker has no pending request while the resident chunk, read pin
       and parked descriptor remain. Full and delta exact-GPU captures both
       succeed at the same unchanged position.
-- [ ] Restore each capture into fresh compatible machines and show identical
+- [x] Restore each capture into fresh compatible machines and show identical
       broker/cache/read-pin/parked-descriptor state. The next native service
       publishes DMA, used-ring and IRQ once, without a second host request or
       double completion; recording and replay witnesses agree.
-- [ ] Keep unsupported/malformed section-20 data and non-exact torn snapshots
+- [x] Keep unsupported/malformed section-20 data and non-exact torn snapshots
       fail-closed. Exercise the affected wasm/browser keyframe path, zero
       console errors and the live demo suite/roadmap gate.
-- [ ] Freeze high-risk native/wasm/browser/guest evidence at the exact head,
+- [x] Freeze high-risk native/wasm/browser/guest evidence at the exact head,
       run the prescribed local gauntlet and final cold-clone proof, then obtain
       a fresh actual Daybreak verifier verdict and publish the browser-impacting
       result to the main Cloudflare Pages URL. No merge is authorized.
@@ -57,6 +57,72 @@ to admit a legacy torn snapshot. The verifier must inspect the executed diff,
 one bounded novel attack, and a pristine-clone run at the final head.
 
 ## Verification log
+
+### 2026-10-23 — fresh Daybreak verifier — VERDICT: verified
+
+- P1 full/delta exact admission and unchanged boundary — **HELD**. Predicted an accepted owned
+  read would leave no broker request while chunk 0, its `(sector 0, length 512)` pin and one
+  parked descriptor remained at transition/retired 74, sequence 1, ordinal 1; predicted both
+  full and delta captures would keep that coordinate and identical non-RAM sections. Observed
+  `target/evidence/e9-t22j-final-135c0f24a/native.log:165-166`, full resume SHA-256
+  `b14d1ccac383f68b4d0654fb81ceeb36c2bfc4896c4225d3ad50ac9648305a62`, delta resume SHA-256
+  `85f89316aadfec4f6a1a72782793f2ce9626fab19e8dc9f6fc6d45f728c977bf`, and independently
+  reran the focused test single-threaded from an isolated target directory with the same hashes.
+- P2 restore and exactly-once service — **HELD**. Predicted fresh full and reconstructed-delta
+  machines would reproduce section 20 byte-for-byte, then the next service would write the
+  `0x5b` DMA payload, one used entry of length 513, status 0 and IRQ bit 1, with cursor 1, no
+  second request and refusal of a repeated completion. The permanent regression asserts each
+  value and recording/replay trace equality; it passed in the frozen native run and independent
+  rerun. Guest trace SHA-256 is
+  `692f7ef965d0577f3d1de75d177bfced16d9645e5da0725cee1fb7828f15bd8f`.
+- P3 fail-closed boundary — **HELD**. Predicted trailing data, invalid head, wrong chunk,
+  out-of-RAM descriptors and a rehashed crosswire to another valid read pin would reject before
+  mutation; predicted an exact network-only session could not admit an unowned parked chain.
+  All attacks passed in the frozen run, and the network-only refusal passed an independent
+  focused rerun. This exercises the descriptor-to-read-specific-pin validation rather than only
+  membership in the global resident set.
+- P4 wasm/browser and public publication — **HELD**. The bounded Chrome/Metal record at
+  `target/evidence/e9-t22j-final-135c0f24a/browser/report.json` (SHA-256
+  `44caba3936a9b2ad238ee60dd00c90dacf30a996a376df4735d04787f531a659`) captured a full
+  `block-mid` frame with one parked chain and replayed from it through next service and final
+  digest `894b33e00073ba1592385ea4b61a883764451faf5e4776afb0f1f547df436d51` with empty
+  error/missing/external lists. The canonical production demo report SHA-256
+  `d7d0f184118e90bc89c87fe1f18a91581b7e008e1551365fe4378dc5562772a6` byte-matches five
+  committed public assets, reports 127 passed/0 failed, both live pips, no console/HTTP errors
+  and no mobile overflow; browser trace SHA-256 is
+  `cf1eef1c03c018fd31687e5e0628817a13c2a1ef0b3196848b8979f232c7f81c`. Deployment
+  `4125e503` is recorded by `target/evidence/e9-t22j-main-publication/deploy.log` SHA-256
+  `96a0e044f52208ea24b40f2a067153f3998aac38a66eafec95727320b010f8c8` at the canonical
+  `https://wasm-vm.pages.dev/` URL.
+- P5 exact-head portability and gauntlet — **HELD**. The pristine-clone acceptance log SHA-256
+  `c023d47b6bf40240ed1760266656a417c06f3aaec67524c407e40f93d23613b8` ends with
+  `verify-E9-T22j PASSED`; its independent browser/demo report hashes are
+  `32e29bb0fc11e7e0045f49d3effa501230f57436364af23c29323cb2409809ef` and
+  `a65160fc5bc440024d334010d745885de9f4edf7839acb6e42bfc7e9041ed1b7`. The raw
+  `make ci` log SHA-256 `dc98b81714a87727e6494d3162945db1d51dc23fd88a0175539231b1411145db`
+  stops only on five pre-existing quarantined `zicsr-stub` dead-code diagnostics outside this
+  diff; production strict Clippy, the isolated stub check with only `dead_code` waived, and all
+  remaining prescribed targets passed in log SHA-256
+  `17442b39f062744d13556ef6dab542f8f14c379237d26fb820342d0995e527ea` (128/128 corpus,
+  wasm determinism and 57.5 MIPS against the 15 MIPS floor).
+- COVERAGE — **HELD**. The full capture executes the removed full-only residual refusal; full and
+  delta restores execute saved sparse-RAM and already-installed page-graph header reads; malformed
+  and crosswired restores execute every new validation refusal. The browser record executes full
+  mid-history capture, selected paged-checkpoint restoration, skipped receipt cursor accounting,
+  next-service replay and whole-chain closure. Generated `web/dist` mirrors, task/roadmap metadata,
+  comments and logging are waived as declarative or derived. No behavioral hunk is unexercised.
+- NOVEL ATTACK — **HELD**. A fresh isolated-target, single-thread execution reproduced the exact
+  full/delta digests, followed by a separate isolated execution of the legacy network-only torn
+  snapshot refusal. Varying scheduling did not change the capture or admit the legacy chain.
+- MOCK/ENV — **HELD**. The pristine clone scrubbed Cargo/Rust flags and rebuilt native, wasm and
+  browser artifacts. Canonical production asset hashes equal committed `web/dist`; the retained
+  browser store, raw receipt batches and physical Metal identity are recorded rather than mocked.
+- SUITE: promoted the bounded native full/delta parked-chain regression, its malformed/crosswire
+  cases, the network-only refusal, `make verify-E9-T22j`, and the built-browser full-checkpoint
+  replay/demo as permanent artifacts. No additional test was added because these stable assertions
+  already encode every verified prediction and the novel reruns introduced no new state.
+- PR [#613](https://github.com/BLamy/wasm-vm/pull/613) is open/draft/clean directly above open draft
+  #612. Verification authorizes no merge.
 
 ### 2026-10-23 — worker — native stack and main production publication
 
