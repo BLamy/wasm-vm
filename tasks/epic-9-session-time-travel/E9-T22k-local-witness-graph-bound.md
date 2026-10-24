@@ -3,7 +3,7 @@ id: E9-T22k
 epic: 9
 title: Admit bounded large local histories without widening portable archives
 priority: 524.922027
-status: implemented
+status: verified
 depends_on: [E9-T22j]
 estimate: S
 risk: high
@@ -42,7 +42,7 @@ complete cold-workload run.
 - [x] Continue to reject the same over-4-GiB graph as a portable bundle or
       storage-only archive with typed `BundleBound`; retain the existing 4 GiB,
       65,536-object and per-object archive limits and previous small archives.
-- [ ] Pass scoped high-risk native/Wasm/browser gates, exact-head evidence,
+- [x] Pass scoped high-risk native/Wasm/browser gates, exact-head evidence,
       final cold-clone proof, a fresh actual Daybreak adversarial verdict and
       production demo verification. No C workload or timing claim belongs here.
 
@@ -67,6 +67,78 @@ one rejection assertion and prove the test fails. Keep the 4 GiB archive
 decoder/index bounds intact.
 
 ## Verification log
+
+### 2026-10-24 — Daybreak verifier — VERDICT: verified
+
+- P1 exact failed boundary — **HELD.** Predicted the reconstructed candidate
+  would remain byte-identical at 4,311,983,484 logical bytes over 1,172
+  authenticated references while its deduplicated physical closure stayed
+  within retention. The prefix report records 3,652 reachable chunks totaling
+  2,981,235,217 bytes against 8 GiB retention, candidate digest
+  `03d3d53ba5db93ece5959eaaddfe9c075298b56d85c101793b0cf94b42e46e6a`,
+  and complete authentication. Citation: cold prefix report SHA-256
+  `3b00800627ab349731f3a41d9ccab883c086056746a8a520726ee47ff7b655a6`.
+- P2 local/archive policy split — **HELD.** Predicted publication, reopen, GC,
+  library preview and mutable GPU reading would select local policy, while
+  portable bundle, storage-only archive and immutable reading would retain
+  archive policy. The clean exact-browser run published revision 263, reopened
+  and retained 1,172 references through GC, previewed all 4,311,983,484 bytes,
+  reached the unfinished-commitment check through the local GPU reader, and
+  returned typed `BundleBound` from both archive exports (including caller
+  `scope: 'local'`), playback export and immutable reading. Citation: cold
+  exact-browser report SHA-256
+  `ba8b54ad5f90d2f7333650d3641a4c2d68860596bc4540cfc816ac6caec4e02d`
+  and trace SHA-256
+  `4366ba12c4c4564d96ecd8d13ac53acf87cee2945429efdc3175d99b53b6c033`.
+- P3 rejection and cleanup boundaries — **HELD.** Predicted missing witness,
+  conflicting digest length, cancellation, local byte/object overflow and a
+  corrupt unrequested chunk would fail or be collected without damaging the
+  reachable graph. The prefix report records `MissingObject`, length mismatch,
+  and `BundleCancelled`; the exact browser records one corrupt orphan removed
+  while revision 263 and all 1,172 references remain; the exact local byte and
+  object edges pass below their limits and return `LocalGraphBound` at or
+  above them in `web/tests/e9-t22k-graph-limits.test.mjs`.
+- P4 portable decoder/index bounds — **HELD.** Predicted the 4 GiB,
+  65,536-object and 640 MiB per-object guards would remain unchanged. Diff and
+  call-site audit confirmed those constants and the default archive scope.
+  The changed import-preflight scope line is **WAIVED** as defense in depth:
+  canonical `indexSessionBundle` / `encodeBundleHeader` rejects aggregate
+  unique bytes above 4 GiB or more than 65,536 sorted unique objects before
+  graph inventory, binds `uncompressedBytes`, and a header omitting a graph
+  reference fails `BundleMissing`; established small-archive import attacks
+  continue to exercise the successful path.
+- P5 exact-head sufficiency — **HELD.** Runtime/browser code was frozen at
+  `141af383eb96969f6c729c315bbc9229109348a3`; recorded served hashes match
+  changed source files and source/dist copies compare equal. The detached
+  pristine clone with scrubbed build environment passed the full deterministic
+  acceptance on that head. Cold demo SHA-256
+  `af874f74d130ac1aed6b631ac7726fa703d007734513788c318c6e67a3833012`
+  records 127 passed, 0 failed and no console/HTTP errors. Production evidence
+  likewise records 127/0 with matching committed assets. Generated build ID,
+  service-worker revision, task ledgers, task/queue metadata and Make target
+  wiring are **WAIVED** as generated/declarative support; both verification
+  scripts executed in submission and cold acceptance.
+- P6 sabotage sensitivity — **HELD.** In isolated
+  `/private/tmp/e9-t22k-verifier.HY7xbh`, changing the candidate archive
+  rejection assertion from `BundleBound` to `LocalGraphBound` made the
+  focused suite fail 1/2 and display the actual typed `BundleBound`.
+- Novel aggregate attack — **HELD.** Independently accumulated distinct,
+  individually valid 256 MiB logical references. Archive policy accepted the
+  first 15 and rejected at 4,294,968,196 bytes with `BundleBound`; local
+  policy admitted the same 16-object total. This falsifies an aggregate-size
+  bypass without relying on one oversized object.
+- SUITE: retain the focused graph-limit test and `verify-E9-T22k` target.
+  They directly guard the policy split and exact failed-prefix workflow. No
+  extra fixture is promoted from the verifier scratch attack because it
+  duplicates the committed byte-bound edge with a less economical input.
+
+Commands: `node --test web/tests/e9-t22k-graph-limits.test.mjs`; bounded
+aggregate attack via `node --input-type=module -e ...`; isolated assertion
+sabotage via `node --test web/tests/e9-t22k-graph-limits.test.mjs`; read-only
+inspection of the submission, production and pristine-clone reports; caller
+and diff audit from verified parent
+`1707778ad20e9a2fe4c51c61897831bd25c3f0ef` through frozen runtime head
+`141af383eb96969f6c729c315bbc9229109348a3`.
 
 ### 2026-10-24 — worker — implemented at frozen runtime head `141af383eb96969f6c729c315bbc9229109348a3`
 
