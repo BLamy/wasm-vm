@@ -52,19 +52,24 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
    thirdSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v3.json')),
    fourthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v4.json')),
    fifthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v5.json')),
-   serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v6.json'));
+   sixthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v6.json')),
+   serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v7.json'));
  const amendment=JSON.parse(sourceReference);need(amendment.originalContract.sha256===receipt.contractSha256&&JSON.stringify(amendment.unchanged.workload)===JSON.stringify(contract.workload)&&JSON.stringify(amendment.unchanged.budgets)===JSON.stringify(contract.budgets),'no reference workload/budget drift');
  need(sha(previousSerialization)==='f59e6190ec3006eaf22c8eda0d9e6915065458a709505afd4ac9e33601767b27','preserved first qualification serialization');
  need(sha(secondSerialization)==='7ea0bb9bc4329da72a9497d184ba139bbc5677ed4e4ea2ba43a6593b0812c5e9','preserved Chrome .86 qualification serialization');
  need(sha(thirdSerialization)==='5802635c6c7a9c7e1746e1da5b7b4c7460c5c2c2564c6e7492b69456d8492082','preserved tool-aware qualification serialization');
  need(sha(fourthSerialization)==='a191b05860be6f32bcc356953ecd4e969eebd47426689d27f643b7bcde13c2c8','preserved supported-retention qualification serialization');
  need(sha(fifthSerialization)==='d1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de','frozen persistent-profile qualification serialization');
- const priorQualification=JSON.parse(fifthSerialization),bootstrapAmendment=JSON.parse(serialization);
- const qualification={...priorQualification,...bootstrapAmendment};
+ need(sha(sixthSerialization)==='5e85dda123738e944c93e5bc0c4a16bb2376e1aca1be8136964d1faeb6800cc0','preserved failed sudo bootstrap qualification');
+ const priorQualification=JSON.parse(fifthSerialization),failedBootstrap=JSON.parse(sixthSerialization),bootstrapAmendment=JSON.parse(serialization);
+ const qualification={...priorQualification,...failedBootstrap,...bootstrapAmendment};
  need(priorQualification.version===5&&priorQualification.previousQualification.sha256===sha(fourthSerialization)
-   &&qualification.version===6&&qualification.previousQualification.sha256===sha(fifthSerialization)
+   &&failedBootstrap.version===6&&failedBootstrap.previousQualification.sha256===sha(fifthSerialization)
+   &&qualification.version===7&&qualification.previousQualification.sha256===sha(sixthSerialization)
    &&qualification.desktopBootstrap.bootargs==='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0 init=/bin/bash -- -i'
-   &&qualification.desktopBootstrap.policy==='omarchy ALL=(root) NOPASSWD: /bin/bash'
+   &&qualification.desktopBootstrap.gettyPath==='/etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf'
+   &&qualification.desktopBootstrap.gettyOverride==='[Service]\nExecStart=\nExecStart=-/usr/bin/agetty --autologin root --noclear --keep-baud 115200,38400,9600 - $TERM\n'
+   &&qualification.desktopBootstrap.gettyMode==='0644'
    &&qualification.originalContract.sha256===receipt.contractSha256
    &&qualification.referenceAmendment.sha256===sha(sourceReference)
    &&qualification.referenceAmendment.originalBrowser==='Chrome 155.0.8059.80'

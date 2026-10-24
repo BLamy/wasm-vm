@@ -45,6 +45,35 @@ missing GL results, hidden live replay I/O and an incomplete long recording.
 
 ## Verification log
 
+### 2026-10-24 — worker — v6 bootstrap refuted by the pinned guest; v7 COW getty amendment
+
+The clean exact-head `e51274fdbea7bb2a83ac125a770f040b76a8bd0e` run of
+`E9_OUT=target/evidence/e9-t22c-submission-e51274fdb make verify-E9-T22c`
+again passed the full Alpine phase and its direct file oracle. The desktop
+phase cold-booted the original pinned Omarchy image into the recorded PID-1
+root Bash prompt, then `cbootstrap` exited 1 at transition 595,088,768. The
+failed report is `target/evidence/e9-t22c-submission-e51274fdb/desktop/report.json`,
+SHA-256 `f6adb22acfbc8af9771d3372bd8d1a0aa83317b6fb4608fa5de7041a69e40023`;
+saved storage index SHA-256 is
+`821f26a6eca79bc9d06ebc6474f3507823efc28d5014eb1596d23d772b1e3fb8`.
+It retains the initial/failure native states, 11 periodic checkpoints, 316
+receipts, 105 authenticated base requests, browser trace and serial output.
+This is a failed bootstrap, not desktop, probe or replay qualification.
+
+A fresh actual Daybreak independent diagnostic reconstructed the exact pinned
+guest filesystem from the retained native COW sectors and authenticated base.
+It found the first false command predicate was `command -v sudo`: PID-1 Bash
+was root and `/sbin/init` was executable, but the image has no `sudo`,
+`visudo` or `/etc/sudoers`. The v6 policy cannot work on this image. The v7
+qualification amendment preserves v6 as the failed attempt and replaces that
+test-only policy with an exact serial-getty root autologin override written to
+the guest COW, hash/mode checked and synced before `exec /sbin/init`. The
+original image, manifest, T01 workload, budgets and production image remain
+unchanged. The harness must then prove the new root getty shell and complete
+the real desktop, GPU probe, whole replay and direct file oracle at a new clean
+head. The desktop direct oracle and software provenance now bind the active v7
+serialization instead of misidentifying v5 as active.
+
 ### 2026-10-24 — worker — preserve failed cold attempt and amend test bootstrap
 
 The clean exact-head `67eea6f160631f0c93912c16bf59902e98cfb66c` run of

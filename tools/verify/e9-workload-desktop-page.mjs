@@ -31,11 +31,13 @@ export async function qualifyDesktopWorkload(contract,qualification){
   const fixture=contract.fixtures.find(row=>row.id==='desktop-gpu-candidate-v1');
   need(fixture&&contract.workload?.desktop?.probe_sha256==='822b258f329ee2d16d7f25fa676684e02227531dbdf8bf5edbf7dc8b45868155','frozen desktop contract');
   const auxiliary=qualification?.auxiliaryDesktopTool;
-  need(qualification?.version===6&&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
+  need(qualification?.version===7&&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
     &&qualification.retention?.defaultMaxBytes===2*1024**3
     &&qualification.retention?.maxBytes===8*1024**3&&qualification.retention?.maxCheckpoints===4096
     &&qualification.desktopBootstrap?.bootargs==='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0 init=/bin/bash -- -i'
-    &&qualification.desktopBootstrap?.policy==='omarchy ALL=(root) NOPASSWD: /bin/bash'
+    &&qualification.desktopBootstrap?.gettyPath==='/etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf'
+    &&qualification.desktopBootstrap?.gettyOverride==='[Service]\nExecStart=\nExecStart=-/usr/bin/agetty --autologin root --noclear --keep-baud 115200,38400,9600 - $TERM\n'
+    &&qualification.desktopBootstrap?.gettyMode==='0644'
     &&auxiliary?.sourceSha256==='9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30'
     &&auxiliary?.transportSha256==='dac2c1dd4ebc37266d5152eae3160f662f587f7e9deb91a35aa6f3d7c75f4679'
     &&auxiliary?.guestPath==='/usr/local/bin/busybox','explicit original desktop tool profile');
@@ -231,19 +233,21 @@ export async function qualifyDesktopWorkload(contract,qualification){
     const initial=journal.initialWitness;state.initial={...pos(initial),digest:hex(initial.digest),state:await retain('initial.state',vm.exactGpuSessionState())};
     vm.enableJit(2);
     await until(()=>/(?:^|\n)[^\n]*#\s*$/.test(textView()));
-    const policy=qualification.desktopBootstrap.policy;
-    state.bootstrap=await command(`test "$(id -u)" = 0 && test -x /sbin/init && command -v sudo && command -v visudo && `+
-      `umask 077 && printf '%s\\n' '${policy}' > /etc/sudoers && chmod 0440 /etc/sudoers && `+
-      `visudo -cf /etc/sudoers && test "$(stat -c '%u:%a' /etc/sudoers)" = '0:440' && `+
+    const getty=qualification.desktopBootstrap.gettyPath;
+    const gettyHash=digest(encoder.encode(qualification.desktopBootstrap.gettyOverride));
+    state.bootstrap=await command(`test "$(id -u)" = 0 && test -x /sbin/init && `+
+      `mkdir -p /etc/systemd/system/serial-getty@ttyS0.service.d && `+
+      `printf '%s\\n' '[Service]' 'ExecStart=' 'ExecStart=-/usr/bin/agetty --autologin root --noclear --keep-baud 115200,38400,9600 - $TERM' > '${getty}' && `+
+      `chmod 0644 '${getty}' && test "$(stat -c '%u:%a' '${getty}')" = '0:644' && `+
+      `test "$(sha256sum '${getty}')" = '${gettyHash}  ${getty}' && `+
       `sync && printf 'E9_QBOOT_OK\\n'`,'cbootstrap','guest-inspection');
-    need(state.bootstrap.stdout.includes('E9_QBOOT_OK'),'recorded COW-only root policy');
+    need(state.bootstrap.stdout.includes('E9_QBOOT_OK'),'recorded COW-only root getty');
     state.bootstrapHandoff=pos(vm.inputPosition());
+    const systemdConsoleAt=state.console.length;
     await offer('guest-inspection','exec /sbin/init\r');
-    await until(()=>/\[omarchy@omarchy-demo [^\n]*\]\$\s*$/.test(textView()));
-    await offer('guest-inspection','sudo -n -H /bin/bash\r');
-    await until(()=>/(?:^|\n)[^\n]*#\s*$/.test(textView()));
-    state.identity=await command('id -u; printf "%s\\n" "$HOME"; stat -c "%u:%a" /etc/sudoers; command -v hyprctl; command -v gzip; command -v dd; command -v stty','cidentity','guest-inspection');
-    need(state.identity.stdout.startsWith('0\n/root\n0:440\n'),'root shell and recorded COW policy for unchanged /root fixture');
+    await until(()=>/(?:^|\n)[^\n]*#\s*$/.test(stripConsole(state.console.slice(systemdConsoleAt))));
+    state.identity=await command(`id -u; printf '%s\\n' "$HOME"; sha256sum '${getty}'; stat -c '%u:%a' '${getty}'; command -v hyprctl; command -v gzip; command -v dd; command -v stty`,'cidentity','guest-inspection');
+    need(state.identity.stdout.startsWith(`0\n/root\n${gettyHash}  ${getty}\n0:644\n`),'root shell and recorded COW getty for unchanged /root fixture');
     await command('stty -echo','cstty','guest-inspection');
     phase='desktop';
     await until(()=>presentation.snapshot().drawnPresents>0&&hasDesktopPixels(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data));

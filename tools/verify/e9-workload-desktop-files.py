@@ -118,9 +118,17 @@ try:
     assert sha(contract_bytes) == '646899bea0da60ba13020a2015f6214236526082a8e34952cca91481cb89dba1'
     assert sha(image_bytes) == '8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8'
     assert image['image_len'] == 12884901888 and image['chunk_size'] == 262144
-    profile_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v5.json').read_bytes()
-    assert sha(profile_bytes) == 'd1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de'
-    profile = json.loads(profile_bytes)
+    v5_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v5.json').read_bytes()
+    v6_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v6.json').read_bytes()
+    profile_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v7.json').read_bytes()
+    assert sha(v5_bytes) == 'd1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de'
+    assert sha(v6_bytes) == '5e85dda123738e944c93e5bc0c4a16bb2376e1aca1be8136964d1faeb6800cc0'
+    assert sha(profile_bytes) == '775db4ae386b71d39391e00a5e395a44e9b3f5f20606a49243fa0f0077f4b002'
+    v6 = json.loads(v6_bytes)
+    v7 = json.loads(profile_bytes)
+    assert v6['previousQualification']['sha256'] == sha(v5_bytes)
+    assert v7['previousQualification']['sha256'] == sha(v6_bytes)
+    profile = {**json.loads(v5_bytes), **v6, **v7}
     retention = profile['retention']
     assert browser['inputs']['serializationSha256'] == sha(profile_bytes)
     assert browser['browserContext']['mode'] == profile['browserContext']['mode']
@@ -135,7 +143,7 @@ try:
     assert browser['result']['retention'] == {
         'before':{'maxBytes':retention['defaultMaxBytes'],'maxCheckpoints':retention['maxCheckpoints']},
         'after':{'maxBytes':retention['maxBytes'],'maxCheckpoints':retention['maxCheckpoints']}}
-    tool = json.loads(profile_bytes)['auxiliaryDesktopTool']
+    tool = profile['auxiliaryDesktopTool']
     assert browser['result']['toolTransfer']['source'] == {'bytes':tool['sourceBytes'],'sha256':tool['sourceSha256']}
     assert browser['result']['toolTransfer']['transport'] == {'bytes':tool['transportBytes'],'sha256':tool['transportSha256']}
     saved = json.loads((out / 'saved/storage.json').read_bytes())
@@ -232,6 +240,10 @@ finally:
                                  'a191b05860be6f32bcc356953ecd4e969eebd47426689d27f643b7bcde13c2c8'),
               'qualificationV5':(out / 'executed-source/docs/design/session-workload-qualification-v5.json',
                                  'd1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de'),
+              'qualificationV6':(out / 'executed-source/docs/design/session-workload-qualification-v6.json',
+                                 '5e85dda123738e944c93e5bc0c4a16bb2376e1aca1be8136964d1faeb6800cc0'),
+              'qualificationV7':(out / 'executed-source/docs/design/session-workload-qualification-v7.json',
+                                 '775db4ae386b71d39391e00a5e395a44e9b3f5f20606a49243fa0f0077f4b002'),
               'busyboxSource':(root / 'releases/initramfs/busybox',
                                '9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30')}
     report['immutableInputs'] = {}
