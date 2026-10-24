@@ -46,13 +46,42 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
  const receipt={profile,scope:'untimed identity/qualification input, no performance result',contractSha256:sha(contractBytes),bootManifestSha256:sha(fixtureBytes),originalFixture:fixture,attempts:[],chunks:[]};
  const kernel=await fs.readFile(path.join(WORKLOAD_ROOT,fixture.artifacts.kernel.url));need(kernel.length===fixture.artifacts.kernel.size&&sha(kernel)===fixture.artifacts.kernel.sha256,'original kernel');
  const wasm=await fs.readFile(path.join(webRoot,'pkg/wasm_vm_wasm_bg.wasm')),rendererAsset=await fs.readFile(path.join(webRoot,'gpu-checkpoint-build.js'));
- const sourceReference=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-replay-performance-reference-v1.json')),serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v1.json'));
+ const sourceReference=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-replay-performance-reference-v1.json')),
+   previousSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v1.json')),
+   secondSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v2.json')),
+   thirdSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v3.json')),
+   serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v4.json'));
  const amendment=JSON.parse(sourceReference);need(amendment.originalContract.sha256===receipt.contractSha256&&JSON.stringify(amendment.unchanged.workload)===JSON.stringify(contract.workload)&&JSON.stringify(amendment.unchanged.budgets)===JSON.stringify(contract.budgets),'no reference workload/budget drift');
- let imageBytes,image,disk,chunkPrefix;
+ need(sha(previousSerialization)==='f59e6190ec3006eaf22c8eda0d9e6915065458a709505afd4ac9e33601767b27','preserved first qualification serialization');
+ need(sha(secondSerialization)==='7ea0bb9bc4329da72a9497d184ba139bbc5677ed4e4ea2ba43a6593b0812c5e9','preserved Chrome .86 qualification serialization');
+ need(sha(thirdSerialization)==='5802635c6c7a9c7e1746e1da5b7b4c7460c5c2c2564c6e7492b69456d8492082','preserved tool-aware qualification serialization');
+ need(sha(serialization)==='a191b05860be6f32bcc356953ecd4e969eebd47426689d27f643b7bcde13c2c8','frozen supported-retention qualification serialization');
+ const qualification=JSON.parse(serialization);
+ need(qualification.version===4&&qualification.previousQualification.sha256===sha(thirdSerialization)
+   &&qualification.originalContract.sha256===receipt.contractSha256
+   &&qualification.referenceAmendment.sha256===sha(sourceReference)
+   &&qualification.referenceAmendment.originalBrowser==='Chrome 155.0.8059.80'
+   &&qualification.referenceAmendment.qualificationBrowser==='Chrome 155.0.8059.86'
+   &&qualification.profiles.desktop.includes('12 GiB')&&qualification.profiles.desktop.includes('ICount/64')
+   &&qualification.history.includes('actual initial frames')
+   &&qualification.retention.defaultMaxBytes===2*1024**3
+   &&qualification.retention.maxBytes===8*1024**3
+   &&qualification.retention.maxCheckpoints===4096,'frozen desktop qualification profile/reference');
+ let imageBytes,image,disk,chunkPrefix,busybox=null;
+ try{
  if(profile==='software'){
   const software=JSON.parse(await fs.readFile(path.join(WORKLOAD_ROOT,'web/session-software-fixture.json')));imageBytes=await fs.readFile(path.join(WORKLOAD_ROOT,'web/session-alpine-image.json'));image=pinnedImage(imageBytes,software.image_manifest_sha256);chunkPrefix=new URL('chunks/',software.base_url).href;
   const raw=path.join(WORKLOAD_ROOT,fixture.artifacts.rootfs.url);need((await fs.stat(raw)).size===fixture.artifacts.rootfs.size,'full software image size');receipt.rawImage={path:raw,bytes:fixture.artifacts.rootfs.size,sha256:await fileSha(raw)};need(receipt.rawImage.sha256===fixture.artifacts.rootfs.sha256,'full software image hash');disk=await fs.open(raw,'r');receipt.bootargs=software.bootargs;
  }else{
+  const tool=qualification.auxiliaryDesktopTool;
+  need(tool.sourcePath==='releases/initramfs/busybox'
+    &&tool.sourceSha256==='9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30'
+    &&tool.sourceBytes===1741320&&tool.transportSha256==='dac2c1dd4ebc37266d5152eae3160f662f587f7e9deb91a35aa6f3d7c75f4679'
+    &&tool.transportBytes===1168752&&tool.transportPaddedBytes===1171456
+    &&tool.guestPath==='/usr/local/bin/busybox','pinned Omarchy auxiliary tool');
+  busybox=await fs.readFile(path.join(WORKLOAD_ROOT,tool.sourcePath));
+  need(busybox.length===tool.sourceBytes&&sha(busybox)===tool.sourceSha256,'original static RV64 BusyBox');
+  receipt.auxiliaryTool={path:tool.sourcePath,bytes:busybox.length,sha256:sha(busybox)};
   const entry=fixture.chunked_image;need(entry.sha256==='8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8'&&entry.size===3539054,'original desktop base');await fs.mkdir(cacheRoot,{recursive:true});const file=path.join(cacheRoot,'manifest-'+entry.sha256+'.json');
   try{imageBytes=await fs.readFile(file);receipt.manifestSource='hash-authenticated-local-cache';}catch(error){if(error.code!=='ENOENT')throw error;imageBytes=await publicBody(R2+entry.key,entry.size,receipt.attempts);need(sha(imageBytes)===entry.sha256,'downloaded desktop manifest');await fs.writeFile(file,imageBytes,{flag:'wx'});receipt.manifestSource='pinned-public-object';}
   need(imageBytes.length===entry.size,'desktop manifest bytes');image=pinnedImage(imageBytes,entry.sha256);need(image.image_len===12884901888&&image.chunk_size===262144,'pinned 12 GiB base distinct from RAM');chunkPrefix=R2+'chunked-omarchy/chunks/';receipt.bootargs='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0';receipt.historicalWarmCheckpointExecuted=false;
@@ -69,5 +98,9 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
    need(bytes.length===image.chunk_size&&sha(bytes)===id,'materialized member hash');receipt.chunks.push({sha256:id,bytes:bytes.length,source});return bytes;
   })();inFlight.set(id,pending);try{return await pending;}finally{inFlight.delete(id);}
  }
- return {profile,receipt,contract,fixture,contractBytes,fixtureBytes,kernel,wasm,rendererAsset,image,imageBytes,imageManifest:new TextDecoder('utf-8',{fatal:true}).decode(imageBytes),readChunk,async inspectCache(){const rows=await inspectMaterializedChunks(directory,image);receipt.finalMaterializedCache=rows;return rows;},async close(){await disk?.close();}};
+ return {profile,receipt,qualification,contract,fixture,contractBytes,fixtureBytes,kernel,wasm,rendererAsset,busybox,image,imageBytes,imageManifest:new TextDecoder('utf-8',{fatal:true}).decode(imageBytes),readChunk,async inspectCache(){const rows=await inspectMaterializedChunks(directory,image);receipt.finalMaterializedCache=rows;return rows;},async close(){await disk?.close();}};
+ }catch(error){
+  try{await disk?.close();}catch(closeError){if(error&&typeof error==='object')error.assetCloseError=String(closeError.stack??closeError);}
+  throw error;
+ }
 }

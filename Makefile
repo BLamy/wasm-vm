@@ -2863,3 +2863,15 @@ verify-E9-T22k:
 	  node tools/verify/e9-local-witness-graph-repro.mjs --directory "$$desktop" --output "$$out/prefix"; \
 	  node tools/verify/e9-local-witness-graph-browser.mjs --desktop "$$desktop" --candidate "$$out/prefix/cold-127-candidate.json" --output "$$out/exact-browser"; \
 	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo"
+.PHONY: verify-E9-T22c
+verify-E9-T22c:
+	mkdir -p target/evidence
+	node --test tools/verify/e9-workload-schedule.test.mjs tools/verify/e9-workload-assets.test.mjs
+	set -eu; E9_QUALIFICATION_OUT="$${E9_OUT:-target/evidence/e9-t22c-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$(dirname "$$E9_QUALIFICATION_OUT")"; \
+	  mkdir "$$E9_QUALIFICATION_OUT"; \
+	  node tools/verify/e9-workload-software-browser.mjs --output "$$E9_QUALIFICATION_OUT/software" && \
+	  python3 -B tools/verify/e9-workload-software-files.py --directory "$$E9_QUALIFICATION_OUT/software" && \
+	  node tools/verify/e9-workload-desktop-browser.mjs --output "$$E9_QUALIFICATION_OUT/desktop" && \
+	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$E9_QUALIFICATION_OUT/desktop" && \
+	  python3 -B tools/verify/e9-workload-desktop-files.py --directory "$$E9_QUALIFICATION_OUT/desktop"

@@ -1,0 +1,63 @@
+{
+  "version": 3,
+  "task": "E9-T22c",
+  "scope": "Untimed Chrome 155.0.8059.86 qualification with explicit recorded static RV64 BusyBox staging in the original Omarchy guest; unchanged T01 workload and numeric budgets",
+  "originalContract": {
+    "path": "docs/design/session-replay-contract.json",
+    "sha256": "646899bea0da60ba13020a2015f6214236526082a8e34952cca91481cb89dba1"
+  },
+  "referenceAmendment": {
+    "path": "docs/design/session-replay-performance-reference-v1.json",
+    "sha256": "05c3c5ce07a29f87226cdfb9758037f49ef2a8460496d0a515594f2f96050751",
+    "originalBrowser": "Chrome 155.0.8059.80",
+    "qualificationBrowser": "Chrome 155.0.8059.86"
+  },
+  "schedule": {
+    "origin": "First drained before-phase host boundary after the unchanged successful setup RPC fence/E9_AFTER and an explicitly recorded auxiliary sync fence, after draining actual terminal replies; retain a native/state witness. All later targets remain absolute.",
+    "offers": 100,
+    "absoluteOffsets": "500000 * frame index, frame index 1..100; never relative sleep after auxiliary work",
+    "normalOffer": "Substitute FRAME_INDEX in the original template, append one newline.",
+    "tenthOffer": "The same frame command and newline, then original rewrite command with INDEX 1..10 and newline, all in one UART offer.",
+    "authoritativeEvidence": "Actual channel-1 accepted offer receipts, exact payload bytes and coordinates; separate setup and auxiliary GPU-control ledgers.",
+    "setup": "Run original setup unchanged and its original advance exchange. Auxiliary network setup, probe transfer/library inspection and viewport controls do not change that source or count among the 100.",
+    "auxiliaryLedger": "Every channel-1 offer belongs to exactly one predeclared producer, including the explicit binary tool-transfer offers. Original setup, advance, actual terminal reply, scheduled frame, network setup, probe transfer/library inspection/invocation, and file/guest inspection remain disjoint. Retain full source coordinates, sequence, byte length and SHA-256; the union covers all UART offers.",
+    "auxiliarySync": "Record one auxiliary sync after original setup/entropy and before the origin witness, and one after the tenth original wget and before final file inspection/capture. Classify both as file-witness UART activity outside the unchanged 100 scheduled offers; preserve original setup/rewrite source, amounts and all numeric budgets."
+  },
+  "profiles": {
+    "software": "Original full Alpine assets, 256 MiB RAM, one hart, pure ICount/10.",
+    "desktop": "Original Omarchy kernel and raw pinned 8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8 manifest (12 GiB base), one GiB RAM, one hart, fresh pure ICount/64 with interactive:null; no historical paced warm checkpoint.",
+    "historicalCandidate": "Preserve original T01 paced-on-keyboard candidate and its asset/renderer identities; this qualification does not coerce that checkpoint.",
+    "renderer": "Production physical renderer; pin host and guest identities, original RV64 EGL/GLES probe source/compiler/sysroot/binary and actual guest-resolved library identities before timing.",
+    "viewportSequence": [
+      [
+        640,
+        480
+      ],
+      [
+        803,
+        603
+      ]
+    ]
+  },
+  "history": "Capture and reopen complete histories from actual initial frames through their ends; no final-keyframe shortcut, partial-prefix acceptance, fixture substitution or hidden live replay I/O.",
+  "capacity": "Existing runtime bounds remain unchanged. An actual full-workload failure at those bounds requires its own ordered runtime prerequisite.",
+  "numericBudgets": "All original T01 values and all original workload amounts remain unchanged. Later timing is E9-T22d.",
+  "previousQualification": {
+    "path": "docs/design/session-workload-qualification-v2.json",
+    "sha256": "7ea0bb9bc4329da72a9497d184ba139bbc5677ed4e4ea2ba43a6593b0812c5e9"
+  },
+  "browserUpdateReason": "Installed Chrome advanced from 155.0.8059.85 before the final GPU workload qualification; original .80 reference and .85 phase evidence remain preserved.",
+  "auxiliaryDesktopTool": {
+    "reason": "The pinned Omarchy image has no BusyBox executable; the unchanged frozen T01 rewrite command invokes busybox wget. Stage the repository-pinned static RV64 ELF as recorded guest input before setup, without changing the original command, base image, response bodies, or budgets.",
+    "sourcePath": "releases/initramfs/busybox",
+    "sourceSha256": "9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30",
+    "sourceBytes": 1741320,
+    "transport": "Deterministic gzip level 9 of the pinned ELF, then recorded raw UART in 2048-byte accepted offers. After each offer, run the guest until the recorded pending UART queue is empty before offering another. The guest receives exactly the padded byte count through dd in raw tty mode, truncates padding, decompresses and verifies the original ELF hash and wget applet.",
+    "transportSha256": "dac2c1dd4ebc37266d5152eae3160f662f587f7e9deb91a35aa6f3d7c75f4679",
+    "transportBytes": 1168752,
+    "transportPaddedBytes": 1171456,
+    "guestPath": "/usr/local/bin/busybox",
+    "evidence": "All source/transport bytes and channel-1 offers are sealed before workload scheduling; the native COW filesystem oracle rereads the staged ELF at before/origin/final/replay. Tool-transfer offers are disjoint from the original 100 scheduled offers.",
+    "guestEnvironment": "Export /usr/local/bin at the front of the persistent root shell PATH after the authenticated transfer, then require command -v busybox to resolve to the staged ELF. This does not alter the original frozen rewrite command."
+  }
+}

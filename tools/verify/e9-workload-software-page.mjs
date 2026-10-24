@@ -7,7 +7,7 @@ import{checkpointHash,checkpointReference,checkpointChunks}from'/session-checkpo
 import{sessionCanonicalImage}from'/session-pkg/wasm_vm_session.js';
 import{createFencedRpc,formatRpcCommand,stripConsole}from'/guest-rpc.js';
 import{createLinuxTerminal}from'/terminal.js';
-import{frozenWorkloadSchedule,scheduledTransition,verifyFrozenWorkloadOffers,verifyUartActivityLedger}from'./e9-workload-schedule.mjs';
+import{frozenWorkloadSchedule,scheduledTransition,verifyFrozenWorkloadOffers,verifyUartActivityLedger,verifyGuestInputMarkers}from'./e9-workload-schedule.mjs';
 const encoder=new TextEncoder(),decoder=new TextDecoder(),tick=()=>new Promise(resolve=>setTimeout(resolve,0));
 const need=(ok,why)=>{if(!ok)throw Error(why);};
 const position=p=>Object.fromEntries(['transition','retired','sequence','phase','ordinal'].map(key=>[key,p[key]]));
@@ -69,12 +69,12 @@ export async function qualifySoftwareWorkload(contract){
   journal=await SessionInputJournal.createLiveExact(store,writer,state.configuration,initial.resume,disk,initial);delete initial.resume;
   await until(()=>stripConsole(state.console).includes("can't access tty; job control turned off"));machine.openOwnedLocalHttp();opened=true;await pump();
   state.networkSetup=await command('mkdir -p /root/e9-session; busybox ip link set eth0 up; busybox ip addr add 10.0.2.15/24 dev eth0; busybox ip addr show eth0','cnetsetup','network-setup');need(state.networkSetup.stdout.includes('10.0.2.15/24'),'actual software interface');
-  parser=createFencedRpc('csetup');rpcResult=null;await offer('setup',formatRpcCommand(contract.workload.setup,'csetup'));await until(()=>/(?:^|\n)E9_BEFORE\n/.test(stripConsole(state.console)));state.before=(await witness('before',true)).result;
+  parser=createFencedRpc('csetup');rpcResult=null;await offer('setup',formatRpcCommand(contract.workload.setup,'csetup'));await until(()=>/E9_BEFORE\r?\n/.test(stripConsole(state.console)));state.before=(await witness('before',true)).result;
   await offer('advance',contract.workload.serial_advance);await until(()=>!!rpcResult);need(rpcResult.exit===0&&/(?:^|\n)E9_AFTER\n/.test(rpcResult.stdout),'frozen setup failed');state.setup=rpcResult;need(rpcResult.stdout.includes(contract.workload.after_sha256+'  '+contract.workload.guest_path),'setup after hash');state.auxiliarySetupSync=await command('sync','csetupflush','file-witness');await tick();await drainTerminal();
   const origin=await witness('origin',true);state.origin=origin.result;state.workloadOrigin=origin.result.transition;state.schedule=plan.map(frame=>({index:frame.index,offset:frame.offset,target:scheduledTransition(state.workloadOrigin,frame.offset),rewriteIndex:frame.rewriteIndex,bytes:frame.bytes.length,sha256:checkpointHash(frame.bytes)}));
   for(const frame of plan){const target=scheduledTransition(state.workloadOrigin,frame.offset);while(BigInt(machine.inputPosition().transition)<BigInt(target))await step(target);need(machine.inputPosition().transition===target,'exact input target');await offer('scheduled',frame.bytes);state.scheduledOffers=frame.index;}
-  await until(()=>state.bodyResults.length===10&&/(?:^|\n)E9_INPUT_100\n/.test(stripConsole(state.console)));
-  const text=stripConsole(state.console);for(let index=1;index<=100;index++){const mark='E9_INPUT_'+String(index).padStart(3,'0');need(text.split('\n').filter(line=>line===mark).length===1,'exact executed frame '+index);}
+  await until(()=>state.bodyResults.length===10&&/E9_INPUT_100\r?\n/.test(stripConsole(state.console)));
+  state.inputMarkers=verifyGuestInputMarkers(stripConsole(state.console));
   state.files=await command('sync; od -An -v -tx1 /root/e9-session/state; od -An -v -tx1 /root/e9-session/entropy; od -An -v -tx1 /root/e9-session/http; sha256sum /root/e9-session/state /root/e9-session/entropy /root/e9-session/http','cfilebytes','file-witness');
   need(state.files.stdout.trim().split('\n')[0].replace(/\s/g,'')===contract.workload.after_hex,'literal final state');
   let closing=machine.cancelOwnedLocalHttp();await collect();for(let n=0;!closing.closed&&n<1024;n++){need(closing.more&&!closing.blocked,'service close stalled');closing=machine.pumpOwnedLocalHttp();await collect();}need(closing.closed,'closed original server');state.server=machine.ownedLocalHttpState();need(state.server.server.requests.every(n=>n===1)&&state.server.server.responsesQueued.every(n=>n===1)&&state.server.server.bodyBytesQueued.every(n=>n===1024),'ten independent real service counts');
@@ -90,10 +90,18 @@ export async function qualifySoftwareWorkload(contract){
    need(result?.reached,'complete initial-to-end replay bound');const observed=replay.exactSessionWitness(true);need(hex(observed.digest)===hex(end.digest)&&observed.resume.length===expectedNative.length&&observed.resume.every((byte,i)=>byte===expectedNative[i]),'full native/software replay mismatch');rawReplay=observed.resume;state.replay={position:position(observed),digest:hex(observed.digest),nativeBytes:observed.resume.length,allWitnesses:read.witnesses.length,events:read.receipts.length,exactNativeBytes:true};need(WasmLinux.ownedLocalHttpFactoryEntries()===factories,'replay provider construction');
   }finally{globalThis.fetch=nativeFetch;globalThis.WebSocket=nativeSocket;replay.free();}
   state.replay.raw=await retain('replay.resume',rawReplay);need(state.replayEgress.fetch===0&&state.replayEgress.sockets===0,'zero replay egress');state.sourceObservations=rows.filter(row=>[17,18].includes(row.channel)).map(row=>({...position(row),channel:row.channel,outcome:row.outcome,bytes:[...row.bytes]}));need(state.sourceObservations.some(row=>row.channel===17&&row.bytes.length===8)&&state.sourceObservations.some(row=>row.channel===18&&row.outcome[1]==='6'),'actual RTC/entropy observations');state.sessionId=id;state.status='software-full-workload-replay-passed';
- }catch(error){state.status='failed';state.error=String(error.stack??error);state.failurePosition=machine?position(machine.inputPosition()):null;await retain('terminal-status.json',encoder.encode(JSON.stringify({status:state.status,error:state.error,position:state.failurePosition,receipts:state.receipts,blocks:state.blocks.length,scheduled:state.scheduledOffers??0})));try{if(machine)state.failure=(await witness('failure',true)).result;}catch(failure){state.captureError=String(failure);}}
+ }catch(error){state.status='failed';state.error=String(error.stack??error);state.failurePosition=machine?position(machine.inputPosition()):null;
+  try{state.terminalStatus=await retain('terminal-status.json',encoder.encode(JSON.stringify({status:state.status,error:state.error,position:state.failurePosition,receipts:state.receipts,blocks:state.blocks.length,scheduled:state.scheduledOffers??0})));}
+  catch(retention){state.terminalStatusError=String(retention.stack??retention);}
+  try{if(machine)state.failure=(await witness('failure',true)).result;}catch(failure){state.captureError=String(failure);}}
  finally{
-  if(!terminalDisposed){terminal.detachSink();terminal.term.dispose();terminalDisposed=true;}machine?.free();await writer?.release();store?.close();
-  state.receiptFile=await retain('receipts.json',encoder.encode(JSON.stringify(rows.map(row=>({...row,bytes:[...row.bytes]})))));state.witnessFile=await retain('witnesses.json',encoder.encode(JSON.stringify(witnesses.map(value=>({...position(value),digest:[...value.digest]})))));state.ledgerFile=await retain('ledger.json',encoder.encode(JSON.stringify(state.ledger)));
+  const cleanup=async(label,action)=>{try{return await action();}catch(error){const detail=label+': '+String(error.stack??error);
+    (state.cleanupErrors??=[]).push(detail);if(state.status!=='failed'){state.status='failed';state.error=detail;}return null;}};
+  await cleanup('terminal',()=>{if(!terminalDisposed){terminal.detachSink();terminal.term.dispose();terminalDisposed=true;}});
+  await cleanup('machine',()=>machine?.free());await cleanup('writer',()=>writer?.release());await cleanup('store',()=>store?.close());
+  state.receiptFile=await cleanup('receipts sidecar',()=>retain('receipts.json',encoder.encode(JSON.stringify(rows.map(row=>({...row,bytes:[...row.bytes]}))))));
+  state.witnessFile=await cleanup('witness sidecar',()=>retain('witnesses.json',encoder.encode(JSON.stringify(witnesses.map(value=>({...position(value),digest:[...value.digest]}))))));
+  state.ledgerFile=await cleanup('ledger sidecar',()=>retain('ledger.json',encoder.encode(JSON.stringify(state.ledger))));
  }
  return state;
 }
