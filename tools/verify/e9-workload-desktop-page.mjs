@@ -31,7 +31,7 @@ export async function qualifyDesktopWorkload(contract,qualification){
   const fixture=contract.fixtures.find(row=>row.id==='desktop-gpu-candidate-v1');
   need(fixture&&contract.workload?.desktop?.probe_sha256==='822b258f329ee2d16d7f25fa676684e02227531dbdf8bf5edbf7dc8b45868155','frozen desktop contract');
   const auxiliary=qualification?.auxiliaryDesktopTool;
-  need(qualification?.version===8&&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
+  need(qualification?.version===9&&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
     &&qualification.retention?.defaultMaxBytes===2*1024**3
     &&qualification.retention?.maxBytes===8*1024**3&&qualification.retention?.maxCheckpoints===4096
     &&qualification.desktopBootstrap?.bootargs==='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0 init=/bin/bash -- -i'
@@ -41,6 +41,10 @@ export async function qualifyDesktopWorkload(contract,qualification){
     &&qualification.desktopNetworkReadiness?.dropinPath==='/etc/systemd/system/NetworkManager.service.d/e9-qualification.conf'
     &&qualification.desktopNetworkReadiness?.dropin==='[Service]\nType=simple\n'
     &&qualification.desktopNetworkReadiness?.mode==='0644'
+    &&JSON.stringify(qualification.desktopPlymouthOrdering?.units)===JSON.stringify([
+      {sourcePath:'/usr/lib/systemd/system/serial-getty@.service',sourceSha256:'ee46ca7068724107df49ee3bdda25a9cf01ceced1e08cca36ab3085bcf6f167d',copyPath:'/etc/systemd/system/serial-getty@ttyS0.service',removeAfterToken:' plymouth-quit-wait.service',copySha256:'151ae951a44e98cacbfa47470b48978608b18d9fa252d0cbd34afc11d03cc5db',copyBytes:1475,mode:'0644'},
+      {sourcePath:'/usr/lib/systemd/system/getty@.service',sourceSha256:'1ad6c472588f703549caa35f3fd51076e30c49492497aecb8f8a8b19026965d1',copyPath:'/etc/systemd/system/getty@tty1.service',removeAfterToken:' plymouth-quit-wait.service',copySha256:'d55625aece69be919b841126af75cd315a926f3a668f7aa62cfdfe7da614a8f4',copyBytes:1934,mode:'0644'},
+      {sourcePath:'/usr/lib/systemd/system/sddm.service',sourceSha256:'23e5a90063dcba8791c78afd8ddfd1b4d3cc7526185d619e97d497d46a91d385',copyPath:'/etc/systemd/system/sddm.service',removeAfterToken:' plymouth-quit.service',copySha256:'a32de2991d6c1344dd5269cf6602685659441d3d5e085b3d0355bc360f4cdfde',copyBytes:359,mode:'0644'}])
     &&auxiliary?.sourceSha256==='9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30'
     &&auxiliary?.transportSha256==='dac2c1dd4ebc37266d5152eae3160f662f587f7e9deb91a35aa6f3d7c75f4679'
     &&auxiliary?.guestPath==='/usr/local/bin/busybox','explicit original desktop tool profile');
@@ -250,6 +254,13 @@ export async function qualifyDesktopWorkload(contract,qualification){
     const gettyHash=digest(encoder.encode(qualification.desktopBootstrap.gettyOverride));
     const network=qualification.desktopNetworkReadiness.dropinPath;
     const networkHash=digest(encoder.encode(qualification.desktopNetworkReadiness.dropin));
+    const [gettyUnit,tty1Unit,sddmUnit]=qualification.desktopPlymouthOrdering.units;
+    const cloneUnit=(unit,sed)=>`test "$(sha256sum '${unit.sourcePath}')" = '${unit.sourceSha256}  ${unit.sourcePath}' && `+
+      `install -Dm0644 '${unit.sourcePath}' '${unit.copyPath}' && `+
+      `sed -i '${sed}' '${unit.copyPath}' && `+
+      `test "$(wc -c < '${unit.copyPath}')" -eq ${unit.copyBytes} && `+
+      `test "$(stat -c '%u:%a' '${unit.copyPath}')" = '0:644' && `+
+      `test "$(sha256sum '${unit.copyPath}')" = '${unit.copySha256}  ${unit.copyPath}' && `;
     state.bootstrap=await command(`test "$(id -u)" = 0 && test -x /sbin/init && `+
       `mkdir -p /etc/systemd/system/serial-getty@ttyS0.service.d && `+
       `printf '%s\\n' '[Service]' 'ExecStart=' 'ExecStart=-/usr/bin/agetty --autologin root --noclear --keep-baud 115200,38400,9600 - $TERM' > '${getty}' && `+
@@ -259,19 +270,48 @@ export async function qualifyDesktopWorkload(contract,qualification){
       `printf '%s\\n' '[Service]' 'Type=simple' > '${network}' && `+
       `chmod 0644 '${network}' && test "$(stat -c '%u:%a' '${network}')" = '0:644' && `+
       `test "$(sha256sum '${network}')" = '${networkHash}  ${network}' && `+
+      cloneUnit(gettyUnit,'s/ plymouth-quit-wait\\.service//')+
+      cloneUnit(tty1Unit,'s/ plymouth-quit-wait\\.service//')+
+      cloneUnit(sddmUnit,'s/ plymouth-quit\\.service//')+
       `sync && printf 'E9_QBOOT_OK\\n'`,'cbootstrap','guest-inspection');
-    need(state.bootstrap.stdout.includes('E9_QBOOT_OK'),'recorded COW-only root getty and NetworkManager readiness');
+    need(state.bootstrap.stdout.includes('E9_QBOOT_OK'),'recorded COW-only root getty, NetworkManager and Plymouth ordering');
     state.bootstrapHandoff=pos(vm.inputPosition());
     const systemdConsoleAt=state.console.length;
     await offer('guest-inspection','exec /sbin/init\r');
     await until(()=>/(?:^|\n)[^\n]*#\s*$/.test(stripConsole(state.console.slice(systemdConsoleAt))));
-    state.identity=await command(`id -u; printf '%s\\n' "$HOME"; sha256sum '${getty}' '${network}'; stat -c '%u:%a' '${getty}' '${network}'; command -v hyprctl; command -v gzip; command -v dd; command -v stty`,'cidentity','guest-inspection');
-    need(state.identity.stdout.startsWith(`0\n/root\n${gettyHash}  ${getty}\n${networkHash}  ${network}\n0:644\n0:644\n`),'root shell and both recorded COW service overrides for unchanged /root fixture');
+    state.identity=await command(`id -u; printf '%s\\n' "$HOME"; sha256sum '${getty}' '${network}' '${gettyUnit.copyPath}' '${tty1Unit.copyPath}' '${sddmUnit.copyPath}'; stat -c '%u:%a' '${getty}' '${network}' '${gettyUnit.copyPath}' '${tty1Unit.copyPath}' '${sddmUnit.copyPath}'; command -v hyprctl; command -v gzip; command -v dd; command -v stty`,'cidentity','guest-inspection');
+    need(state.identity.stdout.startsWith(`0\n/root\n${gettyHash}  ${getty}\n${networkHash}  ${network}\n${gettyUnit.copySha256}  ${gettyUnit.copyPath}\n${tty1Unit.copySha256}  ${tty1Unit.copyPath}\n${sddmUnit.copySha256}  ${sddmUnit.copyPath}\n0:644\n0:644\n0:644\n0:644\n0:644\n`),'root shell and five recorded COW service files for unchanged /root fixture');
+    state.serviceOrdering=await command(`printf 'E9_GETTY_FRAGMENT=%s\\n' "$(systemctl show -p FragmentPath --value serial-getty@ttyS0.service)"; `+
+      `printf 'E9_TTY1_FRAGMENT=%s\\n' "$(systemctl show -p FragmentPath --value getty@tty1.service)"; `+
+      `printf 'E9_SDDM_FRAGMENT=%s\\n' "$(systemctl show -p FragmentPath --value sddm.service)"; `+
+      `printf 'E9_GETTY_AFTER=%s\\n' "$(systemctl show -p After --value serial-getty@ttyS0.service)"; `+
+      `printf 'E9_TTY1_AFTER=%s\\n' "$(systemctl show -p After --value getty@tty1.service)"; `+
+      `printf 'E9_SDDM_AFTER=%s\\n' "$(systemctl show -p After --value sddm.service)"; `+
+      `systemctl list-jobs --no-legend; `+
+      `systemctl is-active systemd-logind serial-getty@ttyS0.service`,'cordering','guest-inspection');
+    const ordering=state.serviceOrdering.stdout;
+    const gettyAfter=ordering.match(/(?:^|\n)E9_GETTY_AFTER=([^\n]*)/)?.[1]??'';
+    const tty1After=ordering.match(/(?:^|\n)E9_TTY1_AFTER=([^\n]*)/)?.[1]??'';
+    const sddmAfter=ordering.match(/(?:^|\n)E9_SDDM_AFTER=([^\n]*)/)?.[1]??'';
+    need(ordering.includes(`E9_GETTY_FRAGMENT=${gettyUnit.copyPath}\n`)
+      &&ordering.includes(`E9_TTY1_FRAGMENT=${tty1Unit.copyPath}\n`)
+      &&ordering.includes(`E9_SDDM_FRAGMENT=${sddmUnit.copyPath}\n`)
+      &&gettyAfter.includes('systemd-user-sessions.service')&&!gettyAfter.includes('plymouth-quit-wait.service')
+      &&tty1After.includes('systemd-user-sessions.service')&&!tty1After.includes('plymouth-quit-wait.service')
+      &&sddmAfter.includes('systemd-logind.service')&&sddmAfter.includes('getty@tty1.service')&&!sddmAfter.includes('plymouth-quit.service')
+      &&ordering.endsWith('active\nactive\n'),'real systemd loaded three amended units with logind/serial getty active');
     state.networkServiceBefore=await networkStatus('cnetwork0');
     await command('stty -echo','cstty','guest-inspection');
     phase='desktop';
     await until(()=>presentation.snapshot().drawnPresents>0&&hasDesktopPixels(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data));
     state.desktop={presentation:presentation.snapshot(),gpu:gpu.inspect()};
+    state.displayService=await command(`test "$(systemctl is-active sddm.service)" = active && `+
+      `e9_sddm_pid=$(systemctl show sddm.service -p MainPID --value) && `+
+      `test "$e9_sddm_pid" -gt 1 && kill -0 "$e9_sddm_pid" && `+
+      `printf 'E9_SDDM_PID=%s\\n' "$e9_sddm_pid"; `+
+      `printf 'E9_PLYMOUTH_PROCESSES=%s\\n' "$(pgrep -c plymouth || true)"`,'cdisplay','guest-inspection');
+    need(/^E9_SDDM_PID=[1-9][0-9]*\nE9_PLYMOUTH_PROCESSES=[0-9]+\n$/.test(state.displayService.stdout),
+      'real SDDM daemon owns the drawn desktop');
     const firstPresents=presentation.snapshot().drawnPresents;
     need(vm.setDisplay(640,480),'first frozen viewport request');await collect();
     for(let n=0;n<64&&!(canvas.width===640&&canvas.height===480&&presentation.snapshot().drawnPresents>firstPresents);n++)await step();

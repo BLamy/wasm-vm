@@ -121,18 +121,22 @@ try:
     v5_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v5.json').read_bytes()
     v6_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v6.json').read_bytes()
     v7_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v7.json').read_bytes()
-    profile_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v8.json').read_bytes()
+    v8_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v8.json').read_bytes()
+    profile_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v9.json').read_bytes()
     assert sha(v5_bytes) == 'd1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de'
     assert sha(v6_bytes) == '5e85dda123738e944c93e5bc0c4a16bb2376e1aca1be8136964d1faeb6800cc0'
     assert sha(v7_bytes) == '775db4ae386b71d39391e00a5e395a44e9b3f5f20606a49243fa0f0077f4b002'
-    assert sha(profile_bytes) == '8003e0f4918de869ff124dd527f66b1d5b305ebd32a5d1e4e3e6c7febbc257d2'
+    assert sha(v8_bytes) == '8003e0f4918de869ff124dd527f66b1d5b305ebd32a5d1e4e3e6c7febbc257d2'
+    assert sha(profile_bytes) == '5a69d57990ba241836b76c578094bbb47be8cf5ddbce7f581250772e3c1f8a82'
     v6 = json.loads(v6_bytes)
     v7 = json.loads(v7_bytes)
-    v8 = json.loads(profile_bytes)
+    v8 = json.loads(v8_bytes)
+    v9 = json.loads(profile_bytes)
     assert v6['previousQualification']['sha256'] == sha(v5_bytes)
     assert v7['previousQualification']['sha256'] == sha(v6_bytes)
     assert v8['previousQualification']['sha256'] == sha(v7_bytes)
-    profile = {**json.loads(v5_bytes), **v6, **v7, **v8}
+    assert v9['previousQualification']['sha256'] == sha(v8_bytes)
+    profile = {**json.loads(v5_bytes), **v6, **v7, **v8, **v9}
     retention = profile['retention']
     assert browser['inputs']['serializationSha256'] == sha(profile_bytes)
     assert browser['browserContext']['mode'] == profile['browserContext']['mode']
@@ -153,12 +157,27 @@ try:
     network = profile['desktopNetworkReadiness']
     network_path = network['dropinPath']
     network_bytes = network['dropin'].encode()
+    units = profile['desktopPlymouthOrdering']['units']
+    assert len(units) == 3
+    expected_unit_files = {}
     assert browser['result']['bootstrap']['exit'] == 0
     assert 'E9_QBOOT_OK' in browser['result']['bootstrap']['stdout']
     assert browser['result']['identity']['exit'] == 0
     assert browser['result']['identity']['stdout'].startswith(
         '0\n/root\n' + sha(getty_bytes) + '  ' + getty_path + '\n' +
-        sha(network_bytes) + '  ' + network_path + '\n0:644\n0:644\n')
+        sha(network_bytes) + '  ' + network_path + '\n' +
+        ''.join(unit['copySha256'] + '  ' + unit['copyPath'] + '\n' for unit in units) +
+        '0:644\n' * 5)
+    ordering = browser['result']['serviceOrdering']
+    assert ordering['exit'] == 0
+    assert all('E9_' + label + '_FRAGMENT=' + unit['copyPath'] + '\n' in ordering['stdout']
+               for label,unit in zip(('GETTY','TTY1','SDDM'),units))
+    assert 'plymouth-quit-wait.service' not in ordering['stdout'].split('E9_GETTY_AFTER=')[1].split('\n')[0]
+    assert 'plymouth-quit-wait.service' not in ordering['stdout'].split('E9_TTY1_AFTER=')[1].split('\n')[0]
+    assert 'plymouth-quit.service' not in ordering['stdout'].split('E9_SDDM_AFTER=')[1].split('\n')[0]
+    assert ordering['stdout'].endswith('active\nactive\n')
+    display = browser['result']['displayService']
+    assert display['exit'] == 0 and 'E9_SDDM_PID=' in display['stdout']
     def network_pid(point):
         row = browser['result'][point]
         assert row['exit'] == 0
@@ -217,6 +236,22 @@ try:
         network_dropin = read_guest_file(disk.name,network_path,label+'.network-readiness')
         assert bytes.fromhex(network_dropin['hex']) == network_bytes, label + ' literal COW NetworkManager drop-in'
         files['networkReadiness'] = network_dropin
+        if label == 'before':
+            for unit in units:
+                source = read_guest_file(disk.name,unit['sourcePath'],label+'.'+Path(unit['sourcePath']).name+'.vendor')
+                original = bytes.fromhex(source['hex'])
+                token = unit['removeAfterToken'].encode()
+                assert source['sha256'] == unit['sourceSha256']
+                assert sum(line.startswith(b'After=') and token in line
+                           for line in original.splitlines()) == 1, 'one vendor After= token'
+                assert original.count(token) == 1, 'only one vendor ordering token'
+                amended = original.replace(token,b'',1)
+                assert len(amended) == unit['copyBytes'] and sha(amended) == unit['copySha256']
+                expected_unit_files[unit['copyPath']] = amended
+        for unit,name in zip(units,('gettyUnit','tty1Unit','sddmUnit')):
+            copy = read_guest_file(disk.name,unit['copyPath'],label+'.'+name)
+            assert bytes.fromhex(copy['hex']) == expected_unit_files[unit['copyPath']], label + ' one-token COW unit '+name
+            files[name] = copy
         staged = read_guest_file(disk.name,tool['guestPath'],label+'.busybox')
         assert staged['bytes'] == tool['sourceBytes'] and staged['sha256'] == tool['sourceSha256'], label + ' original static RV64 BusyBox'
         files['busybox'] = staged
@@ -247,7 +282,7 @@ try:
         try:
             assert cow_digests['final'] == cow_digests['replay'], 'native COW sectors differ'
             assert all(report['points']['final']['files'][name]['hex'] == report['points']['replay']['files'][name]['hex']
-                       for name in ['rootGetty','busybox','state','entropy','http'])
+                       for name in ['rootGetty','networkReadiness','gettyUnit','tty1Unit','sddmUnit','busybox','state','entropy','http'])
             report['finalReplayEquality'] = 'passed'
         except Exception as error:
             report['finalReplayEquality'] = 'failed'
@@ -276,6 +311,8 @@ finally:
                                  '775db4ae386b71d39391e00a5e395a44e9b3f5f20606a49243fa0f0077f4b002'),
               'qualificationV8':(out / 'executed-source/docs/design/session-workload-qualification-v8.json',
                                  '8003e0f4918de869ff124dd527f66b1d5b305ebd32a5d1e4e3e6c7febbc257d2'),
+              'qualificationV9':(out / 'executed-source/docs/design/session-workload-qualification-v9.json',
+                                 '5a69d57990ba241836b76c578094bbb47be8cf5ddbce7f581250772e3c1f8a82'),
               'busyboxSource':(root / 'releases/initramfs/busybox',
                                '9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30')}
     report['immutableInputs'] = {}

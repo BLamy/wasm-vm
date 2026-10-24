@@ -54,7 +54,8 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
    fifthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v5.json')),
    sixthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v6.json')),
    seventhSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v7.json')),
-   serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v8.json'));
+   eighthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v8.json')),
+   serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v9.json'));
  const amendment=JSON.parse(sourceReference);need(amendment.originalContract.sha256===receipt.contractSha256&&JSON.stringify(amendment.unchanged.workload)===JSON.stringify(contract.workload)&&JSON.stringify(amendment.unchanged.budgets)===JSON.stringify(contract.budgets),'no reference workload/budget drift');
  need(sha(previousSerialization)==='f59e6190ec3006eaf22c8eda0d9e6915065458a709505afd4ac9e33601767b27','preserved first qualification serialization');
  need(sha(secondSerialization)==='7ea0bb9bc4329da72a9497d184ba139bbc5677ed4e4ea2ba43a6593b0812c5e9','preserved Chrome .86 qualification serialization');
@@ -63,13 +64,16 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
  need(sha(fifthSerialization)==='d1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de','frozen persistent-profile qualification serialization');
  need(sha(sixthSerialization)==='5e85dda123738e944c93e5bc0c4a16bb2376e1aca1be8136964d1faeb6800cc0','preserved failed sudo bootstrap qualification');
  need(sha(seventhSerialization)==='775db4ae386b71d39391e00a5e395a44e9b3f5f20606a49243fa0f0077f4b002','preserved root getty qualification');
+ need(sha(eighthSerialization)==='8003e0f4918de869ff124dd527f66b1d5b305ebd32a5d1e4e3e6c7febbc257d2','preserved NetworkManager qualification');
  const priorQualification=JSON.parse(fifthSerialization),failedBootstrap=JSON.parse(sixthSerialization),
-   bootstrapAmendment=JSON.parse(seventhSerialization),networkAmendment=JSON.parse(serialization);
- const qualification={...priorQualification,...failedBootstrap,...bootstrapAmendment,...networkAmendment};
+   bootstrapAmendment=JSON.parse(seventhSerialization),networkAmendment=JSON.parse(eighthSerialization),
+   plymouthAmendment=JSON.parse(serialization);
+ const qualification={...priorQualification,...failedBootstrap,...bootstrapAmendment,...networkAmendment,...plymouthAmendment};
  need(priorQualification.version===5&&priorQualification.previousQualification.sha256===sha(fourthSerialization)
    &&failedBootstrap.version===6&&failedBootstrap.previousQualification.sha256===sha(fifthSerialization)
    &&bootstrapAmendment.version===7&&bootstrapAmendment.previousQualification.sha256===sha(sixthSerialization)
-   &&qualification.version===8&&qualification.previousQualification.sha256===sha(seventhSerialization)
+   &&networkAmendment.version===8&&networkAmendment.previousQualification.sha256===sha(seventhSerialization)
+   &&qualification.version===9&&qualification.previousQualification.sha256===sha(eighthSerialization)
    &&qualification.desktopBootstrap.bootargs==='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0 init=/bin/bash -- -i'
    &&qualification.desktopBootstrap.gettyPath==='/etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf'
    &&qualification.desktopBootstrap.gettyOverride==='[Service]\nExecStart=\nExecStart=-/usr/bin/agetty --autologin root --noclear --keep-baud 115200,38400,9600 - $TERM\n'
@@ -77,6 +81,10 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
    &&qualification.desktopNetworkReadiness.dropinPath==='/etc/systemd/system/NetworkManager.service.d/e9-qualification.conf'
    &&qualification.desktopNetworkReadiness.dropin==='[Service]\nType=simple\n'
    &&qualification.desktopNetworkReadiness.mode==='0644'
+   &&JSON.stringify(qualification.desktopPlymouthOrdering.units)===JSON.stringify([
+     {sourcePath:'/usr/lib/systemd/system/serial-getty@.service',sourceSha256:'ee46ca7068724107df49ee3bdda25a9cf01ceced1e08cca36ab3085bcf6f167d',copyPath:'/etc/systemd/system/serial-getty@ttyS0.service',removeAfterToken:' plymouth-quit-wait.service',copySha256:'151ae951a44e98cacbfa47470b48978608b18d9fa252d0cbd34afc11d03cc5db',copyBytes:1475,mode:'0644'},
+     {sourcePath:'/usr/lib/systemd/system/getty@.service',sourceSha256:'1ad6c472588f703549caa35f3fd51076e30c49492497aecb8f8a8b19026965d1',copyPath:'/etc/systemd/system/getty@tty1.service',removeAfterToken:' plymouth-quit-wait.service',copySha256:'d55625aece69be919b841126af75cd315a926f3a668f7aa62cfdfe7da614a8f4',copyBytes:1934,mode:'0644'},
+     {sourcePath:'/usr/lib/systemd/system/sddm.service',sourceSha256:'23e5a90063dcba8791c78afd8ddfd1b4d3cc7526185d619e97d497d46a91d385',copyPath:'/etc/systemd/system/sddm.service',removeAfterToken:' plymouth-quit.service',copySha256:'a32de2991d6c1344dd5269cf6602685659441d3d5e085b3d0355bc360f4cdfde',copyBytes:359,mode:'0644'}])
    &&qualification.originalContract.sha256===receipt.contractSha256
    &&qualification.referenceAmendment.sha256===sha(sourceReference)
    &&qualification.referenceAmendment.originalBrowser==='Chrome 155.0.8059.80'

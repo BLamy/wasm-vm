@@ -45,6 +45,41 @@ missing GL results, hidden live replay I/O and an incomplete long recording.
 
 ## Verification log
 
+### 2026-10-24 — worker — v8 reached logind; v9 tests the Plymouth ordering frontier
+
+The clean exact-head `6c6fa0c07d5674719224048ba4041111823ad60d` run of
+`E9_OUT=target/evidence/e9-t22c-submission-6c6fa0c07 make verify-E9-T22c`
+again passed full Alpine and the independent literal-file oracle. The
+original Omarchy image then passed the recorded root PID-1 bootstrap and
+started the original NetworkManager, reached `network.target`, permitted user
+sessions and started `systemd-logind`. The unchanged console showed no
+Plymouth quit, serial getty or SDDM marker through transition `8000000000`;
+the controlled `STOP` exported at `8050000000`, with 161 periodic checkpoints,
+1,285 receipts and 490 authenticated base-block completions. The report is
+`target/evidence/e9-t22c-submission-6c6fa0c07/desktop/report.json`, SHA-256
+`850dada8271d9a0aa5b8f97dd06919e9bfc8d5f68f9350f172ad5f87fbb90a8f`;
+the saved storage index is SHA-256
+`85ab75a42a357808e6bdfbf6e649e3019f303bc7af5dbbdc336c1265f68248e0`.
+The report is **failed by controlled STOP**, not a desktop/GPU/replay pass.
+
+Daybreak independently checked the exact pinned unit graph, including a fresh
+reconstruction of the retained v8 COW/base. Both vendor
+`serial-getty@.service` and `getty@.service` order after an unbounded
+`plymouth-quit-wait.service`; SDDM orders after `getty@tty1.service` and
+`plymouth-quit.service`. The successful older boot emitted those Plymouth
+markers before getty/SDDM. Console plus unit graph
+identify this ordering frontier but cannot distinguish a running from a
+queued Plymouth job without live `systemctl list-jobs`. Qualification v9
+therefore copies all three hash-pinned vendor units into the qualification COW,
+removes only their respective `After=` Plymouth token, and retains the real
+getty, SDDM, logind, NetworkManager, image, workload, cadence and budgets.
+The browser checks source/clone hashes, exact byte counts/mode, loaded unit
+paths, remaining ordering dependencies, active logind/getty, live SDDM and
+NetworkManager; the independent native oracle reconstructs all three clone
+bytes from the authenticated vendor bytes at all four saved points. This
+profile does not prove an orderly Plymouth splash shutdown. A new clean full
+run and fresh Daybreak final critic remain required.
+
 ### 2026-10-24 — worker — v7 cold-run prefix retained; v8 network-readiness qualification
 
 The clean exact-head `1252a6c61170645ec0136e9a5e635d3f78947d81` run of
