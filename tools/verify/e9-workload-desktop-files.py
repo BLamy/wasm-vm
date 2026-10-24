@@ -143,6 +143,14 @@ try:
     assert browser['result']['retention'] == {
         'before':{'maxBytes':retention['defaultMaxBytes'],'maxCheckpoints':retention['maxCheckpoints']},
         'after':{'maxBytes':retention['maxBytes'],'maxCheckpoints':retention['maxCheckpoints']}}
+    getty = profile['desktopBootstrap']
+    getty_path = getty['gettyPath']
+    getty_bytes = getty['gettyOverride'].encode()
+    assert browser['result']['bootstrap']['exit'] == 0
+    assert 'E9_QBOOT_OK' in browser['result']['bootstrap']['stdout']
+    assert browser['result']['identity']['exit'] == 0
+    assert browser['result']['identity']['stdout'].startswith(
+        '0\n/root\n' + sha(getty_bytes) + '  ' + getty_path + '\n0:644\n')
     tool = profile['auxiliaryDesktopTool']
     assert browser['result']['toolTransfer']['source'] == {'bytes':tool['sourceBytes'],'sha256':tool['sourceSha256']}
     assert browser['result']['toolTransfer']['transport'] == {'bytes':tool['transportBytes'],'sha256':tool['transportSha256']}
@@ -187,6 +195,9 @@ try:
                 output.seek(index * 512);output.write(data)
         names = ['state'] + ([] if label == 'before' else ['entropy']) + (['http'] if label in ('final','replay') else [])
         files = {}
+        root_getty = read_guest_file(disk.name,getty_path,label+'.root-getty')
+        assert bytes.fromhex(root_getty['hex']) == getty_bytes, label + ' literal COW root serial getty'
+        files['rootGetty'] = root_getty
         staged = read_guest_file(disk.name,tool['guestPath'],label+'.busybox')
         assert staged['bytes'] == tool['sourceBytes'] and staged['sha256'] == tool['sourceSha256'], label + ' original static RV64 BusyBox'
         files['busybox'] = staged
@@ -217,7 +228,7 @@ try:
         try:
             assert cow_digests['final'] == cow_digests['replay'], 'native COW sectors differ'
             assert all(report['points']['final']['files'][name]['hex'] == report['points']['replay']['files'][name]['hex']
-                       for name in ['busybox','state','entropy','http'])
+                       for name in ['rootGetty','busybox','state','entropy','http'])
             report['finalReplayEquality'] = 'passed'
         except Exception as error:
             report['finalReplayEquality'] = 'failed'

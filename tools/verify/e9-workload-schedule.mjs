@@ -28,16 +28,35 @@ export function frozenWorkloadSchedule(contract){
  });
 }
 export function scheduledTransition(origin,offset){const start=exact(origin),delta=exact(offset);need(start+delta<=max,'target overflow');return String(start+delta);}
-export function verifyGuestInputMarkers(consoleText){
+export function verifyGuestInputMarkers(consoleText,contract,origin,receipts){
  need(typeof consoleText==='string','guest console');
- const counts=new Map();
- for(const line of consoleText.split('\n'))if(/^E9_INPUT_[0-9]{3}$/.test(line))counts.set(line,(counts.get(line)??0)+1);
+ // The accepted UART offers prove which commands reached the guest. Their
+ // printed markers can still share a tty line with the echo of the next offer:
+ // the console interleaves independent writers at byte granularity.
+ verifyFrozenWorkloadOffers(contract,origin,receipts);
+ const plan=frozenWorkloadSchedule(contract),counts=new Map(),interleaved=[];
+ const lines=consoleText.split('\n');
+ for(let at=0;at<lines.length;at++){
+  const line=lines[at],match=line.match(/E9_INPUT_([0-9]{3})$/);
+  if(!match)continue;
+  const index=Number(match[1]),marker=match[0],prefix=line.slice(0,-marker.length);
+  if(prefix){
+   const following=plan[index];
+   const echoLines=following?.text.trimEnd().split('\n')??[];
+   const prior=lines[at-1]??'';
+   need(prefix.length>=16&&echoLines.some(command=>command.startsWith(prefix))
+     &&echoLines.some(command=>prior===command||prior.endsWith('~ # '+command)),
+   'executed input '+index+' authenticated adjacent echo interleaving');
+   interleaved.push({index,following:index+1,echoPrefix:prefix});
+  }
+  counts.set(marker,(counts.get(marker)??0)+1);
+ }
  for(let index=1;index<=100;index++){
   const marker='E9_INPUT_'+String(index).padStart(3,'0');
-  need(counts.get(marker)===1,'executed input '+index+' as one complete output line');
+  need(counts.get(marker)===1,'executed input '+index+' exactly once');
  }
  need(counts.size===100,'no extra input output markers');
- return {lines:100,first:'E9_INPUT_001',last:'E9_INPUT_100'};
+ return {lines:100,first:'E9_INPUT_001',last:'E9_INPUT_100',interleaved};
 }
 export function verifyFrozenWorkloadOffers(contract,origin,receipts){
  need(Array.isArray(receipts),'receipt list');exact(origin);const plan=frozenWorkloadSchedule(contract);

@@ -59,9 +59,20 @@ test('a second accepted UART offer can inherit the first offer pending depth',()
  for(const outcome of [['0','1024','3072','0'],['1','2048','3072','0'],['0','2048','1024','0'],['0','2048','1048577','0'],['0','2048','3072','1']])
   assert.throws(()=>verifyFullUartOffer(outcome,2048),/accepted in full/);
 });
-test('100 complete guest output lines reject 100 prefixed impostors',()=>{
+test('100 output markers accept only authenticated adjacent echo collisions',()=>{
  const lines=Array.from({length:100},(_,i)=>'E9_INPUT_'+String(i+1).padStart(3,'0'));
- assert.equal(verifyGuestInputMarkers(lines.join('\n')+'\n').lines,100);
- assert.throws(()=>verifyGuestInputMarkers(lines.map(line=>'JUNK_'+line).join('\n')+'\n'),/complete output line/);
- assert.throws(()=>verifyGuestInputMarkers(lines.concat(lines[0]).join('\n')+'\n'),/complete output line/);
+ const check=text=>verifyGuestInputMarkers(text,contract,'12345',offers());
+ assert.equal(check(lines.join('\n')+'\n').lines,100);
+ const next=frozenWorkloadSchedule(contract)[9].text.trimEnd().split('\n');
+ const echoPrefix=next[1].slice(0,next[1].indexOf(' /root'));
+ const collision=[...lines];collision.splice(8,1,next[0],echoPrefix+lines[8]);
+ const accepted=check(collision.join('\n')+'\n');
+ assert.deepEqual(accepted.interleaved,[{index:9,following:10,echoPrefix}]);
+ assert.throws(()=>check(lines.map(line=>'JUNK_'+line).join('\n')+'\n'),/adjacent echo interleaving/);
+ assert.throws(()=>check(lines.concat(lines[0]).join('\n')+'\n'),/exactly once/);
+ assert.throws(()=>check(lines.slice(1).join('\n')+'\n'),/exactly once/);
+ assert.throws(()=>check(lines.map(line=>line+'-junk').join('\n')+'\n'),/exactly once/);
+ const other=frozenWorkloadSchedule(contract)[19].text.trimEnd().split('\n');
+ const wrong=[...lines];wrong.splice(8,1,other[0],other[1].slice(0,other[1].indexOf(' /root'))+lines[8]);
+ assert.throws(()=>check(wrong.join('\n')+'\n'),/adjacent echo interleaving/);
 });

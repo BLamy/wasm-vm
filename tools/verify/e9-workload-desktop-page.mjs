@@ -300,7 +300,7 @@ export async function qualifyDesktopWorkload(contract,qualification){
       need(vm.inputPosition().transition===target,'exact scheduled transition '+frame.index);
       await offer('scheduled',frame.bytes);state.scheduledOffers=frame.index;}
     await until(()=>state.bodyResults.length===10&&/E9_INPUT_100\r?\n/.test(textView()));
-    state.inputMarkers=verifyGuestInputMarkers(stripConsole(state.console));
+    state.inputMarkers=verifyGuestInputMarkers(stripConsole(state.console),contract,state.workloadOrigin,uartRows);
     state.files=await command('sync; od -An -v -tx1 /root/e9-session/state; od -An -v -tx1 /root/e9-session/entropy; od -An -v -tx1 /root/e9-session/http; sha256sum /root/e9-session/state /root/e9-session/entropy /root/e9-session/http','cfilebytes','file-witness');
     need(state.files.stdout.trim().split('\n')[0].replace(/\s/g,'')===contract.workload.after_hex,'literal final guest file');
     let closing=vm.cancelOwnedLocalHttp();await collect();

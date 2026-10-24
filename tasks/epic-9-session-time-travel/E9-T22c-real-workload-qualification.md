@@ -45,6 +45,35 @@ missing GL results, hidden live replay I/O and an incomplete long recording.
 
 ## Verification log
 
+### 2026-10-24 — worker — authenticated tty interleaving in the Alpine leg
+
+At clean exact head `df2499fa0b3c39b963de022cbd47569f618c7ec4`, the
+v7 `make verify-E9-T22c` run stopped in Alpine before desktop. Its failed
+software report is `target/evidence/e9-t22c-submission-df2499fa0/software/report.json`,
+SHA-256 `ed7df1b2e452ee7c7da022d70d6805627fdcbc922241aa1e89586819a49b51f6`;
+the saved graph index is SHA-256
+`72c567686a0a539ba435fdb239baa36b783d7ab585bbaa0f03f4ccf46b7a78b5`.
+The 100 scheduled offers and ten real HTTP responses were recorded, but the
+old output-marker checker demanded every marker occupy an entire tty line.
+Input 9's `E9_INPUT_009` output instead appeared at the end of the concurrent
+echo of frame 10's frozen `busybox wget -qO` command. The failed run has no
+final file oracle or replay result; neither is inferred from the partial
+recording.
+
+A fresh actual Daybreak critic independently checked saved receipt sequence
+205 at transition 358,694,304: frame 9's exact 27 input bytes were accepted
+in full, with the scheduled ledger's SHA-256. The raw serial stream has the
+expanded `E9_INPUT_009\r\n` token exactly once. Input 10's separately
+authenticated echo is the prefix on that line. This is a checker false
+negative, not a missing guest instruction. The amended checker first validates
+all exact scheduled source receipts, then accepts an interleaved output only
+when its prefix matches the immediately following authenticated frame's echo;
+arbitrary prefixes, suffixes, duplicates, omissions and nonadjacent echoes
+still fail. The failed console itself now passes this narrow rule with exactly
+one classified interleaving. The desktop direct oracle will independently
+read the v7 getty override from reconstructed COW media at every saved point,
+as requested by Daybreak preflight. A new frozen full run is required.
+
 ### 2026-10-24 — worker — v6 bootstrap refuted by the pinned guest; v7 COW getty amendment
 
 The clean exact-head `e51274fdbea7bb2a83ac125a770f040b76a8bd0e` run of
