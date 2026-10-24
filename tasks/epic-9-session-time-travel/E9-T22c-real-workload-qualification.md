@@ -4,8 +4,8 @@ epic: 9
 title: Qualify both full pinned performance workloads
 priority: 524.92203
 status: blocked
-blocked_on: [E9-T22e, E9-T22i, E9-T22f, E9-T22g, E9-T22h]
-depends_on: [E9-T22b, E9-T22h]
+blocked_on: [E9-T22j]
+depends_on: [E9-T22b, E9-T22h, E9-T22j]
 estimate: S
 risk: medium
 capstone: false
@@ -45,6 +45,40 @@ and count live server calls. Refuse software renderer or changed probe/assets,
 missing GL results, hidden live replay I/O and an incomplete long recording.
 
 ## Verification log
+
+### 2026-10-23 — worker — blocked on exact-GPU full-keyframe prerequisite
+
+The complete v5 cold Omarchy attempt at exact clean head
+`29fade9013c4a48e5ffd6736f27f756f3ca53e76` failed at transition
+`4500000000`, sequence 881, after the original pinned base chunk was supplied
+at that exact before-boundary. Reproduce the attempt with
+`node tools/verify/e9-workload-desktop-browser.mjs --development --output
+<new-directory>` at that head. Its retained report is
+`target/evidence/e9-t22c-desktop-development-13/report.json` SHA-256
+`e1298b9391aefb1a4b317f12f99bab5c6df1ee54bcf45a616521f3fa49f968f6`;
+the independent prefix-closure report SHA-256 is
+`265904da28efd1f0a8c32fab65ce5b69d780fde518c178226cc96c5657263912`.
+The first 89 periodic checkpoints through `4450000000` were committed; the
+next full keyframe refused with `gpu_session: NotQuiesced { reason: Chunk,
+in_flight: 1 }`. The saved prefix, 842 objects, 2,413 chunks and 90 witness
+pages authenticate. No in-guest GPU probe, complete workload, or replay was
+reached. The fresh persistent Chrome profile was readable and reported
+1,912,825,101 bytes used against a 12,650,243,341-byte quota. This is separate
+from the earlier nonpersistent-profile `NotReadableError` at 4.95 billion.
+
+Fresh actual Daybreak independently decoded the failure's native section 20 and
+rehydrated earlier authenticated GPU frames. It found a visible, accepted owned
+block completion, resident bytes and an empty broker, with one legitimate
+parked virtio-blk chain. Several previously successful **delta** keyframes
+serialized that same shape. Only the **full** GPU keyframe path rejects it, and
+the journal must take a full frame at this point because the previous delta
+depth is eight. Diagnostic report:
+`target/evidence/e9-t22c-daybreak-quiesce-diagnostic/report.md`, SHA-256
+`98881ffeb390809ade23866da001a8ef5fcc77ebdb09752b437d8b38faad4c3c`.
+This is a runtime-semantic boundary, so ordered high-risk E9-T22j must fix and
+be independently verified before C resumes. The unchanged 50M cadence, full
+Omarchy workload, 8 GiB setting, original RV64 probe and complete replay remain
+required. This failure is neither C acceptance nor a performance result.
 
 ### 2026-10-22 — worker — begin complete real-workload qualification
 

@@ -410,6 +410,7 @@ impl crate::Machine {
             self.session_position()
                 .ok_or(DeviceError::Inactive)?
                 .sequence,
+            None,
         )?;
         Ok(Some(out))
     }
@@ -417,6 +418,7 @@ impl crate::Machine {
         &self,
         bytes: &[u8],
         sequence: u64,
+        ram_snapshot: Option<&[u8]>,
     ) -> Result<DeviceRestore, DeviceError> {
         let hub = self
             .session_devices
@@ -427,11 +429,46 @@ impl crate::Machine {
         let guest = hub.decode(r.bytes(276 << 20)?, sequence)?;
         let pending = r.bytes(2 << 20)?;
         let block = if self.blk.is_some() {
-            Some(crate::dev::virtio::blk::SessionPending::decode(
+            let block = crate::dev::virtio::blk::SessionPending::decode(
                 pending,
                 self.bus.ram().base(),
                 self.bus.ram().len(),
-            )?)
+            )?;
+            // Read the saved header from the saved RAM, not the destination's old
+            // RAM. Delta restore already installed its authenticated page graph.
+            let base_addr = self.bus.ram().base();
+            let ram = self.bus.ram().as_bytes();
+            let pins = block.parked_read_pins(|addr, out| {
+                let offset =
+                    usize::try_from(addr.checked_sub(base_addr).ok_or(DeviceError::Snapshot)?)
+                        .map_err(|_| DeviceError::Snapshot)?;
+                let end = offset.checked_add(out.len()).ok_or(DeviceError::Snapshot)?;
+                if end > ram.len() {
+                    return Err(DeviceError::Snapshot);
+                }
+                if let Some(snapshot) = ram_snapshot {
+                    crate::resume::read_sparse_range(snapshot, ram.len(), offset, out)
+                        .map_err(|_| DeviceError::Snapshot)?;
+                } else {
+                    out.copy_from_slice(&ram[offset..end]);
+                }
+                Ok(())
+            })?;
+            for pin in pins {
+                let chunk = u32::try_from(pin.chunk).map_err(|_| DeviceError::Snapshot)?;
+                if hub
+                    .base
+                    .as_ref()
+                    .is_none_or(|base| base.chunks.get(chunk as usize).is_none())
+                    || !guest
+                        .reads
+                        .get(&(pin.sector, pin.length))
+                        .is_some_and(|required| required.contains(&chunk))
+                {
+                    return Err(DeviceError::Snapshot);
+                }
+            }
+            Some(block)
         } else {
             if !pending.is_empty() {
                 return Err(DeviceError::Snapshot);

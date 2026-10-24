@@ -707,7 +707,6 @@ pub(crate) fn restore_sparse_into(enc: &[u8], destination: &mut [u8]) -> Result<
 }
 
 /// Read a bounded range without allocating a second full RAM image during preflight.
-#[cfg(feature = "virgl-renderer")]
 pub(crate) fn read_sparse_range(
     enc: &[u8],
     expected_len: usize,

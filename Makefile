@@ -2840,3 +2840,14 @@ verify-E9-T22g:
 .PHONY: verify-E9-T22h
 verify-E9-T22h:
 	python3 -B tools/verify/e9-gpu-whole-chain-replay.py --output "$${E9_OUT:-target/evidence/e9-t22h-$$(date -u +%Y%m%dT%H%M%SZ)}"
+
+.PHONY: verify-E9-T22j
+verify-E9-T22j:
+	@set -eu; out="$${E9_OUT:-target/evidence/e9-t22j-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$out/native"; \
+	  out="$$(cd "$$out" && pwd -P)"; \
+	  E9_T22J_EVIDENCE="$$out/native" cargo test -p wasm-vm-core --features virgl-renderer,trace --test session_gpu_results --test e9_device_completions --test virtio_blk_quiesce -- --nocapture > "$$out/native.log" 2>&1; \
+	  $(MAKE) web-dist; \
+	  git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-gpu-journal-stream-browser.mjs --parked-full --output "$$out/browser"; \
+	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo"
