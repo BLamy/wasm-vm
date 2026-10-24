@@ -135,7 +135,7 @@ class SessionLibrary {
       const references = new Map(); let witnessCount = null;
       if (storageOnly) {
         const {inventoryWitnessGraph} = await import('./session-witness-graph.js');
-        const graph = await inventoryWitnessGraph(this.store, opened.manifest); witnessCount = graph.witness.count;
+        const graph = await inventoryWitnessGraph(this.store, opened.manifest, {scope: 'local'}); witnessCount = graph.witness.count;
         for (const ref of graph.refs) references.set(ref.sha256, ref);
       } else for (const ref of [...manifest.assets.map(asset => asset.content), ...manifest.checkpoints.map(point => point.machine),
         ...manifest.checkpoints.flatMap(point => point.gpu ? [point.gpu] : []),

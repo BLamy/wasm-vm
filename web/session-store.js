@@ -8,6 +8,7 @@ import {decodeKeyframeDescriptor, isKeyframeDescriptorPrefix,
 import {validateSessionWitnesses} from './session-witnesses.js';
 import {witnessCommitment} from './session-witness-pages.js';
 import {inventoryWitnessGraph} from './session-witness-graph.js';
+import {LOCAL_WITNESS_GRAPH_MAX_OBJECTS} from './session-witness-graph-limits.js';
 
 export const SESSION_DATABASE = 'wasm-vm-sessions-v1';
 export const SESSION_CHUNK_BYTES = 1024 * 1024;
@@ -15,7 +16,7 @@ export const SESSION_DATABASE_VERSION = 2;
 export const DEFAULT_SESSION_RETENTION = Object.freeze({maxBytes: 2 * 1024 ** 3, maxCheckpoints: 4096});
 const MAX_SOURCE_CHUNK = 4 * 1024 * 1024;
 const MAX_BYTES = 4 * 1024 * 1024 * 1024, MAX_SESSIONS = 256, MAX_U64 = (1n << 64n) - 1n;
-const MAX_GC_OBJECTS = 262144, MAX_GC_CHUNKS = 1048576, MAX_DISK_ROOT_BYTES = 12 * 1024 * 1024;
+const MAX_GC_OBJECTS = LOCAL_WITNESS_GRAPH_MAX_OBJECTS, MAX_GC_CHUNKS = 1048576, MAX_DISK_ROOT_BYTES = 12 * 1024 * 1024;
 const decoder = new TextDecoder('utf-8', {fatal: true});
 const sameBytes = (a, b) => a instanceof Uint8Array && b instanceof Uint8Array && a.length === b.length && a.every((value, index) => value === b[index]);
 const hashPattern = /^[0-9a-f]{64}$/;
@@ -307,7 +308,7 @@ export class SessionStore {
     active();
     if (witnessCommitment(parsedManifest.value)) {
       let graph;
-      try {graph = await inventoryWitnessGraph(source, parsedManifest.bytes, {previous, signal}); active();}
+      try {graph = await inventoryWitnessGraph(source, parsedManifest.bytes, {previous, signal, scope: 'local'}); active();}
       catch (error) {
         if (['Cancelled', 'Closed'].includes(error.code)) throw error;
         const failure = new SessionStoreError('Corrupt', error.message);

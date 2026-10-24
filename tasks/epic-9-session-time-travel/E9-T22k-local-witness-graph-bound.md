@@ -48,9 +48,13 @@ complete cold-workload run.
 
 ## Deterministic acceptance
 
-`make verify-E9-T22k`: a bounded real browser local/adversarial proof and direct
-policy tests using authenticated deduplicated graph data. The C failed prefix
-is diagnostic evidence; a shortened boot must not be called C acceptance.
+`E9_T22K_DESKTOP=target/evidence/e9-t22c-submission-b40712603/desktop make
+verify-E9-T22k`: reconstruct the failed candidate from the retained original
+browser state, resume its exact publication in a copy of that Chrome profile,
+then run bounded browser attacks, independent byte oracles and the demo. Set
+`E9_T22K_DESKTOP` to the same retained evidence bundle's absolute path in a
+pristine clone. The failed C prefix is diagnostic evidence; a shortened boot
+must not be called C acceptance.
 
 ## Adversarial verification
 
