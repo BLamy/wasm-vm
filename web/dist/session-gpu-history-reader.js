@@ -88,7 +88,8 @@ export class SessionGpuHistoryReader {
     this.#anchor={stage:'open',id};this.#live();const opened=await this.#store.openSession(id,{signal});this.#live();need(opened,'MissingSession',{id});
     this.#manifestBytes=opened.manifest;this.#metrics.manifestBytes=opened.manifest.length;
     this.#anchor={stage:'closure',id,manifestSha256:checkpointHash(opened.manifest)};
-    const graph=await inventoryWitnessGraph(this.#source,opened.manifest,{signal});this.#live();
+    const graph=await inventoryWitnessGraph(this.#source,opened.manifest,
+      {signal,scope:this.#store instanceof SessionStore?'local':'archive'});this.#live();
     const manifest=this.#manifest=graph.manifest,commitment=witnessCommitment(manifest,{finished:true});
     need(commitment?.finished,'UnfinishedWitness',this.#anchor);
     this.#pages=graph.witness.refs.toReversed();

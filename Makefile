@@ -2851,3 +2851,15 @@ verify-E9-T22j:
 	  git diff --exit-code -- web/dist; \
 	  node tools/verify/e9-gpu-journal-stream-browser.mjs --parked-full --output "$$out/browser"; \
 	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo"
+
+.PHONY: verify-E9-T22k
+verify-E9-T22k:
+	@set -eu; desktop="$${E9_T22K_DESKTOP:-target/evidence/e9-t22c-submission-b40712603/desktop}"; \
+	  test -f "$$desktop/saved/storage.json" || { echo "E9-T22k requires the saved failed C prefix: set E9_T22K_DESKTOP" >&2; exit 1; }; \
+	  out="$${E9_OUT:-target/evidence/e9-t22k-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  node --test web/tests/e9-t22k-graph-limits.test.mjs > "$$out/policy.log" 2>&1; \
+	  $(MAKE) web-dist; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-local-witness-graph-repro.mjs --directory "$$desktop" --output "$$out/prefix"; \
+	  node tools/verify/e9-local-witness-graph-browser.mjs --desktop "$$desktop" --candidate "$$out/prefix/cold-127-candidate.json" --output "$$out/exact-browser"; \
+	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo"

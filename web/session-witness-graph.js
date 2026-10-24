@@ -3,7 +3,8 @@ import init, {SessionSha256, sessionValidateManifest, sessionManifestReferences,
   sessionValidateDiskRoot, sessionDiskRootReferences} from './session-pkg/wasm_vm_session.js';
 import {authenticateWitnessPages, witnessCommitment} from './session-witness-pages.js';
 import {decodeKeyframeDescriptor, isKeyframeDescriptorPrefix, inspectRamDeltaChunk} from './session-keyframes.js';
-import {BUNDLE_MAX_BYTES, BUNDLE_MAX_OBJECTS, BUNDLE_CHUNK_BYTES, bundleNeed as need, bundleReference} from './session-bundle-format.js';
+import {BUNDLE_CHUNK_BYTES, bundleNeed as need, bundleReference} from './session-bundle-format.js';
+import {checkWitnessGraphLimit} from './session-witness-graph-limits.js';
 await init();
 const decoder = new TextDecoder('utf-8', {fatal: true});
 const parsed = bytes => JSON.parse(decoder.decode(bytes));
@@ -55,17 +56,17 @@ async function gpuCheckpointWitness(source, point, row, manifest, signal) {
     && ['transition', 'phase', 'ordinal', 'sequence', 'retired'].every(key => meta.position?.[key] === row[key])
     && meta.stateSha256 === row.digest.map(byte => byte.toString(16).padStart(2, '0')).join(''), 'GPU checkpoint witness digest/identity');
 }
-export async function inventoryWitnessGraph(source, manifestBytes, {signal, previous = null} = {}) {
+export async function inventoryWitnessGraph(source, manifestBytes, {signal, previous = null, scope = 'archive'} = {}) {
   active(signal); const canonical = sessionValidateManifest(manifestBytes);
   need(equal(canonical, manifestBytes), 'non-canonical manifest'); const manifest = parsed(canonical);
   need(witnessCommitment(manifest), 'required paged witnesses', 'BundleCompatibility');
+  checkWitnessGraphLimit(scope, manifestBytes.length, 0);
   if (previous) sessionCheckAppend(new TextEncoder().encode(JSON.stringify(previous)), canonical);
   const refs = new Map(); let total = manifestBytes.length;
   const add = value => {
     const ref = bundleReference(value), previous = refs.get(ref.sha256);
     need(!previous || previous.length === ref.length, 'conflicting referenced lengths');
-    if (!previous) {total += Number(ref.length); need(total <= BUNDLE_MAX_BYTES && refs.size < BUNDLE_MAX_OBJECTS - 1,
-      'archive byte/object bound', 'BundleBound'); refs.set(ref.sha256, ref);}
+    if (!previous) {total += Number(ref.length); checkWitnessGraphLimit(scope, total, refs.size + 1); refs.set(ref.sha256, ref);}
   };
   const direct = parsed(sessionManifestReferences(canonical)); for (const ref of direct.blobs) add(ref);
   const witness = await authenticateWitnessPages(source, manifest, {previous, onReference: add, onCheckpoint: (point, row) => gpuCheckpointWitness(source, point, row, manifest, signal)});

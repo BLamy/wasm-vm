@@ -4,8 +4,8 @@ epic: 9
 title: Qualify both full pinned performance workloads
 priority: 524.92203
 status: blocked
-blocked_on: [E9-T22j]
-depends_on: [E9-T22b, E9-T22h, E9-T22j]
+blocked_on: [E9-T22k]
+depends_on: [E9-T22b, E9-T22h, E9-T22j, E9-T22k]
 estimate: S
 risk: medium
 capstone: false
@@ -45,6 +45,43 @@ and count live server calls. Refuse software renderer or changed probe/assets,
 missing GL results, hidden live replay I/O and an incomplete long recording.
 
 ## Verification log
+
+### 2026-10-24 — worker — blocked on local witness-graph admission boundary
+
+At clean exact head `b4071260307146339230ec0986daafcd9661dbeb`, run
+`E9_OUT=target/evidence/e9-t22c-submission-b40712603 make verify-E9-T22c`.
+The complete Alpine leg passed its literal file, RTC/entropy, 100 scheduled
+input, ten rewrite/HTTP and beginning-to-end replay checks. Its report is
+`target/evidence/e9-t22c-submission-b40712603/software/report.json`, SHA-256
+`069a3ae44b9d57a4c61c4fa35dadce1dcd9f219b21f08b8f2c61c5bcb36c3911`.
+The genuine cold Omarchy leg crossed the prior 2.2-billion streamed-journal
+failure and committed the repaired full parked-chain keyframe at 4.5 billion.
+It then failed while publishing the next checkpoint at transition
+`6400000000`, after 127 committed checkpoints and 1,054 receipts, with
+`SessionStoreError: Corrupt: BundleBound: archive byte/object bound` from
+`session-store.js` `#references`/`#publish`. No login, GPU probe, full workload
+or replay was reached. Its immutable report is
+`target/evidence/e9-t22c-submission-b40712603/desktop/report.json`, SHA-256
+`f69bd158e704c185f1bef08893a641ea054f6f64f1e167cb14257ec2162f6389`;
+the exported failed-prefix store is `desktop/saved/storage.json`, SHA-256
+`89291c38bb8f5a3351ad37b835099d956ca223835e88b60d217b97fcbb56e36e`.
+The existing independent closure oracle with `--allow-incomplete` rehashed all
+3,652 physical chunks and 1,172 objects, and resolved 1,166 reachable refs and
+128 witness pages; report SHA-256
+`e3b95c7993fdda7d1f045526c2f070a32287c116e5c3ba28e23aa10477f9cc8b`.
+
+Fresh actual Daybreak reconstructed the rejected candidate rather than
+inferring from the browser error. The last committed authenticated graph is
+4,281,733,856 logical bytes, 13,233,440 below the portable 4 GiB archive
+cap. Six durably staged objects and the next manifest take the real candidate
+to 4,311,983,484 bytes, 17,016,188 over that cap; the production graph
+inventory rejects the reconstructed candidate with the same `BundleBound`.
+Physical stored chunks are only 2,981,235,217 bytes under the already
+configured 8 GiB local retention limit. This is a local runtime admission
+boundary, not a workload-fixture or timing failure. E9-T22k must separate
+bounded local publication/open/GC/reader inventory from the unchanged 4 GiB
+portable archive guard before C resumes. Preserve this complete failed run,
+the original pinned workload, 50M cadence and all numeric budgets.
 
 ### 2026-10-23 — worker — blocked on exact-GPU full-keyframe prerequisite
 
