@@ -36374,7 +36374,7 @@
       "epicKey": "9",
       "title": "Qualify a finite desktop host-wall allowance",
       "priority": null,
-      "status": "in-progress",
+      "status": "implemented",
       "depends_on": [
         "E9-T22m"
       ],
@@ -36404,7 +36404,7 @@
       ],
       "criteriaTotal": 4,
       "criteriaDone": 0,
-      "verificationLog": "(pending; no implementation or verification claim)",
+      "verificationLog": "### 2026-10-25 — worker — implemented, awaiting fresh Daybreak verification\n\nAt clean exact implementation head `7c5dd728fce680849a2dd6f5804c208a2af64059`,\n`E9_OUT=target/evidence/e9-t22n-submission-7c5dd728f make verify-E9-T22n`\npassed. The gate ran five deterministic boundary/source/asset tests, rebuilt\n`web/dist` without a diff, loaded the actual desktop module in\nChrome `155.0.8059.86` with no console/page/HTTP/external errors, and rehashed\nthe original exported graph using `e9-workload-retained-closure.mjs\n--allow-incomplete`. The browser proof's fake clock observed old-eight-hour\nrefusal, admission at the old point under v11 and at 16 hours minus 1 ms,\nrefusal at exactly 16 hours, and rejection of an unbounded/tampered profile.\nThe retained oracle authenticated 10,320 physical chunks, 2,822 reachable\nobjects, 352 witness pages, and the original failed report (SHA-256\n`12b51f16c8502c9c4243e1c639c8d619a015c780bb5fa97630caa32fe224e593`).\nThe browser receipt records v10 SHA-256\n`3e118664a0079556aa446066e1562649bcc7aabbccef00c78e426d2862000de6`\nand v11 SHA-256\n`cced6514f53c2d747a9faed7f8f7cefde82fbd1f832007e1b0c3b1ee3d230141`.\nThe desktop page reverses byte-for-byte to the old sealed page after only the\nwall import/version/guard edits; original guest-transition, cadence, workload,\nclock, retention, source/asset pins, and numeric performance budgets were\ncompared against the failed run. The software profile remained v10.\n\nEvidence: `target/evidence/e9-t22n-submission-7c5dd728f/browser/report.json`\n(SHA-256 `4d3055a5aa255d0c28fbf31b2c660611234fc5622408a0a0f2c306aeea0703ad`),\n`browser/browser-trace.zip` (SHA-256\n`94d0870fea6d1a8b9bd74d95406360984846e2a458f8e72824eef0fe391dce22`),\n`prefix/retained-closure/report.json` (SHA-256\n`95eedf1fd245c4bf5e7e97a997a199e45d52ef0a407fe95d88631d4bfeb99503`),\n`boundary-tests.log` (SHA-256\n`ccd12f72dcb673a2e0d01c4907b5e7cdc568fbd679f577f8e191a298b2a0e696`),\nand `web-dist.log` (SHA-256\n`2363603c7a1b1b18a5d21df32086668982187df29896cd4299e924429ce9c824`).\nThe graph oracle uses its explicit incomplete-prefix mode because this\nretained source is the failed eight-hour run; this is not a claim that the full\ndesktop workload, GPU probe, replay, or original performance budgets passed.",
       "adversarial": "Change the elapsed clock at the exact boundary; tamper with the predecessor\ndigest, wall field, transition ceiling or workload pins; omit a retained chunk;\ntry to pass by replaying only the incomplete prefix or by presenting a timing\nclaim. Check the active browser source actually consults the sealed profile.",
       "file": "tasks/epic-9-session-time-travel/E9-T22n-supported-desktop-wall-allowance.md",
       "activity": [
