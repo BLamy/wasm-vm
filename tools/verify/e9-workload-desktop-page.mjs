@@ -33,7 +33,9 @@ export async function qualifyDesktopWorkload(contract,qualification){
   const auxiliary=qualification?.auxiliaryDesktopTool;
   need(qualification?.version===10&&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
     &&qualification.retention?.defaultMaxBytes===2*1024**3
-    &&qualification.retention?.maxBytes===8*1024**3&&qualification.retention?.maxCheckpoints===4096
+    &&qualification.retention?.maxBytes===16*1024**3&&qualification.retention?.maxCheckpoints===4096
+    &&qualification.capacityPreflight?.reserveBytes===1024**3
+    &&qualification.capacityPreflight?.fullColdRunCopies===2
     &&qualification.desktopBootstrap?.bootargs==='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0 init=/bin/bash -- -i'
     &&qualification.desktopBootstrap?.gettyPath==='/etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf'
     &&qualification.desktopBootstrap?.gettyOverride==='[Service]\nExecStart=\nExecStart=-/usr/bin/agetty --autologin root --noclear --keep-baud 115200,38400,9600 - $TERM\n'
@@ -67,7 +69,7 @@ export async function qualifyDesktopWorkload(contract,qualification){
     &&auxiliary.transportPaddedBytes%4096===0&&auxiliary.transportPaddedBytes>=busyboxTransport.length,'pinned static RV64 tool transport');
   const state={task:'E9-T22c',scope:'Original cold full Omarchy, hardware GPU probe and whole replay; no timing claim',
     status:'running',phase:'boot',database:'wasm-vm-sessions-v1-t22c-desktop-'+crypto.randomUUID(),console:'',
-    receipts:0,channels:{},blocks:[],checkpoints:[],ledger:[],payloads:[],viewports:[],bodyResults:[],
+    receipts:0,channels:{},blocks:[],checkpoints:[],capacityChecks:[],ledger:[],payloads:[],viewports:[],bodyResults:[],
     probeInput:shape(probe),toolInput:shape(busyboxTransport),assetInputs:{kernel:shape(kernel),manifest:shape(encoder.encode(imageManifest)),wasm:shape(wasm),renderer:shape(stamp)}};
   globalThis.desktopWorkload=state;
   const canvas=document.querySelector('canvas'),presentation=new PresentationController(canvas,{scheduleFrames:false});
@@ -94,6 +96,23 @@ export async function qualifyDesktopWorkload(contract,qualification){
     document.querySelector('pre').textContent=JSON.stringify(p,null,2);
     const control=await globalThis.workloadProgress(p);need(control?.continue!==false,'operator stopped development run');
   };
+  // Every durable write is admitted before it starts. The unchanged failed
+  // prefix's largest machine+GPU checkpoint was <197 MiB; 512 MiB also bounds
+  // the original image-chunk, event and witness write operations below.
+  const guardedWrite=async(stage,write)=>{
+    const before=(await store.statistics()).payloadBytes;
+    const estimate=await navigator.storage.estimate();
+    const receipt=await globalThis.workloadCapacity({stage,phase,position:pos(vm.inputPosition()),
+      payloadBytes:before,plannedBytes:512*1024**2,quota:estimate.quota,usage:estimate.usage});
+    need(receipt?.browserAvailable>=receipt?.browserRequired&&receipt?.hostFreeBytes>=receipt?.hostRequired,
+      'pre-write browser and host capacity');
+    const result=await write();
+    const after=(await store.statistics()).payloadBytes;
+    need(after<=before+512*1024**2,'single original-workload durable write exceeds admitted 512 MiB phase');
+    state.capacityChecks.push({stage,beforePayloadBytes:before,afterPayloadBytes:after,...receipt});
+    return result;
+  };
+  const flushJournal=()=>journal.pending?guardedWrite('journal-flush',()=>journal.flush()):journal.flush();
   const collect=async()=>{
     const batch=vm.takeExactGpuBatch();need(batch.events.length||!batch.payloads.length,'orphan GPU body');
     if(!batch.events.length)return;
@@ -107,9 +126,9 @@ export async function qualifyDesktopWorkload(contract,qualification){
     for(const body of batch.payloads){const id=hex(body.sha256);if(!savedPayloads.has(id)){
       state.payloads.push({sha256:id,length:body.length,artifact:await retain('body-'+id+'.bin',body.bytes)});savedPayloads.add(id);}}
     const size=batch.events.reduce((sum,row)=>sum+row.bytes.length,0);
-    if(journal.pending+batch.events.length>256||stagedBytes+size>4*1048576){await journal.flush();stagedBytes=0;}
+    if(journal.pending+batch.events.length>256||stagedBytes+size>4*1048576){await flushJournal();stagedBytes=0;}
     journal.stage(batch);stagedBytes+=size;
-    if(journal.pending>=128||stagedBytes>=2*1048576){await journal.flush();stagedBytes=0;}
+    if(journal.pending>=128||stagedBytes>=2*1048576){await flushJournal();stagedBytes=0;}
   };
   const offer=async(kind,bytes)=>{const owned=typeof bytes==='string'?encoder.encode(bytes):bytes.slice();
     offers.push({kind,transition:vm.inputPosition().transition,sha256:digest(owned)});
@@ -123,7 +142,7 @@ export async function qualifyDesktopWorkload(contract,qualification){
         const {sha256,length}=request.intent.content,response=await fetch('/__chunk__/'+sha256+'.bin');
         need(response.ok,'original base chunk');const bytes=new Uint8Array(await response.arrayBuffer());
         need(bytes.length===Number(length)&&digest(bytes)===sha256,'base chunk identity');
-        await writer.put(checkpointReference(bytes),checkpointChunks(bytes));
+        await guardedWrite('base-chunk',()=>writer.put(checkpointReference(bytes),checkpointChunks(bytes)));
         const lease=vm.exactLeaseDeviceRequest(request.id);
         try{vm.exactCompleteDeviceRequest(lease,0,0,bytes);}finally{lease.free();}
         state.blocks.push({sha256,bytes:bytes.length,position:pos(vm.inputPosition())});await collect();
@@ -140,8 +159,8 @@ export async function qualifyDesktopWorkload(contract,qualification){
     for(let n=0;n<1024;n++){const result=vm.pumpOwnedLocalHttp();await collect();if(!result.more||result.blocked)return;}
     throw Error('owned HTTP pump work bound');
   };
-  const witness=async(label,raw=false)=>{await drainBlocks();await collect();await journal.flush();stagedBytes=0;
-    const value=vm.exactGpuSessionWitness();await journal.observeExactWitness(value);
+  const witness=async(label,raw=false)=>{await drainBlocks();await collect();await flushJournal();stagedBytes=0;
+    const value=vm.exactGpuSessionWitness();await guardedWrite('witness',()=>journal.observeExactWitness(value));
     const result={...pos(value),digest:hex(value.digest),ramDigest:vm.softwareRamDigest()};
     if(raw)result.state=await retain(label+'.state',vm.exactGpuSessionState());return result;};
   const noteBodies=async()=>{
@@ -165,8 +184,8 @@ export async function qualifyDesktopWorkload(contract,qualification){
     const now=BigInt(vm.inputPosition().transition);need(now<=limit,'exact transition budget overrun');
     await noteBodies();
     if(now===nextCapture){await drainBlocks();need(gpu.checkpointReady().ok,'50M keyframe boundary unavailable');
-      await journal.flush();stagedBytes=0;
-      const frame=await journal.captureKeyframe(vm,gpu,'cold-'+state.checkpoints.length);
+      await flushJournal();stagedBytes=0;
+      const frame=await guardedWrite('keyframe',()=>journal.captureKeyframe(vm,gpu,'cold-'+state.checkpoints.length));
       state.checkpoints.push({...pos(frame),digest:hex(frame.digest),ramDigest:hex(frame.ramDigest),full:frame.full});
       nextCapture=now+50000000n;}
     await progress();await tick();
@@ -251,6 +270,8 @@ export async function qualifyDesktopWorkload(contract,qualification){
     state.retention={before:beforeRetention.limits,after:afterRetention.limits};
     writer=await store.writer('full-original-omarchy');
     journal=await SessionGpuJournal.create(store,writer,config,vm,gpu,{witnessPages:true});
+    state.initialCapacity=(await store.statistics()).payloadBytes;
+    need(state.initialCapacity<=512*1024**2,'initial exact GPU keyframe stays within admitted 512 MiB phase');
     const initial=journal.initialWitness;state.initial={...pos(initial),digest:hex(initial.digest),state:await retain('initial.state',vm.exactGpuSessionState())};
     vm.enableJit(2);
     await until(()=>/(?:^|\n)[^\n]*#\s*$/.test(textView()));
@@ -384,10 +405,10 @@ export async function qualifyDesktopWorkload(contract,qualification){
       &&state.server.server.bodyBytesQueued.length===10,'exact ten service counters');
     need(state.server.server.requests.every(value=>value===1)&&state.server.server.responsesQueued.every(value=>value===1)
       &&state.server.server.bodyBytesQueued.every(value=>value===1024),'ten real counted HTTP responses');
-    await drainTerminal();await collect();await pumpGpu();await journal.flush();stagedBytes=0;
-    const finalFrame=await journal.captureKeyframe(vm,gpu,'cold-final');
+    await drainTerminal();await collect();await pumpGpu();await flushJournal();stagedBytes=0;
+    const finalFrame=await guardedWrite('final-keyframe',()=>journal.captureKeyframe(vm,gpu,'cold-final'));
     state.checkpoints.push({...pos(finalFrame),digest:hex(finalFrame.digest),ramDigest:hex(finalFrame.ramDigest),full:finalFrame.full});
-    const end=vm.exactGpuSessionWitness();await journal.completeExactPaged(end);
+    const end=vm.exactGpuSessionWitness();await guardedWrite('final-witness',()=>journal.completeExactPaged(end));
     state.final={...pos(end),digest:hex(end.digest),ramDigest:vm.softwareRamDigest(),state:await retain('final.state',vm.exactGpuSessionState())};
     originalState=vm.exactGpuSessionState();originalQueues=vm.exactSessionHostQueues();
     state.hostQueues=Object.fromEntries(Object.entries(originalQueues).map(([key,bytes])=>[key,shape(bytes)]));
@@ -487,10 +508,12 @@ export async function qualifyDesktopWorkload(contract,qualification){
   }finally{
     const cleanup=async(label,action)=>{try{return await action();}catch(error){const detail=label+': '+String(error.stack??error);
       (state.cleanupErrors??=[]).push(detail);if(state.status!=='failed'){state.status='failed';state.error=detail;}return null;}};
-    await cleanup('final flush',async()=>{if(vm){await collect();await journal?.flush();}});
+    await cleanup('final flush',async()=>{if(vm){await collect();if(journal)await flushJournal();}});
     await cleanup('terminal',()=>{if(!terminalDisposed){terminal.detachSink();terminal.term.dispose();terminalDisposed=true;}});
     await cleanup('renderer',()=>gpu?.dispose());await cleanup('machine',()=>vm?.free());
-    await cleanup('writer',()=>writer?.release());await cleanup('store',()=>store?.close());
+    await cleanup('writer',()=>writer?.release());
+    state.retentionAtEnd=await cleanup('retention statistics',()=>store?.statistics());
+    await cleanup('store',()=>store?.close());
     state.receiptFile=await cleanup('receipts sidecar',()=>retain('receipts.json',encoder.encode(JSON.stringify(rows))));
     state.ledgerFile=await cleanup('ledger sidecar',()=>retain('ledger.json',encoder.encode(JSON.stringify(state.ledger))));
   }

@@ -125,32 +125,70 @@ try:
     v8_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v8.json').read_bytes()
     v9_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v9.json').read_bytes()
     profile_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v10.json').read_bytes()
+    retention_bytes = (out / 'executed-source/docs/design/session-workload-retention-v1.json').read_bytes()
     assert sha(v5_bytes) == 'd1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de'
     assert sha(v6_bytes) == '5e85dda123738e944c93e5bc0c4a16bb2376e1aca1be8136964d1faeb6800cc0'
     assert sha(v7_bytes) == '775db4ae386b71d39391e00a5e395a44e9b3f5f20606a49243fa0f0077f4b002'
     assert sha(v8_bytes) == '8003e0f4918de869ff124dd527f66b1d5b305ebd32a5d1e4e3e6c7febbc257d2'
     assert sha(v9_bytes) == '5a69d57990ba241836b76c578094bbb47be8cf5ddbce7f581250772e3c1f8a82'
     assert sha(profile_bytes) == '3e118664a0079556aa446066e1562649bcc7aabbccef00c78e426d2862000de6'
+    assert sha(retention_bytes) == '7eedd78f0199d53abe362d785be1ce34afa1c030b3ff5f47538f154d538c70b1'
     v6 = json.loads(v6_bytes)
     v7 = json.loads(v7_bytes)
     v8 = json.loads(v8_bytes)
     v9 = json.loads(v9_bytes)
     v10 = json.loads(profile_bytes)
+    capacity = json.loads(retention_bytes)
     assert v6['previousQualification']['sha256'] == sha(v5_bytes)
     assert v7['previousQualification']['sha256'] == sha(v6_bytes)
     assert v8['previousQualification']['sha256'] == sha(v7_bytes)
     assert v9['previousQualification']['sha256'] == sha(v8_bytes)
     assert v10['previousQualification']['sha256'] == sha(v9_bytes)
     profile = {**json.loads(v5_bytes), **v6, **v7, **v8, **v9, **v10}
-    retention = profile['retention']
+    assert profile['retention']['maxBytes'] == 8 * 1024**3
+    assert capacity['version'] == 1 and capacity['task'] == 'E9-T22m'
+    assert capacity['previousQualification']['sha256'] == sha(v9_bytes)
+    assert capacity['retention']['defaultMaxBytes'] == profile['retention']['defaultMaxBytes']
+    assert capacity['retention']['maxCheckpoints'] == profile['retention']['maxCheckpoints']
+    assert capacity['retention']['maxBytes'] == 16 * 1024**3
+    assert capacity['preflight']['reserveBytes'] == 1024**3
+    assert capacity['preflight']['fullColdRunCopies'] == 2
+    retention = capacity['retention']
     assert browser['inputs']['serializationSha256'] == sha(profile_bytes)
+    assert browser['inputs']['retentionProfileSha256'] == sha(retention_bytes)
     assert browser['browserContext']['mode'] == profile['browserContext']['mode']
     assert Path(browser['browserContext']['directory']) == out / 'chrome-profile'
     assert (out / 'chrome-profile/Last Version').read_text().strip() == browser['browser']
     assert browser['chromeVersion']['product'] == 'Chrome/' + browser['browser']
-    assert browser['browserStorageBefore']['quota'] >= retention['maxBytes']
+    assert isinstance(browser['browserStorageBefore']['persistRequested'], bool)
+    assert isinstance(browser['browserStorageBefore']['persisted'], bool)
+    assert browser['browserStorageBefore']['quota'] - browser['browserStorageBefore']['usage'] >= 1536 * 1024**2
     assert browser['hostFreeBytesBefore'].isdigit()
-    assert int(browser['hostFreeBytesBefore']) >= retention['maxBytes']
+    assert browser['hostSidecarReserveBytes'] == 4 * 1024**3
+    assert int(browser['hostCapacityRequiredBytes']) == 2 * retention['maxBytes'] + 5 * 1024**3
+    assert int(browser['hostFreeBytesBefore']) >= int(browser['hostCapacityRequiredBytes'])
+    assert browser['capacityChecks'][0]['stage'] == 'initial'
+    assert browser['capacityChecks'][-1]['stage'] == 'pre-export'
+    for row in browser['capacityChecks']:
+        assert row['quota'] - row['usage'] == row['browserAvailable']
+        assert row['reserveBytes'] == 1024**3 and row['exportBytes'] == retention['maxBytes']
+        assert row['localBytes'] == (0 if row['stage'] == 'pre-export' else 512 * 1024**2)
+        assert row['hostLocalBytes'] == max(512 * 1024**2, retention['maxBytes'] - row['payloadBytes']) + 4 * 1024**3
+        assert row['browserRequired'] == row['localBytes'] + row['reserveBytes']
+        assert row['hostRequired'] == row['hostLocalBytes'] + row['exportBytes'] + row['reserveBytes']
+        assert row['browserAvailable'] >= row['browserRequired'] and row['hostFreeBytes'] >= row['hostRequired']
+    writes = browser['capacityChecks'][1:-1]
+    page_writes = browser['result']['capacityChecks']
+    assert 0 <= browser['result']['initialCapacity'] <= 512 * 1024**2
+    assert len(writes) == len(page_writes) and len(writes) > 0
+    assert sum(row['stage'] == 'keyframe' for row in writes) == len(browser['result']['checkpoints'])
+    for node_row, page_row in zip(writes, page_writes):
+        assert node_row['stage'] == page_row['stage']
+        assert node_row['payloadBytes'] == page_row['beforePayloadBytes']
+        assert page_row['afterPayloadBytes'] <= page_row['beforePayloadBytes'] + 512 * 1024**2
+        assert node_row['hostRequired'] == page_row['hostRequired']
+        assert node_row['browserAvailable'] == page_row['browserAvailable']
+    assert browser['result']['retentionAtEnd']['payloadBytes'] == browser['capacityChecks'][-1]['payloadBytes']
     assert browser['hardware']['source'] == 'production-virgl-inspection'
     assert browser['hardware']['profile'] == browser['result']['physical']
     assert browser['result']['retention'] == {
@@ -206,7 +244,16 @@ try:
     assert browser['result']['toolTransfer']['source'] == {'bytes':tool['sourceBytes'],'sha256':tool['sourceSha256']}
     assert browser['result']['toolTransfer']['transport'] == {'bytes':tool['transportBytes'],'sha256':tool['transportSha256']}
     saved = json.loads((out / 'saved/storage.json').read_bytes())
+    metadata_rows = saved['stores']['metadata']
+    saved_metadata = {row['key']:row['value'] for row in metadata_rows}
+    assert len(saved_metadata) == len(metadata_rows) == 2, 'duplicate or missing physical metadata'
+    assert saved_metadata['limits'] == {'maxBytes':retention['maxBytes'],
+                                        'maxCheckpoints':retention['maxCheckpoints']}
+    assert saved_metadata['payloadBytes'] == browser['result']['retentionAtEnd']['payloadBytes']
+    assert sum(row['bytes'] for row in saved['stores']['chunks']) == saved_metadata['payloadBytes']
+    report['retainedCapacity'] = saved_metadata
     saved_chunks = {row['key']:row for row in saved['stores']['chunks']}
+    assert len(saved_chunks) == len(saved['stores']['chunks'])
     base_chunks = {}
     for id in set(image['chunks']) & saved_chunks.keys():
         file = out / 'saved/chunks' / (id + '.bin')
@@ -329,6 +376,8 @@ finally:
                                  '8003e0f4918de869ff124dd527f66b1d5b305ebd32a5d1e4e3e6c7febbc257d2'),
               'qualificationV9':(out / 'executed-source/docs/design/session-workload-qualification-v9.json',
                                  '5a69d57990ba241836b76c578094bbb47be8cf5ddbce7f581250772e3c1f8a82'),
+              'retentionV1':(out / 'executed-source/docs/design/session-workload-retention-v1.json',
+                             '7eedd78f0199d53abe362d785be1ce34afa1c030b3ff5f47538f154d538c70b1'),
               'qualificationV10':(out / 'executed-source/docs/design/session-workload-qualification-v10.json',
                                   '3e118664a0079556aa446066e1562649bcc7aabbccef00c78e426d2862000de6'),
               'busyboxSource':(root / 'releases/initramfs/busybox',

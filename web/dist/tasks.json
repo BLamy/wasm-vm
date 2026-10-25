@@ -35711,7 +35711,7 @@
       "epicKey": "9",
       "title": "Qualify both full pinned performance workloads",
       "priority": null,
-      "status": "blocked",
+      "status": "in-progress",
       "depends_on": [
         "E9-T22b",
         "E9-T22h",
@@ -35769,7 +35769,7 @@
         },
         {
           "date": "2026-10-24",
-          "commits": 7,
+          "commits": 8,
           "labels": [
             "tasks: isolate local manifest capacity before workload qualification",
             "Qualify Omarchy boot with recorded Plymouth ordering overrides",
@@ -35779,8 +35779,9 @@
         },
         {
           "date": "2026-10-25",
-          "commits": 3,
+          "commits": 6,
           "labels": [
+            "Resume E9 full workload qualification after retention proof",
             "Account for staged orphan chunks in retention cleanup proof",
             "Plan supported retention prerequisite for full desktop qualification",
             "Record E9-T22c full-history retention failure"
@@ -35789,7 +35790,7 @@
       ],
       "firstActivity": "2026-10-22",
       "lastActivity": "2026-10-25",
-      "commitCount": 15
+      "commitCount": 19
     },
     {
       "id": "E9-T22d",
