@@ -55,7 +55,8 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
    sixthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v6.json')),
    seventhSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v7.json')),
    eighthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v8.json')),
-   serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v9.json'));
+   ninthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v9.json')),
+   serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v10.json'));
  const amendment=JSON.parse(sourceReference);need(amendment.originalContract.sha256===receipt.contractSha256&&JSON.stringify(amendment.unchanged.workload)===JSON.stringify(contract.workload)&&JSON.stringify(amendment.unchanged.budgets)===JSON.stringify(contract.budgets),'no reference workload/budget drift');
  need(sha(previousSerialization)==='f59e6190ec3006eaf22c8eda0d9e6915065458a709505afd4ac9e33601767b27','preserved first qualification serialization');
  need(sha(secondSerialization)==='7ea0bb9bc4329da72a9497d184ba139bbc5677ed4e4ea2ba43a6593b0812c5e9','preserved Chrome .86 qualification serialization');
@@ -65,19 +66,25 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
  need(sha(sixthSerialization)==='5e85dda123738e944c93e5bc0c4a16bb2376e1aca1be8136964d1faeb6800cc0','preserved failed sudo bootstrap qualification');
  need(sha(seventhSerialization)==='775db4ae386b71d39391e00a5e395a44e9b3f5f20606a49243fa0f0077f4b002','preserved root getty qualification');
  need(sha(eighthSerialization)==='8003e0f4918de869ff124dd527f66b1d5b305ebd32a5d1e4e3e6c7febbc257d2','preserved NetworkManager qualification');
+ need(sha(ninthSerialization)==='5a69d57990ba241836b76c578094bbb47be8cf5ddbce7f581250772e3c1f8a82','preserved Plymouth ordering qualification');
  const priorQualification=JSON.parse(fifthSerialization),failedBootstrap=JSON.parse(sixthSerialization),
    bootstrapAmendment=JSON.parse(seventhSerialization),networkAmendment=JSON.parse(eighthSerialization),
-   plymouthAmendment=JSON.parse(serialization);
- const qualification={...priorQualification,...failedBootstrap,...bootstrapAmendment,...networkAmendment,...plymouthAmendment};
+   plymouthAmendment=JSON.parse(ninthSerialization),serialShellAmendment=JSON.parse(serialization);
+ const qualification={...priorQualification,...failedBootstrap,...bootstrapAmendment,...networkAmendment,...plymouthAmendment,...serialShellAmendment};
  need(priorQualification.version===5&&priorQualification.previousQualification.sha256===sha(fourthSerialization)
    &&failedBootstrap.version===6&&failedBootstrap.previousQualification.sha256===sha(fifthSerialization)
    &&bootstrapAmendment.version===7&&bootstrapAmendment.previousQualification.sha256===sha(sixthSerialization)
    &&networkAmendment.version===8&&networkAmendment.previousQualification.sha256===sha(seventhSerialization)
-   &&qualification.version===9&&qualification.previousQualification.sha256===sha(eighthSerialization)
+   &&plymouthAmendment.version===9&&plymouthAmendment.previousQualification.sha256===sha(eighthSerialization)
+   &&qualification.version===10&&qualification.previousQualification.sha256===sha(ninthSerialization)
    &&qualification.desktopBootstrap.bootargs==='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0 init=/bin/bash -- -i'
    &&qualification.desktopBootstrap.gettyPath==='/etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf'
    &&qualification.desktopBootstrap.gettyOverride==='[Service]\nExecStart=\nExecStart=-/usr/bin/agetty --autologin root --noclear --keep-baud 115200,38400,9600 - $TERM\n'
    &&qualification.desktopBootstrap.gettyMode==='0644'
+   &&qualification.desktopSerialShell.gettyOverride==='[Service]\nExecStart=\nExecStart=-/bin/bash --noprofile --norc -i\nWorkingDirectory=/root\nEnvironment=HOME=/root USER=root LOGNAME=root SHELL=/bin/bash PATH=/usr/local/sbin:/usr/local/bin:/usr/bin TERM=vt100\n'
+   &&qualification.desktopSerialShell.gettyOverrideBytes===205
+   &&qualification.desktopSerialShell.gettyOverrideSha256===sha(Buffer.from(qualification.desktopSerialShell.gettyOverride))
+   &&qualification.desktopSerialShell.mode==='0644'
    &&qualification.desktopNetworkReadiness.dropinPath==='/etc/systemd/system/NetworkManager.service.d/e9-qualification.conf'
    &&qualification.desktopNetworkReadiness.dropin==='[Service]\nType=simple\n'
    &&qualification.desktopNetworkReadiness.mode==='0644'

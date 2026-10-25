@@ -1,0 +1,18 @@
+{
+  "version": 10,
+  "task": "E9-T22c",
+  "scope": "Untimed original Omarchy qualification with a recorded COW-only direct root serial shell; all v9 image, workload, browser, retention and budget pins are inherited unchanged",
+  "previousQualification": {
+    "path": "docs/design/session-workload-qualification-v9.json",
+    "sha256": "5a69d57990ba241836b76c578094bbb47be8cf5ddbce7f581250772e3c1f8a82"
+  },
+  "desktopSerialShell": {
+    "reason": "The v9 run reached the real ttyS0 root autologin and MOTD, but login then slept in ppoll(fd 4, POLLIN) with a 120-second guest-time timeout before execing a shell. At ICount/64 and 10 MHz timebase, waiting for that timeout would require about 76.8 billion more retired guest instructions. Replace only the v7 getty launcher in the qualification COW, retaining the authenticated v9 serial-getty unit, tty ownership, service ordering, restart policy, real systemd, SDDM and NetworkManager.",
+    "gettyOverride": "[Service]\nExecStart=\nExecStart=-/bin/bash --noprofile --norc -i\nWorkingDirectory=/root\nEnvironment=HOME=/root USER=root LOGNAME=root SHELL=/bin/bash PATH=/usr/local/sbin:/usr/local/bin:/usr/bin TERM=vt100\n",
+    "gettyOverrideSha256": "680640930be5a865474a66cc25627e6281bd8afc8c77c32c1e1a8dea490a7bca",
+    "gettyOverrideBytes": 205,
+    "mode": "0644",
+    "handoff": "Before exec /sbin/init, write and hash-check the exact drop-in at the inherited gettyPath, sync and retain the COW. Require the new ttyS0 root Bash prompt, uid 0, HOME=/root, /dev/ttyS0, Bash argv and active serial-getty, logind, SDDM and NetworkManager services before the frozen workload.",
+    "limitation": "This serial qualification shell bypasses agetty, login, PAM, utmp/wtmp and root login-session registration, and omits root profile scripts. It does not claim to verify those paths; the unmodified production image and original cold desktop/GPU workload remain the subjects of the recording."
+  }
+}

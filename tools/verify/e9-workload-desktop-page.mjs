@@ -31,13 +31,17 @@ export async function qualifyDesktopWorkload(contract,qualification){
   const fixture=contract.fixtures.find(row=>row.id==='desktop-gpu-candidate-v1');
   need(fixture&&contract.workload?.desktop?.probe_sha256==='822b258f329ee2d16d7f25fa676684e02227531dbdf8bf5edbf7dc8b45868155','frozen desktop contract');
   const auxiliary=qualification?.auxiliaryDesktopTool;
-  need(qualification?.version===9&&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
+  need(qualification?.version===10&&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
     &&qualification.retention?.defaultMaxBytes===2*1024**3
     &&qualification.retention?.maxBytes===8*1024**3&&qualification.retention?.maxCheckpoints===4096
     &&qualification.desktopBootstrap?.bootargs==='root=/dev/vda rw console=ttyS0 earlycon=sbi plymouth.enable=0 init=/bin/bash -- -i'
     &&qualification.desktopBootstrap?.gettyPath==='/etc/systemd/system/serial-getty@ttyS0.service.d/autologin.conf'
     &&qualification.desktopBootstrap?.gettyOverride==='[Service]\nExecStart=\nExecStart=-/usr/bin/agetty --autologin root --noclear --keep-baud 115200,38400,9600 - $TERM\n'
     &&qualification.desktopBootstrap?.gettyMode==='0644'
+    &&qualification.desktopSerialShell?.gettyOverride==='[Service]\nExecStart=\nExecStart=-/bin/bash --noprofile --norc -i\nWorkingDirectory=/root\nEnvironment=HOME=/root USER=root LOGNAME=root SHELL=/bin/bash PATH=/usr/local/sbin:/usr/local/bin:/usr/bin TERM=vt100\n'
+    &&qualification.desktopSerialShell?.gettyOverrideBytes===205
+    &&qualification.desktopSerialShell?.gettyOverrideSha256===digest(encoder.encode(qualification.desktopSerialShell.gettyOverride))
+    &&qualification.desktopSerialShell?.mode==='0644'
     &&qualification.desktopNetworkReadiness?.dropinPath==='/etc/systemd/system/NetworkManager.service.d/e9-qualification.conf'
     &&qualification.desktopNetworkReadiness?.dropin==='[Service]\nType=simple\n'
     &&qualification.desktopNetworkReadiness?.mode==='0644'
@@ -251,7 +255,7 @@ export async function qualifyDesktopWorkload(contract,qualification){
     vm.enableJit(2);
     await until(()=>/(?:^|\n)[^\n]*#\s*$/.test(textView()));
     const getty=qualification.desktopBootstrap.gettyPath;
-    const gettyHash=digest(encoder.encode(qualification.desktopBootstrap.gettyOverride));
+    const gettyHash=digest(encoder.encode(qualification.desktopSerialShell.gettyOverride));
     const network=qualification.desktopNetworkReadiness.dropinPath;
     const networkHash=digest(encoder.encode(qualification.desktopNetworkReadiness.dropin));
     const [gettyUnit,tty1Unit,sddmUnit]=qualification.desktopPlymouthOrdering.units;
@@ -263,8 +267,9 @@ export async function qualifyDesktopWorkload(contract,qualification){
       `test "$(sha256sum '${unit.copyPath}')" = '${unit.copySha256}  ${unit.copyPath}' && `;
     state.bootstrap=await command(`test "$(id -u)" = 0 && test -x /sbin/init && `+
       `mkdir -p /etc/systemd/system/serial-getty@ttyS0.service.d && `+
-      `printf '%s\\n' '[Service]' 'ExecStart=' 'ExecStart=-/usr/bin/agetty --autologin root --noclear --keep-baud 115200,38400,9600 - $TERM' > '${getty}' && `+
+      `printf '%s\\n' '[Service]' 'ExecStart=' 'ExecStart=-/bin/bash --noprofile --norc -i' 'WorkingDirectory=/root' 'Environment=HOME=/root USER=root LOGNAME=root SHELL=/bin/bash PATH=/usr/local/sbin:/usr/local/bin:/usr/bin TERM=vt100' > '${getty}' && `+
       `chmod 0644 '${getty}' && test "$(stat -c '%u:%a' '${getty}')" = '0:644' && `+
+      `test "$(wc -c < '${getty}')" -eq 205 && `+
       `test "$(sha256sum '${getty}')" = '${gettyHash}  ${getty}' && `+
       `mkdir -p /etc/systemd/system/NetworkManager.service.d && `+
       `printf '%s\\n' '[Service]' 'Type=simple' > '${network}' && `+
@@ -274,14 +279,20 @@ export async function qualifyDesktopWorkload(contract,qualification){
       cloneUnit(tty1Unit,'s/ plymouth-quit-wait\\.service//')+
       cloneUnit(sddmUnit,'s/ plymouth-quit\\.service//')+
       `sync && printf 'E9_QBOOT_OK\\n'`,'cbootstrap','guest-inspection');
-    need(state.bootstrap.stdout.includes('E9_QBOOT_OK'),'recorded COW-only root getty, NetworkManager and Plymouth ordering');
+    need(state.bootstrap.stdout.includes('E9_QBOOT_OK'),'recorded COW-only root shell, NetworkManager and Plymouth ordering');
     state.bootstrapHandoff=pos(vm.inputPosition());
     const systemdConsoleAt=state.console.length;
     await offer('guest-inspection','exec /sbin/init\r');
     await until(()=>/(?:^|\n)[^\n]*#\s*$/.test(stripConsole(state.console.slice(systemdConsoleAt))));
+    state.serialShell=await command(`printf 'E9_ROOT_DIRECT uid=%s home=%s tty=%s shell=%s\\n' "$(id -u)" "$HOME" "$(tty)" "$0"; `+
+      `tr '\\0' ' ' </proc/$$/cmdline; printf '\\n'; `+
+      `ps -o pid,ppid,comm,args -p "$$,$PPID"`,'cserialshell','guest-inspection');
+    need(/^E9_ROOT_DIRECT uid=0 home=\/root tty=\/dev\/ttyS0 shell=.*bash\n\/bin\/bash --noprofile --norc -i *\n/.test(state.serialShell.stdout)
+      &&!/(?:^|\n)[^\n]*\blogin\b/.test(state.serialShell.stdout),'direct ttyS0 root Bash without login or PAM ancestry');
     state.identity=await command(`id -u; printf '%s\\n' "$HOME"; sha256sum '${getty}' '${network}' '${gettyUnit.copyPath}' '${tty1Unit.copyPath}' '${sddmUnit.copyPath}'; stat -c '%u:%a' '${getty}' '${network}' '${gettyUnit.copyPath}' '${tty1Unit.copyPath}' '${sddmUnit.copyPath}'; command -v hyprctl; command -v gzip; command -v dd; command -v stty`,'cidentity','guest-inspection');
     need(state.identity.stdout.startsWith(`0\n/root\n${gettyHash}  ${getty}\n${networkHash}  ${network}\n${gettyUnit.copySha256}  ${gettyUnit.copyPath}\n${tty1Unit.copySha256}  ${tty1Unit.copyPath}\n${sddmUnit.copySha256}  ${sddmUnit.copyPath}\n0:644\n0:644\n0:644\n0:644\n0:644\n`),'root shell and five recorded COW service files for unchanged /root fixture');
     state.serviceOrdering=await command(`printf 'E9_GETTY_FRAGMENT=%s\\n' "$(systemctl show -p FragmentPath --value serial-getty@ttyS0.service)"; `+
+      `printf 'E9_GETTY_EXEC=%s\\n' "$(systemctl show -p ExecStart --value serial-getty@ttyS0.service)"; `+
       `printf 'E9_TTY1_FRAGMENT=%s\\n' "$(systemctl show -p FragmentPath --value getty@tty1.service)"; `+
       `printf 'E9_SDDM_FRAGMENT=%s\\n' "$(systemctl show -p FragmentPath --value sddm.service)"; `+
       `printf 'E9_GETTY_AFTER=%s\\n' "$(systemctl show -p After --value serial-getty@ttyS0.service)"; `+
@@ -294,6 +305,7 @@ export async function qualifyDesktopWorkload(contract,qualification){
     const tty1After=ordering.match(/(?:^|\n)E9_TTY1_AFTER=([^\n]*)/)?.[1]??'';
     const sddmAfter=ordering.match(/(?:^|\n)E9_SDDM_AFTER=([^\n]*)/)?.[1]??'';
     need(ordering.includes(`E9_GETTY_FRAGMENT=${gettyUnit.copyPath}\n`)
+      &&ordering.includes('/bin/bash --noprofile --norc -i')
       &&ordering.includes(`E9_TTY1_FRAGMENT=${tty1Unit.copyPath}\n`)
       &&ordering.includes(`E9_SDDM_FRAGMENT=${sddmUnit.copyPath}\n`)
       &&gettyAfter.includes('systemd-user-sessions.service')&&!gettyAfter.includes('plymouth-quit-wait.service')

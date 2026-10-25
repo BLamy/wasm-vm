@@ -122,21 +122,25 @@ try:
     v6_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v6.json').read_bytes()
     v7_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v7.json').read_bytes()
     v8_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v8.json').read_bytes()
-    profile_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v9.json').read_bytes()
+    v9_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v9.json').read_bytes()
+    profile_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v10.json').read_bytes()
     assert sha(v5_bytes) == 'd1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de'
     assert sha(v6_bytes) == '5e85dda123738e944c93e5bc0c4a16bb2376e1aca1be8136964d1faeb6800cc0'
     assert sha(v7_bytes) == '775db4ae386b71d39391e00a5e395a44e9b3f5f20606a49243fa0f0077f4b002'
     assert sha(v8_bytes) == '8003e0f4918de869ff124dd527f66b1d5b305ebd32a5d1e4e3e6c7febbc257d2'
-    assert sha(profile_bytes) == '5a69d57990ba241836b76c578094bbb47be8cf5ddbce7f581250772e3c1f8a82'
+    assert sha(v9_bytes) == '5a69d57990ba241836b76c578094bbb47be8cf5ddbce7f581250772e3c1f8a82'
+    assert sha(profile_bytes) == '3e118664a0079556aa446066e1562649bcc7aabbccef00c78e426d2862000de6'
     v6 = json.loads(v6_bytes)
     v7 = json.loads(v7_bytes)
     v8 = json.loads(v8_bytes)
-    v9 = json.loads(profile_bytes)
+    v9 = json.loads(v9_bytes)
+    v10 = json.loads(profile_bytes)
     assert v6['previousQualification']['sha256'] == sha(v5_bytes)
     assert v7['previousQualification']['sha256'] == sha(v6_bytes)
     assert v8['previousQualification']['sha256'] == sha(v7_bytes)
     assert v9['previousQualification']['sha256'] == sha(v8_bytes)
-    profile = {**json.loads(v5_bytes), **v6, **v7, **v8, **v9}
+    assert v10['previousQualification']['sha256'] == sha(v9_bytes)
+    profile = {**json.loads(v5_bytes), **v6, **v7, **v8, **v9, **v10}
     retention = profile['retention']
     assert browser['inputs']['serializationSha256'] == sha(profile_bytes)
     assert browser['browserContext']['mode'] == profile['browserContext']['mode']
@@ -153,7 +157,10 @@ try:
         'after':{'maxBytes':retention['maxBytes'],'maxCheckpoints':retention['maxCheckpoints']}}
     getty = profile['desktopBootstrap']
     getty_path = getty['gettyPath']
-    getty_bytes = getty['gettyOverride'].encode()
+    serial_shell = profile['desktopSerialShell']
+    getty_bytes = serial_shell['gettyOverride'].encode()
+    assert len(getty_bytes) == serial_shell['gettyOverrideBytes'] == 205
+    assert sha(getty_bytes) == serial_shell['gettyOverrideSha256'] == '680640930be5a865474a66cc25627e6281bd8afc8c77c32c1e1a8dea490a7bca'
     network = profile['desktopNetworkReadiness']
     network_path = network['dropinPath']
     network_bytes = network['dropin'].encode()
@@ -162,6 +169,11 @@ try:
     expected_unit_files = {}
     assert browser['result']['bootstrap']['exit'] == 0
     assert 'E9_QBOOT_OK' in browser['result']['bootstrap']['stdout']
+    direct = browser['result']['serialShell']
+    assert direct['exit'] == 0
+    assert direct['stdout'].startswith('E9_ROOT_DIRECT uid=0 home=/root tty=/dev/ttyS0 shell=/bin/bash\n'
+                                      '/bin/bash --noprofile --norc -i \n')
+    assert 'login' not in direct['stdout']
     assert browser['result']['identity']['exit'] == 0
     assert browser['result']['identity']['stdout'].startswith(
         '0\n/root\n' + sha(getty_bytes) + '  ' + getty_path + '\n' +
@@ -172,6 +184,7 @@ try:
     assert ordering['exit'] == 0
     assert all('E9_' + label + '_FRAGMENT=' + unit['copyPath'] + '\n' in ordering['stdout']
                for label,unit in zip(('GETTY','TTY1','SDDM'),units))
+    assert '/bin/bash --noprofile --norc -i' in ordering['stdout']
     assert 'plymouth-quit-wait.service' not in ordering['stdout'].split('E9_GETTY_AFTER=')[1].split('\n')[0]
     assert 'plymouth-quit-wait.service' not in ordering['stdout'].split('E9_TTY1_AFTER=')[1].split('\n')[0]
     assert 'plymouth-quit.service' not in ordering['stdout'].split('E9_SDDM_AFTER=')[1].split('\n')[0]
@@ -313,6 +326,8 @@ finally:
                                  '8003e0f4918de869ff124dd527f66b1d5b305ebd32a5d1e4e3e6c7febbc257d2'),
               'qualificationV9':(out / 'executed-source/docs/design/session-workload-qualification-v9.json',
                                  '5a69d57990ba241836b76c578094bbb47be8cf5ddbce7f581250772e3c1f8a82'),
+              'qualificationV10':(out / 'executed-source/docs/design/session-workload-qualification-v10.json',
+                                  '3e118664a0079556aa446066e1562649bcc7aabbccef00c78e426d2862000de6'),
               'busyboxSource':(root / 'releases/initramfs/busybox',
                                '9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30')}
     report['immutableInputs'] = {}
