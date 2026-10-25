@@ -4,8 +4,8 @@ epic: 9
 title: Qualify both full pinned performance workloads
 priority: 524.92203
 status: blocked
-blocked_on: E9-T22l
-depends_on: [E9-T22b, E9-T22h, E9-T22j, E9-T22k, E9-T22l]
+blocked_on: E9-T22m
+depends_on: [E9-T22b, E9-T22h, E9-T22j, E9-T22k, E9-T22l, E9-T22m]
 estimate: S
 risk: medium
 capstone: false
