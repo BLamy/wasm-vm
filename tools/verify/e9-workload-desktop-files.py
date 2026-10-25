@@ -125,6 +125,7 @@ try:
     v8_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v8.json').read_bytes()
     v9_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v9.json').read_bytes()
     profile_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v10.json').read_bytes()
+    wall_bytes = (out / 'executed-source/docs/design/session-workload-qualification-v11.json').read_bytes()
     retention_bytes = (out / 'executed-source/docs/design/session-workload-retention-v1.json').read_bytes()
     assert sha(v5_bytes) == 'd1160d82ee7e90d556a1255736d94b46f49578ea82a54caf4e4748e7733a49de'
     assert sha(v6_bytes) == '5e85dda123738e944c93e5bc0c4a16bb2376e1aca1be8136964d1faeb6800cc0'
@@ -132,19 +133,25 @@ try:
     assert sha(v8_bytes) == '8003e0f4918de869ff124dd527f66b1d5b305ebd32a5d1e4e3e6c7febbc257d2'
     assert sha(v9_bytes) == '5a69d57990ba241836b76c578094bbb47be8cf5ddbce7f581250772e3c1f8a82'
     assert sha(profile_bytes) == '3e118664a0079556aa446066e1562649bcc7aabbccef00c78e426d2862000de6'
+    assert sha(wall_bytes) == 'cced6514f53c2d747a9faed7f8f7cefde82fbd1f832007e1b0c3b1ee3d230141'
     assert sha(retention_bytes) == '7eedd78f0199d53abe362d785be1ce34afa1c030b3ff5f47538f154d538c70b1'
     v6 = json.loads(v6_bytes)
     v7 = json.loads(v7_bytes)
     v8 = json.loads(v8_bytes)
     v9 = json.loads(v9_bytes)
     v10 = json.loads(profile_bytes)
+    v11 = json.loads(wall_bytes)
     capacity = json.loads(retention_bytes)
     assert v6['previousQualification']['sha256'] == sha(v5_bytes)
     assert v7['previousQualification']['sha256'] == sha(v6_bytes)
     assert v8['previousQualification']['sha256'] == sha(v7_bytes)
     assert v9['previousQualification']['sha256'] == sha(v8_bytes)
     assert v10['previousQualification']['sha256'] == sha(v9_bytes)
-    profile = {**json.loads(v5_bytes), **v6, **v7, **v8, **v9, **v10}
+    assert v11['previousQualification']['sha256'] == sha(profile_bytes)
+    assert v11['desktopHostWallMs'] == 16 * 60 * 60 * 1000
+    assert v11['retainedFailure']['oldHostWallMs'] == 8 * 60 * 60 * 1000
+    assert v11['retainedFailure']['reportSha256'] == '12b51f16c8502c9c4243e1c639c8d619a015c780bb5fa97630caa32fe224e593'
+    profile = {**json.loads(v5_bytes), **v6, **v7, **v8, **v9, **v10, **v11}
     assert profile['retention']['maxBytes'] == 8 * 1024**3
     assert capacity['version'] == 1 and capacity['task'] == 'E9-T22m'
     assert capacity['previousQualification']['sha256'] == sha(v9_bytes)
@@ -155,6 +162,7 @@ try:
     assert capacity['preflight']['fullColdRunCopies'] == 2
     retention = capacity['retention']
     assert browser['inputs']['serializationSha256'] == sha(profile_bytes)
+    assert browser['inputs']['wallProfileSha256'] == sha(wall_bytes)
     assert browser['inputs']['retentionProfileSha256'] == sha(retention_bytes)
     assert browser['browserContext']['mode'] == profile['browserContext']['mode']
     assert Path(browser['browserContext']['directory']) == out / 'chrome-profile'
@@ -380,6 +388,8 @@ finally:
                              '7eedd78f0199d53abe362d785be1ce34afa1c030b3ff5f47538f154d538c70b1'),
               'qualificationV10':(out / 'executed-source/docs/design/session-workload-qualification-v10.json',
                                   '3e118664a0079556aa446066e1562649bcc7aabbccef00c78e426d2862000de6'),
+              'qualificationV11':(out / 'executed-source/docs/design/session-workload-qualification-v11.json',
+                                  'cced6514f53c2d747a9faed7f8f7cefde82fbd1f832007e1b0c3b1ee3d230141'),
               'busyboxSource':(root / 'releases/initramfs/busybox',
                                '9958179c84ee901615fef183214b90ec2306b5579d0640f520790105f4d79f30')}
     report['immutableInputs'] = {}

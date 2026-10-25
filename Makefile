@@ -2891,10 +2891,23 @@ verify-E9-T22m:
 	  node tools/verify/e9-retention-capacity-browser.mjs --desktop "$$desktop" --output "$$out/exact-browser"; \
 	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo"
 
+.PHONY: verify-E9-T22n
+verify-E9-T22n:
+	@set -eu; desktop="$${E9_T22N_DESKTOP:-target/evidence/e9-t22c-submission-a161b0f8d/desktop}"; \
+	  test -f "$$desktop/report.json" && test -f "$$desktop/saved/storage.json" || { echo "E9-T22n requires the preserved eight-hour failed C export: set E9_T22N_DESKTOP" >&2; exit 1; }; \
+	  desktop="$$(cd "$$desktop" && pwd -P)"; \
+	  out="$${E9_OUT:-target/evidence/e9-t22n-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  E9_T22N_DESKTOP="$$desktop" node --test tools/verify/e9-workload-wall.test.mjs > "$$out/boundary-tests.log" 2>&1; \
+	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; git diff --exit-code -- web/dist; \
+	  E9_T22N_DESKTOP="$$desktop" node tools/verify/e9-workload-wall-browser.mjs --output "$$out/browser"; \
+	  mkdir "$$out/prefix"; ln -s "$$desktop/report.json" "$$out/prefix/report.json"; ln -s "$$desktop/saved" "$$out/prefix/saved"; \
+	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/prefix" --allow-incomplete
+
 .PHONY: verify-E9-T22c
 verify-E9-T22c:
 	mkdir -p target/evidence
-	node --test tools/verify/e9-workload-schedule.test.mjs tools/verify/e9-workload-assets.test.mjs
+	node --test tools/verify/e9-workload-schedule.test.mjs tools/verify/e9-workload-assets.test.mjs tools/verify/e9-workload-wall.test.mjs
 	set -eu; E9_QUALIFICATION_OUT="$${E9_OUT:-target/evidence/e9-t22c-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
 	  mkdir -p "$$(dirname "$$E9_QUALIFICATION_OUT")"; \
 	  mkdir "$$E9_QUALIFICATION_OUT"; \

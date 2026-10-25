@@ -4,6 +4,7 @@ import path from 'node:path';
 import {fileURLToPath}from'node:url';
 import {createHash}from'node:crypto';
 import {createReadStream}from'node:fs';
+import {validateDesktopWallAmendment} from './e9-workload-wall.mjs';
 export const WORKLOAD_ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 export const R2='https://pub-c7188e40d3a0463183db72f9dd03cae2.r2.dev/';
 export const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
@@ -57,6 +58,7 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
    eighthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v8.json')),
    ninthSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v9.json')),
    serialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v10.json')),
+   wallSerialization=profile==='desktop'?await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-qualification-v11.json')):null,
    retentionSerialization=await fs.readFile(path.join(WORKLOAD_ROOT,'docs/design/session-workload-retention-v1.json'));
  const amendment=JSON.parse(sourceReference);need(amendment.originalContract.sha256===receipt.contractSha256&&JSON.stringify(amendment.unchanged.workload)===JSON.stringify(contract.workload)&&JSON.stringify(amendment.unchanged.budgets)===JSON.stringify(contract.budgets),'no reference workload/budget drift');
  need(sha(previousSerialization)==='f59e6190ec3006eaf22c8eda0d9e6915065458a709505afd4ac9e33601767b27','preserved first qualification serialization');
@@ -124,6 +126,11 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
  // verified local SessionStore setting, not a rewrite of that frozen serialization.
  qualification.retention=retentionAmendment.retention;
  qualification.capacityPreflight=retentionAmendment.preflight;
+ if(profile==='desktop'){
+  const wallAmendment=JSON.parse(wallSerialization);
+  validateDesktopWallAmendment(wallAmendment,sha(serialization));
+  Object.assign(qualification,wallAmendment);
+ }
  let imageBytes,image,disk,chunkPrefix,busybox=null;
  try{
  if(profile==='software'){
@@ -144,7 +151,7 @@ export async function loadQualificationAssets(profile,{webRoot=path.join(WORKLOA
   need(imageBytes.length===entry.size,'desktop manifest bytes');image=pinnedImage(imageBytes,entry.sha256);need(image.image_len===12884901888&&image.chunk_size===262144,'pinned 12 GiB base distinct from RAM');chunkPrefix=R2+'chunked-omarchy/chunks/';receipt.bootargs=qualification.desktopBootstrap.bootargs;receipt.historicalWarmCheckpointExecuted=false;
  }
  const directory=path.join(cacheRoot,profile+'-chunks');const initialCache=await inspectMaterializedChunks(directory,image),ids=new Set(image.chunks),first=new Map();image.chunks.forEach((id,index)=>{if(!first.has(id))first.set(id,index);});
- Object.assign(receipt,{kernel:{bytes:kernel.length,sha256:sha(kernel)},wasm:{bytes:wasm.length,sha256:sha(wasm)},renderer:{bytes:rendererAsset.length,sha256:sha(rendererAsset)},image:{bytes:imageBytes.length,sha256:sha(imageBytes),imageBytes:image.image_len,chunkBytes:image.chunk_size,chunks:image.chunks.length,uniqueChunks:ids.size},referenceSha256:sha(sourceReference),serializationSha256:sha(serialization),retentionProfileSha256:sha(retentionSerialization),initialMaterializedCache:initialCache,qualifiedClock:{mode:'icount',divider:profile==='software'?10:64,interactive:null},ramMib:profile==='software'?256:1024});
+ Object.assign(receipt,{kernel:{bytes:kernel.length,sha256:sha(kernel)},wasm:{bytes:wasm.length,sha256:sha(wasm)},renderer:{bytes:rendererAsset.length,sha256:sha(rendererAsset)},image:{bytes:imageBytes.length,sha256:sha(imageBytes),imageBytes:image.image_len,chunkBytes:image.chunk_size,chunks:image.chunks.length,uniqueChunks:ids.size},referenceSha256:sha(sourceReference),serializationSha256:sha(serialization),wallProfileSha256:profile==='desktop'?sha(wallSerialization):null,retentionProfileSha256:sha(retentionSerialization),initialMaterializedCache:initialCache,qualifiedClock:{mode:'icount',divider:profile==='software'?10:64,interactive:null},ramMib:profile==='software'?256:1024});
  const inFlight=new Map();
  async function readChunk(id){
   need(typeof id==='string'&&ids.has(id),'owned manifest member');if(inFlight.has(id))return inFlight.get(id);

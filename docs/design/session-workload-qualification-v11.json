@@ -1,0 +1,16 @@
+{
+  "version": 11,
+  "task": "E9-T22n",
+  "scope": "Host wall allowance only for the unchanged cold Omarchy qualification; no timing or full-workload claim",
+  "previousQualification": {
+    "path": "docs/design/session-workload-qualification-v10.json",
+    "sha256": "3e118664a0079556aa446066e1562649bcc7aabbccef00c78e426d2862000de6"
+  },
+  "desktopHostWallMs": 57600000,
+  "retainedFailure": {
+    "head": "a161b0f8d6a4e7e4d19de7170fe7ad52a2f416f6",
+    "reportSha256": "12b51f16c8502c9c4243e1c639c8d619a015c780bb5fa97630caa32fe224e593",
+    "oldHostWallMs": 28800000,
+    "transition": "17550000000"
+  }
+}

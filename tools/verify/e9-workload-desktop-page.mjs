@@ -13,6 +13,7 @@ import {hasDesktopPixels} from '/omarchy-desktop-readiness.js';
 import {createLinuxTerminal} from '/terminal.js';
 import {createFencedRpc,formatRpcCommand,stripConsole} from '/guest-rpc.js';
 import {frozenWorkloadSchedule,scheduledTransition,verifyFrozenWorkloadOffers,verifyUartActivityLedger,verifyFullUartOffer,verifyGuestInputMarkers} from '/e9-workload-schedule.mjs';
+import {desktopWallOpen,QUALIFIED_DESKTOP_WALL_MS} from '/e9-workload-wall.mjs';
 
 const encoder=new TextEncoder(),decoder=new TextDecoder(),tick=()=>new Promise(resolve=>setTimeout(resolve,0));
 const need=(ok,detail)=>{if(!ok)throw Error('full desktop qualification: '+detail);};
@@ -31,7 +32,8 @@ export async function qualifyDesktopWorkload(contract,qualification){
   const fixture=contract.fixtures.find(row=>row.id==='desktop-gpu-candidate-v1');
   need(fixture&&contract.workload?.desktop?.probe_sha256==='822b258f329ee2d16d7f25fa676684e02227531dbdf8bf5edbf7dc8b45868155','frozen desktop contract');
   const auxiliary=qualification?.auxiliaryDesktopTool;
-  need(qualification?.version===10&&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
+  need(qualification?.version===11&&qualification.desktopHostWallMs===QUALIFIED_DESKTOP_WALL_MS
+    &&qualification.browserContext?.mode==='fresh-persistent-user-data-dir'
     &&qualification.retention?.defaultMaxBytes===2*1024**3
     &&qualification.retention?.maxBytes===16*1024**3&&qualification.retention?.maxCheckpoints===4096
     &&qualification.capacityPreflight?.reserveBytes===1024**3
@@ -172,7 +174,7 @@ export async function qualifyDesktopWorkload(contract,qualification){
     }
   };
   const step=async(target=null)=>{
-    need(performance.now()-begun<28800000,'desktop qualification wall bound');
+    need(desktopWallOpen(performance.now(),begun,qualification.desktopHostWallMs),'desktop qualification wall bound');
     await drainTerminal();await drainBlocks();
     await pumpHttp();await pumpGpu();
     const at=BigInt(vm.inputPosition().transition);need(at<20000000000n,'original cold transition bound');
