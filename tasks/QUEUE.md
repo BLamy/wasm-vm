@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E9-T22n** — Qualify a finite desktop host-wall allowance
 1. **E6-T11e** — Survive hostile guest 3D requests and browser graphics context loss
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 1. **E5.5-T06** — Diagnose missing package-bar foreground on the cold GPU desktop
@@ -481,7 +480,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.922027` [E9-T22k](epic-9-session-time-travel/E9-T22k-local-witness-graph-bound.md) — Admit bounded large local histories without widening portable archives *(deps: E9-T22j)*
 - [x] `524.922029` [E9-T22l](epic-9-session-time-travel/E9-T22l-local-manifest-capacity.md) — Admit bounded local session metadata above the portable payload cap *(deps: E9-T22k)*
 - [x] `524.9220295` [E9-T22m](epic-9-session-time-travel/E9-T22m-supported-retention-capacity.md) — Qualify a supported 16 GiB local retention profile *(deps: E9-T22l)*
-- [ ] `524.92202975` [E9-T22n](epic-9-session-time-travel/E9-T22n-supported-desktop-wall-allowance.md) — Qualify a finite desktop host-wall allowance *(deps: E9-T22m)*
+- [~] `524.92202975` [E9-T22n](epic-9-session-time-travel/E9-T22n-supported-desktop-wall-allowance.md) — Qualify a finite desktop host-wall allowance *(deps: E9-T22m)*
 - [b] `524.92203` [E9-T22c](epic-9-session-time-travel/E9-T22c-real-workload-qualification.md) — Qualify both full pinned performance workloads *(deps: E9-T22b, E9-T22h, E9-T22j, E9-T22k, E9-T22l, E9-T22m, E9-T22n)*
 - [ ] `524.92204` [E9-T22d](epic-9-session-time-travel/E9-T22d-replay-performance-campaign.md) — Measure the unchanged complete replay performance budgets *(deps: E9-T15, E9-T16, E9-T19, E9-T22c)*
 - [ ] `524.923` [E9-T23](epic-9-session-time-travel/E9-T23-recovery-hardening.md) — Harden recording and seeking against crashes and corrupt history *(deps: E9-T07, E9-T18c, E9-T20, E9-T21, E9-T22d)*

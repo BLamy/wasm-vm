@@ -3,7 +3,7 @@ id: E9-T22n
 epic: 9
 title: Qualify a finite desktop host-wall allowance
 priority: 524.92202975
-status: pending
+status: in-progress
 depends_on: [E9-T22m]
 estimate: S
 risk: medium
