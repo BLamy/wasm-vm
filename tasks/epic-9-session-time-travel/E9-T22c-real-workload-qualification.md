@@ -3,8 +3,9 @@ id: E9-T22c
 epic: 9
 title: Qualify both full pinned performance workloads
 priority: 524.92203
-status: in-progress
-depends_on: [E9-T22b, E9-T22h, E9-T22j, E9-T22k, E9-T22l, E9-T22m]
+status: blocked
+blocked_on: E9-T22n
+depends_on: [E9-T22b, E9-T22h, E9-T22j, E9-T22k, E9-T22l, E9-T22m, E9-T22n]
 estimate: S
 risk: medium
 capstone: false
@@ -44,6 +45,37 @@ and count live server calls. Refuse software renderer or changed probe/assets,
 missing GL results, hidden live replay I/O and an incomplete long recording.
 
 ## Verification log
+
+### 2026-10-25 — worker — blocked on the exact eight-hour desktop wall
+
+At clean exact head `a161b0f8d6a4e7e4d19de7170fe7ad52a2f416f6`, run
+`E9_OUT=target/evidence/e9-t22c-submission-a161b0f8d make verify-E9-T22c`.
+The 12 direct tests, complete original Alpine recording/replay, and independent
+literal-file oracle passed. The original Omarchy image then booted real systemd,
+SDDM, logind, NetworkManager and the qualified direct root serial shell; the
+guest proved the COW units, service ordering, live NetworkManager PID and D-Bus
+owner. The first nonblank desktop frame had not appeared when the fixed
+28,800,000 ms host wall check failed at transition `17,550,000,000`, retired
+`17,549,193,735`, sequence `2472`. The retained prefix has 351 periodic
+checkpoints, 2,472 receipts and 952 authenticated base-block completions. No
+GPU probe, full desktop workload, whole-history replay or performance result is
+claimed. The desktop report SHA-256 is
+`12b51f16c8502c9c4243e1c639c8d619a015c780bb5fa97630caa32fe224e593`;
+the saved storage index SHA-256 is
+`44814fa5a9923e31e8149ce172d42bacb9989df2721d76795fcaaf5f2f7d0a98`;
+the exact failure state SHA-256 is
+`bcea040c7219f3c644937ac2ee2d5ff65afe41d43b0447253aa1635b63113ceb`.
+
+Fresh Daybreak read-only verification rehashed all 10,320 physical chunks,
+authenticated all 2,822 objects and reachable references, and confirmed 352
+witness pages with an unfinished commitment appropriate to this failed prefix.
+The saved payload is 8,692,849,469 bytes under the verified 16 GiB setting;
+there was no retention, quota, cleanup, browser-console or guest failure.
+The guest continued toward a user desktop session. The exact obstruction is
+the host qualification wall, so E9-T22n must declare and prove a finite
+wall-only supported profile amendment before C restarts from a new clean head.
+The 20B guest-transition cap, original image, workload, cadence and numeric
+performance budgets remain frozen. This prefix does not satisfy C acceptance.
 
 ### 2026-10-25 — worker — retained 8 GiB exact-history capacity failure
 
