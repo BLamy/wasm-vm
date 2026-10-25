@@ -3,7 +3,7 @@ id: E9-T22m
 epic: 9
 title: Qualify a supported 16 GiB local retention profile
 priority: 524.9220295
-status: in-progress
+status: implemented
 depends_on: [E9-T22l]
 estimate: S
 risk: high
@@ -59,6 +59,60 @@ test actually exercises the production store and cannot pass by merely raising
 a harness constant. Preserve portable refusal above 4 GiB.
 
 ## Verification log
+
+### 2026-10-25 — worker — exact-head physical and pristine-clone submission
+
+At clean source head `f7e82bd94051cb372ee30446c139a51d6980c099`,
+`E9_OUT=target/evidence/e9-t22m-submission-f7e82bd94 make verify-E9-T22m`
+passed the preflight tests, portable-policy Rust test, exact `web/dist` parity,
+production Chrome physical-capacity proof, and built-demo check. The browser
+report `target/evidence/e9-t22m-submission-f7e82bd94/exact-browser/report.json`
+has SHA-256 `a02e73ecfea261d42ebf99c9611e101b26c367c17aa0e23aa457150ade4dc227`;
+the main and post-restart browser traces have SHA-256
+`97d6a8ef73f695dc285bf538b012c34c9b18ba1bb7426a1127c72e2d82f61bed`
+and `a380ce96b5798284846ad41f7c981903deed4faf64864c16fc506f976f2e8305`.
+The demo report SHA-256 is
+`20d96797341c793dd392e0bb552b004dfca85be9326dffd22ae30ed661a0c5c0`
+(127 passed, 0 failed, no browser or HTTP errors).
+
+The same command passed once in pristine sparse clone
+`/private/tmp/e9-t22m-cold-f7e82bd94`, detached at the same exact head with
+`RUSTFLAGS`, `RUSTDOCFLAGS`, `RUST_LOG` and all `CARGO_*` environment variables
+absent, using `E9_T22M_DESKTOP` pointed at the original retained failed C
+prefix. Its browser report SHA-256 is
+`49c9665f94d5d59c572031e000e1ef106a1512b04030cd88c5d3483c0c31d060`;
+its main/reopen traces are
+`6f65ef765a277467566b0225caa1da5d94e817e1a58b18b19b97bbdda7e6f8e7` and
+`dcc1953a914a2deb100e7f5ee387d9937d47148af1a1a09f3012536b238a9149`;
+its demo report is
+`4f19908fe789d1656c2ecc93a3a8ae8f7536892b5d9917b37f1b05aad60676e2`
+(127 passed, 0 failed). The clone remained clean after building.
+
+Both recordings independently rehashed all 10,268 chunks of the original
+8,589,076,999-byte failed prefix. Through the production writer, each imported
+that prefix into real IndexedDB, added 2,049 novel objects, charged exactly
+17,179,869,184 physical payload bytes, and observed atomic `RetentionLimit`
+for byte 17,179,869,185. Chrome's origin usage exceeded 16 GiB. Collection
+removed the newly staged objects and the original 152 orphan chunks, preserving
+the exact 2,816-object, 10,116-chunk reachable graph; a new Chrome process
+reopened revision 637 and the original manifest hash. Each run checked actual
+Chrome quota and host free space with a 1 GiB reserve before staging. A fresh
+Daybreak read-only attack of the main recording also inspected the closed raw
+IndexedDB files: every reachable original chunk hash was present, with no
+leftover new test chunk. That profile was then removed for disk space; its
+report and traces remain. Chrome denied `navigator.storage.persist()` on this
+localhost origin, so this submission claims durable process restart and real
+quota, not eviction immunity; eviction recovery belongs to E9-T23.
+
+`bash tools/deploy-cloudflare.sh` published the exact built bundle to the
+production `wasm-vm` Pages project. Deployment log SHA-256 is
+`e889111d53befcb023a3cfebb3a6d049bd51c4355c40db9306a26a93e573904a`.
+Direct GETs of `https://wasm-vm.pages.dev/` assets `index.html`, `app.html`,
+`roadmap.js` and `tasks.json` returned byte-for-byte the tested local bundle;
+`target/evidence/e9-t22m-live-f7e82bd94.json` SHA-256 is
+`753ea6778fdf4e0f4671acd7b344bc32aaef563b30cc798d77d7f63b477190f2`.
+The deploy script's temporary manifest URL rewrites were restored after the
+public check. The fresh Daybreak final verdict is still required.
 
 ### 2026-10-25 — worker — first physical run found original staging orphans
 
