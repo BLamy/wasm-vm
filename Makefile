@@ -2879,6 +2879,18 @@ verify-E9-T22l:
 	  node tools/verify/e9-local-manifest-browser.mjs --desktop "$$desktop" --candidate "$$out/prefix/cold-257-candidate.json" --output "$$out/exact-browser"; \
 	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo"
 
+.PHONY: verify-E9-T22m
+verify-E9-T22m:
+	@set -eu; desktop="$${E9_T22M_DESKTOP:-target/evidence/e9-t22c-submission-45beaadaa/desktop}"; \
+	  test -f "$$desktop/saved/storage.json" && test -f "$$desktop/retained-closure/report.json" || { echo "E9-T22m requires the retained failed C prefix: set E9_T22M_DESKTOP" >&2; exit 1; }; \
+	  out="$${E9_OUT:-target/evidence/e9-t22m-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  node --test tools/verify/e9-retention-capacity.test.mjs > "$$out/preflight-tests.log" 2>&1; \
+	  cargo test -p wasm-vm-storage --test session_local > "$$out/portable-policy.log" 2>&1; \
+	  $(MAKE) web-dist; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-retention-capacity-browser.mjs --desktop "$$desktop" --output "$$out/exact-browser"; \
+	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo"
+
 .PHONY: verify-E9-T22c
 verify-E9-T22c:
 	mkdir -p target/evidence

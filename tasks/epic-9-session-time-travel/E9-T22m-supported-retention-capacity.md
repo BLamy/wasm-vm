@@ -43,8 +43,12 @@ not pass it with a saved prefix or synthetic desktop.
 ## Deterministic acceptance
 
 `make verify-E9-T22m` checks the retained original prefix, production browser
-retention behavior and negative bounds, the built demo, and a clean exact-head
-cold clone. It is distinct from `make verify-E9-T22c`.
+retention behavior and negative bounds, and the built demo. Run the same
+command once from a pristine clone at the final exact head, pointing
+`E9_T22M_DESKTOP` at the authenticated retained prefix by absolute path. The
+clone is separate from the normal target so it is run once, on the frozen
+submission, rather than during every implementation iteration. This is
+distinct from `make verify-E9-T22c`.
 
 ## Adversarial verification
 
