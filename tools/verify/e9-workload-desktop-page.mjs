@@ -322,7 +322,7 @@ export async function qualifyDesktopWorkload(contract,qualification){
       `test "$e9_sddm_pid" -gt 1 && kill -0 "$e9_sddm_pid" && `+
       `printf 'E9_SDDM_PID=%s\\n' "$e9_sddm_pid"; `+
       `printf 'E9_PLYMOUTH_PROCESSES=%s\\n' "$(pgrep -c plymouth || true)"`,'cdisplay','guest-inspection');
-    need(/^E9_SDDM_PID=[1-9][0-9]*\nE9_PLYMOUTH_PROCESSES=[0-9]+\n$/.test(state.displayService.stdout),
+    need(/^E9_SDDM_PID=[1-9][0-9]*\nE9_PLYMOUTH_PROCESSES=[0-9]+\n+$/.test(state.displayService.stdout),
       'real SDDM daemon owns the drawn desktop');
     const firstPresents=presentation.snapshot().drawnPresents;
     need(vm.setDisplay(640,480),'first frozen viewport request');await collect();
