@@ -3,7 +3,7 @@ id: E9-T22m
 epic: 9
 title: Qualify a supported 16 GiB local retention profile
 priority: 524.9220295
-status: pending
+status: in-progress
 depends_on: [E9-T22l]
 estimate: S
 risk: high
