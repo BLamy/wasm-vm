@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import struct
 import subprocess
 import sys
@@ -188,7 +189,7 @@ try:
     assert 'plymouth-quit-wait.service' not in ordering['stdout'].split('E9_GETTY_AFTER=')[1].split('\n')[0]
     assert 'plymouth-quit-wait.service' not in ordering['stdout'].split('E9_TTY1_AFTER=')[1].split('\n')[0]
     assert 'plymouth-quit.service' not in ordering['stdout'].split('E9_SDDM_AFTER=')[1].split('\n')[0]
-    assert ordering['stdout'].endswith('active\nactive\n')
+    assert re.search(r'(?:^|\n|\x1b>)active\nactive\n+$', ordering['stdout']) is not None
     display = browser['result']['displayService']
     assert display['exit'] == 0 and 'E9_SDDM_PID=' in display['stdout']
     def network_pid(point):

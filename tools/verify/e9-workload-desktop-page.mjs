@@ -311,7 +311,7 @@ export async function qualifyDesktopWorkload(contract,qualification){
       &&gettyAfter.includes('systemd-user-sessions.service')&&!gettyAfter.includes('plymouth-quit-wait.service')
       &&tty1After.includes('systemd-user-sessions.service')&&!tty1After.includes('plymouth-quit-wait.service')
       &&sddmAfter.includes('systemd-logind.service')&&sddmAfter.includes('getty@tty1.service')&&!sddmAfter.includes('plymouth-quit.service')
-      &&ordering.endsWith('active\nactive\n'),'real systemd loaded three amended units with logind/serial getty active');
+      &&/(?:^|\n|\x1b>)active\nactive\n+$/.test(ordering),'real systemd loaded three amended units with logind/serial getty active');
     state.networkServiceBefore=await networkStatus('cnetwork0');
     await command('stty -echo','cstty','guest-inspection');
     phase='desktop';
