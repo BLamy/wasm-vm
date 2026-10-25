@@ -60,13 +60,40 @@ a harness constant. Preserve portable refusal above 4 GiB.
 
 ## Verification log
 
+### 2026-10-25 — worker — first physical run found original staging orphans
+
+At clean head `b25990107811c03ff7a64f35ee4886cb3c6e12b8`, the
+`E9_OUT=target/evidence/e9-t22m-submission-b25990107 make verify-E9-T22m`
+run rehashed all 10,268 saved chunks, restored the real 8 GiB prefix into
+Chrome, staged 8 GiB of genuinely novel data through the production writer,
+reached exactly 17,179,869,184 charged bytes, and observed atomic
+`RetentionLimit` for the next byte. Its cleanup assertion then failed before
+accepted completion. Report SHA-256:
+`c1ebdd337f2989e70105c18d2216619e5e915bc4f2534f592aeb03a1cc3be7f4`;
+browser trace SHA-256:
+`dd76daea1e171e9498f1674990a41b6b59b5c0ffe7e0f36576078cbfebd694b8`.
+No M acceptance is claimed from this failed run.
+
+Independent inspection of the original saved index found 10,116 chunks
+referenced by the 2,816 reachable objects and 152 orphan chunks left by the
+failed checkpoint (159,383,552 bytes). A separate read-only reopen of the
+failed M browser profile after its GC reported exactly 10,116 chunks,
+2,816 objects, payload `8,429,693,447`, session revision `637` and the
+durable 16 GiB setting. The cleanup oracle now asserts that reachable graph
+instead of the raw staged prefix. The closed failed profile and a
+reproducible older T22l browser clone were removed for disk space; their
+reports/traces and both original source prefixes remain retained. A new
+clean-head full run and cold clone are required.
+
 ### 2026-10-25 — planning — exact 8 GiB boundary
 
 The unchanged cold C run at `45beaadaa7b4561b127e77796ea3849f981deedb`
 failed at its next 50M checkpoint with `RetentionLimit: saved data byte budget`.
 The retained `target/evidence/e9-t22c-submission-45beaadaa/desktop/saved/storage.json`
 indexes 8,589,076,999 physical bytes, 10,268 chunks and 2,816 reachable
-objects; its separate closure report authenticated all of them. Chrome's
+objects; its separate closure report authenticated the objects. Subsequent
+exact graph inspection found 152 orphan chunks (159,383,552 bytes) left by
+unfinished staging. Chrome's
 origin quota was 19,331,787,395 bytes. The complete failed-run report and
 Daybreak's guest-state diagnostic remain under that evidence directory and
 `target/evidence/e9-t22c-daybreak-capacity-45beaadaa/` respectively. No

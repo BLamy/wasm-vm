@@ -70,8 +70,10 @@ authenticated all 2,816 objects/reachable references and 351 witness pages;
 `desktop/retained-closure/report.json` SHA-256
 `0788ce5fba4b1c1c035f47e04e145b91f3cec59850f08133accbc0749de37734`.
 Physical payload usage is `8,589,076,999` bytes, only `857,593` below the
-declared 8 GiB limit, and every object is live, so garbage collection cannot
-relieve this prefix. The exact original workload and 50M cadence remain
+declared 8 GiB limit. All 2,816 objects are live, but 152 chunks (159,383,552
+bytes) from unfinished staging are orphaned and can be reclaimed by GC. This
+does not supply enough headroom for the remaining complete desktop history.
+The exact original workload and 50M cadence remain
 unchanged. An ordered capacity/profile prerequisite and a new full clean-head
 run are required. Daybreak's read-only reconstruction of the authenticated
 `17500000000` checkpoint found real SDDM/PAM/logind session creation, a

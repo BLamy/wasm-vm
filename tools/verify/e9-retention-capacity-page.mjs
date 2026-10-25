@@ -142,9 +142,10 @@ export async function provePhysicalCapacity(config) {
     need(collected.collected && collected.removedObjects === newObjects.length,
       'unpublished objects not collected');
     const afterCleanup = await store.statistics();
-    need(afterCleanup.payloadBytes === config.prefixBytes
-      && afterCleanup.chunks === seeded.chunks && afterCleanup.objects === seeded.objects,
-    'cleanup did not restore exact physical prefix');
+    need(afterCleanup.payloadBytes === config.survivorBytes
+      && afterCleanup.chunks === config.survivorChunkCount
+      && afterCleanup.objects === seeded.objects,
+    'cleanup did not retain the exact original reachable graph');
     const survivor = await store.openSession(source.stores.sessions[0].key);
     need(survivor?.revision === '637'
       && await digest(survivor.manifest) === config.manifestSha256,

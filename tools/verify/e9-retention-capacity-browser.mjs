@@ -64,11 +64,13 @@ try {
   const indexedBytes = storage.stores.chunks.reduce((sum, row) => sum + row.bytes, 0);
   assert.equal(indexedBytes, pin.physicalBytes);
   const originalParts = new Map(storage.stores.chunks.map(row => [row.key, row.bytes]));
+  const referencedParts = new Set();
   for (const row of storage.stores.objects) {
     const value = row.value;
     assert.equal(row.key, value.sha256);
     assert.equal(value.parts.reduce((sum, part) => {
       assert.equal(originalParts.get(part.sha256), Number(part.length));
+      referencedParts.add(part.sha256);
       return sum + Number(part.length);
     }, 0), Number(value.length));
   }
@@ -84,15 +86,24 @@ try {
   report.prefix = {reportSha256: sha(failureBytes), storageSha256: sha(storageBytes),
     closureSha256: sha(closureBytes), physicalBytes: indexedBytes,
     belowEightGiB: pin.oldMaxBytes - indexedBytes, chunks: checked,
-    objects: storage.stores.objects.length, closureStatus: closure.status};
+    objects: storage.stores.objects.length, closureStatus: closure.status,
+    reachableChunks: referencedParts.size,
+    reachableBytes: storage.stores.chunks.reduce((sum, row) =>
+      sum + (referencedParts.has(row.key) ? row.bytes : 0), 0)};
   assert.equal(report.prefix.belowEightGiB, 857593);
+  assert.equal(report.prefix.reachableChunks, pin.reachableChunks);
+  assert.equal(report.prefix.reachableBytes, pin.reachableBytes);
+  assert.equal(report.prefix.chunks - report.prefix.reachableChunks, pin.orphanChunks);
+  assert.equal(report.prefix.physicalBytes - report.prefix.reachableBytes, pin.orphanBytes);
   assert.equal(closure.status, 'retained-closure-passed');
   assert.equal(closure.objects, pin.objects);
   assert.equal(closure.references, pin.objects);
   const manifest = new Uint8Array(storage.stores.sessions[0].value.manifest);
   const config = {database: 'wasm-vm-sessions-v1-t22m-capacity',
     prefixBytes: pin.physicalBytes, maxBytes: profile.retention.maxBytes,
-    manifestSha256: sha(manifest), reserveBytes: profile.preflight.reserveBytes};
+    manifestSha256: sha(manifest), reserveBytes: profile.preflight.reserveBytes,
+    survivorChunkCount: report.prefix.reachableChunks,
+    survivorBytes: report.prefix.reachableBytes};
   const seen = new Map();
   const types = {'.js': 'text/javascript', '.mjs': 'text/javascript', '.wasm': 'application/wasm',
     '.json': 'application/json', '.css': 'text/css', '.html': 'text/html'};
@@ -205,7 +216,7 @@ try {
         persisted: await navigator.storage.persisted()};
     } finally {await store.close();}
   }, config);
-  assert.equal(report.reopen.stats.payloadBytes, pin.physicalBytes);
+  assert.equal(report.reopen.stats.payloadBytes, config.survivorBytes);
   assert.equal(report.reopen.stats.limits.maxBytes, profile.retention.maxBytes);
   assert.equal(report.reopen.revision, '637');
   assert.equal(report.reopen.manifestSha256, config.manifestSha256);

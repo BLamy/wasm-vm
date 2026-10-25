@@ -15,6 +15,10 @@
     "physicalBytes": 8589076999,
     "chunks": 10268,
     "objects": 2816,
+    "reachableChunks": 10116,
+    "reachableBytes": 8429693447,
+    "orphanChunks": 152,
+    "orphanBytes": 159383552,
     "oldMaxBytes": 8589934592
   },
   "retention": {
