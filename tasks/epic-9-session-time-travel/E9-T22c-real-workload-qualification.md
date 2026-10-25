@@ -3,8 +3,7 @@ id: E9-T22c
 epic: 9
 title: Qualify both full pinned performance workloads
 priority: 524.92203
-status: blocked
-blocked_on: E9-T22n
+status: in-progress
 depends_on: [E9-T22b, E9-T22h, E9-T22j, E9-T22k, E9-T22l, E9-T22m, E9-T22n]
 estimate: S
 risk: medium
@@ -45,6 +44,18 @@ and count live server calls. Refuse software renderer or changed probe/assets,
 missing GL results, hidden live replay I/O and an incomplete long recording.
 
 ## Verification log
+
+### 2026-10-25 — worker — resumed after E9-T22n verification
+
+E9-T22n independently verified the finite 16-hour wall-only v11 amendment at
+`66eed6c54e7cfe91ab4e8ef152fb35f2d62b3709`. The prior failed C report,
+browser trace, failure state, and authenticated 8.1 GiB saved graph remain.
+Its closed Chrome profile duplicated the exported graph and was removed to
+restore 39 GiB host free space before a fresh cold run; no saved object or
+recording artifact was removed. The original 20B guest-transition ceiling,
+50M checkpoint cadence, workloads, asset pins, retention, probe, replay rules
+and numeric performance budgets are unchanged. Resume `make verify-E9-T22c`
+from the original cold boot on a new clean exact head.
 
 ### 2026-10-25 — worker — blocked on the exact eight-hour desktop wall
 
