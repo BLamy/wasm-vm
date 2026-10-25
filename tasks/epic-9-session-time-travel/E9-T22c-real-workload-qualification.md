@@ -46,6 +46,134 @@ missing GL results, hidden live replay I/O and an incomplete long recording.
 
 ## Verification log
 
+### 2026-10-25 — worker — retained 8 GiB exact-history capacity failure
+
+At clean head `45beaadaa7b4561b127e77796ea3849f981deedb`, the exact
+`E9_OUT=target/evidence/e9-t22c-submission-45beaadaa make verify-E9-T22c`
+run passed the 12 direct tests, the complete original Alpine workload/replay,
+and its independent literal-file oracle. The original cold Omarchy image then
+booted real systemd, NetworkManager, logind, serial getty, SDDM and the direct
+root Bash; guest commands proved all five COW service files and unit ordering.
+While waiting for the first nonblank desktop frame, checkpoint 351 attempted
+to stage another live byte at transition `17550000000`, sequence `2477`, and
+the durable store rejected it with `SessionStoreError: RetentionLimit: saved
+data byte budget`. The 350 committed periodic checkpoints and 2,477 exact
+receipts remain intact. No desktop frame, RV64 probe, complete GPU workload,
+whole-history replay, timing result or C acceptance is claimed.
+
+The failure report is `target/evidence/e9-t22c-submission-45beaadaa/desktop/report.json`
+(SHA-256 `99d146de6bf1cc0f31d8bf118e901f96fbaac2e822cdf8b2f15a6fa8811b463d`);
+the exported saved graph index is `desktop/saved/storage.json` (SHA-256
+`3de6de06c5da89d7e38f7a05b46f48736086b670bc92f8e060343ca8130b62dd`).
+The independent incomplete-prefix oracle rehashed all 10,268 physical chunks,
+authenticated all 2,816 objects/reachable references and 351 witness pages;
+`desktop/retained-closure/report.json` SHA-256
+`0788ce5fba4b1c1c035f47e04e145b91f3cec59850f08133accbc0749de37734`.
+Physical payload usage is `8,589,076,999` bytes, only `857,593` below the
+declared 8 GiB limit, and every object is live, so garbage collection cannot
+relieve this prefix. The exact original workload and 50M cadence remain
+unchanged. An ordered capacity/profile prerequisite and a new full clean-head
+run are required. Daybreak's read-only reconstruction of the authenticated
+`17500000000` checkpoint found real SDDM/PAM/logind session creation, a
+runnable user systemd, `uwsm` in a finite poll, and newly started user D-Bus
+processes. The guest was still advancing toward Hyprland; there is no evidence
+for a login deadlock or a COW session bypass. Diagnostic report
+`target/evidence/e9-t22c-daybreak-capacity-45beaadaa/report.md` SHA-256
+`39760ab9266c0f61b8ba6c57ae82f035f4a90e9e8197057a251b60f9603f7cb6`.
+The closed Chrome profile's duplicate IndexedDB copy was removed after the
+complete saved graph passed the independent closure oracle; its browser
+version metadata, exported graph, state, receipts, screenshot and trace remain.
+
+### 2026-10-25 — worker — controlled preflight stop before a second RPC newline trap
+
+At clean exact head `5f6970582a8ffdd303764aaa76d74ebf3cf53102`,
+`E9_OUT=target/evidence/e9-t22c-submission-5f6970582 make verify-E9-T22c`
+passed the 12 schedule/asset tests and entered the software boot. A fresh
+Daybreak read-only downstream preflight found that `cdisplay` would
+deterministically reject the same documented RPC framing newline as the
+just-fixed service-status predicate. I requested the harness's normal `STOP`
+control during the software boot, so this attempt failed at about 179 million
+transitions before the long desktop run; its retained report is
+`target/evidence/e9-t22c-submission-5f6970582/software/report.json`
+(SHA-256 `4f12f394ebb154cfe911d803683bf92c52f3111e2f796105335bace52e9b6a21`).
+It is not a software or desktop qualification pass.
+
+The page now accepts only extra terminal newlines after the two exact SDDM
+status records; the independent Python oracle enforces the same record shape.
+Positive one/two-newline samples and negative extra-line/invalid-PID samples
+pass in both languages. Daybreak found no other deterministic downstream
+blocker in the GPU, export, retained-closure or literal-file checks. A new
+clean exact-head full run remains required.
+
+### 2026-10-25 — worker — retained f488 service-status formatting failure
+
+At clean exact head `f48806901cb86e76472fa28e61d5cb6fa5ff045a`,
+`E9_OUT=target/evidence/e9-t22c-submission-f48806901 make verify-E9-T22c`
+passed the complete original Alpine recording/replay and independent literal-file
+oracle. The original Omarchy image then booted real systemd, NetworkManager,
+logind and SDDM. The authenticated v10 COW direct root Bash appeared on ttyS0;
+recorded guest commands proved UID 0, HOME `/root`, Bash argv/parent PID 1, all
+five COW file hashes and modes, and the live getty/tty1/SDDM unit paths and
+ordering. At transition `11336700160`, sequence `2022`, the harness rejected
+the final service-status assertion despite `systemctl is-active` returning
+`active` for both logind and serial getty with exit 0. The retained stdout
+ends `active\nactive\n\n`; both the page and offline oracle had incorrectly
+required exactly one final newline. The extra newline is the documented RPC
+fence behavior, not a service failure. Fresh Daybreak independently checked
+every semantic predicate against the report. This is a harness proof gap, not
+a desktop, GPU workload or replay pass.
+
+The failure retained 226 checkpoints, 2,022 receipts, 753 authenticated base
+completions, the report at `target/evidence/e9-t22c-submission-f48806901/desktop/report.json`
+(SHA-256 `ec1d2fc599dd168f5f0eecc670a529d5037ab02683f570c3be8a26b840f38efc`),
+and saved graph at `desktop/saved/storage.json` (SHA-256
+`9d19b6009972979f594ff2847689b96b729236ebc35a0d4d63baf4d1b016f3eb`).
+The page and independent oracle now require two line-bounded `active` statuses
+and allow only extra final newlines. The retained positive result and two
+`inactive` mutations pass/fail as expected in both JS and Python; the 14 RPC
+parser tests pass. A fresh clean-head full qualification is still required.
+
+### 2026-10-24 — worker — retained v9 root-login wait and v10 serial-shell amendment
+
+At clean exact head `18bf26e9e00ace2edfd42fc09e6ec0c550d0058c`,
+`E9_OUT=target/evidence/e9-t22c-submission-18bf26e9e make verify-E9-T22c`
+passed the complete original Alpine workload and its independent literal-file
+oracle. The unchanged Omarchy image booted real systemd, NetworkManager,
+logind, SDDM, serial getty, and root autologin to its normal MOTD, but no
+interactive prompt appeared through about 10.8 billion guest transitions.
+I closed this attempt through the harness's recorded `STOP` control, retaining
+216 checkpoints, 1,852 receipts, 736 authenticated base completions and the
+failed report at `target/evidence/e9-t22c-submission-18bf26e9e/desktop/report.json`
+(SHA-256 `67872e0041c39742b55426e035dc5f58ba04341e343cc2930bde6051af6178f0`),
+with its saved graph (`desktop/saved/storage.json`, SHA-256
+`ec566930a7fd88ba8c255a940db9e645c1ee40e2274cd0c3dc75973d56bbfe12`).
+This controlled failure is not a GPU, desktop workload or replay pass.
+
+Fresh Daybreak independently reconstructed the prior longer v9 saved-state
+prefix at 12.85 billion transitions: `login` PID 189 slept in
+`__riscv_sys_ppoll` on fd 4 `POLLIN`, with a nearly 120-second guest-time
+timeout, while runnable systemd processes continued. No Bash process existed.
+The ICount/64, 10 MHz profile makes that timeout about 76.8 billion more
+instructions. The exact fd 4 object was not recovered, so the external cause
+of the poll remains unknown. Daybreak proposed a narrow v10 test-only COW
+drop-in: retain the authenticated vendor serial-getty unit and its tty/service
+settings, but launch `/bin/bash --noprofile --norc -i` directly on ttyS0.
+The base image, workload, emulator, clock, cadence and budget remain frozen.
+v10 explicitly does not qualify agetty, PAM, utmp/wtmp or root login-session
+registration. The new run must prove the direct root shell, live systemd
+services, unchanged full desktop/GPU workload, replay and independent COW
+bytes on a fresh clean exact head.
+
+### 2026-10-24 — worker — preflight prevented an uninformative long run
+
+At clean exact head `546110a4991b6bfcfac154ad0dc0c10544626d7a`, `make verify-E9-T22c` passed its 12 schedule/asset tests and entered the software leg. A fresh Daybreak preflight found that the post-desktop retained-closure oracle still called the portable 4 GiB manifest APIs, which would deterministically reject the now-valid local history after the several-hour desktop run. I interrupted the in-progress software replay at exit 130; its controlled-interruption report remains at `target/evidence/e9-t22c-submission-546110a49/software/report.json` (SHA-256 `995a2a63dbb2d0397adfdc30c2e02ed4cbeb81398494a2f399219dfd6a3d8e09`). This is not a workload result.
+
+The oracle now uses the explicit local manifest and event-reference APIs for saved-graph inspection, while requiring the complete history to remain rejected by the portable validator. Its `--allow-incomplete` dry run against the retained `bcc6bc1c4` desktop export passed 2,138 objects and 2,134 reachable references (`desktop/retained-closure/report.json`, SHA-256 `e653d4ebe6da2cd9c7787631d1db7de3c69e043c8210d72eade562e625b6ba20`). Directly checking the exact `cold-257` candidate confirmed local admission, local references and portable rejection. Daybreak's read-only patch preflight found no remaining deterministic oracle blocker. A clean-head full run and final verifier remain required.
+
+### 2026-10-24 — worker — resume after E9-T22l verification
+
+E9-T22l was independently verified at `7dd057423a8e4d18495715190d009ef005e01230` and its verified roadmap publication was committed at `c6e3427b1904590475382658f14c56df71897e80`. Resume the unchanged full software and desktop qualification from a clean head. The retained `cold-257` profile remains the reference for the previous failure; this entry makes no qualification or performance claim.
+
 ### 2026-10-24 — worker — blocked on shared local session-metadata bound
 
 At clean exact head `bcc6bc1c4a8eb7d6cb82a1ffc1653b2827d63a60`, run
