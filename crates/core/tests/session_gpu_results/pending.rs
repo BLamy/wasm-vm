@@ -159,6 +159,47 @@ fn exact_gpu_checkpoint_preserves_unnotified_cursor_descriptor() {
     assert_eq!(resumed.machine.bus_mut().load16(used + 2).unwrap(), 1);
     assert_eq!(gpu_shadow(&mut resumed, 1).0, 1);
 }
+
+#[test]
+fn verifier_capture_boundary_preserves_each_queue_notification_without_coalescing() {
+    let mut source = fresh(false, false);
+    let slot = source.machine.virtio_gpu().unwrap().0;
+    let base = Platform::virtio_base(slot as u64);
+    for _ in 0..500 {
+        if source.machine.bus_mut().load32(base + 0x44).unwrap() == 1 {
+            break;
+        }
+        source.step();
+    }
+    assert_eq!(source.machine.bus_mut().load32(base + 0x44).unwrap(), 1);
+
+    let before = source.machine.save_gpu_result_resume(&RENDERER).unwrap();
+    source.machine.bus_mut().store32(base + 0x50, 0).unwrap();
+    let between = source.machine.save_gpu_result_resume(&RENDERER).unwrap();
+    source.machine.bus_mut().store32(base + 0x50, 1).unwrap();
+    let after = source.machine.save_gpu_result_resume(&RENDERER).unwrap();
+
+    for (checkpoint, expected) in [
+        (&before, [0, 0, 0]),
+        (&between, [0, 1, 0]),
+        (&after, [0, 1, 1]),
+    ] {
+        let mut restored = fresh(false, false);
+        restored
+            .machine
+            .load_gpu_result_resume(checkpoint, &RENDERER)
+            .unwrap();
+        assert_eq!(gpu_shadow(&mut restored, 0).2, expected);
+    }
+
+    let mut restored = fresh(false, false);
+    restored
+        .machine
+        .load_gpu_result_resume(&after, &RENDERER)
+        .unwrap();
+    restored.step();
+    assert_eq!(gpu_shadow(&mut restored, 0).2, [0, 0, 0]);
+}
 fn drain(r: &mut Rig) {
     r.machine.take_session_deliveries().unwrap();
 }
