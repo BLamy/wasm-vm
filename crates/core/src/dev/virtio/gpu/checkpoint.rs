@@ -349,6 +349,8 @@ pub(crate) struct PreparedGpuCheckpoint {
     scanout: Scanout3dSnapshot,
     scanout_resource: Option<u32>,
     pending: Option<pending::PendingCheckpoint>,
+    /// Exact histories retain QueueNotify latches; ordinary reconnects rearm them.
+    notification_latches: Option<(bool, bool)>,
     pub(crate) saved_epoch: u64,
     pub(crate) restored_epoch: u64,
 }
@@ -417,8 +419,10 @@ impl GpuState {
                     .as_ref()
                     .is_some_and(|c| c.result_tap_active()),
         )?;
-        let mut out = b"WVGPULG1".to_vec();
+        let mut out = b"WVGPULG2".to_vec();
         out.push(u8::from(self.reset_pending));
+        out.push(u8::from(self.kicked));
+        out.push(u8::from(self.cursor_kicked));
         out.extend_from_slice(
             &self
                 .scanout_resource
@@ -545,7 +549,7 @@ impl GpuState {
             .snapshot();
         let mut out = Vec::new();
         out.extend_from_slice(MAGIC);
-        out.extend_from_slice(&(if results { 2u32 } else { 1u32 }).to_le_bytes());
+        out.extend_from_slice(&(if results { 3u32 } else { 1u32 }).to_le_bytes());
         out.extend_from_slice(
             &self
                 .scanout_resource
@@ -553,6 +557,10 @@ impl GpuState {
                 .to_le_bytes(),
         );
         out.extend_from_slice(witness);
+        if results {
+            out.push(u8::from(self.kicked));
+            out.push(u8::from(self.cursor_kicked));
+        }
         let cap = self
             .capabilities
             .as_ref()
@@ -631,11 +639,24 @@ impl GpuState {
             return Err(Error::Corrupt);
         }
         let mut r = Reader::new(body);
-        need(r.take(8)? == MAGIC && r.u32()? == if results { 2 } else { 1 })?;
+        need(r.take(8)? == MAGIC)?;
+        let version = r.u32()?;
+        if results && version == 2 {
+            return Err(Error::Unsupported);
+        }
+        need(version == if results { 3 } else { 1 })?;
         let original_scanout = r.u32()?;
         if r.take(32)? != witness || witness.iter().all(|v| *v == 0) {
             return Err(Error::WitnessMismatch);
         }
+        let notification_latches = if results {
+            let control = r.u8()?;
+            let cursor = r.u8()?;
+            need(control <= 1 && cursor <= 1)?;
+            Some((control != 0, cursor != 0))
+        } else {
+            None
+        };
         let profile = r.blob(CAPSET_BYTES)?;
         if profile
             != self
@@ -765,6 +786,7 @@ impl GpuState {
             saved_epoch,
             restored_epoch,
             pending,
+            notification_latches,
         })
     }
     pub(crate) fn commit_gpu_checkpoint(&mut self, prepared: PreparedGpuCheckpoint) {
@@ -776,6 +798,7 @@ impl GpuState {
             scanout_resource,
             restored_epoch,
             pending,
+            notification_latches,
             ..
         } = prepared;
         self.control3d
@@ -796,7 +819,7 @@ impl GpuState {
                 .expect("prepared submit")
                 .commit_pending_checkpoint(value.pending, value.last_exchange, value.completion);
         }
-        snapshot::apply(self, two_d);
+        snapshot::apply(self, two_d, notification_latches);
         self.scanout_resource = scanout_resource;
     }
 }

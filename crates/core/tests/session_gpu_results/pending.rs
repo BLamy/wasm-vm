@@ -25,6 +25,140 @@ fn logical_gpu(r: &Rig) -> Vec<u8> {
     out.extend(gpu.scanout3d_snapshot().unwrap().canonical_bytes());
     out
 }
+
+fn gpu_shadow(r: &mut Rig, queue: usize) -> (u16, u16, [u8; 3]) {
+    assert!(queue < 2);
+    let state = r.machine.gpu_session_state_witness_bytes().unwrap();
+    let (_, sections) = wasm_vm_core::resume::SectionReader::new(&state).unwrap();
+    let gpu = sections
+        .map(Result::unwrap)
+        .find(|section| section.tag == wasm_vm_core::resume::section::VIRTIO_GPU)
+        .unwrap();
+    let prefix = &gpu.payload[277 + 5 * queue..282 + 5 * queue];
+    let magic = gpu
+        .payload
+        .windows(8)
+        .position(|value| value == b"WVGPULG2")
+        .unwrap();
+    assert_eq!(prefix[0], 1);
+    (
+        u16::from_le_bytes([prefix[1], prefix[2]]),
+        u16::from_le_bytes([prefix[3], prefix[4]]),
+        gpu.payload[magic + 8..magic + 11].try_into().unwrap(),
+    )
+}
+
+#[test]
+fn exact_gpu_checkpoint_preserves_unnotified_control_descriptor() {
+    let mut source = fresh(false, false);
+    let slot = source.machine.virtio_gpu().unwrap().0;
+    let base = Platform::virtio_base(slot as u64);
+    for _ in 0..500 {
+        if source.machine.bus_mut().load32(base + 0x44).unwrap() == 1 {
+            break;
+        }
+        source.step();
+    }
+    assert_eq!(source.machine.bus_mut().load32(base + 0x44).unwrap(), 1);
+    assert_eq!(source.machine.bus_mut().load16(AVAIL + 2).unwrap(), 0);
+    source.write(AVAIL + 2, &1u16.to_le_bytes());
+    assert_eq!(gpu_shadow(&mut source, 0), (0, 0, [0, 0, 0]));
+    let saved = source.machine.save_gpu_result_resume(&RENDERER).unwrap();
+    let mut restored = fresh(false, false);
+    restored
+        .machine
+        .load_gpu_result_resume(&saved, &RENDERER)
+        .unwrap();
+    assert_eq!(gpu_shadow(&mut restored, 0), (0, 0, [0, 0, 0]));
+    restored.step();
+    assert_eq!(gpu_shadow(&mut restored, 0), (0, 0, [0, 0, 0]));
+    assert_eq!(restored.machine.bus_mut().load16(USED + 2).unwrap(), 0);
+
+    source.machine.bus_mut().store32(base + 0x50, 0).unwrap();
+    assert_eq!(gpu_shadow(&mut source, 0), (0, 0, [0, 1, 0]));
+    let notified = source.machine.save_gpu_result_resume(&RENDERER).unwrap();
+    let mut resumed = fresh(false, false);
+    resumed
+        .machine
+        .load_gpu_result_resume(&notified, &RENDERER)
+        .unwrap();
+    assert_eq!(gpu_shadow(&mut resumed, 0), (0, 0, [0, 1, 0]));
+    resumed.step();
+    assert_eq!(gpu_shadow(&mut resumed, 0).0, 1);
+    assert_eq!(resumed.machine.bus_mut().load16(USED + 2).unwrap(), 1);
+}
+
+#[test]
+fn exact_gpu_checkpoint_preserves_unnotified_cursor_descriptor() {
+    let mut source = fresh(false, false);
+    let slot = source.machine.virtio_gpu().unwrap().0;
+    let base = Platform::virtio_base(slot as u64);
+    for _ in 0..500 {
+        if source.machine.bus_mut().load32(base + 0x44).unwrap() == 1 {
+            break;
+        }
+        source.step();
+    }
+    assert_eq!(source.machine.bus_mut().load32(base + 0x44).unwrap(), 1);
+    let desc = virt::DRAM_BASE + 0x30000;
+    let avail = virt::DRAM_BASE + 0x31000;
+    let used = virt::DRAM_BASE + 0x32000;
+    let request = virt::DRAM_BASE + 0x33000;
+    let response = virt::DRAM_BASE + 0x34000;
+    let mut descriptors = [0u8; 32];
+    descriptors[..8].copy_from_slice(&request.to_le_bytes());
+    descriptors[8..12].copy_from_slice(&40u32.to_le_bytes());
+    descriptors[12..14].copy_from_slice(&1u16.to_le_bytes());
+    descriptors[14..16].copy_from_slice(&1u16.to_le_bytes());
+    descriptors[16..24].copy_from_slice(&response.to_le_bytes());
+    descriptors[24..28].copy_from_slice(&24u32.to_le_bytes());
+    descriptors[28..30].copy_from_slice(&2u16.to_le_bytes());
+    source.write(desc, &descriptors);
+    source.write(request, &packet(0x301, 0, 40));
+    for (offset, value) in [
+        (0x30, 1),
+        (0x38, 16),
+        (0x80, desc as u32),
+        (0x84, 0),
+        (0x90, avail as u32),
+        (0x94, 0),
+        (0xa0, used as u32),
+        (0xa4, 0),
+        (0x44, 1),
+        (0x30, 0),
+    ] {
+        source
+            .machine
+            .bus_mut()
+            .store32(base + offset, value)
+            .unwrap();
+    }
+    source.write(avail + 2, &1u16.to_le_bytes());
+    assert_eq!(gpu_shadow(&mut source, 1).2, [0, 0, 0]);
+    let saved = source.machine.save_gpu_result_resume(&RENDERER).unwrap();
+    let mut restored = fresh(false, false);
+    restored
+        .machine
+        .load_gpu_result_resume(&saved, &RENDERER)
+        .unwrap();
+    assert_eq!(gpu_shadow(&mut restored, 1).2, [0, 0, 0]);
+    restored.step();
+    assert_eq!(restored.machine.bus_mut().load16(used + 2).unwrap(), 0);
+    assert_eq!(gpu_shadow(&mut restored, 1).1, 0);
+
+    source.machine.bus_mut().store32(base + 0x50, 1).unwrap();
+    assert_eq!(gpu_shadow(&mut source, 1).2, [0, 0, 1]);
+    let notified = source.machine.save_gpu_result_resume(&RENDERER).unwrap();
+    let mut resumed = fresh(false, false);
+    resumed
+        .machine
+        .load_gpu_result_resume(&notified, &RENDERER)
+        .unwrap();
+    assert_eq!(gpu_shadow(&mut resumed, 1).2, [0, 0, 1]);
+    resumed.step();
+    assert_eq!(resumed.machine.bus_mut().load16(used + 2).unwrap(), 1);
+    assert_eq!(gpu_shadow(&mut resumed, 1).0, 1);
+}
 fn drain(r: &mut Rig) {
     r.machine.take_session_deliveries().unwrap();
 }
@@ -990,9 +1124,9 @@ fn native_chunks(gpu: &[u8]) -> (usize, Vec<std::ops::Range<usize>>) {
     let inner = gpu.windows(8).position(|v| v == b"WVGPU3D1").unwrap();
     assert_eq!(
         u32::from_le_bytes(gpu[inner + 8..inner + 12].try_into().unwrap()),
-        2
+        3
     );
-    let mut at = inner + 48;
+    let mut at = inner + 50;
     let mut chunks = vec![];
     for _ in 0..6 {
         let n = u32::from_le_bytes(gpu[at..at + 4].try_into().unwrap()) as usize;
@@ -1004,7 +1138,7 @@ fn native_chunks(gpu: &[u8]) -> (usize, Vec<std::ops::Range<usize>>) {
 }
 fn reseal_gpu_parts(parts: &mut [(u32, Vec<u8>)]) {
     let gpu = &mut parts.iter_mut().find(|(tag, _)| *tag == 12).unwrap().1;
-    let (inner, _) = native_chunks(gpu);
+    let inner = gpu.windows(8).position(|v| v == b"WVGPU3D1").unwrap();
     let end = gpu.len() - 32;
     let sha = Sha256::digest(&gpu[inner..end]);
     gpu[end..].copy_from_slice(&sha);
@@ -1012,6 +1146,59 @@ fn reseal_gpu_parts(parts: &mut [(u32, Vec<u8>)]) {
     let frontier = &mut parts.iter_mut().find(|(tag, _)| *tag == 22).unwrap().1;
     frontier[8..40].copy_from_slice(&sha);
     reseal(frontier);
+}
+
+#[test]
+fn exact_gpu_checkpoint_rejects_malformed_latches_and_legacy_version_atomically() {
+    let mut source = fresh(false, false);
+    let saved = source.machine.save_gpu_result_resume(&RENDERER).unwrap();
+    let mut target = fresh(false, false);
+    target
+        .machine
+        .load_gpu_result_resume(&saved, &RENDERER)
+        .unwrap();
+    let incumbent = target.machine.save_gpu_result_resume(&RENDERER).unwrap();
+    let parts = sections(&saved);
+    for (name, latch) in [("control", 0usize), ("cursor", 1)] {
+        let mut altered = parts.clone();
+        let gpu = &mut altered.iter_mut().find(|(tag, _)| *tag == 12).unwrap().1;
+        let (inner, _) = native_chunks(gpu);
+        gpu[inner + 48 + latch] = 2;
+        reseal_gpu_parts(&mut altered);
+        let candidate = assemble(&saved, &altered);
+        for _ in 0..2 {
+            assert!(
+                target
+                    .machine
+                    .load_gpu_result_resume(&candidate, &RENDERER)
+                    .is_err(),
+                "accepted {name}"
+            );
+            assert_eq!(
+                target.machine.save_gpu_result_resume(&RENDERER).unwrap(),
+                incumbent,
+                "mutated after {name}"
+            );
+        }
+    }
+    let mut legacy = parts;
+    let gpu = &mut legacy.iter_mut().find(|(tag, _)| *tag == 12).unwrap().1;
+    let (inner, _) = native_chunks(gpu);
+    gpu[inner + 8..inner + 12].copy_from_slice(&2u32.to_le_bytes());
+    gpu.drain(inner + 48..inner + 50);
+    reseal_gpu_parts(&mut legacy);
+    let candidate = assemble(&saved, &legacy);
+    assert!(
+        target
+            .machine
+            .load_gpu_result_resume(&candidate, &RENDERER)
+            .is_err(),
+        "accepted legacy v2"
+    );
+    assert_eq!(
+        target.machine.save_gpu_result_resume(&RENDERER).unwrap(),
+        incumbent
+    );
 }
 #[test]
 fn pending_keyframe_rehashed_native_semantics_and_prepared_dma_fail_before_commit() {

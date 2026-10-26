@@ -1,6 +1,15 @@
 // E5-T22e independent verifier attack, included only inside the existing test module.
 // Real MMIO queue configuration: old and new rings deliberately use different RAM.
 #[test]
+fn ordinary_2d_reconnect_rearms_both_notification_latches() {
+    let (_, state) = VirtioGpu::new_with_state();
+    let saved = state.borrow().to_snapshot().unwrap();
+    assert!(!state.borrow().kicked && !state.borrow().cursor_kicked);
+    state.borrow_mut().restore_snapshot(&saved).unwrap();
+    assert!(state.borrow().kicked && state.borrow().cursor_kicked);
+}
+
+#[test]
 fn display_reset_verifier_reconfigured_rings_reject_stale_resources() {
     fn configure(slot: &mut VirtioMmio, index: u32, base: u64) -> QueueState {
         write32(slot, QUEUE_SEL, index);

@@ -17,9 +17,9 @@ def unpack(blob):
     while at<len(blob)-84:
         tag=u32(blob,at);length=u32(blob,at+4);assert tag not in sections;sections[tag]=blob[at+8:at+8+length];at+=8+length
     assert at==len(blob)-84
-    gpu=sections[12];frontier=sections[22];inner=gpu.index(b'WVGPU3D1');assert u32(gpu,inner+8)==2 and sha(gpu[inner:-32])==gpu[-32:]
+    gpu=sections[12];frontier=sections[22];inner=gpu.index(b'WVGPU3D1');version=u32(gpu,inner+8);assert version in (2,3) and sha(gpu[inner:-32])==gpu[-32:]
     assert frontier[:8]==b'WVGFRNT1' and frontier[8:40]==sha(gpu) and sha(frontier[:-32])==frontier[-32:]
-    chunks=[];at=inner+48
+    chunks=[];at=inner+(50 if version==3 else 48)
     for _ in range(6):n=u32(gpu,at);chunks.append(gpu[at+4:at+4+n]);at+=4+n
     assert at==len(gpu)-32
     return sections,gpu,frontier,chunks

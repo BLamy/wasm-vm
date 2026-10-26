@@ -88,9 +88,18 @@ for point in manifest['checkpoints']:
     assert (u64(clock,12),u64(clock,20),u64(clock,28),u64(clock,36))==tuple(int(point['position'][k]) for k in ['transition','retired','ordinal','sequence'])
     committed=next(x for x in witnesses if x['transition']==point['position']['transition'] and x['sequence']==point['position']['sequence'])
     assert bytes(committed['digest']).hex()==meta['stateSha256']
-    gpu=sections[12];inner=gpu.index(b'WVGPU3D1');assert u32(gpu,inner+8)==2 and sha(gpu[inner:-32])==gpu[-32:].hex()
+    gpu=sections[12];inner=gpu.index(b'WVGPU3D1');version=u32(gpu,inner+8);assert version in (2,3) and sha(gpu[inner:-32])==gpu[-32:].hex()
+    if report.get('latchProof'):
+        assert version==3,'exact latch proof requires the corrected GPU format'
+        if point['id']=='published-unnotified':
+            symbol=report['fixture']['symbols']['gpu'];start=int(symbol['address'],16)-0x80000000
+            assert (u16(view,start+0x1002),u16(view,start+0x120a))==(1,0),'guest published but not yet notified'
+            assert (u16(gpu,278),u16(gpu,280))==(0,0),'device shadow has not claimed the descriptor'
+            assert gpu[inner+48:inner+50]==b'\0\0','both saved QueueNotify latches are clear'
+            assert all(point['position'][key]==report['run']['latchAt']['position'][key] for key in ('transition','retired','phase','sequence','ordinal'))
+            assert meta['stateSha256']==bytes(report['run']['latchAt']['witness']['digest']).hex()
     frontier=sections[22];assert frontier[:8]==b'WVGFRNT1' and frontier[8:40].hex()==sha(gpu) and sha(frontier[:-32])==frontier[-32:].hex()
-    at=inner+48;parts=[]
+    at=inner+(50 if version==3 else 48);parts=[]
     for _ in range(6):length=u32(gpu,at);parts.append(gpu[at+4:at+4+length]);at+=4+length
     assert at==len(gpu)-32
     pending=parts[-1][0]==1
@@ -148,6 +157,11 @@ query=[b for b in result_bodies if len(b)==32]
 assert any(struct.unpack_from('<IIII',b)==(1,4,1,0) for b in query)
 assert any(struct.unpack_from('<IIII',b)==(1,4,0,0) for b in query)
 assert report['replay']['digest']==bytes(report['run']['end']['digest']).hex()
+if report.get('latchProof'):
+    assert any(frame['id']=='published-unnotified' for frame in frames)
+    assert report['run']['latchAt']['pc']==0x8020016e and report['run']['latchAt']['latches']==[0,0]
+    assert report['replay']['latch']['digest']==bytes(report['run']['latchAfter']['digest']).hex()
+    assert report['replayExternalRequests']==[] and report['replaySockets']==[]
 source=bytes(report['run']['stateBytes']);replayed=bytes(report['replay']['stateBytes'])
 assert source==replayed and report['run']['ramDigest']==report['replay']['ramDigest']
 expected=sha(b'wasm-vm-gpu-guest-state-v1\0'+struct.pack('<Q',len(source))+source+bytes.fromhex(report['run']['ramDigest']))

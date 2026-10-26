@@ -37,7 +37,7 @@ fn critic_replace_chunk(parts: &mut [(u32, Vec<u8>)], index: usize, value: Vec<u
     let (inner, ranges) = native_chunks(gpu);
     let mut chunks: Vec<Vec<u8>> = ranges.iter().map(|r| gpu[r.clone()].to_vec()).collect();
     chunks[index] = value;
-    let mut result = gpu[..inner + 48].to_vec();
+    let mut result = gpu[..inner + 50].to_vec();
     for chunk in chunks {
         result.extend_from_slice(&(chunk.len() as u32).to_le_bytes());
         result.extend(chunk);

@@ -2904,6 +2904,19 @@ verify-E9-T22n:
 	  mkdir "$$out/prefix"; ln -s "$$desktop/report.json" "$$out/prefix/report.json"; ln -s "$$desktop/saved" "$$out/prefix/saved"; \
 	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/prefix" --allow-incomplete
 
+.PHONY: verify-E9-T22q
+verify-E9-T22q:
+	@set -eu; out="$${E9_OUT:-target/evidence/e9-t22q-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  cargo fmt --all --check; \
+	  cargo clippy -p wasm-vm-core --features virgl-renderer,trace --all-targets -- -D warnings > "$$out/clippy.log" 2>&1; \
+	  cargo test -p wasm-vm-core --features virgl-renderer,trace --lib --test session_gpu_results --test production_virgl_critic --test production_gpu_checkpoint_critic > "$$out/native.log" 2>&1; \
+	  cargo build -p wasm-vm-wasm --target wasm32-unknown-unknown > "$$out/wasm.log" 2>&1; \
+	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-gpu-replay-browser.mjs --output "$$out/browser" --latch-proof > "$$out/browser.log" 2>&1; \
+	  python3 -B tools/verify/e9-gpu-replay-files.py --directory "$$out/browser" > "$$out/byte-oracle.log" 2>&1; \
+	  node tools/verify/e9-gpu-parked-chain-demo.mjs --output "$$out/demo" > "$$out/demo.log" 2>&1
+
 .PHONY: verify-E9-T22c
 verify-E9-T22c:
 	mkdir -p target/evidence

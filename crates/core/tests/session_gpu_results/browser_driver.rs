@@ -965,7 +965,7 @@ fn restored_unused_cursor_cache_preserves_the_complete_guest_witness() {
     replay.check(&history.final_bytes, 0x1100);
     let before = replay.machine.snapshot();
     let witness = replay.machine.gpu_session_state_witness_bytes().unwrap();
-    assert!(witness.windows(8).any(|bytes| bytes == b"WVGPULG1"));
+    assert!(witness.windows(8).any(|bytes| bytes == b"WVGPULG2"));
     assert!(replay.machine.load_resume(&witness).is_err());
     assert_eq!(replay.machine.snapshot(), before);
     assert_eq!(
