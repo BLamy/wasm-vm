@@ -2929,3 +2929,14 @@ verify-E9-T22c:
 	  node tools/verify/e9-workload-desktop-browser.mjs --output "$$E9_QUALIFICATION_OUT/desktop" && \
 	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$E9_QUALIFICATION_OUT/desktop" && \
 	  python3 -B tools/verify/e9-workload-desktop-files.py --directory "$$E9_QUALIFICATION_OUT/desktop"
+
+.PHONY: verify-E9-T22r
+verify-E9-T22r:
+	@set -eu; out="$${E9_OUT:-target/evidence/e9-t22r-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$(dirname "$$out")"; mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  node --test tools/verify/e9-cold-prefix-budget.test.mjs tools/verify/e9-workload-assets.test.mjs > "$$out/preflight-tests.log" 2>&1; \
+	  cargo fmt --all --check > "$$out/fmt.log" 2>&1; \
+	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-workload-desktop-browser.mjs --prefix --output "$$out/desktop" > "$$out/browser.log" 2>&1; \
+	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/desktop" --prefix > "$$out/closure.log" 2>&1; \
+	  python3 -B tools/verify/e9-cold-prefix-files.py --directory "$$out/desktop" > "$$out/byte-oracle.log" 2>&1

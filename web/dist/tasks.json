@@ -36589,7 +36589,7 @@
       "epicKey": "9",
       "title": "Record an exact-format cold Omarchy first-frame prefix",
       "priority": null,
-      "status": "pending",
+      "status": "in-progress",
       "depends_on": [
         "E9-T22q"
       ],
@@ -36621,15 +36621,16 @@
       "activity": [
         {
           "date": "2026-10-26",
-          "commits": 1,
+          "commits": 2,
           "labels": [
+            "docs(e9): start exact cold desktop prefix recording",
             "Require a new exact-format cold desktop prefix"
           ]
         }
       ],
       "firstActivity": "2026-10-26",
       "lastActivity": "2026-10-26",
-      "commitCount": 1
+      "commitCount": 2
     },
     {
       "id": "E9-T23",

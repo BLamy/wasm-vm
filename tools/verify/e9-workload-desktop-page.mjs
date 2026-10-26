@@ -1,5 +1,6 @@
 // The pinned cold Omarchy guest, not a warm checkpoint or a bare-MMIO fixture.
 import init,{WasmLinux} from '/pkg/wasm_vm_wasm.js';
+import {SessionSha256} from '/session-pkg/wasm_vm_session.js';
 import {SessionStore} from '/session-store.js';
 import {SessionGpuJournal} from '/session-gpu-journal.js';
 import {SessionGpuHistoryReader} from '/session-gpu-history-reader.js';
@@ -22,12 +23,45 @@ const hex=bytes=>[...bytes].map(n=>n.toString(16).padStart(2,'0')).join('');
 const digest=bytes=>checkpointHash(bytes);
 const shape=bytes=>({bytes:bytes.length,sha256:digest(bytes)});
 const sameData=(a,b)=>{const x=encodeCheckpointData(a),y=encodeCheckpointData(b);return x.length===y.length&&x.every((value,i)=>value===y[i]);};
+const logicalLatches=bytes=>{const marker=encoder.encode('WVGPULG2');let at=-1;
+  for(let i=0;i+marker.length+3<=bytes.length;i++)if(marker.every((value,j)=>bytes[i+j]===value)){at=i;break;}
+  need(at>=0&&[bytes[at+9],bytes[at+10]].every(value=>value===0||value===1),
+    'logical GPU QueueNotify latch witness missing');
+  return [bytes[at+9],bytes[at+10]];};
+const independentGpuWitness=(raw,ramDigest)=>{
+  const ram=typeof ramDigest==='string'
+    ?Uint8Array.from(ramDigest.match(/../g)??[],part=>parseInt(part,16)):ramDigest;
+  need(ram?.length===32,'independent GPU witness RAM digest');
+  const size=new Uint8Array(8);
+  new DataView(size.buffer).setBigUint64(0,BigInt(raw.length),true);
+  const hash=new SessionSha256();
+  try{
+    hash.update(encoder.encode('wasm-vm-gpu-guest-state-v1\0'));
+    hash.update(size);hash.update(raw);hash.update(ram);
+    return hash.finish();
+  }finally{hash.free();}
+};
+const capturedLogicalWitness=(frame,raw,ramDigest=frame.ramDigest)=>{
+  const independentDigest=independentGpuWitness(raw,ramDigest);
+  need(independentDigest===hex(frame.digest),'live logical GPU witness differs from keyframe');
+  return {logicalLatches:logicalLatches(raw),independentDigest};
+};
 const software=/software|SwiftShader|llvmpipe|softpipe|lavapipe/i;
 const guestLibraryPins={
   'libEGL.so.1':'686d69940e99357eabbea48b5cccea1ae513c43773e033d48debfd83cddac897',
   'libGLESv2.so.2':'9d57a842bdb448f7896bbaab81c3e438f123ff65eb2f222cf3ebab1a5dbed204'};
 
-export async function qualifyDesktopWorkload(contract,qualification){
+class PrefixBoundary extends Error {
+  constructor(reason){super(reason);this.name='PrefixBoundary';this.reason=reason;}
+}
+
+export async function qualifyDesktopWorkload(contract,qualification,options={}){
+  const prefix=options.prefix??null;
+  if(prefix)need(prefix.task==='E9-T22r'&&Number.isSafeInteger(prefix.wallMs)&&prefix.wallMs>0
+    &&typeof prefix.transitionCap==='string'&&/^[1-9][0-9]*$/.test(prefix.transitionCap)
+    &&BigInt(prefix.transitionCap)%50000000n===0n
+    &&Number.isSafeInteger(prefix.payloadStopBytes)&&prefix.payloadStopBytes>1024**3,
+    'finite cold-prefix policy');
   await init();
   const fixture=contract.fixtures.find(row=>row.id==='desktop-gpu-candidate-v1');
   need(fixture&&contract.workload?.desktop?.probe_sha256==='822b258f329ee2d16d7f25fa676684e02227531dbdf8bf5edbf7dc8b45868155','frozen desktop contract');
@@ -69,10 +103,11 @@ export async function qualifyDesktopWorkload(contract,qualification){
   need(probe[0]===127&&probe[1]===69&&probe[2]===76&&probe[3]===70,'RV64 probe ELF');
   need(busyboxTransport.length===auxiliary.transportBytes&&digest(busyboxTransport)===auxiliary.transportSha256
     &&auxiliary.transportPaddedBytes%4096===0&&auxiliary.transportPaddedBytes>=busyboxTransport.length,'pinned static RV64 tool transport');
-  const state={task:'E9-T22c',scope:'Original cold full Omarchy, hardware GPU probe and whole replay; no timing claim',
-    status:'running',phase:'boot',database:'wasm-vm-sessions-v1-t22c-desktop-'+crypto.randomUUID(),console:'',
+  const state={task:prefix?.task??'E9-T22c',scope:prefix?'Original cold Omarchy first-frame prefix or bounded frontier; no timing claim':'Original cold full Omarchy, hardware GPU probe and whole replay; no timing claim',
+    status:'running',phase:'boot',database:'wasm-vm-sessions-v1-'+(prefix?'t22r-prefix':'t22c-desktop')+'-'+crypto.randomUUID(),console:'',
     receipts:0,channels:{},blocks:[],checkpoints:[],capacityChecks:[],ledger:[],payloads:[],viewports:[],bodyResults:[],
     probeInput:shape(probe),toolInput:shape(busyboxTransport),assetInputs:{kernel:shape(kernel),manifest:shape(encoder.encode(imageManifest)),wasm:shape(wasm),renderer:shape(stamp)}};
+  if(prefix)state.prefixPolicy=prefix;
   globalThis.desktopWorkload=state;
   const canvas=document.querySelector('canvas'),presentation=new PresentationController(canvas,{scheduleFrames:false});
   let presenter;presenter=createWorkerScanoutPresenter(frame=>{
@@ -96,7 +131,11 @@ export async function qualifyDesktopWorkload(contract,qualification){
       blocks:state.blocks.length,checkpoints:state.checkpoints.length,scheduled:state.scheduledOffers??0,
       bodies:state.bodyResults.length,tail:textView().slice(-600)};
     document.querySelector('pre').textContent=JSON.stringify(p,null,2);
-    const control=await globalThis.workloadProgress(p);need(control?.continue!==false,'operator stopped development run');
+    const control=await globalThis.workloadProgress(p);
+    if(control?.continue===false&&prefix)throw new PrefixBoundary('operator-stop');
+    need(control?.continue!==false,'operator stopped development run');
+    if(prefix&&(await store.statistics()).payloadBytes>=prefix.payloadStopBytes)
+      throw new PrefixBoundary('payload-cap');
   };
   // Every durable write is admitted before it starts. The unchanged failed
   // prefix's largest machine+GPU checkpoint was <197 MiB; 512 MiB also bounds
@@ -174,11 +213,15 @@ export async function qualifyDesktopWorkload(contract,qualification){
     }
   };
   const step=async(target=null)=>{
-    need(desktopWallOpen(performance.now(),begun,qualification.desktopHostWallMs),'desktop qualification wall bound');
+    if(prefix){if(!desktopWallOpen(performance.now(),begun,prefix.wallMs))throw new PrefixBoundary('host-wall-cap');}
+    else need(desktopWallOpen(performance.now(),begun,qualification.desktopHostWallMs),'desktop qualification wall bound');
     await drainTerminal();await drainBlocks();
     await pumpHttp();await pumpGpu();
-    const at=BigInt(vm.inputPosition().transition);need(at<20000000000n,'original cold transition bound');
-    const limit=target!==null&&BigInt(target)<nextCapture?BigInt(target):nextCapture;
+    const at=BigInt(vm.inputPosition().transition);
+    if(prefix){if(at>=BigInt(prefix.transitionCap))throw new PrefixBoundary('transition-cap');}
+    else need(at<20000000000n,'original cold transition bound');
+    const scheduled=target!==null&&BigInt(target)<nextCapture?BigInt(target):nextCapture;
+    const limit=prefix&&BigInt(prefix.transitionCap)<scheduled?BigInt(prefix.transitionCap):scheduled;
     need(at<=limit,'cooperative target overrun');
     if(at<limit){const distance=limit-at,budget=Number(distance<1048576n?distance:1048576n);
       const result=vm.runChunk(budget);need(!result.done,'Omarchy guest stopped '+JSON.stringify(result));
@@ -188,7 +231,9 @@ export async function qualifyDesktopWorkload(contract,qualification){
     if(now===nextCapture){await drainBlocks();need(gpu.checkpointReady().ok,'50M keyframe boundary unavailable');
       await flushJournal();stagedBytes=0;
       const frame=await guardedWrite('keyframe',()=>journal.captureKeyframe(vm,gpu,'cold-'+state.checkpoints.length));
-      state.checkpoints.push({...pos(frame),digest:hex(frame.digest),ramDigest:hex(frame.ramDigest),full:frame.full});
+      const raw=prefix?vm.exactGpuSessionState():null;
+      state.checkpoints.push({...pos(frame),digest:hex(frame.digest),ramDigest:hex(frame.ramDigest),full:frame.full,
+        ...(raw?capturedLogicalWitness(frame,raw):{})});
       nextCapture=now+50000000n;}
     await progress();await tick();
   };
@@ -241,6 +286,115 @@ export async function qualifyDesktopWorkload(contract,qualification){
     await drainTerminal();
   };
   let originalState,originalQueues,sourceRenderer,sessionId;
+  const completePrefix=async reason=>{
+    need(prefix&&vm&&gpu&&store&&writer&&journal,'original cold prefix reached a recordable boundary');
+    phase='finalize';await drainBlocks();await pumpHttp();await collect();await pumpGpu();await flushJournal();stagedBytes=0;
+    const current=pos(vm.inputPosition());
+    if(current.transition!==pos(state.checkpoints.at(-1)??state.initial).transition){
+      need(gpu.checkpointReady().ok,'prefix terminal keyframe unavailable');
+      const frame=await guardedWrite('final-keyframe',()=>journal.captureKeyframe(vm,gpu,'cold-prefix-final'));
+      const raw=vm.exactGpuSessionState();
+      state.checkpoints.push({...pos(frame),digest:hex(frame.digest),ramDigest:hex(frame.ramDigest),full:frame.full,
+        ...capturedLogicalWitness(frame,raw)});
+    }
+    const end=vm.exactGpuSessionWitness();
+    await guardedWrite('final-witness',()=>journal.completeExactPaged(end));
+    const finalRaw=vm.exactGpuSessionState(),finalRam=vm.softwareRamDigest();
+    need(independentGpuWitness(finalRaw,finalRam)===hex(end.digest),'live final logical GPU witness');
+    state.final={...pos(end),digest:hex(end.digest),ramDigest:finalRam,
+      state:await retain('final.state',finalRaw)};
+    const terminalPixels=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+    state.frontier={reason,position:pos(end),consoleTail:textView().slice(-2048),gpu:gpu.inspect(),
+      presentation:presentation.snapshot(),pixels:shape(terminalPixels),hasDesktopPixels:hasDesktopPixels(terminalPixels)};
+    originalState=vm.exactGpuSessionState();originalQueues=vm.exactSessionHostQueues();
+    state.hostQueues=Object.fromEntries(Object.entries(originalQueues).map(([key,bytes])=>[key,shape(bytes)]));
+    state.sessionId=writer.id;await writer.release();writer=null;
+    const saved=await store.openSession(state.sessionId),manifest=JSON.parse(decoder.decode(saved.manifest));
+    sourceRenderer=await readCheckpointObject(store,manifest.checkpoints.at(-1).gpu,256*1048576);
+    state.sourceRenderer=shape(sourceRenderer);
+    state.authenticatedHistory=await SessionGpuHistoryReader.withOpen(store,state.sessionId,{},async reader=>{
+      const metadata=reader.metadata;need(metadata.storageAuthenticated&&metadata.receipts===rows.length,
+        'authenticated cold-prefix receipts');
+      need(metadata.checkpoints.length===state.checkpoints.length+1,'authenticated cold-prefix keyframes');
+      return {receipts:metadata.receipts,witnesses:metadata.witnesses,windows:metadata.receiptWindows,
+        receiptDigest:metadata.receiptDigest,manifestSha256:metadata.session.manifestSha256};
+    });
+    need(manifest.checkpoints.length>=3,'two adjacent prefix replay windows');
+    const points=manifest.checkpoints.map(point=>BigInt(point.position.transition));
+    need(points[0]===0n&&points.every((point,index)=>index===0||point>points[index-1]
+      &&point-points[index-1]<=50000000n),'50M cold-prefix keyframe cadence');
+    need(BigInt(manifest.end.transition)===BigInt(state.final.transition)
+      &&BigInt(manifest.end.transition)-points.at(-1)<=50000000n,'cold-prefix terminal witness coverage');
+    const factoryBefore=WasmLinux.ownedLocalHttpFactoryEntries();
+    gpu.dispose();gpu=null;vm.free();vm=null;
+    terminal.detachSink();terminal.term.dispose();terminalDisposed=true;
+    phase='replay';await globalThis.workloadProgress({phase,position:state.final,receipts:state.receipts,
+      blocks:state.blocks.length,checkpoints:state.checkpoints.length,tail:'Cold source freed; replaying final adjacent windows'});
+    const nativeFetch=globalThis.fetch,nativeSocket=globalThis.WebSocket;
+    state.replayEgress={fetch:0,sockets:0};
+    globalThis.fetch=(...args)=>{state.replayEgress.fetch++;throw Error('live page fetch during prefix replay: '+String(args[0]));};
+    globalThis.WebSocket=class extends nativeSocket{constructor(...args){state.replayEgress.sockets++;
+      throw Error('live socket during prefix replay: '+String(args[0]));}};
+    let controller;const windowStates=[];
+    try{
+      const opened=await openGpuTimelineReplay({store,id:state.sessionId,configuration:state.configuration});
+      controller=opened.controller;state.replay={windows:[]};
+      const last=manifest.checkpoints.slice(-3);let selectedInspection;
+      for(let index=0;index<2;index++){
+        const from=last[index],to=last[index+1];
+        const result=await controller.seekFromCheckpoint(from.id,to.position);
+        need(result.status==='ready','cold-prefix adjacent replay did not publish');
+        const expected=state.checkpoints.find(row=>JSON.stringify(pos(row))===JSON.stringify(pos(to.position)))
+          ??(JSON.stringify(pos(state.initial))===JSON.stringify(pos(to.position))?state.initial:null);
+        need(expected&&result.rendered.digest===expected.digest,'cold-prefix adjacent witness mismatch');
+        need(result.rendered.replay?.paged===true&&result.rendered.replay.eventCursor===Number(to.position.sequence),
+          'cold-prefix adjacent replay consumed exact receipt window');
+        selectedInspection=await controller.inspectSelected();
+        windowStates.push(selectedInspection.state.slice());
+        state.replay.windows.push({from:from.id,to:to.id,position:pos(result.position),
+          digest:result.rendered.digest,expected:expected.digest,replay:result.rendered.replay,
+          logicalLatches:logicalLatches(selectedInspection.state),state:shape(selectedInspection.state),
+          requestId:result.requestId});
+      }
+      if(JSON.stringify(pos(last[2].position))!==JSON.stringify(pos(manifest.end))){
+        const tail=await controller.seekFromCheckpoint(last[2].id,manifest.end);
+        need(tail.status==='ready'&&tail.rendered.digest===state.final.digest,
+          'cold-prefix terminal events replayed from final checkpoint');
+        selectedInspection=await controller.inspectSelected();
+        state.replay.terminal={from:last[2].id,position:pos(tail.position),digest:tail.rendered.digest,
+          replay:tail.rendered.replay,logicalLatches:logicalLatches(selectedInspection.state)};
+      }
+      const selected=controller.selected,inspection=selectedInspection;
+      need(selected.rendered.digest===state.final.digest,'cold-prefix final witness mismatch');
+      need(digest(inspection.state)===digest(originalState),'cold-prefix exact CPU/device/clock state');
+      for(const [key,bytes] of Object.entries(originalQueues))
+        need(digest(inspection.queues[key])===digest(bytes),'cold-prefix host queue '+key);
+      const source=decodeCheckpointData(sourceRenderer.subarray(16,-32));
+      const actual=decodeCheckpointData(inspection.renderer.bytes.subarray(16,-32));
+      need(sameData(source.profile,actual.profile),'cold-prefix physical renderer profile');
+      need(sameData({...actual.logical,epoch:source.logical.epoch},source.logical),'cold-prefix logical renderer state');
+      need(sameData(actual.frames.slice(1),source.frames),'cold-prefix physical renderer frame chain');
+      if(state.desktop){const canvas=selected.rendered.canvas;
+        const pixels=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
+        need(hasDesktopPixels(pixels)&&digest(pixels)===state.frontier.pixels.sha256,
+          'cold-prefix replay reproduces real nonblank desktop pixels');}
+      state.replay.final={position:pos(selected.position),digest:selected.rendered.digest,
+        state:shape(inspection.state),renderer:shape(inspection.renderer.bytes),
+        pending:shape(inspection.queues.pending),output:shape(inspection.queues.output)};
+      state.workerProviderAudit=await globalThis.auditReplayWorker();
+      need(state.workerProviderAudit.length===1&&state.workerProviderAudit[0].factoryEntries==='0',
+        'cold-prefix worker provider stayed closed');
+    }finally{controller?.close();globalThis.fetch=nativeFetch;globalThis.WebSocket=nativeSocket;}
+    need(state.replayEgress.fetch===0&&state.replayEgress.sockets===0,
+      'zero cold-prefix replay egress');
+    need(WasmLinux.ownedLocalHttpFactoryEntries()===factoryBefore,'cold-prefix provider stayed closed');
+    phase='post-replay';await globalThis.workloadProgress({phase,position:state.final,
+      receipts:state.receipts,blocks:state.blocks.length,checkpoints:state.checkpoints.length,
+      tail:'Adjacent replay workers closed; retaining independent state bytes'});
+    for(let index=0;index<windowStates.length;index++)
+      state.replay.windows[index].stateArtifact=await retain('replay-window-'+index+'.state',windowStates[index]);
+    state.status=reason==='first-nonblank-desktop-frame'?'cold-prefix-frame':'cold-prefix-frontier';
+  };
   try{
     vm=WasmLinux.newExactGpuSession(kernel,imageManifest,bootargs,bytes=>{
       const text=decoder.decode(bytes,{stream:true});state.console+=text;
@@ -274,7 +428,9 @@ export async function qualifyDesktopWorkload(contract,qualification){
     journal=await SessionGpuJournal.create(store,writer,config,vm,gpu,{witnessPages:true});
     state.initialCapacity=(await store.statistics()).payloadBytes;
     need(state.initialCapacity<=512*1024**2,'initial exact GPU keyframe stays within admitted 512 MiB phase');
-    const initial=journal.initialWitness;state.initial={...pos(initial),digest:hex(initial.digest),state:await retain('initial.state',vm.exactGpuSessionState())};
+    const initial=journal.initialWitness,initialRaw=vm.exactGpuSessionState(),initialRam=vm.softwareRamDigest();
+    state.initial={...pos(initial),digest:hex(initial.digest),ramDigest:initialRam,
+      ...capturedLogicalWitness(initial,initialRaw,initialRam),state:await retain('initial.state',initialRaw)};
     vm.enableJit(2);
     await until(()=>/(?:^|\n)[^\n]*#\s*$/.test(textView()));
     const getty=qualification.desktopBootstrap.gettyPath;
@@ -338,8 +494,57 @@ export async function qualifyDesktopWorkload(contract,qualification){
     state.networkServiceBefore=await networkStatus('cnetwork0');
     await command('stty -echo','cstty','guest-inspection');
     phase='desktop';
+    if(prefix){
+      let inspectAfter=0n;state.desktopCandidates=[];
+      for(;;){
+        await until(()=>BigInt(vm.inputPosition().transition)>=inspectAfter
+          &&presentation.snapshot().drawnPresents>0
+          &&hasDesktopPixels(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data));
+        const candidate={position:pos(vm.inputPosition()),presentation:presentation.snapshot(),gpu:gpu.inspect(),
+          pixels:shape(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data)};
+        const proof=await command(`e9_sddm_pid=$(systemctl show sddm.service -p MainPID --value); `+
+          `e9_hypr_pid=$(pgrep -xo Hyprland || true); `+
+          `printf 'E9_SDDM_PID=%s\\nE9_HYPR_PID=%s\\n' "$e9_sddm_pid" "$e9_hypr_pid"; `+
+          `systemctl show sddm.service -p ActiveState -p MainPID; `+
+          `if test -n "$e9_hypr_pid" && kill -0 "$e9_hypr_pid" 2>/dev/null; then `+
+          `e9_hypr_uid=$(stat -c %u "/proc/$e9_hypr_pid"); `+
+          `printf 'E9_HYPR_UID=%s\\n' "$e9_hypr_uid"; `+
+          `printf 'E9_HYPR_USER_STATE=%s\\n' "$(loginctl show-user "$e9_hypr_uid" -p State --value 2>/dev/null || true)"; `+
+          `printf 'E9_HYPR_CGROUP=%s\\n' "$(tr '\\n' ';' < "/proc/$e9_hypr_pid/cgroup")"; `+
+          `fi; `+
+          `printf 'E9_SESSION_COUNT=%s\\n' "$(loginctl list-sessions --no-legend --no-pager 2>/dev/null | wc -l)"; `+
+          `ps -eo pid,ppid,comm,args | grep -E '[s]ddm|[H]yprland|[X]org|[X]wayland|[w]ayland' || true`,
+          'rsession','guest-inspection');
+        const transcript=proof.stdout;
+        const sddm=transcript.match(/(?:^|\n)E9_SDDM_PID=([1-9][0-9]*)\n/)?.[1];
+        const hypr=transcript.match(/(?:^|\n)E9_HYPR_PID=([1-9][0-9]*)\n/)?.[1];
+        const uid=transcript.match(/(?:^|\n)E9_HYPR_UID=([0-9]+)\n/)?.[1];
+        const userState=transcript.match(/(?:^|\n)E9_HYPR_USER_STATE=(active|online)\n/)?.[1];
+        const sessions=Number(transcript.match(/(?:^|\n)E9_SESSION_COUNT=([0-9]+)\n/)?.[1]??0);
+        if(sddm&&hypr&&uid&&userState&&sessions>0&&transcript.includes('ActiveState=active\n')){
+          const proofPosition=pos(vm.inputPosition());
+          await until(()=>presentation.snapshot().drawnPresents>candidate.presentation.drawnPresents
+            &&hasDesktopPixels(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data));
+          const stillAlive=await command(`if test -d /proc/${hypr} && kill -0 ${hypr} && `+
+            `test "$(systemctl is-active sddm.service)" = active; then `+
+            `printf 'E9_DESKTOP_LIVE=1\\n'; else printf 'E9_DESKTOP_LIVE=0\\n'; fi`,
+            'rframealive','guest-inspection');
+          if(stillAlive.stdout.includes('E9_DESKTOP_LIVE=1\n')){
+            state.desktop={position:pos(vm.inputPosition()),presentation:presentation.snapshot(),gpu:gpu.inspect(),
+              pixels:shape(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data)};
+            state.displayService=proof;state.sessionProof=proof;state.frameAlive=stillAlive;
+            state.desktopProcess={sddmPid:Number(sddm),hyprlandPid:Number(hypr),uid:Number(uid),
+              userState,sessions,proofPosition,framePosition:pos(vm.inputPosition())};
+            throw new PrefixBoundary('first-nonblank-desktop-frame');
+          }
+        }
+        if(state.desktopCandidates.length<32)state.desktopCandidates.push({candidate,proof:transcript.slice(-2048)});
+        inspectAfter=BigInt(vm.inputPosition().transition)+50000000n;
+      }
+    }
     await until(()=>presentation.snapshot().drawnPresents>0&&hasDesktopPixels(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data));
-    state.desktop={presentation:presentation.snapshot(),gpu:gpu.inspect()};
+    state.desktop={position:pos(vm.inputPosition()),presentation:presentation.snapshot(),gpu:gpu.inspect(),
+      pixels:shape(canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data)};
     state.displayService=await command(`test "$(systemctl is-active sddm.service)" = active && `+
       `e9_sddm_pid=$(systemctl show sddm.service -p MainPID --value) && `+
       `test "$e9_sddm_pid" -gt 1 && kill -0 "$e9_sddm_pid" && `+
@@ -503,10 +708,14 @@ export async function qualifyDesktopWorkload(contract,qualification){
     need(WasmLinux.ownedLocalHttpFactoryEntries()===factoryBefore,'no replay-owned provider construction');
     need(state.replay.position.transition===state.final.transition&&state.replay.eventCursor===state.receipts,'full replay endpoint');
     state.status='desktop-full-workload-replay-passed';
-  }catch(error){state.status='failed';state.error=String(error.stack??error);
+  }catch(error){
+    if(prefix&&error instanceof PrefixBoundary){try{await completePrefix(error.reason);}
+      catch(completion){error=completion;}}
+    if(state.status!=='cold-prefix-frame'&&state.status!=='cold-prefix-frontier'){
+      state.status='failed';state.error=String(error.stack??error);
     state.failurePosition=vm?pos(vm.inputPosition()):null;
     try{if(vm)state.failureState=await retain('failure.state',vm.exactGpuSessionState());}
-    catch(capture){state.failureCaptureError=String(capture);}
+    catch(capture){state.failureCaptureError=String(capture);}}
   }finally{
     const cleanup=async(label,action)=>{try{return await action();}catch(error){const detail=label+': '+String(error.stack??error);
       (state.cleanupErrors??=[]).push(detail);if(state.status!=='failed'){state.status='failed';state.error=detail;}return null;}};

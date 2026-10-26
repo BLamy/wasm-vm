@@ -8,16 +8,18 @@ import initSession,{sessionValidateManifest,sessionValidateLocalManifest,session
   sessionValidateDiskRoot,sessionDiskRootReferences,sessionLocalEventReferences} from '../../web/session-pkg/wasm_vm_session.js';
 import {decodeKeyframeDescriptor,isKeyframeDescriptorPrefix} from '../../web/session-keyframes.js';
 const at=process.argv.indexOf('--directory');assert(at>0&&process.argv[at+1]);
-const development=process.argv.includes('--allow-incomplete'),out=path.resolve(process.argv[at+1]);
+const development=process.argv.includes('--allow-incomplete'),prefix=process.argv.includes('--prefix'),out=path.resolve(process.argv[at+1]);
+assert(!(development&&prefix),'prefix closure requires a finished graph');
 const proof=path.join(out,'retained-closure'),sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 await fs.mkdir(proof,{recursive:false});
-const report={task:'E9-T22c',scope:'Exported session graph and ordered-object digest oracle; no timing claim',
+const report={task:prefix?'E9-T22r':'E9-T22c',scope:'Exported session graph and ordered-object digest oracle; no timing claim',
   development,status:'running',sourceSha256:sha(await fs.readFile(new URL(import.meta.url))),roots:0,
   eventChunks:0,descriptorFrames:0,ramChunks:0,witnessPages:0,objects:0,chunks:0,references:0};
 try{
   const browserBytes=await fs.readFile(path.join(out,'report.json')),browser=JSON.parse(browserBytes);
   report.browserSha256=sha(browserBytes);
-  if(!development)assert.equal(browser.status,'desktop-full-workload-replay-passed');
+  if(!development)assert(prefix?['cold-prefix-frame','cold-prefix-frontier'].includes(browser.status)
+    :browser.status==='desktop-full-workload-replay-passed','finished browser recording');
   const seal=browser.executedSources?.find(row=>row.path==='tools/verify/e9-workload-retained-closure.mjs');
   if(!development)assert.equal(seal?.sha256,report.sourceSha256,'executed graph oracle source');
   const sessionWasm=await fs.readFile(new URL('../../web/session-pkg/wasm_vm_session_bg.wasm',import.meta.url));
@@ -45,7 +47,7 @@ try{
   const session=saved.stores.sessions.find(row=>row.key===(browser.result?.sessionId??(development?saved.stores.sessions[0]?.key:null)));
   assert(session,'exported named session');const manifestBytes=Buffer.from(session.value.manifest);
   assert.deepEqual(Buffer.from(sessionValidateLocalManifest(manifestBytes)),manifestBytes,'canonical exported local manifest');
-  if(!development){
+  if(!development&&!prefix){
     assert.throws(()=>sessionValidateManifest(manifestBytes),/TooLarge\("session payload"\)/,
       'complete local history must remain outside portable bundle admission');
     report.portableAdmission='rejected-above-4-GiB';

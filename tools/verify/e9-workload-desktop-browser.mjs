@@ -13,22 +13,29 @@ import{execFileSync}from'node:child_process';
 import{chromium}from'../../web/node_modules/playwright/index.mjs';
 import{WORKLOAD_ROOT as root,loadQualificationAssets,sha}from'./e9-workload-assets.mjs';
 import{checkRetentionCapacity}from'./e9-retention-capacity.mjs';
+import{calculateColdPrefixBudget,OLD_COLD_REPORT,EXACT_LATCH_BUILD}from'./e9-cold-prefix-budget.mjs';
 import{retainSessionStore}from'./e9-retain-session-store.mjs';
 import{sealReplayStaticAssets}from'./e9-replay-static-assets.mjs';
-const options={};for(let i=2;i<process.argv.length;i++){const key=process.argv[i];if(key==='--development'){assert(!options.development);options.development=true;}else{assert(key==='--output'&&!options.output&&process.argv[i+1]);options.output=process.argv[++i];}}assert(options.output);
+class PreflightComplete extends Error {}
+const options={};for(let i=2;i<process.argv.length;i++){const key=process.argv[i];if(key==='--development'){assert(!options.development);options.development=true;}else if(key==='--prefix'){assert(!options.prefix);options.prefix=true;}else if(key==='--preflight-only'){assert(!options.preflightOnly);options.preflightOnly=true;}else{assert(key==='--output'&&!options.output&&process.argv[i+1]);options.output=process.argv[++i];}}assert(options.output);assert(!options.preflightOnly||options.prefix);
 const out=path.resolve(options.output),web=path.join(root,'web/dist');await fs.mkdir(path.dirname(out),{recursive:true});await fs.mkdir(out);
 const git=(...args)=>execFileSync('git',args,{cwd:root,encoding:'utf8'}).trim();
-const report={task:'E9-T22c',phase:'desktop',scope:'Original cold Omarchy workload, RV64 EGL/GLES probe and whole-history replay; no timing claim',development:!!options.development,status:'running',head:null,dirty:null,started:new Date().toISOString(),errors:[],missing:[],external:[],raw:[],served:[],capacityChecks:[],baseRequests:{record:0,replay:0},replayBlockedRequests:[],replayBlockedSockets:[],replayStaticRequests:[],workerFactoryAudits:[]};
+const report={task:options.prefix?'E9-T22r':'E9-T22c',phase:'desktop',scope:options.prefix?'Fresh original cold Omarchy first-frame prefix or bounded frontier; no timing claim':'Original cold Omarchy workload, RV64 EGL/GLES probe and whole-history replay; no timing claim',development:!!options.development,status:'running',head:null,dirty:null,started:new Date().toISOString(),errors:[],missing:[],external:[],raw:[],served:[],capacityChecks:[],baseRequests:{record:0,replay:0},replayBlockedRequests:[],replayBlockedSockets:[],replayStaticRequests:[],workerFactoryAudits:[]};
 const GiB=1024**3,stageBytes=512*1024**2,sidecarBytes=4*GiB;
 const hostAvailable=async()=>{const stat=await fs.statfs(out),bytes=Number(BigInt(stat.bavail)*BigInt(stat.bsize));assert(Number.isSafeInteger(bytes));return bytes;};
 const capacityReceipt=async(stage,{quota,usage,payloadBytes,plannedBytes=stage==='pre-export'?0:stageBytes,phase=null,position=null})=>{
  assert(Number.isSafeInteger(payloadBytes)&&payloadBytes>=0&&payloadBytes<=assets.qualification.retention.maxBytes,'actual saved payload bytes');
  assert.equal(plannedBytes,stage==='pre-export'?0:stageBytes,'bounded 512 MiB admission phase');
- const maxBytes=assets.qualification.retention.maxBytes,reserveBytes=assets.qualification.capacityPreflight.reserveBytes;
+ const maxBytes=assets.qualification.retention.maxBytes;
+ if(options.prefix)assert(payloadBytes<=report.budget.predictedPayloadBytes,
+   'cold-prefix stored payload exceeded measured safety budget');
+ const reserveBytes=options.prefix?report.budget.hostReserveBytes:assets.qualification.capacityPreflight.reserveBytes;
  const localBytes=stage==='pre-export'?0:stageBytes;
- const hostLocalBytes=Math.max(stageBytes,maxBytes-payloadBytes)+sidecarBytes;
+ const hostLocalBytes=options.prefix
+   ?Math.max(stageBytes,report.budget.predictedPayloadBytes-payloadBytes)+report.budget.sidecarReserveBytes
+   :Math.max(stageBytes,maxBytes-payloadBytes)+sidecarBytes;
  const receipt=checkRetentionCapacity({quota,usage,hostFreeBytes:await hostAvailable(),localBytes,hostLocalBytes,
-   exportBytes:maxBytes,reserveBytes});
+   exportBytes:options.prefix?report.budget.predictedPayloadBytes:maxBytes,reserveBytes});
  report.capacityChecks.push({stage,phase,position,payloadBytes,plannedBytes,...receipt});
  return receipt;
 };
@@ -36,7 +43,31 @@ let assets,probe,busyboxTransport,pageSource,scheduleSource,wallSource,replaySta
 try{
  report.head=git('rev-parse','HEAD');report.dirty=git('status','--porcelain');
  if(!options.development)assert.equal(report.dirty,'','freeze source before accepted phase');
+ if(options.prefix){
+   const old=path.join(root,'target/evidence/e9-t22c-submission-19bd97e6e/desktop/report.json');
+   const graph=path.join(path.dirname(old),'saved/storage.json');
+   const bytes=await fs.readFile(old),prior=JSON.parse(bytes),graphBytes=await fs.readFile(graph);
+     assert.equal(sha(bytes),OLD_COLD_REPORT.sha256,'preserved 20B calibration report');
+     assert.equal(prior.result?.failurePosition?.transition,String(OLD_COLD_REPORT.transitions));
+     assert.equal(prior.result?.retentionAtEnd?.payloadBytes,OLD_COLD_REPORT.payloadBytes);
+     assert.equal(Number(prior.hostFreeBytesBefore),OLD_COLD_REPORT.hostFreeBefore);
+     assert.equal(Number(prior.hostFreeBytesAfter),OLD_COLD_REPORT.hostFreeAfter);
+     assert.equal(Date.parse(prior.finished)-Date.parse(prior.started),OLD_COLD_REPORT.durationMs);
+     assert.equal(prior.browserStorageBefore?.quota,OLD_COLD_REPORT.browserQuotaBefore);
+     assert.equal(prior.browserStorageAfter?.quota,OLD_COLD_REPORT.browserQuotaAfter);
+     assert.equal(prior.browserStorageAfter?.usage,OLD_COLD_REPORT.browserUsageAfter);
+     assert(JSON.parse(graphBytes).stores.sessions.length>0,'preserved old physical graph');
+     report.calibrationSource={path:old,sha256:sha(bytes),graphPath:graph,
+       graphSha256:sha(graphBytes),preserved:true};
+ }
  assets=await loadQualificationAssets('desktop');report.inputs=assets.receipt;
+ if(options.prefix){const wasm=sha(await fs.readFile(path.join(web,'pkg/wasm_vm_wasm_bg.wasm'))),
+   renderer=sha(await fs.readFile(path.join(web,'gpu-checkpoint-build.js')));
+   assert.equal(wasm,EXACT_LATCH_BUILD.wasmSha256,'Q corrected exact Wasm binary');
+   assert.equal(renderer,EXACT_LATCH_BUILD.rendererSha256,'Q corrected physical GPU build');
+   assert.notEqual(wasm,EXACT_LATCH_BUILD.oldWasmSha256,'old v2 Wasm forbidden');
+   assert.notEqual(renderer,EXACT_LATCH_BUILD.oldRendererSha256,'old v2 renderer forbidden');
+   report.exactLatchBuild={wasm,renderer,calibration:EXACT_LATCH_BUILD};}
  const tool=assets.qualification.auxiliaryDesktopTool;
  busyboxTransport=gzipSync(assets.busybox,{level:9});
  assert.equal(busyboxTransport.length,tool.transportBytes);assert.equal(sha(busyboxTransport),tool.transportSha256);
@@ -53,7 +84,7 @@ try{
  for(const pin of ['686d69940e99357eabbea48b5cccea1ae513c43773e033d48debfd83cddac897','9d57a842bdb448f7896bbaab81c3e438f123ff65eb2f222cf3ebab1a5dbed204'])assert(probeBuild.headersAndLibraries.includes(pin),'qualified sysroot library '+pin);
  report.probe={bytes:probe.length,sha256:sha(probe),build:sha(probeBuildBytes),buildDetails:probeBuild};
  pageSource=await fs.readFile(path.join(root,'tools/verify/e9-workload-desktop-page.mjs'));scheduleSource=await fs.readFile(path.join(root,'tools/verify/e9-workload-schedule.mjs'));wallSource=await fs.readFile(path.join(root,'tools/verify/e9-workload-wall.mjs'));report.executedSources=[];
- for(const name of ['tools/verify/e9-workload-desktop-browser.mjs','tools/verify/e9-workload-desktop-page.mjs','tools/verify/e9-workload-desktop-files.py','tools/verify/e9-workload-retained-closure.mjs','tools/verify/e9-replay-static-assets.mjs','tools/verify/e9-workload-schedule.mjs','tools/verify/e9-workload-wall.mjs','tools/verify/e9-workload-assets.mjs','tools/verify/e9-retention-capacity.mjs','tools/verify/e9-build-performance-probe.py','docs/design/session-workload-qualification-v1.json','docs/design/session-workload-qualification-v2.json','docs/design/session-workload-qualification-v3.json','docs/design/session-workload-qualification-v4.json','docs/design/session-workload-qualification-v5.json','docs/design/session-workload-qualification-v6.json','docs/design/session-workload-qualification-v7.json','docs/design/session-workload-qualification-v8.json','docs/design/session-workload-qualification-v9.json','docs/design/session-workload-qualification-v10.json','docs/design/session-workload-qualification-v11.json','docs/design/session-workload-retention-v1.json','docs/design/session-gpu-probe.c','releases/initramfs/busybox']){const bytes=await fs.readFile(path.join(root,name));report.executedSources.push({path:name,sha256:sha(bytes)});const file=path.join(out,'executed-source',name);await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,bytes);}
+ for(const name of ['tools/verify/e9-workload-desktop-browser.mjs','tools/verify/e9-workload-desktop-page.mjs','tools/verify/e9-workload-desktop-files.py','tools/verify/e9-workload-retained-closure.mjs','tools/verify/e9-cold-prefix-budget.mjs','tools/verify/e9-cold-prefix-files.py','tools/verify/e9-replay-static-assets.mjs','tools/verify/e9-workload-schedule.mjs','tools/verify/e9-workload-wall.mjs','tools/verify/e9-workload-assets.mjs','tools/verify/e9-retention-capacity.mjs','tools/verify/e9-build-performance-probe.py','docs/design/session-workload-qualification-v1.json','docs/design/session-workload-qualification-v2.json','docs/design/session-workload-qualification-v3.json','docs/design/session-workload-qualification-v4.json','docs/design/session-workload-qualification-v5.json','docs/design/session-workload-qualification-v6.json','docs/design/session-workload-qualification-v7.json','docs/design/session-workload-qualification-v8.json','docs/design/session-workload-qualification-v9.json','docs/design/session-workload-qualification-v10.json','docs/design/session-workload-qualification-v11.json','docs/design/session-workload-retention-v1.json','docs/design/session-gpu-probe.c','releases/initramfs/busybox']){const bytes=await fs.readFile(path.join(root,name));report.executedSources.push({path:name,sha256:sha(bytes)});const file=path.join(out,'executed-source',name);await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,bytes);}
  report.replayStaticAssets=await sealReplayStaticAssets(web);replayStaticAllow=new Map(report.replayStaticAssets.map(row=>[row.name,row]));
  assert.equal(report.executedSources.find(row=>row.path==='tools/verify/e9-workload-desktop-page.mjs').sha256,sha(pageSource),'served page is copied proof source');
  assert.equal(report.executedSources.find(row=>row.path==='tools/verify/e9-workload-schedule.mjs').sha256,sha(scheduleSource),'served schedule is copied proof source');
@@ -66,7 +97,7 @@ let browser,context,page,origin,currentPhase='record';const seen=new Map(),types
 const server=createServer(async(req,res)=>{try{const name=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
  if(req.method==='POST'){assert(/^\/__retain__\/[a-z0-9-]+\.(state|resume|json|bin)$/.test(name));const file=path.basename(name),hash=createHash('sha256');let bytes=0;const tap=new Transform({transform(part,encoding,done){bytes+=part.length;if(bytes>320*1048576)return done(Error('raw phase bound'));hash.update(part);done(null,part);}});await pipeline(req,tap,createWriteStream(path.join(out,file),{flags:'wx'}));const row={file,bytes,sha256:hash.digest('hex')};report.raw.push(row);res.writeHead(200,{'Content-Type':'application/json'}).end(JSON.stringify(row));return;}
  if(name==='/favicon.ico'){res.writeHead(204).end();return;}let bytes,mime='application/octet-stream';
- if(name==='/'){bytes=Buffer.from('<!doctype html><title>Full Omarchy workload qualification</title><link rel="stylesheet" href="/vendor/xterm/xterm.css"><script src="/vendor/xterm/xterm.js"></script><script src="/vendor/xterm/addon-fit.js"></script><canvas width="640" height="480"></canvas><div id="terminal" style="width:800px;height:320px"></div><pre>Untimed original desktop workload; no timing claim.</pre>');mime='text/html';}
+ if(name==='/'){bytes=Buffer.from('<!doctype html><title>Cold Omarchy desktop recording</title><link rel="stylesheet" href="/vendor/xterm/xterm.css"><script src="/vendor/xterm/xterm.js"></script><script src="/vendor/xterm/addon-fit.js"></script><canvas width="640" height="480"></canvas><div id="terminal" style="width:800px;height:320px"></div><pre>Original cold Omarchy recording; no timing claim.</pre>');mime='text/html';}
  else if(name==='/kernel.bin')bytes=assets.kernel;else if(name==='/image.json'){bytes=assets.imageBytes;mime='application/json';}else if(name==='/probe.elf')bytes=probe;else if(name==='/busybox.gz')bytes=busyboxTransport;else if(name==='/desktop.mjs'){bytes=pageSource;mime='text/javascript';}else if(name==='/contract.json'){bytes=assets.contractBytes;mime='application/json';}else if(name==='/e9-workload-schedule.mjs'){bytes=scheduleSource;mime='text/javascript';}else if(name==='/e9-workload-wall.mjs'){bytes=wallSource;mime='text/javascript';}
  else if(/^\/__chunk__\/[a-f0-9]{64}\.bin$/.test(name)){report.baseRequests[currentPhase]++;bytes=await assets.readChunk(path.basename(name,'.bin'));}
  else{const file=path.resolve(web,'.'+name);assert(file.startsWith(web+path.sep));bytes=await fs.readFile(file);mime=types[path.extname(file)]??mime;const digest=sha(bytes);assert(!seen.has(name)||seen.get(name)===digest,'served source changed');if(!seen.has(name)){seen.set(name,digest);report.served.push({name,bytes:bytes.length,sha256:digest});}}
@@ -77,10 +108,14 @@ try{
  const profileDirectory=path.join(out,'chrome-profile');
  await assert.rejects(fs.stat(profileDirectory),{code:'ENOENT'},'fresh persistent profile');
  report.hostFreeBytesBefore=String(await hostAvailable());
- report.hostCapacityRequiredBytes=String(2*assets.qualification.retention.maxBytes
+ if(options.prefix){report.budget=calculateColdPrefixBudget({hostFreeBytes:Number(report.hostFreeBytesBefore),
+   browserQuota:OLD_COLD_REPORT.browserQuotaBefore,browserUsage:0});
+   report.hostCapacityRequiredBytes=String(report.budget.hostRequiredBytes);
+   report.hostSidecarReserveBytes=report.budget.sidecarReserveBytes;}
+ else{report.hostCapacityRequiredBytes=String(2*assets.qualification.retention.maxBytes
    +assets.qualification.capacityPreflight.reserveBytes+sidecarBytes);
- report.hostSidecarReserveBytes=sidecarBytes;
- assert(BigInt(report.hostFreeBytesBefore)>=BigInt(report.hostCapacityRequiredBytes),'both full local copies and sidecar reserve before long capture');
+   report.hostSidecarReserveBytes=sidecarBytes;
+   assert(BigInt(report.hostFreeBytesBefore)>=BigInt(report.hostCapacityRequiredBytes),'both full local copies and sidecar reserve before long capture');}
  context=await chromium.launchPersistentContext(profileDirectory,{headless:true,
    executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
    args:['--enable-gpu','--use-gl=angle','--use-angle=metal'],serviceWorkers:'block',viewport:{width:1200,height:900}});
@@ -110,15 +145,23 @@ try{
  report.browserStorageBefore=await page.evaluate(async()=>{const persistedBefore=await navigator.storage.persisted();
    const persistRequested=await navigator.storage.persist(),estimate=await navigator.storage.estimate();
    return{usage:estimate.usage,quota:estimate.quota,persistedBefore,persistRequested,persisted:await navigator.storage.persisted()};});
+ if(options.prefix)report.budget=calculateColdPrefixBudget({hostFreeBytes:await hostAvailable(),
+   browserQuota:report.browserStorageBefore.quota,browserUsage:report.browserStorageBefore.usage});
  await capacityReceipt('initial',{...report.browserStorageBefore,payloadBytes:0});
- report.result=await page.evaluate(async input=>{const{qualifyDesktopWorkload}=await import('/desktop.mjs');return qualifyDesktopWorkload(input.contract,input.qualification);},{contract:assets.contract,qualification:assets.qualification});
+ if(options.preflightOnly)throw new PreflightComplete('finite cold-prefix preflight passed');
+ report.result=await page.evaluate(async input=>{const{qualifyDesktopWorkload}=await import('/desktop.mjs');
+   return qualifyDesktopWorkload(input.contract,input.qualification,input.options);},{contract:assets.contract,
+   qualification:assets.qualification,options:options.prefix?{prefix:{task:'E9-T22r',
+     transitionCap:report.budget.transitionCap,wallMs:report.budget.wallMs,
+     payloadStopBytes:report.budget.payloadStopBytes}}:{}});
  report.hardware={source:'production-virgl-inspection',profile:report.result.physical};
  try{report.browserStorageAfter=await page.evaluate(async()=>{const estimate=await navigator.storage.estimate();
    return{usage:estimate.usage,quota:estimate.quota,persisted:await navigator.storage.persisted()};});}
  catch(error){report.browserStorageError=String(error.stack??error);}
  report.browserStorageBeforeExport=await page.evaluate(async()=>{const estimate=await navigator.storage.estimate();
    return{usage:estimate.usage,quota:estimate.quota,persisted:await navigator.storage.persisted()};});
- if(report.result.status==='desktop-full-workload-replay-passed')assert(report.result.retentionAtEnd,'successful run retains statistics');
+ if(report.result.status==='desktop-full-workload-replay-passed'||options.prefix)
+   assert(report.result.retentionAtEnd,'successful run retains statistics');
  if(report.result.retentionAtEnd)await capacityReceipt('pre-export',
    {...report.browserStorageBeforeExport,payloadBytes:report.result.retentionAtEnd.payloadBytes});
  try{report.retained=await retainSessionStore(page,report.result.database,path.join(out,'saved'));}
@@ -126,7 +169,30 @@ try{
  report.diagnosticErrors=[];
  try{await fs.writeFile(path.join(out,'console.txt'),report.result.console);}catch(error){report.diagnosticErrors.push('console: '+String(error.stack??error));}
  try{await page.screenshot({path:path.join(out,'desktop.png')});}catch(error){report.diagnosticErrors.push('screenshot: '+String(error.stack??error));}
- assert.equal(report.result.status,'desktop-full-workload-replay-passed',report.result.error);
+ if(options.prefix){
+   assert(['cold-prefix-frame','cold-prefix-frontier'].includes(report.result.status),report.result.error);
+   assert.equal(report.result.task,'E9-T22r');
+   assert.equal(report.result.prefixPolicy.transitionCap,report.budget.transitionCap);
+   assert.equal(report.result.prefixPolicy.wallMs,report.budget.wallMs);
+   assert.equal(report.result.prefixPolicy.payloadStopBytes,report.budget.payloadStopBytes);
+   assert(report.result.final&&report.result.frontier&&report.result.authenticatedHistory);
+   assert(BigInt(report.result.final.transition)<=BigInt(report.budget.transitionCap));
+   assert.equal(report.result.replay?.windows?.length,2,'two adjacent cold-prefix replay windows');
+   for(const row of report.result.replay.windows)assert.equal(row.digest,row.expected);
+   assert.deepEqual(report.result.replayEgress,{fetch:0,sockets:0});
+   if(report.result.status==='cold-prefix-frame'){
+     assert.equal(report.result.frontier.reason,'first-nonblank-desktop-frame');
+     assert(report.result.desktop?.presentation?.drawnPresents>0);
+     assert.equal(report.result.frontier.hasDesktopPixels,true);
+     assert.match(report.result.displayService?.stdout??'',/E9_SDDM_PID=[1-9][0-9]*/);
+     assert(report.result.desktopProcess?.hyprlandPid>1&&report.result.desktopProcess?.sessions>0);
+     assert(['active','online'].includes(report.result.desktopProcess?.userState));
+     assert.match(report.result.sessionProof?.stdout??'',/E9_HYPR_CGROUP=/);
+     assert.match(report.result.frameAlive?.stdout??'',/E9_DESKTOP_LIVE=1/);
+     assert(BigInt(report.result.desktop.position.transition)>=BigInt(report.result.desktopProcess.proofPosition.transition));
+     assert.match(report.result.frontier.pixels.sha256,/^[a-f0-9]{64}$/);
+   }else assert(['transition-cap','host-wall-cap','payload-cap'].includes(report.result.frontier.reason));
+ }else assert.equal(report.result.status,'desktop-full-workload-replay-passed',report.result.error);
  assert(report.retained,report.retentionError??'retained complete session');
  assert.deepEqual(report.diagnosticErrors,[],'complete desktop diagnostics');
  const archive=JSON.parse(await fs.readFile(path.join(out,'saved/storage.json'))),chunks=new Set();
@@ -167,8 +233,14 @@ try{
  for(const row of report.executedSources)assert.equal(sha(await fs.readFile(path.join(root,row.path))),row.sha256);
  for(const row of report.served)assert.equal(sha(await fs.readFile(path.join(web,'.'+row.name))),row.sha256,'served runtime changed '+row.name);
  for(const row of report.replayStaticAssets)assert.equal(sha(await fs.readFile(path.join(web,'.'+row.name))),row.sha256,'sealed replay module changed '+row.name);
- report.status='desktop-full-workload-replay-passed';
-}catch(error){report.status='failed';report.failure=String(error.stack??error);process.exitCode=1;
+ if(options.prefix){
+   const oldReport=await fs.readFile(report.calibrationSource.path),oldGraph=await fs.readFile(report.calibrationSource.graphPath);
+   assert.equal(sha(oldReport),OLD_COLD_REPORT.sha256,'old v2 graph report preserved');
+   assert.equal(sha(oldGraph),report.calibrationSource.graphSha256,'old v2 physical graph preserved');
+   report.status=report.result.status;
+ }else report.status='desktop-full-workload-replay-passed';
+}catch(error){if(error instanceof PreflightComplete)report.status='preflight-passed';
+ else{report.status='failed';report.failure=String(error.stack??error);process.exitCode=1;}
  if(page&&!report.result){try{report.result=await page.evaluate(()=>globalThis.desktopWorkload??null);}
    catch(recovery){report.resultRecoveryError=String(recovery.stack??recovery);}}
  if(page&&report.result?.database&&!report.retained&&!report.retentionError){
