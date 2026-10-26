@@ -4,8 +4,8 @@ epic: 9
 title: Calibrate the cold Omarchy first-frame frontier from an authenticated prefix
 priority: 524.9220298
 status: blocked
-blocked_on: [E9-T22q]
-depends_on: [E9-T22n, E9-T22q]
+blocked_on: [E9-T22q, E9-T22r]
+depends_on: [E9-T22n, E9-T22q, E9-T22r]
 estimate: S
 risk: medium
 capstone: false
@@ -80,5 +80,9 @@ was admitted; a bounded 50M-transition diagnostic branch reached 20.05B with
 no nonblank frame or browser egress (report SHA-256
 `adceb24b41adb50a664bbfa8cee7722ab2dc6e993d1b184314eea03a9152f1d3`).
 That branch is not accepted as calibration because the latch's value is absent
-from the source checkpoint. E9-T22q must correct exact checkpoint fidelity
-before this task can claim a first-frame bound.
+from the source checkpoint. SHA-256-checked reconstruction of guest RAM's
+control ring found avail index `579` while the saved control queue shadow is
+`452/452` at all five checkpoints from cold-395 through cold-399. The 127
+unserviced descriptors make the omitted latch behaviorally decisive. E9-T22q
+must correct exact checkpoint fidelity and E9-T22r must record a new cold
+prefix before this task can claim a first-frame bound.
