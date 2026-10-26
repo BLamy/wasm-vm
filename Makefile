@@ -2907,7 +2907,7 @@ verify-E9-T22n:
 .PHONY: verify-E9-T22q
 verify-E9-T22q:
 	@set -eu; out="$${E9_OUT:-target/evidence/e9-t22q-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
-	  mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  mkdir -p "$$out"; out="$$(cd "$$out" && pwd -P)"; \
 	  cargo fmt --all --check; \
 	  cargo clippy -p wasm-vm-core --features virgl-renderer,trace --all-targets -- -D warnings > "$$out/clippy.log" 2>&1; \
 	  cargo test -p wasm-vm-core --features virgl-renderer,trace --lib --test session_gpu_results --test production_virgl_critic --test production_gpu_checkpoint_critic > "$$out/native.log" 2>&1; \
