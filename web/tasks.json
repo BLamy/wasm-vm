@@ -36570,8 +36570,9 @@
       "activity": [
         {
           "date": "2026-10-26",
-          "commits": 3,
+          "commits": 4,
           "labels": [
+            "verify(e9): prove exact GPU notification latches",
             "docs(e9): submit exact GPU latch proof for verification",
             "Start exact GPU notification-latch repair",
             "Document exact GPU checkpoint blocker for cold calibration"
@@ -36580,7 +36581,7 @@
       ],
       "firstActivity": "2026-10-26",
       "lastActivity": "2026-10-26",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E9-T22r",
