@@ -3,7 +3,7 @@ id: E9-T22o
 epic: 9
 title: Calibrate the cold Omarchy first-frame frontier from an authenticated prefix
 priority: 524.9220298
-status: pending
+status: in-progress
 depends_on: [E9-T22n]
 estimate: S
 risk: medium
