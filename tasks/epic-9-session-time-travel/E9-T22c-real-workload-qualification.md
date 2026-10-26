@@ -3,8 +3,9 @@ id: E9-T22c
 epic: 9
 title: Qualify both full pinned performance workloads
 priority: 524.92203
-status: in-progress
-depends_on: [E9-T22b, E9-T22h, E9-T22j, E9-T22k, E9-T22l, E9-T22m, E9-T22n]
+status: blocked
+blocked_on: [E9-T22p]
+depends_on: [E9-T22b, E9-T22h, E9-T22j, E9-T22k, E9-T22l, E9-T22m, E9-T22n, E9-T22p]
 estimate: S
 risk: medium
 capstone: false
@@ -44,6 +45,48 @@ and count live server calls. Refuse software renderer or changed probe/assets,
 missing GL results, hidden live replay I/O and an incomplete long recording.
 
 ## Verification log
+
+### 2026-10-26 — worker — blocked on a calibrated finite cold-transition profile
+
+At clean exact head `19bd97e6eadf013eacd4aa2af9ded6a14fc20771`, run
+`make verify-E9-T22c E9_OUT=target/evidence/e9-t22c-submission-19bd97e6e`.
+The 17 direct tests, complete original Alpine recording/replay and independent
+literal-file oracle passed. Software report SHA-256 is
+`2569ab23a30df9b97f130d74a6d790bfdf215a3b5f29ff03d67ba8622a0e002f`;
+literal-file report SHA-256 is
+`95584cf62edc6d1d2008a2fff2c2cc7031858e1681a348b449fcd4044393c1ae`.
+The original cold Omarchy guest passed its direct root shell, service ordering,
+NetworkManager PID and D-Bus checks, then reached exactly 20,000,000,000
+transitions without a first nonblank desktop frame. The fixed guest-transition
+bound failed at retired `19,999,133,891`, sequence `2393`, after 400 exact
+periodic checkpoints. Browser errors, external requests, quota, retention and
+host-wall failures are absent. No probe, desktop workload, whole-history replay
+or timing claim follows. Desktop report SHA-256 is
+`4857b8b536a5d274c6dd210f13d3d01efc03350818bae8a386c0124178495d4e`;
+saved storage index SHA-256 is
+`f6a1d995d22b392b18008fe43b3f4526d866dbeea9e4283ad5e5e205091d3883`;
+failure-state SHA-256 is
+`0af9179352da735662256936b8d52523fb251db2b4d95e4bee2ca8b70f5baaca`.
+
+Fresh Daybreak independently authenticated all 11,348 physical chunks, 2,988
+objects/references and 401 witness pages, including the exact 20B checkpoint.
+Its retained-closure report SHA-256 is
+`81ab3c6d099f60de4e6f4cbd55f1ceb2aedb344d44d86496cb5f25531cd5b8df`.
+The reconstructed checkpoint has architectural digest
+`a5e452287e42b7099afe1e633100e9b644a0ebcd704c5669da0145a084caa833`
+and RAM digest
+`01f58e0b85fa9f4d430c56463975927fa39f47ab4eedbb6a617f7484cbf73b3a`.
+User D-Bus was active and a newly started `uwsm` PID 288 was on CPU; Hyprland
+had not yet started. Compared with the earlier 17.50B retained checkpoint, this
+is forward progress, not evidence of a deadlock or display failure. The 16 GiB
+retention profile held 9,650,697,147 physical payload bytes. Its closed Chrome
+profile duplicated the authenticated exported graph and was removed to recover
+about 9 GiB; the saved graph, report, witness, screenshot and browser trace
+remain. E9-T22o must calibrate the first-frame frontier from this retained
+prefix, and E9-T22p must declare and prove a finite supported transition and
+capacity allowance before another original cold C attempt. The image, clock,
+50M cadence, workload, probe, replay semantics and numeric performance budgets
+remain unchanged.
 
 ### 2026-10-25 — worker — resumed after E9-T22n verification
 
