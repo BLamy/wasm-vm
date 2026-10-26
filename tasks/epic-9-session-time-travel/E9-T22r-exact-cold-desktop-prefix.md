@@ -3,7 +3,7 @@ id: E9-T22r
 epic: 9
 title: Record an exact-format cold Omarchy first-frame prefix
 priority: 524.92202975
-status: pending
+status: in-progress
 depends_on: [E9-T22q]
 estimate: S
 risk: medium

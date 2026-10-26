@@ -8,7 +8,6 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 
 ## Next up (deps satisfied, in priority order)
 
-1. **E9-T22r** — Record an exact-format cold Omarchy first-frame prefix
 1. **E6-T11e** — Survive hostile guest 3D requests and browser graphics context loss
 1. **E5-T26f** — Browser desktop snapshot round-trip and interaction smoke
 1. **E5.5-T06** — Diagnose missing package-bar foreground on the cold GPU desktop
@@ -483,7 +482,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.9220295` [E9-T22m](epic-9-session-time-travel/E9-T22m-supported-retention-capacity.md) — Qualify a supported 16 GiB local retention profile *(deps: E9-T22l)*
 - [x] `524.9220297` [E9-T22q](epic-9-session-time-travel/E9-T22q-exact-gpu-notify-latch.md) — Preserve virtio-GPU notification latches in exact checkpoints *(deps: E9-T22n)*
 - [x] `524.92202975` [E9-T22n](epic-9-session-time-travel/E9-T22n-supported-desktop-wall-allowance.md) — Qualify a finite desktop host-wall allowance *(deps: E9-T22m)*
-- [ ] `524.92202975` [E9-T22r](epic-9-session-time-travel/E9-T22r-exact-cold-desktop-prefix.md) — Record an exact-format cold Omarchy first-frame prefix *(deps: E9-T22q)*
+- [~] `524.92202975` [E9-T22r](epic-9-session-time-travel/E9-T22r-exact-cold-desktop-prefix.md) — Record an exact-format cold Omarchy first-frame prefix *(deps: E9-T22q)*
 - [b] `524.9220298` [E9-T22o](epic-9-session-time-travel/E9-T22o-cold-desktop-frontier-calibration.md) — Calibrate the cold Omarchy first-frame frontier from an authenticated prefix *(deps: E9-T22n, E9-T22q, E9-T22r)*
 - [ ] `524.9220299` [E9-T22p](epic-9-session-time-travel/E9-T22p-finite-cold-desktop-transition-profile.md) — Qualify a finite supported cold-desktop transition allowance *(deps: E9-T22o)*
 - [b] `524.92203` [E9-T22c](epic-9-session-time-travel/E9-T22c-real-workload-qualification.md) — Qualify both full pinned performance workloads *(deps: E9-T22b, E9-T22h, E9-T22j, E9-T22k, E9-T22l, E9-T22m, E9-T22n, E9-T22p)*
