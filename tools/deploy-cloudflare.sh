@@ -34,6 +34,13 @@ trap 'rm -f "$LOCAL_RECORDS" "$RELEASE_URLS" "$R2_QUEUE"' EXIT
 
 public_object_is_exact() {
   local url=$1 expected_size=$2 expected_sha=$3 tmp actual_size actual_sha
+  # A single 512 MiB R2 GET can stall behind Cloudflare's public edge, and
+  # Wrangler cannot upload a replacement above 300 MiB. Authenticate large
+  # objects in bounded ranges while hashing the complete byte stream.
+  if [ "$expected_size" -gt $((300 * 1024 * 1024)) ]; then
+    python3 tools/verify-r2-object-ranges.py "$url" "$expected_size" "$expected_sha"
+    return
+  fi
   tmp=$(mktemp "${TMPDIR:-/tmp}/wasm-vm-r2-check.XXXXXX")
   if ! curl --fail --silent --show-error --location \
     --connect-timeout 10 --max-time 300 --speed-time 30 --speed-limit 1024 \
