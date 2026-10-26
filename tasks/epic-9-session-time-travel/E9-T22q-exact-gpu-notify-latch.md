@@ -3,7 +3,7 @@ id: E9-T22q
 epic: 9
 title: Preserve virtio-GPU notification latches in exact checkpoints
 priority: 524.9220297
-status: pending
+status: in-progress
 depends_on: [E9-T22n]
 estimate: S
 risk: high
