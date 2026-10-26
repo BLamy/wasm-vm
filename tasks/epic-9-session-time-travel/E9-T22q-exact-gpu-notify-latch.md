@@ -3,7 +3,7 @@ id: E9-T22q
 epic: 9
 title: Preserve virtio-GPU notification latches in exact checkpoints
 priority: 524.9220297
-status: in-progress
+status: implemented
 depends_on: [E9-T22n]
 estimate: S
 risk: high
@@ -52,6 +52,57 @@ digests at the first resumed witness; a merely matching initial checkpoint is
 insufficient.
 
 ## Verification log
+
+### 2026-10-26 — worker — implemented, awaiting fresh Daybreak verdict
+
+At clean exact implementation head `14d91c8a497b30dc55d603c3e12a44c1ec412be2`,
+`E9_OUT=target/evidence/e9-t22q-14d91c8a4 make verify-E9-T22q` passed:
+format, strict affected Clippy, 52 native GPU tests, wasm32 build, reproducible
+`web/dist`, built-Chrome record/replay, independent saved-byte oracle, and the
+demo. Exact result checkpoint v3 records and validates both QueueNotify latches;
+the logical GPU witness binds them, v2 exact checkpoints fail explicitly, and
+ordinary 2D reconnect retains its re-arm policy. Native tests cover notified
+and unnotified control/cursor queues plus malformed and legacy formats.
+
+The browser recorded a published control descriptor at PC `0x8020016e`
+before QueueNotify, with queue shadow `last_avail=used=0` and latches `[0,0]`.
+The restored replay reached the next witness at transition `9484`, retired
+`9464`, sequence `22`, digest
+`a45145873d52c709bfd1105c41553e728815b78615982b2909da0c5ca5bf6ff9`,
+equal to the original. Browser console/HTTP errors, external replay requests,
+and replay sockets were zero. The byte oracle accepted four frames, 32 GPU
+events, one failed completion, and three bodies. The demo reported `127 passed,
+0 failed`, no page/HTTP errors, and mobile width equal to scroll width (388 px).
+
+Evidence under `target/evidence/e9-t22q-14d91c8a4`: `browser/report.json`
+SHA-256 `73b4ebcdff1dc366ef8654625c8af2fc106555c6d9bc1846e2b9af6c209c84a6`,
+`browser/browser-trace.zip` SHA-256
+`712e2e73b81f9258c5ab12268443d23f8ed81fba2711421e58815c8307c1dac5`,
+`byte-oracle.log` SHA-256
+`ee360915d5cf41de25cef195bce7aac98b0a6d9a70074f52fa177d35114173e8`,
+and `demo/report.json` SHA-256
+`8ce0db3fc1d063fe09d791a2491ef873981772a2b8f7d921c9d648bca7a6bfa3`.
+The independent clean-checkout run at the same implementation head, with a
+scrubbed environment and shared Git objects, passed all seven acceptance
+stages after allowing the pinned Emscripten SDK to update its host cache.
+Its retained `cold-checkout/browser-report.json` SHA-256 is
+`68782ce7c22da57d94cce8d3d941695280e618db43db46c1a0ddd821ff454e97`,
+`cold-checkout/browser-independent-bytes.json` SHA-256 is
+`a710a41d202badb04cd731e85305e4a4542a261ddd57e18a458b80c8b2dc4b39`,
+and `cold-checkout/demo-report.json` SHA-256 is
+`5555da52790b1f4b7f8f24c16fb2237a1657911d52c94800cb5f81c75819bfd0`.
+The earlier clean-checkout native failure did not recur on a bounded diagnostic
+rerun; its cause was not captured. The later web-build failure was the sandbox
+denying the pinned SDK's cache write and passed under normal host permissions.
+
+`make ci` stopped at pre-existing no-default-features `dead_code` warnings in
+untouched `session_clock.rs` and `session_devices.rs` (log SHA-256
+`996df3a642b1a78f54dc45ac56e4e9f8f4bcf9f1a71a28eed32c58ac4cd5602f`).
+The remaining prescribed global gates passed directly with `make test wasm
+features test-riscv riscv-tests-suite determinism perf-smoke` (log SHA-256
+`787c804b9d5a08d61fc39bd550fcd22cb488cf191331d70748f70a7deff96a55`).
+The fresh Daybreak critic has independently exercised the before/between/after
+two-queue notification race; its verdict and coverage audit remain separate.
 
 ### 2026-10-26 — worker — reproduced before implementation
 

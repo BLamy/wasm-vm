@@ -480,7 +480,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.922027` [E9-T22k](epic-9-session-time-travel/E9-T22k-local-witness-graph-bound.md) — Admit bounded large local histories without widening portable archives *(deps: E9-T22j)*
 - [x] `524.922029` [E9-T22l](epic-9-session-time-travel/E9-T22l-local-manifest-capacity.md) — Admit bounded local session metadata above the portable payload cap *(deps: E9-T22k)*
 - [x] `524.9220295` [E9-T22m](epic-9-session-time-travel/E9-T22m-supported-retention-capacity.md) — Qualify a supported 16 GiB local retention profile *(deps: E9-T22l)*
-- [~] `524.9220297` [E9-T22q](epic-9-session-time-travel/E9-T22q-exact-gpu-notify-latch.md) — Preserve virtio-GPU notification latches in exact checkpoints *(deps: E9-T22n)*
+- [?] `524.9220297` [E9-T22q](epic-9-session-time-travel/E9-T22q-exact-gpu-notify-latch.md) — Preserve virtio-GPU notification latches in exact checkpoints *(deps: E9-T22n)*
 - [x] `524.92202975` [E9-T22n](epic-9-session-time-travel/E9-T22n-supported-desktop-wall-allowance.md) — Qualify a finite desktop host-wall allowance *(deps: E9-T22m)*
 - [ ] `524.92202975` [E9-T22r](epic-9-session-time-travel/E9-T22r-exact-cold-desktop-prefix.md) — Record an exact-format cold Omarchy first-frame prefix *(deps: E9-T22q)*
 - [b] `524.9220298` [E9-T22o](epic-9-session-time-travel/E9-T22o-cold-desktop-frontier-calibration.md) — Calibrate the cold Omarchy first-frame frontier from an authenticated prefix *(deps: E9-T22n, E9-T22q, E9-T22r)*
