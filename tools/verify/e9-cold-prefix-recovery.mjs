@@ -38,6 +38,10 @@ const archiveBytes=await fs.readFile(path.join(sourceDir,'saved/storage.json'));
 const archive=JSON.parse(archiveBytes),session=archive.stores.sessions.find(row=>row.key==='full-original-omarchy');
 const oldManifestBytes=Buffer.from(session?.value.manifest??[]),oldManifest=JSON.parse(oldManifestBytes);
 const last=oldManifest.checkpoints.at(-1),before=oldManifest.checkpoints.at(-2),earlier=oldManifest.checkpoints.at(-3);
+// Independently extracted from the failed export's final restorable keyframe.
+// Its SHA differs from the logical witness because the two encodings have
+// different GPU and clock projections (crates/core/src/lib.rs).
+const SOURCE_FINAL_NATIVE_SHA256='e2009e97ca1e4cb47c55419e94a20f35e02d169a9104fe5d6ef219bf0011dee5';
 const sourceSeal=JSON.parse(await fs.readFile(path.join(sourceDir,'sealed-before-execution.json')));
 const origin=new URL(sourceSeal.origin);
 assert.equal(origin.hostname,'127.0.0.1');
@@ -58,6 +62,7 @@ assert.equal(oldCommitment.finished,false);
 assert.equal(oldCommitment.count,oldManifest.checkpoints.length);
 assert.deepEqual(Object.fromEntries(['transition','retired','sequence','phase','ordinal'].map(key=>[key,oldCommitment.last[key]])),last.position);
 assert.equal(Buffer.from(oldCommitment.last.digest).toString('hex'),source.result.checkpoints.at(-1).digest);
+assert.equal(source.result.checkpoints.at(-1).independentDigest,source.result.checkpoints.at(-1).digest);
 const oldClosure=JSON.parse(await fs.readFile(path.join(sourceDir,'retained-closure/report.json')));
 assert.equal(oldClosure.status,'retained-closure-passed');
 assert.equal(oldClosure.browserSha256,sha(sourceBytes));
@@ -177,6 +182,32 @@ try{
           return [bytes[at+9],bytes[at+10]];
       throw Error('logical GPU notification latches missing');
     };
+    const resumeLatches=(bytes,rendererSha)=>{
+      need(new TextDecoder().decode(bytes.subarray(0,8))==='WVMRESU1','saved native state framing');
+      const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength),seal=bytes.length-84;
+      need(checkpointHash(bytes.subarray(0,-32))===hex(bytes.subarray(-32)),
+        'saved native state checksum');
+      let gpu=null;
+      for(let at=84;at<seal;){
+        need(at+8<=seal,'saved native section header');
+        const tag=view.getUint32(at,true),size=view.getUint32(at+4,true);at+=8;
+        need(at+size<=seal,'saved native section length');
+        if(tag===12){need(gpu===null,'duplicate native GPU section');gpu=bytes.subarray(at,at+size);}
+        at+=size;
+      }
+      need(gpu!==null,'saved native GPU section');
+      const marker=new TextEncoder().encode('WVGPU3D1');
+      let found=null;
+      for(let at=0;at+50<=gpu.length;at++)
+        if(marker.every((value,index)=>gpu[at+index]===value)){
+          const part=new DataView(gpu.buffer,gpu.byteOffset+at,gpu.length-at);
+          if(part.getUint32(8,true)===3&&hex(gpu.subarray(at+16,at+48))===rendererSha){
+            need(found===null,'duplicate sealed native GPU codec');
+            found=[gpu[at+48],gpu[at+49]];
+          }
+        }
+      need(found!==null,'saved native GPU notification latches missing');return found;
+    };
     const witness=(raw,ramDigest)=>{
       const hash=new SessionSha256(),size=new Uint8Array(8);
       new DataView(size.buffer).setBigUint64(0,BigInt(raw.length),true);
@@ -196,16 +227,17 @@ try{
       manifest.extensions.find(row=>row.kind==='e9-exact-witness-pages-v2').bytes)));
     need(commitment.finished===false&&same(pos(commitment.last),pos(input.points[2])),
       'unfinished last durable witness');
-    const finalFrame=await frameFor(manifest.checkpoints.at(-1));
+    const finalPoint=manifest.checkpoints.at(-1),finalFrame=await frameFor(finalPoint);
     need(same(pos(finalFrame.meta.position),pos(input.points[2]))
       &&finalFrame.meta.stateSha256===hex(commitment.last.digest)
       &&finalFrame.meta.stateSha256===input.finalDigest
-      &&finalFrame.meta.rendererSha256===manifest.checkpoints.at(-1).gpu.sha256,
+      &&finalFrame.meta.stateSha256===input.finalIndependentDigest
+      &&finalFrame.meta.rendererSha256===finalPoint.gpu.sha256,
       'last original live keyframe binds saved witness and renderer');
-    need(witness(finalFrame.native,finalFrame.meta.ramSha256)===input.finalDigest,
-      'independent saved native-state witness');
-    need(same(latches(finalFrame.native),input.finalLatches),'original live notification latches');
-    const finalState=await globalThis.retainRecoveryArtifact('final.state',b64(finalFrame.native));
+    need(checkpointHash(finalFrame.native)===input.finalNativeSha256,
+      'independently pinned final restorable native bytes');
+    need(same(resumeLatches(finalFrame.native,finalFrame.meta.rendererSha256),input.finalLatches),
+      'saved native notification latches match original live evidence');
     const writer=await store.writer(input.id);
     try{
       const journal=new SessionGpuJournal(store,writer,manifest,input.configuration);
@@ -234,10 +266,28 @@ try{
     globalThis.fetch=(...values)=>{egress.fetch++;throw Error('live fetch during recovered replay '+String(values[0]));};
     globalThis.WebSocket=class extends nativeSocket{constructor(...values){egress.sockets++;
       throw Error('live socket during recovered replay '+String(values[0]));}};
-    let controller,workerAudit,physical;
+    let controller,workerAudit,physical,restored,restoredInspection,restoredState;
     try{
       const replay=await openGpuTimelineReplay({store,id:input.id,configuration:metadata.configuration});
       controller=replay.controller;
+      // This private replay restores the independently pinned native keyframe
+      // without advancing the guest. The committed state digest separately
+      // covers its canonical LogicalGpu projection plus RAM digest.
+      restored=await controller.seekFromCheckpoint(finalPoint.id,finalPoint.position);
+      need(restored.status==='ready'&&same(pos(restored.position),pos(finalPoint.position))
+        &&restored.rendered.digest===input.finalDigest&&restored.rendered.replay?.paged===true
+        &&restored.rendered.replay.eventCursor===Number(finalPoint.position.sequence)
+        &&restored.rendered.replay.wholeChain===true,
+        'zero-transition final checkpoint restore');
+      restoredInspection=await controller.inspectSelected();
+      need(witness(restoredInspection.state,finalFrame.meta.ramSha256)===input.finalDigest
+        &&same(latches(restoredInspection.state),input.finalLatches)
+        &&checkpointHash(restoredInspection.state)!==checkpointHash(finalFrame.native),
+        'restored logical projection binds independent witness and distinct native encoding');
+      need(checkpointHash(restoredInspection.queues.pending)===checkpointHash(finalFrame.pending)
+        &&checkpointHash(restoredInspection.queues.output)===checkpointHash(finalFrame.output),
+        'zero-transition restored host queues');
+      restoredState=await globalThis.retainRecoveryArtifact('final.state',b64(restoredInspection.state));
       const points=manifest.checkpoints.slice(-3);
       for(let index=0;index<2;index++){
         const from=points[index],to=points[index+1];
@@ -247,9 +297,12 @@ try{
           &&result.rendered.replay.eventCursor===Number(to.position.sequence),
           'adjacent replay witness/cursor '+index);
         const inspection=await controller.inspectSelected(),sourceFrame=await frameFor(to);
-        need(checkpointHash(inspection.state)===checkpointHash(sourceFrame.native)
-          &&same(latches(inspection.state),input.latchPairs[index+1]),
-          'adjacent replay exact state/latches '+index);
+        need(witness(inspection.state,sourceFrame.meta.ramSha256)===input.digests[index+1]
+          &&sourceFrame.meta.stateSha256===input.digests[index+1]
+          &&same(latches(inspection.state),input.latchPairs[index+1])
+          &&same(resumeLatches(sourceFrame.native,sourceFrame.meta.rendererSha256),
+            input.latchPairs[index+1]),
+          'adjacent replay exact logical witness and saved native latches '+index);
         need(checkpointHash(inspection.queues.pending)===checkpointHash(sourceFrame.pending)
           &&checkpointHash(inspection.queues.output)===checkpointHash(sourceFrame.output),
           'adjacent replay host queues '+index);
@@ -259,6 +312,8 @@ try{
           logicalLatches:latches(inspection.state),state:artifact,stateArtifact:artifact,
           renderer:{sha256:checkpointHash(inspection.renderer.bytes),bytes:inspection.renderer.bytes.length}});
         if(index===1){
+          need(checkpointHash(inspection.state)===restoredState.sha256,
+            'last replay window differs from zero-transition final restore');
           const sourceBytes=await readCheckpointObject(store,to.gpu,256*1048576);
           const source=decodeCheckpointData(sourceBytes.subarray(16,-32));
           const actual=decodeCheckpointData(inspection.renderer.bytes.subarray(16,-32));
@@ -284,15 +339,20 @@ try{
       newManifestSha256:checkpointHash(post.manifest),newManifest:Array.from(post.manifest),
       revision:post.revision,beforeStats,postStats,
       final:{...pos(commitment.last),digest:input.finalDigest,ramDigest:finalFrame.meta.ramSha256,
-        logicalLatches:latches(finalFrame.native),state:finalState},
+        logicalLatches:latches(restoredInspection.state),state:restoredState,
+        nativeSha256:checkpointHash(finalFrame.native)},
       authenticatedHistory:{storageAuthenticated:metadata.storageAuthenticated,
         receipts:metadata.receipts,witnesses:metadata.witnesses,windows:metadata.receiptWindows,
         receiptDigest:metadata.receiptDigest,manifestSha256:metadata.session.manifestSha256},
-      replay:{windows,final:{position:pos(commitment.last),digest:windows.at(-1).digest}},
+      replay:{restored:{from:finalPoint.id,position:pos(restored.position),digest:restored.rendered.digest,
+        requestId:restored.requestId,replay:restored.rendered.replay,stateArtifact:restoredState},
+        windows,final:{position:pos(commitment.last),digest:windows.at(-1).digest}},
       replayEgress:egress,workerAudit,physical};
   },{database:source.result.database,id:session.key,oldManifestSha256:sha(oldManifestBytes),
     stats:source.result.retentionAtEnd,points:[earlier.position,before.position,last.position],
     finalDigest:source.result.checkpoints.at(-1).digest,
+    finalIndependentDigest:source.result.checkpoints.at(-1).independentDigest,
+    finalNativeSha256:SOURCE_FINAL_NATIVE_SHA256,
     finalLatches:source.result.checkpoints.at(-1).logicalLatches,
     digests:source.result.checkpoints.slice(-3).map(row=>row.digest),
     latchPairs:source.result.checkpoints.slice(-3).map(row=>row.logicalLatches),
