@@ -36,8 +36,12 @@ export function calculateColdPrefixBudget({hostFreeBytes,browserQuota,browserUsa
   const predictedHostConsumption=scaled(oldHostConsumption,scale);
   const predictedWallMs=scaled(OLD_COLD_REPORT.durationMs,scale);
   const hostReserveBytes=4*GiB,sidecarReserveBytes=2*GiB;
-  const hostRequiredBytes=Math.max(predictedHostConsumption+hostReserveBytes,
-    2*predictedPayloadBytes+sidecarReserveBytes+hostReserveBytes);
+  // A cold browser profile and its independent export coexist. The observed
+  // host consumption already includes the live profile, so reserve the whole
+  // export in addition to it; taking the maximum of the two underadmitted the
+  // 2026-10-26 cold run by more than 10 GiB.
+  const hostRequiredBytes=predictedHostConsumption+predictedPayloadBytes
+    +sidecarReserveBytes+hostReserveBytes;
   const rollingBrowserRequiredBytes=stageBytes+GiB;
   if(predictedWallMs>=PREFIX_WALL_MS)throw Error('cold-prefix wall budget cannot fit measured rate');
   if(predictedPayloadBytes>=16*GiB)throw Error('cold-prefix predicted graph exceeds retention');

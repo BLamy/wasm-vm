@@ -31,8 +31,11 @@ const capacityReceipt=async(stage,{quota,usage,payloadBytes,plannedBytes=stage==
    'cold-prefix stored payload exceeded measured safety budget');
  const reserveBytes=options.prefix?report.budget.hostReserveBytes:assets.qualification.capacityPreflight.reserveBytes;
  const localBytes=stage==='pre-export'?0:stageBytes;
+ const remainingProfile=options.prefix?Number((BigInt(report.budget.predictedHostConsumption)
+   *BigInt(report.budget.predictedPayloadBytes-payloadBytes)
+   +BigInt(report.budget.predictedPayloadBytes)-1n)/BigInt(report.budget.predictedPayloadBytes)):0;
  const hostLocalBytes=options.prefix
-   ?Math.max(stageBytes,report.budget.predictedPayloadBytes-payloadBytes)+report.budget.sidecarReserveBytes
+   ?Math.max(stageBytes,remainingProfile)+report.budget.sidecarReserveBytes
    :Math.max(stageBytes,maxBytes-payloadBytes)+sidecarBytes;
  const receipt=checkRetentionCapacity({quota,usage,hostFreeBytes:await hostAvailable(),localBytes,hostLocalBytes,
    exportBytes:options.prefix?report.budget.predictedPayloadBytes:maxBytes,reserveBytes});
