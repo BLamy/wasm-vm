@@ -5,6 +5,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
 import {createHash} from 'node:crypto';
+import {createReadStream} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {chromium} from '../../web/node_modules/playwright/index.mjs';
 
@@ -19,6 +20,24 @@ const limit=argument('--limit');
 assert(/^[1-9][0-9]*$/.test(limit)&&BigInt(limit)>21700000000n&&BigInt(limit)<=23000000000n);
 assert(out!==source&&!out.startsWith(source+path.sep),'source and output must be separate');
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
+const treeDigest=async directory=>{
+  const whole=createHash('sha256');
+  const visit=async(relative='')=>{
+    for(const name of (await fs.readdir(path.join(directory,relative))).sort()){
+      const next=path.join(relative,name),full=path.join(directory,next),stat=await fs.lstat(full);
+      if(stat.isDirectory()){whole.update('d\0'+next+'\0');await visit(next);}
+      else if(stat.isSymbolicLink())whole.update('l\0'+next+'\0'+await fs.readlink(full)+'\0');
+      else{assert(stat.isFile(),'unexpected source evidence type '+next);
+        const file=createHash('sha256');for await(const part of createReadStream(full))file.update(part);
+        whole.update('f\0'+next+'\0'+String(stat.size)+'\0'+file.digest('hex')+'\0');}
+    }
+  };
+  await visit();return whole.digest('hex');
+};
+const freeBytes=async directory=>{
+  const stat=await fs.statfs(directory);
+  return String(BigInt(stat.bavail)*BigInt(stat.bsize));
+};
 const git=(...values)=>execFileSync('git',values,{cwd:root,encoding:'utf8'}).trim();
 const PIN={
   report:'0d2d37842f96a7d9b203a420d6debec108f982322a562838605c56d2b74ab17f',
@@ -46,17 +65,20 @@ assert.equal(priorClosure.status,'retained-closure-passed');
 assert.equal(priorOracle.status,'exact-v3-prefix-passed');
 assert.equal(archive.stores.sessions.length,1);
 assert.equal(git('status','--porcelain'),'','freeze exact calibration harness');
+const sourceTreeBefore=await treeDigest(source);
 await fs.mkdir(out,{recursive:false});
 const report={task:'E9-T22o',status:'running',scope:'Offline exact 21.7B cold desktop diagnostic continuation; no qualification or timing claim',
   source:{directory:source,pins:PIN,sourceHead:recovery.source.head,
     recoveredHead:recovery.head,failedAt:recovery.source.failedAt,
-    sourceTreeSha256:recovery.source.treeSha256Before},
+    originalTreeSha256:recovery.source.treeSha256Before,
+    recoveredTreeSha256Before:sourceTreeBefore},
   head:git('rev-parse','HEAD'),limit,started:new Date().toISOString(),
   browser:{origin:recovery.browser.origin,version:null,sourceVersion:recovery.browser.version,
     staticRequests:[],blockedRequests:[],blockedSockets:[],pageErrors:[]},
   preflight:{},progress:[],result:null};
 let context,page,traceStarted=false,server;
 try{
+  report.hostFreeBytesBefore=await freeBytes(out);
   // The two independent accepted oracles run against symlinked, read-only
   // source inputs. Their new proof directories live only in this output.
   const view=path.join(out,'input-view');await fs.mkdir(view);
@@ -181,7 +203,11 @@ try{
     need(frame.meta.stateSha256===input.finalDigest&&frame.meta.position.transition==='21700000000'
       &&frame.meta.rendererSha256===last.gpu.sha256,'last witness and renderer binding');
     const request=(worker,type,data={},timeout=30*60*1000,transfer=[])=>new Promise((resolve,reject)=>{
-      const requestId=++input.nextRequest;let done=false;
+      // The replay worker binds inspect/capture to the original seek owner;
+      // only the diagnostic worker allocates a new ID for each action.
+      const requestId=data.requestId??++input.nextRequest;let done=false;
+      const expected=type==='seek'?'ready':type==='inspect-selected'?'selected-inspection'
+        :type==='capture-branch'?'branch-captured':'result';
       const cleanup=()=>{done=true;clearTimeout(timer);worker.removeEventListener('message',message);
         worker.removeEventListener('error',error);};
       const fail=value=>{if(done)return;cleanup();reject(value);};
@@ -189,11 +215,7 @@ try{
         if(value.type==='progress')return;
         if(value.type==='error'||value.type==='inspection-error'||value.type==='branch-error'){
           const failure=Error(value.stack??value.message);failure.detail=value;fail(failure);return;}
-        if(type==='seek'&&value.type==='ready'||type==='inspect-selected'&&value.type==='selected-inspection'
-          ||type==='capture-branch'&&value.type==='branch-captured'||value.type!=='ready'
-            &&value.type!=='selected-inspection'&&value.type!=='branch-captured'&&value.type==='result'){
-          cleanup();resolve(value);
-        }
+        if(value.type===expected){cleanup();resolve(value);}
       };
       const error=event=>fail(Error(event.message||'diagnostic worker crashed'));
       const timer=setTimeout(()=>fail(Error(type+' deadline exceeded')),timeout);
@@ -216,11 +238,13 @@ try{
       need(replayed.digest===input.finalDigest&&same(pos(replayed.position),pos(last.position))
         &&replayed.replay?.paged===true&&replayed.replay.windows===2
         &&replayed.replay.wholeChain===true,'21.7B two-window replay differs');
-      inspection=await request(replayWorker,'inspect-selected',{inspectionId:1},30*60*1000);
+      inspection=await request(replayWorker,'inspect-selected',
+        {requestId:replayed.requestId,inspectionId:1},30*60*1000);
       need(checkpointHash(inspection.state)===input.replayedStateSha256
         &&checkpointHash(inspection.renderer.bytes)===input.replayedRendererSha256,
         'selected raw CPU/device or renderer state changed');
-      captured=await request(replayWorker,'capture-branch',{captureId:1},30*60*1000);
+      captured=await request(replayWorker,'capture-branch',
+        {requestId:replayed.requestId,captureId:1},30*60*1000);
       need(same(pos(captured.position),pos(last.position))
         &&hex(captured.capture.sourceDigest)===input.finalDigest
         &&checkpointHash(captured.renderer.bytes)===hex(captured.renderer.sha256),
@@ -242,7 +266,7 @@ try{
     const continuation=new Worker(input.diagnosticWorker,{type:'module'});
     const canvas=document.createElement('canvas');canvas.width=1;canvas.height=1;
     canvas.setAttribute('aria-label','Offline Omarchy frontier');document.body.append(canvas);
-    const presentation=new PresentationController(canvas,{scheduleFrames:false});
+    let presentation=new PresentationController(canvas,{scheduleFrames:false});
     const pixels=await import('/omarchy-desktop-readiness.js');
     const result={status:'running',sourcePosition:pos(last.position),sourceDigest:input.finalDigest,
       authenticated:{manifestSha256:input.manifestSha256,statistics,objects:input.objects,
@@ -252,15 +276,30 @@ try{
         rendererSha256:checkpointHash(inspection.renderer.bytes)},
       capture:inputHashes,origin:null,frame:null,frontier:null,progress:[],
       diagnosticInput:null,egress:{fetch:0,sockets:0}};
+    const paint=frame=>{
+      const before=presentation.snapshot().drawnPresents;
+      need(presentation.present(frame)
+        &&presentation.snapshot().drawnPresents>before,
+      'physical continuation frame could not be painted');
+    };
     const sample=view=>{
-      if(view.frameChanged&&view.frame){
-        need(presentation.present(view.frame),'physical continuation frame could not be painted');
+      if(view.firstCandidate)paint(view.firstCandidate);
+      else if(view.frameChanged&&view.frame)paint(view.frame);
+      else if(view.frameChanged&&!view.frame){
+        presentation.dispose();canvas.width=1;canvas.height=1;
+        presentation=new PresentationController(canvas,{scheduleFrames:false});
       }
-      if(view.frameChanged&&!view.frame){canvas.width=1;canvas.height=1;}
-      if(!view.frameChanged||!view.frame)return false;
+      if(!view.firstCandidate&&(!view.frameChanged||!view.frame))return false;
       const image=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height);
-      if(!pixels.hasDesktopPixels(image.data))return false;
-      result.frame={position:pos(view.position),width:canvas.width,height:canvas.height,
+      if(!pixels.hasDesktopPixels(image.data)){
+        need(!view.firstCandidate,'raw first-frame candidate failed physical presentation');
+        return false;
+      }
+      const shown=view.firstCandidate??view.frame;
+      need(shown?.position&&BigInt(shown.position.transition)<=BigInt(view.position.transition),
+        'physical frame position is outside its advance');
+      result.frame={position:pos(shown.position),observedAt:pos(view.position),
+        width:canvas.width,height:canvas.height,
         rgbaSha256:checkpointHash(image.data),presentation:presentation.snapshot(),
         gpu:view.gpu,consoleTail:view.console.slice(-4096)};
       return true;
@@ -276,23 +315,37 @@ try{
         configuration,kernel,wasm,capture:sourceCapture,renderer:sourceRenderer},
       45*60*1000,[...new Set(transfer)]);
       need(same(prepared.origin.position,pos(last.position))
+        &&prepared.origin.digest===input.finalDigest
         &&prepared.origin.nativeSha256===inputHashes.native
         &&prepared.origin.rendererSha256===inputHashes.renderer
-        &&prepared.view.offline===true,'private branch origin changed');
+        &&prepared.origin.pendingSha256===inputHashes.pending
+        &&prepared.origin.outputSha256===inputHashes.output
+        &&prepared.origin.diskSha256===inputHashes.disk
+        &&prepared.view.offline===true
+        &&prepared.view.egress.fetch===0&&prepared.view.egress.sockets===0,
+        'private branch origin changed');
       result.origin=prepared.origin;sample(prepared.view);
       const active=await request(continuation,'activate',{},30*60*1000);
-      need(active.view.offline===true,'diagnostic network policy changed');
+      need(active.view.offline===true&&active.view.egress.fetch===0
+        &&active.view.egress.sockets===0,'diagnostic network policy changed');
       sample(active.view);
       let previous=BigInt(last.position.transition),nextProgress=previous+10000000n;
       const started=Date.now(),maxWallMs=2*60*60*1000;
+      let lastView=active.view,wallLimited=false;
       while(previous<BigInt(input.limit)&&!result.frame){
-        need(Date.now()-started<maxWallMs,'diagnostic wall bound');
+        const remaining=maxWallMs-(Date.now()-started);
+        if(remaining<=1000){wallLimited=true;break;}
+        const steps=Number((BigInt(input.limit)-previous)<1048576n
+          ?BigInt(input.limit)-previous:1048576n);
         let response;
-        try{response=await request(continuation,'advance',{steps:1048576},10*60*1000);}
+        try{response=await request(continuation,'advance',{steps},Math.min(10*60*1000,remaining));}
         catch(error){
+          if(!error.detail?.missingLocalBlock)throw error;
           const stopped=await request(continuation,'inspect',{},30*60*1000);
+          need(stopped.view.egress.fetch===0&&stopped.view.egress.sockets===0,
+            'offline guest attempted network egress');
           result.status='exact-failure-frontier';
-          result.frontier={reason:error.detail?.missingLocalBlock?'unretained-disk-chunk':'continuation-error',
+          result.frontier={reason:'unretained-disk-chunk',
             message:error.message,missingLocalBlock:error.detail?.missingLocalBlock??stopped.missingLocalBlock,
             position:pos(stopped.view.position),consoleTail:stopped.view.console.slice(-8192),
             gpu:stopped.view.gpu,outstanding:stopped.view.outstanding,
@@ -300,9 +353,19 @@ try{
           break;
         }
         const current=BigInt(response.view.position.transition);
-        need(current>=previous&&current<=BigInt(input.limit)+1048576n,'bounded monotonic continuation');
-        previous=current;
+        need(current>=previous&&current<=BigInt(input.limit),'bounded monotonic continuation');
+        need(response.view.offline===true&&response.view.egress.fetch===0
+          &&response.view.egress.sockets===0,'offline guest attempted network egress');
+        previous=current;lastView=response.view;
         if(sample(response.view)){result.status='desktop-frame';break;}
+        if(response.view.guestHalt){
+          result.status='exact-failure-frontier';
+          result.frontier={reason:'guest-halt',position:pos(response.view.position),
+            guestHalt:response.view.guestHalt,consoleTail:response.view.console.slice(-8192),
+            gpu:response.view.gpu,outstanding:response.view.outstanding,
+            presentation:presentation.snapshot()};
+          break;
+        }
         if(current>=nextProgress){
           const progress={transition:String(current),elapsedMs:Date.now()-started,
             gpu:response.view.gpu,presentation:presentation.snapshot(),
@@ -314,11 +377,19 @@ try{
       if(result.status==='running'){
         const ended=await request(continuation,'inspect',{},30*60*1000);
         result.status='bounded-no-frame';
-        result.frontier={reason:'finite-transition-limit',position:pos(ended.view.position),
+        need(same(pos(ended.view.position),pos(lastView.position)),
+          'diagnostic owner advanced after last accepted view');
+        result.frontier={reason:wallLimited?'finite-wall-limit':'finite-transition-limit',
+          position:pos(ended.view.position),
           digest:ended.view.digest,consoleTail:ended.view.console.slice(-8192),
           gpu:ended.view.gpu,outstanding:ended.view.outstanding,
           presentation:presentation.snapshot()};
+        lastView=ended.view;
       }
+      result.egress=lastView.egress;
+      const retained=await store.statistics();
+      need(same(retained,statistics),'diagnostic continuation changed saved parent');
+      result.authenticated.retentionAfter=retained;
       result.measured={start:last.position.transition,
         end:result.frame?.position.transition??result.frontier.position.transition,
         guestTransitions:(BigInt(result.frame?.position.transition??result.frontier.position.transition)
@@ -344,6 +415,11 @@ finally{
     catch(error){report.traceError=String(error.message);}
   await context?.close().catch(error=>{report.contextCloseError=String(error.message);});
   if(server){server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
+  report.hostFreeBytesAfter=await freeBytes(out);
+  report.source.recoveredTreeSha256After=await treeDigest(source);
+  if(report.source.recoveredTreeSha256After!==sourceTreeBefore){
+    report.status='failed';report.sourceChanged=true;process.exitCode=1;
+  }
   report.finished=new Date().toISOString();
   await fs.writeFile(path.join(out,'report.json'),JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify({status:report.status,output:out,failure:report.failure,
