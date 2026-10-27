@@ -3,7 +3,7 @@ id: E9-T22r
 epic: 9
 title: Record an exact-format cold Omarchy first-frame prefix
 priority: 524.92202975
-status: in-progress
+status: implemented
 depends_on: [E9-T22q]
 estimate: S
 risk: medium
@@ -96,3 +96,44 @@ requirement. The console also reports guest `vda` buffer I/O errors. This
 attempt is diagnostic source evidence only; the recovery target must seal the
 last durable 21.7B witness, authenticate and replay it without a new cold
 boot. A future fresh capture now refuses insufficient disk before launch.
+
+### 2026-10-27 — worker — recovered exact cold HostSpace frontier submitted
+
+At frozen code head `b481f6c71901c2859afc5f79496f9f374a3ae00d`, ran
+`E9_SOURCE=target/evidence/e9-t22r-720f53afe/desktop E9_OUT=target/evidence/e9-t22r-recovery-b481f6c71 make verify-E9-T22r-recovery`.
+The target passed six preflight tests, `cargo fmt --all --check`, the built-web
+check, browser recovery, retained closure and the independent Python byte
+oracle (`target/evidence/e9-t22r-recovery-b481f6c71/`). The source failed
+capture remains pinned to `720f53afe0153a2425e4f01a607ab16c5705fa6b`:
+HostSpace refused the 21.75B write after the last durable 21.7B checkpoint.
+The original source-tree digest stayed
+`bddc8591d832993ad0f612a4cf1cc6ff1efb2e7534ac3350060c2330811e3f31`
+before and after recovery. The cloned Chrome profile matched the exported
+manifest and retention counters despite the recorded Chrome 155-to-156 host
+version change. Sealing executed zero guest steps and changed only the witness
+`finished` flag and session revision; payload bytes, all 3,523 objects and
+13,177 chunks stayed unchanged.
+
+The source-pinned public controller replayed cold-431 at 21.6B to cold-432
+at 21.65B (`4252975a74f0aa73c645f1581be5acb7d7913268bf4cd83ad30464006d617196`).
+The source-pinned production worker replayed the same full anchor through
+the next adjacent window to cold-433 at 21.7B
+(`0602661729d65d93fc4b88053f148b45b336b3f9727efe44c1edaf2a826a10d8`);
+the final result reports two windows and `wholeChain:true`. Both saved raw
+states, GPU notification latches `[0,0]`, host queues and physical renderer
+artifacts are retained. Profile, contents, non-epoch logical fields and all
+1,242 original renderer frames match; replay adds exactly one authenticated
+epoch/scanout rebase. Browser errors, blocked requests and replay egress were
+zero, and worker provider entries were zero. The trace is
+`desktop/browser-trace.zip`; the recovered report SHA-256 is
+`0d2d37842f96a7d9b203a420d6debec108f982322a562838605c56d2b74ab17f`;
+the closure report SHA-256 is
+`81fbecf6c138652d5cf533cd32fbe576c1f4133562864e395664f76cf28f6677`;
+the byte-oracle report SHA-256 is
+`bf77383a441d5c0edf5d3959852126c99b266ae9eaf5cc713d1cf7c67caaf3c5`.
+The source had no nonblank desktop-frame evidence and reported guest `vda`
+write errors. This is a bounded HostSpace frontier, not a desktop boot or a
+delta-origin public-controller seek. A separate Daybreak diagnostic of the
+earlier overly strict renderer oracle is retained in
+`target/evidence/e9-t22r-daybreak-renderer-a5792e4d1b/`; the final fresh
+verifier must interrogate this submitted exact-head evidence.
