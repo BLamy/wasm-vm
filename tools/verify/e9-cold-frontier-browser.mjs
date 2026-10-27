@@ -395,16 +395,19 @@ try{
     };
     const guestProbe=async(worker,tag,from,deadline,minDraws=0)=>{
       const rid='e9frontier'+tag;
-      const command=`e9_sddm_pid=$(systemctl show sddm.service -p MainPID --value); `+
-        `e9_hypr_pid=$(pgrep -xo Hyprland || true); `+
-        `printf 'E9_SDDM_PID=%s\\nE9_HYPR_PID=%s\\n' "$e9_sddm_pid" "$e9_hypr_pid"; `+
-        `systemctl show sddm.service -p ActiveState -p MainPID; `+
-        `if test -n "$e9_hypr_pid" && kill -0 "$e9_hypr_pid" 2>/dev/null; then `+
-        `e9_hypr_uid=$(stat -c %u "/proc/$e9_hypr_pid"); `+
-        `printf 'E9_HYPR_UID=%s\\n' "$e9_hypr_uid"; `+
-        `printf 'E9_HYPR_USER_STATE=%s\\n' "$(loginctl show-user "$e9_hypr_uid" -p State --value 2>/dev/null || true)"; fi; `+
-        `printf 'E9_SESSION_COUNT=%s\\n' "$(loginctl list-sessions --no-legend --no-pager 2>/dev/null | wc -l)"; `+
-        `ps -eo pid,ppid,comm,args | grep -E '[s]ddm|[H]yprland|[X]org|[X]wayland|[w]ayland' || true`;
+      const command=`e9_sddm_pid=$(systemctl show sddm.service -p MainPID --value 2>/dev/null) || e9_sddm_pid=ERR; `+
+        `e9_sddm_active=$(systemctl show sddm.service -p ActiveState --value 2>/dev/null) || e9_sddm_active=ERR; `+
+        `e9_hypr_pid=$(pgrep -xo Hyprland 2>/dev/null) || e9_hypr_pid=0; `+
+        `e9_hypr_uid=-1; e9_user_state=none; `+
+        `if test "$e9_hypr_pid" -gt 0 2>/dev/null; then `+
+        `e9_hypr_uid=$(stat -c %u "/proc/$e9_hypr_pid" 2>/dev/null) || e9_hypr_uid=ERR; `+
+        `if test "$e9_hypr_uid" != ERR; then `+
+        `e9_user_state=$(loginctl show-user "$e9_hypr_uid" -p State --value 2>/dev/null) || e9_user_state=ERR; fi; fi; `+
+        `e9_sessions_raw=$(loginctl list-sessions --no-legend --no-pager 2>/dev/null) || e9_sessions_raw=ERR; `+
+        `if test "$e9_sessions_raw" = ERR; then e9_sessions=ERR; else `+
+        `e9_sessions=$(printf '%s\\n' "$e9_sessions_raw" | awk 'NF{n++} END{print n+0}'); fi; `+
+        `printf 'E9_SDDM_PID=%s\\nE9_SDDM_ACTIVE=%s\\nE9_HYPR_PID=%s\\nE9_HYPR_UID=%s\\nE9_HYPR_USER_STATE=%s\\nE9_SESSION_COUNT=%s\\n' `+
+        `"$e9_sddm_pid" "$e9_sddm_active" "$e9_hypr_pid" "$e9_hypr_uid" "$e9_user_state" "$e9_sessions"`;
       const bytes=new TextEncoder().encode(formatRpcCommand(command,rid));
       const inputBytes=bytes.length;
       const sent=await request(worker,'input',{bytes},30000,[bytes.buffer]);
@@ -429,18 +432,45 @@ try{
         if(last.frameChanged||last.firstCandidate)sample(last);
         if(last.guestHalt){probe.status='guest-halt-before-response';break;}
       }
+      const witnessed=await request(worker,'inspect',{},30000);
+      need(same(pos(witnessed.view.position),pos(last.position))
+        &&/^[0-9a-f]{64}$/.test(witnessed.view.digest),
+      'guest process observation lacks a same-position exact witness');
+      last=witnessed.view;probe.digest=last.digest;
       probe.position=pos(last.position);
       probe.gpu=last.gpu;probe.presentation=presentation.snapshot();
       probe.consoleTail=last.console.slice(-8192);
       if(probe.status==='pending')probe.status='no-response-within-50m-steps';
       if(probe.status==='guest-response'){
-        const value=probe.stdout;
-        probe.process={sddmPid:Number(value.match(/(?:^|\n)E9_SDDM_PID=([1-9][0-9]*)\n/)?.[1]??0),
-          hyprlandPid:Number(value.match(/(?:^|\n)E9_HYPR_PID=([1-9][0-9]*)\n/)?.[1]??0),
-          hyprlandUid:Number(value.match(/(?:^|\n)E9_HYPR_UID=([0-9]+)\n/)?.[1]??-1),
-          hyprlandUserState:value.match(/(?:^|\n)E9_HYPR_USER_STATE=([^\n]*)\n/)?.[1]??'',
-          sessions:Number(value.match(/(?:^|\n)E9_SESSION_COUNT=([0-9]+)\n/)?.[1]??0),
-          sddmActive:value.includes('ActiveState=active\n')};
+        const lines=probe.stdout.trim().split('\n');
+        const schema=['E9_SDDM_PID','E9_SDDM_ACTIVE','E9_HYPR_PID',
+          'E9_HYPR_UID','E9_HYPR_USER_STATE','E9_SESSION_COUNT'];
+        need(probe.exit===0&&lines.length===schema.length,
+          'guest process probe missing or extra fields');
+        const fields={};
+        for(let index=0;index<schema.length;index++){
+          const [name,...parts]=lines[index].split('=');
+          need(name===schema[index]&&parts.length===1&&parts[0]
+            &&parts[0]!=='ERR','guest process probe field '+schema[index]);
+          fields[name]=parts[0];
+        }
+        need(/^(0|[1-9][0-9]*)$/.test(fields.E9_SDDM_PID)
+          &&/^[a-z-]+$/.test(fields.E9_SDDM_ACTIVE)
+          &&/^(0|[1-9][0-9]*)$/.test(fields.E9_HYPR_PID)
+          &&/^(-1|0|[1-9][0-9]*)$/.test(fields.E9_HYPR_UID)
+          &&/^[a-z-]+$/.test(fields.E9_HYPR_USER_STATE)
+          &&/^(0|[1-9][0-9]*)$/.test(fields.E9_SESSION_COUNT),
+        'guest process probe invalid field value');
+        need((fields.E9_HYPR_PID==='0')===
+          (fields.E9_HYPR_UID==='-1'&&fields.E9_HYPR_USER_STATE==='none'),
+        'guest process probe inconsistent Hyprland identity');
+        probe.process={sddmPid:Number(fields.E9_SDDM_PID),
+          sddmState:fields.E9_SDDM_ACTIVE,
+          sddmActive:fields.E9_SDDM_ACTIVE==='active',
+          hyprlandPid:Number(fields.E9_HYPR_PID),
+          hyprlandUid:Number(fields.E9_HYPR_UID),
+          hyprlandUserState:fields.E9_HYPR_USER_STATE,
+          sessions:Number(fields.E9_SESSION_COUNT)};
       }
       return {probe,last};
     };
@@ -586,14 +616,11 @@ try{
               consoleTail:lastView.console.slice(-8192)};
           }
         }else if(probe.status==='guest-response'&&probe.exit===0){
-          const process=probe.process;
           result.diagnosticCandidateAfterInput=result.frameCandidate;
           result.frameCandidate=null;
-          result.status='exact-failure-frontier';
           result.frontier.processProbe=probe;
-          result.frontier.reason=!process?.sddmActive?'sddm-inactive-at-bound'
-            :process.hyprlandPid<=1?'hyprland-not-started-at-bound'
-            :'live-desktop-without-presented-frame-at-bound';
+          result.frontier.processStateTiming='observed only after the unmodified '
+            +'finite bound and diagnostic serial input; not exact state at the bound';
         }
       }
       result.egress=lastView.egress;
