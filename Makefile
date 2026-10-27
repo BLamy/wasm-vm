@@ -2956,3 +2956,15 @@ verify-E9-T22r-recovery:
 	  node tools/verify/e9-cold-prefix-recovery.mjs --source "$$src" --output "$$out/desktop" > "$$out/recovery.log" 2>&1; \
 	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/desktop" --prefix > "$$out/closure.log" 2>&1; \
 	  python3 -B tools/verify/e9-cold-prefix-files.py --directory "$$out/desktop" > "$$out/byte-oracle.log" 2>&1
+
+.PHONY: verify-E9-T22o
+verify-E9-T22o:
+	@set -eu; src="$${E9_SOURCE:?set E9_SOURCE to the recovered exact cold-prefix desktop directory}"; \
+	  src="$$(cd "$$src" && pwd -P)"; out="$${E9_OUT:-target/evidence/e9-t22o-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$(dirname "$$out")"; mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  node --check tools/verify/e9-cold-frontier-browser.mjs; \
+	  node --check tools/verify/e9-cold-frontier-worker.mjs; \
+	  cargo fmt --all --check > "$$out/fmt.log" 2>&1; \
+	  $(MAKE) web-build > "$$out/web-build.log" 2>&1; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-cold-frontier-browser.mjs --source "$$src" --output "$$out/desktop" \
+	    --limit "$${E9_LIMIT:-22000000000}" > "$$out/browser.log" 2>&1
