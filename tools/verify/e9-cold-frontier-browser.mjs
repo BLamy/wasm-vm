@@ -397,7 +397,8 @@ try{
       const rid='e9frontier'+tag;
       const command=`e9_sddm_pid=$(systemctl show sddm.service -p MainPID --value 2>/dev/null) || e9_sddm_pid=ERR; `+
         `e9_sddm_active=$(systemctl show sddm.service -p ActiveState --value 2>/dev/null) || e9_sddm_active=ERR; `+
-        `e9_hypr_pid=$(pgrep -xo Hyprland 2>/dev/null) || e9_hypr_pid=0; `+
+        `if e9_hypr_pid=$(pgrep -xo Hyprland 2>/dev/null); then :; else `+
+        `e9_pgrep_status=$?; if test "$e9_pgrep_status" -eq 1; then e9_hypr_pid=0; else e9_hypr_pid=ERR; fi; fi; `+
         `e9_hypr_uid=-1; e9_user_state=none; `+
         `if test "$e9_hypr_pid" -gt 0 2>/dev/null; then `+
         `e9_hypr_uid=$(stat -c %u "/proc/$e9_hypr_pid" 2>/dev/null) || e9_hypr_uid=ERR; `+
