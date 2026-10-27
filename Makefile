@@ -2899,7 +2899,7 @@ verify-E9-T22n:
 	  out="$${E9_OUT:-target/evidence/e9-t22n-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
 	  mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
 	  E9_T22N_DESKTOP="$$desktop" node --test tools/verify/e9-workload-wall.test.mjs > "$$out/boundary-tests.log" 2>&1; \
-	  $(MAKE) web-build > "$$out/web-build.log" 2>&1; git diff --exit-code -- web/dist; \
+	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; git diff --exit-code -- web/dist; \
 	  E9_T22N_DESKTOP="$$desktop" node tools/verify/e9-workload-wall-browser.mjs --output "$$out/browser"; \
 	  mkdir "$$out/prefix"; ln -s "$$desktop/report.json" "$$out/prefix/report.json"; ln -s "$$desktop/saved" "$$out/prefix/saved"; \
 	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/prefix" --allow-incomplete
@@ -2952,7 +2952,7 @@ verify-E9-T22r-recovery:
 	  node --test tools/verify/e9-cold-prefix-budget.test.mjs tools/verify/e9-workload-assets.test.mjs > "$$out/preflight-tests.log" 2>&1; \
 	  node --check tools/verify/e9-cold-prefix-recovery.mjs; \
 	  cargo fmt --all --check > "$$out/fmt.log" 2>&1; \
-	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; git diff --exit-code -- web/dist; \
+	  $(MAKE) web-build > "$$out/web-build.log" 2>&1; git diff --exit-code -- web/dist; \
 	  node tools/verify/e9-cold-prefix-recovery.mjs --source "$$src" --output "$$out/desktop" > "$$out/recovery.log" 2>&1; \
 	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/desktop" --prefix > "$$out/closure.log" 2>&1; \
 	  python3 -B tools/verify/e9-cold-prefix-files.py --directory "$$out/desktop" > "$$out/byte-oracle.log" 2>&1
