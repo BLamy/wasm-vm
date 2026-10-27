@@ -42,10 +42,15 @@ calibration, never a substitute for the next original cold qualification run.
 
 ## Deterministic acceptance
 
-`E9_SOURCE=target/evidence/e9-t22r-recovery-b481f6c71/desktop make verify-E9-T22o`
-using the pinned recovered E9-T22r graph and recorded SHA-256 receipts. The
-target must refuse missing or changed input and produce a bounded browser
-report with source and output digests.
+First run `E9_OUT=target/evidence/e9-t22o-base-prefetch node
+tools/verify/e9-cold-base-prefetch.mjs` to materialize and hash every member
+of the original frozen image before the browser run. Then run
+`E9_SOURCE=target/evidence/e9-t22r-recovery-b481f6c71/desktop
+E9_BASE_REPORT=target/evidence/e9-t22o-base-prefetch/progress.json make
+verify-E9-T22o` using the pinned recovered E9-T22r graph and recorded
+SHA-256 receipts. The target must refuse missing or changed input, including
+the complete offline base cache, and produce a bounded browser report with
+source and output digests. The browser and guest must remain offline.
 
 ## Adversarial verification
 

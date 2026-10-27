@@ -6,12 +6,15 @@ import {SessionStore} from '/session-store.js';
 import {readCheckpointObject,checkpointHash} from '/session-checkpoints.js';
 import {attachProductionVirgl,createWorkerScanoutPresenter} from '/renderer/virgl-command/production.mjs';
 import {gpuNeed as need,gpuPosition as pos,gpuHashBytes,gpuHex,validateGpuConfiguration} from '/session-gpu-replay-format.js';
+import {decodeCheckpointData,encodeCheckpointData} from '/renderer/virgl-command/checkpoint-codec.mjs';
 
 const decoder=new TextDecoder(),tick=()=>new Promise(resolve=>setTimeout(resolve,0));
 let machine,renderer,store,pastConsole=new Uint8Array(),latestFrame=null,firstCandidate=null;
 let frameVersion=0,sentFrame=0,prepared=false,active=false,stopped=false;
 let missingLocalBlock=null,guestHalt=null,serial=Promise.resolve();
 let retainedObjects,imageChunkLengths,chunkStart=null;
+let nextBaseToken=0,localBaseReads=0;
+const baseWaiters=new Map();
 const egress={fetch:0,sockets:0};
 function tail(parts){
   const bytes=new Uint8Array(Math.min(65536,parts.reduce((n,part)=>n+part.length,0)));let at=bytes.length;
@@ -42,6 +45,7 @@ function view(digest=false){
   const queues=machine.exactSessionHostQueues();
   const value={position:pos(at),console:decoder.decode(tail([pastConsole,queues.output])),gpu:renderer.inspect(),
     offline:machine.exactBranchNetworkOffline(),egress:{...egress},guestHalt,
+    localBaseReads,
     outstanding:machine.exactDeviceRequests().map(row=>({
       id:row.id,kind:row.intent.kind,content:row.intent.content??null}))};
   if(digest)value.digest=gpuHex(at.digest);
@@ -53,7 +57,16 @@ function view(digest=false){
     firstCandidate=null;}
   return value;
 }
-async function localBlocks(){
+function localBase(requestId,ref){
+  return new Promise((resolve,reject)=>{
+    const token=++nextBaseToken;
+    const timer=setTimeout(()=>{baseWaiters.delete(token);
+      reject(Error('offline base response deadline exceeded'));},30000);
+    baseWaiters.set(token,{requestId,ref,resolve,reject,timer});
+    postMessage({type:'need-base',requestId,token,ref});
+  });
+}
+async function localBlocks(requestId){
   for(let round=0;round<1024;round++){
     const requests=machine.exactDeviceRequests();if(!requests.length)return;
     for(const request of requests){
@@ -61,6 +74,7 @@ async function localBlocks(){
       const ref={sha256:request.intent.content.sha256,length:String(request.intent.content.length)};
       need(imageChunkLengths.get(ref.sha256)?.has(Number(ref.length)),
         'offline disk request digest/length is not in the pinned base image');
+      let bytes;
       if(!retainedObjects.has(ref.sha256)){
         let missing=false;
         try{await store.objectReference(ref.sha256);}
@@ -68,11 +82,16 @@ async function localBlocks(){
           'future base object failed for a reason other than absence: '+String(error));
           missing=true;}
         need(missing,'source-unretained object unexpectedly exists in the diagnostic store');
-        missingLocalBlock={id:request.id,ref,code:'MissingObject',
-          sourceGraphMembership:false,baseImageMembership:true};
-        throw Error('unretained offline base-image chunk '+ref.sha256+' length '+ref.length);
-      }
-      const bytes=await readCheckpointObject(store,ref,1048576);
+        try{bytes=await localBase(requestId,ref);}
+        catch(error){missingLocalBlock={id:request.id,ref,code:'BaseSupplyFailure',
+          sourceGraphMembership:false,baseImageMembership:true,
+          localCacheError:String(error.message)};
+          throw Error('unretained offline base-image chunk '+ref.sha256+' length '+ref.length+': '+error.message);}
+        need(bytes instanceof Uint8Array&&bytes.buffer instanceof ArrayBuffer
+          &&bytes.length===Number(ref.length)&&checkpointHash(bytes)===ref.sha256,
+        'local offline base object differs from pinned image');
+        localBaseReads++;
+      }else bytes=await readCheckpointObject(store,ref,1048576);
       need(!stopped&&!renderer.inspect().lost,'diagnostic GPU continuation stopped');
       const lease=machine.exactLeaseDeviceRequest(request.id);
       try{machine.exactCompleteDeviceRequest(lease,0,0,bytes);}
@@ -145,6 +164,38 @@ async function prepare(request){
   const saved=await renderer.saveCheckpoint();
   need(saved.epoch===machine.exactGpuSessionEpoch()&&saved.epoch!==source.epoch
     &&checkpointHash(saved.bytes)===saved.sha256,'restored renderer epoch and identity');
+  const original=decodeCheckpointData(source.bytes.subarray(16,-32));
+  const rebased=decodeCheckpointData(saved.bytes.subarray(16,-32));
+  const data=value=>encodeCheckpointData(value);
+  const originalLogical=structuredClone(rebased.logical);
+  need(original.logical.scanout&&originalLogical.scanout,'physical scanout exists');
+  originalLogical.epoch=original.logical.epoch;
+  originalLogical.scanout.epoch=original.logical.scanout.epoch;
+  const logicalKeys=Object.keys(original.logical);
+  const changedLogicalFields=logicalKeys.filter(key=>
+    checkpointHash(data(original.logical[key]))!==checkpointHash(data(rebased.logical[key])));
+  const profileSha256=checkpointHash(data(original.profile));
+  const contentsSha256=checkpointHash(data(original.contents));
+  const sourceFrames=original.frames.length;
+  const lastFrame=rebased.frames.length===sourceFrames+1
+    ?decodeCheckpointData(rebased.frames.at(-1)):null;
+  need(JSON.stringify(logicalKeys)===JSON.stringify(Object.keys(rebased.logical))
+    &&profileSha256===checkpointHash(data(rebased.profile))
+    &&contentsSha256===checkpointHash(data(rebased.contents))
+    &&rebased.logical.epoch===saved.epoch
+    &&rebased.logical.scanout.epoch===saved.epoch
+    &&changedLogicalFields.every(key=>['epoch','scanout'].includes(key))
+    &&checkpointHash(data(original.logical))===checkpointHash(data(originalLogical))
+    &&original.logical.queries.length===0&&rebased.logical.queries.length===0
+    &&checkpointHash(data(original.frames))===
+      checkpointHash(data(rebased.frames.slice(0,sourceFrames)))
+    &&lastFrame?.op==='rebase'&&lastFrame.expected===original.logical.epoch
+    &&lastFrame.next===rebased.logical.epoch,
+    'physical renderer changed beyond the owner epoch rebase');
+  const physical={sourceSha256:source.sha256,rebasedSha256:saved.sha256,
+    sourceEpoch:original.logical.epoch,rebasedEpoch:rebased.logical.epoch,
+    profileSha256,contentsSha256,changedLogicalFields,
+    sourceFrames,rebasedFrames:rebased.frames.length,rebase:lastFrame};
   const initial=machine.captureExactGpuKeyframe(gpuHashBytes(saved.sha256),true);
   need(JSON.stringify(pos(initial))===JSON.stringify(configuration.branchOrigin.sourcePosition),
     'captured branch origin changed');
@@ -161,7 +212,7 @@ async function prepare(request){
     rendererEpoch:saved.epoch,nativeSha256:checkpointHash(request.capture.native),
     pendingSha256:checkpointHash(request.capture.pending),
     outputSha256:checkpointHash(request.capture.output),
-    diskSha256:checkpointHash(request.capture.disk)},view:view(true)};
+    diskSha256:checkpointHash(request.capture.disk),physical},view:view(true)};
 }
 async function command(request){
   if(request.type==='prepare')return prepare(request);
@@ -182,7 +233,7 @@ async function command(request){
     need(Number.isInteger(request.steps)&&request.steps>0&&request.steps<=1048576,'bounded guest run');
     try{
       for(let left=request.steps;left>0;){
-        need(!renderer.inspect().lost,'physical GPU context lost');await localBlocks();
+        need(!renderer.inspect().lost,'physical GPU context lost');await localBlocks(request.requestId);
         await pumpGpu();
         const amount=Math.min(left,4096);chunkStart=pos(machine.inputPosition());
         const result=machine.runChunk(amount);left-=amount;
@@ -191,7 +242,7 @@ async function command(request){
         if(result.done){guestHalt={position:pos(machine.inputPosition()),result};break;}
         if(left)await tick();
       }
-      await localBlocks();await pumpGpu();
+      await localBlocks(request.requestId);await pumpGpu();
       return {batch:drain(),view:view()};
     }catch(error){stopped=true;throw error;}
   }
@@ -208,6 +259,19 @@ function send(value){
 }
 onmessage=event=>{
   const request=event.data;
+  if(request?.type==='base-reply'||request?.type==='base-error'){
+    const pending=baseWaiters.get(request.token);
+    if(!pending||pending.requestId!==request.requestId){
+      postMessage({type:'error',requestId:request.requestId,
+        message:'unmatched offline base response'});return;}
+    baseWaiters.delete(request.token);clearTimeout(pending.timer);
+    if(request.type==='base-error')pending.reject(Error(String(request.message)));
+    else if(request.ref?.sha256!==pending.ref.sha256
+      ||String(request.ref?.length)!==pending.ref.length)
+      pending.reject(Error('offline base response identity changed'));
+    else pending.resolve(request.bytes);
+    return;
+  }
   serial=serial.catch(()=>{}).then(async()=>{
     try{send({type:'result',requestId:request.requestId,...await command(request)});}
     catch(error){postMessage({type:'error',requestId:request.requestId,

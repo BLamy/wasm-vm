@@ -17,7 +17,8 @@ const source=await fs.realpath(path.resolve(argument('--source')));
 const requestedOut=path.resolve(argument('--output'));
 const out=path.join(await fs.realpath(path.dirname(requestedOut)),path.basename(requestedOut));
 const limit=argument('--limit');
-assert(/^[1-9][0-9]*$/.test(limit)&&BigInt(limit)>21700000000n&&BigInt(limit)<=23000000000n);
+assert(/^[1-9][0-9]*$/.test(limit)&&BigInt(limit)>21700000000n&&BigInt(limit)<=25200000000n);
+const baseReportFile=await fs.realpath(path.resolve(argument('--base-report')));
 assert(out!==source&&!out.startsWith(source+path.sep),'source and output must be separate');
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const treeDigest=async directory=>{
@@ -55,6 +56,42 @@ const recovery=JSON.parse(await readPinned('recovery-report.json',PIN.recovery))
 const archive=JSON.parse(await readPinned('saved/storage.json',PIN.storage));
 const priorClosure=JSON.parse(await readPinned('retained-closure/report.json',PIN.closure));
 const priorOracle=JSON.parse(await readPinned('cold-prefix-byte-oracle/report.json',PIN.byteOracle));
+assert.equal(git('status','--porcelain'),'','freeze exact calibration harness');
+let offlineBase=null;
+{
+  const reportBytes=await fs.readFile(baseReportFile),base=JSON.parse(reportBytes);
+  assert.equal(base.task,'E9-T22o');
+  assert.equal(base.status,'authenticated-complete');
+  assert.equal(base.manifestSha256,'8a793846f109a08242688fa32d531f230d7a3e2a7bdb3c694dbfc1abb70367a8');
+  assert.equal(base.uniqueChunks,34687);
+  const indexBytes=await fs.readFile(path.join(path.dirname(baseReportFile),'index.json'));
+  assert.equal(sha(indexBytes),base.indexSha256,'offline base cache index changed');
+  const cache=await fs.realpath(base.cache);
+  const manifestBytes=await fs.readFile(path.join(root,'target/e9-workload-base-cache',
+    'manifest-'+base.manifestSha256+'.json'));
+  assert.equal(sha(manifestBytes),base.manifestSha256,'frozen original base manifest changed');
+  const image=JSON.parse(manifestBytes);
+  assert.equal(image.image_len,12884901888);assert.equal(image.chunk_size,262144);
+  const ids=[...new Set(image.chunks)].sort();assert.equal(ids.length,34687);
+  const index=JSON.parse(indexBytes);
+  assert.equal(index.length,ids.length);
+  assert.deepEqual(index.map(row=>row.sha256).sort(),ids,'offline cache does not cover original manifest');
+  assert.deepEqual((await fs.readdir(cache)).sort(),ids.map(id=>id+'.bin').sort(),
+    'offline cache has missing or extra members');
+  const files=new Map();
+  for(const row of index){
+    assert.equal(row.bytes,262144);
+    const file=path.join(cache,row.sha256+'.bin'),stat=await fs.lstat(file);
+    assert(stat.isFile()&&!stat.isSymbolicLink()&&stat.size===262144,
+      'offline base member shape '+row.sha256);
+    assert.equal(sha(await fs.readFile(file)),row.sha256,
+      'offline base member differs from original image '+row.sha256);
+    files.set(row.sha256,file);
+  }
+  offlineBase={files,reportSha256:sha(reportBytes),indexSha256:base.indexSha256,
+    manifestSha256:base.manifestSha256,cache,uniqueChunks:ids.length,
+    bytes:String(ids.length*262144)};
+}
 assert.equal(sourceReport.status,'cold-prefix-frontier');
 assert.equal(sourceReport.result.final.transition,'21700000000');
 assert.equal(sourceReport.result.frontier.reason,'host-space-admission');
@@ -64,7 +101,6 @@ assert.equal(recovery.source.treeSha256Before,recovery.source.treeSha256After);
 assert.equal(priorClosure.status,'retained-closure-passed');
 assert.equal(priorOracle.status,'exact-v3-prefix-passed');
 assert.equal(archive.stores.sessions.length,1);
-assert.equal(git('status','--porcelain'),'','freeze exact calibration harness');
 const sourceTreeBefore=await treeDigest(source);
 await fs.mkdir(out,{recursive:false});
 const report={task:'E9-T22o',status:'running',scope:'Offline exact 21.7B cold desktop diagnostic continuation; no qualification or timing claim',
@@ -79,7 +115,10 @@ const report={task:'E9-T22o',status:'running',scope:'Offline exact 21.7B cold de
     guestConsoleTail:sourceReport.result.frontier.consoleTail},
   head:git('rev-parse','HEAD'),limit,started:new Date().toISOString(),
   browser:{origin:recovery.browser.origin,version:null,sourceVersion:recovery.browser.version,
-    staticRequests:[],blockedRequests:[],blockedSockets:[],pageErrors:[]},
+    staticRequests:[],blockedRequests:[],blockedSockets:[],pageErrors:[],localBaseReads:[]},
+  offlineBase:offlineBase?{reportSha256:offlineBase.reportSha256,
+    indexSha256:offlineBase.indexSha256,manifestSha256:offlineBase.manifestSha256,
+    uniqueChunks:offlineBase.uniqueChunks,bytes:offlineBase.bytes}:null,
   preflight:{},progress:[],result:null};
 let context,page,traceStarted=false,server;
 try{
@@ -174,6 +213,19 @@ try{
     await fs.writeFile(path.join(out,'progress.json'),JSON.stringify(value,null,2)+'\n');
     console.log(JSON.stringify(value));
   });
+  await page.exposeFunction('readOfflineBase',async ref=>{
+    assert(offlineBase,'offline base cache was not provided');
+    assert(/^[0-9a-f]{64}$/.test(ref?.sha256)&&ref?.length==='262144',
+      'offline base request shape');
+    const file=offlineBase.files.get(ref.sha256);
+    assert(file,'offline base request is outside original image');
+    const bytes=await fs.readFile(file);
+    assert.equal(bytes.length,262144,'offline base length changed');
+    assert.equal(sha(bytes),ref.sha256,'offline base bytes changed since preflight');
+    report.browser.localBaseReads.push({sha256:ref.sha256,length:bytes.length,
+      source:'frozen-image-manifest-verified-local-file'});
+    return bytes.toString('base64');
+  });
   await page.goto(origin.origin+'/');
   report.result=await page.evaluate(async input=>{
     const need=(value,message)=>{if(!value)throw Error('cold frontier: '+message);};
@@ -187,6 +239,7 @@ try{
     const {isKeyframeDescriptorPrefix,decodeKeyframeDescriptor}=await import('/session-keyframes.js');
     const {branchOrigin}=await import('/session-branch-format.js');
     const {PresentationController}=await import('/src/sink/presentation.js');
+    const {createFencedRpc,formatRpcCommand}=await import('/guest-rpc.js');
     const store=await SessionStore.open(input.database);
     const opened=await store.openSession(input.id);
     need(opened&&checkpointHash(opened.manifest)===input.manifestSha256,
@@ -217,6 +270,22 @@ try{
         worker.removeEventListener('error',error);};
       const fail=value=>{if(done)return;cleanup();reject(value);};
       const message=event=>{const value=event.data;if(value.requestId!==requestId)return;
+        if(value.type==='need-base'){
+          (async()=>{
+            need(Number.isInteger(value.token)&&value.token>0,
+              'offline base request token');
+            const base64=await globalThis.readOfflineBase(value.ref);
+            const binary=atob(base64),bytes=new Uint8Array(binary.length);
+            for(let index=0;index<binary.length;index++)bytes[index]=binary.charCodeAt(index);
+            need(String(bytes.length)===value.ref.length
+              &&checkpointHash(bytes)===value.ref.sha256,
+              'offline base IPC bytes changed');
+            worker.postMessage({type:'base-reply',requestId,token:value.token,
+              ref:value.ref,bytes},[bytes.buffer]);
+          })().catch(error=>worker.postMessage({type:'base-error',requestId,
+            token:value.token,message:String(error.stack??error)}));
+          return;
+        }
         if(value.type==='progress')return;
         if(value.type==='error'||value.type==='inspection-error'||value.type==='branch-error'){
           const failure=Error(value.stack??value.message);failure.detail=value;fail(failure);return;}
@@ -262,6 +331,10 @@ try{
         'captured private branch differs from authenticated replay');
     }finally{replayWorker.terminate();}
     const configuration=structuredClone(metadata.configuration);
+    if(input.baseManifestSha256)
+      need(checkpointHash(new TextEncoder().encode(configuration.imageManifest))
+        ===input.baseManifestSha256,
+      'retained session image differs from offline pinned base manifest');
     configuration.branchOrigin=branchOrigin({parentId:input.id,
       parentManifestSha256:input.manifestSha256,sourceDigestSha256:input.finalDigest,
       position:last.position,consolePrefix:captured.consolePrefix});
@@ -320,6 +393,57 @@ try{
         gpu:view.gpu,consoleTail:view.console.slice(-4096)};
       return true;
     };
+    const guestProbe=async(worker,tag,from,deadline,minDraws=0)=>{
+      const rid='e9frontier'+tag;
+      const command=`e9_sddm_pid=$(systemctl show sddm.service -p MainPID --value); `+
+        `e9_hypr_pid=$(pgrep -xo Hyprland || true); `+
+        `printf 'E9_SDDM_PID=%s\\nE9_HYPR_PID=%s\\n' "$e9_sddm_pid" "$e9_hypr_pid"; `+
+        `systemctl show sddm.service -p ActiveState -p MainPID; `+
+        `if test -n "$e9_hypr_pid" && kill -0 "$e9_hypr_pid" 2>/dev/null; then `+
+        `e9_hypr_uid=$(stat -c %u "/proc/$e9_hypr_pid"); `+
+        `printf 'E9_HYPR_UID=%s\\n' "$e9_hypr_uid"; `+
+        `printf 'E9_HYPR_USER_STATE=%s\\n' "$(loginctl show-user "$e9_hypr_uid" -p State --value 2>/dev/null || true)"; fi; `+
+        `printf 'E9_SESSION_COUNT=%s\\n' "$(loginctl list-sessions --no-legend --no-pager 2>/dev/null | wc -l)"; `+
+        `ps -eo pid,ppid,comm,args | grep -E '[s]ddm|[H]yprland|[X]org|[X]wayland|[w]ayland' || true`;
+      const bytes=new TextEncoder().encode(formatRpcCommand(command,rid));
+      const inputBytes=bytes.length;
+      const sent=await request(worker,'input',{bytes},30000,[bytes.buffer]);
+      need(sent.view.offline&&sent.view.egress.fetch===0&&sent.view.egress.sockets===0,
+        'guest process probe attempted egress');
+      const probe={kind:'post-continuation-diagnostic-input',
+        sentAt:pos(from.position),bytes:inputBytes,command,steps:0,
+        status:'pending',stdout:null,exit:null,position:null};
+      let last=sent.view;
+      for(let index=0;index<48&&Date.now()<deadline-30000;index++){
+        const parsed=createFencedRpc(rid).feed(last.console);
+        if(parsed&&probe.status!=='guest-response'){
+          probe.status='guest-response';probe.stdout=parsed.stdout;probe.exit=parsed.exit;
+        }
+        if(probe.status==='guest-response'
+          &&presentation.snapshot().drawnPresents>minDraws)break;
+        const response=await request(worker,'advance',{steps:1048576},
+          Math.min(10*60*1000,deadline-Date.now()-30000));
+        probe.steps+=1048576;last=response.view;
+        need(last.offline&&last.egress.fetch===0&&last.egress.sockets===0,
+          'guest process probe attempted egress');
+        if(last.frameChanged||last.firstCandidate)sample(last);
+        if(last.guestHalt){probe.status='guest-halt-before-response';break;}
+      }
+      probe.position=pos(last.position);
+      probe.gpu=last.gpu;probe.presentation=presentation.snapshot();
+      probe.consoleTail=last.console.slice(-8192);
+      if(probe.status==='pending')probe.status='no-response-within-50m-steps';
+      if(probe.status==='guest-response'){
+        const value=probe.stdout;
+        probe.process={sddmPid:Number(value.match(/(?:^|\n)E9_SDDM_PID=([1-9][0-9]*)\n/)?.[1]??0),
+          hyprlandPid:Number(value.match(/(?:^|\n)E9_HYPR_PID=([1-9][0-9]*)\n/)?.[1]??0),
+          hyprlandUid:Number(value.match(/(?:^|\n)E9_HYPR_UID=([0-9]+)\n/)?.[1]??-1),
+          hyprlandUserState:value.match(/(?:^|\n)E9_HYPR_USER_STATE=([^\n]*)\n/)?.[1]??'',
+          sessions:Number(value.match(/(?:^|\n)E9_SESSION_COUNT=([0-9]+)\n/)?.[1]??0),
+          sddmActive:value.includes('ActiveState=active\n')};
+      }
+      return {probe,last};
+    };
     try{
       await initialized(continuation);
       const kernel=assets.kernel.slice(),wasm=assets.wasm.slice();
@@ -344,7 +468,11 @@ try{
       need(prepared.origin.sourceRendererSha256===inputHashes.renderer
         &&prepared.origin.sourceRendererEpoch===captured.renderer.epoch
         &&/^[0-9a-f]{64}$/.test(prepared.origin.rendererSha256)
-        &&prepared.origin.rendererEpoch!==captured.renderer.epoch,
+        &&prepared.origin.rendererEpoch!==captured.renderer.epoch
+        &&prepared.origin.physical?.sourceSha256===inputHashes.renderer
+        &&prepared.origin.physical?.rebasedSha256===prepared.origin.rendererSha256
+        &&prepared.origin.physical?.changedLogicalFields.every(key=>
+          ['epoch','scanout'].includes(key)),
       'private branch renderer source or rebase changed');
       need(prepared.view.offline===true
         &&prepared.view.egress.fetch===0&&prepared.view.egress.sockets===0,
@@ -370,25 +498,8 @@ try{
         if(remaining<=10*60*1000+30000){wallLimited=true;break;}
         const steps=Number((BigInt(input.limit)-previous)<1048576n
           ?BigInt(input.limit)-previous:1048576n);
-        let response;
-        try{response=await request(continuation,'advance',{steps},
-          Math.min(10*60*1000,remaining-30000));}
-        catch(error){
-          if(!error.detail?.missingLocalBlock)throw error;
-          const stopped=await request(continuation,'inspect',{},inspectTimeout());
-          need(stopped.view.egress.fetch===0&&stopped.view.egress.sockets===0,
-            'offline guest attempted network egress');
-          need(stopped.view.digest&&stopped.missingLocalBlock?.code==='MissingObject',
-            'missing base object must have an exact witness and storage code');
-          result.status='exact-failure-frontier';
-          result.frontier={reason:'unretained-disk-chunk',
-            message:error.message,missingLocalBlock:error.detail?.missingLocalBlock??stopped.missingLocalBlock,
-            position:pos(stopped.view.position),digest:stopped.view.digest,
-            consoleTail:stopped.view.console.slice(-8192),
-            gpu:stopped.view.gpu,outstanding:stopped.view.outstanding,
-            presentation:presentation.snapshot()};
-          break;
-        }
+        const response=await request(continuation,'advance',{steps},
+          Math.min(10*60*1000,remaining-30000));
         const current=BigInt(response.view.position.transition);
         need(current>=previous&&current<=BigInt(input.limit),'bounded monotonic continuation');
         need(response.view.offline===true&&response.view.egress.fetch===0
@@ -429,15 +540,73 @@ try{
           presentation:presentation.snapshot()};
         lastView=ended.view;
       }
+      const unmodifiedWallMs=Date.now()-started;
+      if(result.status==='candidate-needs-guest-proof'||result.status==='bounded-no-frame'){
+        const candidateBeforeProbe=result.frameCandidate;
+        const drawsBeforeProbe=presentation.snapshot().drawnPresents;
+        const {probe,last}=await guestProbe(continuation,
+          candidateBeforeProbe?'candidate':'limit',lastView,deadline,
+          candidateBeforeProbe?drawsBeforeProbe:0);
+        result.diagnosticInput=probe;lastView=last;
+        if(candidateBeforeProbe){
+          result.frameCandidate=candidateBeforeProbe;
+          const process=probe.process;
+          if(probe.status==='guest-response'&&probe.exit===0
+            &&process?.sddmActive&&process.sddmPid>1
+            &&process.hyprlandPid>1&&process.hyprlandUid>=0
+            &&['active','online'].includes(process.hyprlandUserState)
+            &&process.sessions>0
+            &&presentation.snapshot().drawnPresents>drawsBeforeProbe){
+            const secondFrame={position:pos(lastView.position),
+              presentation:presentation.snapshot()};
+            const alive=await guestProbe(continuation,'alive',lastView,deadline);
+            result.diagnosticInput={session:probe,afterSecondFrame:alive.probe};
+            lastView=alive.last;
+            const still=alive.probe.process;
+            if(alive.probe.status==='guest-response'&&alive.probe.exit===0
+              &&still?.sddmActive&&still.sddmPid===process.sddmPid
+              &&still.hyprlandPid===process.hyprlandPid
+              &&still.hyprlandUid===process.hyprlandUid){
+              result.frame={...candidateBeforeProbe,sessionProof:probe,
+                secondFrame,stillAlive:alive.probe};
+              result.status='first-frame';
+            }
+          }else{
+            result.status='candidate-needs-guest-proof';
+          }
+          if(result.status!=='first-frame'){
+            const inspected=await request(continuation,'inspect',{},inspectTimeout());
+            need(same(pos(inspected.view.position),pos(lastView.position)),
+              'diagnostic owner advanced after failed candidate inspection');
+            result.status='exact-failure-frontier';
+            result.frontier={reason:'candidate-lacks-live-desktop-proof',
+              position:pos(lastView.position),digest:inspected.view.digest,
+              candidate:candidateBeforeProbe,processProbe:result.diagnosticInput,
+              gpu:lastView.gpu,presentation:presentation.snapshot(),
+              consoleTail:lastView.console.slice(-8192)};
+          }
+        }else if(probe.status==='guest-response'&&probe.exit===0){
+          const process=probe.process;
+          result.diagnosticCandidateAfterInput=result.frameCandidate;
+          result.frameCandidate=null;
+          result.status='exact-failure-frontier';
+          result.frontier.processProbe=probe;
+          result.frontier.reason=!process?.sddmActive?'sddm-inactive-at-bound'
+            :process.hyprlandPid<=1?'hyprland-not-started-at-bound'
+            :'live-desktop-without-presented-frame-at-bound';
+        }
+      }
       result.egress=lastView.egress;
+      result.localBaseReads=lastView.localBaseReads;
       const retained=await store.statistics();
       need(same(retained,statistics),'diagnostic continuation changed saved parent');
       result.authenticated.retentionAfter=retained;
-      const end=result.frameCandidate?.positionUpperBound.transition
+      const end=result.frame?.positionUpperBound.transition
         ??result.frontier?.position.transition;
       result.measured={start:last.position.transition,end,
         guestTransitions:(BigInt(end)
-          -BigInt(last.position.transition)).toString(),wallMs:Date.now()-started};
+          -BigInt(last.position.transition)).toString(),
+        unmodifiedWallMs,diagnosticWallMs:Date.now()-started-unmodifiedWallMs};
     }finally{continuation.terminate();presentation.dispose();await store.close();}
     return result;
   },{database:sourceReport.result.database,id:sourceReport.result.sessionId,
@@ -446,12 +615,15 @@ try{
     replayedStateSha256:sourceReport.result.replay.windows[1].stateArtifact.sha256,
     replayedRendererSha256:recovery.artifacts.find(row=>row.file==='replay-window-1.renderer').sha256,
     objects:3523,chunks:13177,retainedObjects:archive.stores.objects.map(row=>row.key),
-    limit,diagnosticWorker:diagnostic,nextRequest:0});
-  assert.equal(report.result.status,'exact-failure-frontier',
+    limit,diagnosticWorker:diagnostic,nextRequest:0,
+    baseManifestSha256:offlineBase?.manifestSha256??null});
+  assert(['exact-failure-frontier','first-frame'].includes(report.result.status),
     'a color candidate needs guest session proof; a mere numeric cap needs a concrete obstruction');
   assert.equal(report.browser.blockedRequests.length,0,'no blocked continuation requests');
   assert.equal(report.browser.blockedSockets.length,0,'no attempted continuation sockets');
   assert.equal(report.browser.pageErrors.length,0,'no browser page errors');
+  assert.equal(report.result?.localBaseReads,report.browser.localBaseReads.length,
+    'offline base IPC receipt count changed');
   report.status=report.result.status;
 }catch(error){report.status='failed';report.failure=String(error.stack??error);process.exitCode=1;}
 finally{
@@ -459,9 +631,19 @@ finally{
   catch(error){report.screenshotError=String(error.message);}
   if(traceStarted)try{await context.tracing.stop({path:path.join(out,'browser-trace.zip')});}
     catch(error){report.traceError=String(error.message);}
+  for(const name of ['screen.png','browser-trace.zip']){
+    try{const bytes=await fs.readFile(path.join(out,name));
+      report.browser[name]={bytes:bytes.length,sha256:sha(bytes)};}
+    catch(error){report.browser[name]={error:String(error.message)};}
+  }
   await context?.close().catch(error=>{report.contextCloseError=String(error.message);});
   if(server){server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
   report.hostFreeBytesAfter=await freeBytes(out);
+  report.storage={hostFreeBytesBefore:report.hostFreeBytesBefore,
+    hostFreeBytesAfter:report.hostFreeBytesAfter,
+    hostUsedBytesDelta:(BigInt(report.hostFreeBytesBefore)
+      -BigInt(report.hostFreeBytesAfter)).toString(),
+    offlineBaseUniqueBytes:offlineBase?.bytes??'0'};
   report.source.recoveredTreeSha256After=await treeDigest(source);
   if(report.source.recoveredTreeSha256After!==sourceTreeBefore){
     report.status='failed';report.sourceChanged=true;process.exitCode=1;
