@@ -3,7 +3,7 @@ id: E9-T22r
 epic: 9
 title: Record an exact-format cold Omarchy first-frame prefix
 priority: 524.92202975
-status: implemented
+status: verified
 depends_on: [E9-T22q]
 estimate: S
 risk: medium
@@ -137,3 +137,47 @@ delta-origin public-controller seek. A separate Daybreak diagnostic of the
 earlier overly strict renderer oracle is retained in
 `target/evidence/e9-t22r-daybreak-renderer-a5792e4d1b/`; the final fresh
 verifier must interrogate this submitted exact-head evidence.
+
+### 2026-10-27 — fresh Daybreak verifier
+
+VERDICT: verified
+
+- Budget and source frontier — HELD. The corrected admission requires
+  46,587,641,122 bytes for the live profile, export and reserves, while the
+  failed original cold run had only 36,344,418,304 bytes. The original report
+  stays failed at 21.75B with 21.7B as its last durable checkpoint, 435 exact
+  v3 checkpoints, no desktop frame and visible guest `vda` errors. Low-disk
+  and low-quota tests reject before launch.
+- Recovery and replay — HELD. Independently byte-compared and hashed all
+  11,173,008,054 retained chunk bytes. The 3,523 objects and 13,177 chunk
+  rows are unchanged; the source-tree digest is identical before and after.
+  Session revision changes `778→779`, and the manifest changes only the
+  witness `finished:false→true`. Both state-plus-RAM witnesses, native and
+  replay latches `[0,0]`, and empty host queues match. The second replay
+  executes two windows from the full 21.6B anchor and reports
+  `wholeChain:true`; it is not a public delta-origin seek.
+- Renderer and isolation — HELD. Both replay renderer artifacts have SHA-256
+  `2bd7272e22de09e1dfaeae04bdff9c8f8f834ba500628c79b054138d1541853d`.
+  Profile, contents and all 1,242 source frames match. Only the outer and
+  scanout epochs change from `2` to `3`, followed by one valid rebase frame.
+  Source runtime pins, cloned-profile counters, zero fetch/socket egress,
+  zero page errors and worker retirement hold despite Chrome 155→156 drift.
+- Novel attack — HELD. An in-memory flip of the final saved state latch at
+  byte 28,347,290 changed its witness from `06026617…a10d8` to
+  `88c020ad…dd5`; the acceptance oracle rejected it. Saved evidence was not
+  changed.
+- COVERAGE: recovery success, both replay transports, source-version drift,
+  renderer normalization, retained closure and byte oracle executed.
+  Fail/timeout cleanup is a fail-closed defense; fresh-frame and other cap
+  branches are mutually exclusive with this permitted HostSpace frontier and
+  remain for later qualification. SUITE: retain
+  `make verify-E9-T22r-recovery`, the closure and independent byte oracle;
+  discard the transient in-memory sabotage after recording its result.
+
+The independent report is
+`target/evidence/e9-t22r-daybreak-final-b481f6c71/report.md` (SHA-256
+`54e13bd843c77d516bcdc16f02544d4f2b32eb2761837ecc411057991f429fcb`).
+The routing record confirms `gpt-daybreak-blue-latest`, `daybreakBlue`, a
+read-only fresh session, and no fallback or errors. It inspected worker code
+head `b481f6c71901c2859afc5f79496f9f374a3ae00d` plus the later
+submission-only task/queue commit.
