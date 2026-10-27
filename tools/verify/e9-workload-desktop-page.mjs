@@ -28,6 +28,15 @@ const sameRebasedRendererLogical=(source,actual)=>sameData({
   scanout:source.scanout&&actual.scanout
     ?{...actual.scanout,epoch:source.scanout.epoch}:actual.scanout,
 },source);
+const sameRendererFramesAfterRebase=(source,actual,savedEpoch,freshEpoch)=>{
+  if(actual.length!==source.length+1)return false;
+  for(let index=0;index<actual.length;index++){
+    const frame=decodeCheckpointData(actual[index]);
+    if(frame.op==='rebase'&&frame.expected===savedEpoch&&frame.next===freshEpoch
+      &&sameData([...actual.slice(0,index),...actual.slice(index+1)],source))return true;
+  }
+  return false;
+};
 const logicalLatches=bytes=>{const marker=encoder.encode('WVGPULG2');let at=-1;
   for(let i=0;i+marker.length+3<=bytes.length;i++)if(marker.every((value,j)=>bytes[i+j]===value)){at=i;break;}
   need(at>=0&&[bytes[at+9],bytes[at+10]].every(value=>value===0||value===1),
@@ -378,7 +387,8 @@ export async function qualifyDesktopWorkload(contract,qualification,options={}){
       const actual=decodeCheckpointData(inspection.renderer.bytes.subarray(16,-32));
       need(sameData(source.profile,actual.profile),'cold-prefix physical renderer profile');
       need(sameRebasedRendererLogical(source.logical,actual.logical),'cold-prefix logical renderer state');
-      need(sameData(actual.frames.slice(1),source.frames),'cold-prefix physical renderer frame chain');
+      need(sameRendererFramesAfterRebase(source.frames,actual.frames,
+        source.logical.epoch,actual.logical.epoch),'cold-prefix physical renderer frame chain');
       if(state.desktop){const canvas=selected.rendered.canvas;
         const pixels=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
         need(hasDesktopPixels(pixels)&&digest(pixels)===state.frontier.pixels.sha256,
@@ -695,7 +705,8 @@ export async function qualifyDesktopWorkload(contract,qualification,options={}){
       const actual=decodeCheckpointData(inspection.renderer.bytes.subarray(16,-32));
       need(sameData(source.profile,actual.profile),'renderer profile');
       need(sameRebasedRendererLogical(source.logical,actual.logical),'renderer logical checkpoint');
-      need(sameData(actual.frames.slice(1),source.frames),'renderer commands after required epoch rebase');
+      need(sameRendererFramesAfterRebase(source.frames,actual.frames,
+        source.logical.epoch,actual.logical.epoch),'renderer commands after required epoch rebase');
       const replayCanvas=selected.rendered.canvas;
       replayStateBytes=inspection.state.slice();
       state.replay={position:pos(selected.position),digest:selected.rendered.digest,windows:selected.rendered.replay.windows,

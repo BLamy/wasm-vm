@@ -406,19 +406,20 @@ try{
           &&checkpointHash(inspection.queues.output)===checkpointHash(sourceFrame.output),
           'adjacent replay host queues '+index);
         const artifact=await globalThis.retainRecoveryArtifact('replay-window-'+index+'.state',b64(inspection.state));
+        const rendererArtifact=await globalThis.retainRecoveryArtifact(
+          'replay-window-'+index+'.renderer',b64(inspection.renderer.bytes));
         windows.push({anchor:anchor.id,from:from.id,to:to.id,transport,
           position:pos(ready.position),digest:ready.digest,
           expected:input.digests[index+1],replay:ready.replay,requestId:ready.requestId,
           logicalLatches:latches(inspection.state),state:artifact,stateArtifact:artifact,
-          renderer:{sha256:checkpointHash(inspection.renderer.bytes),bytes:inspection.renderer.bytes.length}});
+          renderer:{sha256:checkpointHash(inspection.renderer.bytes),bytes:inspection.renderer.bytes.length,
+            artifact:rendererArtifact}});
         if(index===1){
           finalInspection=inspection;finalState=artifact;workerAudit=audit;
           const sourceBytes=await readCheckpointObject(store,to.gpu,256*1048576);
           const source=decodeCheckpointData(sourceBytes.subarray(16,-32));
           const actual=decodeCheckpointData(inspection.renderer.bytes.subarray(16,-32));
           const data=value=>encodeCheckpointData(value);
-          const rendererArtifact=await globalThis.retainRecoveryArtifact(
-            'replay-window-1.renderer',b64(inspection.renderer.bytes));
           const keys=Object.keys(source.logical);
           need(same(keys,Object.keys(actual.logical)),'replay physical renderer logical field names');
           const logicalFields=Object.fromEntries(keys.map(key=>[key,{
@@ -431,16 +432,32 @@ try{
           need(source.logical.scanout&&rebased.scanout,'replay physical scanout exists');
           rebased.epoch=source.logical.epoch;
           rebased.scanout.epoch=source.logical.scanout.epoch;
+          const sourceContents=checkpointHash(data(source.contents));
+          const replayContents=checkpointHash(data(actual.contents));
+          const sourceFrames=source.frames.length;
+          const finalFrame=actual.frames.length===sourceFrames+1
+            ?decodeCheckpointData(actual.frames.at(-1)):null;
           need(checkpointHash(data(source.profile))===checkpointHash(data(actual.profile)),
             'replay physical renderer profile');
+          need(sourceContents===replayContents,'replay physical renderer contents');
+          need(actual.logical.epoch===inspection.renderer.epoch
+            &&actual.logical.scanout.epoch===inspection.renderer.epoch,
+            'replay physical renderer fresh epoch binding');
           need(changed.every(key=>['epoch','scanout'].includes(key))&&
             checkpointHash(data(source.logical))===checkpointHash(data(rebased)),
             'replay physical renderer logical state');
-          need(checkpointHash(data(source.frames))===checkpointHash(data(actual.frames.slice(1))),
+          need(source.logical.queries.length===0&&actual.logical.queries.length===0
+            &&checkpointHash(data(source.frames))===
+              checkpointHash(data(actual.frames.slice(0,sourceFrames)))
+            &&finalFrame?.op==='rebase'
+            &&finalFrame.expected===source.logical.epoch
+            &&finalFrame.next===actual.logical.epoch,
             'replay physical renderer frame chain');
           physical={source:checkpointHash(sourceBytes),replay:checkpointHash(inspection.renderer.bytes),
             rendererArtifact,epoch:{source:source.logical.epoch,replay:actual.logical.epoch},
-            logicalFields,changedLogicalFields:changed,profile:true,logical:true,frames:true};
+            logicalFields,changedLogicalFields:changed,sourceContents,replayContents,
+            sourceFrames,actualFrames:actual.frames.length,rebase:finalFrame,
+            profile:true,contents:true,logical:true,frames:true};
         }
       }
     }finally{globalThis.fetch=nativeFetch;globalThis.WebSocket=nativeSocket;}
