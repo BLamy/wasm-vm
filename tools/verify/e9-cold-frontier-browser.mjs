@@ -414,11 +414,23 @@ try{
       const rid='e9frontier'+tag;
       const bytes=new TextEncoder().encode(formatRpcCommand(command,rid));
       const inputBytes=bytes.length;
+      const noInput=view=>{
+        need(/^[0-9a-f]{64}$/.test(view.digest),
+          'wall-limited diagnostic lacks an exact prior digest');
+        const before=pos(view.position);
+        return {probe:{kind:'post-continuation-diagnostic-input',tag,
+          status:'wall-limit-before-input',priorWitness:before,
+          priorDigest:view.digest,sentAt:null,bytes:0,steps:0,
+          outputBytes:0,stdout:null,exit:null,position:before,
+          digest:view.digest},last:view};
+      };
+      if(deadline-performance.now()<=120000)return noInput(from);
       const witnessed=await request(worker,'inspect',{},30000);
       const before=pos(witnessed.view.position);
       need(same(before,pos(from.position))
         &&/^[0-9a-f]{64}$/.test(witnessed.view.digest),
       'diagnostic serial input lacks a same-position prior exact witness');
+      if(deadline-performance.now()<=120000)return noInput(witnessed.view);
       const sent=await request(worker,'input',{bytes},30000,[bytes.buffer]);
       need(sent.view.offline&&sent.view.egress.fetch===0&&sent.view.egress.sockets===0,
         'guest process probe attempted egress');
@@ -450,13 +462,13 @@ try{
           probe.stdout=parsed.stdout;probe.exit=parsed.exit;}
       };
       feed(sent.batch.serialBytes);
-      for(let index=0;index<maxBatches&&Date.now()<deadline-30000;index++){
+      for(let index=0;index<maxBatches&&performance.now()<deadline-120000;index++){
         if(probe.status==='serial-output-limit')break;
         if(probe.status==='guest-response'
           &&(minQualifiedFrames===0
             ||result.qualifiedFrames.length>minQualifiedFrames))break;
         const response=await request(worker,'advance',{steps:1048576},
-          Math.min(10*60*1000,deadline-Date.now()-30000));
+          Math.min(10*60*1000,deadline-performance.now()-120000));
         probe.steps+=1048576;last=response.view;
         need(last.offline&&last.egress.fetch===0&&last.egress.sockets===0,
           'guest process probe attempted egress');
@@ -476,7 +488,7 @@ try{
       probe.position=pos(last.position);
       probe.gpu=last.gpu;probe.presentation=presentation.snapshot();
       probe.consoleTail=last.console.slice(-8192);
-      if(probe.status==='pending')probe.status=Date.now()>=deadline-30000
+      if(probe.status==='pending')probe.status=performance.now()>=deadline-120000
         ?'wall-limit-before-response':`no-response-within-${probe.steps}-steps`;
       return {probe,last};
     };
@@ -711,7 +723,7 @@ try{
           "sh -c 'printf \"E9_USER_UID=%s\\n\" \"$(id -u)\"; "+
           "systemctl --user list-jobs --no-legend --no-pager'";
         const userJobs=await probeRpc(worker,tag+'user-jobs',
-          userJobsCommand,last,deadline,256);
+          userJobsCommand,last,deadline,384);
         probe.userJobs=userJobs.probe;last=userJobs.last;
         if(probe.userJobs.status==='guest-response'){
           probe.userJobs.validation=probe.userJobs.exit===0
@@ -722,13 +734,72 @@ try{
             probe.userJobs.status='invalid-guest-response';
         }
         if(probe.userJobs.status==='guest-response'){
+          const userUnitCommand='runuser -u omarchy -- env '+
+            'XDG_RUNTIME_DIR=/run/user/1000 '+
+            'DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus '+
+            "sh -c 'printf \"E9_USER_UID=%s\\n\" \"$(id -u)\"; "+
+            'systemctl --user show wayland-wm@hyprland.desktop.service '+
+            "-p ActiveState -p SubState -p Result -p MainPID "+
+            "-p ControlPID -p ExecMainStatus'";
+          const userUnit=await probeRpc(worker,tag+'user-unit',
+            userUnitCommand,last,deadline,512);
+          probe.userUnit=userUnit.probe;last=userUnit.last;
+          if(probe.userUnit.status==='guest-response'){
+            try{
+              need(probe.userUnit.exit===0,'user compositor unit show failed');
+              const lines=probe.userUnit.stdout.trimEnd().split('\n');
+              need(lines.shift()==='E9_USER_UID=1000',
+                'user compositor unit identity changed');
+              const schema=['ActiveState','SubState','Result','MainPID',
+                'ControlPID','ExecMainStatus'];
+              need(lines.length===schema.length,
+                'user compositor unit show has missing or extra fields');
+              const fields={};
+              for(const line of lines){
+                const at=line.indexOf('=');
+                need(at>0,'user compositor unit property is malformed');
+                const name=line.slice(0,at);
+                need(schema.includes(name)&&!Object.hasOwn(fields,name),
+                  'user compositor unit property is duplicate or unknown');
+                fields[name]=line.slice(at+1);
+              }
+              need(schema.every(name=>Object.hasOwn(fields,name))
+                &&['ActiveState','SubState','Result'].every(name=>fields[name])
+                &&['MainPID','ControlPID'].every(name=>
+                  /^(0|[1-9][0-9]*)$/.test(fields[name]))
+                &&/^(|0|[1-9][0-9]*)$/.test(fields.ExecMainStatus),
+              'user compositor unit property value invalid');
+              probe.userUnit.unit=fields;
+              probe.userUnit.validation={status:'passed'};
+            }catch(error){
+              probe.userUnit.validation={status:'failed',reason:String(error.message)};
+              probe.userUnit.status='invalid-guest-response';
+            }
+          }
+        }
+        if(probe.userJobs.status==='guest-response'
+          &&probe.userUnit&&probe.userUnit.stdout!==null){
+          const systemJournal=await probeRpc(worker,tag+'system-journal',
+            'journalctl -b -p warning -n 100 --no-pager',
+            last,deadline,384);
+          probe.systemJournal=systemJournal.probe;last=systemJournal.last;
+          if(probe.systemJournal.status==='guest-response'){
+            probe.systemJournal.validation=probe.systemJournal.exit===0
+              ?{status:'passed'}
+              :{status:'failed',reason:'system warning journal inspection failed'};
+            if(probe.systemJournal.validation.status!=='passed')
+              probe.systemJournal.status='invalid-guest-response';
+          }
+        }
+        if(probe.userJobs.status==='guest-response'
+          &&probe.systemJournal&&probe.systemJournal.stdout!==null){
           const userJournalCommand='runuser -u omarchy -- env '+
             'XDG_RUNTIME_DIR=/run/user/1000 '+
             'DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus '+
             "sh -c 'printf \"E9_USER_UID=%s\\n\" \"$(id -u)\"; "+
             "journalctl --user -b -n 100 --no-pager'";
           const userJournal=await probeRpc(worker,tag+'user-journal',
-            userJournalCommand,last,deadline,256);
+            userJournalCommand,last,deadline,512);
           probe.userJournal=userJournal.probe;last=userJournal.last;
           if(probe.userJournal.status==='guest-response'){
             probe.userJournal.validation=probe.userJournal.exit===0
@@ -739,22 +810,8 @@ try{
               probe.userJournal.status='invalid-guest-response';
           }
         }
-        if(probe.userJobs.status==='guest-response'
-          &&probe.userJournal?.status==='guest-response'){
-          const systemJournal=await probeRpc(worker,tag+'system-journal',
-            'journalctl -b -p warning -n 100 --no-pager',
-            last,deadline,256);
-          probe.systemJournal=systemJournal.probe;last=systemJournal.last;
-          if(probe.systemJournal.status==='guest-response'){
-            probe.systemJournal.validation=probe.systemJournal.exit===0
-              ?{status:'passed'}
-              :{status:'failed',reason:'system warning journal inspection failed'};
-            if(probe.systemJournal.validation.status!=='passed')
-              probe.systemJournal.status='invalid-guest-response';
-          }
-        }
         const diagnosticParts=[directProcess?.uwsmBaseline,probe.jobs,
-          probe.uwsmAfter,probe.userJobs,probe.userJournal,
+          probe.uwsmAfter,probe.userJobs,probe.userUnit,probe.userJournal,
           probe.systemJournal].filter(Boolean);
         const incomplete=diagnosticParts.filter(part=>
           part.status!=='guest-response'||part.validation?.status!=='passed');
@@ -807,16 +864,17 @@ try{
         &&active.view.egress.sockets===0,'diagnostic network policy changed');
       if(sample(active.view))result.status='candidate-needs-guest-proof';
       let previous=BigInt(last.position.transition),nextProgress=previous+10000000n;
-      const started=Date.now(),maxWallMs=4*60*60*1000,deadline=started+maxWallMs;
+      const started=performance.now(),maxWallMs=6*60*60*1000,
+        diagnosticReserveMs=3*60*60*1000,deadline=started+maxWallMs;
       const inspectTimeout=()=>{
-        const remaining=deadline-Date.now();
+        const remaining=deadline-performance.now();
         need(remaining>1000,'diagnostic wall budget cannot fit exact witness inspection');
         return Math.min(30000,remaining-1000);
       };
       let lastView=active.view,wallLimited=false;
       while(previous<BigInt(input.limit)&&result.status==='running'){
-        const remaining=deadline-Date.now();
-        if(remaining<=70*60*1000+30000){wallLimited=true;break;}
+        const remaining=deadline-performance.now();
+        if(remaining<=diagnosticReserveMs+30000){wallLimited=true;break;}
         const steps=Number((BigInt(input.limit)-previous)<1048576n
           ?BigInt(input.limit)-previous:1048576n);
         const response=await request(continuation,'advance',{steps},
@@ -842,7 +900,7 @@ try{
           break;
         }
         if(current>=nextProgress){
-          const progress={transition:String(current),elapsedMs:Date.now()-started,
+          const progress={transition:String(current),elapsedMs:performance.now()-started,
             gpu:response.view.gpu,presentation:presentation.snapshot(),
             consoleTail:response.view.console.slice(-1024),batch:response.batch};
           result.progress.push(progress);await globalThis.frontierProgress(progress);
@@ -861,11 +919,23 @@ try{
           presentation:presentation.snapshot()};
         lastView=ended.view;
       }
-      const unmodifiedWallMs=Date.now()-started;
+      const unmodifiedWallMs=performance.now()-started;
       if(result.status==='candidate-needs-guest-proof'||result.status==='bounded-no-frame'){
         const candidateBeforeProbe=result.frameCandidate;
         const drawsBeforeProbe=presentation.snapshot().drawnPresents;
         const qualifiedBeforeProbe=result.qualifiedFrames.length;
+        let unmodifiedExact=result.frontier
+          ?{position:result.frontier.position,digest:result.frontier.digest}
+          :{position:pos(active.view.position),digest:active.view.digest};
+        try{
+        if(candidateBeforeProbe){
+          const witnessed=await request(continuation,'inspect',{},inspectTimeout());
+          need(same(pos(witnessed.view.position),pos(lastView.position))
+            &&/^[0-9a-f]{64}$/.test(witnessed.view.digest),
+          'frame candidate lacks a same-position unmodified exact witness');
+          lastView=witnessed.view;
+          unmodifiedExact={position:pos(lastView.position),digest:lastView.digest};
+        }
         const {probe,last}=await guestProbe(continuation,
           candidateBeforeProbe?'candidate':'limit',lastView,deadline,
           candidateBeforeProbe?qualifiedBeforeProbe:0);
@@ -901,12 +971,22 @@ try{
             result.status='candidate-needs-guest-proof';
           }
           if(result.status!=='first-frame'){
-            const inspected=await request(continuation,'inspect',{},inspectTimeout());
-            need(same(pos(inspected.view.position),pos(lastView.position)),
-              'diagnostic owner advanced after failed candidate inspection');
-            result.status='exact-failure-frontier';
-            result.frontier={reason:'candidate-lacks-live-desktop-proof',
-              position:pos(lastView.position),digest:inspected.view.digest,
+            const validated=part=>part?.status==='guest-response'
+              &&part.validation?.status==='passed'&&part.exit===0&&part.process;
+            const live=process=>process.sddmActive&&process.sddmPid>1
+              &&process.hyprlandPid>1&&process.hyprlandUid>=0
+              &&['active','online'].includes(process.hyprlandUserState)
+              &&process.sessions>0;
+            const aliveProbe=result.diagnosticInput?.afterSecondFrame;
+            const obstruction=validated(probe)&&!live(probe.process)
+              ?'guest-session-not-live'
+              :validated(aliveProbe)&&!live(aliveProbe.process)
+                ?'desktop-liveness-lost-after-frame'
+                :null;
+            result.status=obstruction?'exact-failure-frontier'
+              :'candidate-needs-guest-proof';
+            result.frontier={reason:obstruction??'candidate-proof-incomplete',
+              position:pos(lastView.position),digest:lastView.digest,
               candidate:candidateBeforeProbe,processProbe:result.diagnosticInput,
               gpu:lastView.gpu,presentation:presentation.snapshot(),
               consoleTail:lastView.console.slice(-8192)};
@@ -918,6 +998,27 @@ try{
           result.frontier.processStateTiming='observed only after the unmodified '
             +'finite bound and diagnostic serial input; not exact state at the bound';
         }
+        }catch(error){
+          result.diagnosticError=String(error.stack??error);
+          if(candidateBeforeProbe){
+            result.status='candidate-needs-guest-proof';
+            result.frameCandidate=candidateBeforeProbe;
+            result.frontier={reason:'candidate-proof-incomplete',
+              position:unmodifiedExact.position,digest:unmodifiedExact.digest,
+              candidate:candidateBeforeProbe,processProbe:result.diagnosticInput,
+              gpu:candidateBeforeProbe.gpu,presentation:presentation.snapshot()};
+          }else result.status='bounded-no-frame';
+        }
+      }
+      if(result.diagnosticInput){
+        const guard=await probeRpc(continuation,'wall-guard-check',
+          'true',lastView,performance.now()+1,1);
+        need(guard.probe.status==='wall-limit-before-input'
+          &&guard.probe.sentAt===null&&guard.probe.bytes===0
+          &&same(pos(guard.last.position),pos(lastView.position))
+          &&guard.probe.priorDigest===lastView.digest,
+        'diagnostic deadline guard admitted input or lost the exact witness');
+        result.wallGuard=guard.probe;
       }
       result.egress=lastView.egress;
       result.localBaseReads=lastView.localBaseReads;
@@ -929,7 +1030,7 @@ try{
       result.measured={start:last.position.transition,end,
         guestTransitions:(BigInt(end)
           -BigInt(last.position.transition)).toString(),
-        unmodifiedWallMs,diagnosticWallMs:Date.now()-started-unmodifiedWallMs};
+        unmodifiedWallMs,diagnosticWallMs:performance.now()-started-unmodifiedWallMs};
     }finally{continuation.terminate();presentation.dispose();await store.close();}
     return result;
   },{database:sourceReport.result.database,id:sourceReport.result.sessionId,
