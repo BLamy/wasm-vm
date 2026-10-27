@@ -194,9 +194,10 @@ try{
       'source last adjacent checkpoint positions');
     const commitment=JSON.parse(new TextDecoder().decode(Uint8Array.from(
       manifest.extensions.find(row=>row.kind==='e9-exact-witness-pages-v2').bytes)));
-    need(commitment.finished===false&&same(pos(commitment.last),input.points[2]),'unfinished last durable witness');
+    need(commitment.finished===false&&same(pos(commitment.last),pos(input.points[2])),
+      'unfinished last durable witness');
     const finalFrame=await frameFor(manifest.checkpoints.at(-1));
-    need(same(finalFrame.meta.position,input.points[2])
+    need(same(pos(finalFrame.meta.position),pos(input.points[2]))
       &&finalFrame.meta.stateSha256===hex(commitment.last.digest)
       &&finalFrame.meta.stateSha256===input.finalDigest
       &&finalFrame.meta.rendererSha256===manifest.checkpoints.at(-1).gpu.sha256,
