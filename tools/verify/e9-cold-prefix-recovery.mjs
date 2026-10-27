@@ -14,8 +14,11 @@ import {chromium} from '../../web/node_modules/playwright/index.mjs';
 const args=process.argv.slice(2),flag=name=>{
   const at=args.indexOf(name);assert(at>=0&&args[at+1],name);return path.resolve(args[at+1]);
 };
-const sourceDir=flag('--source'),out=flag('--output');
-assert(!out.startsWith(sourceDir+path.sep),'recovery must not mutate original evidence');
+const sourceDir=await fs.realpath(flag('--source'));
+const requestedOut=flag('--output');
+const out=path.join(await fs.realpath(path.dirname(requestedOut)),path.basename(requestedOut));
+assert(out!==sourceDir&&!out.startsWith(sourceDir+path.sep),
+  'recovery must not mutate original evidence, including through an output-parent symlink');
 const root=path.resolve(import.meta.dirname,'../..'),web=path.join(root,'web/dist');
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const treeDigest=async directory=>{
@@ -63,6 +66,7 @@ assert.equal(oldCommitment.count,oldManifest.checkpoints.length);
 assert.deepEqual(Object.fromEntries(['transition','retired','sequence','phase','ordinal'].map(key=>[key,oldCommitment.last[key]])),last.position);
 assert.equal(Buffer.from(oldCommitment.last.digest).toString('hex'),source.result.checkpoints.at(-1).digest);
 assert.equal(source.result.checkpoints.at(-1).independentDigest,source.result.checkpoints.at(-1).digest);
+assert(Array.isArray(source.result.desktopCandidates));
 const oldClosure=JSON.parse(await fs.readFile(path.join(sourceDir,'retained-closure/report.json')));
 assert.equal(oldClosure.status,'retained-closure-passed');
 assert.equal(oldClosure.browserSha256,sha(sourceBytes));
@@ -72,7 +76,14 @@ assert.equal(oldClosure.references,archive.stores.objects.length);
 assert.equal(oldClosure.witnessPages,oldCommitment.pages);
 const sourceTreeBefore=await treeDigest(sourceDir);
 
-const pins=new Map([...source.served,...source.replayStaticAssets].map(row=>[row.name,row.sha256]));
+const pins=new Map();
+for(const row of [...source.served,...source.replayStaticAssets]){
+  if(pins.has(row.name))assert.equal(pins.get(row.name),row.sha256,
+    'conflicting source/replay runtime pin '+row.name);
+  pins.set(row.name,row.sha256);
+}
+assert(pins.has('/session-gpu-replay.js')&&pins.has('/session-gpu-replay-worker.js'),
+  'controller and worker must both be source-pinned');
 for(const [name,digest]of pins){
   assert(name.startsWith('/')&&!name.includes('..'));
   assert.equal(sha(await fs.readFile(path.join(web,'.'+name))),digest,'source runtime asset changed '+name);
@@ -84,6 +95,8 @@ const report={task:'E9-T22r',status:'running',scope:'Seal a saved original-cold 
     manifestSha256:sha(oldManifestBytes),head:source.head,failedAt:source.result.failurePosition,
     error:source.result.error,treeSha256Before:sourceTreeBefore},head:git('rev-parse','HEAD'),started:new Date().toISOString(),
   browser:{origin:origin.origin,version:null,staticRequests:[],blockedRequests:[],blockedSockets:[],pageErrors:[]},
+  pinnedReplayRuntime:{controller:pins.get('/session-gpu-replay.js'),
+    worker:pins.get('/session-gpu-replay-worker.js')},
   artifacts:[]};
 const mime=new Map([['.js','text/javascript'],['.mjs','text/javascript'],['.wasm','application/wasm'],
   ['.json','application/json'],['.css','text/css']]);
@@ -101,6 +114,12 @@ const server=createServer(async(req,res)=>{
       'Cross-Origin-Embedder-Policy':'require-corp'}).end(bytes);
   }catch(error){res.writeHead(500).end(String(error));}
 });
+const withDeadline=async(promise,label,ms,onTimeout)=>{
+  let timer;
+  try{return await Promise.race([promise,new Promise((_,reject)=>{
+    timer=setTimeout(()=>{try{onTimeout?.();}catch{}reject(Error(label+' deadline exceeded'));},ms);
+  })]);}finally{clearTimeout(timer);}
+};
 let context,page,answer,recovered,successful=false,traceStarted=false;
 try{
   await new Promise((resolve,reject)=>server.once('error',reject).listen(Number(origin.port),origin.hostname,resolve));
@@ -152,8 +171,14 @@ try{
   report.browser.sourceVersion=source.browser;
   report.browser.versionChanged=report.browser.version!==source.browser;
   await page.goto(origin.origin+'/');
-  answer=await page.evaluate(async input=>{
+  answer=await withDeadline(page.evaluate(async input=>{
     const need=(value,reason)=>{if(!value)throw Error('cold prefix recovery: '+reason);};
+    const within=async(label,ms,promise,onTimeout)=>{
+      let timer;
+      try{return await Promise.race([promise,new Promise((_,reject)=>{
+        timer=setTimeout(()=>{try{onTimeout();}catch{}reject(Error(label+' deadline exceeded'));},ms);
+      })]);}finally{clearTimeout(timer);}
+    };
     const pos=value=>Object.fromEntries(['transition','retired','sequence','phase','ordinal'].map(key=>[key,value[key]]));
     const hex=bytes=>[...bytes].map(value=>value.toString(16).padStart(2,'0')).join('');
     const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
@@ -287,11 +312,16 @@ try{
           const timer=setTimeout(()=>fail(Error('pinned GPU replay worker timed out')),60*60*1000);
           const fail=error=>{if(done)return;done=true;clearTimeout(timer);reject(error);};
           worker.onerror=event=>fail(Error(event.message||'pinned GPU replay worker failed'));
+          worker.onmessageerror=()=>fail(Error('pinned GPU replay worker message could not be decoded'));
           worker.onmessage=event=>{
             const value=event.data;
+            if(!value||typeof value!=='object'){
+              fail(Error('pinned GPU replay worker sent a malformed message'));return;
+            }
             if(value.type==='initialized'){
-              worker.postMessage({type:'seek',requestId,database:input.database,sessionId:input.id,
-                checkpointId:anchor.id,target:pos(target.position),quantum:4096});
+              try{worker.postMessage({type:'seek',requestId,database:input.database,sessionId:input.id,
+                checkpointId:anchor.id,target:pos(target.position),quantum:4096});}
+              catch(error){fail(error);}
               return;
             }
             if(value.requestId!==requestId||done)return;
@@ -300,8 +330,10 @@ try{
             }
             if(value.type==='ready'){
               ready=value;
-              worker.postMessage({type:'inspect-selected',requestId,inspectionId});
+              try{worker.postMessage({type:'inspect-selected',requestId,inspectionId});}
+              catch(error){fail(error);}
             }else if(value.type==='selected-inspection'&&value.inspectionId===inspectionId){
+              if(!ready){fail(Error('inspection arrived before a ready selection'));return;}
               done=true;clearTimeout(timer);resolve({ready,inspection:value});
             }
           };
@@ -310,7 +342,16 @@ try{
         need(audit.length===1&&audit[0].factoryEntries==='0',
           'pinned replay worker provider closed');
         return {...result,audit};
-      }finally{worker.terminate();await new Promise(resolve=>setTimeout(resolve,0));}
+      }finally{
+        worker.terminate();
+        let retired=false;
+        for(let wait=0;wait<100;wait++){
+          try{if((await globalThis.auditReplayWorker()).length===0){retired=true;break;}}
+          catch{ /* Playwright may observe termination before the close event. */ }
+          await new Promise(resolve=>setTimeout(resolve,50));
+        }
+        need(retired,'direct pinned replay worker did not retire');
+      }
     };
     let workerAudit,physical,finalInspection,finalState;
     try{
@@ -321,12 +362,14 @@ try{
           const replay=await openGpuTimelineReplay({store,id:input.id,
             configuration:metadata.configuration}),controller=replay.controller;
           try{
-            const result=await controller.seekFromCheckpoint(anchor.id,to.position);
+            const result=await within('public controller seek',45*60*1000,
+              controller.seekFromCheckpoint(anchor.id,to.position),()=>controller.close());
             need(result.status==='ready'&&result.checkpointId===anchor.id,
               'public controller selected the full replay anchor');
             ready={position:result.position,digest:result.rendered.digest,
               replay:result.rendered.replay,requestId:result.requestId};
-            inspection=await controller.inspectSelected();
+            inspection=await within('public controller inspection',45*60*1000,
+              controller.inspectSelected(),()=>controller.close());
             audit=await globalThis.auditReplayWorker();
             need(audit.length===1&&audit[0].factoryEntries==='0',
               'public replay worker provider closed');
@@ -409,7 +452,8 @@ try{
     finalLatches:source.result.checkpoints.at(-1).logicalLatches,
     digests:source.result.checkpoints.slice(-3).map(row=>row.digest),
     latchPairs:source.result.checkpoints.slice(-3).map(row=>row.logicalLatches),
-    receipts:source.result.receipts,configuration:source.result.configuration});
+    receipts:source.result.receipts,configuration:source.result.configuration}),
+  'browser recovery',2*60*60*1000,()=>{void context.close().catch(()=>{});});
   const newManifest=Buffer.from(answer.newManifest);
   assert.equal(sha(newManifest),answer.newManifestSha256);
   assert.equal(answer.oldManifestSha256,sha(oldManifestBytes));
@@ -432,7 +476,8 @@ try{
   delete recovered.result.error;delete recovered.result.failurePosition;delete recovered.result.failureState;
   recovered.result.final=answer.final;
   recovered.result.frontier={reason:'host-space-admission',position:last.position,
-    failurePosition:source.result.failurePosition,hasDesktopPixels:false,
+    failurePosition:source.result.failurePosition,desktopFrameEvidence:'not-established',
+    desktopCandidatesObserved:source.result.desktopCandidates.length,
     consoleTail:source.result.console.slice(-2048)};
   recovered.result.authenticatedHistory=answer.authenticatedHistory;
   recovered.result.replay=answer.replay;
@@ -449,6 +494,7 @@ try{
     sealingGuestSteps:0,replayGuestExecution:true,noFreshColdBoot:true,sourceProfileCloned:true,
     sourceBrowser:source.browser,recoveryBrowser:report.browser.version,
     browserVersionChanged:report.browser.versionChanged,
+    pinnedReplayRuntime:report.pinnedReplayRuntime,
     originalObjects:archive.stores.objects.length,originalChunks:archive.stores.chunks.length,
     oldStats:answer.beforeStats,newStats:answer.postStats,
     newManifestSha256:answer.newManifestSha256};
