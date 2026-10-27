@@ -235,7 +235,7 @@ try{
     const {SessionStore}=await import('/session-store.js');
     const {SessionGpuHistoryReader}=await import('/session-gpu-history-reader.js');
     const {checkpointHash,readCheckpointObject}=await import('/session-checkpoints.js');
-    const {decodeGpuExactFrame}=await import('/session-gpu-replay-format.js');
+    const {decodeGpuExactFrame,gpuCompare}=await import('/session-gpu-replay-format.js');
     const {isKeyframeDescriptorPrefix,decodeKeyframeDescriptor}=await import('/session-keyframes.js');
     const {branchOrigin}=await import('/session-branch-format.js');
     const {PresentationController}=await import('/src/sink/presentation.js');
@@ -359,7 +359,8 @@ try{
       replay:{position:pos(replayed.position),digest:replayed.digest,windows:replayed.replay.windows,
         wholeChain:replayed.replay.wholeChain,rawStateSha256:checkpointHash(inspection.state),
         rendererSha256:checkpointHash(inspection.renderer.bytes)},
-      capture:inputHashes,origin:null,frameCandidate:null,frame:null,frontier:null,progress:[],
+      capture:inputHashes,origin:null,frameCandidate:null,frame:null,frontier:null,
+      qualifiedFrames:[],progress:[],
       diagnosticInput:null,egress:{fetch:0,sockets:0}};
     const paint=frame=>{
       const before=presentation.snapshot().drawnPresents;
@@ -381,44 +382,85 @@ try{
         return false;
       }
       const shown=view.firstCandidate??view.frame;
-      need(shown?.observedAt&&shown?.bracketStart
-        &&BigInt(shown.bracketStart.transition)<=BigInt(shown.observedAt.transition)
-        &&BigInt(shown.observedAt.transition)<=BigInt(view.position.transition),
+      const validPosition=value=>value
+        &&['before','observe'].includes(value.phase)
+        &&Number.isInteger(value.ordinal)&&value.ordinal>=0
+        &&value.ordinal<=0xffffffff
+        &&['transition','retired','sequence'].every(key=>
+          typeof value[key]==='string'&&/^(0|[1-9][0-9]*)$/.test(value[key]))
+        &&(value.phase!=='observe'||value.ordinal>0)
+        &&BigInt(value.ordinal)<=BigInt(value.sequence)
+        &&BigInt(value.retired)<=BigInt(value.transition);
+      need(validPosition(shown?.bracketStart)
+        &&validPosition(shown?.observedAt)&&validPosition(view.position)
+        &&gpuCompare(shown.bracketStart,shown.observedAt)<=0
+        &&gpuCompare(shown.observedAt,view.position)<=0
+        &&BigInt(shown.bracketStart.retired)<=BigInt(shown.observedAt.retired)
+        &&BigInt(shown.observedAt.retired)<=BigInt(view.position.retired),
         'physical frame position is outside its advance');
-      result.frameCandidate={positionUpperBound:pos(shown.observedAt),
+      const rgbaSha256=checkpointHash(image.data);
+      const framePosition=pos(shown.observedAt);
+      if(!result.qualifiedFrames.some(row=>same(row.position,framePosition)))
+        result.qualifiedFrames.push({position:framePosition,rgbaSha256});
+      result.frameCandidate={positionUpperBound:framePosition,
         positionLowerBound:pos(shown.bracketStart),observedAt:pos(view.position),
         coordinatePrecision:'presentation observed after at most 4096 guest transitions; not an exact event coordinate',
         width:canvas.width,height:canvas.height,
-        rgbaSha256:checkpointHash(image.data),presentation:presentation.snapshot(),
+        rgbaSha256,presentation:presentation.snapshot(),
         gpu:view.gpu,consoleTail:view.console.slice(-4096)};
       return true;
     };
-    const probeRpc=async(worker,tag,command,from,deadline,maxBatches,minDraws=0)=>{
+    const probeRpc=async(worker,tag,command,from,deadline,maxBatches,minQualifiedFrames=0)=>{
       const rid='e9frontier'+tag;
       const bytes=new TextEncoder().encode(formatRpcCommand(command,rid));
       const inputBytes=bytes.length;
+      const witnessed=await request(worker,'inspect',{},30000);
+      const before=pos(witnessed.view.position);
+      need(same(before,pos(from.position))
+        &&/^[0-9a-f]{64}$/.test(witnessed.view.digest),
+      'diagnostic serial input lacks a same-position prior exact witness');
       const sent=await request(worker,'input',{bytes},30000,[bytes.buffer]);
       need(sent.view.offline&&sent.view.egress.fetch===0&&sent.view.egress.sockets===0,
         'guest process probe attempted egress');
-      need(sent.view.position.transition===from.position.transition,
-        'diagnostic serial input advanced guest before observation');
+      const after=pos(sent.view.position);
+      need(after.transition===before.transition&&after.retired===before.retired
+        &&after.phase==='before'&&before.phase==='before'
+        &&Number.isSafeInteger(before.ordinal)&&before.ordinal>=0
+        &&before.ordinal<0xffffffff
+        &&after.ordinal===before.ordinal+1
+        &&BigInt(before.sequence)>=0n
+        &&BigInt(before.sequence)<(1n<<64n)-1n
+        &&BigInt(after.sequence)===BigInt(before.sequence)+1n,
+      'diagnostic serial input did not occupy exactly one same-transition input event');
       const probe={kind:'post-continuation-diagnostic-input',tag,
-        priorWitness:pos(from.position),sentAt:pos(sent.view.position),
+        priorWitness:before,priorDigest:witnessed.view.digest,sentAt:after,
         bytes:inputBytes,command,steps:0,
-        status:'pending',stdout:null,exit:null,position:null};
+        outputBytes:0,status:'pending',stdout:null,exit:null,position:null};
       let last=sent.view;
-      for(let index=0;index<maxBatches&&Date.now()<deadline-30000;index++){
-        const parsed=createFencedRpc(rid).feed(last.console);
-        if(parsed&&probe.status!=='guest-response'){
-          probe.status='guest-response';probe.stdout=parsed.stdout;probe.exit=parsed.exit;
+      const parser=createFencedRpc(rid);
+      const feed=chunk=>{
+        need(chunk instanceof Uint8Array,'diagnostic serial delta missing');
+        probe.outputBytes+=chunk.length;
+        if(probe.outputBytes>1048576){
+          probe.status='serial-output-limit';return;
         }
+        if(probe.status==='guest-response')return;
+        const parsed=parser.feed(chunk);
+        if(parsed){probe.status='guest-response';
+          probe.stdout=parsed.stdout;probe.exit=parsed.exit;}
+      };
+      feed(sent.batch.serialBytes);
+      for(let index=0;index<maxBatches&&Date.now()<deadline-30000;index++){
+        if(probe.status==='serial-output-limit')break;
         if(probe.status==='guest-response'
-          &&(minDraws===0||presentation.snapshot().drawnPresents>minDraws))break;
+          &&(minQualifiedFrames===0
+            ||result.qualifiedFrames.length>minQualifiedFrames))break;
         const response=await request(worker,'advance',{steps:1048576},
           Math.min(10*60*1000,deadline-Date.now()-30000));
         probe.steps+=1048576;last=response.view;
         need(last.offline&&last.egress.fetch===0&&last.egress.sockets===0,
           'guest process probe attempted egress');
+        feed(response.batch.serialBytes);
         if(last.frameChanged||last.firstCandidate)sample(last);
         if(last.guestHalt){probe.status='guest-halt-before-response';break;}
         if(index%16===15)await globalThis.frontierProgress({stage:'diagnostic-probe',
@@ -426,11 +468,11 @@ try{
           consoleTail:last.console.slice(-256),
           drawnPresents:presentation.snapshot().drawnPresents});
       }
-      const witnessed=await request(worker,'inspect',{},30000);
-      need(same(pos(witnessed.view.position),pos(last.position))
-        &&/^[0-9a-f]{64}$/.test(witnessed.view.digest),
+      const postWitness=await request(worker,'inspect',{},30000);
+      need(same(pos(postWitness.view.position),pos(last.position))
+        &&/^[0-9a-f]{64}$/.test(postWitness.view.digest),
       'guest process observation lacks a same-position exact witness');
-      last=witnessed.view;probe.digest=last.digest;
+      last=postWitness.view;probe.digest=last.digest;
       probe.position=pos(last.position);
       probe.gpu=last.gpu;probe.presentation=presentation.snapshot();
       probe.consoleTail=last.console.slice(-8192);
@@ -438,8 +480,74 @@ try{
         ?'wall-limit-before-response':`no-response-within-${probe.steps}-steps`;
       return {probe,last};
     };
-    const guestProbe=async(worker,tag,from,deadline,minDraws=0)=>{
+    const guestProbe=async(worker,tag,from,deadline,minQualifiedFrames=0)=>{
       let current=from,directProcess=null,directSession=null;
+      let uwsmPids=[];
+      const uwsmDetails=()=>'( printf "E9_UWSM_BEGIN\\n"; for e9_pid in '+
+        uwsmPids.join(' ')+'; do '+
+        'printf "E9_UWSM_PID=%s\\n" "$e9_pid"; '+
+        'if test -d "/proc/$e9_pid"; then printf "E9_UWSM_PRESENT=1\\n"; '+
+        'if e9_args=$(ps -p "$e9_pid" -o args= 2>/dev/null) '+
+        '&& test -n "$e9_args"; then printf "E9_UWSM_ARGS=%s\\n" "$e9_args"; '+
+        'else printf "E9_UWSM_ARGS_ERROR=ps\\n"; fi; '+
+        'for e9_field in stat wchan syscall cgroup; do '+
+        'printf "E9_UWSM_FIELD=%s\\n" "$e9_field"; '+
+        'if test -r "/proc/$e9_pid/$e9_field" '+
+        '&& e9_value=$(cat "/proc/$e9_pid/$e9_field" 2>/dev/null) '+
+        '&& test -n "$e9_value"; then '+
+        'printf "E9_UWSM_VALUE=%s\\n" "$e9_value"; '+
+        'else printf "E9_UWSM_ERROR=unreadable\\n"; fi; done; '+
+        'else printf "E9_UWSM_PRESENT=0\\n"; fi; '+
+        'printf "E9_UWSM_PID_END=%s\\n" "$e9_pid"; done; '+
+        'printf "E9_UWSM_END\\n"; )';
+      const validateUwsm=probe=>{
+        try{
+          need(probe.exit===0,'uwsm detail command failed');
+          const lines=probe.stdout.trimEnd().split('\n');
+          let at=0;const next=()=>lines[at++];
+          need(next()==='E9_UWSM_BEGIN','uwsm detail opening marker missing');
+          const details=[],issues=[];
+          for(const pid of uwsmPids){
+            need(next()==='E9_UWSM_PID='+pid,'uwsm detail PID mismatch');
+            const present=next();
+            need(['E9_UWSM_PRESENT=0','E9_UWSM_PRESENT=1'].includes(present),
+              'uwsm presence marker missing');
+            const row={pid,present:present.endsWith('1'),args:null,fields:{}};
+            if(row.present){
+              const args=next();
+              if(args?.startsWith('E9_UWSM_ARGS=')&&args.length>13)
+                row.args=args.slice(13);
+              else{
+                need(args==='E9_UWSM_ARGS_ERROR=ps','uwsm args marker malformed');
+                issues.push('PID '+pid+' args unavailable');
+              }
+              for(const field of ['stat','wchan','syscall','cgroup']){
+                need(next()==='E9_UWSM_FIELD='+field,
+                  'uwsm field marker missing '+field);
+                const value=next();
+                if(value?.startsWith('E9_UWSM_VALUE=')&&value.length>14)
+                  row.fields[field]=value.slice(14);
+                else{
+                  need(value==='E9_UWSM_ERROR=unreadable',
+                    'uwsm field value malformed '+field);
+                  issues.push('PID '+pid+' '+field+' unreadable');
+                }
+              }
+            }else issues.push('PID '+pid+' disappeared after process census');
+            need(next()==='E9_UWSM_PID_END='+pid,'uwsm PID closing marker missing');
+            details.push(row);
+          }
+          need(next()==='E9_UWSM_END'&&at===lines.length,
+            'uwsm detail closing marker or line count changed');
+          probe.uwsmDetails=details;
+          probe.validation=issues.length
+            ?{status:'incomplete',issues}
+            :{status:'passed'};
+        }catch(error){
+          probe.validation={status:'failed',reason:String(error.message)};
+          probe.status='invalid-guest-response';
+        }
+      };
       if(tag==='limit'){
         const processCommand="( set -o pipefail; ps -eo pid=,ppid=,uid=,stat=,comm= "+
           "| awk 'tolower($5) ~ /sddm|hyprland|uwsm|greeter|systemd|dbus/ "+
@@ -464,11 +572,23 @@ try{
           need(processes.length<=Number(total[1]),'filtered process count exceeds census');
           directProcess.processCount=Number(total[1]);
           directProcess.relevantProcesses=processes;
+          uwsmPids=processes.filter(row=>row.name==='uwsm').map(row=>row.pid);
           directProcess.validation={status:'passed'};
         }catch(error){
           directProcess.validation={status:'failed',reason:String(error.message)};
           directProcess.status='invalid-guest-response';
           return {probe:{...directProcess,directProcess},last:current};
+        }
+        if(uwsmPids.length){
+          const baseline=await probeRpc(worker,tag+'uwsm-before',
+            uwsmDetails(),current,deadline,256);
+          directProcess.uwsmBaseline=baseline.probe;current=baseline.last;
+          if(baseline.probe.status!=='guest-response')
+            return {probe:{...baseline.probe,directProcess},last:current};
+          validateUwsm(baseline.probe);
+          if(baseline.probe.status!=='guest-response'){
+            return {probe:{...baseline.probe,directProcess},last:current};
+          }
         }
         const sessionCommand=`( printf 'E9_SESSION_FILES_BEGIN\\n'; `+
           `for e9_file in /run/systemd/sessions/* /run/systemd/users/*; do `+
@@ -516,10 +636,14 @@ try{
         `e9_sessions=$(printf '%s\\n' "$e9_sessions_raw" | awk 'NF{n++} END{print n+0}'); fi; `+
         `printf 'E9_SDDM_PID=%s\\nE9_SDDM_ACTIVE=%s\\nE9_HYPR_PID=%s\\nE9_HYPR_UID=%s\\nE9_HYPR_USER_STATE=%s\\nE9_SESSION_COUNT=%s\\n' `+
         `"$e9_sddm_pid" "$e9_sddm_active" "$e9_hypr_pid" "$e9_hypr_uid" "$e9_user_state" "$e9_sessions"`;
+      const qualifiedAtServiceInput=result.qualifiedFrames.length;
       const service=await probeRpc(worker,tag+'service',command,current,
-        deadline,768,minDraws);
+        deadline,768,Math.max(minQualifiedFrames,qualifiedAtServiceInput));
       const probe=service.probe;let last=service.last;
       probe.directProcess=directProcess;probe.directSession=directSession;
+      probe.postInputQualifiedFrame=result.qualifiedFrames
+        .slice(qualifiedAtServiceInput)
+        .find(row=>gpuCompare(row.position,probe.sentAt)>0)??null;
       if(probe.status==='guest-response'){
         try{
         const lines=probe.stdout.trim().split('\n').filter(line=>
@@ -568,6 +692,76 @@ try{
             :{status:'failed',reason:'guest service job inspection failed'};
           if(probe.jobs.exit!==0)probe.jobs.status='invalid-guest-response';
         }
+        if(probe.jobs.status!=='guest-response'){
+          probe.status='diagnostic-incomplete';return {probe,last};
+        }
+        if(uwsmPids.length){
+          const after=await probeRpc(worker,tag+'uwsm-after',
+            uwsmDetails(),last,deadline,256);
+          probe.uwsmAfter=after.probe;last=after.last;
+          if(probe.uwsmAfter.status==='guest-response')
+            validateUwsm(probe.uwsmAfter);
+          if(probe.uwsmAfter.status!=='guest-response'){
+            probe.status='diagnostic-incomplete';return {probe,last};
+          }
+        }
+        const userJobsCommand='runuser -u omarchy -- env '+
+          'XDG_RUNTIME_DIR=/run/user/1000 '+
+          'DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus '+
+          "sh -c 'printf \"E9_USER_UID=%s\\n\" \"$(id -u)\"; "+
+          "systemctl --user list-jobs --no-legend --no-pager'";
+        const userJobs=await probeRpc(worker,tag+'user-jobs',
+          userJobsCommand,last,deadline,256);
+        probe.userJobs=userJobs.probe;last=userJobs.last;
+        if(probe.userJobs.status==='guest-response'){
+          probe.userJobs.validation=probe.userJobs.exit===0
+            &&probe.userJobs.stdout.split('\n',1)[0]==='E9_USER_UID=1000'
+            ?{status:'passed'}
+            :{status:'failed',reason:'UID1000 user service job inspection failed'};
+          if(probe.userJobs.validation.status!=='passed')
+            probe.userJobs.status='invalid-guest-response';
+        }
+        if(probe.userJobs.status==='guest-response'){
+          const userJournalCommand='runuser -u omarchy -- env '+
+            'XDG_RUNTIME_DIR=/run/user/1000 '+
+            'DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus '+
+            "sh -c 'printf \"E9_USER_UID=%s\\n\" \"$(id -u)\"; "+
+            "journalctl --user -b -n 100 --no-pager'";
+          const userJournal=await probeRpc(worker,tag+'user-journal',
+            userJournalCommand,last,deadline,256);
+          probe.userJournal=userJournal.probe;last=userJournal.last;
+          if(probe.userJournal.status==='guest-response'){
+            probe.userJournal.validation=probe.userJournal.exit===0
+              &&probe.userJournal.stdout.split('\n',1)[0]==='E9_USER_UID=1000'
+              ?{status:'passed'}
+              :{status:'failed',reason:'UID1000 user journal inspection failed'};
+            if(probe.userJournal.validation.status!=='passed')
+              probe.userJournal.status='invalid-guest-response';
+          }
+        }
+        if(probe.userJobs.status==='guest-response'
+          &&probe.userJournal?.status==='guest-response'){
+          const systemJournal=await probeRpc(worker,tag+'system-journal',
+            'journalctl -b -p warning -n 100 --no-pager',
+            last,deadline,256);
+          probe.systemJournal=systemJournal.probe;last=systemJournal.last;
+          if(probe.systemJournal.status==='guest-response'){
+            probe.systemJournal.validation=probe.systemJournal.exit===0
+              ?{status:'passed'}
+              :{status:'failed',reason:'system warning journal inspection failed'};
+            if(probe.systemJournal.validation.status!=='passed')
+              probe.systemJournal.status='invalid-guest-response';
+          }
+        }
+        const diagnosticParts=[directProcess?.uwsmBaseline,probe.jobs,
+          probe.uwsmAfter,probe.userJobs,probe.userJournal,
+          probe.systemJournal].filter(Boolean);
+        const incomplete=diagnosticParts.filter(part=>
+          part.status!=='guest-response'||part.validation?.status!=='passed');
+        probe.diagnosticValidation=incomplete.length
+          ?{status:'incomplete',tags:incomplete.map(part=>part.tag)}
+          :{status:'passed'};
+        if(incomplete.length)probe.status='diagnostic-incomplete';
       }
       return {probe,last};
     };
@@ -671,9 +865,10 @@ try{
       if(result.status==='candidate-needs-guest-proof'||result.status==='bounded-no-frame'){
         const candidateBeforeProbe=result.frameCandidate;
         const drawsBeforeProbe=presentation.snapshot().drawnPresents;
+        const qualifiedBeforeProbe=result.qualifiedFrames.length;
         const {probe,last}=await guestProbe(continuation,
           candidateBeforeProbe?'candidate':'limit',lastView,deadline,
-          candidateBeforeProbe?drawsBeforeProbe:0);
+          candidateBeforeProbe?qualifiedBeforeProbe:0);
         result.diagnosticInput=probe;lastView=last;
         if(candidateBeforeProbe){
           result.frameCandidate=candidateBeforeProbe;
@@ -683,8 +878,10 @@ try{
             &&process.hyprlandPid>1&&process.hyprlandUid>=0
             &&['active','online'].includes(process.hyprlandUserState)
             &&process.sessions>0
+            &&probe.postInputQualifiedFrame
             &&presentation.snapshot().drawnPresents>drawsBeforeProbe){
             const secondFrame={position:pos(lastView.position),
+              qualified:probe.postInputQualifiedFrame,
               presentation:presentation.snapshot()};
             const alive=await guestProbe(continuation,'alive',lastView,deadline);
             result.diagnosticInput={session:probe,afterSecondFrame:alive.probe};
@@ -693,7 +890,9 @@ try{
             if(alive.probe.status==='guest-response'&&alive.probe.exit===0
               &&still?.sddmActive&&still.sddmPid===process.sddmPid
               &&still.hyprlandPid===process.hyprlandPid
-              &&still.hyprlandUid===process.hyprlandUid){
+              &&still.hyprlandUid===process.hyprlandUid
+              &&['active','online'].includes(still.hyprlandUserState)
+              &&still.sessions>0){
               result.frame={...candidateBeforeProbe,sessionProof:probe,
                 secondFrame,stillAlive:alive.probe};
               result.status='first-frame';

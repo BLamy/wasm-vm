@@ -14,6 +14,7 @@ let frameVersion=0,sentFrame=0,prepared=false,active=false,stopped=false;
 let missingLocalBlock=null,guestHalt=null,serial=Promise.resolve();
 let retainedObjects,imageChunkLengths,chunkStart=null;
 let nextBaseToken=0,localBaseReads=0;
+let serialTracking=false;
 const baseWaiters=new Map();
 const egress={fetch:0,sockets:0};
 function tail(parts){
@@ -26,8 +27,18 @@ function tail(parts){
 function drain(){
   const queues=machine.exactSessionHostQueues();if(queues.output.length)machine.takeOutput();
   const batch=machine.takeExactGpuBatch();
-  for(const row of batch.events)if(row.channel===21)pastConsole=tail([pastConsole,row.bytes]);
-  return {events:batch.events.length,payloads:batch.payloads.length,hostOutputBytes:queues.output.length};
+  const serialRows=batch.events.filter(row=>row.channel===21);
+  for(const row of serialRows)pastConsole=tail([pastConsole,row.bytes]);
+  const summary={events:batch.events.length,payloads:batch.payloads.length,
+    hostOutputBytes:queues.output.length};
+  if(serialTracking){
+    const length=serialRows.reduce((total,row)=>total+row.bytes.length,0);
+    need(length<=8*1048576,'diagnostic serial batch exceeds transport bound');
+    const bytes=new Uint8Array(length);let at=0;
+    for(const row of serialRows){bytes.set(row.bytes,at);at+=row.bytes.length;}
+    summary.serialBytes=bytes;
+  }
+  return summary;
 }
 function likelyDesktop(frame){
   const words=frame.pixels;if(!words||words.length<1024)return false;
@@ -227,7 +238,13 @@ async function command(request){
   if(request.type==='input'){
     need(request.bytes instanceof Uint8Array&&request.bytes.buffer instanceof ArrayBuffer
       &&request.bytes.length<=65536,'owned inspection input');
-    machine.sendInput(request.bytes);return {batch:drain(),view:view()};
+    const before=pos(machine.inputPosition()),baseline=drain();
+    need(baseline.events===0&&baseline.payloads===0
+      &&baseline.hostOutputBytes===0
+      &&JSON.stringify(pos(machine.inputPosition()))===JSON.stringify(before),
+    'undrained output before diagnostic serial input');
+    serialTracking=true;
+    machine.sendInput(request.bytes);return {baseline,batch:drain(),view:view()};
   }
   if(request.type==='advance'){
     need(Number.isInteger(request.steps)&&request.steps>0&&request.steps<=1048576,'bounded guest run');
