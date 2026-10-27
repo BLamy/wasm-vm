@@ -581,7 +581,7 @@ try{
         }
         if(uwsmPids.length){
           const baseline=await probeRpc(worker,tag+'uwsm-before',
-            uwsmDetails(),current,deadline,256);
+            uwsmDetails(),current,deadline,512);
           directProcess.uwsmBaseline=baseline.probe;current=baseline.last;
           if(baseline.probe.status!=='guest-response')
             return {probe:{...baseline.probe,directProcess},last:current};
@@ -697,7 +697,7 @@ try{
         }
         if(uwsmPids.length){
           const after=await probeRpc(worker,tag+'uwsm-after',
-            uwsmDetails(),last,deadline,256);
+            uwsmDetails(),last,deadline,512);
           probe.uwsmAfter=after.probe;last=after.last;
           if(probe.uwsmAfter.status==='guest-response')
             validateUwsm(probe.uwsmAfter);
