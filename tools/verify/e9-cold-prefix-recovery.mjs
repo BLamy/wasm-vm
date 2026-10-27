@@ -131,7 +131,7 @@ try{
       workers.push(worker);worker.on('close',()=>closed.add(worker));}
   });
   await page.exposeFunction('retainRecoveryArtifact',async(name,encoded)=>{
-    assert(/^(final|replay-window-[01])\.state$/.test(name));
+    assert(/^replay-window-[01]\.state$/.test(name));
     assert(typeof encoded==='string'&&encoded.length<=64*1048576);
     const bytes=Buffer.from(encoded,'base64');
     assert.equal(bytes.toString('base64'),encoded);
@@ -266,37 +266,93 @@ try{
     globalThis.fetch=(...values)=>{egress.fetch++;throw Error('live fetch during recovered replay '+String(values[0]));};
     globalThis.WebSocket=class extends nativeSocket{constructor(...values){egress.sockets++;
       throw Error('live socket during recovered replay '+String(values[0]));}};
-    let controller,workerAudit,physical,restored,restoredInspection,restoredState;
+    const points=manifest.checkpoints.slice(-3),anchor=points[0];
+    need(anchor.id==='cold-431'&&anchor.position.transition==='21600000000'
+      &&points[1].position.transition==='21650000000'
+      &&points[2].position.transition==='21700000000',
+      'last two adjacent windows and full replay anchor');
+    const anchorFrame=await frameFor(anchor);
+    need(anchorFrame.meta.full===true&&same(pos(anchorFrame.meta.position),pos(anchor.position)),
+      'last full checkpoint is the exact replay anchor');
+    const seekPinnedWorker=async(target,index)=>{
+      // The source-pinned paged worker itself supports consecutive witnessed
+      // windows. The source-pinned controller restricts explicit seeks to the
+      // next checkpoint, so this diagnostic drives that worker protocol
+      // directly and makes no claim about the public controller's delta seek.
+      const requestId=index+1,inspectionId=index+101;
+      const worker=new Worker('/session-gpu-replay-worker.js',{type:'module'});
+      try{
+        const result=await new Promise((resolve,reject)=>{
+          let ready=null,done=false;
+          const timer=setTimeout(()=>fail(Error('pinned GPU replay worker timed out')),60*60*1000);
+          const fail=error=>{if(done)return;done=true;clearTimeout(timer);reject(error);};
+          worker.onerror=event=>fail(Error(event.message||'pinned GPU replay worker failed'));
+          worker.onmessage=event=>{
+            const value=event.data;
+            if(value.type==='initialized'){
+              worker.postMessage({type:'seek',requestId,database:input.database,sessionId:input.id,
+                checkpointId:anchor.id,target:pos(target.position),quantum:4096});
+              return;
+            }
+            if(value.requestId!==requestId||done)return;
+            if(value.type==='error'||value.type==='inspection-error'){
+              fail(Error(value.stack||value.message));return;
+            }
+            if(value.type==='ready'){
+              ready=value;
+              worker.postMessage({type:'inspect-selected',requestId,inspectionId});
+            }else if(value.type==='selected-inspection'&&value.inspectionId===inspectionId){
+              done=true;clearTimeout(timer);resolve({ready,inspection:value});
+            }
+          };
+        });
+        const audit=await globalThis.auditReplayWorker();
+        need(audit.length===1&&audit[0].factoryEntries==='0',
+          'pinned replay worker provider closed');
+        return {...result,audit};
+      }finally{worker.terminate();await new Promise(resolve=>setTimeout(resolve,0));}
+    };
+    let workerAudit,physical,finalInspection,finalState;
     try{
-      const replay=await openGpuTimelineReplay({store,id:input.id,configuration:metadata.configuration});
-      controller=replay.controller;
-      // This private replay restores the independently pinned native keyframe
-      // without advancing the guest. The committed state digest separately
-      // covers its canonical LogicalGpu projection plus RAM digest.
-      restored=await controller.seekFromCheckpoint(finalPoint.id,finalPoint.position);
-      need(restored.status==='ready'&&same(pos(restored.position),pos(finalPoint.position))
-        &&restored.rendered.digest===input.finalDigest&&restored.rendered.replay?.paged===true
-        &&restored.rendered.replay.eventCursor===Number(finalPoint.position.sequence)
-        &&restored.rendered.replay.wholeChain===true,
-        'zero-transition final checkpoint restore');
-      restoredInspection=await controller.inspectSelected();
-      need(witness(restoredInspection.state,finalFrame.meta.ramSha256)===input.finalDigest
-        &&same(latches(restoredInspection.state),input.finalLatches)
-        &&checkpointHash(restoredInspection.state)!==checkpointHash(finalFrame.native),
-        'restored logical projection binds independent witness and distinct native encoding');
-      need(checkpointHash(restoredInspection.queues.pending)===checkpointHash(finalFrame.pending)
-        &&checkpointHash(restoredInspection.queues.output)===checkpointHash(finalFrame.output),
-        'zero-transition restored host queues');
-      restoredState=await globalThis.retainRecoveryArtifact('final.state',b64(restoredInspection.state));
-      const points=manifest.checkpoints.slice(-3);
       for(let index=0;index<2;index++){
         const from=points[index],to=points[index+1];
-        const result=await controller.seekFromCheckpoint(from.id,to.position);
-        need(result.status==='ready'&&result.rendered.digest===input.digests[index+1]
-          &&result.rendered.replay?.paged===true
-          &&result.rendered.replay.eventCursor===Number(to.position.sequence),
-          'adjacent replay witness/cursor '+index);
-        const inspection=await controller.inspectSelected(),sourceFrame=await frameFor(to);
+        let ready,inspection,audit,transport;
+        if(index===0){
+          const replay=await openGpuTimelineReplay({store,id:input.id,
+            configuration:metadata.configuration}),controller=replay.controller;
+          try{
+            const result=await controller.seekFromCheckpoint(anchor.id,to.position);
+            need(result.status==='ready'&&result.checkpointId===anchor.id,
+              'public controller selected the full replay anchor');
+            ready={position:result.position,digest:result.rendered.digest,
+              replay:result.rendered.replay,requestId:result.requestId};
+            inspection=await controller.inspectSelected();
+            audit=await globalThis.auditReplayWorker();
+            need(audit.length===1&&audit[0].factoryEntries==='0',
+              'public replay worker provider closed');
+            transport='pinned-production-controller';
+          }finally{
+            controller.close();
+            let retired=false;
+            for(let wait=0;wait<100;wait++){
+              try{if((await globalThis.auditReplayWorker()).length===0){retired=true;break;}}
+              catch{ /* Playwright may observe termination before the close event. */ }
+              await new Promise(resolve=>setTimeout(resolve,50));
+            }
+            need(retired,'public replay worker did not retire');
+          }
+        }else{
+          ({ready,inspection,audit}=await seekPinnedWorker(to,index));
+          transport='pinned-production-worker-protocol';
+        }
+        need(same(pos(ready.position),pos(to.position))
+          &&ready.digest===input.digests[index+1]
+          &&ready.replay?.paged===true&&ready.replay.windows===index+1
+          &&ready.replay.eventCursor===Number(to.position.sequence)
+          &&ready.replay.wholeChain===(index===1),
+          'adjacent replay witness/cursor/window count '+index);
+        const sourceFrame=await frameFor(to);
+        need(sourceFrame.meta.full===false,'replayed target is a delta checkpoint '+index);
         need(witness(inspection.state,sourceFrame.meta.ramSha256)===input.digests[index+1]
           &&sourceFrame.meta.stateSha256===input.digests[index+1]
           &&same(latches(inspection.state),input.latchPairs[index+1])
@@ -307,13 +363,13 @@ try{
           &&checkpointHash(inspection.queues.output)===checkpointHash(sourceFrame.output),
           'adjacent replay host queues '+index);
         const artifact=await globalThis.retainRecoveryArtifact('replay-window-'+index+'.state',b64(inspection.state));
-        windows.push({from:from.id,to:to.id,position:pos(result.position),digest:result.rendered.digest,
-          expected:input.digests[index+1],replay:result.rendered.replay,requestId:result.requestId,
+        windows.push({anchor:anchor.id,from:from.id,to:to.id,transport,
+          position:pos(ready.position),digest:ready.digest,
+          expected:input.digests[index+1],replay:ready.replay,requestId:ready.requestId,
           logicalLatches:latches(inspection.state),state:artifact,stateArtifact:artifact,
           renderer:{sha256:checkpointHash(inspection.renderer.bytes),bytes:inspection.renderer.bytes.length}});
         if(index===1){
-          need(checkpointHash(inspection.state)===restoredState.sha256,
-            'last replay window differs from zero-transition final restore');
+          finalInspection=inspection;finalState=artifact;workerAudit=audit;
           const sourceBytes=await readCheckpointObject(store,to.gpu,256*1048576);
           const source=decodeCheckpointData(sourceBytes.subarray(16,-32));
           const actual=decodeCheckpointData(inspection.renderer.bytes.subarray(16,-32));
@@ -329,9 +385,7 @@ try{
             epoch:source.logical.epoch,profile:true,logical:true,frames:true};
         }
       }
-      workerAudit=await globalThis.auditReplayWorker();
-      need(workerAudit.length===1&&workerAudit[0].factoryEntries==='0','replay worker provider closed');
-    }finally{controller?.close();globalThis.fetch=nativeFetch;globalThis.WebSocket=nativeSocket;}
+    }finally{globalThis.fetch=nativeFetch;globalThis.WebSocket=nativeSocket;}
     need(egress.fetch===0&&egress.sockets===0,'replay page egress');
     need(WasmLinux.ownedLocalHttpFactoryEntries()===factoryBefore,'replay page provider closed');
     await store.close();
@@ -339,14 +393,13 @@ try{
       newManifestSha256:checkpointHash(post.manifest),newManifest:Array.from(post.manifest),
       revision:post.revision,beforeStats,postStats,
       final:{...pos(commitment.last),digest:input.finalDigest,ramDigest:finalFrame.meta.ramSha256,
-        logicalLatches:latches(restoredInspection.state),state:restoredState,
+        logicalLatches:latches(finalInspection.state),state:finalState,
         nativeSha256:checkpointHash(finalFrame.native)},
       authenticatedHistory:{storageAuthenticated:metadata.storageAuthenticated,
         receipts:metadata.receipts,witnesses:metadata.witnesses,windows:metadata.receiptWindows,
         receiptDigest:metadata.receiptDigest,manifestSha256:metadata.session.manifestSha256},
-      replay:{restored:{from:finalPoint.id,position:pos(restored.position),digest:restored.rendered.digest,
-        requestId:restored.requestId,replay:restored.rendered.replay,stateArtifact:restoredState},
-        windows,final:{position:pos(commitment.last),digest:windows.at(-1).digest}},
+      replay:{anchor:{id:anchor.id,position:pos(anchor.position),full:true},windows,
+        final:{position:pos(commitment.last),digest:windows.at(-1).digest}},
       replayEgress:egress,workerAudit,physical};
   },{database:source.result.database,id:session.key,oldManifestSha256:sha(oldManifestBytes),
     stats:source.result.retentionAtEnd,points:[earlier.position,before.position,last.position],
@@ -388,6 +441,7 @@ try{
   recovered.result.recoveryPhysical=answer.physical;
   recovered.raw=[...source.raw,...report.artifacts];
   recovered.recovery={kind:'seal-last-durable-original-cold-checkpoint',
+    controllerLimitation:'source-pinned public controller bounds explicit seeks to the next checkpoint; second window uses its pinned production worker protocol',
     sourceReportSha256:sha(sourceBytes),sourceStorageSha256:sha(archiveBytes),
     sourceManifestSha256:sha(oldManifestBytes),sourceHead:source.head,
     recoveryHead:report.head,sourceStatus:'failed',sourceFailure:source.result.error,
