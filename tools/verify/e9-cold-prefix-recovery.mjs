@@ -150,7 +150,7 @@ try{
       workers.push(worker);worker.on('close',()=>closed.add(worker));}
   });
   await page.exposeFunction('retainRecoveryArtifact',async(name,encoded)=>{
-    assert(/^replay-window-[01]\.state$/.test(name));
+    assert(/^replay-window-[01]\.(?:state|renderer)$/.test(name));
     assert(typeof encoded==='string'&&encoded.length<=64*1048576);
     const bytes=Buffer.from(encoded,'base64');
     assert.equal(bytes.toString('base64'),encoded);
@@ -417,15 +417,30 @@ try{
           const source=decodeCheckpointData(sourceBytes.subarray(16,-32));
           const actual=decodeCheckpointData(inspection.renderer.bytes.subarray(16,-32));
           const data=value=>encodeCheckpointData(value);
+          const rendererArtifact=await globalThis.retainRecoveryArtifact(
+            'replay-window-1.renderer',b64(inspection.renderer.bytes));
+          const keys=Object.keys(source.logical);
+          need(same(keys,Object.keys(actual.logical)),'replay physical renderer logical field names');
+          const logicalFields=Object.fromEntries(keys.map(key=>[key,{
+            source:checkpointHash(data(source.logical[key])),
+            replay:checkpointHash(data(actual.logical[key]))}]));
+          const changed=keys.filter(key=>logicalFields[key].source!==logicalFields[key].replay);
+          // A restored renderer gets a fresh owner epoch. Its scanout carries
+          // that epoch too; all other logical fields must remain byte-identical.
+          const rebased=structuredClone(actual.logical);
+          need(source.logical.scanout&&rebased.scanout,'replay physical scanout exists');
+          rebased.epoch=source.logical.epoch;
+          rebased.scanout.epoch=source.logical.scanout.epoch;
           need(checkpointHash(data(source.profile))===checkpointHash(data(actual.profile)),
             'replay physical renderer profile');
-          need(checkpointHash(data(source.logical))===
-            checkpointHash(data({...actual.logical,epoch:source.logical.epoch})),
+          need(changed.every(key=>['epoch','scanout'].includes(key))&&
+            checkpointHash(data(source.logical))===checkpointHash(data(rebased)),
             'replay physical renderer logical state');
           need(checkpointHash(data(source.frames))===checkpointHash(data(actual.frames.slice(1))),
             'replay physical renderer frame chain');
           physical={source:checkpointHash(sourceBytes),replay:checkpointHash(inspection.renderer.bytes),
-            epoch:source.logical.epoch,profile:true,logical:true,frames:true};
+            rendererArtifact,epoch:{source:source.logical.epoch,replay:actual.logical.epoch},
+            logicalFields,changedLogicalFields:changed,profile:true,logical:true,frames:true};
         }
       }
     }finally{globalThis.fetch=nativeFetch;globalThis.WebSocket=nativeSocket;}

@@ -23,6 +23,11 @@ const hex=bytes=>[...bytes].map(n=>n.toString(16).padStart(2,'0')).join('');
 const digest=bytes=>checkpointHash(bytes);
 const shape=bytes=>({bytes:bytes.length,sha256:digest(bytes)});
 const sameData=(a,b)=>{const x=encodeCheckpointData(a),y=encodeCheckpointData(b);return x.length===y.length&&x.every((value,i)=>value===y[i]);};
+const sameRebasedRendererLogical=(source,actual)=>sameData({
+  ...actual,epoch:source.epoch,
+  scanout:source.scanout&&actual.scanout
+    ?{...actual.scanout,epoch:source.scanout.epoch}:actual.scanout,
+},source);
 const logicalLatches=bytes=>{const marker=encoder.encode('WVGPULG2');let at=-1;
   for(let i=0;i+marker.length+3<=bytes.length;i++)if(marker.every((value,j)=>bytes[i+j]===value)){at=i;break;}
   need(at>=0&&[bytes[at+9],bytes[at+10]].every(value=>value===0||value===1),
@@ -372,7 +377,7 @@ export async function qualifyDesktopWorkload(contract,qualification,options={}){
       const source=decodeCheckpointData(sourceRenderer.subarray(16,-32));
       const actual=decodeCheckpointData(inspection.renderer.bytes.subarray(16,-32));
       need(sameData(source.profile,actual.profile),'cold-prefix physical renderer profile');
-      need(sameData({...actual.logical,epoch:source.logical.epoch},source.logical),'cold-prefix logical renderer state');
+      need(sameRebasedRendererLogical(source.logical,actual.logical),'cold-prefix logical renderer state');
       need(sameData(actual.frames.slice(1),source.frames),'cold-prefix physical renderer frame chain');
       if(state.desktop){const canvas=selected.rendered.canvas;
         const pixels=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
@@ -689,7 +694,7 @@ export async function qualifyDesktopWorkload(contract,qualification,options={}){
       const source=decodeCheckpointData(sourceRenderer.subarray(16,-32));
       const actual=decodeCheckpointData(inspection.renderer.bytes.subarray(16,-32));
       need(sameData(source.profile,actual.profile),'renderer profile');
-      need(sameData({...actual.logical,epoch:source.logical.epoch},source.logical),'renderer logical checkpoint');
+      need(sameRebasedRendererLogical(source.logical,actual.logical),'renderer logical checkpoint');
       need(sameData(actual.frames.slice(1),source.frames),'renderer commands after required epoch rebase');
       const replayCanvas=selected.rendered.canvas;
       replayStateBytes=inspection.state.slice();
