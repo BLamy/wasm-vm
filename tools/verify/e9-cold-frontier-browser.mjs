@@ -250,9 +250,15 @@ try{
         'selected raw CPU/device or renderer state changed');
       captured=await request(replayWorker,'capture-branch',
         {requestId:replayed.requestId,captureId:1},30*60*1000);
+      await globalThis.frontierProgress({stage:'replay-capture',
+        position:pos(captured.position),sourceDigest:hex(captured.capture.sourceDigest),
+        rendererSha256:captured.renderer.sha256,
+        rendererBytesSha256:checkpointHash(captured.renderer.bytes),
+        inspectedRendererSha256:checkpointHash(inspection.renderer.bytes)});
       need(same(pos(captured.position),pos(last.position))
         &&hex(captured.capture.sourceDigest)===input.finalDigest
-        &&checkpointHash(captured.renderer.bytes)===hex(captured.renderer.sha256),
+        &&checkpointHash(captured.renderer.bytes)===captured.renderer.sha256
+        &&checkpointHash(captured.renderer.bytes)===checkpointHash(inspection.renderer.bytes),
         'captured private branch differs from authenticated replay');
     }finally{replayWorker.terminate();}
     const configuration=structuredClone(metadata.configuration);
@@ -324,10 +330,15 @@ try{
         configuration,kernel,wasm,capture:sourceCapture,renderer:sourceRenderer,
         retainedObjects:input.retainedObjects},
       45*60*1000,[...new Set(transfer)]);
+      await globalThis.frontierProgress({stage:'prepared-private-branch',
+        origin:prepared.origin,offline:prepared.view.offline,egress:prepared.view.egress});
       need(same(prepared.origin.position,pos(last.position))
         &&prepared.origin.digest===input.finalDigest
         &&prepared.origin.nativeSha256===inputHashes.native
-        &&prepared.origin.rendererSha256===inputHashes.renderer
+        &&prepared.origin.sourceRendererSha256===inputHashes.renderer
+        &&prepared.origin.sourceRendererEpoch===captured.renderer.epoch
+        &&/^[0-9a-f]{64}$/.test(prepared.origin.rendererSha256)
+        &&prepared.origin.rendererEpoch!==captured.renderer.epoch
         &&prepared.origin.pendingSha256===inputHashes.pending
         &&prepared.origin.outputSha256===inputHashes.output
         &&prepared.origin.diskSha256===inputHashes.disk

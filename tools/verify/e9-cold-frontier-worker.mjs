@@ -13,7 +13,6 @@ let frameVersion=0,sentFrame=0,prepared=false,active=false,stopped=false;
 let missingLocalBlock=null,guestHalt=null,serial=Promise.resolve();
 let retainedObjects,imageChunkLengths,chunkStart=null;
 const egress={fetch:0,sockets:0};
-const hex=bytes=>[...bytes].map(value=>value.toString(16).padStart(2,'0')).join('');
 function tail(parts){
   const bytes=new Uint8Array(Math.min(65536,parts.reduce((n,part)=>n+part.length,0)));let at=bytes.length;
   for(let index=parts.length-1;index>=0&&at>0;index--){
@@ -130,7 +129,7 @@ async function prepare(request){
     if(frame.presentationToken)queueMicrotask(()=>presenter.acknowledge(frame.presentationToken,'superseded'));
   });
   const source=request.renderer;
-  need(checkpointHash(source.bytes)===hex(source.sha256),'captured physical renderer identity');
+  need(checkpointHash(source.bytes)===source.sha256,'captured physical renderer identity');
   renderer=await attachProductionVirgl(machine,{presenter,checkpoint:{exactHistory:true,
     renderer:source.bytes,profile:configuration.profile,epoch:source.epoch,
     rendererSha256:source.sha256}});
@@ -144,7 +143,8 @@ async function prepare(request){
   need(JSON.stringify(pos(machine.inputPosition()))===JSON.stringify(configuration.branchOrigin.sourcePosition),
     'activation changed source position');
   const saved=await renderer.saveCheckpoint();
-  need(saved.epoch===machine.exactGpuSessionEpoch(),'restored renderer epoch');
+  need(saved.epoch===machine.exactGpuSessionEpoch()&&saved.epoch!==source.epoch
+    &&checkpointHash(saved.bytes)===saved.sha256,'restored renderer epoch and identity');
   const initial=machine.captureExactGpuKeyframe(gpuHashBytes(saved.sha256),true);
   need(JSON.stringify(pos(initial))===JSON.stringify(configuration.branchOrigin.sourcePosition),
     'captured branch origin changed');
@@ -156,7 +156,8 @@ async function prepare(request){
   globalThis.WebSocket=class{constructor(url){egress.sockets++;
     throw Error('offline diagnostic attempted socket '+String(url));}};
   prepared=true;return {origin:{position:pos(initial),digest:gpuHex(initial.digest),
-    ramDigest:gpuHex(initial.ramDigest),rendererSha256:hex(saved.sha256),
+    ramDigest:gpuHex(initial.ramDigest),sourceRendererSha256:source.sha256,
+    sourceRendererEpoch:source.epoch,rendererSha256:saved.sha256,
     rendererEpoch:saved.epoch,nativeSha256:checkpointHash(request.capture.native),
     pendingSha256:checkpointHash(request.capture.pending),
     outputSha256:checkpointHash(request.capture.output),
