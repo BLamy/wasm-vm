@@ -393,38 +393,27 @@ try{
         gpu:view.gpu,consoleTail:view.console.slice(-4096)};
       return true;
     };
-    const guestProbe=async(worker,tag,from,deadline,minDraws=0)=>{
+    const probeRpc=async(worker,tag,command,from,deadline,maxBatches,minDraws=0)=>{
       const rid='e9frontier'+tag;
-      const command=`e9_sddm_pid=$(systemctl show sddm.service -p MainPID --value 2>/dev/null) || e9_sddm_pid=ERR; `+
-        `e9_sddm_active=$(systemctl show sddm.service -p ActiveState --value 2>/dev/null) || e9_sddm_active=ERR; `+
-        `if e9_hypr_pid=$(pgrep -xo Hyprland 2>/dev/null); then :; else `+
-        `e9_pgrep_status=$?; if test "$e9_pgrep_status" -eq 1; then e9_hypr_pid=0; else e9_hypr_pid=ERR; fi; fi; `+
-        `e9_hypr_uid=-1; e9_user_state=none; `+
-        `if test "$e9_hypr_pid" -gt 0 2>/dev/null; then `+
-        `e9_hypr_uid=$(stat -c %u "/proc/$e9_hypr_pid" 2>/dev/null) || e9_hypr_uid=ERR; `+
-        `if test "$e9_hypr_uid" != ERR; then `+
-        `e9_user_state=$(loginctl show-user "$e9_hypr_uid" -p State --value 2>/dev/null) || e9_user_state=ERR; fi; fi; `+
-        `e9_sessions_raw=$(loginctl list-sessions --no-legend --no-pager 2>/dev/null) || e9_sessions_raw=ERR; `+
-        `if test "$e9_sessions_raw" = ERR; then e9_sessions=ERR; else `+
-        `e9_sessions=$(printf '%s\\n' "$e9_sessions_raw" | awk 'NF{n++} END{print n+0}'); fi; `+
-        `printf 'E9_SDDM_PID=%s\\nE9_SDDM_ACTIVE=%s\\nE9_HYPR_PID=%s\\nE9_HYPR_UID=%s\\nE9_HYPR_USER_STATE=%s\\nE9_SESSION_COUNT=%s\\n' `+
-        `"$e9_sddm_pid" "$e9_sddm_active" "$e9_hypr_pid" "$e9_hypr_uid" "$e9_user_state" "$e9_sessions"`;
       const bytes=new TextEncoder().encode(formatRpcCommand(command,rid));
       const inputBytes=bytes.length;
       const sent=await request(worker,'input',{bytes},30000,[bytes.buffer]);
       need(sent.view.offline&&sent.view.egress.fetch===0&&sent.view.egress.sockets===0,
         'guest process probe attempted egress');
-      const probe={kind:'post-continuation-diagnostic-input',
-        sentAt:pos(from.position),bytes:inputBytes,command,steps:0,
+      need(sent.view.position.transition===from.position.transition,
+        'diagnostic serial input advanced guest before observation');
+      const probe={kind:'post-continuation-diagnostic-input',tag,
+        priorWitness:pos(from.position),sentAt:pos(sent.view.position),
+        bytes:inputBytes,command,steps:0,
         status:'pending',stdout:null,exit:null,position:null};
       let last=sent.view;
-      for(let index=0;index<48&&Date.now()<deadline-30000;index++){
+      for(let index=0;index<maxBatches&&Date.now()<deadline-30000;index++){
         const parsed=createFencedRpc(rid).feed(last.console);
         if(parsed&&probe.status!=='guest-response'){
           probe.status='guest-response';probe.stdout=parsed.stdout;probe.exit=parsed.exit;
         }
         if(probe.status==='guest-response'
-          &&presentation.snapshot().drawnPresents>minDraws)break;
+          &&(minDraws===0||presentation.snapshot().drawnPresents>minDraws))break;
         const response=await request(worker,'advance',{steps:1048576},
           Math.min(10*60*1000,deadline-Date.now()-30000));
         probe.steps+=1048576;last=response.view;
@@ -432,6 +421,10 @@ try{
           'guest process probe attempted egress');
         if(last.frameChanged||last.firstCandidate)sample(last);
         if(last.guestHalt){probe.status='guest-halt-before-response';break;}
+        if(index%16===15)await globalThis.frontierProgress({stage:'diagnostic-probe',
+          tag,transition:last.position.transition,steps:probe.steps,
+          consoleTail:last.console.slice(-256),
+          drawnPresents:presentation.snapshot().drawnPresents});
       }
       const witnessed=await request(worker,'inspect',{},30000);
       need(same(pos(witnessed.view.position),pos(last.position))
@@ -441,9 +434,96 @@ try{
       probe.position=pos(last.position);
       probe.gpu=last.gpu;probe.presentation=presentation.snapshot();
       probe.consoleTail=last.console.slice(-8192);
-      if(probe.status==='pending')probe.status='no-response-within-50m-steps';
+      if(probe.status==='pending')probe.status=Date.now()>=deadline-30000
+        ?'wall-limit-before-response':`no-response-within-${probe.steps}-steps`;
+      return {probe,last};
+    };
+    const guestProbe=async(worker,tag,from,deadline,minDraws=0)=>{
+      let current=from,directProcess=null,directSession=null;
+      if(tag==='limit'){
+        const processCommand="( set -o pipefail; ps -eo pid=,ppid=,uid=,stat=,comm= "+
+          "| awk 'tolower($5) ~ /sddm|hyprland|uwsm|greeter|systemd|dbus/ "+
+          "{print} END {print \"E9_PROCESS_COUNT=\" NR}' )";
+        const first=await probeRpc(worker,tag+'process',
+          processCommand,current,deadline,256);
+        directProcess=first.probe;current=first.last;
+        if(directProcess.status!=='guest-response')
+          return {probe:{...directProcess,directProcess},last:current};
+        try{
+          need(directProcess.exit===0,'direct guest process inspection failed');
+          const lines=directProcess.stdout.trim().split('\n');
+          const total=lines.pop()?.match(/^E9_PROCESS_COUNT=([1-9][0-9]*)$/);
+          need(total&&directProcess.stdout.length<32768,
+            'direct guest process enumeration is incomplete or oversized');
+          const processes=lines.map(line=>{
+            const matched=line.match(/^\s*([0-9]+)\s+([0-9]+)\s+([0-9]+)\s+(\S+)\s+(.+?)\s*$/);
+            need(matched,'direct guest process table has an unparsed row');
+            return {pid:Number(matched[1]),ppid:Number(matched[2]),uid:Number(matched[3]),
+              state:matched[4],name:matched[5]};
+          });
+          need(processes.length<=Number(total[1]),'filtered process count exceeds census');
+          directProcess.processCount=Number(total[1]);
+          directProcess.relevantProcesses=processes;
+          directProcess.validation={status:'passed'};
+        }catch(error){
+          directProcess.validation={status:'failed',reason:String(error.message)};
+          directProcess.status='invalid-guest-response';
+          return {probe:{...directProcess,directProcess},last:current};
+        }
+        const sessionCommand=`( printf 'E9_SESSION_FILES_BEGIN\\n'; `+
+          `for e9_file in /run/systemd/sessions/* /run/systemd/users/*; do `+
+          `if test -f "$e9_file"; then printf 'E9_SESSION_FILE=%s\\n' "$e9_file"; `+
+          `sed -n '/^\\(UID\\|USER\\|STATE\\|ACTIVE\\|SERVICE\\|TYPE\\|CLASS\\|LEADER\\|SCOPE\\)=/p' "$e9_file" || exit 91; fi; done; `+
+          `printf 'E9_SESSION_FILES_END\\n'; `+
+          `awk '$2=="/" || $2=="/home" {print "E9_MOUNT=" $0}' /proc/mounts; )`;
+        const second=await probeRpc(worker,tag+'session',sessionCommand,
+          current,deadline,256);
+        directSession=second.probe;current=second.last;
+        if(directSession.status!=='guest-response')
+          return {probe:{...directSession,directProcess,directSession},last:current};
+        try{
+          need(directSession.exit===0
+            &&directSession.stdout.includes('E9_SESSION_FILES_BEGIN\n')
+            &&directSession.stdout.includes('E9_SESSION_FILES_END\n')
+            &&directSession.stdout.includes('E9_MOUNT='),
+          'direct guest session and mount inspection failed');
+          directSession.sessionFiles=[...directSession.stdout.matchAll(
+            /^E9_SESSION_FILE=(.+)$/gm)].map(match=>match[1]);
+          directSession.validation={status:'passed'};
+        }catch(error){
+          directSession.validation={status:'failed',reason:String(error.message)};
+          directSession.status='invalid-guest-response';
+          return {probe:{...directSession,directProcess,directSession},last:current};
+        }
+      }
+      const command=`printf 'E9_SERVICE_STAGE=START\\n'; `+
+        `e9_sddm_pid=$(systemctl show sddm.service -p MainPID --value 2>/dev/null) || e9_sddm_pid=ERR; `+
+        `printf 'E9_SERVICE_STAGE=SDDM_PID\\n'; `+
+        `e9_sddm_active=$(systemctl show sddm.service -p ActiveState --value 2>/dev/null) || e9_sddm_active=ERR; `+
+        `printf 'E9_SERVICE_STAGE=SDDM_ACTIVE\\n'; `+
+        `if e9_hypr_pid=$(pgrep -xo Hyprland 2>/dev/null); then :; else `+
+        `e9_pgrep_status=$?; if test "$e9_pgrep_status" -eq 1; then e9_hypr_pid=0; else e9_hypr_pid=ERR; fi; fi; `+
+        `printf 'E9_SERVICE_STAGE=HYPR_PID\\n'; `+
+        `e9_hypr_uid=-1; e9_user_state=none; `+
+        `if test "$e9_hypr_pid" -gt 0 2>/dev/null; then `+
+        `e9_hypr_uid=$(stat -c %u "/proc/$e9_hypr_pid" 2>/dev/null) || e9_hypr_uid=ERR; `+
+        `if test "$e9_hypr_uid" != ERR; then `+
+        `e9_user_state=$(loginctl show-user "$e9_hypr_uid" -p State --value 2>/dev/null) || e9_user_state=ERR; fi; fi; `+
+        `printf 'E9_SERVICE_STAGE=HYPR_USER\\n'; `+
+        `e9_sessions_raw=$(loginctl list-sessions --no-legend --no-pager 2>/dev/null) || e9_sessions_raw=ERR; `+
+        `printf 'E9_SERVICE_STAGE=SESSIONS\\n'; `+
+        `if test "$e9_sessions_raw" = ERR; then e9_sessions=ERR; else `+
+        `e9_sessions=$(printf '%s\\n' "$e9_sessions_raw" | awk 'NF{n++} END{print n+0}'); fi; `+
+        `printf 'E9_SDDM_PID=%s\\nE9_SDDM_ACTIVE=%s\\nE9_HYPR_PID=%s\\nE9_HYPR_UID=%s\\nE9_HYPR_USER_STATE=%s\\nE9_SESSION_COUNT=%s\\n' `+
+        `"$e9_sddm_pid" "$e9_sddm_active" "$e9_hypr_pid" "$e9_hypr_uid" "$e9_user_state" "$e9_sessions"`;
+      const service=await probeRpc(worker,tag+'service',command,current,
+        deadline,768,minDraws);
+      const probe=service.probe;let last=service.last;
+      probe.directProcess=directProcess;probe.directSession=directSession;
       if(probe.status==='guest-response'){
-        const lines=probe.stdout.trim().split('\n');
+        try{
+        const lines=probe.stdout.trim().split('\n').filter(line=>
+          !line.startsWith('E9_SERVICE_STAGE='));
         const schema=['E9_SDDM_PID','E9_SDDM_ACTIVE','E9_HYPR_PID',
           'E9_HYPR_UID','E9_HYPR_USER_STATE','E9_SESSION_COUNT'];
         need(probe.exit===0&&lines.length===schema.length,
@@ -472,6 +552,22 @@ try{
           hyprlandUid:Number(fields.E9_HYPR_UID),
           hyprlandUserState:fields.E9_HYPR_USER_STATE,
           sessions:Number(fields.E9_SESSION_COUNT)};
+        probe.validation={status:'passed'};
+        }catch(error){
+          probe.validation={status:'failed',reason:String(error.message)};
+          probe.status='invalid-guest-response';
+        }
+      }
+      if(tag==='limit'&&probe.status==='guest-response'){
+        const jobs=await probeRpc(worker,tag+'jobs',
+          'systemctl list-jobs --no-legend --no-pager',last,deadline,256);
+        probe.jobs=jobs.probe;last=jobs.last;
+        if(probe.jobs.status==='guest-response'){
+          probe.jobs.validation=probe.jobs.exit===0
+            ?{status:'passed'}
+            :{status:'failed',reason:'guest service job inspection failed'};
+          if(probe.jobs.exit!==0)probe.jobs.status='invalid-guest-response';
+        }
       }
       return {probe,last};
     };
@@ -517,7 +613,7 @@ try{
         &&active.view.egress.sockets===0,'diagnostic network policy changed');
       if(sample(active.view))result.status='candidate-needs-guest-proof';
       let previous=BigInt(last.position.transition),nextProgress=previous+10000000n;
-      const started=Date.now(),maxWallMs=2*60*60*1000,deadline=started+maxWallMs;
+      const started=Date.now(),maxWallMs=4*60*60*1000,deadline=started+maxWallMs;
       const inspectTimeout=()=>{
         const remaining=deadline-Date.now();
         need(remaining>1000,'diagnostic wall budget cannot fit exact witness inspection');
@@ -526,7 +622,7 @@ try{
       let lastView=active.view,wallLimited=false;
       while(previous<BigInt(input.limit)&&result.status==='running'){
         const remaining=deadline-Date.now();
-        if(remaining<=10*60*1000+30000){wallLimited=true;break;}
+        if(remaining<=70*60*1000+30000){wallLimited=true;break;}
         const steps=Number((BigInt(input.limit)-previous)<1048576n
           ?BigInt(input.limit)-previous:1048576n);
         const response=await request(continuation,'advance',{steps},
@@ -616,7 +712,7 @@ try{
               gpu:lastView.gpu,presentation:presentation.snapshot(),
               consoleTail:lastView.console.slice(-8192)};
           }
-        }else if(probe.status==='guest-response'&&probe.exit===0){
+        }else{
           result.diagnosticCandidateAfterInput=result.frameCandidate;
           result.frameCandidate=null;
           result.frontier.processProbe=probe;
