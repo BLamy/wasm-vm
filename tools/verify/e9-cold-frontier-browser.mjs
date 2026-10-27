@@ -274,6 +274,7 @@ try{
     const inputHashes={native:checkpointHash(captured.capture.native),
       pending:checkpointHash(captured.capture.pending),output:checkpointHash(captured.capture.output),
       disk:checkpointHash(captured.capture.disk),renderer:checkpointHash(captured.renderer.bytes)};
+    await globalThis.frontierProgress({stage:'captured-payload-hashes',...inputHashes});
     const continuation=new Worker(input.diagnosticWorker,{type:'module'});
     const canvas=document.createElement('canvas');canvas.width=1;canvas.height=1;
     canvas.setAttribute('aria-label','Offline Omarchy frontier');document.body.append(canvas);
@@ -332,23 +333,26 @@ try{
       45*60*1000,[...new Set(transfer)]);
       await globalThis.frontierProgress({stage:'prepared-private-branch',
         origin:prepared.origin,offline:prepared.view.offline,egress:prepared.view.egress});
-      need(same(prepared.origin.position,pos(last.position))
-        &&prepared.origin.digest===input.finalDigest
-        &&prepared.origin.nativeSha256===inputHashes.native
-        &&prepared.origin.sourceRendererSha256===inputHashes.renderer
-        &&prepared.origin.sourceRendererEpoch===captured.renderer.epoch
-        &&/^[0-9a-f]{64}$/.test(prepared.origin.rendererSha256)
-        &&prepared.origin.rendererEpoch!==captured.renderer.epoch
+      need(same(pos(prepared.origin.position),pos(last.position)),
+        'private branch source position changed');
+      need(prepared.origin.digest===input.finalDigest,'private branch logical digest changed');
+      need(prepared.origin.nativeSha256===inputHashes.native
         &&prepared.origin.pendingSha256===inputHashes.pending
         &&prepared.origin.outputSha256===inputHashes.output
-        &&prepared.origin.diskSha256===inputHashes.disk
-        &&prepared.view.offline===true
+        &&prepared.origin.diskSha256===inputHashes.disk,
+      'private branch captured payload changed');
+      need(prepared.origin.sourceRendererSha256===inputHashes.renderer
+        &&prepared.origin.sourceRendererEpoch===captured.renderer.epoch
+        &&/^[0-9a-f]{64}$/.test(prepared.origin.rendererSha256)
+        &&prepared.origin.rendererEpoch!==captured.renderer.epoch,
+      'private branch renderer source or rebase changed');
+      need(prepared.view.offline===true
         &&prepared.view.egress.fetch===0&&prepared.view.egress.sockets===0,
-        'private branch origin changed');
+      'private branch network policy changed');
       result.origin=prepared.origin;
       if(sample(prepared.view))result.status='candidate-needs-guest-proof';
       const active=await request(continuation,'activate',{},30*60*1000);
-      need(same(pos(active.view.position),prepared.origin.position)
+      need(same(pos(active.view.position),pos(prepared.origin.position))
         &&active.view.digest===prepared.origin.digest
         &&active.view.offline===true&&active.view.egress.fetch===0
         &&active.view.egress.sockets===0,'diagnostic network policy changed');
