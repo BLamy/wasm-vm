@@ -72,6 +72,11 @@ const report={task:'E9-T22o',status:'running',scope:'Offline exact 21.7B cold de
     recoveredHead:recovery.head,failedAt:recovery.source.failedAt,
     originalTreeSha256:recovery.source.treeSha256Before,
     recoveredTreeSha256Before:sourceTreeBefore},
+  sourceGuestAtFrontier:{serialShell:sourceReport.result.serialShell,
+    networkService:sourceReport.result.networkServiceBefore,
+    serviceOrdering:sourceReport.result.serviceOrdering,
+    desktopCandidates:sourceReport.result.desktopCandidates,
+    guestConsoleTail:sourceReport.result.frontier.consoleTail},
   head:git('rev-parse','HEAD'),limit,started:new Date().toISOString(),
   browser:{origin:recovery.browser.origin,version:null,sourceVersion:recovery.browser.version,
     staticRequests:[],blockedRequests:[],blockedSockets:[],pageErrors:[]},
@@ -274,7 +279,7 @@ try{
       replay:{position:pos(replayed.position),digest:replayed.digest,windows:replayed.replay.windows,
         wholeChain:replayed.replay.wholeChain,rawStateSha256:checkpointHash(inspection.state),
         rendererSha256:checkpointHash(inspection.renderer.bytes)},
-      capture:inputHashes,origin:null,frame:null,frontier:null,progress:[],
+      capture:inputHashes,origin:null,frameCandidate:null,frame:null,frontier:null,progress:[],
       diagnosticInput:null,egress:{fetch:0,sockets:0}};
     const paint=frame=>{
       const before=presentation.snapshot().drawnPresents;
@@ -296,9 +301,13 @@ try{
         return false;
       }
       const shown=view.firstCandidate??view.frame;
-      need(shown?.position&&BigInt(shown.position.transition)<=BigInt(view.position.transition),
+      need(shown?.observedAt&&shown?.bracketStart
+        &&BigInt(shown.bracketStart.transition)<=BigInt(shown.observedAt.transition)
+        &&BigInt(shown.observedAt.transition)<=BigInt(view.position.transition),
         'physical frame position is outside its advance');
-      result.frame={position:pos(shown.position),observedAt:pos(view.position),
+      result.frameCandidate={positionUpperBound:pos(shown.observedAt),
+        positionLowerBound:pos(shown.bracketStart),observedAt:pos(view.position),
+        coordinatePrecision:'presentation observed after at most 4096 guest transitions; not an exact event coordinate',
         width:canvas.width,height:canvas.height,
         rgbaSha256:checkpointHash(image.data),presentation:presentation.snapshot(),
         gpu:view.gpu,consoleTail:view.console.slice(-4096)};
@@ -312,7 +321,8 @@ try{
         ...Object.values(sourceCapture).filter(value=>value instanceof Uint8Array)]
         .map(bytes=>bytes.buffer);
       const prepared=await request(continuation,'prepare',{database:input.database,
-        configuration,kernel,wasm,capture:sourceCapture,renderer:sourceRenderer},
+        configuration,kernel,wasm,capture:sourceCapture,renderer:sourceRenderer,
+        retainedObjects:input.retainedObjects},
       45*60*1000,[...new Set(transfer)]);
       need(same(prepared.origin.position,pos(last.position))
         &&prepared.origin.digest===input.finalDigest
@@ -324,17 +334,20 @@ try{
         &&prepared.view.offline===true
         &&prepared.view.egress.fetch===0&&prepared.view.egress.sockets===0,
         'private branch origin changed');
-      result.origin=prepared.origin;sample(prepared.view);
+      result.origin=prepared.origin;
+      if(sample(prepared.view))result.status='candidate-needs-guest-proof';
       const active=await request(continuation,'activate',{},30*60*1000);
-      need(active.view.offline===true&&active.view.egress.fetch===0
+      need(same(pos(active.view.position),prepared.origin.position)
+        &&active.view.digest===prepared.origin.digest
+        &&active.view.offline===true&&active.view.egress.fetch===0
         &&active.view.egress.sockets===0,'diagnostic network policy changed');
-      sample(active.view);
+      if(sample(active.view))result.status='candidate-needs-guest-proof';
       let previous=BigInt(last.position.transition),nextProgress=previous+10000000n;
       const started=Date.now(),maxWallMs=2*60*60*1000;
       let lastView=active.view,wallLimited=false;
-      while(previous<BigInt(input.limit)&&!result.frame){
+      while(previous<BigInt(input.limit)&&result.status==='running'){
         const remaining=maxWallMs-(Date.now()-started);
-        if(remaining<=1000){wallLimited=true;break;}
+        if(remaining<=10*60*1000+30000){wallLimited=true;break;}
         const steps=Number((BigInt(input.limit)-previous)<1048576n
           ?BigInt(input.limit)-previous:1048576n);
         let response;
@@ -344,10 +357,13 @@ try{
           const stopped=await request(continuation,'inspect',{},30*60*1000);
           need(stopped.view.egress.fetch===0&&stopped.view.egress.sockets===0,
             'offline guest attempted network egress');
+          need(stopped.view.digest&&stopped.missingLocalBlock?.code==='MissingObject',
+            'missing base object must have an exact witness and storage code');
           result.status='exact-failure-frontier';
           result.frontier={reason:'unretained-disk-chunk',
             message:error.message,missingLocalBlock:error.detail?.missingLocalBlock??stopped.missingLocalBlock,
-            position:pos(stopped.view.position),consoleTail:stopped.view.console.slice(-8192),
+            position:pos(stopped.view.position),digest:stopped.view.digest,
+            consoleTail:stopped.view.console.slice(-8192),
             gpu:stopped.view.gpu,outstanding:stopped.view.outstanding,
             presentation:presentation.snapshot()};
           break;
@@ -357,11 +373,17 @@ try{
         need(response.view.offline===true&&response.view.egress.fetch===0
           &&response.view.egress.sockets===0,'offline guest attempted network egress');
         previous=current;lastView=response.view;
-        if(sample(response.view)){result.status='desktop-frame';break;}
+        if(sample(response.view)){
+          result.status='candidate-needs-guest-proof';break;
+        }
         if(response.view.guestHalt){
+          const halted=await request(continuation,'inspect',{},30*60*1000);
+          need(halted.view.digest&&same(pos(halted.view.position),pos(response.view.position)),
+            'guest halt lacks same-position witness');
           result.status='exact-failure-frontier';
           result.frontier={reason:'guest-halt',position:pos(response.view.position),
-            guestHalt:response.view.guestHalt,consoleTail:response.view.console.slice(-8192),
+            digest:halted.view.digest,guestHalt:response.view.guestHalt,
+            consoleTail:response.view.console.slice(-8192),
             gpu:response.view.gpu,outstanding:response.view.outstanding,
             presentation:presentation.snapshot()};
           break;
@@ -390,9 +412,10 @@ try{
       const retained=await store.statistics();
       need(same(retained,statistics),'diagnostic continuation changed saved parent');
       result.authenticated.retentionAfter=retained;
-      result.measured={start:last.position.transition,
-        end:result.frame?.position.transition??result.frontier.position.transition,
-        guestTransitions:(BigInt(result.frame?.position.transition??result.frontier.position.transition)
+      const end=result.frameCandidate?.positionUpperBound.transition
+        ??result.frontier?.position.transition;
+      result.measured={start:last.position.transition,end,
+        guestTransitions:(BigInt(end)
           -BigInt(last.position.transition)).toString(),wallMs:Date.now()-started};
     }finally{continuation.terminate();presentation.dispose();await store.close();}
     return result;
@@ -401,8 +424,10 @@ try{
     statistics:sourceReport.result.retentionAtEnd,finalDigest:sourceReport.result.final.digest,
     replayedStateSha256:sourceReport.result.replay.windows[1].stateArtifact.sha256,
     replayedRendererSha256:recovery.artifacts.find(row=>row.file==='replay-window-1.renderer').sha256,
-    objects:3523,chunks:13177,limit,diagnosticWorker:diagnostic,nextRequest:0});
-  assert(['desktop-frame','exact-failure-frontier','bounded-no-frame'].includes(report.result.status));
+    objects:3523,chunks:13177,retainedObjects:archive.stores.objects.map(row=>row.key),
+    limit,diagnosticWorker:diagnostic,nextRequest:0});
+  assert(['exact-failure-frontier','bounded-no-frame'].includes(report.result.status),
+    'nonblank pixels require guest SDDM/Hyprland session proof before desktop classification');
   assert.equal(report.browser.blockedRequests.length,0,'no blocked continuation requests');
   assert.equal(report.browser.blockedSockets.length,0,'no attempted continuation sockets');
   assert.equal(report.browser.pageErrors.length,0,'no browser page errors');

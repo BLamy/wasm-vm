@@ -11,6 +11,7 @@ const decoder=new TextDecoder(),tick=()=>new Promise(resolve=>setTimeout(resolve
 let machine,renderer,store,pastConsole=new Uint8Array(),latestFrame=null,firstCandidate=null;
 let frameVersion=0,sentFrame=0,prepared=false,active=false,stopped=false;
 let missingLocalBlock=null,guestHalt=null,serial=Promise.resolve();
+let retainedObjects,imageChunks,chunkStart=null;
 const egress={fetch:0,sockets:0};
 const hex=bytes=>[...bytes].map(value=>value.toString(16).padStart(2,'0')).join('');
 function tail(parts){
@@ -59,10 +60,19 @@ async function localBlocks(){
     for(const request of requests){
       need(request.intent.kind==='block','unexpected offline device request '+request.intent.kind);
       const ref={sha256:request.intent.content.sha256,length:String(request.intent.content.length)};
-      let bytes;
-      try{bytes=await readCheckpointObject(store,ref,1048576);}
-      catch(error){missingLocalBlock={id:request.id,ref,error:String(error.message)};
-        throw Error('unretained offline disk chunk '+ref.sha256+' length '+ref.length);}
+      need(imageChunks.has(ref.sha256),'offline disk request is not in the pinned base image');
+      if(!retainedObjects.has(ref.sha256)){
+        let missing=false;
+        try{await store.objectReference(ref.sha256);}
+        catch(error){need(error?.code==='MissingObject',
+          'future base object failed for a reason other than absence: '+String(error));
+          missing=true;}
+        need(missing,'source-unretained object unexpectedly exists in the diagnostic store');
+        missingLocalBlock={id:request.id,ref,code:'MissingObject',
+          sourceGraphMembership:false,baseImageMembership:true};
+        throw Error('unretained offline base-image chunk '+ref.sha256+' length '+ref.length);
+      }
+      const bytes=await readCheckpointObject(store,ref,1048576);
       need(!stopped&&!renderer.inspect().lost,'diagnostic GPU continuation stopped');
       const lease=machine.exactLeaseDeviceRequest(request.id);
       try{machine.exactCompleteDeviceRequest(lease,0,0,bytes);}
@@ -83,6 +93,15 @@ async function prepare(request){
   need(!prepared&&!machine,'one diagnostic continuation per worker');
   const configuration=validateGpuConfiguration(request.configuration);
   need(configuration.branchOrigin&&request.capture&&request.renderer,'authenticated branch input');
+  need(Array.isArray(request.retainedObjects)&&request.retainedObjects.length===3523,
+    'authenticated source object inventory');
+  retainedObjects=new Set(request.retainedObjects);
+  need(retainedObjects.size===request.retainedObjects.length,
+    'duplicate source object reference');
+  const image=JSON.parse(configuration.imageManifest);
+  need(image.version===1&&Array.isArray(image.chunks)&&image.chunks.length>0,
+    'pinned base image chunk inventory');
+  imageChunks=new Set(image.chunks);
   need(request.wasm instanceof Uint8Array&&request.wasm.buffer instanceof ArrayBuffer
     &&String(request.wasm.length)===configuration.wasm.length
     &&checkpointHash(request.wasm)===configuration.wasm.sha256,'retained Wasm identity');
@@ -92,7 +111,9 @@ async function prepare(request){
   let presenter;presenter=createWorkerScanoutPresenter(frame=>{
     if(frame.type==='clear'){latestFrame=null;frameVersion++;return;}
     if(frame.type==='invalidate')return;
-    latestFrame={...frame,pixels:new Uint32Array(frame.pixels),position:pos(machine.inputPosition())};
+    latestFrame={...frame,pixels:new Uint32Array(frame.pixels),
+      observedAt:pos(machine.inputPosition()),
+      bracketStart:chunkStart??pos(machine.inputPosition())};
     frameVersion++;
     if(!firstCandidate&&likelyDesktop(latestFrame))
       firstCandidate={...latestFrame,pixels:latestFrame.pixels.slice()};
@@ -152,8 +173,10 @@ async function command(request){
       for(let left=request.steps;left>0;){
         need(!renderer.inspect().lost,'physical GPU context lost');await localBlocks();
         await pumpGpu();
-        const amount=Math.min(left,4096),result=machine.runChunk(amount);left-=amount;
+        const amount=Math.min(left,4096);chunkStart=pos(machine.inputPosition());
+        const result=machine.runChunk(amount);left-=amount;
         const pumped=renderer.pump();need(pumped===null||pumped.ok,'physical GPU continuation failed: '+pumped?.error?.message);
+        chunkStart=null;
         if(result.done){guestHalt={position:pos(machine.inputPosition()),result};break;}
         if(left)await tick();
       }
