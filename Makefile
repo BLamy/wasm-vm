@@ -2899,7 +2899,7 @@ verify-E9-T22n:
 	  out="$${E9_OUT:-target/evidence/e9-t22n-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
 	  mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
 	  E9_T22N_DESKTOP="$$desktop" node --test tools/verify/e9-workload-wall.test.mjs > "$$out/boundary-tests.log" 2>&1; \
-	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; git diff --exit-code -- web/dist; \
+	  $(MAKE) web-build > "$$out/web-build.log" 2>&1; git diff --exit-code -- web/dist; \
 	  E9_T22N_DESKTOP="$$desktop" node tools/verify/e9-workload-wall-browser.mjs --output "$$out/browser"; \
 	  mkdir "$$out/prefix"; ln -s "$$desktop/report.json" "$$out/prefix/report.json"; ln -s "$$desktop/saved" "$$out/prefix/saved"; \
 	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/prefix" --allow-incomplete
