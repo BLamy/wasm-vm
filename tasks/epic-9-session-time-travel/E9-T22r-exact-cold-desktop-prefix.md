@@ -30,6 +30,9 @@ through a separate recovery run that proves the original graph unchanged,
 finishes the existing witness without stepping the source VM, and replays two
 adjacent windows. The source failure and guest errors remain visible; recovery
 must never be represented as a first desktop frame or a completed cold run.
+If the host browser auto-updated after the source capture, record both exact
+versions and require the cloned profile's original manifest and retention
+counters to match the exported graph before sealing or replay.
 
 ## Acceptance criteria
 

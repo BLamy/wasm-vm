@@ -144,7 +144,8 @@ try{
   });
   const version=await(await context.newCDPSession(page)).send('Browser.getVersion');
   report.browser.version=version.product.slice('Chrome/'.length);
-  assert.equal(report.browser.version,source.browser,'same Chrome build as original cold capture');
+  report.browser.sourceVersion=source.browser;
+  report.browser.versionChanged=report.browser.version!==source.browser;
   await page.goto(origin.origin+'/');
   answer=await page.evaluate(async input=>{
     const need=(value,reason)=>{if(!value)throw Error('cold prefix recovery: '+reason);};
@@ -331,6 +332,8 @@ try{
     recoveryHead:report.head,sourceStatus:'failed',sourceFailure:source.result.error,
     sourceFailurePosition:source.result.failurePosition,frontierPosition:last.position,
     sealingGuestSteps:0,replayGuestExecution:true,noFreshColdBoot:true,sourceProfileCloned:true,
+    sourceBrowser:source.browser,recoveryBrowser:report.browser.version,
+    browserVersionChanged:report.browser.versionChanged,
     originalObjects:archive.stores.objects.length,originalChunks:archive.stores.chunks.length,
     oldStats:answer.beforeStats,newStats:answer.postStats,
     newManifestSha256:answer.newManifestSha256};
