@@ -11,7 +11,7 @@ const decoder=new TextDecoder(),tick=()=>new Promise(resolve=>setTimeout(resolve
 let machine,renderer,store,pastConsole=new Uint8Array(),latestFrame=null,firstCandidate=null;
 let frameVersion=0,sentFrame=0,prepared=false,active=false,stopped=false;
 let missingLocalBlock=null,guestHalt=null,serial=Promise.resolve();
-let retainedObjects,imageChunks,chunkStart=null;
+let retainedObjects,imageChunkLengths,chunkStart=null;
 const egress={fetch:0,sockets:0};
 const hex=bytes=>[...bytes].map(value=>value.toString(16).padStart(2,'0')).join('');
 function tail(parts){
@@ -60,7 +60,8 @@ async function localBlocks(){
     for(const request of requests){
       need(request.intent.kind==='block','unexpected offline device request '+request.intent.kind);
       const ref={sha256:request.intent.content.sha256,length:String(request.intent.content.length)};
-      need(imageChunks.has(ref.sha256),'offline disk request is not in the pinned base image');
+      need(imageChunkLengths.get(ref.sha256)?.has(Number(ref.length)),
+        'offline disk request digest/length is not in the pinned base image');
       if(!retainedObjects.has(ref.sha256)){
         let missing=false;
         try{await store.objectReference(ref.sha256);}
@@ -99,9 +100,18 @@ async function prepare(request){
   need(retainedObjects.size===request.retainedObjects.length,
     'duplicate source object reference');
   const image=JSON.parse(configuration.imageManifest);
-  need(image.version===1&&Array.isArray(image.chunks)&&image.chunks.length>0,
+  need(image.version===1&&Number.isSafeInteger(image.image_len)&&image.image_len>0
+    &&Number.isSafeInteger(image.chunk_size)&&image.chunk_size>0
+    &&Array.isArray(image.chunks)
+    &&image.chunks.length===Math.ceil(image.image_len/image.chunk_size),
     'pinned base image chunk inventory');
-  imageChunks=new Set(image.chunks);
+  imageChunkLengths=new Map();
+  for(const [index,digest]of image.chunks.entries()){
+    need(typeof digest==='string'&&/^[0-9a-f]{64}$/.test(digest),'pinned base chunk hash');
+    const length=Math.min(image.chunk_size,image.image_len-index*image.chunk_size);
+    if(!imageChunkLengths.has(digest))imageChunkLengths.set(digest,new Set());
+    imageChunkLengths.get(digest).add(length);
+  }
   need(request.wasm instanceof Uint8Array&&request.wasm.buffer instanceof ArrayBuffer
     &&String(request.wasm.length)===configuration.wasm.length
     &&checkpointHash(request.wasm)===configuration.wasm.sha256,'retained Wasm identity');

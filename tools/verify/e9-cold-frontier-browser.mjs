@@ -343,18 +343,24 @@ try{
         &&active.view.egress.sockets===0,'diagnostic network policy changed');
       if(sample(active.view))result.status='candidate-needs-guest-proof';
       let previous=BigInt(last.position.transition),nextProgress=previous+10000000n;
-      const started=Date.now(),maxWallMs=2*60*60*1000;
+      const started=Date.now(),maxWallMs=2*60*60*1000,deadline=started+maxWallMs;
+      const inspectTimeout=()=>{
+        const remaining=deadline-Date.now();
+        need(remaining>1000,'diagnostic wall budget cannot fit exact witness inspection');
+        return Math.min(30000,remaining-1000);
+      };
       let lastView=active.view,wallLimited=false;
       while(previous<BigInt(input.limit)&&result.status==='running'){
-        const remaining=maxWallMs-(Date.now()-started);
+        const remaining=deadline-Date.now();
         if(remaining<=10*60*1000+30000){wallLimited=true;break;}
         const steps=Number((BigInt(input.limit)-previous)<1048576n
           ?BigInt(input.limit)-previous:1048576n);
         let response;
-        try{response=await request(continuation,'advance',{steps},Math.min(10*60*1000,remaining));}
+        try{response=await request(continuation,'advance',{steps},
+          Math.min(10*60*1000,remaining-30000));}
         catch(error){
           if(!error.detail?.missingLocalBlock)throw error;
-          const stopped=await request(continuation,'inspect',{},30*60*1000);
+          const stopped=await request(continuation,'inspect',{},inspectTimeout());
           need(stopped.view.egress.fetch===0&&stopped.view.egress.sockets===0,
             'offline guest attempted network egress');
           need(stopped.view.digest&&stopped.missingLocalBlock?.code==='MissingObject',
@@ -377,7 +383,7 @@ try{
           result.status='candidate-needs-guest-proof';break;
         }
         if(response.view.guestHalt){
-          const halted=await request(continuation,'inspect',{},30*60*1000);
+          const halted=await request(continuation,'inspect',{},inspectTimeout());
           need(halted.view.digest&&same(pos(halted.view.position),pos(response.view.position)),
             'guest halt lacks same-position witness');
           result.status='exact-failure-frontier';
@@ -397,7 +403,7 @@ try{
         }
       }
       if(result.status==='running'){
-        const ended=await request(continuation,'inspect',{},30*60*1000);
+        const ended=await request(continuation,'inspect',{},inspectTimeout());
         result.status='bounded-no-frame';
         need(same(pos(ended.view.position),pos(lastView.position)),
           'diagnostic owner advanced after last accepted view');
@@ -426,8 +432,8 @@ try{
     replayedRendererSha256:recovery.artifacts.find(row=>row.file==='replay-window-1.renderer').sha256,
     objects:3523,chunks:13177,retainedObjects:archive.stores.objects.map(row=>row.key),
     limit,diagnosticWorker:diagnostic,nextRequest:0});
-  assert(['exact-failure-frontier','bounded-no-frame'].includes(report.result.status),
-    'nonblank pixels require guest SDDM/Hyprland session proof before desktop classification');
+  assert.equal(report.result.status,'exact-failure-frontier',
+    'a color candidate needs guest session proof; a mere numeric cap needs a concrete obstruction');
   assert.equal(report.browser.blockedRequests.length,0,'no blocked continuation requests');
   assert.equal(report.browser.blockedSockets.length,0,'no attempted continuation sockets');
   assert.equal(report.browser.pageErrors.length,0,'no browser page errors');
