@@ -3,8 +3,7 @@ id: E9-T22o
 epic: 9
 title: Calibrate the cold Omarchy first-frame frontier from an authenticated prefix
 priority: 524.9220298
-status: blocked
-blocked_on: [E9-T22q, E9-T22r]
+status: in-progress
 depends_on: [E9-T22n, E9-T22q, E9-T22r]
 estimate: S
 risk: medium
@@ -14,21 +13,23 @@ capstone: false
 ## Goal
 
 Determine a defensible finite guest-transition bound for the original Omarchy
-desktop after the clean E9-T22c run reached 20B transitions before first light.
+desktop after the exact E9-T22r cold recording reached a durable 21.7B
+checkpoint before first light and stopped at the 21.75B HostSpace guard.
 
 ## Boundary
 
-One offline, non-acceptance diagnostic continuation from the authenticated
-20B checkpoint. Reconstruct its complete RAM ancestry, CPU/device/disk state,
-host queues, renderer epoch and witness digest from the exported physical graph
-before creating a VM. Continue only in a separate diagnostic owner with no
-live replay egress. Do not edit the image, clock, cadence, guest service files,
-workload, probe or production replay policy. The continuation is calibration,
-never a substitute for the next original cold qualification run.
+One offline, non-acceptance diagnostic continuation from the recovered exact
+E9-T22r 21.7B checkpoint. Authenticate its complete RAM ancestry,
+CPU/device/disk state, host queues, renderer epoch and witness digest from the
+exported physical graph before creating a VM. Continue only in a separate
+diagnostic owner with no live replay egress. Preserve the failed source report
+and its guest disk errors. Do not edit the image, clock, cadence, guest service
+files, workload, probe or production replay policy. The continuation is
+calibration, never a substitute for the next original cold qualification run.
 
 ## Acceptance criteria
 
-- [ ] Authenticate the exact 20B saved-graph closure and the chosen checkpoint,
+- [ ] Authenticate the recovered exact 21.7B saved-graph closure and checkpoint,
   including every physical chunk/object, RAM ancestor digest, renderer bytes,
   disk root and witness membership, before continuation.
 - [ ] Run a bounded offline continuation to a real nonblank Omarchy frame, or
@@ -41,9 +42,10 @@ never a substitute for the next original cold qualification run.
 
 ## Deterministic acceptance
 
-`make verify-E9-T22o` using the pinned E9-T22c 20B saved graph and its recorded
-SHA-256 receipts. The target must refuse missing or changed input and produce a
-bounded browser report with source and output digests.
+`E9_SOURCE=target/evidence/e9-t22r-recovery-b481f6c71/desktop make verify-E9-T22o`
+using the pinned recovered E9-T22r graph and recorded SHA-256 receipts. The
+target must refuse missing or changed input and produce a bounded browser
+report with source and output digests.
 
 ## Adversarial verification
 
