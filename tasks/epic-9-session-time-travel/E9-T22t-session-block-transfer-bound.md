@@ -3,7 +3,7 @@ id: E9-T22t
 epic: 9
 title: Bound large session block DMA independently of host completions
 priority: 524.92202987
-status: implemented
+status: verified
 depends_on: [E9-T22s]
 estimate: S
 risk: high
@@ -27,15 +27,15 @@ policy stay unchanged. This task makes no first-frame or full-workload claim.
 
 ## Acceptance criteria
 
-- [ ] The real virtio descriptor path completes an in-range 1,179,648-byte
+- [x] The real virtio descriptor path completes an in-range 1,179,648-byte
   session COW write with `S_OK`, exact bytes and used-ring advancement. Reads
   spanning multiple authenticated base chunks remain atomic across parks and
   overlays; replay preserves the resulting disk state.
-- [ ] A sector-aligned request above the new finite DMA bound still completes
+- [x] A sector-aligned request above the new finite DMA bound still completes
   `S_IOERR` without a backend call, while out-of-range and COW-capacity paths
   retain their distinct behavior. Host `MAX_RESULT` and authenticated
   completion validation do not widen.
-- [ ] The built browser exercises the corrected guest-visible path without
+- [x] The built browser exercises the corrected guest-visible path without
   console errors, and the demo's session-capability evidence is updated.
   Record exact-head guest and browser evidence, then obtain a fresh Daybreak
   adversarial verdict on the diff and evidence.
@@ -103,3 +103,31 @@ parks until complete within the 16 MiB cache, and mixed base/COW reads remain
 atomic and restore identically. Host `MAX_RESULT` stays 1,048,320 bytes.
 No first desktop frame, full Omarchy workload, or later performance budget is
 claimed; E9-T22p and E9-T22c remain separate.
+
+### 2026-10-28 — Daybreak Blue verifier — VERDICT: verified
+
+Daybreak's fresh adversarial session inspected the implementation diff, the
+main and pristine-clone evidence, and the exact-head browser capture before
+testing the claim. P1 boundary separation, P2 real virtio and negative cases,
+P3 atomic multichunk read and guest-trace ordering, P4 browser asset identity
+and zero errors, and P5 the disclosed `make ci` limitation all **HELD**. The
+384-line guest trace has queue notifications at lines 247/357, used indices
+at 256/366, `S_OK` observations at 267/377, and completion at 382; the
+browser report shows 127 passed, 0 failed. A novel exact-8-MiB split write
+returned `S_OK` and round-tripped first, middle and final bytes without a host
+request. Sabotaging the advertised transfer bound back to `MAX_RESULT` made
+the 1,179,648-byte real-chain test fail at its `S_OK` assertion (exit 101),
+then the original code passed again. All semantic diff hunks were covered;
+generated assets, README and declarative metadata were waived with reasons.
+
+The independent verdict is
+`target/evidence/e9-t22t-daybreak-verifier-1bbaaf6fd/report.md`, SHA-256
+`b1c9d664e0c3edb967408a977e3c8898545bb862548292903f89491fb1c98d0b`.
+The verifier's exact-bound novel attack was promoted as a fourth integration
+test in test-only commit `4158ff58e27795925e37247a181d5e9a5bd780f6`;
+the touched format, Clippy and four integration tests passed. Runtime code,
+dependency boundary, and evidence digests are unchanged from the worker
+submission, so Daybreak's HELD predictions carry forward under the
+incremental re-verification rule. The remaining `make ci` warning is in
+unchanged `zicsr-stub` code; the prescribed gates beyond it passed separately
+as cited above. No desktop first-frame claim is included in this verdict.
