@@ -1,0 +1,28 @@
+{
+  "action": "SIGTERM only owned make process group 60352 after graceful STOP sealed final state; prevent further replay",
+  "at": "2026-10-28T19:40:58.386278+00:00",
+  "command": "/Applications/Xcode.app/Contents/Developer/usr/bin/make verify-E9-T22u",
+  "progress": {
+    "phase": "replay",
+    "position": {
+      "transition": "950000000",
+      "retired": "949941396",
+      "sequence": "861",
+      "phase": "before",
+      "ordinal": 0,
+      "digest": "e73e3a0579b13d1fd6642b01b0d5d1c51a4088d9213b8b3f58fd4daf5ee38e8a",
+      "ramDigest": "3e0206e972a3a9f53826135ace16ab821d503cb9d429f9cb956e3f77ebec7e16",
+      "state": {
+        "file": "final.state",
+        "bytes": 19699223,
+        "sha256": "913604eb9109810bac03a29059ea21647ad2d13aac3819ac9c1082f6dc6c11a9"
+      }
+    },
+    "receipts": 861,
+    "blocks": 223,
+    "checkpoints": 19,
+    "tail": "Cold source freed; replaying final adjacent windows"
+  },
+  "acceptance": false,
+  "preserved": "all existing files and closed browser profile; no source or historical evidence removed"
+}

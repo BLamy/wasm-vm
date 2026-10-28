@@ -4,11 +4,21 @@ epic: 9
 title: Harden recording and seeking against crashes and corrupt history
 priority: 524.923
 status: pending
-depends_on: [E9-T07, E9-T18c, E9-T20, E9-T21, E9-T22d]
+depends_on: [E9-T07, E9-T18c, E9-T20, E9-T21]
 estimate: S
 risk: high
 capstone: false
 ---
+
+## User scope amendment — 2026-10-28
+
+The user waived the long original-cold boot/replay campaign. E9-T22d's full
+performance campaign is therefore deferred and removed as an integration
+prerequisite. The already verified storage, GPU-result, branch and import
+boundaries remain prerequisites. All recovery/fuzz/context-loss criteria below
+remain mandatory and use bounded deterministic/browser runs, without another
+original Omarchy cold boot. This task makes no full-desktop qualification or
+performance-budget claim.
 
 ## Goal
 

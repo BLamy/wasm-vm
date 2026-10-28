@@ -3,12 +3,22 @@ id: E9-T22p
 epic: 9
 title: Qualify a finite supported cold-desktop transition allowance
 priority: 524.9220299
-status: pending
+status: cancelled
 depends_on: [E9-T22o, E9-T22s, E9-T22t, E9-T22u]
 estimate: S
 risk: medium
 capstone: false
 ---
+
+## User scope amendment — 2026-10-28
+
+The user explicitly requested: “can we please just skip the cold boot and replay you have been working on that one ticket for days”.
+
+The finite original-cold supported-profile amendment is deferred with the waived cold boot. No first-frame measurement or Chrome 156 supported-profile claim follows. Status `cancelled` records removed scope, not a successful
+verification verdict. The original criteria and all prior failures remain below
+for audit. Do not restart this long boot/replay campaign without a new user
+request. Continue E9-T23 recovery and E9-T24 bounded user-flow integration;
+functional seeking/replay tests remain required for those product behaviors.
 
 ## Goal
 

@@ -1,0 +1,27 @@
+{
+  "request": "can we please just skip the cold boot and replay you have been working on that one ticket for days",
+  "requestedAt": "2026-10-28T19:39:42.318280+00:00",
+  "action": "existing graceful STOP control; preserve partial evidence, no acceptance claim",
+  "head": "f6efcba3bf318d1eab696f8fd38711aa3a5f91f1",
+  "progressSha256": "0cd84944eeb43517189bb5b7f6b9c3c4ddd0ffa86926af8c1c84e374c67dbd3f",
+  "progress": {
+    "phase": "boot",
+    "position": {
+      "transition": "900000000",
+      "retired": "899941439",
+      "sequence": "858",
+      "phase": "before",
+      "ordinal": 0
+    },
+    "receipts": 858,
+    "blocks": 223,
+    "checkpoints": 18,
+    "scheduled": 0,
+    "bodies": 0,
+    "tail": "/sbin/init\n\u001b7\u001b8[  396.981099] systemd[1]: systemd 261.2-1-arch running in system mode (+PAM +AUDIT -SELINUX +APPARMOR -IMA +IPE +SMACK +SECCOMP +GCRYPT +GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 +KMOD +LIBCRYPTSETUP +LIBCRYPTSETUP_PLUGINS +LIBFDISK +PCRE2 +PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD +BPF_FRAMEWORK +BTF +XKBCOMMON +UTMP +LIBARCHIVE)\n[  396.981154] systemd[1]: Detected architecture riscv64.\n\nWelcome to Arch Linux!\n\n[  410.659586] systemd[1]: Initializing machine ID from random generator.\n[  412.706894] systemd[1]: Hostname set to <omarchy-demo>.\n"
+  },
+  "skipped": [
+    "remaining long original cold boot",
+    "long original-cold replay qualification"
+  ]
+}

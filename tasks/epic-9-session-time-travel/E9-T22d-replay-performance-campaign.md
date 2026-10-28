@@ -3,12 +3,22 @@ id: E9-T22d
 epic: 9
 title: Measure the unchanged complete replay performance budgets
 priority: 524.92204
-status: pending
+status: cancelled
 depends_on: [E9-T15, E9-T16, E9-T19, E9-T22c]
 estimate: S
 risk: medium
 capstone: false
 ---
+
+## User scope amendment — 2026-10-28
+
+The user explicitly requested: “can we please just skip the cold boot and replay you have been working on that one ticket for days”.
+
+The complete two-profile performance campaign is deferred with its waived original-cold qualification prerequisite. No recording-overhead, storage-growth, memory or replay-latency budget is declared passed. Status `cancelled` records removed scope, not a successful
+verification verdict. The original criteria and all prior failures remain below
+for audit. Do not restart this long boot/replay campaign without a new user
+request. Continue E9-T23 recovery and E9-T24 bounded user-flow integration;
+functional seeking/replay tests remain required for those product behaviors.
 
 ## Goal
 

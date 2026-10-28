@@ -3,12 +3,22 @@ id: E9-T22u
 epic: 9
 title: Measure the cold desktop after the session block-transfer correction
 priority: 524.92202988
-status: in-progress
+status: cancelled
 depends_on: [E9-T22t]
 estimate: S
 risk: high
 capstone: false
 ---
+
+## User scope amendment — 2026-10-28
+
+The user explicitly requested: “can we please just skip the cold boot and replay you have been working on that one ticket for days”.
+
+The remaining corrected original-cold boot and its replay proof are waived. The partial recording is preserved and is not passing acceptance. Status `cancelled` records removed scope, not a successful
+verification verdict. The original criteria and all prior failures remain below
+for audit. Do not restart this long boot/replay campaign without a new user
+request. Continue E9-T23 recovery and E9-T24 bounded user-flow integration;
+functional seeking/replay tests remain required for those product behaviors.
 
 ## Goal
 
@@ -248,3 +258,45 @@ SHA-256 `6cccec9c2eebe3d7fd6c9f581ab55636740419a232ef77a4c8c2307649cf093c`;
 its routing receipt is
 `6824db75bd4c34725c3f99298d4666143915c9dfdbafb0894c99caef28441c0a`.
 The actual full independent-clone gate remains outstanding.
+
+### 2026-10-28 — worker — user waived the remaining long cold proof
+
+The user explicitly requested skipping this cold boot and replay. The worker
+used the existing graceful STOP control, which sealed the original cold source
+at transition `950000000`, retired `949941396`, sequence `861`, with 19
+checkpoints. Its automatic adjacent replay was then interrupted by SIGTERM to
+the owned make process group `60352`, to honor the replay cancellation too.
+Unified session `37407` exited 1; the controller records status `failed` and
+the actual signal exit. No target-write completion, first frame, complete
+replay or passing task acceptance is claimed.
+
+All source/proof inputs remain frozen at
+`f6efcba3bf318d1eab696f8fd38711aa3a5f91f1` in the independent clone.
+The live profile, request parts, logs and raw states are preserved beneath
+`target/evidence/e9-t22u-resume-f6efcba3bf31-v1`. Final raw state is
+19,699,223 bytes, SHA-256
+`913604eb9109810bac03a29059ea21647ad2d13aac3819ac9c1082f6dc6c11a9`.
+No process belonging to this run remained after cancellation. Portable copies
+of the two operator-stop receipts, failed controller receipt and a file/hash
+inventory are committed under `evidence/e9-t22u-user-waiver-20261028/`.
+No historical failure was relabelled and no evidence file was deleted.
+
+The task and dependent original-cold profile/combined qualification/performance
+campaign are cancelled as a user scope amendment. T23 recovery and T24 bounded
+user-flow integration proceed without those prerequisites. Product functional
+replay checks and fresh actual Daybreak verification remain required; no
+full Omarchy or numeric performance claim follows.
+
+### 2026-10-28 — actual Daybreak — waiver/cancellation metadata PASS
+
+Fresh actual `gpt-daybreak-blue-latest`, root thread
+`01a1840a-8742-7163-b7a4-2f4ecf21a24e`, returned **PASS — waiver/cancellation
+metadata only**. It independently matched all three copied stop/controller
+receipts and the final-state bytes/hash, checked no new verified status,
+verified T23 prerequisites and the bounded T24 scope, and retained every
+full-cold/performance claim as unproven. Its read-only process-table access
+was denied, so it did not independently assert process absence. This is no
+runtime or task acceptance verdict. Report/routing are committed under
+`evidence/e9-t22u-user-waiver-20261028/daybreak-review/`; SHA-256 hashes:
+report `1ac8c199364311059569bf56b5160f01f10964a25aba8105cdd65b71a65ccb3a`,
+routing `7c0cc987260cf5a45098e8a00df24a5f5b7630aea91e311304e3fcba5a8b979e`.

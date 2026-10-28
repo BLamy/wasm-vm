@@ -3,13 +3,22 @@ id: E9-T22c
 epic: 9
 title: Qualify both full pinned performance workloads
 priority: 524.92203
-status: blocked
-blocked_on: [E9-T22p]
+status: cancelled
 depends_on: [E9-T22b, E9-T22h, E9-T22j, E9-T22k, E9-T22l, E9-T22m, E9-T22n, E9-T22p]
 estimate: S
 risk: medium
 capstone: false
 ---
+
+## User scope amendment — 2026-10-28
+
+The user explicitly requested: “can we please just skip the cold boot and replay you have been working on that one ticket for days”.
+
+The full combined original software/Omarchy qualification is deferred with the waived cold boot and original-cold replay. Earlier software-only evidence remains valid only for its recorded head and scope; the combined qualification is unproven. Status `cancelled` records removed scope, not a successful
+verification verdict. The original criteria and all prior failures remain below
+for audit. Do not restart this long boot/replay campaign without a new user
+request. Continue E9-T23 recovery and E9-T24 bounded user-flow integration;
+functional seeking/replay tests remain required for those product behaviors.
 
 ## Goal
 
