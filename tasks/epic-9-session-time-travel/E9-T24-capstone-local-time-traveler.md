@@ -3,7 +3,7 @@ id: E9-T24
 epic: 9
 title: CAPSTONE locally saved replayable VM sessions with a time-travel UI
 priority: 524.924
-status: pending
+status: in-progress
 depends_on: [E9-T08, E9-T13, E9-T18c, E9-T19, E9-T20, E9-T21, E9-T23]
 estimate: S
 risk: high
