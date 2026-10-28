@@ -57,8 +57,8 @@ try{
   await imported.page.locator('[data-timeline="forward"]').click();await settled(imported.page);assert.equal(await imported.page.evaluate(()=>__sessionTimeline.active.position.transition),String(BigInt(middle.transition)+1n));
   await imported.page.locator('[data-timeline="back"]').click();await settled(imported.page);assert.equal(await imported.page.evaluate(()=>__sessionTimeline.active.digest),selected.active.digest);
   const final=await seek(imported.page,target,'imported-end');assert.equal(final.active.digest,position.digest);
-  const raw=await imported.page.evaluate(async kind=>{const controller=__sessionTimeline.owner.controller;const bytes=kind==='gpu'?(await controller.inspectSelected()).state:(await controller.captureSelectedBranch()).capture.native;return [...bytes];},kind);
-  assert.deepEqual(Buffer.from(raw),expectedNative,'fresh profile full native/device/disk state');const native=Buffer.from(raw);await fs.writeFile(path.join(out,kind+'.native'),native);result.native={file:kind+'.native',bytes:native.length,sha256:sha(native),sourceSha256:sha(expectedNative)};
+  await imported.page.exposeFunction('__retainCapstoneNative',async encoded=>{assert(encoded.length<=48*1048576);const native=Buffer.from(encoded,'base64');assert.equal(native.toString('base64'),encoded);assert.deepEqual(native,expectedNative,'fresh profile full native/device/disk state');await fs.writeFile(path.join(out,kind+'.native'),native);return{file:kind+'.native',bytes:native.length,sha256:sha(native),sourceSha256:sha(expectedNative)};});
+  result.native=await imported.page.evaluate(async kind=>{const controller=__sessionTimeline.owner.controller;const bytes=kind==='gpu'?(await controller.inspectSelected()).state:(await controller.captureSelectedBranch()).capture.native;let text='';for(let at=0;at<bytes.length;at+=16384)text+=String.fromCharCode(...bytes.subarray(at,at+16384));return __retainCapstoneNative(btoa(text));},kind);
   await close(imported);report.cases.push(result);
  }
  {
