@@ -9,10 +9,10 @@ import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {chromium} from '../../web/node_modules/playwright/index.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..'),web=path.join(root,'web/dist'),o={};
-for(let i=2;i<process.argv.length;i+=2){assert(['--software','--gpu','--output','--url'].includes(process.argv[i])&&process.argv[i+1]&&!o[process.argv[i]]);o[process.argv[i]]=process.argv[i+1];}
-assert(o['--software']&&o['--gpu']&&o['--output']);const out=path.resolve(o['--output']);await fs.mkdir(out);
+for(let i=2;i<process.argv.length;i+=2){assert(['--software','--gpu','--output','--url','--kind'].includes(process.argv[i])&&process.argv[i+1]&&!o[process.argv[i]]);o[process.argv[i]]=process.argv[i+1];}
+assert(o['--software']&&o['--gpu']&&o['--output']);if(o['--kind'])assert(['software','gpu'].includes(o['--kind']));const out=path.resolve(o['--output']);await fs.mkdir(out);
 const sha=b=>createHash('sha256').update(b).digest('hex'),git=(...args)=>execFileSync('git',args,{cwd:root,encoding:'utf8'}).trim();
-const report={task:'E9-T24',status:'running',head:git('rev-parse','HEAD'),dirty:git('status','--porcelain'),cases:[],errors:[],blocked:[],started:new Date().toISOString()},contexts=new Set();
+const report={task:'E9-T24',status:'running',head:git('rev-parse','HEAD'),dirty:git('status','--porcelain'),selectedKind:o['--kind']??'both',cases:[],errors:[],blocked:[],started:new Date().toISOString()},contexts=new Set();
 let base=o['--url'],server;
 try{
  if(base)assert.equal(base,'https://wasm-vm.pages.dev/');
@@ -20,7 +20,7 @@ try{
   server=createServer(async(req,res)=>{try{const name=decodeURIComponent(new URL(req.url,'http://local').pathname);if(name==='/favicon.ico'){res.writeHead(204).end();return;}const file=path.resolve(web,'.'+name);assert(file.startsWith(web+path.sep));const bytes=await fs.readFile(file);res.writeHead(200,{'Content-Type':mime[path.extname(file)]??'application/octet-stream','Cache-Control':'no-store','Cross-Origin-Opener-Policy':'same-origin','Cross-Origin-Embedder-Policy':'require-corp'}).end(bytes);}catch{res.writeHead(404).end();}});
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));base='http://127.0.0.1:'+server.address().port+'/';}
  report.base=base;
- for(const kind of ['software','gpu']){
+ for(const kind of (o['--kind']?[o['--kind']]:['software','gpu'])){
   const directory=path.resolve(o['--'+kind]),bytes=await fs.readFile(path.join(directory,'report.json')),source=JSON.parse(bytes),storageBytes=await fs.readFile(path.join(directory,'saved/storage.json')),saved=JSON.parse(storageBytes),parts=new Map();
   assert.equal(source.status,kind==='software'?'software-full-workload-replay-passed':'passed');
   for(const row of saved.stores.chunks){const chunk=await fs.readFile(path.join(directory,'saved/chunks',row.key+'.bin'));assert.equal(sha(chunk),row.key);assert.equal(chunk.length,row.bytes);parts.set(row.key,chunk);}
@@ -49,7 +49,9 @@ try{
      let expected;if(label==='final')expected=expectedNative;else if(label.startsWith('import-'))expected=await fs.readFile(path.join(out,kind+'-source-'+label.slice(7)+'.native'));else if(label==='source-middle'&&kind==='gpu')expected=await fs.readFile(path.join(directory,middleWitness.state.file));
      if(expected)assert.deepEqual(native,expected,'all CPU/RAM/device/disk bytes at '+label);if(label==='source-middle'&&kind==='software')assert.equal(sha(native),middleWitness.digest,'source middle native hash vs immutable recording witness');
      const file=kind+'-'+label+'.native';await fs.writeFile(path.join(out,file),native);return{file,bytes:native.length,sha256:sha(native),sourceSha256:expected?sha(expected):null};});profile.retainer=true;}
-   return profile.page.evaluate(async({kind,label})=>{const t=__sessionTimeline,controller=t.owner.controller,bytes=kind==='gpu'?(await controller.inspectSelected()).state:(await controller.captureSelectedBranch()).capture.native;let text='';for(let at=0;at<bytes.length;at+=16384)text+=String.fromCharCode(...bytes.subarray(at,at+16384));const native=await __retainCapstoneNative(label,btoa(text)),canvas=t.gpuFrame.querySelector('canvas');return{active:t.snapshot.active,visible:t.c.digest.textContent,native,pixel:canvas?[...canvas.getContext('2d').getImageData(32,32,1,1).data]:null};},{kind,label});
+   return profile.page.evaluate(async({kind,label})=>{const t=__sessionTimeline,controller=t.owner.controller;let bytes,sourceCapture=null;
+    if(kind==='gpu'&&label.endsWith('-step')){const branch=await controller.captureSelectedBranch(),hex=b=>[...b].map(v=>v.toString(16).padStart(2,'0')).join('');if(!['transition','retired','sequence','phase','ordinal'].every(k=>branch.position[k]===t.active.position[k])||hex(branch.capture.sourceDigest)!==t.active.digest)throw Error('interior continuation capture is not the selected source');bytes=branch.capture.native;sourceCapture={kind:'guarded branch projection',position:branch.position,sourceDigest:hex(branch.capture.sourceDigest),rendererSha256:branch.renderer.sha256};}
+    else bytes=kind==='gpu'?(await controller.inspectSelected()).state:(await controller.captureSelectedBranch()).capture.native;let text='';for(let at=0;at<bytes.length;at+=16384)text+=String.fromCharCode(...bytes.subarray(at,at+16384));const native=await __retainCapstoneNative(label,btoa(text)),canvas=t.gpuFrame.querySelector('canvas');return{active:t.snapshot.active,visible:t.c.digest.textContent,native,sourceCapture,pixel:canvas?[...canvas.getContext('2d').getImageData(32,32,1,1).data]:null};},{kind,label});
   };
   const checkMiddleAndStep=async(profile,label,expectedStep=null)=>{
    await profile.page.locator('[data-timeline="points"]').selectOption(middlePoint.id);await profile.page.locator('[data-timeline="point-go"]').click();await settled(profile.page);
