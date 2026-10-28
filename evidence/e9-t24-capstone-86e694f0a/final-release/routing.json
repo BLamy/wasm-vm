@@ -1,0 +1,132 @@
+{
+  "requestedModel": "gpt-daybreak-blue-latest",
+  "cyberAccessProgram": "daybreakBlue",
+  "route": "local Codex app-server fresh ephemeral workspace-write child; final critic writes limited to task/status/queue/tests",
+  "started": "2026-10-28T22:36:08.748Z",
+  "status": "completed",
+  "sandbox": {
+    "mode": "workspace-write",
+    "networkAccess": true
+  },
+  "allowProviderModelFallback": false,
+  "messages": [
+    "I’ll perform the bounded metadata-only verification, with no browser launch, runtime replay, status/source changes, deployment, or PR mutation. I’ll first record falsifiable predictions from the scope, then inspect the exact diff, preserved evidence, fresh cache-busted public bytes, and read-only GitHub stack/PR state; the only output file will be the requested audit.",
+    "Predictions are now frozen in scratch. I’m checking the commit boundary and artifact identities first; any runtime/package/Wasm/renderer/source-policy hunk would fail the release check immediately, without reopening the completed capstone proof.",
+    "The commit boundary is clean and matches the allowed shape: two commits, preserved verifier evidence/task/queue, and exactly five metadata files across source/dist; no runtime, package, Wasm, renderer/worker, or policy file changed. The actual Daybreak binding and requested report/routing hashes also match, including both startup attempts remaining explicitly failed and non-gating. Next I’m making independent cache-busted HTTP GETs and byte-comparing all eight release assets.",
+    "The fresh public check held: all eight independently fetched assets exactly match `web/dist`, including unchanged Wasm/stamp/build identities; public `tasks.json` has T24 verified and T22u/p/c/d cancelled, while the roadmap explicitly says full Omarchy cold qualification and performance budgets remain deferred and unproven. Local source/dist equality and both documentation/closure checks also pass. I’m finishing with read-only native stack and PR metadata.",
+    "All final predictions held. PR 625 is open, ready for review, clean, based on PR 624’s branch, and at the exact current head; its description preserves the bounded scope and unproven original qualification. Native `gh stack view --json` reports 47/47 open, unmerged, and unqueued. I’m writing the small audit now; no repository, task, queue, deployment, or GitHub state was changed.",
+    "RELEASE CHECK: passed\n\nAudit written to [audit.md](/private/tmp/e9-t24-final-release-audit-v1/audit.md).\n\nT24 remains verified, all completed proof is preserved, and the repository remains clean at `6789cbdeeeed070bbe2703530b3a4e099f3b7fa6`. No PR, deployment, task, queue, or status state was altered."
+  ],
+  "commands": [
+    {
+      "command": "/bin/zsh -lc \"pwd && git status --short --branch && rg --files -g 'AGENTS.md' -g 'tasks/*T24*' -g 'tasks/*t24*' -g 'tasks/QUEUE.md' -g 'ROADMAP.md' | sort\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'rg -n \"T24|t24|capstone\" tasks ROADMAP.md AGENTS.md | head -250'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'cat AGENTS.md && cat tasks/epic-9-session-time-travel/E9-T24-capstone-local-time-traveler.md'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'mkdir -p /private/tmp/e9-t24-final-release-audit-v1/scratch'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'git rev-parse HEAD && git status --porcelain=v1 && git log --oneline --decorate 93ca76956bc5721098feaa07449389d3a35b8b9b..HEAD && git diff --name-status 93ca76956bc5721098feaa07449389d3a35b8b9b..HEAD && git diff --stat 93ca76956bc5721098feaa07449389d3a35b8b9b..HEAD && git diff --check 93ca76956bc5721098feaa07449389d3a35b8b9b..HEAD'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"git diff --unified=80 93ca76956bc5721098feaa07449389d3a35b8b9b..HEAD -- tasks/QUEUE.md tasks/epic-9-session-time-travel/E9-T24-capstone-local-time-traveler.md web/roadmap.js web/tasks.json web/dist/roadmap.js web/dist/tasks.json web/dist/sw.js && shasum -a 256 evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/report.md evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/routing.json evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/verdict.md evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/artifact-index.json && jq '{root_id,turn_id,model,reasoning_effort,status,verdict,final_response,route,requested_model,actual_model}' evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/routing.json 2>/dev/null || true && cat evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/verdict.md\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"jq 'keys' evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/routing.json && jq '{schema_version, task, role, route, model, status, root, turn, verdict, output, bindings, requested, actual}' evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/routing.json && jq '.artifacts[]? | select((.path // \\\"\\\") | test(\\\"failed-startup|report.md|verdict.md|routing.json\\\"))' evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/artifact-index.json\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"jq '{threadId,turnId,model,requestedModel,allowProviderModelFallback,status,finished,turnError,errors,rootCompletion,sandbox,cyberAccessProgram,messages: [.messages[] | {role,phase,type,content}]}' evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/routing.json\"",
+      "exitCode": 5
+    },
+    {
+      "command": "/bin/zsh -lc \"jq 'del(.messages,.commands)' evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/routing.json && jq '.messages | type, length, .[0:3]' evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/routing.json\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"jq 'keys, .artifacts[0]?, .files[0]?' evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/artifact-index.json\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"jq '{model,rootThreadId,rootTurnId,scope,rawRoot,stored,rawFilesCount:(.rawFiles|length),rawFiles:(.rawFiles[0:8])}' evidence/e9-t24-capstone-86e694f0a/daybreak-final-v1/artifact-index.json\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"test -f target/evidence/e9-t24-production-metadata-v1/report.json && test -f target/evidence/e9-t24-production-metadata-v1/visible-status/report.json && shasum -a 256 target/evidence/e9-t24-production-metadata-v1/report.json target/evidence/e9-t24-production-metadata-v1/visible-status/report.json target/evidence/e9-t24-production-v1/session-ui/report.json && jq 'keys' target/evidence/e9-t24-production-metadata-v1/report.json && jq 'keys' target/evidence/e9-t24-production-metadata-v1/visible-status/report.json && jq '.' target/evidence/e9-t24-production-metadata-v1/report.json && jq '.' target/evidence/e9-t24-production-metadata-v1/visible-status/report.json\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"mkdir -p /private/tmp/e9-t24-final-release-audit-v1/scratch/public && curl --fail --silent --show-error --location 'https://wasm-vm.pages.dev/?release-audit=6789cbde-20261028-final' --output /private/tmp/e9-t24-final-release-audit-v1/scratch/public/index.html && curl --fail --silent --show-error --location 'https://wasm-vm.pages.dev/app?release-audit=6789cbde-20261028-final' --output /private/tmp/e9-t24-final-release-audit-v1/scratch/public/app.html && curl --fail --silent --show-error --location 'https://wasm-vm.pages.dev/roadmap.js?release-audit=6789cbde-20261028-final' --output /private/tmp/e9-t24-final-release-audit-v1/scratch/public/roadmap.js && curl --fail --silent --show-error --location 'https://wasm-vm.pages.dev/tasks.json?release-audit=6789cbde-20261028-final' --output /private/tmp/e9-t24-final-release-audit-v1/scratch/public/tasks.json && curl --fail --silent --show-error --location 'https://wasm-vm.pages.dev/sw.js?release-audit=6789cbde-20261028-final' --output /private/tmp/e9-t24-final-release-audit-v1/scratch/public/sw.js && curl --fail --silent --show-error --location 'https://wasm-vm.pages.dev/gpu-checkpoint-build.js?release-audit=6789cbde-20261028-final' --output /private/tmp/e9-t24-final-release-audit-v1/scratch/public/gpu-checkpoint-build.js && curl --fail --silent --show-error --location 'https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm?release-audit=6789cbde-20261028-final' --output /private/tmp/e9-t24-final-release-audit-v1/scratch/public/wasm_vm_wasm_bg.wasm && curl --fail --silent --show-error --location 'https://wasm-vm.pages.dev/docs-content/time-travel.md?release-audit=6789cbde-20261028-final' --output /private/tmp/e9-t24-final-release-audit-v1/scratch/public/time-travel.md && shasum -a 256 /private/tmp/e9-t24-final-release-audit-v1/scratch/public/* && cmp -s /private/tmp/e9-t24-final-release-audit-v1/scratch/public/index.html web/dist/index.html && cmp -s /private/tmp/e9-t24-final-release-audit-v1/scratch/public/app.html web/dist/app.html && cmp -s /private/tmp/e9-t24-final-release-audit-v1/scratch/public/roadmap.js web/dist/roadmap.js && cmp -s /private/tmp/e9-t24-final-release-audit-v1/scratch/public/tasks.json web/dist/tasks.json && cmp -s /private/tmp/e9-t24-final-release-audit-v1/scratch/public/sw.js web/dist/sw.js && cmp -s /private/tmp/e9-t24-final-release-audit-v1/scratch/public/gpu-checkpoint-build.js web/dist/gpu-checkpoint-build.js && cmp -s /private/tmp/e9-t24-final-release-audit-v1/scratch/public/wasm_vm_wasm_bg.wasm web/dist/pkg/wasm_vm_wasm_bg.wasm && cmp -s /private/tmp/e9-t24-final-release-audit-v1/scratch/public/time-travel.md web/dist/docs-content/time-travel.md && echo ALL_8_PUBLIC_BYTES_MATCH_LOCAL\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"jq '{t24:(.tasks[] | select(.id==\\\"E9-T24\\\") | {id,status,criteriaDone,criteriaTotal}), waived:[.tasks[] | select(.id==\\\"E9-T22u\\\" or .id==\\\"E9-T22p\\\" or .id==\\\"E9-T22c\\\" or .id==\\\"E9-T22d\\\") | {id,status}]}' /private/tmp/e9-t24-final-release-audit-v1/scratch/public/tasks.json && rg -n -C 3 'Session Time Travel|Full Omarchy cold qualification|Bounded time-travel integration|full Omarchy and numeric performance claims excluded' /private/tmp/e9-t24-final-release-audit-v1/scratch/public/roadmap.js && cmp -s web/roadmap.js web/dist/roadmap.js && echo ROADMAP_SOURCE_DIST_MATCH && cmp -s web/tasks.json web/dist/tasks.json && echo TASKS_SOURCE_DIST_MATCH && rg -n '\"'^status:'\"' tasks/epic-9-session-time-travel | sort && rg -n 'E9-T22(u|p|c|d)|E9-T24' tasks/QUEUE.md | tail -20 && find target/evidence/e9-t24-production-metadata-v1 -maxdepth 3 -type f -print | sort\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"shasum -a 256 web/dist/artifacts.json web/dist/artifacts-alpine.json web/dist/artifacts-node-alpine.json web/dist/artifacts-omarchy.json web/dist/artifacts-omarchy-virgl.json target/evidence/e9-t24-production-metadata-v1/staged-manifests/*.json && rg -n 'branch|changed|Uploaded|Success|R2|exact|restore|restor|transform|files|Pages|main|HEAD|status|error|Error' target/evidence/e9-t24-production-metadata-v1/deploy.log | tail -120\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"sed -n '1,80p' target/evidence/e9-t24-production-metadata-v1/deploy.log\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"rg -n -C 3 -- '--branch|pages deploy|production' tools/deploy-cloudflare.sh && git show 6789cbdeeeed070bbe2703530b3a4e099f3b7fa6:web/dist/gpu-checkpoint-build.js && cat web/dist/gpu-checkpoint-build.js && git status --porcelain=v1\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"git show --no-patch --format=fuller 6789cbdeeeed070bbe2703530b3a4e099f3b7fa6 && git show --no-patch --format=%B 6789cbdeeeed070bbe2703530b3a4e099f3b7fa6 && rg -n 'build-closure|docs.*check|check.*docs|web-dist|make web-dist|roadmap.*check|tasks.json' Makefile tools web/package.json package.json 2>/dev/null | head -250\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"rg -n 'closure' tools/verify/e9-capstone.py Makefile | head -80 && sed -n '100,135p' tools/verify/e9-capstone.py && sed -n '3038,3062p' Makefile\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"find target/evidence -type f \\\\( -name '*web-dist*.log' -o -name '*docs*.log' -o -name '*closure*.log' \\\\) -newermt '2026-10-28 18:00:00' -print | sort | tail -100\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'node tools/check-docs.mjs && python3 -B tools/check-docs-dist.py web/dist && git diff --exit-code -- web/dist web/roadmap.js web/tasks.json && git status --porcelain=v1'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'gh pr view 625 --json number,state,isDraft,baseRefName,headRefName,headRefOid,title,body,mergeStateStatus,url && gh pr view 624 --json number,state,isDraft,baseRefName,headRefName,headRefOid,title,url && gh stack view --json'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"gh stack view --json | jq '{trunk,currentBranch,count:(.branches|length),allOpen:([.branches[].pr.state]|all(.==\\\"OPEN\\\")),allUnmerged:([.branches[].isMerged]|all(.==false)),allUnqueued:([.branches[].isQueued]|all(.==false)),firstPR:.branches[0].pr.number,lastPR:.branches[-1].pr.number,lastHead:.branches[-1].head,lastBase:.branches[-1].base}' && shasum -a 256 target/evidence/e9-t24-production-metadata-v1/visible-status/browser-trace.zip target/evidence/e9-t24-production-metadata-v1/visible-status/verified-app.png && git status --porcelain=v1 && git rev-parse HEAD && git rev-parse origin/codex/e9-time-traveler-capstone\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"rg '\"'^status: '\"' tasks/epic-9-session-time-travel | sed 's/.*status: //' | sort | uniq -c && git diff --unified=3 93ca76956bc5721098feaa07449389d3a35b8b9b..HEAD -- web/roadmap.js web/dist/roadmap.js web/tasks.json web/dist/tasks.json web/dist/sw.js\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'shasum -a 256 /private/tmp/e9-t24-final-release-audit-v1/audit.md /private/tmp/e9-t24-final-release-audit-v1/scratch/predictions.md && git status --porcelain=v1 && test \"$(git rev-parse HEAD)\" = 6789cbdeeeed070bbe2703530b3a4e099f3b7fa6 && echo REPO_UNCHANGED_AND_EXACT_HEAD'",
+      "exitCode": 0
+    }
+  ],
+  "errors": [],
+  "model": "gpt-daybreak-blue-latest",
+  "threadId": "01a184a8-0ec9-7691-a8ac-f6e433343cf8",
+  "turnId": "01a184a8-11a4-7051-b1a2-a247daa2674a",
+  "rootCompletion": {
+    "threadId": "01a184a8-0ec9-7691-a8ac-f6e433343cf8",
+    "turnId": "01a184a8-11a4-7051-b1a2-a247daa2674a"
+  },
+  "turnError": null,
+  "finished": "2026-10-28T22:39:15.001Z"
+}
