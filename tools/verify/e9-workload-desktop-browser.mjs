@@ -14,13 +14,17 @@ import{chromium}from'../../web/node_modules/playwright/index.mjs';
 import{WORKLOAD_ROOT as root,loadQualificationAssets,sha}from'./e9-workload-assets.mjs';
 import{checkRetentionCapacity}from'./e9-retention-capacity.mjs';
 import{calculateColdPrefixBudget,OLD_COLD_REPORT,EXACT_LATCH_BUILD}from'./e9-cold-prefix-budget.mjs';
+import{calculateCorrectedColdBudget,CORRECTED_COLD_SOURCE,CORRECTED_BLOCK_BUILD}from'./e9-corrected-cold-budget.mjs';
 import{retainSessionStore}from'./e9-retain-session-store.mjs';
 import{sealReplayStaticAssets}from'./e9-replay-static-assets.mjs';
 class PreflightComplete extends Error {}
-const options={};for(let i=2;i<process.argv.length;i++){const key=process.argv[i];if(key==='--development'){assert(!options.development);options.development=true;}else if(key==='--prefix'){assert(!options.prefix);options.prefix=true;}else if(key==='--preflight-only'){assert(!options.preflightOnly);options.preflightOnly=true;}else{assert(key==='--output'&&!options.output&&process.argv[i+1]);options.output=process.argv[++i];}}assert(options.output);assert(!options.preflightOnly||options.prefix);
+const options={};for(let i=2;i<process.argv.length;i++){const key=process.argv[i];if(key==='--development'){assert(!options.development);options.development=true;}else if(key==='--prefix'){assert(!options.prefix);options.prefix=true;}else if(key==='--corrected-block-prefix'){assert(!options.prefix);options.prefix=true;options.correctedBlockPrefix=true;}else if(key==='--preflight-only'){assert(!options.preflightOnly);options.preflightOnly=true;}else{assert(key==='--output'&&!options.output&&process.argv[i+1]);options.output=process.argv[++i];}}assert(options.output);assert(!options.preflightOnly||options.prefix);
 const out=path.resolve(options.output),web=path.join(root,'web/dist');await fs.mkdir(path.dirname(out),{recursive:true});await fs.mkdir(out);
+const diagnosticPkg=path.join(root,'target/e9-t22u-diagnostic-pkg');
+const diagnosticAsset=name=>options.correctedBlockPrefix&&/^\/pkg\/wasm_vm_wasm(?:_bg\.wasm|\.js)$/.test(name);
+const servedPath=name=>diagnosticAsset(name)?path.join(diagnosticPkg,path.basename(name)):path.join(web,'.'+name);
 const git=(...args)=>execFileSync('git',args,{cwd:root,encoding:'utf8'}).trim();
-const report={task:options.prefix?'E9-T22r':'E9-T22c',phase:'desktop',scope:options.prefix?'Fresh original cold Omarchy first-frame prefix or bounded frontier; no timing claim':'Original cold Omarchy workload, RV64 EGL/GLES probe and whole-history replay; no timing claim',development:!!options.development,status:'running',head:null,dirty:null,started:new Date().toISOString(),errors:[],missing:[],external:[],raw:[],served:[],capacityChecks:[],baseRequests:{record:0,replay:0},replayBlockedRequests:[],replayBlockedSockets:[],replayStaticRequests:[],workerFactoryAudits:[]};
+const report={task:options.correctedBlockPrefix?'E9-T22u':options.prefix?'E9-T22r':'E9-T22c',phase:'desktop',scope:options.prefix?'Fresh original cold Omarchy first-frame prefix or bounded frontier; no timing claim':'Original cold Omarchy workload, RV64 EGL/GLES probe and whole-history replay; no timing claim',development:!!options.development,status:'running',head:null,dirty:null,started:new Date().toISOString(),errors:[],missing:[],external:[],raw:[],served:[],capacityChecks:[],baseRequests:{record:0,replay:0},replayBlockedRequests:[],replayBlockedSockets:[],replayStaticRequests:[],workerFactoryAudits:[]};
 const GiB=1024**3,stageBytes=512*1024**2,sidecarBytes=4*GiB;
 const hostAvailable=async()=>{const stat=await fs.statfs(out),bytes=Number(BigInt(stat.bavail)*BigInt(stat.bsize));assert(Number.isSafeInteger(bytes));return bytes;};
 const capacityReceipt=async(stage,{quota,usage,payloadBytes,plannedBytes=stage==='pre-export'?0:stageBytes,phase=null,position=null})=>{
@@ -63,14 +67,44 @@ try{
      report.calibrationSource={path:old,sha256:sha(bytes),graphPath:graph,
        graphSha256:sha(graphBytes),preserved:true};
  }
+ if(options.correctedBlockPrefix){
+   const failedPath=path.join(root,'target/evidence/e9-t22r-720f53afe/desktop/report.json');
+   const frontierPath=path.join(root,'target/evidence/e9-t22o-839481890-fullbase/desktop/report.json');
+   const failedBytes=await fs.readFile(failedPath),frontierBytes=await fs.readFile(frontierPath);
+   assert.equal(sha(failedBytes),CORRECTED_COLD_SOURCE.failedPrefixReportSha256,
+     'changed pre-error cold source');
+   assert.equal(sha(frontierBytes),CORRECTED_COLD_SOURCE.frontierReportSha256,
+     'changed later measured frontier');
+   const failed=JSON.parse(failedBytes),frontier=JSON.parse(frontierBytes);
+   const before=failed.result.checkpoints.find(row=>row.transition===CORRECTED_COLD_SOURCE.preErrorTransition);
+   assert.equal(before?.ramDigest,CORRECTED_COLD_SOURCE.preErrorRamDigest,
+     'old cold guest RAM before original disk error');
+   assert.equal(frontier.result.sourcePosition.transition,CORRECTED_COLD_SOURCE.frontierStart);
+   assert.equal(frontier.result.frontier.position.transition,CORRECTED_COLD_SOURCE.frontierEnd);
+   assert.equal(frontier.result.measured.unmodifiedWallMs,CORRECTED_COLD_SOURCE.unmodifiedWallMs);
+   report.correctedSources={failedPrefix:{path:failedPath,sha256:sha(failedBytes)},
+     laterFrontier:{path:frontierPath,sha256:sha(frontierBytes)}};
+ }
  assets=await loadQualificationAssets('desktop');report.inputs=assets.receipt;
  if(options.prefix){const wasm=sha(await fs.readFile(path.join(web,'pkg/wasm_vm_wasm_bg.wasm'))),
    renderer=sha(await fs.readFile(path.join(web,'gpu-checkpoint-build.js')));
-   assert.equal(wasm,EXACT_LATCH_BUILD.wasmSha256,'Q corrected exact Wasm binary');
-   assert.equal(renderer,EXACT_LATCH_BUILD.rendererSha256,'Q corrected physical GPU build');
-   assert.notEqual(wasm,EXACT_LATCH_BUILD.oldWasmSha256,'old v2 Wasm forbidden');
-   assert.notEqual(renderer,EXACT_LATCH_BUILD.oldRendererSha256,'old v2 renderer forbidden');
-   report.exactLatchBuild={wasm,renderer,calibration:EXACT_LATCH_BUILD};}
+   if(options.correctedBlockPrefix){
+     const diagnosticWasm=sha(await fs.readFile(servedPath('/pkg/wasm_vm_wasm_bg.wasm')));
+     const glue=sha(await fs.readFile(servedPath('/pkg/wasm_vm_wasm.js')));
+     assert.equal(diagnosticWasm,CORRECTED_BLOCK_BUILD.wasmSha256,'corrected diagnostic Wasm binary');
+     assert.equal(glue,CORRECTED_BLOCK_BUILD.glueSha256,'corrected diagnostic binding');
+     assert.equal(wasm,CORRECTED_BLOCK_BUILD.productionWasmSha256,'corrected production Wasm binary');
+     assert.equal(renderer,CORRECTED_BLOCK_BUILD.rendererSha256,'corrected physical GPU build');
+     assert.notEqual(diagnosticWasm,EXACT_LATCH_BUILD.wasmSha256,'old transfer bound forbidden');
+     report.exactLatchBuild={wasm:diagnosticWasm,glue,renderer,
+       productionWasm:wasm,calibration:CORRECTED_BLOCK_BUILD};
+   }else{
+     assert.equal(wasm,EXACT_LATCH_BUILD.wasmSha256,'Q corrected exact Wasm binary');
+     assert.equal(renderer,EXACT_LATCH_BUILD.rendererSha256,'Q corrected physical GPU build');
+     assert.notEqual(wasm,EXACT_LATCH_BUILD.oldWasmSha256,'old v2 Wasm forbidden');
+     assert.notEqual(renderer,EXACT_LATCH_BUILD.oldRendererSha256,'old v2 renderer forbidden');
+     report.exactLatchBuild={wasm,renderer,calibration:EXACT_LATCH_BUILD};
+   }}
  const tool=assets.qualification.auxiliaryDesktopTool;
  busyboxTransport=gzipSync(assets.busybox,{level:9});
  assert.equal(busyboxTransport.length,tool.transportBytes);assert.equal(sha(busyboxTransport),tool.transportSha256);
@@ -87,8 +121,14 @@ try{
  for(const pin of ['686d69940e99357eabbea48b5cccea1ae513c43773e033d48debfd83cddac897','9d57a842bdb448f7896bbaab81c3e438f123ff65eb2f222cf3ebab1a5dbed204'])assert(probeBuild.headersAndLibraries.includes(pin),'qualified sysroot library '+pin);
  report.probe={bytes:probe.length,sha256:sha(probe),build:sha(probeBuildBytes),buildDetails:probeBuild};
  pageSource=await fs.readFile(path.join(root,'tools/verify/e9-workload-desktop-page.mjs'));scheduleSource=await fs.readFile(path.join(root,'tools/verify/e9-workload-schedule.mjs'));wallSource=await fs.readFile(path.join(root,'tools/verify/e9-workload-wall.mjs'));report.executedSources=[];
- for(const name of ['tools/verify/e9-workload-desktop-browser.mjs','tools/verify/e9-workload-desktop-page.mjs','tools/verify/e9-workload-desktop-files.py','tools/verify/e9-workload-retained-closure.mjs','tools/verify/e9-cold-prefix-budget.mjs','tools/verify/e9-cold-prefix-files.py','tools/verify/e9-replay-static-assets.mjs','tools/verify/e9-workload-schedule.mjs','tools/verify/e9-workload-wall.mjs','tools/verify/e9-workload-assets.mjs','tools/verify/e9-retention-capacity.mjs','tools/verify/e9-build-performance-probe.py','docs/design/session-workload-qualification-v1.json','docs/design/session-workload-qualification-v2.json','docs/design/session-workload-qualification-v3.json','docs/design/session-workload-qualification-v4.json','docs/design/session-workload-qualification-v5.json','docs/design/session-workload-qualification-v6.json','docs/design/session-workload-qualification-v7.json','docs/design/session-workload-qualification-v8.json','docs/design/session-workload-qualification-v9.json','docs/design/session-workload-qualification-v10.json','docs/design/session-workload-qualification-v11.json','docs/design/session-workload-retention-v1.json','docs/design/session-gpu-probe.c','releases/initramfs/busybox']){const bytes=await fs.readFile(path.join(root,name));report.executedSources.push({path:name,sha256:sha(bytes)});const file=path.join(out,'executed-source',name);await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,bytes);}
- report.replayStaticAssets=await sealReplayStaticAssets(web);replayStaticAllow=new Map(report.replayStaticAssets.map(row=>[row.name,row]));
+ for(const name of ['tools/verify/e9-workload-desktop-browser.mjs','tools/verify/e9-workload-desktop-page.mjs','tools/verify/e9-workload-desktop-files.py','tools/verify/e9-workload-retained-closure.mjs','tools/verify/e9-cold-prefix-budget.mjs','tools/verify/e9-corrected-cold-budget.mjs','tools/verify/e9-cold-prefix-files.py','tools/verify/e9-replay-static-assets.mjs','tools/verify/e9-workload-schedule.mjs','tools/verify/e9-workload-wall.mjs','tools/verify/e9-workload-assets.mjs','tools/verify/e9-retention-capacity.mjs','tools/verify/e9-build-performance-probe.py','docs/design/session-workload-qualification-v1.json','docs/design/session-workload-qualification-v2.json','docs/design/session-workload-qualification-v3.json','docs/design/session-workload-qualification-v4.json','docs/design/session-workload-qualification-v5.json','docs/design/session-workload-qualification-v6.json','docs/design/session-workload-qualification-v7.json','docs/design/session-workload-qualification-v8.json','docs/design/session-workload-qualification-v9.json','docs/design/session-workload-qualification-v10.json','docs/design/session-workload-qualification-v11.json','docs/design/session-workload-retention-v1.json','docs/design/session-gpu-probe.c','releases/initramfs/busybox']){const bytes=await fs.readFile(path.join(root,name));report.executedSources.push({path:name,sha256:sha(bytes)});const file=path.join(out,'executed-source',name);await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,bytes);}
+ report.replayStaticAssets=await sealReplayStaticAssets(web);
+ if(options.correctedBlockPrefix)report.replayStaticAssets=await Promise.all(report.replayStaticAssets.map(async row=>{
+   if(!diagnosticAsset(row.name))return row;
+   const bytes=await fs.readFile(servedPath(row.name));
+   return {...row,bytes:bytes.length,sha256:sha(bytes)};
+ }));
+ replayStaticAllow=new Map(report.replayStaticAssets.map(row=>[row.name,row]));
  assert.equal(report.executedSources.find(row=>row.path==='tools/verify/e9-workload-desktop-page.mjs').sha256,sha(pageSource),'served page is copied proof source');
  assert.equal(report.executedSources.find(row=>row.path==='tools/verify/e9-workload-schedule.mjs').sha256,sha(scheduleSource),'served schedule is copied proof source');
  assert.equal(report.executedSources.find(row=>row.path==='tools/verify/e9-workload-wall.mjs').sha256,sha(wallSource),'served wall policy is copied proof source');
@@ -103,7 +143,7 @@ const server=createServer(async(req,res)=>{try{const name=decodeURIComponent(new
  if(name==='/'){bytes=Buffer.from('<!doctype html><title>Cold Omarchy desktop recording</title><link rel="stylesheet" href="/vendor/xterm/xterm.css"><script src="/vendor/xterm/xterm.js"></script><script src="/vendor/xterm/addon-fit.js"></script><canvas width="640" height="480"></canvas><div id="terminal" style="width:800px;height:320px"></div><pre>Original cold Omarchy recording; no timing claim.</pre>');mime='text/html';}
  else if(name==='/kernel.bin')bytes=assets.kernel;else if(name==='/image.json'){bytes=assets.imageBytes;mime='application/json';}else if(name==='/probe.elf')bytes=probe;else if(name==='/busybox.gz')bytes=busyboxTransport;else if(name==='/desktop.mjs'){bytes=pageSource;mime='text/javascript';}else if(name==='/contract.json'){bytes=assets.contractBytes;mime='application/json';}else if(name==='/e9-workload-schedule.mjs'){bytes=scheduleSource;mime='text/javascript';}else if(name==='/e9-workload-wall.mjs'){bytes=wallSource;mime='text/javascript';}
  else if(/^\/__chunk__\/[a-f0-9]{64}\.bin$/.test(name)){report.baseRequests[currentPhase]++;bytes=await assets.readChunk(path.basename(name,'.bin'));}
- else{const file=path.resolve(web,'.'+name);assert(file.startsWith(web+path.sep));bytes=await fs.readFile(file);mime=types[path.extname(file)]??mime;const digest=sha(bytes);assert(!seen.has(name)||seen.get(name)===digest,'served source changed');if(!seen.has(name)){seen.set(name,digest);report.served.push({name,bytes:bytes.length,sha256:digest});}}
+ else{const file=path.resolve(servedPath(name));assert(file.startsWith(web+path.sep)||diagnosticAsset(name)&&file.startsWith(diagnosticPkg+path.sep));bytes=await fs.readFile(file);mime=types[path.extname(file)]??mime;const digest=sha(bytes);assert(!seen.has(name)||seen.get(name)===digest,'served source changed');if(!seen.has(name)){seen.set(name,digest);report.served.push({name,bytes:bytes.length,sha256:digest});}}
  res.writeHead(200,{'Content-Type':mime,'Cache-Control':'no-store','Cross-Origin-Opener-Policy':'same-origin','Cross-Origin-Embedder-Policy':'require-corp'}).end(bytes);
  }catch(error){report.missing.push({url:req.url,error:String(error.stack??error)});if(!res.headersSent)res.writeHead(500);res.end();}});
 try{
@@ -111,7 +151,7 @@ try{
  const profileDirectory=path.join(out,'chrome-profile');
  await assert.rejects(fs.stat(profileDirectory),{code:'ENOENT'},'fresh persistent profile');
  report.hostFreeBytesBefore=String(await hostAvailable());
- if(options.prefix){report.budget=calculateColdPrefixBudget({hostFreeBytes:Number(report.hostFreeBytesBefore),
+ if(options.prefix){report.budget=(options.correctedBlockPrefix?calculateCorrectedColdBudget:calculateColdPrefixBudget)({hostFreeBytes:Number(report.hostFreeBytesBefore),
    browserQuota:OLD_COLD_REPORT.browserQuotaBefore,browserUsage:0});
    report.hostCapacityRequiredBytes=String(report.budget.hostRequiredBytes);
    report.hostSidecarReserveBytes=report.budget.sidecarReserveBytes;}
@@ -131,7 +171,11 @@ try{
  report.chromeVersion=await(await context.newCDPSession(page)).send('Browser.getVersion');
  assert.match(report.chromeVersion.product,/^Chrome\/[0-9.]+$/);
  report.browser=report.chromeVersion.product.slice('Chrome/'.length);
- assert.equal('Chrome '+report.browser,assets.qualification.referenceAmendment.qualificationBrowser,'declared browser profile');
+ report.browserProfile={declared:assets.qualification.referenceAmendment.qualificationBrowser,
+   observed:'Chrome '+report.browser,diagnosticVersionDrift:!!options.correctedBlockPrefix};
+ assert.equal('Chrome '+report.browser,options.correctedBlockPrefix
+   ?'Chrome 156.0.8078.49':assets.qualification.referenceAmendment.qualificationBrowser,
+ 'declared or explicitly pinned diagnostic browser profile');
  const replayWorkers=[],closedReplayWorkers=new Set();page.on('worker',worker=>{if(new URL(worker.url()).pathname==='/session-gpu-replay-worker.js'){replayWorkers.push(worker);worker.on('close',()=>closedReplayWorkers.add(worker));}});
  await page.exposeFunction('auditReplayWorker',async()=>{const live=replayWorkers.filter(worker=>!closedReplayWorkers.has(worker));const rows=await Promise.all(live.map(async worker=>({url:worker.url(),factoryEntries:await worker.evaluate(async()=>{const {WasmLinux}=await import('/pkg/wasm_vm_wasm.js');return WasmLinux.ownedLocalHttpFactoryEntries();})})));
    report.workerFactoryAudits.push(rows);return rows;});
@@ -148,13 +192,13 @@ try{
  report.browserStorageBefore=await page.evaluate(async()=>{const persistedBefore=await navigator.storage.persisted();
    const persistRequested=await navigator.storage.persist(),estimate=await navigator.storage.estimate();
    return{usage:estimate.usage,quota:estimate.quota,persistedBefore,persistRequested,persisted:await navigator.storage.persisted()};});
- if(options.prefix)report.budget=calculateColdPrefixBudget({hostFreeBytes:await hostAvailable(),
+ if(options.prefix)report.budget=(options.correctedBlockPrefix?calculateCorrectedColdBudget:calculateColdPrefixBudget)({hostFreeBytes:await hostAvailable(),
    browserQuota:report.browserStorageBefore.quota,browserUsage:report.browserStorageBefore.usage});
  await capacityReceipt('initial',{...report.browserStorageBefore,payloadBytes:0});
  if(options.preflightOnly)throw new PreflightComplete('finite cold-prefix preflight passed');
  report.result=await page.evaluate(async input=>{const{qualifyDesktopWorkload}=await import('/desktop.mjs');
    return qualifyDesktopWorkload(input.contract,input.qualification,input.options);},{contract:assets.contract,
-   qualification:assets.qualification,options:options.prefix?{prefix:{task:'E9-T22r',
+   qualification:assets.qualification,options:options.prefix?{prefix:{task:report.task,
      transitionCap:report.budget.transitionCap,wallMs:report.budget.wallMs,
      payloadStopBytes:report.budget.payloadStopBytes}}:{}});
  report.hardware={source:'production-virgl-inspection',profile:report.result.physical};
@@ -174,10 +218,18 @@ try{
  try{await page.screenshot({path:path.join(out,'desktop.png')});}catch(error){report.diagnosticErrors.push('screenshot: '+String(error.stack??error));}
  if(options.prefix){
    assert(['cold-prefix-frame','cold-prefix-frontier'].includes(report.result.status),report.result.error);
-   assert.equal(report.result.task,'E9-T22r');
+   assert.equal(report.result.task,report.task);
    assert.equal(report.result.prefixPolicy.transitionCap,report.budget.transitionCap);
    assert.equal(report.result.prefixPolicy.wallMs,report.budget.wallMs);
    assert.equal(report.result.prefixPolicy.payloadStopBytes,report.budget.payloadStopBytes);
+   if(options.correctedBlockPrefix){
+     const block=report.result.correctedBlockWindow;
+     assert.equal(block?.preErrorRamDigest,CORRECTED_COLD_SOURCE.preErrorRamDigest);
+     assert.equal(block?.from?.transition,CORRECTED_COLD_SOURCE.preErrorTransition);
+     assert.equal(block?.to?.transition,'14400000000');
+     assert.equal(block?.matching?.length,1,'original large COW write completed once');
+     assert.equal(block.firstFailure,null,'no earlier guest block I/O error');
+   }
    assert(report.result.final&&report.result.frontier&&report.result.authenticatedHistory);
    assert(BigInt(report.result.final.transition)<=BigInt(report.budget.transitionCap));
    assert.equal(report.result.replay?.windows?.length,2,'two adjacent cold-prefix replay windows');
@@ -234,12 +286,14 @@ try{
  await assets.inspectCache();assert.equal(git('rev-parse','HEAD'),report.head);
  assert.equal(git('status','--porcelain'),report.dirty,'source worktree changed during qualification');
  for(const row of report.executedSources)assert.equal(sha(await fs.readFile(path.join(root,row.path))),row.sha256);
- for(const row of report.served)assert.equal(sha(await fs.readFile(path.join(web,'.'+row.name))),row.sha256,'served runtime changed '+row.name);
- for(const row of report.replayStaticAssets)assert.equal(sha(await fs.readFile(path.join(web,'.'+row.name))),row.sha256,'sealed replay module changed '+row.name);
+ for(const row of report.served)assert.equal(sha(await fs.readFile(servedPath(row.name))),row.sha256,'served runtime changed '+row.name);
+ for(const row of report.replayStaticAssets)assert.equal(sha(await fs.readFile(servedPath(row.name))),row.sha256,'sealed replay module changed '+row.name);
  if(options.prefix){
    const oldReport=await fs.readFile(report.calibrationSource.path),oldGraph=await fs.readFile(report.calibrationSource.graphPath);
    assert.equal(sha(oldReport),OLD_COLD_REPORT.sha256,'old v2 graph report preserved');
    assert.equal(sha(oldGraph),report.calibrationSource.graphSha256,'old v2 physical graph preserved');
+   if(options.correctedBlockPrefix)for(const row of Object.values(report.correctedSources))
+     assert.equal(sha(await fs.readFile(row.path)),row.sha256,'corrected cold source changed');
    report.status=report.result.status;
  }else report.status='desktop-full-workload-replay-passed';
 }catch(error){if(error instanceof PreflightComplete)report.status='preflight-passed';

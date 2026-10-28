@@ -17,6 +17,8 @@ const report={task:prefix?'E9-T22r':'E9-T22c',scope:'Exported session graph and 
   eventChunks:0,descriptorFrames:0,ramChunks:0,witnessPages:0,objects:0,chunks:0,references:0};
 try{
   const browserBytes=await fs.readFile(path.join(out,'report.json')),browser=JSON.parse(browserBytes);
+  if(prefix)assert(['E9-T22r','E9-T22u'].includes(browser.task),'cold-prefix task');
+  report.task=browser.task;
   report.browserSha256=sha(browserBytes);
   if(!development)assert(prefix?['cold-prefix-frame','cold-prefix-frontier'].includes(browser.status)
     :browser.status==='desktop-full-workload-replay-passed','finished browser recording');

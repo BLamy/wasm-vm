@@ -179,6 +179,8 @@ fn blk_log_records_serviced_requests() {
     assert_eq!(log.len(), 2, "two requests logged");
     // OUT: type 1, sector 5, len 0 (writes report no data-in), status OK(0).
     assert_eq!((log[0].rtype, log[0].sector, log[0].status), (1, 5, 0));
+    #[cfg(feature = "cold-block-diagnostic")]
+    assert_eq!(log[0].requested_bytes, SECTOR_SIZE as u64);
     // IN: type 0, sector 5, len = one sector, status OK(0).
     assert_eq!(
         (log[1].rtype, log[1].sector, log[1].len, log[1].status),

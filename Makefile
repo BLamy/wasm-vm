@@ -2941,6 +2941,28 @@ verify-E9-T22r:
 	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/desktop" --prefix > "$$out/closure.log" 2>&1; \
 	  python3 -B tools/verify/e9-cold-prefix-files.py --directory "$$out/desktop" > "$$out/byte-oracle.log" 2>&1
 
+.PHONY: verify-E9-T22u
+verify-E9-T22u:
+	@set -eu; out="$${E9_OUT:-target/evidence/e9-t22u-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$(dirname "$$out")"; mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  node --test tools/verify/e9-corrected-cold-budget.test.mjs > "$$out/preflight-tests.log" 2>&1; \
+	  cargo fmt --all --check > "$$out/fmt.log" 2>&1; \
+	  cargo test -p wasm-vm-core --features cold-block-diagnostic \
+	    --test virtio_blk --test session_block_transfer > "$$out/native.log" 2>&1; \
+	  cargo clippy -p wasm-vm-wasm-web --target wasm32-unknown-unknown --features cold-block-diagnostic -- -D warnings > "$$out/clippy.log" 2>&1; \
+	  node --check tools/verify/e9-workload-desktop-browser.mjs; \
+	  node --check tools/verify/e9-workload-desktop-page.mjs; \
+	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; git diff --exit-code -- web/dist; \
+	  wasm-pack build crates/wasm-web --target web --profile wasm-release --out-name wasm_vm_wasm \
+	    --out-dir ../../target/e9-t22u-diagnostic-pkg --features cold-block-diagnostic \
+	    > "$$out/diagnostic-wasm.log" 2>&1; \
+	  node tools/verify/e9-workload-desktop-browser.mjs --corrected-block-prefix \
+	    --output "$$out/desktop" > "$$out/browser.log" 2>&1; \
+	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/desktop" --prefix \
+	    > "$$out/closure.log" 2>&1; \
+	  python3 -B tools/verify/e9-cold-prefix-files.py --directory "$$out/desktop" \
+	    > "$$out/byte-oracle.log" 2>&1
+
 # A resource guard may stop the one original-cold capture after a complete
 # keyframe but before its final witness publication. This path authenticates
 # that saved graph, seals only the last recorded witness, and replays it.

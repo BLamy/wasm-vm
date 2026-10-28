@@ -21,8 +21,11 @@ write error at 14.365B and cannot serve as a clean continuation source.
 
 One fresh, bounded diagnostic prefix from transition zero in a new browser
 profile, with the frozen image, kernel, bootargs, ICount/64 clock, 50M
-checkpoint cadence, service files, renderer and workload unchanged. The prior
-source graphs remain immutable. Change only the diagnostic finite transition,
+  checkpoint cadence, service files, renderer and workload unchanged. The prior
+  source graphs remain immutable. The host Chrome auto-updated from the frozen
+  v11 qualification's 155.0.8059.86 to 156.0.8078.49; pin that actual version
+  for this diagnostic only and leave the supported browser profile untouched.
+  Change only the diagnostic finite transition,
 wall and capacity admission to cover the post-fix observation window. This is
 not the full E9-T22c qualification, a timing result, or an allowance for it.
 

@@ -2,7 +2,7 @@
   "generated": "tools/gen-tasks-json.py",
   "headline": {
     "verified": 552,
-    "total": 753
+    "total": 754
   },
   "epics": [
     {
@@ -36512,12 +36512,13 @@
       "depends_on": [
         "E9-T22o",
         "E9-T22s",
-        "E9-T22t"
+        "E9-T22t",
+        "E9-T22u"
       ],
       "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
-      "goal": "Admit a finite original-cold qualification window informed by E9-T22o's\nmeasured first-frame frontier, without changing the frozen workloads.\n\nE9-T22o ended at an exact no-frame failure frontier. E9-T22s must attribute\nthe original guest's first disk I/O rejection before a later exact run can\nmeasure the first frame; this task cannot substitute a guessed allowance.\nE9-T22t must correct the attributed bounded session-block transfer rejection\nbefore that later run.",
+      "goal": "Admit a finite original-cold qualification window informed by E9-T22o's\nmeasured first-frame frontier, without changing the frozen workloads.\n\nE9-T22o ended at an exact no-frame failure frontier. E9-T22s must attribute\nthe original guest's first disk I/O rejection before a later exact run can\nmeasure the first frame; this task cannot substitute a guessed allowance.\nE9-T22t must correct the attributed bounded session-block transfer rejection\nbefore that later run. E9-T22u records the corrected cold prefix from zero;\nits measured frame or exact next obstruction is required before this allowance\ncan be set. The host's Chrome 155-to-156 auto-update is diagnostic environment\ndrift; the supported browser identity must be reconciled explicitly before\nE9-T22c, rather than silently folded into this numeric allowance.",
       "boundary": "## Boundary\n\nOne explicit supported-profile amendment chained to the accepted v11 desktop\nprofile. The guest-transition, host-wall and retained-capacity allowances may\nchange only where the calibration and measured capacity require them. Retain\nthe old reference, failed C report and exact source/asset receipts. Do not\nchange the original image, ICount/64 clock, 50M checkpoint cadence, guest\nservice files, probe, replay policy or numeric performance budgets.\n\n",
       "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T22p` on a clean exact head.\n\n",
       "criteria": [
@@ -36549,8 +36550,9 @@
         },
         {
           "date": "2026-10-28",
-          "commits": 2,
+          "commits": 3,
           "labels": [
+            "plan corrected cold desktop measurement after block fix",
             "plan bounded session block transfer prerequisite",
             "Open exact cold desktop block-error attribution prerequisite"
           ]
@@ -36558,7 +36560,7 @@
       ],
       "firstActivity": "2026-10-26",
       "lastActivity": "2026-10-28",
-      "commitCount": 3
+      "commitCount": 4
     },
     {
       "id": "E9-T22q",
@@ -36770,6 +36772,54 @@
       "firstActivity": "2026-10-28",
       "lastActivity": "2026-10-28",
       "commitCount": 3
+    },
+    {
+      "id": "E9-T22u",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Measure the cold desktop after the session block-transfer correction",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E9-T22t"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Record the original Omarchy cold boot again with the corrected session block\ntransfer boundary, then establish its first real nonblank frame or the next\nexact failure frontier. The previous 21.7B checkpoint followed a guest disk\nwrite error at 14.365B and cannot serve as a clean continuation source.",
+      "boundary": "## Boundary\n\nOne fresh, bounded diagnostic prefix from transition zero in a new browser\nprofile, with the frozen image, kernel, bootargs, ICount/64 clock, 50M\n  checkpoint cadence, service files, renderer and workload unchanged. The prior\n  source graphs remain immutable. The host Chrome auto-updated from the frozen\n  v11 qualification's 155.0.8059.86 to 156.0.8078.49; pin that actual version\n  for this diagnostic only and leave the supported browser profile untouched.\n  Change only the diagnostic finite transition,\nwall and capacity admission to cover the post-fix observation window. This is\nnot the full E9-T22c qualification, a timing result, or an allowance for it.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T22u` on a clean exact head, with a unique `E9_OUT` directory.\n\n",
+      "criteria": [
+        {
+          "text": "Preflight the new finite limit from measured 20B and 25.2B rates, 16 GiB retention, browser quota and host space for a live profile plus an independent export, with explicit reserves. Reject insufficient capacity before launching the long run.",
+          "checked": false
+        },
+        {
+          "text": "Record the original cold guest from zero through a real nonblank frame or an exact bounded frontier. Show whether the formerly failing 1,179,648- byte virtio-blk write now completes successfully in the guest; preserve guest serial, disk, session, process and physical renderer evidence.",
+          "checked": false
+        },
+        {
+          "text": "Authenticate the exported graph and replay two adjacent checkpoint windows to exact witnesses without live replay egress. A fresh Daybreak verifier attacks the source pins, disk conclusion, frame classification, capacity and exact replay independently.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Try the old 1 MiB transfer cap, a changed image or workload, omitted graph\nchunks, a blank scanout misclassified as a frame, low quota, low disk, and a\nreplay that silently fetches base data. Refuse a recovered checkpoint whose\nguest already observed the earlier disk failure. If the run ends without a\nframe, cite the exact position and next concrete obstruction rather than\nclaiming a supported allowance.",
+      "file": "tasks/epic-9-session-time-travel/E9-T22u-corrected-cold-desktop-prefix.md",
+      "activity": [
+        {
+          "date": "2026-10-28",
+          "commits": 1,
+          "labels": [
+            "plan corrected cold desktop measurement after block fix"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-28",
+      "lastActivity": "2026-10-28",
+      "commitCount": 1
     },
     {
       "id": "E9-T23",

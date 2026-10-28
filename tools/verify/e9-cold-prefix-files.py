@@ -72,7 +72,7 @@ def renderer_epoch(payload):
 
 def inspect(directory):
     browser = json.loads((directory / 'report.json').read_bytes())
-    assert browser['task'] == 'E9-T22r'
+    assert browser['task'] in ('E9-T22r', 'E9-T22u')
     assert browser['status'] in ('cold-prefix-frame', 'cold-prefix-frontier')
     archive = json.loads((directory / 'saved/storage.json').read_bytes())
     objects = {row['key']: row['value'] for row in archive['stores']['objects']}
@@ -198,7 +198,7 @@ def inspect(directory):
     assert checkpoints[-1]['stateSha256'] == windows[-1]['digest']
     terminal = browser['result']['replay'].get('terminal')
     assert final_latches == (terminal['logicalLatches'] if terminal else windows[-1]['logicalLatches'])
-    report = {'task': 'E9-T22r', 'status': 'exact-v3-prefix-passed',
+    report = {'task': browser['task'], 'status': 'exact-v3-prefix-passed',
               'browserSha256': sha((directory / 'report.json').read_bytes()),
               'manifestSha256': sha(manifest_bytes), 'checkpoints': len(checkpoints),
               'allV3': True, 'lastThree': checkpoints[-3:], 'finalLogicalLatches': final_latches,

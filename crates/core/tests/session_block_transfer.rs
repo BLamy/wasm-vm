@@ -263,9 +263,20 @@ fn large_split_session_write_roundtrips_and_restores_below_finite_dma_bound() {
         .map(|n| ((n * 17 + n / 512 * 3) % 251) as u8)
         .collect();
     let mut machine = fixture();
+    #[cfg(feature = "cold-block-diagnostic")]
+    machine.enable_blk_log();
     machine.bus_mut().write_ram_slice(DATA, &payload).unwrap();
     request(&mut machine, 1, 20_000, DATA, payload.len());
     assert_eq!(submit(&mut machine, 1), 0, "cold write reaches COW backend");
+    #[cfg(feature = "cold-block-diagnostic")]
+    {
+        let log = machine.drain_blk_log();
+        assert_eq!(log.len(), 1);
+        assert_eq!(log[0].rtype, 1);
+        assert_eq!(log[0].requested_bytes, OBSERVED_COLD_WRITE as u64);
+        assert_eq!(log[0].len, 0, "OUT returns no guest payload");
+        assert_eq!(log[0].status, 0);
+    }
     assert!(machine.session_device_requests().unwrap().is_empty());
 
     let frame = machine.save_session_resume().unwrap();

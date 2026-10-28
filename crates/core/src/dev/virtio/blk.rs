@@ -57,6 +57,10 @@ pub struct BlkReq {
     pub sector: u64,
     /// Data bytes transferred (excludes the status byte).
     pub len: u32,
+    /// Full guest DMA length before the backend operation. OUT requests have
+    /// `len = 0` because no data is written back to guest memory.
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub requested_bytes: u64,
     /// virtio-blk status byte: 0=OK 1=IOERR 2=UNSUPP.
     pub status: u8,
 }
@@ -834,6 +838,8 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
             rtype,
             sector,
             len: data_written,
+            #[cfg(feature = "cold-block-diagnostic")]
+            requested_bytes,
             status,
         });
     }

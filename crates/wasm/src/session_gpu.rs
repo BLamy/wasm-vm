@@ -72,6 +72,39 @@ impl WasmLinux {
         Ok(())
     }
 
+    /// Record only the bounded diagnostic window around the original cold
+    /// guest's large write. The log is passive and absent from snapshots.
+    #[cfg(feature = "cold-block-diagnostic")]
+    #[wasm_bindgen(js_name=armExactBlockLog)]
+    pub fn arm_exact_block_log(&self) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        admitted(&inner)?;
+        inner.machine.enable_blk_log();
+        Ok(())
+    }
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    #[wasm_bindgen(js_name=drainExactBlockLog)]
+    pub fn drain_exact_block_log(&self) -> Result<String, JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        admitted(&inner)?;
+        let rows: Vec<_> = inner
+            .machine
+            .drain_blk_log()
+            .into_iter()
+            .map(|row| {
+                serde_json::json!({
+                    "type":row.rtype,
+                    "sector":row.sector.to_string(),
+                    "bytes":row.requested_bytes,
+                    "guestWrittenBytes":row.len,
+                    "status":row.status,
+                })
+            })
+            .collect();
+        serde_json::to_string(&rows).map_err(|error| JsError::new(&error.to_string()))
+    }
+
     #[cfg(feature = "cold-block-diagnostic")]
     #[wasm_bindgen(js_name=exactParkedBlocks)]
     pub fn exact_parked_blocks(&self) -> Result<String, JsError> {

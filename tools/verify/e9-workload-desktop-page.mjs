@@ -71,7 +71,7 @@ class PrefixBoundary extends Error {
 
 export async function qualifyDesktopWorkload(contract,qualification,options={}){
   const prefix=options.prefix??null;
-  if(prefix)need(prefix.task==='E9-T22r'&&Number.isSafeInteger(prefix.wallMs)&&prefix.wallMs>0
+  if(prefix)need(['E9-T22r','E9-T22u'].includes(prefix.task)&&Number.isSafeInteger(prefix.wallMs)&&prefix.wallMs>0
     &&typeof prefix.transitionCap==='string'&&/^[1-9][0-9]*$/.test(prefix.transitionCap)
     &&BigInt(prefix.transitionCap)%50000000n===0n
     &&Number.isSafeInteger(prefix.payloadStopBytes)&&prefix.payloadStopBytes>1024**3,
@@ -249,6 +249,23 @@ export async function qualifyDesktopWorkload(contract,qualification,options={}){
       state.checkpoints.push({...pos(frame),digest:hex(frame.digest),ramDigest:hex(frame.ramDigest),full:frame.full,
         ...(raw?capturedLogicalWitness(frame,raw):{})});
       nextCapture=now+50000000n;}
+    if(prefix?.task==='E9-T22u'&&now===14350000000n){
+      const checkpoint=state.checkpoints.at(-1);
+      need(checkpoint?.ramDigest==='701fe081ade720cab198e2fab3e586648f9e407d3c3ef4eb15600e6e308ea4bd',
+        'corrected cold guest differs before the original large write');
+      vm.armExactBlockLog();
+      state.correctedBlockWindow={from:pos(vm.inputPosition()),preErrorRamDigest:checkpoint.ramDigest};
+    }
+    if(prefix?.task==='E9-T22u'&&now===14400000000n){
+      need(state.correctedBlockWindow,'large block observation was not armed');
+      const rows=JSON.parse(vm.drainExactBlockLog());
+      const matching=rows.filter(row=>row.type===1&&row.sector==='24928880'
+        &&row.bytes===1179648&&row.status===0);
+      state.correctedBlockWindow={...state.correctedBlockWindow,to:pos(vm.inputPosition()),
+        requests:rows,matching,firstFailure:vm.exactFirstBlockFailure()};
+      need(matching.length===1&&state.correctedBlockWindow.firstFailure===null,
+        'original 1,179,648-byte guest write did not complete with S_OK');
+    }
     await progress();await tick();
   };
   const until=async predicate=>{while(!predicate())await step();};
@@ -301,6 +318,7 @@ export async function qualifyDesktopWorkload(contract,qualification,options={}){
   };
   let originalState,originalQueues,sourceRenderer,sessionId;
   const completePrefix=async reason=>{
+    if(prefix?.task==='E9-T22u')state.firstBlockFailureAtEnd=vm.exactFirstBlockFailure();
     need(prefix&&vm&&gpu&&store&&writer&&journal,'original cold prefix reached a recordable boundary');
     phase='finalize';await drainBlocks();await pumpHttp();await collect();await pumpGpu();await flushJournal();stagedBytes=0;
     const current=pos(vm.inputPosition());
@@ -416,6 +434,7 @@ export async function qualifyDesktopWorkload(contract,qualification,options={}){
       need(state.console.length<=4*1048576,'console bound');terminal.write(bytes.slice());
       if(parser){const value=parser.feed(text);if(value)rpcResult=value;}
     },false);
+    if(prefix?.task==='E9-T22u')vm.armExactFirstBlockFailure();
     gpu=await attachProductionVirgl(vm,{presenter});
     state.physical=gpu.inspect();need(state.physical.qualified&&!state.physical.lost&&!software.test(state.physical.profile.identity),'qualified physical renderer');
     const build=await import('/gpu-checkpoint-build.js');

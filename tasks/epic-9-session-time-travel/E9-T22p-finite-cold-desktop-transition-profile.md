@@ -21,7 +21,9 @@ measure the first frame; this task cannot substitute a guessed allowance.
 E9-T22t must correct the attributed bounded session-block transfer rejection
 before that later run. E9-T22u records the corrected cold prefix from zero;
 its measured frame or exact next obstruction is required before this allowance
-can be set.
+can be set. The host's Chrome 155-to-156 auto-update is diagnostic environment
+drift; the supported browser identity must be reconciled explicitly before
+E9-T22c, rather than silently folded into this numeric allowance.
 
 ## Boundary
 
