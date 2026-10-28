@@ -233,6 +233,29 @@ fn read_at_dma_bound_fits_authenticated_pinned_cache() {
 }
 
 #[test]
+fn exact_write_bound_is_inclusive_and_roundtrips() {
+    let mut machine = fixture();
+    let payload: Vec<u8> = (0..MAX_BLOCK_TRANSFER)
+        .map(|index| ((index / SECTOR_SIZE + index * 7) % 251) as u8)
+        .collect();
+    machine.bus_mut().write_ram_slice(DATA, &payload).unwrap();
+    request(&mut machine, 1, 0, DATA, payload.len());
+    assert_eq!(submit(&mut machine, 1), 0, "exact DMA ceiling is accepted");
+    assert!(machine.session_device_requests().unwrap().is_empty());
+
+    request(&mut machine, 0, 0, READ, payload.len());
+    assert_eq!(submit(&mut machine, 2), 0, "COW bytes read back");
+    let mut actual = vec![0; payload.len()];
+    machine
+        .bus_mut()
+        .ram()
+        .read_slice(READ, &mut actual)
+        .unwrap();
+    assert_eq!(actual, payload);
+    assert!(machine.session_device_requests().unwrap().is_empty());
+}
+
+#[test]
 fn large_split_session_write_roundtrips_and_restores_below_finite_dma_bound() {
     assert_eq!(MAX_BLOCK_TRANSFER, 8 << 20);
     assert_eq!(MAX_BLOCK_TRANSFER % SECTOR_SIZE, 0);
