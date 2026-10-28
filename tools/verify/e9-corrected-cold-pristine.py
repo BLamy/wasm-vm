@@ -103,7 +103,7 @@ def main():
 
     if git(source, 'rev-parse', 'HEAD') != args.head or git(source, 'status', '--porcelain'):
         raise RuntimeError('source must be the clean frozen head')
-    subprocess.run(['git', 'clone', '--local', '--no-hardlinks', '--single-branch',
+    subprocess.run(['git', 'clone', '--local', '--no-hardlinks', '--dissociate', '--single-branch',
                     str(source), str(destination)], env=environment, check=True)
     if (git(destination, 'rev-parse', 'HEAD') != args.head
             or git(destination, 'status', '--porcelain')

@@ -234,3 +234,17 @@ left successful large-write/post-completion proof, actual clean-head pristine
 execution, the complete gate and fresh final acceptance as **NEEDS EVIDENCE**.
 No further repair was required before that run. Task status stays
 `in-progress`; readiness is not task verification.
+
+The intended source checkout itself borrows Git objects through an
+alternate, so the pristine clone also uses `--dissociate`. A real bounded
+Git fixture cloned a shared-object source with the exact flags, moved both
+upstream stores away, and passed independent `fsck`/`show` checks. Its
+receipt SHA-256 is
+`650dfad334509f0bec21866c1e9a01f47742619682a12f5cba9ddb26523f6f1c`.
+Fresh actual root Daybreak v6 returned **ROOT PASS — PRE-RUN READINESS
+ONLY**, carried all unchanged v5 results forward, and rechecked that fixture
+and actual source topology. Dev4's `daybreak-readiness-v6/report.md` has
+SHA-256 `6cccec9c2eebe3d7fd6c9f581ab55636740419a232ef77a4c8c2307649cf093c`;
+its routing receipt is
+`6824db75bd4c34725c3f99298d4666143915c9dfdbafb0894c99caef28441c0a`.
+The actual full independent-clone gate remains outstanding.
