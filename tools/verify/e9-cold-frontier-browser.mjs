@@ -542,10 +542,11 @@ try{
                 else{
                   need(value==='E9_UWSM_ERROR=unreadable',
                     'uwsm field value malformed '+field);
-                  issues.push('PID '+pid+' '+field+' unreadable');
+                  if(field!=='cgroup')
+                    issues.push('PID '+pid+' '+field+' unreadable');
                 }
               }
-            }else issues.push('PID '+pid+' disappeared after process census');
+            }
             need(next()==='E9_UWSM_PID_END='+pid,'uwsm PID closing marker missing');
             details.push(row);
           }
@@ -558,6 +559,30 @@ try{
         }catch(error){
           probe.validation={status:'failed',reason:String(error.message)};
           probe.status='invalid-guest-response';
+        }
+      };
+      const validateJournal=(part,user)=>{
+        try{
+          need(part.exit===0,'structured guest journal command failed');
+          const lines=part.stdout.trimEnd().split('\n');
+          if(user)need(lines.shift()==='E9_USER_UID=1000',
+            'structured user journal identity changed');
+          if(lines.length===1&&lines[0]==='')lines.pop();
+          need(lines.length<=100,'structured journal exceeded the 100-entry bound');
+          part.records=lines.map(line=>{
+            const row=JSON.parse(line);
+            need(row&&typeof row==='object'&&!Array.isArray(row)
+              &&typeof row._BOOT_ID==='string'
+              &&/^[0-9a-f]{32}$/.test(row._BOOT_ID)
+              &&typeof row.__MONOTONIC_TIMESTAMP==='string'
+              &&/^[0-9]+$/.test(row.__MONOTONIC_TIMESTAMP),
+            'structured journal record lacks a boot identity or timestamp');
+            return row;
+          });
+          part.validation={status:'passed'};
+        }catch(error){
+          part.validation={status:'failed',reason:String(error.message)};
+          part.status='invalid-guest-response';
         }
       };
       if(tag==='limit'){
@@ -737,8 +762,9 @@ try{
           const userUnitCommand='runuser -u omarchy -- env '+
             'XDG_RUNTIME_DIR=/run/user/1000 '+
             'DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus '+
+            'SYSTEMD_PAGER=cat SYSTEMD_COLORS=0 TERM=dumb '+
             "sh -c 'printf \"E9_USER_UID=%s\\n\" \"$(id -u)\"; "+
-            'systemctl --user show wayland-wm@hyprland.desktop.service '+
+            'systemctl --user --no-pager show wayland-wm@hyprland.desktop.service '+
             "-p ActiveState -p SubState -p Result -p MainPID "+
             "-p ControlPID -p ExecMainStatus'";
           const userUnit=await probeRpc(worker,tag+'user-unit',
@@ -747,9 +773,15 @@ try{
           if(probe.userUnit.status==='guest-response'){
             try{
               need(probe.userUnit.exit===0,'user compositor unit show failed');
+              // Only the observed framing toggles may surround the properties.
               const lines=probe.userUnit.stdout.trimEnd().split('\n');
               need(lines.shift()==='E9_USER_UID=1000',
                 'user compositor unit identity changed');
+              if(lines[0]?.startsWith('\x1b='))
+                lines[0]=lines[0].slice(2);
+              if(lines.at(-1)==='\x1b>')lines.pop();
+              need(lines.every(line=>!line.includes('\x1b')),
+                'user compositor unit has an unexpected terminal escape');
               const schema=['ActiveState','SubState','Result','MainPID',
                 'ControlPID','ExecMainStatus'];
               need(lines.length===schema.length,
@@ -780,35 +812,34 @@ try{
         if(probe.userJobs.status==='guest-response'
           &&probe.userUnit&&probe.userUnit.stdout!==null){
           const systemJournal=await probeRpc(worker,tag+'system-journal',
-            'journalctl -b -p warning -n 100 --no-pager',
+            'SYSTEMD_PAGER=cat SYSTEMD_COLORS=0 TERM=dumb '
+              +'journalctl -b -p warning -n 100 --no-pager -o json '
+              +'--output-fields=MESSAGE,MESSAGE_ID,_PID,_UID,_COMM,'
+              +'SYSLOG_IDENTIFIER,_SYSTEMD_USER_UNIT,_SYSTEMD_UNIT,'
+              +'_TRANSPORT,COREDUMP_PID,COREDUMP_UID,COREDUMP_COMM,'
+              +'COREDUMP_USER_UNIT',
             last,deadline,384);
           probe.systemJournal=systemJournal.probe;last=systemJournal.last;
-          if(probe.systemJournal.status==='guest-response'){
-            probe.systemJournal.validation=probe.systemJournal.exit===0
-              ?{status:'passed'}
-              :{status:'failed',reason:'system warning journal inspection failed'};
-            if(probe.systemJournal.validation.status!=='passed')
-              probe.systemJournal.status='invalid-guest-response';
-          }
+          if(probe.systemJournal.status==='guest-response')
+            validateJournal(probe.systemJournal,false);
         }
         if(probe.userJobs.status==='guest-response'
           &&probe.systemJournal&&probe.systemJournal.stdout!==null){
           const userJournalCommand='runuser -u omarchy -- env '+
             'XDG_RUNTIME_DIR=/run/user/1000 '+
             'DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus '+
+            'SYSTEMD_PAGER=cat SYSTEMD_COLORS=0 TERM=dumb '+
             "sh -c 'printf \"E9_USER_UID=%s\\n\" \"$(id -u)\"; "+
-            "journalctl --user -b -n 100 --no-pager'";
+            'journalctl --user -b -n 100 --no-pager -o json '+
+            '--output-fields=MESSAGE,MESSAGE_ID,_PID,_UID,_COMM,'+
+            'SYSLOG_IDENTIFIER,_SYSTEMD_USER_UNIT,_SYSTEMD_UNIT,'+
+            '_TRANSPORT,COREDUMP_PID,COREDUMP_UID,COREDUMP_COMM,'+
+            "COREDUMP_USER_UNIT'";
           const userJournal=await probeRpc(worker,tag+'user-journal',
             userJournalCommand,last,deadline,512);
           probe.userJournal=userJournal.probe;last=userJournal.last;
-          if(probe.userJournal.status==='guest-response'){
-            probe.userJournal.validation=probe.userJournal.exit===0
-              &&probe.userJournal.stdout.split('\n',1)[0]==='E9_USER_UID=1000'
-              ?{status:'passed'}
-              :{status:'failed',reason:'UID1000 user journal inspection failed'};
-            if(probe.userJournal.validation.status!=='passed')
-              probe.userJournal.status='invalid-guest-response';
-          }
+          if(probe.userJournal.status==='guest-response')
+            validateJournal(probe.userJournal,true);
         }
         const diagnosticParts=[directProcess?.uwsmBaseline,probe.jobs,
           probe.uwsmAfter,probe.userJobs,probe.userUnit,probe.userJournal,
@@ -997,6 +1028,107 @@ try{
           result.frontier.processProbe=probe;
           result.frontier.processStateTiming='observed only after the unmodified '
             +'finite bound and diagnostic serial input; not exact state at the bound';
+          const census=probe.directProcess?.relevantProcesses??[];
+          const hyprland=census.filter(row=>row.name==='Hyprland'
+            &&row.uid===1000&&row.pid>1);
+          const unit=probe.userUnit?.unit;
+          const pid=hyprland[0]?.pid;
+          const unitName='wayland-wm@hyprland.desktop.service';
+          const userManager=census.find(row=>row.name==='systemd'
+            &&row.uid===1000&&row.pid>1);
+          const coredumpers=census.filter(row=>row.name==='systemd-coredum'
+            &&row.uid===1000&&row.pid>1);
+          const startupPids=new Set(census.filter(row=>row.uid===1000
+            &&['Hyprland','start-hyprland','uwsm'].includes(row.name))
+            .map(row=>String(row.pid)));
+          const systemRows=probe.systemJournal?.records??[];
+          const userRows=probe.userJournal?.records??[];
+          // stdout streams can retain their connecting parent's trusted PID.
+          // Bind the text to this unit and one of its observed process parents;
+          // the coredump fields, rather than a text prefix, identify the victim.
+          const fromCompositor=row=>row._UID==='1000'
+            &&startupPids.has(row._PID)
+            &&row._SYSTEMD_USER_UNIT===unitName
+            &&row.SYSLOG_IDENTIFIER==='uwsm_hyprland.desktop';
+          const backend=userRows.find(row=>fromCompositor(row)
+            &&typeof row.MESSAGE==='string'
+            &&/^\s*what\(\):\s+CBackend::create\(\) failed!$/.test(row.MESSAGE));
+          const crashed=userRows.find(row=>fromCompositor(row)
+            &&typeof row.MESSAGE==='string'
+            &&/^Hyprland has crashed :\(/.test(row.MESSAGE));
+          const core=systemRows.find(row=>row.MESSAGE_ID===
+              'fc2e22bc6ee647b6b90729ab34a250b1'
+            &&row.COREDUMP_PID===String(pid)
+            &&row.COREDUMP_UID==='1000'
+            &&row.COREDUMP_COMM==='Hyprland'
+            &&row.COREDUMP_USER_UNIT===unitName
+            &&row._PID===String(coredumpers[0]?.pid)
+            &&row._UID==='1000'
+            &&row._COMM==='systemd-coredum');
+          const unitFailure=systemRows.find(row=>row._PID===
+              String(userManager?.pid)
+            &&row._UID==='1000'&&row._COMM==='systemd'
+            &&row.MESSAGE===unitName+": Failed with result 'protocol'.");
+          const sameBoot=backend&&crashed&&core&&unitFailure
+            &&[crashed,core,unitFailure].every(row=>
+              row._BOOT_ID===backend._BOOT_ID);
+          const ordered=sameBoot
+            &&BigInt(backend.__MONOTONIC_TIMESTAMP)
+              <=BigInt(crashed.__MONOTONIC_TIMESTAMP)
+            &&BigInt(crashed.__MONOTONIC_TIMESTAMP)
+              <=BigInt(core.__MONOTONIC_TIMESTAMP)
+            &&BigInt(core.__MONOTONIC_TIMESTAMP)
+              <=BigInt(unitFailure.__MONOTONIC_TIMESTAMP);
+          const crashProven=probe.status==='guest-response'
+            &&probe.diagnosticValidation?.status==='passed'
+            &&probe.directProcess?.validation?.status==='passed'
+            &&probe.directSession?.validation?.status==='passed'
+            &&hyprland.length===1
+            &&userManager
+            &&coredumpers.length===1
+            &&probe.process?.sddmActive&&probe.process.hyprlandPid===0
+            &&probe.process.sessions>=2
+            &&unit?.ActiveState==='failed'&&unit.SubState==='failed'
+            &&unit.Result==='protocol'&&unit.MainPID==='0'
+            &&unit.ControlPID==='0'
+            &&probe.userUnit?.validation?.status==='passed'
+            &&probe.systemJournal?.validation?.status==='passed'
+            &&probe.userJournal?.validation?.status==='passed'
+            &&ordered;
+          if(crashProven){
+            const journalRef=row=>({bootId:row._BOOT_ID,
+              monotonic:row.__MONOTONIC_TIMESTAMP,cursor:row.__CURSOR,
+              pid:row._PID,uid:row._UID,comm:row._COMM,
+              identifier:row.SYSLOG_IDENTIFIER,userUnit:row._SYSTEMD_USER_UNIT,
+              coredumpPid:row.COREDUMP_PID,coredumpUid:row.COREDUMP_UID,
+              coredumpComm:row.COREDUMP_COMM,
+              coredumpUserUnit:row.COREDUMP_USER_UNIT,
+              message:typeof row.MESSAGE==='string'
+                ?row.MESSAGE.slice(0,200):null});
+            result.status='exact-failure-frontier';
+            result.frontier.nextObservedObstruction={
+              kind:'hyprland-backend-crash-after-diagnostic-input',
+              guestMessage:'CBackend::create() failed!',hyprlandPid:pid,
+              journalRecords:{backend:journalRef(backend),
+                crashed:journalRef(crashed),core:journalRef(core),
+                unitFailure:journalRef(unitFailure)},
+              firstCensus:{position:probe.directProcess.position,
+                digest:probe.directProcess.digest},
+              compositorUnit:{position:probe.userUnit.position,
+                digest:probe.userUnit.digest,fields:unit},
+              systemJournal:{position:probe.systemJournal.position,
+                digest:probe.systemJournal.digest},
+              userJournal:{position:probe.userJournal.position,
+                digest:probe.userJournal.digest},
+              possibleAntecedent:'preserved source guest vda/EXT4 I/O errors; '
+                +'causal relation to backend crash not established'};
+            result.boundRecommendation={kind:'diagnostic-only',
+              testedUnmodifiedLimit:input.limit,
+              supportedFirstFrameAllowance:null,
+              reason:'first frame absent and compositor backend crashed; '
+                +'a supported finite first-frame allowance requires a later '
+                +'unmodified calibrated run after the crash is resolved'};
+          }
         }
         }catch(error){
           result.diagnosticError=String(error.stack??error);
@@ -1041,13 +1173,13 @@ try{
     objects:3523,chunks:13177,retainedObjects:archive.stores.objects.map(row=>row.key),
     limit,diagnosticWorker:diagnostic,nextRequest:0,
     baseManifestSha256:offlineBase?.manifestSha256??null});
-  assert(['exact-failure-frontier','first-frame'].includes(report.result.status),
-    'a color candidate needs guest session proof; a mere numeric cap needs a concrete obstruction');
   assert.equal(report.browser.blockedRequests.length,0,'no blocked continuation requests');
   assert.equal(report.browser.blockedSockets.length,0,'no attempted continuation sockets');
   assert.equal(report.browser.pageErrors.length,0,'no browser page errors');
   assert.equal(report.result?.localBaseReads,report.browser.localBaseReads.length,
     'offline base IPC receipt count changed');
+  assert(['exact-failure-frontier','first-frame'].includes(report.result.status),
+    'a color candidate needs guest session proof; a numeric cap needs a separately witnessed obstruction');
   report.status=report.result.status;
 }catch(error){report.status='failed';report.failure=String(error.stack??error);process.exitCode=1;}
 finally{
