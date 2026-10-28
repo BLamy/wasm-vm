@@ -484,7 +484,7 @@ Legend: `[ ]` pending · `[~]` in-progress · `[?]` implemented/evidence-needed 
 - [x] `524.92202975` [E9-T22n](epic-9-session-time-travel/E9-T22n-supported-desktop-wall-allowance.md) — Qualify a finite desktop host-wall allowance *(deps: E9-T22m)*
 - [x] `524.92202975` [E9-T22r](epic-9-session-time-travel/E9-T22r-exact-cold-desktop-prefix.md) — Record an exact-format cold Omarchy first-frame prefix *(deps: E9-T22q)*
 - [x] `524.9220298` [E9-T22o](epic-9-session-time-travel/E9-T22o-cold-desktop-frontier-calibration.md) — Calibrate the cold Omarchy first-frame frontier from an authenticated prefix *(deps: E9-T22n, E9-T22q, E9-T22r)*
-- [~] `524.92202985` [E9-T22s](epic-9-session-time-travel/E9-T22s-cold-desktop-block-error-attribution.md) — Attribute the original cold desktop's first virtio block I/O error *(deps: E9-T22o)*
+- [?] `524.92202985` [E9-T22s](epic-9-session-time-travel/E9-T22s-cold-desktop-block-error-attribution.md) — Attribute the original cold desktop's first virtio block I/O error *(deps: E9-T22o)*
 - [ ] `524.9220299` [E9-T22p](epic-9-session-time-travel/E9-T22p-finite-cold-desktop-transition-profile.md) — Qualify a finite supported cold-desktop transition allowance *(deps: E9-T22o, E9-T22s)*
 - [b] `524.92203` [E9-T22c](epic-9-session-time-travel/E9-T22c-real-workload-qualification.md) — Qualify both full pinned performance workloads *(deps: E9-T22b, E9-T22h, E9-T22j, E9-T22k, E9-T22l, E9-T22m, E9-T22n, E9-T22p)*
 - [ ] `524.92204` [E9-T22d](epic-9-session-time-travel/E9-T22d-replay-performance-campaign.md) — Measure the unchanged complete replay performance budgets *(deps: E9-T15, E9-T16, E9-T19, E9-T22c)*
