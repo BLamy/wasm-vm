@@ -3,7 +3,7 @@ id: E9-T22o
 epic: 9
 title: Calibrate the cold Omarchy first-frame frontier from an authenticated prefix
 priority: 524.9220298
-status: implemented
+status: verified
 depends_on: [E9-T22n, E9-T22q, E9-T22r]
 estimate: S
 risk: medium
@@ -61,6 +61,28 @@ the original guest. Distinguish actual frame presentation from a compositor
 process existing without visible pixels.
 
 ## Verification log
+
+### 2026-10-28 — fresh Daybreak verifier — VERDICT: verified
+
+Independent Daybreak Blue report:
+`/private/tmp/e9-t22o-daybreak-final-verifier/report.md`; route
+`gpt-daybreak-blue-latest` / `daybreakBlue` completed with 18 read-only
+commands and no tool errors. It independently recomputed the source tree and
+five pinned report hashes, checked all 3,523 objects, 13,177 chunks, 435
+witnesses, 2,850 receipts, the 21.7B exact guest digest and private-owner
+reconstruction, all 307 authenticated offline base reads, zero egress and page
+errors, and the exact 25.2B no-qualifying-frame frontier. A scanout was painted
+near 23.346B, but it was blank; renderer draw calls remained zero. The verifier
+confirmed that the Hyprland PID-341 crash/coredump/unit records were captured
+only after diagnostic input, with one boot ID and ordered trusted journal
+fields, so they cannot stand in for an exact-state first frame. The bounded
+novel attack rejected a 25,200,000,001-transition limit before browser or
+source mutation. Code was unchanged between evidence head `839481890` and
+worker submission `e472aaddb`. Retain `make verify-E9-T22o` and the existing
+frame-readiness classifier tests; preserve the 131 MiB report by SHA-256
+`5cb0ab6386e534f5d7711d57ca2544a4efa721ff82e87204e1ba810f249e737b`.
+Supported first-frame allowance remains unset. Daybreak explicitly authorized
+mechanical promotion of this status and queue.
 
 ### 2026-10-28 — worker — exact failure frontier submitted
 
