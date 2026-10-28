@@ -3067,4 +3067,4 @@ verify-E9-T23:
 # Final bounded integration; original-cold Omarchy and performance campaign are waived.
 .PHONY: verify-E9-T24
 verify-E9-T24:
-	python3 -B tools/verify/e9-capstone.py --output "$${E9_OUT:-target/evidence/e9-t24-$$(date -u +%Y%m%dT%H%M%SZ)}"
+	python3 -B tools/verify/e9-capstone.py --output "$${E9_OUT:-target/evidence/e9-t24-$$(date -u +%Y%m%dT%H%M%SZ)}" $${E9_RECORDED_INPUTS:+--recorded-inputs "$$E9_RECORDED_INPUTS"}

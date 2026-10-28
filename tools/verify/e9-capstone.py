@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 p = argparse.ArgumentParser(description=__doc__)
 p.add_argument('--output', type=Path, required=True)
 p.add_argument('--recovery', type=Path, default=ROOT / 'target/evidence/e9-t23-exact-recovery-v1')
+p.add_argument('--recorded-inputs', type=Path)
 a = p.parse_args()
 out = a.output.resolve()
 out.mkdir(parents=True, exist_ok=False)
@@ -92,6 +93,29 @@ try:
                                   limitation='Prior critic clone browser loopback was EPERM; non-browser build proof only. Runtime evidence independently interrogated.'))
     names = git('diff', '--name-only', '1d3976142b6f8d488907bcbc037a21e8cf9535be', report['head']).splitlines()
     report['sources'] = {name: sha(ROOT / name) for name in names if (ROOT / name).is_file()}
+    reused = {}
+    if a.recorded_inputs:
+        index_path = a.recorded_inputs.resolve()
+        index = json.loads(index_path.read_text())
+        prior_file = Path(index['sourceReport'])
+        assert sha(prior_file) == index['sourceReportSha256']
+        previous = json.loads(prior_file.read_text())
+        assert previous['status'] == index['sourceStatus'] == 'failed'
+        assert previous['active'] == 'capstone-session-UI' and previous['head'] == index['sourceHead']
+        assert all(x['exitCode'] == 0 for x in previous['commands'] if x['name'] != 'capstone-session-UI')
+        changed_since = git('diff', '--name-only', previous['head'], report['head']).splitlines()
+        assert all(name in ['Makefile', 'tools/verify/e9-capstone.py', 'tools/verify/e9-capstone-session-ui.mjs'] or name.startswith('evidence/e9-t24-inputs-0e47542da/') for name in changed_since), 'recording boundary changed'
+        for component in index['components']:
+            directory = Path(component['root'])
+            assert sha(directory / 'report.json') == component['reportSha256']
+            actual = sorted(str(f.relative_to(directory)) for f in directory.rglob('*') if f.is_file())
+            assert actual == sorted(row['path'] for row in component['files']), 'recorded inventory changed'
+            for row in component['files']:
+                file = directory / row['path']
+                assert file.is_file() and not file.is_symlink() and file.stat().st_size == row['bytes'] and sha(file) == row['sha256'], 'recorded bytes changed'
+            reused[component['name']] = directory
+        assert set(reused) == {'demo', 'timeline', 'software-network', 'paged-gpu'}
+        report['carried'].append(dict(task='E9-T24', index=str(index_path), sha256=sha(index_path), sourceHead=previous['head'], scope=index['scope']))
     run('task-policy', ['python3', '-B', 'tools/check_task_policy.py'])
     run('format', ['cargo', 'fmt', '--all', '--check'])
     run('docs', ['node', 'tools/check-docs.mjs'])
@@ -100,22 +124,24 @@ try:
         'web/tests/guest-rpc.test.mjs', 'web/tests/omarchy-seeded-loader.test.mjs', 'web/tests/overlay-seed-identity.test.mjs',
         'tools/virgl-production/critic-fast-boots-protocol.test.mjs', 'tools/virgl-production/critic-fast-boots-final.test.mjs',
         'tools/verify/e9-bundle-format.test.mjs', 'tools/verify/e9-session-witnesses.test.mjs', 'tools/verify/e9-replay-static-assets.test.mjs'])
-    run('demo', ['node', 'tools/verify/e9-gpu-results-browser.mjs', '--output', str(out / 'demo'),
-        '--branch-status', 'verified', '--bundle-status', 'verified'])
-    demo = evidence('demo')
-    assert demo['suite'] == dict(passed=127, failed=0)
-    run('timeline', ['node', 'tools/verify/e9-timeline-browser.mjs', '--probe-only', '--output', str(out / 'timeline')], timeout=600)
-    evidence('timeline')
-    run('software-network', ['node', 'tools/verify/e9-workload-software-browser.mjs', '--capstone', '--output', str(out / 'software-network')], timeout=1800)
-    software = evidence('software-network', 'software-full-workload-replay-passed')
-    assert software['task'] == 'E9-T24' and software['wire']['connections'] == 10
-    assert software['result']['replayEgress'] == dict(fetch=0, sockets=0)
-    run('software-literal-files', ['python3', '-B', 'tools/verify/e9-workload-software-files.py', '--capstone', '--directory', str(out / 'software-network')])
-    run('paged-gpu', ['node', 'tools/verify/e9-capstone-paged-browser.mjs', '--output', str(out / 'paged-gpu')], timeout=300)
-    evidence('paged-gpu')
-    run('paged-byte-RAM-oracle', ['python3', '-B', 'tools/verify/e9-capstone-paged-files.py', '--directory', str(out / 'paged-gpu')])
-    run('capstone-session-UI', ['node', 'tools/verify/e9-capstone-session-ui.mjs', '--software', str(out / 'software-network'),
-        '--gpu', str(out / 'paged-gpu'), '--output', str(out / 'session-ui')], timeout=1200)
+    if not reused:
+        run('demo', ['node', 'tools/verify/e9-gpu-results-browser.mjs', '--output', str(out / 'demo'),
+            '--branch-status', 'verified', '--bundle-status', 'verified'])
+        demo = evidence('demo')
+        assert demo['suite'] == dict(passed=127, failed=0)
+        run('timeline', ['node', 'tools/verify/e9-timeline-browser.mjs', '--probe-only', '--output', str(out / 'timeline')], timeout=600)
+        evidence('timeline')
+        run('software-network', ['node', 'tools/verify/e9-workload-software-browser.mjs', '--capstone', '--output', str(out / 'software-network')], timeout=1800)
+        software = evidence('software-network', 'software-full-workload-replay-passed')
+        assert software['task'] == 'E9-T24' and software['wire']['connections'] == 10
+        assert software['result']['replayEgress'] == dict(fetch=0, sockets=0)
+        run('software-literal-files', ['python3', '-B', 'tools/verify/e9-workload-software-files.py', '--capstone', '--directory', str(out / 'software-network')])
+        run('paged-gpu', ['node', 'tools/verify/e9-capstone-paged-browser.mjs', '--output', str(out / 'paged-gpu')], timeout=300)
+        evidence('paged-gpu')
+        run('paged-byte-RAM-oracle', ['python3', '-B', 'tools/verify/e9-capstone-paged-files.py', '--directory', str(out / 'paged-gpu')])
+    software_root, gpu_root = (reused.get(name, out / name) for name in ['software-network', 'paged-gpu'])
+    run('capstone-session-UI', ['node', 'tools/verify/e9-capstone-session-ui.mjs', '--software', str(software_root),
+        '--gpu', str(gpu_root), '--output', str(out / 'session-ui')], timeout=1200)
     evidence('session-ui')
     run('fresh-profile-UI', ['node', 'tools/verify/e9-bundle-browser.mjs', '--software', str(recovery / 'linux-branches'),
         '--gpu', str(recovery / 'gpu-branches'), '--output', str(out / 'bundles')], timeout=1200)
