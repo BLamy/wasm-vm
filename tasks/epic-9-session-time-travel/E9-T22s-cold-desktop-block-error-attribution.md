@@ -3,7 +3,7 @@ id: E9-T22s
 epic: 9
 title: Attribute the original cold desktop's first virtio block I/O error
 priority: 524.92202985
-status: implemented
+status: verified
 depends_on: [E9-T22o]
 estimate: S
 risk: high
@@ -117,3 +117,32 @@ clock/device files; the later affected gates were run individually and passed.
 The private diagnostic feature is off in the production build. The code commit
 used the hook's `SKIP_WEB_BUILD=1` to keep the pinned production `web/dist`
 bytes unchanged; this slice adds no public demo capability.
+
+### 2026-10-28 — fresh Daybreak Blue verifier — VERDICT: verified
+
+- First completed rejection — HELD. Predicted a pre-serial-error write at
+  transition `14,365,286,002`; observed head 69, sector `24,928,880`, length
+  `1,179,648`, `TransferShape`, no backend call, status DMA and used-ring commit
+  at `request-trace.json:1339`. Independently calculated an in-range byte end
+  `12,764,766,208` below capacity `12,884,901,888`. The verifier's initial
+  byte-end estimate and expectation of an explicit backend error were corrected
+  against the code and trace; neither was a product claim.
+- Source and non-interference — HELD. Rehashed the pinned source inputs and
+  final report/trace, checked the fresh 3,523-object/13,177-chunk closure and
+  435-checkpoint byte oracle, then matched the original and diagnostic guest,
+  output, event, and payload witnesses at 14.4B, 14.45B, and the failure
+  boundary. Source tree before/after and browser/guest egress were unchanged.
+  The first sealed vda/EXT4 serial receipt follows at `14,365,728,640` with
+  the same sector (`request-trace.json:1439`).
+- Attacks and coverage — HELD. The maximum aligned transfer, out-of-range
+  write, COW capacity park, unavailable base chunk, malformed descriptor,
+  corrupt base/RAM inputs, and a novel two-descriptor aggregate-size case held
+  their distinct status/used-ring/backend predictions. Sabotaging the new cap
+  assertion made its focused test fail, then the restored test passed; the
+  scratch clone finished clean. The cold run and deterministic tests exercised
+  the acceptance-relevant changed hunks; passive defensive stage labels and
+  compile-time feature declarations received explicit waivers.
+- SUITE: retain the 20 diagnostic integration tests, COW-capacity unit test,
+  negative input-integrity probes, and `verify-E9-T22s` target. Full verifier
+  report: `target/evidence/e9-t22s-daybreak-verifier-de39b0459/report.md`
+  (SHA-256 `6f6977f4ceef21eb0944565a0c4e6f9f1a3eab73f97d0471ba1cc91bac331340`).
