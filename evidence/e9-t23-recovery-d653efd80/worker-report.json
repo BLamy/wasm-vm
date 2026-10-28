@@ -1,0 +1,279 @@
+{
+  "task": "E9-T23",
+  "risk": "high",
+  "status": "passed",
+  "head": "d653efd8001fb0c9d9c61b860f2185e9488157c1",
+  "started": 1793217430.24348,
+  "commands": [
+    {
+      "name": "task-policy",
+      "command": [
+        "python3",
+        "-B",
+        "tools/check_task_policy.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.04792213439941406,
+      "logSha256": "563bb83bb97c7b0c2ec28d52724b1253e3eebdeced93331479d134727b9be2b3"
+    },
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exitCode": 0,
+      "seconds": 1.460090160369873,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "storage-clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "-p",
+        "wasm-vm-storage",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exitCode": 0,
+      "seconds": 4.11075496673584,
+      "logSha256": "07170d9f6ed7ae0aeb303b5cd50927056ad0ceb8d98d0bb9636112fa4f6233e4"
+    },
+    {
+      "name": "storage-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "wasm-vm-storage",
+        "--test",
+        "session_manifest",
+        "--test",
+        "session_manifest_critic",
+        "--test",
+        "session_local",
+        "--test",
+        "session_publication",
+        "--test",
+        "session_witness",
+        "--",
+        "--nocapture"
+      ],
+      "exitCode": 0,
+      "seconds": 4.41395902633667,
+      "logSha256": "947751998f7b993b5e0ed2c01b56584f7f296885ebc76ce5c6eaddc1b19931e0"
+    },
+    {
+      "name": "native-gpu-branches",
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "-p",
+        "wasm-vm-core",
+        "--features",
+        "virgl-renderer,virgl-control-proof,gpu-trace,trace",
+        "--test",
+        "e9_branch",
+        "--test",
+        "session_gpu_results",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exitCode": 0,
+      "seconds": 155.0354928970337,
+      "logSha256": "12d189f49b23e0f0e002d0d0aca08b700409c0ce576576e7ac2536cc1b73b50c"
+    },
+    {
+      "name": "native-byte-oracle-gpu-results",
+      "command": [
+        "python3",
+        "-B",
+        "tools/verify/e9-gpu-results-files.py",
+        "--directory",
+        "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/native"
+      ],
+      "exitCode": 0,
+      "seconds": 1.6520366668701172,
+      "logSha256": "e839f04e1fcfc193eeb41c44e00237b799dba6052bb9b763e5514ca813529231"
+    },
+    {
+      "name": "native-byte-oracle-pending-gpu",
+      "command": [
+        "python3",
+        "-B",
+        "tools/verify/e9-pending-gpu-files.py",
+        "--directory",
+        "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/native"
+      ],
+      "exitCode": 0,
+      "seconds": 0.078582763671875,
+      "logSha256": "b7aed3be7f4c93b9a928c37f4f3034530a2a74c33f2087c31e5cdd0dc323d7a2"
+    },
+    {
+      "name": "wasm-metadata",
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "-p",
+        "wasm-vm-session-web",
+        "--target",
+        "wasm32-unknown-unknown"
+      ],
+      "exitCode": 0,
+      "seconds": 2.792928695678711,
+      "logSha256": "5e4ff4b62b16c2ab43ff37eb2d6bbfb3099851e9d0b898dd86d52f488b7fb6e4"
+    },
+    {
+      "name": "codecs",
+      "command": [
+        "node",
+        "--max-old-space-size=128",
+        "tools/verify/e9-recovery-codecs.mjs",
+        "--output",
+        "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/codecs"
+      ],
+      "exitCode": 0,
+      "seconds": 0.2621181011199951,
+      "logSha256": "5cc478bdf72014e70eb2af082791ea33c4edce5756150558c50a8ebe4dbe01e6"
+    },
+    {
+      "name": "durable-recovery",
+      "command": [
+        "node",
+        "tools/verify/e9-recovery-browser.mjs",
+        "--output",
+        "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/durable-recovery"
+      ],
+      "exitCode": 0,
+      "seconds": 15.417801141738892,
+      "logSha256": "c289a8ac90762ebd1afb5c8137ba6da4dfe91b734ded49b2fb341d17cf643c61"
+    },
+    {
+      "name": "linux-branches",
+      "command": [
+        "node",
+        "tools/verify/e9-branch-browser.mjs",
+        "--include-deltas",
+        "--output",
+        "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/linux-branches"
+      ],
+      "exitCode": 0,
+      "seconds": 157.05961394309998,
+      "logSha256": "3520290ecc68b7b71a35f5a10519eaecbd06c8cf3041c2de2c41e1994738ae4c"
+    },
+    {
+      "name": "linux-byte-oracle",
+      "command": [
+        "python3",
+        "-B",
+        "tools/verify/e9-branch-files.py",
+        "--directory",
+        "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/linux-branches",
+        "--kind",
+        "software"
+      ],
+      "exitCode": 0,
+      "seconds": 0.7036159038543701,
+      "logSha256": "71299c344a6a8099ad698c5f6c88ec6f9fb3953a1107f69becb876417f8d423c"
+    },
+    {
+      "name": "gpu-recovery",
+      "command": [
+        "node",
+        "tools/verify/e9-gpu-replay-browser.mjs",
+        "--output",
+        "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/gpu-recovery"
+      ],
+      "exitCode": 0,
+      "seconds": 199.87382197380066,
+      "logSha256": "e7df08e80d6cccbba575156bd92b8a437c0b34e3414892795cba0af30893703f"
+    },
+    {
+      "name": "gpu-byte-oracle",
+      "command": [
+        "python3",
+        "-B",
+        "tools/verify/e9-gpu-replay-files.py",
+        "--directory",
+        "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/gpu-recovery"
+      ],
+      "exitCode": 0,
+      "seconds": 7.675162076950073,
+      "logSha256": "c3715520d6a2268bbeb98394569a13fb43f679a8704f0f37a3ef90fc79b9ef12"
+    },
+    {
+      "name": "gpu-branches",
+      "command": [
+        "node",
+        "tools/verify/e9-branch-gpu-browser.mjs",
+        "--output",
+        "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/gpu-branches"
+      ],
+      "exitCode": 0,
+      "seconds": 337.2134578227997,
+      "logSha256": "c2cb68bb9010b0131e242ef73bcc294dafda16819b5ff6d8df4792dcfa0ab93f"
+    },
+    {
+      "name": "gpu-branch-byte-oracle",
+      "command": [
+        "python3",
+        "-B",
+        "tools/verify/e9-branch-files.py",
+        "--directory",
+        "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/gpu-branches",
+        "--kind",
+        "gpu"
+      ],
+      "exitCode": 0,
+      "seconds": 3.1154298782348633,
+      "logSha256": "7c68fc4c911d0f2a53302c681f3b3a9f1e5e27f47cf534a711036e630642a33f"
+    }
+  ],
+  "evidence": [
+    {
+      "name": "codecs",
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/codecs/report.json",
+      "sha256": "bca1423d64488eaaf044803a4cdaf0adb51f98dc92129ed8e2fd21da2a12750f"
+    },
+    {
+      "name": "durable-recovery",
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/durable-recovery/report.json",
+      "sha256": "499541c6f493e58e28c2edf5c4074d704446f9fe7032dd91cfd5421505e7451a"
+    },
+    {
+      "name": "linux-branches",
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/linux-branches/report.json",
+      "sha256": "c14a1602260d16ad6c5b4e331f14b42d83a434a4ee610d66d60e6bb5a4e7dc87"
+    },
+    {
+      "name": "gpu-recovery",
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/gpu-recovery/report.json",
+      "sha256": "ea844049ae15b9a70ca5c6b751a50a2f8e2f26f49d8d577203a1ab36b2eb68ef"
+    },
+    {
+      "name": "gpu-branches",
+      "path": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-exact-recovery-v1/gpu-branches/report.json",
+      "sha256": "b8832caeebb866e92f3cf5d99ff3a258c57bca9e0ae1cca7ce31ee742e4cfbf5"
+    }
+  ],
+  "recordedHarness": {
+    "tools/verify/e9-recovery.py": "9bef8d29a2d4468ece50fed62ca6ef3730b07f47d5009fef343bd883a832c143",
+    "tools/verify/e9-recovery-codecs.mjs": "0efe594bb8b391a5773ca43209f06ffcd26d9829bd1678569fc74b67e92ceec0",
+    "tools/verify/e9-recovery-browser.mjs": "9bab6c47853b317899bddde215897813f706780262a651586d22c8fbd36b80bb",
+    "tools/verify/e9-session-retention-storage.mjs": "6730cd1c7f14c766d94c5061965c76b754bdae731df111205ffb30f74bc55d4d"
+  },
+  "scope": "Bounded storage/codec/branch/GPU recovery; no long original cold boot or performance claim",
+  "userWaiver": "evidence/e9-t22u-user-waiver-20261028/receipt.json",
+  "active": "gpu-branch-byte-oracle",
+  "finished": 1793218321.334643
+}

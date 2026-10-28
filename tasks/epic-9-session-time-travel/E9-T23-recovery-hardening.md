@@ -3,7 +3,7 @@ id: E9-T23
 epic: 9
 title: Harden recording and seeking against crashes and corrupt history
 priority: 524.923
-status: in-progress
+status: implemented
 depends_on: [E9-T07, E9-T18c, E9-T20, E9-T21]
 estimate: S
 risk: high
@@ -64,3 +64,39 @@ The earlier dev1 failed on repeated evidence-export callback registration;
 its unmodified failed receipt is retained. Fresh export pages repair that
 harness-only issue. No runtime semantics changed. Final exact-head integration,
 byte oracles and fresh actual Daybreak acceptance remain outstanding.
+
+### 2026-10-28 — worker — exact-head bounded recovery submission
+
+Claim head `d653efd8001fb0c9d9c61b860f2185e9488157c1`, clean throughout.
+Command: `make verify-E9-T23 E9_OUT=target/evidence/e9-t23-exact-recovery-v1`.
+The complete selected gate passed with no runtime semantic changes. Format,
+storage clippy, 31 native storage tests, 58 native GPU/branch tests with guest
+traces, independent native byte oracles and the wasm32 metadata build passed.
+The built codec gate exercised 10,500 actual mutations plus 1,500 valid
+controls across manifest/event/keyframe/RAM-delta parsers; no trap, panic or
+out-of-bounds error was admitted, and retained metadata memory stayed within
+its bounded harness limit. The strict-IDB matrix passed 15 publication crashes,
+six garbage-collection crashes and 48 varied maintenance schedules, preserving
+every tested sibling and the expected last committed revision.
+
+The real short Linux file recording, mixed full/incremental keyframes, two
+private file branches, discarded/cancelled publication and reload/deletion
+checks passed their independent ext2 byte oracle. Physical GPU tests passed
+real query/readback/error witnesses, private-seek cancellation, original
+retired-capability refusal, real context loss, checkpoint rollback/rollover,
+branch journal/paint/final-put failures, relative-session reload and independent
+GPU/disk/network-counter byte oracles. All browser reports contain zero
+unexpected errors; replay remained offline. The original Omarchy cold boot,
+its long replay and the full performance campaign were not run.
+
+Recording root: `target/evidence/e9-t23-exact-recovery-v1` in this checkout.
+Top-level report SHA-256 `99b50fb454f89f6bceebbef386b42ef981615f5ce12b2a09eecbb395f446a9ff`.
+The report includes executed harness hashes, every exact command/log digest,
+child report digests and source head. Native traces/raw states, browser traces,
+screenshots and saved IndexedDB bytes remain there for independent critique.
+Portable controller receipt and a key-artifact inventory are committed under
+`evidence/e9-t23-recovery-d653efd80/`.
+
+This worker claim is not verification. A fresh actual Daybreak session must
+attack the acceptance/coverage, use independent seeds and a bounded novel
+attack, sabotage-check the new gate, and record the final verdict.
