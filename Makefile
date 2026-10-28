@@ -2972,11 +2972,15 @@ verify-E9-T22o:
 	    --limit "$${E9_LIMIT:-25200000000}" --base-report "$$base" > "$$out/browser.log" 2>&1
 
 .PHONY: verify-E9-T22s
+# The closure oracle imports web/session-pkg. A cold clone has the pinned
+# committed package only under web/dist/session-pkg, so stage that copy first.
 verify-E9-T22s:
 	@set -eu; src="$${E9_SOURCE:?set E9_SOURCE to the recovered exact cold-prefix desktop directory}"; \
 	  base="$${E9_BASE_REPORT:?set E9_BASE_REPORT to the authenticated complete offline base prefetch report}"; \
 	  src="$$(cd "$$src" && pwd -P)"; out="$${E9_OUT:-target/evidence/e9-t22s-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
 	  mkdir -p "$$(dirname "$$out")"; mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  test -f web/dist/session-pkg/wasm_vm_session.js; \
+	  mkdir -p web/session-pkg; cp -R web/dist/session-pkg/. web/session-pkg/; \
 	  node --check tools/verify/e9-cold-block-error-browser.mjs; \
 	  node --check tools/verify/e9-cold-block-error-page.mjs; \
 	  node --check tools/verify/e9-cold-block-error-worker.mjs; \
