@@ -1,0 +1,120 @@
+{
+  "originalRoot": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e9-t23-final-verifier",
+  "files": [
+    {
+      "path": "browser-two-seeds.log",
+      "bytes": 510,
+      "sha256": "088e91552c8ea6a630347dc1efa827593accdc827a9750c8dacbc5a5efc5f68c"
+    },
+    {
+      "path": "browser-zero-seed.log",
+      "bytes": 510,
+      "sha256": "088e91552c8ea6a630347dc1efa827593accdc827a9750c8dacbc5a5efc5f68c"
+    },
+    {
+      "path": "codec-existing-output.log",
+      "bytes": 623,
+      "sha256": "5737523d0331631164cf9434aee00f59d3af2b88eb11ba141c70f01dbe4440a0"
+    },
+    {
+      "path": "codec-two-seeds.log",
+      "bytes": 509,
+      "sha256": "330316be2c5cf61d78ae9474c1d5f76a0c5178ec8cb09250b8d338bc61c58d96"
+    },
+    {
+      "path": "codec-zero-seed.log",
+      "bytes": 509,
+      "sha256": "330316be2c5cf61d78ae9474c1d5f76a0c5178ec8cb09250b8d338bc61c58d96"
+    },
+    {
+      "path": "controller-existing-output.log",
+      "bytes": 546,
+      "sha256": "2df972a3d518a96bda4f8d6bc6d7e8f9dc34ba5d61d92d870995f6272eb37d29"
+    },
+    {
+      "path": "controller-optimized.log",
+      "bytes": 313,
+      "sha256": "ff1fc539d5874f67b86f91a42a315a3b523e4fe6f00a29c9e670169f8f6db9f8"
+    },
+    {
+      "path": "durable-summary.json",
+      "bytes": 961687,
+      "sha256": "651ec4742883ef2f523e7f33f8d7df9f0d597632635f4bfd51eb4faa6812316b"
+    },
+    {
+      "path": "gpu-branches-concise.json",
+      "bytes": 264089,
+      "sha256": "1185c1d71d4ae91cd2eb105e0ba677259deb09b669a656861526cfb479994dfe"
+    },
+    {
+      "path": "gpu-branches-summary.json",
+      "bytes": 624723,
+      "sha256": "2bb1c988c1124f287eda34e8cdc5fdd6a70c193e0a86c0759fb0fc39e68148a3"
+    },
+    {
+      "path": "gpu-recovery-concise.json",
+      "bytes": 21570106,
+      "sha256": "cb930d3c2566fa48753950004f063457205b1b83d0caed1d10603f68b12cf556"
+    },
+    {
+      "path": "gpu-recovery-summary.json",
+      "bytes": 22889875,
+      "sha256": "a9cee0fe15bb7be087d1da5ec656bcdc44cfbfb8526c1ce3521178eb3349e77e"
+    },
+    {
+      "path": "linux-summary.json",
+      "bytes": 128726,
+      "sha256": "258c2b8620146a986330a919b650d3e2a3d45b421e2aacd9d4d3e225d20824ef"
+    },
+    {
+      "path": "novel-codecs/report.json",
+      "bytes": 3266,
+      "sha256": "1ccd495641165b2941fc4f384f549f89646c16898314ec8a0bfe5e4ff9b6da5f"
+    },
+    {
+      "path": "novel-codecs.log",
+      "bytes": 188,
+      "sha256": "5fbc6e4e7b13c6930ec1326f7e5a3cbb84f103bfb514f3896b3851623b71695e"
+    },
+    {
+      "path": "novel-durable.log",
+      "bytes": 593,
+      "sha256": "ef74f148d853bc17fde63669deaa0c417ba0f6103dc0393ee76b34cd4570554b"
+    },
+    {
+      "path": "predictions.md",
+      "bytes": 3216,
+      "sha256": "915e35bfa8ac9d7c3ecf38c044b4cf5ee91082043ec02bd93ff0932cd562bfd0"
+    },
+    {
+      "path": "pristine-make.log",
+      "bytes": 487,
+      "sha256": "aba7a3d94ad7dfcb31f251b3b924d0872a7e2f62b7ed9253caec86443e3ef542"
+    },
+    {
+      "path": "sabotage.log",
+      "bytes": 347,
+      "sha256": "c348de4b5ea5d230ef4818a6153ffdb224430b6594f72dcf133c071249f66fe4"
+    },
+    {
+      "path": "scratch-path.txt",
+      "bytes": 33,
+      "sha256": "533ecebc035e26126a6be02a4713eebf69cdcd8ceb1e055c0e8deb80b8fde3b5"
+    },
+    {
+      "path": "timeout-kill-sabotage.log",
+      "bytes": 284,
+      "sha256": "57708cd9c1a22653f0af74e941299a09e849a63c3725542272f79bd791c5c279"
+    },
+    {
+      "path": "timeout-sabotage-2.log",
+      "bytes": 227,
+      "sha256": "d78b1da0c72c21cca0f85f6624227b91992538aac4d246973be52230dc7e70d3"
+    },
+    {
+      "path": "timeout-sabotage.log",
+      "bytes": 158,
+      "sha256": "cb90db187ec951bbe2c19cbeb2c183f08a816ac5229808875527f34dcef40a02"
+    }
+  ]
+}

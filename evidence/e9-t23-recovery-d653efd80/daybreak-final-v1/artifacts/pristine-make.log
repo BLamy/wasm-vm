@@ -1,0 +1,13 @@
+python3 -B tools/verify/e9-recovery.py --output "${E9_OUT:-target/evidence/e9-t23-$(date -u +%Y%m%dT%H%M%SZ)}"
+task-policy
+format
+storage-clippy
+storage-tests
+native-gpu-branches
+native-byte-oracle-gpu-results
+native-byte-oracle-pending-gpu
+wasm-metadata
+codecs
+durable-recovery
+{"status": "failed", "output": "/private/tmp/e9-t23-final.x5Cldg/repo/target/evidence/e9-t23-pristine-verifier", "failure": "durable-recovery failed; inspect preserved log"}
+make: *** [verify-E9-T23] Error 1

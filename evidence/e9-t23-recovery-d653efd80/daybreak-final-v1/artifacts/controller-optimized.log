@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/tools/verify/e9-recovery.py", line 14, in <module>
+    raise RuntimeError('recovery assertions require the normal Python interpreter')
+RuntimeError: recovery assertions require the normal Python interpreter
