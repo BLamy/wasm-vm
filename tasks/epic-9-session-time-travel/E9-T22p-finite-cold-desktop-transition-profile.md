@@ -4,7 +4,7 @@ epic: 9
 title: Qualify a finite supported cold-desktop transition allowance
 priority: 524.9220299
 status: pending
-depends_on: [E9-T22o, E9-T22s, E9-T22t]
+depends_on: [E9-T22o, E9-T22s, E9-T22t, E9-T22u]
 estimate: S
 risk: medium
 capstone: false
@@ -19,7 +19,9 @@ E9-T22o ended at an exact no-frame failure frontier. E9-T22s must attribute
 the original guest's first disk I/O rejection before a later exact run can
 measure the first frame; this task cannot substitute a guessed allowance.
 E9-T22t must correct the attributed bounded session-block transfer rejection
-before that later run.
+before that later run. E9-T22u records the corrected cold prefix from zero;
+its measured frame or exact next obstruction is required before this allowance
+can be set.
 
 ## Boundary
 
