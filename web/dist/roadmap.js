@@ -217,8 +217,8 @@ export const ROADMAP = [
   {
     epic: "E9",
     title: "Session Time Travel",
-    status: "in-progress",
-    blurb: "Local Linux recordings, exact seeking, isolated branches and recording files; final bounded integration is in progress. Full Omarchy cold qualification and performance budgets are deferred and unproven.",
+    status: "verified",
+    blurb: "Verified bounded Linux/GPU time travel: saved recordings, exact seeks and steps, private branches and local recording files. Full Omarchy cold qualification and performance budgets remain deferred and unproven.",
     caps: [
       { name: "Durable multi-session history store", status: "verified", evidence: "E9-T03: bounded IndexedDB chunks, atomic commit cursors, reload/crash and two-tab writer proofs" },
       { name: "Immutable historical disk roots", status: "verified", evidence: "E9-T04: private COW restores, exact base/generation bindings and shared-block retention" },
@@ -251,7 +251,7 @@ export const ROADMAP = [
       { name: "Owned live HTTP with zero-egress replay", status: "verified", probe: "owned-http", evidence: "E9-T22b: Daybreak-verified fixed local Slirp HTTP provider; full Alpine OFF/ON bodies, exact closed-server replay and zero replay egress" },
       { name: "Live execution with recording disabled", status: "verified", probe: "unrecorded-control", evidence: "Capture-OFF fixed profiles verified with full Alpine file/input work and physical GPU fixtures (E9-T22a); full desktop and performance qualification are deferred" },
       { name: "Recording and replay recovery", status: "verified", evidence: "E9-T23: actual Daybreak verified codec mutations, durable crash cuts, quota/GC schedules and real Linux/physical GPU recovery" },
-      { name: "Bounded time-travel integration", status: "in-progress", evidence: "E9-T24: final software Linux and bounded physical GPU user-flow integration; full Omarchy and numeric performance claims excluded" },
+      { name: "Bounded time-travel integration", status: "verified", evidence: "E9-T24: actual Daybreak verified real Linux input/files/network, physical GPU witnesses, fresh-profile seek/step/transfer and the main public release; full Omarchy and numeric performance claims excluded" },
       { name: "Local recording bundles", status: "verified", evidence: "E9-T21: Daybreak verified bounded software/GPU archives, authenticated closure and fresh-profile replay; matching installed runtime required" },
     ],
   },
