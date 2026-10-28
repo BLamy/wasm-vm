@@ -3,7 +3,7 @@ id: E9-T22o
 epic: 9
 title: Calibrate the cold Omarchy first-frame frontier from an authenticated prefix
 priority: 524.9220298
-status: in-progress
+status: implemented
 depends_on: [E9-T22n, E9-T22q, E9-T22r]
 estimate: S
 risk: medium
@@ -61,6 +61,37 @@ the original guest. Distinguish actual frame presentation from a compositor
 process existing without visible pixels.
 
 ## Verification log
+
+### 2026-10-28 — worker — exact failure frontier submitted
+
+Code head `8394818901ecd9897c17536c16e4e005b32ef48a` passed
+`E9_SOURCE=target/evidence/e9-t22r-recovery-b481f6c71/desktop
+E9_BASE_REPORT=target/evidence/e9-t22o-base-prefetch-49266d393/progress.json
+E9_OUT=target/evidence/e9-t22o-839481890-fullbase make verify-E9-T22o`
+(including `node --check`, `cargo fmt --all --check`, and `make web-build`).
+The exact browser report is
+`target/evidence/e9-t22o-839481890-fullbase/desktop/report.json`, SHA-256
+`5cb0ab6386e534f5d7711d57ca2544a4efa721ff82e87204e1ba810f249e737b`.
+The authenticated source graph SHA-256 stayed
+`ad3bc7bfe74ce25a72617ac8b0d3155a8966593b819e8445014dfdef6cc935f3`
+before and after the run; the 21.7B guest witness digest was
+`0602661729d65d93fc4b88053f148b45b336b3f9727efe44c1edaf2a826a10d8`.
+The report authenticates 3,523 source objects, 13,177 physical chunks, all
+witnesses and the complete 9,092,988,928-byte offline base cache. The separate
+owner advanced the original guest by 3.5B transitions to the exact 25.2B
+finite bound in 6,557,605 ms, with zero renderer draws, no qualifying frame,
+and zero fetch/socket egress. After that unmodified bound, diagnostic serial
+input captured a Hyprland `CBackend::create() failed!` crash (PID 341), a
+matching PID-365 coredump, and the failed user compositor unit. The four
+structured journal records share one boot ID and monotonic order; their
+trusted process and unit fields are bound to the direct process census. This
+is an exact *failure* frontier plus an explicitly post-input obstruction, not
+a measured first-frame position. The supported allowance remains unset.
+Preserved source guest vda/EXT4 I/O errors may precede the crash, but the
+causal link is unproven. The next independent slice must trace the first
+rejected block request and collect read-only guest crash/DRM artifacts before
+E9-T22p can recommend a first-frame allowance. Submitted for fresh Daybreak
+verification; the worker does not mark this task verified.
 
 ### 2026-10-26 — worker — blocked on exact GPU notification-latch restore
 
