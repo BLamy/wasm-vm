@@ -3002,3 +3002,30 @@ verify-E9-T22s:
 	    > "$$out/diagnostic-wasm-build.log" 2>&1; \
 	  node tools/verify/e9-cold-block-error-browser.mjs --source "$$src" --output "$$out/desktop" \
 	    --limit 14450000000 --base-report "$$base" > "$$out/browser.log" 2>&1
+
+.PHONY: verify-E9-T22t
+verify-E9-T22t:
+	@set -eu; out="$${E9_OUT:-target/evidence/e9-t22t-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$(dirname "$$out")"; mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  test -z "$$(git status --porcelain --untracked-files=all)"; \
+	  python3 tools/check_task_policy.py > "$$out/policy.log" 2>&1; \
+	  python3 tools/verify/build-e9-block-transfer-guest.py > "$$out/fixture.log" 2>&1; \
+	  git diff --exit-code -- web/assets/e9-block-transfer.elf web/assets/e9-block-transfer.json \
+	    tools/verify/e9-block-transfer-guest.listing; \
+	  cargo fmt --all --check > "$$out/fmt.log" 2>&1; \
+	  cargo clippy -p wasm-vm-core --all-targets --features cold-block-diagnostic,trace,virgl-renderer \
+	    -- -D warnings > "$$out/clippy.log" 2>&1; \
+	  cargo test -p wasm-vm-core --features cold-block-diagnostic,trace,virgl-renderer \
+	    --lib --test session_block_transfer --test virtio_blk --test e9_device_completions \
+	    > "$$out/native.log" 2>&1; \
+	  cargo build -p wasm-vm-core --no-default-features --target wasm32-unknown-unknown \
+	    > "$$out/no-std-wasm.log" 2>&1; \
+	  node --check web/session-block-transfer-probe.js; \
+	  node --check tools/verify/e9-device-completions-browser.mjs; \
+	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; \
+	  git diff --exit-code -- web/dist web/gpu-checkpoint-build.js web/tasks.json; \
+	  node tools/verify/e9-device-completions-browser.mjs --output "$$out/browser" \
+	    > "$$out/browser.log" 2>&1; \
+	  python3 -B tools/verify/e9-block-transfer-files.py --directory "$$out/browser" \
+	    > "$$out/oracle.log" 2>&1; \
+	  test -z "$$(git status --porcelain --untracked-files=all)"

@@ -17,6 +17,9 @@ pub const CHANNEL: u16 = 19;
 pub const MAX_REQUESTS: usize = 256;
 pub const MAX_RESULT: usize = (1 << 20) - 256;
 pub const CACHE_BUDGET: usize = 16 << 20;
+/// Guest virtio-blk DMA is assembled locally; it is not one host completion.
+/// Half the base-chunk cache leaves room for boundary chunks and other reads.
+pub const MAX_BLOCK_TRANSFER: usize = CACHE_BUDGET / 2;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DeviceError {

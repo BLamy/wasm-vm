@@ -1,8 +1,8 @@
 {
   "generated": "tools/gen-tasks-json.py",
   "headline": {
-    "verified": 548,
-    "total": 751
+    "verified": 551,
+    "total": 753
   },
   "epics": [
     {
@@ -64,7 +64,7 @@
   ],
   "activityRange": {
     "start": "2026-07-02",
-    "end": "2026-10-26"
+    "end": "2026-10-28"
   },
   "tasks": [
     {
@@ -36437,7 +36437,7 @@
       "epicKey": "9",
       "title": "Calibrate the cold Omarchy first-frame frontier from an authenticated prefix",
       "priority": null,
-      "status": "blocked",
+      "status": "verified",
       "depends_on": [
         "E9-T22n",
         "E9-T22q",
@@ -36446,12 +36446,12 @@
       "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
-      "goal": "Determine a defensible finite guest-transition bound for the original Omarchy\ndesktop after the clean E9-T22c run reached 20B transitions before first light.",
-      "boundary": "## Boundary\n\nOne offline, non-acceptance diagnostic continuation from the authenticated\n20B checkpoint. Reconstruct its complete RAM ancestry, CPU/device/disk state,\nhost queues, renderer epoch and witness digest from the exported physical graph\nbefore creating a VM. Continue only in a separate diagnostic owner with no\nlive replay egress. Do not edit the image, clock, cadence, guest service files,\nworkload, probe or production replay policy. The continuation is calibration,\nnever a substitute for the next original cold qualification run.\n\n",
-      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T22o` using the pinned E9-T22c 20B saved graph and its recorded\nSHA-256 receipts. The target must refuse missing or changed input and produce a\nbounded browser report with source and output digests.\n\n",
+      "goal": "Determine a defensible finite guest-transition bound for the original Omarchy\ndesktop after the exact E9-T22r cold recording reached a durable 21.7B\ncheckpoint before first light and stopped at the 21.75B HostSpace guard.",
+      "boundary": "## Boundary\n\nOne offline, non-acceptance diagnostic continuation from the recovered exact\nE9-T22r 21.7B checkpoint. Authenticate its complete RAM ancestry,\nCPU/device/disk state, host queues, renderer epoch and witness digest from the\nexported physical graph before creating a VM. Continue only in a separate\ndiagnostic owner with no live replay egress. Preserve the failed source report\nand its guest disk errors. Do not edit the image, clock, cadence, guest service\nfiles, workload, probe or production replay policy. The continuation is\ncalibration, never a substitute for the next original cold qualification run.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\nFirst run `E9_OUT=target/evidence/e9-t22o-base-prefetch node\ntools/verify/e9-cold-base-prefetch.mjs` to materialize and hash every member\nof the original frozen image before the browser run. Then run\n`E9_SOURCE=target/evidence/e9-t22r-recovery-b481f6c71/desktop\nE9_BASE_REPORT=target/evidence/e9-t22o-base-prefetch/progress.json make\nverify-E9-T22o` using the pinned recovered E9-T22r graph and recorded\nSHA-256 receipts. The target must refuse missing or changed input, including\nthe complete offline base cache, and produce a bounded browser report with\nsource and output digests. The browser and guest must remain offline.\n\n",
       "criteria": [
         {
-          "text": "Authenticate the exact 20B saved-graph closure and the chosen checkpoint, including every physical chunk/object, RAM ancestor digest, renderer bytes, disk root and witness membership, before continuation.",
+          "text": "Authenticate the recovered exact 21.7B saved-graph closure and checkpoint, including every physical chunk/object, RAM ancestor digest, renderer bytes, disk root and witness membership, before continuation.",
           "checked": false
         },
         {
@@ -36465,7 +36465,7 @@
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-10-26 — worker — blocked on exact GPU notification-latch restore\n\nThe original 20B graph authenticated every physical chunk, object, witness\npage and checkpoint ancestor. Repro: `node\ntools/verify/e9-cold-frontier-browser.mjs --output\ntarget/evidence/e9-t22o-cold395-divergent-state-v2 --limit 20000010000\n--restore-mode history`. From the original cold-395 19.8B checkpoint, replay\nfails at the next 19.85B witness with original digest\n`7967c3dde55a71e77ad05461c6a1b038286fd44fc89dfd909d12dea876974002`\nversus `5b2ea2cf90b5b05a3ef21fce4c48e9c37390f7c2bccc85678fd9d47ffd5d989c`.\n`target/evidence/e9-t22o-state-diff.json` proves equal RAM, CPU, clock and all\nother serialized devices; only `VIRTIO_GPU` differs. The original queue shadow\nis `452/452`, replay is `453/452` with one extra pending RESOURCE_FLUSH.\nFresh Daybreak traced the unrecorded dequeue to exact checkpoint restore\nunconditionally rearming both GPU notification latches. The v2 checkpoint\ndoes not retain those latches, so a later witness cannot authenticate the\ncontinuation from that checkpoint. The divergent browser report SHA-256 is\n`bebdbf1cf874a794cfc65f5656bdf042d8decf88e73a8fc3596b1f835492c41d`;\nthe section comparison SHA-256 is\n`b272b4c2ebaf82e28b68c4dd8e1146069a9f14b881da8e2e66ca003ddf3cc7f5`.\nAn independent reconstruction of the terminal 20B RAM and logical witness\nwas admitted; a bounded 50M-transition diagnostic branch reached 20.05B with\nno nonblank frame or browser egress (report SHA-256\n`adceb24b41adb50a664bbfa8cee7722ab2dc6e993d1b184314eea03a9152f1d3`).\nThat branch is not accepted as calibration because the latch's value is absent\nfrom the source checkpoint. SHA-256-checked reconstruction of guest RAM's\ncontrol ring found avail index `579` while the saved control queue shadow is\n`452/452` at all five checkpoints from cold-395 through cold-399. The 127\nunserviced descriptors make the omitted latch behaviorally decisive. E9-T22q\nmust correct exact checkpoint fidelity and E9-T22r must record a new cold\nprefix before this task can claim a first-frame bound.",
+      "verificationLog": "### 2026-10-28 — fresh Daybreak verifier — VERDICT: verified\n\nIndependent Daybreak Blue report:\n`/private/tmp/e9-t22o-daybreak-final-verifier/report.md`; route\n`gpt-daybreak-blue-latest` / `daybreakBlue` completed with 18 read-only\ncommands and no tool errors. It independently recomputed the source tree and\nfive pinned report hashes, checked all 3,523 objects, 13,177 chunks, 435\nwitnesses, 2,850 receipts, the 21.7B exact guest digest and private-owner\nreconstruction, all 307 authenticated offline base reads, zero egress and page\nerrors, and the exact 25.2B no-qualifying-frame frontier. A scanout was painted\nnear 23.346B, but it was blank; renderer draw calls remained zero. The verifier\nconfirmed that the Hyprland PID-341 crash/coredump/unit records were captured\nonly after diagnostic input, with one boot ID and ordered trusted journal\nfields, so they cannot stand in for an exact-state first frame. The bounded\nnovel attack rejected a 25,200,000,001-transition limit before browser or\nsource mutation. Code was unchanged between evidence head `839481890` and\nworker submission `e472aaddb`. Retain `make verify-E9-T22o` and the existing\nframe-readiness classifier tests; preserve the 131 MiB report by SHA-256\n`5cb0ab6386e534f5d7711d57ca2544a4efa721ff82e87204e1ba810f249e737b`.\nSupported first-frame allowance remains unset. Daybreak explicitly authorized\nmechanical promotion of this status and queue.\n\n### 2026-10-28 — worker — exact failure frontier submitted\n\nCode head `8394818901ecd9897c17536c16e4e005b32ef48a` passed\n`E9_SOURCE=target/evidence/e9-t22r-recovery-b481f6c71/desktop\nE9_BASE_REPORT=target/evidence/e9-t22o-base-prefetch-49266d393/progress.json\nE9_OUT=target/evidence/e9-t22o-839481890-fullbase make verify-E9-T22o`\n(including `node --check`, `cargo fmt --all --check`, and `make web-build`).\nThe exact browser report is\n`target/evidence/e9-t22o-839481890-fullbase/desktop/report.json`, SHA-256\n`5cb0ab6386e534f5d7711d57ca2544a4efa721ff82e87204e1ba810f249e737b`.\nThe authenticated source graph SHA-256 stayed\n`ad3bc7bfe74ce25a72617ac8b0d3155a8966593b819e8445014dfdef6cc935f3`\nbefore and after the run; the 21.7B guest witness digest was\n`0602661729d65d93fc4b88053f148b45b336b3f9727efe44c1edaf2a826a10d8`.\nThe report authenticates 3,523 source objects, 13,177 physical chunks, all\nwitnesses and the complete 9,092,988,928-byte offline base cache. The separate\nowner advanced the original guest by 3.5B transitions to the exact 25.2B\nfinite bound in 6,557,605 ms, with zero renderer draws, no qualifying frame,\nand zero fetch/socket egress. After that unmodified bound, diagnostic serial\ninput captured a Hyprland `CBackend::create() failed!` crash (PID 341), a\nmatching PID-365 coredump, and the failed user compositor unit. The four\nstructured journal records share one boot ID and monotonic order; their\ntrusted process and unit fields are bound to the direct process census. This\nis an exact *failure* frontier plus an explicitly post-input obstruction, not\na measured first-frame position. The supported allowance remains unset.\nPreserved source guest vda/EXT4 I/O errors may precede the crash, but the\ncausal link is unproven. The next independent slice must trace the first\nrejected block request and collect read-only guest crash/DRM artifacts before\nE9-T22p can recommend a first-frame allowance. Submitted for fresh Daybreak\nverification; the worker does not mark this task verified.\n\n### 2026-10-26 — worker — blocked on exact GPU notification-latch restore\n\nThe original 20B graph authenticated every physical chunk, object, witness\npage and checkpoint ancestor. Repro: `node\ntools/verify/e9-cold-frontier-browser.mjs --output\ntarget/evidence/e9-t22o-cold395-divergent-state-v2 --limit 20000010000\n--restore-mode history`. From the original cold-395 19.8B checkpoint, replay\nfails at the next 19.85B witness with original digest\n`7967c3dde55a71e77ad05461c6a1b038286fd44fc89dfd909d12dea876974002`\nversus `5b2ea2cf90b5b05a3ef21fce4c48e9c37390f7c2bccc85678fd9d47ffd5d989c`.\n`target/evidence/e9-t22o-state-diff.json` proves equal RAM, CPU, clock and all\nother serialized devices; only `VIRTIO_GPU` differs. The original queue shadow\nis `452/452`, replay is `453/452` with one extra pending RESOURCE_FLUSH.\nFresh Daybreak traced the unrecorded dequeue to exact checkpoint restore\nunconditionally rearming both GPU notification latches. The v2 checkpoint\ndoes not retain those latches, so a later witness cannot authenticate the\ncontinuation from that checkpoint. The divergent browser report SHA-256 is\n`bebdbf1cf874a794cfc65f5656bdf042d8decf88e73a8fc3596b1f835492c41d`;\nthe section comparison SHA-256 is\n`b272b4c2ebaf82e28b68c4dd8e1146069a9f14b881da8e2e66ca003ddf3cc7f5`.\nAn independent reconstruction of the terminal 20B RAM and logical witness\nwas admitted; a bounded 50M-transition diagnostic branch reached 20.05B with\nno nonblank frame or browser egress (report SHA-256\n`adceb24b41adb50a664bbfa8cee7722ab2dc6e993d1b184314eea03a9152f1d3`).\nThat branch is not accepted as calibration because the latch's value is absent\nfrom the source checkpoint. SHA-256-checked reconstruction of guest RAM's\ncontrol ring found avail index `579` while the saved control queue shadow is\n`452/452` at all five checkpoints from cold-395 through cold-399. The 127\nunserviced descriptors make the omitted latch behaviorally decisive. E9-T22q\nmust correct exact checkpoint fidelity and E9-T22r must record a new cold\nprefix before this task can claim a first-frame bound.",
       "adversarial": "Corrupt an unrequested base chunk or RAM delta, swap renderer epochs, alter a\npending input, remove a witness page, and block all network. A continuation\nthat works only after skipping an authentication boundary does not calibrate\nthe original guest. Distinguish actual frame presentation from a compositor\nprocess existing without visible pixels.",
       "file": "tasks/epic-9-session-time-travel/E9-T22o-cold-desktop-frontier-calibration.md",
       "activity": [
@@ -36478,11 +36478,29 @@
             "Start authenticated Omarchy frontier calibration",
             "Track calibrated desktop qualification prerequisites"
           ]
+        },
+        {
+          "date": "2026-10-27",
+          "commits": 6,
+          "labels": [
+            "Verify cold desktop frontier with manifest-authenticated offline blocks",
+            "E9-T22o: start exact cold frontier calibration",
+            "E9-T22o: constrain base reads and wall-clock witness bound",
+            "E9-T22o: fail closed on unproven frames and storage faults"
+          ]
+        },
+        {
+          "date": "2026-10-28",
+          "commits": 2,
+          "labels": [
+            "Verify authenticated cold desktop failure frontier",
+            "Submit authenticated cold desktop failure frontier for verification"
+          ]
         }
       ],
       "firstActivity": "2026-10-26",
-      "lastActivity": "2026-10-26",
-      "commitCount": 4
+      "lastActivity": "2026-10-28",
+      "commitCount": 12
     },
     {
       "id": "E9-T22p",
@@ -36492,12 +36510,14 @@
       "priority": null,
       "status": "pending",
       "depends_on": [
-        "E9-T22o"
+        "E9-T22o",
+        "E9-T22s",
+        "E9-T22t"
       ],
       "decomposed_into": [],
       "estimate": "S",
       "capstone": false,
-      "goal": "Admit a finite original-cold qualification window informed by E9-T22o's\nmeasured first-frame frontier, without changing the frozen workloads.",
+      "goal": "Admit a finite original-cold qualification window informed by E9-T22o's\nmeasured first-frame frontier, without changing the frozen workloads.\n\nE9-T22o ended at an exact no-frame failure frontier. E9-T22s must attribute\nthe original guest's first disk I/O rejection before a later exact run can\nmeasure the first frame; this task cannot substitute a guessed allowance.\nE9-T22t must correct the attributed bounded session-block transfer rejection\nbefore that later run.",
       "boundary": "## Boundary\n\nOne explicit supported-profile amendment chained to the accepted v11 desktop\nprofile. The guest-transition, host-wall and retained-capacity allowances may\nchange only where the calibration and measured capacity require them. Retain\nthe old reference, failed C report and exact source/asset receipts. Do not\nchange the original image, ICount/64 clock, 50M checkpoint cadence, guest\nservice files, probe, replay policy or numeric performance budgets.\n\n",
       "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T22p` on a clean exact head.\n\n",
       "criteria": [
@@ -36526,11 +36546,19 @@
           "labels": [
             "Track calibrated desktop qualification prerequisites"
           ]
+        },
+        {
+          "date": "2026-10-28",
+          "commits": 2,
+          "labels": [
+            "plan bounded session block transfer prerequisite",
+            "Open exact cold desktop block-error attribution prerequisite"
+          ]
         }
       ],
       "firstActivity": "2026-10-26",
-      "lastActivity": "2026-10-26",
-      "commitCount": 1
+      "lastActivity": "2026-10-28",
+      "commitCount": 3
     },
     {
       "id": "E9-T22q",
@@ -36589,7 +36617,7 @@
       "epicKey": "9",
       "title": "Record an exact-format cold Omarchy first-frame prefix",
       "priority": null,
-      "status": "in-progress",
+      "status": "verified",
       "depends_on": [
         "E9-T22q"
       ],
@@ -36597,11 +36625,11 @@
       "estimate": "S",
       "capstone": false,
       "goal": "Replace the old 20B cold prefix whose GPU notification latches were omitted\nfrom every exact checkpoint. Retain a fresh original-cold recording with the\ncorrected format through the first real nonblank desktop frame, or a bounded\nfailure frontier.",
-      "boundary": "## Boundary\n\nOne fresh browser recording of the same pinned Omarchy image, kernel,\nbootargs, renderer, service-file setup, ICount/64 clock and 50M checkpoint\ncadence. This is a diagnostic prefix, not the full C workload or its probe;\nit cannot qualify timing. Stop at the first real desktop frame or a declared\nfinite upper bound with resource preflight. Preserve the old graph as evidence.\n\n",
-      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T22r` at a frozen exact head.\n\n",
+      "boundary": "## Boundary\n\nOne fresh browser recording of the same pinned Omarchy image, kernel,\nbootargs, renderer, service-file setup, ICount/64 clock and 50M checkpoint\ncadence. This is a diagnostic prefix, not the full C workload or its probe;\nit cannot qualify timing. Stop at the first real desktop frame or a declared\nfinite upper bound with resource preflight. Preserve the old graph as evidence.\nIf a live HostSpace admission safely stops an already recorded cold prefix,\nits last durable checkpoint may become an explicit resource frontier only\nthrough a separate recovery run that proves the original graph unchanged,\nfinishes the existing witness without stepping the source VM, and replays two\nadjacent windows. The source failure and guest errors remain visible; recovery\nmust never be represented as a first desktop frame or a completed cold run.\nIf the host browser auto-updated after the source capture, record both exact\nversions and require the cloned profile's original manifest and retention\ncounters to match the exported graph before sealing or replay.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T22r` at a frozen exact head for a new capture. For the\npreserved 2026-10-26 resource frontier, run\n`E9_SOURCE=target/evidence/e9-t22r-720f53afe/desktop make verify-E9-T22r-recovery`\nat a frozen recovery head. The recovery report must pin the original\n`720f53afe` execution and its immutable failed report and exported graph.\n\n",
       "criteria": [
         {
-          "text": "Before starting, calculate a finite guest-transition, host-wall, quota and free-disk budget from the old 20B run's measured rate and 9.65 GiB storage, with explicit safety headroom. Refuse a run that cannot fit.",
+          "text": "Before starting any new cold capture, calculate a finite guest-transition, host-wall, quota and free-disk budget from the old 20B run's measured rate and 9.65 GiB storage, with explicit safety headroom for the live profile **plus** a complete export. Refuse a new run that cannot fit. Document the earlier underadmitted capture as a failed source, not a passing preflight.",
           "checked": false
         },
         {
@@ -36609,13 +36637,13 @@
           "checked": false
         },
         {
-          "text": "Authenticate the saved graph and replay at least the last two adjacent checkpoint windows to matching witnesses with zero live egress. A fresh Daybreak critic checks source pins, latch witness fidelity and frame evidence.",
+          "text": "Authenticate the saved graph and replay at least the last two adjacent checkpoint windows to matching witnesses with zero live egress. A fresh Daybreak critic checks source pins, latch witness fidelity and frame evidence. For a HostSpace frontier, prove that the recovery changed only the finished witness flag and session revision, that all original CAS objects and chunks remain byte-identical, and that the reported frontier is the last durable checkpoint before the recorded HostSpace failure.",
           "checked": false
         }
       ],
       "criteriaTotal": 3,
       "criteriaDone": 0,
-      "verificationLog": "### 2026-10-26 — worker — necessity established\n\nThe old 20B graph's original GPU control shadow stayed `last_avail=used=452`\nfrom cold-395 through cold-399, while guest RAM's control avail index was\n`579` in every one of those five checkpoints. Its cursor queue was `0/0`\nwith RAM avail index `0`. The physical objects and sparse-RAM ancestry were\nSHA-256 checked while extracting those ring values. The 127 published but\nunserviced control descriptors make the old v2 checkpoint's missing\nQueueNotify latch behaviorally decisive. Forced rearm consumed one of them in\nthe independently observed replay at 19.85B. A guessed latch value cannot\nauthenticate an exact continuation, so the calibration task needs a newly\nrecorded source prefix after E9-T22q lands.",
+      "verificationLog": "### 2026-10-26 — worker — necessity established\n\nThe old 20B graph's original GPU control shadow stayed `last_avail=used=452`\nfrom cold-395 through cold-399, while guest RAM's control avail index was\n`579` in every one of those five checkpoints. Its cursor queue was `0/0`\nwith RAM avail index `0`. The physical objects and sparse-RAM ancestry were\nSHA-256 checked while extracting those ring values. The 127 published but\nunserviced control descriptors make the old v2 checkpoint's missing\nQueueNotify latch behaviorally decisive. Forced rearm consumed one of them in\nthe independently observed replay at 19.85B. A guessed latch value cannot\nauthenticate an exact continuation, so the calibration task needs a newly\nrecorded source prefix after E9-T22q lands.\n\n### 2026-10-27 — worker — failed cold capture retained, capacity model corrected\n\nThe fresh exact-format cold capture at `720f53afe` reached a durable 21.7B\ncheckpoint (435 total including origin) before the live HostSpace guard refused\nthe next write at 21.75B. The source browser report remains `failed`; it has no\nfinal witness or replay. Its exported graph has 3,523/3,523 reachable objects,\n13,177 hashed chunks and 435 witness pages, but the commitment says\n`finished:false` (`target/evidence/e9-t22r-720f53afe/desktop/`). The old\nadmission reserved the larger of profile and export projections instead of\ntheir sum, so the 36.34 GB initial free space was under the corrected 46+ GB\nrequirement. The console also reports guest `vda` buffer I/O errors. This\nattempt is diagnostic source evidence only; the recovery target must seal the\nlast durable 21.7B witness, authenticate and replay it without a new cold\nboot. A future fresh capture now refuses insufficient disk before launch.\n\n### 2026-10-27 — worker — recovered exact cold HostSpace frontier submitted\n\nAt frozen code head `b481f6c71901c2859afc5f79496f9f374a3ae00d`, ran\n`E9_SOURCE=target/evidence/e9-t22r-720f53afe/desktop E9_OUT=target/evidence/e9-t22r-recovery-b481f6c71 make verify-E9-T22r-recovery`.\nThe target passed six preflight tests, `cargo fmt --all --check`, the built-web\ncheck, browser recovery, retained closure and the independent Python byte\noracle (`target/evidence/e9-t22r-recovery-b481f6c71/`). The source failed\ncapture remains pinned to `720f53afe0153a2425e4f01a607ab16c5705fa6b`:\nHostSpace refused the 21.75B write after the last durable 21.7B checkpoint.\nThe original source-tree digest stayed\n`bddc8591d832993ad0f612a4cf1cc6ff1efb2e7534ac3350060c2330811e3f31`\nbefore and after recovery. The cloned Chrome profile matched the exported\nmanifest and retention counters despite the recorded Chrome 155-to-156 host\nversion change. Sealing executed zero guest steps and changed only the witness\n`finished` flag and session revision; payload bytes, all 3,523 objects and\n13,177 chunks stayed unchanged.\n\nThe source-pinned public controller replayed cold-431 at 21.6B to cold-432\nat 21.65B (`4252975a74f0aa73c645f1581be5acb7d7913268bf4cd83ad30464006d617196`).\nThe source-pinned production worker replayed the same full anchor through\nthe next adjacent window to cold-433 at 21.7B\n(`0602661729d65d93fc4b88053f148b45b336b3f9727efe44c1edaf2a826a10d8`);\nthe final result reports two windows and `wholeChain:true`. Both saved raw\nstates, GPU notification latches `[0,0]`, host queues and physical renderer\nartifacts are retained. Profile, contents, non-epoch logical fields and all\n1,242 original renderer frames match; replay adds exactly one authenticated\nepoch/scanout rebase. Browser errors, blocked requests and replay egress were\nzero, and worker provider entries were zero. The trace is\n`desktop/browser-trace.zip`; the recovered report SHA-256 is\n`0d2d37842f96a7d9b203a420d6debec108f982322a562838605c56d2b74ab17f`;\nthe closure report SHA-256 is\n`81fbecf6c138652d5cf533cd32fbe576c1f4133562864e395664f76cf28f6677`;\nthe byte-oracle report SHA-256 is\n`bf77383a441d5c0edf5d3959852126c99b266ae9eaf5cc713d1cf7c67caaf3c5`.\nThe source had no nonblank desktop-frame evidence and reported guest `vda`\nwrite errors. This is a bounded HostSpace frontier, not a desktop boot or a\ndelta-origin public-controller seek. A separate Daybreak diagnostic of the\nearlier overly strict renderer oracle is retained in\n`target/evidence/e9-t22r-daybreak-renderer-a5792e4d1b/`; the final fresh\nverifier must interrogate this submitted exact-head evidence.\n\n### 2026-10-27 — fresh Daybreak verifier\n\nVERDICT: verified\n\n- Budget and source frontier — HELD. The corrected admission requires\n  46,587,641,122 bytes for the live profile, export and reserves, while the\n  failed original cold run had only 36,344,418,304 bytes. The original report\n  stays failed at 21.75B with 21.7B as its last durable checkpoint, 435 exact\n  v3 checkpoints, no desktop frame and visible guest `vda` errors. Low-disk\n  and low-quota tests reject before launch.\n- Recovery and replay — HELD. Independently byte-compared and hashed all\n  11,173,008,054 retained chunk bytes. The 3,523 objects and 13,177 chunk\n  rows are unchanged; the source-tree digest is identical before and after.\n  Session revision changes `778→779`, and the manifest changes only the\n  witness `finished:false→true`. Both state-plus-RAM witnesses, native and\n  replay latches `[0,0]`, and empty host queues match. The second replay\n  executes two windows from the full 21.6B anchor and reports\n  `wholeChain:true`; it is not a public delta-origin seek.\n- Renderer and isolation — HELD. Both replay renderer artifacts have SHA-256\n  `2bd7272e22de09e1dfaeae04bdff9c8f8f834ba500628c79b054138d1541853d`.\n  Profile, contents and all 1,242 source frames match. Only the outer and\n  scanout epochs change from `2` to `3`, followed by one valid rebase frame.\n  Source runtime pins, cloned-profile counters, zero fetch/socket egress,\n  zero page errors and worker retirement hold despite Chrome 155→156 drift.\n- Novel attack — HELD. An in-memory flip of the final saved state latch at\n  byte 28,347,290 changed its witness from `06026617…a10d8` to\n  `88c020ad…dd5`; the acceptance oracle rejected it. Saved evidence was not\n  changed.\n- COVERAGE: recovery success, both replay transports, source-version drift,\n  renderer normalization, retained closure and byte oracle executed.\n  Fail/timeout cleanup is a fail-closed defense; fresh-frame and other cap\n  branches are mutually exclusive with this permitted HostSpace frontier and\n  remain for later qualification. SUITE: retain\n  `make verify-E9-T22r-recovery`, the closure and independent byte oracle;\n  discard the transient in-memory sabotage after recording its result.\n\nThe independent report is\n`target/evidence/e9-t22r-daybreak-final-b481f6c71/report.md` (SHA-256\n`54e13bd843c77d516bcdc16f02544d4f2b32eb2761837ecc411057991f429fcb`).\nThe routing record confirms `gpt-daybreak-blue-latest`, `daybreakBlue`, a\nread-only fresh session, and no fallback or errors. It inspected worker code\nhead `b481f6c71901c2859afc5f79496f9f374a3ae00d` plus the later\nsubmission-only task/queue commit.",
       "adversarial": "Swap a checkpoint's latch byte, remove an unrequested RAM-delta chunk, alter a\nphysical renderer epoch, and misclassify a compositor process as visible pixels.\nReject reusing the old v2 graph or a warm-start boot as the new prefix.",
       "file": "tasks/epic-9-session-time-travel/E9-T22r-exact-cold-desktop-prefix.md",
       "activity": [
@@ -36626,11 +36654,120 @@
             "docs(e9): start exact cold desktop prefix recording",
             "Require a new exact-format cold desktop prefix"
           ]
+        },
+        {
+          "date": "2026-10-27",
+          "commits": 6,
+          "labels": [
+            "E9-T22r: record independent Daybreak verification",
+            "E9-T22r: submit recovered cold frontier for verification",
+            "Record Chrome version drift during cold prefix recovery",
+            "Recover exact cold prefix after host-space admission"
+          ]
         }
       ],
       "firstActivity": "2026-10-26",
-      "lastActivity": "2026-10-26",
-      "commitCount": 2
+      "lastActivity": "2026-10-27",
+      "commitCount": 8
+    },
+    {
+      "id": "E9-T22s",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Attribute the original cold desktop's first virtio block I/O error",
+      "priority": null,
+      "status": "verified",
+      "depends_on": [
+        "E9-T22o"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Identify the first guest-visible rejected virtio-blk request in the unchanged\nOmarchy cold recording, before deciding whether a disk defect is implicated in\nthe later compositor failure.",
+      "boundary": "## Boundary\n\nDiagnostic observation only. Authenticate an original saved checkpoint before\nthe guest's first vda/EXT4 I/O error, then replay that exact guest in a private\noffline owner. Instrument only the request/result observation path, without\nchanging request validation, completion, guest state, source image, clock,\ncadence, renderer, frozen workload, or production replay policy. Do not infer\nthat the disk error caused Hyprland's later backend crash. The E9-T22o exact\n25.2B no-frame frontier and post-input crash report remain intact.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T22s` against the pinned E9-T22r recovered graph and complete\noffline base cache, producing a bounded browser report, request trace, source\nand output digests, and a negative input-integrity test. A fresh Daybreak Blue\nverifier must examine the trace and the changed diagnostic path at the exact\ncode head before this task reaches `verified`.\n\n",
+      "criteria": [
+        {
+          "text": "Independently authenticate the source checkpoint, RAM ancestry, device and disk state, physical renderer, pending queues, and source code/asset receipts before executing any guest instruction.",
+          "checked": true
+        },
+        {
+          "text": "At the first rejected virtio-blk request, record the exact transition and guest witness digest, type, sector, requested byte length, disk capacity and checked range, backend result or pre-backend refusal, COW sector count before/after, and whether the descriptor was parked or completed `S_IOERR`. Tie that event to the first kernel vda/EXT4 error in the serial stream; never equate a `WouldBlock` park with an I/O error.",
+          "checked": true
+        },
+        {
+          "text": "Prove the diagnostic did not change the architectural run: compare exact state and guest-output witnesses with the original recorded checkpoint(s), retain zero browser/guest egress and unchanged source-graph digest, and classify the failure as a concrete runtime or guest-side path. If no first rejection can be reproduced from the authenticated prefix, report an exact witness divergence rather than guessing a cause.",
+          "checked": true
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 3,
+      "verificationLog": "### 2026-10-28 — worker — prerequisite opened\n\nE9-T22o was independently verified at report SHA-256\n`5cb0ab6386e534f5d7711d57ca2544a4efa721ff82e87204e1ba810f249e737b`.\nIts unchanged guest had no qualifying first frame by 25.2B. Only after\ndiagnostic input did trusted journal records show Hyprland PID 341 failing\n`CBackend::create()`; the source guest console also preserves a vda write I/O\nerror at sector 24,928,880 and an EXT4 write error for inode 177851. The\nrequest length and backend outcome are absent from that evidence. This slice\nmust identify the exact first block rejection before a semantic fix or a\nfirst-frame allowance can be selected.\n\n### 2026-10-28 — worker — implemented at `de39b0459d4e83c63503230fb03897c21335a340`\n\nClaim: The unchanged cold guest's first completed virtio-blk `S_IOERR` occurred\nat transition `14,365,286,002` (guest witness\n`585596507707029fef3886fa1763aba8daa00e79fcf5581067e799148e1ce25f`,\nRAM digest `2e6582c826bac324fb7c19f573efd614c9392c48254c4b5f0e8c25a1047cf275`).\nDescriptor head 69 requested a `1,179,648`-byte write at sector `24,928,880`.\nThe disk range was in bounds (`25,165,824` sectors), but the session backend's\ntransfer cap was `1,048,320` bytes. The virtio transfer-shape gate rejected it\nbefore backend I/O, wrote the status byte, and committed the used ring. The COW\noverlay remained at `17,640` sectors. The next sealed serial receipt at\ntransition `14,365,728,640` reports the same sector as a vda write error,\nfollowed by the EXT4 warning. This attributes that disk error only; it does not\nclaim that the error caused the later Hyprland failure.\n\nEvidence: `target/evidence/e9-t22s-cold-proof-de39b0459/desktop/report.json`\n(SHA-256 `3ff45601e5eb82c147f3023610499f165ea5c540d1ff6542f544f8984ac2e37f`),\n`desktop/request-trace.json` (SHA-256\n`c3c5fef9c5f1b57e8beeb084772ce60e6a9f9d559f17a870740db53bdf4a285c`),\n`desktop/browser-trace.zip`, and `input-attacks/report.json` (SHA-256\n`2ae7b5fe8c1b6b69ac0b16491452e8d1950d9b2428cae5daca3226963ae55923`).\nThe source report pin is `0d2d37842f96a7d9b203a420d6debec108f982322a562838605c56d2b74ab17f`;\nthe recovered source tree remained\n`ad3bc7bfe74ce25a72617ac8b0d3155a8966593b819e8445014dfdef6cc935f3`\nbefore and after. The authenticated 14.35B checkpoint, physical renderer,\noriginal 14.4B/14.45B state and output, and original-versus-diagnostic failure\nboundary all matched. Browser errors, blocked requests, sockets, and guest\negress were zero. No unretained base chunk was naturally requested in this\ninterval; the negative input test separately refused an unavailable chunk and\ncorrupt base/RAM bytes before guest execution.\n\nCommands: `make verify-E9-T22s` from a clean sparse clone of the exact code\nhead, with `CARGO_*`, `RUSTFLAGS`, and `RUST_LOG` scrubbed, offline `npm ci`,\nand only the recovered graph and authenticated base cache supplied as external\ninputs; `make test`, `make features`, `make wasm`, `make test-riscv`,\n`make riscv-tests-suite` (128/128), `make determinism`, and `make perf-smoke`\n(55.3 MIPS). `make ci` was attempted but stopped in its no-default-feature\nClippy matrix on five pre-existing dead-code warnings in unchanged session\nclock/device files; the later affected gates were run individually and passed.\nThe private diagnostic feature is off in the production build. The code commit\nused the hook's `SKIP_WEB_BUILD=1` to keep the pinned production `web/dist`\nbytes unchanged; this slice adds no public demo capability.\n\n### 2026-10-28 — fresh Daybreak Blue verifier — VERDICT: verified\n\n- First completed rejection — HELD. Predicted a pre-serial-error write at\n  transition `14,365,286,002`; observed head 69, sector `24,928,880`, length\n  `1,179,648`, `TransferShape`, no backend call, status DMA and used-ring commit\n  at `request-trace.json:1339`. Independently calculated an in-range byte end\n  `12,764,766,208` below capacity `12,884,901,888`. The verifier's initial\n  byte-end estimate and expectation of an explicit backend error were corrected\n  against the code and trace; neither was a product claim.\n- Source and non-interference — HELD. Rehashed the pinned source inputs and\n  final report/trace, checked the fresh 3,523-object/13,177-chunk closure and\n  435-checkpoint byte oracle, then matched the original and diagnostic guest,\n  output, event, and payload witnesses at 14.4B, 14.45B, and the failure\n  boundary. Source tree before/after and browser/guest egress were unchanged.\n  The first sealed vda/EXT4 serial receipt follows at `14,365,728,640` with\n  the same sector (`request-trace.json:1439`).\n- Attacks and coverage — HELD. The maximum aligned transfer, out-of-range\n  write, COW capacity park, unavailable base chunk, malformed descriptor,\n  corrupt base/RAM inputs, and a novel two-descriptor aggregate-size case held\n  their distinct status/used-ring/backend predictions. Sabotaging the new cap\n  assertion made its focused test fail, then the restored test passed; the\n  scratch clone finished clean. The cold run and deterministic tests exercised\n  the acceptance-relevant changed hunks; passive defensive stage labels and\n  compile-time feature declarations received explicit waivers.\n- SUITE: retain the 20 diagnostic integration tests, COW-capacity unit test,\n  negative input-integrity probes, and `verify-E9-T22s` target. Full verifier\n  report: `target/evidence/e9-t22s-daybreak-verifier-de39b0459/report.md`\n  (SHA-256 `6f6977f4ceef21eb0944565a0c4e6f9f1a3eab73f97d0471ba1cc91bac331340`).",
+      "adversarial": "Attempt a 1 MiB transfer at the session maximum, an out-of-range write, a COW\ncapacity park, an unavailable base chunk, and a malformed descriptor. Distinguish\neach from the actual first rejected request using the status byte, used-ring\ncommit and backend return. Corrupt an unrequested base chunk and one RAM delta;\nrefuse both before execution. Check that instrumentation cannot repair or mask\nthe observed error and that the original guest witness still matches.",
+      "file": "tasks/epic-9-session-time-travel/E9-T22s-cold-desktop-block-error-attribution.md",
+      "activity": [
+        {
+          "date": "2026-10-28",
+          "commits": 5,
+          "labels": [
+            "E9-T22s record Daybreak verification verdict",
+            "E9-T22s submit exact cold block attribution evidence",
+            "Open exact cold desktop block-error attribution prerequisite",
+            "E9-T22s stage pinned session package for cold verification"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-28",
+      "lastActivity": "2026-10-28",
+      "commitCount": 5
+    },
+    {
+      "id": "E9-T22t",
+      "epic": "9",
+      "epicKey": "9",
+      "title": "Bound large session block DMA independently of host completions",
+      "priority": null,
+      "status": "in-progress",
+      "depends_on": [
+        "E9-T22s"
+      ],
+      "decomposed_into": [],
+      "estimate": "S",
+      "capstone": false,
+      "goal": "Let the frozen original cold desktop complete its observed 1,179,648-byte\nvirtio-blk write. E9-T22s proved that the in-range write currently completes\n`S_IOERR` before the COW backend because a host completion-payload limit is\nalso used as the guest's block DMA limit. Keep these two boundaries separate.",
+      "boundary": "## Boundary\n\nOne bounded session-block transfer change. The maximum guest block request\nmust remain finite and fit the 16 MiB authenticated base-chunk cache; host\ncompletion envelopes, immutable base chunks, the 524,288-sector COW limit,\ndevice ownership, frozen image/workload/clock/checkpoint cadence, and replay\npolicy stay unchanged. This task makes no first-frame or full-workload claim.\n\n",
+      "acceptanceContract": "## Deterministic acceptance\n\n`make verify-E9-T22t` on a clean exact head.\n\n",
+      "criteria": [
+        {
+          "text": "The real virtio descriptor path completes an in-range 1,179,648-byte session COW write with `S_OK`, exact bytes and used-ring advancement. Reads spanning multiple authenticated base chunks remain atomic across parks and overlays; replay preserves the resulting disk state.",
+          "checked": false
+        },
+        {
+          "text": "A sector-aligned request above the new finite DMA bound still completes `S_IOERR` without a backend call, while out-of-range and COW-capacity paths retain their distinct behavior. Host `MAX_RESULT` and authenticated completion validation do not widen.",
+          "checked": false
+        },
+        {
+          "text": "The built browser exercises the corrected guest-visible path without console errors, and the demo's session-capability evidence is updated. Record exact-head guest and browser evidence, then obtain a fresh Daybreak adversarial verdict on the diff and evidence.",
+          "checked": false
+        }
+      ],
+      "criteriaTotal": 3,
+      "criteriaDone": 0,
+      "verificationLog": "",
+      "adversarial": "Attack just below, at and above the transfer boundary; split DMA over\nmultiple descriptors; exercise a read that needs more than one authenticated\nbase chunk, a partially overlaid read, out-of-range sectors, COW capacity,\nreset/park and replay. Try to use a larger guest DMA to smuggle an oversized\nhost completion or to exhaust the cache with pinned chunks. Reject evidence\nthat only calls the backend directly and never executes the virtio chain.",
+      "file": "tasks/epic-9-session-time-travel/E9-T22t-session-block-transfer-bound.md",
+      "activity": [
+        {
+          "date": "2026-10-28",
+          "commits": 1,
+          "labels": [
+            "plan bounded session block transfer prerequisite"
+          ]
+        }
+      ],
+      "firstActivity": "2026-10-28",
+      "lastActivity": "2026-10-28",
+      "commitCount": 1
     },
     {
       "id": "E9-T23",

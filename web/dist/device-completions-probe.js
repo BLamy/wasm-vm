@@ -4,6 +4,7 @@ import {SessionStore} from './session-store.js';
 import {SessionInputJournal} from './session-inputs.js';
 import {sessionCanonicalImage,sessionEventReferences,sessionManifestReferences} from './session-pkg/wasm_vm_session.js';
 import {deviceEventParts,splitDeviceCompletion} from './session-devices.js';
+import {runSessionBlockTransferProbe} from './session-block-transfer-probe.js';
 export const DEVICE_PROBE_DATABASE='wasm-vm-sessions-v1-device-completion-proof';
 const need=(ok,why)=>{if(!ok)throw Error('device completion: '+why);};
 const equal=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
@@ -66,6 +67,7 @@ export async function runDeviceCompletionsProbe(){
    }finally{replay.free();}
   }
   machine.restoreEventCheckpoint(pending);const before=machine.saveEventCheckpoint();refuse('stale callback after restore',()=>machine.completeDeviceRequest(stale,0,0,chunks[0]));need(equal(before,machine.saveEventCheckpoint()),'stale reply changes nothing');stale.free();
-  report.baseReferences=receipts.filter(r=>splitDeviceCompletion(r.bytes).tag===1).map(r=>deviceEventParts(r).payload.content);report.status='passed';return report;
+  report.baseReferences=receipts.filter(r=>splitDeviceCompletion(r.bytes).tag===1).map(r=>deviceEventParts(r).payload.content);
+  report.largeBlock=await runSessionBlockTransferProbe();report.status='passed';return report;
  }finally{if(writer)await writer.release();if(store)await store.close();machine?.free();}
 }

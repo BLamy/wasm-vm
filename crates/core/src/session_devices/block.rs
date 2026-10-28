@@ -47,7 +47,7 @@ impl BlockBackend for CompletionBlock {
         Some(self.hub.borrow().guest.overlay.len())
     }
     fn max_transfer_bytes(&self) -> usize {
-        MAX_RESULT
+        MAX_BLOCK_TRANSFER
     }
     fn capacity_sectors(&self) -> u64 {
         self.hub.borrow().base.as_ref().unwrap().sectors
@@ -58,7 +58,7 @@ impl BlockBackend for CompletionBlock {
         if buf.is_empty() {
             return Ok(());
         }
-        if buf.len() > MAX_RESULT {
+        if buf.len() > MAX_BLOCK_TRANSFER {
             hub.error = Some(DeviceError::Limit);
             return Err(BlockError::WouldBlock { chunk: 0 });
         }
@@ -116,6 +116,10 @@ impl BlockBackend for CompletionBlock {
     fn write(&mut self, sector: u64, buf: &[u8]) -> Result<(), BlockError> {
         check_range(self.capacity_sectors(), sector, buf.len())?;
         let mut hub = self.hub.borrow_mut();
+        if buf.len() > MAX_BLOCK_TRANSFER {
+            hub.error = Some(DeviceError::Limit);
+            return Err(BlockError::WouldBlock { chunk: 0 });
+        }
         let additional = (0..buf.len() / SECTOR_SIZE)
             .filter(|n| !hub.guest.overlay.contains_key(&(sector + *n as u64)))
             .count();
@@ -190,7 +194,7 @@ mod diagnostic_tests {
         const HDR: u64 = virt::DRAM_BASE + 0x13_0000;
         const DATA: u64 = virt::DRAM_BASE + 0x14_0000;
         const STATUS: u64 = virt::DRAM_BASE + 0x15_0000;
-        let mut machine = Machine::new(8 * 1024 * 1024);
+        let mut machine = Machine::new(16 * 1024 * 1024);
         machine.enable_clint(10);
         machine.enable_plic();
         machine.enable_virtio_blk(Box::new(CompletionBlock { hub: hub.clone() }));
@@ -259,15 +263,15 @@ mod diagnostic_tests {
         assert_eq!(parked[0].used_shadow_index, 0);
         assert_eq!(parked[0].used_guest_index, 0);
 
-        // The real session backend advertises 1 MiB minus 256 bytes. Virtio
-        // writes are sector-aligned, so this is its largest accepted request.
+        // Host completion envelopes remain below 1 MiB; a local guest DMA
+        // request has its own finite bound, independent of that envelope.
         hub.borrow_mut().guest.overlay.clear();
         hub.borrow_mut().error = None;
         const HDR2: u64 = virt::DRAM_BASE + 0x16_0000;
         const DATA2: u64 = virt::DRAM_BASE + 0x20_0000;
         const STATUS2: u64 = virt::DRAM_BASE + 0x17_0000;
-        let maximum_aligned = (MAX_RESULT / SECTOR_SIZE * SECTOR_SIZE) as u32;
-        assert_eq!(maximum_aligned, (1 << 20) - 512);
+        let maximum_aligned = MAX_BLOCK_TRANSFER as u32;
+        assert_eq!(maximum_aligned, 8 << 20);
         machine.bus_mut().store32(HDR2, 1).unwrap();
         machine.bus_mut().store64(HDR2 + 8, 0).unwrap();
         for (index, addr, length, flags, next) in [
@@ -289,20 +293,22 @@ mod diagnostic_tests {
         assert_eq!(machine.bus_mut().load8(STATUS).unwrap(), 0);
         assert_eq!(machine.bus_mut().load8(STATUS2).unwrap(), 0);
         assert_eq!(machine.bus_mut().load16(USED + 2).unwrap(), 2);
-        assert_eq!(hub.borrow().guest.overlay.len(), 2048);
+        assert_eq!(
+            hub.borrow().guest.overlay.len(),
+            MAX_BLOCK_TRANSFER / SECTOR_SIZE + 1 // earlier capacity-parked sector completes
+        );
         assert!(machine.first_blk_failure().is_none());
 
-        // A literal 1 MiB session write is one sector-aligned step over the
-        // advertised result cap. It completes S_IOERR before the backend,
-        // unlike the earlier COW capacity park.
+        // The original cold desktop wrote 1,179,648 bytes in one virtio
+        // request. It is larger than any host completion, but fits local DMA.
         const HDR3: u64 = virt::DRAM_BASE + 0x18_0000;
         const DATA3: u64 = virt::DRAM_BASE + 0x30_0000;
         const STATUS3: u64 = virt::DRAM_BASE + 0x19_0000;
         machine.bus_mut().store32(HDR3, 1).unwrap();
-        machine.bus_mut().store64(HDR3 + 8, 4096).unwrap();
+        machine.bus_mut().store64(HDR3 + 8, 20_000).unwrap();
         for (index, addr, length, flags, next) in [
             (0, HDR3, 16, 1, 1),
-            (1, DATA3, 1 << 20, 1, 2),
+            (1, DATA3, 1_179_648, 1, 2),
             (2, STATUS3, 1, 2, 0),
         ] {
             let at = DESC + index * 16;
@@ -316,19 +322,56 @@ mod diagnostic_tests {
         machine.bus_mut().store16(AVAIL + 2, 3).unwrap();
         machine.bus_mut().store32(SLOT + 0x50, 0).unwrap();
         assert_eq!(machine.run(4), RunOutcome::MaxInstrs);
-        assert_eq!(machine.bus_mut().load8(STATUS3).unwrap(), 1);
+        assert_eq!(machine.bus_mut().load8(STATUS3).unwrap(), 0);
         assert_eq!(machine.bus_mut().load16(USED + 2).unwrap(), 3);
+        assert_eq!(
+            hub.borrow().guest.overlay.len(),
+            MAX_BLOCK_TRANSFER / SECTOR_SIZE + 2305
+        );
+        assert!(machine.first_blk_failure().is_none());
+
+        // Exactly one sector over the independent DMA bound still fails
+        // before calling the backend or touching the COW overlay.
+        const HDR4: u64 = virt::DRAM_BASE + 0x1a_0000;
+        const DATA4: u64 = virt::DRAM_BASE + 0x30_0000;
+        const STATUS4: u64 = virt::DRAM_BASE + 0x1b_0000;
+        machine.bus_mut().store32(HDR4, 1).unwrap();
+        machine.bus_mut().store64(HDR4 + 8, 8192).unwrap();
+        for (index, addr, length, flags, next) in [
+            (0, HDR4, 16, 1, 1),
+            (1, DATA4, (MAX_BLOCK_TRANSFER + SECTOR_SIZE) as u32, 1, 2),
+            (2, STATUS4, 1, 2, 0),
+        ] {
+            let at = DESC + index * 16;
+            machine.bus_mut().store64(at, addr).unwrap();
+            machine.bus_mut().store32(at + 8, length).unwrap();
+            machine.bus_mut().store16(at + 12, flags).unwrap();
+            machine.bus_mut().store16(at + 14, next).unwrap();
+        }
+        machine.bus_mut().store8(STATUS4, 0xa5).unwrap();
+        machine.bus_mut().store16(AVAIL + 10, 0).unwrap();
+        machine.bus_mut().store16(AVAIL + 2, 4).unwrap();
+        machine.bus_mut().store32(SLOT + 0x50, 0).unwrap();
+        assert_eq!(machine.run(4), RunOutcome::MaxInstrs);
+        assert_eq!(machine.bus_mut().load8(STATUS4).unwrap(), 1);
+        assert_eq!(machine.bus_mut().load16(USED + 2).unwrap(), 4);
         let failure = machine.first_blk_failure().unwrap();
         assert_eq!(failure.rtype, Some(1));
-        assert_eq!(failure.sector, Some(4096));
-        assert_eq!(failure.requested_bytes, 1 << 20);
-        assert_eq!(failure.max_transfer_bytes, MAX_RESULT);
+        assert_eq!(failure.sector, Some(8192));
+        assert_eq!(
+            failure.requested_bytes,
+            (MAX_BLOCK_TRANSFER + SECTOR_SIZE) as u64
+        );
+        assert_eq!(failure.max_transfer_bytes, MAX_BLOCK_TRANSFER);
         assert_eq!(
             failure.stage,
             crate::dev::virtio::blk::BlkFailureStage::TransferShape
         );
         assert_eq!(failure.backend_error, None);
         assert!(failure.status_dma_written && failure.used_ring_committed);
-        assert_eq!(hub.borrow().guest.overlay.len(), 2048);
+        assert_eq!(
+            hub.borrow().guest.overlay.len(),
+            MAX_BLOCK_TRANSFER / SECTOR_SIZE + 2305
+        );
     }
 }

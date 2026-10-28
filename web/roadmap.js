@@ -230,7 +230,7 @@ export const ROADMAP = [
       { name: "Delivered user input recording", status: "verified", probe: "input-recording", evidence: "E9-T10: guest input adapters, durable prefixes and replay ingress firewall" },
       { name: "Guest time and entropy recording", status: "verified", probe: "time-entropy", evidence: "E9-T11: independently verified RTC/entropy replay, stable JIT polling and zero live providers" },
       { name: "Offline network recording", status: "verified", probe: "network-capture", evidence: "E9-T13: real guest Ethernet intents, owned replies, exact delivery positions and zero live replay transport" },
-      { name: "Owned device completion recording", status: "verified", probe: "device-completions", evidence: "E9-T12: authenticated base payloads, real block/agent/audio DMA and revocable callback leases" },
+      { name: "Owned device completion recording", status: "verified", probe: "device-completions", evidence: "E9-T12/T22t: authenticated base payloads, bounded large guest block DMA, real agent/audio DMA and revocable callback leases" },
       { name: "Saved full Linux replay", status: "verified", probe: "session-replay", evidence: "E9-T14: pinned Alpine session, durable event tape, interpreter/JIT state digests, first-divergence and unbranched-input checks" },
       { name: "Bounded native replay handoff", status: "verified", probe: "streamed-replay", evidence: "E9-T22g: Daybreak verified one private machine across bounded exact replay windows; full GPU workload qualification remains separate" },
       { name: "Incremental RAM keyframes", status: "verified", probe: "session-keyframe", evidence: "E9-T15: independently verified bounded dirty-page deltas, exact private restore, ancestor refusal and shared retention" },

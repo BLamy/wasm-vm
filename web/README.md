@@ -46,6 +46,12 @@ Full desktop recording integration and performance remain E9-T22/E9-T24 work.
 independent from-start VM/console comparisons and 100 superseded seek requests. Build and
 commit `web/dist` before recording the frozen-head acceptance.
 
+The **Owned device completion recording** probe also runs a small RV64 guest
+that submits a 1,179,648-byte split-descriptor block write and read through
+the session COW adapter. Its source and deterministic ELF builder are in
+`tools/verify/build-e9-block-transfer-guest.py`; `make verify-E9-T22t` checks
+the built browser proof and the independent guest trace oracle.
+
 ## Browser support
 
 Current **Chrome** and **Firefox** (both ship `WebAssembly`, ES modules, and
