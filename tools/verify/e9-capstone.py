@@ -77,7 +77,7 @@ try:
     assert prior['status'] == 'passed' and prior['head'] == 'd653efd8001fb0c9d9c61b860f2185e9488157c1'
     runtime_paths = ['crates', 'Cargo.toml', 'Cargo.lock', 'guest', 'web']
     allowed = lambda name: (name.startswith(('web/docs', 'web/dist/docs', 'web/dist/assets/docs-reader-', 'web/dist/assets/marketing-'))
-                            or name in ['web/README.md', 'web/roadmap.js', 'web/dist/roadmap.js', 'web/tasks.json', 'web/dist/tasks.json',
+                            or name in ['web/tests/omarchy-seeded-loader.test.mjs', 'web/README.md', 'web/roadmap.js', 'web/dist/roadmap.js', 'web/tasks.json', 'web/dist/tasks.json',
                                         'web/repo-activity.json', 'web/dist/repo-activity.json', 'web/dist/index.html', 'web/dist/sw.js'])
     changed = git('diff', '--name-only', prior['head'], report['head'], '--', *runtime_paths).splitlines()
     assert all(allowed(name) for name in changed), 'runtime boundary changed: ' + repr([n for n in changed if not allowed(n)])

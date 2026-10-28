@@ -12,7 +12,10 @@ const endAt = loader.indexOf("\nexport function resolveSlirpProvider", startAt);
 assert.ok(startAt >= 0 && endAt > startAt, "actual startLinuxBoot source boundary missing");
 const startSource = loader
   .slice(startAt, endAt)
-  .replace("export async function startLinuxBoot(", "async function startLinuxBoot(");
+  .replace("export async function startLinuxBoot(", "async function startLinuxBoot(")
+  // vm.Script has no module metadata. Bind the real loader URL without changing
+  // the extracted function or any boot decision/identity guard.
+  .replaceAll("import.meta.url", JSON.stringify(new URL("../loader.js", import.meta.url).href));
 
 const CHUNK_MANIFEST_TEXT = '{"version":1}';
 const CHUNK_MANIFEST_SHA256 = "2430f1a2ad2982d0067885488a4c89e21ad1d7c83b115ba8f1b20acc88dfaea8";
