@@ -13,11 +13,13 @@ import{execFileSync}from'node:child_process';
 import{chromium}from'../../web/node_modules/playwright/index.mjs';
 import{WORKLOAD_ROOT as root,loadQualificationAssets,sha}from'./e9-workload-assets.mjs';
 import{retainSessionStore}from'./e9-retain-session-store.mjs';
-const options={};for(let i=2;i<process.argv.length;i++){const key=process.argv[i];if(key==='--development'){assert(!options.development);options.development=true;}else{assert(key==='--output'&&!options.output&&process.argv[i+1]);options.output=process.argv[++i];}}assert(options.output);
+import {verifyCapturedHttp} from './e9-owned-http-wire.mjs';
+const options={};for(let i=2;i<process.argv.length;i++){const key=process.argv[i];if(key==='--development'||key==='--capstone'){const name=key.slice(2);assert(!options[name]);options[name]=true;}else{assert(key==='--output'&&!options.output&&process.argv[i+1]);options.output=process.argv[++i];}}assert(options.output);
 const out=path.resolve(options.output),web=path.join(root,'web/dist');await fs.mkdir(path.dirname(out),{recursive:true});await fs.mkdir(out);
 const git=(...args)=>execFileSync('git',args,{cwd:root,encoding:'utf8'}).trim();
 const report={task:'E9-T22c',phase:'software',scope:'Complete original software workload/replay phase only; desktop, direct oracles and independent critic remain required',development:!!options.development,status:'running',head:null,dirty:null,started:new Date().toISOString(),errors:[],missing:[],external:[],raw:[],served:[]};
 let assets,pageSource,scheduleSource;
+if(options.capstone){const bytes=await fs.readFile(path.join(root,'docs/design/session-capstone-profile-v1.json'));const profile=JSON.parse(bytes);assert.equal(profile.task,'E9-T24');assert.equal(profile.platform,process.platform);assert.equal(profile.arch,process.arch);report.task='E9-T24';report.scope=profile.scope;report.capstoneProfile={...profile,sha256:sha(bytes)};}
 try{
  report.head=git('rev-parse','HEAD');report.dirty=git('status','--porcelain');
  if(!options.development)assert.equal(report.dirty,'','freeze source before accepted phase');
@@ -41,7 +43,7 @@ const server=createServer(async(req,res)=>{try{const name=decodeURIComponent(new
  }catch(error){report.missing.push({url:req.url,error:String(error.stack??error)});if(!res.headersSent)res.writeHead(500);res.end();}});
 try{
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));origin='http://127.0.0.1:'+server.address().port;
- browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});report.browser=browser.version();assert.equal('Chrome '+report.browser,assets.qualification.referenceAmendment.qualificationBrowser,'declared browser profile');context=await browser.newContext({serviceWorkers:'block',viewport:{width:1200,height:900}});await context.tracing.start({screenshots:true,snapshots:false,sources:true});page=await context.newPage();
+ browser=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'});report.browser=browser.version();assert.equal('Chrome '+report.browser,options.capstone?report.capstoneProfile.browser:assets.qualification.referenceAmendment.qualificationBrowser,'declared scoped browser profile');context=await browser.newContext({serviceWorkers:'block',viewport:{width:1200,height:900}});await context.tracing.start({screenshots:true,snapshots:false,sources:true});page=await context.newPage();
  page.on('console',m=>{if(m.type()==='error')report.errors.push(m.text());});page.on('pageerror',e=>report.errors.push(e.stack));page.on('request',r=>{if(/^https?:/.test(r.url())&&new URL(r.url()).origin!==origin)report.external.push(r.url());});page.on('websocket',s=>report.external.push(s.url()));
  await page.exposeFunction('workloadProgress',async p=>{await fs.writeFile(path.join(out,'progress.json'),JSON.stringify(p,null,2)+'\n');console.log(JSON.stringify(p));let stop=false;try{await fs.access(path.join(out,'STOP'));stop=true;}catch{}return{continue:!stop};});
  await fs.writeFile(path.join(out,'sealed-before-execution.json'),JSON.stringify({...report,origin},null,2)+'\n');
@@ -49,13 +51,13 @@ try{
  try{report.retained=await retainSessionStore(page,report.result.database,path.join(out,'saved'));}
  catch(error){report.retentionError=String(error.stack??error);}
  report.diagnosticErrors=[];
- try{await fs.writeFile(path.join(out,'console.txt'),report.result.console);}catch(error){report.diagnosticErrors.push('console: '+String(error.stack??error));}
+ try{if(options.capstone)report.wire=verifyCapturedHttp(JSON.parse(await fs.readFile(path.join(out,'receipts.json'),'utf8')));await fs.writeFile(path.join(out,'console.txt'),report.result.console);}catch(error){report.diagnosticErrors.push('console: '+String(error.stack??error));}
  try{await page.screenshot({path:path.join(out,'software.png')});}catch(error){report.diagnosticErrors.push('screenshot: '+String(error.stack??error));}
  assert.equal(report.result.status,'software-full-workload-replay-passed',report.result.error);
  assert(report.retained,report.retentionError??'retained complete session');
  assert.deepEqual(report.diagnosticErrors,[],'complete software diagnostics');
  assert.deepEqual(report.errors,[]);assert.deepEqual(report.missing,[]);assert.deepEqual(report.external,[]);
- await assets.inspectCache();assert.equal(git('rev-parse','HEAD'),report.head);for(const row of report.executedSources)assert.equal(sha(await fs.readFile(path.join(root,row.path))),row.sha256);
+ await assets.inspectCache();assert.equal(git('rev-parse','HEAD'),report.head);assert.equal(git('status','--porcelain'),report.dirty);for(const row of report.executedSources)assert.equal(sha(await fs.readFile(path.join(root,row.path))),row.sha256);
  report.status='software-full-workload-replay-passed';
 }catch(error){report.status='failed';report.failure=String(error.stack??error);process.exitCode=1;
  if(page&&!report.result){try{report.result=await page.evaluate(()=>globalThis.softwareWorkload??null);}

@@ -40,7 +40,7 @@ digest update together only after the private replay is restored. Observation ev
 navigate to the next transition boundary. Exact GPU histories recorded in the explicit
 1 GiB pure ICount/64 runtime also restore their physical canvas and recorded guest
 results. Older paced GPU histories remain checkpoint-only in **Local saved sessions**.
-Full desktop recording integration and performance remain E9-T22/E9-T24 work.
+Full Omarchy cold-boot qualification and the original two-profile performance campaign are deferred and unproven. The [unified time-travel guide](docs-source/guides/time-travel.md) describes the bounded software Linux/GPU integration, local transfer and recovery controls. `make verify-E9-T24` records that accepted scope.
 
 `make verify-E9-T19` records the built-page keyboard, mouse and touch paths, narrow layout,
 independent from-start VM/console comparisons and 100 superseded seek requests. Build and

@@ -16,6 +16,7 @@ wasm-vm executes a RISC-V computer in Rust and WebAssembly. An unmodified Linux 
 | Put the machine inside your application | [Embed the machine](./docs.html?page=embedding) |
 | Understand CPU, memory, and devices | [Architecture](./docs.html?page=architecture) |
 | Keep changes across reloads | [Storage and persistence](./docs.html?page=storage) |
+| Rewind execution or branch a recording | [Record, rewind, and branch](./docs.html?page=time-travel) |
 | Connect the guest to a network | [Networking](./docs.html?page=networking) |
 | Use the display and input paths | [Desktop and input](./docs.html?page=desktop) |
 | Understand admitted guest graphics work | [Graphics boundary](./docs.html?page=graphics) |

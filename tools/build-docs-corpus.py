@@ -28,6 +28,7 @@ GUIDES = [
     ("architecture", "Architecture", "Use the machine"),
     ("embedding", "Embed the machine", "Use the machine"),
     ("storage", "Storage and persistence", "Use the machine"),
+    ("time-travel", "Record, rewind, and branch", "Use the machine"),
     ("networking", "Networking", "Use the machine"),
     ("desktop", "Display, input, and audio", "Use the machine"),
     ("graphics", "Guest graphics: the admitted boundary", "Use the machine"),

@@ -15,6 +15,7 @@ import subprocess
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--directory', type=Path, required=True)
+parser.add_argument('--capstone', action='store_true')
 a = parser.parse_args()
 root = Path(__file__).resolve().parents[2]
 out = a.directory.resolve()
@@ -158,7 +159,11 @@ try:
     assert source.stat().st_size == fixture['artifacts']['rootfs']['size']
     assert hash_file(source) == fixture['artifacts']['rootfs']['sha256']
     report['baseSha256'] = fixture['artifacts']['rootfs']['sha256']
-    assert browser['phase'] == 'software' and browser['task'] == 'E9-T22c'
+    assert browser['phase'] == 'software' and browser['task'] == ('E9-T24' if a.capstone else 'E9-T22c')
+    if a.capstone:
+        profile = (root / 'docs/design/session-capstone-profile-v1.json').read_bytes()
+        assert browser['capstoneProfile']['sha256'] == sha(profile)
+        assert 'Chrome ' + browser['browser'] == json.loads(profile)['browser']
     work = browser['result']
     entropy_hashes = re.findall(r'(?m)^([a-f0-9]{64})  /root/e9-session/entropy$', work['setup']['stdout'])
     assert len(entropy_hashes) == 1

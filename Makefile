@@ -3063,3 +3063,8 @@ verify-E9-T22t:
 .PHONY: verify-E9-T23
 verify-E9-T23:
 	python3 -B tools/verify/e9-recovery.py --output "$${E9_OUT:-target/evidence/e9-t23-$$(date -u +%Y%m%dT%H%M%SZ)}"
+
+# Final bounded integration; original-cold Omarchy and performance campaign are waived.
+.PHONY: verify-E9-T24
+verify-E9-T24:
+	python3 -B tools/verify/e9-capstone.py --output "$${E9_OUT:-target/evidence/e9-t24-$$(date -u +%Y%m%dT%H%M%SZ)}"
