@@ -3,7 +3,7 @@ id: E9-T23
 epic: 9
 title: Harden recording and seeking against crashes and corrupt history
 priority: 524.923
-status: pending
+status: in-progress
 depends_on: [E9-T07, E9-T18c, E9-T20, E9-T21]
 estimate: S
 risk: high
