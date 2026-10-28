@@ -193,12 +193,12 @@ export async function checkMigration(page,{namespace,fixture}) {
   assert.equal(result.version,2);assert.equal(result.matches,true);assert.equal(result.stats.payloadBytes,fixture.expectedSharedBytes);assert.equal(result.revision,'1');return result;
 }
 
-export async function checkMaintenanceSchedules(context,page,url,{namespace,fixture}) {
+export async function checkMaintenanceSchedules(context,page,url,{namespace,fixture,firstSeed=17}) {
   const other=await context.newPage();await other.goto(url,{waitUntil:'domcontentloaded'});await other.waitForFunction(()=>window.__ready===true);
   const result=[];
   try{
     for(const target of [page,other])await target.evaluate(async namespace=>{const {SessionStore}=await import('./session-store.js');window.__retentionRaceStore=await SessionStore.open(namespace);},namespace);
-    for(let seed=17;seed<33;seed++){
+    for(let seed=firstSeed;seed<firstSeed+16;seed++){
       const mode=seed%2?'writer':'reader',delay=seed*13%7;
       await page.evaluate(async({mode,seed,delay,fixture})=>{
         const store=__retentionRaceStore;

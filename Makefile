@@ -3059,3 +3059,7 @@ verify-E9-T22t:
 	  python3 -B tools/verify/e9-block-transfer-files.py --directory "$$out/browser" \
 	    > "$$out/oracle.log" 2>&1; \
 	  test -z "$$(git status --porcelain --untracked-files=all)"
+
+.PHONY: verify-E9-T23
+verify-E9-T23:
+	python3 -B tools/verify/e9-recovery.py --output "$${E9_OUT:-target/evidence/e9-t23-$$(date -u +%Y%m%dT%H%M%SZ)}"

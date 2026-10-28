@@ -36,7 +36,16 @@ Integration recovery of accepted session boundaries: append/keyframe/branch/GC i
 
 ## Deterministic acceptance
 
-`make verify-E9-T23`. This is a planned target to implement with this slice, not an existing passing command. It must record the assertions above and the risk-tier evidence required by AGENTS.md.
+`make verify-E9-T23 E9_OUT=<unique-directory>` on a clean exact head.
+The bounded gate runs format/clippy, native manifest/publication/witness tests,
+a wasm32 metadata build, at least 10,000 actual codec mutations, seeded strict
+IndexedDB crash/retention/multi-tab cases, real Linux file branches/reload and
+physical GPU cancellation/context-loss/branch tests with independent byte
+oracles. It performs no original Omarchy cold boot or long whole-history replay.
+
+The storage matrix explicitly uses synthetic storage payloads rather than a
+model VM. Separate short RV64/Linux recordings supply the actual guest/state
+and physical-GPU evidence. Earlier development failures remain preserved.
 
 ## Adversarial verification
 
@@ -44,4 +53,14 @@ Choose new interruption points around commits and fence completion, race two tab
 
 ## Verification log
 
-(pending; no implementation or verification claim)
+### 2026-10-28 — worker — bounded development checks
+
+The 12,000-case codec smoke passed. The final harness separately counts actual
+mutations and valid controls so controls cannot satisfy the 10,000-mutation
+criterion. The strict-IDB recovery development run `target/evidence/e9-t23-recovery-dev2`
+passed 15 publication crash cuts, six GC cuts and 48 varied maintenance
+schedules, preserving sibling manifests and the expected committed revisions.
+The earlier dev1 failed on repeated evidence-export callback registration;
+its unmodified failed receipt is retained. Fresh export pages repair that
+harness-only issue. No runtime semantics changed. Final exact-head integration,
+byte oracles and fresh actual Daybreak acceptance remain outstanding.
