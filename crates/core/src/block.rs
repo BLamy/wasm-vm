@@ -56,6 +56,12 @@ pub enum BlockError {
 /// Object-safe storage backend, sector-addressed in 512-byte units.
 pub trait BlockBackend {
     fn capacity_sectors(&self) -> u64;
+    /// Passive diagnostic count for the exact cold-desktop block-error probe.
+    /// It is never consulted by request validation or completion.
+    #[cfg(feature = "cold-block-diagnostic")]
+    fn diagnostic_overlay_sectors(&self) -> Option<usize> {
+        None
+    }
     /// Bound guest DMA allocation before a qualified asynchronous adapter owns the request.
     fn max_transfer_bytes(&self) -> usize {
         u32::MAX as usize

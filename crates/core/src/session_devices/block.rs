@@ -42,6 +42,10 @@ pub struct CompletionBlock {
     pub(super) hub: Rc<RefCell<DeviceHub>>,
 }
 impl BlockBackend for CompletionBlock {
+    #[cfg(feature = "cold-block-diagnostic")]
+    fn diagnostic_overlay_sectors(&self) -> Option<usize> {
+        Some(self.hub.borrow().guest.overlay.len())
+    }
     fn max_transfer_bytes(&self) -> usize {
         MAX_RESULT
     }
@@ -133,5 +137,198 @@ impl BlockBackend for CompletionBlock {
             .pending
             .retain(|_, r| !matches!(r.intent, DeviceIntent::BaseBlock { .. }));
         hub.guest.reads.clear();
+    }
+}
+
+#[cfg(all(test, feature = "cold-block-diagnostic"))]
+mod diagnostic_tests {
+    use super::*;
+    use crate::bus::Bus;
+    use crate::platform::virt;
+    use crate::{Machine, RunOutcome};
+
+    #[test]
+    fn capacity_park_is_not_a_completed_io_error() {
+        let mut guest = GuestState::default();
+        for sector in 0..524288u64 {
+            guest.overlay.insert(sector, Vec::new());
+        }
+        let hub = Rc::new(RefCell::new(DeviceHub {
+            base: Some(BaseDisk {
+                identity: [1; 32],
+                sectors: 600000,
+                chunk_bytes: 262144,
+                chunks: Vec::new(),
+            }),
+            agent: false,
+            capture: false,
+            replay: false,
+            unrecorded: false,
+            incarnation: Rc::new(()),
+            guest,
+            error: None,
+        }));
+        let mut backend = CompletionBlock { hub: hub.clone() };
+        assert_eq!(backend.diagnostic_overlay_sectors(), Some(524288));
+        assert_eq!(
+            backend.write(524288, &[7; SECTOR_SIZE]),
+            Err(BlockError::WouldBlock { chunk: 0 })
+        );
+        assert_eq!(backend.diagnostic_overlay_sectors(), Some(524288));
+        assert_eq!(hub.borrow().error, Some(DeviceError::Limit));
+        // Existing sectors do not consume capacity; the limit decision depends on
+        // the count of new sectors, not on the transfer length alone.
+        assert_eq!(backend.write(0, &[9; SECTOR_SIZE]), Ok(()));
+        assert_eq!(backend.diagnostic_overlay_sectors(), Some(524288));
+
+        // Exercise the same capacity path through a real virtio descriptor.
+        hub.borrow_mut().error = None;
+        const SLOT: u64 = 0x1000_1000;
+        const DESC: u64 = virt::DRAM_BASE + 0x10_0000;
+        const AVAIL: u64 = virt::DRAM_BASE + 0x11_0000;
+        const USED: u64 = virt::DRAM_BASE + 0x12_0000;
+        const HDR: u64 = virt::DRAM_BASE + 0x13_0000;
+        const DATA: u64 = virt::DRAM_BASE + 0x14_0000;
+        const STATUS: u64 = virt::DRAM_BASE + 0x15_0000;
+        let mut machine = Machine::new(8 * 1024 * 1024);
+        machine.enable_clint(10);
+        machine.enable_plic();
+        machine.enable_virtio_blk(Box::new(CompletionBlock { hub: hub.clone() }));
+        machine.enable_builtin_sbi();
+        machine.boot_supervisor(0, 0);
+        machine
+            .bus_mut()
+            .store32(virt::KERNEL_BASE, 0x0000_006f)
+            .unwrap();
+        for status in [1, 3] {
+            machine.bus_mut().store32(SLOT + 0x70, status).unwrap();
+        }
+        machine.bus_mut().store32(SLOT + 0x24, 0).unwrap();
+        machine.bus_mut().store32(SLOT + 0x20, 0).unwrap();
+        machine.bus_mut().store32(SLOT + 0x24, 1).unwrap();
+        machine.bus_mut().store32(SLOT + 0x20, 1).unwrap();
+        machine.bus_mut().store32(SLOT + 0x70, 11).unwrap();
+        machine.bus_mut().store32(SLOT + 0x30, 0).unwrap();
+        machine.bus_mut().store32(SLOT + 0x38, 8).unwrap();
+        machine.bus_mut().store32(SLOT + 0x80, DESC as u32).unwrap();
+        machine.bus_mut().store32(SLOT + 0x84, 0).unwrap();
+        machine
+            .bus_mut()
+            .store32(SLOT + 0x90, AVAIL as u32)
+            .unwrap();
+        machine.bus_mut().store32(SLOT + 0x94, 0).unwrap();
+        machine.bus_mut().store32(SLOT + 0xa0, USED as u32).unwrap();
+        machine.bus_mut().store32(SLOT + 0xa4, 0).unwrap();
+        machine.bus_mut().store32(SLOT + 0x44, 1).unwrap();
+        machine.bus_mut().store32(SLOT + 0x70, 15).unwrap();
+        machine.enable_first_blk_failure_diagnostic();
+        machine.bus_mut().store32(HDR, 1).unwrap();
+        machine.bus_mut().store32(HDR + 4, 0).unwrap();
+        machine.bus_mut().store64(HDR + 8, 524288).unwrap();
+        for (index, addr, length, flags, next) in [
+            (0, HDR, 16, 1, 1),
+            (1, DATA, SECTOR_SIZE as u32, 1, 2),
+            (2, STATUS, 1, 2, 0),
+        ] {
+            let at = DESC + index * 16;
+            machine.bus_mut().store64(at, addr).unwrap();
+            machine.bus_mut().store32(at + 8, length).unwrap();
+            machine.bus_mut().store16(at + 12, flags).unwrap();
+            machine.bus_mut().store16(at + 14, next).unwrap();
+        }
+        machine.bus_mut().store8(STATUS, 0xa5).unwrap();
+        machine.bus_mut().store16(AVAIL + 4, 0).unwrap();
+        machine.bus_mut().store16(AVAIL + 2, 1).unwrap();
+        machine.bus_mut().store32(SLOT + 0x50, 0).unwrap();
+        assert_eq!(machine.run(4), RunOutcome::MaxInstrs);
+        assert_eq!(hub.borrow().error, Some(DeviceError::Limit));
+        assert_eq!(backend.diagnostic_overlay_sectors(), Some(524288));
+        assert_eq!(machine.pending_blk_chunks(), vec![0]);
+        assert_eq!(machine.bus_mut().load8(STATUS).unwrap(), 0xa5);
+        assert_eq!(machine.bus_mut().load16(USED + 2).unwrap(), 0);
+        assert!(machine.first_blk_failure().is_none());
+        let parked = machine.parked_blk_witnesses();
+        assert_eq!(parked.len(), 1);
+        assert_eq!(parked[0].head, 0);
+        assert_eq!(
+            parked[0].reason,
+            crate::dev::virtio::blk::ParkReason::Chunk(0)
+        );
+        assert_eq!(parked[0].status_addr, STATUS);
+        assert_eq!(parked[0].status_byte, 0xa5);
+        assert_eq!(parked[0].used_shadow_index, 0);
+        assert_eq!(parked[0].used_guest_index, 0);
+
+        // The real session backend advertises 1 MiB minus 256 bytes. Virtio
+        // writes are sector-aligned, so this is its largest accepted request.
+        hub.borrow_mut().guest.overlay.clear();
+        hub.borrow_mut().error = None;
+        const HDR2: u64 = virt::DRAM_BASE + 0x16_0000;
+        const DATA2: u64 = virt::DRAM_BASE + 0x20_0000;
+        const STATUS2: u64 = virt::DRAM_BASE + 0x17_0000;
+        let maximum_aligned = (MAX_RESULT / SECTOR_SIZE * SECTOR_SIZE) as u32;
+        assert_eq!(maximum_aligned, (1 << 20) - 512);
+        machine.bus_mut().store32(HDR2, 1).unwrap();
+        machine.bus_mut().store64(HDR2 + 8, 0).unwrap();
+        for (index, addr, length, flags, next) in [
+            (3, HDR2, 16, 1, 4),
+            (4, DATA2, maximum_aligned, 1, 5),
+            (5, STATUS2, 1, 2, 0),
+        ] {
+            let at = DESC + index * 16;
+            machine.bus_mut().store64(at, addr).unwrap();
+            machine.bus_mut().store32(at + 8, length).unwrap();
+            machine.bus_mut().store16(at + 12, flags).unwrap();
+            machine.bus_mut().store16(at + 14, next).unwrap();
+        }
+        machine.bus_mut().store8(STATUS2, 0xa5).unwrap();
+        machine.bus_mut().store16(AVAIL + 6, 3).unwrap();
+        machine.bus_mut().store16(AVAIL + 2, 2).unwrap();
+        machine.bus_mut().store32(SLOT + 0x50, 0).unwrap();
+        assert_eq!(machine.run(4), RunOutcome::MaxInstrs);
+        assert_eq!(machine.bus_mut().load8(STATUS).unwrap(), 0);
+        assert_eq!(machine.bus_mut().load8(STATUS2).unwrap(), 0);
+        assert_eq!(machine.bus_mut().load16(USED + 2).unwrap(), 2);
+        assert_eq!(hub.borrow().guest.overlay.len(), 2048);
+        assert!(machine.first_blk_failure().is_none());
+
+        // A literal 1 MiB session write is one sector-aligned step over the
+        // advertised result cap. It completes S_IOERR before the backend,
+        // unlike the earlier COW capacity park.
+        const HDR3: u64 = virt::DRAM_BASE + 0x18_0000;
+        const DATA3: u64 = virt::DRAM_BASE + 0x30_0000;
+        const STATUS3: u64 = virt::DRAM_BASE + 0x19_0000;
+        machine.bus_mut().store32(HDR3, 1).unwrap();
+        machine.bus_mut().store64(HDR3 + 8, 4096).unwrap();
+        for (index, addr, length, flags, next) in [
+            (0, HDR3, 16, 1, 1),
+            (1, DATA3, 1 << 20, 1, 2),
+            (2, STATUS3, 1, 2, 0),
+        ] {
+            let at = DESC + index * 16;
+            machine.bus_mut().store64(at, addr).unwrap();
+            machine.bus_mut().store32(at + 8, length).unwrap();
+            machine.bus_mut().store16(at + 12, flags).unwrap();
+            machine.bus_mut().store16(at + 14, next).unwrap();
+        }
+        machine.bus_mut().store8(STATUS3, 0xa5).unwrap();
+        machine.bus_mut().store16(AVAIL + 8, 0).unwrap();
+        machine.bus_mut().store16(AVAIL + 2, 3).unwrap();
+        machine.bus_mut().store32(SLOT + 0x50, 0).unwrap();
+        assert_eq!(machine.run(4), RunOutcome::MaxInstrs);
+        assert_eq!(machine.bus_mut().load8(STATUS3).unwrap(), 1);
+        assert_eq!(machine.bus_mut().load16(USED + 2).unwrap(), 3);
+        let failure = machine.first_blk_failure().unwrap();
+        assert_eq!(failure.rtype, Some(1));
+        assert_eq!(failure.sector, Some(4096));
+        assert_eq!(failure.requested_bytes, 1 << 20);
+        assert_eq!(failure.max_transfer_bytes, MAX_RESULT);
+        assert_eq!(
+            failure.stage,
+            crate::dev::virtio::blk::BlkFailureStage::TransferShape
+        );
+        assert_eq!(failure.backend_error, None);
+        assert!(failure.status_dma_written && failure.used_ring_committed);
+        assert_eq!(hub.borrow().guest.overlay.len(), 2048);
     }
 }

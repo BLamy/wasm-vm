@@ -23,9 +23,13 @@ use core::cell::RefCell;
 use super::VirtioDevice;
 use super::mmio::VirtioMmio;
 use super::queue::{DescriptorChain, Virtqueue};
+#[cfg(feature = "cold-block-diagnostic")]
+use crate::block::check_range;
 use crate::block::{BlockBackend, BlockError, SECTOR_SIZE};
 use crate::bus::Bus;
 use crate::mmio::SystemBus;
+#[cfg(feature = "cold-block-diagnostic")]
+use crate::session_clock::SessionPosition;
 
 // Request types (§5.2.6).
 const T_IN: u32 = 0;
@@ -57,6 +61,54 @@ pub struct BlkReq {
     pub status: u8,
 }
 
+/// Passive first-error observation for an exact diagnostic replay. This is not
+/// included in any guest snapshot or architectural digest.
+#[cfg(feature = "cold-block-diagnostic")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct BlkFailure {
+    pub head: u16,
+    pub event_position: Option<SessionPosition>,
+    pub ram_digest: Option<[u8; 32]>,
+    pub rtype: Option<u32>,
+    pub sector: Option<u64>,
+    pub requested_bytes: u64,
+    pub capacity_sectors: u64,
+    pub max_transfer_bytes: usize,
+    pub range: Option<Result<u64, BlockError>>,
+    pub overlay_before: Option<usize>,
+    pub overlay_after: Option<usize>,
+    pub stage: BlkFailureStage,
+    pub backend_error: Option<BlockError>,
+    pub status_dma_written: bool,
+    pub used_ring_committed: bool,
+}
+
+/// Read-only ring evidence for a request parked on an offline block chunk.
+#[cfg(feature = "cold-block-diagnostic")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ParkedBlkWitness {
+    pub head: u16,
+    pub reason: ParkReason,
+    pub status_addr: u64,
+    pub status_byte: u8,
+    pub used_shadow_index: u16,
+    pub used_guest_index: u16,
+    pub next_used_slot_head: u32,
+}
+
+#[cfg(feature = "cold-block-diagnostic")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BlkFailureStage {
+    Header,
+    TransferShape,
+    GuestRead,
+    GuestWrite,
+    BackendRead,
+    BackendWrite,
+    BackendFlush,
+    FlushSector,
+}
+
 /// Shared blk state: the storage backend + the deferred kick flag.
 pub struct BlkState {
     pub backend: Box<dyn BlockBackend>,
@@ -71,6 +123,12 @@ pub struct BlkState {
     /// E2-T19: when `Some`, each serviced request is appended here for `--blk-log`. Off by
     /// default (no cost, and no host-visible allocation on the hot path when disabled).
     blk_log: Option<alloc::vec::Vec<BlkReq>>,
+    #[cfg(feature = "cold-block-diagnostic")]
+    first_failure_enabled: bool,
+    #[cfg(feature = "cold-block-diagnostic")]
+    first_failure: Option<BlkFailure>,
+    #[cfg(feature = "cold-block-diagnostic")]
+    diagnostic_position: Option<SessionPosition>,
     /// E3-T02/E3-T08/E3-T10: chains PARKED awaiting something asynchronous — a base chunk fetch
     /// (`WouldBlock`), a durable flush commit (`FlushPending`), or a durable write commit
     /// (`WritePending`). Re-executed each `service()` boundary; completed (pushed to the used ring,
@@ -91,6 +149,59 @@ pub enum ParkReason {
 }
 
 impl BlkState {
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub fn diagnostic_parked_chains(&self) -> alloc::vec::Vec<(DescriptorChain, ParkReason)> {
+        self.parked.clone()
+    }
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub fn enable_first_failure_diagnostic(&mut self) {
+        self.first_failure_enabled = true;
+        self.first_failure = None;
+        self.diagnostic_position = None;
+    }
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub fn set_first_failure_position(&mut self, position: Option<SessionPosition>) {
+        if self.first_failure_enabled && self.first_failure.is_none() {
+            self.diagnostic_position = position;
+        }
+    }
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub fn first_failure(&self) -> Option<BlkFailure> {
+        self.first_failure
+            .filter(|failure| failure.status_dma_written && failure.used_ring_committed)
+    }
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    fn commit_first_failure(&mut self, head: u16, committed: bool, bus: &SystemBus) {
+        if self
+            .first_failure
+            .is_some_and(|failure| failure.head == head && !failure.used_ring_committed)
+        {
+            if committed && self.first_failure.unwrap().status_dma_written {
+                use sha2::{Digest, Sha256};
+                let mut digest = Sha256::new();
+                digest.update(bus.ram().as_bytes());
+                let failure = self.first_failure.as_mut().unwrap();
+                failure.ram_digest = Some(digest.finalize().into());
+                failure.used_ring_committed = true;
+            } else {
+                self.first_failure = None;
+            }
+        }
+    }
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    fn mark_first_failure_status(&mut self, head: u16, written: bool) {
+        if let Some(failure) = &mut self.first_failure
+            && failure.head == head
+            && !failure.used_ring_committed
+        {
+            failure.status_dma_written = written;
+        }
+    }
+
     pub(crate) fn session_pending(&self) -> alloc::vec::Vec<u8> {
         let mut out = alloc::vec![self.kicked as u8, self.reset_pending as u8];
         out.extend_from_slice(&(self.parked.len() as u32).to_le_bytes());
@@ -357,6 +468,12 @@ pub fn new(backend: Box<dyn BlockBackend>) -> (VirtioBlkDev, Rc<RefCell<BlkState
         reset_pending: false,
         flush_count: 0,
         blk_log: None,
+        #[cfg(feature = "cold-block-diagnostic")]
+        first_failure_enabled: false,
+        #[cfg(feature = "cold-block-diagnostic")]
+        first_failure: None,
+        #[cfg(feature = "cold-block-diagnostic")]
+        diagnostic_position: None,
         parked: alloc::vec::Vec::new(),
     }));
     (
@@ -459,12 +576,59 @@ enum ExecOutcome {
     Invalid,
 }
 
+#[cfg(feature = "cold-block-diagnostic")]
+struct BlkFailureInput {
+    head: u16,
+    rtype: Option<u32>,
+    sector: Option<u64>,
+    requested_bytes: u64,
+    overlay_before: Option<usize>,
+    stage: BlkFailureStage,
+    backend_error: Option<BlockError>,
+}
+
+#[cfg(feature = "cold-block-diagnostic")]
+fn observe_first_failure(state: &mut BlkState, input: BlkFailureInput) {
+    if !state.first_failure_enabled || state.first_failure.is_some() {
+        return;
+    }
+    let capacity_sectors = state.backend.capacity_sectors();
+    let max_transfer_bytes = state.backend.max_transfer_bytes();
+    state.first_failure = Some(BlkFailure {
+        head: input.head,
+        event_position: state.diagnostic_position,
+        ram_digest: None,
+        rtype: input.rtype,
+        sector: input.sector,
+        requested_bytes: input.requested_bytes,
+        capacity_sectors,
+        max_transfer_bytes,
+        range: input.sector.map(|sector| {
+            usize::try_from(input.requested_bytes)
+                .map_err(|_| BlockError::OutOfRange)
+                .and_then(|length| check_range(capacity_sectors, sector, length))
+        }),
+        overlay_before: input.overlay_before,
+        overlay_after: state.backend.diagnostic_overlay_sectors(),
+        stage: input.stage,
+        backend_error: input.backend_error,
+        status_dma_written: false,
+        used_ring_committed: false,
+    });
+}
+
 fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -> ExecOutcome {
     let writable_total = chain.writable_len();
     if writable_total == 0 {
         return ExecOutcome::Invalid; // no status byte possible → protocol violation
     }
     let status_pos = writable_total - 1;
+    #[cfg(feature = "cold-block-diagnostic")]
+    let overlay_before = if state.first_failure_enabled && state.first_failure.is_none() {
+        state.backend.diagnostic_overlay_sectors()
+    } else {
+        None
+    };
 
     // Header: 16 readable bytes, possibly split across descriptors.
     let mut hdr = [0u8; 16];
@@ -473,11 +637,38 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
     let out_len = rc.remaining(); // readable bytes AFTER the header = OUT payload
     drop(rc);
     if !ok {
-        write_status(chain, bus, status_pos, S_IOERR);
+        #[cfg(feature = "cold-block-diagnostic")]
+        observe_first_failure(
+            state,
+            BlkFailureInput {
+                head: chain.head,
+                rtype: None,
+                sector: None,
+                requested_bytes: 0,
+                overlay_before,
+                stage: BlkFailureStage::Header,
+                backend_error: None,
+            },
+        );
+        let written = write_status(chain, bus, status_pos, S_IOERR);
+        #[cfg(feature = "cold-block-diagnostic")]
+        state.mark_first_failure_status(chain.head, written);
+        #[cfg(not(feature = "cold-block-diagnostic"))]
+        let _ = written;
         return ExecOutcome::Done(1);
     }
     let rtype = u32::from_le_bytes(hdr[0..4].try_into().unwrap());
     let sector = u64::from_le_bytes(hdr[8..16].try_into().unwrap());
+    #[cfg(feature = "cold-block-diagnostic")]
+    let requested_bytes = match rtype {
+        T_IN => status_pos,
+        T_OUT => out_len,
+        _ => 0,
+    };
+    #[cfg(feature = "cold-block-diagnostic")]
+    let mut failure_stage = None;
+    #[cfg(feature = "cold-block-diagnostic")]
+    let mut backend_error = None;
 
     let (status, data_written) = match rtype {
         T_IN => {
@@ -486,6 +677,10 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
                 || !data_len.is_multiple_of(SECTOR_SIZE as u64)
                 || data_len > state.backend.max_transfer_bytes() as u64
             {
+                #[cfg(feature = "cold-block-diagnostic")]
+                {
+                    failure_stage = Some(BlkFailureStage::TransferShape);
+                }
                 (S_IOERR, 0)
             } else {
                 let mut buf = vec![0u8; data_len as usize];
@@ -495,6 +690,10 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
                         if wc.write_all(&buf) {
                             (S_OK, data_len as u32)
                         } else {
+                            #[cfg(feature = "cold-block-diagnostic")]
+                            {
+                                failure_stage = Some(BlkFailureStage::GuestWrite);
+                            }
                             (S_IOERR, 0)
                         }
                     }
@@ -503,7 +702,14 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
                     Err(BlockError::WouldBlock { chunk }) => {
                         return ExecOutcome::Parked(ParkReason::Chunk(chunk));
                     }
-                    Err(_) => (S_IOERR, 0),
+                    Err(_error) => {
+                        #[cfg(feature = "cold-block-diagnostic")]
+                        {
+                            failure_stage = Some(BlkFailureStage::BackendRead);
+                            backend_error = Some(_error);
+                        }
+                        (S_IOERR, 0)
+                    }
                 }
             }
         }
@@ -512,6 +718,10 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
                 || !out_len.is_multiple_of(SECTOR_SIZE as u64)
                 || out_len > state.backend.max_transfer_bytes() as u64
             {
+                #[cfg(feature = "cold-block-diagnostic")]
+                {
+                    failure_stage = Some(BlkFailureStage::TransferShape);
+                }
                 (S_IOERR, 0)
             } else {
                 let mut buf = vec![0u8; out_len as usize];
@@ -519,6 +729,10 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
                 let mut skip = [0u8; 16];
                 let _ = rc.read_exact(&mut skip); // re-skip the header
                 if !rc.read_exact(&mut buf) {
+                    #[cfg(feature = "cold-block-diagnostic")]
+                    {
+                        failure_stage = Some(BlkFailureStage::GuestRead);
+                    }
                     (S_IOERR, 0)
                 } else {
                     drop(rc);
@@ -537,14 +751,24 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
                         Err(BlockError::WritePending) => {
                             return ExecOutcome::Parked(ParkReason::Write);
                         }
-                        Err(BlockError::ReadOnly) => (S_IOERR, 0),
-                        Err(_) => (S_IOERR, 0),
+                        Err(_error) => {
+                            #[cfg(feature = "cold-block-diagnostic")]
+                            {
+                                failure_stage = Some(BlkFailureStage::BackendWrite);
+                                backend_error = Some(_error);
+                            }
+                            (S_IOERR, 0)
+                        }
                     }
                 }
             }
         }
         T_FLUSH => {
             if sector != 0 {
+                #[cfg(feature = "cold-block-diagnostic")]
+                {
+                    failure_stage = Some(BlkFailureStage::FlushSector);
+                }
                 (S_IOERR, 0) // spec: driver MUST set sector 0 for FLUSH
             } else {
                 state.flush_count += 1;
@@ -561,7 +785,14 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
                     Err(BlockError::FlushPending) => {
                         return ExecOutcome::Parked(ParkReason::Flush);
                     }
-                    Err(_) => (S_IOERR, 0),
+                    Err(_error) => {
+                        #[cfg(feature = "cold-block-diagnostic")]
+                        {
+                            failure_stage = Some(BlkFailureStage::BackendFlush);
+                            backend_error = Some(_error);
+                        }
+                        (S_IOERR, 0)
+                    }
                 }
             }
         }
@@ -571,11 +802,31 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
             if wc.write_all(&SERIAL[..room]) {
                 (S_OK, room as u32)
             } else {
+                #[cfg(feature = "cold-block-diagnostic")]
+                {
+                    failure_stage = Some(BlkFailureStage::GuestWrite);
+                }
                 (S_IOERR, 0)
             }
         }
         _ => (S_UNSUPP, 0), // DISCARD / WRITE_ZEROES / garbage types
     };
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    if status == S_IOERR {
+        observe_first_failure(
+            state,
+            BlkFailureInput {
+                head: chain.head,
+                rtype: Some(rtype),
+                sector: Some(sector),
+                requested_bytes,
+                overlay_before,
+                stage: failure_stage.expect("all I/O errors have a diagnostic stage"),
+                backend_error,
+            },
+        );
+    }
 
     // E2-T19 --blk-log: record the serviced request (type/sector/len/status) when enabled.
     if let Some(log) = state.blk_log.as_mut() {
@@ -587,21 +838,27 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
         });
     }
 
-    write_status(chain, bus, status_pos, status);
+    let written = write_status(chain, bus, status_pos, status);
+    #[cfg(feature = "cold-block-diagnostic")]
+    if status == S_IOERR {
+        state.mark_first_failure_status(chain.head, written);
+    }
+    #[cfg(not(feature = "cold-block-diagnostic"))]
+    let _ = written;
     ExecOutcome::Done(data_written + 1)
 }
 
 /// Write the status byte at writable-stream position `pos`.
-fn write_status(chain: &DescriptorChain, bus: &mut SystemBus, pos: u64, status: u8) {
+fn write_status(chain: &DescriptorChain, bus: &mut SystemBus, pos: u64, status: u8) -> bool {
     let mut remaining = pos;
     for seg in chain.writable() {
         let len = u64::from(seg.len);
         if remaining < len {
-            let _ = bus.store8(seg.addr + remaining, status);
-            return;
+            return bus.store8(seg.addr + remaining, status).is_ok();
         }
         remaining -= len;
     }
+    false
 }
 
 /// Run-loop service: consume a pending kick, (re)build the queue-0 ring view when the
@@ -679,6 +936,10 @@ fn service_kicked(
         match outcome {
             ExecOutcome::Done(w) => {
                 if q.push_used(bus, chain.head, w).is_err() {
+                    #[cfg(feature = "cold-block-diagnostic")]
+                    state
+                        .borrow_mut()
+                        .commit_first_failure(chain.head, false, bus);
                     slot.borrow_mut().protocol_violation();
                     *vq = None;
                     // The rest of the taken parked chains are dropped with this early return —
@@ -687,6 +948,10 @@ fn service_kicked(
                     state.borrow_mut().backend.write_reset();
                     return;
                 }
+                #[cfg(feature = "cold-block-diagnostic")]
+                state
+                    .borrow_mut()
+                    .commit_first_failure(chain.head, true, bus);
                 delivered_work = true;
             }
             ExecOutcome::Parked(reason) => {
@@ -719,10 +984,18 @@ fn service_kicked(
                 match outcome {
                     ExecOutcome::Done(w) => {
                         if q.push_used(bus, chain.head, w).is_err() {
+                            #[cfg(feature = "cold-block-diagnostic")]
+                            state
+                                .borrow_mut()
+                                .commit_first_failure(chain.head, false, bus);
                             slot.borrow_mut().protocol_violation();
                             *vq = None;
                             return;
                         }
+                        #[cfg(feature = "cold-block-diagnostic")]
+                        state
+                            .borrow_mut()
+                            .commit_first_failure(chain.head, true, bus);
                         delivered_work = true;
                     }
                     // E3-T02: data not resident — keep the chain OUT of the used ring and retry next

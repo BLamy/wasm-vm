@@ -291,9 +291,22 @@ fn restore_resume_queues(
     Ok(restored)
 }
 
+/// Passive architectural witness immediately after the first completed block
+/// failure, before the next guest instruction. This is diagnostic host state.
+#[cfg(feature = "cold-block-diagnostic")]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct BlkFailureWitness {
+    pub position: session_clock::SessionPosition,
+    pub pc: u64,
+    pub ram_digest: [u8; 32],
+    pub guest_digest: [u8; 32],
+}
+
 pub struct Machine {
     hart: Hart,
     bus: SystemBus,
+    #[cfg(feature = "cold-block-diagnostic")]
+    first_blk_failure_witness: Option<BlkFailureWitness>,
     /// Opt-in exact scheduling; ordinary machines retain their established run semantics.
     session_clock: Option<session_clock::SessionClock>,
     live_unrecorded: Option<session_live::LiveWork>,
@@ -984,6 +997,8 @@ impl Machine {
         let mut m = Self {
             hart: Hart::new(),
             bus: SystemBus::new(Ram::new(ram_bytes)?),
+            #[cfg(feature = "cold-block-diagnostic")]
+            first_blk_failure_witness: None,
             session_clock: None,
             live_unrecorded: None,
             session_sources: Default::default(),
@@ -2970,6 +2985,118 @@ impl Machine {
             .as_ref()
             .map(|(s, _)| s.borrow_mut().take_log())
             .unwrap_or_default()
+    }
+
+    /// Arm a passive one-shot observation of the first completed virtio-blk
+    /// `S_IOERR`. Diagnostic metadata never enters guest state or snapshots.
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub fn enable_first_blk_failure_diagnostic(&mut self) {
+        self.first_blk_failure_witness = None;
+        if let Some((state, _)) = &self.blk {
+            state.borrow_mut().enable_first_failure_diagnostic();
+        }
+    }
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub fn first_blk_failure(&self) -> Option<dev::virtio::blk::BlkFailure> {
+        self.blk
+            .as_ref()
+            .and_then(|(state, _)| state.borrow().first_failure())
+    }
+
+    /// Inspect the exact guest bytes and queue indices of parked block chains
+    /// without servicing or completing them.
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub fn parked_blk_witnesses(&self) -> alloc::vec::Vec<dev::virtio::blk::ParkedBlkWitness> {
+        use crate::bus::mmap::DRAM_BASE;
+        let Some((state, Some(queue))) = &self.blk else {
+            return alloc::vec::Vec::new();
+        };
+        let Some(slot) = self.virtio.first() else {
+            return alloc::vec::Vec::new();
+        };
+        let used_addr = slot.0.borrow().queue(0).device;
+        let (_, shadow_index) = queue.ring_indices();
+        let ram = self.bus.ram().as_bytes();
+        let read = |addr: u64, length: usize| -> Option<&[u8]> {
+            let offset = usize::try_from(addr.checked_sub(DRAM_BASE)?).ok()?;
+            ram.get(offset..offset.checked_add(length)?)
+        };
+        let Some(guest_index_bytes) = used_addr.checked_add(2).and_then(|addr| read(addr, 2))
+        else {
+            return alloc::vec::Vec::new();
+        };
+        let guest_index = u16::from_le_bytes([guest_index_bytes[0], guest_index_bytes[1]]);
+        let Some(next_slot_addr) = used_addr
+            .checked_add(4)
+            .and_then(|addr| addr.checked_add(8 * u64::from(shadow_index % queue.size())))
+        else {
+            return alloc::vec::Vec::new();
+        };
+        let Some(next_head_bytes) = read(next_slot_addr, 4) else {
+            return alloc::vec::Vec::new();
+        };
+        let next_head = u32::from_le_bytes(next_head_bytes.try_into().unwrap());
+        state
+            .borrow()
+            .diagnostic_parked_chains()
+            .into_iter()
+            .filter_map(|(chain, reason)| {
+                let status = chain.writable().last()?;
+                let status_addr = status
+                    .addr
+                    .checked_add(u64::from(status.len).checked_sub(1)?)?;
+                let status_byte = *read(status_addr, 1)?.first()?;
+                Some(dev::virtio::blk::ParkedBlkWitness {
+                    head: chain.head,
+                    reason,
+                    status_addr,
+                    status_byte,
+                    used_shadow_index: shadow_index,
+                    used_guest_index: guest_index,
+                    next_used_slot_head: next_head,
+                })
+            })
+            .collect()
+    }
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub fn first_blk_failure_witness(&self) -> Option<BlkFailureWitness> {
+        self.first_blk_failure_witness
+    }
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    fn capture_first_blk_failure_witness(&mut self) {
+        use sha2::{Digest, Sha256};
+        if self.first_blk_failure_witness.is_some() {
+            return;
+        }
+        let Some(failure) = self.first_blk_failure() else {
+            return;
+        };
+        let (Some(position), Some(ram_digest)) = (failure.event_position, failure.ram_digest)
+        else {
+            return;
+        };
+        let pc = self.hart.regs.pc;
+        let mut digest = Sha256::new();
+        digest.update(b"wasm-vm-first-block-guest-v1\0");
+        digest.update(position.transition.to_le_bytes());
+        digest.update(position.retired.to_le_bytes());
+        digest.update(position.phase.label().as_bytes());
+        digest.update(position.ordinal.to_le_bytes());
+        digest.update(position.sequence.to_le_bytes());
+        digest.update(pc.to_le_bytes());
+        for index in 0..32u8 {
+            digest.update(self.hart.regs.read(index).to_le_bytes());
+        }
+        digest.update(ram_digest);
+        self.first_blk_failure_witness = Some(BlkFailureWitness {
+            position,
+            pc,
+            ram_digest,
+            guest_digest: digest.finalize().into(),
+        });
     }
 
     /// E3-T02: the chunks that parked virtio-blk reads are waiting on — what a lazy-fetch layer must
@@ -6722,6 +6849,8 @@ impl Machine {
     #[inline(never)]
     fn boundary_sync_full(&mut self) {
         self.sync_session_devices();
+        #[cfg(feature = "cold-block-diagnostic")]
+        let diagnostic_position = self.session_position();
         let mut idle = true;
         // E5-T04: host-owned virtio devices may have requested a config change through a
         // retained state handle (for example a GPU canvas resize).  Latch those requests
@@ -6769,6 +6898,10 @@ impl Machine {
         // E2-T11: service pending virtio-blk kicks BEFORE mirroring levels, so a
         // completed request's used-ring interrupt lands this same boundary.
         if let Some((state, vq)) = blk {
+            #[cfg(feature = "cold-block-diagnostic")]
+            state
+                .borrow_mut()
+                .set_first_failure_position(diagnostic_position);
             idle &= dev::virtio::blk::service(&virtio[0].0, vq, state, bus);
         }
         // E4-T03: service each ADDITIONAL (read-only) blk device on the same boundary, so a
@@ -7197,6 +7330,11 @@ impl Machine {
             if source_capture && let Err(error) = self.commit_source_scope() {
                 return RunOutcome::SessionStopped(error);
             }
+            // A completed descriptor is visible to the guest before this
+            // boundary retires its next instruction. Snapshot only the first
+            // such failure, without yielding or changing the event cadence.
+            #[cfg(feature = "cold-block-diagnostic")]
+            self.capture_first_blk_failure_witness();
             // E1-T11: sample interrupts at the instruction boundary (precise). Deliver the
             // highest-priority pending&enabled interrupt through mtvec/stvec BEFORE fetching the
             // next instruction — sepc/mepc then points at the resume address (the interrupted

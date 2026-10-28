@@ -2970,3 +2970,31 @@ verify-E9-T22o:
 	  $(MAKE) web-build > "$$out/web-build.log" 2>&1; git diff --exit-code -- web/dist; \
 	  node tools/verify/e9-cold-frontier-browser.mjs --source "$$src" --output "$$out/desktop" \
 	    --limit "$${E9_LIMIT:-25200000000}" --base-report "$$base" > "$$out/browser.log" 2>&1
+
+.PHONY: verify-E9-T22s
+verify-E9-T22s:
+	@set -eu; src="$${E9_SOURCE:?set E9_SOURCE to the recovered exact cold-prefix desktop directory}"; \
+	  base="$${E9_BASE_REPORT:?set E9_BASE_REPORT to the authenticated complete offline base prefetch report}"; \
+	  src="$$(cd "$$src" && pwd -P)"; out="$${E9_OUT:-target/evidence/e9-t22s-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
+	  mkdir -p "$$(dirname "$$out")"; mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
+	  node --check tools/verify/e9-cold-block-error-browser.mjs; \
+	  node --check tools/verify/e9-cold-block-error-page.mjs; \
+	  node --check tools/verify/e9-cold-block-error-worker.mjs; \
+	  node --check tools/verify/e9-cold-block-error-attacks.mjs; \
+	  node --check tools/verify/e9-cold-block-base-integrity.mjs; \
+	  cargo fmt --all --check > "$$out/fmt.log" 2>&1; \
+	  cargo clippy -p wasm-vm-core --features cold-block-diagnostic -- -D warnings \
+	    > "$$out/diagnostic-clippy.log" 2>&1; \
+	  cargo test -p wasm-vm-core --test virtio_blk > "$$out/default-block-tests.log" 2>&1; \
+	  cargo test -p wasm-vm-core --features cold-block-diagnostic --test virtio_blk > "$$out/diagnostic-block-tests.log" 2>&1; \
+	  cargo test -p wasm-vm-core --features cold-block-diagnostic --lib capacity_park_is_not_a_completed_io_error \
+	    > "$$out/cow-capacity-test.log" 2>&1; \
+	  cargo check -p wasm-vm-wasm-web --target wasm32-unknown-unknown --features cold-block-diagnostic \
+	    > "$$out/diagnostic-wasm-check.log" 2>&1; \
+	  node tools/verify/e9-cold-block-error-attacks.mjs --source "$$src" --base-report "$$base" \
+	    --output "$$out/input-attacks" > "$$out/input-attacks.log" 2>&1; \
+	  wasm-pack build crates/wasm-web --target web --profile wasm-release --out-name wasm_vm_wasm \
+	    --out-dir ../../target/e9-t22s-diagnostic-pkg --features cold-block-diagnostic \
+	    > "$$out/diagnostic-wasm-build.log" 2>&1; \
+	  node tools/verify/e9-cold-block-error-browser.mjs --source "$$src" --output "$$out/desktop" \
+	    --limit 14450000000 --base-report "$$base" > "$$out/browser.log" 2>&1

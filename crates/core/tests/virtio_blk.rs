@@ -3,8 +3,10 @@
 
 #![cfg(not(feature = "zicsr-stub"))]
 
-use wasm_vm_core::block::{BlockBackend, MemBackend, SECTOR_SIZE};
+use wasm_vm_core::block::{BlockBackend, BlockError, MemBackend, SECTOR_SIZE};
 use wasm_vm_core::bus::Bus;
+#[cfg(feature = "cold-block-diagnostic")]
+use wasm_vm_core::dev::virtio::blk::BlkFailureStage;
 use wasm_vm_core::dev::virtio::blk::SERIAL;
 use wasm_vm_core::platform::virt;
 use wasm_vm_core::{Machine, RunOutcome};
@@ -318,6 +320,286 @@ fn read_only_write_fails_cleanly() {
     assert_eq!(m.bus_mut().load8(DATA + 0x2000).unwrap(), 0x42);
 }
 
+#[cfg(feature = "cold-block-diagnostic")]
+#[test]
+fn first_block_failure_probe_preserves_guest_completion() {
+    let write = |probe: bool| {
+        let (mut machine, mut context) = machine(vec![0x42; 16 * SECTOR_SIZE], true);
+        if probe {
+            machine.enable_first_blk_failure_diagnostic();
+        }
+        write_hdr(&mut machine, HDR, 1, 0);
+        for i in 0..SECTOR_SIZE {
+            machine.bus_mut().store8(DATA + i as u64, 0x99).unwrap();
+        }
+        wdesc(&mut machine, 0, HDR, 16, F_NEXT, 1);
+        wdesc(&mut machine, 1, DATA, SECTOR_SIZE as u32, F_NEXT, 2);
+        wdesc(&mut machine, 2, STATUS, 1, F_WRITE, 0);
+        let status = submit(&mut machine, &mut context, 0);
+        let used = machine.bus_mut().load16(USED + 2).unwrap();
+        let used_len = machine.bus_mut().load32(USED + 8).unwrap();
+        (machine, context, status, used, used_len)
+    };
+    let (mut baseline, _, baseline_status, baseline_used, baseline_len) = write(false);
+    let (mut observed, mut context, status, used, used_len) = write(true);
+    assert_eq!(
+        (status, used, used_len),
+        (baseline_status, baseline_used, baseline_len)
+    );
+    assert_eq!((status, used, used_len), (1, 1, 1));
+    assert_eq!(
+        observed.save_session_resume().unwrap(),
+        baseline.save_session_resume().unwrap(),
+        "passive observer must not change the saved architectural machine"
+    );
+    assert!(baseline.first_blk_failure().is_none());
+    let first = observed
+        .first_blk_failure()
+        .expect("completed failure observed");
+    assert_eq!(
+        (first.rtype, first.sector, first.requested_bytes),
+        (Some(1), Some(0), 512)
+    );
+    assert_eq!(first.capacity_sectors, 16);
+    assert_eq!(first.range, Some(Ok(0)));
+    assert_eq!(first.stage, BlkFailureStage::BackendWrite);
+    assert_eq!(first.backend_error, Some(BlockError::ReadOnly));
+    assert_eq!((first.overlay_before, first.overlay_after), (None, None));
+    assert!(first.status_dma_written);
+    assert!(first.used_ring_committed);
+
+    write_hdr(&mut observed, HDR, 0, 1_000_000);
+    wdesc(&mut observed, 0, HDR, 16, F_NEXT, 1);
+    wdesc(
+        &mut observed,
+        1,
+        DATA,
+        SECTOR_SIZE as u32,
+        F_WRITE | F_NEXT,
+        2,
+    );
+    wdesc(&mut observed, 2, STATUS, 1, F_WRITE, 0);
+    assert_eq!(submit(&mut observed, &mut context, 0), 1);
+    assert_eq!(
+        observed.first_blk_failure(),
+        Some(first),
+        "first failure remains sticky"
+    );
+}
+
+#[cfg(feature = "cold-block-diagnostic")]
+#[test]
+fn completed_failure_witness_precedes_the_next_guest_instruction() {
+    let (mut machine, mut context) = machine(vec![0; 8 * SECTOR_SIZE], true);
+    machine.start_session_clock(1).unwrap();
+    machine.enable_first_blk_failure_diagnostic();
+    write_hdr(&mut machine, HDR, 1, 0);
+    wdesc(&mut machine, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut machine, 1, DATA, SECTOR_SIZE as u32, F_NEXT, 2);
+    wdesc(&mut machine, 2, STATUS, 1, F_WRITE, 0);
+    assert_eq!(submit(&mut machine, &mut context, 0), 1);
+    let witness = machine.first_blk_failure_witness().unwrap();
+    assert_eq!(witness.position.transition, 0);
+    assert_eq!(witness.position.retired, 0);
+    assert_eq!(witness.pc, virt::KERNEL_BASE);
+    assert_ne!(witness.guest_digest, [0; 32]);
+    assert_eq!(witness.ram_digest, machine.snapshot().mem_digest);
+    assert_eq!(machine.session_position().unwrap().transition, 4);
+    assert_eq!(machine.bus_mut().load16(USED + 2).unwrap(), 1);
+}
+
+#[cfg(feature = "cold-block-diagnostic")]
+#[test]
+fn first_failure_witness_excludes_later_same_boundary_descriptor_dma() {
+    let (mut machine, _context) = machine(vec![0; 8 * SECTOR_SIZE], true);
+    machine.start_session_clock(1).unwrap();
+    machine.enable_first_blk_failure_diagnostic();
+    for (head, header, data, status) in [
+        (0, HDR, DATA, STATUS),
+        (3, HDR + 0x100, DATA + 0x1000, STATUS + 1),
+    ] {
+        write_hdr(&mut machine, header, 1, 0);
+        wdesc(&mut machine, head, header, 16, F_NEXT, head + 1);
+        wdesc(
+            &mut machine,
+            head + 1,
+            data,
+            SECTOR_SIZE as u32,
+            F_NEXT,
+            head + 2,
+        );
+        wdesc(&mut machine, head + 2, status, 1, F_WRITE, 0);
+    }
+    machine.bus_mut().store16(AVAIL + 4, 0).unwrap();
+    machine.bus_mut().store16(AVAIL + 6, 3).unwrap();
+    machine.bus_mut().store16(AVAIL + 2, 2).unwrap();
+    machine.bus_mut().store32(SLOT0 + 0x50, 0).unwrap();
+    assert_eq!(machine.run(4), RunOutcome::MaxInstrs);
+    assert_eq!(machine.bus_mut().load16(USED + 2).unwrap(), 2);
+    assert_eq!(machine.bus_mut().load8(STATUS).unwrap(), 1);
+    assert_eq!(machine.bus_mut().load8(STATUS + 1).unwrap(), 1);
+    assert_eq!(machine.first_blk_failure().unwrap().head, 0);
+    let witness = machine.first_blk_failure_witness().unwrap();
+    assert_eq!(witness.position.transition, 0);
+    assert_ne!(
+        witness.ram_digest,
+        machine.snapshot().mem_digest,
+        "the second descriptor changed RAM after the first failure witness"
+    );
+}
+
+#[cfg(feature = "cold-block-diagnostic")]
+struct CappedBlock(MemBackend);
+
+#[cfg(feature = "cold-block-diagnostic")]
+impl BlockBackend for CappedBlock {
+    fn capacity_sectors(&self) -> u64 {
+        self.0.capacity_sectors()
+    }
+    fn max_transfer_bytes(&self) -> usize {
+        (1 << 20) - 256
+    }
+    fn read(&mut self, sector: u64, buf: &mut [u8]) -> Result<(), BlockError> {
+        self.0.read(sector, buf)
+    }
+    fn write(&mut self, sector: u64, buf: &[u8]) -> Result<(), BlockError> {
+        self.0.write(sector, buf)
+    }
+    fn flush(&mut self) -> Result<(), BlockError> {
+        self.0.flush()
+    }
+}
+
+#[cfg(feature = "cold-block-diagnostic")]
+#[test]
+fn first_block_failure_distinguishes_valid_range_from_transfer_cap() {
+    let backend = CappedBlock(MemBackend::new(vec![0; 4 * 1024 * 1024]));
+    let (mut machine, mut context) = machine_be(Box::new(backend));
+    machine.enable_first_blk_failure_diagnostic();
+    write_hdr(&mut machine, HDR, 1, 0);
+    wdesc(&mut machine, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut machine, 1, DATA, 1 << 20, F_NEXT, 2);
+    wdesc(&mut machine, 2, STATUS, 1, F_WRITE, 0);
+    assert_eq!(submit(&mut machine, &mut context, 0), 1);
+    let failure = machine.first_blk_failure().unwrap();
+    assert_eq!(failure.requested_bytes, 1 << 20);
+    assert_eq!(
+        failure.range,
+        Some(Ok(0)),
+        "full transfer fits disk capacity"
+    );
+    assert_eq!(failure.max_transfer_bytes, (1 << 20) - 256);
+    assert_eq!(failure.stage, BlkFailureStage::TransferShape);
+    assert_eq!(failure.backend_error, None, "backend was never called");
+    assert!(failure.status_dma_written);
+    assert!(failure.used_ring_committed);
+}
+
+#[cfg(feature = "cold-block-diagnostic")]
+#[test]
+fn malformed_header_reports_unknown_sector_and_range() {
+    let (mut machine, mut context) = machine(vec![0; 8 * SECTOR_SIZE], false);
+    machine.enable_first_blk_failure_diagnostic();
+    wdesc(&mut machine, 0, HDR, 8, F_NEXT, 1);
+    wdesc(&mut machine, 1, STATUS, 1, F_WRITE, 0);
+    assert_eq!(submit(&mut machine, &mut context, 0), 1);
+    let failure = machine.first_blk_failure().unwrap();
+    assert_eq!(failure.stage, BlkFailureStage::Header);
+    assert_eq!(
+        (failure.rtype, failure.sector, failure.range),
+        (None, None, None)
+    );
+    assert!(failure.status_dma_written && failure.used_ring_committed);
+}
+
+#[cfg(feature = "cold-block-diagnostic")]
+#[test]
+fn first_block_failure_distinguishes_out_of_range_backend_result() {
+    let (mut machine, mut context) = machine(vec![0; 8 * SECTOR_SIZE], false);
+    machine.enable_first_blk_failure_diagnostic();
+    write_hdr(&mut machine, HDR, 1, 8);
+    wdesc(&mut machine, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut machine, 1, DATA, SECTOR_SIZE as u32, F_NEXT, 2);
+    wdesc(&mut machine, 2, STATUS, 1, F_WRITE, 0);
+    assert_eq!(submit(&mut machine, &mut context, 0), 1);
+    let failure = machine.first_blk_failure().unwrap();
+    assert_eq!(failure.range, Some(Err(BlockError::OutOfRange)));
+    assert_eq!(failure.stage, BlkFailureStage::BackendWrite);
+    assert_eq!(failure.backend_error, Some(BlockError::OutOfRange));
+    assert_eq!(
+        (failure.overlay_before, failure.overlay_after),
+        (None, None)
+    );
+    assert!(failure.status_dma_written);
+    assert!(failure.used_ring_committed);
+}
+
+#[cfg(feature = "cold-block-diagnostic")]
+#[test]
+fn malformed_status_descriptor_cannot_masquerade_as_completed_io_error() {
+    let (mut machine, mut context) = machine(vec![0; 8 * SECTOR_SIZE], true);
+    machine.enable_first_blk_failure_diagnostic();
+    write_hdr(&mut machine, HDR, 1, 0);
+    wdesc(&mut machine, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut machine, 1, DATA, SECTOR_SIZE as u32, F_NEXT, 2);
+    // The chain has a writable status descriptor, but its guest address is unmapped.
+    wdesc(
+        &mut machine,
+        2,
+        virt::DRAM_BASE + RAM as u64 + 0x1000,
+        1,
+        F_WRITE,
+        0,
+    );
+    machine.bus_mut().store8(STATUS, 0xa5).unwrap();
+    machine.bus_mut().store16(AVAIL + 4, 0).unwrap();
+    context.seq += 1;
+    machine.bus_mut().store16(AVAIL + 2, context.seq).unwrap();
+    machine.bus_mut().store32(SLOT0 + 0x50, 0).unwrap();
+    assert_eq!(machine.run(4), RunOutcome::MaxInstrs);
+    assert!(
+        machine.first_blk_failure().is_none(),
+        "queue validation must reject the chain before a backend I/O attempt"
+    );
+    assert_eq!(machine.bus_mut().load16(USED + 2).unwrap(), 0);
+    assert_ne!(machine.bus_mut().load32(SLOT0 + 0x70).unwrap() & 64, 0);
+    assert_eq!(machine.bus_mut().load8(STATUS).unwrap(), 0xa5);
+}
+
+#[cfg(feature = "cold-block-diagnostic")]
+struct ParkOnWrite;
+
+#[cfg(feature = "cold-block-diagnostic")]
+impl BlockBackend for ParkOnWrite {
+    fn capacity_sectors(&self) -> u64 {
+        16
+    }
+    fn read(&mut self, _: u64, _: &mut [u8]) -> Result<(), BlockError> {
+        Ok(())
+    }
+    fn write(&mut self, _: u64, _: &[u8]) -> Result<(), BlockError> {
+        Err(BlockError::WouldBlock { chunk: 0 })
+    }
+    fn flush(&mut self) -> Result<(), BlockError> {
+        Ok(())
+    }
+}
+
+#[cfg(feature = "cold-block-diagnostic")]
+#[test]
+fn parked_write_has_no_status_or_used_ring_completion() {
+    let (mut machine, mut context) = machine_be(Box::new(ParkOnWrite));
+    machine.enable_first_blk_failure_diagnostic();
+    write_hdr(&mut machine, HDR, 1, 0);
+    wdesc(&mut machine, 0, HDR, 16, F_NEXT, 1);
+    wdesc(&mut machine, 1, DATA, SECTOR_SIZE as u32, F_NEXT, 2);
+    wdesc(&mut machine, 2, STATUS, 1, F_WRITE, 0);
+    machine.bus_mut().store8(STATUS, 0xa5).unwrap();
+    assert_eq!(submit(&mut machine, &mut context, 0), 0xa5);
+    assert!(machine.first_blk_failure().is_none());
+    assert_eq!(machine.bus_mut().load16(USED + 2).unwrap(), 0);
+}
+
 /// Charter torture: hostile requests interleaved with valid ones — 10^4 requests, the
 /// device answers IOERR/UNSUPP and NEVER wedges (a valid request still works after).
 #[test]
@@ -392,7 +674,6 @@ fn no_status_byte_is_protocol_violation() {
 // ── E3-T02: deferred (lazy-fetch) completion ────────────────────────────────────────────────
 use std::cell::Cell;
 use std::rc::Rc;
-use wasm_vm_core::block::BlockError;
 
 /// A backend that WouldBlocks (awaiting chunk 0) until `ready` is set, then serves `data`. Models a
 /// lazy chunk source whose chunk hasn't been fetched yet.
@@ -436,6 +717,10 @@ fn lazy_read_parks_then_completes_exactly_once() {
         data: payload.clone(),
     };
     let (mut m, mut ctx) = machine_be(Box::new(mock));
+    #[cfg(feature = "cold-block-diagnostic")]
+    {
+        m.enable_first_blk_failure_diagnostic();
+    }
 
     // IN: read sector 0 (1 sector) into a guest buffer.
     write_hdr(&mut m, HDR, 0, 0);
@@ -459,6 +744,13 @@ fn lazy_read_parks_then_completes_exactly_once() {
         0xEE,
         "status untouched while parked"
     );
+    #[cfg(feature = "cold-block-diagnostic")]
+    {
+        assert!(
+            m.first_blk_failure().is_none(),
+            "a park is not an I/O error"
+        );
+    }
 
     // Extra boundaries while still parked must NOT complete or drop the request.
     assert_eq!(m.run(4), RunOutcome::MaxInstrs);
@@ -479,6 +771,13 @@ fn lazy_read_parks_then_completes_exactly_once() {
         "completed exactly once"
     );
     assert_eq!(m.bus_mut().load8(STATUS).unwrap(), 0, "status S_OK");
+    #[cfg(feature = "cold-block-diagnostic")]
+    {
+        assert!(
+            m.first_blk_failure().is_none(),
+            "completed retry was successful"
+        );
+    }
     for (i, &want) in payload[..SECTOR_SIZE].iter().enumerate() {
         assert_eq!(
             m.bus_mut().load8(rbuf + i as u64).unwrap(),

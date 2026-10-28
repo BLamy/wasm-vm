@@ -60,6 +60,112 @@ impl WasmLinux {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
         Ok(witness(&mut inner)?.into())
     }
+
+    /// Enable a passive one-shot block failure observation in a private exact
+    /// diagnostic owner. The flag and result are absent from guest snapshots.
+    #[cfg(feature = "cold-block-diagnostic")]
+    #[wasm_bindgen(js_name=armExactFirstBlockFailure)]
+    pub fn arm_exact_first_block_failure(&self) -> Result<(), JsError> {
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        admitted(&inner)?;
+        inner.machine.enable_first_blk_failure_diagnostic();
+        Ok(())
+    }
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    #[wasm_bindgen(js_name=exactParkedBlocks)]
+    pub fn exact_parked_blocks(&self) -> Result<String, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        admitted(&inner)?;
+        let rows: Vec<_> = inner
+            .machine
+            .parked_blk_witnesses()
+            .into_iter()
+            .map(|row| {
+                let reason = match row.reason {
+                    wasm_vm_core::dev::virtio::blk::ParkReason::Chunk(index) => {
+                        serde_json::json!({"kind":"chunk","index":index})
+                    }
+                    wasm_vm_core::dev::virtio::blk::ParkReason::Flush => {
+                        serde_json::json!({"kind":"flush"})
+                    }
+                    wasm_vm_core::dev::virtio::blk::ParkReason::Write => {
+                        serde_json::json!({"kind":"write"})
+                    }
+                };
+                serde_json::json!({
+                    "head":row.head,
+                    "reason":reason,
+                    "statusAddress":row.status_addr.to_string(),
+                    "statusByte":row.status_byte,
+                    "usedShadowIndex":row.used_shadow_index,
+                    "usedGuestIndex":row.used_guest_index,
+                    "nextUsedSlotHead":row.next_used_slot_head,
+                })
+            })
+            .collect();
+        serde_json::to_string(&rows).map_err(|error| JsError::new(&error.to_string()))
+    }
+
+    #[cfg(feature = "cold-block-diagnostic")]
+    #[wasm_bindgen(js_name=exactFirstBlockFailure)]
+    pub fn exact_first_block_failure(&self) -> Result<Option<String>, JsError> {
+        let inner = self.inner.try_borrow().map_err(|_| reentrant())?;
+        admitted(&inner)?;
+        let Some(failure) = inner.machine.first_blk_failure() else {
+            return Ok(None);
+        };
+        let witness = inner
+            .machine
+            .first_blk_failure_witness()
+            .ok_or_else(|| JsError::new("completed block failure has no boundary witness"))?;
+        if failure.event_position != Some(witness.position)
+            || failure.ram_digest != Some(witness.ram_digest)
+        {
+            return Err(JsError::new("completed block failure witness changed"));
+        }
+        let hex = |bytes: [u8; 32]| -> String {
+            bytes.iter().map(|byte| format!("{byte:02x}")).collect()
+        };
+        let range = match failure.range {
+            Some(Ok(offset)) => {
+                serde_json::json!({"status":"in-range","byteOffset":offset.to_string()})
+            }
+            Some(Err(error)) => {
+                serde_json::json!({"status":"rejected","error":format!("{error:?}")})
+            }
+            None => serde_json::Value::Null,
+        };
+        serde_json::to_string(&serde_json::json!({
+            "head":failure.head,
+            "eventPosition":{
+                "transition":witness.position.transition.to_string(),
+                "retired":witness.position.retired.to_string(),
+                "sequence":witness.position.sequence.to_string(),
+                "phase":witness.position.phase.label(),
+                "ordinal":witness.position.ordinal,
+            },
+            "guestWitnessDigest":hex(witness.guest_digest),
+            "ramDigest":hex(witness.ram_digest),
+            "pc":format!("0x{:016x}",witness.pc),
+            "type":failure.rtype,
+            "sector":failure.sector.map(|value|value.to_string()),
+            "requestedBytes":failure.requested_bytes.to_string(),
+            "capacitySectors":failure.capacity_sectors.to_string(),
+            "maxTransferBytes":failure.max_transfer_bytes,
+            "range":range,
+            "overlayBefore":failure.overlay_before,
+            "overlayAfter":failure.overlay_after,
+            "stage":format!("{:?}",failure.stage),
+            "backendError":failure.backend_error.map(|error|format!("{error:?}")),
+            "status":"S_IOERR",
+            "statusDmaWritten":failure.status_dma_written,
+            "usedRingCommitted":failure.used_ring_committed,
+        }))
+        .map(Some)
+        .map_err(gpu_error)
+    }
+
     #[wasm_bindgen(js_name=exactGpuSessionState)]
     pub fn exact_gpu_session_state(&self) -> Result<js_sys::Uint8Array, JsError> {
         let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
