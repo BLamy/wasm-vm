@@ -2945,7 +2945,8 @@ verify-E9-T22r:
 verify-E9-T22u:
 	@set -eu; out="$${E9_OUT:-target/evidence/e9-t22u-$$(date -u +%Y%m%dT%H%M%SZ)}"; \
 	  mkdir -p "$$(dirname "$$out")"; mkdir "$$out"; out="$$(cd "$$out" && pwd -P)"; \
-	  node --test tools/verify/e9-corrected-cold-budget.test.mjs > "$$out/preflight-tests.log" 2>&1; \
+	  node --test tools/verify/e9-corrected-cold-budget.test.mjs tools/verify/e9-corrected-cold-observation.test.mjs tools/verify/e9-replay-static-assets.test.mjs > "$$out/preflight-tests.log" 2>&1; \
+	  python3 -B tools/verify/test_gpu_checkpoint_build.py > "$$out/identity-tests.log" 2>&1; \
 	  cargo fmt --all --check > "$$out/fmt.log" 2>&1; \
 	  cargo test -p wasm-vm-core --features cold-block-diagnostic \
 	    --test virtio_blk --test session_block_transfer > "$$out/native.log" 2>&1; \
@@ -2953,10 +2954,17 @@ verify-E9-T22u:
 	  node --check tools/verify/e9-workload-desktop-browser.mjs; \
 	  node --check tools/verify/e9-workload-desktop-page.mjs; \
 	  $(MAKE) web-dist > "$$out/web-dist.log" 2>&1; git diff --exit-code -- web/dist; \
+	  node tools/verify/e9-device-completions-browser.mjs --output "$$out/demo" > "$$out/demo.log" 2>&1; \
+	  python3 -B tools/verify/e9-block-transfer-files.py --directory "$$out/demo" > "$$out/demo-bytes.log" 2>&1; \
 	  wasm-pack build crates/wasm-web --target web --profile wasm-release --out-name wasm_vm_wasm \
 	    --out-dir ../../target/e9-t22u-diagnostic-pkg --features cold-block-diagnostic \
 	    > "$$out/diagnostic-wasm.log" 2>&1; \
+	  python3 tools/gen-gpu-checkpoint-build.py --runtime-root web/dist \
+	    --wasm-package-root target/e9-t22u-diagnostic-pkg \
+	    --output target/e9-t22u-diagnostic-pkg/gpu-checkpoint-build.js > "$$out/diagnostic-identity.log" 2>&1; \
 	  node tools/verify/e9-workload-desktop-browser.mjs --corrected-block-prefix \
+	    --calibration-root "$${E9_CALIBRATION_ROOT:-target/evidence}" \
+	    --base-cache "$${E9_BASE_CACHE:-target/e9-workload-base-cache}" \
 	    --output "$$out/desktop" > "$$out/browser.log" 2>&1; \
 	  node tools/verify/e9-workload-retained-closure.mjs --directory "$$out/desktop" --prefix \
 	    > "$$out/closure.log" 2>&1; \

@@ -72,8 +72,8 @@ impl WasmLinux {
         Ok(())
     }
 
-    /// Record only the bounded diagnostic window around the original cold
-    /// guest's large write. The log is passive and absent from snapshots.
+    /// Enable passive request observations, drained by the diagnostic harness
+    /// at each cooperative boundary. The log is absent from snapshots.
     #[cfg(feature = "cold-block-diagnostic")]
     #[wasm_bindgen(js_name=armExactBlockLog)]
     pub fn arm_exact_block_log(&self) -> Result<(), JsError> {
@@ -99,6 +99,16 @@ impl WasmLinux {
                     "bytes":row.requested_bytes,
                     "guestWrittenBytes":row.len,
                     "status":row.status,
+                    "head":row.head,
+                    "eventPosition":row.event_position.map(|position|serde_json::json!({
+                        "transition":position.transition.to_string(),
+                        "retired":position.retired.to_string(),
+                        "sequence":position.sequence.to_string(),
+                        "phase":position.phase.label(),
+                        "ordinal":position.ordinal,
+                    })),
+                    "statusDmaWritten":row.status_dma_written,
+                    "usedRingCommitted":row.used_ring_committed,
                 })
             })
             .collect();

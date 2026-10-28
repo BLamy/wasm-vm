@@ -61,6 +61,14 @@ pub struct BlkReq {
     /// `len = 0` because no data is written back to guest memory.
     #[cfg(feature = "cold-block-diagnostic")]
     pub requested_bytes: u64,
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub head: u16,
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub event_position: Option<SessionPosition>,
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub status_dma_written: bool,
+    #[cfg(feature = "cold-block-diagnostic")]
+    pub used_ring_committed: bool,
     /// virtio-blk status byte: 0=OK 1=IOERR 2=UNSUPP.
     pub status: u8,
 }
@@ -128,6 +136,8 @@ pub struct BlkState {
     /// default (no cost, and no host-visible allocation on the hot path when disabled).
     blk_log: Option<alloc::vec::Vec<BlkReq>>,
     #[cfg(feature = "cold-block-diagnostic")]
+    log_completion_pending: bool,
+    #[cfg(feature = "cold-block-diagnostic")]
     first_failure_enabled: bool,
     #[cfg(feature = "cold-block-diagnostic")]
     first_failure: Option<BlkFailure>,
@@ -179,6 +189,13 @@ impl BlkState {
 
     #[cfg(feature = "cold-block-diagnostic")]
     fn commit_first_failure(&mut self, head: u16, committed: bool, bus: &SystemBus) {
+        if core::mem::take(&mut self.log_completion_pending)
+            && let Some(row) = self.blk_log.as_mut().and_then(|log| log.last_mut())
+            && row.head == head
+            && !row.used_ring_committed
+        {
+            row.used_ring_committed = committed;
+        }
         if self
             .first_failure
             .is_some_and(|failure| failure.head == head && !failure.used_ring_committed)
@@ -473,6 +490,8 @@ pub fn new(backend: Box<dyn BlockBackend>) -> (VirtioBlkDev, Rc<RefCell<BlkState
         flush_count: 0,
         blk_log: None,
         #[cfg(feature = "cold-block-diagnostic")]
+        log_completion_pending: false,
+        #[cfg(feature = "cold-block-diagnostic")]
         first_failure_enabled: false,
         #[cfg(feature = "cold-block-diagnostic")]
         first_failure: None,
@@ -622,6 +641,10 @@ fn observe_first_failure(state: &mut BlkState, input: BlkFailureInput) {
 }
 
 fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -> ExecOutcome {
+    #[cfg(feature = "cold-block-diagnostic")]
+    {
+        state.log_completion_pending = false;
+    }
     let writable_total = chain.writable_len();
     if writable_total == 0 {
         return ExecOutcome::Invalid; // no status byte possible → protocol violation
@@ -840,11 +863,30 @@ fn execute(chain: &DescriptorChain, state: &mut BlkState, bus: &mut SystemBus) -
             len: data_written,
             #[cfg(feature = "cold-block-diagnostic")]
             requested_bytes,
+            #[cfg(feature = "cold-block-diagnostic")]
+            head: chain.head,
+            #[cfg(feature = "cold-block-diagnostic")]
+            event_position: state.diagnostic_position,
+            #[cfg(feature = "cold-block-diagnostic")]
+            status_dma_written: false,
+            #[cfg(feature = "cold-block-diagnostic")]
+            used_ring_committed: false,
             status,
         });
+        #[cfg(feature = "cold-block-diagnostic")]
+        {
+            state.log_completion_pending = true;
+        }
     }
 
     let written = write_status(chain, bus, status_pos, status);
+    #[cfg(feature = "cold-block-diagnostic")]
+    if let Some(row) = state.blk_log.as_mut().and_then(|log| log.last_mut())
+        && row.head == chain.head
+        && !row.used_ring_committed
+    {
+        row.status_dma_written = written;
+    }
     #[cfg(feature = "cold-block-diagnostic")]
     if status == S_IOERR {
         state.mark_first_failure_status(chain.head, written);

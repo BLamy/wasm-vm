@@ -71,6 +71,8 @@ class PrefixBoundary extends Error {
 
 export async function qualifyDesktopWorkload(contract,qualification,options={}){
   const prefix=options.prefix??null;
+  const correctedObserver=prefix?.task==='E9-T22u'
+    ?await import('/e9-corrected-cold-observation.mjs'):null;
   if(prefix)need(['E9-T22r','E9-T22u'].includes(prefix.task)&&Number.isSafeInteger(prefix.wallMs)&&prefix.wallMs>0
     &&typeof prefix.transitionCap==='string'&&/^[1-9][0-9]*$/.test(prefix.transitionCap)
     &&BigInt(prefix.transitionCap)%50000000n===0n
@@ -218,6 +220,20 @@ export async function qualifyDesktopWorkload(contract,qualification,options={}){
     const value=vm.exactGpuSessionWitness();await guardedWrite('witness',()=>journal.observeExactWitness(value));
     const result={...pos(value),digest:hex(value.digest),ramDigest:vm.softwareRamDigest()};
     if(raw)result.state=await retain(label+'.state',vm.exactGpuSessionState());return result;};
+  const observeCorrectedBlocks=async()=>{
+    if(prefix?.task!=='E9-T22u')return;
+    const observation=state.correctedBlockObservation,rows=JSON.parse(vm.drainExactBlockLog());
+    if(rows.length){
+      const bytes=encoder.encode(JSON.stringify(rows));
+      need(observation.logBytes+bytes.length<=correctedObserver.CORRECTED_COLD_LOG_MAX_BYTES,'bounded diagnostic block log');
+      const through=pos(vm.inputPosition());
+      const artifact=await retain('block-log-'+observation.parts.length+'.json',bytes);
+      const matches=correctedObserver.recordCorrectedColdBatch(observation,rows,through,artifact);
+      if(matches.length)observation.witness=await witness('corrected-block',true);
+    }
+    observation.firstFailure=vm.exactFirstBlockFailure()??null;
+    need(observation.firstFailure===null,'fresh cold guest observed a block I/O error');
+  };
   const noteBodies=async()=>{
     const text=textView();
     for(let index=state.bodyResults.length+1;index<=10;index++){
@@ -241,7 +257,7 @@ export async function qualifyDesktopWorkload(contract,qualification,options={}){
       const result=vm.runChunk(budget);need(!result.done,'Omarchy guest stopped '+JSON.stringify(result));
       await collect();await pumpHttp();await pumpGpu();await drainBlocks();}
     const now=BigInt(vm.inputPosition().transition);need(now<=limit,'exact transition budget overrun');
-    await noteBodies();
+    await noteBodies();await observeCorrectedBlocks();
     if(now===nextCapture){await drainBlocks();need(gpu.checkpointReady().ok,'50M keyframe boundary unavailable');
       await flushJournal();stagedBytes=0;
       const frame=await guardedWrite('keyframe',()=>journal.captureKeyframe(vm,gpu,'cold-'+state.checkpoints.length));
@@ -249,23 +265,6 @@ export async function qualifyDesktopWorkload(contract,qualification,options={}){
       state.checkpoints.push({...pos(frame),digest:hex(frame.digest),ramDigest:hex(frame.ramDigest),full:frame.full,
         ...(raw?capturedLogicalWitness(frame,raw):{})});
       nextCapture=now+50000000n;}
-    if(prefix?.task==='E9-T22u'&&now===14350000000n){
-      const checkpoint=state.checkpoints.at(-1);
-      need(checkpoint?.ramDigest==='701fe081ade720cab198e2fab3e586648f9e407d3c3ef4eb15600e6e308ea4bd',
-        'corrected cold guest differs before the original large write');
-      vm.armExactBlockLog();
-      state.correctedBlockWindow={from:pos(vm.inputPosition()),preErrorRamDigest:checkpoint.ramDigest};
-    }
-    if(prefix?.task==='E9-T22u'&&now===14400000000n){
-      need(state.correctedBlockWindow,'large block observation was not armed');
-      const rows=JSON.parse(vm.drainExactBlockLog());
-      const matching=rows.filter(row=>row.type===1&&row.sector==='24928880'
-        &&row.bytes===1179648&&row.status===0);
-      state.correctedBlockWindow={...state.correctedBlockWindow,to:pos(vm.inputPosition()),
-        requests:rows,matching,firstFailure:vm.exactFirstBlockFailure()};
-      need(matching.length===1&&state.correctedBlockWindow.firstFailure===null,
-        'original 1,179,648-byte guest write did not complete with S_OK');
-    }
     await progress();await tick();
   };
   const until=async predicate=>{while(!predicate())await step();};
@@ -318,9 +317,10 @@ export async function qualifyDesktopWorkload(contract,qualification,options={}){
   };
   let originalState,originalQueues,sourceRenderer,sessionId;
   const completePrefix=async reason=>{
-    if(prefix?.task==='E9-T22u')state.firstBlockFailureAtEnd=vm.exactFirstBlockFailure();
     need(prefix&&vm&&gpu&&store&&writer&&journal,'original cold prefix reached a recordable boundary');
     phase='finalize';await drainBlocks();await pumpHttp();await collect();await pumpGpu();await flushJournal();stagedBytes=0;
+    await observeCorrectedBlocks();
+    if(prefix?.task==='E9-T22u')state.firstBlockFailureAtEnd=vm.exactFirstBlockFailure()??null;
     const current=pos(vm.inputPosition());
     if(current.transition!==pos(state.checkpoints.at(-1)??state.initial).transition){
       need(gpu.checkpointReady().ok,'prefix terminal keyframe unavailable');
@@ -335,6 +335,7 @@ export async function qualifyDesktopWorkload(contract,qualification,options={}){
     need(independentGpuWitness(finalRaw,finalRam)===hex(end.digest),'live final logical GPU witness');
     state.final={...pos(end),digest:hex(end.digest),ramDigest:finalRam,
       state:await retain('final.state',finalRaw)};
+    if(prefix?.task==='E9-T22u')state.correctedBlockObservation.through=pos(end);
     const terminalPixels=canvas.getContext('2d').getImageData(0,0,canvas.width,canvas.height).data;
     state.frontier={reason,position:pos(end),consoleTail:textView().slice(-2048),gpu:gpu.inspect(),
       presentation:presentation.snapshot(),pixels:shape(terminalPixels),hasDesktopPixels:hasDesktopPixels(terminalPixels)};
@@ -434,7 +435,10 @@ export async function qualifyDesktopWorkload(contract,qualification,options={}){
       need(state.console.length<=4*1048576,'console bound');terminal.write(bytes.slice());
       if(parser){const value=parser.feed(text);if(value)rpcResult=value;}
     },false);
-    if(prefix?.task==='E9-T22u')vm.armExactFirstBlockFailure();
+    if(prefix?.task==='E9-T22u'){
+      vm.armExactFirstBlockFailure();vm.armExactBlockLog();
+      state.correctedBlockObservation=correctedObserver.createCorrectedColdObservation(pos(vm.inputPosition()));
+    }
     gpu=await attachProductionVirgl(vm,{presenter});
     state.physical=gpu.inspect();need(state.physical.qualified&&!state.physical.lost&&!software.test(state.physical.profile.identity),'qualified physical renderer');
     const build=await import('/gpu-checkpoint-build.js');

@@ -26,6 +26,10 @@ const OBSERVED_COLD_WRITE: usize = 1_179_648;
 const _: () = assert!(OBSERVED_COLD_WRITE > MAX_RESULT);
 
 fn fixture() -> Machine {
+    fixture_with_used(USED)
+}
+
+fn fixture_with_used(used: u64) -> Machine {
     let chunk = vec![0x63; 256 * 1024];
     let reference = PayloadRef::of(&chunk).unwrap();
     let mut machine = Machine::new(16 * 1024 * 1024);
@@ -67,8 +71,11 @@ fn fixture() -> Machine {
         .store32(SLOT + 0x90, AVAIL as u32)
         .unwrap();
     machine.bus_mut().store32(SLOT + 0x94, 0).unwrap();
-    machine.bus_mut().store32(SLOT + 0xa0, USED as u32).unwrap();
-    machine.bus_mut().store32(SLOT + 0xa4, 0).unwrap();
+    machine.bus_mut().store32(SLOT + 0xa0, used as u32).unwrap();
+    machine
+        .bus_mut()
+        .store32(SLOT + 0xa4, (used >> 32) as u32)
+        .unwrap();
     machine.bus_mut().store32(SLOT + 0x44, 1).unwrap();
     machine.bus_mut().store32(SLOT + 0x70, 15).unwrap();
     machine
@@ -264,7 +271,10 @@ fn large_split_session_write_roundtrips_and_restores_below_finite_dma_bound() {
         .collect();
     let mut machine = fixture();
     #[cfg(feature = "cold-block-diagnostic")]
-    machine.enable_blk_log();
+    {
+        machine.enable_first_blk_failure_diagnostic();
+        machine.enable_blk_log();
+    }
     machine.bus_mut().write_ram_slice(DATA, &payload).unwrap();
     request(&mut machine, 1, 20_000, DATA, payload.len());
     assert_eq!(submit(&mut machine, 1), 0, "cold write reaches COW backend");
@@ -276,6 +286,10 @@ fn large_split_session_write_roundtrips_and_restores_below_finite_dma_bound() {
         assert_eq!(log[0].requested_bytes, OBSERVED_COLD_WRITE as u64);
         assert_eq!(log[0].len, 0, "OUT returns no guest payload");
         assert_eq!(log[0].status, 0);
+        assert_eq!(log[0].head, 0);
+        assert!(log[0].event_position.is_some());
+        assert!(log[0].status_dma_written);
+        assert!(log[0].used_ring_committed);
     }
     assert!(machine.session_device_requests().unwrap().is_empty());
 
@@ -316,4 +330,40 @@ fn large_split_session_write_roundtrips_and_restores_below_finite_dma_bound() {
         PayloadRef::of(&vec![0; MAX_RESULT + 1]),
         Err(DeviceError::Limit)
     ));
+}
+
+#[cfg(feature = "cold-block-diagnostic")]
+#[test]
+fn diagnostic_backend_success_requires_a_real_status_dma_and_used_commit() {
+    for invalid_status in [true, false] {
+        let mut machine = if invalid_status {
+            fixture()
+        } else {
+            fixture_with_used(BASE + 16 * 1024 * 1024 - 8)
+        };
+        machine.enable_first_blk_failure_diagnostic();
+        machine.enable_blk_log();
+        let payload = vec![0x39; OBSERVED_COLD_WRITE];
+        machine.bus_mut().write_ram_slice(DATA, &payload).unwrap();
+        request(&mut machine, 1, 20_000, DATA, payload.len());
+        if invalid_status {
+            descriptor(&mut machine, 3, u64::MAX - 1, 1, F_WRITE, 0);
+        }
+        kick(&mut machine, 1);
+        let log = machine.drain_blk_log();
+        if invalid_status {
+            assert!(
+                log.is_empty(),
+                "an invalid status descriptor is rejected before execution"
+            );
+            assert_eq!(machine.bus_mut().load16(USED + 2).unwrap(), 0);
+            continue;
+        }
+        assert_eq!(log.len(), 1, "the valid request reaches the backend");
+        assert_eq!(log[0].status, 0, "the backend accepted the write");
+        assert_eq!(log[0].requested_bytes, OBSERVED_COLD_WRITE as u64);
+        assert!(log[0].status_dma_written);
+        assert!(!log[0].used_ring_committed);
+        assert!(machine.first_blk_failure().is_none());
+    }
 }

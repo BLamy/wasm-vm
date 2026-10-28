@@ -12,10 +12,11 @@ export const CORRECTED_COLD_SOURCE=Object.freeze({
   unmodifiedWallMs:6557604.799999997,
 });
 export const CORRECTED_BLOCK_BUILD=Object.freeze({
-  wasmSha256:'1f0d2c0eb3853aa0c1050f756743e75c12dd5bae26e9429a7f4b66811fde70aa',
-  glueSha256:'fe77bfb7abe4695a0b0190e12964906ff440e1a56c1171c7aff4ea16c25c9dd8',
-  productionWasmSha256:'bbf5e4b9219a25ddc7d3d2bbc8cb568a6d9fecbc0c7a44770c89e8a182adadd8',
-  rendererSha256:'2701a54ee2f37200aba3936335e5564501ccafb0e12c6d99a2afc76cd095449d',
+  wasmSha256:'5dd5c93fdb600f68c1b7d74eaa3cbda2435692343e409c118f27371991041e9e',
+  glueSha256:'c626772fedbe75251bb7461f11f5d7a4b5177a2c7170f9c7eed480e6c6224632',
+  productionWasmSha256:'00159a8cb8f880b0dc88412c5a7009e8a74dfa546c47c36dd0d6859125873a87',
+  rendererSha256:'6adfd6f5248c56933ee6e840b1c38f9de953f5369bdaa3cdea8e73928e023667',
+  productionRendererSha256:'ac678419d5d27f56488c71940286d32901a55aa750bdf6c4508c9075c5eb3e1e',
 });
 export const CORRECTED_COLD_CAP=27000000000;
 export const CORRECTED_COLD_WALL_MS=20*60*60*1000;

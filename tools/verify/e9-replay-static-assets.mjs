@@ -6,11 +6,18 @@ const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const patterns=[/\b(?:import|export)\s+[^;]*?\bfrom\s*['"]([^'"]+)['"]/g,
   /\bimport\s*['"]([^'"]+)['"]/g,/\bimport\s*\(\s*['"]([^'"]+)['"]\s*\)/g,
   /\bnew\s+URL\(\s*['"]([^'"]+)['"]\s*,\s*import\.meta\.url\s*\)/g];
-export async function sealReplayStaticAssets(webRoot){
+export async function sealReplayStaticAssets(webRoot,{wasmPackageRoot=null,gpuBuildFile=null}={}){
   const result=new Map(),pending=['/session-gpu-replay-worker.js'];
   while(pending.length){const name=pending.pop();if(result.has(name))continue;
     if(!name.startsWith('/')||name.includes('?')||name.includes('#'))throw Error('static replay asset path '+name);
-    const file=path.resolve(webRoot,'.'+name);if(!file.startsWith(webRoot+path.sep))throw Error('static replay asset escape '+name);
+    let file;
+    if(gpuBuildFile&&name==='/gpu-checkpoint-build.js')file=path.resolve(gpuBuildFile);
+    else{
+      const packageAsset=wasmPackageRoot&&name.startsWith('/pkg/');
+      const root=path.resolve(packageAsset?wasmPackageRoot:webRoot);
+      file=path.resolve(root,packageAsset?name.slice('/pkg/'.length):'.'+name);
+      if(!file.startsWith(root+path.sep))throw Error('static replay asset escape '+name);
+    }
     const bytes=await fs.readFile(file);result.set(name,{name,bytes:bytes.length,sha256:sha(bytes)});
     if(!/\.(?:js|mjs)$/.test(name))continue;
     const source=bytes.toString('utf8');

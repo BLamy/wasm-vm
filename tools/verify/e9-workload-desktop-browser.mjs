@@ -18,11 +18,18 @@ import{calculateCorrectedColdBudget,CORRECTED_COLD_SOURCE,CORRECTED_BLOCK_BUILD}
 import{retainSessionStore}from'./e9-retain-session-store.mjs';
 import{sealReplayStaticAssets}from'./e9-replay-static-assets.mjs';
 class PreflightComplete extends Error {}
-const options={};for(let i=2;i<process.argv.length;i++){const key=process.argv[i];if(key==='--development'){assert(!options.development);options.development=true;}else if(key==='--prefix'){assert(!options.prefix);options.prefix=true;}else if(key==='--corrected-block-prefix'){assert(!options.prefix);options.prefix=true;options.correctedBlockPrefix=true;}else if(key==='--preflight-only'){assert(!options.preflightOnly);options.preflightOnly=true;}else{assert(key==='--output'&&!options.output&&process.argv[i+1]);options.output=process.argv[++i];}}assert(options.output);assert(!options.preflightOnly||options.prefix);
+const options={};for(let i=2;i<process.argv.length;i++){const key=process.argv[i];if(key==='--development'){assert(!options.development);options.development=true;}else if(key==='--prefix'){assert(!options.prefix);options.prefix=true;}else if(key==='--corrected-block-prefix'){assert(!options.prefix);options.prefix=true;options.correctedBlockPrefix=true;}else if(key==='--preflight-only'){assert(!options.preflightOnly);options.preflightOnly=true;}else{const field={'--output':'output','--calibration-root':'calibrationRoot','--base-cache':'baseCache'}[key];assert(field&&!options[field]&&process.argv[i+1]);options[field]=process.argv[++i];}}assert(options.output);assert(!options.preflightOnly||options.prefix);
+const {createCorrectedColdObservation,recordCorrectedColdBatch,finishCorrectedColdObservation,
+  CORRECTED_COLD_LOG_MAX_BYTES}=options.correctedBlockPrefix?await import('./e9-corrected-cold-observation.mjs'):{};
+const calibrationRoot=path.resolve(options.calibrationRoot??path.join(root,'target/evidence')),
+  baseCache=path.resolve(options.baseCache??path.join(root,'target/e9-workload-base-cache'));
 const out=path.resolve(options.output),web=path.join(root,'web/dist');await fs.mkdir(path.dirname(out),{recursive:true});await fs.mkdir(out);
 const diagnosticPkg=path.join(root,'target/e9-t22u-diagnostic-pkg');
-const diagnosticAsset=name=>options.correctedBlockPrefix&&/^\/pkg\/wasm_vm_wasm(?:_bg\.wasm|\.js)$/.test(name);
-const servedPath=name=>diagnosticAsset(name)?path.join(diagnosticPkg,path.basename(name)):path.join(web,'.'+name);
+const diagnosticStamp=path.join(diagnosticPkg,'gpu-checkpoint-build.js');
+const diagnosticAsset=name=>options.correctedBlockPrefix&&(name.startsWith('/pkg/')||name==='/gpu-checkpoint-build.js');
+const servedPath=name=>diagnosticAsset(name)
+  ?name==='/gpu-checkpoint-build.js'?diagnosticStamp:path.join(diagnosticPkg,name.slice('/pkg/'.length))
+  :path.join(web,'.'+name);
 const git=(...args)=>execFileSync('git',args,{cwd:root,encoding:'utf8'}).trim();
 const report={task:options.correctedBlockPrefix?'E9-T22u':options.prefix?'E9-T22r':'E9-T22c',phase:'desktop',scope:options.prefix?'Fresh original cold Omarchy first-frame prefix or bounded frontier; no timing claim':'Original cold Omarchy workload, RV64 EGL/GLES probe and whole-history replay; no timing claim',development:!!options.development,status:'running',head:null,dirty:null,started:new Date().toISOString(),errors:[],missing:[],external:[],raw:[],served:[],capacityChecks:[],baseRequests:{record:0,replay:0},replayBlockedRequests:[],replayBlockedSockets:[],replayStaticRequests:[],workerFactoryAudits:[]};
 const GiB=1024**3,stageBytes=512*1024**2,sidecarBytes=4*GiB;
@@ -46,12 +53,12 @@ const capacityReceipt=async(stage,{quota,usage,payloadBytes,plannedBytes=stage==
  report.capacityChecks.push({stage,phase,position,payloadBytes,plannedBytes,...receipt});
  return receipt;
 };
-let assets,probe,busyboxTransport,pageSource,scheduleSource,wallSource,replayStaticAllow;
+let assets,probe,busyboxTransport,pageSource,scheduleSource,wallSource,observationSource,replayStaticAllow;
 try{
  report.head=git('rev-parse','HEAD');report.dirty=git('status','--porcelain');
  if(!options.development)assert.equal(report.dirty,'','freeze source before accepted phase');
  if(options.prefix){
-   const old=path.join(root,'target/evidence/e9-t22c-submission-19bd97e6e/desktop/report.json');
+   const old=path.join(calibrationRoot,'e9-t22c-submission-19bd97e6e/desktop/report.json');
    const graph=path.join(path.dirname(old),'saved/storage.json');
    const bytes=await fs.readFile(old),prior=JSON.parse(bytes),graphBytes=await fs.readFile(graph);
      assert.equal(sha(bytes),OLD_COLD_REPORT.sha256,'preserved 20B calibration report');
@@ -68,8 +75,8 @@ try{
        graphSha256:sha(graphBytes),preserved:true};
  }
  if(options.correctedBlockPrefix){
-   const failedPath=path.join(root,'target/evidence/e9-t22r-720f53afe/desktop/report.json');
-   const frontierPath=path.join(root,'target/evidence/e9-t22o-839481890-fullbase/desktop/report.json');
+   const failedPath=path.join(calibrationRoot,'e9-t22r-720f53afe/desktop/report.json');
+   const frontierPath=path.join(calibrationRoot,'e9-t22o-839481890-fullbase/desktop/report.json');
    const failedBytes=await fs.readFile(failedPath),frontierBytes=await fs.readFile(frontierPath);
    assert.equal(sha(failedBytes),CORRECTED_COLD_SOURCE.failedPrefixReportSha256,
      'changed pre-error cold source');
@@ -82,22 +89,38 @@ try{
    assert.equal(frontier.result.sourcePosition.transition,CORRECTED_COLD_SOURCE.frontierStart);
    assert.equal(frontier.result.frontier.position.transition,CORRECTED_COLD_SOURCE.frontierEnd);
    assert.equal(frontier.result.measured.unmodifiedWallMs,CORRECTED_COLD_SOURCE.unmodifiedWallMs);
-   report.correctedSources={failedPrefix:{path:failedPath,sha256:sha(failedBytes)},
+   report.correctedSources={role:'historical error identity and cost calibration; fresh RTC/entropy are recorded live',
+     failedPrefix:{path:failedPath,sha256:sha(failedBytes)},
      laterFrontier:{path:frontierPath,sha256:sha(frontierBytes)}};
  }
- assets=await loadQualificationAssets('desktop');report.inputs=assets.receipt;
+ report.externalInputs={calibrationRoot,baseCache};
+ assets=await loadQualificationAssets('desktop',{cacheRoot:baseCache});report.inputs=assets.receipt;
  if(options.prefix){const wasm=sha(await fs.readFile(path.join(web,'pkg/wasm_vm_wasm_bg.wasm'))),
    renderer=sha(await fs.readFile(path.join(web,'gpu-checkpoint-build.js')));
    if(options.correctedBlockPrefix){
      const diagnosticWasm=sha(await fs.readFile(servedPath('/pkg/wasm_vm_wasm_bg.wasm')));
      const glue=sha(await fs.readFile(servedPath('/pkg/wasm_vm_wasm.js')));
+     const stampBytes=await fs.readFile(diagnosticStamp),diagnosticRenderer=sha(stampBytes);
      assert.equal(diagnosticWasm,CORRECTED_BLOCK_BUILD.wasmSha256,'corrected diagnostic Wasm binary');
      assert.equal(glue,CORRECTED_BLOCK_BUILD.glueSha256,'corrected diagnostic binding');
      assert.equal(wasm,CORRECTED_BLOCK_BUILD.productionWasmSha256,'corrected production Wasm binary');
-     assert.equal(renderer,CORRECTED_BLOCK_BUILD.rendererSha256,'corrected physical GPU build');
+     assert.equal(renderer,CORRECTED_BLOCK_BUILD.productionRendererSha256,'corrected production GPU build');
+     assert.equal(diagnosticRenderer,CORRECTED_BLOCK_BUILD.rendererSha256,'genuine diagnostic GPU build');
+     const identityCheck=execFileSync('python3',['tools/gen-gpu-checkpoint-build.py','--runtime-root',web,
+       '--wasm-package-root',diagnosticPkg,'--output',diagnosticStamp,'--check'],{cwd:root,encoding:'utf8'}).trim();
+     const parseStamp=bytes=>{const text=bytes.toString('utf8');return{
+       buildId:text.match(/GPU_CHECKPOINT_BUILD_ID="([a-f0-9]{64})";/)[1],
+       wasmSha256:text.match(/SOFTWARE_CHECKPOINT_WASM_SHA256="([a-f0-9]{64})";/)[1],
+       wasmBytes:Number(text.match(/SOFTWARE_CHECKPOINT_WASM_BYTES=([0-9]+);/)[1])};};
+     const identity=parseStamp(stampBytes),productionIdentity=parseStamp(await fs.readFile(path.join(web,'gpu-checkpoint-build.js')));
+     assert.equal(identity.wasmSha256,diagnosticWasm);
+     assert.equal(identity.wasmBytes,(await fs.stat(servedPath('/pkg/wasm_vm_wasm_bg.wasm'))).size);
+     assert.notEqual(identity.buildId,productionIdentity.buildId,'diagnostic and production package identities differ');
+     report.diagnosticIdentity={...identity,stampSha256:diagnosticRenderer,identityCheck,
+       production:{...productionIdentity,stampSha256:renderer}};
      assert.notEqual(diagnosticWasm,EXACT_LATCH_BUILD.wasmSha256,'old transfer bound forbidden');
-     report.exactLatchBuild={wasm:diagnosticWasm,glue,renderer,
-       productionWasm:wasm,calibration:CORRECTED_BLOCK_BUILD};
+     report.exactLatchBuild={wasm:diagnosticWasm,glue,renderer:diagnosticRenderer,
+       productionWasm:wasm,productionRenderer:renderer,calibration:CORRECTED_BLOCK_BUILD};
    }else{
      assert.equal(wasm,EXACT_LATCH_BUILD.wasmSha256,'Q corrected exact Wasm binary');
      assert.equal(renderer,EXACT_LATCH_BUILD.rendererSha256,'Q corrected physical GPU build');
@@ -120,18 +143,20 @@ try{
  for(const soname of ['libEGL.so.1','libGLESv2.so.2'])assert(probeBuild.dynamic.includes('Shared library: ['+soname+']'),'linked '+soname);
  for(const pin of ['686d69940e99357eabbea48b5cccea1ae513c43773e033d48debfd83cddac897','9d57a842bdb448f7896bbaab81c3e438f123ff65eb2f222cf3ebab1a5dbed204'])assert(probeBuild.headersAndLibraries.includes(pin),'qualified sysroot library '+pin);
  report.probe={bytes:probe.length,sha256:sha(probe),build:sha(probeBuildBytes),buildDetails:probeBuild};
- pageSource=await fs.readFile(path.join(root,'tools/verify/e9-workload-desktop-page.mjs'));scheduleSource=await fs.readFile(path.join(root,'tools/verify/e9-workload-schedule.mjs'));wallSource=await fs.readFile(path.join(root,'tools/verify/e9-workload-wall.mjs'));report.executedSources=[];
+ pageSource=await fs.readFile(path.join(root,'tools/verify/e9-workload-desktop-page.mjs'));scheduleSource=await fs.readFile(path.join(root,'tools/verify/e9-workload-schedule.mjs'));wallSource=await fs.readFile(path.join(root,'tools/verify/e9-workload-wall.mjs'));if(options.correctedBlockPrefix)observationSource=await fs.readFile(path.join(root,'tools/verify/e9-corrected-cold-observation.mjs'));report.executedSources=[];
  for(const name of ['tools/verify/e9-workload-desktop-browser.mjs','tools/verify/e9-workload-desktop-page.mjs','tools/verify/e9-workload-desktop-files.py','tools/verify/e9-workload-retained-closure.mjs','tools/verify/e9-cold-prefix-budget.mjs','tools/verify/e9-corrected-cold-budget.mjs','tools/verify/e9-cold-prefix-files.py','tools/verify/e9-replay-static-assets.mjs','tools/verify/e9-workload-schedule.mjs','tools/verify/e9-workload-wall.mjs','tools/verify/e9-workload-assets.mjs','tools/verify/e9-retention-capacity.mjs','tools/verify/e9-build-performance-probe.py','docs/design/session-workload-qualification-v1.json','docs/design/session-workload-qualification-v2.json','docs/design/session-workload-qualification-v3.json','docs/design/session-workload-qualification-v4.json','docs/design/session-workload-qualification-v5.json','docs/design/session-workload-qualification-v6.json','docs/design/session-workload-qualification-v7.json','docs/design/session-workload-qualification-v8.json','docs/design/session-workload-qualification-v9.json','docs/design/session-workload-qualification-v10.json','docs/design/session-workload-qualification-v11.json','docs/design/session-workload-retention-v1.json','docs/design/session-gpu-probe.c','releases/initramfs/busybox']){const bytes=await fs.readFile(path.join(root,name));report.executedSources.push({path:name,sha256:sha(bytes)});const file=path.join(out,'executed-source',name);await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,bytes);}
- report.replayStaticAssets=await sealReplayStaticAssets(web);
- if(options.correctedBlockPrefix)report.replayStaticAssets=await Promise.all(report.replayStaticAssets.map(async row=>{
-   if(!diagnosticAsset(row.name))return row;
-   const bytes=await fs.readFile(servedPath(row.name));
-   return {...row,bytes:bytes.length,sha256:sha(bytes)};
- }));
+ if(options.correctedBlockPrefix)for(const name of ['tools/verify/e9-corrected-cold-observation.mjs','tools/verify/e9-corrected-cold-observation.test.mjs','tools/verify/e9-replay-static-assets.test.mjs','tools/gen-gpu-checkpoint-build.py','tools/verify/test_gpu_checkpoint_build.py','tools/verify/e9-corrected-cold-pristine.py']){
+   const bytes=await fs.readFile(path.join(root,name));report.executedSources.push({path:name,sha256:sha(bytes)});
+   const file=path.join(out,'executed-source',name);await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,bytes);
+ }
+ report.replayStaticAssets=await sealReplayStaticAssets(web,
+   options.correctedBlockPrefix?{wasmPackageRoot:diagnosticPkg,gpuBuildFile:diagnosticStamp}:{});
  replayStaticAllow=new Map(report.replayStaticAssets.map(row=>[row.name,row]));
  assert.equal(report.executedSources.find(row=>row.path==='tools/verify/e9-workload-desktop-page.mjs').sha256,sha(pageSource),'served page is copied proof source');
  assert.equal(report.executedSources.find(row=>row.path==='tools/verify/e9-workload-schedule.mjs').sha256,sha(scheduleSource),'served schedule is copied proof source');
  assert.equal(report.executedSources.find(row=>row.path==='tools/verify/e9-workload-wall.mjs').sha256,sha(wallSource),'served wall policy is copied proof source');
+ if(options.correctedBlockPrefix)assert.equal(report.executedSources.find(row=>row.path==='tools/verify/e9-corrected-cold-observation.mjs').sha256,
+   sha(observationSource),'served observation policy is copied proof source');
  await fs.writeFile(path.join(out,'image.json'),assets.imageBytes);await fs.writeFile(path.join(out,'contract.json'),assets.contractBytes);
 }catch(error){report.status='failed';report.failure=String(error.stack??error);if(error.assetCloseError)report.assetCloseError=error.assetCloseError;
  try{await assets?.close();}catch(closeError){report.assetCloseError=String(closeError.stack??closeError);}
@@ -142,8 +167,13 @@ const server=createServer(async(req,res)=>{try{const name=decodeURIComponent(new
  if(name==='/favicon.ico'){res.writeHead(204).end();return;}let bytes,mime='application/octet-stream';
  if(name==='/'){bytes=Buffer.from('<!doctype html><title>Cold Omarchy desktop recording</title><link rel="stylesheet" href="/vendor/xterm/xterm.css"><script src="/vendor/xterm/xterm.js"></script><script src="/vendor/xterm/addon-fit.js"></script><canvas width="640" height="480"></canvas><div id="terminal" style="width:800px;height:320px"></div><pre>Original cold Omarchy recording; no timing claim.</pre>');mime='text/html';}
  else if(name==='/kernel.bin')bytes=assets.kernel;else if(name==='/image.json'){bytes=assets.imageBytes;mime='application/json';}else if(name==='/probe.elf')bytes=probe;else if(name==='/busybox.gz')bytes=busyboxTransport;else if(name==='/desktop.mjs'){bytes=pageSource;mime='text/javascript';}else if(name==='/contract.json'){bytes=assets.contractBytes;mime='application/json';}else if(name==='/e9-workload-schedule.mjs'){bytes=scheduleSource;mime='text/javascript';}else if(name==='/e9-workload-wall.mjs'){bytes=wallSource;mime='text/javascript';}
+ else if(options.correctedBlockPrefix&&name==='/e9-corrected-cold-observation.mjs'){bytes=observationSource;mime='text/javascript';}
  else if(/^\/__chunk__\/[a-f0-9]{64}\.bin$/.test(name)){report.baseRequests[currentPhase]++;bytes=await assets.readChunk(path.basename(name,'.bin'));}
  else{const file=path.resolve(servedPath(name));assert(file.startsWith(web+path.sep)||diagnosticAsset(name)&&file.startsWith(diagnosticPkg+path.sep));bytes=await fs.readFile(file);mime=types[path.extname(file)]??mime;const digest=sha(bytes);assert(!seen.has(name)||seen.get(name)===digest,'served source changed');if(!seen.has(name)){seen.set(name,digest);report.served.push({name,bytes:bytes.length,sha256:digest});}}
+ if(options.correctedBlockPrefix){const sealed=replayStaticAllow.get(name);if(sealed){
+   assert.equal(bytes.length,sealed.bytes,'recorded static input length');
+   assert.equal(sha(bytes),sealed.sha256,'recorded static input changed after sealing');
+ }}
  res.writeHead(200,{'Content-Type':mime,'Cache-Control':'no-store','Cross-Origin-Opener-Policy':'same-origin','Cross-Origin-Embedder-Policy':'require-corp'}).end(bytes);
  }catch(error){report.missing.push({url:req.url,error:String(error.stack??error)});if(!res.headersSent)res.writeHead(500);res.end();}});
 try{
@@ -154,7 +184,9 @@ try{
  if(options.prefix){report.budget=(options.correctedBlockPrefix?calculateCorrectedColdBudget:calculateColdPrefixBudget)({hostFreeBytes:Number(report.hostFreeBytesBefore),
    browserQuota:OLD_COLD_REPORT.browserQuotaBefore,browserUsage:0});
    report.hostCapacityRequiredBytes=String(report.budget.hostRequiredBytes);
-   report.hostSidecarReserveBytes=report.budget.sidecarReserveBytes;}
+   report.hostSidecarReserveBytes=report.budget.sidecarReserveBytes;
+   if(options.correctedBlockPrefix)assert(CORRECTED_COLD_LOG_MAX_BYTES<=report.budget.sidecarReserveBytes,
+     'bounded request log fits the existing sidecar reserve');}
  else{report.hostCapacityRequiredBytes=String(2*assets.qualification.retention.maxBytes
    +assets.qualification.capacityPreflight.reserveBytes+sidecarBytes);
    report.hostSidecarReserveBytes=sidecarBytes;
@@ -223,12 +255,27 @@ try{
    assert.equal(report.result.prefixPolicy.wallMs,report.budget.wallMs);
    assert.equal(report.result.prefixPolicy.payloadStopBytes,report.budget.payloadStopBytes);
    if(options.correctedBlockPrefix){
-     const block=report.result.correctedBlockWindow;
-     assert.equal(block?.preErrorRamDigest,CORRECTED_COLD_SOURCE.preErrorRamDigest);
-     assert.equal(block?.from?.transition,CORRECTED_COLD_SOURCE.preErrorTransition);
-     assert.equal(block?.to?.transition,'14400000000');
-     assert.equal(block?.matching?.length,1,'original large COW write completed once');
-     assert.equal(block.firstFailure,null,'no earlier guest block I/O error');
+     const block=report.result.correctedBlockObservation;
+     assert(block,'source-aware block observation');
+     const checked=createCorrectedColdObservation(block.from);
+     for(const part of block.parts){
+       assert(/^block-log-[0-9]+\.json$/.test(part.file),'retained diagnostic filename');
+       const bytes=await fs.readFile(path.join(out,part.file));
+       assert.equal(bytes.length,part.bytes);assert.equal(sha(bytes),part.sha256);
+       recordCorrectedColdBatch(checked,JSON.parse(bytes),part.through,
+         {file:part.file,bytes:part.bytes,sha256:part.sha256});
+       assert.deepEqual(checked.parts.at(-1),part,'authenticated diagnostic part');
+     }
+     checked.witness=block.witness;
+     finishCorrectedColdObservation(checked,report.result.final,report.result.firstBlockFailureAtEnd);
+     assert.deepEqual(checked,block,'recomputed complete block observation');
+     assert.equal(block.witness.state.file,'corrected-block.state');
+     const raw=await fs.readFile(path.join(out,block.witness.state.file));
+     assert.equal(raw.length,block.witness.state.bytes);assert.equal(sha(raw),block.witness.state.sha256);
+     const size=Buffer.alloc(8);size.writeBigUInt64LE(BigInt(raw.length));
+     assert.equal(createHash('sha256').update(Buffer.from('wasm-vm-gpu-guest-state-v1\0'))
+       .update(size).update(raw).update(Buffer.from(block.witness.ramDigest,'hex')).digest('hex'),
+       block.witness.digest,'independent post-completion guest witness');
    }
    assert(report.result.final&&report.result.frontier&&report.result.authenticatedHistory);
    assert(BigInt(report.result.final.transition)<=BigInt(report.budget.transitionCap));

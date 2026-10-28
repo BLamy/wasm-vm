@@ -43,13 +43,36 @@ async function seekPaged(request,manifest,config,reader){
   const skipped=Number(checkpoint.position.sequence);
   need(Number.isSafeInteger(skipped)&&skipped>=0,'paged GPU checkpoint cursor');
   const windows=gpuReplayWitnessWindows(reader,{start:checkpoint.position}),first=await windows.next();need(!first.done,'paged GPU history has no replay window');
-  const frame=decodeGpuExactFrame(await readCheckpointObject(store,checkpoint.machine,GPU_FRAME_LIMIT));
-  need(frame.meta.full&&same(frame.meta.position,checkpoint.position)&&frame.meta.runtime===manifest.machine.vm_build
+  const chain=await new SessionCheckpoints(store).resolveDelta(request.sessionId,checkpoint.id);
+  const base=decodeGpuExactFrame(await readCheckpointObject(store,chain.base,GPU_FRAME_LIMIT));
+  need(base.meta.full&&same(base.meta.position,chain.baseCheckpoint.position)
+    &&base.meta.runtime===manifest.machine.vm_build&&base.meta.rendererSha256===chain.baseCheckpoint.gpu.sha256,
+    'paged GPU full RAM ancestor binding');
+  const last=chain.deltas.at(-1),frame=last
+    ?decodeGpuExactFrame(await readCheckpointObject(store,last.descriptor.frame,GPU_FRAME_LIMIT)):base;
+  need(frame.meta.full===(chain.deltas.length===0)&&same(frame.meta.position,checkpoint.position)&&frame.meta.runtime===manifest.machine.vm_build
     &&frame.meta.rendererSha256===checkpoint.gpu.sha256&&frame.meta.stateSha256===gpuHex(first.value.begin.digest),
-    'selected full GPU replay frame/witness binding');
+    'selected GPU replay frame/witness binding');
+  if(last)need(frame.meta.ramSha256===last.descriptor.ramSha256,'paged GPU selected delta RAM binding');
   const rendererBytes=await readCheckpointObject(store,checkpoint.gpu,256*1048576),kernelRef=manifest.assets.find(value=>value.role==='kernel')?.content;
   need(kernelRef,'GPU kernel missing');const kernel=await readCheckpointObject(store,kernelRef,64*1048576);
   machine=WasmLinux.newExactGpuSession(kernel,config.imageManifest,config.bootargs,()=>{},true);
+  if(chain.deltas.length){
+    machine.seedExactGpuRam(base.native,gpuHashBytes(base.meta.rendererSha256));
+    for(const {checkpoint:point,descriptor} of chain.deltas){let previous=-1,pages=0;
+      for(const ref of descriptor.chunks){
+        const bytes=await readCheckpointObject(store,ref,4194304),shape=inspectRamDeltaChunk(bytes,'1073741824',previous);
+        previous=shape.last;pages+=shape.count;
+        need(machine.applySoftwareRamDeltaChunk(bytes)===shape.count,'paged GPU RAM page application');
+      }
+      need(pages===descriptor.dirtyPages&&machine.softwareRamDigest()===descriptor.ramSha256,
+        'paged GPU reconstructed RAM mismatch');
+      const part=decodeGpuExactFrame(await readCheckpointObject(store,descriptor.frame,GPU_FRAME_LIMIT));
+      need(!part.meta.full&&same(part.meta.position,point.position)&&part.meta.runtime===manifest.machine.vm_build
+        &&part.meta.rendererSha256===point.gpu.sha256&&part.meta.ramSha256===descriptor.ramSha256,
+        'paged GPU delta frame binding');
+    }
+  }
   let presenter;presenter=createWorkerScanoutPresenter(frame=>{
     if(frame.type==='clear'){latestFrame=null;return;}
     if(frame.type==='invalidate')return;
@@ -58,7 +81,8 @@ async function seekPaged(request,manifest,config,reader){
   });
   renderer=await attachProductionVirgl(machine,{presenter,checkpoint:{exactHistory:true,renderer:rendererBytes,profile:config.profile,epoch:frame.meta.rendererEpoch,rendererSha256:frame.meta.rendererSha256}});
   if(config.branchOrigin)machine.markExactBranchReplayOffline();
-  const gpuOptions=plan=>({version:1,rendererDigest:gpuHashBytes(frame.meta.rendererSha256),ramDigest:null,payloads:plan.payloads});
+  const gpuOptions=plan=>({version:1,rendererDigest:gpuHashBytes(frame.meta.rendererSha256),
+    ramDigest:frame.meta.full?null:gpuHashBytes(frame.meta.ramSha256),payloads:plan.payloads});
   let plan=first.value,admitted=0,consoleParts=[Uint8Array.from(config.branchOrigin?.consolePrefix??[])],outcome;
   machine.beginExactReplay(frame.native,plan.events,plan.witnesses,plan.end,{pending:frame.pending,output:frame.output},gpuOptions(plan));
   await renderer.activateCheckpoint();
