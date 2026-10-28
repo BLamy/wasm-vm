@@ -4,7 +4,7 @@ epic: 9
 title: Qualify a finite supported cold-desktop transition allowance
 priority: 524.9220299
 status: pending
-depends_on: [E9-T22o]
+depends_on: [E9-T22o, E9-T22s]
 estimate: S
 risk: medium
 capstone: false
@@ -14,6 +14,10 @@ capstone: false
 
 Admit a finite original-cold qualification window informed by E9-T22o's
 measured first-frame frontier, without changing the frozen workloads.
+
+E9-T22o ended at an exact no-frame failure frontier. E9-T22s must attribute
+the original guest's first disk I/O rejection before a later exact run can
+measure the first frame; this task cannot substitute a guessed allowance.
 
 ## Boundary
 
