@@ -1,0 +1,50 @@
+{
+  "scope": "Exact raw HTTP protocol headers supplement the normalized readable copies; original verifier bytes retained, no receipt relabelling",
+  "files": {
+    "artifacts-omarchy.json.headers.gz": {
+      "rawBytes": 804,
+      "rawSha256": "5beb5697e367097f03f825d149f47f8782fcb85b70bd9d2d2ce9b78a03b25bd7",
+      "archiveSha256": "a867b57dff31e6dcfbb31dad45a3b077bedc105d4d84bb3fd04b31c19d4429d0"
+    },
+    "gpu-checkpoint-build.js.headers.gz": {
+      "rawBytes": 823,
+      "rawSha256": "21eb0bf587a194781d4037e2a749c195e2e4018ee319fe5f306dc8ff4b0876be",
+      "archiveSha256": "cbd1018a14f67ceee70d6877aa39c5b5c41c6f87c3b42fc3b15a1b00d677616b"
+    },
+    "loader.js.headers.gz": {
+      "rawBytes": 822,
+      "rawSha256": "be5942887b9afc49b789d804e3754fb441610e8c24264c2034aa7b2ae2769910",
+      "archiveSha256": "3fe3b7a58e00e348a14544247d3d7fb55de98ceee569c8b22ffea064c06db408"
+    },
+    "pkg__wasm_vm_wasm.js.headers.gz": {
+      "rawBytes": 824,
+      "rawSha256": "d4895a85d202ae7e4ef7fb2df92fcb31c2eacdab7fe94761e68ff165dd88738e",
+      "archiveSha256": "4f1acd253d9c5813352efd81cf286abb4f2422ae75e66be664ce2e7045c144bc"
+    },
+    "pkg__wasm_vm_wasm_bg.wasm.headers.gz": {
+      "rawBytes": 825,
+      "rawSha256": "6e6c3d4be4568c9ac6ee27a910492cf05ad36b1c93262396a90ffa11fa08c7e3",
+      "archiveSha256": "f471978f497bb01c3b71870a55bcfc4749981cfa3d1830f50d8b2ec83362281b"
+    },
+    "snapshot-stream.js.headers.gz": {
+      "rawBytes": 822,
+      "rawSha256": "b09aa0a421bcb6bc8b46a0e5477e71e9a7062effcef3ec4e3ce0fcf63d41248c",
+      "archiveSha256": "cbac99e508985fe9c36dbef8810e89073bd64b9d9e63ce714a29ca1d605815f3"
+    }
+  },
+  "codeWhitespaceCheck": {
+    "command": [
+      "git",
+      "diff",
+      "e437bcf4eeba226303be9e4656504c9132feed32",
+      "--check",
+      "--",
+      ".",
+      ":(exclude)evidence"
+    ],
+    "exitCode": 0,
+    "rawDataException": "Preserved stdout EOF blanks and HTTP status-line spaces are evidence data; code/metadata whitespace check excludes evidence"
+  },
+  "runtimeCheck": "GPU checkpoint build a40bd3255a8daf33370c6c4868b1534c19db22a14f3d45893cea701fcadc29a6 (83 runtime files) verified",
+  "wasmSha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d"
+}
