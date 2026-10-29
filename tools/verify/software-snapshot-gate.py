@@ -39,7 +39,7 @@ try:
         assert (ROOT/'web'/name).read_bytes()==(ROOT/'web/dist'/name).read_bytes(), 'stale dist: '+name
     for i,cmd in enumerate(commands):
         log=OUT/f'{i:02d}.log'; started=time.time()
-        env=dict(os.environ,E5_DEMO_TASK='E5.5-T07',E5_DEMO_OUT=str(OUT/'demo'))
+        env=dict(os.environ,E5_DEMO_TASK='E5.5-T07',E5_DEMO_OUT=str(OUT/'demo'),E5_DEMO_SOFTWARE_GL='1')
         with log.open('wb') as output:
             result=subprocess.run(cmd,cwd=ROOT,env=env,stdout=output,stderr=subprocess.STDOUT,timeout=600)
         entry={'command':cmd,'exitCode':result.returncode,'elapsed':time.time()-started,'log':str(log),

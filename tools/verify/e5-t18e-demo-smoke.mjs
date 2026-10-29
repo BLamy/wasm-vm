@@ -35,7 +35,8 @@ if (!base) {
   base = `http://127.0.0.1:${server.address().port}`;
 }
 const { chromium } = await import(pathToFileURL(path.join(repo, "web/node_modules/playwright/index.mjs")));
-const browser = await chromium.launch({ executablePath: process.env.E5_T18E_CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", headless: true });
+const launchArgs = process.env.E5_DEMO_SOFTWARE_GL === "1" ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : [];
+const browser = await chromium.launch({ args: launchArgs, executablePath: process.env.E5_T18E_CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", headless: true });
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1050 }, serviceWorkers: "block" });
   const errors = [], consoleLog = [], httpErrors = [];
@@ -70,7 +71,7 @@ try {
   assert.deepEqual(httpErrors, []);
   await mkdir(out, { recursive: true });
   const screenshot = await page.screenshot({ path: path.join(out, "demo-suite.png") });
-  const result = { url: `${base}/app.html?noAutoBoot=1`, browser: browser.version(), metrics, detail, capability, errors, httpErrors, consoleLog,
+  const result = { url: `${base}/app.html?noAutoBoot=1`, browser: browser.version(), launchArgs, metrics, detail, capability, errors, httpErrors, consoleLog,
     screenshotSha256: createHash("sha256").update(screenshot).digest("hex") };
   await writeFile(path.join(out, "demo-suite.json"), `${JSON.stringify(result, null, 2)}\n`);
   console.log(JSON.stringify({ metrics, errors, httpErrors, detail }));
