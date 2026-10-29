@@ -1,0 +1,120 @@
+   Compiling cfg-if v1.0.4
+   Compiling proc-macro2 v1.0.106
+   Compiling wasm-bindgen-shared v0.2.126
+   Compiling typenum v1.20.1
+   Compiling libc v0.2.186
+   Compiling once_cell v1.21.4
+   Compiling quote v1.0.46
+   Compiling slab v0.4.12
+   Compiling syn v2.0.118
+   Compiling generic-array v0.14.7
+   Compiling futures-task v0.3.32
+   Compiling pin-project-lite v0.2.17
+   Compiling futures-core v0.3.32
+   Compiling futures-util v0.3.32
+   Compiling cpufeatures v0.2.17
+   Compiling serde_core v1.0.228
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling bitflags v2.13.0
+   Compiling byteorder v1.5.0
+   Compiling smallvec v1.15.2
+   Compiling log v0.4.33
+   Compiling rustc_apfloat v0.2.3+llvm-462a31f5a5ab
+   Compiling hash32 v0.3.1
+   Compiling zmij v1.0.21
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.2
+   Compiling tinyvec_macros v0.1.1
+   Compiling stable_deref_trait v1.2.1
+   Compiling tinyvec v1.12.0
+   Compiling heapless v0.9.3
+   Compiling serde_json v1.0.150
+   Compiling wasm-vm-core v0.0.1 (/private/tmp/e5-5-t07-pristine-pinned-0144c662b/crates/core)
+   Compiling wasm-bindgen-macro-support v0.2.126
+   Compiling libm v0.2.16
+   Compiling serde_derive v1.0.228
+   Compiling managed v0.8.0
+   Compiling bitflags v1.3.2
+   Compiling smoltcp v0.13.1
+   Compiling wasm-bindgen-macro v0.2.126
+   Compiling wasm-bindgen v0.2.126
+   Compiling serde v1.0.228
+   Compiling num-traits v0.2.19
+   Compiling wasm-bindgen-test-macro v0.3.76
+   Compiling async-trait v0.1.89
+   Compiling js-sys v0.3.103
+   Compiling unicode-normalization v0.1.25
+   Compiling cast v0.3.0
+   Compiling wasm-bindgen-test-shared v0.2.126
+   Compiling oorandom v11.1.5
+   Compiling wasm-vm-wasm-emit v0.0.1 (/private/tmp/e5-5-t07-pristine-pinned-0144c662b/crates/wasm-emit)
+   Compiling nu-ansi-term v0.50.3
+   Compiling wasm-vm-jit-translate v0.0.1 (/private/tmp/e5-5-t07-pristine-pinned-0144c662b/crates/jit-translate)
+   Compiling wasm-vm-slirp v0.0.0 (/private/tmp/e5-5-t07-pristine-pinned-0144c662b/crates/slirp)
+   Compiling console_error_panic_hook v0.1.7
+   Compiling wasm-vm-storage v0.0.1 (/private/tmp/e5-5-t07-pristine-pinned-0144c662b/crates/storage)
+   Compiling getrandom v0.2.17
+   Compiling wasm-bindgen-futures v0.4.76
+   Compiling web-sys v0.3.103
+   Compiling wasm-bindgen-test v0.3.76
+   Compiling console_log v1.0.0
+   Compiling wasm-vm-wasm v0.0.1 (/private/tmp/e5-5-t07-pristine-pinned-0144c662b/crates/wasm)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.93s
+     Running unittests src/lib.rs (target/debug/deps/wasm_vm_wasm-19b0cd274669e69b)
+
+running 49 tests
+test admission_probe_tests::admission_probe_real_translator_integer_fp_move_arithmetic_and_csr_contrasts ... ok
+test chunked::tests::bad_requests_are_typed_errors_not_panics ... ok
+test chunked::tests::absent_chunk_parks_then_resident_read_returns_bytes ... ok
+test chunked::tests::overlay_shadows_base_within_a_spanning_read ... ok
+test chunked::tests::a_read_spanning_present_and_absent_chunks_parks_on_the_absent_one ... ok
+test chunked::tests::flush_commits_the_overlay ... ok
+test chunked::tests::checkpoint_persistent_disk_refuses_uncommitted_and_unacknowledged_writes ... ok
+test chunked::tests::checkpoint_disk_owns_complete_detached_seed_and_new_write_set ... ok
+test chunked::tests::partial_block_write_parks_until_its_base_chunk_is_resident ... ok
+test chunked::critic_e3t10_hostile::continue_read_only_flush_parks_until_backlog_drains_then_acks ... ok
+test chunked::ro_tests::ro_backend_with_forged_dirty_queue_would_park_flush_forever ... ok
+test chunked::tests::seeded_delta_rejects_duplicate_blocks ... ok
+test chunked::tests::seeded_delta_rejects_block_index_multiplication_overflow ... ok
+test chunked::tests::seeded_delta_blocks_read_without_resident_base_chunks ... ok
+test chunked::ro_tests::read_only_backend_serves_reads_refuses_writes ... ok
+test chunked::tests::seeded_delta_rejects_foreign_length_and_out_of_bounds_blocks ... ok
+test chunked::tests::seeded_overlay_writes_are_isolated_from_the_base_cache ... ok
+test event_clock::tests::exact_counter_strings_reject_coercion_and_overflow ... ok
+test cold_counter_recycling_tests::cold_counter_recycling_wrapper_selection_and_lossless_stats_fields ... ok
+test session_devices::tests::configuration_rejects_unknown_versions_fields_and_wrapping_numbers ... ok
+test chunked::reset_scope_tests::overlay_db_name_is_per_image_and_stable ... ok
+test chunked::durable_write_ack_tests::persistent_write_waits_for_exact_barrier_then_acks_or_returns_read_only ... ok
+test chunked::critic_e3t10_hostile::quota_failure_then_redirty_then_retry_never_loses_the_newest_bytes ... ok
+test chunked::flush_tests::flush_barrier_over_writeback_overlay ... ok
+test guest_clock_tests::selection_refuses_invalid_and_unavailable_before_mutating_active_anchor ... ok
+test chunked::ro_tests::ro_check_precedes_range_validation_and_reads_never_dirty_queue ... ok
+test guest_clock_tests::paced_selection_refuses_missing_source_or_clint_without_replacing_policy ... ok
+test session_input::unrecorded_progress_tests::offered_input_is_distinct_from_applied_fifo_bytes_and_overflow_is_atomic ... ok
+test snapshot_staging::tests::snapshot_staging_bounds_and_ownership ... ok
+test storage_err::critic_e3t10_hostile::legacy_webkit_quota_spelling_is_missed ... ok
+test storage_err::critic_e3t10_hostile::oversized_value_error_is_not_quota ... ok
+test storage_err::tests::other_failures_are_not_quota ... ok
+test storage_err::tests::quota_names_across_engines_classify_as_quota ... ok
+test ws_transport_state::tests::malformed_and_oversized_inbound_messages_fail_closed ... ok
+test ws_transport_state::tests::drain_resets_accounting_and_close_or_error_marks_failed ... ok
+test ws_transport_state::tests::outbound_aggregate_cap_is_hard_and_clears_retained_frames ... ok
+test ws_transport_state::tests::inbound_aggregate_cap_is_hard_and_clears_retained_frames ... ok
+test critic_flush_reset::combined_chunk_and_flush_parks_report_only_the_chunk ... ok
+test critic_flush_reset::two_flushes_no_reset_second_flush_covers_newer_write ... ok
+test critic_flush_reset::stale_flush_barrier_survives_transport_reset_and_acks_early ... ok
+test session_input::tests::inactive_or_diagnostic_mailboxes_refuse_input_before_device_mutation ... ok
+test session_input::tests::oversized_and_forged_publication_frames_refuse_before_reserving ... ok
+test session_input::tests::owned_byte_pressure_refuses_before_a_fifth_offer_mutates_the_prefix ... ok
+test session_input::tests::serial_offers_are_owned_but_only_fifo_batches_are_guest_delivery ... ok
+test session_input::tests::bounded_ingress_failures_keep_prefix_and_replay_rejects_live_input ... ok
+test session_input::tests::offered_agent_clipboard_prefix_reaches_the_actual_guest_port ... ok
+test session_input::tests::whole_frame_drops_are_recorded_and_replay_without_guest_dma ... ok
+test session_input::tests::rapid_make_break_bursts_retain_order_in_real_guest_ring ... ok
+test session_input::tests::exact_modifier_release_and_duplicate_pointer_frames_reach_guest_dma ... ok
+
+test result: ok. 49 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.86s
+

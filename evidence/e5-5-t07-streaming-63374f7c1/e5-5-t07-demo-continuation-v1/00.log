@@ -1,0 +1,92 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   {
++     text: 'THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .',
++     type: 'error',
++     url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
++   },
++   {
++     text: 'THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .',
++     type: 'error',
++     url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
++   },
++   {
++     text: 'THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .',
++     type: 'error',
++     url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
++   },
++   {
++     text: 'THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .',
++     type: 'error',
++     url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
++   },
++   {
++     text: 'THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .',
++     type: 'error',
++     url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
++   },
++   {
++     text: 'THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .',
++     type: 'error',
++     url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
++   },
++   {
++     text: 'THREE.WebGLRenderer: Error creating WebGL context.',
++     type: 'error',
++     url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
++   }
++ ]
+- []
+
+    at file:///Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/tools/verify/e5-t18e-demo-smoke.mjs:69:10 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [
+    {
+      type: 'error',
+      text: 'THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .',
+      url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
+    },
+    {
+      type: 'error',
+      text: 'THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .',
+      url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
+    },
+    {
+      type: 'error',
+      text: 'THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .',
+      url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
+    },
+    {
+      type: 'error',
+      text: 'THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .',
+      url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
+    },
+    {
+      type: 'error',
+      text: 'THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .',
+      url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
+    },
+    {
+      type: 'error',
+      text: 'THREE.WebGLRenderer: A WebGL context could not be created. Reason:  Could not create a WebGL context, VENDOR = 0xffff, DEVICE = 0xffff, GL_VENDOR = Disabled, GL_RENDERER = Disabled, Sandboxed = no, Optimus = no, AMD switchable = no, Reset notification strategy = 0x0000, ErrorMessage = BindToCurrentSequence failed: .',
+      url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
+    },
+    {
+      type: 'error',
+      text: 'THREE.WebGLRenderer: Error creating WebGL context.',
+      url: 'http://127.0.0.1:62383/vendor/three/three.module.js'
+    }
+  ],
+  expected: [],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

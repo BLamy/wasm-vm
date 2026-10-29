@@ -1,0 +1,172 @@
+{
+  "head": "63374f7c1e546c922ba1c779f34b09fced5e1ad4",
+  "started": "2026-10-29T00:19:58.175Z",
+  "passed": true,
+  "oracle": {
+    "expandedBytes": 634769246,
+    "sha256": "a356cd7455a7b5c7dddb67523e14bcfb07029b8846955ff5245d4a35ac23f762",
+    "ramBytes": 1073741824,
+    "ramSha256": "310a8f157b044cef3b7fc0f3dbc972e8658ec403d03c33aa5d46389e2b1414c0",
+    "sections": [
+      {
+        "tag": 1,
+        "length": 1309,
+        "sha256": "bb23ad74e0250f70cc0a354c507324254824cb255a342f1657e3387c02818f58"
+      },
+      {
+        "tag": 2,
+        "length": 634624706,
+        "sha256": "4b024a6fcb0143e66f72323b4331da119126d0cf28fb1a7b2a9190d421e9c736"
+      },
+      {
+        "tag": 3,
+        "length": 17,
+        "sha256": "88773190cd9a08ab1b3341812d1ca97ad8c2cfd78245b02e5344ba0878aff594"
+      },
+      {
+        "tag": 4,
+        "length": 156,
+        "sha256": "cd275fe5c3c50ea27f05b0f5e441e61d31b1804740974ce82711d83e29c7f51a"
+      },
+      {
+        "tag": 5,
+        "length": 22,
+        "sha256": "e4def70a9e6292d5b14802a0f65277c113c40e95eb1b31e163827d855861cdc6"
+      },
+      {
+        "tag": 8,
+        "length": 27,
+        "sha256": "2ac66bb554609d444cc9b2f3578a1b78860f6d3d30350b9d75ef89fd43113ca9"
+      },
+      {
+        "tag": 6,
+        "length": 290,
+        "sha256": "40d99d1af33f0c6287505b0936aca32f09ef1c88a937807503fcfaf58fe5e8f6"
+      },
+      {
+        "tag": 7,
+        "length": 311,
+        "sha256": "7d74f23cb955da005a9502672cffb7adf0aca40fbfc3f484eede2153f0c9592c"
+      },
+      {
+        "tag": 12,
+        "length": 140010,
+        "sha256": "dbb0273bb5180529f28828839a40455dfe4471758c5aad604813b6c8d6dc16ef"
+      },
+      {
+        "tag": 13,
+        "length": 355,
+        "sha256": "e81fbb5060b9bfa98a98b36261622d719b45234a4504339b63c3d2e6b365f184"
+      },
+      {
+        "tag": 14,
+        "length": 355,
+        "sha256": "5d437a6f2702b2aa4d5598e5d1d64cd538df944380ac1be9150ff36fa323e332"
+      },
+      {
+        "tag": 15,
+        "length": 355,
+        "sha256": "a1acf42c2c40cdb677975ae18bfbd1583ffd2b15323769fb3bd3569e1beaef15"
+      },
+      {
+        "tag": 16,
+        "length": 485,
+        "sha256": "3258aea0bdd409ca4dba02386151bd5ef2dacecbf88d384fbe2aa9991487aaf4"
+      },
+      {
+        "tag": 10,
+        "length": 292,
+        "sha256": "fc0a0beec5466ee74a5eac3c520ac089e6723d99732d934477429f7bdf568cee"
+      },
+      {
+        "tag": 11,
+        "length": 320,
+        "sha256": "a9df62090de1f2ddcc9ac12873a9a76946ea08c4f87b5afa9774a244b939402d"
+      },
+      {
+        "tag": 9,
+        "length": 24,
+        "sha256": "299905a1ccbfa0fb1e01377ac3f0ee28314ac525774ca005137621f5e07d87a2"
+      }
+    ]
+  },
+  "manifest": {
+    "generated": "content-hashed Omarchy desktop (kernel + paired RAM snapshot/disk delta)",
+    "artifacts": {
+      "kernel": {
+        "url": "releases/kernel/6.6.63-omarchy-evdev1024/Image",
+        "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d",
+        "size": 24208896
+      },
+      "bootSnapshot": {
+        "url": "releases/boot-snapshot/omarchy-apps-ready-98235fbe8cc4.snap.gz",
+        "sha256": "98235fbe8cc4baefefdaab086c700d40c5f5c60d9bf3b26f7642903802214b22",
+        "size": 210695930,
+        "uncompressedSize": 634769246,
+        "uncompressedSha256": "a356cd7455a7b5c7dddb67523e14bcfb07029b8846955ff5245d4a35ac23f762"
+      },
+      "overlayDelta": {
+        "url": "releases/boot-snapshot/omarchy-apps-overlay-delta-bc36948ac61a.bin.gz",
+        "sha256": "bc36948ac61a562e775f2561592d358bfe7a4796998a9643fd2a5139fac998c5",
+        "size": 1337997
+      }
+    },
+    "chunkedImage": {
+      "key": "chunked-omarchy/manifest-0a1325c9d547271e195e7a08d63d734155b3536ba3dd70b299ddf183c1e17a41.json",
+      "sha256": "0a1325c9d547271e195e7a08d63d734155b3536ba3dd70b299ddf183c1e17a41",
+      "size": 3539054
+    }
+  },
+  "errors": [],
+  "logs": [
+    "STREAM_PHASE {\"name\":\"bounded-attacks\",\"memory\":19398656,\"refused\":[{\"want\":\"foreign_build\",\"observed\":\"foreign_build\"},{\"want\":\"foreign_image\",\"observed\":\"foreign_image\"},{\"want\":\"stale\",\"observed\":\"stale\"},{\"want\":\"corrupt\",\"observed\":\"corrupt\"},{\"want\":\"corrupt\",\"observed\":\"corrupt\"},{\"want\":\"corrupt\",\"observed\":\"corrupt\"},{\"want\":\"corrupt\",\"observed\":\"corrupt\"}]}",
+    "STREAM_PHASE {\"name\":\"constructed\",\"memory\":1173553152}",
+    "STREAM_PHASE {\"name\":\"staged\",\"memory\":1808334848,\"expandedBytes\":634769246,\"maxCopyBytes\":65536,\"copies\":11159,\"sha256\":\"a356cd7455a7b5c7dddb67523e14bcfb07029b8846955ff5245d4a35ac23f762\"}",
+    "STREAM_PHASE {\"name\":\"restored\",\"memory\":1808334848,\"ram\":\"310a8f157b044cef3b7fc0f3dbc972e8658ec403d03c33aa5d46389e2b1414c0\",\"stagedMemory\":1808334848,\"afterMemory\":1808334848}"
+  ],
+  "browser": "156.0.8078.49",
+  "result": {
+    "refused": [
+      {
+        "want": "foreign_build",
+        "observed": "foreign_build"
+      },
+      {
+        "want": "foreign_image",
+        "observed": "foreign_image"
+      },
+      {
+        "want": "stale",
+        "observed": "stale"
+      },
+      {
+        "want": "corrupt",
+        "observed": "corrupt"
+      },
+      {
+        "want": "corrupt",
+        "observed": "corrupt"
+      },
+      {
+        "want": "corrupt",
+        "observed": "corrupt"
+      },
+      {
+        "want": "corrupt",
+        "observed": "corrupt"
+      }
+    ],
+    "incompleteRefused": true,
+    "overflow": true,
+    "stats": {
+      "expandedBytes": 634769246,
+      "maxCopyBytes": 65536,
+      "copies": 11159
+    },
+    "ramSha256": "310a8f157b044cef3b7fc0f3dbc972e8658ec403d03c33aa5d46389e2b1414c0",
+    "stagedMemory": 1808334848,
+    "afterMemory": 1808334848,
+    "guestInstructionsExecuted": 0
+  },
+  "finished": "2026-10-29T00:20:08.320Z"
+}

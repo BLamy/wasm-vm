@@ -1,0 +1,12 @@
+✔ native gzip stream preserves all bytes and transfers bounded-buffer ownership (35.953417ms)
+✔ invalid descriptors refuse before allocating (17.703209ms)
+✔ length/digest mismatches and corrupt gzip always release staging (34.610084ms)
+✔ reader and copy failures release the allocated buffer (8.998ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 186.035792

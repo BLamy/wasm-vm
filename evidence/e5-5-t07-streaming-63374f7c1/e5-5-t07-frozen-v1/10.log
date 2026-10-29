@@ -1,0 +1,8 @@
+{"type":"wvm:guest-state","detail":{"state":"fetching"},"time":1793233209633}
+{"type":"wvm:guest-state","detail":{"state":"instantiating"},"time":1793233210282}
+{"type":"wvm:guest-state","detail":{"state":"restoring"},"time":1793233210286}
+{"type":"wvm:guest-state","detail":{"state":"restoring"},"time":1793233210515}
+{"type":"wvm:guest-progress","detail":{"phase":"bootSnapshot: staged","loaded":634769246,"total":634769246},"time":1793233213589}
+{"type":"wvm:guest-state","detail":{"state":"restored"},"time":1793233213773}
+{"type":"wvm:guest-ready","time":1793233213775}
+{"passed":true,"restored":{"restored":true,"paused":true,"status":"linux: restored"}}

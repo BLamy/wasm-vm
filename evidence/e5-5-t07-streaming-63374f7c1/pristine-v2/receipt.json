@@ -1,0 +1,107 @@
+{
+  "priorFailedReceiptSha256": "54234a4a7e4d650193225c227ae8a876edc7e3e3a9b73e404bfecf1f494f568d",
+  "setupCorrection": "v1 sparse checkout omitted tracked rust-toolchain.toml and built with default1.98.0; v2 is a NEW independent clone with the tracked1.96.0pin and absenttarget, not a relabelled failure",
+  "status": "failed",
+  "scope": "shallow filtered independent pristine source clone; rebuilt Wasm browser artifact; bounded warm acceptance only",
+  "started": 1793234533.9418821,
+  "clone": "/private/tmp/e5-5-t07-pristine-pinned-0144c662b",
+  "commands": [
+    {
+      "label": "sparse",
+      "command": [
+        "git",
+        "sparse-checkout",
+        "set",
+        "--no-cone",
+        "--stdin"
+      ],
+      "exitCode": 0,
+      "seconds": 0.022588014602661133,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "checkout",
+      "command": [
+        "git",
+        "checkout",
+        "codex/omarchy-streamed-software-restore"
+      ],
+      "exitCode": 0,
+      "seconds": 20.201534032821655,
+      "logSha256": "5ddf59a4c250bb493d766f9e289165a5397ff2a67b3096e92f5a2ba504a50e97"
+    },
+    {
+      "label": "renderer-build",
+      "command": [
+        "bash",
+        "tools/build-virgl-runtime.sh"
+      ],
+      "exitCode": 0,
+      "seconds": 5.566275119781494,
+      "logSha256": "a2948a3b9b7158a7ba39b8a921936cc3e043a4bdcf3714ae5d3e6708e6a9ad80"
+    },
+    {
+      "label": "wasm-build",
+      "command": [
+        "wasm-pack",
+        "build",
+        "crates/wasm-web",
+        "--target",
+        "web",
+        "--profile",
+        "wasm-release",
+        "--out-name",
+        "wasm_vm_wasm"
+      ],
+      "exitCode": 0,
+      "seconds": 68.43978810310364,
+      "logSha256": "5fcf97666cf03228eac269c8d61555379c95777041a7e3bb379b6938b4ba446b"
+    },
+    {
+      "label": "npm",
+      "command": [
+        "npm",
+        "--prefix",
+        "web",
+        "ci",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "exitCode": 0,
+      "seconds": 3.558861017227173,
+      "logSha256": "7bc62ddf9b7f9418c1d0c8dbbec824dadfd91924e470112955803533c65eedb4"
+    },
+    {
+      "label": "acceptance",
+      "command": [
+        "make",
+        "verify-E5.5-T07"
+      ],
+      "exitCode": 2,
+      "seconds": 58.05111598968506,
+      "logSha256": "37b01605397e122db91b83107d237f635e9c186fa6203cab753631d0e50a8874"
+    }
+  ],
+  "compiler": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: aarch64-apple-darwin\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+  "head": "0144c662b0ffc53e0aec1efdbabc4edcac73b27d",
+  "initialStatus": "",
+  "initialTargetAbsent": true,
+  "alternatesAbsent": true,
+  "shallow": "true",
+  "built": {
+    "wasm_vm_wasm_bg.wasm": {
+      "sha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+      "shippedSha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+      "bytes": 2650103,
+      "identical": true
+    },
+    "wasm_vm_wasm.js": {
+      "sha256": "015f14a6773ece07c6b4e66c82cf3c3e5f6642993f9cfac45ac5fc7c3f7acd14",
+      "shippedSha256": "015f14a6773ece07c6b4e66c82cf3c3e5f6642993f9cfac45ac5fc7c3f7acd14",
+      "bytes": 193900,
+      "identical": true
+    }
+  },
+  "failure": "AssertionError('acceptance')",
+  "finished": 1793234690.004009
+}

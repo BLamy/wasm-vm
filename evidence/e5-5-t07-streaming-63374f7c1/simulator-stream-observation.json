@@ -1,0 +1,32 @@
+{
+  "scope": "CUA worker observation of the rebuilt software path; no physical-phone qualification",
+  "device": "iPhone Duo Simulator",
+  "osVersion": "27.1",
+  "url": "http://127.0.0.1:8774/app.html?guest=omarchy&desktop=1&gpu=0#ide",
+  "codeHead": "63374f7c1e546c922ba1c779f34b09fced5e1ad4",
+  "fixtureHead": "0144c662b0ffc53e0aec1efdbabc4edcac73b27d",
+  "input": "echo iphone-stream-ok",
+  "observedOutput": "iphone-stream-ok",
+  "returnedPrompt": true,
+  "screenshot": "simulator-stream-echo.png",
+  "screenshotSha256": "93af7981fb5947e63a9515c769e5ce0c4919500809efc5eb443bcfbb24eacb58",
+  "physicalPhone": {
+    "model": "iPhone 16 Pro Max",
+    "os": "26.7.2",
+    "developerMode": "disabled at inventory",
+    "matchingCrashLog": null
+  },
+  "limitations": [
+    "No physical iPhone test or OOM attribution",
+    "No total WebContent RSS measurement",
+    "No new GPU compatibility claim",
+    "Safari console errors were not captured; zero unexpected browser errors belongs to recorded Chrome gates only"
+  ],
+  "servedFiles": {
+    "loader.js": "94b9199ebea64916c386a47286d38ba393783d819b6299ffd7e9464ed65ed829",
+    "snapshot-stream.js": "77faf0310717d00c232391f5e11d61a7df91dd668ebc7f7149584f1445943198",
+    "pkg/wasm_vm_wasm.js": "015f14a6773ece07c6b4e66c82cf3c3e5f6642993f9cfac45ac5fc7c3f7acd14",
+    "pkg/wasm_vm_wasm_bg.wasm": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+    "artifacts-omarchy.json": "7e7a98a26dfd80c4cb078f3f9f64bbea40f7b88e25a0380f7aa0fe9bdc681efe"
+  }
+}

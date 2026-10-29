@@ -1,0 +1,13 @@
+python3 tools/verify/software-snapshot-gate.py
+{"index": 0, "exitCode": 0, "elapsed": 0.13120603561401367, "command": ["python3", "tools/check_task_policy.py"]}
+{"index": 1, "exitCode": 0, "elapsed": 0.20070719718933105, "command": ["git", "diff", "--check"]}
+{"index": 2, "exitCode": 0, "elapsed": 1.6539781093597412, "command": ["cargo", "fmt", "--all", "--check"]}
+{"index": 3, "exitCode": 0, "elapsed": 9.985621929168701, "command": ["cargo", "clippy", "-p", "wasm-vm-wasm", "--all-targets", "--", "-D", "warnings"]}
+{"index": 4, "exitCode": 0, "elapsed": 16.828880786895752, "command": ["cargo", "clippy", "-p", "wasm-vm-wasm", "--target", "wasm32-unknown-unknown", "--features", "virgl-renderer", "--", "-D", "warnings"]}
+{"index": 5, "exitCode": 0, "elapsed": 11.06419825553894, "command": ["cargo", "test", "-p", "wasm-vm-wasm", "--lib"]}
+{"index": 6, "exitCode": 0, "elapsed": 17.606995105743408, "command": ["cargo", "test", "-p", "wasm-vm-core", "--test", "snapshot_coherence", "--test", "cpu_resume", "--test", "desktop_machine_resume", "--test", "desktop_machine_resume_verifier"]}
+{"index": 7, "exitCode": 0, "elapsed": 0.13700008392333984, "command": ["cargo", "build", "-p", "wasm-vm-wasm-web", "--target", "wasm32-unknown-unknown", "--profile", "wasm-release"]}
+{"index": 8, "exitCode": 0, "elapsed": 0.14308977127075195, "command": ["node", "--test", "web/tests/snapshot-stream.test.mjs"]}
+{"index": 9, "exitCode": 1, "elapsed": 0.19370388984680176, "command": ["node", "tools/verify/software-snapshot-stream.mjs", "/private/tmp/e5-5-t07-pristine-proof-v2/gate/staging"]}
+{"passed": false, "out": "/private/tmp/e5-5-t07-pristine-proof-v2/gate", "failure": "RuntimeError(\"failed command: ['node', 'tools/verify/software-snapshot-stream.mjs', '/private/tmp/e5-5-t07-pristine-proof-v2/gate/staging']\")"}
+make: *** [verify-E5.5-T07] Error 1

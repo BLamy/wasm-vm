@@ -1,0 +1,169 @@
+{
+  "head": "63374f7c1e546c922ba1c779f34b09fced5e1ad4",
+  "started": 1793233169.0388532,
+  "passed": false,
+  "commands": [
+    {
+      "command": [
+        "python3",
+        "tools/check_task_policy.py"
+      ],
+      "exitCode": 0,
+      "elapsed": 0.07921004295349121,
+      "log": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/00.log",
+      "sha256": "daf2eaa22adf721579f3b80601bb428092575f9c0ff6c711c1ca70641c06d928"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "elapsed": 0.0231020450592041,
+      "log": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/01.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exitCode": 0,
+      "elapsed": 1.9515042304992676,
+      "log": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/02.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-wasm",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exitCode": 0,
+      "elapsed": 0.2562589645385742,
+      "log": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/03.log",
+      "sha256": "fecede7c2157efe2f16c8c8b9dce94b0fb4dd384dca8207046c8bf7636eb0ffe"
+    },
+    {
+      "command": [
+        "cargo",
+        "clippy",
+        "-p",
+        "wasm-vm-wasm",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--features",
+        "virgl-renderer",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exitCode": 0,
+      "elapsed": 0.1384749412536621,
+      "log": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/04.log",
+      "sha256": "8c233a54790c4800d3dd585436af679aa838da259bfdb129412e2d51cdb75cdc"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-wasm",
+        "--lib"
+      ],
+      "exitCode": 0,
+      "elapsed": 1.0644888877868652,
+      "log": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/05.log",
+      "sha256": "7f8a2862b2adcb31d1c19dcacf7fbadbe3560aafb86768f377198580c143b451"
+    },
+    {
+      "command": [
+        "cargo",
+        "test",
+        "-p",
+        "wasm-vm-core",
+        "--test",
+        "snapshot_coherence",
+        "--test",
+        "cpu_resume",
+        "--test",
+        "desktop_machine_resume",
+        "--test",
+        "desktop_machine_resume_verifier"
+      ],
+      "exitCode": 0,
+      "elapsed": 7.5129499435424805,
+      "log": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/06.log",
+      "sha256": "7edaf5cf0d320d5c16a4c6657265fac59dcb46aa9e390f82683451551ffb1dab"
+    },
+    {
+      "command": [
+        "cargo",
+        "build",
+        "-p",
+        "wasm-vm-wasm-web",
+        "--target",
+        "wasm32-unknown-unknown",
+        "--profile",
+        "wasm-release"
+      ],
+      "exitCode": 0,
+      "elapsed": 0.13486003875732422,
+      "log": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/07.log",
+      "sha256": "573ea7846a03a7ecbe8a0221f0c83a9fb63cf644fd2df89b5175978421cde855"
+    },
+    {
+      "command": [
+        "node",
+        "--test",
+        "web/tests/snapshot-stream.test.mjs"
+      ],
+      "exitCode": 0,
+      "elapsed": 0.2683711051940918,
+      "log": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/08.log",
+      "sha256": "b63a47e65f1b34a935890b0569bce9b725aef92265fe5c4e7bc22d0bb23ffc85"
+    },
+    {
+      "command": [
+        "node",
+        "tools/verify/software-snapshot-stream.mjs",
+        "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/staging"
+      ],
+      "exitCode": 0,
+      "elapsed": 27.96314811706543,
+      "log": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/09.log",
+      "sha256": "1c5cde4ea72489869a6aa7b95ba3ab431677b22a70b341cb9ada268fa4233def"
+    },
+    {
+      "command": [
+        "node",
+        "tools/verify/software-snapshot-warm-ui.mjs",
+        "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/warm-ui"
+      ],
+      "exitCode": 0,
+      "elapsed": 16.278602123260498,
+      "log": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/10.log",
+      "sha256": "89fae9554b442d8c9bfcd72fd916c8cb9a53e90001af0e298902cc682f3b0372"
+    },
+    {
+      "command": [
+        "node",
+        "tools/verify/e5-t18e-demo-smoke.mjs"
+      ],
+      "exitCode": 1,
+      "elapsed": 38.170470237731934,
+      "log": "/Users/blamy/Documents/Codex/.e9-t14-cold-proof-local-9d4b3905/target/evidence/e5-5-t07-frozen-v1/11.log",
+      "sha256": "885fdd2b0b14ca14764986ad00a4cdaa7eafa8c4960136b3789edfc7e50bb484"
+    }
+  ],
+  "failure": "RuntimeError(\"failed command: ['node', 'tools/verify/e5-t18e-demo-smoke.mjs']\")",
+  "finished": 1793233262.8846028
+}

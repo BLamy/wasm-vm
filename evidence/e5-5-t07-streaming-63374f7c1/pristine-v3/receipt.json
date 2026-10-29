@@ -1,0 +1,70 @@
+{
+  "status": "passed",
+  "started": 1793234887.056907,
+  "clone": "/private/tmp/e5-5-t07-pristine-pinned-0144c662b",
+  "originalFailedReceiptSha256": "c785fc33cefd7e495a127f0168517ee04b4b2b307cd67fd6693ad2082c9a8b8b",
+  "originalOutcome": "failed",
+  "originalCompiler": "rustc 1.96.0 (ac68faa20 2026-05-25)\nbinary: rustc\ncommit-hash: ac68faa20c58cbccd01ee7208bf3b6e93a7d7f96\ncommit-date: 2026-05-25\nhost: aarch64-apple-darwin\nrelease: 1.96.0\nLLVM version: 22.1.2\n",
+  "originalEmptyTarget": true,
+  "originalHead": "0144c662b0ffc53e0aec1efdbabc4edcac73b27d",
+  "scope": "Continuation of same independently compiled pinned clone; only missing R2 bootstrap and three browser proofs; no second empty-target claim",
+  "commands": [
+    {
+      "name": "fetch",
+      "command": [
+        "git",
+        "fetch",
+        "--depth",
+        "1",
+        "origin",
+        "codex/omarchy-streamed-software-restore"
+      ],
+      "exitCode": 0,
+      "seconds": 0.3714470863342285,
+      "sha256": "a64c1bc44d21bfe07afee08e15725c4510f3e33e203775d1b1b0d63b49140b10"
+    },
+    {
+      "name": "checkout",
+      "command": [
+        "git",
+        "checkout",
+        "--detach",
+        "FETCH_HEAD"
+      ],
+      "exitCode": 0,
+      "seconds": 0.31240200996398926,
+      "sha256": "2fc82ba9e97852519732f875b894368babd77931f98146b4787d66fc76d23727"
+    },
+    {
+      "name": "missing-browser-acceptance",
+      "command": [
+        "make",
+        "verify-E5.5-T07"
+      ],
+      "exitCode": 0,
+      "seconds": 89.66310811042786,
+      "sha256": "9225f9e6eac2523681e28cd455d2f6bfc86e3b61fe511d20ab6c58d3c751245c"
+    }
+  ],
+  "built": {
+    "wasm_vm_wasm_bg.wasm": {
+      "sha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+      "shippedSha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+      "bytes": 2650103,
+      "identical": true
+    },
+    "wasm_vm_wasm.js": {
+      "sha256": "015f14a6773ece07c6b4e66c82cf3c3e5f6642993f9cfac45ac5fc7c3f7acd14",
+      "shippedSha256": "015f14a6773ece07c6b4e66c82cf3c3e5f6642993f9cfac45ac5fc7c3f7acd14",
+      "bytes": 193900,
+      "identical": true
+    }
+  },
+  "head": "087c69c54713db7598b296b45d0da3a8f91ba1d2",
+  "changes": [
+    "Makefile",
+    "tools/verify/software-snapshot-gate.py"
+  ],
+  "finalStatus": "",
+  "finished": 1793234977.6326241
+}
