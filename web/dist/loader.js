@@ -11,6 +11,7 @@
 
 import init, {
   WasmLinux,
+  SnapshotBuffer,
   overlayDbName,
   seedOverlayDelta,
   setSlirpNet,
@@ -31,6 +32,7 @@ import { createTaskQuiescence } from "./task-quiescence.js";
 import { validateGuestClock, validateICountDivider, validateInteractiveClock, createGuestClockLifecycle } from "./guest-clock.js";
 import { validateDecodedCacheEntries, applyDecodedCacheEntries } from "./decoded-cache.js";
 import { fetchVerifiedBootAsset } from "./boot-asset-cache.js";
+import { stageGzipSnapshot } from "./snapshot-stream.js";
 import { applyAdmissionProbe } from "./admission-probe.js";
 import { applyColdCounterRecycling, isLoopbackOrigin } from "./cold-counter-recycling.js";
 
@@ -444,6 +446,7 @@ export async function startLinuxBoot(opts = {}) {
       ? await deriveOverlaySeedIdentity(bootSnap.sha256, overlayDeltaEntry.sha256)
       : null;
     let alpineRamBlob = null;
+    let alpineStagedSnapshot = null;
     let alpineOverlaySeeded = false;
     // Cache immutable release bytes, never the mutable RAM/disk of a running guest. This
     // cache survives shell upgrades and fresh sessions; each read still verifies its hash.
@@ -929,8 +932,16 @@ export async function startLinuxBoot(opts = {}) {
         const rgz = await readBootAsset("bootSnapshot", bootSnap);
         if ((await sha256hex(rgz)) !== bootSnap.sha256) throw new Error("boot snapshot integrity");
         if (omarchyImage) onProgress("bootSnapshot: unpacking", null, null);
-        alpineRamBlob = await gunzip(rgz);
+        if (freshDesktop) {
+          const staged = await stageGzipSnapshot(rgz, bootSnap, size => new SnapshotBuffer(size));
+          alpineStagedSnapshot = staged.buffer;
+          onProgress("bootSnapshot: staged", staged.stats.expandedBytes, staged.stats.expandedBytes);
+        } else {
+          alpineRamBlob = await gunzip(rgz);
+        }
       } catch (e) {
+        alpineStagedSnapshot?.free();
+        alpineStagedSnapshot = null;
         if (freshDesktop) throw e;
         console.warn("wasm-vm: Alpine RAM fallback fetch failed, cold booting:", e?.message || e);
         alpineRamBlob = null;
@@ -957,11 +968,18 @@ export async function startLinuxBoot(opts = {}) {
     // identity is already the chunk manifest's base_hash (set in newChunkedDiskPersistent), so
     // restoreDecisionCode enforces the core-hash + base + overlay-generation triple. A foreign/stale
     // RAM blob (or a generation mismatch) is rejected → the machine keeps its fresh chunked cold boot.
-    if (!restoredFromStoredSnapshot && alpineRamBlob) {
+    if (!restoredFromStoredSnapshot && (alpineRamBlob || alpineStagedSnapshot)) {
       try {
-        const decision = machine.restoreDecisionCode(alpineRamBlob, machine.overlayGeneration());
+        let decision;
+        if (alpineStagedSnapshot) {
+          const owned = alpineStagedSnapshot;
+          alpineStagedSnapshot = null; // consumed even if the restore refuses/throws.
+          decision = machine.restoreSnapshotBuffer(owned);
+        } else {
+          decision = machine.restoreDecisionCode(alpineRamBlob, machine.overlayGeneration());
+          if (decision === "resume") machine.loadSnapshotBlob(alpineRamBlob);
+        }
         if (decision === "resume") {
-          machine.loadSnapshotBlob(alpineRamBlob);
           restoredFromBootSnapshot = true;
           onState("restored");
         } else {
@@ -972,6 +990,10 @@ export async function startLinuxBoot(opts = {}) {
         if (freshDesktop) throw e;
         console.warn("wasm-vm: Alpine RAM restore failed, cold booting:", e?.message || e);
         restoredFromBootSnapshot = false;
+      } finally {
+        alpineRamBlob = null;
+        alpineStagedSnapshot?.free();
+        alpineStagedSnapshot = null;
       }
     }
     if (mode === "initramfs" && bootSnap && opts.bootSnapshot !== false) {

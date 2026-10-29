@@ -47,6 +47,22 @@ export class SessionSourceProbe {
     traceText(): string;
 }
 
+/**
+ * A single owned Wasm allocation filled by bounded decompressor chunks. It exposes no raw
+ * pointer or full-size JS export; ownership is consumed exactly once at restore.
+ */
+export class SnapshotBuffer {
+    free(): void;
+    [Symbol.dispose](): void;
+    /**
+     * Uint8Array is a JS handle, not Vec<u8>: copy directly into the one staging allocation.
+     */
+    append(chunk: Uint8Array): void;
+    byteLength(): number;
+    constructor(expected: number);
+    sha256(): string;
+}
+
 export class WasmGpuTransport {
     private constructor();
     free(): void;
@@ -496,6 +512,11 @@ export class WasmLinux {
      * unavailable.
      */
     restoreDesktopSnapshot(blob: Uint8Array, host_width: number, host_height: number): any;
+    /**
+     * Consume one streamed container without another JS-to-Wasm snapshot copy. The same complete
+     * framing, identity and transactional component checks run before any guest mutation.
+     */
+    restoreSnapshotBuffer(buffer: SnapshotBuffer): string;
     /**
      * Only a private seeded candidate is admitted by the loader. Native callers additionally get
      * a complete byte comparison of its COW map, not merely a generation comparison (siblings may
@@ -970,6 +991,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
     readonly __wbg_filesha256_free: (a: number, b: number) => void;
+    readonly __wbg_snapshotbuffer_free: (a: number, b: number) => void;
     readonly __wbg_wasmlinux_free: (a: number, b: number) => void;
     readonly __wbg_wasmmachine_free: (a: number, b: number) => void;
     readonly bench: (a: number) => [number, number, number];
@@ -979,6 +1001,10 @@ export interface InitOutput {
     readonly initLogging: () => void;
     readonly overlayDbName: (a: number, b: number, c: number, d: number) => [number, number, number, number];
     readonly seedOverlayDelta: (a: number, b: number, c: number, d: number, e: number, f: number) => any;
+    readonly snapshotbuffer_append: (a: number, b: any) => [number, number];
+    readonly snapshotbuffer_byteLength: (a: number) => number;
+    readonly snapshotbuffer_new: (a: number) => [number, number, number];
+    readonly snapshotbuffer_sha256: (a: number) => [number, number];
     readonly version: () => [number, number];
     readonly wasmlinux_advanceOverlayGeneration: (a: number) => [number, number, number];
     readonly wasmlinux_attachAudioCapture: (a: number, b: any, c: number, d: number) => [number, number];
@@ -1032,6 +1058,7 @@ export interface InitOutput {
     readonly wasmlinux_relinquishSnapshotWriter: (a: number) => any;
     readonly wasmlinux_restoreDecisionCode: (a: number, b: number, c: number, d: number) => [number, number, number, number];
     readonly wasmlinux_restoreDesktopSnapshot: (a: number, b: number, c: number, d: number, e: number) => [number, number, number];
+    readonly wasmlinux_restoreSnapshotBuffer: (a: number, b: number) => [number, number, number, number];
     readonly wasmlinux_restoreStoredSnapshot: (a: number) => any;
     readonly wasmlinux_runChunk: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_saveDesktopSnapshot: (a: number) => [number, number, number];
@@ -1082,15 +1109,11 @@ export interface InitOutput {
     readonly wasmmachine_stateDigest: (a: number) => [number, number, number, number];
     readonly wasmmachine_step: (a: number, b: number) => [number, number, number];
     readonly wasmmachine_takeTrace: (a: number) => [number, number, number, number];
-    readonly setSlirpDhcpLeaseSeconds: (a: number) => void;
-    readonly setSlirpDohEndpoint: (a: number, b: number) => void;
-    readonly setSlirpMtu: (a: number) => void;
-    readonly setSlirpNet: (a: number) => void;
-    readonly setSlirpRelay: (a: number, b: number) => void;
-    readonly setSlirpRelayToken: (a: number, b: number) => void;
-    readonly setSlirpTailscaleWorker: (a: number, b: number, c: any) => void;
-    readonly slirpDhcpStats: () => [number, number];
-    readonly slirpTailscaleCommand: (a: number, b: number) => number;
+    readonly wasmlinux_cancelOwnedLocalHttp: (a: number) => [number, number, number];
+    readonly wasmlinux_openOwnedLocalHttp: (a: number) => [number, number];
+    readonly wasmlinux_ownedLocalHttpFactoryEntries: () => [number, number];
+    readonly wasmlinux_ownedLocalHttpState: (a: number) => [number, number, number];
+    readonly wasmlinux_pumpOwnedLocalHttp: (a: number) => [number, number, number];
     readonly __wbg_sessiondevicelease_free: (a: number, b: number) => void;
     readonly __wbg_sessionnetworklease_free: (a: number, b: number) => void;
     readonly __wbg_sessionsourceprobe_free: (a: number, b: number) => void;
@@ -1130,25 +1153,15 @@ export interface InitOutput {
     readonly wasmmachine_replayDeviceCompletion: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
     readonly wasmmachine_replayNetworkEvent: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any, i: any) => [number, number];
     readonly wasmmachine_takeDeviceDeliveries: (a: number) => [number, number, number];
-    readonly wasmlinux_cancelOwnedLocalHttp: (a: number) => [number, number, number];
-    readonly wasmlinux_openOwnedLocalHttp: (a: number) => [number, number];
-    readonly wasmlinux_ownedLocalHttpFactoryEntries: () => [number, number];
-    readonly wasmlinux_ownedLocalHttpState: (a: number) => [number, number, number];
-    readonly wasmlinux_pumpOwnedLocalHttp: (a: number) => [number, number, number];
-    readonly __jit_amo: (a: bigint, b: bigint, c: number, d: number) => bigint;
-    readonly __jit_fp_arith_s: (a: number, b: number, c: number, d: number) => bigint;
-    readonly __jit_fp_div_s: (a: number, b: number, c: number) => bigint;
-    readonly __jit_fp_flags: () => number;
-    readonly __jit_fp_fmadd_s: (a: number, b: number, c: number, d: number) => bigint;
-    readonly __jit_fp_from_int_s: (a: bigint, b: number, c: number) => bigint;
-    readonly __jit_fp_op32: (a: number, b: bigint, c: bigint, d: bigint, e: number) => bigint;
-    readonly __jit_fp_op64: (a: number, b: bigint, c: bigint, d: bigint, e: number) => bigint;
-    readonly __jit_fp_to_word_s: (a: number, b: number, c: number) => bigint;
-    readonly __jit_load: (a: bigint, b: number) => bigint;
-    readonly __jit_lr: (a: bigint, b: number) => bigint;
-    readonly __jit_sc: (a: bigint, b: bigint, c: number) => bigint;
-    readonly __jit_store: (a: bigint, b: bigint, c: number) => void;
-    readonly wasmlinux_captureDiskDelta: (a: number) => any;
+    readonly setSlirpDhcpLeaseSeconds: (a: number) => void;
+    readonly setSlirpDohEndpoint: (a: number, b: number) => void;
+    readonly setSlirpMtu: (a: number) => void;
+    readonly setSlirpNet: (a: number) => void;
+    readonly setSlirpRelay: (a: number, b: number) => void;
+    readonly setSlirpRelayToken: (a: number, b: number) => void;
+    readonly setSlirpTailscaleWorker: (a: number, b: number, c: any) => void;
+    readonly slirpDhcpStats: () => [number, number];
+    readonly slirpTailscaleCommand: (a: number, b: number) => number;
     readonly __wbg_wasmgputransport_free: (a: number, b: number) => void;
     readonly wasmgputransport_complete: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number) => [number, number];
     readonly wasmgputransport_gatherInput: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number, p: number, q: number) => [number, number, number];
@@ -1166,6 +1179,7 @@ export interface InitOutput {
     readonly sessionGpuResultInfo: (a: number, b: number) => [number, number, number];
     readonly wasmlinux_applySoftwareRamDeltaChunk: (a: number, b: number, c: number) => [number, number, number];
     readonly wasmlinux_attachVirgl: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: any) => [number, number];
+    readonly wasmlinux_captureDiskDelta: (a: number) => any;
     readonly wasmlinux_captureExactGpuKeyframe: (a: number, b: number, c: number, d: number) => [number, number, number];
     readonly wasmlinux_captureGpuDiskDelta: (a: number) => [number, number, number];
     readonly wasmlinux_captureSoftwareBaseKeyframe: (a: number, b: number, c: number) => any;
@@ -1225,6 +1239,19 @@ export interface InitOutput {
     readonly wasmmachine_stageEventWrite: (a: number, b: number, c: number, d: number, e: number, f: any) => [number, number, number, number];
     readonly wasmmachine_startEventClock: (a: number, b: any, c: any) => [number, number];
     readonly wasmmachine_takeEventDeliveries: (a: number) => [number, number, number];
+    readonly __jit_amo: (a: bigint, b: bigint, c: number, d: number) => bigint;
+    readonly __jit_fp_arith_s: (a: number, b: number, c: number, d: number) => bigint;
+    readonly __jit_fp_div_s: (a: number, b: number, c: number) => bigint;
+    readonly __jit_fp_flags: () => number;
+    readonly __jit_fp_fmadd_s: (a: number, b: number, c: number, d: number) => bigint;
+    readonly __jit_fp_from_int_s: (a: bigint, b: number, c: number) => bigint;
+    readonly __jit_fp_op32: (a: number, b: bigint, c: bigint, d: bigint, e: number) => bigint;
+    readonly __jit_fp_op64: (a: number, b: bigint, c: bigint, d: bigint, e: number) => bigint;
+    readonly __jit_fp_to_word_s: (a: number, b: number, c: number) => bigint;
+    readonly __jit_load: (a: bigint, b: number) => bigint;
+    readonly __jit_lr: (a: bigint, b: number) => bigint;
+    readonly __jit_sc: (a: bigint, b: bigint, c: number) => bigint;
+    readonly __jit_store: (a: bigint, b: bigint, c: number) => void;
     readonly wasmmachine_takeNetworkDeliveries: (a: number) => [number, number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56: (a: number, b: number, c: any) => [number, number];
     readonly wasm_bindgen__convert__closures_____invoke__h0b706747458e1fca: (a: number, b: number, c: any, d: any) => void;

@@ -1,8 +1,8 @@
 /* @ts-self-types="./wasm_vm_wasm.d.ts" */
-import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js';
-import { ownedClockOriginBytes } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js';
+import { ownedClockOriginBytes } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js';
+import { invokeJitBlock } from './snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js';
 import * as import1 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js"
-import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js"
+import * as import2 from "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js"
 
 
 /**
@@ -256,6 +256,68 @@ export class SessionSourceProbe {
     }
 }
 if (Symbol.dispose) SessionSourceProbe.prototype[Symbol.dispose] = SessionSourceProbe.prototype.free;
+
+/**
+ * A single owned Wasm allocation filled by bounded decompressor chunks. It exposes no raw
+ * pointer or full-size JS export; ownership is consumed exactly once at restore.
+ */
+export class SnapshotBuffer {
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        SnapshotBufferFinalization.unregister(this);
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_snapshotbuffer_free(ptr, 0);
+    }
+    /**
+     * Uint8Array is a JS handle, not Vec<u8>: copy directly into the one staging allocation.
+     * @param {Uint8Array} chunk
+     */
+    append(chunk) {
+        const ret = wasm.snapshotbuffer_append(this.__wbg_ptr, chunk);
+        if (ret[1]) {
+            throw takeFromExternrefTable0(ret[0]);
+        }
+    }
+    /**
+     * @returns {number}
+     */
+    byteLength() {
+        const ret = wasm.snapshotbuffer_byteLength(this.__wbg_ptr);
+        return ret >>> 0;
+    }
+    /**
+     * @param {number} expected
+     */
+    constructor(expected) {
+        const ret = wasm.snapshotbuffer_new(expected);
+        if (ret[2]) {
+            throw takeFromExternrefTable0(ret[1]);
+        }
+        this.__wbg_ptr = ret[0];
+        SnapshotBufferFinalization.register(this, this.__wbg_ptr, this);
+        return this;
+    }
+    /**
+     * @returns {string}
+     */
+    sha256() {
+        let deferred1_0;
+        let deferred1_1;
+        try {
+            const ret = wasm.snapshotbuffer_sha256(this.__wbg_ptr);
+            deferred1_0 = ret[0];
+            deferred1_1 = ret[1];
+            return getStringFromWasm0(ret[0], ret[1]);
+        } finally {
+            wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
+        }
+    }
+}
+if (Symbol.dispose) SnapshotBuffer.prototype[Symbol.dispose] = SnapshotBuffer.prototype.free;
 
 export class WasmGpuTransport {
     static __wrap(ptr) {
@@ -2022,6 +2084,32 @@ export class WasmLinux {
             throw takeFromExternrefTable0(ret[1]);
         }
         return takeFromExternrefTable0(ret[0]);
+    }
+    /**
+     * Consume one streamed container without another JS-to-Wasm snapshot copy. The same complete
+     * framing, identity and transactional component checks run before any guest mutation.
+     * @param {SnapshotBuffer} buffer
+     * @returns {string}
+     */
+    restoreSnapshotBuffer(buffer) {
+        let deferred3_0;
+        let deferred3_1;
+        try {
+            _assertClass(buffer, SnapshotBuffer);
+            var ptr0 = buffer.__destroy_into_raw();
+            const ret = wasm.wasmlinux_restoreSnapshotBuffer(this.__wbg_ptr, ptr0);
+            var ptr2 = ret[0];
+            var len2 = ret[1];
+            if (ret[3]) {
+                ptr2 = 0; len2 = 0;
+                throw takeFromExternrefTable0(ret[2]);
+            }
+            deferred3_0 = ptr2;
+            deferred3_1 = len2;
+            return getStringFromWasm0(ptr2, len2);
+        } finally {
+            wasm.__wbindgen_free(deferred3_0, deferred3_1, 1);
+        }
     }
     /**
      * Only a private seeded candidate is admitted by the loader. Native callers additionally get
@@ -4385,7 +4473,7 @@ function __wbg_get_imports() {
         __proto__: null,
         "./wasm_vm_wasm_bg.js": import0,
         "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js": import1,
-        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js": import2,
+        "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js": import2,
     };
 }
 
@@ -4437,6 +4525,9 @@ const SessionNetworkLeaseFinalization = (typeof FinalizationRegistry === 'undefi
 const SessionSourceProbeFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_sessionsourceprobe_free(ptr, 1));
+const SnapshotBufferFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_snapshotbuffer_free(ptr, 1));
 const WasmGpuTransportFinalization = (typeof FinalizationRegistry === 'undefined')
     ? { register: () => {}, unregister: () => {} }
     : new FinalizationRegistry(ptr => wasm.__wbg_wasmgputransport_free(ptr, 1));

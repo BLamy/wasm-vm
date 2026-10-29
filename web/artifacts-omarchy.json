@@ -2,7 +2,7 @@
   "generated": "content-hashed Omarchy desktop (kernel + paired RAM snapshot/disk delta)",
   "artifacts": {
     "kernel": { "url": "releases/kernel/6.6.63-omarchy-evdev1024/Image", "sha256": "3cf8bed0d9a9941a6f2f81b7c8de86cefcba3e4e6bd5e5846bd395714a25642d", "size": 24208896 },
-    "bootSnapshot": { "url": "releases/boot-snapshot/omarchy-apps-ready-98235fbe8cc4.snap.gz", "sha256": "98235fbe8cc4baefefdaab086c700d40c5f5c60d9bf3b26f7642903802214b22", "size": 210695930 },
+    "bootSnapshot": { "url": "releases/boot-snapshot/omarchy-apps-ready-98235fbe8cc4.snap.gz", "sha256": "98235fbe8cc4baefefdaab086c700d40c5f5c60d9bf3b26f7642903802214b22", "size": 210695930, "uncompressedSize": 634769246, "uncompressedSha256": "a356cd7455a7b5c7dddb67523e14bcfb07029b8846955ff5245d4a35ac23f762" },
     "overlayDelta": { "url": "releases/boot-snapshot/omarchy-apps-overlay-delta-bc36948ac61a.bin.gz", "sha256": "bc36948ac61a562e775f2561592d358bfe7a4796998a9643fd2a5139fac998c5", "size": 1337997 }
   },
   "chunkedImage": {

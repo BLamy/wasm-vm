@@ -42,6 +42,8 @@ mod virgl_linux;
 ))]
 mod virgl_session_transport;
 
+#[cfg(any(test, all(target_arch = "wasm32", not(feature = "zicsr-stub"))))]
+mod snapshot_staging;
 pub mod software_checkpoint;
 
 use core::cell::RefCell;
@@ -2233,6 +2235,42 @@ pub struct WasmLinux {
 
 #[cfg(all(test, target_arch = "wasm32", not(feature = "zicsr-stub")))]
 mod display_tests;
+
+/// A single owned Wasm allocation filled by bounded decompressor chunks. It exposes no raw
+/// pointer or full-size JS export; ownership is consumed exactly once at restore.
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen]
+pub struct SnapshotBuffer {
+    staging: snapshot_staging::SnapshotStaging,
+}
+#[cfg(all(target_arch = "wasm32", not(feature = "zicsr-stub")))]
+#[wasm_bindgen]
+impl SnapshotBuffer {
+    #[wasm_bindgen(constructor)]
+    pub fn new(expected: u32) -> Result<SnapshotBuffer, JsError> {
+        Ok(Self {
+            staging: snapshot_staging::SnapshotStaging::new(expected as usize)
+                .map_err(JsError::new)?,
+        })
+    }
+    /// Uint8Array is a JS handle, not Vec<u8>: copy directly into the one staging allocation.
+    pub fn append(&mut self, chunk: js_sys::Uint8Array) -> Result<(), JsError> {
+        self.staging
+            .append_with(chunk.length() as usize, |out| chunk.copy_to(out))
+            .map_err(JsError::new)
+    }
+    #[wasm_bindgen(js_name = byteLength)]
+    pub fn byte_length(&self) -> u32 {
+        self.staging.bytes().len() as u32
+    }
+    pub fn sha256(&self) -> String {
+        let mut out = String::with_capacity(64);
+        for byte in Sha256::digest(self.staging.bytes()) {
+            let _ = write!(out, "{byte:02x}");
+        }
+        out
+    }
+}
 
 /// E3-T12d build-stable snapshot identity: the crate version zero-padded into 32 bytes. Changes across
 /// releases so a snapshot taken by a different build fails the coherence guard (a `CoreHashMismatch`
@@ -5094,6 +5132,34 @@ impl WasmLinux {
             .map_err(|e| JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code()))?;
         inner.owned_http = None;
         Ok(())
+    }
+
+    /// Consume one streamed container without another JS-to-Wasm snapshot copy. The same complete
+    /// framing, identity and transactional component checks run before any guest mutation.
+    #[wasm_bindgen(js_name = restoreSnapshotBuffer)]
+    pub fn restore_snapshot_buffer(&self, buffer: SnapshotBuffer) -> Result<String, JsError> {
+        let blob = buffer.staging.finish().map_err(JsError::new)?;
+        let mut inner = self.inner.try_borrow_mut().map_err(|_| reentrant())?;
+        inner.refuse_unrecorded_mutation()?;
+        inner.refuse_capture_mutation()?;
+        let Some(base) = inner.resume_base else {
+            return Ok("missing".to_string());
+        };
+        let decision = resume::RestoreDecision::decide(
+            Some(&blob),
+            &build_core_hash(),
+            &base,
+            inner.machine.overlay_generation(),
+        );
+        if !decision.is_resume() {
+            return Ok(decision.code().to_string());
+        }
+        inner
+            .machine
+            .load_resume(&blob)
+            .map_err(|e| JsError::new(resume::ColdBootReason::from_snapshot_error(&e).code()))?;
+        inner.owned_http = None;
+        Ok("resume".to_string())
     }
 
     /// E4 restore-on-first-load (busybox boot-snapshot): stamp THIS machine's coherence identity so a
