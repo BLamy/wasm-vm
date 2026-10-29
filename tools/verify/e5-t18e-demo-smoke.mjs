@@ -60,6 +60,7 @@ try {
     assert.equal(await row.locator(".cap-pip").getAttribute("class"), "cap-pip live");
     capability = await row.innerText();
   }
+  await page.goto(`${base}/roadmap.html`);
   await page.locator("#rm-search").fill(task);
   await page.locator(".rm-g-label").filter({ hasText: task }).click();
   await page.locator("#rm-detail").waitFor({ state: "visible" });

@@ -19,6 +19,22 @@ commands=[
  ['node','tools/verify/software-snapshot-warm-ui.mjs',str(OUT/'warm-ui')],
  ['node','tools/verify/e5-t18e-demo-smoke.mjs']]
 try:
+    resume=os.environ.get('E5_STREAM_RESUME')
+    if resume:
+        previous=Path(resume).resolve(); prior=json.loads((previous/'gate.json').read_text())
+        assert prior['passed'] is False and len(prior['commands'])==12
+        assert all(row['exitCode']==0 for row in prior['commands'][:11])
+        assert prior['commands'][11]['exitCode']!=0
+        changed=subprocess.check_output(['git','diff','--name-only',prior['head'],report['head']],cwd=ROOT,text=True).splitlines()
+        assert set(changed)<= {'tools/verify/software-snapshot-gate.py','tools/verify/e5-t18e-demo-smoke.mjs'}, changed
+        for row in prior['commands'][:11]:
+            assert hashlib.sha256(Path(row['log']).read_bytes()).hexdigest()==row['sha256']
+        report['carried']={'head':prior['head'],'originalOutcome':'failed','source':str(previous),
+            'gateSha256':hashlib.sha256((previous/'gate.json').read_bytes()).hexdigest(),
+            'unchangedPassedCommands':prior['commands'][:11],'fixtureOnlyChanges':changed,
+            'evidence':{str(p.relative_to(previous)):hashlib.sha256(p.read_bytes()).hexdigest()
+                for p in sorted(previous.rglob('*')) if p.is_file()}}
+        commands=commands[-1:]
     for name in ['loader.js','snapshot-stream.js','artifacts-omarchy.json']:
         assert (ROOT/'web'/name).read_bytes()==(ROOT/'web/dist'/name).read_bytes(), 'stale dist: '+name
     for i,cmd in enumerate(commands):
