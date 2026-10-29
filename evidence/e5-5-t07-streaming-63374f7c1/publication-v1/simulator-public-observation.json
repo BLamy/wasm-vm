@@ -1,0 +1,11 @@
+{
+  "device": "iPhone Duo Simulator",
+  "os": "27.1",
+  "url": "https://wasm-vm.pages.dev/app?guest=omarchy&desktop=1&gpu=0#ide",
+  "action": "Confirmed full software URL in Safari address field; reloaded prior owned public test session after main publication",
+  "input": "echo iphone-live-stream-ok",
+  "output": "iphone-live-stream-ok",
+  "returnedPrompt": true,
+  "scope": "CUA observed public functional result; no Safari console/RSS/physical-phone or independent per-client module digest claim",
+  "screenshotSha256": "74bd57767c1b840fafb970d6af009b4f67b6da946b722ffd6b2a6a07f8660d1c"
+}

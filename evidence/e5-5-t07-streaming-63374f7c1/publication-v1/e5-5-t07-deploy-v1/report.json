@@ -1,0 +1,46 @@
+{
+  "deployerSha256": "925a16d81002c117ece05bd65e948fc8ceb6758bbb6b51b23b1d2384922bc509",
+  "task": "E5.5-T07",
+  "head": "9341693b29909767a1426431c7f181c8e5c338c0",
+  "status": "published",
+  "url": "https://wasm-vm.pages.dev/",
+  "started": 1793235414.456544,
+  "command": [
+    "bash",
+    "tools/deploy-cloudflare.sh"
+  ],
+  "before": {
+    "artifacts.json": "9448cba61163eab896c1a80ec166274f552f5bbc847b83f7d69025f00a95b8cf",
+    "artifacts-alpine.json": "72843b6eebb9b482f1ffba392872d24824ca7465a09d1b4bec257d02a93a1ece",
+    "artifacts-node-alpine.json": "84dd4084dc7ef21e0054aa819fa3694b744ea93d013d8d8bc2c951cf9b8c8857",
+    "artifacts-omarchy.json": "7e7a98a26dfd80c4cb078f3f9f64bbea40f7b88e25a0380f7aa0fe9bdc681efe",
+    "artifacts-omarchy-virgl.json": "d37bdc377b6488bee43a5547f3a3acb37aae890efc2b6a0c1067e93fc1de6ac6"
+  },
+  "exitCode": 0,
+  "staged": {
+    "artifacts.json": {
+      "bytes": 905,
+      "sha256": "c2a325fde02d8dbe84674699336441462eb0d891ba7793d53261986fdbaec404"
+    },
+    "artifacts-alpine.json": {
+      "bytes": 1110,
+      "sha256": "a3e5e51a69fcda662579d367d5b46fab295ab8bebad4d38155afa3b51c034b6c"
+    },
+    "artifacts-node-alpine.json": {
+      "bytes": 1255,
+      "sha256": "ab1338d6f7b54bf96b2b503aa3e12e3bc72f9de2fd7f2a40728f3cefe2fe6caf"
+    },
+    "artifacts-omarchy.json": {
+      "bytes": 1362,
+      "sha256": "a39c1a1f6cc315379d180ee42c6b65894791b88d07c855340cccb871107f6750"
+    },
+    "artifacts-omarchy-virgl.json": {
+      "bytes": 1062,
+      "sha256": "78e227e08f0032bddc1e9dc0df77df8274c78f7340c4df9d9dd72630cd4e91ff"
+    }
+  },
+  "checkoutStatus": "",
+  "headAfter": "9341693b29909767a1426431c7f181c8e5c338c0",
+  "finished": 1793235740.569171,
+  "logSha256": "4582b2d5e28db56de8be304d32d39e60d25d71fe605690fe7951dce4ae415c27"
+}
