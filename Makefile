@@ -3072,4 +3072,5 @@ verify-E9-T24:
 # Bounded software warm restore staging; no original cold boot or long replay.
 .PHONY: verify-E5.5-T07
 verify-E5.5-T07:
+	node tools/fetch-omarchy-snapshot.mjs
 	python3 tools/verify/software-snapshot-gate.py

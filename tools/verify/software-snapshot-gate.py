@@ -22,19 +22,23 @@ try:
     resume=os.environ.get('E5_STREAM_RESUME')
     if resume:
         previous=Path(resume).resolve(); prior=json.loads((previous/'gate.json').read_text())
-        assert prior['passed'] is False and len(prior['commands'])==12
-        assert all(row['exitCode']==0 for row in prior['commands'][:11])
-        assert prior['commands'][11]['exitCode']!=0
+        assert prior['passed'] is False and 1 < len(prior['commands']) <= len(commands)
+        prefix=len(prior['commands'])-1
+        assert all(row['exitCode']==0 for row in prior['commands'][:prefix])
+        assert prior['commands'][prefix]['exitCode']!=0
+        for i,row in enumerate(prior['commands']):
+            normalize=lambda cmd,base: [part.replace(str(base), '<OUTPUT>') for part in cmd]
+            assert normalize(row['command'],previous)==normalize(commands[i],OUT), 'changed acceptance command'
         changed=subprocess.check_output(['git','diff','--name-only',prior['head'],report['head']],cwd=ROOT,text=True).splitlines()
-        assert set(changed)<= {'tools/verify/software-snapshot-gate.py','tools/verify/e5-t18e-demo-smoke.mjs'}, changed
-        for row in prior['commands'][:11]:
+        assert set(changed)<= {'Makefile','tools/verify/software-snapshot-gate.py','tools/verify/e5-t18e-demo-smoke.mjs'}, changed
+        for row in prior['commands'][:prefix]:
             assert hashlib.sha256(Path(row['log']).read_bytes()).hexdigest()==row['sha256']
         report['carried']={'head':prior['head'],'originalOutcome':'failed','source':str(previous),
             'gateSha256':hashlib.sha256((previous/'gate.json').read_bytes()).hexdigest(),
-            'unchangedPassedCommands':prior['commands'][:11],'fixtureOnlyChanges':changed,
+            'unchangedPassedCommands':prior['commands'][:prefix],'fixtureOnlyChanges':changed,
             'evidence':{str(p.relative_to(previous)):hashlib.sha256(p.read_bytes()).hexdigest()
                 for p in sorted(previous.rglob('*')) if p.is_file()}}
-        commands=commands[-1:]
+        commands=commands[prefix:]
     for name in ['loader.js','snapshot-stream.js','artifacts-omarchy.json']:
         assert (ROOT/'web'/name).read_bytes()==(ROOT/'web/dist'/name).read_bytes(), 'stale dist: '+name
     for i,cmd in enumerate(commands):
