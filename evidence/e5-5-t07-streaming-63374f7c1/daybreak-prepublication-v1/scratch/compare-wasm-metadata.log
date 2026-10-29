@@ -1,0 +1,72 @@
+{
+  "shipped": {
+    "bytes": 2650103,
+    "sha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+    "imports": 177,
+    "exports": 282,
+    "producers": [
+      {
+        "bytes": 102,
+        "sha256": "2805fe8899bde973d2988779b4d1544967d231ffd7cd6c1b3a0b782ee559fe3b"
+      }
+    ],
+    "targetFeatures": [
+      {
+        "bytes": 91,
+        "sha256": "cf0f44a13248b590ee55f98ee3c66b75d6eae8a1c77cef5b2c83c1a8b5a299e4"
+      }
+    ]
+  },
+  "cold": {
+    "bytes": 2633541,
+    "sha256": "4aae7ad32ab000918149e7a96b0abc089b20d844d0e9636ec0c48f377865b0cf",
+    "imports": 177,
+    "exports": 282,
+    "producers": [
+      {
+        "bytes": 102,
+        "sha256": "ed54669e22938eaf6e8dfd54d3f49804fbc232084443506d763a1e31735fc37d"
+      }
+    ],
+    "targetFeatures": [
+      {
+        "bytes": 91,
+        "sha256": "cf0f44a13248b590ee55f98ee3c66b75d6eae8a1c77cef5b2c83c1a8b5a299e4"
+      }
+    ]
+  },
+  "importDelta": {
+    "onlyShipped": [
+      "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js\u0000invokeVirglControl\u0000function",
+      "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js\u0000throwJitMemFault\u0000function"
+    ],
+    "onlyCold": [
+      "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js\u0000throwJitMemFault\u0000function",
+      "./snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js\u0000invokeVirglControl\u0000function"
+    ]
+  },
+  "exportDelta": {
+    "onlyShipped": [
+      "wasm_bindgen__convert__closures_____invoke__h0b706747458e1fca\u0000function",
+      "wasm_bindgen__convert__closures_____invoke__h4eecf702a8348cd1\u0000function",
+      "wasm_bindgen__convert__closures_____invoke__h53288473eff8cf56\u0000function",
+      "wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714\u0000function",
+      "wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_2\u0000function",
+      "wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_3\u0000function",
+      "wasm_bindgen__convert__closures_____invoke__h76d79cd2a4d7a714_4\u0000function"
+    ],
+    "onlyCold": [
+      "wasm_bindgen_648d87fa8fac4da___convert__closures_____invoke_______true_\u0000function",
+      "wasm_bindgen_648d87fa8fac4da___convert__closures_____invoke___js_sys_6c0948d7a4fac297___Function_fn_wasm_bindgen_648d87fa8fac4da___JsValue_____wasm_bindgen_648d87fa8fac4da___sys__Undefined___js_sys_6c0948d7a4fac297___Function_fn_wasm_bindgen_648d87fa8fac4da___JsValue_____wasm_bindgen_648d87fa8fac4da___sys__Undefined_______true_\u0000function",
+      "wasm_bindgen_648d87fa8fac4da___convert__closures_____invoke___wasm_bindgen_648d87fa8fac4da___JsValue__core_f0fd674eaa06beef___result__Result_____wasm_bindgen_648d87fa8fac4da___JsError___true_\u0000function",
+      "wasm_bindgen_648d87fa8fac4da___convert__closures_____invoke___web_sys_e2f3f6d6d47d6f5d___features__gen_ErrorEvent__ErrorEvent______true_\u0000function",
+      "wasm_bindgen_648d87fa8fac4da___convert__closures_____invoke___web_sys_e2f3f6d6d47d6f5d___features__gen_ErrorEvent__ErrorEvent______true__2\u0000function",
+      "wasm_bindgen_648d87fa8fac4da___convert__closures_____invoke___web_sys_e2f3f6d6d47d6f5d___features__gen_ErrorEvent__ErrorEvent______true__3\u0000function",
+      "wasm_bindgen_648d87fa8fac4da___convert__closures_____invoke___web_sys_e2f3f6d6d47d6f5d___features__gen_ErrorEvent__ErrorEvent______true__4\u0000function"
+    ]
+  },
+  "publicApiDelta": {
+    "onlyShipped": [],
+    "onlyCold": []
+  }
+}

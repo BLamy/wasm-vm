@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "cleanHead": "0144c662b0ffc53e0aec1efdbabc4edcac73b27d",
+  "compiler": "1.96.0",
+  "wasmBytes": 2650103,
+  "wasmSha256": "6d3082341ed52848f108da2e5743a0f11716d8828694cca11ee9bf4d9bbb053d",
+  "glueSha256": "015f14a6773ece07c6b4e66c82cf3c3e5f6642993f9cfac45ac5fc7c3f7acd14",
+  "compressedBytes": 210695930,
+  "expandedBytes": 634769246,
+  "maxCopyBytes": 16384,
+  "copies": 41958,
+  "beforeStage": 1173553152,
+  "stagedMemory": 1808334848,
+  "afterMemory": 1808334848,
+  "ramSha256": "310a8f157b044cef3b7fc0f3dbc972e8658ec403d03c33aa5d46389e2b1414c0"
+}

@@ -1,0 +1,235 @@
+{
+  "requestedModel": "gpt-daybreak-blue-latest",
+  "cyberAccessProgram": "daybreakBlue",
+  "route": "fresh actual Daybreak adversarial prepublication reviewer; source read-only",
+  "started": "2026-10-29T00:40:24.217Z",
+  "status": "completed",
+  "sandbox": {
+    "mode": "workspace-write",
+    "networkAccess": true
+  },
+  "allowProviderModelFallback": false,
+  "messages": [
+    "I’ll perform this as a fresh Daybreak prepublication review, read-only against source, task, Git, and evidence. I’ll first map the task and changed boundary, then write timestamped falsifiable predictions before opening any evidence outputs; only the isolated audit directory and scratch tests will be written.",
+    "The task is high-risk persistence work and the runtime is frozen at `63374f7c1`; the two later commits are harness-only. I’m now tracing the exact ownership transfer from JS streaming through generated wasm-bindgen glue into Rust preflight/restore, and separating runtime hunks from fixtures, generated artifacts, and declarative copies before freezing predictions.",
+    "Predictions are frozen at SHA-256 `d1140ccf…f429b41`. The sharpest source-level risk is ownership/error behavior, not framing logic: generated glue invalidates the JS wrapper before Rust runs, while failed appends should preserve an already-staged prefix. I’ll now test those claims independently and only then reconcile the worker receipts and pristine experiment.",
+    "The first direct Node probe exposed an overstrict verifier assumption in my scratch test: a successful restore does not promise byte-identical reserialization, because restore intentionally refreshes/discards host-owned state. That is not a product failure—the acceptance requires byte identity only on refusals. I’m narrowing the oracle to `stateDigest` for successful restore and complete snapshot bytes for every rejection, while preserving the exploratory failure separately.",
+    "The independent shipped-Wasm probe now passes: non-zero-offset typed-array views, recoverable failed appends, single-use ownership on every outcome, three coherence refusals, duplicate/overflow TLVs, and a structurally complete late-device invalid boolean all behaved as predicted; every rejection preserved the complete machine snapshot. The cleanup sabotage was detected with exit 1. I’m moving to evidence integrity and the clean-build discrepancy now, without assigning causation from the differing bytes.",
+    "The pristine discrepancy is now bounded by evidence, not guesswork: v1 stays FAILED. Its sparse set omitted tracked `rust-toolchain.toml`; the preserved old clone selects Rust 1.98, while the repository pin is 1.96. A new pinned clone rebuilt wasm and matching glue byte-for-byte to the committed artifacts. However, its functional gate also remains FAILED because the sparse checkout omitted the published gzip, so no pristine full restore ran. I’m checking whether that is the only remaining non-publication proof gap and will not relabel either receipt.",
+    "The clean-source functional gap is now closed independently without altering either failed receipt: the pinned clean clone’s own wasm and matching glue restored the actual published 634,769,246-byte container directly under Node, with a 16 KiB observed copy maximum, no restore-time memory growth, and the independent 1 GiB RAM digest. Live Cloudflare still serves the old 2,645,647-byte module, so deployment/live verification remains the publication step—not a runtime refutation.",
+    "One concurrent repository change appeared after the review: the working-tree HEAD moved from reviewed `0144c662…` to `087c69c5…`. I did not cause it. I’m checking whether it is evidence-only; the verdict remains bound to `0144c662…` unless the new commit is proven not to alter the reviewed runtime or fixtures.",
+    "PREPUBLICATION VERDICT: pass\n\nThe streamed software restore boundary survived independent actual-Wasm attacks and pristine functional acceptance. The original failed receipts remain preserved; no physical-phone/OOM, RSS reduction, or GPU qualification is claimed.\n\nPublication remains pending: Cloudflare still serves the old wasm. Deploy current PR 626 head `087c69c5…`, verify live hashes plus warm restore/echo, then perform final verification. No task status or implementation files were changed.\n\nFull audit: [audit.md](/private/tmp/e5-5-t07-daybreak-prepublication-v1/audit.md)  \nSHA-256: `45cc8530008dca54eb170b02374d71a314651e886b5bd7104e315c46311f14a0`"
+  ],
+  "commands": [
+    {
+      "command": "/bin/zsh -lc \"pwd && sed -n '1,260p' AGENTS.md && rg -n \\\"E5\\\\.5-T07|streamed software|software warm|streaming\\\" tasks ROADMAP.md 2>/dev/null | head -120 && git status --short && git rev-parse HEAD && git log -1 --oneline\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"sed -n '261,620p' AGENTS.md && sed -n '1,320p' tasks/epic-5.5-omarchy/E5.5-T07-streamed-software-warm-restore.md && git diff --stat f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe..0144c662b0ffc53e0aec1efdbabc4edcac73b27d && git diff --name-status f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe..0144c662b0ffc53e0aec1efdbabc4edcac73b27d && git log --oneline --decorate f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe..0144c662b0ffc53e0aec1efdbabc4edcac73b27d\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'git diff --find-renames --unified=100 f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe..63374f7c1 -- crates/wasm/src/lib.rs crates/wasm/src/snapshot_staging.rs web/loader.js web/snapshot-stream.js web/gpu-checkpoint-build.js web/artifacts-omarchy.json web/tests/snapshot-stream.test.mjs tools/verify/software-snapshot-stream.mjs tools/verify/software-snapshot-oracle.py tools/verify/software-snapshot-gate.py tools/verify/software-snapshot-warm-ui.mjs Makefile && git diff --name-only 63374f7c1..0144c662b0ffc53e0aec1efdbabc4edcac73b27d && git diff --unified=80 63374f7c1..0144c662b0ffc53e0aec1efdbabc4edcac73b27d -- tools/verify/software-snapshot-gate.py tools/verify/e5-t18e-demo-smoke.mjs'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'git diff --unified=50 f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe..63374f7c1 -- crates/wasm/src/lib.rs > /private/tmp/e55-lib.diff && rg -n \"''^@@|SnapshotBuffer|restore.*snapshot|snapshot\" /private/tmp/e55-lib.diff | head -120 && nl -ba crates/wasm/src/snapshot_staging.rs && rg -n \"SnapshotBuffer|restore.*Snapshot|restore.*snapshot|stageGzipSnapshot|softwareWarm|snapshot-stream\" crates/wasm/src/lib.rs web/loader.js web/gpu-checkpoint-build.js web/artifacts-omarchy.json && nl -ba crates/wasm/src/lib.rs | sed -n '\"'2290,2460p' && nl -ba crates/wasm/src/lib.rs | sed -n '3310,3475p' && nl -ba web/loader.js | sed -n '900,1090p' && nl -ba web/loader.js | sed -n '1410,1570p'\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"nl -ba crates/wasm/src/lib.rs | sed -n '2228,2288p'; nl -ba crates/wasm/src/lib.rs | sed -n '5070,5170p'; nl -ba web/loader.js | sed -n '1,50p'; nl -ba web/loader.js | sed -n '840,1005p'; git diff --unified=30 f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe..63374f7c1 -- web/gpu-checkpoint-build.js web/artifacts-omarchy.json tools/verify/software-snapshot-stream.mjs tools/verify/software-snapshot-oracle.py tools/verify/software-snapshot-warm-ui.mjs tools/verify/software-snapshot-serve.py\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"rg -n \\\"class SnapshotBuffer|restoreSnapshotBuffer|snapshotbuffer|snapshot_buffer|__wbg_ptr|append\\\\(\\\" web/dist/pkg/wasm_vm_wasm.js web/dist/pkg/wasm_vm_wasm_bg.wasm.d.ts | head -100 && nl -ba web/dist/pkg/wasm_vm_wasm.js | sed -n '760,900p' && rg -n \\\"profile.*wasm-release|wasm-release|wasm-pack|wasm-opt|build-web\\\" Cargo.toml Makefile tools/build-web-dist.sh crates/wasm/Cargo.toml .cargo/config.toml 2>/dev/null | head -160 && git show 63374f7c1:web/dist/pkg/wasm_vm_wasm.js | rg -n \\\"class SnapshotBuffer|restoreSnapshotBuffer|append\\\\(\\\"\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"nl -ba web/dist/pkg/wasm_vm_wasm.js | sed -n '252,320p'; nl -ba web/dist/pkg/wasm_vm_wasm.js | sed -n '2075,2112p'; sed -n '40,100p' Cargo.toml; sed -n '210,250p' Makefile; sed -n '1,100p' tools/build-web-dist.sh; git diff --numstat 63374f7c1..0144c662b0ffc53e0aec1efdbabc4edcac73b27d\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'mkdir -p /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'test -f /private/tmp/e5-5-t07-daybreak-prepublication-v1/predictions.md && sha256sum /private/tmp/e5-5-t07-daybreak-prepublication-v1/predictions.md || shasum -a 256 /private/tmp/e5-5-t07-daybreak-prepublication-v1/predictions.md'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"find evidence/e5-5-t07-streaming-63374f7c1 -type f -maxdepth 4 -print | sort; find target/evidence/e5-5-t07-frozen-v1 -type f -maxdepth 4 -print 2>/dev/null | sort; find /private/tmp/e5-5-t07-pristine-proof-v1 /private/tmp/e5-5-t07-pristine-proof-v2 -maxdepth 3 -type f -print 2>/dev/null | sort; shasum -a 256 /private/tmp/wasm-vm-iphone-physical-20261028/daybreak-memory-review-v1/audit.md 2>/dev/null; sed -n '1,260p' /private/tmp/wasm-vm-iphone-physical-20261028/daybreak-memory-review-v1/audit.md 2>/dev/null\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"python3 - <<'PY'\nimport json\nfrom pathlib import Path\nbase=Path('evidence/e5-5-t07-streaming-63374f7c1')\nfor rel in ['evidence-index.json','device-summary.json','simulator-stream-observation.json','e5-5-t07-frozen-v1/gate.json','e5-5-t07-frozen-v1/staging/report.json','e5-5-t07-frozen-v1/warm-ui/report.json','e5-5-t07-demo-continuation-v1/gate.json','e5-5-t07-demo-continuation-v2/gate.json','e5-5-t07-demo-continuation-v2/demo/demo-suite.json']:\n p=base/rel\n print('\\\\n###',rel)\n print(p.read_text())\nPY\nfor f in evidence/e5-5-t07-streaming-63374f7c1/e5-5-t07-frozen-v1/{00..11}.log evidence/e5-5-t07-streaming-63374f7c1/e5-5-t07-demo-continuation-v{1,2}/00.log; do echo \\\"### \"'$f\"; tail -80 \"$f\"; done'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'node /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/actual-wasm-boundary.mjs | tee /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/actual-wasm-boundary.log'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'mv /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/actual-wasm-boundary.log /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/exploratory-overstrict-failed.log'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'node /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/actual-wasm-boundary.mjs > /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/actual-wasm-boundary.log 2>&1; rc=$?; cat /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/actual-wasm-boundary.log; exit $rc'",
+      "exitCode": 1
+    },
+    {
+      "command": "/bin/zsh -lc \"rg -n \\\"const .*TAG|TAG_.*=|SECTION_.*=|tag ==|match tag|TAG_RNG|RNG\\\" crates/core/src/resume.rs crates/core/src/lib.rs | head -180; nl -ba crates/core/src/lib.rs | sed -n '4440,4760p'; nl -ba crates/core/src/resume.rs | sed -n '1,180p'\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"nl -ba crates/core/src/lib.rs | sed -n '225,285p'; rg -n \\\"fn parse_resume_device_prefix\\\" crates/core/src/lib.rs\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'mv /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/actual-wasm-boundary.log /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/exploratory-device-byte-failed.log'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'node /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/actual-wasm-boundary.mjs > /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/actual-wasm-boundary.log 2>&1; rc=$?; cat /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/actual-wasm-boundary.log; exit $rc'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'cp web/snapshot-stream.js /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/snapshot-stream-sabotaged.mjs'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'set +e; node /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/sabotage-cleanup-check.mjs > /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/sabotage-cleanup-check.log 2>&1; rc=$?; set -e; cat /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/sabotage-cleanup-check.log; test \"$rc\" -ne 0; printf '\"'EXPECTED_SABOTAGE_EXIT=%s\\\\n' \\\"\"'$rc\"'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"python3 - <<'PY'\nimport json,hashlib\nfrom pathlib import Path\nbase=Path('evidence/e5-5-t07-streaming-63374f7c1')\nidx=json.loads((base/'evidence-index.json').read_text())\nerrors=[]\nfor rel,meta in idx['files'].items():\n p=base/rel\n got=hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None\n if got\"'!=meta['\"'sha256'] or (p.is_file() and p.stat().st_size\"'!=meta['\"'bytes']): errors.append((rel,got,meta))\nprint(json.dumps({'indexedFiles':len(idx['files']),'errors':errors,'indexSha256':hashlib.sha256((base/'evidence-index.json').read_bytes()).hexdigest()},indent=2))\nPY\nprintf '\\\\n### pristine-v1 receipt\\\\n'; sed -n '1,260p' /private/tmp/e5-5-t07-pristine-proof-v1/receipt.json\nprintf '\\\\n### checkout/build tails\\\\n'; for f in /private/tmp/e5-5-t07-pristine-proof-v1/*.log; do echo \\\"## \"'$f\"; tail -60 \"$f\"; done\nprintf '\"'\\\\n### pristine tree identity\\\\n'; git -C /private/tmp/e5-5-t07-pristine-0144c662b rev-parse HEAD; git -C /private/tmp/e5-5-t07-pristine-0144c662b status --short; git -C /private/tmp/e5-5-t07-pristine-0144c662b rev-parse --is-shallow-repository; git -C /private/tmp/e5-5-t07-pristine-0144c662b config --get-all remote.origin.promisor; git -C /private/tmp/e5-5-t07-pristine-0144c662b config --get-all remote.origin.partialclonefilter; git -C /private/tmp/e5-5-t07-pristine-0144c662b rev-parse --git-path objects/info/alternates; test \"'! -s /private/tmp/e5-5-t07-pristine-0144c662b/.git/objects/info/alternates && echo no-alternates\nfind /private/tmp/e5-5-t07-pristine-0144c662b -maxdepth 3 -type f '\"\\\\( -name '*.wasm' -o -name 'wasm_vm_wasm.js' \\\\) -print -exec shasum -a 256 {} \\\\;\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"command -v wasm-tools || true; command -v wasm-objdump || true; command -v wasm2wat || true; wasm-pack --version; rustc -Vv; cargo -V; find /private/tmp/e5-5-t07-pristine-0144c662b/crates/wasm-web/pkg -maxdepth 2 -type f -print -exec shasum -a 256 {} \\\\; | head -80; shasum -a 256 Cargo.lock /private/tmp/e5-5-t07-pristine-0144c662b/Cargo.lock crates/wasm-web/Cargo.toml /private/tmp/e5-5-t07-pristine-0144c662b/crates/wasm-web/Cargo.toml; git -C /private/tmp/e5-5-t07-pristine-0144c662b status --short --untracked-files=all --ignored | head -80\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"printf '%s\\\\n' '### module section headers/sizes'; wasm-objdump -h web/dist/pkg/wasm_vm_wasm_bg.wasm; wasm-objdump -h /private/tmp/e5-5-t07-pristine-0144c662b/crates/wasm-web/pkg/wasm_vm_wasm_bg.wasm; printf '%s\\\\n' '### glue diff stat'; git diff --no-index --stat -- web/dist/pkg/wasm_vm_wasm.js /private/tmp/e5-5-t07-pristine-0144c662b/crates/wasm-web/pkg/wasm_vm_wasm.js || true; printf '%s\\\\n' '### glue semantic names'; diff -u <(rg '\"'^export (class|function)|''^export '\"\\\\{|\"'^    [A-Za-z].*'\"\\\\(' web/dist/pkg/wasm_vm_wasm.js | sed 's/[[:space:]]\\\\+/ /g') <(rg '\"'^export (class|function)|''^export '\"\\\\{|\"'^    [A-Za-z].*'\"\\\\(' /private/tmp/e5-5-t07-pristine-0144c662b/crates/wasm-web/pkg/wasm_vm_wasm.js | sed 's/[[:space:]]\\\\+/ /g') | head -240 || true; printf '%s\\\\n' '### wasm import/export name diffs'; diff -u <(wasm-objdump -x web/dist/pkg/wasm_vm_wasm_bg.wasm | rg ' <- |Export\\\\[') <(wasm-objdump -x /private/tmp/e5-5-t07-pristine-0144c662b/crates/wasm-web/pkg/wasm_vm_wasm_bg.wasm | rg ' <- |Export\\\\[') | head -260 || true\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'node /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/compare-wasm-metadata.mjs | tee /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/compare-wasm-metadata.log'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'wasm-objdump -x web/dist/pkg/wasm_vm_wasm_bg.wasm | tail -35; wasm-objdump -x /private/tmp/e5-5-t07-pristine-0144c662b/crates/wasm-web/pkg/wasm_vm_wasm_bg.wasm | tail -35; diff -u web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline0.js /private/tmp/e5-5-t07-pristine-0144c662b/crates/wasm-web/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js || true; diff -u web/dist/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline2.js /private/tmp/e5-5-t07-pristine-0144c662b/crates/wasm-web/pkg/snippets/wasm-vm-wasm-0a6604668439f3ad/inline1.js || true'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"find /private/tmp/e5-5-t07-pristine-proof-v2 -maxdepth 3 -type f -print 2>/dev/null | sort; test -f /private/tmp/e5-5-t07-pristine-proof-v2/receipt.json && sed -n '1,320p' /private/tmp/e5-5-t07-pristine-proof-v2/receipt.json || true; ps -axo pid,etime,command | rg 'e5-5-t07-pristine|software-snapshot' | rg -v rg || true\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"tail -100 /private/tmp/e5-5-t07-pristine-proof-v2/acceptance.log 2>/dev/null; tail -40 /private/tmp/e5-5-t07-pristine-proof-v2/wasm-build.log 2>/dev/null; find /private/tmp/e5-5-t07-pristine-pinned-0144c662b -maxdepth 2 -name rust-toolchain.toml -print -exec cat {} \\\\; 2>/dev/null; git -C /private/tmp/e5-5-t07-pristine-pinned-0144c662b status --short 2>/dev/null; git -C /private/tmp/e5-5-t07-pristine-pinned-0144c662b rev-parse HEAD --is-shallow-repository 2>/dev/null\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"git diff --unified=12 f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe..63374f7c1 -- web/loader.js web/gpu-checkpoint-build.js web/artifacts-omarchy.json web/roadmap.js web/tasks.json | sed -n '1,700p'; printf '\\\\n### source/dist identity\\\\n'; cmp -s web/loader.js web/dist/loader.js && echo loader-identical; cmp -s web/snapshot-stream.js web/dist/snapshot-stream.js && echo stream-identical; cmp -s web/artifacts-omarchy.json web/dist/artifacts-omarchy.json && echo manifest-identical; printf '\\\\n### source digests\\\\n'; shasum -a 256 crates/wasm/src/lib.rs crates/wasm/src/snapshot_staging.rs web/loader.js web/snapshot-stream.js web/dist/pkg/wasm_vm_wasm.js web/dist/pkg/wasm_vm_wasm_bg.wasm web/artifacts-omarchy.json tools/verify/software-snapshot-stream.mjs tools/verify/software-snapshot-warm-ui.mjs tools/verify/software-snapshot-gate.py tools/verify/e5-t18e-demo-smoke.mjs\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"rg -n \\\"factory|GPU_CHECKPOINT_BUILD_ID|gpu.*identity|retained\\\" web/artifacts-omarchy.json web/gpu-checkpoint-build.js web/gpu-checkpoint.js web/loader.js tasks/epic-5.5-omarchy/E5.5-T05d-omarchy-application-warm-release.md | head -240; git diff --name-only f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe..0144c662b0ffc53e0aec1efdbabc4edcac73b27d -- releases web | rg 'gpu|checkpoint|artifact|release|omarchy' || true; find releases -maxdepth 3 -type f | rg -i 'gpu|checkpoint|omarchy' | sort | head -100\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'shasum -a 256 releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair; rg -n \"3583ea|7456e9|wvgpair|gpu.*factory\" web releases tasks/epic-5.5-omarchy/E5.5-T05d-omarchy-application-warm-release.md | head -160; git diff --quiet f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe..0144c662b0ffc53e0aec1efdbabc4edcac73b27d -- releases/boot-snapshot/omarchy-apps-virgl-ready-3583ea9927d1.wvgpair && echo factory-pair-byte-unchanged'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"sed -n '1,40p' web/artifacts-omarchy-virgl.json; nl -ba web/loader.js | sed -n '180,235p'; git show f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe:web/gpu-checkpoint-build.js; git show f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe:web/artifacts-omarchy-virgl.json | sed -n '1,30p'; shasum -a 256 web/artifacts-omarchy-virgl.json web/dist/artifacts-omarchy-virgl.json\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"gh pr view 626 --json number,state,isDraft,baseRefName,headRefName,headRefOid,mergeStateStatus,url 2>&1; gh pr view 625 --json number,state,isDraft,baseRefName,headRefName,headRefOid,url 2>&1; gh pr list --state open --limit 100 --json number | python3 -c 'import sys,json; x=json.load(sys.stdin); print({\\\"openCount\\\":len(x),\\\"numbers\\\":[r[\\\"number\\\"] for r in x]})' 2>&1\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"sleep 20; sed -n '1,360p' /private/tmp/e5-5-t07-pristine-proof-v2/receipt.json; tail -60 /private/tmp/e5-5-t07-pristine-proof-v2/acceptance.log\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"find /private/tmp/e5-5-t07-pristine-proof-v2/gate -maxdepth 3 -type f -print | sort; sed -n '1,240p' /private/tmp/e5-5-t07-pristine-proof-v2/gate/09.log 2>/dev/null; sed -n '1,280p' /private/tmp/e5-5-t07-pristine-proof-v2/gate/gate.json 2>/dev/null; cat /private/tmp/e5-5-t07-pristine-proof-v2/setup-note.json\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'cd /private/tmp/e5-5-t07-pristine-0144c662b && rustc -Vv && rustup show active-toolchain; cd /private/tmp/e5-5-t07-pristine-pinned-0144c662b && rustc -Vv && rustup show active-toolchain; shasum -a 256 /private/tmp/e5-5-t07-pristine-proof-v1/receipt.json /private/tmp/e5-5-t07-pristine-proof-v2/receipt.json /private/tmp/e5-5-t07-pristine-proof-v2/gate/gate.json; git -C /private/tmp/e5-5-t07-pristine-pinned-0144c662b status --porcelain --untracked-files=no; test ! -s /private/tmp/e5-5-t07-pristine-pinned-0144c662b/.git/objects/info/alternates && echo pinned-no-alternates; git -C /private/tmp/e5-5-t07-pristine-pinned-0144c662b rev-parse --is-shallow-repository'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'node --max-old-space-size=4096 /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/pristine-own-full-acceptance.mjs > /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/pristine-own-full-acceptance.log 2>&1; rc=$?; cat /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/pristine-own-full-acceptance.log; exit $rc'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'rg -n \"GPU_CHECKPOINT_BUILD_ID|SOFTWARE_CHECKPOINT_WASM\" /private/tmp/e5-5-t07-pristine-pinned-0144c662b/web/gpu-checkpoint-build.js; shasum -a 256 /private/tmp/e5-5-t07-pristine-pinned-0144c662b/web/gpu-checkpoint-build.js; git -C /private/tmp/e5-5-t07-pristine-pinned-0144c662b status --porcelain --untracked-files=no; test ! -e /private/tmp/e5-5-t07-pristine-pinned-0144c662b/target-before-proof && true'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'tmp=/private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/live-wasm.bin; curl -fsSL --max-time 30 https://wasm-vm.pages.dev/pkg/wasm_vm_wasm_bg.wasm -o \"$tmp\"; wc -c \"$tmp\"; shasum -a 256 \"$tmp\"; curl -fsSL --max-time 20 https://wasm-vm.pages.dev/artifacts-omarchy.json | shasum -a 256'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"python3 - <<'PY'\nimport json,hashlib\nfrom pathlib import Path\nb=Path('evidence/e5-5-t07-streaming-63374f7c1')\no=json.loads((b/'e5-5-t07-frozen-v1/gate.json').read_text())\nc=json.loads((b/'e5-5-t07-demo-continuation-v2/gate.json').read_text())\nr={\n'originalHead':o['head'],'originalPassed':o['passed'],'originalExitCodes':[x['exitCode'] for x in o['commands']],\n'continuationHead':c['head'],'continuationPassed':c['passed'],'continuationCommands':[(x['command'],x['exitCode']) for x in c['commands']],\n'carriedHead':c.get('carried',{}).get('head'),'carriedOriginalOutcome':c.get('carried',{}).get('originalOutcome'),\n'fixtureOnlyChanges':c.get('carried',{}).get('fixtureOnlyChanges'),'carriedGateSha':c.get('carried',{}).get('gateSha256'),\n'actualOriginalGateSha':hashlib.sha256((b/'e5-5-t07-frozen-v1/gate.json').read_bytes()).hexdigest()}\nprint(json.dumps(r,indent=2))\nPY\npython3 - <<'PY'\nimport json\nfrom pathlib import Path\np=Path('evidence/e5-5-t07-streaming-63374f7c1/e5-5-t07-demo-continuation-v2/demo/demo-suite.json')\nx=json.loads(p.read_text()); print(json.dumps({k:x.get(k) for k in ['browser','launchArgs','metrics','errors','httpErrors','screenshotSha256']},indent=2))\nPY\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"python3 - <<'PY'\nimport json\nfrom pathlib import Path\np=Path('evidence/e5-5-t07-streaming-63374f7c1/e5-5-t07-frozen-v1/warm-ui/report.json'); x=json.loads(p.read_text())\nprint(json.dumps({'head':x['head'],'passed':x['passed'],'errors':x['errors'],'httpErrors':x['httpErrors'],'restored':x.get('restored'),'typed':x.get('typed'),'echo':x.get('echo'),'trustedKeysCount':len(x.get('trustedKeys',[])),'allTrusted':all(k.get('trusted') for k in x.get('trustedKeys',[])),'screenshotSha256':x.get('screenshotSha256'),'echoScreenshotSha256':x.get('echoScreenshotSha256')},indent=2))\nPY\nshasum -a 256 /private/tmp/e5-5-t07-daybreak-prepublication-v1/scratch/* 2>/dev/null | sort\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'git diff --binary f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe..0144c662b0ffc53e0aec1efdbabc4edcac73b27d | shasum -a 256; git diff --binary f2e4ab0d28b157f6d41e0502d6e690c0baa93cfe..63374f7c1 | shasum -a 256; git diff --binary 63374f7c1..0144c662b0ffc53e0aec1efdbabc4edcac73b27d | shasum -a 256; shasum -a 256 evidence/e5-5-t07-streaming-63374f7c1/evidence-index.json evidence/e5-5-t07-streaming-63374f7c1/e5-5-t07-frozen-v1/gate.json evidence/e5-5-t07-streaming-63374f7c1/e5-5-t07-frozen-v1/staging/report.json evidence/e5-5-t07-streaming-63374f7c1/e5-5-t07-frozen-v1/warm-ui/report.json evidence/e5-5-t07-streaming-63374f7c1/e5-5-t07-demo-continuation-v2/gate.json evidence/e5-5-t07-streaming-63374f7c1/simulator-stream-observation.json evidence/e5-5-t07-streaming-63374f7c1/simulator-stream-echo.png'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"sed -n '1,40p' /private/tmp/e5-5-t07-daybreak-prepublication-v1/audit.md; shasum -a 256 /private/tmp/e5-5-t07-daybreak-prepublication-v1/audit.md; git status --short; git rev-parse HEAD; test \\\"\"'$(head -1 /private/tmp/e5-5-t07-daybreak-prepublication-v1/audit.md)\" = '\"'PREPUBLICATION VERDICT: pass' && echo first-line-ok\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'git log -3 --oneline --decorate; git show --stat --oneline --summary 087c69c54713db7598b296b45d0da3a8f91ba1d2; git diff --name-status 0144c662b0ffc53e0aec1efdbabc4edcac73b27d..087c69c54713db7598b296b45d0da3a8f91ba1d2; git status --short'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'git diff --unified=80 0144c662b0ffc53e0aec1efdbabc4edcac73b27d..087c69c54713db7598b296b45d0da3a8f91ba1d2 -- Makefile tools/verify/software-snapshot-gate.py; gh pr view 626 --json headRefOid,state,isDraft,baseRefName,url'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"find /private/tmp -maxdepth 2 -type f -path '*e5-5-t07-pristine-proof-v3*' -print 2>/dev/null | sort; git status --short\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"sed -n '1,360p' /private/tmp/e5-5-t07-pristine-proof-v3/receipt.json; for f in /private/tmp/e5-5-t07-pristine-proof-v3/*.log; do echo \\\"### \"'$f\"; tail -80 \"$f\"; done'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"sleep 20; sed -n '1,420p' /private/tmp/e5-5-t07-pristine-proof-v3/receipt.json; tail -100 /private/tmp/e5-5-t07-pristine-proof-v3/missing-browser-acceptance.log\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc \"sleep 30; sed -n '1,460p' /private/tmp/e5-5-t07-pristine-proof-v3/receipt.json; tail -120 /private/tmp/e5-5-t07-pristine-proof-v3/missing-browser-acceptance.log\"",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'shasum -a 256 /private/tmp/e5-5-t07-pristine-proof-v3/receipt.json /private/tmp/e5-5-t07-pristine-proof-v3/missing-browser-acceptance.log; git diff --binary 0144c662b0ffc53e0aec1efdbabc4edcac73b27d..087c69c54713db7598b296b45d0da3a8f91ba1d2 | shasum -a 256; git diff --name-only 0144c662b0ffc53e0aec1efdbabc4edcac73b27d..087c69c54713db7598b296b45d0da3a8f91ba1d2'",
+      "exitCode": 0
+    },
+    {
+      "command": "/bin/zsh -lc 'shasum -a 256 /private/tmp/e5-5-t07-daybreak-prepublication-v1/audit.md; head -1 /private/tmp/e5-5-t07-daybreak-prepublication-v1/audit.md; git status --short; git rev-parse HEAD; gh pr view 626 --json headRefOid,state,isDraft,baseRefName,url'",
+      "exitCode": 0
+    }
+  ],
+  "errors": [],
+  "model": "gpt-daybreak-blue-latest",
+  "threadId": "01a18519-d2ad-7610-a60d-a25e450fb89e",
+  "turnId": "01a18519-d773-7811-b5a8-e7ad236a9a93",
+  "rootCompletion": {
+    "threadId": "01a18519-d2ad-7610-a60d-a25e450fb89e",
+    "turnId": "01a18519-d773-7811-b5a8-e7ad236a9a93"
+  },
+  "turnError": null,
+  "finished": "2026-10-29T00:50:09.041Z"
+}
