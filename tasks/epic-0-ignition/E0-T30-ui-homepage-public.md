@@ -3,7 +3,7 @@ id: E0-T30
 epic: 0
 title: Homepage and public pages on the shared interface — honest copy, architecture model kept
 priority: 0.3
-status: verified
+status: in-progress
 depends_on: [E0-T29]
 estimate: S
 risk: medium
@@ -401,3 +401,22 @@ No further test or implementation edit was necessary. Command: `PW_DISABLE_TS_ES
 PLAYWRIGHT_PORT=8194 node node_modules/playwright/cli.js test tests/ui-public.spec.js --grep
 'standalone public actions' --trace on --output ../target/ui-verifier/public-626-r2/pw-owned-targets
 --reporter=list` from `web/`; task policy before queue regeneration. No push, deploy or merge.
+
+### 2026-10-30 — coordinator — deployment interpolation repair activated
+
+The final isolated preview attempt from frozen docs release
+`2d7b3414d0b16a744a246236f275870e51ba88a4` authenticated every required R2 object,
+then stopped **before** invoking Wrangler: macOS Bash/default UTF-8 parses the ellipsis
+after `$DEPLOY_TARGET` as part of the variable at `tools/deploy-cloudflare.sh:238`.
+The log reports an unbound variable; the outer process status was zero, so it is not a
+successful deployment receipt. The failed log, head, and five staged manifests are preserved
+under `target/ui-release-626/deploy-first-attempt/`. Only those five expected manifest
+rewrites were restored before checking out the owning public layer.
+
+Reopen this boundary for one literal logging interpolation repair, using the same Opus
+worker. No UI, package, runtime, asset guard, argument or publication-target behavior change
+is authorized by this repair. The previous UI evidence, single bounded attack and seven
+final grades carry by unchanged source/evidence. Narrow submission: shell syntax, the
+actual repaired log under default macOS UTF-8 Bash, preview command resolution, then the
+real isolated deployment. A fresh verifier decides coverage/carry; no broad repeated suite
+or second full pristine clone is required for this one output line.
