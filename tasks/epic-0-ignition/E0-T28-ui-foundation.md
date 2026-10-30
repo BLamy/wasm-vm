@@ -3,7 +3,7 @@ id: E0-T28
 epic: 0
 title: Shared interface foundation on @brett_lamy/ui (build, tokens, shared nav)
 priority: 0.1
-status: in-progress
+status: implemented
 depends_on: [E0-T27]
 estimate: S
 risk: medium
@@ -390,3 +390,74 @@ Commands and permanent suite:
 
 Verdict applies to the shared foundation slice. Whole-site design scoring, launcher/public-page
 work, guest/runtime gauntlets, other browser engines, deployment and merges remain outside it.
+
+### 2026-10-30 — worker — PR 626 integration, implemented (submitted for a fresh verifier)
+
+**Product head: `9347dd4bc60c069e110b179b1218666b9e169a7b`** (`codex/ui-redesign`, one layer above
+PR 626 `c396efe1ecd061721865a5929235e6d0a6268561`). Tree at that head: `web/ui/src` `8ebba569…`,
+`web/dist` `ecdbdb27…`. The commit that records this entry changes only the task file, the
+queue, `web/tasks.json` and evidence; the hook re-copies the ledger into `web/dist`.
+
+Integration. The coordinator applied the old-main foundation delta with `git apply --3way`; two
+files conflicted and were resolved keeping 626's lines and adding the foundation's:
+`Makefile` (`session-web` build and `web/session-pkg` kept, `npm run build:ui` added) and
+`web/index.html` (`session-library.css` kept, `ui.css` added; the shared-nav header mount merged
+cleanly). Every E9 control, the case-study pages and the guides are untouched; no Rust, runtime
+controller or artifact manifest changed.
+
+Added on this source (see Boundary → Latest-source integration):
+- `web/ui/src/routes.js`: `case-studies` route; `site-nav.jsx`: `NEW_TAB_FROM_APP`
+  (docs, case-studies, roadmap → `target=_blank rel=noopener` with "(opens in a new tab)" names
+  and an "Opens in a new tab" row detail when `current="app"`); `primitives.jsx`: `LinkRow target`.
+- `web/index.html`: warm page tokens; `body > header` background `rgb(21 20 16 / 0.94)`;
+  `.audio-autoplay-badge { display: none !important; }` replacing the amber/cyan/red badge rules.
+  main.js/autoplay.js still write the badge's state, text and `hidden`.
+- `web/tests/ui-foundation.spec.js`: phone-sheet Case studies href; three new tests —
+  Case studies from the nav on desktop and phone (and the index's three studies answer 200);
+  from the app, Docs/Case studies/Roadmap carry `_blank`/`noopener`, the Case studies popup has no
+  opener and the app document and URL are unchanged (desktop and phone); the warm header and
+  body colours, a written autoplay state, and the badge staying `display:none` after a forced
+  `hidden=false` + `unavailable` write, with no errors or overflow (1280 and 390).
+
+Commands (frozen head, after `make web-build`, which built the new `web/session-pkg`):
+- `bash tools/verify-ui-foundation.sh` → **PASS**: pins (`@brett_lamy/ui` 5.10.1 with registry
+  integrity, React 19.3.0, single react/react-dom/react-aria), deterministic build digest
+  `016f85caf147c0073781e61bb2147f51902496e6e6308eab59ce1829febb4e4e`, tree-shaking, same-origin
+  assets, no gradients/glows, source and dist rev stamps, root-swapped dist, stamped `sw.js`,
+  Playwright **15 passed** (12 carried tests re-run on this source + 3 new).
+  Log `evidence/ui-redesign/foundation-626/verify-ui-foundation.log`.
+- `PW_DISABLE_TS_ESM=1 node node_modules/playwright/cli.js test tests/ui-foundation.spec.js
+  --trace on --output ../target/e0t28-626/pw` → 15 passed; 15 traces (19 MB, ignored path)
+  hashed in `evidence/ui-redesign/foundation-626/traces-SHA256SUMS`.
+- `node evidence/ui-redesign/foundation-626/capture.mjs` → `capture.json` and screenshots:
+  source app at 1440/1280/390 (header `rgba(21, 20, 16, 0.94)`, badge `display:none` with state
+  `locked`, nav Home / Docs `_blank` / Case studies `_blank` / Roadmap `_blank` / Machine `#ide`,
+  overflow 0, no errors); phone sheet rows; tapping "Open the machine" keeps
+  `index.html?nosw#ide` and closes the sheet; kit nav → `case-studies.html`. Built `web/dist`
+  served with its `_headers`: `/app.html` at 1280 and 390 links `./`, `./docs.html`,
+  `./case-studies.html`, `./roadmap.html`, `#ide`; `/`, docs, roadmap, case-studies, the three
+  studies and `ui-kit.html` answer 200; header warm, badge hidden, no errors.
+- Digests: `evidence/ui-redesign/foundation-626/SHA256SUMS` (all files above, incl. the traces list).
+
+Claim. On the PR 626 source the foundation's library bundle, nav, menu, kit, isolation guard and
+deploy swap behave as on old main (the 12 historical tests pass unchanged against this source);
+Case studies are reachable from the shared nav on desktop and phone; reading pages opened from
+the app leave the app document (and so a running guest) in place while the current-machine entry
+stays in-document and closes the sheet; the app header is the warm bar on a warm page and the
+autoplay notice cannot appear in it while its controller state keeps being written.
+
+Carried, not re-proven: nothing. The old-main entries above are history only (their evidence is
+kept by digest: `foundation-r2/SHA256SUMS` `ddb6fb23…`, `foundation/changed-source-sha256.txt`
+`219dfc14…`, `foundation/dist-ui-sha256.txt` `ab73f4ed…`).
+
+Limits.
+- The launcher below the header still has 626's blue gradient and system font; restyling it is
+  E0-T29. At ≤1000 px the core version readout wraps under the nav (626 layout; E0-T29 drops it on
+  phones). The autoplay readout in Settings is E0-T29 (`/tmp/wasm-vm-ui-port-header-sound.patch`).
+- No guest was booted for this slice: "guest survives" is proven as "the app document and URL are
+  unchanged" (window token), not with a running guest. The riscv-tests 127/0 suite is not part of
+  this acceptance and was not run.
+- The dist browser check ignores `/releases/` responses (boot artifacts are staged at deploy time).
+- No cold clone (coordinator, after the final combined grade); nothing pushed or deployed.
+- `@brett_lamy/ui` 5.10.1 is the coordinator-confirmed latest; not re-queried here.
+
