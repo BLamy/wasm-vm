@@ -1,0 +1,20 @@
+{
+ "base-05fa92c82": {
+  "attached": true,
+  "wvmDemo": true,
+  "buttonVisible": false,
+  "hiddenBy": "div#ide-root.",
+  "panelOsSelected": null,
+  "ideRootDisplay": "none",
+  "e2eShowall": true
+ },
+ "frozen-2b9f97c11": {
+  "attached": true,
+  "wvmDemo": true,
+  "buttonVisible": false,
+  "hiddenBy": "div#ide-root.",
+  "panelOsSelected": null,
+  "ideRootDisplay": "none",
+  "e2eShowall": true
+ }
+}

@@ -10,10 +10,14 @@ import { createRoot } from "react-dom/client";
 import { UIRoot } from "./components/ui-root.jsx";
 import { SiteNav } from "./components/site-nav.jsx";
 import { Kit } from "./components/kit.jsx";
+import { Launcher } from "./components/launcher.jsx";
+import { Workspace } from "./components/workspace.jsx";
 
 const ISLANDS = {
   "site-nav": (el) => <SiteNav current={el.dataset.current} showDiagnostics={el.hasAttribute("data-diagnostics")} />,
   kit: () => <Kit />,
+  launcher: () => <Launcher />,
+  workspace: () => <Workspace />,
 };
 
 export function mountIslands(root = document) {

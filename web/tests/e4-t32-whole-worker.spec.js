@@ -171,10 +171,15 @@ test("default JIT keeps whole-machine BusyBox rAF/input responsive", async ({ pa
   // provider returns false; a page-boundary rejection must be rendered, not become an unhandled
   // click rejection or kill the VM; logout must still clear one-time credentials and persisted state.
   const tailscaleRpcBefore = await page.evaluate(() => window.__linuxCtl.workerRpcStats());
-  await page.click("#ide-sb-net");
-  await expect(page.locator("#ide-net-pop")).toHaveClass(/open/);
-  await expect(page.locator("#ide-net-pop")).toBeVisible();
-  await page.click("#tailscale-login");
+  // E0-T29: the network controls live in the workspace Settings sheet (library controls that press
+  // main.js's own #tailscale-login / #tailscale-logout). Login and logout are offered for the
+  // Tailscale providers; this guest still booted offline, so the engine's rejection is unchanged.
+  await page.getByRole("button", { name: "Settings" }).click();
+  const settings = page.getByRole("dialog", { name: "Machine settings" });
+  await settings.getByRole("button", { name: /Provider/ }).click();
+  await page.getByRole("option", { name: "Tailscale (public)" }).click();
+  const login = settings.getByRole("button", { name: "Log in" });
+  await login.click();
   await expect(page.locator("#tailscale-status")).toContainText(
     "Boot with the Tailscale provider before requesting login.",
   );
@@ -186,7 +191,7 @@ test("default JIT keeps whole-machine BusyBox rAF/input responsive", async ({ pa
       throw new Error("injected worker command rejection");
     };
   });
-  await page.click("#tailscale-login");
+  await login.click();
   await expect(page.locator("#tailscale-status")).toContainText(
     "Tailscale login failed: injected worker command rejection",
   );
@@ -196,10 +201,12 @@ test("default JIT keeps whole-machine BusyBox rAF/input responsive", async ({ pa
     localStorage.setItem("wasm-vm.tailscale-state.v1", JSON.stringify({ machine: "persisted" }));
     document.querySelector("#tailscale-auth-key").value = "tskey-one-time";
   });
-  await page.click("#tailscale-logout");
+  await settings.getByRole("button", { name: "Log out and revoke" }).click();
   await expect(page.locator("#tailscale-status")).toContainText(
     "Persisted browser state cleared; no active Tailscale Worker.",
   );
+  await page.keyboard.press("Escape");
+  await expect(settings).toHaveCount(0);
   const tailscaleProof = await page.evaluate(async () => ({
     state: localStorage.getItem("wasm-vm.tailscale-state.v1"),
     auth: document.querySelector("#tailscale-auth-key").value,

@@ -659,8 +659,8 @@ export function createFileTransferUI({
       if (controller) ignoreRejection(() => controller.setFileDownloadReady(Boolean(directory)));
       setStatus(
         next
-          ? "WVFT controller attached; uploads wait for two bounded guest-agent connections."
-          : "Boot Alpine to enable WVFT.",
+          ? "Ready to copy files (WVFT controller attached; up to two transfers at a time)."
+          : "Start an Alpine guest to copy files between this computer and the guest.",
         next ? "ready" : "",
       );
     },

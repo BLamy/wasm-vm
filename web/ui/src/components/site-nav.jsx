@@ -54,7 +54,7 @@ function MobileMenu({ current, showDiagnostics }) {
       <Button variant="secondary" size="sm" className="wv-nav-menu" aria-label="Open menu">
         Menu
       </Button>
-      <SheetContent side="right" aria-label="Site menu">
+      <SheetContent side="right" grabber={false} aria-label="Site menu">
         <SheetHeader>
           <SheetTitle>wasm-vm</SheetTitle>
         </SheetHeader>

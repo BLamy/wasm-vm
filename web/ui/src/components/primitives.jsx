@@ -59,9 +59,9 @@ export function Choice({ label, options, value, onChange }) {
 }
 
 // One-of-many choice with a visible label. `options` is [{ id, label }].
-export function Picker({ label, options, value, onChange, description }) {
+export function Picker({ label, options, value, onChange, description, isDisabled }) {
   return (
-    <Select value={value} onChange={(key) => onChange(String(key))}>
+    <Select value={value} onChange={(key) => onChange(String(key))} isDisabled={isDisabled}>
       <Label>{label}</Label>
       <SelectTrigger>
         <SelectValue />

@@ -1,0 +1,5 @@
+421e81dd0655c781e069185176e11da99cd5b236ff2bb804c8cd168271ed700e  web/ui/src/components/projection.jsx
+3a95d45fa6ea9ecc640d3959b1aa8cf20e9e48da19979ce7f45719d426e7bb4d  web/ui/src/styles.css
+f23d7c6cca26d5e97b8c3f7b7a0ac8cbc2e8b06e70e3bd1226e96db7e230d88d  web/tests/ui-workspace-contracts.spec.js
+997a88f09e9be9df3d25ff37a85dfc0e244a48e5b826be574611cfd1538e9f87  web/index.html
+600e1bfa078faaca054311d15d338a3a4e70e652788ecd6efc3281fe16d0a8be  web/ui-kit.html

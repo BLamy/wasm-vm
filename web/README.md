@@ -113,6 +113,14 @@ Islands are scoped: tokens live on `.wv-ui`, not `:root`, and an `all: revert-la
 page's own unlayered element CSS from restyling library controls. [`ui-kit.html`](./ui-kit.html)
 shows every shared control. Acceptance: `bash tools/verify-ui-foundation.sh`.
 
+The app's launcher and workspace (`launcher.jsx`, `workspace.jsx`, `tool-panes.jsx`) operate the
+engine's own DOM rather than replacing it. `main.js` and `ide.js` keep their native buttons,
+inputs and panes (hidden in the ordinary app, visible under `?testHooks` for the core suite);
+`bridge.js` writes native fields with real `change` events and `projection.jsx` re-renders
+ide.js's file tree, transfers, container controls and editor tabs as library components that
+press the native controls. xterm, the guest canvas and the code textarea stay native. Acceptance:
+`bash tools/verify-ui-workspace.sh`.
+
 ## Files
 
 - `index.html` — page + xterm.js UMD include + `main.js` module.

@@ -1,0 +1,6 @@
+Sabotage check, run before committing 06c7aff0f (working tree identical to it except this line):
+  replaced `if (input) input.disabled = block.disabled;` in web/ui/src/components/projection.jsx
+  with a comment, rebuilt (node tools/build-ui.mjs), ran
+  PW_DISABLE_TS_ESM=1 node node_modules/playwright/cli.js test tests/ui-workspace-contracts.spec.js -g "container panel adapters" --timeout=30000
+Result: 1 failed at ui-workspace-contracts.spec.js:121 `await expect(follow).toBeDisabled({ timeout: 5_000 })`.
+Restored the file; rebuild produced ui.js rev 88c08668cdeb, identical to the committed bundle.

@@ -121,7 +121,8 @@ test("shared nav collapses to a sheet on a phone", async ({ browser }) => {
 test("app shell mounts the shared nav without disturbing runtime-owned DOM", async ({ page }) => {
   const errors = watchErrors(page);
   await page.goto("/index.html?nosw#ide");
-  await expect(page.locator("html")).toHaveAttribute("data-wv-ui", "site-nav");
+  // E0-T29: the app page also mounts the launcher and workspace islands; the nav must be one of them.
+  await expect(page.locator("html")).toHaveAttribute("data-wv-ui", /(^| )site-nav( |$)/);
 
   const header = page.locator("body > header");
   const island = header.locator('[data-wv-ui="site-nav"][data-wv-mounted="true"]');

@@ -1,0 +1,90 @@
+✔ TypeScript source and no-bundler browser projection stay byte-identical (0.897208ms)
+✔ capture-on prevents ordinary events and flushes modifier prefixes in order (0.7125ms)
+✔ capture-off leaves defaults alone and never forwards to the guest (0.105542ms)
+✔ reserved Ctrl+Alt+Backquote consumes prefixes without preventing the browser default (0.148375ms)
+✔ browser-owned Ctrl/Meta shortcuts and F11 are passed through on both edges (0.148541ms)
+✔ Firefox-style quick-find is prevented when Slash reaches a captured host (0.07175ms)
+✔ IME events remain browser-owned and do not flush a pending modifier (0.084208ms)
+✔ attachKeyboardCapture installs/removes policy listeners (0.108708ms)
+✔ loader task quiescence joins held persistence and permanently closes scheduling (0.770125ms)
+✔ checkpoint idle wait joins the active lazy fetch without permanently closing scheduling (0.122583ms)
+✔ retained GPU receipt can complete boot while guest RPCs remain behind boot (2.591791ms)
+✔ retained GPU receipt drains an awaited checkpoint without bypassing queued guest calls (0.598458ms)
+✔ explicit surface, FIFO input/RPC, exact transferable ownership, Tailscale, and stop order (3.015458ms)
+✔ every explicit controller method crosses the runtime and no-provider Tailscale is false/nonfatal (3.619084ms)
+✔ guestClock boot data and current machine state traverse the paired worker protocol without rounding or caching (4.385125ms)
+✔ worker forwards an invalid clock label to validation and propagates refusal before machine mutation (0.35925ms)
+✔ capture PCM_START lifecycle notification crosses the worker boundary (1.569042ms)
+✔ display FrameSink projections cross the worker boundary with private pixel ownership (1.515958ms)
+✔ display clear controls cross the worker boundary without a pixel payload (1.534666ms)
+✔ cursor-plane update and move projections keep MOVE payloads empty and privately owned (2.790333ms)
+✔ RPC ids correlate out-of-order results and arbitrary methods are not exposed (0.250334ms)
+✔ version mismatch/fatal rejects boot, pending and future calls exactly once (0.122958ms)
+✔ fatal after ready rejects pending, whenDone, stats, and future RPCs once (0.138166ms)
+✔ worker rejects an unknown method without executing it and propagates controller rejections (2.911625ms)
+✔ unknown frames fail closed and Tailscale events remain versioned (1.626875ms)
+✔ DONE rejects pending RPCs and DONE-before-READY rejects boot (0.16575ms)
+✔ byte RPC encoding errors reject asynchronously (0.149834ms)
+✔ silent termination is detected before and after READY and rejects pending work (53.341625ms)
+✔ heartbeat bypasses long async RPCs and visibility suspension shifts its deadline (83.350125ms)
+✔ visibility suspension pauses the pre-READY boot deadline (61.969958ms)
+✔ stateDigest gets method-scoped heartbeat grace and the controller remains live afterward (61.326375ms)
+✔ every bulk snapshot RPC emits BUSY/IDLE and survives the scoped heartbeat grace (424.966083ms)
+✔ natural completion emits a scoped terminal digest before DONE (1.661541ms)
+✔ natural completion waits behind a held snapshot RPC before terminal BUSY and cleanup (1.85575ms)
+✔ fatal input during natural cleanup wins over clean DONE (1.646708ms)
+✔ stop and fatal cleanup are bounded when a dependency never settles (31.599667ms)
+✔ stop timeout fails closed without releasing storage under a live loader pump (25.568375ms)
+✔ Tailscale UI exceptions are non-fatal (2.153708ms)
+✔ backend-neutral stop closes main storage but does not RPC after worker termination (0.246167ms)
+✔ TypeScript source and no-bundler browser projection stay byte-identical (0.459666ms)
+✔ KeyA make/break is one EV_KEY frame each and DOM repeats add no make (0.621709ms)
+✔ rapid Shift/A interleaving preserves modifier-before-key and key-before-modifier release (0.125833ms)
+✔ Ctrl+C and shifted punctuation emit physical modifier frames in chord order (0.113ms)
+✔ Windows AltGr representation is ControlLeft + AltRight and releases in dependency order (0.076333ms)
+✔ IME/composing events are suppressed, while a non-composing dead key uses physical code (0.087333ms)
+✔ unmapped and orphan events are explicit no-ops, and the Wasm adapter forwards both calls (0.114459ms)
+✔ attachKeyboardBridge installs and removes only translation listeners (0.114417ms)
+ℹ tests 47
+ℹ suites 0
+ℹ pass 47
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 815.836584
+✔ TypeScript source and no-bundler pointer projection stay byte-identical (0.662333ms)
+✔ absolute coordinates use the current CSS rect and clamp independently of DPR/backing pixels (0.387792ms)
+✔ browser button numbers map to the documented evdev codes (0.079167ms)
+✔ absolute moves target the tablet while relative moves target only the mouse (0.382042ms)
+✔ mode changes release old-device buttons before routing the next button pair (0.204833ms)
+✔ an absolute desktop can keep tablet motion and route buttons through the mouse seat (0.110541ms)
+✔ pixel and line wheel detents use signed per-axis accumulators (0.283167ms)
+✔ 1000 small pixel wheel deltas stay bounded and never change emitted sign (1.130875ms)
+✔ wheel accumulators cancel across direction changes and reject invalid modes (0.166208ms)
+✔ Pointer Lock success is accepted and denial/loss returns to neutral absolute mode (2.470959ms)
+✔ legacy Pointer Lock retries without options and explicit errors fail closed (0.170583ms)
+✔ attached surface captures buttons and suppresses the browser context menu (0.365292ms)
+✔ Wasm pointer adapter requires the complete four-method transport surface (0.223042ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41.972333
+✔ generated table and both checked-in module projections match the source (24.500958ms)
+✔ coverage oracle proves every W3C fixture identity is present exactly once (0.143ms)
+✔ letters, punctuation, modifiers, functions, navigation, and numpad edges match evdev (0.104625ms)
+✔ oracle names a deleted identity and a duplicate identity (0.26475ms)
+✔ oracle rejects duplicate evdev assignments and undocumented unmapped rows (0.134291ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 63.646
+node exit=0

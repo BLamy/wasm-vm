@@ -1,0 +1,11 @@
+M	web/dist/app.html
+M	web/dist/sw.js
+M	web/dist/tasks.json
+M	web/dist/ui-kit.html
+M	web/dist/ui.css
+M	web/dist/ui.js
+M	web/index.html
+M	web/tests/ui-workspace-contracts.spec.js
+M	web/ui-kit.html
+M	web/ui/src/components/projection.jsx
+M	web/ui/src/styles.css

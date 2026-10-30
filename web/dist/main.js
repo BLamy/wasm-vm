@@ -3695,6 +3695,9 @@ setInteractiveState();
       if (!button.disabled) void startGuestChoice(button.dataset.os);
     });
   }
+  // The launcher island (web/ui) presses these buttons; it waits for this marker so a press made
+  // while the manifests are still being probed is not lost.
+  document.documentElement.dataset.launcherReady = "true";
   if (_bootQ.has("testHooks")) {
     window.__runConfiguredAutoBootForTest = () => startGuestChoice(_guest, { navigateToDesktop: false });
     window.__linuxBootStateForTest = () => ({
