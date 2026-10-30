@@ -322,6 +322,10 @@ test("Omarchy's graphics choice sits behind Desktop settings and reaches the eng
   await expect(graphics).toBeVisible();
   await graphics.getByText("Software", { exact: true }).click();
   expect(await page.evaluate(() => document.getElementById("desktop-graphics").value)).toBe("software");
+  // Honest copy: software rendering needs no GPU check; it is not promised to work everywhere.
+  const help = page.locator(".wv-launcher-setting-help");
+  await expect(help).toHaveText("Draws on the CPU from a saved snapshot. No GPU qualification required.");
+  await expect(page.locator("#os-launcher")).not.toContainText("works everywhere");
   // Keyboard: collapse and reopen with the keyboard, then move the choice with an arrow key.
   await trigger.focus();
   await page.keyboard.press("Enter");

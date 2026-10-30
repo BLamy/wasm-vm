@@ -106,7 +106,7 @@ function GraphicsChoice() {
         />
         <span className="wv-launcher-setting-help">
           {value === "software"
-            ? "Draws on the CPU from a saved snapshot. Slower, works everywhere."
+            ? "Draws on the CPU from a saved snapshot. No GPU qualification required."
             : "Uses WebGL after a hardware check. Falls back with a clear error if the GPU is unsuitable."}
         </span>
       </div>

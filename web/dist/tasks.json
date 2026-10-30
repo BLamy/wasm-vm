@@ -1770,7 +1770,7 @@
       "epicKey": "0",
       "title": "Launcher and workspace on the shared interface — one obvious start, advanced behind disclosure",
       "priority": null,
-      "status": "implemented",
+      "status": "in-progress",
       "depends_on": [
         "E0-T28"
       ],
@@ -1789,18 +1789,18 @@
       "activity": [
         {
           "date": "2026-10-30",
-          "commits": 7,
+          "commits": 9,
           "labels": [
+            "tasks(E0-T29): reopen for the Software graphics copy correction",
+            "tasks(E0-T29): PR 626 integration implemented; product 505d29064",
             "tasks(E0-T29): re-open the workspace slice on the PR 626 stack",
-            "verify(ui): accept foundation on PR626 and preserve real-guest navigation",
-            "feat(ui): shared interface foundation on the PR 626 stack (E0-T28, in progress)",
-            "fix(ui): 45 px phone tap band for library Switches (E0-T29)"
+            "verify(ui): accept foundation on PR626 and preserve real-guest navigation"
           ]
         }
       ],
       "firstActivity": "2026-10-30",
       "lastActivity": "2026-10-30",
-      "commitCount": 7
+      "commitCount": 9
     },
     {
       "id": "E0-T30",
