@@ -11,7 +11,7 @@ Open the [machine](./index.html#ide) and choose **Start Linux**. It starts a Bus
 **Choose Start Linux.** The status line shows loading and restoring progress; the loader checks each downloaded artifact against its SHA-256 digest before the guest uses it.
 {% endstep %}
 {% step %}
-**Type in the terminal.** When the workspace shows **Ready**, click or tap the terminal and type a command, for example `uname -a` or `ls /`, then press Enter. What you type goes to the guest's shell. A few host status lines in brackets appear while it starts; everything after them comes from the guest.
+**Type in the terminal.** When the workspace shows **Ready**, click or tap the terminal and type a command, for example `uname -a` or `ls /`, then press Enter. What you type goes to the guest's shell. The host can also print its own status or error lines in the terminal, such as startup progress, a full-storage pause or a stopped machine.
 
 ![The BusyBox workspace after typing uname -sm in the terminal](./images/terminal.png "thumbnail") The terminal is the main view. **Display** switches to the guest's screen when a graphical guest draws one.
 {% endstep %}

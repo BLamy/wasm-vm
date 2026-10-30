@@ -48,3 +48,9 @@
    screen, it must fit beside the indented stepper. */
 .reader-document .docs-thumb:not(:hover):not(:focus-visible) .docs-thumb-card{display:none}
 @media(max-width:700px){.reader-document .docs-thumb-card{width:calc(100vw - 88px)}}
+/* Docstream's own article actions (code/diagram copy, Open in Playground, demo controls) are tap
+   targets on phones and coarse pointers: each owns at least 44 × 44 px. Prose links are unchanged. */
+@media(max-width:760px),(pointer:coarse){
+  .reader-document :is(button,a.docs-split-action){min-width:44px;min-height:44px}
+  .reader-document :is(button.docs-split-action,a.docs-split-action){justify-content:center}
+}
