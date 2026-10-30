@@ -7,6 +7,15 @@ import { expect as baseExpect, test } from "@playwright/test";
 
 test.setTimeout(180_000);
 const expect = baseExpect.configure({ timeout: 10_000 });
+// Locator actions fail in seconds, not at the whole-test timeout, when a selector cannot match.
+test.beforeEach(({ context }) => {
+  context.setDefaultTimeout(10_000);
+});
+async function newContext(browser, options) {
+  const context = await browser.newContext(options);
+  context.setDefaultTimeout(10_000);
+  return context;
+}
 const BOOT_MS = 120_000;
 
 function watch(page) {
@@ -44,7 +53,7 @@ async function pick(scope, label, optionText) {
 // keyboard navigation to Case studies on a phone, an ordinary tap on the terminal must give typing
 // back to the same guest. No wvmDemo.focusTerminal(), locator.focus() or injected guest input.
 test("phone 390: after keyboard Case studies, an ordinary terminal tap types into the same guest", async ({ browser }) => {
-  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const context = await newContext(browser, { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
   try {
     const page = await context.newPage();
     const errors = watch(page);
@@ -199,8 +208,8 @@ test("Recordings: a real Linux sample records, opens and moves through library c
 
 test("Recordings: continue from here, then export and import the recording in a fresh browser", async ({ browser }) => {
   test.setTimeout(300_000);
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, acceptDownloads: true });
-  const fresh = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const context = await newContext(browser, { viewport: { width: 1280, height: 900 }, acceptDownloads: true });
+  const fresh = await newContext(browser, { viewport: { width: 1280, height: 900 } });
   try {
     const page = await context.newPage();
     const errors = watch(page);
@@ -336,7 +345,7 @@ test("Self-checks: every probe panel is listed with its own action, and a press 
 });
 
 test("phone 360: Tools opens Recordings as a full pane with a way back to the terminal", async ({ browser }) => {
-  const context = await browser.newContext({ viewport: { width: 360, height: 640 }, isMobile: true, hasTouch: true });
+  const context = await newContext(browser, { viewport: { width: 360, height: 640 }, isMobile: true, hasTouch: true });
   try {
     const page = await context.newPage();
     const errors = watch(page);
@@ -392,3 +401,86 @@ test("Settings shows the autoplay state as Sound; the header stays one warm row 
   await expect(badge).toBeHidden();
   expect(errors).toEqual([]);
 });
+
+// Phone tap targets for the library Switch (E0-T29 critic finding at fe98069ad): the 51 x 31 track
+// sat in a 54 px row whose extra band was inert. The label (the Switch's pressable element) now
+// extends 7 px above and below on phones. Real touchscreen taps in that band must reach it and
+// toggle the native keyboard capture exactly once; outside the band nothing changes; keyboard
+// Space still toggles once; an engine-disabled linked switch ignores taps in its band.
+for (const viewport of [{ width: 390, height: 844 }, { width: 360, height: 640 }]) {
+  test(`phone ${viewport.width}: Settings switches take ordinary taps across a 45 px band`, async ({ browser }) => {
+    const context = await newContext(browser, { viewport, isMobile: true, hasTouch: true });
+    try {
+      const page = await context.newPage();
+      const errors = watch(page);
+      await page.goto("/index.html?nosw#ide");
+      await startLinux(page, { tap: true });
+      await page.getByRole("button", { name: "Tools and settings" }).tap();
+      const sheet = page.getByRole("dialog", { name: "Machine settings" });
+      const row = sheet.locator('[data-slot="list-row"]', { hasText: "Send keys to the guest" });
+      const label = row.locator('label[data-slot="switch"]');
+      await label.scrollIntoViewIfNeeded();
+      // Measure once the sheet has finished opening and scrolling.
+      let box = null;
+      await expect.poll(async () => {
+        const previous = box;
+        box = await label.boundingBox();
+        return JSON.stringify(previous) === JSON.stringify(box);
+      }, { intervals: [150] }).toBe(true);
+      expect([box.width, box.height]).toEqual([51, 31]);
+      const capture = () => page.evaluate(() => document.documentElement.dataset.keyboardCapture);
+      const hitsSwitch = (y) => page.evaluate(({ x, y }) => Boolean(document.elementFromPoint(x, y)?.closest('label[data-slot="switch"]')), { x, y });
+      const x = box.x + box.width / 2;
+      for (const y of [box.y - 6, box.y + box.height + 6]) {
+        expect(await hitsSwitch(y), `y=${y}`).toBe(true);
+        const before = await capture();
+        await page.touchscreen.tap(x, y);
+        await expect.poll(capture).not.toBe(before);
+        await page.waitForTimeout(300);
+        expect(await capture(), "one tap toggles exactly once").not.toBe(before);
+      }
+      // Outside the band the row stays inert.
+      expect(await hitsSwitch(box.y - 12)).toBe(false);
+      const outside = await capture();
+      await page.touchscreen.tap(x, box.y - 12);
+      await page.waitForTimeout(300);
+      expect(await capture()).toBe(outside);
+      // Keyboard: Tab to the switch, Space toggles once.
+      const input = row.getByRole("switch", { name: "Send keys to the guest" });
+      for (let i = 0; i < 25 && !(await input.evaluate((el) => el === document.activeElement)); i += 1) await page.keyboard.press("Tab");
+      await expect(input).toBeFocused();
+      const beforeKey = await capture();
+      await page.keyboard.press("Space");
+      await expect.poll(capture).not.toBe(beforeKey);
+      await page.waitForTimeout(300);
+      expect(await capture()).not.toBe(beforeKey);
+      await expect(input).toBeChecked({ checked: (await capture()) === "on" });
+      await page.keyboard.press("Escape");
+      await expect(sheet).toHaveCount(0);
+
+      // An engine-disabled linked switch (Recordings → Checkpoints, time and random inputs: disabled
+      // until a checkpoint guest exists) keeps input.disabled and ignores taps in its band.
+      await page.getByRole("button", { name: "Tools and settings" }).tap();
+      await page.getByRole("dialog", { name: "Machine settings" }).getByRole("button", { name: /^Recordings/ }).tap();
+      const pane = page.locator('[data-wv="recordings"]');
+      await pane.getByRole("radiogroup", { name: "Recordings view" }).getByText("Checkpoints").tap();
+      const native = session(page, "time-entropy");
+      expect(await native.isDisabled()).toBe(true);
+      const linked = pane.getByRole("switch", { name: "Include time and random inputs" });
+      expect(await linked.isDisabled()).toBe(true);
+      // The library label that contains this switch input (its pressable element).
+      const linkedLabel = linked.locator("xpath=ancestor::label[1]");
+      await linkedLabel.scrollIntoViewIfNeeded();
+      const lb = await linkedLabel.boundingBox();
+      const checked = await native.isChecked();
+      for (const y of [lb.y - 6, lb.y + lb.height / 2, lb.y + lb.height + 6]) {
+        await page.touchscreen.tap(lb.x + lb.width / 2, y);
+        await page.waitForTimeout(250);
+        expect(await native.isChecked(), `tap at ${y}`).toBe(checked);
+      }
+      expect(errors).toEqual([]);
+    } finally {
+      await context.close();
+    }
+  });
+}

@@ -285,6 +285,9 @@
     .wv-ui [data-slot="segmented"] { min-height: 44px; }
     .wv-ui [data-slot="segmented"] [role="radio"] { min-height: 40px; }
     .wv-ui :is([data-slot="button"], [data-slot="dialog-close"]) { min-width: 44px; }
+    /* The library Switch keeps its 51 x 31 track; its label (the pressable element) gains an
+       invisible 7 px band above and below, so the tap target is 45 px tall. */
+    .wv-ui label[data-slot="switch"]::after { content: ""; position: absolute; inset: -7px 0; }
   }
 
   /* ── Projected tool panes (projection.jsx / tool-panes.jsx) ────────────── */
