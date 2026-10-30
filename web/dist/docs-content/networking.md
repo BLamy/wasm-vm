@@ -12,7 +12,11 @@ The CPU executes locally, while network traffic uses an explicit provider. Downl
 
 The virtio-net device feeds the guest network stack. The user-mode slirp implementation supplies the Ethernet/IP boundary, DHCP, and DNS behavior described in its contract. Browser restrictions shape how TCP and UDP reach an external network.
 
-## Provider choices
+## Choose a provider
+
+In the [machine](./app.html#ide), **Settings → Network → Provider** chooses **Offline** (the default), **WebSocket relay**, **Tailscale (public)**, **Headscale (self-hosted)** or **Private wvrelay (advanced)**, and shows only the fields that provider needs. Changes apply at the next boot. A one-time Tailscale auth key is never saved or logged. Recorded sessions replay without a live connection; their branches stay offline.
+
+## Provider contracts
 
 | Boundary | Documentation |
 | --- | --- |

@@ -21,6 +21,13 @@ if content.is_dir():
         text = (content / f"{page['id']}.md").read_text()
         page["sha256"] = hashlib.sha256(text.encode()).hexdigest()
     catalog_path.write_text(json.dumps(catalog, ensure_ascii=False, separators=(",", ":")) + "\n")
+    # E0-T32: the lazily loaded search corpus carries the same (route-swapped) published Markdown.
+    corpus_path = content / "search-corpus.json"
+    if corpus_path.is_file():
+        corpus = json.loads(corpus_path.read_text())
+        for entry in corpus["pages"]:
+            entry["content"] = (content / entry["path"]).read_text()
+        corpus_path.write_text(json.dumps(corpus, ensure_ascii=False, separators=(",", ":")) + "\n")
     ledger_path = content / "migration-ledger.json"
     ledger = json.loads(ledger_path.read_text())
     hashes = {page["id"]:page["sha256"] for page in catalog["pages"]}

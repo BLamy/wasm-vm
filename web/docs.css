@@ -28,3 +28,23 @@
    the cells rather than the scroller, so no empty bordered area trails the table. */
 .reader-document .docs-table { border: 0; }
 .reader-document .docs-table :is(th, td) { border: 1px solid var(--reader-line); }
+
+/* E0-T32: ranked search results (page title, matching section, excerpt). */
+.reader-results{display:grid;margin-top:14px}
+.reader-sidebar .reader-results a{display:grid;gap:3px;padding:11px 10px;border-left:1px solid transparent;border-bottom:1px solid var(--reader-line);min-height:44px}
+.reader-results a strong{color:var(--reader-ink);font-weight:600;font-size:13px;line-height:1.4}
+.reader-results a em{font-style:normal;color:var(--reader-cyan);font-size:12px;line-height:1.4}
+.reader-result-snippet{color:var(--reader-muted);font-size:12px;line-height:1.55;overflow-wrap:anywhere}
+.reader-results mark{background:rgb(228 168 83 / .28);color:var(--reader-ink);border-radius:2px;padding:0 1px}
+.reader-document [tabindex="-1"]:focus{outline:none}
+.reader-document :is(h1,h2,h3,h4)[tabindex="-1"]:focus-visible{outline:2px solid var(--reader-cyan);outline-offset:4px}
+
+/* E0-T32: Docstream 1.33 highlights code (including diagram sources) with --docs-tok-* colours;
+   warm values on the reader's dark panels, each at least AA against #1d1b16. */
+:root{--docs-tok-keyword:#e4a853;--docs-tok-type:#e6c994;--docs-tok-function:#f2dcae;--docs-tok-string:#b4c98f;--docs-tok-number:#e8a27a;--docs-tok-constant:#e8a27a;--docs-tok-operator:#b9b2a7}
+.reader-document .docs-split-card,.reader-document .docs-thumb-card{background:#1d1b16;border-color:#484338}
+/* The full-size thumbnail card is absolutely placed at the thumbnail's left edge. Hidden, it should
+   take no room (an invisible card still widened the phone layout viewport); shown on a narrow
+   screen, it must fit beside the indented stepper. */
+.reader-document .docs-thumb:not(:hover):not(:focus-visible) .docs-thumb-card{display:none}
+@media(max-width:700px){.reader-document .docs-thumb-card{width:calc(100vw - 88px)}}

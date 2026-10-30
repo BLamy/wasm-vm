@@ -55,16 +55,16 @@ The loader checks build identity, image binding, and overlay generation before a
 
 ## Local saved checkpoints
 
-The [demo](./app.html) has a **Local saved sessions** library. Choose **New checkpoint guest** to start the pinned, single-hart Alpine software guest with 256 MiB RAM, an instruction-count clock and guest networking disabled. Boot assets are downloaded by the host. This profile keeps recording separate from the ordinary desktop's devices and live connections.
+Open **Recordings** in the [machine](./index.html#ide) and choose its **Checkpoints** tab (before a guest starts, it is under **Recordings and time travel** on the first view). Choose **New checkpoint guest** to start the pinned, single-hart Alpine software guest with 256 MiB RAM, an instruction-count clock and guest networking disabled. Boot assets are downloaded by the host. This profile keeps recording separate from the ordinary desktop's devices and live connections.
 
 1. Make your guest file changes, then choose **Start checkpoint recording** to save the initial point.
 2. Choose **Checkpoint** for another exact restore point. **Stop recording** saves a final point and ends recording; later changes remain unsaved.
-3. Select a session and restore point, then choose **Open checkpoint**. It restores CPU, RAM, device state, disk changes and pending input together, initially paused. Choose **Resume guest** to continue. Selecting a preview alone leaves the active guest in place.
-4. Rename sessions to distinguish them. A reload or another tab on the same browser origin can reopen the saved points. Opening a point or starting a new checkpoint guest replaces the current guest.
+3. Choose a **Selected preview** and an **Exact restore point**, then **Open checkpoint**. It restores CPU, RAM, device state, disk changes and pending input together, initially paused. Choose **Resume guest** to continue. Selecting a preview alone leaves the active guest in place.
+4. Type a **Session name** and choose **Rename session** (or press Enter) to distinguish sessions. A reload or another tab on the same browser origin can reopen the saved points. Opening a point or starting a new checkpoint guest replaces the current guest.
 
-**Checkpoint restore.** This library restores explicit saved points. The separate **Time travel · session timeline** opens completed software recordings and admitted exact GPU histories, with seeking, reverse-step and private continuations. Older paced GPU histories remain checkpoint-only. The [time-travel guide](./docs.html?page=time-travel) covers completed recordings, branches and transfer. Full Omarchy cold-boot qualification and the original performance campaign are deferred and unproven. Recording cannot recover execution from before it started. A session requires its exact compatible runtime, Wasm, kernel and image; an update can leave an older named session visibly incompatible without deleting it.
+**Checkpoint restore.** This library restores explicit saved points. The **Replay** tab opens completed software recordings and admitted exact GPU histories, with seeking, reverse-step and private continuations. Older paced GPU histories remain checkpoint-only. The [time-travel guide](./docs.html?page=time-travel) covers completed recordings, branches and transfer. Full Omarchy cold-boot qualification and the original performance campaign are deferred and unproven. Recording cannot recover execution from before it started. A session requires its exact compatible runtime, Wasm, kernel and image; an update can leave an older named session visibly incompatible without deleting it.
 
-The demo also has an **Execution boundary check**. It runs a small guest and compares exact stops, queued-event order and restored counters on the interpreter and JIT. The check reports its result in the page and runs separately from your active guest. It proves the common event-clock mechanism; the saved-session library continues to offer explicit checkpoints.
+**Self-checks** (in **Settings → More tools** on a desktop, under **Tools** on a phone, or on the first view) includes an **Execution boundary check**. It runs a small guest and compares exact stops, queued-event order and restored counters on the interpreter and JIT. The check reports its result in the page and runs separately from your active guest. It proves the common event-clock mechanism; the saved-session library continues to offer explicit checkpoints.
 
 ### Delivered input prefixes
 
@@ -91,7 +91,7 @@ The **Time and entropy check** runs a separate RV64 guest with RTC reads, random
 
 ## Local recording files
 
-In **Time travel · session timeline**, select a finished recording and choose
+In **Recordings → Replay**, open a finished recording and choose
 **Export recording**. Import its `.wvsession` file with **Import recording file**
 in another browser profile. Import selects a preview; choose **Open replay** to
 restore it. Existing recording IDs are refused rather than overwritten.
@@ -128,13 +128,13 @@ cleanup reports a refusal and preserves its data for recovery.
 
 ### Limits, quota and deletion
 
-The library reports saved binary bytes, the browser's approximate origin usage/quota and persistent-storage status. **Saved binary data limit** counts unique stored chunks once; browser metadata, caches and other site data consume additional space. **Restore points per session** limits future appends. Lowering either limit preserves existing named history.
+**Checkpoints → Storage** reports saved binary bytes, the browser's approximate origin usage/quota and persistent-storage status; its limits and cleanup actions are under **Limits and cleanup**. **Saved binary data limit** counts unique stored chunks once; browser metadata, caches and other site data consume additional space. **Restore points per session** limits future appends. Lowering either limit preserves existing named history.
 
 Quota or retention failure pauses recording and the guest, preserving the last committed prefix. The status distinguishes unsaved current memory from the saved point. Free space, raise a limit or run **Clean up unreachable data**, then choose **Retry recording** to save a new point. **Stop recording** while quota-paused ends at the committed prefix. Retry refuses history that another tab changed or deleted.
 
 **Delete selected session** asks for confirmation and removes its restore points. Shared machine chunks and disk data referenced by other sessions are preserved. Cleanup can refuse while another tab holds a writer or restore lease, or when surviving history is incomplete; the status explains the failure and lets you retry. Browser eviction or cleared data appears as incomplete history with Open disabled and Delete available.
 
-Checkpoints are stored locally in IndexedDB on the same browser origin. Names are small display metadata in localStorage. Persistent storage can be requested, but browser denial or later site-data clearing can still remove recordings. Keep an external copy of important guest data; portable session bundle export/import belongs to the later release milestone.
+Checkpoints are stored locally in IndexedDB on the same browser origin. Names are small display metadata in localStorage. Persistent storage can be requested, but browser denial or later site-data clearing can still remove recordings. Keep an external copy of important guest data. A finished recording can be saved to a file with **Export recording** (see [Local recording files](#local-recording-files)); that archive admits completed recordings, not partial input captures or checkpoint-only profiles.
 
 {% hint style="info" %}
 Passkey-encrypted user volumes belong to the proposed ProofMesh product layer. The current IndexedDB overlay is not documented as an encrypted, passkey-owned volume.

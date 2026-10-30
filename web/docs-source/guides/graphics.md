@@ -6,7 +6,7 @@ The command, shader, dimensional depth, transform-feedback and native multisampl
 
 ## Launch the desktop
 
-Choose **Omarchy** in the [launcher](./app), with **GPU rendering** selected. The worker checks actual WebGL2 limits, texture roles, native renderability and nonzero sampled results before advertising VirGL. An unsupported host produces a visible error; it does not justify positive guest capabilities.
+In the [machine](./index.html#ide), open **Desktop settings**, keep **Desktop graphics** on **GPU**, and choose **Start** next to **Omarchy desktop** under **Other machines**. The worker checks actual WebGL2 limits, texture roles, native renderability and nonzero sampled results before advertising VirGL. An unsupported host produces a visible error; it does not justify positive guest capabilities.
 
 The accelerated image uses a pinned Mesa 26.2.2 build with VirGL and the GLES API exposed through EGL. Its small, recorded source patch makes both border-clamp extension names independently configurable, and rejects desktop OpenGL contexts while retaining GBM's internal buffer-mapping context. It separates multisample renderbuffer support from multisample texture sampling: only qualified two-dimensional color/depth attachment queries can use the measured sample count and format mask. Unsupported border-clamp and sRGB-decode extensions are disabled in both legacy and indexed queries. The software DRI entrypoints are removed.
 
@@ -14,7 +14,7 @@ GPU rendering restores an authenticated Omarchy warm checkpoint on compatible ho
 
 The accelerated factory captures a clean session after the original wallpaper and Apps menu have initialized, startup jobs have finished, and disk requests have settled over a measured interval. Preparation opens the stock Apps menu, searches for LibreOffice Writer, closes it and checks the desktop again before freezing RAM, disk and GPU state together.
 
-Use `?guest=omarchy&desktop=1&noSnapshot=1` on the launcher for an explicit GPU cold boot. The **Software rendering** option retains its paired RAM snapshot and disk delta. BusyBox, Alpine and Alpine + Node keep their fast-boot paths. A corrupt or incompatible GPU checkpoint produces a visible error; it cannot silently become a cold boot or a software session.
+Use `?guest=omarchy&desktop=1&noSnapshot=1` on the machine's URL for an explicit GPU cold boot. **Software** (the other **Desktop graphics** choice) retains its paired RAM snapshot and disk delta; since E5.5-T07 the expanded snapshot streams into the machine's memory instead of first being held as one 605 MiB JavaScript buffer. That change does not measure total browser-process memory, and a physical iPhone remains unverified. BusyBox, Alpine and Alpine + Node keep their fast-boot paths. A corrupt or incompatible GPU checkpoint produces a visible error; it cannot silently become a cold boot or a software session.
 
 {% hint style="info" %}
 An accelerated cold boot starts with instruction-based time. Before its first original keyboard make, including a lock-state repair, it selects host-paced idle. A warm boot preserves the checkpoint's selected mode and exact guest time, then re-anchors its host clock; time spent offline is excluded. Busy execution and JIT timing follow retired instructions, while idle timer jumps are bounded by elapsed host time. Explicit pauses exclude paused time. The software snapshot retains its existing clock policy. The accelerated timing policy is independently verified in E6-T11d72 and E6-T11d73; paired clock restoration is covered by E6-T11d74c.

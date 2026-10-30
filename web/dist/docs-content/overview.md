@@ -6,7 +6,7 @@ scope: "Authored explanation; verification belongs to the named evidence"
 
 # A field guide to wasm-vm
 
-wasm-vm executes a RISC-V computer in Rust and WebAssembly. An unmodified Linux kernel runs above its CPU, memory, interrupt controllers, and virtual devices. Start with the browser demo, then follow the boundary you need to understand.
+wasm-vm executes a RISC-V computer in Rust and WebAssembly. An unmodified Linux kernel runs above its CPU, memory, interrupt controllers, and virtual devices. Start the machine with [Boot your first guest](./docs.html?page=quickstart), then follow the boundary you need to understand.
 
 ## Pick a starting point
 
@@ -33,9 +33,9 @@ The `@agent-wasm/*` packages belong to a separate host-side project. This reposi
 
 ## Read beyond the guides
 
-The reference library contains the detailed technical documentation from this repository, including device contracts, renderer boundaries, build runbooks, and dated measurements. Every page exposes its original source and Markdown. Search matches titles, paths, and page content; the Reference section also supports a subject filter.
+The reference library contains the detailed technical documentation from this repository, including device contracts, renderer boundaries, build runbooks, and dated measurements. Every page exposes its original source and Markdown. Search ranks matches in titles, section headings and text, and opens the matching section; the Reference section also supports a subject filter, and the **Archive ledger** searches every source path.
 
-[Documentation coverage](./docs.html?page=coverage) accounts for every prose file at its pinned migration revision. Current field guides identify newer evidence separately. Task logs, evidence, operating policy, protocols, legal text, and upstream specifications keep their authoritative source intact.
+[Documentation coverage](./docs.html?page=coverage) accounts for every prose file at its pinned migration revision. Current field guides identify newer evidence separately, and the **Current references** group publishes the session-format documents from a later, stated revision. Task logs, evidence, operating policy, protocols, legal text, and upstream specifications keep their authoritative source intact.
 
 ## Product direction
 

@@ -26,7 +26,7 @@ def fences(text):
 
 catalog = json.loads((DIST / "docs-content/catalog.json").read_text())
 ledger = json.loads((DIST / "docs-content/migration-ledger.json").read_text())
-require(catalog["docstreamVersion"] == "1.9.1", "Wrong published Docstream release")
+require(catalog["docstreamVersion"] == "1.33.0", "Wrong published Docstream release")
 hashes = {}
 for page in catalog["pages"]:
     target = DIST / "docs-content" / f"{page['id']}.md"
@@ -38,6 +38,12 @@ for page in catalog["pages"]:
     require(fences(text) == fences(original), f"Deployment changed a code example: {page['id']}")
     outside = re.sub(r"^\s*(`{3,})[^\n]*\n.*?^\s*\1\s*$", "", text, flags=re.M | re.S)
     require("](./index.html" not in outside and "](./landing.html" not in outside, f"Source-layout URL remains: {page['id']}")
+corpus = json.loads((DIST / "docs-content/search-corpus.json").read_text())
+require([entry["id"] for entry in corpus["pages"]] == [page["id"] for page in catalog["pages"]], "Search corpus page list drift")
+for entry in corpus["pages"]:
+    require(entry["content"] == (DIST / "docs-content" / entry["path"]).read_text(), f"Search corpus differs from published page: {entry['id']}")
+for image in re.findall(r"\]\(\./images/([^)\s]+)", "".join(entry["content"] for entry in corpus["pages"])):
+    require((DIST / "docs-content/images" / image).is_file(), f"Missing published guide image: {image}")
 for item in ledger["documents"]:
     if item.get("page"):
         require(item["publishedSha256"] == hashes[item["page"]], f"Published ledger hash drift: {item['path']}")

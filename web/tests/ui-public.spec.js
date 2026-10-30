@@ -35,7 +35,9 @@ function watch(page) {
   });
   return errors;
 }
-const overflowX = (page) => page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+// Measured against the configured viewport: in a mobile context, content wider than the screen
+// widens the layout viewport (innerWidth) itself, which a scrollWidth - innerWidth check misses.
+const overflowX = (page) => page.evaluate((width) => Math.max(document.documentElement.scrollWidth, innerWidth) - width, page.viewportSize().width);
 // Visible library controls, and standalone page actions (a link directly under a hero or section
 // heading, outside any library island), under 44 px. React-aria's clipped screen-reader buttons
 // are excluded; links inside prose are not standalone actions.
@@ -195,9 +197,9 @@ test("docs: search, subject filter, archive, source link, history and outline", 
   await page.keyboard.press(process.platform === "darwin" ? "Meta+K" : "Control+K");
   await expect(search).toBeFocused();
   await search.fill("dimensional");
-  await expect(page.locator(".search-count")).toContainText("matching pages");
-  const links = page.locator(".reader-sidebar nav a");
-  expect(await links.count()).toBeGreaterThan(0);
+  // E0-T32: ranked section results (Docstream /site search) replace the old page filter.
+  await expect(page.locator(".search-count")).toHaveText(/^\d+ results?$/);
+  expect(await page.locator('nav[aria-label="Search results"] a').count()).toBeGreaterThan(0);
   await search.fill("");
   // Subject filter through the library Select.
   await page.getByRole("button", { name: /Reference subject/ }).click();
@@ -244,7 +246,7 @@ test("docs on a phone: Browse docs opens the library; its own Close or a choice 
   await expect(browse).toBeFocused();
   await browse.tap();
   await page.getByRole("searchbox", { name: "Search documentation" }).fill("storage");
-  await page.locator(".reader-sidebar nav a").first().tap();
+  await page.locator('[data-wv="docs-result"]').first().tap();
   await expect(browse).toHaveAttribute("aria-expanded", "false");
   await expect(page.locator(".reader-document h1")).toBeVisible();
   expect(await overflowX(page)).toBe(0);

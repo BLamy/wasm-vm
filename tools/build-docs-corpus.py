@@ -44,6 +44,20 @@ ALIASES = {
     "web/docs-guest.html": "storage", "web/docs-containers.html": "containers",
     "web/docs-verification.html": "verification", "web/docs-explainers.html": "explainers",
 }
+# Current references: published from exact blobs at a pinned later revision (PR 626, the latest
+# merged-stack source), separately from the migration inventory above, which stays pinned at BASE.
+CURRENT_REVISION = "c396efe1ecd061721865a5929235e6d0a6268561"
+CURRENT_REFERENCES = [
+    ("docs/design/session-replay.md", "Session replay"),
+    ("docs/design/session-format.md", "Session format"),
+    ("docs/design/session-store.md", "Session store"),
+    ("docs/design/session-gpu-history-reader.md", "GPU history reader"),
+]
+# Machine-readable contracts beside them, linked at the same revision rather than rendered.
+CURRENT_CONTRACTS = [
+    ("docs/design/session-replay-contract.json", "Replay contract"),
+    ("docs/design/session-workload-qualification-v11.json", "Workload qualification (v11)"),
+]
 PRESERVED_PROTOCOLS = {
     "docs/agent-protocol.md", "docs/trace-format.md", "docs/audio.md",
     "docs/virtio-snd.md", "docs/design/tailscale-worker-protocol.md",
@@ -83,8 +97,12 @@ def slug(path: str) -> str:
     return "reference-" + re.sub(r"[^a-z0-9]+", "-", re.sub(r"\.(md|mdx)$", "", path.lower())).strip("-")
 
 
-def source_url(path: str, anchor: str = "") -> str:
-    return f"{REPO_URL}/blob/{BASE}/{quote(path, safe='/')}" + anchor
+def source_url(path: str, anchor: str = "", revision: str = BASE) -> str:
+    return f"{REPO_URL}/blob/{revision}/{quote(path, safe='/')}" + anchor
+
+
+def current_slug(path: str) -> str:
+    return "current-" + re.sub(r"[^a-z0-9]+", "-", re.sub(r"\.(md|mdx)$", "", path.lower())).strip("-")
 
 
 def digest(text) -> str:
@@ -97,9 +115,9 @@ def with_properties(body: str, **properties: str) -> str:
     return f"---\n{yaml}\n---\n\n{body}"
 
 
-def baseline_sources(paths: list[str]) -> dict[str, bytes]:
+def baseline_sources(paths: list[str], revision: str = BASE) -> dict[str, bytes]:
     """Read the pinned blobs, never mutable integration-worktree copies."""
-    requests = "".join(f"{BASE}:{path}\n" for path in paths).encode()
+    requests = "".join(f"{revision}:{path}\n" for path in paths).encode()
     output = subprocess.check_output(["git", "cat-file", "--batch"], input=requests, cwd=ROOT)
     sources, offset = {}, 0
     for path in paths:
@@ -178,7 +196,7 @@ def disposition(path: str) -> tuple[str, str]:
     return "rewritten", "Published as a complete Docstream reference page with navigation, source provenance, resolved links, portable Markdown, and complete technical body."
 
 
-def links_for(text: str, path: str, known: set[str]) -> str:
+def links_for(text: str, path: str, known: set[str], revision: str = BASE, current: dict[str, str] | None = None) -> str:
     """Resolve authored repository links without changing fences or measured text."""
     parts = re.split(r"(^\s*`{3,}[^\n]*\n.*?^\s*`{3,}\s*$)", text, flags=re.M | re.S)
     pattern = re.compile(r"(?<!!)\[([^\]\n]*)\]\(([^\s)]+)(?:\s+\"[^\"]*\")?\)")
@@ -191,9 +209,10 @@ def links_for(text: str, path: str, known: set[str]) -> str:
         anchor = f"#{split.fragment}" if split.fragment else ""
         if resolved in ALIASES: return f"[{label}](./docs.html?page={ALIASES[resolved]}{anchor})"
         if resolved == "web/index.html": return f"[{label}](./index.html{anchor})"
+        if current and resolved in current: return f"[{label}](./docs.html?page={current[resolved]}{anchor})"
         if resolved in known: return f"[{label}](./docs.html?page={slug(resolved)}{anchor})"
         # Relative code/evidence links refer to the real source tree, not the docs asset directory.
-        return f"[{label}]({source_url(resolved, anchor)})"
+        return f"[{label}]({source_url(resolved, anchor, revision)})"
     return "".join(part if i%2 else pattern.sub(rewrite, part) for i,part in enumerate(parts))
 
 
@@ -254,7 +273,16 @@ def main() -> None:
         path = SOURCE / f"{page}.md"
         text = with_properties(path.read_text(), kind="Field guide", source=f"web/docs-source/guides/{page}.md", scope="Authored explanation; verification belongs to the named evidence")
         (OUT / f"{page}.md").write_text(text)
-        catalog.append({"id":page,"title":title,"group":group,"category":"Guides","kind":"guide","url":f"./docs-content/{page}.md","source":f"web/docs-source/guides/{page}.md","sourceUrl":f"./docs-content/{page}.md","sha256":digest(text),"search":re.sub(r"[`#*{}%]", "", text)})
+        catalog.append({"id":page,"title":title,"group":group,"category":"Guides","kind":"guide","url":f"./docs-content/{page}.md","source":f"web/docs-source/guides/{page}.md","sourceUrl":f"./docs-content/{page}.md","sha256":digest(text)})
+    # Guide images (real captures only) are published beside the Markdown that references them, so
+    # a document-relative "./images/…" resolves the same way in the reader and in the raw file.
+    images = OUT / "images"
+    if images.exists():
+        for old in images.iterdir(): old.unlink()
+    if (SOURCE / "images").is_dir():
+        images.mkdir(exist_ok=True)
+        for image in sorted((SOURCE / "images").iterdir()):
+            (images / image.name).write_bytes(image.read_bytes())
     for path in prose:
         text = originals[path].decode("utf-8")
         status, reason = disposition(path)
@@ -295,8 +323,28 @@ def main() -> None:
             )
             (OUT / f"{page}.md").write_text(published)
             item.update({"page":page,"replacement":f"./docs.html?page={page}","publishedSha256":digest(published)})
-            catalog.append({"id":page,"title":title,"group":"Reference library","category":category_for(path),"kind":"reference","disposition":status,"url":f"./docs-content/{page}.md","source":path,"sourceUrl":source_url(path),"sourceSha256":digest(text),"sha256":digest(published),"search":re.sub(r"[`#*{}%]", "", published)})
+            catalog.append({"id":page,"title":title,"group":"Reference library","category":category_for(path),"kind":"reference","disposition":status,"url":f"./docs-content/{page}.md","source":path,"sourceUrl":source_url(path),"sourceSha256":digest(text),"sha256":digest(published)})
         ledger.append(item)
+    current_ids = {path: current_slug(path) for path, _ in CURRENT_REFERENCES}
+    current_sources = baseline_sources([path for path, _ in CURRENT_REFERENCES] + [path for path, _ in CURRENT_CONTRACTS], CURRENT_REVISION)
+    contract_links = " · ".join(f"[{label}]({source_url(path, revision=CURRENT_REVISION)})" for path, label in CURRENT_CONTRACTS)
+    for path, title in CURRENT_REFERENCES:
+        text = current_sources[path].decode("utf-8")
+        page = current_ids[path]
+        body = re.sub(r"^#\s+.*\n", "", text, count=1)
+        body = links_for(body, path, renderable, CURRENT_REVISION, current_ids)
+        body = re.sub(r'\{% content-ref url="\./docs\.html\?page=[a-z0-9-]+" %\}\n[^\n]+\n',
+                      '{% content-ref url="./docs.html?page=time-travel" %}\nRecord, rewind, and branch\n', publish_current_structure(body, path))
+        note = (f"Current reference. Published from the exact source at revision `{CURRENT_REVISION[:9]}` (the PR 626 stack), "
+                "separately from the pinned migration inventory. It describes the shipped format and its stated limits; "
+                f"read it with the time-travel guide. Contracts at the same revision: {contract_links}.")
+        published = with_properties(
+            f"# {title}\n\n{{% hint style=\"info\" %}}\n{note}\n{{% endhint %}}\n\n" + body.strip() + "\n",
+            kind="Current reference", source=path, source_revision=CURRENT_REVISION, source_sha256=digest(text),
+            scope="Current source at the stated revision; not part of the pinned migration inventory",
+        )
+        (OUT / f"{page}.md").write_text(published)
+        catalog.append({"id":page,"title":title,"group":"Current references","category":"Time travel","kind":"reference","disposition":"current","url":f"./docs-content/{page}.md","source":path,"sourceRevision":CURRENT_REVISION,"sourceUrl":source_url(path, revision=CURRENT_REVISION),"sourceSha256":digest(text),"sha256":digest(published)})
     for path in auxiliary:
         ledger.append({"path":path,"status":"preserved","role":"auxiliary-record","reason":auxiliary_reason(path),"sourceSha256":digest(originals[path]),"sourceUrl":source_url(path)})
     for path,page in ALIASES.items():
@@ -325,11 +373,15 @@ Plain-text licenses, notices, diagnostic transcripts, fixture text, manifests, g
 
 This ledger is an immutable inventory of the stated migration revision. Later task logs and release evidence keep their own source revisions; the current [desktop guide](./docs.html?page=desktop) names the application-image evidence separately. A reference's native **Properties** sheet exposes its exact original revision and SHA-256. Guide properties identify authored explanations, not an independent verification result.
 
+## Current references
+
+Four session references are published separately from this inventory, from exact blobs at revision `{CURRENT_REVISION}` (the PR 626 stack): {", ".join(f"[{title}](./docs.html?page={current_slug(path)})" for path, title in CURRENT_REFERENCES)}. Each page's **Properties** sheet carries that revision and the source SHA-256. They are not counted in the dispositions above and do not change the migration ledger.
+
 ## Inspect the complete ledger
 
 [Download the full document-by-document migration ledger](./docs-content/migration-ledger.json).
 
-Use the reader's **Archive ledger** to search every preserved source path. The Reference library includes {sum(p['kind']=='reference' for p in catalog)} full documents; no technical reference is represented by a link-only summary.
+Use the reader's **Archive ledger** to search every preserved source path. The Reference library includes {sum(p['kind']=='reference' and p.get('disposition')!='current' for p in catalog)} full documents; no technical reference is represented by a link-only summary.
 
 ## Package and build
 
@@ -337,14 +389,18 @@ The reader uses the exact `@brett_lamy/docstream@{DOCSTREAM_VERSION}` npm releas
 """
     coverage = with_properties(coverage, kind="Migration inventory", source="web/docs-content/coverage.md", generated_by="tools/build-docs-corpus.py", source_revision=BASE, scope="Baseline accounting; later evidence retains its own revision")
     (OUT / "coverage.md").write_text(coverage)
-    catalog.append({"id":"coverage","title":"Documentation coverage","group":"Build and prove","category":"Guides","kind":"guide","url":"./docs-content/coverage.md","source":"web/docs-content/coverage.md","sourceUrl":"./docs-content/coverage.md","sha256":digest(coverage),"search":coverage})
+    catalog.append({"id":"coverage","title":"Documentation coverage","group":"Build and prove","category":"Guides","kind":"guide","url":"./docs-content/coverage.md","source":"web/docs-content/coverage.md","sourceUrl":"./docs-content/coverage.md","sha256":digest(coverage)})
     for item in ledger:
         if item["status"]=="rewritten" and "page" not in item:
             raise RuntimeError(f"Unpublished rewritten document: {item['path']}")
     ids=[p['id'] for p in catalog]
     if len(ids)!=len(set(ids)): raise RuntimeError("Duplicate page IDs")
-    manifest={"schema":1,"docstreamVersion":DOCSTREAM_VERSION,"sourceRevision":BASE,"pages":catalog,"counts":{"baselineProse":len(prose),"auxiliaryRecords":len(auxiliary),"totalDocuments":len(ledger),"pages":len(catalog),**counts}}
+    manifest={"schema":1,"docstreamVersion":DOCSTREAM_VERSION,"sourceRevision":BASE,"currentRevision":CURRENT_REVISION,"pages":catalog,"counts":{"baselineProse":len(prose),"auxiliaryRecords":len(auxiliary),"totalDocuments":len(ledger),"pages":len(catalog),"currentReferences":len(CURRENT_REFERENCES),**counts}}
     (OUT / "catalog.json").write_text(json.dumps(manifest,ensure_ascii=False,separators=(",",":"))+"\n")
+    # Search reads the published Markdown, loaded only when a reader first searches; the catalog that
+    # every page fetches stays small.
+    corpus={"schema":1,"pages":[{"id":p["id"],"path":f"{p['id']}.md","content":(OUT / f"{p['id']}.md").read_text()} for p in catalog]}
+    (OUT / "search-corpus.json").write_text(json.dumps(corpus,ensure_ascii=False,separators=(",",":"))+"\n")
     (OUT / "migration-ledger.json").write_text(json.dumps({"schema":1,"sourceRevision":BASE,"counts":counts,"documents":ledger},indent=2,ensure_ascii=False)+"\n")
     design=ROOT/"design";design.mkdir(exist_ok=True)
     (design/"documentation-migration.json").write_text(json.dumps({"schema":1,"sourceRevision":BASE,"counts":counts,"documents":ledger},indent=2,ensure_ascii=False)+"\n")

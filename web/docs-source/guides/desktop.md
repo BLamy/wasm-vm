@@ -18,7 +18,7 @@ The [independent E5.5-T05c verdict](https://github.com/BLamy/wasm-vm/blob/dddae3
 
 The [application catalogue](https://github.com/BLamy/wasm-vm/blob/dddae3bc2c15b1332dedcb208f3b7e6c6f852127/tools/image/omarchy-apps/catalog.json) accounts for 147 upstream Omarchy 4.0.2 entries: 32 were already present, 97 have native repository packages, five have portable alternatives, and 13 still require source-port work. Chromium and LibreOffice are two explicit additions beyond that list. The 13 unresolved ports are not established incompatibilities, and this is not a claim that all 147 applications are complete.
 
-The [launcher](./index.html#ide) uses matched warm factories for the application image. Accelerated mode restores RAM, disk, GPU resources and the guest clock together. Software mode restores its matching RAM and disk snapshot. Read [guest graphics](./docs.html?page=graphics) for warm, explicit cold and software modes.
+The [machine](./index.html#ide) starts Omarchy from matched warm factories for the application image (**Other machines → Omarchy desktop**; **Desktop settings → Desktop graphics** chooses GPU or Software). Accelerated mode restores RAM, disk, GPU resources and the guest clock together. Software mode restores its matching RAM and disk snapshot. Read [guest graphics](./docs.html?page=graphics) for warm, explicit cold and software modes.
 
 Open applications from Omarchy's Apps menu. With keyboard capture enabled, the stock browser shortcut is **Super + Shift + B**, and **Super + Alt + Space** opens the Apps menu. Search for **LibreOffice Writer**, **Calc** or **Impress**. The Foot terminal also has `node` and `npm` available.
 
@@ -28,19 +28,19 @@ Desktop restoration and application startup are separate measurements. Large gue
 
 ## Keyboard capture
 
-The terminal displays whether input is captured for the guest or owned by the browser. Physical `KeyboardEvent.code` transitions feed the virtio keyboard boundary, while xterm retains its serial text path. **Release keys** repairs held guest input after focus changes.
+In the terminal workspace, **Settings → Keyboard** shows whether keys go to the guest (**Send keys to the guest**) or stay with the browser. Physical `KeyboardEvent.code` transitions feed the virtio keyboard boundary, while xterm retains its serial text path. **Release held keys** repairs held guest input after focus changes.
 
 `Ctrl+Alt+Backquote` is reserved for the host view switch. OS- or browser-owned shortcuts can be consumed before the page receives an event; the input contract describes passthrough and recovery behavior.
 
 ## Pointer and clipboard
 
-Absolute pointer coordinates use the element's CSS bounds. Relative mode uses Pointer Lock, which may require a gesture or be denied by iframe policy. The fallback returns to absolute mode and releases held buttons.
+**Settings → Pointer mode** switches between absolute and relative pointer input when a guest display exists. Absolute pointer coordinates use the element's CSS bounds. Relative mode uses Pointer Lock, which may require a gesture or be denied by iframe policy. The fallback returns to absolute mode and releases held buttons.
 
 Clipboard operations are an explicit host permission boundary. Read the clipboard contract before forwarding text or promising synchronization.
 
 ## Audio
 
-The browser audio-ring and virtio-snd contracts define the admitted format, control path, and bounded buffering behavior. Browser autoplay policy can require a gesture before audio starts.
+The browser audio-ring and virtio-snd contracts define the admitted format, control path, and bounded buffering behavior. Browser autoplay policy can require a gesture before audio starts: sound begins after your first click or key press on the page, and **Settings → Sound** shows whether it is on.
 
 ## Detailed references
 
